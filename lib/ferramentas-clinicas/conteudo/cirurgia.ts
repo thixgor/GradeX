@@ -291,14 +291,14 @@ const alvarado: Ferramenta = {
   resumo: 'Probabilidade de apendicite aguda por oito achados clínicos e laboratoriais.',
   categorias: ['cirurgia', 'emergencia'],
   campos: [
-    campoSimNao('migracao', 'Migração da dor para a fossa ilíaca direita', 1),
+    campoSimNao('migracao', 'Migração da dor para a fossa ilíaca direita', 1, 'Dor que começou periumbilical ou epigástrica e depois migrou para a fossa ilíaca direita — reflete a transição de dor visceral referida para irritação peritoneal parietal.'),
     campoSimNao('anorexia', 'Anorexia', 1),
     campoSimNao('nausea', 'Náusea ou vômito', 1),
-    campoSimNao('dorFid', 'Dor à palpação em fossa ilíaca direita', 2),
+    campoSimNao('dorFid', 'Dor à palpação em fossa ilíaca direita', 2, 'Dor à palpação no ponto de McBurney. É o item de maior peso do escore, junto com a leucocitose.'),
     campoSimNao('descompressao', 'Dor à descompressão brusca', 1),
-    campoSimNao('febre', 'Temperatura ≥ 37,3 °C', 1),
-    campoSimNao('leucocitose', 'Leucócitos ≥ 10.000/mm³', 2),
-    campoSimNao('desvio', 'Desvio à esquerda (neutrófilos ≥ 75%)', 1),
+    campoSimNao('febre', 'Temperatura ≥ 37,3 °C', 1, 'Temperatura axilar ou timpânica ≥ 37,3 °C. Febre alta desde o início sugere outra causa ou apendicite já complicada.'),
+    campoSimNao('leucocitose', 'Leucócitos ≥ 10.000/mm³', 2, 'Leucograma da admissão. Leucócitos normais não excluem apendicite precoce.'),
+    campoSimNao('desvio', 'Desvio à esquerda (neutrófilos ≥ 75%)', 1, 'Neutrófilos ≥ 75% do diferencial, com ou sem bastões. É o item mais precoce da resposta inflamatória.'),
   ],
   calcular: (v) => {
     const total = somaSimNao(v, [
@@ -888,14 +888,14 @@ const hidricaPerioperatoria: Ferramenta = {
   categorias: ['cirurgia'],
   campos: [
     campoPeso(),
-    campoNum('horasJejum', 'Horas de jejum', { unidade: 'h', min: 0, max: 24, passo: 0.5, padrao: '8' }),
-    campoNum('duracao', 'Duração prevista da cirurgia', { unidade: 'h', min: 0.5, max: 12, passo: 0.5, padrao: '2' }),
+    campoNum('horasJejum', 'Horas de jejum', { ajuda: 'Conte a partir da última ingestão. Com jejum abreviado (líquido claro até 2 h antes), o déficit é próximo de zero e não há o que repor.', unidade: 'h', min: 0, max: 24, passo: 0.5, padrao: '8' }),
+    campoNum('duracao', 'Duração prevista da cirurgia', { ajuda: 'Duração prevista da cirurgia, para estimar as perdas insensíveis — hoje calculadas em 0,5 a 1 mL/kg/h, e não nos 8 a 10 da literatura antiga.', unidade: 'h', min: 0.5, max: 12, passo: 0.5, padrao: '2' }),
     campoOpc('trauma', 'Grau de exposição e trauma cirúrgico', [
       { valor: '2', rotulo: 'Pequeno (superficial, laparoscopia curta) — 2 mL/kg/h', pontos: 2 },
       { valor: '4', rotulo: 'Moderado (abdominal fechada, ortopédica) — 4 mL/kg/h', pontos: 4 },
       { valor: '6', rotulo: 'Grande (laparotomia extensa, torácica) — 6 mL/kg/h', pontos: 6 },
     ]),
-    campoNum('perdaSangue', 'Perda sanguínea estimada', { unidade: 'mL', min: 0, max: 5000, passo: 50, padrao: '0' }),
+    campoNum('perdaSangue', 'Perda sanguínea estimada', { ajuda: 'Perda estimada em mL. Use a contagem de compressas e o volume do aspirador; a estimativa visual do campo subestima de forma sistemática.', unidade: 'mL', min: 0, max: 5000, passo: 50, padrao: '0' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')

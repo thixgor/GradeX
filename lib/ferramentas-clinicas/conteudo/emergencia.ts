@@ -162,8 +162,8 @@ const saps3: Ferramenta = {
       { valor: '7', rotulo: 'Outra UTI', pontos: 7 },
       { valor: '8', rotulo: 'Outro (enfermaria, outro hospital)', pontos: 8 },
     ]),
-    campoSimNao('vasoativo', 'Uso de droga vasoativa antes da admissão na UTI', 3),
-    campoSimNao('naoPlanejada', 'Admissão não planejada', 3),
+    campoSimNao('vasoativo', 'Uso de droga vasoativa antes da admissão na UTI', 3, 'Vasopressor ou inotrópico em uso na hora anterior à admissão na UTI, em qualquer dose.'),
+    campoSimNao('naoPlanejada', 'Admissão não planejada', 3, 'Admissão que não estava programada no momento em que a cirurgia ou a internação começou.'),
     campoOpc('cirurgia', 'Condição cirúrgica', [
       { valor: '0', rotulo: 'Cirurgia eletiva', pontos: 0 },
       { valor: '5', rotulo: 'Sem cirurgia', pontos: 5 },
@@ -300,10 +300,10 @@ const vasoativas: Ferramenta = {
       { valor: 'para-ml', rotulo: 'Dose → velocidade (mL/h)' },
       { valor: 'para-dose', rotulo: 'Velocidade (mL/h) → dose' },
     ]),
-    campoNum('dose', 'Dose desejada', { unidade: 'mcg/kg/min', min: 0.001, max: 100, passo: 0.01, mostrarSe: (v) => opc(v, 'direcao') === 'para-ml' }),
-    campoNum('velocidade', 'Velocidade da bomba', { unidade: 'mL/h', min: 0.1, max: 500, passo: 0.1, mostrarSe: (v) => opc(v, 'direcao') === 'para-dose' }),
-    campoNum('massaMg', 'Massa do fármaco na solução', { unidade: 'mg', min: 0.1, max: 5000, passo: 0.1, padrao: '16' }),
-    campoNum('volumeMl', 'Volume final da solução', { unidade: 'mL', min: 10, max: 1000, passo: 1, padrao: '250' }),
+    campoNum('dose', 'Dose desejada', { ajuda: 'Dose desejada na unidade que o fármaco usa — µg/kg/min para noradrenalina e dobutamina, µg/min para algumas padronizações, UI/min para vasopressina. Confundir as unidades é a origem mais comum de erro grave.', unidade: 'mcg/kg/min', min: 0.001, max: 100, passo: 0.01, mostrarSe: (v) => opc(v, 'direcao') === 'para-ml' }),
+    campoNum('velocidade', 'Velocidade da bomba', { ajuda: 'Velocidade da bomba em mL/h, para o cálculo no sentido inverso.', unidade: 'mL/h', min: 0.1, max: 500, passo: 0.1, mostrarSe: (v) => opc(v, 'direcao') === 'para-dose' }),
+    campoNum('massaMg', 'Massa do fármaco na solução', { ajuda: 'Massa total do fármaco diluída na bolsa, em miligramas.', unidade: 'mg', min: 0.1, max: 5000, passo: 0.1, padrao: '16' }),
+    campoNum('volumeMl', 'Volume final da solução', { ajuda: 'Volume final da solução, já contando o diluente e o volume das ampolas.', unidade: 'mL', min: 10, max: 1000, passo: 1, padrao: '250' }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')

@@ -870,7 +870,7 @@ export const ferramentas: Ferramenta[] = [
     categorias: ['gasometria'],
     campos: [
       campoNum('hco3', 'HCO₃⁻', { unidade: 'mEq/L', min: 20, max: 60, passo: 0.1, ajuda: 'Só faz sentido acima de 26 mEq/L.' }),
-      campoNum('paco2', 'PaCO₂ medida', { unidade: 'mmHg', min: 20, max: 100, passo: 0.5, opcional: true }),
+      campoNum('paco2', 'PaCO₂ medida', { ajuda: 'Gás carbônico arterial medido, para comparar com a compensação prevista. O teto prático da hipoventilação compensatória fica em torno de 55 mmHg.', unidade: 'mmHg', min: 20, max: 100, passo: 0.5, opcional: true }),
     ],
     calcular: (v) => {
       const hco3 = num(v, 'hco3')
@@ -924,9 +924,9 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Separa a acidose metabólica por ânions não medidos da acidose hiperclorêmica.',
     categorias: ['gasometria', 'nefrologia'],
     campos: [
-      campoNum('na', 'Sódio', { unidade: 'mEq/L', min: 90, max: 200, passo: 1, normalMin: 135, normalMax: 145 }),
-      campoNum('cl', 'Cloro', { unidade: 'mEq/L', min: 60, max: 160, passo: 1, normalMin: 98, normalMax: 107 }),
-      campoNum('hco3', 'HCO₃⁻', { unidade: 'mEq/L', min: 1, max: 60, passo: 0.1, normalMin: 22, normalMax: 26 }),
+      campoNum('na', 'Sódio', { ajuda: 'Sódio do mesmo painel dos outros dois eletrólitos. Amostras de momentos diferentes invalidam o cálculo.', unidade: 'mEq/L', min: 90, max: 200, passo: 1, normalMin: 135, normalMax: 145 }),
+      campoNum('cl', 'Cloro', { ajuda: 'Cloro do mesmo painel. Métodos de eletrodo íon-seletivo atuais deslocam a faixa normal do gap para cerca de 6 ± 3.', unidade: 'mEq/L', min: 60, max: 160, passo: 1, normalMin: 98, normalMax: 107 }),
+      campoNum('hco3', 'HCO₃⁻', { ajuda: 'Use o bicarbonato da gasometria arterial quando houver; na sua falta, o dióxido de carbono total do painel venoso serve.', unidade: 'mEq/L', min: 1, max: 60, passo: 0.1, normalMin: 22, normalMax: 26 }),
       campoNum('k', 'Potássio', { unidade: 'mEq/L', min: 1, max: 10, passo: 0.1, opcional: true, ajuda: 'Opcional. Incluir o potássio eleva a faixa de referência para 12 a 16.' }),
     ],
     calcular: (v) => {
@@ -995,10 +995,10 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Recupera o ânion gap que a hipoalbuminemia esconde — reclassifica boa parte da UTI.',
     categorias: ['gasometria', 'nefrologia'],
     campos: [
-      campoNum('na', 'Sódio', { unidade: 'mEq/L', min: 90, max: 200, passo: 1 }),
-      campoNum('cl', 'Cloro', { unidade: 'mEq/L', min: 60, max: 160, passo: 1 }),
-      campoNum('hco3', 'HCO₃⁻', { unidade: 'mEq/L', min: 1, max: 60, passo: 0.1 }),
-      campoNum('albumina', 'Albumina', { unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, normalMin: 3.5, normalMax: 5 }),
+      campoNum('na', 'Sódio', { ajuda: 'Sódio do mesmo painel dos demais eletrólitos.', unidade: 'mEq/L', min: 90, max: 200, passo: 1 }),
+      campoNum('cl', 'Cloro', { ajuda: 'Cloro do mesmo painel — os três valores precisam vir da mesma amostra.', unidade: 'mEq/L', min: 60, max: 160, passo: 1 }),
+      campoNum('hco3', 'HCO₃⁻', { ajuda: 'Bicarbonato da gasometria, ou dióxido de carbono total do painel venoso na sua falta.', unidade: 'mEq/L', min: 1, max: 60, passo: 0.1 }),
+      campoNum('albumina', 'Albumina', { ajuda: 'Albumina em g/dL. Cada 1 g/dL abaixo de 4 esconde cerca de 2,5 mEq/L de ânion gap, e é por isso que quase toda a UTI precisa da correção.', unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, normalMin: 3.5, normalMax: 5 }),
       campoNum('fosfato', 'Fosfato', { unidade: 'mg/dL', min: 0.5, max: 20, passo: 0.1, opcional: true, ajuda: 'Opcional. Em uremia grave o fosfato contribui de forma relevante para o gap.' }),
     ],
     calcular: (v) => {
@@ -1070,7 +1070,7 @@ export const ferramentas: Ferramenta[] = [
     categorias: ['gasometria'],
     campos: [
       campoNum('ag', 'Ânion gap (preferir o corrigido pela albumina)', { unidade: 'mEq/L', min: 0, max: 60, passo: 0.1 }),
-      campoNum('hco3', 'HCO₃⁻', { unidade: 'mEq/L', min: 1, max: 60, passo: 0.1 }),
+      campoNum('hco3', 'HCO₃⁻', { ajuda: 'Bicarbonato atual. A relação delta compara a queda do bicarbonato com a subida do ânion gap para revelar um segundo distúrbio.', unidade: 'mEq/L', min: 1, max: 60, passo: 0.1 }),
       campoNum('agBasal', 'Ânion gap normal de referência', { unidade: 'mEq/L', min: 4, max: 14, passo: 0.5, padrao: '12', ajuda: 'Use o normal do seu laboratório. Serviços com eletrodo íon-seletivo costumam usar 8 a 10.' }),
       campoNum('hco3Basal', 'HCO₃⁻ normal de referência', { unidade: 'mEq/L', min: 20, max: 28, passo: 0.5, padrao: '24' }),
     ],
@@ -1308,11 +1308,11 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Separa hipoxemia por doença do pulmão de hipoxemia por hipoventilação ou altitude.',
     categorias: ['gasometria', 'pneumologia'],
     campos: [
-      campoNum('pao2', 'PaO₂ arterial', { unidade: 'mmHg', min: 20, max: 700, passo: 1 }),
-      campoNum('paco2', 'PaCO₂', { unidade: 'mmHg', min: 5, max: 150, passo: 0.5 }),
+      campoNum('pao2', 'PaO₂ arterial', { ajuda: 'Pressão parcial arterial de oxigênio por gasometria — a oximetria de pulso não serve para este cálculo.', unidade: 'mmHg', min: 20, max: 700, passo: 1 }),
+      campoNum('paco2', 'PaCO₂', { ajuda: 'Gás carbônico arterial da mesma amostra, usado na equação do gás alveolar com o quociente respiratório de 0,8.', unidade: 'mmHg', min: 5, max: 150, passo: 0.5 }),
       campoNum('fio2', 'FiO₂', { unidade: '%', min: 21, max: 100, passo: 1, padrao: '21' }),
       campoNum('idade', 'Idade', { unidade: 'anos', min: 0, max: 120, passo: 1 }),
-      campoNum('patm', 'Pressão barométrica local', { unidade: 'mmHg', min: 400, max: 800, passo: 1, padrao: '760' }),
+      campoNum('patm', 'Pressão barométrica local', { ajuda: 'Pressão barométrica local: 760 mmHg ao nível do mar, cerca de 700 em São Paulo e 560 em La Paz. Ignorar a altitude infla o gradiente.', unidade: 'mmHg', min: 400, max: 800, passo: 1, padrao: '760' }),
       campoNum('r', 'Quociente respiratório (R)', { min: 0.6, max: 1, passo: 0.05, padrao: '0.8', ajuda: 'Dieta mista = 0,8. Dieta rica em carboidrato aproxima de 1,0.' }),
     ],
     calcular: (v) => {
@@ -1391,8 +1391,8 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Mostra por que a hemoglobina, e não a PaO₂, é quem carrega o oxigênio.',
     categorias: ['gasometria', 'emergencia'],
     campos: [
-      campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 1, max: 25, passo: 0.1, normalMin: 12, normalMax: 17 }),
-      campoNum('sao2', 'SaO₂', { unidade: '%', min: 30, max: 100, passo: 0.1, padrao: '97', normalMin: 95, normalMax: 100 }),
+      campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina em g/dL. Ela responde por cerca de 98% do conteúdo — é a variável que mais muda o resultado.', unidade: 'g/dL', min: 1, max: 25, passo: 0.1, normalMin: 12, normalMax: 17 }),
+      campoNum('sao2', 'SaO₂', { ajuda: 'Saturação arterial. Em intoxicação por monóxido de carbono ou metemoglobinemia, use co-oximetria: a oximetria de pulso mente.', unidade: '%', min: 30, max: 100, passo: 0.1, padrao: '97', normalMin: 95, normalMax: 100 }),
       campoNum('pao2', 'PaO₂', { unidade: 'mmHg', min: 20, max: 700, passo: 1, padrao: '95' }),
       campoNum('svo2', 'SvO₂ (venosa mista ou central)', { unidade: '%', min: 20, max: 100, passo: 0.1, opcional: true, ajuda: 'Opcional — habilita o cálculo da diferença arteriovenosa e da taxa de extração.' }),
       campoNum('pvo2', 'PvO₂', { unidade: 'mmHg', min: 10, max: 100, passo: 1, padrao: '40', opcional: true }),
@@ -1477,7 +1477,7 @@ export const ferramentas: Ferramenta[] = [
     categorias: ['gasometria', 'emergencia'],
     campos: [
       campoNum('dc', 'Débito cardíaco', { unidade: 'L/min', min: 0.5, max: 20, passo: 0.1, normalMin: 4, normalMax: 8 }),
-      campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 1, max: 25, passo: 0.1 }),
+      campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina em g/dL — uma das três alavancas independentes da oferta, junto com débito e saturação.', unidade: 'g/dL', min: 1, max: 25, passo: 0.1 }),
       campoNum('sao2', 'SaO₂', { unidade: '%', min: 30, max: 100, passo: 0.1, padrao: '97' }),
       campoNum('pao2', 'PaO₂', { unidade: 'mmHg', min: 20, max: 700, passo: 1, padrao: '95' }),
       campoNum('sc', 'Superfície corporal', { unidade: 'm²', min: 0.2, max: 3.5, passo: 0.01, opcional: true, ajuda: 'Opcional — permite indexar a oferta.' }),
@@ -1686,10 +1686,10 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Converte os valores medidos a 37 °C para a temperatura real do paciente.',
     categorias: ['gasometria'],
     campos: [
-      campoNum('temp', 'Temperatura do paciente', { unidade: '°C', min: 15, max: 43, passo: 0.1, padrao: '37', normalMin: 36, normalMax: 37.5 }),
-      campoNum('ph', 'pH medido (a 37 °C)', { min: 6.5, max: 8, passo: 0.01, padrao: '7.40' }),
-      campoNum('paco2', 'PaCO₂ medida (a 37 °C)', { unidade: 'mmHg', min: 5, max: 150, passo: 0.5, padrao: '40' }),
-      campoNum('pao2', 'PaO₂ medida (a 37 °C)', { unidade: 'mmHg', min: 20, max: 700, passo: 1, padrao: '95' }),
+      campoNum('temp', 'Temperatura do paciente', { ajuda: 'Temperatura central do paciente em °C — esofágica, vesical ou timpânica; a axilar subestima e invalida a correção.', unidade: '°C', min: 15, max: 43, passo: 0.1, padrao: '37', normalMin: 36, normalMax: 37.5 }),
+      campoNum('ph', 'pH medido (a 37 °C)', { ajuda: 'pH informado pelo aparelho, que sempre mede a 37 °C independentemente da temperatura real do paciente.', min: 6.5, max: 8, passo: 0.01, padrao: '7.40' }),
+      campoNum('paco2', 'PaCO₂ medida (a 37 °C)', { ajuda: 'Gás carbônico informado a 37 °C. Na hipotermia, o valor real é **menor** que o relatado.', unidade: 'mmHg', min: 5, max: 150, passo: 0.5, padrao: '40' }),
+      campoNum('pao2', 'PaO₂ medida (a 37 °C)', { ajuda: 'Oxigênio informado a 37 °C. Na hipotermia, o valor real também é menor — e superestimá-lo leva a desmame de oxigênio precoce.', unidade: 'mmHg', min: 20, max: 700, passo: 1, padrao: '95' }),
     ],
     calcular: (v) => {
       const t = num(v, 'temp')
@@ -1758,9 +1758,9 @@ export const ferramentas: Ferramenta[] = [
         { valor: 'periferica', rotulo: 'Venosa periférica' },
         { valor: 'central', rotulo: 'Venosa central' },
       ]),
-      campoNum('phv', 'pH venoso', { min: 6.5, max: 8, passo: 0.01, padrao: '7.36' }),
-      campoNum('paco2v', 'PCO₂ venosa', { unidade: 'mmHg', min: 5, max: 150, passo: 0.5, padrao: '45' }),
-      campoNum('hco3v', 'HCO₃⁻ venoso', { unidade: 'mEq/L', min: 1, max: 60, passo: 0.1, padrao: '24' }),
+      campoNum('phv', 'pH venoso', { ajuda: 'pH da amostra venosa. Corresponde ao arterial com desvio de cerca de 0,03 a 0,05 para baixo.', min: 6.5, max: 8, passo: 0.01, padrao: '7.36' }),
+      campoNum('paco2v', 'PCO₂ venosa', { ajuda: 'Gás carbônico venoso. Abaixo de 45 mmHg praticamente exclui hipercapnia arterial; acima disso, colha gasometria arterial antes de decidir ventilar.', unidade: 'mmHg', min: 5, max: 150, passo: 0.5, padrao: '45' }),
+      campoNum('hco3v', 'HCO₃⁻ venoso', { ajuda: 'Bicarbonato venoso, que corresponde bem ao arterial (cerca de 1 a 2 mEq/L maior) e serve para conduzir cetoacidose sem punção arterial.', unidade: 'mEq/L', min: 1, max: 60, passo: 0.1, padrao: '24' }),
     ],
     calcular: (v) => {
       const sitio = opc(v, 'sitio')
@@ -1818,11 +1818,11 @@ export const ferramentas: Ferramenta[] = [
     resumo: 'Rastreia álcoois tóxicos quando há acidose de ânion gap alto sem causa evidente.',
     categorias: ['gasometria', 'nefrologia', 'emergencia'],
     campos: [
-      campoNum('osmMedida', 'Osmolalidade medida (osmômetro por ponto de congelamento)', { unidade: 'mOsm/kg', min: 200, max: 450, passo: 1 }),
+      campoNum('osmMedida', 'Osmolalidade medida (osmômetro por ponto de congelamento)', { ajuda: 'Osmolalidade medida por **crioscopia** (ponto de congelamento). O método por pressão de vapor não detecta álcoois voláteis e anula o gap.', unidade: 'mOsm/kg', min: 200, max: 450, passo: 1 }),
       campoNum('na', 'Sódio', { unidade: 'mEq/L', min: 90, max: 200, passo: 1 }),
       campoNum('glicose', 'Glicose', { unidade: 'mg/dL', min: 20, max: 1500, passo: 1 }),
       campoNum('ureia', 'Ureia', { unidade: 'mg/dL', min: 5, max: 400, passo: 1, ajuda: 'Se o laboratório reporta BUN, multiplique por 2,14 para obter ureia.' }),
-      campoNum('etanol', 'Etanol', { unidade: 'mg/dL', min: 0, max: 600, passo: 1, padrao: '0', opcional: true }),
+      campoNum('etanol', 'Etanol', { ajuda: 'Alcoolemia em mg/dL. O etanol é a causa mais comum de gap osmolar alto e precisa ser descontado antes de suspeitar de metanol ou etilenoglicol.', unidade: 'mg/dL', min: 0, max: 600, passo: 1, padrao: '0', opcional: true }),
     ],
     calcular: (v) => {
       const osm = num(v, 'osmMedida')

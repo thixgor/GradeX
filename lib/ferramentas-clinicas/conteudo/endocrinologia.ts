@@ -248,10 +248,10 @@ const homa: Ferramenta = {
   resumo: 'Estima resistência à insulina e função de célula beta com glicemia e insulina de jejum.',
   categorias: ['endocrinologia'],
   campos: [
-    campoNum('glicose', 'Glicemia de jejum', { unidade: 'mg/dL', min: 40, max: 500, passo: 1, normalMin: 70, normalMax: 99 }),
-    campoNum('insulina', 'Insulina de jejum', { unidade: 'µU/mL', min: 0.5, max: 200, passo: 0.1, normalMin: 2, normalMax: 15 }),
-    campoNum('triglicerides', 'Triglicerídeos', { unidade: 'mg/dL', min: 20, max: 1500, passo: 1, opcional: true }),
-    campoNum('hdl', 'HDL-colesterol', { unidade: 'mg/dL', min: 15, max: 120, passo: 1, opcional: true }),
+    campoNum('glicose', 'Glicemia de jejum', { ajuda: 'Glicemia de jejum de 8 a 12 horas, em mg/dL, da mesma amostra da insulina.', unidade: 'mg/dL', min: 40, max: 500, passo: 1, normalMin: 70, normalMax: 99 }),
+    campoNum('insulina', 'Insulina de jejum', { ajuda: 'Insulina de jejum em µU/mL, da mesma amostra. O ensaio não é padronizado entre laboratórios, o que limita a comparação de resultados de origens diferentes.', unidade: 'µU/mL', min: 0.5, max: 200, passo: 0.1, normalMin: 2, normalMax: 15 }),
+    campoNum('triglicerides', 'Triglicerídeos', { ajuda: 'Triglicerídeos de jejum, para o índice TyG e para a relação TG/HDL, que são alternativas ao HOMA quando a insulina não está disponível.', unidade: 'mg/dL', min: 20, max: 1500, passo: 1, opcional: true }),
+    campoNum('hdl', 'HDL-colesterol', { ajuda: 'HDL do mesmo painel. A relação triglicerídeos/HDL acima de 3,5 sugere resistência insulínica e predomínio de LDL pequena e densa.', unidade: 'mg/dL', min: 15, max: 120, passo: 1, opcional: true }),
   ],
   calcular: (v) => {
     const g = num(v, 'glicose')
@@ -325,8 +325,8 @@ const hba1c: Ferramenta = {
       { valor: 'a1c', rotulo: 'Hemoglobina glicada' },
       { valor: 'gm', rotulo: 'Glicemia média' },
     ]),
-    campoNum('a1c', 'Hemoglobina glicada', { unidade: '%', min: 3, max: 20, passo: 0.1, mostrarSe: (v) => opc(v, 'direcao') === 'a1c' }),
-    campoNum('gm', 'Glicemia média', { unidade: 'mg/dL', min: 40, max: 500, passo: 1, mostrarSe: (v) => opc(v, 'direcao') === 'gm' }),
+    campoNum('a1c', 'Hemoglobina glicada', { ajuda: 'Hemoglobina glicada em %, por método certificado pelo NGSP. Hemoglobinopatias, anemia hemolítica, transfusão e doença renal avançada tornam o resultado não interpretável.', unidade: '%', min: 3, max: 20, passo: 0.1, mostrarSe: (v) => opc(v, 'direcao') === 'a1c' }),
+    campoNum('gm', 'Glicemia média', { ajuda: 'Glicemia média em mg/dL, vinda do automonitoramento ou do relatório de monitorização contínua.', unidade: 'mg/dL', min: 40, max: 500, passo: 1, mostrarSe: (v) => opc(v, 'direcao') === 'gm' }),
   ],
   calcular: (v) => {
     const dir = opc(v, 'direcao')
@@ -400,12 +400,12 @@ const cetoacidose: Ferramenta = {
   resumo: 'Aplica os critérios diagnósticos, calcula o ânion gap e monta a conduta inicial.',
   categorias: ['endocrinologia', 'emergencia'],
   campos: [
-    campoNum('glicose', 'Glicemia', { unidade: 'mg/dL', min: 50, max: 2000, passo: 1 }),
-    campoNum('ph', 'pH arterial ou venoso', { min: 6.6, max: 7.6, passo: 0.01 }),
-    campoNum('hco3', 'HCO₃⁻', { unidade: 'mEq/L', min: 1, max: 40, passo: 0.1 }),
-    campoNum('na', 'Sódio medido', { unidade: 'mEq/L', min: 100, max: 190, passo: 1 }),
+    campoNum('glicose', 'Glicemia', { ajuda: 'Glicemia em mg/dL. Lembre da cetoacidose euglicêmica por inibidor de SGLT2, em que a glicemia pode estar normal ou pouco elevada.', unidade: 'mg/dL', min: 50, max: 2000, passo: 1 }),
+    campoNum('ph', 'pH arterial ou venoso', { ajuda: 'pH arterial ou venoso — a gasometria venosa é suficiente para conduzir todo o tratamento e evita punções arteriais repetidas.', min: 6.6, max: 7.6, passo: 0.01 }),
+    campoNum('hco3', 'HCO₃⁻', { ajuda: 'Bicarbonato da gasometria. O fechamento do ânion gap, e não a glicemia, é o marcador de resolução.', unidade: 'mEq/L', min: 1, max: 40, passo: 0.1 }),
+    campoNum('na', 'Sódio medido', { ajuda: 'Sódio medido. Corrija pela glicemia antes de interpretar: some 1,6 mEq/L para cada 100 mg/dL de glicose acima de 100.', unidade: 'mEq/L', min: 100, max: 190, passo: 1 }),
     campoNum('cl', 'Cloro', { unidade: 'mEq/L', min: 60, max: 160, passo: 1 }),
-    campoNum('k', 'Potássio', { unidade: 'mEq/L', min: 1.5, max: 9, passo: 0.1 }),
+    campoNum('k', 'Potássio', { ajuda: 'Potássio sérico. Abaixo de 3,3 mEq/L, reponha potássio **antes** de iniciar a insulina.', unidade: 'mEq/L', min: 1.5, max: 9, passo: 0.1 }),
     campoNum('betaHidroxi', 'Beta-hidroxibutirato', { unidade: 'mmol/L', min: 0, max: 15, passo: 0.1, opcional: true, ajuda: 'Acima de 3,0 mmol/L é critério diagnóstico e é mais confiável que a cetonúria.' }),
     campoPeso({ opcional: true }),
   ],
@@ -501,9 +501,9 @@ const insulina: Ferramenta = {
       { valor: 'rapida', rotulo: 'Análogo ultrarrápido (lispro, asparte, glulisina)' },
       { valor: 'regular', rotulo: 'Regular humana' },
     ]),
-    campoNum('glicemiaAtual', 'Glicemia atual', { unidade: 'mg/dL', min: 40, max: 600, passo: 1, opcional: true }),
-    campoNum('alvo', 'Glicemia alvo', { unidade: 'mg/dL', min: 80, max: 200, passo: 5, padrao: '120' }),
-    campoNum('carboidratos', 'Carboidratos da refeição', { unidade: 'g', min: 0, max: 300, passo: 1, opcional: true }),
+    campoNum('glicemiaAtual', 'Glicemia atual', { ajuda: 'Glicemia capilar ou de sensor no momento da aplicação.', unidade: 'mg/dL', min: 40, max: 600, passo: 1, opcional: true }),
+    campoNum('alvo', 'Glicemia alvo', { ajuda: 'Glicemia alvo pré-prandial, tipicamente 100 a 130 mg/dL; mais alta em idosos, em hipoglicemia assintomática ou em risco de queda.', unidade: 'mg/dL', min: 80, max: 200, passo: 5, padrao: '120' }),
+    campoNum('carboidratos', 'Carboidratos da refeição', { ajuda: 'Gramas de carboidrato da refeição, pela contagem ou pelo rótulo. Gordura e proteína em excesso retardam a absorção e exigem bolus estendido.', unidade: 'g', min: 0, max: 300, passo: 1, opcional: true }),
   ],
   calcular: (v) => {
     const peso = num(v, 'peso')
@@ -710,7 +710,7 @@ const corticoides: Ferramenta = {
       { valor: 'betametasona', rotulo: 'Betametasona' },
       { valor: 'deflazacorte', rotulo: 'Deflazacorte' },
     ]),
-    campoNum('dose', 'Dose', { unidade: 'mg', min: 0.05, max: 2000, passo: 0.05 }),
+    campoNum('dose', 'Dose', { ajuda: 'Dose em miligramas do fármaco de origem. A equivalência convertida é apenas anti-inflamatória: potência mineralocorticoide e meia-vida não acompanham.', unidade: 'mg', min: 0.05, max: 2000, passo: 0.05 }),
   ],
   calcular: (v) => {
     const de = opc(v, 'de')
@@ -795,9 +795,9 @@ const tireoide: Ferramenta = {
       { valor: 'gestante', rotulo: 'Gestante' },
       { valor: 'subclinico', rotulo: 'Hipotireoidismo subclínico' },
     ], { mostrarSe: (v) => opc(v, 'cenario') === 'hipo' }),
-    campoNum('levo', 'Dose de levotiroxina', { unidade: 'µg/dia', min: 12.5, max: 400, passo: 12.5, mostrarSe: (v) => opc(v, 'cenario') === 'conversao' }),
-    campoNum('t4total', 'T4 total', { unidade: 'µg/dL', min: 1, max: 30, passo: 0.1, mostrarSe: (v) => opc(v, 'cenario') === 'itl' }),
-    campoNum('captacao', 'Captação de T3 em resina (ou THBR)', { unidade: '%', min: 10, max: 80, passo: 0.1, padrao: '30', mostrarSe: (v) => opc(v, 'cenario') === 'itl' }),
+    campoNum('levo', 'Dose de levotiroxina', { ajuda: 'Dose diária de levotiroxina em µg, para as equivalências.', unidade: 'µg/dia', min: 12.5, max: 400, passo: 12.5, mostrarSe: (v) => opc(v, 'cenario') === 'conversao' }),
+    campoNum('t4total', 'T4 total', { ajuda: 'T4 total em µg/dL, usado no índice de tiroxina livre quando o T4 livre não está disponível.', unidade: 'µg/dL', min: 1, max: 30, passo: 0.1, mostrarSe: (v) => opc(v, 'cenario') === 'itl' }),
+    campoNum('captacao', 'Captação de T3 em resina (ou THBR)', { ajuda: 'Captação de T3 em resina em %, ou razão de ligação a hormônio tireoidiano (THBR). Corrige o efeito das proteínas transportadoras sobre o T4 total.', unidade: '%', min: 10, max: 80, passo: 0.1, padrao: '30', mostrarSe: (v) => opc(v, 'cenario') === 'itl' }),
   ],
   calcular: (v) => {
     const cenario = opc(v, 'cenario')

@@ -123,13 +123,13 @@ const meld: Ferramenta = {
   resumo: 'Prioriza transplante hepático e estima mortalidade em 90 dias.',
   categorias: ['gastroenterologia'],
   campos: [
-    campoNum('bilirrubina', 'Bilirrubina total', { unidade: 'mg/dL', min: 0.1, max: 60, passo: 0.1 }),
-    campoNum('inr', 'INR', { min: 0.5, max: 12, passo: 0.01 }),
-    campoNum('creatinina', 'Creatinina', { unidade: 'mg/dL', min: 0.1, max: 15, passo: 0.01 }),
+    campoNum('bilirrubina', 'Bilirrubina total', { ajuda: 'Bilirrubina total em mg/dL. Hemólise e obstrução biliar extra-hepática a elevam por mecanismo alheio à função hepatocelular e distorcem o escore.', unidade: 'mg/dL', min: 0.1, max: 60, passo: 0.1 }),
+    campoNum('inr', 'INR', { ajuda: 'INR do tempo de protrombina. Anticoagulante oral em uso invalida o cálculo — registre o uso em vez de aceitar o número.', min: 0.5, max: 12, passo: 0.01 }),
+    campoNum('creatinina', 'Creatinina', { ajuda: 'Creatinina em mg/dL, limitada a 4,0 no cálculo. Diálise nos últimos 7 dias entra como valor fixo de 4,0.', unidade: 'mg/dL', min: 0.1, max: 15, passo: 0.01 }),
     campoNum('sodio', 'Sódio', { unidade: 'mEq/L', min: 100, max: 160, passo: 1, opcional: true, ajuda: 'Habilita o MELD-Na e o MELD 3.0.' }),
     campoNum('albumina', 'Albumina', { unidade: 'g/dL', min: 0.5, max: 6, passo: 0.1, opcional: true, ajuda: 'Entra apenas no MELD 3.0.' }),
     campoSexo(),
-    campoSimNao('dialise', 'Duas ou mais sessões de diálise nos últimos 7 dias, ou 24 h de hemodiálise contínua', 1, 'Nesse caso a creatinina é fixada em 4,0 mg/dL.'),
+    campoSimNao('dialise', 'Duas ou mais sessões de diálise nos últimos 7 dias, ou 24 h de hemodiálise contínua', 1, 'Duas ou mais sessões de hemodiálise, ou 24 horas de terapia contínua, nos últimos 7 dias. Nesse caso a creatinina entra no cálculo fixada em 4,0 mg/dL.'),
   ],
   calcular: (v) => {
     const bili = num(v, 'bilirrubina')
@@ -225,14 +225,14 @@ const blatchford: Ferramenta = {
   resumo: 'Identifica quem pode ser conduzido ambulatorialmente na hemorragia digestiva alta.',
   categorias: ['gastroenterologia', 'emergencia'],
   campos: [
-    campoNum('ureia', 'Ureia', { unidade: 'mg/dL', min: 5, max: 400, passo: 1 }),
-    campoNum('hb', 'Hemoglobina', { unidade: 'g/dL', min: 2, max: 20, passo: 0.1 }),
+    campoNum('ureia', 'Ureia', { ajuda: 'Ureia em mg/dL. Ela sobe desproporcionalmente à creatinina porque a hemoglobina digerida no intestino delgado é uma carga proteica absorvida.', unidade: 'mg/dL', min: 5, max: 400, passo: 1 }),
+    campoNum('hb', 'Hemoglobina', { ajuda: 'Hemoglobina da admissão. Ela subestima a perda nas primeiras horas, antes da hemodiluição compensatória.', unidade: 'g/dL', min: 2, max: 20, passo: 0.1 }),
     campoSexo(),
-    campoNum('pas', 'PA sistólica', { unidade: 'mmHg', min: 40, max: 250, passo: 1 }),
+    campoNum('pas', 'PA sistólica', { ajuda: 'Sistólica da chegada, antes da reposição volêmica.', unidade: 'mmHg', min: 40, max: 250, passo: 1 }),
     campoSimNao('fc', 'Frequência cardíaca ≥ 100 bpm', 1),
-    campoSimNao('melena', 'Melena', 1),
-    campoSimNao('sincope', 'Síncope', 2),
-    campoSimNao('hepatopatia', 'Doença hepática', 2),
+    campoSimNao('melena', 'Melena', 1, 'Melena constatada ao exame, não apenas relatada — fezes escurecidas por ferro, bismuto ou beterraba são confundidas com frequência.'),
+    campoSimNao('sincope', 'Síncope', 2, 'Síncope ou pré-síncope associada ao episódio de sangramento.'),
+    campoSimNao('hepatopatia', 'Doença hepática', 2, 'Doença hepática conhecida ou em investigação — muda também a conduta, por exigir profilaxia antibiótica e agente vasoativo esplâncnico.'),
     campoSimNao('cardiaca', 'Insuficiência cardíaca', 2),
   ],
   calcular: (v) => {
