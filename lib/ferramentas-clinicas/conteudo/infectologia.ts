@@ -189,6 +189,9 @@ const sofa: Ferramenta = {
         'SOFA **≥ 11** associa-se a mortalidade acima de 80% e é um bom momento para **conversa sobre objetivos de cuidado** com a família. Use-o como gatilho de comunicação, nunca como critério isolado de limitação: o escore descreve populações e não determina o desfecho de um indivíduo.',
         'Lembre das limitações que distorcem o cálculo: o componente neurológico é inválido em paciente **sedado**, o respiratório depende de gasometria arterial que nem sempre existe, e a bilirrubina e a creatinina podem estar cronicamente alteradas. Registre o SOFA basal do paciente crônico — sem ele, o critério de aumento de 2 pontos não pode ser aplicado.',
       ],
+      alertas: [
+        'O componente neurológico é inválido em paciente sedado, e bilirrubina e creatinina podem estar cronicamente alteradas. Sem registrar o SOFA basal do paciente crônico, o critério de aumento de 2 pontos que define sepse não pode ser aplicado.',
+      ],
       interpretacao: [
         '**Sepse (Sepsis-3)** = infecção suspeita ou documentada **mais** aumento de 2 ou mais pontos no SOFA. **Choque séptico** = sepse com necessidade de vasopressor para manter PAM ≥ 65 mmHg **e** lactato acima de 2 mmol/L, ambos apesar de ressuscitação volêmica adequada. A mortalidade do choque séptico assim definido supera 40%.',
         'A tendência do SOFA vale mais do que o valor isolado: SOFA que sobe nas primeiras 48 a 72 horas de UTI associa-se a mortalidade muito maior do que SOFA alto e estável.',
@@ -369,6 +372,10 @@ const news2: Ferramenta = {
         '**NEWS2 ≥ 7 (alto risco)**: monitorização contínua, avaliação imediata por equipe com competência em cuidado crítico e consideração de transferência para unidade de maior complexidade. Esse é o limiar de acionamento do time de resposta rápida.',
         'Preste atenção especial à **frequência respiratória**: é o parâmetro que mais precocemente se altera na deterioração e o mais frequentemente não medido ou estimado à distância. Contar 60 segundos muda o escore e a conduta mais do que qualquer exame laboratorial disponível na enfermaria.',
         'Use a **escala 2 de saturação (alvo 88–92%)** apenas em pacientes com insuficiência respiratória hipercápnica confirmada e prescrição explícita de alvo reduzido. Aplicá-la por presunção em qualquer portador de doença pulmonar obstrutiva mascara hipoxemia real e atrasa a resposta.',
+      ],
+      alertas: [
+        'Um único parâmetro valendo 3 pontos é gatilho de escalada independentemente da soma.',
+        'A escala 2 de saturação (alvo 88 a 92%) só vale com insuficiência respiratória hipercápnica confirmada e prescrição explícita. Aplicá-la por presunção a qualquer portador de doença pulmonar obstrutiva mascara hipoxemia real.',
       ],
       interpretacao: [
         ['**Total 0:** monitorização mínima a cada 12 horas.', '**Total 1 a 4:** reavaliação a cada 4 a 6 horas, com decisão do enfermeiro sobre escalonamento.', '**Total 5 a 6, ou qualquer parâmetro em 3:** resposta urgente — avaliação médica em até 1 hora, monitorização de hora em hora, considerar cuidados de maior complexidade.', '**Total ≥ 7:** resposta emergencial — avaliação por equipe com competência em cuidados críticos, monitorização contínua, transferência para leito monitorizado.'][faixa],
@@ -626,6 +633,7 @@ const centor: Ferramenta = {
   ],
   referencias: [
     { texto: 'Centor RM, Witherspoon JM, Dalton HP, Brody CE, Link K. The diagnosis of strep throat in adults in the emergency room. Med Decis Making. 1981;1(3):239-246.' },
+    { texto: 'Shulman ST, Bisno AL, Clegg HW, et al. Clinical practice guideline for the diagnosis and management of group A streptococcal pharyngitis: 2012 update by the Infectious Diseases Society of America. Clin Infect Dis. 2012;55(10):e86-e102.' },
   ],
 }
 

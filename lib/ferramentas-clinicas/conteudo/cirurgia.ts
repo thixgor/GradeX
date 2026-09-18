@@ -170,6 +170,10 @@ const rcri: Ferramenta = {
         'Otimize o que é modificável: **mantenha o betabloqueador de quem já usa** (a retirada abrupta aumenta eventos), mas **não inicie betabloqueador nos dias que antecedem a cirurgia** — o ensaio POISE mostrou redução de infarto ao custo de mais acidente vascular cerebral e morte. Mantenha estatina e aspirina conforme a indicação individual, e discuta com o cirurgião o momento seguro para suspender antiagregante em paciente com stent recente.',
         'Lembre que o RCRI **subestima o risco em cirurgia vascular aberta e em cirurgia de emergência**, e que ele não contempla idade, anemia, fragilidade nem capacidade funcional. Em idosos, combine com uma avaliação de **fragilidade** — ela prediz complicação, delirium, institucionalização e mortalidade melhor que qualquer índice cardíaco.',
       ],
+      alertas: [
+        'O RCRI subestima o risco em cirurgia vascular aberta e em cirurgia de emergência, e não contempla idade, anemia, fragilidade nem capacidade funcional.',
+        '**Não inicie betabloqueador nos dias que antecedem a cirurgia**: o ensaio POISE mostrou redução de infarto ao custo de mais acidente vascular cerebral e mais morte. Manter o de quem já usa, sim; começar às vésperas, não.',
+      ],
       interpretacao: [
         alto
           ? '**Risco elevado (≥ 2 pontos).** Combine com a capacidade funcional: se ela for boa (DASI acima de 34 pontos ou capacidade acima de 4 METs), a investigação adicional raramente muda conduta. Se for ruim ou desconhecida, considere dosar peptídeo natriurético (BNP ou NT-proBNP) — que é a estratégia recomendada pela diretriz canadense e melhora a discriminação.'
@@ -276,6 +280,7 @@ const gupta: Ferramenta = {
   ],
   referencias: [
     { texto: 'Gupta PK, Gupta H, Sundaram A, et al. Development and validation of a risk calculator for prediction of cardiac risk after surgery. Circulation. 2011;124(4):381-387.' },
+    { texto: 'Halvorsen S, Mehilli J, Cassese S, et al. 2022 ESC Guidelines on cardiovascular assessment and management of patients undergoing non-cardiac surgery. Eur Heart J. 2022;43(39):3826-3924.' },
   ],
 }
 
@@ -325,6 +330,9 @@ const alvarado: Ferramenta = {
         '**Escore 7–10 (alto risco)**: apendicite provável. Em homens jovens com quadro típico, alguns serviços indicam cirurgia sem imagem; na maioria dos contextos, a tomografia ainda reduz apendicectomias negativas e ajuda a identificar complicação. Acione a cirurgia e inicie antibiótico e analgesia — analgesia não mascara o exame abdominal, e negá-la é prática ultrapassada.',
         'Considere **tratamento antibiótico exclusivo** em apendicite não complicada selecionada (sem apendicolito, sem perfuração, sem abscesso): cerca de 70% evitam a cirurgia em 1 ano, com o restante operando depois. É uma opção legítima a oferecer, especialmente quando o risco cirúrgico é alto — e uma conversa de decisão compartilhada, não uma escolha do serviço.',
         'Saiba onde o escore **falha**: mulheres em idade fértil (grande sobreposição com doença ginecológica — peça beta-hCG sempre), idosos (apresentação atípica, maior taxa de perfuração), crianças pequenas e imunossuprimidos. Nesses grupos, o limiar para imagem deve ser mais baixo, e escores alternativos como o AIR e o AAS têm desempenho superior.',
+      ],
+      alertas: [
+        'O escore tem desempenho ruim em mulheres em idade fértil (grande sobreposição com doença ginecológica — peça beta-hCG sempre), em idosos, em crianças pequenas e em imunossuprimidos. Nesses grupos, baixe o limiar para imagem.',
       ],
       interpretacao: [
         faixa === 0
@@ -737,6 +745,10 @@ const jejum: Ferramenta = {
         'Prolongue o jejum apenas em situações de **esvaziamento gástrico retardado**: gastroparesia diabética, obstrução, estenose pilórica, refluxo grave, gestação avançada, trauma recente, dor intensa, uso de opioide e **agonistas de GLP-1**, que retardam substancialmente o esvaziamento — nesses últimos, considere suspender o fármaco antes do procedimento eletivo conforme o protocolo local e avaliar o conteúdo gástrico por ultrassonografia.',
         'Em **emergência**, presuma estômago cheio independentemente do tempo de jejum e use **indução em sequência rápida** com pressão cricoide conforme a prática do serviço. O tempo de jejum não é critério para adiar cirurgia de urgência.',
         'Mantenha a **medicação de uso contínuo** com um gole de água: anti-hipertensivos (com a ressalva de suspender IECA e BRA na manhã da cirurgia pelo risco de hipotensão na indução), antiarrítmicos, antiepilépticos, broncodilatadores, corticoide e antirretrovirais. A suspensão indiscriminada de toda a prescrição na véspera causa mais dano do que o jejum.',
+      ],
+      alertas: [
+        'Agonistas de GLP-1, opioides, gastroparesia diabética, obstrução e dor intensa retardam o esvaziamento gástrico: o tempo de jejum da tabela não garante estômago vazio nesses pacientes.',
+        'Em emergência, presuma estômago cheio independentemente do tempo de jejum e use indução em sequência rápida. Tempo de jejum não é critério para adiar cirurgia de urgência.',
       ],
       interpretacao: [
         urgencia

@@ -767,6 +767,9 @@ export const ferramentas: Ferramenta[] = [
           'Diferencie **aguda (bicarbonato sobe 1 mEq/L para cada 10 mmHg de gás carbônico)** de **crônica (sobe 3,5–4 mEq/L)**: na retenção crônica compensada do doente com doença pulmonar obstrutiva, o objetivo **não** é normalizar o gás carbônico, e sim devolvê-lo ao valor basal do paciente. Normalizar à força gera alcalose pós-hipercápnica e desmame impossível.',
           'Indique **ventilação não invasiva** com pH < 7,35 e gás carbônico elevado na exacerbação de doença pulmonar obstrutiva ou no edema agudo — é a intervenção que mais reduz intubação e mortalidade nesse cenário. Passe à intubação se houver rebaixamento, instabilidade, incapacidade de proteger a via aérea ou falha da não invasiva após 1–2 horas.',
         ],
+        alertas: [
+          'Na retenção crônica compensada, o objetivo **não** é normalizar o gás carbônico, e sim devolvê-lo ao valor basal do paciente. Normalizar à força gera alcalose pós-hipercápnica e desmame impossível.',
+        ],
         interpretacao: [
           hco3 === null ? 'Informe o bicarbonato medido para comparar.' : c.leitura,
           'A comparação entre o pH medido e os dois pHs previstos costuma ser o modo mais rápido de datar a hipercapnia: pH próximo do previsto para agudo indica retenção recente; próximo do crônico indica adaptação renal já estabelecida; entre os dois, agudização sobre crônico — o cenário típico da exacerbação de DPOC.',
@@ -833,6 +836,10 @@ export const ferramentas: Ferramenta[] = [
           'Diferencie **aguda (bicarbonato cai 2 mEq/L por 10 mmHg de queda do gás carbônico)** de **crônica (cai 4–5 mEq/L)**: gestação e altitude produzem alcalose respiratória crônica plenamente compensada, que é fisiológica e não requer intervenção alguma.',
           'Na alcalose respiratória **iatrogênica do paciente ventilado**, corrija os parâmetros — reduza a frequência ou o volume corrente — em vez de aumentar a sedação. Hipocapnia mantida reduz o fluxo sanguíneo cerebral em cerca de 2–4% por mmHg e piora a isquemia em lesão cerebral aguda, onde a hiperventilação só se justifica como medida de resgate por minutos, diante de herniação iminente.',
         ],
+        alertas: [
+          'Hiperventilação não é diagnóstico de ansiedade até que sepse, embolia pulmonar, hipoxemia, intoxicação por salicilato e lesão do sistema nervoso central tenham sido afastadas.',
+          'Hipocapnia mantida reduz o fluxo sanguíneo cerebral em cerca de 2 a 4% por mmHg. Em lesão cerebral aguda, a hiperventilação só se justifica por minutos, como resgate diante de herniação iminente.',
+        ],
         interpretacao: [
           hco3 === null ? 'Informe o bicarbonato medido para comparar.' : c.leitura,
           'A alcalose respiratória é o distúrbio ácido-base mais comum em pacientes hospitalizados e quase nunca é o problema em si — é o sinal de outro. Dor, ansiedade, febre, sepse, embolia pulmonar, hepatopatia, gestação, altitude, ventilação mecânica mal ajustada e intoxicação por salicilato cobrem a maioria dos casos. A alcalose respiratória crônica é o único distúrbio em que a compensação pode normalizar completamente o pH.',
@@ -886,6 +893,9 @@ export const ferramentas: Ferramenta[] = [
           'Reponha **potássio e magnésio** sempre: a hipocalemia mantém a alcalose ao estimular a reabsorção de bicarbonato e a secreção de hidrogênio no túbulo coletor. Sem corrigi-los, a alcalose se torna autoperpetuante independentemente da causa inicial.',
           'Em alcalose grave (**pH > 7,55 ou bicarbonato > 45 mEq/L**) com repercussão — arritmia, tetania por queda do cálcio ionizado, convulsão, depressão respiratória —, considere **acetazolamida 250–500 mg** (que aumenta a bicarbonatúria, ao custo de perda de potássio), inibidor de bomba de prótons quando a origem for perda gástrica, ou hemodiálise com banho de baixo bicarbonato nos casos refratários com insuficiência renal.',
           'Verifique se a **compensação respiratória é adequada** (gás carbônico sobe 0,7 mmHg por mEq/L de bicarbonato, com teto prático em torno de 55 mmHg): compensação insuficiente indica que algo limita a hipoventilação — estímulo hipoxêmico, dor, ventilação mecânica com parâmetros fixos — e a alcalemia resultante será mais grave.',
+        ],
+        alertas: [
+          'Sem corrigir potássio e magnésio, a alcalose se torna autoperpetuante: a hipocalemia mantém a reabsorção de bicarbonato e a secreção de hidrogênio no túbulo coletor, independentemente da causa inicial.',
         ],
         interpretacao: [
           paco2 === null ? 'Informe a PaCO₂ medida para verificar a compensação.' : c.leitura,
@@ -1016,6 +1026,9 @@ export const ferramentas: Ferramenta[] = [
         nivel: agCorr > 20 ? 'critico' : agCorr > 16 ? 'alerta' : agCorr > 12 ? 'atencao' : 'ok',
         rotuloNivel: agCorr > 12 ? 'Aumentado' : 'Normal',
         detalhes,
+        alertas: [
+          'Use o gap corrigido como numerador ao calcular a relação delta. Usar o gap bruto distorce a razão e pode inventar ou apagar um segundo distúrbio.',
+        ],
         interpretacao: [
           reclassifica
             ? `**A correção muda o diagnóstico.** O gap bruto de ${fmt(ag, 1)} pareceria normal, mas com albumina de ${fmt(alb, 1)} g/dL o gap verdadeiro é ${fmt(agCorr, 1)} — há acidose por ânions não medidos que passaria despercebida.`
@@ -1093,6 +1106,10 @@ export const ferramentas: Ferramenta[] = [
                   ? 'Acidose de ânion gap alto pura'
                   : 'Alcalose metabólica ou acidose respiratória crônica associada',
         detalhes,
+        alertas: [
+          'A relação delta pressupõe que o distúrbio esteja em equilíbrio e perde validade nas primeiras horas de uma acidose em instalação rápida, quando o bicarbonato ainda está caindo.',
+          'Em hipoalbuminemia, corrija o ânion gap antes de calcular a razão — caso contrário o numerador está subestimado e a interpretação, invertida.',
+        ],
         interpretacao: [
           razao === null ? 'Com o bicarbonato exatamente no valor de referência, a relação delta é indefinida — use o delta gap absoluto.' : leituraRelacaoDelta(razao),
           'A lógica é de conservação: se todo o ácido acrescentado foi tamponado por bicarbonato, cada mEq de ânion novo deveria ter consumido 1 mEq de bicarbonato, e a razão seria 1. Desvios revelam que algo mais mexeu no bicarbonato — para cima (alcalose associada) ou para baixo (perda adicional).',
@@ -1170,6 +1187,10 @@ export const ferramentas: Ferramenta[] = [
           'Acompanhe a **tendência**, não o valor isolado: no choque, a normalização do déficit de base nas primeiras 24 h é preditor de sobrevida, e um déficit que não melhora apesar da reposição volêmica indica hemorragia em curso ou foco isquêmico não controlado — é indicação de reexplorar, não de repetir o exame.',
           'Lembre que o excesso de base **não diz a causa**: ele quantifica, mas não distingue lactato de cetoácido, de ânion não medido ou de perda de bicarbonato. Combine sempre com **ânion gap, lactato e cloro** para chegar ao mecanismo.',
           'Em hipoalbuminemia — praticamente toda a UTI —, o excesso de base **subestima** a acidose por ânions não medidos, pelo mesmo motivo que o ânion gap: a albumina é o principal ácido fraco do plasma. Use o **excesso de base corrigido pela albumina** ou a abordagem de Stewart nesses pacientes.',
+        ],
+        alertas: [
+          'O excesso de base quantifica, mas não diz a causa: não distingue lactato de cetoácido, de ânion não medido ou de perda de bicarbonato. Combine com ânion gap, lactato e cloro.',
+          'Em hipoalbuminemia — praticamente toda a UTI — ele subestima a acidose por ânions não medidos. Use o excesso de base corrigido pela albumina nesses pacientes.',
         ],
         interpretacao: [
           'O bicarbonato atual mistura duas coisas: o que o metabolismo fez e o que a PaCO₂ fez. O bicarbonato padrão remove a segunda, respondendo "qual seria o bicarbonato deste sangue se a ventilação estivesse normal". Diferença grande entre atual e padrão significa que boa parte do bicarbonato observado é efeito respiratório, não metabólico.',
@@ -1412,6 +1433,8 @@ export const ferramentas: Ferramenta[] = [
         )
       }
       const nivel: Nivel = cao2 < 12 ? 'critico' : cao2 < 16 ? 'alerta' : 'ok'
+      interp.push('O cálculo deixa evidente que **a hemoglobina carrega quase todo o oxigênio**: cerca de 98% do conteúdo vem da fração ligada e apenas 2% da dissolvida. Por isso corrigir anemia grave aumenta muito mais a oferta do que elevar a pressão parcial de oxigênio de 80 para 120 mmHg.')
+      interp.push('Em intoxicação por **monóxido de carbono** e em **metemoglobinemia**, a oximetria de pulso mente e o conteúdo real fica muito abaixo do calculado pela saturação convencional. Só a co-oximetria informa o conteúdo verdadeiro.')
       return {
         titulo: 'Conteúdo arterial de O₂',
         valor: fmt(cao2, 2),
@@ -1495,6 +1518,8 @@ export const ferramentas: Ferramenta[] = [
           'Em condições normais o consumo é independente da oferta: se a oferta cai, a extração sobe e o VO₂ se mantém. Abaixo de um limiar crítico de DO₂ (aproximadamente 300 a 330 mL/min/m²) a extração satura, o consumo passa a cair junto com a oferta e o metabolismo anaeróbio começa — é exatamente aí que o lactato sobe.',
         )
       }
+      interp.push('Compare a oferta com o **consumo**: a taxa de extração fisiológica é de 20 a 30%. Extração acima de 50 a 60% significa que a oferta está no limite, e qualquer aumento de demanda precipitará metabolismo anaeróbio.')
+      interp.push('Saturação venosa central **acima de 80%** com lactato alto não é boa notícia: aponta falha de extração (sepse, intoxicação por cianeto) ou shunt microcirculatório, em que aumentar a oferta não resolve o problema.')
       return {
         titulo: 'Oferta sistêmica de O₂',
         valor: fmtInt(do2),

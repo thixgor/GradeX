@@ -289,6 +289,8 @@ const classificacaoAnemias: Ferramenta = {
     if (sat !== null) detalhes.push({ rotulo: 'Saturação de transferrina', valor: fmtPct(sat, 0), nota: sat < 20 ? 'Abaixo de 20%: aporte de ferro insuficiente para a eritropoese, mesmo com ferritina normal (ferropenia funcional).' : 'Adequada.' })
     if (retic !== null) detalhes.push({ rotulo: 'Reticulócitos', valor: fmtPct(retic, 1), nota: 'Use a calculadora de índice de produção reticulocitária para interpretar corretamente.' })
     const nivel: Nivel = hb < 7 ? 'critico' : hb < 10 ? 'alerta' : anemia ? 'atencao' : 'ok'
+    hipoteses.push('Quando o quadro não fechar, o **esfregaço de sangue periférico** resolve boa parte dos casos: esquizócitos, corpúsculos de Howell-Jolly, hipersegmentação de neutrófilos, células em alvo e rouleaux mudam o rumo da investigação imediatamente, e o exame custa quase nada.')
+    hipoteses.push('Desconfie de **anemia mista**, frequente na prática: deficiência de ferro somada a deficiência de B12 produz volume corpuscular normal com RDW alto, e cada uma isoladamente levaria a uma conduta diferente.')
     return {
       titulo: anemia ? `Anemia ${gravidade} ${morfologia.toLowerCase()}` : 'Sem anemia',
       valor: `${fmt(hb, 1)} g/dL`,
@@ -473,6 +475,10 @@ const padua: Ferramenta = {
         'Ajuste a dose em situações especiais: **insuficiência renal com filtração < 30 mL/min** (prefira heparina não fracionada ou reduza a enoxaparina), **obesidade com índice de massa corporal > 40** (doses profiláticas maiores) e **peso muito baixo**. A dose profilática padrão subdosa o obeso e superdosa o paciente de 40 kg.',
         'Reavalie o escore **a cada mudança clínica** e considere **profilaxia estendida após a alta** em pacientes selecionados de alto risco com mobilidade reduzida persistente — a maioria dos eventos tromboembólicos associados à internação clínica ocorre **depois** da alta, quando a profilaxia já foi suspensa.',
       ],
+      alertas: [
+        'A maioria dos eventos tromboembólicos associados à internação clínica ocorre **depois da alta**, quando a profilaxia já foi suspensa. Reavalie a indicação de profilaxia estendida em quem permanece com mobilidade reduzida.',
+        'A dose profiláctica padrão subdosa o obeso com índice de massa corporal acima de 40 e superdosa o paciente de peso muito baixo ou com filtração abaixo de 30 mL/min.',
+      ],
       interpretacao: [
         alto
           ? '**Tromboprofilaxia farmacológica indicada** na ausência de contraindicação: enoxaparina 40 mg por via subcutânea uma vez ao dia (ajustar para 30 mg/dia se clearance de creatinina < 30 mL/min), heparina não fracionada 5.000 UI a cada 8 ou 12 horas, ou fondaparinux 2,5 mg/dia.'
@@ -492,6 +498,7 @@ const padua: Ferramenta = {
   ],
   referencias: [
     { texto: 'Barbar S, Noventa F, Rossetto V, et al. A risk assessment model for the identification of hospitalized medical patients at risk for venous thromboembolism: the Padua Prediction Score. J Thromb Haemost. 2010;8(11):2450-2457.' },
+    { texto: 'Schünemann HJ, Cushman M, Burnett AE, et al. American Society of Hematology 2018 guidelines for management of venous thromboembolism: prophylaxis for hospitalized and nonhospitalized medical patients. Blood Adv. 2018;2(22):3198-3225.' },
   ],
 }
 
@@ -775,6 +782,10 @@ const isth: Ferramenta = {
         'Transfunda por **sangramento ou procedimento invasivo programado, não por número isolado**: plaquetas se < 50 mil com sangramento (ou < 20 mil sem sangramento), plasma fresco congelado se houver prolongamento significativo de TP/TTPa com sangramento, e **crioprecipitado ou concentrado de fibrinogênio se o fibrinogênio estiver abaixo de 1,5 g/L**. O fibrinogênio é o fator que mais se consome e o mais esquecido.',
         'Diferencie o **fenótipo predominante**, porque o tratamento diverge: na CIVD com **predomínio trombótico** (comum na sepse, com púrpura fulminante ou isquemia digital), considere heparina em dose profilática ou terapêutica; na CIVD com **predomínio hemorrágico** (comum na leucemia promielocítica aguda e em complicações obstétricas), o suporte é transfusional, e antifibrinolíticos são geralmente contraindicados por risco de trombose.',
         'Trate a **leucemia promielocítica aguda** como emergência à parte: inicie **ácido all-trans-retinoico (ATRA) imediatamente**, antes mesmo da confirmação citogenética, porque a coagulopatia é a principal causa de morte precoce e responde ao ATRA. Mantenha metas transfusionais mais agressivas nesse cenário (fibrinogênio > 1,5 g/L, plaquetas > 30–50 mil).',
+      ],
+      alertas: [
+        'A CIVD é **sempre secundária**: nenhum suporte hemostático resolve enquanto o gatilho persistir. Transfundir por número isolado, sem sangramento nem procedimento programado, não melhora desfecho.',
+        'Na leucemia promielocítica aguda, inicie **ATRA imediatamente**, antes da confirmação citogenética — a coagulopatia é a principal causa de morte precoce e responde ao tratamento específico.',
       ],
       interpretacao: [
         manifesta

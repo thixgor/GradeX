@@ -205,20 +205,33 @@ function tamanhoDeString(f, prop) {
 /**
  * Soma o tamanho de todos os literais de texto de uma propriedade-lista.
  *
- * Duas formas contam. A direta, `interpretacao: [ ... ]`, e a construída em
- * etapas, `const interpretacao: string[] = []` seguida de `interpretacao.push(...)`
- * — que é como o interpretador de gasometria monta a leitura dos quatro passos.
- * Medir só a primeira reprovaria a ferramenta pelo estilo do código.
+ * Três formas contam. A direta, `interpretacao: [ ... ]`; a construída em
+ * etapas sob o próprio nome, `interpretacao.push(...)`; e a construída sob um
+ * apelido, `const interp: string[] = []` com `interp.push(...)` e depois
+ * `interpretacao: interp` no objeto retornado — que é como boa parte da
+ * gasometria monta a leitura.
+ *
+ * A terceira forma foi acrescentada depois de a auditoria reprovar cinco
+ * ferramentas que tinham o texto todo escrito: ela media o nome da
+ * propriedade e o código usava outro. Medir só as duas primeiras reprova
+ * pelo estilo do código, não pelo conteúdo — que é exatamente o erro que
+ * esta ferramenta existe para não cometer.
  */
 function tamanhoDeCampoDeTexto(f, prop) {
   let total = 0
+  const apelidos = new Set([prop])
+  for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}:\\s*([A-Za-z_$][\\w$]*)\\s*[,}]`, 'g'))) {
+    apelidos.add(m[1])
+  }
   for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}:\\s*(\\[|[a-zA-Z])`, 'g'))) {
     const trecho = f.corpo.slice(m.index, m.index + 4000)
     total += somarLiterais(trecho.slice(0, delimitarLista(trecho)))
   }
-  for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}\\.push\\(`, 'g'))) {
-    const trecho = f.corpo.slice(m.index, m.index + 3000)
-    total += somarLiterais(trecho.slice(0, delimitarChamada(trecho)))
+  for (const apelido of apelidos) {
+    for (const m of f.corpo.matchAll(new RegExp(`\\b${apelido}\\.push\\(`, 'g'))) {
+      const trecho = f.corpo.slice(m.index, m.index + 3000)
+      total += somarLiterais(trecho.slice(0, delimitarChamada(trecho)))
+    }
   }
   return total
 }

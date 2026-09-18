@@ -82,6 +82,9 @@ const childPugh: Ferramenta = {
         'Use o Child-Pugh para o que ele faz melhor — **prever risco cirúrgico e anestésico, e ajustar dose de fármacos** — e o **MELD** para priorização em fila de transplante, onde ele substituiu o Child por ser objetivo e não depender de itens subjetivos.',
         'Os dois itens subjetivos (**ascite e encefalopatia**) são a fraqueza do escore: ascite controlada por diurético pontua diferente conforme quem avalia, e encefalopatia mínima só aparece em testes psicométricos. Registre o critério usado, para que a comparação ao longo do tempo tenha sentido.',
       ],
+      alertas: [
+        'Ascite e encefalopatia são itens subjetivos: ascite controlada por diurético pontua diferente conforme quem avalia, e encefalopatia mínima só aparece em testes psicométricos. Registre o critério usado para que a comparação ao longo do tempo tenha sentido.',
+      ],
       interpretacao: [
         idx === 0
           ? 'Classe A: cirrose compensada. Rastreio semestral de carcinoma hepatocelular com ultrassonografia, endoscopia para varizes conforme critérios de Baveno, e vacinação para hepatites A e B.'
@@ -706,6 +709,10 @@ const atlanta: Ferramenta = {
         'Determine a **etiologia** desde a admissão, porque ela muda a conduta imediata: litíase biliar (a mais comum) exige **colangiopancreatografia retrógrada urgente se houver colangite**, e **colecistectomia na mesma internação** na forma leve, para evitar recidiva; álcool exige abordagem da dependência; hipertrigliceridemia acima de 1.000 mg/dL exige insulina, jejum e às vezes plasmaférese.',
         'Na suspeita de **necrose infectada** (deterioração clínica a partir da 2ª a 4ª semana, gás na coleção à tomografia), inicie antibiótico com penetração pancreática (carbapenêmico) e adote a estratégia **step-up**: drenagem percutânea ou endoscópica primeiro, necrosectomia minimamente invasiva depois, e cirurgia aberta apenas em falha. O adiamento da intervenção para além de 4 semanas, quando possível, reduz mortalidade.',
       ],
+      alertas: [
+        'A classificação só é definitiva **após 48 horas**: falência orgânica transitória e persistente só se distinguem retrospectivamente, e classificar na admissão subestima a gravidade.',
+        'Tomografia com contraste antes do 3º ao 5º dia subestima a necrose, que ainda não se delimitou. Pedir cedo demais gera falsa tranquilidade.',
+      ],
       interpretacao: [
         '**A disfunção orgânica persistente é o divisor de águas.** Ela define a pancreatite grave e concentra praticamente toda a mortalidade. Disfunção que se resolve em 48 horas tem prognóstico muito melhor, e essa distinção temporal é a principal contribuição da revisão de 2012.',
         'A nomenclatura das coleções foi padronizada porque a antiga era caótica — "abscesso pancreático" e "pseudocisto infectado" descreviam a mesma coisa de formas diferentes. Hoje, a classificação depende de duas perguntas: há necrose e há parede encapsulada?',
@@ -950,6 +957,10 @@ const fli: Ferramenta = {
         'Considere farmacoterapia quando houver esteato-hepatite com fibrose: **resmetirom** (aprovado especificamente para essa indicação), **agonistas de GLP-1** como semaglutida ou tirzepatida quando houver obesidade ou diabetes tipo 2, **pioglitazona** em diabetes tipo 2, e vitamina E em não diabéticos selecionados. Cirurgia bariátrica é a intervenção com maior efeito em obesidade grave.',
         'Não pare no fígado: a principal causa de morte na doença hepática esteatótica associada à disfunção metabólica é **cardiovascular**, não hepática. Rastreie e trate hipertensão, dislipidemia, diabetes e apneia do sono — a estatina é segura nesses pacientes e frequentemente subprescrita por receio infundado de hepatotoxicidade.',
       ],
+      alertas: [
+        'O que determina prognóstico na doença hepática esteatótica é a **fibrose**, não a quantidade de gordura. Um FLI alto sem fibrose tem prognóstico hepático benigno — sempre siga para o FIB-4.',
+        'A principal causa de morte nesses pacientes é cardiovascular, não hepática. A estatina é segura aqui e é frequentemente omitida por receio infundado de hepatotoxicidade.',
+      ],
       interpretacao: [
         'O índice foi derivado contra ultrassonografia numa coorte italiana de mais de 500 pessoas e é usado sobretudo em estudos epidemiológicos e em rastreio populacional, onde imagem para todos é inviável.',
         'A esteatose por si só tem prognóstico hepático benigno. O que muda o desfecho é a **fibrose** — por isso, um FLI alto deve ser seguido de estadiamento com FIB-4 e, se necessário, elastografia. Detectar gordura sem estadiar fibrose gera ansiedade sem benefício.',
@@ -1192,6 +1203,9 @@ const roma: Ferramenta = {
         'Investigação mínima na síndrome do intestino irritável sem alarme: **hemograma, proteína C-reativa, sorologia para doença celíaca e calprotectina fecal**. Calprotectina normal afasta doença inflamatória intestinal com boa segurança e evita colonoscopia desnecessária em pacientes jovens.',
         'Trate pelo subtipo predominante: com **constipação**, fibras solúveis (psyllium, não farelo de trigo, que piora distensão), polietilenoglicol, linaclotida; com **diarreia**, loperamida, rifaximina, colestiramina se houver má absorção de sais biliares; com **dor** predominante, antiespasmódico (brometo de otilônio, óleo de hortelã) e **neuromodulador em dose baixa** — amitriptilina 10–25 mg à noite para o subtipo diarreia, inibidor seletivo da recaptação de serotonina para o subtipo constipação.',
         'Ofereça a **dieta FODMAP com orientação de nutricionista** e por tempo limitado: ela funciona na fase de restrição, mas precisa de reintrodução programada para não empobrecer a microbiota e o aporte nutricional. Acrescente **terapias dirigidas ao eixo intestino-cérebro** — terapia cognitivo-comportamental, hipnoterapia dirigida ao intestino — que têm os maiores tamanhos de efeito nos casos refratários.',
+      ],
+      alertas: [
+        'Os critérios de Roma só valem na **ausência de sinais de alarme**. Início após os 50 anos, perda de peso, sangramento, anemia, febre, massa palpável ou história familiar de câncer colorretal obrigam investigação antes de qualquer diagnóstico funcional.',
       ],
       interpretacao: [
         alarme

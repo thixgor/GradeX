@@ -748,6 +748,10 @@ const corticoides: Ferramenta = {
         'Aplique a **dose de estresse** em quem usa corticoide cronicamente e enfrenta cirurgia, trauma, infecção grave ou parto: hidrocortisona 50–100 mg intravenosa, com ajuste pela magnitude do estresse. A ausência dessa cobertura produz choque refratário a vasopressor, com diagnóstico frequentemente tardio.',
         'Antecipe os efeitos adversos previsíveis e trate-os antes de aparecerem: **profilaxia de osteoporose** (cálcio, vitamina D e bisfosfonato conforme risco) a partir de 3 meses de uso, controle glicêmico (o corticoide eleva sobretudo a glicemia pós-prandial), monitorização de pressão e potássio, e **profilaxia de pneumocistose** com sulfametoxazol-trimetoprima quando a dose equivaler a 20 mg ou mais de prednisona por 4 semanas ou mais, especialmente com outro imunossupressor associado.',
       ],
+      alertas: [
+        'A equivalência anti-inflamatória **não** carrega junto a potência mineralocorticoide nem a meia-vida. Trocar por dexametasona na dose \'equivalente\' entrega um fármaco sem efeito mineralocorticoide — o que é perigoso na insuficiência adrenal, onde a fludrocortisona é indispensável.',
+        'Quem usou dose supressora por mais de 3 semanas precisa de desmame e de dose de estresse em cirurgia, trauma ou infecção grave. A ausência dessa cobertura produz choque refratário a vasopressor, com diagnóstico frequentemente tardio.',
+      ],
       interpretacao: [
         '**A equivalência é apenas anti-inflamatória.** Ela não transfere as outras propriedades: dexametasona equipotente a hidrocortisona não repõe mineralocorticoide, e por isso não serve para insuficiência adrenal primária sem fludrocortisona associada.',
         '**Escolha pelo perfil, não pela potência.** Hidrocortisona para reposição fisiológica (imita o cortisol, meia-vida curta, tem ação mineralocorticoide). Prednisona/prednisolona para anti-inflamatório crônico. Dexametasona quando se quer evitar retenção hídrica ou aproveitar a passagem pela barreira hematoencefálica (edema cerebral, maturação pulmonar fetal). Metilprednisolona em pulsoterapia.',

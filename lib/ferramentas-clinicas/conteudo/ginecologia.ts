@@ -116,6 +116,7 @@ const idadeGestacional: Ferramenta = {
   ],
   referencias: [
     { texto: 'American College of Obstetricians and Gynecologists. Committee Opinion No. 700: Methods for estimating the due date. Obstet Gynecol. 2017;129(5):e150-e154.' },
+    { texto: 'Committee on Obstetric Practice. ACOG Committee Opinion No. 831: Medically Indicated Late-Preterm and Early-Term Deliveries. Obstet Gynecol. 2021;138(1):e35-e39.' },
   ],
 }
 
@@ -292,6 +293,10 @@ const bishop: Ferramenta = {
         'Bishop **7** é zona intermediária: decida pelo contexto. Multíparas frequentemente respondem à ocitocina isolada; nulíparas costumam se beneficiar do preparo cervical.',
         'A **dilatação** é o item de maior peso do escore, e a **estação da apresentação** o de maior variabilidade entre examinadores. Quando houver dúvida na estação, prefira o Bishop simplificado (dilatação, apagamento e estação), que tem desempenho preditivo equivalente e menos ruído.',
         'Reavalie o Bishop **após cada ciclo de preparo cervical** e antes de declarar falha de indução. Falha de indução só deve ser diagnosticada após ruptura das membranas e pelo menos 12–18 h de ocitocina em contratilidade adequada — encerrar antes disso converte em cesárea induções que ainda dariam certo.',
+      ],
+      alertas: [
+        '**Misoprostol é contraindicado em cesárea prévia ou qualquer cicatriz uterina**, pelo risco de rotura. Nesses casos, use métodos mecânicos — sonda de Foley ou balão duplo —, que têm eficácia comparável.',
+        'Não diagnostique falha de indução antes da ruptura das membranas e de 12 a 18 h de ocitocina em contratilidade adequada: encerrar antes disso converte em cesárea induções que ainda dariam certo.',
       ],
       interpretacao: [
         favoravel
@@ -924,6 +929,7 @@ const sangramentoUterino: Ferramenta = {
   ],
   referencias: [
     { texto: 'Munro MG, Critchley HOD, Fraser IS, et al. The two FIGO systems for normal and abnormal uterine bleeding symptoms and classification of causes of abnormal uterine bleeding in the reproductive years: 2018 revisions. Int J Gynaecol Obstet. 2018;143(3):393-408.' },
+    { texto: 'National Institute for Health and Care Excellence. Heavy menstrual bleeding: assessment and management. NICE guideline NG88. 2018 (atualizada em 2021).' },
   ],
 }
 

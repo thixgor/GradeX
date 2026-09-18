@@ -243,6 +243,10 @@ const nihss: Ferramenta = {
         '**NIHSS > 22** marca déficit grave, com maior risco de transformação hemorrágica após trombólise. Não é contraindicação, mas exige vigilância redobrada, controle pressórico rigoroso (< 180/105 mmHg nas primeiras 24 h após trombólise) e discussão precoce sobre trajetória e objetivos.',
         'Conheça o **viés hemisférico** da escala: o hemisfério esquerdo dominante pontua mais alto pela linguagem, de modo que um infarto direito extenso — com heminegligência grave e prognóstico funcional ruim — pode somar poucos pontos. Não deixe de tratar um território direito extenso só porque o NIHSS é modesto.',
       ],
+      alertas: [
+        'A escala tem **viés hemisférico**: o hemisfério esquerdo dominante pontua mais alto pela linguagem. Um infarto direito extenso, com heminegligência grave e prognóstico funcional ruim, pode somar poucos pontos — não deixe de tratar por isso.',
+        'Déficit incapacitante justifica trombólise mesmo com NIHSS baixo. A pergunta correta não é se o número é alto, e sim se o déficit é incapacitante para aquele paciente.',
+      ],
       interpretacao: [
         '**O NIHSS não decide trombólise sozinho.** Não há limite superior de pontuação que contraindique alteplase ou tenecteplase; o limite inferior também é relativo — déficit incapacitante, ainda que com NIHSS baixo (afasia isolada, hemianopsia, déficit em mão dominante), é indicação, e essa foi a conclusão do estudo PRISMS sobre déficits leves.',
         'A escala é ponderada para território de artéria cerebral média esquerda: linguagem vale até 3 pontos e não há item específico para tronco. Um AVC de tronco devastador pode pontuar 3 ou 4, e uma oclusão basilar com síndrome do encarceramento pontua pouco relativamente à gravidade.',
@@ -820,6 +824,10 @@ const camIcu: Ferramenta = {
         { rotulo: '4. Pensamento desorganizado', valor: c4 ? 'Presente' : 'Ausente' },
         { rotulo: 'Regra', valor: '(1 E 2) E (3 OU 4)' },
       ],
+      alertas: [
+        'O **delirium hipoativo** é o mais comum e o de pior prognóstico, e é exatamente o que passa despercebido: o paciente é descrito como "tranquilo" e nunca é rastreado. Aplicar o CAM-ICU por turno, e não só diante de agitação, é o que muda a taxa de detecção.',
+        'A escala exige paciente que responda a comando. Com RASS de −4 ou −5 a avaliação fica suspensa — e sedação profunda mantida sem indicação formal é, ela própria, causa de delirium.',
+      ],
       conduta: [
         '**CAM-ICU positivo** confirma delirium. A primeira ação é **procurar a causa**, não sedar: percorra a mnemônica **DIMES** — **D**rogas (benzodiazepínicos, opioides, anticolinérgicos, corticoides), **I**nfecção, **M**etabólico (hiponatremia, hipoglicemia, uremia, tireoide), **E**strutural (acidente vascular, hematoma subdural) e **S**ono, dor e retenção urinária.',
         'Aplique o pacote **ABCDEF**, que é o que efetivamente reduz duração de delirium e mortalidade: **A**valiar e tratar dor, **B**ranqueamento de sedação com despertar diário e testes de respiração espontânea, **C**oordenar escolha de analgesia e sedação, **D**elirium monitorado, **E**xercício e mobilização precoce, **F**amília envolvida à beira do leito.',
@@ -834,6 +842,7 @@ const camIcu: Ferramenta = {
         '**Tratamento é sobretudo não farmacológico:** identificar e tratar a causa (infecção, dor, hipóxia, distúrbio metabólico, abstinência, retenção urinária, constipação), reorientar, restaurar o ciclo sono-vigília, mobilizar precocemente, devolver óculos e aparelho auditivo, envolver a família e retirar o que puder ser retirado — sonda, cateter, contenção.',
         '**Revise a lista de medicamentos.** Benzodiazepínicos, anticolinérgicos, opioides em excesso e corticoides são os principais precipitantes farmacológicos.',
         'Antipsicóticos **não** reduzem duração nem mortalidade do delirium — o ensaio MIND-USA mostrou isso com haloperidol e ziprasidona. Reserve-os para agitação com risco à segurança, na menor dose e pelo menor tempo. Em abstinência alcoólica, o tratamento é benzodiazepínico, e a lógica se inverte.',
+        'O **delirium hipoativo** é o mais comum e o de pior prognóstico, e é justamente o que passa despercebido: o paciente é descrito como "tranquilo" ou "sonolento" e nunca é rastreado. Aplicar o CAM-ICU por turno, e não apenas diante de agitação, é o que muda a taxa de detecção.',
       ],
     }
   },
@@ -1317,6 +1326,10 @@ const riscoConvulsao: Ferramenta = {
         'Lembre da definição vigente de **epilepsia**: duas crises não provocadas separadas por mais de 24 h, **ou uma crise com risco de recorrência ≥ 60%**, **ou** um diagnóstico de síndrome epiléptica. Isso significa que um paciente com uma única crise e lesão estrutural já tem epilepsia e deve ser tratado.',
         'Separe **crise provocada** de não provocada, porque a conduta é inteiramente diferente: hipoglicemia, hiponatremia, abstinência alcoólica, intoxicação, eclâmpsia, infecção do sistema nervoso e trauma agudo produzem crises sintomáticas agudas, que se tratam corrigindo a causa e não indicam antiepiléptico de longo prazo.',
         'Complete a investigação mínima e oriente: **eletroencefalograma** (preferencialmente em até 24–48 h, quando o rendimento é maior; se normal, considere registro com privação de sono), **ressonância de crânio com protocolo para epilepsia** (superior à tomografia), e exames metabólicos. Informe o paciente sobre **restrição de direção** conforme a legislação local, e sobre precauções com natação, altura e máquinas — essa orientação é parte obrigatória da conduta e é frequentemente omitida.',
+      ],
+      alertas: [
+        'Crise **provocada** — hipoglicemia, hiponatremia, abstinência alcoólica, intoxicação, eclâmpsia, infecção do sistema nervoso — não entra nesse cálculo: trata-se corrigindo a causa, e não indica antiepiléptico de longo prazo.',
+        'Orientar sobre restrição de direção, natação, altura e máquinas é parte obrigatória da conduta após a primeira crise, e é sistematicamente omitido.',
       ],
       interpretacao: [
         alto

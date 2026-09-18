@@ -286,6 +286,7 @@ const schwartz: Ferramenta = {
       interpretacao: [
         'A fórmula é elegante porque a altura funciona como aproximação da massa muscular na criança — a mesma variável que a creatinina reflete. A constante k incorpora essa relação e foi recalibrada em 2009, quando a dosagem de creatinina migrou do método de Jaffe para o enzimático.',
         referencia,
+        'Os valores normais variam com a idade: o recém-nascido a termo filtra cerca de 20 a 40 mL/min/1,73 m², chega a cerca de 60 no primeiro mês e só alcança o valor adulto entre 1 e 2 anos. Aplicar o corte adulto de 90 a um lactente rotula como doente uma criança normal.',
       ],
       alertas: ['Confirme o método de dosagem da creatinina no laboratório. Usar k = 0,413 com creatinina por Jaffe superestima a filtração.'],
     }
@@ -299,6 +300,7 @@ const schwartz: Ferramenta = {
   ],
   referencias: [
     { texto: 'Schwartz GJ, Muñoz A, Schneider MF, et al. New equations to estimate GFR in children with CKD. J Am Soc Nephrol. 2009;20(3):629-637.' },
+    { texto: 'Pierce CB, Muñoz A, Ng DK, et al. Age- and sex-dependent clinical equations to estimate glomerular filtration rates in children and young adults with chronic kidney disease. Kidney Int. 2021;99(4):948-956.' },
   ],
 }
 
@@ -440,6 +442,10 @@ const calcioCorrigido: Ferramenta = {
         'Antes de repor, **dose o magnésio**: a hipomagnesemia causa hipocalcemia refratária por bloquear a secreção e a ação periférica do paratormônio. Repor cálcio sem corrigir o magnésio simplesmente não funciona, e essa é a causa mais comum de falha terapêutica.',
         'Na **hipercalcemia > 14 mg/dL ou sintomática**, comece por hidratação com solução salina isotônica (200–300 mL/h), acrescente calcitonina para efeito rápido (que se esgota por taquifilaxia em 48 h) e **bisfosfonato ou denosumabe** para efeito sustentado. Furosemida só depois da reposição volêmica, e diálise em casos graves com insuficiência renal ou cardíaca. Investigue paratormônio: alto ou inapropriadamente normal aponta hiperparatireoidismo; suprimido aponta malignidade, intoxicação por vitamina D ou doença granulomatosa.',
       ],
+      alertas: [
+        'A fórmula de correção tem desempenho limitado no doente crítico. Quando a decisão for crítica, meça o **cálcio ionizado**, colhido em anaerobiose.',
+        'Hipocalcemia refratária à reposição quase sempre é hipomagnesemia não corrigida: sem magnésio, o paratormônio não é secretado nem age.',
+      ],
       interpretacao: [
         'Cerca de 40% do cálcio circulante está ligado à albumina, 10% a ânions e apenas 50% está livre — e só a fração livre é biologicamente ativa. Quando a albumina cai, o cálcio total cai junto sem que o ionizado mude, e é isso que a correção tenta desfazer.',
         '**A correção é uma aproximação frágil.** Estudos em pacientes críticos mostram concordância ruim entre o cálcio corrigido e o ionizado medido. Sempre que a decisão depender do valor — hipocalcemia sintomática, transfusão maciça, pós-tireoidectomia, doença renal crônica avançada, pancreatite —, **meça o cálcio ionizado**, que a gasometria já fornece.',
@@ -504,6 +510,10 @@ const osmolaridade: Ferramenta = {
         'Na **hiperglicemia**, corrija o sódio antes de interpretar: some **1,6 mEq/L ao sódio medido para cada 100 mg/dL de glicose acima de 100** (fator de 2,4 acima de 400 mg/dL). A hiponatremia da cetoacidose costuma ser dilucional e desaparece com o tratamento — tratá-la como hiponatremia verdadeira é erro grave.',
         '**Osmolalidade efetiva > 320 mOsm/kg** com glicemia muito alta e sem cetose significativa caracteriza o **estado hiperglicêmico hiperosmolar**. A conduta é reposição volêmica agressiva primeiro, insulina depois e reposição de potássio antecipada — o déficit de água costuma passar de 8 a 10 litros.',
         'Use a osmolaridade para avaliar a resposta ao **manitol** e à salina hipertônica em hipertensão intracraniana: a meta habitual é 300–320 mOsm/kg. Acima disso, o risco de lesão renal aguda pelo manitol cresce, e o gap osmolar serve para detectar seu acúmulo em pacientes com filtração reduzida.',
+      ],
+      alertas: [
+        'Osmolaridade alta não significa desidratação celular: a ureia atravessa livremente as membranas e não gera gradiente osmótico. É a **tonicidade** — sódio e glicose — que move água e produz sintoma neurológico.',
+        'Na hiperglicemia, corrija o sódio antes de interpretar. A hiponatremia da cetoacidose costuma ser dilucional e desaparece com o tratamento; tratá-la como hiponatremia verdadeira é erro grave.',
       ],
       interpretacao: [
         'A distinção entre osmolaridade **total** e **efetiva** é a que mais gera confusão e a que mais muda conduta. A ureia sobe muito na uremia e eleva a osmolaridade total sem desidratar célula nenhuma, porque atravessa a membrana. Já sódio e glicose ficam do lado de fora e puxam água.',
@@ -1019,6 +1029,10 @@ const kdigo: Ferramenta = {
         'Suba o estágio pelo pior critério, de creatinina **ou** de diurese: o critério de débito urinário costuma detectar a lesão mais cedo, porque a creatinina só sobe depois que 50% da função já se perdeu. Isso torna a medida horária da diurese em paciente de risco uma ferramenta diagnóstica, não apenas de enfermagem.',
         'Indique **diálise** pelos critérios clássicos, memorizados como AEIOU: **A**cidose refratária, distúrbio **E**letrolítico grave (hipercalemia refratária), **I**ntoxicação dialisável (lítio, metanol, etilenoglicol, salicilatos, metformina), s**O**brecarga volêmica refratária e **U**remia sintomática (pericardite, encefalopatia, sangramento). Iniciar diálise apenas por estágio KDIGO 3, sem essas indicações, não melhorou desfecho nos ensaios de início precoce.',
         'Programe o **seguimento após a alta**: quem teve lesão renal aguda tem risco muito aumentado de doença renal crônica, de novos episódios e de evento cardiovascular. Reavalie creatinina e albuminúria em 3 meses, reintroduza IECA ou BRA de forma programada quando indicados, e registre o episódio no prontuário — ele é um marcador de risco vitalício e costuma se perder na transição de cuidado.',
+      ],
+      alertas: [
+        'Suba o estágio pelo pior critério, de creatinina **ou** de diurese: a creatinina só sobe depois que cerca de 50% da função já se perdeu, e o débito urinário detecta a lesão mais cedo.',
+        'Peça ultrassonografia de vias urinárias cedo. A obstrução é a causa mais facilmente reversível e a mais fácil de deixar passar — uma sonda ou nefrostomia recupera a função em horas.',
       ],
       interpretacao: [
         'A definição KDIGO unificou os critérios anteriores (RIFLE e AKIN) e fixou três gatilhos: aumento de creatinina ≥ 0,3 mg/dL em 48 horas, aumento ≥ 1,5 vez o basal em 7 dias, ou débito urinário abaixo de 0,5 mL/kg/h por 6 horas. **Um único deles basta.**',

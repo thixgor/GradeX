@@ -23,8 +23,10 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import process from 'node:process'
 
 const arquivoDeEntrada = process.argv[2]
+/** Propriedade do `Resultado` a inserir. `conduta` é o caso original; `alertas` usa a mesma mecânica. */
+const propriedade = process.argv[3] ?? 'conduta'
 if (!arquivoDeEntrada) {
-  console.error('uso: node scripts/inserir-conduta.mjs <arquivo.json>')
+  console.error('uso: node scripts/inserir-conduta.mjs <arquivo.json> [propriedade]')
   process.exit(1)
 }
 
@@ -69,8 +71,8 @@ for (const [caminho, porFerramenta] of Object.entries(plano)) {
       continue
     }
     const corpo = linhas.slice(trecho.inicio, trecho.fim)
-    if (corpo.some((l) => /^\s*conduta: \[/.test(l))) {
-      recusadas.push(`${id}: já tem conduta`)
+    if (corpo.some((l) => new RegExp(`^\\s*${propriedade}: \\[`).test(l))) {
+      recusadas.push(`${id}: já tem ${propriedade}`)
       continue
     }
     const ancoras = []
@@ -90,7 +92,7 @@ for (const [caminho, porFerramenta] of Object.entries(plano)) {
   for (const alvo of alvos) {
     const itens = porFerramenta[alvo.id]
     const bloco = [
-      `${alvo.indentacao}conduta: [`,
+      `${alvo.indentacao}${propriedade}: [`,
       ...itens.map((t) => `${alvo.indentacao}  ${aspas(t)},`),
       `${alvo.indentacao}],`,
     ]
@@ -101,7 +103,7 @@ for (const [caminho, porFerramenta] of Object.entries(plano)) {
   if (alvos.length > 0) writeFileSync(caminho, linhas.join('\n'), 'utf8')
 }
 
-console.log(`condutas inseridas: ${inseridas}`)
+console.log(`blocos '${propriedade}' inseridos: ${inseridas}`)
 if (recusadas.length > 0) {
   console.log('recusadas (nada foi escrito para estas):')
   for (const r of recusadas) console.log(`  - ${r}`)

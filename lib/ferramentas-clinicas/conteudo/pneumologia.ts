@@ -69,6 +69,10 @@ const pesoPreditoFerramenta: Ferramenta = {
         'Aplique a ventilação protetora **também em pulmão sadio**, em ventilação intraoperatória e em pacientes sem lesão pulmonar: volumes altos causam lesão mesmo em pulmão previamente normal, e a estratégia protetora reduz complicações pulmonares pós-operatórias.',
         'Se o paciente apresentar **taquipneia ou acidose respiratória** com o volume protetor, a resposta é aumentar a frequência (até cerca de 35 irpm, vigiando auto-PEEP) e aceitar **hipercapnia permissiva** com pH até cerca de 7,20 — não é aumentar o volume corrente. Em hipoxemia refratária, escale para PEEP otimizada, bloqueio neuromuscular e **posição prona** por 16 h ou mais, que também reduz mortalidade.',
       ],
+      alertas: [
+        '**Nunca use o peso real.** O pulmão não cresce com a obesidade: 6 mL/kg sobre o peso real de um paciente de 120 kg entrega volumes que causam lesão induzida pela ventilação.',
+        'Um erro de 10 cm na altura muda o volume corrente prescrito em cerca de 50 mL. Meça a altura de verdade, com fita métrica ou estimativa por envergadura no paciente acamado.',
+      ],
       interpretacao: [
         'O pulmão não engorda. O volume de gás que ele comporta depende da altura, do sexo e da idade — não da massa gorda. Ventilar pelo peso real é o erro mais consequente da ventilação mecânica: entrega volumes muito acima do que o parênquima suporta em obesos, e volumes insuficientes em caquéticos.',
         'O estudo ARMA (ARDSNet, 2000) comparou 6 e 12 mL/kg de peso predito na SDRA e foi interrompido precocemente por benefício: mortalidade de 31% contra 39,8%. É um dos resultados mais robustos da medicina intensiva, e a fórmula usada aqui é exatamente a do protocolo.',
@@ -237,6 +241,10 @@ const ventilacaoMinuto: Ferramenta = {
         'Reconheça as demandas **metabólicas** que elevam a necessidade ventilatória: febre (cerca de 10% por grau), sepse, agitação, dor, tremor, convulsão, hipertireoidismo, excesso de carboidrato na nutrição e acidose metabólica. Tratar a febre e sedar adequadamente pode resolver uma \'insuficiência ventilatória\' sem tocar no ventilador.',
         'No **desmame**, uma ventilação-minuto acima de 10 L/min para manter gás carbônico normal indica reserva limitada e prediz falha. Combine com o **índice de respiração rápida e superficial (RSBI)** e com a avaliação de força muscular e de sobrecarga cardíaca — o teste de respiração espontânea revela a soma desses fatores melhor que qualquer índice isolado.',
       ],
+      alertas: [
+        'Só a ventilação **alveolar** remove gás carbônico. Aumentar a frequência com volume corrente baixo eleva o volume-minuto e pode **piorar** a eliminação, porque cada ciclo passa a ter proporcionalmente mais espaço morto.',
+        'Se houver aprisionamento aéreo, aumentar a frequência agrava tudo: reduza a frequência e prolongue o tempo expiratório. Verifique auto-PEEP com pausa expiratória antes de decidir.',
+      ],
       interpretacao: [
         'A PaCO₂ é inversamente proporcional à ventilação **alveolar**, não à ventilação-minuto. Isso explica um fenômeno cotidiano: o paciente taquipneico com volume corrente pequeno pode ter ventilação-minuto alta e ainda assim reter CO₂, porque quase todo o ar movimentado fica no espaço morto.',
         'Necessidade de ventilação-minuto acima de 15 L/min para manter a PaCO₂ é sinal de espaço morto grande (SDRA grave, embolia pulmonar, DPOC) ou de produção elevada de CO₂ (febre, sepse, tireotoxicose, excesso de carboidrato na dieta) — e é um dos preditores de falha de desmame.',
@@ -302,6 +310,9 @@ const indiceOxigenacao: Ferramenta = {
         'Antes de escalar terapias de resgate, **otimize o básico**: titule a PEEP, verifique recrutabilidade, faça **posição prona** (16 h ou mais por sessão), considere bloqueio neuromuscular nas primeiras 48 h da forma grave, e trate a causa. Boa parte dos índices altos melhora com essas medidas.',
         'Acompanhe o índice **em série**: a tendência ao longo de 6 a 12 horas discrimina melhor que qualquer valor isolado, e um índice que não melhora após prona e otimização de PEEP é o sinal para contatar o centro de ECMO — idealmente antes de o paciente se tornar intransportável.',
       ],
+      alertas: [
+        'Os limiares de óxido nítrico e de ECMO existem para serem acionados a tempo: o contato tardio com o centro de referência, já com o paciente intransportável, é o principal determinante de desfecho ruim.',
+      ],
       interpretacao: [
         'O índice de oxigenação responde a uma pergunta que a relação PaO₂/FiO₂ ignora: **quanto custou** essa oxigenação. Dois pacientes com a mesma relação P/F de 150 são muito diferentes se um está com pressão média de 12 e o outro com 30 cmH₂O — o segundo já esgotou a reserva de suporte.',
         'É o parâmetro de referência da pediatria e da neonatologia. A definição pediátrica de SDRA (PALICC) usa o índice de oxigenação em vez da relação P/F: leve 4 a 8, moderada 8 a 16, grave acima de 16.',
@@ -358,6 +369,10 @@ const curb65: Ferramenta = {
         '**CURB-65 de 3 a 5 (mortalidade 15–40%)**: interne, e avalie **unidade de terapia intensiva** — use os critérios da IDSA/ATS (choque com necessidade de vasopressor ou ventilação mecânica como critérios maiores; três ou mais critérios menores) para essa decisão, porque o CURB-65 prediz mortalidade, não necessidade de UTI.',
         'Administre o **antibiótico na primeira hora em sepse** e nas primeiras horas nos demais casos, guiado pela gravidade e pelos fatores de risco para germes resistentes. Colha hemoculturas e escarro nos casos graves, e considere antígenos urinários para pneumococo e *Legionella*. Reavalie em 48–72 h para **descalonar** e definir duração: **5 dias bastam** na maioria dos casos com boa resposta clínica.',
         'Não se prenda ao escore quando o paciente tem **hipoxemia, derrame parapneumônico, descompensação de comorbidade ou impossibilidade de tratamento domiciliar** — todos indicam internação independentemente da pontuação. O CURB-65 também não contempla saturação de oxigênio, que é um dos dados mais decisivos à beira do leito; o **PSI/PORT** é mais completo, porém mais trabalhoso.',
+      ],
+      alertas: [
+        'O CURB-65 prediz mortalidade, **não** necessidade de terapia intensiva — para isso use os critérios da IDSA/ATS.',
+        'Ele não contempla saturação de oxigênio, que é um dos dados mais decisivos à beira do leito. Hipoxemia, derrame parapneumônico e descompensação de comorbidade indicam internação independentemente da pontuação.',
       ],
       interpretacao: [
         total <= 1
@@ -1068,6 +1083,10 @@ const rsbi: Ferramenta = {
         'Meça o RSBI da forma correta: em **respiração espontânea sem pressão de suporte e sem PEEP**, por cerca de 1 minuto. Medido com pressão de suporte, o valor cai artificialmente e produz falsos positivos — é a causa mais comum de extubação prematura guiada pelo índice.',
         'A decisão de extubar depende de **quatro perguntas além do índice**: a causa da insuficiência respiratória foi resolvida? A oxigenação é adequada com parâmetros baixos? O paciente protege a via aérea (nível de consciência, tosse eficaz, secreção manejável)? A via aérea está patente (teste de vazamento do balonete em pacientes de risco para estridor)?',
         'Em pacientes de alto risco de falha (idosos, hipercápnicos, cardiopatas, obesos), aplique **ventilação não invasiva ou cânula de alto fluxo profiláticas imediatamente após a extubação**: essa medida reduz reintubação, e a reintubação é fator independente de mortalidade. Considere também extubação direta para não invasiva no retentor crônico de gás carbônico.',
+      ],
+      alertas: [
+        'Medido com pressão de suporte ou PEEP, o RSBI cai artificialmente e produz falsos positivos — é a causa mais comum de extubação prematura guiada pelo índice. Meça em respiração espontânea sem assistência.',
+        'O índice não responde às perguntas que decidem a extubação: a causa foi resolvida, o paciente protege a via aérea, a tosse é eficaz e a via aérea está patente.',
       ],
       interpretacao: [
         'Respiração rápida e superficial é o padrão universal de fadiga da musculatura respiratória: quando o trabalho por respiração fica alto demais, o sistema compensa reduzindo o volume e aumentando a frequência. Dividir uma pela outra transforma esse padrão num número.',

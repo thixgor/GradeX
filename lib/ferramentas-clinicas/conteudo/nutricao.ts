@@ -198,6 +198,10 @@ const proteina: Ferramenta = {
         'Ajuste em situações específicas: em **diálise**, aumente (1,2–1,5 g/kg/dia) por causa das perdas dialíticas; em **doença renal crônica sem diálise**, restrinja moderadamente (0,6–0,8 g/kg/dia) com acompanhamento nutricional; em **encefalopatia hepática**, **não restrinja** proteína — essa prática está abandonada e agrava a desnutrição. Use aminoácidos de cadeia ramificada se houver intolerância.',
         'Distribua o restante das calorias entre carboidrato (45–60%, com limite de oferta de glicose em torno de 4–5 mg/kg/min para não gerar lipogênese e retenção de gás carbônico) e lipídio (25–35%), e monitore **triglicerídeos** em nutrição parenteral e em uso prolongado de propofol.',
       ],
+      alertas: [
+        '**Não restrinja proteína na encefalopatia hepática** — essa prática está abandonada e agrava a desnutrição sem melhorar a encefalopatia.',
+        'Também não reduza proteína em lesão renal aguda apenas para adiar a diálise: a restrição custa massa magra sem alterar o desfecho renal.',
+      ],
       interpretacao: [
         meta.nota,
         '**A proteína só vira músculo se houver energia suficiente.** Aporte proteico alto com déficit calórico faz o organismo oxidar os aminoácidos para produzir energia — daí a importância da relação entre calorias não proteicas e nitrogênio.',
@@ -781,6 +785,7 @@ const balancoNitrogenado: Ferramenta = {
   ],
   referencias: [
     { texto: 'Dickerson RN. Nitrogen balance and protein requirements for critically ill older patients. Nutrients. 2016;8(4):226.' },
+    { texto: 'Singer P, Blaser AR, Berger MM, et al. ESPEN practical and partially revised guideline: Clinical nutrition in the intensive care unit. Clin Nutr. 2023;42(9):1671-1689.' },
   ],
 }
 
@@ -833,6 +838,10 @@ const carboidratoRefeicao: Ferramenta = {
         'Ajuste o **tempo de aplicação**: insulina ultrarrápida 10 a 15 minutos antes da refeição (e não durante ou depois) melhora substancialmente a glicemia pós-prandial. Em gastroparesia, o inverso pode ser necessário — aplicação durante ou após a refeição, ou uso de bolus estendido na bomba.',
         'Considere **gordura e proteína** em refeições ricas nesses macronutrientes (pizza, churrasco, feijoada): elas retardam e prolongam a elevação glicêmica, exigindo bolus estendido ou dose adicional tardia. É a causa clássica de hiperglicemia 4 a 6 horas após uma refeição aparentemente bem coberta.',
         'Planeje o **exercício** com antecedência: reduza o bolus da refeição anterior em 25 a 50%, ou consuma carboidrato adicional, conforme intensidade e duração, e vigie a **hipoglicemia tardia**, que pode ocorrer até 12 a 24 horas depois pela reposição do glicogênio muscular. Em atividade anaeróbica intensa, a glicemia pode subir — o ajuste é individual e exige registro sistemático.',
+      ],
+      alertas: [
+        'Refeições ricas em gordura e proteína (pizza, churrasco, feijoada) retardam e prolongam a elevação glicêmica — é a causa clássica de hiperglicemia 4 a 6 horas depois de uma refeição aparentemente bem coberta.',
+        'Após exercício, vigie hipoglicemia tardia por até 12 a 24 horas, pela reposição do glicogênio muscular.',
       ],
       interpretacao: [
         '**A contagem de carboidratos é a estratégia com melhor evidência para controle glicêmico no diabetes tipo 1** e é a base da terapia insulínica flexível. Ela permite ajustar a insulina à refeição, em vez de o contrário.',

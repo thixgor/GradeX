@@ -125,6 +125,7 @@ const apache: Ferramenta = {
   ],
   referencias: [
     { texto: 'Knaus WA, Draper EA, Wagner DP, Zimmerman JE. APACHE II: a severity of disease classification system. Crit Care Med. 1985;13(10):818-829.' },
+    { texto: 'Zimmerman JE, Kramer AA, McNair DS, Malila FM. Acute Physiology and Chronic Health Evaluation (APACHE) IV: hospital mortality assessment for today\'s critically ill patients. Crit Care Med. 2006;34(5):1297-1310.' },
   ],
 }
 
@@ -273,6 +274,7 @@ const saps3: Ferramenta = {
   ],
   referencias: [
     { texto: 'Moreno RP, Metnitz PG, Almeida E, et al. SAPS 3 — From evaluation of the patient to evaluation of the intensive care unit. Part 2: development of a prognostic model. Intensive Care Med. 2005;31(10):1345-1355.' },
+    { texto: 'Silva Junior JM, Malbouisson LMS, Nuevo HL, et al. Aplicabilidade do escore fisiológico agudo simplificado (SAPS 3) em hospitais brasileiros. Rev Bras Anestesiol. 2010;60(1):20-31.' },
   ],
 }
 
@@ -631,6 +633,8 @@ const volemia: Ferramenta = {
         ? 'Composição mais próxima do plasma, com menos cloro. Evitar Ringer lactato em hepatopatia grave (metabolização do lactato comprometida) e usar com cautela na hipercalemia, embora o potássio de 4 a 5 mEq/L raramente seja problema.'
         : 'Cloro de 154 mEq/L, muito acima do plasmático. Em grande volume causa acidose hiperclorêmica e vasoconstrição renal. Continua indicada na hipercloremia por perda gástrica, na hiponatremia e no traumatismo cranioencefálico.',
     })
+    interp.push('Guie a reposição por **resposta dinâmica**, não por meta fixa de volume: elevação passiva de pernas, variação de pressão de pulso ou de volume sistólico, e teste de infusão rápida de 250 mL. Pressão venosa central isolada não prediz resposta a volume e foi abandonada como alvo.')
+    interp.push('O balanço hídrico positivo cumulativo associa-se de forma independente a maior mortalidade. Depois da ressuscitação, o objetivo passa a ser **desescalar**: as fases de otimização, estabilização e retirada de volume são tão parte do tratamento quanto o bolus inicial.')
     return {
       conduta,
       titulo: principal,

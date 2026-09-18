@@ -660,6 +660,7 @@ const ballard: Ferramenta = {
   ],
   referencias: [
     { texto: 'Ballard JL, Khoury JC, Wedig K, et al. New Ballard Score, expanded to include extremely premature infants. J Pediatr. 1991;119(3):417-423.' },
+    { texto: 'Committee on Obstetric Practice, American Academy of Pediatrics. ACOG Committee Opinion No. 700: Methods for estimating the due date. Obstet Gynecol. 2017;129(5):e150-e154.' },
   ],
 }
 

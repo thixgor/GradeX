@@ -864,6 +864,10 @@ const timi: Ferramenta = {
         '**Instabilidade hemodinâmica, angina refratária, arritmia ventricular sustentada ou insuficiência cardíaca aguda** determinam cateterismo imediato (< 2 h), independentemente do TIMI. O escore estratifica quem está estável, não quem está deteriorando.',
         'Prefira o **GRACE** quando precisar de estimativa quantitativa de mortalidade intra-hospitalar e em 6 meses: o TIMI foi construído para decisão rápida à beira do leito e perde discriminação em idosos e renais crônicos, justamente os que mais concentram eventos.',
       ],
+      alertas: [
+        'O TIMI não se aplica a infarto com supra de ST, a instabilidade hemodinâmica nem a angina refratária — nessas situações a conduta é reperfusão ou cateterismo imediato, e calcular o escore só atrasa.',
+        'Ele perde discriminação em idosos e em renais crônicos, justamente os grupos que mais concentram eventos. Quando precisar de estimativa quantitativa de mortalidade, use o GRACE.',
+      ],
       interpretacao: [
         total >= 3
           ? 'TIMI ≥ 3 é o ponto de corte tradicional para benefício de estratégia invasiva precoce e de terapia antitrombótica mais intensa (inibidor de glicoproteína IIb/IIIa nos estudos originais, hoje substituído por antiagregação dupla potente).'
@@ -887,6 +891,7 @@ const timi: Ferramenta = {
   ],
   referencias: [
     { texto: 'Antman EM, Cohen M, Bernink PJ, et al. The TIMI risk score for unstable angina/non-ST elevation MI. JAMA. 2000;284(7):835-842.' },
+    { texto: 'Amsterdam EA, Wenger NK, Brindis RG, et al. 2014 AHA/ACC Guideline for the Management of Patients With Non-ST-Elevation Acute Coronary Syndromes. Circulation. 2014;130(25):e344-e426.' },
   ],
 }
 
@@ -954,6 +959,9 @@ const grace: Ferramenta = {
         'Risco **alto (> 140, > 3%)**: cateterismo em até 24 h. Esse é o corte que as diretrizes europeias usam para indicar invasiva precoce, e o grupo em que ela reduz morte e infarto.',
         'Calcule também o **GRACE pós-alta (6 meses a 3 anos)**: ele orienta a intensidade do seguimento, a agressividade das metas de LDL e a duração da dupla antiagregação. Um escore alto na alta justifica reavaliação em 2–4 semanas em vez de 3 meses.',
         'O GRACE considera **Killip, creatinina e parada cardíaca na admissão** — variáveis que o TIMI ignora. Por isso ele discrimina melhor em idosos, renais crônicos e pacientes com disfunção ventricular, e é o preferido quando o objetivo é quantificar mortalidade e não apenas classificar.',
+      ],
+      alertas: [
+        'Um GRACE calculado sem creatinina, sem classe de Killip ou sem o dado de parada cardíaca na admissão não é GRACE — são justamente essas variáveis que lhe dão a vantagem sobre o TIMI, e omiti-las subestima sistematicamente o risco.',
       ],
       interpretacao: [
         total > 140
@@ -1123,6 +1131,9 @@ const hasbled: Ferramenta = {
         'Compare sempre o HAS-BLED com o **CHA₂DS₂-VASc** no mesmo paciente: eles compartilham fatores de risco (idade, hipertensão, AVC prévio), de modo que quem sangra mais é geralmente quem mais se beneficia de não ter AVC. O benefício líquido costuma continuar favorável à anticoagulação.',
         'Em sangramento **maior sob anticoagulante**, tenha o antídoto mapeado: idarucizumabe para dabigatrana, andexanet alfa (onde disponível) ou complexo protrombínico para inibidores do fator Xa, e complexo protrombínico com vitamina K para varfarina. Tratada a causa, reintroduza a anticoagulação — retomar em 1–2 semanas costuma superar o risco de não retomar.',
       ],
+      alertas: [
+        '**Escore alto não é motivo para suspender a anticoagulação.** Ele identifica quem precisa de vigilância mais próxima e de correção de fatores modificáveis. Como HAS-BLED e CHA₂DS₂-VASc compartilham fatores de risco, quem mais sangra costuma ser quem mais se beneficia de não ter AVC.',
+      ],
       interpretacao: [
         '**O HAS-BLED nunca é motivo para não anticoagular.** Essa é a mensagem central das diretrizes atuais e o erro mais comum na prática. Os fatores de risco de sangramento e de AVC se sobrepõem muito, de modo que quem mais sangra costuma ser exatamente quem mais se beneficia da anticoagulação — o benefício absoluto continua favorável.',
         modificaveis.length
@@ -1189,6 +1200,10 @@ const wellsTep: Ferramenta = {
         'Considere o ajuste do D-dímero pela idade (**idade × 10 µg/L** acima de 50 anos) ou o protocolo **YEARS**: ambos reduzem tomografias desnecessárias sem perder embolias, e são especialmente úteis em idosos, em quem o D-dímero é quase sempre positivo por razões inespecíficas.',
         'Se a angiotomografia estiver indisponível ou contraindicada (contraste, gestação, insuficiência renal), use **cintilografia de ventilação-perfusão** ou ultrassonografia de membros inferiores — trombose proximal confirmada em paciente com suspeita clínica autoriza tratar sem imagem torácica.',
         'Com suspeita alta e demora prevista na imagem, **inicie a anticoagulação empírica** enquanto aguarda, desde que não haja risco de sangramento proibitivo. Confirmado o diagnóstico, estratifique a gravidade com **PESI ou sPESI** — é isso que define alta precoce, internação ou trombólise.',
+      ],
+      alertas: [
+        'Com Wells na faixa \'provável\', o D-dímero não ajuda: negativo, ele não reduz o risco pós-teste o suficiente para liberar o paciente. Peça a angiotomografia diretamente.',
+        'Gestação, pós-operatório, câncer, infecção e idade avançada elevam o D-dímero por razões inespecíficas. Considere o ajuste pela idade ou o protocolo YEARS antes de encadear tomografias.',
       ],
       interpretacao: [
         total <= 4
@@ -1272,6 +1287,9 @@ const wellsTvp: Ferramenta = {
         'Trombose **distal isolada** em paciente sem câncer, sem trombose prévia e com sintomas leves pode ser acompanhada com ultrassonografia seriada em vez de anticoagulada — decisão que equilibra o risco de extensão contra o de sangramento.',
         'Investigue **câncer oculto** apenas com rastreio apropriado à idade e sexo, não com tomografia de corpo inteiro: a busca extensiva não melhora a sobrevida. Trombofilia só deve ser pesquisada se o resultado for mudar a duração do tratamento — na maioria dos casos não muda.',
       ],
+      alertas: [
+        'Ultrassonografia negativa com suspeita clínica mantida não encerra o caso: repita em 5 a 7 dias, porque trombose distal pode progredir e só então se tornar visível.',
+      ],
       interpretacao: [
         total < 2
           ? '**TVP improvável.** D-dímero negativo exclui e encerra a investigação. D-dímero positivo indica ultrassom com compressão.'
@@ -1326,6 +1344,10 @@ const perc: Ferramenta = {
         'O PERC só é válido quando a probabilidade pré-teste já é **baixa**. Aplicá-lo a um paciente com suspeita moderada ou alta é uso incorreto e produz falsa segurança — a regra foi desenhada para evitar investigação, não para substituí-la.',
         'A grande utilidade prática é **reduzir D-dímeros desnecessários** na emergência. Como o D-dímero é frequentemente positivo por razões inespecíficas, pedi-lo em paciente PERC-negativo desencadeia uma cascata de tomografias com contraste, radiação e achados incidentais sem benefício.',
         'Não use o PERC em **gestantes, em quem já usa anticoagulante** ou em situações de alta prevalência de embolia. A regra foi validada em emergência de baixa prevalência e não transporta para esses contextos.',
+      ],
+      alertas: [
+        'O PERC **só é válido quando a probabilidade pré-teste já é baixa** (menor que 15%). Aplicá-lo a suspeita moderada ou alta é uso incorreto e produz falsa segurança.',
+        'Não use em gestantes nem em quem já está anticoagulado — a regra foi validada em emergência de baixa prevalência e não transporta para esses contextos.',
       ],
       interpretacao: [
         total === 0
@@ -1508,6 +1530,9 @@ const dasi: Ferramenta = {
         'Use o DASI também para **medir resposta terapêutica** em insuficiência cardíaca e doença coronariana estável: ele é sensível a mudança e serve de desfecho em reabilitação cardíaca, sem precisar de ergoespirometria.',
         'Cuidado com a **limitação não cardíaca**: artrose, doença vascular periférica, obesidade e doença pulmonar reduzem o DASI sem que haja limitação cardíaca. Nesses casos o escore baixo não significa risco cardíaco alto, e o teste farmacológico (estresse com dobutamina ou dipiridamol) substitui o esforço.',
       ],
+      alertas: [
+        'Artrose, doença vascular periférica, obesidade e doença pulmonar reduzem o DASI sem que haja limitação cardíaca. Nesses casos, escore baixo não significa risco cardíaco alto, e o teste farmacológico substitui o esforço.',
+      ],
       interpretacao: [
         mets < 4
           ? '**Menos de 4 METs.** É o limiar clássico das diretrizes perioperatórias: incapacidade de subir um lance de escadas ou caminhar dois quarteirões no plano identifica capacidade funcional ruim e motiva investigação cardiovascular adicional antes de cirurgia de risco intermediário ou alto.'
@@ -1598,6 +1623,9 @@ const debitoCardiaco: Ferramenta = {
         'Interprete sempre junto com **saturação venosa central de oxigênio e lactato**: débito \'normal\' pode ser insuficiente para a demanda metabólica de um paciente séptico ou febril. O número absoluto importa menos do que a adequação à demanda.',
         'Lembre que o débito é **frequência × volume sistólico**: taquicardia extrema reduz o tempo de enchimento diastólico e derruba o débito, e bradicardia sem reserva de volume sistólico faz o mesmo. Corrigir a arritmia é, muitas vezes, a intervenção hemodinâmica mais eficaz disponível.',
       ],
+      alertas: [
+        'Débito \'normal\' pode ser insuficiente para a demanda metabólica de um paciente séptico ou febril. Interprete sempre junto com lactato e saturação venosa central — o número absoluto importa menos que a adequação à demanda.',
+      ],
       interpretacao: [
         'O índice cardíaco é mais informativo do que o débito absoluto, porque normaliza pela superfície corporal: 4,5 L/min é excelente numa pessoa de 45 kg e insuficiente numa de 110 kg.',
         'Débito elevado com hipotensão aponta choque distributivo (sepse, anafilaxia, insuficiência hepática, tireotoxicose, beribéri, fístula arteriovenosa). Débito baixo com pressão de enchimento alta aponta choque cardiogênico; com pressão de enchimento baixa, hipovolêmico.',
@@ -1667,6 +1695,9 @@ const pam: Ferramenta = {
         'O **duplo produto (FC × PA sistólica)** estima o consumo miocárdico de oxigênio. Em angina, o limiar em que a dor aparece é reprodutível para o mesmo paciente e serve para medir eficácia de betabloqueador: se o limiar subiu, o fármaco está funcionando.',
         'Em **lesão cerebral aguda**, a PAM é o insumo da pressão de perfusão cerebral (PPC = PAM − PIC). Metas de PAM aqui não são genéricas — devem ser derivadas da PPC desejada (geralmente 60–70 mmHg) e da pressão intracraniana medida.',
         'Em **hipertensão aguda grave**, a regra é reduzir a PAM em no máximo **20–25% na primeira hora**, exceto em dissecção de aorta (sistólica < 120 mmHg em 20 min), pré-eclâmpsia grave e hemorragia intracerebral com indicação específica. Quedas maiores deslocam o paciente para fora da faixa de autorregulação e causam isquemia cerebral e renal.',
+      ],
+      alertas: [
+        'Em hipertensão aguda grave, reduzir a PAM mais de 20 a 25% na primeira hora desloca o paciente para fora da faixa de autorregulação e causa isquemia cerebral e renal. As exceções com alvo mais agressivo são dissecção de aorta, pré-eclâmpsia grave e situações específicas de hemorragia intracerebral.',
       ],
       interpretacao: [
         'A PAM é ponderada pela diástole porque, em frequência normal, o coração passa cerca de dois terços do ciclo em diástole — e é a PAM, não a sistólica, que governa a perfusão de rim, cérebro e coração.',
