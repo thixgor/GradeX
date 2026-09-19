@@ -2812,6 +2812,104 @@ const sincope: Ferramenta = {
   ],
 }
 
+/* ═══════════ CRUSADE — risco de sangramento na síndrome coronariana ═══════════ */
+
+const crusadeCampos: Campo[] = [
+  campoNum('hematocrito', 'Hematócrito basal', { unidade: '%', min: 15, max: 60, passo: 0.1, ajuda: 'Hematócrito baixo é o preditor mais forte do escore e frequentemente reflete sangramento já existente, ainda não identificado — anemia na admissão de uma síndrome coronariana merece investigação, não apenas registro.' }),
+  campoNum('clearance', 'Clearance de creatinina (Cockcroft-Gault)', { unidade: 'mL/min', min: 5, max: 200, passo: 1, ajuda: 'Use **Cockcroft-Gault**, que foi a fórmula da derivação. A função renal pesa muito no escore porque a maioria dos antitrombóticos tem eliminação renal, e a subdosagem por não ajustar é uma das causas mais comuns de sangramento iatrogênico.' }),
+  campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 30, max: 200, passo: 1 }),
+  campoNum('pas', 'Pressão arterial sistólica', { unidade: 'mmHg', min: 50, max: 250, passo: 1, ajuda: 'Tanto a hipotensão (abaixo de 110 mmHg) quanto a hipertensão acentuada (acima de 180 mmHg) somam pontos — a curva de risco é em U.' }),
+  campoSexo('sexo', 'Sexo biológico'),
+  campoSimNao('icc', 'Sinais de insuficiência cardíaca na admissão', 0, undefined),
+  campoSimNao('vascular', 'Doença vascular prévia (arterial periférica ou acidente vascular cerebral)', 0, undefined),
+  campoSimNao('diabetes', 'Diabetes mellitus', 0, undefined),
+]
+
+const crusade: Ferramenta = {
+  id: 'crusade',
+  nome: 'CRUSADE — risco de sangramento maior na síndrome coronariana',
+  sigla: 'CRUSADE',
+  sinonimos: ['crusade', 'sangramento sca', 'risco hemorragico', 'sangramento coronariana'],
+  resumo: 'Estima o risco de sangramento maior intra-hospitalar na síndrome coronariana sem supra e orienta o ajuste dos antitrombóticos.',
+  categorias: ['cardiologia', 'emergencia', 'hematologia'],
+  campos: crusadeCampos,
+  calcular: (v) => {
+    const ht = num(v, 'hematocrito')
+    const cl = num(v, 'clearance')
+    const fc = num(v, 'fc')
+    const pas = num(v, 'pas')
+    if (ht === null || cl === null || fc === null || pas === null) return null
+
+    const pHt = ht < 31 ? 9 : ht < 34 ? 7 : ht < 37 ? 3 : ht < 40 ? 2 : 0
+    const pCl = cl <= 15 ? 39 : cl <= 30 ? 35 : cl <= 60 ? 28 : cl <= 90 ? 17 : cl <= 120 ? 7 : 0
+    const pFc = fc <= 70 ? 0 : fc <= 80 ? 1 : fc <= 90 ? 3 : fc <= 100 ? 6 : fc <= 110 ? 8 : fc <= 120 ? 10 : 11
+    const pPas = pas <= 90 ? 10 : pas <= 100 ? 8 : pas <= 120 ? 5 : pas <= 180 ? 1 : pas <= 200 ? 3 : 5
+    const pSexo = opc(v, 'sexo') === 'f' ? 8 : 0
+    const pIcc = sim(v, 'icc') ? 7 : 0
+    const pVasc = sim(v, 'vascular') ? 6 : 0
+    const pDm = sim(v, 'diabetes') ? 6 : 0
+
+    const total = pHt + pCl + pFc + pPas + pSexo + pIcc + pVasc + pDm
+    const faixa = total <= 20 ? 'Muito baixo' : total <= 30 ? 'Baixo' : total <= 40 ? 'Moderado' : total <= 50 ? 'Alto' : 'Muito alto'
+    const risco = total <= 20 ? '3,1%' : total <= 30 ? '5,5%' : total <= 40 ? '8,6%' : total <= 50 ? '11,9%' : '19,5%'
+    const nivel: Nivel = total > 50 ? 'critico' : total > 40 ? 'alerta' : total > 30 ? 'atencao' : 'ok'
+
+    return {
+      titulo: 'CRUSADE',
+      valor: fmtInt(total),
+      unidade: 'de 100 pontos',
+      nivel,
+      rotuloNivel: `Risco ${faixa.toLowerCase()} — ${risco} de sangramento maior`,
+      detalhes: [
+        { rotulo: 'Hematócrito', valor: `${fmt(ht, 1)}% → ${pHt} pts`, nivel: (pHt >= 7 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Clearance de creatinina', valor: `${fmtInt(cl)} mL/min → ${pCl} pts`, nivel: (pCl >= 28 ? 'alerta' : 'ok') as Nivel, nota: 'É o item de maior peso do escore' },
+        { rotulo: 'Frequência cardíaca', valor: `${fmtInt(fc)} bpm → ${pFc} pts` },
+        { rotulo: 'Pressão sistólica', valor: `${fmtInt(pas)} mmHg → ${pPas} pts`, nota: 'Curva em U: hipotensão e hipertensão somam' },
+        { rotulo: 'Sexo feminino', valor: `${pSexo} pts` },
+        { rotulo: 'Insuficiência cardíaca', valor: `${pIcc} pts` },
+        { rotulo: 'Doença vascular prévia', valor: `${pVasc} pts` },
+        { rotulo: 'Diabetes', valor: `${pDm} pts` },
+      ],
+      interpretacao: [
+        `**${total} pontos — risco ${faixa.toLowerCase()}, com probabilidade de sangramento maior intra-hospitalar de aproximadamente ${risco}.** As faixas são: até 20 muito baixo, 21 a 30 baixo, 31 a 40 moderado, 41 a 50 alto, acima de 50 muito alto.`,
+        '**O clearance de creatinina é o item de maior peso** — até 39 pontos, mais de um terço do escore. A razão é direta: heparinas de baixo peso molecular, inibidores da glicoproteína IIb/IIIa e alguns anticoagulantes têm eliminação renal, e a **subdosagem por não ajustar à função renal** é uma das causas mais frequentes de sangramento iatrogênico nessa população.',
+        'O CRUSADE deve ser lido **junto com o GRACE**, não no lugar dele: um estima o risco isquêmico e o outro o hemorrágico, e a decisão clínica é o balanço entre os dois. Risco isquêmico alto com risco hemorrágico alto é a situação mais difícil, e nela o que se ajusta é a **intensidade e a duração** da terapia, não a sua existência.',
+        total > 40
+          ? '**Risco alto ou muito alto de sangramento.** Isso não contraindica a terapia antitrombótica — significa que cada escolha precisa ser feita com atenção: acesso radial, doses ajustadas, antiagregante de menor potência quando possível, e proteção gástrica.'
+          : 'Risco de sangramento em faixa aceitável, o que dá margem para a terapia antitrombótica plena conforme o risco isquêmico.',
+        'Anemia na admissão de uma síndrome coronariana **não é apenas um item do escore**: ela frequentemente sinaliza sangramento já em curso e não identificado, e merece investigação antes de se instalar a anticoagulação plena.',
+      ],
+      conduta: [
+        '**Use acesso radial** em vez de femoral para o cateterismo: essa única escolha reduz sangramento maior e mortalidade, e o benefício é maior justamente nos pacientes de maior risco hemorrágico.',
+        '**Ajuste as doses à função renal e ao peso.** A subdosagem por não ajustar é a causa modificável mais comum de sangramento: enoxaparina abaixo de 30 mL/min exige redução; inibidores de glicoproteína IIb/IIIa têm ajuste próprio; e fondaparinux tem menos sangramento que a enoxaparina na síndrome sem supra.',
+        'Escolha o **antiagregante** considerando o balanço: prasugrel é contraindicado com acidente vascular prévio e desaconselhado acima de 75 anos ou abaixo de 60 kg; ticagrelor tem mais sangramento espontâneo que o clopidogrel; e o clopidogrel é a opção de menor potência quando o risco hemorrágico domina.',
+        'Prescreva **inibidor de bomba de prótons** em quem usa dupla antiagregação com risco gastrointestinal: idade acima de 65 anos, úlcera prévia, infecção por *Helicobacter pylori*, uso de anticoagulante, corticoide ou anti-inflamatório.',
+        'Considere **encurtar a dupla antiagregação** em risco hemorrágico alto — estratégias de 1 a 3 meses seguidas de monoterapia com inibidor de P2Y12 mostraram redução de sangramento sem aumento de eventos isquêmicos em populações selecionadas.',
+        'Monitore **hemoglobina e função renal** durante a internação, e investigue qualquer queda: sangramento gastrointestinal, retroperitoneal (após acesso femoral) e do sítio de punção são os mais frequentes, e o retroperitoneal se apresenta com dor lombar e hipotensão sem sangramento visível.',
+      ],
+      alertas: [
+        '**Risco hemorrágico alto não contraindica antitrombótico** em síndrome coronariana — ele orienta o ajuste de via, dose, escolha e duração. Negar a terapia por medo de sangrar troca um risco conhecido por outro maior.',
+        'O CRUSADE foi derivado em síndrome coronariana **sem supra de ST** tratada conforme a prática dos anos 2000; ele subestima ou superestima em cenários com acesso radial rotineiro e antiagregantes modernos, e deve ser lido como estimativa relativa.',
+        'Anemia na admissão pode ser sangramento em curso ainda não identificado. Investigue antes de anticoagular plenamente.',
+      ],
+    }
+  },
+  formula: ['CRUSADE = hematócrito + clearance de creatinina + frequência + sistólica + sexo feminino + insuficiência cardíaca + doença vascular + diabetes', 'Faixas: ≤ 20 muito baixo · 21-30 baixo · 31-40 moderado · 41-50 alto · > 50 muito alto'],
+  fundamento:
+    'O tratamento da síndrome coronariana aguda é, por natureza, um exercício de equilíbrio entre dois riscos opostos: a terapia antitrombótica que impede a progressão do trombo coronariano é a mesma que provoca sangramento em outro lugar. Durante anos esse segundo risco foi tratado como efeito colateral aceitável, até que estudos mostraram que o **sangramento maior intra-hospitalar tem impacto prognóstico comparável ao do próprio reinfarto** — ele aumenta a mortalidade em 30 dias e em 1 ano, tanto pelo evento em si (hipotensão, transfusão, isquemia por anemia) quanto pelo que ele desencadeia: suspensão dos antitrombóticos, trombose de stent e reinfarto. O CRUSADE captura os determinantes desse risco, e os pesos revelam a fisiologia. A **função renal** domina porque o rim elimina a maior parte dos antitrombóticos, e porque a uremia causa disfunção plaquetária qualitativa por acúmulo de toxinas que interferem na agregação mediada pelo receptor IIb/IIIa. O **hematócrito baixo** pesa por dois motivos simultâneos: pode indicar sangramento já ocorrido e reduz a marginação de plaquetas na parede do vaso — as hemácias, ao ocuparem o centro do fluxo, empurram as plaquetas para a periferia, e menos hemácias significam hemostasia primária menos eficiente. O **sexo feminino** soma pontos por menor superfície corporal, maior prevalência de doença renal não reconhecida e uma tendência documentada a receber doses excessivas de antitrombótico.',
+  armadilhas: [
+    'Foi derivado em síndrome sem supra de ST; aplicá-lo ao infarto com supra ou à fibrilação atrial é extrapolação.',
+    'A derivação precede o uso rotineiro do acesso radial e dos antiagregantes de nova geração, o que altera as taxas absolutas.',
+    'Use Cockcroft-Gault, e não CKD-EPI: a fórmula da derivação importa, e as duas divergem em extremos de peso.',
+    'O escore não inclui uso prévio de anticoagulante oral, trombocitopenia nem história de sangramento — três fatores de peso que exigem julgamento à parte.',
+  ],
+  referencias: [
+    { texto: 'Subherwal S, Bach RG, Chen AY, et al. Baseline risk of major bleeding in non-ST-segment-elevation myocardial infarction: the CRUSADE bleeding score. Circulation. 2009;119(14):1873-1882.' },
+    { texto: 'Valgimigli M, Bueno H, Byrne RA, et al. 2017 ESC focused update on dual antiplatelet therapy in coronary artery disease. Eur Heart J. 2018;39(3):213-260.' },
+    { texto: 'Byrne RA, Rossello X, Coughlan JJ, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44(38):3720-3826.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2842,6 +2940,7 @@ export const ferramentas: Ferramenta[] = [
   addrs,
   itb,
   sincope,
+  crusade,
 ]
 
 export default ferramentas

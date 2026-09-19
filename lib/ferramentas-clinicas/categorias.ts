@@ -28,7 +28,7 @@ export const CATEGORIAS: Categoria[] = [
       'Os escores cardiológicos existem para transformar impressão em probabilidade: quem pode ir para casa da emergência, quem precisa de anticoagulação, quem sangra se anticoagulado. Aqui estão as calculadoras de ECG, os escores de dor torácica, de fibrilação atrial, de tromboembolismo e as contas hemodinâmicas de beira de leito.',
     icone: 'cardiologia',
     cor: 'vermelho',
-    total: 36,
+    total: 37,
   },
   {
     id: 'pneumologia',
@@ -88,7 +88,7 @@ export const CATEGORIAS: Categoria[] = [
       'Ler um hemograma é converter percentuais em valores absolutos e comparar com o esperado para a resposta medular. Aqui estão a correção de reticulócitos, a classificação das anemias, os escores de trombose e de trombocitopenia induzida por heparina, e a conta de ferro de Ganzoni.',
     icone: 'hematologia',
     cor: 'rosa',
-    total: 17,
+    total: 18,
   },
   {
     id: 'endocrinologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 100,
+    total: 101,
   },
   {
     id: 'cirurgia',

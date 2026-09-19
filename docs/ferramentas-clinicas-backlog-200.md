@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **241** (eram 201) |
-| Implementadas desta lista | **40** |
-| Restantes | **160** |
-| Nota média na auditoria | **100** — todas as 241 |
+| Ferramentas no catálogo | **242** (eram 201) |
+| Implementadas desta lista | **41** |
+| Restantes | **159** |
+| Nota média na auditoria | **100** — todas as 242 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -98,6 +98,7 @@ escores individuais.
     - ✅ **feito** — `killip-kimball`
 18. **TIMI para IAM com supra de ST** — escore prognóstico próprio do STEMI, distinto do TIMI de SCA sem supra já existente. **[P1]**
 19. **CRUSADE** — risco de sangramento maior intra-hospitalar na síndrome coronariana aguda. **[P1]**
+    - ✅ **feito** — `crusade`
 20. **Sgarbossa, Sgarbossa modificado (Smith), Wellens e de Winter** — IAM com BRE ou marcapasso e padrões de oclusão proximal de DA. **[P1]**
     - 🟡 **parcial** — `sgarbossa` cobre Sgarbossa e Sgarbossa modificado; Wellens e De Winter aparecem só na conduta, sem ferramenta própria
 21. **Critérios de Brugada, Vereckei e algoritmo de aVR** — taquicardia ventricular vs. supraventricular com QRS largo. **[P1]**
