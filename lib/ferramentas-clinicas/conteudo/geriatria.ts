@@ -440,6 +440,194 @@ const barthel: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo, barthel]
+/* ═══════════ Braden e Morse — lesão por pressão e risco de queda ═══════════ */
+
+const bradenCampos: Campo[] = [
+  campoSeg('escala', 'Escala', [
+    { valor: 'braden', rotulo: 'Braden (lesão por pressão)' },
+    { valor: 'morse', rotulo: 'Morse (risco de queda)' },
+  ], { ajuda: 'As duas são aplicadas pela enfermagem na admissão e reavaliadas periodicamente. Braden pontua **de 6 a 23, e quanto menor pior**; Morse pontua de 0 a 125, e quanto maior pior — a inversão entre elas é fonte constante de erro de registro.' }),
+  campoOpc('percepcao', 'Percepção sensorial', [
+    { valor: '1', rotulo: '1 — Totalmente limitada: não responde a estímulo doloroso', pontos: 1 },
+    { valor: '2', rotulo: '2 — Muito limitada: responde só a dor, não comunica desconforto', pontos: 2 },
+    { valor: '3', rotulo: '3 — Levemente limitada: responde a comando, alguma dificuldade em comunicar', pontos: 3 },
+    { valor: '4', rotulo: '4 — Nenhuma limitação', pontos: 4 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'escala') === 'braden', ajuda: 'Capacidade de sentir e comunicar desconforto. Sedação, rebaixamento, neuropatia diabética e lesão medular abolem o sinal de alarme que faria a pessoa mudar de posição sozinha — é o mecanismo central da lesão por pressão.' }),
+  campoOpc('umidade', 'Umidade da pele', [
+    { valor: '1', rotulo: '1 — Constantemente úmida', pontos: 1 },
+    { valor: '2', rotulo: '2 — Muito úmida: troca de roupa ao menos uma vez por turno', pontos: 2 },
+    { valor: '3', rotulo: '3 — Ocasionalmente úmida', pontos: 3 },
+    { valor: '4', rotulo: '4 — Raramente úmida', pontos: 4 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'escala') === 'braden', ajuda: 'Incontinência, sudorese e drenagem maceram a pele e reduzem sua resistência ao cisalhamento — a dermatite associada à incontinência é um diagnóstico distinto da lesão por pressão e frequentemente confundido com ela.' }),
+  campoOpc('atividade', 'Atividade', [
+    { valor: '1', rotulo: '1 — Acamado', pontos: 1 },
+    { valor: '2', rotulo: '2 — Restrito à cadeira', pontos: 2 },
+    { valor: '3', rotulo: '3 — Anda ocasionalmente', pontos: 3 },
+    { valor: '4', rotulo: '4 — Anda com frequência', pontos: 4 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'escala') === 'braden' }),
+  campoOpc('mobilidade', 'Mobilidade', [
+    { valor: '1', rotulo: '1 — Totalmente imóvel', pontos: 1 },
+    { valor: '2', rotulo: '2 — Muito limitada', pontos: 2 },
+    { valor: '3', rotulo: '3 — Levemente limitada', pontos: 3 },
+    { valor: '4', rotulo: '4 — Não limitada', pontos: 4 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'escala') === 'braden', ajuda: 'Capacidade de **mudar e controlar a posição do corpo**. É diferente de atividade: um paciente restrito ao leito que se vira sozinho tem mobilidade preservada e risco bem menor.' }),
+  campoOpc('nutricao', 'Nutrição', [
+    { valor: '1', rotulo: '1 — Muito pobre: come menos de 1/3, sem suplemento', pontos: 1 },
+    { valor: '2', rotulo: '2 — Provavelmente inadequada', pontos: 2 },
+    { valor: '3', rotulo: '3 — Adequada', pontos: 3 },
+    { valor: '4', rotulo: '4 — Excelente', pontos: 4 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'escala') === 'braden' }),
+  campoOpc('friccao', 'Fricção e cisalhamento', [
+    { valor: '1', rotulo: '1 — Problema: precisa de assistência máxima, escorrega na cama', pontos: 1 },
+    { valor: '2', rotulo: '2 — Problema potencial: move-se com alguma dificuldade', pontos: 2 },
+    { valor: '3', rotulo: '3 — Sem problema aparente', pontos: 3 },
+  ], { padrao: '3', mostrarSe: (v) => opc(v, 'escala') === 'braden', ajuda: 'Único item que vai só até 3. O **cisalhamento** — que ocorre quando o paciente escorrega com a cabeceira elevada e a pele fica presa enquanto o esqueleto desliza — angula e oclui os vasos perfurantes e causa lesão profunda com pele ainda íntegra.' }),
+  campoOpc('quedaPrevia', 'História de queda (nos últimos 3 meses ou durante a internação)', [
+    { valor: '0', rotulo: 'Não', pontos: 0 },
+    { valor: '25', rotulo: 'Sim', pontos: 25 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse', ajuda: 'É o item de maior peso junto com o diagnóstico secundário. Queda prévia é o preditor isolado mais forte de nova queda.' }),
+  campoOpc('diagSecundario', 'Diagnóstico secundário (mais de um diagnóstico ativo)', [
+    { valor: '0', rotulo: 'Não', pontos: 0 },
+    { valor: '15', rotulo: 'Sim', pontos: 15 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse' }),
+  campoOpc('auxilio', 'Auxílio para deambular', [
+    { valor: '0', rotulo: 'Nenhum, acamado, ou auxiliado por profissional', pontos: 0 },
+    { valor: '15', rotulo: 'Muletas, bengala ou andador', pontos: 15 },
+    { valor: '30', rotulo: 'Apoia-se em móveis e paredes', pontos: 30 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse', ajuda: 'Apoiar-se em móveis pontua **mais** que usar andador: indica necessidade de apoio sem o dispositivo adequado, que é a combinação de maior risco.' }),
+  campoOpc('venoso', 'Terapia intravenosa ou dispositivo salinizado', [
+    { valor: '0', rotulo: 'Não', pontos: 0 },
+    { valor: '20', rotulo: 'Sim', pontos: 20 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse' }),
+  campoOpc('marcha', 'Marcha', [
+    { valor: '0', rotulo: 'Normal, acamado ou em cadeira de rodas', pontos: 0 },
+    { valor: '10', rotulo: 'Fraca: passos curtos, apoia-se em mobiliário', pontos: 10 },
+    { valor: '20', rotulo: 'Comprometida: dificuldade para levantar, equilíbrio instável', pontos: 20 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse' }),
+  campoOpc('estadoMental', 'Estado mental', [
+    { valor: '0', rotulo: 'Consciente das próprias limitações', pontos: 0 },
+    { valor: '15', rotulo: 'Superestima a própria capacidade ou esquece as limitações', pontos: 15 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'morse', ajuda: 'Pergunte se o paciente pode ir ao banheiro sozinho e compare com a avaliação da equipe. A discordância entre o que ele acha que consegue e o que de fato consegue é o item.' }),
+]
+
+const bradenMorse: Ferramenta = {
+  id: 'braden-morse',
+  nome: 'Braden e Morse — lesão por pressão e risco de queda',
+  sinonimos: ['braden', 'morse', 'lesao por pressao', 'ulcera de pressao', 'risco de queda', 'escala de enfermagem'],
+  resumo: 'Estratifica o risco de lesão por pressão e de queda intra-hospitalar, e converte cada faixa em medidas preventivas concretas.',
+  categorias: ['geriatria', 'emergencia'],
+  campos: bradenCampos,
+  calcular: (v) => {
+    const morse = opc(v, 'escala') === 'morse'
+
+    if (morse) {
+      const ids = ['quedaPrevia', 'diagSecundario', 'auxilio', 'venoso', 'marcha', 'estadoMental']
+      const pontos = ids.map((id) => ptsOpc(bradenCampos, v, id))
+      if (pontos.some((p) => p === null)) return null
+      const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+      const nivel: Nivel = total >= 45 ? 'alerta' : total >= 25 ? 'atencao' : 'ok'
+      const faixa = total >= 45 ? 'Risco alto' : total >= 25 ? 'Risco baixo a moderado' : 'Sem risco'
+
+      return {
+        titulo: 'Escala de Morse',
+        valor: fmtInt(total),
+        unidade: 'de 125 pontos',
+        nivel,
+        rotuloNivel: faixa,
+        detalhes: [
+          { rotulo: 'Queda prévia', valor: (pontos[0] as number) > 0 ? 'Sim (25)' : 'Não', nivel: ((pontos[0] as number) > 0 ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Diagnóstico secundário', valor: (pontos[1] as number) > 0 ? 'Sim (15)' : 'Não' },
+          { rotulo: 'Auxílio para deambular', valor: fmtInt(pontos[2] as number) },
+          { rotulo: 'Terapia intravenosa', valor: (pontos[3] as number) > 0 ? 'Sim (20)' : 'Não' },
+          { rotulo: 'Marcha', valor: fmtInt(pontos[4] as number) },
+          { rotulo: 'Estado mental', valor: (pontos[5] as number) > 0 ? 'Superestima a capacidade (15)' : 'Consciente das limitações' },
+          { rotulo: 'Faixa', valor: faixa, nota: '0-24 sem risco · 25-44 baixo a moderado · ≥ 45 alto' },
+        ],
+        interpretacao: [
+          `**${total} de 125 pontos — ${faixa.toLowerCase()}.** Na escala de Morse, **quanto maior, pior** — o oposto da Braden, e a inversão entre as duas é uma fonte recorrente de erro de registro quando as duas são preenchidas na mesma admissão.`,
+          'Apoiar-se em **móveis e paredes** pontua 30, mais que usar andador (15). A lógica é que o paciente precisa de apoio mas não tem o dispositivo adequado — e improvisar apoio em mobiliário instável é a combinação de maior risco.',
+          'A **terapia intravenosa** pontua não pelo soro em si, mas pelo conjunto: suporte, equipo, cabos e a necessidade de levá-los ao banheiro no meio da noite.',
+          'O item de **estado mental** captura a discordância entre a capacidade percebida e a real. O paciente que esquece que não pode andar sozinho é o que cai — e a demência, o delirium e o pós-operatório imediato são os cenários clássicos.',
+        ],
+        conduta: [
+          total >= 45
+            ? '**Alto risco: implante o protocolo completo.** Sinalização à beira do leito e no prontuário, campainha ao alcance, cama baixa e travada, grades conforme protocolo, calçado antiderrapante, iluminação noturna, banheiro desobstruído, acompanhamento nas idas ao banheiro e rondas horárias proativas.'
+            : total >= 25
+              ? '**Risco baixo a moderado:** medidas padrão de segurança, orientação ao paciente e ao acompanhante, e reavaliação a cada mudança clínica ou de medicação.'
+              : '**Sem risco identificado:** mantenha as medidas universais de segurança e reavalie a cada 24 a 48 horas ou a qualquer mudança clínica.',
+          '**Revise a prescrição procurando fármacos que derrubam.** Benzodiazepínicos, Z-drugs, antipsicóticos, antidepressivos, opioides, anticolinérgicos, anti-hipertensivos que causam hipotensão postural e hipoglicemiantes são a causa mais modificável de queda hospitalar — e a que menos costuma ser abordada.',
+          'Meça a **pressão em pé** em quem tem tontura ao levantar: queda de 20 mmHg na sistólica ou de 10 mmHg na diastólica em 3 minutos define hipotensão postural, que é tratável.',
+          'Corrija o que é corrigível: visão (catarata, óculos errados), audição, dor, sono, anemia, distúrbio eletrolítico, incontinência e pés — calçado inadequado e alterações podológicas respondem por parte relevante das quedas.',
+          'Após qualquer queda, **investigue a causa** em vez de apenas registrar o evento: síncope, arritmia, acidente vascular, hipoglicemia, infecção e delirium se apresentam como queda, e a queda é sintoma antes de ser acidente.',
+        ],
+        alertas: [
+          '**Contenção física não previne queda** e aumenta lesão, delirium e mortalidade. Grades elevadas em paciente agitado transformam queda de 50 cm em queda de 1,20 m.',
+          'A escala de Morse identifica risco mas **não previne nada sozinha**: o que reduz queda é o pacote multicomponente implementado, não o escore registrado.',
+        ],
+      }
+    }
+
+    const ids = ['percepcao', 'umidade', 'atividade', 'mobilidade', 'nutricao', 'friccao']
+    const pontos = ids.map((id) => ptsOpc(bradenCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+
+    const nivel: Nivel = total <= 9 ? 'critico' : total <= 12 ? 'alerta' : total <= 14 ? 'alerta' : total <= 18 ? 'atencao' : 'ok'
+    const faixa = total <= 9 ? 'Risco muito alto' : total <= 12 ? 'Risco alto' : total <= 14 ? 'Risco moderado' : total <= 18 ? 'Risco leve' : 'Sem risco'
+
+    return {
+      titulo: 'Escala de Braden',
+      valor: fmtInt(total),
+      unidade: 'de 23 pontos',
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: 'Percepção sensorial', valor: fmtInt(pontos[0] as number) },
+        { rotulo: 'Umidade', valor: fmtInt(pontos[1] as number) },
+        { rotulo: 'Atividade', valor: fmtInt(pontos[2] as number) },
+        { rotulo: 'Mobilidade', valor: fmtInt(pontos[3] as number) },
+        { rotulo: 'Nutrição', valor: fmtInt(pontos[4] as number) },
+        { rotulo: 'Fricção e cisalhamento', valor: fmtInt(pontos[5] as number), nota: 'Único item que vai só até 3' },
+        { rotulo: 'Faixa', valor: faixa, nota: '≤ 9 muito alto · 10-12 alto · 13-14 moderado · 15-18 leve · ≥ 19 sem risco' },
+      ],
+      interpretacao: [
+        `**${total} de 23 pontos — ${faixa.toLowerCase()}.** Na Braden, **quanto menor, pior**. O corte de 18 é o usado no Brasil e em boa parte dos serviços para iniciar medidas preventivas, e abaixo de 13 o risco é alto o bastante para exigir superfície de redistribuição de pressão.`,
+        'Os seis itens cobrem os três mecanismos da lesão por pressão: **pressão** (atividade e mobilidade), **tolerância tecidual** (nutrição, umidade, percepção sensorial) e **cisalhamento** — este último com escala própria de 3 pontos, porque é o mecanismo que produz lesão profunda com a pele ainda íntegra.',
+        'Atividade e mobilidade são itens **diferentes**: um paciente restrito ao leito que se vira sozinho tem risco muito menor que outro igualmente acamado e imóvel. É a incapacidade de **redistribuir a própria pressão** que causa a lesão, não o fato de estar na cama.',
+        'A escala tem sensibilidade e especificidade apenas moderadas, e as revisões sistemáticas mostram que o uso isolado de escalas não reduz incidência — o que reduz é **a avaliação da pele combinada ao pacote de prevenção**, disparado por qualquer um dos dois.',
+      ],
+      conduta: [
+        total <= 14
+          ? '**Risco moderado a muito alto: implante o pacote completo.** Reposicionamento a cada 2 horas (ou conforme a superfície de suporte), **superfície de redistribuição de pressão** (colchão de espuma viscoelástica ou de pressão alternada), proteção de proeminências ósseas com curativo de espuma de silicone multicamadas — sacro, calcâneos, trocânteres —, cabeceira em no máximo 30° e elevação dos calcâneos fora do colchão.'
+          : '**Risco leve ou ausente:** mantenha inspeção diária da pele, hidratação, mobilização e nutrição adequadas. Reavalie a cada 24 a 48 h e a cada mudança clínica.',
+        '**Inspecione a pele diariamente**, com atenção a sacro, calcâneos, trocânteres, occipital, orelhas e pontos sob dispositivos — sonda, cânula, máscara de ventilação não invasiva, oxímetro e colar cervical. A lesão por **dispositivo médico** responde por uma fração crescente dos casos e não é capturada pela Braden.',
+        'Garanta o suporte nutricional: **1,2 a 1,5 g/kg/dia de proteína**, calorias adequadas e hidratação. A desnutrição é fator de risco independente e é também o que impede a cicatrização depois que a lesão se instala.',
+        'Trate a **umidade** como problema próprio: manejo de incontinência, produtos de barreira e troca imediata. A dermatite associada à incontinência é um diagnóstico distinto, tem tratamento diferente e é sistematicamente confundida com lesão por pressão estágio 1 ou 2.',
+        'Documente o estágio quando houver lesão: 1 (eritema não branqueável com pele íntegra), 2 (perda parcial da derme), 3 (perda total da pele, gordura visível), 4 (exposição de músculo, tendão ou osso), **não classificável** (base coberta por esfacelo ou escara) e **lesão tecidual profunda** (descoloração vinhosa persistente com pele íntegra). Nunca "reestadie" uma lesão em cicatrização — uma lesão estágio 4 que melhora é "estágio 4 em cicatrização", não estágio 2.',
+      ],
+      alertas: [
+        '**A escala não substitui a inspeção da pele.** Braden alto com lesão já presente é situação comum, e o escore tranquiliza enquanto a lesão avança.',
+        'Lesão por **dispositivo médico** (cânula, sonda, máscara, oxímetro, colar) não é capturada pela escala e exige inspeção específica em cada troca de turno.',
+        'A Braden pontua **de 6 a 23, e menor é pior**; a Morse pontua até 125, e maior é pior. Registrar uma no campo da outra é erro frequente e inverte completamente a leitura do risco.',
+      ],
+    }
+  },
+  formula: ['Braden = 5 itens de 1 a 4 + fricção de 1 a 3 (total de 6 a 23; menor é pior)', 'Morse = queda prévia (25) + diagnóstico secundário (15) + auxílio (0/15/30) + acesso venoso (20) + marcha (0/10/20) + estado mental (15)'],
+  fundamento:
+    'A lesão por pressão nasce de uma equação simples entre **intensidade e duração da pressão** contra a **tolerância do tecido**. Quando a pressão externa sobre uma proeminência óssea ultrapassa a pressão de fechamento capilar — historicamente citada em torno de 32 mmHg, embora seja muito variável —, o fluxo cessa, e a isquemia leva a acúmulo de metabólitos, acidose, aumento da permeabilidade capilar, edema e morte celular. O detalhe que explica a gravidade é a distribuição: a pressão se concentra na interface entre osso e tecido profundo, de modo que o **músculo, mais sensível à isquemia que a pele, morre primeiro** — e é por isso que existe a lesão tecidual profunda, em que a pele parece apenas descolorada enquanto há necrose extensa por baixo, e por isso que o estadiamento visual subestima o dano real. O **cisalhamento** agrava tudo: quando a cabeceira está elevada e o paciente escorrega, a pele fica aderida ao lençol enquanto o esqueleto desliza, angulando e ocluindo os vasos perfurantes com uma fração da pressão perpendicular necessária. É esse mecanismo que justifica o limite de 30° de cabeceira, e é ele que a Braden isola num item próprio. Em pessoas com percepção sensorial íntegra, micromovimentos inconscientes redistribuem a pressão continuamente, mesmo durante o sono — a lesão por pressão é, antes de tudo, a falência desse reflexo protetor.',
+  armadilhas: [
+    'A Braden subestima o risco em pacientes críticos com instabilidade hemodinâmica, uso de vasopressor e edema, em que a perfusão tecidual está comprometida independentemente do escore.',
+    'Nenhuma das duas escalas previne por si: a evidência de redução de incidência vem do pacote de prevenção implementado, não do registro do número.',
+    'Massagear área avermelhada é prática antiga e contraindicada — pode agravar a lesão tecidual profunda subjacente.',
+    'Colchão de pressão alternada não dispensa reposicionamento, e o calcâneo continua precisando de elevação fora da superfície, porque nenhuma superfície redistribui pressão num ponto de contato tão pequeno.',
+  ],
+  referencias: [
+    { texto: 'Bergstrom N, Braden BJ, Laguzza A, Holman V. The Braden Scale for Predicting Pressure Sore Risk. Nurs Res. 1987;36(4):205-210.' },
+    { texto: 'Morse JM, Morse RM, Tylko SJ. Development of a scale to identify the fall-prone patient. Can J Aging. 1989;8(4):366-377.' },
+    { texto: 'European Pressure Ulcer Advisory Panel, National Pressure Injury Advisory Panel, Pan Pacific Pressure Injury Alliance. Prevention and Treatment of Pressure Ulcers/Injuries: Clinical Practice Guideline. 3ª ed. 2019.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo, barthel, bradenMorse]
 
 export default ferramentas

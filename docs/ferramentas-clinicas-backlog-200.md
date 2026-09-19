@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **226** (eram 201) |
-| Implementadas desta lista | **25** |
-| Restantes | **175** |
-| Nota média na auditoria | **100** — todas as 226 |
+| Ferramentas no catálogo | **227** (eram 201) |
+| Implementadas desta lista | **26** |
+| Restantes | **174** |
+| Nota média na auditoria | **100** — todas as 227 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -128,6 +128,7 @@ escores individuais.
 42. **Clinical Frailty Scale, FRAIL e fenótipo de Fried** — fragilidade como modificador de prognóstico e de conduta. **[P1]**
     - 🟡 **parcial** — `fragilidade-fried` cobre CFS e fenótipo de Fried; FRAIL pendente
 43. **Escalas de risco de enfermagem: Braden, Norton, Morse e Downton** — lesão por pressão e queda intra-hospitalar. **[P1]**
+    - 🟡 **parcial** — `braden-morse` cobre Braden e Morse; Norton e Downton pendentes
 44. **Escore de Aldrete e Aldrete modificado** — alta da sala de recuperação pós-anestésica. **[P1]**
 45. **Vasoactive-Inotropic Score (VIS)** — quantificação objetiva da carga vasoativa. **[P2]**
 46. **Escore de Murray, RESP score e SAVE score** — lesão pulmonar aguda e indicação/prognóstico de ECMO. **[P2]**

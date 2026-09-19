@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 89,
+    total: 90,
   },
   {
     id: 'cirurgia',
@@ -188,7 +188,7 @@ export const CATEGORIAS: Categoria[] = [
       'Em idosos, idade cronológica prediz pouco e funcionalidade prediz quase tudo: fragilidade, capacidade funcional e cognição preveem complicação cirúrgica, delirium, institucionalização e mortalidade melhor que qualquer índice de comorbidade. Em cuidados paliativos, as escalas de desempenho e prognóstico existem para que a conversa sobre objetivos aconteça enquanto ainda há escolha.',
     icone: 'geriatria',
     cor: 'ardosia',
-    total: 6,
+    total: 7,
   },
   {
     id: 'especialidades',
