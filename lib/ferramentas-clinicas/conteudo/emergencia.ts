@@ -918,6 +918,244 @@ const sequenciaRapida: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [apache, saps3, vasoativas, infusao, volemia, bicarbonato, anafilaxia, sequenciaRapida]
+/* ═══════════ Canadian C-Spine Rule e NEXUS — liberação da coluna cervical ═══════════ */
+
+const cspine: Ferramenta = {
+  id: 'canadian-c-spine',
+  nome: 'Canadian C-Spine Rule e NEXUS — liberação da coluna cervical',
+  sinonimos: ['c-spine', 'canadian cspine', 'nexus', 'coluna cervical', 'colar cervical', 'trauma cervical'],
+  resumo: 'Decide quem pode ter a coluna cervical liberada sem imagem após trauma, por duas regras validadas com sensibilidade próxima de 100%.',
+  categorias: ['emergencia', 'especialidades'],
+  campos: [
+    campoSeg('regra', 'Regra', [
+      { valor: 'ccr', rotulo: 'Canadian C-Spine' },
+      { valor: 'nexus', rotulo: 'NEXUS' },
+    ], { ajuda: 'A Canadian C-Spine tem especificidade maior (evita mais exames) e exige paciente alerta, estável e com Glasgow 15; o NEXUS é mais simples e aplicável a uma população um pouco mais ampla. As duas têm sensibilidade próxima de 100%, e a escolha costuma ser institucional.' }),
+    campoSimNao('idade65', 'Idade de 65 anos ou mais', 0, 'Fator de alto risco na Canadian C-Spine: o osso osteoporótico e a artrose cervical fazem o idoso fraturar com mecanismo trivial, inclusive queda da própria altura.'),
+    campoSimNao('mecanismoPerigoso', 'Mecanismo perigoso', 0, 'Queda de altura maior que 1 metro ou 5 degraus, carga axial sobre a cabeça (mergulho), colisão em alta velocidade (acima de 100 km/h), capotamento, ejeção, acidente com veículo recreativo motorizado, ou colisão de bicicleta.'),
+    campoSimNao('parestesia', 'Parestesias em extremidades', 0, 'Formigamento ou dormência em qualquer extremidade — na Canadian C-Spine, é fator de alto risco e obriga imagem, mesmo isolado.'),
+    campoSimNao('colisaoTraseira', 'Colisão traseira simples (sem os agravantes)', 0, 'Fator de baixo risco que permite testar a rotação. **Não** vale se houve empurrão para o tráfego oncoming, colisão por ônibus ou caminhão grande, capotamento ou impacto por veículo em alta velocidade.'),
+    campoSimNao('sentado', 'Permaneceu sentado na emergência', 0, undefined),
+    campoSimNao('deambulou', 'Deambulou em algum momento após o trauma', 0, undefined),
+    campoSimNao('dorTardia', 'Dor cervical de início tardio (não imediata)', 0, undefined),
+    campoSimNao('semDorLinhaMedia', 'Ausência de dor à palpação da linha média cervical posterior', 0, 'Palpe os processos espinhosos de C1 a C7. Dor na musculatura paravertebral não conta — o critério é a linha média posterior.'),
+    campoSimNao('rotacao', 'Consegue rodar ativamente o pescoço 45° para os dois lados', 0, 'Peça ao paciente para rodar ativamente, sem ajuda. **Só teste a rotação se não houver nenhum fator de alto risco e houver pelo menos um fator de baixo risco** — testar antes disso pode mobilizar uma coluna instável.'),
+    campoSimNao('nAlerta', 'Alerta e orientado (Glasgow 15)', 0, undefined),
+    campoSimNao('nFoco', 'Sem déficit neurológico focal', 0, 'Force, sensibilidade e reflexos normais nos quatro membros.'),
+    campoSimNao('nIntoxicado', 'Sem sinais de intoxicação', 0, 'Álcool, drogas ou medicação sedativa em uso recente impedem a aplicação da regra, porque mascaram a dor.'),
+    campoSimNao('nDistrator', 'Sem lesão dolorosa distrativa', 0, 'Fratura de ossos longos, queimadura extensa, lesão visceral ou qualquer dor intensa que desvie a atenção da coluna.'),
+  ],
+  calcular: (v) => {
+    const nexus = opc(v, 'regra') === 'nexus'
+
+    if (nexus) {
+      const criterios: [string, boolean][] = [
+        ['Sem dor à palpação da linha média posterior', sim(v, 'semDorLinhaMedia')],
+        ['Sem sinais de intoxicação', sim(v, 'nIntoxicado')],
+        ['Alerta e orientado', sim(v, 'nAlerta')],
+        ['Sem déficit neurológico focal', sim(v, 'nFoco')],
+        ['Sem lesão dolorosa distrativa', sim(v, 'nDistrator')],
+      ]
+      const todos = criterios.every(([, c]) => c)
+      return {
+        titulo: 'NEXUS',
+        valor: todos ? 'Coluna liberável sem imagem' : 'Imagem indicada',
+        nivel: todos ? 'ok' : 'alerta',
+        rotuloNivel: `${criterios.filter(([, c]) => c).length} de 5 critérios cumpridos`,
+        detalhes: criterios.map(([rotulo, c]) => ({ rotulo, valor: c ? 'Cumprido' : 'Não cumprido', nivel: (c ? 'ok' : 'alerta') as Nivel })),
+        interpretacao: [
+          todos
+            ? '**Os cinco critérios estão cumpridos: a coluna cervical pode ser liberada sem imagem.** O NEXUS tem sensibilidade de 99,6% para lesão cervical clinicamente significativa, com valor preditivo negativo próximo de 100%.'
+            : '**Pelo menos um critério não foi cumprido: a imagem está indicada.** Basta um para indicar — os cinco precisam ser simultaneamente negativos.',
+          'A **tomografia** substituiu a radiografia como exame de escolha no trauma cervical: a radiografia em três incidências perde de 30 a 50% das fraturas, sobretudo na transição cervicotorácica e em C1-C2, e a tomografia multidetectores tem sensibilidade acima de 99%.',
+          'O NEXUS é mais simples que a Canadian C-Spine e não exige julgamento sobre mecanismo, mas tem **especificidade menor** — ou seja, indica mais exames para a mesma segurança.',
+          'A **lesão dolorosa distrativa** é o critério mais subjetivo e mal aplicado: a definição não é rígida, e cabe ao avaliador julgar se há dor suficiente para mascarar a cervical.',
+        ],
+        conduta: [
+          todos
+            ? '**Retire o colar cervical.** Manter colar sem indicação causa dor, úlcera de pressão, dificuldade de via aérea, aumento da pressão intracraniana e desconforto, sem qualquer benefício em coluna já liberada.'
+            : '**Solicite tomografia de coluna cervical** e mantenha a imobilização até o resultado, com colar bem ajustado, cabeça neutra e mobilização em bloco.',
+          'Diante de **déficit neurológico com tomografia normal**, prossiga com **ressonância magnética**: ela detecta lesão ligamentar, hematoma epidural e contusão medular, incluindo a lesão medular sem anormalidade radiográfica, mais comum em crianças e em idosos com canal estreito.',
+          'Em idosos, mantenha o limiar baixo: a **fratura do odontoide** é a mais comum nessa faixa, ocorre com trauma trivial e pode cursar com pouca dor. Queda da própria altura em maior de 65 anos já é mecanismo suficiente.',
+          'Registre no prontuário **qual regra foi aplicada e cada critério avaliado**. É essa documentação que sustenta a decisão de não pedir exame, e é ela que falta quando a decisão é questionada depois.',
+        ],
+        alertas: [
+          'O NEXUS **não se aplica** a paciente intoxicado, rebaixado, com déficit focal ou com lesão distrativa — nesses casos não há regra a aplicar, e a imagem é obrigatória.',
+          'Radiografia simples não é mais aceitável como exame de liberação no adulto: a tomografia é o padrão, e a radiografia perde uma fração grande das fraturas.',
+        ],
+      }
+    }
+
+    const altoRisco = sim(v, 'idade65') || sim(v, 'mecanismoPerigoso') || sim(v, 'parestesia')
+    const baixoRisco = sim(v, 'colisaoTraseira') || sim(v, 'sentado') || sim(v, 'deambulou') || sim(v, 'dorTardia') || sim(v, 'semDorLinhaMedia')
+    const rodou = sim(v, 'rotacao')
+    const liberavel = !altoRisco && baixoRisco && rodou
+
+    return {
+      titulo: 'Canadian C-Spine Rule',
+      valor: liberavel ? 'Coluna liberável sem imagem' : 'Imagem indicada',
+      nivel: liberavel ? 'ok' : 'alerta',
+      rotuloNivel: altoRisco ? 'Fator de alto risco presente' : !baixoRisco ? 'Nenhum fator de baixo risco' : rodou ? 'Rotação preservada' : 'Rotação limitada',
+      detalhes: [
+        { rotulo: 'Passo 1 — fator de alto risco', valor: altoRisco ? 'Presente' : 'Ausente', nivel: (altoRisco ? 'alerta' : 'ok') as Nivel, nota: 'Idade ≥ 65, mecanismo perigoso ou parestesias' },
+        { rotulo: 'Passo 2 — fator de baixo risco', valor: baixoRisco ? 'Presente' : 'Ausente', nivel: (baixoRisco ? 'ok' : 'alerta') as Nivel, nota: 'Permite testar a rotação' },
+        { rotulo: 'Passo 3 — rotação de 45° bilateral', valor: rodou ? 'Consegue' : 'Não consegue', nivel: (rodou ? 'ok' : 'alerta') as Nivel },
+      ],
+      interpretacao: [
+        'A regra tem **três passos em ordem obrigatória**. Primeiro: há fator de alto risco? Se sim, imagem, e o raciocínio para aqui. Segundo: há algum fator de baixo risco que permita avaliar a rotação com segurança? Se não, imagem. Terceiro: o paciente roda o pescoço 45° para os dois lados? Se sim, a coluna é liberável.',
+        altoRisco
+          ? '**Há fator de alto risco: a imagem está indicada e a rotação não deve ser testada.** Mobilizar ativamente uma coluna potencialmente instável é justamente o que a sequência dos passos existe para evitar.'
+          : !baixoRisco
+            ? '**Nenhum fator de baixo risco foi identificado**, o que impede testar a rotação com segurança. A imagem está indicada.'
+            : rodou
+              ? '**Sem alto risco, com fator de baixo risco e rotação preservada: a coluna pode ser liberada sem imagem.** A Canadian C-Spine tem sensibilidade de 99,4% e especificidade superior à do NEXUS, evitando mais exames para a mesma segurança.'
+              : '**A rotação está limitada**, o que indica imagem mesmo na ausência de fatores de alto risco.',
+        'A regra **exige paciente alerta (Glasgow 15), estável e cooperativo**, com trauma nas últimas 48 horas. Ela não se aplica a menores de 16 anos, gestantes, pacientes com doença vertebral prévia conhecida ou com paralisia.',
+        'A comparação direta entre as duas regras mostrou sensibilidade semelhante e **especificidade maior para a Canadian C-Spine** (cerca de 45% contra 37%), o que se traduz em menos tomografias para a mesma taxa de detecção.',
+      ],
+      conduta: [
+        liberavel
+          ? '**Retire o colar cervical.** Colar mantido sem indicação causa dor, úlcera de pressão, dificuldade de acesso à via aérea, aumento da pressão intracraniana e agitação — sem benefício algum em coluna já liberada.'
+          : '**Solicite tomografia de coluna cervical** e mantenha a imobilização até o resultado, com mobilização em bloco.',
+        'Se houver **déficit neurológico com tomografia normal**, prossiga com ressonância magnética para lesão ligamentar, hematoma epidural e contusão medular.',
+        'Em **idosos**, a fratura do odontoide ocorre com trauma trivial e com pouca dor; em **crianças**, considere a lesão medular sem anormalidade radiográfica, pela maior elasticidade ligamentar e maior proporção cefálica.',
+        'Documente cada passo no prontuário. A decisão de **não** pedir exame precisa ser rastreável tanto quanto a de pedir.',
+      ],
+      alertas: [
+        '**Não teste a rotação antes de percorrer os dois primeiros passos.** A sequência existe para não mobilizar ativamente uma coluna possivelmente instável.',
+        'A regra não se aplica a menores de 16 anos, a pacientes não alertas, instáveis ou intoxicados, nem a trauma com mais de 48 horas.',
+      ],
+    }
+  },
+  formula: [
+    'Canadian C-Spine: (1) fator de alto risco → imagem · (2) sem fator de baixo risco → imagem · (3) não roda 45° bilateral → imagem',
+    'NEXUS: liberável apenas se os 5 critérios forem negativos',
+  ],
+  fundamento:
+    'A coluna cervical concentra risco desproporcional no trauma porque reúne a maior mobilidade da coluna vertebral com a menor proteção óssea e com a estrutura de maior consequência: a medula cervical alta, cuja lesão acima de C4 abole a inervação diafragmática e causa parada respiratória. Cerca de 2 a 3% dos traumas fechados significativos têm lesão cervical, e uma fração relevante delas é instável. Por outro lado, imobilizar e tomografar todo mundo tem custo real — radiação em população jovem, tempo de emergência, e os danos diretos do colar, que aumenta a pressão intracraniana por dificultar o retorno venoso jugular, provoca úlcera de pressão em horas e atrapalha o manejo da via aérea. As duas regras foram derivadas e validadas prospectivamente com desenho deliberadamente assimétrico: sensibilidade próxima de 100%, aceitando especificidade baixa, porque perder uma fratura instável é um desfecho catastrófico e irreversível enquanto um exame a mais é um custo recuperável. A sequência de três passos da Canadian C-Spine incorpora ainda uma precaução de segurança que o NEXUS não tem — só se pede ao paciente que rode o pescoço depois de afastados os fatores de alto risco.',
+  armadilhas: [
+    'Aplicar as regras fora de sua população de derivação — intoxicados, rebaixados, menores de 16 anos, trauma antigo — invalida a sensibilidade relatada.',
+    '"Lesão distrativa" é um critério subjetivo e a fonte mais comum de divergência entre avaliadores no NEXUS.',
+    'A dor deve ser pesquisada na **linha média posterior**: dor paravertebral muscular não é o critério e leva a exames desnecessários quando confundida.',
+    'Tomografia normal não exclui lesão ligamentar pura nem lesão medular sem anormalidade radiográfica — com déficit neurológico, a ressonância é obrigatória.',
+  ],
+  referencias: [
+    { texto: 'Stiell IG, Wells GA, Vandemheen KL, et al. The Canadian C-spine rule for radiography in alert and stable trauma patients. JAMA. 2001;286(15):1841-1848.' },
+    { texto: 'Hoffman JR, Mower WR, Wolfson AB, Todd KH, Zucker MI. Validity of a set of clinical criteria to rule out injury to the cervical spine in patients with blunt trauma (NEXUS). N Engl J Med. 2000;343(2):94-99.' },
+    { texto: 'Stiell IG, Clement CM, McKnight RD, et al. The Canadian C-spine rule versus the NEXUS low-risk criteria in patients with trauma. N Engl J Med. 2003;349(26):2510-2518.' },
+  ],
+}
+
+/* ═══════════════ Índice de comorbidade de Charlson ═══════════════ */
+
+const charlsonItens: [string, string, number][] = [
+  ['iam', 'Infarto do miocárdio prévio', 1],
+  ['icc', 'Insuficiência cardíaca congestiva', 1],
+  ['vascular', 'Doença vascular periférica', 1],
+  ['avc', 'Doença cerebrovascular (AVC ou AIT)', 1],
+  ['demencia', 'Demência', 1],
+  ['dpoc', 'Doença pulmonar crônica', 1],
+  ['conectivo', 'Doença do tecido conjuntivo', 1],
+  ['ulcera', 'Doença ulcerosa péptica', 1],
+  ['hepaticaLeve', 'Hepatopatia leve', 1],
+  ['diabetes', 'Diabetes sem lesão de órgão-alvo', 1],
+  ['diabetesAlvo', 'Diabetes com lesão de órgão-alvo', 2],
+  ['hemiplegia', 'Hemiplegia ou paraplegia', 2],
+  ['renal', 'Doença renal moderada a grave', 2],
+  ['tumor', 'Tumor sólido sem metástase (nos últimos 5 anos)', 2],
+  ['leucemia', 'Leucemia', 2],
+  ['linfoma', 'Linfoma', 2],
+  ['hepaticaGrave', 'Hepatopatia moderada a grave', 3],
+  ['metastase', 'Tumor sólido metastático', 6],
+  ['hiv', 'HIV/aids', 6],
+]
+
+const charlson: Ferramenta = {
+  id: 'charlson',
+  nome: 'Índice de comorbidade de Charlson',
+  sigla: 'CCI',
+  sinonimos: ['charlson', 'cci', 'comorbidade', 'indice de comorbidade', 'mortalidade 10 anos'],
+  resumo: 'Soma a carga de comorbidade com pesos derivados de mortalidade e estima a sobrevida em 10 anos.',
+  categorias: ['emergencia', 'geriatria'],
+  campos: [
+    campoIdade({ min: 18, ajuda: 'A versão ajustada acrescenta 1 ponto por década a partir dos 50 anos: 1 ponto dos 50 aos 59, 2 dos 60 aos 69, e assim por diante. Em populações idosas, a idade costuma contribuir mais que as próprias comorbidades.' }),
+    ...charlsonItens.map(([id, rotulo, pontos]) =>
+      campoSimNao(id, `${rotulo} (${pontos} ${pontos === 1 ? 'ponto' : 'pontos'})`, pontos, undefined),
+    ),
+  ],
+  calcular: (v) => {
+    const idade = num(v, 'idade')
+    if (idade === null) return null
+    const comorbidades = somaSimNao(v, charlsonItens.map(([id, , pontos]) => ({ id, pontos })))
+    const pontosIdade = idade < 50 ? 0 : Math.min(4, Math.floor((idade - 40) / 10))
+    const total = comorbidades + pontosIdade
+
+    // Sobrevida estimada em 10 anos pela fórmula original de Charlson.
+    const sobrevida = Math.pow(0.983, Math.exp(total * 0.9) * 100) * 100
+    const nivel: Nivel = total >= 5 ? 'critico' : total >= 3 ? 'alerta' : total >= 1 ? 'atencao' : 'ok'
+
+    const presentes = charlsonItens.filter(([id]) => sim(v, id))
+
+    return {
+      titulo: 'Índice de Charlson ajustado pela idade',
+      valor: fmtInt(total),
+      unidade: 'pontos',
+      nivel,
+      rotuloNivel: total >= 5 ? 'Carga muito alta' : total >= 3 ? 'Carga alta' : total >= 1 ? 'Carga baixa a moderada' : 'Sem comorbidade',
+      detalhes: [
+        { rotulo: 'Comorbidades', valor: fmtInt(comorbidades) },
+        { rotulo: 'Pontos por idade', valor: fmtInt(pontosIdade), nota: '1 por década a partir dos 50 anos, teto de 4' },
+        { rotulo: 'Sobrevida estimada em 10 anos', valor: fmtPct(Math.max(0, Math.min(100, sobrevida)), 0), nota: 'Estimativa da coorte original de 1987' },
+        { rotulo: 'Comorbidades assinaladas', valor: presentes.length > 0 ? presentes.map(([, r]) => r.split(' (')[0]).join(', ') : 'nenhuma' },
+      ],
+      interpretacao: [
+        `**${total} pontos**, sendo ${comorbidades} de comorbidade e ${pontosIdade} de idade. As faixas usuais são: 0 sem comorbidade, 1 a 2 carga baixa, 3 a 4 carga moderada, e 5 ou mais carga alta, com mortalidade progressivamente maior em cada uma.`,
+        'Os pesos não são arbitrários: foram derivados do **risco relativo de morte em 1 ano** associado a cada condição na coorte original. Por isso tumor metastático e HIV/aids valem 6 pontos, enquanto diabetes sem lesão de órgão vale 1 — a escala reflete letalidade, não prevalência nem complexidade de manejo.',
+        `A sobrevida estimada em 10 anos, de aproximadamente ${fmtPct(Math.max(0, Math.min(100, sobrevida)), 0)}, vem da fórmula original e deve ser lida com reserva: a coorte é de 1987, e o prognóstico de várias das condições mudou radicalmente desde então — HIV, em particular, deixou de ser sentença e hoje tem expectativa de vida próxima da população geral sob tratamento antirretroviral.`,
+        idade >= 50
+          ? `A idade contribuiu com ${pontosIdade} ponto(s). Em populações idosas, ela costuma pesar mais que as próprias comorbidades, e é por isso que a versão ajustada substituiu a original na maioria dos usos.`
+          : 'Abaixo de 50 anos, a idade não acrescenta pontos ao índice.',
+      ],
+      conduta: [
+        'Use o índice para **ajustar risco em comparações e para informar conversas de prognóstico**, não para decidir sobre um tratamento específico. Ele foi construído para ajustar casuística em pesquisa e em auditoria de resultados.',
+        'Em **decisão sobre rastreamento de câncer**, o índice ajuda a estimar se o paciente viverá o suficiente para se beneficiar: rastrear câncer de cólon ou de mama em quem tem expectativa de vida menor que 10 anos expõe a dano imediato com benefício que nunca chegará.',
+        'Antes de restringir tratamento por carga de comorbidade, avalie **fragilidade e funcionalidade** — elas predizem desfecho melhor que a contagem de doenças, e um paciente com Charlson alto pode estar funcionalmente íntegro.',
+        'Trate cada comorbidade identificada de forma ativa: a soma alta é, antes de tudo, uma lista de intervenções pendentes. Insuficiência cardíaca, doença renal, diabetes e doença pulmonar têm tratamentos que modificam desfecho.',
+        'Reavalie o índice em cada transição de cuidado — ele muda com novo diagnóstico, e a versão registrada na admissão anterior envelhece rápido.',
+      ],
+      alertas: [
+        'A coorte de derivação é de **1987**. A estimativa de sobrevida em 10 anos é historicamente calibrada e superestima a mortalidade de condições cujo tratamento mudou, sobretudo HIV/aids, linfoma, leucemia e hepatite C.',
+        'O índice **não mede funcionalidade, fragilidade nem cognição**, que são preditores mais fortes de desfecho em idosos. Usá-lo sozinho para decidir intensidade de cuidado é uso indevido.',
+      ],
+    }
+  },
+  formula: ['CCI = soma dos pesos das comorbidades presentes', 'Ajustado: acrescenta 1 ponto por década a partir dos 50 anos (teto de 4)', 'Sobrevida em 10 anos ≈ 0,983^(e^(CCI × 0,9)) × 100'],
+  fundamento:
+    'Charlson e colaboradores partiram de um problema metodológico concreto: comparar desfechos entre serviços ou entre tratamentos é injusto quando as populações diferem em carga de doença, e contar comorbidades sem pesá-las trata um diabetes bem controlado como equivalente a um tumor metastático. Eles acompanharam uma coorte de pacientes internados, mediram o **risco relativo de morte em 1 ano** associado a cada condição e converteram esses riscos em pesos inteiros — daí a escala assimétrica, em que algumas condições valem 1 e outras valem 6. A racionalidade fisiológica por trás do índice é a de **reserva orgânica**: cada comorbidade consome a margem entre a função basal de um sistema e o limiar em que ele falha, e a soma dessas margens consumidas determina a capacidade de sobreviver a um novo insulto. Isso explica por que o índice prediz melhor em coortes do que em indivíduos, e por que fragilidade — que mede diretamente a reserva, em vez de inferi-la a partir da lista de diagnósticos — acaba superando o Charlson em predição individual no idoso.',
+  armadilhas: [
+    'Comorbidades registradas de forma incompleta no prontuário subestimam sistematicamente o índice, e é assim que ele costuma ser calculado em estudos retrospectivos.',
+    'A gravidade dentro de cada categoria não é capturada: uma insuficiência cardíaca classe I e uma classe IV valem o mesmo ponto.',
+    'Hipertensão, dislipidemia, obesidade, tabagismo e transtornos mentais não entram no índice, ainda que afetem prognóstico.',
+    'Existem versões adaptadas para bases administrativas (Deyo, Romano, Quan), com códigos diferentes e resultados não intercambiáveis com a versão clínica.',
+  ],
+  referencias: [
+    { texto: 'Charlson ME, Pompei P, Ales KL, MacKenzie CR. A new method of classifying prognostic comorbidity in longitudinal studies. J Chronic Dis. 1987;40(5):373-383.' },
+    { texto: 'Charlson M, Szatrowski TP, Peterson J, Gold J. Validation of a combined comorbidity index. J Clin Epidemiol. 1994;47(11):1245-1251.' },
+    { texto: 'Quan H, Li B, Couris CM, et al. Updating and validating the Charlson comorbidity index and score for risk adjustment in hospital discharge abstracts using data from 6 countries. Am J Epidemiol. 2011;173(6):676-682.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [
+  apache,
+  saps3,
+  vasoativas,
+  infusao,
+  volemia,
+  bicarbonato,
+  anafilaxia,
+  sequenciaRapida,
+  cspine,
+  charlson,
+]
 
 export default ferramentas

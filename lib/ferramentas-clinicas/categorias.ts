@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 81,
+    total: 83,
   },
   {
     id: 'cirurgia',
@@ -188,7 +188,7 @@ export const CATEGORIAS: Categoria[] = [
       'Em idosos, idade cronológica prediz pouco e funcionalidade prediz quase tudo: fragilidade, capacidade funcional e cognição preveem complicação cirúrgica, delirium, institucionalização e mortalidade melhor que qualquer índice de comorbidade. Em cuidados paliativos, as escalas de desempenho e prognóstico existem para que a conversa sobre objetivos aconteça enquanto ainda há escolha.',
     icone: 'geriatria',
     cor: 'ardosia',
-    total: 2,
+    total: 3,
   },
   {
     id: 'especialidades',
@@ -198,7 +198,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escores que decidem conduta em territórios específicos e que o generalista encontra com frequência: quando uma pedra ureteral vai sair sozinha, se uma lesão pigmentada precisa de biópsia, quando uma otite exige antibiótico, qual tornozelo torcido merece radiografia. São regras de decisão de alto valor justamente porque evitam exame e procedimento desnecessários.',
     icone: 'especialidades',
     cor: 'ocre',
-    total: 3,
+    total: 4,
   },
 ]
 
