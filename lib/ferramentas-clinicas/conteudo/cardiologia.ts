@@ -15,6 +15,7 @@ import {
   numOu,
   opc,
   pts,
+  ptsOpc,
   sim,
   somaSimNao,
 } from '../helpers'
@@ -2103,6 +2104,199 @@ const ldl: Ferramenta = {
   ],
 }
 
+/* ═══════════════════ Killip-Kimball e classificação de Forrester ═══════════════════ */
+
+const killipCampos: Campo[] = [
+  campoOpc('killip', 'Classe de Killip-Kimball', [
+    { valor: '1', rotulo: 'I — Sem sinais de congestão: ausculta pulmonar limpa, sem B3', pontos: 1 },
+    { valor: '2', rotulo: 'II — Estertores em até metade dos campos pulmonares, B3 ou turgência jugular', pontos: 2 },
+    { valor: '3', rotulo: 'III — Edema agudo de pulmão: estertores em mais da metade dos campos', pontos: 3 },
+    { valor: '4', rotulo: 'IV — Choque cardiogênico: hipotensão com hipoperfusão periférica', pontos: 4 },
+  ], { padrao: '1', ajuda: 'Classifique pelo **exame físico na admissão**, antes de diurético e de suporte ventilatório. A classe registrada depois do tratamento não é a classe de Killip e não carrega o mesmo prognóstico.' }),
+  campoSimNao('reperfusao', 'Reperfusão realizada (angioplastia primária ou trombólise)', 0, 'A mortalidade por classe caiu substancialmente na era da reperfusão: as taxas originais de 1967 são cerca de três vezes maiores que as atuais em serviços com angioplastia primária disponível.'),
+  campoNum('pas', 'Pressão arterial sistólica', { unidade: 'mmHg', min: 40, max: 250, passo: 1, opcional: true, ajuda: 'Sistólica abaixo de 90 mmHg com sinais de hipoperfusão, por mais de 30 minutos e sem hipovolemia, define choque cardiogênico independentemente da ausculta.' }),
+]
+
+const killip: Ferramenta = {
+  id: 'killip-kimball',
+  nome: 'Classificação de Killip-Kimball no infarto',
+  sinonimos: ['killip', 'killip kimball', 'iam congestao', 'choque cardiogenico', 'forrester'],
+  resumo: 'Gradua a congestão e a hipoperfusão no infarto pelo exame físico da admissão, e estima a mortalidade por classe.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: killipCampos,
+  calcular: (v) => {
+    const classe = ptsOpc(killipCampos, v, 'killip')
+    if (classe === null) return null
+    const reperfusao = sim(v, 'reperfusao')
+    const pas = num(v, 'pas')
+
+    // Mortalidade hospitalar: série original de 1967 e era contemporânea.
+    const original = [6, 17, 38, 81][classe - 1]
+    const atual = [2, 8, 18, 45][classe - 1]
+    const estimada = reperfusao ? atual : Math.round((original + atual) / 2)
+
+    const nivel: Nivel = classe >= 4 ? 'critico' : classe === 3 ? 'critico' : classe === 2 ? 'alerta' : 'ok'
+    const rotulos = ['Sem congestão', 'Congestão leve a moderada', 'Edema agudo de pulmão', 'Choque cardiogênico']
+
+    const conduta: string[] = []
+    conduta.push(
+      '**Reperfusão é a prioridade em qualquer classe de Killip** no infarto com supra de ST: angioplastia primária em até 90 minutos do primeiro contato médico (120 minutos se houver transferência), ou trombólise em até 30 minutos quando a angioplastia não for alcançável no prazo. Quanto pior a classe, maior o benefício absoluto da reperfusão.',
+    )
+    if (classe === 1) {
+      conduta.push('**Killip I:** mantenha monitorização e a terapia antitrombótica e anti-isquêmica plena. Inicie betabloqueador nas primeiras 24 h se não houver contraindicação, e IECA ou BRA, sobretudo com disfunção ventricular, diabetes ou infarto anterior.')
+    } else if (classe === 2) {
+      conduta.push('**Killip II:** acrescente diurético de alça e vasodilatador conforme a pressão, mantenha oxigênio apenas se a saturação estiver abaixo de 90%, e solicite ecocardiograma para avaliar função ventricular e complicações mecânicas. **Betabloqueador intravenoso está contraindicado** na presença de congestão.')
+    } else if (classe === 3) {
+      conduta.push('**Killip III (edema agudo):** ventilação não invasiva com pressão positiva, que reduz intubação e mortalidade; nitrato intravenoso se a sistólica permitir; diurético de alça; e reperfusão imediata. Evite volume e betabloqueador.')
+    } else {
+      conduta.push('**Killip IV (choque cardiogênico):** a mortalidade permanece alta mesmo hoje. Reperfusão imediata da artéria culpada — e **apenas dela**, porque o ensaio CULPRIT-SHOCK mostrou mortalidade maior com revascularização de múltiplos vasos no mesmo tempo. Suporte com noradrenalina como vasopressor de escolha e dobutamina como inotrópico, considerando dispositivo de assistência circulatória em centro habilitado.')
+    }
+    conduta.push(
+      'Busque ativamente as **complicações mecânicas** quando a classe piora de forma abrupta: ruptura de músculo papilar com insuficiência mitral aguda, comunicação interventricular e ruptura de parede livre com tamponamento. Todas aparecem entre o 2º e o 7º dia, todas têm sopro novo ou deterioração súbita, e todas são cirúrgicas — o ecocardiograma à beira do leito é o exame que as separa.',
+      'Reavalie a classe ao longo da internação. O Killip é da **admissão** por definição, mas a piora da congestão depois dela é sinal de infarto extenso, de complicação mecânica ou de sobrecarga iatrogênica de volume.',
+      'Antes da alta, garanta a **terapia de quatro pilares** quando houver disfunção ventricular: IECA ou BRA (ou sacubitril-valsartana), betabloqueador, antagonista mineralocorticoide e inibidor de SGLT2, somados a estatina de alta intensidade e antiagregação dupla pelo tempo indicado.',
+    )
+
+    return {
+      titulo: 'Killip-Kimball',
+      valor: ['I', 'II', 'III', 'IV'][classe - 1],
+      unidade: `classe · ${rotulos[classe - 1]}`,
+      nivel,
+      rotuloNivel: `Mortalidade hospitalar estimada de ${estimada}%`,
+      detalhes: [
+        { rotulo: 'Classe', valor: `${['I', 'II', 'III', 'IV'][classe - 1]} — ${rotulos[classe - 1]}` },
+        { rotulo: 'Mortalidade na série de 1967', valor: `${original}%`, nota: 'Antes da reperfusão' },
+        { rotulo: 'Mortalidade contemporânea', valor: `${atual}%`, nota: 'Com angioplastia primária disponível' },
+        { rotulo: 'Reperfusão realizada', valor: reperfusao ? 'Sim' : 'Não', nivel: (reperfusao ? 'ok' : 'alerta') as Nivel },
+        ...(pas !== null ? [{ rotulo: 'Sistólica', valor: `${fmtInt(pas)} mmHg`, nivel: (pas < 90 ? 'critico' : 'ok') as Nivel }] : []),
+      ],
+      interpretacao: [
+        `**Classe ${['I', 'II', 'III', 'IV'][classe - 1]} — ${rotulos[classe - 1].toLowerCase()}.** A série original de Killip e Kimball, de 1967, encontrou mortalidade hospitalar de 6%, 17%, 38% e 81% nas classes I a IV. Na era da reperfusão, esses números caíram para aproximadamente 2%, 8%, 18% e 45%.`,
+        'A classificação é feita **exclusivamente pelo exame físico** — ausculta pulmonar, terceira bulha, turgência jugular e sinais de hipoperfusão — e é justamente essa simplicidade que a manteve em uso por quase sessenta anos, inclusive como variável do escore GRACE.',
+        pas !== null && pas < 90
+          ? '**Sistólica abaixo de 90 mmHg.** Com sinais de hipoperfusão (extremidades frias, oligúria, confusão, lactato elevado) por mais de 30 minutos e sem hipovolemia, o quadro é de choque cardiogênico — classe IV — independentemente do que a ausculta mostre.'
+          : 'A classificação de Killip não depende da pressão arterial exceto na classe IV, em que a hipotensão com hipoperfusão é o critério definidor.',
+        'A classificação **hemodinâmica de Forrester** é o equivalente invasivo, cruzando índice cardíaco com pressão capilar pulmonar em quatro quadrantes: quente e seco, quente e úmido, frio e seco, frio e úmido. O Killip é a leitura clínica dos mesmos quadrantes, feita sem cateter.',
+      ],
+      conduta,
+      alertas: [
+        '**Classifique pela admissão.** A classe atribuída após diurético, ventilação não invasiva ou reperfusão não carrega o prognóstico descrito e não é comparável às séries publicadas.',
+        'Piora abrupta da classe entre o 2º e o 7º dia exige **ecocardiograma imediato** para afastar complicação mecânica — ruptura de músculo papilar, comunicação interventricular ou ruptura de parede livre. Todas são cirúrgicas e a janela é curta.',
+        'Em Killip IV, revascularize **apenas a artéria culpada** no procedimento inicial: o CULPRIT-SHOCK mostrou mortalidade maior com abordagem de múltiplos vasos no mesmo tempo.',
+      ],
+    }
+  },
+  formula: ['Classe I a IV pelo exame físico na admissão', 'Mortalidade hospitalar original (1967): 6% · 17% · 38% · 81%'],
+  fundamento:
+    'As quatro classes de Killip correspondem a estágios sucessivos da mesma cascata: a perda de massa contrátil no infarto reduz o volume sistólico, e o ventrículo esquerdo responde subindo a pressão diastólica final para recrutar pré-carga pelo mecanismo de Frank-Starling. Essa pressão se transmite retrogradamente ao átrio esquerdo e ao capilar pulmonar, e quando ultrapassa a pressão oncótica plasmática — em torno de 18 a 20 mmHg —, o líquido extravasa para o interstício, produzindo os estertores da classe II; acima de 25 a 30 mmHg, inunda o alvéolo e produz o edema agudo da classe III. Quando a perda de massa passa de aproximadamente 40% do ventrículo esquerdo, o débito cai a ponto de não sustentar a perfusão tecidual, e instala-se o choque da classe IV. A escala é portanto uma leitura clínica direta da pressão de enchimento e do débito — os dois eixos que Forrester mediria com cateter de artéria pulmonar alguns anos depois. Killip e Kimball descreveram a classificação em 1967 ao relatar a experiência de uma das primeiras unidades coronarianas do mundo, e o próprio artigo já mostrava que a monitorização sistemática reduzia mortalidade por permitir tratar arritmias antes que matassem.',
+  armadilhas: [
+    'Estertores por doença pulmonar crônica, fibrose ou pneumonia são confundidos com congestão e inflam a classe.',
+    'A hipotensão do infarto de ventrículo direito — que cursa com pulmões limpos, turgência jugular e hipotensão — não é classe IV verdadeira: o tratamento é volume, e diurético ou nitrato podem ser catastróficos nesse cenário.',
+    'A classe foi derivada em infarto com supra de ST; seu valor prognóstico em síndromes sem supra é menor.',
+    'A mortalidade por classe citada na literatura clássica é pré-reperfusão e superestima muito o prognóstico atual em serviços com angioplastia primária.',
+  ],
+  referencias: [
+    { texto: 'Killip T 3rd, Kimball JT. Treatment of myocardial infarction in a coronary care unit. A two year experience with 250 patients. Am J Cardiol. 1967;20(4):457-464.' },
+    { texto: 'Thiele H, Akin I, Sandri M, et al. PCI strategies in patients with acute myocardial infarction and cardiogenic shock (CULPRIT-SHOCK). N Engl J Med. 2017;377(25):2419-2432.' },
+    { texto: 'Byrne RA, Rossello X, Coughlan JJ, et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44(38):3720-3826.' },
+  ],
+}
+
+/* ═══════════════ Critérios de Sgarbossa e Sgarbossa modificado ═══════════════ */
+
+const sgarbossa: Ferramenta = {
+  id: 'sgarbossa',
+  nome: 'Critérios de Sgarbossa e Sgarbossa modificado (Smith)',
+  sinonimos: ['sgarbossa', 'smith sgarbossa', 'iam bloqueio de ramo', 'bre iam', 'marcapasso infarto'],
+  resumo: 'Identifica infarto com supra de ST na vigência de bloqueio de ramo esquerdo ou ritmo de marcapasso, em que o supra habitual não pode ser lido.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: [
+    campoSeg('versao', 'Versão', [
+      { valor: 'original', rotulo: 'Sgarbossa original (pontos)' },
+      { valor: 'smith', rotulo: 'Sgarbossa modificado (proporção)' },
+    ], { ajuda: 'A versão modificada de Smith troca o terceiro critério — supra discordante ≥ 5 mm — por uma **proporção**: supra dividido pela profundidade da onda S ≤ −0,25. Ela é bem mais sensível, porque o supra discordante esperado é proporcional à amplitude do QRS, e o critério fixo de 5 mm perde infartos em QRS de baixa voltagem.' }),
+    campoSimNao('concordanteSupra', 'Supra de ST ≥ 1 mm **concordante** com o QRS (mesma direção)', 5, 'Este é o critério mais específico de todos, com especificidade próxima de 98%: na repolarização normal do bloqueio de ramo esquerdo, o ST é sempre **discordante** do QRS, ou seja, aponta na direção oposta. Concordância é, por si, anormal.'),
+    campoSimNao('infraV1V3', 'Infra de ST ≥ 1 mm em V1, V2 ou V3', 3, 'Infra concordante nas precordiais direitas, onde o QRS é predominantemente negativo e o ST deveria estar elevado. Equivale a um supra concordante e tem especificidade alta.'),
+    campoSimNao('discordante5', 'Supra de ST ≥ 5 mm **discordante** do QRS', 2, 'Critério original. É o de menor especificidade dos três, e é justamente o que a versão modificada substitui.'),
+    campoNum('supraMm', 'Supra de ST no ponto J', { unidade: 'mm', min: 0, max: 20, passo: 0.5, mostrarSe: (v) => opc(v, 'versao') === 'smith', ajuda: 'Meça no ponto J, em relação ao segmento PR, na derivação com maior supra discordante.' }),
+    campoNum('sMm', 'Profundidade da onda S na mesma derivação', { unidade: 'mm', min: 0.5, max: 50, passo: 0.5, mostrarSe: (v) => opc(v, 'versao') === 'smith', ajuda: 'Amplitude absoluta da onda S (ou da onda R, quando o QRS for positivo) na mesma derivação em que o supra foi medido. É ela que normaliza o supra pelo tamanho do QRS.' }),
+  ],
+  calcular: (v) => {
+    const smith = opc(v, 'versao') === 'smith'
+    const concordante = sim(v, 'concordanteSupra')
+    const infra = sim(v, 'infraV1V3')
+    const discordante5 = sim(v, 'discordante5')
+    const supra = num(v, 'supraMm')
+    const s = num(v, 'sMm')
+
+    const pontos = (concordante ? 5 : 0) + (infra ? 3 : 0) + (discordante5 ? 2 : 0)
+    const proporcao = smith && supra !== null && s !== null && s > 0 ? supra / s : null
+    const criterioSmith = proporcao !== null && proporcao >= 0.25
+
+    const positivo = smith ? concordante || infra || criterioSmith : pontos >= 3
+    const nivel: Nivel = positivo ? 'critico' : 'atencao'
+
+    const interpretacao: string[] = [
+      smith
+        ? '**Sgarbossa modificado (Smith):** basta **um** dos três critérios para ser positivo — supra concordante ≥ 1 mm, infra ≥ 1 mm em V1 a V3, ou relação supra/onda S ≥ 0,25 em valor absoluto. A sensibilidade sobe de cerca de 52% (original) para 80 a 91%, mantendo especificidade acima de 90%.'
+        : `**Sgarbossa original:** ${pontos} ponto(s), com corte de 3 para positividade. O escore soma 5 pelo supra concordante, 3 pelo infra em V1 a V3 e 2 pelo supra discordante ≥ 5 mm. A especificidade é alta (cerca de 98% com 3 ou mais pontos), mas a sensibilidade é baixa — em torno de 20 a 50%.`,
+      concordante
+        ? '**Supra concordante presente — o achado mais específico de todos.** Na repolarização normal do bloqueio de ramo esquerdo, o ST é obrigatoriamente **discordante** do QRS: aponta na direção oposta ao complexo. Concordância é, por definição, anormal e aponta lesão transmural.'
+        : 'Sem supra concordante, que é o critério isolado de maior especificidade.',
+      proporcao !== null
+        ? `A relação supra/onda S é de ${fmt(proporcao, 2)}, ${criterioSmith ? '**acima** do corte de 0,25 — critério positivo' : 'abaixo do corte de 0,25'}. A lógica da proporção é que o supra discordante fisiológico é proporcional à amplitude do QRS: um supra de 3 mm com onda S de 8 mm é patológico, e o critério fixo de 5 mm o perderia.`
+        : 'A versão original usa o corte fixo de 5 mm para o supra discordante, que perde infartos em QRS de baixa voltagem — foi essa limitação que motivou a versão modificada.',
+      '**Um resultado negativo não exclui infarto.** Mesmo a versão modificada tem sensibilidade em torno de 80 a 91%, e o quadro clínico, a troponina seriada e o ecocardiograma continuam mandando. Bloqueio de ramo esquerdo novo com dor torácica típica e instabilidade justifica cateterismo independentemente dos critérios.',
+    ]
+
+    return {
+      titulo: smith ? 'Sgarbossa modificado (Smith)' : 'Sgarbossa original',
+      valor: positivo ? 'Positivo' : 'Negativo',
+      nivel,
+      rotuloNivel: smith ? 'Um critério basta' : `${pontos} de 10 pontos (corte 3)`,
+      detalhes: [
+        { rotulo: 'Supra concordante ≥ 1 mm', valor: concordante ? 'Presente' : 'Ausente', nivel: (concordante ? 'critico' : 'ok') as Nivel, nota: 'Especificidade ~98%' },
+        { rotulo: 'Infra ≥ 1 mm em V1-V3', valor: infra ? 'Presente' : 'Ausente', nivel: (infra ? 'critico' : 'ok') as Nivel },
+        ...(smith
+          ? [{ rotulo: 'Relação supra/onda S', valor: proporcao !== null ? fmt(proporcao, 2) : '—', nivel: (criterioSmith ? 'critico' : 'ok') as Nivel, nota: 'Corte ≥ 0,25' }]
+          : [{ rotulo: 'Supra discordante ≥ 5 mm', valor: discordante5 ? 'Presente' : 'Ausente', nivel: (discordante5 ? 'alerta' : 'ok') as Nivel }]),
+        { rotulo: 'Resultado', valor: positivo ? 'Critérios preenchidos' : 'Critérios não preenchidos' },
+      ],
+      interpretacao,
+      conduta: [
+        positivo
+          ? '**Critérios positivos: ative o protocolo de infarto com supra de ST.** Angioplastia primária em até 90 minutos do primeiro contato médico, ou trombólise em até 30 minutos quando a angioplastia não for alcançável no prazo. Não espere a troponina.'
+          : '**Critérios negativos não afastam infarto.** Mantenha monitorização, colha troponina ultrassensível seriada, repita o ECG a cada 15 a 30 minutos e considere ecocardiograma à beira do leito procurando alteração segmentar nova.',
+        'Compare com um **ECG anterior** sempre que houver um. Bloqueio de ramo esquerdo comprovadamente novo, em paciente com dor típica, tem peso clínico próprio — embora a diretriz atual não o trate mais como equivalente automático de supra de ST.',
+        'Diante de **instabilidade hemodinâmica, choque, insuficiência cardíaca aguda ou arritmia ventricular** com bloqueio de ramo esquerdo e quadro compatível, leve ao cateterismo independentemente dos critérios. Nesse cenário, o risco de esperar supera o de intervir.',
+        'Aplique os mesmos critérios ao **ritmo de marcapasso ventricular**, que produz a mesma discordância fisiológica do bloqueio de ramo esquerdo. A versão modificada tem desempenho melhor também aqui.',
+        'Não confunda com os padrões de **oclusão iminente sem supra**: o padrão de Wellens (T bifásica ou profundamente invertida em V2-V3, fora da dor, indicando estenose crítica proximal da artéria descendente anterior) e o padrão de De Winter (infra ascendente no ponto J com T apiculada em precordiais). Nenhum dos dois preenche critério de supra, e ambos indicam cateterismo.',
+      ],
+      alertas: [
+        '**Sgarbossa negativo não exclui infarto.** A sensibilidade é limitada mesmo na versão modificada — a decisão final é clínica, com troponina seriada, ECG seriado e ecocardiograma.',
+        'Os critérios exigem **bloqueio de ramo esquerdo ou ritmo de marcapasso**. Em bloqueio de ramo **direito**, o ST e a T são interpretáveis pelas regras habituais nas derivações não afetadas, e Sgarbossa não se aplica.',
+      ],
+    }
+  },
+  formula: [
+    'Sgarbossa original: supra concordante ≥ 1 mm (5 pts) + infra ≥ 1 mm em V1-V3 (3 pts) + supra discordante ≥ 5 mm (2 pts); positivo com ≥ 3',
+    'Modificado (Smith): qualquer um entre supra concordante ≥ 1 mm, infra ≥ 1 mm em V1-V3, ou |supra ÷ onda S| ≥ 0,25',
+  ],
+  fundamento:
+    'No bloqueio de ramo esquerdo, o impulso não desce pelo ramo esquerdo e precisa atravessar o miocárdio célula a célula, o que alarga o QRS e, mais importante, altera completamente a sequência de repolarização. O resultado é a **discordância apropriada**: o segmento ST e a onda T apontam na direção oposta à deflexão principal do QRS — em derivações com QRS negativo, o ST está elevado; em derivações com QRS positivo, está deprimido. Essa alteração de base mascara o supra de ST da lesão transmural, que é o sinal com que o eletrocardiograma detecta infarto. Sgarbossa resolveu o problema procurando o que **não** pode ser explicado pela discordância fisiológica: um ST que aponta na mesma direção do QRS (concordância) é anormal em qualquer circunstância, e é por isso que esse critério tem especificidade próxima de 98%. A contribuição de Smith foi perceber que o terceiro critério original errava de premissa: o supra discordante esperado não é um valor fixo, e sim **proporcional à amplitude do QRS**, de modo que um corte absoluto de 5 mm é permissivo demais em QRS amplo e restritivo demais em QRS de baixa voltagem. Substituir o valor absoluto pela razão entre o supra e a onda S quase dobrou a sensibilidade sem sacrificar especificidade.',
+  armadilhas: [
+    'Medir o supra na derivação errada: use a derivação com maior desvio, e meça no ponto J em relação ao segmento PR.',
+    'Aplicar os critérios a bloqueio de ramo direito, onde eles não valem — ali o ST é interpretável pelas regras habituais nas derivações não afetadas.',
+    'Hipertrofia ventricular esquerda com padrão de sobrecarga produz discordância semelhante e é fonte de falso positivo do critério de 5 mm.',
+    'Aguardar a troponina em paciente com critérios positivos: eles equivalem a supra de ST, e a conduta é reperfusão imediata.',
+  ],
+  referencias: [
+    { texto: 'Sgarbossa EB, Pinski SL, Barbagelata A, et al. Electrocardiographic diagnosis of evolving acute myocardial infarction in the presence of left bundle-branch block. N Engl J Med. 1996;334(8):481-487.' },
+    { texto: 'Smith SW, Dodd KW, Henry TD, Dvorak DM, Pearce LA. Diagnosis of ST-elevation myocardial infarction in the presence of left bundle branch block with the ST-elevation to S-wave ratio in a modified Sgarbossa rule. Ann Emerg Med. 2012;60(6):766-776.' },
+    { texto: 'Meyers HP, Limkakeng AT, Jaffa EJ, et al. Validation of the modified Sgarbossa criteria for acute coronary occlusion in the setting of left bundle branch block. Am Heart J. 2015;170(6):1255-1264.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2127,6 +2321,8 @@ export const ferramentas: Ferramenta[] = [
   duke,
   sanFrancisco,
   ldl,
+  killip,
+  sgarbossa,
 ]
 
 export default ferramentas
