@@ -153,4 +153,4 @@ export function totalDeclarado(): number {
  * Número de ferramentas distintas do catálogo.
  * Mantido pelo script `scripts/contar-ferramentas.js`.
  */
-export const TOTAL_FERRAMENTAS = 225
+export const TOTAL_FERRAMENTAS = 226

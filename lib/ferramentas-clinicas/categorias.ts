@@ -28,7 +28,7 @@ export const CATEGORIAS: Categoria[] = [
       'Os escores cardiológicos existem para transformar impressão em probabilidade: quem pode ir para casa da emergência, quem precisa de anticoagulação, quem sangra se anticoagulado. Aqui estão as calculadoras de ECG, os escores de dor torácica, de fibrilação atrial, de tromboembolismo e as contas hemodinâmicas de beira de leito.',
     icone: 'cardiologia',
     cor: 'vermelho',
-    total: 31,
+    total: 32,
   },
   {
     id: 'pneumologia',

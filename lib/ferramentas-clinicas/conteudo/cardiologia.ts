@@ -2297,6 +2297,175 @@ const sgarbossa: Ferramenta = {
   ],
 }
 
+/* ═══════════════ NYHA, CCS e critérios de Framingham para insuficiência cardíaca ═══════════════ */
+
+const nyhaCampos: Campo[] = [
+  campoSeg('escala', 'O que classificar', [
+    { valor: 'nyha', rotulo: 'NYHA (dispneia)' },
+    { valor: 'ccs', rotulo: 'CCS (angina)' },
+    { valor: 'framingham', rotulo: 'Framingham (diagnóstico de IC)' },
+  ], { ajuda: 'NYHA e CCS graduam **sintoma** e mudam com o tratamento; os critérios de Framingham fazem o **diagnóstico clínico** de insuficiência cardíaca, e servem sobretudo em contexto epidemiológico e onde não há acesso rápido a ecocardiograma e peptídeo natriurético.' }),
+  campoOpc('nyha', 'Classe funcional NYHA', [
+    { valor: '1', rotulo: 'I — Sem limitação: atividade física habitual não causa sintoma', pontos: 1 },
+    { valor: '2', rotulo: 'II — Limitação leve: confortável em repouso, sintoma com atividade habitual', pontos: 2 },
+    { valor: '3', rotulo: 'III — Limitação acentuada: sintoma com atividade menor que a habitual', pontos: 3 },
+    { valor: '4', rotulo: 'IV — Sintoma em repouso, ou com qualquer atividade', pontos: 4 },
+  ], { padrao: '1', mostrarSe: (v) => opc(v, 'escala') === 'nyha', ajuda: 'Pergunte por atividades concretas do dia a dia do paciente — subir um lance de escada, caminhar um quarteirão, tomar banho, vestir-se — e não "você se cansa?". A classe é o que ele consegue fazer hoje, não o que fazia antes.' }),
+  campoOpc('ccs', 'Classe de angina CCS', [
+    { valor: '1', rotulo: 'I — Angina apenas com esforço extenuante, rápido ou prolongado', pontos: 1 },
+    { valor: '2', rotulo: 'II — Limitação leve: angina ao subir escada rapidamente, após refeição, no frio ou sob estresse', pontos: 2 },
+    { valor: '3', rotulo: 'III — Limitação acentuada: angina ao caminhar 1 a 2 quarteirões ou subir um lance de escada em ritmo normal', pontos: 3 },
+    { valor: '4', rotulo: 'IV — Incapaz de qualquer atividade sem angina, ou angina em repouso', pontos: 4 },
+  ], { padrao: '1', mostrarSe: (v) => opc(v, 'escala') === 'ccs', ajuda: 'A CCS é mais específica que a NYHA porque ancora cada classe em distância e ritmo: quantos quarteirões, quantos lances, em que velocidade. Registre a âncora usada, para que a comparação ao longo do tempo tenha sentido.' }),
+  campoSimNao('dpn', 'Dispneia paroxística noturna ou ortopneia', 0, 'Critério **maior** de Framingham. Pergunte por quantos travesseiros o paciente usa e se acorda com falta de ar — a ortopneia tem sensibilidade modesta mas especificidade alta.'),
+  campoSimNao('jugular', 'Turgência jugular', 0, 'Critério **maior**. Avalie a 45°, com a cabeça levemente rodada para o lado oposto, procurando o ponto mais alto de pulsação venosa acima do ângulo esternal.'),
+  campoSimNao('estertores', 'Estertores crepitantes', 0, 'Critério **maior**.'),
+  campoSimNao('cardiomegalia', 'Cardiomegalia na radiografia', 0, 'Critério **maior**: índice cardiotorácico acima de 0,5 em incidência posteroanterior.'),
+  campoSimNao('edemaPulmonar', 'Edema agudo de pulmão', 0, 'Critério **maior**.'),
+  campoSimNao('b3', 'Terceira bulha (ritmo de galope)', 0, 'Critério **maior**. É pouco sensível mas muito específico, e sua presença aumenta bastante a probabilidade de pressão de enchimento elevada.'),
+  campoSimNao('refluxo', 'Refluxo hepatojugular positivo', 0, 'Critério **maior**: pressão sustentada sobre o quadrante superior direito por 15 segundos elevando a coluna jugular de forma persistente.'),
+  campoSimNao('perdaPeso', 'Perda de mais de 4,5 kg em 5 dias com o tratamento', 0, 'Critério **maior** quando a perda responde ao tratamento da insuficiência cardíaca.'),
+  campoSimNao('edemaMmii', 'Edema de membros inferiores bilateral', 0, 'Critério **menor**. Tem baixa especificidade: insuficiência venosa, medicamentos (bloqueador de canal de cálcio), hipoalbuminemia e imobilidade causam o mesmo achado.'),
+  campoSimNao('tosseNoturna', 'Tosse noturna', 0, 'Critério **menor**.'),
+  campoSimNao('dispneiaEsforco', 'Dispneia aos esforços habituais', 0, 'Critério **menor**.'),
+  campoSimNao('hepatomegalia', 'Hepatomegalia', 0, 'Critério **menor**.'),
+  campoSimNao('derrame', 'Derrame pleural', 0, 'Critério **menor**.'),
+  campoSimNao('taquicardia', 'Frequência cardíaca acima de 120 bpm', 0, 'Critério **menor**.'),
+]
+
+const nyhaCcs: Ferramenta = {
+  id: 'nyha-ccs-framingham',
+  nome: 'NYHA, CCS e critérios de Framingham',
+  sinonimos: ['nyha', 'classe funcional', 'ccs', 'angina', 'framingham', 'insuficiencia cardiaca diagnostico'],
+  resumo: 'Gradua dispneia e angina por classe funcional e aplica os critérios clínicos de Framingham para insuficiência cardíaca.',
+  categorias: ['cardiologia'],
+  campos: nyhaCampos,
+  calcular: (v) => {
+    const escala = opc(v, 'escala') ?? 'nyha'
+
+    if (escala === 'framingham') {
+      const maiores = ['dpn', 'jugular', 'estertores', 'cardiomegalia', 'edemaPulmonar', 'b3', 'refluxo', 'perdaPeso']
+      const menores = ['edemaMmii', 'tosseNoturna', 'dispneiaEsforco', 'hepatomegalia', 'derrame', 'taquicardia']
+      const nM = maiores.filter((id) => sim(v, id)).length
+      const nm = menores.filter((id) => sim(v, id)).length
+      const diagnostico = nM >= 2 || (nM >= 1 && nm >= 2)
+
+      return {
+        titulo: 'Critérios de Framingham',
+        valor: diagnostico ? 'Critérios preenchidos' : 'Critérios não preenchidos',
+        nivel: diagnostico ? 'alerta' : 'atencao',
+        rotuloNivel: `${nM} maior(es) e ${nm} menor(es)`,
+        detalhes: [
+          { rotulo: 'Critérios maiores', valor: `${nM} de 8`, nivel: (nM >= 2 ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Critérios menores', valor: `${nm} de 6` },
+          { rotulo: 'Regra', valor: '2 maiores, ou 1 maior + 2 menores' },
+        ],
+        interpretacao: [
+          diagnostico
+            ? `**${nM} critério(s) maior(es) e ${nm} menor(es): os critérios de Framingham estão preenchidos.** A regra exige 2 maiores, ou 1 maior somado a 2 menores, com os menores contando apenas se não houver outra explicação para eles.`
+            : `**${nM} maior(es) e ${nm} menor(es): a regra não é satisfeita.** Isso não exclui insuficiência cardíaca — os critérios foram construídos para estudo epidemiológico e têm sensibilidade limitada, sobretudo na insuficiência com fração de ejeção preservada.`,
+          'Os critérios de Framingham antecedem o ecocardiograma e o peptídeo natriurético, e hoje têm papel sobretudo **epidemiológico e em contextos sem acesso rápido a esses exames**. O diagnóstico moderno combina sintoma e sinal compatíveis, **BNP ou NT-proBNP** elevados e **ecocardiograma** com alteração estrutural ou funcional.',
+          'Os cortes de peptídeo natriurético para **excluir** insuficiência cardíaca no quadro agudo são: BNP abaixo de 100 pg/mL ou NT-proBNP abaixo de 300 pg/mL. No ambulatório, os cortes são mais baixos (BNP 35 e NT-proBNP 125), e valores abaixo deles tornam o diagnóstico improvável.',
+          'Fibrilação atrial, idade avançada, insuficiência renal e sepse elevam o peptídeo natriurético; **obesidade o reduz** de forma significativa, e essa é a causa mais comum de falso negativo.',
+        ],
+        conduta: [
+          diagnostico
+            ? '**Confirme com ecocardiograma e peptídeo natriurético**, e classifique pela fração de ejeção — reduzida (≤ 40%), levemente reduzida (41 a 49%) ou preservada (≥ 50%) —, porque é isso que define o tratamento.'
+            : '**Prossiga a investigação** mesmo sem preencher os critérios: dose BNP ou NT-proBNP e solicite ecocardiograma se a suspeita clínica persistir. Considere também doença pulmonar, anemia, obesidade, descondicionamento, tireoidopatia e depressão como causas de dispneia.',
+          'Na **fração de ejeção reduzida**, instale os quatro pilares o mais rápido possível — inibidor do receptor de angiotensina com neprilisina (ou IECA/BRA), betabloqueador, antagonista mineralocorticoide e inibidor de SGLT2. A estratégia atual é iniciar os quatro em doses baixas e titular em paralelo, e não em sequência ao longo de meses: o benefício em mortalidade aparece em semanas.',
+          'Na **fração preservada**, o inibidor de SGLT2 é o único com benefício consistente; trate agressivamente hipertensão, fibrilação atrial, obesidade, apneia do sono e diabetes, e investigue causas específicas — amiloidose cardíaca (cintilografia com pirofosfato e pesquisa de cadeias leves), cardiomiopatia hipertrófica e doença de Fabry.',
+          'Procure e trate o **fator descompensante** em toda internação: má adesão, transgressão de sal e líquido, infecção, arritmia, isquemia, anemia, disfunção tireoidiana, anti-inflamatórios e embolia pulmonar.',
+        ],
+        alertas: [
+          'Os critérios de Framingham são **clínicos e antigos**, com sensibilidade limitada na insuficiência com fração de ejeção preservada — não os use para excluir o diagnóstico.',
+          'Peptídeo natriurético **reduzido pela obesidade** é a causa mais comum de falso negativo; em obesos, use cortes mais baixos e valorize mais a clínica e o ecocardiograma.',
+        ],
+      }
+    }
+
+    const classe = ptsOpc(nyhaCampos, v, escala === 'nyha' ? 'nyha' : 'ccs')
+    if (classe === null) return null
+    const nivel: Nivel = classe >= 4 ? 'critico' : classe === 3 ? 'alerta' : classe === 2 ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (escala === 'nyha') {
+      conduta.push(
+        'Trate a **doença**, não a classe: os quatro pilares da insuficiência com fração de ejeção reduzida estão indicados de NYHA II a IV, e o betabloqueador e o inibidor de SGLT2 valem também na classe I com disfunção ventricular assintomática.',
+      )
+      if (classe >= 3) {
+        conduta.push('**NYHA III a IV apesar de terapia otimizada:** avalie indicações de dispositivo — **cardiodesfibrilador implantável** com fração ≤ 35% e expectativa de vida acima de 1 ano, e **terapia de ressincronização** com QRS ≥ 130 ms e morfologia de bloqueio de ramo esquerdo. Considere também encaminhamento para avaliação de transplante e de suporte circulatório.')
+        conduta.push('Na **classe IV persistente**, discuta explicitamente objetivos de cuidado e envolva cuidados paliativos: a mortalidade em 1 ano é comparável à de muitas neoplasias, e essa conversa costuma acontecer tarde demais.')
+      } else {
+        conduta.push('**NYHA I a II:** titule os quatro pilares até a dose-alvo ou a máxima tolerada. A subtitulação é a lacuna mais comum no tratamento da insuficiência cardíaca — a maioria dos pacientes nunca chega à dose dos ensaios.')
+      }
+      conduta.push(
+        'Encaminhe para **reabilitação cardiovascular supervisionada**, que melhora capacidade funcional, qualidade de vida e reduz hospitalização.',
+        'Reavalie a classe a cada consulta e **registre a âncora usada** (quantos lances de escada, quantos quarteirões). Piora de classe é o gatilho mais precoce para intensificar tratamento — antes do ganho de peso e antes do edema.',
+      )
+    } else {
+      conduta.push(
+        '**Otimize a terapia antianginosa** antes de considerar revascularização em doença estável: betabloqueador ou bloqueador de canal de cálcio como primeira linha, nitrato de longa duração, e ivabradina, ranolazina ou trimetazidina como segunda linha.',
+      )
+      if (classe >= 3) {
+        conduta.push('**CCS III a IV apesar de terapia otimizada** é indicação de estratificação invasiva e de revascularização para alívio de sintoma. Lembre que, em doença estável, a revascularização melhora sintoma mas não reduz infarto nem mortalidade em relação ao tratamento clínico otimizado — o ensaio ISCHEMIA confirmou isso, e essa informação pertence à conversa com o paciente.')
+      } else {
+        conduta.push('**CCS I a II:** tratamento clínico otimizado, com controle agressivo de fatores de risco. Estratificação invasiva apenas se houver isquemia extensa em teste funcional ou disfunção ventricular.')
+      }
+      conduta.push(
+        'Garanta a **terapia que muda prognóstico**, independentemente da classe: estatina de alta intensidade com meta de LDL abaixo de 55 mg/dL, aspirina, controle pressórico e glicêmico, cessação do tabagismo e atividade física.',
+        'Angina **em repouso, de início recente ou em crescendo** não é angina estável: é síndrome coronariana aguda, e a conduta muda inteiramente.',
+      )
+    }
+
+    return {
+      titulo: escala === 'nyha' ? 'Classe funcional NYHA' : 'Classe de angina CCS',
+      valor: ['I', 'II', 'III', 'IV'][classe - 1],
+      nivel,
+      rotuloNivel: escala === 'nyha'
+        ? ['Sem limitação', 'Limitação leve', 'Limitação acentuada', 'Sintoma em repouso'][classe - 1]
+        : ['Esforço extenuante', 'Limitação leve', 'Limitação acentuada', 'Qualquer atividade ou repouso'][classe - 1],
+      detalhes: [
+        { rotulo: 'Classe', valor: ['I', 'II', 'III', 'IV'][classe - 1] },
+        { rotulo: 'Escala', valor: escala === 'nyha' ? 'New York Heart Association (dispneia)' : 'Canadian Cardiovascular Society (angina)' },
+      ],
+      interpretacao: [
+        escala === 'nyha'
+          ? `**NYHA classe ${['I', 'II', 'III', 'IV'][classe - 1]}.** A classificação é **dinâmica**: melhora com o tratamento e piora na descompensação, e por isso serve para acompanhar resposta. A classe na admissão e a classe na alta são informações diferentes e devem ser registradas separadamente.`
+          : `**CCS classe ${['I', 'II', 'III', 'IV'][classe - 1]}.** A CCS é mais específica que a NYHA porque ancora cada classe em distância e ritmo — quantos quarteirões, quantos lances, em que velocidade —, o que reduz a variabilidade entre observadores.`,
+        'A concordância entre observadores é apenas **moderada** em ambas as escalas, sobretudo entre as classes II e III, que concentram a maior parte dos pacientes. Ancorar a pergunta em atividades concretas do dia a dia do paciente é o que mais melhora a reprodutibilidade.',
+        escala === 'nyha'
+          ? 'A NYHA classifica **sintoma**, e o estágio A/B/C/D da AHA classifica a **progressão estrutural da doença** — este último é unidirecional e nunca retrocede. Um paciente pode ir de NYHA III para I com tratamento, mas continua em estágio C.'
+          : 'Classe alta de angina não implica doença anatomicamente mais grave: há lesões críticas assintomáticas e angina limitante com doença moderada, muitas vezes por componente microvascular ou vasoespástico.',
+        classe >= 3
+          ? 'Classe III ou IV marca limitação importante e associa-se a mortalidade substancialmente maior — é a faixa em que se avaliam dispositivos, revascularização e, na insuficiência cardíaca avançada, transplante e suporte circulatório.'
+          : 'Classe I ou II indica boa capacidade funcional, o que não dispensa a terapia que modifica prognóstico: em insuficiência cardíaca e em doença coronariana, o tratamento de fundo independe do sintoma.',
+      ],
+      conduta,
+      alertas: [
+        'A classe funcional mede **sintoma**, não gravidade anatômica nem função ventricular: há fração de ejeção de 20% em NYHA I e de 45% em NYHA III.',
+        escala === 'nyha'
+          ? 'Não confunda a classe funcional NYHA com o **estágio A/B/C/D** da AHA: a primeira é dinâmica e reversível, o segundo é estrutural e unidirecional.'
+          : 'Angina em repouso, de início recente ou em crescendo **não é angina estável** — é síndrome coronariana aguda, e a CCS não se aplica.',
+      ],
+    }
+  },
+  formula: ['NYHA I a IV (dispneia) · CCS I a IV (angina)', 'Framingham: 2 critérios maiores, ou 1 maior + 2 menores'],
+  fundamento:
+    'A classe funcional traduz, num único número, o ponto em que a reserva cardiovascular se esgota — e a fisiologia desse esgotamento explica por que ela se correlaciona tão mal com a fração de ejeção. Na insuficiência cardíaca, a limitação ao esforço depende pouco do débito de repouso e muito da **incapacidade de aumentá-lo**: a reserva cronotrópica está reduzida, a pressão de enchimento sobe abruptamente com o exercício produzindo congestão pulmonar dinâmica, a vasodilatação periférica dependente de endotélio está prejudicada, e o músculo esquelético sofre alterações próprias — perda de fibras tipo I, disfunção mitocondrial, acidose precoce — que geram fadiga independentemente do coração. É por isso que dois pacientes com a mesma fração de ejeção podem estar em classes opostas, e por que o treinamento físico melhora a classe sem mudar a fração. Na angina, a classe reflete o **limiar isquêmico**, que é o ponto em que a demanda miocárdica de oxigênio — estimada pelo duplo produto — ultrapassa a oferta limitada pela estenose; esse limiar é reprodutível para cada paciente e é justamente o que o betabloqueador desloca para cima ao reduzir frequência e contratilidade. Os critérios de Framingham, por sua vez, são um artefato histórico valioso: construídos nos anos 1970 a partir da coorte que deu nome ao estudo, eles codificam o exame físico da congestão numa era anterior ao ecocardiograma, e ainda hoje ensinam quais sinais têm peso — turgência jugular, terceira bulha e refluxo hepatojugular são pouco sensíveis e muito específicos de pressão de enchimento elevada.',
+  armadilhas: [
+    'A concordância entre observadores é apenas moderada, sobretudo entre as classes II e III — ancorar em atividades concretas reduz o ruído.',
+    'Pacientes limitam a própria atividade para evitar sintoma e se autodeclaram em classe melhor do que estão; perguntar o que deixaram de fazer revela mais que perguntar o que sentem.',
+    'Comorbidades não cardíacas — artrose, doença pulmonar, obesidade, anemia, depressão — elevam a classe sem piora cardíaca.',
+    'Os critérios de Framingham têm sensibilidade baixa na insuficiência com fração de ejeção preservada, justamente a forma mais prevalente hoje.',
+  ],
+  referencias: [
+    { texto: 'The Criteria Committee of the New York Heart Association. Nomenclature and Criteria for Diagnosis of Diseases of the Heart and Great Vessels. 9ª ed. Boston: Little, Brown; 1994.' },
+    { texto: 'Campeau L. Grading of angina pectoris. Circulation. 1976;54(3):522-523.' },
+    { texto: 'McKee PA, Castelli WP, McNamara PM, Kannel WB. The natural history of congestive heart failure: the Framingham study. N Engl J Med. 1971;285(26):1441-1446.' },
+    { texto: 'McDonagh TA, Metra M, Adamo M, et al. 2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure. Eur Heart J. 2021;42(36):3599-3726.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2323,6 +2492,7 @@ export const ferramentas: Ferramenta[] = [
   ldl,
   killip,
   sgarbossa,
+  nyhaCcs,
 ]
 
 export default ferramentas

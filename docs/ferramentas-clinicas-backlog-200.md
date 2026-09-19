@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **225** (eram 201) |
-| Implementadas desta lista | **24** |
-| Restantes | **176** |
-| Nota média na auditoria | **100** — todas as 225 |
+| Ferramentas no catálogo | **226** (eram 201) |
+| Implementadas desta lista | **25** |
+| Restantes | **175** |
+| Nota média na auditoria | **100** — todas as 226 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -99,6 +99,7 @@ escores individuais.
 21. **Critérios de Brugada, Vereckei e algoritmo de aVR** — taquicardia ventricular vs. supraventricular com QRS largo. **[P1]**
 22. **Critérios de sobrecarga atrial e de hipertrofia ventricular direita** — complemento eletrocardiográfico do módulo de HVE. **[P2]**
 23. **Critérios de Framingham e de Boston para IC, com classificação NYHA e angina pela CCS** — diagnóstico clínico de insuficiência cardíaca e graduação sintomática. **[P1]**
+    - ✅ **feito** — `nyha-ccs-framingham`, com as três escalas
 24. **MAGGIC e GWTG-HF** — mortalidade na IC crônica e na descompensação intra-hospitalar. **[P2]**
 25. **EuroSCORE II e STS score** — mortalidade em cirurgia cardíaca. **[P2]**
 26. **ORBIT, ATRIA e ABC bleeding** — risco de sangramento na fibrilação atrial, alternativas ao HAS-BLED. **[P2]**
