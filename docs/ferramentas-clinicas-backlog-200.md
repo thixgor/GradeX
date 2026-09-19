@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **233** (eram 201) |
-| Implementadas desta lista | **32** |
-| Restantes | **168** |
-| Nota média na auditoria | **100** — todas as 233 |
+| Ferramentas no catálogo | **235** (eram 201) |
+| Implementadas desta lista | **34** |
+| Restantes | **166** |
+| Nota média na auditoria | **100** — todas as 235 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -109,9 +109,11 @@ escores individuais.
 27. **EDACS e Marburg Heart Score** — dor torácica de baixo risco na emergência e na atenção primária. **[P1]**
 28. **Canadian Syncope Risk Score, OESIL e EGSYS** — risco de evento grave após síncope. **[P1]**
 29. **ADD-RS, com classificação de Stanford e DeBakey** — probabilidade pré-teste de dissecção aórtica. **[P1]**
+    - ✅ **feito** — `add-rs`, com a estratégia ADvISED e as classificações de Stanford e DeBakey na conduta
 30. **YEARS, PEGeD e D-dímero ajustado à idade** — estratégias de exclusão de TEP sem imagem. **[P1]**
 31. **Hestia, BOVA e modelos de recorrência (Vienna, DASH, HERDOO2)** — tratamento ambulatorial do TEP, risco intermediário-alto e decisão de suspender a anticoagulação. **[P2]**
 32. **Índice tornozelo-braquial, Fontaine e Rutherford** — diagnóstico e estadiamento da doença arterial periférica. **[P1]**
+    - ✅ **feito** — `indice-tornozelo-braquial`, com Fontaine, Rutherford e o caso da artéria incompressível
 
 ## 3. Emergência, trauma e terapia intensiva (16)
 

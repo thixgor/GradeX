@@ -2466,6 +2466,239 @@ const nyhaCcs: Ferramenta = {
   ],
 }
 
+/* ═══════════════ ADD-RS — probabilidade de dissecção aórtica ═══════════════ */
+
+const addrsCampos: Campo[] = [
+  campoSimNao('marfan', 'Condição de alto risco: Marfan, doença do tecido conjuntivo, história familiar de doença aórtica, valva aórtica bicúspide, aneurisma de aorta conhecido, ou manipulação aórtica recente', 1, 'Categoria I do ADD-RS — **condições predisponentes**. Basta uma para a categoria pontuar. Manipulação recente inclui cateterismo, cirurgia cardíaca e valvoplastia.'),
+  campoSimNao('dorAbrupta', 'Dor de início abrupto, intensidade máxima desde o começo, ou de caráter dilacerante ou rasgante', 1, 'Categoria II — **características da dor**. O padrão que importa é o de **instalação**: dor que já nasce no máximo, ao contrário da dor isquêmica, que cresce em minutos. O caráter "rasgante" é clássico mas está presente em menos da metade dos casos.'),
+  campoSimNao('exameAlterado', 'Déficit de pulso ou diferença de pressão entre membros, déficit neurológico focal com dor, sopro de insuficiência aórtica novo, ou hipotensão e choque', 1, 'Categoria III — **achados de exame**. Meça a pressão nos **dois braços**: diferença sistólica maior que 20 mmHg é sinal clássico, embora presente em apenas cerca de um terço dos casos.'),
+  campoNum('dimero', 'D-dímero', { unidade: 'ng/mL', min: 0, max: 20000, passo: 10, opcional: true, ajuda: 'O D-dímero abaixo de 500 ng/mL, combinado a ADD-RS de 0 ou 1, tem valor preditivo negativo próximo de 99% (estratégia ADvISED) e permite dispensar angiotomografia. **Nunca use o D-dímero isoladamente**: a dissecção com trombose completa do falso lúmen pode cursar com D-dímero normal.' }),
+  campoSimNao('mediastino', 'Alargamento de mediastino na radiografia', 0, 'Presente em cerca de 60% dos casos — radiografia normal **não afasta** dissecção, e esse é um dos erros mais frequentes nesse diagnóstico.'),
+  campoSeg('instabilidade', 'Estado hemodinâmico', [
+    { valor: 'estavel', rotulo: 'Estável' },
+    { valor: 'instavel', rotulo: 'Instável (choque, tamponamento, síncope)' },
+  ], { ajuda: 'A instabilidade muda a rota do exame: paciente instável vai para **ecocardiograma transesofágico à beira do leito** ou direto ao centro cirúrgico, em vez de ser transportado para a tomografia.' }),
+]
+
+const addrs: Ferramenta = {
+  id: 'add-rs',
+  nome: 'ADD-RS — probabilidade de dissecção aórtica',
+  sigla: 'ADD-RS',
+  sinonimos: ['add-rs', 'dissecao aortica', 'aorta', 'stanford', 'debakey', 'dor toracica'],
+  resumo: 'Estima a probabilidade pré-teste de dissecção aórtica em três categorias e define quando o D-dímero pode dispensar a angiotomografia.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: addrsCampos,
+  calcular: (v) => {
+    const categorias = ['marfan', 'dorAbrupta', 'exameAlterado']
+    const total = categorias.filter((id) => sim(v, id)).length
+    const dimero = num(v, 'dimero')
+    const instavel = opc(v, 'instabilidade') === 'instavel'
+
+    const baixo = total <= 1
+    const dimeroNegativo = dimero !== null && dimero < 500
+    const podeDispensar = baixo && dimeroNegativo && !instavel
+
+    const nivel: Nivel = total >= 2 || instavel ? 'critico' : total === 1 ? 'alerta' : 'atencao'
+
+    const interpretacao: string[] = [
+      `**ADD-RS de ${total} de 3 categorias.** O escore conta **categorias**, não itens: cada uma das três — condição predisponente, características da dor e achados de exame — vale no máximo 1 ponto, por mais itens que estejam presentes dentro dela.`,
+      total >= 2
+        ? '**ADD-RS de 2 ou 3 é alto risco.** Prossiga direto para imagem definitiva. A sensibilidade do escore para dissecção é de aproximadamente 96%, e nessa faixa o D-dímero não tem papel: um resultado negativo não reduz o risco pós-teste o suficiente para liberar o paciente.'
+        : total === 1
+          ? '**ADD-RS de 1: risco intermediário.** É aqui que a estratégia **ADvISED** se aplica — D-dímero abaixo de 500 ng/mL com ADD-RS de 0 ou 1 tem valor preditivo negativo próximo de 99% e permite dispensar a angiotomografia.'
+          : '**ADD-RS de 0: baixo risco.** Com D-dímero negativo, a dissecção é muito improvável. Ainda assim, mantenha a investigação das outras causas de dor torácica potencialmente letais.',
+      dimero !== null
+        ? dimeroNegativo
+          ? `D-dímero de ${fmtInt(dimero)} ng/mL, **abaixo do corte de 500**. Combinado a ADD-RS de 0 ou 1, isso sustenta a decisão de não fazer angiotomografia — mas o D-dímero **nunca** decide sozinho, e há um cenário específico em que ele engana: a dissecção com **trombose completa do falso lúmen**, em que pode vir normal.`
+          : `D-dímero de ${fmtInt(dimero)} ng/mL, acima do corte. Isso não confirma dissecção — o D-dímero é inespecífico e sobe em embolia, infecção, câncer, gestação, pós-operatório e idade avançada —, mas impede que ele seja usado para excluir.`
+        : 'O D-dímero não foi informado. Ele só tem papel na estratégia de exclusão quando o ADD-RS é 0 ou 1.',
+      instavel
+        ? '**Paciente instável:** não o transporte para a tomografia. O **ecocardiograma transesofágico à beira do leito** tem sensibilidade acima de 95% para dissecção tipo A e pode ser feito na sala de emergência ou no centro cirúrgico, com a equipe de cirurgia cardíaca já acionada.'
+        : 'Paciente estável, o que permite a angiotomografia de aorta com contraste, que é o exame de escolha.',
+    ]
+
+    const conduta: string[] = []
+    if (instavel) {
+      conduta.push('**Instabilidade: acione a cirurgia cardíaca imediatamente** e faça ecocardiograma transesofágico à beira do leito. Choque em dissecção significa tamponamento, insuficiência aórtica aguda grave, rotura ou infarto — todos cirúrgicos. Pericardiocentese em tamponamento por dissecção é **contraindicada** fora do centro cirúrgico: aliviar a pressão pode reativar o sangramento.')
+    } else if (total >= 2) {
+      conduta.push('**Alto risco: angiotomografia de aorta com contraste, de toda a aorta**, do arco às ilíacas. Não aguarde o D-dímero.')
+    } else if (podeDispensar) {
+      conduta.push('**ADD-RS de 0 ou 1 com D-dímero negativo: a angiotomografia pode ser dispensada** pela estratégia ADvISED. Prossiga investigando as demais causas de dor torácica — síndrome coronariana, embolia pulmonar, pneumotórax, rotura de esôfago, pericardite.')
+    } else {
+      conduta.push('**Risco baixo ou intermediário sem D-dímero negativo documentado:** dose o D-dímero, ou prossiga direto para angiotomografia se a suspeita clínica for relevante e a estratégia de exclusão não estiver disponível.')
+    }
+    conduta.push(
+      'Confirmada a dissecção, **classifique por Stanford**, que é o que define a conduta: **tipo A** envolve a aorta ascendente e é **emergência cirúrgica** — a mortalidade sem operar é de 1 a 2% **por hora** nas primeiras 48 horas; **tipo B** poupa a ascendente e é tratada clinicamente, salvo complicação (má perfusão de órgão, dor refratária, hipertensão incontrolável, expansão rápida, rotura iminente), quando se indica reparo endovascular.',
+      '**Controle a pressão e a frequência imediatamente, nessa ordem: primeiro betabloqueador, depois vasodilatador.** Alvo de frequência abaixo de 60 bpm e sistólica de 100 a 120 mmHg, com esmolol, metoprolol ou labetalol. Vasodilatador antes do betabloqueador causa **taquicardia reflexa**, que aumenta a força de cisalhamento (dP/dt) e pode propagar a dissecção — é o erro clássico desse tratamento.',
+      'Dê **analgesia eficaz**, com opioide: a dor alimenta a descarga adrenérgica, e controlá-la é parte do controle hemodinâmico, não um conforto acessório.',
+      'Investigue as complicações de má perfusão por ramo: **coronária** (o infarto inferior por acometimento da coronária direita é armadilha clássica — trombolisar esse paciente é catastrófico), **carótidas** (acidente vascular), **medular** (paraplegia), **renal**, **mesentérica** e **ilíacas**. Diferença de pulsos entre os membros é o sinal de rastreio.',
+      'A classificação de **DeBakey** completa o quadro anatômico: tipo I (ascendente e descendente), tipo II (ascendente apenas) e tipo III (descendente apenas). Stanford A corresponde a DeBakey I e II; Stanford B, a DeBakey III.',
+    )
+
+    return {
+      titulo: 'ADD-RS',
+      valor: fmtInt(total),
+      unidade: 'de 3 categorias',
+      nivel,
+      rotuloNivel: instavel ? 'Instável — via rápida' : total >= 2 ? 'Alto risco' : total === 1 ? 'Risco intermediário' : 'Baixo risco',
+      detalhes: [
+        { rotulo: 'I — Condição predisponente', valor: sim(v, 'marfan') ? 'Presente' : 'Ausente', nivel: (sim(v, 'marfan') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'II — Características da dor', valor: sim(v, 'dorAbrupta') ? 'Presente' : 'Ausente', nivel: (sim(v, 'dorAbrupta') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'III — Achados de exame', valor: sim(v, 'exameAlterado') ? 'Presente' : 'Ausente', nivel: (sim(v, 'exameAlterado') ? 'critico' : 'ok') as Nivel },
+        ...(dimero !== null ? [{ rotulo: 'D-dímero', valor: `${fmtInt(dimero)} ng/mL`, nivel: (dimeroNegativo ? 'ok' : 'alerta') as Nivel, nota: 'Corte de 500 ng/mL' }] : []),
+        { rotulo: 'Alargamento de mediastino', valor: sim(v, 'mediastino') ? 'Presente' : 'Ausente', nota: 'Presente em ~60% — radiografia normal não afasta' },
+        { rotulo: 'Conduta de imagem', valor: instavel ? 'Ecocardiograma transesofágico' : podeDispensar ? 'Angiotomografia dispensável' : 'Angiotomografia de aorta' },
+      ],
+      interpretacao,
+      conduta,
+      alertas: [
+        '**Betabloqueador antes do vasodilatador, sempre.** Vasodilatar primeiro causa taquicardia reflexa, aumenta o dP/dt e pode propagar a dissecção.',
+        '**Radiografia de tórax normal não afasta dissecção** — o alargamento de mediastino aparece em cerca de 60% dos casos.',
+        'Infarto inferior com dor de início abrupto pode ser dissecção acometendo a coronária direita. **Trombolisar essa apresentação é catastrófico** — na dúvida, imagem antes de reperfundir.',
+        'Tamponamento por dissecção: **não puncione fora do centro cirúrgico**. Aliviar a pressão pode reativar o sangramento e levar à exsanguinação.',
+      ],
+    }
+  },
+  formula: ['ADD-RS = número de categorias positivas (0 a 3): condição predisponente · características da dor · achados de exame', 'ADvISED: ADD-RS ≤ 1 com D-dímero < 500 ng/mL permite dispensar angiotomografia'],
+  fundamento:
+    'A dissecção aórtica começa com uma laceração na **íntima**, por onde o sangue sob pressão sistêmica penetra e descola a camada média ao longo do eixo do vaso, criando um falso lúmen. A força que propaga essa clivagem não é a pressão arterial média, e sim a **dP/dt** — a taxa de variação da pressão ao longo do tempo, isto é, a inclinação da curva de pressão durante a ejeção. Esse detalhe é o que dita todo o tratamento clínico: reduzir apenas a pressão com um vasodilatador provoca taquicardia reflexa e **aumenta** a dP/dt, propagando a dissecção; por isso o betabloqueador vem primeiro, reduzindo simultaneamente a frequência e a velocidade de ejeção, e o vasodilatador só depois. As duas condições predisponentes clássicas atacam a média por caminhos distintos: a **hipertensão crônica** provoca degeneração da média com fragmentação de elastina, e as **doenças do tecido conjuntivo** — Marfan por fibrilina-1, Ehlers-Danlos vascular por colágeno tipo III, Loeys-Dietz por receptores de TGF-beta — comprometem a matriz desde o início. A gravidade do tipo A decorre da anatomia: ali a dissecção pode romper para o pericárdio, causando tamponamento; descolar a valva aórtica, causando insuficiência aguda; ou ocluir os óstios coronarianos, causando infarto. Daí a mortalidade de 1 a 2% por hora nas primeiras 48 horas e a indicação cirúrgica imediata, que contrasta com o tipo B, tratado clinicamente por não ameaçar nenhuma dessas estruturas.',
+  armadilhas: [
+    'A dor pode ser abdominal, lombar ou já ter cedido quando o paciente chega — a ausência de dor no momento do exame não afasta.',
+    'Apenas cerca de um terço dos pacientes tem diferença de pulsos ou de pressão entre os membros; sua ausência não exclui.',
+    'D-dímero normal ocorre na dissecção com falso lúmen completamente trombosado, e é o cenário em que a estratégia de exclusão falha.',
+    'Síncope isolada, dor abdominal e déficit neurológico focal são apresentações reconhecidas e frequentemente atribuídas a outros diagnósticos.',
+  ],
+  referencias: [
+    { texto: 'Rogers AM, Hermann LK, Booher AM, et al. Sensitivity of the aortic dissection detection risk score. Circulation. 2011;123(20):2213-2218.' },
+    { texto: 'Nazerian P, Mueller C, Soeiro AM, et al. Diagnostic accuracy of the aortic dissection detection risk score plus D-dimer for acute aortic syndromes: the ADvISED prospective multicenter study. Circulation. 2018;137(3):250-258.' },
+    { texto: 'Isselbacher EM, Preventza O, Hamilton Black J 3rd, et al. 2022 ACC/AHA Guideline for the Diagnosis and Management of Aortic Disease. Circulation. 2022;146(24):e334-e482.' },
+  ],
+}
+
+/* ═══════════ Índice tornozelo-braquial, Fontaine e Rutherford ═══════════ */
+
+const itbCampos: Campo[] = [
+  campoNum('brqD', 'Pressão sistólica braquial direita', { unidade: 'mmHg', min: 40, max: 300, passo: 1, ajuda: 'Meça nos **dois braços** com Doppler. O numerador do índice usa o maior valor entre os dois braquiais — se houver diferença maior que 15 a 20 mmHg, suspeite de estenose de subclávia do lado menor.' }),
+  campoNum('brqE', 'Pressão sistólica braquial esquerda', { unidade: 'mmHg', min: 40, max: 300, passo: 1 }),
+  campoNum('tibialPost', 'Tibial posterior (membro avaliado)', { unidade: 'mmHg', min: 0, max: 300, passo: 1, ajuda: 'Meça com Doppler, não com estetoscópio. O denominador usa o **maior** valor entre tibial posterior e pediosa do mesmo membro.' }),
+  campoNum('pediosa', 'Pediosa (membro avaliado)', { unidade: 'mmHg', min: 0, max: 300, passo: 1 }),
+  campoOpc('fontaine', 'Estágio clínico (Fontaine)', [
+    { valor: '1', rotulo: 'I — Assintomático', pontos: 1 },
+    { valor: '2', rotulo: 'IIa — Claudicação a mais de 200 m', pontos: 2 },
+    { valor: '3', rotulo: 'IIb — Claudicação a menos de 200 m', pontos: 3 },
+    { valor: '4', rotulo: 'III — Dor isquêmica em repouso', pontos: 4 },
+    { valor: '5', rotulo: 'IV — Úlcera isquêmica ou gangrena', pontos: 5 },
+  ], { padrao: '1', ajuda: 'Fontaine III e IV constituem **isquemia crítica de membro**, que tem risco de amputação e é emergência vascular — não confundir com claudicação, que é estável e tem tratamento clínico.' }),
+  campoSimNao('diabetes', 'Diabetes ou doença renal crônica', 0, 'Nesses pacientes a **calcificação da média (esclerose de Mönckeberg)** torna a artéria incompressível e produz índice falsamente normal ou alto. Se o índice vier acima de 1,3 nesse contexto, ele não é interpretável — use o índice hálux-braquial.'),
+]
+
+const itb: Ferramenta = {
+  id: 'indice-tornozelo-braquial',
+  nome: 'Índice tornozelo-braquial, Fontaine e Rutherford',
+  sigla: 'ITB',
+  sinonimos: ['itb', 'abi', 'indice tornozelo braquial', 'doenca arterial periferica', 'claudicacao', 'fontaine', 'rutherford'],
+  resumo: 'Diagnostica e gradua a doença arterial periférica, e identifica quando o índice não é interpretável por calcificação arterial.',
+  categorias: ['cardiologia', 'especialidades'],
+  campos: itbCampos,
+  calcular: (v) => {
+    const brqD = num(v, 'brqD')
+    const brqE = num(v, 'brqE')
+    const tp = num(v, 'tibialPost')
+    const ped = num(v, 'pediosa')
+    if (brqD === null || brqE === null || tp === null || ped === null) return null
+    const braquial = Math.max(brqD, brqE)
+    const tornozelo = Math.max(tp, ped)
+    if (braquial === 0) return null
+    const indice = tornozelo / braquial
+
+    const incompressivel = indice > 1.3
+    const diabetes = sim(v, 'diabetes')
+    const fontaine = ptsOpc(itbCampos, v, 'fontaine') ?? 1
+    const critica = fontaine >= 4
+
+    const classificacao = incompressivel
+      ? 'Não compressível — não interpretável'
+      : indice >= 1.0
+        ? 'Normal'
+        : indice >= 0.9
+          ? 'Limítrofe'
+          : indice >= 0.7
+            ? 'Doença leve'
+            : indice >= 0.4
+              ? 'Doença moderada'
+              : 'Doença grave'
+
+    const nivel: Nivel = incompressivel ? 'atencao' : indice < 0.4 || critica ? 'critico' : indice < 0.9 ? 'alerta' : 'ok'
+
+    const conduta: string[] = []
+    if (critica) {
+      conduta.push('**Isquemia crítica de membro (Fontaine III ou IV): emergência vascular.** Encaminhe para avaliação de revascularização com urgência — o risco de amputação em 1 ano sem revascularização é alto. Complete com angiotomografia ou arteriografia para mapear o leito distal, e trate infecção associada com antibiótico e desbridamento.')
+    } else if (!incompressivel && indice < 0.9) {
+      conduta.push('**Doença arterial periférica confirmada.** O tratamento de base é o mesmo em qualquer estágio sintomático: **programa supervisionado de exercício** (caminhar até a dor, descansar, repetir, por 30 a 45 minutos, 3 vezes por semana, por pelo menos 12 semanas) — é a intervenção com melhor evidência para distância de caminhada, superior à angioplastia isolada no seguimento a longo prazo.')
+      conduta.push('Acrescente **cilostazol 100 mg duas vezes ao dia** para claudicação, contraindicado em insuficiência cardíaca. Revascularização fica reservada a claudicação limitante e refratária ao tratamento clínico, e a isquemia crítica.')
+    } else if (incompressivel) {
+      conduta.push('**Índice acima de 1,3: artéria incompressível, resultado não interpretável.** Prossiga com **índice hálux-braquial** (corte de 0,7), que usa artérias digitais poupadas da calcificação da média, ou com medida da pressão transcutânea de oxigênio e ultrassonografia com Doppler.')
+    } else {
+      conduta.push('**Índice normal em repouso não exclui doença arterial periférica** em paciente com claudicação típica. Faça o **índice pós-exercício**: queda de 20% ou mais após esforço padronizado confirma o diagnóstico que o repouso escondeu.')
+    }
+    conduta.push(
+      '**Trate o paciente, e não a perna.** A doença arterial periférica é marcador de aterosclerose sistêmica: o risco de infarto e de acidente vascular nesses pacientes é maior que o de amputação, e a principal causa de morte é cardiovascular. Prescreva **estatina de alta intensidade** (meta de LDL abaixo de 55 mg/dL), **antiagregante** (clopidogrel tem leve vantagem sobre aspirina nessa população), controle pressórico e glicêmico.',
+      '**Cessação do tabagismo é a intervenção isolada de maior impacto**: ela reduz progressão, amputação, eventos cardiovasculares e melhora a patência de qualquer revascularização feita.',
+      'Considere **rivaroxabana 2,5 mg duas vezes ao dia associada a aspirina** (estratégia do ensaio COMPASS) em doença arterial periférica sintomática de alto risco: ela reduz eventos cardiovasculares maiores e eventos adversos maiores do membro, ao custo de mais sangramento.',
+      'Em diabéticos, faça **exame dos pés em toda consulta**: inspeção, teste do monofilamento e palpação de pulsos. A neuropatia mascara a dor isquêmica, e a primeira manifestação pode ser diretamente a úlcera — o que torna a isquemia crítica um diagnóstico tardio justamente em quem tem mais risco.',
+    )
+
+    return {
+      titulo: 'Índice tornozelo-braquial',
+      valor: fmt(indice, 2),
+      nivel,
+      rotuloNivel: classificacao,
+      detalhes: [
+        { rotulo: 'Braquial (maior dos dois)', valor: `${fmtInt(braquial)} mmHg` },
+        { rotulo: 'Tornozelo (maior das duas)', valor: `${fmtInt(tornozelo)} mmHg` },
+        { rotulo: 'Índice', valor: fmt(indice, 2), nota: '> 1,3 não compressível · 1,0-1,3 normal · 0,9-0,99 limítrofe · 0,7-0,89 leve · 0,4-0,69 moderada · < 0,4 grave' },
+        { rotulo: 'Estágio de Fontaine', valor: ['I', 'IIa', 'IIb', 'III', 'IV'][fontaine - 1], nivel: (critica ? 'critico' : fontaine >= 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Diabetes ou doença renal', valor: diabetes ? 'Sim' : 'Não', nivel: (diabetes && incompressivel ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Diferença entre braquiais', valor: `${fmtInt(Math.abs(brqD - brqE))} mmHg`, nota: '> 15-20 mmHg sugere estenose de subclávia' },
+      ],
+      interpretacao: [
+        `**Índice de ${fmt(indice, 2)} — ${classificacao.toLowerCase()}.** O corte diagnóstico é **0,90**, com sensibilidade em torno de 75% e especificidade acima de 95% para estenose maior que 50% em comparação à arteriografia.`,
+        incompressivel
+          ? `**Índice acima de 1,3 significa artéria incompressível, não artéria saudável.** A calcificação da camada média — esclerose de Mönckeberg — impede o colabamento do vaso pelo manguito, e o resultado é falsamente alto. ${diabetes ? 'O diabetes ou a doença renal assinalados explicam esse achado.' : 'Isso ocorre em diabetes, doença renal crônica avançada e idade muito avançada.'} Use o **índice hálux-braquial**, cujo corte é 0,7.`
+          : indice < 0.4
+            ? '**Índice abaixo de 0,4 indica doença grave**, com pressão de perfusão insuficiente para cicatrização — é a faixa associada a dor em repouso, úlcera que não fecha e risco de amputação.'
+            : indice < 0.9
+              ? 'Índice abaixo de 0,90 confirma doença arterial periférica. Lembre que **a maioria dos portadores é assintomática ou tem sintoma atípico**, e que a ausência de claudicação clássica não afasta o diagnóstico.'
+              : 'Índice dentro da faixa normal em repouso. Se houver claudicação típica, faça o índice **pós-exercício**: queda de 20% ou mais confirma doença que o repouso não revelou.',
+        `**Fontaine ${['I', 'IIa', 'IIb', 'III', 'IV'][fontaine - 1]}.** A classificação de Fontaine tem 4 estágios (com o II subdividido) e a de **Rutherford** tem 7 categorias em 4 graus, mais granular e preferida em publicações cirúrgicas. A equivalência prática: Fontaine I ≈ Rutherford 0; IIa ≈ 1; IIb ≈ 2-3; III ≈ 4; IV ≈ 5-6.`,
+        critica
+          ? '**Fontaine III e IV constituem isquemia crítica de membro**, com risco de amputação e mortalidade em 1 ano comparável à de várias neoplasias. É condição diferente da claudicação, que é estável e tem tratamento clínico.'
+          : 'A claudicação intermitente é relativamente estável ao longo do tempo: cerca de 75% dos pacientes permanecem estáveis ou melhoram, e apenas uma minoria progride para isquemia crítica.',
+      ],
+      conduta,
+      alertas: [
+        '**Índice acima de 1,3 não é bom sinal** — é artéria incompressível por calcificação, e o resultado não pode ser usado. Em diabético e em renal crônico, esse achado é frequente.',
+        'Índice normal em repouso não exclui doença em quem tem claudicação típica: o índice pós-exercício é o exame que fecha o diagnóstico nesses casos.',
+        'Em diabéticos com neuropatia, a dor isquêmica é mascarada e a primeira manifestação pode ser a úlcera. Exame dos pés em toda consulta, com monofilamento e palpação de pulsos.',
+      ],
+    }
+  },
+  formula: ['ITB = maior pressão do tornozelo (tibial posterior ou pediosa) ÷ maior pressão braquial', 'Fontaine I a IV · Rutherford 0 a 6'],
+  fundamento:
+    'O índice tornozelo-braquial se apoia num princípio hidrostático simples: em pessoas sem doença arterial, a pressão sistólica no tornozelo é **igual ou levemente maior** que a braquial, porque a onda de pulso sofre amplificação ao se propagar para a periferia — a reflexão da onda nos leitos distais soma-se à onda incidente e eleva o pico sistólico. Qualquer estenose hemodinamicamente significativa proximal a esse ponto dissipa energia e derruba a pressão distal, e é essa queda que o índice mede. A estenose só se torna hemodinamicamente relevante em repouso quando ultrapassa cerca de 50% do diâmetro, porque abaixo disso a vasodilatação compensatória do leito distal mantém o fluxo — e é exatamente por isso que o índice pode ser normal em repouso e cair após o exercício, quando a demanda esgota essa reserva. A dor da claudicação surge do descompasso entre oferta e demanda no músculo em atividade, com acúmulo de metabólitos e ativação de aferentes do grupo III e IV; a dor em repouso aparece quando a pressão de perfusão já não sustenta nem o metabolismo basal, tipicamente com índice abaixo de 0,4, e piora com a elevação do membro por perda do componente gravitacional — o que explica o paciente que dorme com a perna pendente para fora da cama. A armadilha do índice falsamente alto tem mecanismo próprio: na esclerose de Mönckeberg, a calcificação se deposita na **camada média**, e não na íntima, tornando a parede rígida e incompressível pelo manguito sem que o lúmen esteja necessariamente comprometido.',
+  armadilhas: [
+    'Medir a pressão do tornozelo com estetoscópio em vez de Doppler subestima e invalida o índice.',
+    'Usar a pressão de apenas um braço ignora estenose de subclávia, que derruba o numerador do lado afetado e superestima o índice.',
+    'Índice entre 0,90 e 0,99 é zona limítrofe: com sintoma típico, prossiga com índice pós-exercício.',
+    'A maioria dos portadores de doença arterial periférica é assintomática ou tem sintoma atípico — ausência de claudicação clássica não afasta.',
+  ],
+  referencias: [
+    { texto: 'Aboyans V, Criqui MH, Abraham P, et al. Measurement and interpretation of the ankle-brachial index: a scientific statement from the American Heart Association. Circulation. 2012;126(24):2890-2909.' },
+    { texto: 'Gerhard-Herman MD, Gornik HL, Barrett C, et al. 2016 AHA/ACC Guideline on the Management of Patients With Lower Extremity Peripheral Artery Disease. Circulation. 2017;135(12):e726-e779.' },
+    { texto: 'Eikelboom JW, Connolly SJ, Bosch J, et al. Rivaroxaban with or without aspirin in stable cardiovascular disease (COMPASS). N Engl J Med. 2017;377(14):1319-1330.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2493,6 +2726,8 @@ export const ferramentas: Ferramenta[] = [
   killip,
   sgarbossa,
   nyhaCcs,
+  addrs,
+  itb,
 ]
 
 export default ferramentas
