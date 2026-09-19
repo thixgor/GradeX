@@ -1,5 +1,5 @@
 import type { Campo, Ferramenta, Nivel } from '../tipos'
-import { campoNum, campoOpc, campoSeg, campoSimNao, fmtInt, num, opc, ptsOpc, sim, somaSimNao } from '../helpers'
+import { campoIdade, campoNum, campoOpc, campoSeg, campoSimNao, fmt, fmtInt, num, opc, ptsOpc, sim, somaSimNao } from '../helpers'
 
 /* ═════════════════ 1. Fenótipo de fragilidade e índice clínico ═════════════════ */
 
@@ -628,6 +628,177 @@ const bradenMorse: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo, barthel, bradenMorse]
+/* ═══════════ MMSE, MoCA e teste do relógio — rastreio cognitivo ═══════════ */
+
+const cognitivoCampos: Campo[] = [
+  campoSeg('teste', 'Instrumento', [
+    { valor: 'mmse', rotulo: 'MMSE (0-30)' },
+    { valor: 'moca', rotulo: 'MoCA (0-30)' },
+    { valor: 'relogio', rotulo: 'Teste do relógio' },
+  ], { ajuda: 'O MMSE é o mais conhecido e o mais insensível ao comprometimento leve; o **MoCA** detecta função executiva e por isso é o de escolha quando a queixa é recente ou sutil; o teste do relógio é o mais rápido e detecta disfunção executiva e visuoespacial com uma folha de papel.' }),
+  campoNum('escore', 'Pontuação bruta obtida', { min: 0, max: 30, passo: 1, mostrarSe: (v) => opc(v, 'teste') !== 'relogio', ajuda: 'Some conforme o protocolo do instrumento. No MoCA, acrescente **1 ponto** se a escolaridade for de 12 anos ou menos — é a única correção prevista pelo próprio teste.' }),
+  campoNum('escolaridade', 'Anos de estudo completos', { unidade: 'anos', min: 0, max: 25, passo: 1, ajuda: 'A escolaridade é a variável que mais distorce o rastreio cognitivo no Brasil, onde a escolaridade média do idoso é baixa. Sem ajuste, o MMSE classifica como demente uma parcela grande de idosos cognitivamente normais com pouca escolaridade — e deixa passar o professor universitário em declínio inicial.' }),
+  campoIdade({ min: 18, ajuda: 'Idade para contextualizar: o declínio cognitivo associado ao envelhecimento normal afeta velocidade de processamento e evocação, mas não a memória de reconhecimento nem a função executiva de forma significativa.' }),
+  campoOpc('relogioNum', 'Teste do relógio — números', [
+    { valor: '4', rotulo: 'Todos os 12 números presentes, na ordem e na posição corretas', pontos: 4 },
+    { valor: '3', rotulo: 'Pequenos erros de espaçamento', pontos: 3 },
+    { valor: '2', rotulo: 'Omissões ou perseveração, sequência preservada', pontos: 2 },
+    { valor: '1', rotulo: 'Números fora de ordem ou fora do círculo', pontos: 1 },
+    { valor: '0', rotulo: 'Ausentes ou irreconhecíveis', pontos: 0 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'teste') === 'relogio', ajuda: 'Entregue um círculo já desenhado, peça para colocar os números e depois marcar **11h10** — esse horário exige inibir o impulso de apontar para o número 10, que é o que testa a função executiva.' }),
+  campoOpc('relogioPont', 'Teste do relógio — ponteiros', [
+    { valor: '4', rotulo: 'Dois ponteiros na posição correta, com comprimentos distintos', pontos: 4 },
+    { valor: '3', rotulo: 'Pequeno erro de posição', pontos: 3 },
+    { valor: '2', rotulo: 'Erro grande de posição ou ponteiros de mesmo tamanho', pontos: 2 },
+    { valor: '1', rotulo: 'Apenas um ponteiro, ou ponteiros apontando para o 10 e o 11', pontos: 1 },
+    { valor: '0', rotulo: 'Ausentes ou incompreensíveis', pontos: 0 },
+  ], { padrao: '4', mostrarSe: (v) => opc(v, 'teste') === 'relogio', ajuda: 'Apontar para o **10 e o 11** em vez de 11 e 2 é o erro mais informativo: revela falha na inibição do estímulo literal e é típico da disfunção executiva frontal.' }),
+]
+
+const cognitivo: Ferramenta = {
+  id: 'mmse-moca-relogio',
+  nome: 'MMSE, MoCA e teste do relógio — rastreio cognitivo',
+  sinonimos: ['mmse', 'mini mental', 'moca', 'montreal', 'teste do relogio', 'rastreio cognitivo', 'demencia'],
+  resumo: 'Interpreta o rastreio cognitivo com o ajuste por escolaridade, que é o que separa declínio real de baixa alfabetização.',
+  categorias: ['geriatria', 'neurologia'],
+  campos: cognitivoCampos,
+  calcular: (v) => {
+    const teste = opc(v, 'teste') ?? 'mmse'
+    const escolaridade = num(v, 'escolaridade')
+    if (escolaridade === null) return null
+
+    if (teste === 'relogio') {
+      const n1 = ptsOpc(cognitivoCampos, v, 'relogioNum')
+      const n2 = ptsOpc(cognitivoCampos, v, 'relogioPont')
+      if (n1 === null || n2 === null) return null
+      const total = n1 + n2 + 2 // círculo já fornecido pontua 2 na escala de Shulman adaptada
+      const alterado = total < 8
+      return {
+        titulo: 'Teste do desenho do relógio',
+        valor: fmtInt(total),
+        unidade: 'de 10 pontos',
+        nivel: alterado ? 'alerta' : 'ok',
+        rotuloNivel: alterado ? 'Alterado' : 'Dentro do esperado',
+        detalhes: [
+          { rotulo: 'Números', valor: `${fmtInt(n1)} de 4`, nivel: (n1 < 4 ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Ponteiros', valor: `${fmtInt(n2)} de 4`, nivel: (n2 < 4 ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Escolaridade', valor: `${fmtInt(escolaridade)} anos` },
+        ],
+        interpretacao: [
+          `**${total} de 10 pontos — ${alterado ? 'alterado' : 'dentro do esperado'}.** Existem várias escalas de pontuação para o relógio (Shulman, Sunderland, Mendez), com cortes diferentes; o que todas compartilham é que **o erro dos ponteiros informa mais que o dos números**.`,
+          'O teste é surpreendentemente rico para o tempo que consome: exige compreensão da instrução, memória de trabalho, planejamento, organização visuoespacial, conhecimento numérico e — no horário 11h10 — **inibição** do impulso de apontar para o número 10, que é o estímulo literal presente no enunciado.',
+          n2 <= 1
+            ? '**Erro nos ponteiros, com apontamento para o 10 e o 11**, é o padrão mais informativo: indica falha de inibição e aponta disfunção executiva frontal, que o MMSE não detecta.'
+            : 'Os ponteiros foram posicionados de forma adequada ou com erro pequeno, o que sugere planejamento e inibição preservados.',
+          'O relógio é pouco influenciado pela **escolaridade** em comparação ao MMSE — embora analfabetismo funcional e desconhecimento do relógio analógico, cada vez mais comum entre os mais jovens, sejam limitações reais.',
+        ],
+        conduta: [
+          alterado
+            ? '**Prossiga com avaliação cognitiva mais completa**, de preferência o MoCA, e colha história com informante sobre funcionalidade — é a perda de atividades instrumentais que separa comprometimento cognitivo de demência.'
+            : 'Teste dentro do esperado. Se houver queixa do paciente ou do familiar apesar do resultado, **não encerre**: o relógio é rápido mas pouco sensível ao comprometimento muito leve. Aplique o MoCA.',
+          'Combine sempre com uma prova de **memória episódica** — o relógio testa executivo e visuoespacial, e pode estar normal na doença de Alzheimer inicial, cujo déficit começa pela memória.',
+          'Registre o desenho no prontuário. Ele é comparável ao longo do tempo de uma forma que o número isolado não é, e a comparação visual entre dois relógios do mesmo paciente com seis meses de intervalo é frequentemente mais eloquente que a diferença de pontuação.',
+        ],
+        alertas: ['O teste do relógio é **rastreio**, não diagnóstico, e não distingue os tipos de demência. Também não substitui a avaliação de memória episódica.'],
+      }
+    }
+
+    const bruto = num(v, 'escore')
+    if (bruto === null) return null
+
+    if (teste === 'moca') {
+      const ajustado = escolaridade <= 12 ? Math.min(30, bruto + 1) : bruto
+      const alterado = ajustado < 26
+      return {
+        titulo: 'MoCA',
+        valor: fmtInt(ajustado),
+        unidade: 'de 30 pontos',
+        nivel: ajustado < 18 ? 'alerta' : alterado ? 'atencao' : 'ok',
+        rotuloNivel: ajustado < 18 ? 'Comprometimento moderado a grave' : alterado ? 'Abaixo do corte de 26' : 'Dentro do esperado',
+        detalhes: [
+          { rotulo: 'Bruto', valor: fmtInt(bruto) },
+          { rotulo: 'Ajuste por escolaridade', valor: escolaridade <= 12 ? '+1 ponto' : 'nenhum', nota: 'O MoCA prevê +1 para 12 anos de estudo ou menos' },
+          { rotulo: 'Corrigido', valor: fmtInt(ajustado) },
+          { rotulo: 'Corte original', valor: '26' },
+        ],
+        interpretacao: [
+          `**MoCA de ${fmtInt(ajustado)} (bruto ${fmtInt(bruto)}${escolaridade <= 12 ? ', com +1 por escolaridade' : ''}).** O corte original de 26 tem sensibilidade alta para comprometimento cognitivo leve — de 80 a 90%, contra 18% do MMSE na mesma condição —, mas especificidade baixa: cerca de 40% dos idosos normais pontuam abaixo dele.`,
+          'Por causa disso, **cortes mais baixos (23 ou 24) são recomendados em populações de baixa escolaridade**, e há normas brasileiras específicas por faixa etária e de escolaridade. Aplicar o corte de 26 sem ajuste no Brasil produz excesso de falsos positivos.',
+          'A vantagem do MoCA sobre o MMSE está nos domínios que ele acrescenta: **função executiva** (trilhas, fluência verbal, abstração), **atenção sustentada** e **memória de evocação tardia com mais itens e sem pistas**. São justamente os domínios afetados no comprometimento cognitivo leve, na demência vascular e na demência frontotemporal.',
+          alterado
+            ? 'O resultado está abaixo do corte, o que **não é diagnóstico de demência**: o que separa comprometimento cognitivo leve de demência é a **perda de independência funcional**, avaliada por história com informante e por escalas como o Lawton — e não pela pontuação.'
+            : 'Resultado dentro do esperado. Se a queixa persistir, considere avaliação neuropsicológica formal, que é mais sensível que qualquer rastreio.',
+        ],
+        conduta: [
+          '**Exclua causas reversíveis antes de rotular.** Dose TSH, vitamina B12, hemograma, sódio, cálcio, glicemia, função renal e hepática, e sorologias (sífilis e HIV) quando houver fator de risco. Rastreie **depressão** com a GDS-15 — a pseudodemência depressiva é frequente e tratável — e **delirium** com o 4AT, porque testar cognição durante quadro agudo mede a doença, não o basal.',
+          '**Revise a prescrição procurando carga anticolinérgica**: benzodiazepínicos, antidepressivos tricíclicos, anti-histamínicos de primeira geração, antiespasmódicos urinários, antipsicóticos. É a causa mais modificável de déficit cognitivo no idoso e a que mais costuma passar despercebida.',
+          'Solicite **neuroimagem estrutural** (tomografia ou, preferencialmente, ressonância) na avaliação inicial: hidrocefalia de pressão normal, hematoma subdural crônico, tumor e doença cerebrovascular são achados que mudam a conduta.',
+          alterado
+            ? 'Com déficit confirmado e perda funcional, caracterize a síndrome demencial e o provável tipo, e encaminhe para avaliação especializada. Inicie o planejamento antecipado de cuidados **enquanto o paciente ainda pode participar** — diretivas, finanças, direção de veículos — que é a intervenção mais negligenciada e a de maior impacto na vida da família.'
+            : 'Reavalie em 6 a 12 meses, ou antes se houver mudança. A **trajetória** informa mais que qualquer valor isolado.',
+          'Trate os fatores de risco modificáveis, que respondem por parte substancial do risco de demência: hipertensão na meia-idade, diabetes, tabagismo, obesidade, sedentarismo, perda auditiva não corrigida, isolamento social, depressão, consumo excessivo de álcool, traumatismo craniano e poluição do ar.',
+        ],
+        alertas: [
+          'O corte de 26 tem **especificidade baixa** e superdiagnostica em baixa escolaridade. Use normas locais.',
+          'Nenhum rastreio faz diagnóstico de demência: o critério que falta no escore é a **perda de independência funcional**, e ela se avalia com informante, não com teste.',
+        ],
+      }
+    }
+
+    // MMSE — cortes por escolaridade (Brucki et al., normas brasileiras)
+    const corte = escolaridade === 0 ? 20 : escolaridade <= 4 ? 25 : escolaridade <= 8 ? 26.5 : escolaridade <= 11 ? 28 : 29
+    const alterado = bruto < corte
+
+    return {
+      titulo: 'MMSE',
+      valor: fmtInt(bruto),
+      unidade: 'de 30 pontos',
+      nivel: alterado ? 'alerta' : 'ok',
+      rotuloNivel: alterado ? `Abaixo do corte para ${fmtInt(escolaridade)} anos de estudo` : 'Dentro do esperado para a escolaridade',
+      detalhes: [
+        { rotulo: 'Pontuação', valor: `${fmtInt(bruto)} de 30` },
+        { rotulo: 'Escolaridade', valor: `${fmtInt(escolaridade)} anos` },
+        { rotulo: 'Corte aplicado', valor: fmt(corte, 1), nota: 'Normas brasileiras (Brucki e cols.)' },
+        { rotulo: 'Cortes por escolaridade', valor: 'Analfabeto 20 · 1-4 anos 25 · 5-8 anos 26,5 · 9-11 anos 28 · ≥ 12 anos 29' },
+      ],
+      interpretacao: [
+        `**MMSE de ${fmtInt(bruto)}, com corte de ${fmt(corte, 1)} para ${fmtInt(escolaridade)} anos de estudo — ${alterado ? 'abaixo do esperado' : 'dentro do esperado'}.** Usar o corte único de 24, ainda comum, é a principal fonte de erro do MMSE no Brasil: ele superdiagnostica em baixa escolaridade e deixa passar declínio em quem tem escolaridade alta.`,
+        'O MMSE é **pouco sensível ao comprometimento cognitivo leve** (em torno de 18%) e praticamente não avalia **função executiva**, que é o domínio afetado primeiro na demência vascular, na frontotemporal e na associada à doença de Parkinson. Para queixa recente ou sutil, o MoCA é o instrumento.',
+        'Ele também tem **efeito teto**: uma pessoa com escolaridade alta pode perder função significativa e ainda pontuar 29 ou 30. A comparação com o próprio desempenho prévio, quando existe, vale mais que o corte populacional.',
+        alterado
+          ? 'Resultado abaixo do corte **não é diagnóstico**. Antes de qualquer rótulo, afaste delirium, depressão, déficit sensorial não corrigido (o paciente que não escuta a instrução erra por não ouvir), baixa alfabetização, barreira de idioma e efeito de medicamento.'
+          : 'Resultado dentro do esperado para a escolaridade. Se houver queixa persistente do paciente ou do informante, prossiga com MoCA ou avaliação neuropsicológica — o MMSE normal não afasta declínio inicial.',
+      ],
+      conduta: [
+        '**Corrija o corte pela escolaridade sempre.** As normas brasileiras de Brucki e colaboradores são: 20 para analfabetos, 25 para 1 a 4 anos, 26,5 para 5 a 8, 28 para 9 a 11 e 29 para 12 anos ou mais.',
+        '**Exclua causas reversíveis:** TSH, vitamina B12, hemograma, sódio, cálcio, função renal e hepática, sorologias quando indicadas, e rastreio de depressão (GDS-15) e de delirium (4AT). Reveja a prescrição procurando carga anticolinérgica e sedativos.',
+        'Solicite **neuroimagem estrutural** na avaliação inicial de todo declínio cognitivo: hidrocefalia de pressão normal, hematoma subdural crônico, tumor e doença cerebrovascular mudam a conduta.',
+        'Complemente com **teste do relógio e fluência verbal** — os dois levam poucos minutos e cobrem a lacuna executiva do MMSE. Fluência semântica ("nomes de animais em 1 minuto") abaixo de 9 em baixa escolaridade e abaixo de 13 em alta é sugestiva.',
+        'Avalie **funcionalidade com informante** (Lawton e Barthel): é a perda de independência que separa comprometimento cognitivo leve de demência, e ela não aparece em nenhum teste cognitivo.',
+      ],
+      alertas: [
+        '**O corte de 24 aplicado a todos é o erro mais comum e mais danoso** no uso do MMSE no Brasil — ele rotula como dementes idosos normais de baixa escolaridade e absolve pessoas escolarizadas em declínio.',
+        'O MMSE não avalia função executiva e tem efeito teto: normal em quem tem escolaridade alta não afasta declínio.',
+        'Testar cognição durante doença aguda, dor, privação de sono ou logo após sedação mede o estado agudo, não o basal. Repita depois da recuperação.',
+      ],
+    }
+  },
+  formula: ['MMSE 0-30, corte por escolaridade (normas brasileiras)', 'MoCA 0-30, corte 26 (+1 ponto se escolaridade ≤ 12 anos); considerar 23-24 em baixa escolaridade', 'Relógio: escalas de 0 a 10, com maior peso ao erro nos ponteiros'],
+  fundamento:
+    'Os três instrumentos amostram domínios cognitivos diferentes, e escolher errado é o que produz a maior parte dos falsos negativos no rastreio. O **MMSE** foi criado em 1975 para quantificar o estado mental em psiquiatria hospitalar, e sua composição reflete essa origem: pesa orientação, linguagem e memória imediata, e quase ignora função executiva. Isso o torna razoável para demência moderada, em que o hipocampo e o córtex temporoparietal já estão comprometidos, e ruim para o comprometimento cognitivo leve e para as demências de predomínio frontal, em que a memória pode estar preservada e o que falha é planejar, inibir e alternar. O **MoCA** foi desenhado em 2005 exatamente para preencher essa lacuna, acrescentando trilhas, cópia do cubo, relógio, fluência, abstração e evocação tardia sem pistas — e por isso detecta o comprometimento leve com sensibilidade de 80 a 90% onde o MMSE fica em 18%. O **teste do relógio** condensa, numa única tarefa, compreensão, planejamento, organização visuoespacial e inibição: pedir 11h10 é uma armadilha deliberada, porque o número 10 aparece no enunciado e apontar para ele revela falha na supressão do estímulo literal — um déficit frontal que nenhuma prova de memória detectaria. Sobre tudo isso paira a **escolaridade**, que funciona como reserva cognitiva: mais anos de estudo aumentam a densidade sináptica e a eficiência das redes, permitindo que a pessoa compense patologia por mais tempo e pontue bem apesar de doença já presente — e, no sentido inverso, fazem com que a baixa escolaridade derrube o desempenho sem que haja doença alguma.',
+  armadilhas: [
+    'Aplicar o corte único de 24 no MMSE ignora a escolaridade e é a maior fonte de erro do instrumento em população brasileira.',
+    'Déficit auditivo ou visual não corrigido produz erro por não compreender a instrução, e não por déficit cognitivo — corrija antes de testar.',
+    'Depressão causa pseudodemência com padrão característico ("não sei" em vez de erro, desempenho melhor com encorajamento) e é tratável.',
+    'Nenhum dos três distingue os tipos de demência nem substitui avaliação neuropsicológica formal, que continua sendo o padrão quando a decisão é difícil.',
+  ],
+  referencias: [
+    { texto: 'Folstein MF, Folstein SE, McHugh PR. "Mini-mental state": a practical method for grading the cognitive state of patients for the clinician. J Psychiatr Res. 1975;12(3):189-198.' },
+    { texto: 'Brucki SMD, Nitrini R, Caramelli P, Bertolucci PHF, Okamoto IH. Sugestões para o uso do mini-exame do estado mental no Brasil. Arq Neuropsiquiatr. 2003;61(3B):777-781.' },
+    { texto: 'Nasreddine ZS, Phillips NA, Bédirian V, et al. The Montreal Cognitive Assessment, MoCA: a brief screening tool for mild cognitive impairment. J Am Geriatr Soc. 2005;53(4):695-699.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo, barthel, bradenMorse, cognitivo]
 
 export default ferramentas

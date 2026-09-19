@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **227** (eram 201) |
-| Implementadas desta lista | **26** |
-| Restantes | **174** |
-| Nota média na auditoria | **100** — todas as 227 |
+| Ferramentas no catálogo | **228** (eram 201) |
+| Implementadas desta lista | **27** |
+| Restantes | **173** |
+| Nota média na auditoria | **100** — todas as 228 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -138,6 +138,7 @@ escores individuais.
 ## 4. Neurologia (11)
 
 49. **MMSE, MoCA, teste do desenho do relógio e fluência verbal** — rastreio cognitivo com ajuste por escolaridade. **[P1]**
+    - 🟡 **parcial** — `mmse-moca-relogio` cobre os três com ajuste por escolaridade (normas brasileiras de Brucki); fluência verbal com normas próprias pendente
 50. **CDR e GDS de Reisberg** — estadiamento da demência. **[P2]**
 51. **4AT e ICDSC** — rastreio de delirium fora da UTI e alternativa ao CAM-ICU. **[P1]**
     - 🟡 **parcial** — `4at` feito; ICDSC pendente
