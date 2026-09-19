@@ -1635,6 +1635,163 @@ const espirometria: Ferramenta = {
   ],
 }
 
+/* ═══════════ YEARS, PEGeD e D-dímero ajustado à idade ═══════════ */
+
+const yearsCampos: Campo[] = [
+  campoSeg('estrategia', 'Estratégia', [
+    { valor: 'years', rotulo: 'YEARS' },
+    { valor: 'peged', rotulo: 'PEGeD (Wells + corte adaptado)' },
+    { valor: 'idade', rotulo: 'D-dímero ajustado à idade' },
+  ], { ajuda: 'As três reduzem angiotomografias sem perder embolias. **YEARS** usa três itens próprios; **PEGeD** usa a probabilidade de Wells com cortes de D-dímero adaptados; o **ajuste pela idade** é o mais simples e aplicável sobre qualquer regra.' }),
+  campoSimNao('sinaisTvp', 'Sinais clínicos de trombose venosa profunda', 0, 'Item do YEARS. Edema de membro, dor à palpação do trajeto venoso profundo, aumento de circunferência da panturrilha.'),
+  campoSimNao('hemoptise', 'Hemoptise', 0, 'Item do YEARS.'),
+  campoSimNao('tepProvavel', 'Embolia pulmonar é o diagnóstico mais provável', 0, 'Item do YEARS, e o mais subjetivo dos três — é o julgamento do clínico de que nenhuma outra hipótese explica melhor o quadro. A reprodutibilidade entre avaliadores é o ponto fraco reconhecido da regra.'),
+  campoNum('dimero', 'D-dímero', { unidade: 'ng/mL (unidades FEU)', min: 0, max: 20000, passo: 10, ajuda: 'Confira a **unidade do seu laboratório**: os cortes citados (500, 1000) são em **unidades equivalentes de fibrinogênio (FEU)**. Resultados em unidades de D-dímero (DDU) são aproximadamente a metade, e confundir as duas escalas inverte a decisão.' }),
+  campoNum('idade', 'Idade', { unidade: 'anos', min: 18, max: 110, passo: 1, ajuda: 'Acima de 50 anos, o corte ajustado é **idade × 10 ng/mL** — aos 80 anos, 800 ng/mL em vez de 500. O D-dímero sobe fisiologicamente com a idade, e o corte fixo torna praticamente todo idoso positivo.' }),
+  campoSeg('wells', 'Probabilidade de Wells (para o PEGeD)', [
+    { valor: 'baixa', rotulo: 'Baixa (Wells < 2)' },
+    { valor: 'moderada', rotulo: 'Moderada (Wells 2 a 6)' },
+    { valor: 'alta', rotulo: 'Alta (Wells > 6)' },
+  ], { padrao: 'baixa', mostrarSe: (v) => opc(v, 'estrategia') === 'peged', ajuda: 'No PEGeD, o corte do D-dímero depende da probabilidade: **1000 ng/mL** na probabilidade baixa e **500 ng/mL** na moderada. Probabilidade alta vai direto à imagem.' }),
+]
+
+const years: Ferramenta = {
+  id: 'years-peged',
+  nome: 'YEARS, PEGeD e D-dímero ajustado à idade',
+  sinonimos: ['years', 'peged', 'd-dimero ajustado', 'tep exclusao', 'embolia pulmonar', 'dimero idade'],
+  resumo: 'Aplica as estratégias que excluem embolia pulmonar sem imagem, reduzindo angiotomografias sem perder diagnósticos.',
+  categorias: ['pneumologia', 'cardiologia', 'emergencia'],
+  campos: yearsCampos,
+  calcular: (v) => {
+    const estrategia = opc(v, 'estrategia') ?? 'years'
+    const dimero = num(v, 'dimero')
+    const idade = num(v, 'idade')
+    if (dimero === null || idade === null) return null
+
+    if (estrategia === 'years') {
+      const itens = [sim(v, 'sinaisTvp'), sim(v, 'hemoptise'), sim(v, 'tepProvavel')]
+      const n = itens.filter(Boolean).length
+      const corte = n === 0 ? 1000 : 500
+      const excluido = dimero < corte
+
+      return {
+        titulo: 'YEARS',
+        valor: excluido ? 'Embolia excluída' : 'Angiotomografia indicada',
+        nivel: excluido ? 'ok' : 'alerta',
+        rotuloNivel: `${n} item(ns) · corte de ${corte} ng/mL`,
+        detalhes: [
+          { rotulo: 'Sinais clínicos de TVP', valor: itens[0] ? 'Presente' : 'Ausente', nivel: (itens[0] ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Hemoptise', valor: itens[1] ? 'Presente' : 'Ausente', nivel: (itens[1] ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'TEP como diagnóstico mais provável', valor: itens[2] ? 'Sim' : 'Não', nivel: (itens[2] ? 'alerta' : 'ok') as Nivel },
+          { rotulo: 'Corte aplicado', valor: `${corte} ng/mL`, nota: n === 0 ? 'Nenhum item: corte de 1000' : 'Pelo menos um item: corte de 500' },
+          { rotulo: 'D-dímero', valor: `${fmtInt(dimero)} ng/mL`, nivel: (excluido ? 'ok' : 'alerta') as Nivel },
+        ],
+        interpretacao: [
+          `**${n} de 3 itens do YEARS presentes, corte de ${corte} ng/mL, D-dímero de ${fmtInt(dimero)} — embolia ${excluido ? 'excluída' : 'não excluída'}.**`,
+          'A lógica do YEARS é elegante: em vez de classificar o paciente em faixas de probabilidade, ele **muda o corte do D-dímero** conforme a presença dos três itens. Sem nenhum item, o corte sobe para 1000 ng/mL; com pelo menos um, permanece em 500.',
+          'No estudo de validação, essa estratégia **reduziu a necessidade de angiotomografia em 14 pontos percentuais** em relação ao algoritmo convencional, com taxa de falha (embolia perdida em 3 meses) de apenas 0,43% — dentro da margem considerada segura.',
+          'O item mais frágil é o terceiro — "embolia é o diagnóstico mais provável" —, que é subjetivo e tem reprodutibilidade limitada entre avaliadores. Na dúvida, considere-o presente: isso torna a regra mais conservadora.',
+        ],
+        conduta: [
+          excluido
+            ? '**Embolia pulmonar excluída pelo YEARS: não solicite angiotomografia.** Investigue as demais causas de dispneia e dor torácica — síndrome coronariana, pneumonia, pneumotórax, insuficiência cardíaca, ansiedade, dor musculoesquelética.'
+            : '**Solicite angiotomografia de tórax.** Se houver contraindicação (alergia grave ao contraste, insuficiência renal, gestação), considere cintilografia de ventilação-perfusão ou ultrassonografia de membros inferiores — trombose proximal confirmada em paciente com suspeita clínica autoriza tratar sem imagem torácica.',
+          'Confirmado o diagnóstico, **estratifique a gravidade** com PESI ou sPESI e com marcadores de disfunção de ventrículo direito (troponina, BNP, ecocardiograma, relação VD/VE na tomografia): é isso que separa quem vai para casa com anticoagulante oral, quem interna, e quem precisa de trombólise.',
+          'Com suspeita alta e demora prevista na imagem, **inicie anticoagulação empírica** desde que não haja risco proibitivo de sangramento.',
+        ],
+        alertas: [
+          'Confira a **unidade do D-dímero**: os cortes são em unidades equivalentes de fibrinogênio (FEU). Resultados em DDU são cerca de metade, e confundi-los inverte a decisão.',
+          'O YEARS **não foi validado em gestantes na forma original** — para gestantes existe o algoritmo YEARS adaptado, com ultrassonografia de membros inferiores antes da imagem torácica quando há sinais de trombose.',
+        ],
+      }
+    }
+
+    if (estrategia === 'peged') {
+      const prob = opc(v, 'wells') ?? 'baixa'
+      const corte = prob === 'baixa' ? 1000 : prob === 'moderada' ? 500 : 0
+      const excluido = prob !== 'alta' && dimero < corte
+
+      return {
+        titulo: 'PEGeD',
+        valor: prob === 'alta' ? 'Angiotomografia indicada' : excluido ? 'Embolia excluída' : 'Angiotomografia indicada',
+        nivel: excluido ? 'ok' : 'alerta',
+        rotuloNivel: prob === 'alta' ? 'Probabilidade alta — direto à imagem' : `Corte de ${corte} ng/mL`,
+        detalhes: [
+          { rotulo: 'Probabilidade de Wells', valor: prob === 'baixa' ? 'Baixa' : prob === 'moderada' ? 'Moderada' : 'Alta' },
+          { rotulo: 'Corte aplicado', valor: prob === 'alta' ? 'Não se aplica' : `${corte} ng/mL` },
+          { rotulo: 'D-dímero', valor: `${fmtInt(dimero)} ng/mL`, nivel: (excluido ? 'ok' : 'alerta') as Nivel },
+        ],
+        interpretacao: [
+          prob === 'alta'
+            ? '**Probabilidade alta de Wells: vá direto à angiotomografia.** Nessa faixa, nenhum corte de D-dímero reduz o risco pós-teste o suficiente para excluir.'
+            : `**Probabilidade ${prob === 'baixa' ? 'baixa' : 'moderada'}, corte de ${corte} ng/mL, D-dímero de ${fmtInt(dimero)} — embolia ${excluido ? 'excluída' : 'não excluída'}.**`,
+          'O PEGeD mantém a classificação de Wells mas **adapta o corte do D-dímero à probabilidade**: 1000 ng/mL na probabilidade baixa e 500 na moderada. A racionalidade é bayesiana — quanto menor a probabilidade pré-teste, mais alto pode ser o corte sem que o risco pós-teste ultrapasse o limiar de segurança.',
+          'No estudo de validação, **nenhum** dos pacientes com probabilidade baixa e D-dímero abaixo de 1000 teve embolia em 3 meses, e a estratégia reduziu o uso de imagem em cerca de um terço.',
+          'PEGeD e YEARS chegam ao mesmo lugar por caminhos diferentes, e ambos são aceitáveis. A escolha costuma ser institucional — o importante é aplicar **uma** delas de forma consistente, e não misturar itens de uma com cortes da outra.',
+        ],
+        conduta: [
+          excluido
+            ? '**Embolia excluída: não solicite angiotomografia.** Prossiga com o diagnóstico diferencial de dispneia e dor torácica.'
+            : '**Solicite angiotomografia de tórax.** Na impossibilidade, considere cintilografia de ventilação-perfusão ou ultrassonografia de membros inferiores.',
+          'Confirmado o diagnóstico, estratifique com **PESI ou sPESI** e avalie disfunção de ventrículo direito antes de decidir entre alta precoce, internação e trombólise.',
+          'Lembre que o **D-dímero tem papel apenas de exclusão**: um resultado alto não confirma nada, porque ele sobe em infecção, câncer, gestação, pós-operatório, trauma, insuficiência cardíaca, dissecção de aorta e simplesmente com a idade.',
+        ],
+        alertas: ['Não misture estratégias: use os itens do YEARS com os cortes do YEARS, e a probabilidade de Wells com os cortes do PEGeD.'],
+      }
+    }
+
+    const corteIdade = idade > 50 ? idade * 10 : 500
+    const excluido = dimero < corteIdade
+
+    return {
+      titulo: 'D-dímero ajustado à idade',
+      valor: excluido ? 'Abaixo do corte ajustado' : 'Acima do corte ajustado',
+      nivel: excluido ? 'ok' : 'alerta',
+      rotuloNivel: `Corte de ${fmtInt(corteIdade)} ng/mL`,
+      detalhes: [
+        { rotulo: 'Idade', valor: `${fmtInt(idade)} anos` },
+        { rotulo: 'Corte ajustado', valor: `${fmtInt(corteIdade)} ng/mL`, nota: idade > 50 ? 'idade × 10' : 'corte fixo de 500 abaixo dos 50 anos' },
+        { rotulo: 'D-dímero', valor: `${fmtInt(dimero)} ng/mL`, nivel: (excluido ? 'ok' : 'alerta') as Nivel },
+      ],
+      interpretacao: [
+        `**Corte ajustado de ${fmtInt(corteIdade)} ng/mL para ${fmtInt(idade)} anos — D-dímero ${excluido ? 'abaixo' : 'acima'} do corte.** Acima dos 50 anos, o corte é **idade × 10**; abaixo disso, permanece em 500.`,
+        'O ajuste existe porque o D-dímero **sobe fisiologicamente com a idade**, por aumento da geração basal de fibrina e redução da depuração. Com o corte fixo de 500, praticamente todo octogenário resulta positivo, e o exame perde a função para a qual foi feito — excluir.',
+        'O estudo ADJUST-PE mostrou que o ajuste **aumenta a proporção de pacientes em que a embolia pode ser excluída sem imagem de 6,4% para 30%** nos maiores de 75 anos, mantendo taxa de falha abaixo de 0,5%.',
+        '**O ajuste só vale com probabilidade pré-teste não alta.** Ele é uma correção do corte, não um substituto da avaliação clínica — aplicá-lo a um paciente com Wells alto é uso incorreto.',
+      ],
+      conduta: [
+        excluido
+          ? '**Com probabilidade pré-teste baixa ou moderada, a embolia pode ser excluída** e a angiotomografia dispensada. Documente a probabilidade pré-teste usada — sem ela, a decisão não se sustenta.'
+          : '**Acima do corte ajustado: prossiga para angiotomografia.** Lembre que D-dímero alto não confirma embolia: ele é inespecífico e sobe em dezenas de condições.',
+        'O ajuste pela idade é o mais simples de implementar e pode ser **combinado com qualquer regra de probabilidade**, o que o torna a estratégia de adoção mais fácil em serviços que já usam Wells ou Genebra.',
+        'Confirmado o diagnóstico, estratifique com PESI ou sPESI e avalie função de ventrículo direito antes de decidir o local de tratamento.',
+      ],
+      alertas: [
+        'O ajuste pela idade **não se aplica a probabilidade pré-teste alta** — nesses casos, vá direto à imagem.',
+        'Confira a unidade do laboratório: os cortes são em unidades equivalentes de fibrinogênio (FEU).',
+      ],
+    }
+  },
+  formula: [
+    'YEARS: 0 itens → corte 1000 ng/mL · ≥ 1 item → corte 500 ng/mL',
+    'PEGeD: Wells baixo → corte 1000 · Wells moderado → corte 500 · Wells alto → imagem',
+    'Ajuste à idade: acima de 50 anos, corte = idade × 10 ng/mL',
+  ],
+  fundamento:
+    'O D-dímero é um produto de degradação da fibrina **reticulada**, formado quando a plasmina cliva um trombo já estabilizado pelo fator XIII. Isso o torna um marcador muito sensível de trombose em atividade — mas também explica sua inespecificidade, porque qualquer processo que gere e degrade fibrina o eleva: infecção, inflamação, câncer, cirurgia, trauma, gestação, insuficiência cardíaca, dissecção de aorta e hematoma. A consequência prática é que o D-dímero **só serve para excluir**, nunca para confirmar. O problema que as três estratégias resolvem é uma limitação estatística do corte único: com o corte fixo de 500 ng/mL, a especificidade cai a valores muito baixos em idosos, porque a geração basal de fibrina aumenta e a depuração diminui com a idade — o resultado é que quase todo paciente idoso resulta positivo e acaba na tomografia, com contraste, radiação e achados incidentais. As soluções partem todas do **teorema de Bayes**: o limiar de segurança aceito é um risco pós-teste de embolia abaixo de 2% em 3 meses, e quanto menor a probabilidade pré-teste, mais alto pode ser o corte do D-dímero sem ultrapassar esse limiar. O YEARS opera essa lógica por três itens clínicos, o PEGeD pela probabilidade de Wells, e o ajuste pela idade por uma correção linear simples — e as três chegam ao mesmo resultado, que é tomografar menos sem perder embolia.',
+  armadilhas: [
+    'D-dímero elevado não diagnostica nada: ele sobe em dezenas de condições e seu único uso válido é a exclusão.',
+    'As unidades variam entre laboratórios (FEU e DDU, com fator de aproximadamente 2) — usar o corte errado inverte a decisão.',
+    'Nenhuma das estratégias vale com probabilidade pré-teste alta: ali a imagem é obrigatória, qualquer que seja o D-dímero.',
+    'Em gestantes, use o algoritmo YEARS adaptado, que incorpora ultrassonografia de membros inferiores antes da imagem torácica quando há sinais de trombose.',
+  ],
+  referencias: [
+    { texto: 'van der Hulle T, Cheung WY, Kooij S, et al. Simplified diagnostic management of suspected pulmonary embolism (the YEARS study). Lancet. 2017;390(10091):289-297.' },
+    { texto: 'Kearon C, de Wit K, Parpia S, et al. Diagnosis of Pulmonary Embolism with d-Dimer Adjusted to Clinical Probability (PEGeD). N Engl J Med. 2019;381(22):2125-2134.' },
+    { texto: 'Righini M, Van Es J, Den Exter PL, et al. Age-adjusted D-dimer cutoff levels to rule out pulmonary embolism: the ADJUST-PE study. JAMA. 2014;311(11):1117-1124.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   pesoPreditoFerramenta,
   mecanicaVentilatoria,
@@ -1653,6 +1810,7 @@ export const ferramentas: Ferramenta[] = [
   spesi,
   catGold,
   espirometria,
+  years,
 ]
 
 export default ferramentas

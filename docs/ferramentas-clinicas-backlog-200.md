@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **239** (eram 201) |
-| Implementadas desta lista | **38** |
-| Restantes | **162** |
-| Nota média na auditoria | **100** — todas as 239 |
+| Ferramentas no catálogo | **240** (eram 201) |
+| Implementadas desta lista | **39** |
+| Restantes | **161** |
+| Nota média na auditoria | **100** — todas as 240 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -112,6 +112,7 @@ escores individuais.
 29. **ADD-RS, com classificação de Stanford e DeBakey** — probabilidade pré-teste de dissecção aórtica. **[P1]**
     - ✅ **feito** — `add-rs`, com a estratégia ADvISED e as classificações de Stanford e DeBakey na conduta
 30. **YEARS, PEGeD e D-dímero ajustado à idade** — estratégias de exclusão de TEP sem imagem. **[P1]**
+    - ✅ **feito** — `years-peged`, com as três estratégias de exclusão
 31. **Hestia, BOVA e modelos de recorrência (Vienna, DASH, HERDOO2)** — tratamento ambulatorial do TEP, risco intermediário-alto e decisão de suspender a anticoagulação. **[P2]**
 32. **Índice tornozelo-braquial, Fontaine e Rutherford** — diagnóstico e estadiamento da doença arterial periférica. **[P1]**
     - ✅ **feito** — `indice-tornozelo-braquial`, com Fontaine, Rutherford e o caso da artéria incompressível
