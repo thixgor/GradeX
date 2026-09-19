@@ -497,6 +497,123 @@ const ciwa: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [phq9, gad7, audit, ciwa]
+/* ═══════════ C-SSRS — avaliação de risco de suicídio ═══════════ */
+
+const cssrsCampos: Campo[] = [
+  campoOpc('ideacao', 'Ideação suicida — intensidade máxima no último mês', [
+    { valor: '0', rotulo: '0 — Ausente', pontos: 0 },
+    { valor: '1', rotulo: '1 — Desejo de estar morto ("queria não acordar")', pontos: 1 },
+    { valor: '2', rotulo: '2 — Pensamentos suicidas ativos inespecíficos, sem método', pontos: 2 },
+    { valor: '3', rotulo: '3 — Ideação ativa com **método** pensado, sem plano nem intenção', pontos: 3 },
+    { valor: '4', rotulo: '4 — Ideação ativa com alguma **intenção** de agir, sem plano definido', pontos: 4 },
+    { valor: '5', rotulo: '5 — Ideação ativa com **plano e intenção** específicos', pontos: 5 },
+  ], { padrao: '0', ajuda: 'A escala é **hierárquica e progressiva**: cada nível engloba os anteriores. A transição decisiva está entre os níveis 3 e 4 — do método pensado para a intenção de agir. **Níveis 4 e 5 são considerados risco alto** e mudam a conduta imediatamente.' }),
+  campoSimNao('comportamento', 'Comportamento preparatório ou tentativa nos últimos 3 meses', 0, 'Inclui tentativa real, tentativa interrompida (por terceiro), tentativa abortada (pelo próprio) e **atos preparatórios**: comprar ou juntar o meio, escrever carta, dar pertences, pesquisar métodos. Comportamento recente é o preditor isolado mais forte.'),
+  campoSimNao('tentativaPrevia', 'Tentativa de suicídio ao longo da vida', 0, 'É o preditor mais forte de suicídio consumado — o risco permanece elevado por décadas. Pergunte sobre número de tentativas, método, letalidade percebida e intenção na ocasião.'),
+  campoSimNao('meio', 'Acesso a meio letal (arma de fogo, medicamento acumulado, agrotóxico, altura)', 0, 'A **restrição de acesso ao meio letal** é uma das poucas intervenções com redução comprovada de mortalidade por suicídio em nível populacional. Perguntar e agir sobre isso é parte da consulta, não um detalhe.'),
+  campoSimNao('protecao', 'Fatores de proteção presentes (vínculos, responsabilidade por filhos, razões para viver, suporte, crença)', 0, 'Pergunte explicitamente: "o que o tem segurado?". A resposta orienta o plano de segurança e, frequentemente, é o que sustenta a conduta ambulatorial.'),
+  campoSimNao('substancia', 'Uso de álcool ou outra substância, ou intoxicação atual', 0, 'O álcool aumenta a impulsividade e reduz o julgamento, e está presente em parcela grande das tentativas. Avaliação feita sob intoxicação não é confiável — reavalie sóbrio.'),
+  campoSimNao('psicose', 'Sintomas psicóticos, agitação grave ou desesperança intensa', 0, 'A **desesperança** prediz suicídio melhor que a própria intensidade da depressão, e alucinações de comando são situação de risco imediato.'),
+]
+
+const cssrs: Ferramenta = {
+  id: 'c-ssrs',
+  nome: 'C-SSRS — avaliação de risco de suicídio',
+  sigla: 'C-SSRS',
+  sinonimos: ['c-ssrs', 'columbia', 'risco de suicidio', 'ideacao suicida', 'sad persons'],
+  resumo: 'Gradua a ideação suicida em cinco níveis hierárquicos e organiza a avaliação de risco em conduta imediata.',
+  categorias: ['psiquiatria', 'emergencia'],
+  campos: cssrsCampos,
+  calcular: (v) => {
+    const ideacao = ptsOpc(cssrsCampos, v, 'ideacao')
+    if (ideacao === null) return null
+    const comportamento = sim(v, 'comportamento')
+    const previa = sim(v, 'tentativaPrevia')
+    const meio = sim(v, 'meio')
+    const protecao = sim(v, 'protecao')
+    const substancia = sim(v, 'substancia')
+    const psicose = sim(v, 'psicose')
+
+    const alto = ideacao >= 4 || comportamento || psicose
+    const moderado = !alto && (ideacao === 3 || (ideacao >= 1 && (previa || meio || substancia)))
+    const categoria = alto ? 'alto' : moderado ? 'moderado' : ideacao >= 1 ? 'baixo' : 'sem ideação'
+
+    const nivel: Nivel = alto ? 'critico' : moderado ? 'alerta' : ideacao >= 1 ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (alto) {
+      conduta.push(
+        '**Risco alto: não deixe o paciente sozinho.** Garanta supervisão contínua enquanto organiza a avaliação psiquiátrica de urgência. Retire o acesso ao meio letal antes de qualquer outra coisa — é a medida com maior impacto imediato.',
+        '**Avaliação psiquiátrica presencial e urgente**, com consideração de internação. A internação está indicada quando o risco não pode ser manejado com segurança no ambiente atual: plano definido com acesso ao meio, tentativa recente de alta letalidade, psicose com comando, agitação grave, ausência de suporte, ou recusa de plano de segurança.',
+      )
+    } else if (moderado) {
+      conduta.push('**Risco moderado:** avaliação de saúde mental em curto prazo (dias, não semanas), plano de segurança escrito, restrição de acesso ao meio e envolvimento de alguém de confiança. Defina retorno explícito e um contato em caso de piora.')
+    } else if (ideacao >= 1) {
+      conduta.push('**Risco baixo:** acompanhamento com reavaliação periódica e plano de segurança simples. Trate a condição de base — depressão, ansiedade, dor crônica, uso de substância — que é o que sustenta a ideação.')
+    } else {
+      conduta.push('**Sem ideação relatada.** Mantenha o rastreio periódico, sobretudo em depressão, dor crônica, doença grave, transição de cuidado e após alta psiquiátrica — os 30 dias seguintes à alta são um período de risco particularmente alto.')
+    }
+    conduta.push(
+      '**Construa um plano de segurança escrito, com o paciente**, e não um "contrato de não suicídio", que não tem eficácia demonstrada. O plano de Stanley e Brown tem seis passos: reconhecer sinais de alerta pessoais, estratégias próprias de enfrentamento, pessoas e lugares que distraem, pessoas a quem pedir ajuda, profissionais e serviços com telefone, e **tornar o ambiente seguro**.',
+      '**Restrinja o acesso ao meio letal de forma concreta**: entregar a arma a terceiro, dispensar medicamento acumulado, fornecer receita de quantidade limitada, envolver a família na guarda. É a intervenção com melhor evidência populacional, e depende de ser combinada explicitamente.',
+      'Trate a **condição psiquiátrica de base** com vigor, e atente ao período de latência: nas primeiras semanas de antidepressivo, a energia e a iniciativa podem melhorar antes do humor, o que é uma janela de risco. Monitore de perto nesse intervalo. **Lítio** em transtorno bipolar e **clozapina** em esquizofrenia são os dois fármacos com redução específica de suicídio demonstrada.',
+      'Envolva a rede: família ou pessoa de confiança informada, com orientação sobre sinais de alerta e sobre como agir. O isolamento é fator de risco, e a rede é o que sustenta o plano entre as consultas.',
+      'Garanta a **continuidade do cuidado**. Contatos breves de acompanhamento — telefonema, mensagem, carta — após atendimento por tentativa reduzem repetição, e a transição entre serviços é onde os pacientes mais se perdem.',
+    )
+
+    return {
+      titulo: 'C-SSRS',
+      valor: categoria === 'sem ideação' ? 'Sem ideação' : `Risco ${categoria}`,
+      nivel,
+      rotuloNivel: `Ideação nível ${ideacao} de 5`,
+      detalhes: [
+        { rotulo: 'Nível de ideação', valor: `${fmtInt(ideacao)} de 5`, nivel: (ideacao >= 4 ? 'critico' : ideacao >= 2 ? 'alerta' : ideacao >= 1 ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Comportamento nos últimos 3 meses', valor: comportamento ? 'Presente' : 'Ausente', nivel: (comportamento ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Tentativa ao longo da vida', valor: previa ? 'Sim' : 'Não', nivel: (previa ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Acesso a meio letal', valor: meio ? 'Sim' : 'Não', nivel: (meio ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Fatores de proteção', valor: protecao ? 'Presentes' : 'Ausentes', nivel: (protecao ? 'ok' : 'atencao') as Nivel },
+        { rotulo: 'Uso de substância', valor: substancia ? 'Sim' : 'Não', nivel: (substancia ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Psicose, agitação ou desesperança intensa', valor: psicose ? 'Sim' : 'Não', nivel: (psicose ? 'critico' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        `**Ideação em nível ${ideacao} de 5 — risco ${categoria}.** A escala de ideação do C-SSRS é **hierárquica**: cada nível engloba os anteriores, e a transição decisiva está entre o nível 3 (método pensado) e o **nível 4 (alguma intenção de agir)**. Níveis 4 e 5 são considerados risco alto.`,
+        comportamento
+          ? '**Há comportamento suicida nos últimos 3 meses**, incluindo atos preparatórios. Esse é o preditor isolado mais forte de nova tentativa e eleva o risco independentemente do nível de ideação relatado.'
+          : 'Sem comportamento suicida recente relatado. Lembre que **atos preparatórios contam** — comprar ou juntar o meio, escrever carta, dar pertences —, e que eles precisam ser perguntados de forma específica.',
+        previa
+          ? '**Tentativa prévia ao longo da vida é o preditor mais forte de suicídio consumado**, e o risco permanece elevado por décadas, não apenas nos meses seguintes.'
+          : 'Sem tentativa prévia relatada, o que reduz mas não elimina o risco — a maioria dos suicídios consumados ocorre na primeira tentativa em algumas populações, sobretudo em homens e com métodos de alta letalidade.',
+        'Uma verdade que precisa ser dita: **perguntar sobre suicídio não induz o ato**. Isso foi testado e refutado repetidamente, e o receio de perguntar é a barreira mais comum — e mais custosa — à avaliação adequada.',
+        'O C-SSRS é um instrumento de **avaliação estruturada**, não uma calculadora de probabilidade. Nenhum escore prediz suicídio individual com acurácia útil; a função dele é garantir que as perguntas certas sejam feitas e que a conduta decorra delas.',
+      ],
+      conduta,
+      alertas: [
+        '**Perguntar sobre suicídio não induz o ato.** Não perguntar é a omissão mais documentada nesse cenário.',
+        '**Contrato de não suicídio não funciona** e não tem eficácia demonstrada. O que funciona é o plano de segurança escrito e a restrição de acesso ao meio letal.',
+        'Avaliação feita sob **intoxicação** não é confiável: reavalie o paciente sóbrio antes de qualquer decisão de alta.',
+        'Os **30 dias após alta psiquiátrica** e as primeiras semanas de antidepressivo são janelas de risco elevado — a energia melhora antes do humor. Monitore de perto nesses períodos.',
+      ],
+    }
+  },
+  formula: [
+    'Ideação: 1 desejo de morrer · 2 pensamentos ativos inespecíficos · 3 com método · 4 com intenção · 5 com plano e intenção',
+    'Risco alto: ideação 4 ou 5, comportamento nos últimos 3 meses, ou psicose/agitação/desesperança intensa',
+  ],
+  fundamento:
+    'O suicídio não é um evento aleatório nem um desfecho previsível por escore: décadas de pesquisa mostraram que **nenhum instrumento prediz suicídio individual com acurácia clinicamente útil** — os valores preditivos positivos são baixos mesmo nas melhores escalas, porque o desfecho é raro em termos estatísticos e multifatorial em termos causais. O que o C-SSRS oferece, e onde está seu valor, é outra coisa: **estrutura**. Ele garante que a pergunta seja feita de forma graduada, do desejo passivo de morrer até o plano com intenção, e que atos preparatórios — frequentemente omitidos quando se pergunta apenas "você pensou em se matar?" — sejam capturados. A hierarquia da escala reflete um achado consistente: a progressão de ideação passiva para ativa, depois para método, depois para intenção e plano, corresponde a aumentos de risco mensuráveis, com a transição mais importante entre o método pensado e a intenção de agir. O modelo de **ideação para ação** ajuda a entender por que: os fatores que geram ideação (dor psicológica, desesperança, sensação de ser um fardo, pertencimento frustrado) são diferentes dos que permitem a passagem ao ato (capacidade adquirida para o autodano, impulsividade, acesso ao meio). É essa distinção que explica por que a restrição de acesso ao meio letal funciona tão bem em nível populacional: ela não altera a ideação, mas interrompe a passagem ao ato num momento em que a crise é frequentemente breve e ambivalente.',
+  armadilhas: [
+    'Perguntar apenas "você pensa em se matar?" perde ideação passiva e atos preparatórios — a graduação existe para isso.',
+    'Ausência de ideação relatada não afasta risco: pacientes negam por vergonha, por medo de internação ou porque já decidiram.',
+    'Escores e escalas não substituem a avaliação clínica e não devem ser usados para justificar alta em paciente que preocupa.',
+    'O risco flutua em horas: uma avaliação não vale para a semana inteira, e a reavaliação é parte do manejo.',
+  ],
+  referencias: [
+    { texto: 'Posner K, Brown GK, Stanley B, et al. The Columbia-Suicide Severity Rating Scale: initial validity and internal consistency findings. Am J Psychiatry. 2011;168(12):1266-1277.' },
+    { texto: 'Stanley B, Brown GK. Safety Planning Intervention: a brief intervention to mitigate suicide risk. Cogn Behav Pract. 2012;19(2):256-264.' },
+    { texto: 'Zalsman G, Hawton K, Wasserman D, et al. Suicide prevention strategies revisited: 10-year systematic review. Lancet Psychiatry. 2016;3(7):646-659.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [phq9, gad7, audit, ciwa, cssrs]
 
 export default ferramentas

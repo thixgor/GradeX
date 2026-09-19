@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 102,
+    total: 103,
   },
   {
     id: 'cirurgia',
@@ -168,7 +168,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas psiquiátricas não diagnosticam: elas quantificam gravidade, medem resposta ao tratamento e disparam a conversa que o clínico precisa ter. O PHQ-9 rastreia depressão em 2 minutos e tem no item 9 a pergunta sobre ideação suicida que a consulta costuma pular; o CIWA-Ar decide a dose de benzodiazepínico na abstinência alcoólica hora a hora. Aqui estão os instrumentos de rastreio, gravidade, risco e conversão de dose que sustentam essas decisões.',
     icone: 'psiquiatria',
     cor: 'roxo',
-    total: 4,
+    total: 5,
   },
   {
     id: 'reumatologia',

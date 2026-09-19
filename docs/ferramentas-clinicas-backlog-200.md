@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **244** (eram 201) |
-| Implementadas desta lista | **43** |
-| Restantes | **157** |
-| Nota média na auditoria | **100** — todas as 244 |
+| Ferramentas no catálogo | **245** (eram 201) |
+| Implementadas desta lista | **44** |
+| Restantes | **156** |
+| Nota média na auditoria | **100** — todas as 245 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -306,6 +306,7 @@ escores individuais.
     - ✅ **feito** — `phq-9` e `gad-7`, com as versões de 2 itens
 164. **HAM-D, HAM-A, MADRS e inventários de Beck (BDI-II, BAI)** — gravidade aplicada pelo clínico e autoavaliação. **[P1]**
 165. **C-SSRS (Columbia) e SAD PERSONS** — risco de suicídio. **[P1]**
+    - 🟡 **parcial** — `c-ssrs` feito; SAD PERSONS deliberadamente não implementado (desempenho preditivo ruim e desaconselhado nas diretrizes atuais)
 166. **MDQ, HCL-32 e YMRS** — rastreio de bipolaridade e gravidade da mania. **[P1]**
 167. **AUDIT, AUDIT-C, CAGE, ASSIST e teste de Fagerström** — rastreio de álcool, multissubstância e dependência de nicotina. **[P1]**
     - 🟡 **parcial** — `audit-c` cobre AUDIT-C e CAGE; AUDIT completo de 10 itens, ASSIST e Fagerström pendentes
