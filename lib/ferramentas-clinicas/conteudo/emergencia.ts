@@ -1438,6 +1438,11 @@ const traumaCampos: Campo[] = [
       { valor: '6', rotulo: '6 — Máxima, praticamente insobrevivível', pontos: 6 },
     ], { padrao: '0', ajuda: r.ajuda }),
   ),
+  campoSeg('mecanismo', 'Mecanismo do trauma', [
+    { valor: 'contuso', rotulo: 'Contuso' },
+    { valor: 'penetrante', rotulo: 'Penetrante' },
+  ], { padrao: 'contuso', ajuda: 'O TRISS usa **coeficientes diferentes** para trauma contuso e penetrante, porque a relação entre gravidade anatômica e mortalidade não é a mesma nos dois. Abaixo de 15 anos, aplicam-se os coeficientes de trauma contuso qualquer que seja o mecanismo.' }),
+  campoIdade({ min: 0, max: 110, ajuda: 'No TRISS a idade entra como **variável binária**, e não contínua: o índice vale 0 abaixo de 55 anos e 1 a partir dos 55. É uma simplificação reconhecida do modelo — ela não distingue um paciente de 56 anos de um de 90.' }),
 ]
 
 const traumaGravidade: Ferramenta = {
@@ -1462,6 +1467,19 @@ const traumaGravidade: Ferramenta = {
     const maxAis = Math.max(...ais.map((a) => a.valor))
     const tresMaiores = ais.map((a) => a.valor).sort((a, b) => b - a).slice(0, 3)
     const iss = maxAis === 6 ? 75 : tresMaiores.reduce((s, n) => s + n * n, 0)
+
+    // TRISS (Boyd 1987, coeficientes da Major Trauma Outcome Study).
+    // Ps = 1 / (1 + e^-b), com b = b0 + b1·RTS + b2·ISS + b3·índice de idade.
+    const idade = num(v, 'idade')
+    const mecanismo = opc(v, 'mecanismo') ?? 'contuso'
+    // Abaixo de 15 anos usam-se os coeficientes de trauma contuso, qualquer que seja o mecanismo.
+    const usaContuso = mecanismo === 'contuso' || (idade !== null && idade < 15)
+    const coef = usaContuso
+      ? { b0: -0.4499, b1: 0.8085, b2: -0.0835, b3: -1.743 }
+      : { b0: -2.5355, b1: 0.9934, b2: -0.0651, b3: -1.136 }
+    const indiceIdade = idade !== null && idade >= 55 ? 1 : 0
+    const b = coef.b0 + coef.b1 * rts + coef.b2 * iss + coef.b3 * indiceIdade
+    const ps = idade === null ? null : 1 / (1 + Math.exp(-b))
 
     const politrauma = iss >= 16
     const issGrave = iss >= 25
@@ -1492,12 +1510,12 @@ const traumaGravidade: Ferramenta = {
       '**Use o Glasgow da chegada, antes de sedação ou intubação.** Depois disso o valor não é aproveitável para o escore, e essa é a fonte mais comum de RTS calculado de forma incorreta.',
       '**Considere o idoso e o anticoagulado como grupos de alto risco independentemente do escore.** O idoso tem reserva fisiológica menor, frequentemente usa betabloqueador que impede a taquicardia compensatória, e apresenta mortalidade muito maior para o mesmo ISS; o anticoagulado sangra mais e exige limiar baixo para tomografia de crânio e reversão precoce.',
       'Lembre que os critérios de triagem para centro de trauma incluem elementos que **nenhum escore captura**: mecanismo de alta energia, ejeção do veículo, morte de outro ocupante, queda de altura superior a três vezes a estatura, atropelamento, lesão penetrante de tronco, tórax instável, duas ou mais fraturas de ossos longos proximais, amputação e paralisia.',
-      'Para estimar **probabilidade de sobrevivência**, a ferramenta consagrada é o **TRISS**, que combina RTS, ISS, idade e mecanismo — contuso ou penetrante — numa regressão logística. Ele exige coeficientes específicos por mecanismo, derivados da Major Trauma Outcome Study, e deve ser calculado com a fonte original em mãos.',
+      '**Use o TRISS para auditoria da sua casuística, e não para decisão individual.** Compare a mortalidade observada com a esperada, e revise os casos discordantes: o sobrevivente com probabilidade baixa mostra o que o serviço fez bem, e o óbito com probabilidade alta é o que precisa de revisão. Lembre que os coeficientes são de uma coorte dos anos 1980 e tendem a subestimar a sobrevida com o cuidado atual.',
     )
 
     return {
       titulo: 'Gravidade no trauma',
-      valor: `RTS ${fmt(rts, 2)} · ISS ${fmtInt(iss)}`,
+      valor: ps === null ? `RTS ${fmt(rts, 2)} · ISS ${fmtInt(iss)}` : `RTS ${fmt(rts, 2)} · ISS ${fmtInt(iss)} · sobrevida ${fmtPct(ps * 100, 1)}`,
       nivel,
       rotuloNivel: maxAis === 6 ? 'Lesão AIS 6' : issGrave ? 'Trauma grave' : politrauma ? 'Politraumatizado' : triagemPositiva ? 'Triagem positiva para centro de trauma' : 'Fora dos limiares de gravidade',
       detalhes: [
@@ -1508,6 +1526,13 @@ const traumaGravidade: Ferramenta = {
         { rotulo: 'Maior AIS', valor: fmtInt(maxAis), nivel: (maxAis >= 5 ? 'critico' : maxAis >= 4 ? 'alerta' : 'ok') as Nivel },
         { rotulo: 'Regiões lesadas', valor: regioesLesadas.length > 0 ? regioesLesadas.map((a) => `${a.rotulo} (AIS ${a.valor})`).join(' · ') : 'Nenhuma' },
         { rotulo: 'Três maiores AIS somados ao quadrado', valor: maxAis === 6 ? 'Não se aplica — AIS 6' : `${tresMaiores[0]}² + ${tresMaiores[1]}² + ${tresMaiores[2]}² = ${fmtInt(iss)}` },
+        {
+          rotulo: 'TRISS — probabilidade de sobrevivência',
+          valor: ps === null ? 'Informe a idade' : fmtPct(ps * 100, 1),
+          nivel: (ps === null ? 'neutro' : ps < 0.25 ? 'critico' : ps < 0.5 ? 'alerta' : ps < 0.9 ? 'atencao' : 'ok') as Nivel,
+          nota: ps === null ? undefined : `Coeficientes de trauma ${usaContuso ? 'contuso' : 'penetrante'}${idade !== null && idade < 15 && mecanismo === 'penetrante' ? ' (idade < 15 anos)' : ''}`,
+        },
+        { rotulo: 'Índice de idade do TRISS', valor: idade === null ? '—' : `${fmtInt(idade)} anos → ${fmtInt(indiceIdade)}`, nota: 'Binário: 0 abaixo de 55 anos, 1 a partir de 55' },
       ],
       interpretacao: [
         `**RTS de ${fmt(rts, 2)} e ISS de ${fmtInt(iss)}.** São escores de naturezas distintas: o **RTS é fisiológico** e mede como o paciente está respondendo agora; o **ISS é anatômico** e mede o que foi lesado. Eles não se substituem, e a discordância entre os dois é informação clínica, não erro.`,
@@ -1516,6 +1541,11 @@ const traumaGravidade: Ferramenta = {
         maxAis === 6
           ? '**Há lesão AIS 6**, categoria de lesão praticamente insobrevivível, e por convenção o ISS é fixado em 75 independentemente das demais lesões.'
           : `A maior lesão isolada é **AIS ${maxAis}**. Note a principal limitação do ISS: ele considera apenas **uma lesão por região corporal**, de modo que três lesões graves no mesmo tórax contam como uma só. É por isso que o **NISS**, que toma as três lesões mais graves **independentemente da região**, prediz melhor a mortalidade no trauma penetrante e no trauma concentrado num único segmento.`,
+        ps === null
+          ? '**Informe a idade para calcular o TRISS**, que combina o RTS, o ISS, a idade e o mecanismo numa probabilidade de sobrevivência.'
+          : `**TRISS: probabilidade de sobrevivência de ${fmtPct(ps * 100, 1)}.** O modelo aplica uma regressão logística — Ps = 1 / (1 + e⁻ᵇ), com b = ${fmt(coef.b0, 4)} + ${fmt(coef.b1, 4)} × RTS ${fmt(coef.b2, 4)} × ISS ${fmt(coef.b3, 4)} × índice de idade —, usando os coeficientes de trauma **${usaContuso ? 'contuso' : 'penetrante'}** derivados da Major Trauma Outcome Study.`,
+        '**O TRISS serve para auditoria de qualidade, não para decidir à beira do leito.** Seu uso consagrado é comparar a mortalidade observada com a esperada numa casuística, identificando as mortes inesperadas — sobreviventes com Ps baixo e óbitos com Ps alto — que merecem revisão de caso. Nenhum valor de Ps justifica limitar esforço terapêutico num paciente individual.',
+        '**Conheça as limitações do modelo antes de citar o número.** Os coeficientes vêm de uma coorte norte-americana dos anos 1980, e o cuidado ao traumatizado mudou muito desde então — o TRISS tende a **subestimar a sobrevida** com a prática atual. A idade entra de forma binária, com corte único aos 55 anos, de modo que um paciente de 56 e um de 90 recebem o mesmo ajuste. Comorbidades não entram. E o modelo não é calculável quando falta qualquer componente do RTS, situação comum no paciente intubado em cena.',
         `${rtsBaixo ? '**O RTS está abaixo de 4**, o que sinaliza comprometimento fisiológico relevante. ' : ''}Atenção à combinação inversa, que é a mais traiçoeira: **RTS normal com ISS alto**. Ela é comum no jovem, que compensa e mantém pressão e Glasgow normais até descompensar de forma abrupta, e no idoso em uso de betabloqueador, que não consegue fazer a taquicardia compensatória. Nos dois, a fisiologia tranquilizadora precede o colapso.`,
       ],
       conduta,
@@ -1532,6 +1562,8 @@ const traumaGravidade: Ferramenta = {
     'RTS = 0,9368 × código(Glasgow) + 0,7326 × código(PAS) + 0,2908 × código(FR) — de 0 a 7,8408',
     'RTS de triagem = código(Glasgow) + código(PAS) + código(FR) — de 0 a 12 · centro de trauma se ≤ 11',
     'ISS = soma dos quadrados dos três maiores AIS de regiões distintas — de 0 a 75 · qualquer AIS 6 fixa o ISS em 75',
+    'TRISS: Ps = 1 / (1 + e⁻ᵇ), com b = b₀ + b₁ × RTS + b₂ × ISS + b₃ × índice de idade (0 se < 55 anos, 1 se ≥ 55)',
+    'Coeficientes (MTOS, Boyd 1987) — contuso: b₀ = −0,4499 · b₁ = 0,8085 · b₂ = −0,0835 · b₃ = −1,7430 · penetrante: b₀ = −2,5355 · b₁ = 0,9934 · b₂ = −0,0651 · b₃ = −1,1360 · abaixo de 15 anos usam-se os de trauma contuso',
   ],
   fundamento:
     'Os dois escores respondem a perguntas diferentes porque nascem de duas maneiras distintas de olhar para o traumatizado. O **RTS mede a resposta fisiológica** e se apoia na sequência com que o organismo compensa a perda de volume. A hemorragia reduz o retorno venoso e o débito cardíaco; barorreceptores aórticos e carotídeos detectam a queda e disparam descarga simpática, que produz taquicardia e vasoconstrição arteriolar seletiva — poupando cérebro e coração à custa de pele, músculo, rim e esplâncnico. Essa vasoconstrição mantém a **pressão arterial dentro da normalidade até que cerca de 30 a 40% da volemia tenham se perdido**, momento em que a compensação falha e a pressão despenca. Daí a assimetria entre os três componentes: o Glasgow, que reflete perfusão cerebral e integridade encefálica, recebe o maior peso; a pressão sistólica vem depois, porque só se altera tardiamente; e a frequência respiratória, a mais inespecífica, recebe o menor — ainda que a taquipneia seja um dos sinais mais precoces, por compensação da acidose láctica gerada pelo metabolismo anaeróbio nos tecidos hipoperfundidos. O **ISS mede o dano anatômico** e incorpora uma observação empírica que mudou a traumatologia: a mortalidade não cresce proporcionalmente à gravidade, mas de forma acelerada, e lesões em regiões diferentes interagem de modo mais que aditivo — um trauma cranioencefálico moderado somado a uma lesão torácica moderada mata mais do que a soma dos dois isolados, porque a hipóxia e a hipotensão da lesão torácica agravam diretamente a lesão cerebral secundária. Elevar cada AIS ao quadrado antes de somar é a forma que Baker encontrou, em 1974, de fazer o número acompanhar essa curva. A limitação do método decorre da mesma escolha: ao aceitar apenas uma lesão por região, o ISS enxerga mal o trauma concentrado, e foi para corrigir isso que se propôs o NISS.',
@@ -1546,6 +1578,7 @@ const traumaGravidade: Ferramenta = {
     { texto: 'Champion HR, Sacco WJ, Copes WS, Gann DS, Gennarelli TA, Flanagan ME. A revision of the Trauma Score. J Trauma. 1989;29(5):623-629.' },
     { texto: 'Baker SP, O\'Neill B, Haddon W Jr, Long WB. The injury severity score: a method for describing patients with multiple injuries and evaluating emergency care. J Trauma. 1974;14(3):187-196.' },
     { texto: 'Osler T, Baker SP, Long W. A modification of the injury severity score that both improves accuracy and simplifies scoring. J Trauma. 1997;43(6):922-926.' },
+    { texto: 'Boyd CR, Tolson MA, Copes WS. Evaluating trauma care: the TRISS method. Trauma Score and the Injury Severity Score. J Trauma. 1987;27(4):370-378.' },
   ],
 }
 
