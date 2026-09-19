@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **240** (eram 201) |
-| Implementadas desta lista | **39** |
-| Restantes | **161** |
-| Nota média na auditoria | **100** — todas as 240 |
+| Ferramentas no catálogo | **241** (eram 201) |
+| Implementadas desta lista | **40** |
+| Restantes | **160** |
+| Nota média na auditoria | **100** — todas as 241 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -109,6 +109,7 @@ escores individuais.
 26. **ORBIT, ATRIA e ABC bleeding** — risco de sangramento na fibrilação atrial, alternativas ao HAS-BLED. **[P2]**
 27. **EDACS e Marburg Heart Score** — dor torácica de baixo risco na emergência e na atenção primária. **[P1]**
 28. **Canadian Syncope Risk Score, OESIL e EGSYS** — risco de evento grave após síncope. **[P1]**
+    - 🟡 **parcial** — `canadian-syncope` feito; OESIL e EGSYS pendentes (o CSRS os supera em desempenho e foi priorizado)
 29. **ADD-RS, com classificação de Stanford e DeBakey** — probabilidade pré-teste de dissecção aórtica. **[P1]**
     - ✅ **feito** — `add-rs`, com a estratégia ADvISED e as classificações de Stanford e DeBakey na conduta
 30. **YEARS, PEGeD e D-dímero ajustado à idade** — estratégias de exclusão de TEP sem imagem. **[P1]**

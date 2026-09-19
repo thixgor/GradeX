@@ -2699,6 +2699,119 @@ const itb: Ferramenta = {
   ],
 }
 
+/* ═══════════ Canadian Syncope Risk Score ═══════════ */
+
+const sincopeCampos: Campo[] = [
+  campoOpc('predisposicao', 'Predisposição a síncope vasovagal (ambiente quente e cheio, dor, emoção, posição ortostática prolongada)', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '-1', rotulo: 'Presente', pontos: -1 },
+  ], { padrao: '0', ajuda: 'É o único item que **subtrai** ponto. O pródromo vasovagal — calor, náusea, sudorese, visão turva, palidez — em contexto compatível reduz o risco de evento grave.' }),
+  campoOpc('cardiopatia', 'História de cardiopatia (doença coronariana, valvopatia, arritmia, insuficiência cardíaca)', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Presente', pontos: 1 },
+  ], { padrao: '0' }),
+  campoNum('pas', 'Pressão sistólica mais alterada na emergência', { unidade: 'mmHg', min: 40, max: 300, passo: 1, ajuda: 'Use o valor **mais anormal** registrado na emergência. Sistólica **abaixo de 90 ou acima de 180 mmHg** soma 2 pontos.' }),
+  campoNum('troponina', 'Troponina (múltiplos do percentil 99)', { min: 0, max: 100, passo: 0.1, opcional: true, ajuda: 'Expresse em múltiplos do limite superior de referência do seu laboratório. Acima do percentil 99 soma 2 pontos — mas troponina elevada na síncope exige diferenciar lesão miocárdica por isquemia de lesão por outra causa.' }),
+  campoOpc('qrs', 'QRS acima de 130 ms', [
+    { valor: '0', rotulo: 'Não', pontos: 0 },
+    { valor: '1', rotulo: 'Sim', pontos: 1 },
+  ], { padrao: '0', ajuda: 'QRS alargado sugere doença do sistema de condução, que é substrato para bloqueio atrioventricular paroxístico — uma das causas arrítmicas de síncope mais perigosas justamente por não aparecer no eletrocardiograma entre os episódios.' }),
+  campoOpc('qtc', 'QTc acima de 480 ms', [
+    { valor: '0', rotulo: 'Não', pontos: 0 },
+    { valor: '2', rotulo: 'Sim', pontos: 2 },
+  ], { padrao: '0' }),
+  campoOpc('diagnostico', 'Diagnóstico na emergência', [
+    { valor: '0', rotulo: 'Nenhum dos dois', pontos: 0 },
+    { valor: '-2', rotulo: 'Síncope vasovagal', pontos: -2 },
+    { valor: '2', rotulo: 'Síncope cardíaca', pontos: 2 },
+  ], { padrao: '0', ajuda: 'O diagnóstico do emergencista ao fim da avaliação. Vasovagal **subtrai 2**; cardíaca **soma 2**. É o item de maior amplitude do escore.' }),
+]
+
+const sincope: Ferramenta = {
+  id: 'canadian-syncope',
+  nome: 'Canadian Syncope Risk Score',
+  sigla: 'CSRS',
+  sinonimos: ['sincope', 'csrs', 'canadian syncope', 'desmaio', 'perda de consciencia transitoria'],
+  resumo: 'Estima o risco de evento adverso grave em 30 dias após síncope e define quem pode ir para casa da emergência.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: sincopeCampos,
+  calcular: (v) => {
+    const pas = num(v, 'pas')
+    if (pas === null) return null
+    const trop = num(v, 'troponina')
+
+    const itens = ['predisposicao', 'cardiopatia', 'qrs', 'qtc', 'diagnostico']
+    const pontos = itens.map((id) => ptsOpc(sincopeCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const pontosPas = pas < 90 || pas > 180 ? 2 : 0
+    const pontosTrop = trop !== null && trop > 1 ? 2 : 0
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0) + pontosPas + pontosTrop
+
+    const faixa = total <= -2 ? 'Muito baixo' : total <= 0 ? 'Baixo' : total <= 3 ? 'Médio' : total <= 5 ? 'Alto' : 'Muito alto'
+    const risco = total <= -2 ? '0,4-0,7%' : total <= 0 ? '1,2-1,9%' : total <= 3 ? '3,1-8,1%' : total <= 5 ? '12,9-19,7%' : '28,9-83,6%'
+    const nivel: Nivel = total >= 4 ? 'critico' : total >= 1 ? 'alerta' : 'ok'
+
+    return {
+      titulo: 'Canadian Syncope Risk Score',
+      valor: fmtInt(total),
+      unidade: 'de −3 a +11',
+      nivel,
+      rotuloNivel: `Risco ${faixa.toLowerCase()} — ${risco} em 30 dias`,
+      detalhes: [
+        { rotulo: 'Predisposição vasovagal', valor: fmtInt(pontos[0] as number) },
+        { rotulo: 'História de cardiopatia', valor: fmtInt(pontos[1] as number) },
+        { rotulo: 'Sistólica < 90 ou > 180', valor: `${fmtInt(pontosPas)} (${fmtInt(pas)} mmHg)`, nivel: (pontosPas > 0 ? 'alerta' : 'ok') as Nivel },
+        ...(trop !== null ? [{ rotulo: 'Troponina', valor: fmtInt(pontosTrop), nivel: (pontosTrop > 0 ? 'alerta' : 'ok') as Nivel }] : []),
+        { rotulo: 'QRS > 130 ms', valor: fmtInt(pontos[2] as number) },
+        { rotulo: 'QTc > 480 ms', valor: fmtInt(pontos[3] as number) },
+        { rotulo: 'Diagnóstico na emergência', valor: fmtInt(pontos[4] as number) },
+      ],
+      interpretacao: [
+        `**${total} pontos — risco ${faixa.toLowerCase()}, com probabilidade de evento adverso grave em 30 dias de aproximadamente ${risco}.** O escore vai de −3 a +11, e dois itens **subtraem**: predisposição vasovagal (−1) e diagnóstico de síncope vasovagal na emergência (−2).`,
+        'O desfecho que o escore prediz é **evento adverso grave em 30 dias**: morte, arritmia ventricular, bradiarritmia significativa, infarto, doença estrutural cardíaca grave, dissecção de aorta, embolia pulmonar, hemorragia grave e necessidade de intervenção.',
+        total <= 0
+          ? '**Risco baixo ou muito baixo: a alta da emergência é segura**, com seguimento ambulatorial. Nessa faixa, a observação hospitalar prolongada não melhora desfecho e expõe a custo, imobilidade e eventos iatrogênicos.'
+          : total <= 3
+            ? '**Risco médio:** considere observação de 4 a 6 horas com monitorização, e defina a conduta conforme a evolução e o resultado de exames dirigidos.'
+            : '**Risco alto ou muito alto:** monitorização e investigação hospitalar. Nessa faixa, o risco de arritmia grave justifica internação.',
+        'O escore foi derivado em mais de 4 mil pacientes e validado em coorte independente, com desempenho superior ao de OESIL, EGSYS e San Francisco. Sua força está em **permitir a alta com segurança**, não em decidir quem interna — nos grupos de alto risco, o julgamento clínico continua mandando.',
+      ],
+      conduta: [
+        total <= 0
+          ? '**Alta com seguimento ambulatorial.** Oriente sobre medidas de prevenção da síncope vasovagal: hidratação e sal, reconhecimento do pródromo, manobras de contrapressão física (cruzar as pernas e contrair, apertar as mãos, tensionar os braços), e evitar gatilhos conhecidos.'
+          : '**Monitorização cardíaca.** A maioria dos eventos arrítmicos graves ocorre nas primeiras horas; a monitorização prolongada em ambiente hospitalar tem rendimento decrescente, e o **monitor de eventos ambulatorial ou o looper implantável** rendem mais em síncope recorrente de causa indefinida.',
+        '**Faça a avaliação inicial completa em todo caso**, que é o que mais rende: história detalhada do episódio (pródromo, posição, gatilho, duração, recuperação, testemunhas), exame físico com **pressão em pé** para hipotensão ortostática, e **eletrocardiograma**. Essa tríade identifica a causa em cerca de metade dos casos.',
+        'Procure as **bandeiras vermelhas** que apontam causa cardíaca, independentemente do escore: síncope durante o esforço (não após), síncope em decúbito, ausência de pródromo, palpitações precedendo, história familiar de morte súbita antes dos 50 anos, sopro novo, e alteração eletrocardiográfica.',
+        'Não peça exames de rotina sem hipótese: **tomografia de crânio, eletroencefalograma e carótidas têm rendimento muito baixo** na síncope típica e são a fonte mais comum de investigação desnecessária. Peça-os apenas com déficit neurológico focal, trauma craniano significativo ou suspeita real de crise epiléptica.',
+        'Diferencie **síncope de crise epiléptica**: mioclonias breves durante a síncope são comuns e não indicam epilepsia; o que aponta crise é a mordedura **lateral** da língua, a confusão pós-ictal prolongada, o desvio ocular tônico e a aura estereotipada.',
+      ],
+      alertas: [
+        '**Síncope durante o esforço é cardíaca até prova em contrário** — estenose aórtica, cardiomiopatia hipertrófica, anomalia coronariana, taquicardia ventricular catecolaminérgica. Síncope logo **após** o esforço costuma ser vasovagal.',
+        'Nenhum escore substitui a investigação de **bandeiras vermelhas**: história familiar de morte súbita precoce, palpitações precedendo, síncope em decúbito e ECG alterado pedem investigação mesmo com escore baixo.',
+        'Tomografia de crânio e eletroencefalograma de rotina na síncope típica têm rendimento próximo de zero e devem ser reservados a indicação específica.',
+      ],
+    }
+  },
+  formula: [
+    'Predisposição vasovagal −1 · cardiopatia +1 · sistólica < 90 ou > 180 +2 · troponina elevada +2 · QRS > 130 ms +1 · QTc > 480 ms +2',
+    'Diagnóstico: vasovagal −2 · cardíaca +2 · Total de −3 a +11',
+    '≤ −2 muito baixo · −1 a 0 baixo · 1 a 3 médio · 4 a 5 alto · ≥ 6 muito alto',
+  ],
+  fundamento:
+    'A síncope é a perda transitória de consciência por **hipoperfusão cerebral global**, e o cérebro tolera essa interrupção por muito pouco: a perda de consciência ocorre após cerca de 6 a 8 segundos de fluxo cessado, ou quando o fluxo cerebral cai para menos de 20 a 30% do basal. Os três mecanismos que produzem isso definem os três grandes grupos, e é essa separação que o escore tenta capturar. A síncope **reflexa ou vasovagal** — a mais comum e a de melhor prognóstico — decorre de um reflexo paradoxal: a redução do retorno venoso ativa mecanorreceptores ventriculares num ventrículo pouco preenchido e vigorosamente contraído, gerando aferência que o tronco encefálico interpreta como hipertensão e respondendo com retirada simpática e ativação vagal, o que produz vasodilatação e bradicardia simultâneas. A **hipotensão ortostática** decorre de falha da vasoconstrição compensatória, por depleção de volume, fármaco ou disautonomia. A síncope **cardíaca** é a que mata: arritmia (bradiarritmia paroxística ou taquiarritmia ventricular) ou obstrução mecânica ao fluxo (estenose aórtica, cardiomiopatia hipertrófica, embolia, tamponamento, mixoma). É por isso que os itens do escore que mais somam pontos são marcadores de substrato cardíaco — QRS alargado, QTc prolongado, troponina, pressão anormal e diagnóstico de síncope cardíaca —, enquanto o contexto vasovagal é o único que subtrai.',
+  armadilhas: [
+    'O escore não se aplica a perda de consciência por trauma craniano, intoxicação, crise epiléptica ou hipoglicemia — que não são síncope.',
+    'Ele foi construído para prever evento em 30 dias, não para decidir internação: risco baixo autoriza alta com segurança, mas risco alto não obriga a uma conduta específica.',
+    'Troponina discretamente elevada na síncope é comum e frequentemente reflete lesão miocárdica não isquêmica; interpretá-la como infarto desencadeia investigação desnecessária.',
+    'Mioclonias durante a síncope são frequentes e não significam epilepsia — a "síncope convulsiva" é reconhecida e não deve levar a antiepiléptico.',
+  ],
+  referencias: [
+    { texto: 'Thiruganasambandamoorthy V, Kwong K, Wells GA, et al. Development of the Canadian Syncope Risk Score to predict serious adverse events after emergency department assessment of syncope. CMAJ. 2016;188(12):E289-E298.' },
+    { texto: 'Thiruganasambandamoorthy V, Sivilotti MLA, Le Sage N, et al. Multicenter Emergency Department Validation of the Canadian Syncope Risk Score. JAMA Intern Med. 2020;180(5):737-744.' },
+    { texto: 'Brignole M, Moya A, de Lange FJ, et al. 2018 ESC Guidelines for the diagnosis and management of syncope. Eur Heart J. 2018;39(21):1883-1948.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2728,6 +2841,7 @@ export const ferramentas: Ferramenta[] = [
   nyhaCcs,
   addrs,
   itb,
+  sincope,
 ]
 
 export default ferramentas
