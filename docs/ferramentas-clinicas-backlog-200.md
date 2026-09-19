@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **231** (eram 201) |
-| Implementadas desta lista | **30** |
-| Restantes | **170** |
-| Nota média na auditoria | **100** — todas as 231 |
+| Ferramentas no catálogo | **233** (eram 201) |
+| Implementadas desta lista | **32** |
+| Restantes | **168** |
+| Nota média na auditoria | **100** — todas as 233 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -84,9 +84,11 @@ escores individuais.
 10. **Calculadora de sepse neonatal precoce (Kaiser Permanente)** — risco de sepse de início precoce e conduta em RN ≥ 34 semanas. **[P1]**
 11. **Escore de Finnegan (NAS)** — síndrome de abstinência neonatal e indicação de morfina. **[P2]**
 12. **Escalas de dor pediátrica: NIPS, PIPP, FLACC e escala de faces** — dor por faixa etária. **[P1]**
+    - 🟡 **parcial** — `dor-pediatrica` cobre FLACC, NIPS e escala de faces; PIPP pendente
 13. **Escore de Downes e escore de Tal** — desconforto respiratório do neonato e do lactente. **[P2]**
 14. **Pediatric Appendicitis Score (Samuel)** — apendicite na criança, alternativa ao Alvarado. **[P1]**
 15. **Estadiamento de Tanner** — maturação sexual: mamas, genitália e pilificação. **[P1]**
+    - ✅ **feito** — `tanner`, com a janela etária esperada e a distinção entre adrenarca e gonadarca
 16. **Previsão de estatura final e altura-alvo parental** — canal familiar e velocidade de crescimento. **[P2]**
 
 ## 2. Cardiologia (16)

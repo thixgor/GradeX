@@ -1809,6 +1809,259 @@ const pecarn: Ferramenta = {
 }
 
 
+/* ═══════════════════ Estadiamento de Tanner ═══════════════════ */
+
+const tannerCampos: Campo[] = [
+  campoSexo('sexo', 'Sexo biológico'),
+  campoNum('idadeAnos', 'Idade', { unidade: 'anos', min: 5, max: 20, passo: 0.5, ajuda: 'A idade serve para confrontar o estágio encontrado com a janela esperada — é a **discordância** entre os dois que define puberdade precoce ou atrasada, não o estágio em si.' }),
+  campoOpc('mama', 'Mamas (M)', [
+    { valor: '1', rotulo: 'M1 — Pré-púbere: apenas elevação da papila', pontos: 1 },
+    { valor: '2', rotulo: 'M2 — Broto mamário: elevação da mama e da papila, aréola alargada', pontos: 2 },
+    { valor: '3', rotulo: 'M3 — Maior aumento de mama e aréola, sem separação de contornos', pontos: 3 },
+    { valor: '4', rotulo: 'M4 — Aréola e papila formam segunda saliência sobre a mama', pontos: 4 },
+    { valor: '5', rotulo: 'M5 — Mama adulta: só a papila se projeta', pontos: 5 },
+  ], { padrao: '1', mostrarSe: (v) => opc(v, 'sexo') === 'f', ajuda: 'O **M2 é o marco inicial** da puberdade feminina e deve ser confirmado por palpação, não só por inspeção: a lipomastia da obesidade simula broto mamário à inspeção e é a causa mais comum de encaminhamento indevido por puberdade precoce.' }),
+  campoOpc('genital', 'Genitália (G)', [
+    { valor: '1', rotulo: 'G1 — Pré-púbere: testículos < 4 mL, pênis infantil', pontos: 1 },
+    { valor: '2', rotulo: 'G2 — Testículos de 4 a 8 mL, escroto avermelhado e com textura alterada', pontos: 2 },
+    { valor: '3', rotulo: 'G3 — Testículos de 9 a 12 mL, pênis aumenta em comprimento', pontos: 3 },
+    { valor: '4', rotulo: 'G4 — Testículos de 12 a 15 mL, pênis aumenta em diâmetro, glande desenvolvida', pontos: 4 },
+    { valor: '5', rotulo: 'G5 — Adulto: testículos > 15 mL', pontos: 5 },
+  ], { padrao: '1', mostrarSe: (v) => opc(v, 'sexo') === 'm', ajuda: 'O marco inicial da puberdade masculina é o **volume testicular de 4 mL** (ou eixo maior de 2,5 cm), medido com orquidômetro de Prader. Pelos pubianos sem aumento testicular indicam adrenarca, não puberdade verdadeira — a distinção é central.' }),
+  campoOpc('pelos', 'Pelos pubianos (P)', [
+    { valor: '1', rotulo: 'P1 — Ausentes ou velus', pontos: 1 },
+    { valor: '2', rotulo: 'P2 — Pelos longos, levemente pigmentados, lisos ou pouco encaracolados', pontos: 2 },
+    { valor: '3', rotulo: 'P3 — Pelos mais escuros, grossos e encaracolados, espalhando-se pelo púbis', pontos: 3 },
+    { valor: '4', rotulo: 'P4 — Tipo adulto, sem atingir a face interna das coxas', pontos: 4 },
+    { valor: '5', rotulo: 'P5 — Adulto, estendendo-se à face interna das coxas', pontos: 5 },
+  ], { padrao: '1', ajuda: 'Os pelos pubianos dependem de **androgênios adrenais** (adrenarca) e evoluem de forma parcialmente independente do eixo gonadal. Por isso o estágio de pelos pode discordar do de mama ou genitália — e essa discordância é informativa.' }),
+  campoSimNao('menarca', 'Já teve menarca', 0, 'A menarca ocorre tipicamente no estágio M4, cerca de 2 a 2,5 anos após o broto mamário, e já **depois do pico de velocidade de crescimento** na menina — restam em média 5 a 7 cm de estatura após ela.'),
+]
+
+const tanner: Ferramenta = {
+  id: 'tanner',
+  nome: 'Estadiamento de Tanner — maturação sexual',
+  sinonimos: ['tanner', 'estadiamento puberal', 'maturacao sexual', 'puberdade', 'telarca', 'pubarca'],
+  resumo: 'Estadia a maturação sexual e confronta o estágio com a janela etária esperada, que é o que define precocidade ou atraso.',
+  categorias: ['pediatria', 'endocrinologia'],
+  campos: tannerCampos,
+  calcular: (v) => {
+    const feminino = opc(v, 'sexo') === 'f'
+    const idade = num(v, 'idadeAnos')
+    if (idade === null) return null
+    const principal = ptsOpc(tannerCampos, v, feminino ? 'mama' : 'genital')
+    const pelos = ptsOpc(tannerCampos, v, 'pelos')
+    if (principal === null || pelos === null) return null
+
+    const iniciado = principal >= 2
+    const limiteInferior = feminino ? 8 : 9
+    const limiteSuperior = feminino ? 13 : 14
+    const precoce = iniciado && idade < limiteInferior
+    const atrasada = !iniciado && idade > limiteSuperior
+    const discordancia = Math.abs(principal - pelos) >= 2
+
+    const nivel: Nivel = precoce || atrasada ? 'alerta' : discordancia ? 'atencao' : 'ok'
+    const rotulo = precoce ? 'Puberdade precoce a investigar' : atrasada ? 'Puberdade atrasada a investigar' : iniciado ? 'Puberdade em curso' : 'Pré-púbere'
+
+    const interpretacao: string[] = [
+      `**${feminino ? `M${principal}` : `G${principal}`}, P${pelos}, aos ${fmt(idade, 1)} anos — ${rotulo.toLowerCase()}.** Os estágios de mama ou genitália e de pelos são registrados **separadamente** porque dependem de eixos hormonais diferentes: o gonadal (gonadarca) e o adrenal (adrenarca).`,
+      feminino
+        ? `Na menina, a puberdade começa pelo **broto mamário (M2)**, tipicamente entre 8 e 13 anos. O pico de velocidade de crescimento ocorre cedo, em M2 a M3, e a **menarca vem depois dele**, em torno de M4 — o que significa que, após a primeira menstruação, restam em média apenas 5 a 7 cm de estatura.`
+        : `No menino, a puberdade começa pelo **aumento testicular para 4 mL ou mais (G2)**, tipicamente entre 9 e 14 anos. O pico de velocidade de crescimento é **tardio**, em G4, e é por isso que meninos em atraso constitucional continuam crescendo depois que as colegas pararam — e acabam mais altos.`,
+      precoce
+        ? `**Início antes de ${limiteInferior} anos configura puberdade precoce** e exige investigação. Separe a **central** (dependente de gonadotrofinas, com aumento testicular bilateral ou telarca progressiva) da **periférica** (independente, por tumor, cisto ovariano, hiperplasia adrenal congênita, exposição exógena a esteroides, ou síndrome de McCune-Albright).`
+        : atrasada
+          ? `**Ausência de sinais puberais depois de ${limiteSuperior} anos configura puberdade atrasada.** A causa mais comum é o **atraso constitucional do crescimento e da puberdade**, que é variante do normal e costuma ter história familiar — mas é diagnóstico de exclusão. Investigue hipogonadismo hipogonadotrófico (incluindo síndrome de Kallmann, com anosmia), hipergonadotrófico (Turner, Klinefelter), doença crônica, desnutrição, transtorno alimentar e excesso de exercício.`
+          : 'A cronologia está dentro da janela esperada para a idade.',
+      discordancia
+        ? '**Há discordância importante entre o estágio gonadal e o de pelos**, o que aponta dissociação entre adrenarca e gonadarca. Pelos avançados com gônadas pré-púberes sugerem adrenarca precoce isolada, hiperplasia adrenal congênita não clássica ou tumor produtor de androgênio; gônadas avançadas com poucos pelos podem ocorrer em insuficiência adrenal.'
+        : 'Os estágios gonadal e de pelos evoluem de forma concordante, como é o padrão habitual.',
+    ]
+
+    return {
+      titulo: 'Estadiamento de Tanner',
+      valor: `${feminino ? 'M' : 'G'}${principal} P${pelos}`,
+      nivel,
+      rotuloNivel: rotulo,
+      detalhes: [
+        { rotulo: feminino ? 'Mamas' : 'Genitália', valor: `${feminino ? 'M' : 'G'}${principal}` },
+        { rotulo: 'Pelos pubianos', valor: `P${pelos}` },
+        { rotulo: 'Idade', valor: `${fmt(idade, 1)} anos` },
+        { rotulo: 'Janela esperada de início', valor: `${limiteInferior} a ${limiteSuperior} anos`, nota: feminino ? 'Telarca (M2)' : 'Testículos ≥ 4 mL (G2)' },
+        ...(feminino ? [{ rotulo: 'Menarca', valor: sim(v, 'menarca') ? 'Presente' : 'Ausente' }] : []),
+        { rotulo: 'Pico de velocidade de crescimento', valor: feminino ? 'Precoce (M2-M3), antes da menarca' : 'Tardio (G4)' },
+      ],
+      interpretacao,
+      conduta: [
+        precoce
+          ? '**Investigue puberdade precoce:** idade óssea (radiografia de mão e punho esquerdos), LH e FSH basais, estradiol ou testosterona, e **teste de estímulo com GnRH** quando os basais forem inconclusivos — resposta puberal do LH confirma a forma central. Ressonância de sela é obrigatória em meninos e em meninas abaixo de 6 anos, pela frequência de causa orgânica.'
+          : atrasada
+            ? '**Investigue puberdade atrasada:** idade óssea, LH, FSH, testosterona ou estradiol, TSH, prolactina, hemograma, função renal e hepática, e rastreio de doença celíaca. **LH e FSH elevados** apontam falência gonadal (peça cariótipo: Turner em meninas, Klinefelter em meninos); **baixos ou normais** apontam causa central ou atraso constitucional, e a diferenciação frequentemente exige acompanhamento.'
+            : 'Acompanhe com estadiamento e **velocidade de crescimento** a cada 6 meses. A velocidade é mais sensível que a estatura absoluta para detectar desvios, e a associação entre estágio de Tanner e velocidade de crescimento é o que permite prever o estirão.',
+        'Calcule a **estatura-alvo parental** e compare com o canal de crescimento atual: soma das estaturas dos pais dividida por 2, mais 6,5 cm para meninos e menos 6,5 cm para meninas.',
+        'Use a **idade óssea** para prever estatura final e para distinguir os quadros: idade óssea avançada em relação à cronológica acelera o fechamento das epífises e reduz a estatura final (típico da precocidade); idade óssea atrasada preserva o potencial de crescimento e é característica do atraso constitucional.',
+        'Cuidado com a **lipomastia** do menino e da menina obesos, que simula telarca à inspeção — palpe sempre para confirmar tecido glandular. E com a **telarca precoce isolada**, comum entre 1 e 3 anos, benigna e não progressiva, que não exige tratamento.',
+        'Aborde o **impacto psicossocial**, que é parte do problema e não um detalhe: puberdade precoce associa-se a sofrimento e a maior vulnerabilidade; atraso puberal, sobretudo em meninos, associa-se a baixa autoestima e a bullying. Explique a trajetória esperada ao adolescente e à família.',
+      ],
+      alertas: [
+        '**Pelos pubianos isolados não são puberdade verdadeira.** No menino, o marco é o volume testicular de 4 mL; na menina, o broto mamário palpável. Pelos com gônadas pré-púberes são adrenarca e pedem outra investigação.',
+        'O estadiamento exige exame físico com **consentimento, privacidade e acompanhante**, e deve ser feito com objetivo clínico claro. Em adolescentes, explique antes o que será examinado e por quê.',
+        'Puberdade precoce em **meninos** é muito mais frequentemente orgânica que em meninas — neuroimagem é obrigatória nesse grupo.',
+      ],
+    }
+  },
+  formula: ['Meninas: M1 a M5 (mamas) e P1 a P5 (pelos) · marco inicial M2 entre 8 e 13 anos', 'Meninos: G1 a G5 (genitália) e P1 a P5 · marco inicial testículos ≥ 4 mL entre 9 e 14 anos'],
+  fundamento:
+    'A puberdade é a reativação de um eixo que funcionou no feto e no lactente e depois foi suprimido: o gerador de pulsos de GnRH do núcleo arqueado hipotalâmico entra em quiescência na infância e volta a disparar, primeiro à noite, por desinibição que envolve o sistema **kisspeptina-neurocinina B-dinorfina** — a descoberta de que mutações no receptor da kisspeptina causam hipogonadismo hipogonadotrófico foi o que revelou esse mecanismo. Os pulsos de GnRH estimulam LH e FSH, que por sua vez ativam as gônadas: nos testículos, o LH age nas células de Leydig produzindo testosterona e o FSH nas células de Sertoli promovendo a espermatogênese — e é o crescimento dos túbulos seminíferos, e não a produção hormonal, que responde por quase todo o aumento do volume testicular, razão pela qual ele é o primeiro sinal mensurável. Nos ovários, o FSH recruta folículos e o estradiol produz a telarca. A **adrenarca** é um processo separado e anterior, decorrente da maturação da zona reticular da suprarrenal e da produção de DHEA e androstenediona, e é ela que gera pelos pubianos e axilares — daí o estadiamento registrar os dois eixos em separado, e daí a dissociação entre eles ser um achado diagnóstico e não um erro de medida. A diferença na cronologia do estirão entre os sexos — precoce na menina, tardio no menino — explica a diferença de estatura final adulta: o menino cresce por mais anos antes do fechamento epifisário mediado pelo estradiol, que em ambos os sexos é o hormônio que fecha as placas.',
+  armadilhas: [
+    'Estadiar por inspeção sem palpação confunde lipomastia com telarca e é a causa mais comum de encaminhamento indevido por puberdade precoce.',
+    'A autoavaliação por desenhos tem concordância apenas moderada com o exame do profissional, e superestima em obesos.',
+    'Telarca precoce isolada entre 1 e 3 anos é benigna, não progressiva e não exige tratamento — não confundir com puberdade precoce central.',
+    'A idade média da telarca vem caindo nas últimas décadas, e há variação por etnia; os limites de 8 e 9 anos continuam sendo os operacionais, mas com julgamento clínico sobre progressão e velocidade de crescimento.',
+  ],
+  referencias: [
+    { texto: 'Marshall WA, Tanner JM. Variations in pattern of pubertal changes in girls. Arch Dis Child. 1969;44(235):291-303.' },
+    { texto: 'Marshall WA, Tanner JM. Variations in the pattern of pubertal changes in boys. Arch Dis Child. 1970;45(239):13-23.' },
+    { texto: 'Carel JC, Léger J. Clinical practice. Precocious puberty. N Engl J Med. 2008;358(22):2366-2377.' },
+  ],
+}
+
+/* ═══════════════════ Escalas de dor pediátrica ═══════════════════ */
+
+const dorPedCampos: Campo[] = [
+  campoSeg('escala', 'Escala', [
+    { valor: 'flacc', rotulo: 'FLACC (2 meses a 7 anos)' },
+    { valor: 'nips', rotulo: 'NIPS (neonato)' },
+    { valor: 'faces', rotulo: 'Faces / numérica (≥ 4 a 7 anos)' },
+  ], { ajuda: 'A escolha é por **idade e capacidade de autorrelato**: neonato usa NIPS, criança pré-verbal ou não cooperativa usa FLACC, e a partir de 4 a 7 anos o autorrelato por faces é preferível — autorrelato sempre supera observação quando disponível.' }),
+  campoOpc('face', 'Face', [
+    { valor: '0', rotulo: '0 — Nenhuma expressão particular ou sorriso', pontos: 0 },
+    { valor: '1', rotulo: '1 — Careta ou sobrancelha franzida ocasional, retraído', pontos: 1 },
+    { valor: '2', rotulo: '2 — Tremor frequente do queixo, mandíbula cerrada', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'flacc' }),
+  campoOpc('pernas', 'Pernas (Legs)', [
+    { valor: '0', rotulo: '0 — Posição normal ou relaxada', pontos: 0 },
+    { valor: '1', rotulo: '1 — Inquietas, agitadas, tensas', pontos: 1 },
+    { valor: '2', rotulo: '2 — Chutando ou esticadas', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'flacc' }),
+  campoOpc('atividadeF', 'Atividade', [
+    { valor: '0', rotulo: '0 — Deitada quieta, posição normal, move-se facilmente', pontos: 0 },
+    { valor: '1', rotulo: '1 — Contorcendo-se, movendo-se para trás e para frente, tensa', pontos: 1 },
+    { valor: '2', rotulo: '2 — Curvada, rígida ou com movimentos bruscos', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'flacc' }),
+  campoOpc('choro', 'Choro', [
+    { valor: '0', rotulo: '0 — Sem choro (acordada ou dormindo)', pontos: 0 },
+    { valor: '1', rotulo: '1 — Gemidos ou choramingos, queixa ocasional', pontos: 1 },
+    { valor: '2', rotulo: '2 — Choro persistente, grito, soluço, queixa frequente', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'flacc', ajuda: 'Atenção: **choro ausente não significa ausência de dor**. A criança exausta, deprimida ou com dor crônica pode não chorar — a chamada "quietude patológica" é sinal de dor intensa e prolongada, não de conforto.' }),
+  campoOpc('consolabilidade', 'Consolabilidade', [
+    { valor: '0', rotulo: '0 — Satisfeita, relaxada', pontos: 0 },
+    { valor: '1', rotulo: '1 — Tranquilizada por toque, abraço ou conversa; distraível', pontos: 1 },
+    { valor: '2', rotulo: '2 — Difícil de consolar ou confortar', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'flacc' }),
+  campoNum('nips', 'NIPS — pontuação total', { min: 0, max: 7, passo: 1, mostrarSe: (v) => opc(v, 'escala') === 'nips', ajuda: 'Some os seis itens: expressão facial (0-1), choro (0-2), padrão respiratório (0-1), braços (0-1), pernas (0-1) e estado de alerta (0-1). Total de 0 a 7, com corte de **3 ou mais** indicando dor.' }),
+  campoNum('faces', 'Faces ou escala numérica (0 a 10)', { min: 0, max: 10, passo: 1, mostrarSe: (v) => opc(v, 'escala') === 'faces', ajuda: 'Na escala de faces de Wong-Baker, ancore nas extremidades ("esta carinha não tem dor nenhuma" e "esta tem a pior dor possível") e **não** associe as faces a choro ou a felicidade — a criança pode escolher a face triste por estar assustada, e não por dor.' }),
+]
+
+const dorPediatrica: Ferramenta = {
+  id: 'dor-pediatrica',
+  nome: 'Dor pediátrica: FLACC, NIPS e escala de faces',
+  sinonimos: ['flacc', 'nips', 'wong baker', 'escala de faces', 'dor crianca', 'dor neonatal'],
+  resumo: 'Mede dor por faixa etária e converte a pontuação em conduta analgésica, incluindo as medidas não farmacológicas do neonato.',
+  categorias: ['pediatria', 'emergencia'],
+  campos: dorPedCampos,
+  calcular: (v) => {
+    const escala = opc(v, 'escala') ?? 'flacc'
+    let total: number | null = null
+    let maximo = 10
+
+    if (escala === 'flacc') {
+      const ids = ['face', 'pernas', 'atividadeF', 'choro', 'consolabilidade']
+      const pontos = ids.map((id) => ptsOpc(dorPedCampos, v, id))
+      if (pontos.some((p) => p === null)) return null
+      total = (pontos as number[]).reduce((a, b) => a + b, 0)
+      maximo = 10
+    } else if (escala === 'nips') {
+      total = num(v, 'nips')
+      maximo = 7
+    } else {
+      total = num(v, 'faces')
+      maximo = 10
+    }
+    if (total === null) return null
+
+    const corte = escala === 'nips' ? 3 : 4
+    const intensa = escala === 'nips' ? total >= 5 : total >= 7
+    const nivel: Nivel = intensa ? 'alerta' : total >= corte ? 'atencao' : 'ok'
+    const faixa = intensa ? 'Dor intensa' : total >= corte ? 'Dor moderada' : total > 0 ? 'Dor leve' : 'Sem dor'
+
+    const conduta: string[] = []
+    if (escala === 'nips') {
+      conduta.push(
+        '**No neonato, comece pelas medidas não farmacológicas, que têm eficácia comprovada** e são sistematicamente subutilizadas: **sacarose a 24% (0,5 a 2 mL, 2 minutos antes do procedimento)**, sucção não nutritiva, contato pele a pele (método canguru), amamentação durante o procedimento, contenção facilitada e enrolamento. A combinação delas supera cada uma isolada.',
+        'Para procedimentos, acrescente anestésico tópico quando houver tempo de latência (lidocaína-prilocaína exige 60 minutos) e prefira a **punção de calcanhar com lanceta automática** à punção manual.',
+      )
+    }
+    if (total >= corte) {
+      conduta.push(
+        '**Dor moderada a intensa: trate agora e reavalie.** Paracetamol 10 a 15 mg/kg ou dipirona 10 a 25 mg/kg; ibuprofeno 5 a 10 mg/kg a partir de 6 meses (evite em desidratação, lesão renal e suspeita de dengue). Na dor intensa, **opioide**: morfina 0,05 a 0,1 mg/kg por via intravenosa, com reavaliação em 15 a 30 minutos.',
+        '**Reavalie com a mesma escala** após o intervalo esperado de ação — 30 a 60 minutos para via oral, 15 a 30 para intravenosa. Medir uma vez e não remedir é o erro que transforma prescrição em ritual.',
+      )
+    } else {
+      conduta.push('**Dor leve ou ausente pelo escore.** Mantenha reavaliação periódica, porque a dor flutua com procedimentos, manipulação e horário da última dose. Confronte o escore com o relato dos pais, que conhecem o basal da criança.')
+    }
+    conduta.push(
+      '**Prescreva analgesia em horário fixo, não "se necessário"**, quando a dor é previsível — pós-operatório, trauma, mucosite. Esquema conforme necessidade deixa a criança esperar a dor voltar para receber a próxima dose, e a dor já instalada é mais difícil de controlar.',
+      'Combine analgesia farmacológica com **medidas não farmacológicas**, que funcionam em todas as idades: presença dos pais, distração (bolhas, vídeo, música), posicionamento confortável, ambiente calmo e explicação apropriada à idade sobre o que vai acontecer.',
+      'Use **anestésico tópico e bloqueios** para procedimentos, e não subestime o acúmulo: cada punção mal manejada sensibiliza a criança para as próximas, e a experiência dolorosa repetida na infância altera o processamento da dor a longo prazo.',
+      'Registre a dor como **sinal vital**, com escala, valor, horário e resposta ao tratamento. O que não é medido não é tratado — e a dor pediátrica é historicamente subtratada por presumir-se que a criança "não sente" ou "não lembra".',
+    )
+
+    return {
+      titulo: escala === 'flacc' ? 'FLACC' : escala === 'nips' ? 'NIPS' : 'Escala de faces / numérica',
+      valor: fmtInt(total),
+      unidade: `de ${maximo} pontos`,
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: 'Escala aplicada', valor: escala === 'flacc' ? 'FLACC (observacional, 2 meses a 7 anos)' : escala === 'nips' ? 'NIPS (neonatal)' : 'Autorrelato (≥ 4 a 7 anos)' },
+        { rotulo: 'Corte para intervenção', valor: `≥ ${corte}` },
+        { rotulo: 'Faixa', valor: faixa },
+      ],
+      interpretacao: [
+        `**${total} de ${maximo} pontos — ${faixa.toLowerCase()}.** ${escala === 'nips' ? 'No NIPS, 3 ou mais indica dor.' : 'Nas escalas de 0 a 10, a leitura usual é 1 a 3 leve, 4 a 6 moderada e 7 a 10 intensa.'}`,
+        escala === 'flacc'
+          ? 'O FLACC é **observacional** e avalia cinco domínios comportamentais: face, pernas, atividade, choro e consolabilidade. Ele é o instrumento para a criança que não relata — pré-verbal, com atraso de desenvolvimento, sedada ou intubada — e tem versão revisada para crianças com comprometimento cognitivo, que incorpora comportamentos individuais descritos pelos pais.'
+          : escala === 'nips'
+            ? 'O NIPS mede seis parâmetros no recém-nascido: expressão facial, choro, padrão respiratório, braços, pernas e estado de alerta. O neonato **sente dor** — as vias nociceptivas estão funcionais desde cerca de 24 semanas de gestação, enquanto as vias inibitórias descendentes ainda são imaturas, o que significa que ele pode sentir **mais** dor e modulá-la menos que o adulto.'
+            : 'O **autorrelato é o padrão-ouro** sempre que a criança conseguir fornecê-lo, tipicamente a partir dos 4 a 7 anos. Escalas observacionais tendem a subestimar a dor em comparação ao autorrelato, e devem ser reservadas a quem não pode relatar.',
+        'Escores observacionais medem **comportamento**, não nocicepção: ansiedade, fome, sono e medo do ambiente elevam a pontuação sem dor, e a criança exausta ou com dor crônica pode pontuar baixo estando com dor intensa — a chamada quietude patológica.',
+        'Nenhuma escala substitui o **relato dos pais**, que conhecem o comportamento basal da criança. Quando o escore e a percepção dos pais divergem, vale investigar antes de confiar no número.',
+      ],
+      conduta,
+      alertas: [
+        '**Choro ausente não é ausência de dor.** A criança exausta, deprimida ou com dor prolongada pode ficar quieta — e essa quietude é sinal de gravidade, não de conforto.',
+        'O neonato sente dor e a modula menos que o adulto: as vias nociceptivas estão prontas desde cerca de 24 semanas, e as inibitórias descendentes ainda não. Procedimento sem analgesia no neonato não é inócuo.',
+        'Dor pediátrica é historicamente **subtratada**. Medir com escala apropriada, prescrever em horário fixo quando a dor é previsível e reavaliar são as três medidas que mais mudam isso.',
+      ],
+    }
+  },
+  formula: ['FLACC = 5 itens de 0 a 2 (total 0 a 10)', 'NIPS = 6 itens (total 0 a 7), corte ≥ 3', 'Faces/numérica: 0 a 10, com autorrelato a partir de 4 a 7 anos'],
+  fundamento:
+    'A ideia de que o recém-nascido não sente dor sustentou, até os anos 1980, a prática de operar neonatos apenas com bloqueador neuromuscular. Ela era falsa em todos os níveis. As **vias nociceptivas periféricas e espinhais estão funcionais desde cerca de 24 semanas de gestação**, e as conexões talamocorticais necessárias à percepção se estabelecem por volta de 25 a 26 semanas. O que de fato é imaturo no neonato são as **vias inibitórias descendentes**, que partem do tronco encefálico e modulam o corno dorsal — ou seja, ele recebe o estímulo e o modula pior, com campos receptivos mais amplos e limiares mais baixos. Pior ainda, a exposição repetida a dor no período neonatal produz **sensibilização de longo prazo**: alteração da arborização de fibras aferentes, hiperalgesia persistente e resposta alterada a dor meses e anos depois. Essa fisiologia justifica tanto a existência de escalas específicas quanto a eficácia surpreendente das medidas não farmacológicas — a sacarose oral ativa vias opioides endógenas por mecanismo gustativo, e o contato pele a pele e a sucção não nutritiva recrutam modulação por vias táteis e oxitocinérgicas. Nas crianças maiores, o problema muda de natureza: elas sentem e expressam, mas o comportamento é um proxy imperfeito da nocicepção, contaminado por medo, fadiga e contexto — e é por isso que o autorrelato, quando disponível, supera qualquer escala observacional.',
+  armadilhas: [
+    'Aplicar escala observacional a criança capaz de relatar subestima a dor: use o autorrelato sempre que possível.',
+    'Escalas de faces que misturam dor com emoção (faces chorando ou sorrindo) confundem medo com dor — ancore nas extremidades e explique que se trata de dor, não de sentimento.',
+    'Ansiedade, fome, sono e privação de contato elevam o FLACC sem dor; tratar tudo com analgésico deixa a causa real sem manejo.',
+    'Em crianças com comprometimento cognitivo, o comportamento basal é atípico e o FLACC padrão erra — use a versão revisada, construída com a descrição dos pais sobre como aquela criança expressa dor.',
+  ],
+  referencias: [
+    { texto: 'Merkel SI, Voepel-Lewis T, Shayevitz JR, Malviya S. The FLACC: a behavioral scale for scoring postoperative pain in young children. Pediatr Nurs. 1997;23(3):293-297.' },
+    { texto: 'Lawrence J, Alcock D, McGrath P, et al. The development of a tool to assess neonatal pain (NIPS). Neonatal Netw. 1993;12(6):59-66.' },
+    { texto: 'Committee on Fetus and Newborn and Section on Anesthesiology and Pain Medicine. Prevention and Management of Procedural Pain in the Neonate: An Update. Pediatrics. 2016;137(2):e20154271.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   dosePediatrica,
   hidratacao,
@@ -1828,6 +2081,8 @@ export const ferramentas: Ferramenta[] = [
   westley,
   kocher,
   pecarn,
+  tanner,
+  dorPediatrica,
 ]
 
 export default ferramentas

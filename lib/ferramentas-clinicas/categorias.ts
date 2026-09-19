@@ -98,7 +98,7 @@ export const CATEGORIAS: Categoria[] = [
       'Da relação insulina-carboidrato ao gap osmolar da cetoacidose, esta categoria reúne as contas do dia a dia endocrinológico — incluindo as conversões de corticoide e de hormônio tireoidiano que resolvem metade dos erros de prescrição.',
     icone: 'endocrinologia',
     cor: 'laranja',
-    total: 17,
+    total: 18,
   },
   {
     id: 'pediatria',
@@ -108,7 +108,7 @@ export const CATEGORIAS: Categoria[] = [
       'Criança não é adulto pequeno, e a prova disso é que quase toda conduta pediátrica passa por uma conta de peso ou superfície corporal. Estão aqui Holliday-Segar, as escalas neonatais, os percentis de crescimento, a fototerapia e as doses máximas que evitam intoxicação.',
     icone: 'pediatria',
     cor: 'turquesa',
-    total: 24,
+    total: 26,
   },
   {
     id: 'ginecologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 92,
+    total: 93,
   },
   {
     id: 'cirurgia',
