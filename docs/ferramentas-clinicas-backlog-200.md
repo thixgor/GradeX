@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **222** (eram 201) |
-| Implementadas desta lista | **21** |
-| Restantes | **179** |
-| Nota média na auditoria | **100** — todas as 222 |
+| Ferramentas no catálogo | **224** (eram 201) |
+| Implementadas desta lista | **23** |
+| Restantes | **177** |
+| Nota média na auditoria | **100** — todas as 224 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -331,9 +331,11 @@ escores individuais.
 ## 18. Urologia, dermatologia, oftalmologia, ORL e ortopedia — categoria nova (9)
 
 192. **IPSS e escore de qualidade de vida na HPB** — sintomas do trato urinário inferior e indicação de tratamento. **[P1]**
+    - ✅ **feito** — `ipss`, com a pergunta de qualidade de vida separada da soma
 193. **IIEF-5/SHIM e NIH-CPSI** — disfunção erétil e prostatite crônica. **[P2]**
 194. **Próstata: densidade e velocidade do PSA, relação livre/total, Gleason/ISUP grade group, risco de D'Amico e nomograma de Partin** — indicação de biópsia e estratificação do câncer de próstata. **[P1]**
 195. **TWIST score** — probabilidade de torção testicular. **[P1]**
+    - ✅ **feito** — `twist`
 196. **SCORAD e EASI** — gravidade da dermatite atópica. **[P1]**
 197. **SCORTEN e ALDEN** — mortalidade na necrólise epidérmica tóxica e causalidade medicamentosa. **[P1]**
 198. **Melanoma: Breslow, Clark, regra ABCDE, escore de 7 pontos de Glasgow e fototipos de Fitzpatrick** — estadiamento e risco fotobiológico. **[P1]**
