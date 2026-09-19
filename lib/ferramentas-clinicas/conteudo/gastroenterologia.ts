@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   campoAltura,
   campoIdade,
@@ -1301,6 +1301,108 @@ const astAlt: Ferramenta = {
   ],
 }
 
+/* ═══════════ Probabilidade de coledocolitíase (ASGE/ESGE) ═══════════ */
+
+const coledocoCampos: Campo[] = [
+  campoSimNao('calculoVisto', 'Cálculo visualizado no colédoco por imagem', 0, 'Preditor **muito forte** isolado. Se o cálculo foi visto na ultrassonografia, na tomografia ou na ecoendoscopia, a probabilidade é alta e a conduta é direta.'),
+  campoSimNao('colangite', 'Colangite aguda', 0, 'Preditor **muito forte**. A tríade de Charcot é febre, icterícia e dor em hipocôndrio direito; a pêntade de Reynolds acrescenta hipotensão e alteração do estado mental, e indica colangite supurativa — **emergência de drenagem**, não de antibiótico isolado.'),
+  campoNum('bilirrubina', 'Bilirrubina total', { unidade: 'mg/dL', min: 0, max: 40, passo: 0.1, ajuda: 'Acima de **4 mg/dL** é preditor muito forte; entre **1,8 e 4 mg/dL** é preditor forte. Lembre que bilirrubina alta com colédoco não dilatado, em paciente sem dor, pede investigação de causa hepatocelular ou hemolítica antes de assumir obstrução.' }),
+  campoNum('colédoco', 'Diâmetro do colédoco na ultrassonografia', { unidade: 'mm', min: 1, max: 30, passo: 0.5, ajuda: 'Acima de **6 mm** com vesícula in situ é preditor forte. Em colecistectomizados, o colédoco dilata fisiologicamente até 10 mm e o corte perde valor; some 1 mm por década acima dos 60 anos.' }),
+  campoSimNao('pancreatite', 'Pancreatite biliar', 0, 'Preditor **moderado**. Em pancreatite biliar sem colangite e sem obstrução persistente, o cálculo geralmente já passou — e a colangiopancreatografia retrógrada de rotina nesse cenário acrescenta risco sem benefício.'),
+  campoSimNao('transaminases', 'Elevação de transaminases (padrão hepatocelular transitório)', 0, 'Preditor **moderado**. O padrão característico da passagem de cálculo é uma elevação abrupta e alta de ALT e AST que **cai rapidamente** nas 48 horas seguintes, seguida pela elevação de fosfatase alcalina e GGT.'),
+  campoSimNao('idade55', 'Idade acima de 55 anos', 0, 'Preditor **moderado**.'),
+]
+
+const coledocolitiase: Ferramenta = {
+  id: 'coledocolitiase',
+  nome: 'Probabilidade de coledocolitíase (ASGE/ESGE)',
+  sinonimos: ['coledocolitiase', 'colangite', 'cpre', 'colangiorressonancia', 'calculo no coledoco', 'asge'],
+  resumo: 'Estratifica a probabilidade de cálculo no colédoco e define quem vai direto à CPRE, quem faz imagem antes e quem não precisa de nada.',
+  categorias: ['gastroenterologia', 'cirurgia', 'emergencia'],
+  campos: coledocoCampos,
+  calcular: (v) => {
+    const bili = num(v, 'bilirrubina')
+    const diam = num(v, 'colédoco')
+    if (bili === null || diam === null) return null
+
+    const muitoForte = sim(v, 'calculoVisto') || sim(v, 'colangite') || bili > 4
+    const forte = diam > 6 || (bili >= 1.8 && bili <= 4)
+    const moderados = [sim(v, 'pancreatite'), sim(v, 'transaminases'), sim(v, 'idade55')].filter(Boolean).length
+
+    const alta = muitoForte || (diam > 6 && bili >= 1.8)
+    const baixa = !muitoForte && !forte && moderados === 0
+    const categoria = alta ? 'alta' : baixa ? 'baixa' : 'intermediaria'
+
+    const nivel: Nivel = sim(v, 'colangite') ? 'critico' : alta ? 'alerta' : categoria === 'intermediaria' ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (sim(v, 'colangite')) {
+      conduta.push('**Colangite aguda é emergência de drenagem.** Antibiótico e reposição volêmica são suporte, não tratamento: o que resolve é a **descompressão biliar**, por colangiopancreatografia retrógrada em até 24 horas (ou imediatamente na forma supurativa, com hipotensão ou alteração do estado mental). Drenagem percutânea trans-hepática ou ecoguiada são alternativas quando a endoscópica falha.')
+      conduta.push('Grade a gravidade pelos **critérios de Tóquio**: grau I (leve, responde ao tratamento inicial), grau II (moderada, com dois entre leucocitose ou leucopenia, febre ≥ 39 °C, idade ≥ 75 anos, bilirrubina ≥ 5 e hipoalbuminemia) e grau III (grave, com disfunção orgânica) — os graus II e III exigem drenagem urgente.')
+    } else if (alta) {
+      conduta.push('**Probabilidade alta: colangiopancreatografia retrógrada endoscópica (CPRE) direta**, com papilotomia e extração do cálculo. Nessa faixa, fazer colangiorressonância antes apenas atrasa, porque o resultado dificilmente mudará a conduta.')
+    } else if (categoria === 'intermediaria') {
+      conduta.push('**Probabilidade intermediária: faça imagem antes da CPRE** — colangiorressonância ou **ecoendoscopia**, esta com sensibilidade um pouco maior para cálculos pequenos. A alternativa é a colangiografia intraoperatória durante a colecistectomia, com exploração do colédoco se positiva. O que **não** se faz é CPRE diagnóstica: ela é um procedimento terapêutico com risco real, e usá-la para investigar expõe o paciente sem necessidade.')
+    } else {
+      conduta.push('**Probabilidade baixa: nenhuma investigação adicional do colédoco.** Prossiga para a colecistectomia.')
+    }
+    conduta.push(
+      '**Colecistectomia na mesma internação** após a resolução da obstrução, e não ambulatorialmente semanas depois: adiar expõe a novo evento biliar — cerca de 15 a 25% recidivam em 6 semanas —, e a cirurgia precoce reduz reinternação sem aumentar complicação.',
+      'Conheça os riscos da CPRE antes de indicá-la: **pancreatite pós-CPRE em 3 a 10%** (a complicação mais comum), sangramento, perfuração e colangite. A profilaxia que funciona é **indometacina ou diclofenaco retal 100 mg imediatamente antes ou após o procedimento**, somada à hidratação com Ringer lactato e, em casos selecionados, à prótese pancreática.',
+      'Na **pancreatite biliar sem colangite e sem obstrução persistente**, a CPRE precoce **não** melhora desfecho: o cálculo geralmente já passou. Reserve-a para colangite associada ou obstrução mantida documentada.',
+      'Considere as **causas não litiásicas** de obstrução quando o quadro não fechar: tumor de cabeça de pâncreas, colangiocarcinoma, ampuloma, colangite esclerosante primária, síndrome de Mirizzi e estenose pós-operatória. Perda de peso, icterícia indolor e vesícula palpável (sinal de Courvoisier) apontam neoplasia.',
+    )
+
+    return {
+      titulo: 'Probabilidade de coledocolitíase',
+      valor: categoria === 'alta' ? 'Alta' : categoria === 'intermediaria' ? 'Intermediária' : 'Baixa',
+      nivel,
+      rotuloNivel: sim(v, 'colangite') ? 'Colangite — drenagem urgente' : categoria === 'alta' ? 'CPRE direta' : categoria === 'intermediaria' ? 'Imagem antes da CPRE' : 'Sem investigação adicional',
+      detalhes: [
+        { rotulo: 'Preditor muito forte', valor: muitoForte ? 'Presente' : 'Ausente', nivel: (muitoForte ? 'alerta' : 'ok') as Nivel, nota: 'Cálculo visto, colangite, ou bilirrubina > 4' },
+        { rotulo: 'Preditor forte', valor: forte ? 'Presente' : 'Ausente', nota: 'Colédoco > 6 mm ou bilirrubina 1,8-4' },
+        { rotulo: 'Preditores moderados', valor: `${moderados} de 3`, nota: 'Pancreatite biliar, transaminases alteradas, idade > 55' },
+        { rotulo: 'Bilirrubina', valor: `${fmt(bili, 1)} mg/dL`, nivel: (bili > 4 ? 'alerta' : bili >= 1.8 ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Colédoco', valor: `${fmt(diam, 1)} mm`, nivel: (diam > 6 ? 'alerta' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        `**Probabilidade ${categoria === 'alta' ? 'alta' : categoria === 'intermediaria' ? 'intermediária' : 'baixa'}.** A estratificação ASGE separa três níveis por conduta, e não por número: **alta** vai direto à CPRE, **intermediária** faz imagem antes, e **baixa** vai à colecistectomia sem investigar o colédoco.`,
+        'São considerados **preditores muito fortes**: cálculo visualizado no colédoco por imagem, colangite aguda, e bilirrubina total acima de 4 mg/dL. **Fortes**: colédoco dilatado acima de 6 mm com vesícula in situ, e bilirrubina entre 1,8 e 4 mg/dL. **Moderados**: pancreatite biliar, alteração de transaminases e idade acima de 55 anos.',
+        sim(v, 'colangite')
+          ? '**Colangite aguda muda a natureza do problema.** Ela é infecção em um sistema obstruído e sob pressão, com risco de bacteriemia e de choque — e o tratamento é **descompressão**, não antibiótico isolado. A tríade de Charcot está presente em cerca de metade dos casos; a pêntade de Reynolds indica forma supurativa.'
+          : 'Sem colangite assinalada, o que retira a urgência de descompressão e permite planejar a investigação.',
+        'A CPRE **não é exame diagnóstico**: é um procedimento terapêutico com pancreatite em 3 a 10% dos casos. Usá-la para investigar, quando colangiorressonância ou ecoendoscopia responderiam a mesma pergunta sem risco, é a inversão que a estratificação existe para evitar.',
+        'O padrão laboratorial da **passagem de cálculo** é característico: elevação abrupta e alta de transaminases que cai rapidamente em 48 horas, seguida pela elevação de fosfatase alcalina e GGT. Encontrar esse padrão com colédoco já normal sugere que o cálculo passou.',
+      ],
+      conduta,
+      alertas: [
+        '**Colangite é emergência de drenagem, não de antibiótico.** Pus sob pressão não responde a antimicrobiano — a descompressão vem em até 24 horas, ou imediatamente na forma supurativa.',
+        'Não use a **CPRE como exame diagnóstico**: em probabilidade intermediária, colangiorressonância ou ecoendoscopia respondem a mesma pergunta sem o risco de pancreatite.',
+        'Em **colecistectomizados**, o colédoco dilata fisiologicamente até 10 mm, e o corte de 6 mm perde valor. Some 1 mm por década acima dos 60 anos.',
+      ],
+    }
+  },
+  formula: [
+    'Muito forte: cálculo visto no colédoco · colangite aguda · bilirrubina > 4 mg/dL',
+    'Forte: colédoco > 6 mm (vesícula in situ) · bilirrubina 1,8-4 mg/dL',
+    'Moderado: pancreatite biliar · transaminases alteradas · idade > 55 anos',
+    'Alta: qualquer muito forte, ou ambos os fortes → CPRE · Intermediária → imagem antes · Baixa → colecistectomia',
+  ],
+  fundamento:
+    'O cálculo que migra da vesícula para o colédoco produz uma obstrução que é frequentemente **intermitente**, e essa característica explica boa parte da dificuldade diagnóstica: as enzimas sobem e descem, a dor vai e volta, e o colédoco pode estar dilatado num exame e normal no seguinte. A obstrução eleva a pressão no sistema biliar; acima de cerca de 15 a 20 cmH₂O, a secreção biliar cessa e as junções oclusivas entre os hepatócitos se abrem, permitindo **refluxo de bile e de bactérias para o sinusoide hepático** — é esse mecanismo, e não a infecção da bile em si, que transforma uma colangite localizada em bacteriemia e choque, e é por isso que a descompressão resolve o que o antibiótico sozinho não resolve. A cronologia laboratorial também decorre da fisiologia: a passagem do cálculo causa uma lesão hepatocelular aguda e breve, com pico rápido de transaminases que cai em 48 horas, enquanto os marcadores canaliculares — fosfatase alcalina e GGT — sobem depois, porque dependem da indução de sua síntese pela colestase mantida. A estratificação ASGE existe porque a CPRE, diferentemente da maioria dos exames, **não é neutra**: ela carrega risco de pancreatite em 3 a 10% dos casos, e por isso a decisão de indicá-la precisa de uma probabilidade pré-teste que justifique esse risco.',
+  armadilhas: [
+    'Ultrassonografia tem sensibilidade de apenas 20 a 50% para cálculo no colédoco: não vê-lo não afasta nada.',
+    'A obstrução intermitente faz enzimas e diâmetro flutuarem — um exame normal colhido no momento errado engana.',
+    'Bilirrubina elevada com colédoco não dilatado e sem dor merece investigação de causa hepatocelular, hemolítica ou neoplásica antes de assumir cálculo.',
+    'Síndrome de Mirizzi — cálculo impactado no infundíbulo comprimindo o hepático comum — simula coledocolitíase, tem risco alto de lesão de via biliar na cirurgia, e precisa ser reconhecida antes.',
+  ],
+  referencias: [
+    { texto: 'Buxbaum JL, Abbas Fehmi SM, Sultan S, et al. ASGE guideline on the role of endoscopy in the evaluation and management of choledocholithiasis. Gastrointest Endosc. 2019;89(6):1075-1105.' },
+    { texto: 'Manes G, Paspatis G, Aabakken L, et al. Endoscopic management of common bile duct stones: European Society of Gastrointestinal Endoscopy (ESGE) guideline. Endoscopy. 2019;51(5):472-491.' },
+    { texto: 'Kiriyama S, Kozaka K, Takada T, et al. Tokyo Guidelines 2018: diagnostic criteria and severity grading of acute cholangitis. J Hepatobiliary Pancreat Sci. 2018;25(1):17-30.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   childPugh,
   meld,
@@ -1316,6 +1418,7 @@ export const ferramentas: Ferramenta[] = [
   kings,
   roma,
   astAlt,
+  coledocolitiase,
 ]
 
 export default ferramentas

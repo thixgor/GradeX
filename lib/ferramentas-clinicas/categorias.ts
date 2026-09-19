@@ -78,7 +78,7 @@ export const CATEGORIAS: Categoria[] = [
       'A hepatologia é a especialidade dos escores: Child-Pugh classifica, MELD prioriza transplante, Maddrey define corticoide na hepatite alcoólica e King’s College define transplante urgente na falência aguda. Junto vêm os escores de hemorragia digestiva, de gravidade da pancreatite e os índices não invasivos de fibrose.',
     icone: 'gastroenterologia',
     cor: 'ambar',
-    total: 19,
+    total: 20,
   },
   {
     id: 'hematologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 96,
+    total: 97,
   },
   {
     id: 'cirurgia',
@@ -138,7 +138,7 @@ export const CATEGORIAS: Categoria[] = [
       'A avaliação pré-operatória é um exercício de estratificação: ASA descreve o doente, RCRI estima evento cardíaco, Caprini estima trombose e POSSUM estima morbimortalidade global. Junto, os escores diagnósticos de abdome agudo e as contas de volemia e transfusão.',
     icone: 'cirurgia',
     cor: 'esmeralda',
-    total: 17,
+    total: 18,
   },
   {
     id: 'farmacologia',

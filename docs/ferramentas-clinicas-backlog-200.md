@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **237** (eram 201) |
-| Implementadas desta lista | **36** |
-| Restantes | **164** |
-| Nota média na auditoria | **100** — todas as 237 |
+| Ferramentas no catálogo | **238** (eram 201) |
+| Implementadas desta lista | **37** |
+| Restantes | **163** |
+| Nota média na auditoria | **100** — todas as 238 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -268,6 +268,7 @@ escores individuais.
 139. **RIPASA e escore de Tzanakis** — apendicite, alternativas a Alvarado e AIR. **[P2]**
 140. **Classificação de Hinchey e classificação WSES de diverticulite** — estadiamento e conduta. **[P1]**
 141. **Grading de Parkland, escore de Nassar e probabilidade de coledocolitíase (ASGE/ESGE)** — dificuldade da colecistectomia e indicação de CPRE ou colangio-RM. **[P1]**
+    - 🟡 **parcial** — `coledocolitiase` cobre a estratificação ASGE/ESGE e os graus de Tóquio para colangite; grading de Parkland e escore de Nassar para dificuldade da colecistectomia pendentes
 142. **Escore de Boey e índice de peritonite de Mannheim** — mortalidade na úlcera perfurada e na peritonite. **[P2]**
 143. **MESS e classificação de Gustilo-Anderson** — viabilidade do membro e fratura exposta. **[P2]**
 144. **Classificação de Goligher, classificação de Parks e escore de Wexner** — hemorroidas, fístula anal e incontinência fecal. **[P2]**
