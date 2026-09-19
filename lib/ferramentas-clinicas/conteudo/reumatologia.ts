@@ -258,6 +258,163 @@ const lesEular: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [das28, lesEular]
+/* ═══════════ Critérios ACR/EULAR 2015 para gota ═══════════ */
+
+const gotaCampos: Campo[] = [
+  campoSimNao('entrada', 'Houve pelo menos um episódio de edema, dor ou sensibilidade em articulação periférica ou bursa', 0, '**Critério de entrada obrigatório.** Sem ele, os critérios não se aplicam. Note que não é necessário que o episódio esteja ativo no momento da avaliação.'),
+  campoSimNao('cristais', 'Cristais de urato monossódico identificados em líquido sinovial ou tofo', 0, '**Critério suficiente.** Cristais em forma de agulha com birrefringência negativa forte à luz polarizada **fecham o diagnóstico** e dispensam toda a pontuação. Esse é o padrão-ouro e continua subutilizado — a artrocentese é simples e resolve a maior parte das dúvidas.'),
+  campoOpc('padrao', 'Padrão de acometimento articular', [
+    { valor: '0', rotulo: 'Outra articulação (nem tornozelo/médio-pé, nem 1ª metatarsofalangeana)', pontos: 0 },
+    { valor: '1', rotulo: 'Tornozelo ou médio-pé, sem a 1ª metatarsofalangeana', pontos: 1 },
+    { valor: '2', rotulo: 'Primeira metatarsofalangeana (podagra)', pontos: 2 },
+  ], { padrao: '0', ajuda: 'A **podagra** — acometimento da primeira metatarsofalangeana — é o padrão clássico e vale o máximo de pontos. Ela reflete a temperatura mais baixa da articulação periférica distal, que reduz a solubilidade do urato e favorece a precipitação.' }),
+  campoOpc('caracteristicas', 'Características do episódio: eritema sobre a articulação, dor intensa ao toque, e dificuldade importante para caminhar ou usar a articulação', [
+    { valor: '0', rotulo: 'Nenhuma', pontos: 0 },
+    { valor: '1', rotulo: 'Uma', pontos: 1 },
+    { valor: '2', rotulo: 'Duas', pontos: 2 },
+    { valor: '3', rotulo: 'Três', pontos: 3 },
+  ], { padrao: '0' }),
+  campoOpc('cronologia', 'Cronologia típica: pico de dor em menos de 24 h, resolução em menos de 14 dias, e resolução completa entre as crises', [
+    { valor: '0', rotulo: 'Nenhum episódio típico', pontos: 0 },
+    { valor: '1', rotulo: 'Um episódio típico', pontos: 1 },
+    { valor: '2', rotulo: 'Episódios típicos recorrentes', pontos: 2 },
+  ], { padrao: '0', ajuda: 'A cronologia é o que melhor distingue gota de artrite séptica e de artrite reumatoide: **pico em menos de 24 horas** e **resolução completa** entre as crises. Dor que cresce ao longo de dias não é gota típica.' }),
+  campoOpc('tofo', 'Tofo clinicamente evidente', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '4', rotulo: 'Presente', pontos: 4 },
+  ], { padrao: '0', ajuda: 'Nódulo subcutâneo com material esbranquiçado ou amarelado sob pele fina e vascularizada, em localizações típicas: pavilhão auricular, olécrano, bursas, tendões e polpas digitais.' }),
+  campoNum('uricemia', 'Ácido úrico sérico', { unidade: 'mg/dL', min: 0, max: 20, passo: 0.1, ajuda: 'Meça **fora da crise**, idealmente 4 semanas após, e sem tratamento hipouricemiante. Durante a crise, o ácido úrico pode estar **normal ou baixo** em até um terço dos casos — e uricemia normal na crise é a fonte mais comum de diagnóstico perdido.' }),
+  campoOpc('imagem', 'Imagem', [
+    { valor: '0', rotulo: 'Sem sinais ou não realizada', pontos: 0 },
+    { valor: '4', rotulo: 'Sinal do duplo contorno à ultrassonografia, ou depósito de urato na tomografia de dupla energia', pontos: 4 },
+    { valor: '8', rotulo: 'Erosão em saca-bocado à radiografia, somada a sinal de depósito', pontos: 8 },
+  ], { padrao: '0', ajuda: 'O **sinal do duplo contorno** é a deposição de urato sobre a cartilagem hialina, visível como uma linha hiperecoica paralela à cortical óssea. A erosão "em saca-bocado", com bordas esclerosadas e margens salientes, é radiologicamente característica e preserva o espaço articular.' }),
+]
+
+const gota: Ferramenta = {
+  id: 'criterios-gota',
+  nome: 'Critérios ACR/EULAR 2015 para gota',
+  sinonimos: ['gota', 'acido urico', 'podagra', 'tofo', 'artrite gotosa', 'urato'],
+  resumo: 'Classifica gota sem artrocentese quando ela não é possível, e mostra por que a uricemia na crise engana.',
+  categorias: ['reumatologia', 'emergencia'],
+  campos: gotaCampos,
+  calcular: (v) => {
+    if (!sim(v, 'entrada')) {
+      return {
+        titulo: 'Critérios ACR/EULAR 2015',
+        valor: 'Não aplicável',
+        nivel: 'neutro',
+        rotuloNivel: 'Critério de entrada ausente',
+        detalhes: [{ rotulo: 'Critério de entrada', valor: 'Não cumprido', nota: 'Exige ao menos um episódio de edema, dor ou sensibilidade em articulação periférica ou bursa' }],
+        interpretacao: [
+          '**Sem o critério de entrada, os critérios de classificação não se aplicam.** É necessário ao menos um episódio de edema, dor ou sensibilidade em articulação periférica ou bursa — o episódio não precisa estar ativo no momento da avaliação.',
+          'Hiperuricemia **assintomática não é gota**: apenas uma minoria dos hiperuricêmicos desenvolve a doença, e as diretrizes não recomendam tratamento hipouricemiante sem manifestação clínica, salvo situações específicas como profilaxia de síndrome de lise tumoral.',
+        ],
+        conduta: [
+          'Em hiperuricemia assintomática, trate os **fatores associados** e não o número: obesidade, síndrome metabólica, consumo de álcool (sobretudo cerveja, rica em purinas e em guanosina), frutose, diuréticos tiazídicos e de alça, e doença renal crônica.',
+          'Rastreie e trate comorbidades, que são a causa de morte nesses pacientes: hipertensão, diabetes, dislipidemia, doença renal crônica e doença cardiovascular.',
+        ],
+        alertas: ['Hiperuricemia assintomática não é gota e, em geral, não se trata com hipouricemiante.'],
+      }
+    }
+
+    if (sim(v, 'cristais')) {
+      return {
+        titulo: 'Critérios ACR/EULAR 2015',
+        valor: 'Gota confirmada',
+        nivel: 'alerta',
+        rotuloNivel: 'Cristais identificados — critério suficiente',
+        detalhes: [{ rotulo: 'Cristais de urato monossódico', valor: 'Identificados', nivel: 'alerta' as Nivel, nota: 'Agulha, birrefringência negativa forte' }],
+        interpretacao: [
+          '**Cristais de urato monossódico identificados: o diagnóstico está feito** e a pontuação dos demais critérios é desnecessária. É o padrão-ouro, e a artrocentese continua subutilizada — ela é simples, rápida e resolve a maior parte das dúvidas diagnósticas.',
+          'Os cristais de urato são **aciculares, com birrefringência negativa forte** à luz polarizada compensada: amarelos quando paralelos ao eixo do compensador e azuis quando perpendiculares. Os de pirofosfato de cálcio (pseudogota) são romboides, com birrefringência positiva fraca — e a diferença muda o tratamento de longo prazo.',
+          '**A presença de cristais não exclui artrite séptica**, e as duas podem coexistir. Diante de febre, toxemia ou líquido de aspecto purulento, peça Gram e cultura e trate empiricamente até o resultado.',
+        ],
+        conduta: [
+          '**Trate a crise agora e comece o hipouricemiante depois — ou junto, com profilaxia.** Para a crise: anti-inflamatório não esteroidal em dose plena, **colchicina em dose baixa** (1,2 mg seguido de 0,6 mg uma hora depois, e depois 0,6 mg uma a duas vezes ao dia — a dose alta antiga causava diarreia em quase todos sem ganho de eficácia), ou **corticoide** oral, intra-articular ou parenteral, que é a escolha em doença renal crônica.',
+          '**Inicie ou mantenha o hipouricemiante** com **alopurinol** como primeira linha, começando com 100 mg/dia (50 mg na doença renal crônica) e titulando a cada 2 a 5 semanas até a **meta de uricemia abaixo de 6 mg/dL** (abaixo de 5 com tofos). A estratégia é de **tratar para o alvo**, não de dose fixa — e a subtitulação é a causa mais comum de falha.',
+          '**Faça profilaxia de crise durante os primeiros 3 a 6 meses** de hipouricemiante, com colchicina 0,5 a 0,6 mg ao dia ou anti-inflamatório em dose baixa. A queda da uricemia mobiliza urato dos depósitos e **desencadeia crises** — sem profilaxia, o paciente atribui a crise ao remédio e abandona o tratamento.',
+          'Nunca **suspenda o alopurinol durante uma crise** em quem já o usa: isso prolonga o episódio. E não o inicie sem profilaxia.',
+          'Rastreie **HLA-B*5801** antes do alopurinol em populações de risco (ascendência do sudeste asiático, chinesa Han, tailandesa e coreana com doença renal), pelo risco de síndrome de hipersensibilidade grave.',
+          'Trate as **comorbidades**: em hipertenso com gota, prefira losartana, que é uricosúrica; em diabético, inibidor de SGLT2, que também reduz uricemia. Evite tiazídico e considere substituir quando possível.',
+        ],
+        alertas: [
+          '**Cristais presentes não excluem artrite séptica** — as duas coexistem. Com febre ou líquido purulento, colha Gram e cultura e trate empiricamente.',
+          'Não suspenda o hipouricemiante durante a crise em quem já o usa, e não o inicie sem profilaxia concomitante.',
+        ],
+      }
+    }
+
+    const itens = ['padrao', 'caracteristicas', 'cronologia', 'tofo', 'imagem']
+    const pontos = itens.map((id) => ptsOpc(gotaCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const urico = num(v, 'uricemia')
+    if (urico === null) return null
+
+    const pontosUrico = urico < 4 ? -4 : urico < 6 ? 0 : urico < 8 ? 2 : urico < 10 ? 3 : 4
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0) + pontosUrico
+    const classifica = total >= 8
+
+    const nivel: Nivel = classifica ? 'alerta' : 'atencao'
+
+    return {
+      titulo: 'Critérios ACR/EULAR 2015',
+      valor: fmtInt(total),
+      unidade: 'de 23 pontos',
+      nivel,
+      rotuloNivel: classifica ? 'Classifica como gota (≥ 8)' : 'Não classifica (< 8)',
+      detalhes: [
+        { rotulo: 'Padrão articular', valor: fmtInt(pontos[0] as number) },
+        { rotulo: 'Características do episódio', valor: fmtInt(pontos[1] as number) },
+        { rotulo: 'Cronologia', valor: fmtInt(pontos[2] as number) },
+        { rotulo: 'Tofo', valor: (pontos[3] as number) > 0 ? 'Presente (4)' : 'Ausente', nivel: ((pontos[3] as number) > 0 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Ácido úrico', valor: `${fmt(urico, 1)} mg/dL → ${pontosUrico > 0 ? '+' : ''}${pontosUrico} ponto(s)`, nota: '< 4: −4 · 4-5,9: 0 · 6-7,9: +2 · 8-9,9: +3 · ≥ 10: +4' },
+        { rotulo: 'Imagem', valor: fmtInt(pontos[4] as number) },
+      ],
+      interpretacao: [
+        `**${total} de 23 pontos, com corte de 8.** Os critérios de 2015 foram construídos exatamente para o cenário em que a artrocentese **não foi feita ou não foi possível** — se os cristais estiverem disponíveis, eles são critério suficiente e toda a pontuação é desnecessária.`,
+        `**Ácido úrico de ${fmt(urico, 1)} mg/dL contribui com ${pontosUrico > 0 ? '+' : ''}${pontosUrico} ponto(s).** Repare que valores **abaixo de 4 mg/dL subtraem 4 pontos**: uricemia baixa fora da crise torna a gota bem improvável. Mas o inverso também vale — durante a crise, a uricemia pode estar normal ou baixa em até um terço dos casos, e é por isso que ela deve ser medida **4 semanas depois**.`,
+        classifica
+          ? 'Os critérios **classificam como gota**. Lembre que classificação não é diagnóstico: eles foram construídos para selecionar populações homogêneas em ensaios clínicos, e o diagnóstico definitivo continua sendo a identificação de cristais.'
+          : 'Os critérios **não classificam**, o que não exclui gota. Considere artrocentese, que resolve a questão, e mantenha no diferencial artrite séptica, pseudogota (pirofosfato de cálcio), artrite psoriásica, artrite reativa e sarcoidose.',
+        'A **podagra** vale o máximo no item de padrão articular por uma razão física: a solubilidade do urato cai com a temperatura, e a primeira metatarsofalangeana é a articulação mais fria e mais distal do corpo — o que a torna o sítio preferencial de precipitação.',
+      ],
+      conduta: [
+        classifica
+          ? '**Trate a crise e planeje o tratamento de fundo.** Crise: anti-inflamatório em dose plena, **colchicina em dose baixa** (1,2 mg depois 0,6 mg em 1 hora), ou **corticoide** — oral, intra-articular ou parenteral —, que é a escolha em doença renal crônica e em idosos.'
+          : '**Considere artrocentese** para resolver a dúvida: a identificação de cristais é definitiva e afasta ou confirma em uma única punção. Afaste artrite séptica antes de qualquer coisa se houver febre ou toxemia.',
+        '**Inicie hipouricemiante** com indicação clara: crises recorrentes (duas ou mais por ano), tofo, nefrolitíase por urato, ou dano articular por imagem. **Alopurinol** é a primeira linha, iniciando com 100 mg/dia (50 mg se houver doença renal) e titulando a cada 2 a 5 semanas até **uricemia abaixo de 6 mg/dL** — ou abaixo de 5 com tofos, para dissolvê-los.',
+        '**Profilaxia de crise por 3 a 6 meses** ao iniciar o hipouricemiante, com colchicina em dose baixa ou anti-inflamatório. Sem ela, a mobilização de urato dos depósitos provoca crises que o paciente atribui ao tratamento, e a adesão se perde.',
+        'Oriente sobre **dieta com expectativa realista**: restrição de purinas reduz a uricemia em cerca de 1 mg/dL, o que raramente basta sozinho. O que mais importa é reduzir **álcool** (cerveja em primeiro lugar), **frutose e bebidas açucaradas**, e perder peso. Laticínios desnatados e café têm associação protetora.',
+        'Reveja a medicação: **tiazídicos e diuréticos de alça elevam a uricemia**; **losartana e inibidores de SGLT2** a reduzem, e são escolhas preferenciais no hipertenso e no diabético com gota. Aspirina em dose baixa eleva pouco e não deve ser suspensa por isso.',
+      ],
+      alertas: [
+        '**Uricemia normal durante a crise não exclui gota** — ela cai em até um terço dos episódios. Meça 4 semanas depois, fora da crise e sem hipouricemiante.',
+        '**Artrite séptica é o diagnóstico a afastar primeiro**, e pode coexistir com a gota. Monoartrite aguda com febre pede artrocentese com Gram e cultura antes de qualquer conclusão.',
+        'Não inicie hipouricemiante **sem profilaxia** nem o suspenda durante a crise em quem já o usa.',
+      ],
+    }
+  },
+  formula: [
+    'Entrada obrigatória: ≥ 1 episódio de edema, dor ou sensibilidade em articulação periférica ou bursa',
+    'Critério suficiente: cristais de urato monossódico identificados',
+    'Soma de padrão articular, características, cronologia, tofo, uricemia e imagem · classifica com ≥ 8 de 23',
+  ],
+  fundamento:
+    'A gota é uma **artrite por cristais** e sua fisiopatologia é notavelmente mecanicista. O urato é o produto final do metabolismo das purinas nos humanos, que perderam a uricase por mutação ao longo da evolução dos primatas — daí nossos níveis séricos serem dez vezes maiores que os de outros mamíferos. Acima da **saturação de aproximadamente 6,8 mg/dL**, o urato monossódico precipita em cristais, e essa saturação depende fortemente da **temperatura**: é por isso que a precipitação ocorre preferencialmente nas articulações mais frias e distais, com a primeira metatarsofalangeana no topo da lista. Os cristais depositados são inertes até serem fagocitados: ali ativam o **inflamassoma NLRP3** nos macrófagos sinoviais, que cliva a pró-interleucina-1-beta em sua forma ativa, desencadeando recrutamento maciço de neutrófilos e a inflamação explosiva característica — pico de dor em menos de 24 horas, eritema, calor e impotência funcional. Essa via explica por que a colchicina funciona (ela inibe a polimerização de microtúbulos e prejudica a quimiotaxia e a ativação do inflamassoma) e por que os **inibidores de interleucina-1**, como o anakinra e o canaquinumabe, resolvem crises refratárias. A autolimitação da crise decorre do recobrimento dos cristais por apolipoproteínas e da resolução ativa mediada por macrófagos — o que explica a "resolução completa entre as crises", que é justamente o item cronológico que distingue gota das artrites crônicas.',
+  armadilhas: [
+    'Uricemia é medida de risco, não de diagnóstico: normal na crise em até um terço, e alta em muitos que nunca terão gota.',
+    'Gota poliarticular e de pequenas articulações das mãos ocorre em idosos e em mulheres pós-menopausa, e é confundida com artrite reumatoide.',
+    'Pseudogota (pirofosfato de cálcio) tem apresentação muito semelhante, acomete mais joelho e punho, e se distingue pela morfologia e birrefringência dos cristais e pela condrocalcinose na radiografia.',
+    'Tofo pode ser confundido com nódulo reumatoide, xantoma e nódulo de Heberden — a punção com identificação de cristais resolve.',
+  ],
+  referencias: [
+    { texto: 'Neogi T, Jansen TL, Dalbeth N, et al. 2015 Gout Classification Criteria: an American College of Rheumatology/European League Against Rheumatism collaborative initiative. Arthritis Rheumatol. 2015;67(10):2557-2568.' },
+    { texto: 'FitzGerald JD, Dalbeth N, Mikuls T, et al. 2020 American College of Rheumatology Guideline for the Management of Gout. Arthritis Rheumatol. 2020;72(6):879-895.' },
+    { texto: 'Richette P, Doherty M, Pascual E, et al. 2016 updated EULAR evidence-based recommendations for the management of gout. Ann Rheum Dis. 2017;76(1):29-42.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [das28, lesEular, gota]
 
 export default ferramentas

@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **238** (eram 201) |
-| Implementadas desta lista | **37** |
-| Restantes | **163** |
-| Nota média na auditoria | **100** — todas as 238 |
+| Ferramentas no catálogo | **239** (eram 201) |
+| Implementadas desta lista | **38** |
+| Restantes | **162** |
+| Nota média na auditoria | **100** — todas as 239 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -322,6 +322,7 @@ escores individuais.
 176. **Critérios ASAS, BASDAI e ASDAS** — espondiloartrite axial. **[P1]**
 177. **CASPAR, PASI e DLQI** — artrite psoriásica, extensão da psoríase e impacto na qualidade de vida. **[P1]**
 178. **Critérios ACR/EULAR 2015 para gota** — classificação com e sem identificação de cristais. **[P1]**
+    - ✅ **feito** — `criterios-gota`, com o caminho por cristais e o de classificação sem artrocentese
 179. **Critérios ACR/EULAR para Sjögren (ESSDAI) e para esclerose sistêmica (escore de Rodnan modificado)** — classificação e atividade. **[P2]**
 180. **Vasculites: critérios ACR/EULAR 2022 para ANCA, BVAS, Five Factor Score e critérios de arterite de células gigantes e polimialgia reumática** — classificação, atividade e prognóstico. **[P2]**
 181. **Critérios ACR 2016 para fibromialgia, com WPI/SS e FIQ** — diagnóstico e impacto funcional. **[P1]**

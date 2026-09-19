@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 97,
+    total: 98,
   },
   {
     id: 'cirurgia',
@@ -178,7 +178,7 @@ export const CATEGORIAS: Categoria[] = [
       'Critérios de classificação foram feitos para ensaios clínicos, não para o consultório — e usá-los como critério diagnóstico é o erro que mais gera diagnóstico falso em reumatologia. O que muda conduta é a atividade de doença medida em série: DAS28, SLEDAI, BASDAI e CDAI dizem se o tratamento está funcionando e quando escalonar, que é a decisão real.',
     icone: 'reumatologia',
     cor: 'carmim',
-    total: 2,
+    total: 3,
   },
   {
     id: 'geriatria',
