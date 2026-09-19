@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **229** (eram 201) |
-| Implementadas desta lista | **28** |
-| Restantes | **172** |
-| Nota média na auditoria | **100** — todas as 229 |
+| Ferramentas no catálogo | **231** (eram 201) |
+| Implementadas desta lista | **30** |
+| Restantes | **170** |
+| Nota média na auditoria | **100** — todas as 231 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -71,6 +71,7 @@ escores individuais.
 1. **UTICalc — probabilidade de ITU em lactentes** — 2 a 23 meses, em duas etapas (pré e pós-urinálise), definindo quem precisa de coleta por sondagem. **[P1]**
     - ✅ **feito** — `uticalc`
 2. **PECARN — regras de TC no TCE pediátrico e de lesão intra-abdominal** — algoritmos para < 2 anos e ≥ 2 anos e quem dispensa TC de abdome após trauma fechado. **[P1]**
+    - 🟡 **parcial** — `pecarn-tce` cobre as duas regras de TC no TCE (< 2 anos e ≥ 2 anos); a regra de lesão intra-abdominal pendente
 3. **Escore de Westley para crupe** — gravidade da laringotraqueíte e indicação de adrenalina nebulizada. **[P1]**
     - ✅ **feito** — `westley-crupe`
 4. **PRAM — Pediatric Respiratory Assessment Measure** — gravidade da crise asmática na criança. **[P1]**
@@ -117,6 +118,7 @@ escores individuais.
 34. **Canadian C-Spine Rule e NEXUS** — liberação de coluna cervical sem imagem. **[P1]**
     - ✅ **feito** — `canadian-c-spine`, com as duas regras
 35. **Canadian CT Head Rule, New Orleans Criteria e Ottawa SAH Rule** — indicação de TC no TCE leve e investigação de hemorragia subaracnóidea na cefaleia aguda. **[P1]**
+    - 🟡 **parcial** — `ct-head-rule` cobre Canadian CT Head e New Orleans; Ottawa SAH Rule pendente
 36. **Escore de Marshall e escore de Rotterdam** — classificação tomográfica do TCE e prognóstico. **[P2]**
 37. **RTS, ISS/AIS e TRISS** — gravidade fisiológica e anatômica do trauma e probabilidade de sobrevida. **[P1]**
 38. **Classificação AAST de lesão de órgãos** — graduação de lesão esplênica, hepática e renal. **[P2]**

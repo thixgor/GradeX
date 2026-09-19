@@ -68,7 +68,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas neurológicas são o exame físico transformado em número reprodutível entre plantões — é isso que permite comparar o NIHSS da porta com o de duas horas depois e decidir. Estão aqui as escalas de coma, os escores de AVC isquêmico e hemorrágico, as de sedação e delirium e a conta de perfusão cerebral.',
     icone: 'neurologia',
     cor: 'indigo',
-    total: 22,
+    total: 24,
   },
   {
     id: 'gastroenterologia',
@@ -108,7 +108,7 @@ export const CATEGORIAS: Categoria[] = [
       'Criança não é adulto pequeno, e a prova disso é que quase toda conduta pediátrica passa por uma conta de peso ou superfície corporal. Estão aqui Holliday-Segar, as escalas neonatais, os percentis de crescimento, a fototerapia e as doses máximas que evitam intoxicação.',
     icone: 'pediatria',
     cor: 'turquesa',
-    total: 23,
+    total: 24,
   },
   {
     id: 'ginecologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 90,
+    total: 92,
   },
   {
     id: 'cirurgia',

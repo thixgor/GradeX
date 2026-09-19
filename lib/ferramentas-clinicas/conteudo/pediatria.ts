@@ -1695,6 +1695,120 @@ const kocher: Ferramenta = {
   ],
 }
 
+/* ═══════════════ PECARN — tomografia no trauma cranioencefálico pediátrico ═══════════════ */
+
+const pecarnCampos: Campo[] = [
+  campoSeg('faixa', 'Faixa etária', [
+    { valor: 'menor2', rotulo: 'Menor de 2 anos' },
+    { valor: 'maior2', rotulo: '2 anos ou mais' },
+  ], { ajuda: 'As duas regras têm itens diferentes porque o lactente não relata sintoma, tem crânio mais maleável e sutura aberta, e apresenta hematoma de couro cabeludo como marcador de fratura — achado que perde valor depois dos 2 anos.' }),
+  campoSimNao('gcs14', 'Glasgow de 14, ou alteração do estado mental', 0, 'Alteração do estado mental inclui agitação, sonolência, resposta lenta ou repetição de perguntas. Junto com fratura palpável ou sinais de fratura de base, é **critério de alto risco** e indica tomografia diretamente.'),
+  campoSimNao('fraturaPalpavel', 'Fratura de crânio palpável (menores de 2 anos)', 0, 'Depressão, degrau ou crepitação à palpação. Em maiores de 2 anos o item equivalente são os **sinais de fratura de base**: hemotímpano, equimose periorbital em óculos, equimose retroauricular (sinal de Battle) e otorreia ou rinorreia de líquor.'),
+  campoSimNao('hematomaOccipital', 'Hematoma de couro cabeludo occipital, temporal ou parietal (menores de 2 anos)', 0, 'Hematoma **frontal isolado** não conta: ele é o de menor associação com lesão intracraniana. Occipital, temporal e parietal são os que importam, e o tamanho também pesa.'),
+  campoSimNao('perdaConsciencia', 'Perda de consciência (≥ 5 s em menores de 2 anos; qualquer duração em maiores)', 0, 'Em menores de 2 anos, só conta se durou 5 segundos ou mais; em maiores de 2 anos, qualquer perda de consciência conta como fator de risco intermediário.'),
+  campoSimNao('mecanismoGrave', 'Mecanismo de trauma grave', 0, 'Acidente automobilístico com ejeção, morte de outro ocupante ou capotamento; atropelamento de pedestre ou ciclista sem capacete; queda de mais de **0,9 m** em menores de 2 anos ou de mais de **1,5 m** em maiores; impacto por objeto de alto impacto.'),
+  campoSimNao('comportamento', 'Comportamento anormal segundo os pais (menores de 2 anos)', 0, 'Os pais são a melhor fonte para "ele não está ele mesmo" — esse relato tem valor preditivo real nessa faixa e deve ser perguntado explicitamente.'),
+  campoSimNao('vomitos', 'Vômitos (maiores de 2 anos)', 0, 'Fator de risco intermediário. Vômito isolado, sem outros fatores, raramente indica lesão — mas vômito persistente ou que começa tardiamente muda o quadro.'),
+  campoSimNao('cefaleiaGrave', 'Cefaleia intensa (maiores de 2 anos)', 0, 'Fator de risco intermediário.'),
+  campoSimNao('anticoagulante', 'Uso de anticoagulante ou distúrbio de coagulação', 0, 'Não faz parte da regra PECARN original, mas eleva substancialmente o risco de hemorragia tardia e justifica limiar mais baixo para imagem e para observação prolongada.'),
+]
+
+const pecarn: Ferramenta = {
+  id: 'pecarn-tce',
+  nome: 'PECARN — tomografia de crânio no trauma pediátrico',
+  sigla: 'PECARN',
+  sinonimos: ['pecarn', 'tce pediatrico', 'tomografia crianca', 'trauma cranio crianca', 'traumatismo craniano'],
+  resumo: 'Identifica a criança com trauma craniano leve que pode dispensar tomografia, com valor preditivo negativo próximo de 100%.',
+  categorias: ['pediatria', 'emergencia', 'neurologia'],
+  campos: pecarnCampos,
+  calcular: (v) => {
+    const menor2 = opc(v, 'faixa') === 'menor2'
+    const anticoagulante = sim(v, 'anticoagulante')
+
+    const altoRisco = sim(v, 'gcs14') || sim(v, 'fraturaPalpavel')
+    const intermediario = menor2
+      ? sim(v, 'hematomaOccipital') || sim(v, 'perdaConsciencia') || sim(v, 'mecanismoGrave') || sim(v, 'comportamento')
+      : sim(v, 'perdaConsciencia') || sim(v, 'vomitos') || sim(v, 'mecanismoGrave') || sim(v, 'cefaleiaGrave')
+
+    const categoria = altoRisco ? 'alto' : intermediario ? 'intermediario' : 'baixo'
+    const risco = altoRisco ? '4,4%' : intermediario ? '0,9%' : menor2 ? '0,02%' : '0,05%'
+    const nivel: Nivel = altoRisco ? 'critico' : intermediario ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (altoRisco) {
+      conduta.push('**Alto risco: solicite tomografia de crânio sem contraste.** O risco de lesão cerebral clinicamente importante é de aproximadamente 4,4%, alto o bastante para que a imagem se justifique sem discussão.')
+    } else if (intermediario) {
+      conduta.push(
+        '**Risco intermediário (cerca de 0,9%): decisão compartilhada entre tomografia e observação.** A observação por 4 a 6 horas na emergência é uma alternativa legítima e reduz o uso de tomografia sem aumentar lesões perdidas — a maioria das lesões clinicamente importantes se manifesta nesse período.',
+        'Pesem a favor da **tomografia**: múltiplos fatores presentes, piora durante a observação, idade abaixo de 3 meses, vômitos persistentes, preferência dos pais por definição, ou impossibilidade de retorno rápido ao serviço.',
+        'Pesem a favor da **observação**: fator isolado, mecanismo leve, criança ativa e brincando, experiência do médico com o quadro, e disponibilidade de reavaliação.',
+      )
+    } else {
+      conduta.push(
+        '**Baixo risco: tomografia não está indicada.** O risco de lesão cerebral clinicamente importante é de cerca de 0,02% em menores de 2 anos e 0,05% em maiores — abaixo do risco atribuível de câncer induzido por radiação nessa faixa etária.',
+        'Dê alta com **orientação escrita** de sinais de retorno: vômitos repetidos, sonolência progressiva, dificuldade de despertar, confusão, convulsão, cefaleia que piora, assimetria de pupilas, fraqueza ou alteração da fala, e saída de líquido claro pelo nariz ou ouvido.',
+      )
+    }
+    if (anticoagulante) {
+      conduta.push('**Uso de anticoagulante ou distúrbio de coagulação:** o PECARN não contempla esse fator, e ele eleva muito o risco de hemorragia tardia. Baixe o limiar para tomografia e considere observação prolongada e tomografia de controle, mesmo com regra negativa.')
+    }
+    conduta.push(
+      '**Radiografia de crânio não tem lugar** na avaliação do trauma craniano: ela não afasta lesão intracraniana e sua normalidade produz falsa segurança. A exceção estreita é a investigação de maus-tratos, em que a série óssea faz parte do protocolo.',
+      'Considere **maus-tratos** quando a história for inconsistente com a lesão, mudar a cada relato, ou houver atraso na procura de atendimento — sobretudo em lactentes que ainda não deambulam, em que qualquer fratura ou hematoma significativo exige investigação.',
+      'Na criança que faz tomografia e ela vem normal, com exame neurológico normal, **a alta é segura**: deterioração após tomografia normal é rara, e não há indicação de tomografia de controle de rotina.',
+    )
+
+    return {
+      titulo: `PECARN — ${menor2 ? 'menores de 2 anos' : '2 anos ou mais'}`,
+      valor: categoria === 'alto' ? 'Tomografia indicada' : categoria === 'intermediario' ? 'Tomografia ou observação' : 'Tomografia dispensável',
+      nivel,
+      rotuloNivel: `Risco de lesão clinicamente importante ≈ ${risco}`,
+      detalhes: [
+        { rotulo: 'Alto risco', valor: altoRisco ? 'Presente' : 'Ausente', nivel: (altoRisco ? 'critico' : 'ok') as Nivel, nota: 'Glasgow 14 / alteração do estado mental, ou fratura palpável (ou de base)' },
+        { rotulo: 'Risco intermediário', valor: intermediario ? 'Presente' : 'Ausente', nivel: (intermediario ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Anticoagulação ou coagulopatia', valor: anticoagulante ? 'Sim' : 'Não', nivel: (anticoagulante ? 'alerta' : 'ok') as Nivel, nota: 'Fora da regra original' },
+        { rotulo: 'Risco estimado', valor: risco },
+      ],
+      interpretacao: [
+        `**Categoria de ${categoria === 'alto' ? 'alto risco' : categoria === 'intermediario' ? 'risco intermediário' : 'baixo risco'}, com risco estimado de lesão cerebral clinicamente importante em torno de ${risco}.** O PECARN foi derivado e validado em mais de 42 mil crianças e é a maior regra de decisão pediátrica já construída.`,
+        'O desfecho que a regra prediz é **lesão cerebral clinicamente importante**, e essa definição é deliberadamente restrita: morte, necessidade de neurocirurgia, intubação por mais de 24 horas ou internação de 2 noites ou mais por causa do trauma. Ela **não** prediz qualquer achado tomográfico — pequenas hemorragias sem consequência clínica não entram, e essa escolha é o que permite dispensar imagem com segurança.',
+        menor2
+          ? 'Na faixa **abaixo de 2 anos**, o hematoma de couro cabeludo **não frontal** é um item próprio, porque o crânio é mais maleável e a fratura linear subjacente se manifesta assim. E o relato dos pais de que a criança "não está ela mesma" entra como critério formal, já que o lactente não descreve sintoma.'
+          : 'Na faixa de **2 anos ou mais**, o hematoma de couro cabeludo sai da regra e entram vômitos, cefaleia intensa e perda de consciência de qualquer duração como fatores intermediários.',
+        categoria === 'baixo'
+          ? '**Baixo risco: o valor preditivo negativo da regra é próximo de 100%**, e essa segurança precisa ser confrontada com o dano da tomografia — uma tomografia de crânio na infância acrescenta risco pequeno mas real de neoplasia, e o encéfalo em desenvolvimento é mais radiossensível. Em muitos casos, a tomografia ainda exige sedação, que traz risco próprio.'
+          : 'A regra identifica risco; ela não substitui o julgamento clínico nem a reavaliação seriada, que continua sendo o instrumento mais sensível de todos.',
+      ],
+      conduta,
+      alertas: [
+        '**Radiografia de crânio não afasta lesão intracraniana** e não deve ser usada para essa finalidade.',
+        'O PECARN vale para trauma **leve** — Glasgow 14 ou 15 — nas primeiras 24 horas. Glasgow abaixo de 14, trauma penetrante, tumor cerebral conhecido, derivação ventricular ou distúrbio de coagulação ficam fora da regra e pedem imagem.',
+        'História inconsistente com a lesão, relato que muda, atraso na procura de atendimento ou lesão significativa em lactente que não deambula: investigue **maus-tratos**.',
+      ],
+    }
+  },
+  formula: [
+    'Menores de 2 anos — alto risco: Glasgow 14 ou alteração do estado mental, ou fratura palpável',
+    'Menores de 2 anos — intermediário: hematoma não frontal, perda de consciência ≥ 5 s, mecanismo grave, comportamento anormal segundo os pais',
+    'Maiores de 2 anos — alto risco: Glasgow 14 ou alteração do estado mental, ou sinais de fratura de base',
+    'Maiores de 2 anos — intermediário: perda de consciência, vômitos, mecanismo grave, cefaleia intensa',
+  ],
+  fundamento:
+    'A criança difere do adulto no trauma craniano por razões anatômicas concretas, e o PECARN foi construído em torno delas. O crânio do lactente é **maleável e com suturas abertas**, o que permite deformação sem fratura e, ao mesmo tempo, transmite energia ao parênquima com menos dissipação; a cabeça representa proporção muito maior da massa corporal, deslocando o centro de gravidade e tornando o mecanismo de aceleração-desaceleração mais eficiente; o espaço subaracnóideo é relativamente maior, permitindo maior movimentação do encéfalo dentro da caixa; e a mielinização incompleta torna o tecido mais suscetível a lesão axonal difusa. Some-se a isso que o lactente **não relata sintoma** — não há cefaleia, tontura ou amnésia a colher —, o que obriga a regra a se apoiar em achados objetivos (hematoma não frontal, fratura palpável) e no relato dos pais. Do outro lado da balança está o custo da imagem: o encéfalo em desenvolvimento é mais radiossensível, a expectativa de vida é longa o bastante para que o risco estocástico de neoplasia se manifeste, e a tomografia frequentemente exige sedação. O PECARN resolve essa tensão restringindo o desfecho a **lesão clinicamente importante** — não qualquer achado de imagem —, o que é o que permite dispensar a tomografia com segurança em quem não precisa dela.',
+  armadilhas: [
+    'A regra vale para trauma leve nas primeiras 24 horas; aplicá-la fora disso, ou a Glasgow abaixo de 14, é uso incorreto.',
+    'Hematoma **frontal** isolado em menores de 2 anos não conta como fator: só occipital, temporal ou parietal.',
+    'Distúrbio de coagulação e uso de anticoagulante não fazem parte da regra e elevam o risco de hemorragia tardia — exigem limiar próprio.',
+    'A observação estruturada é alternativa validada à tomografia no grupo intermediário, e é subutilizada: a maioria das lesões importantes se manifesta em 4 a 6 horas.',
+  ],
+  referencias: [
+    { texto: 'Kuppermann N, Holmes JF, Dayan PS, et al. Identification of children at very low risk of clinically-important brain injuries after head trauma: a prospective cohort study. Lancet. 2009;374(9696):1160-1170.' },
+    { texto: 'Holmes JF, Yen K, Ugalde IT, et al. PECARN prediction rules for CT imaging of children presenting to the emergency department with blunt abdominal or minor head trauma: a multicentre prospective validation study. Lancet Child Adolesc Health. 2024;8(5):339-347.' },
+    { texto: 'Dayan PS, Holmes JF, Atabaki S, et al. Association of traumatic brain injuries with vomiting in children with blunt head trauma. Ann Emerg Med. 2014;63(6):657-665.' },
+  ],
+}
+
+
 export const ferramentas: Ferramenta[] = [
   dosePediatrica,
   hidratacao,
@@ -1713,6 +1827,7 @@ export const ferramentas: Ferramenta[] = [
   uticalc,
   westley,
   kocher,
+  pecarn,
 ]
 
 export default ferramentas

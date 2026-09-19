@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   campoIdade,
   campoNum,
@@ -1145,6 +1145,139 @@ const charlson: Ferramenta = {
   ],
 }
 
+/* ═══════════ Canadian CT Head Rule e New Orleans Criteria ═══════════ */
+
+const ctHeadCampos: Campo[] = [
+  campoSeg('regra', 'Regra', [
+    { valor: 'canadian', rotulo: 'Canadian CT Head Rule' },
+    { valor: 'neworleans', rotulo: 'New Orleans Criteria' },
+  ], { ajuda: 'A Canadian exige perda de consciência, amnésia ou desorientação e tem especificidade bem maior (evita mais tomografias); a New Orleans aplica-se a quem teve perda de consciência com Glasgow 15 e é mais sensível para qualquer achado, ao custo de indicar muito mais exames.' }),
+  campoSimNao('gcs15_2h', 'Glasgow abaixo de 15 duas horas após o trauma', 0, 'Critério de **alto risco** da Canadian, isto é, de necessidade de intervenção neurocirúrgica. Reavalie o Glasgow às 2 horas, e não apenas na chegada.'),
+  campoSimNao('fraturaAberta', 'Suspeita de fratura aberta ou com afundamento', 0, 'Critério de alto risco.'),
+  campoSimNao('fraturaBase', 'Qualquer sinal de fratura de base do crânio', 0, 'Hemotímpano, equimose periorbital bilateral em óculos, equimose retroauricular (sinal de Battle), otorreia ou rinorreia de líquor. Critério de alto risco.'),
+  campoSimNao('vomitos2', 'Dois ou mais episódios de vômito', 0, 'Critério de alto risco na Canadian. Um episódio isolado não conta.'),
+  campoSimNao('idade65', 'Idade de 65 anos ou mais', 0, 'Critério de alto risco. A atrofia cerebral do idoso estira as veias emissárias e as torna vulneráveis — é por isso que o hematoma subdural ocorre com trauma trivial e pode se manifestar semanas depois.'),
+  campoSimNao('amnesia30', 'Amnésia retrógrada de 30 minutos ou mais', 0, 'Critério de **médio risco** na Canadian, ou seja, de lesão visível na tomografia mas sem necessidade cirúrgica.'),
+  campoSimNao('mecanismoPerigoso', 'Mecanismo perigoso', 0, 'Atropelamento de pedestre, ejeção de veículo, ou queda de mais de 1 metro ou 5 degraus. Critério de médio risco.'),
+  campoSimNao('noCefaleia', 'Cefaleia', 0, undefined),
+  campoSimNao('noVomito', 'Vômito', 0, undefined),
+  campoSimNao('noIdade60', 'Idade acima de 60 anos', 0, undefined),
+  campoSimNao('noIntoxicacao', 'Intoxicação por álcool ou drogas', 0, undefined),
+  campoSimNao('noMemoria', 'Déficit persistente de memória anterógrada', 0, undefined),
+  campoSimNao('noTrauma', 'Evidência de trauma acima das clavículas', 0, undefined),
+  campoSimNao('noConvulsao', 'Convulsão', 0, undefined),
+]
+
+const ctHead: Ferramenta = {
+  id: 'ct-head-rule',
+  nome: 'Canadian CT Head Rule e New Orleans Criteria',
+  sinonimos: ['canadian ct head', 'new orleans', 'tce leve', 'tomografia cranio adulto', 'concussao'],
+  resumo: 'Decide quem precisa de tomografia após trauma craniano leve no adulto, por duas regras validadas com sensibilidade próxima de 100%.',
+  categorias: ['emergencia', 'neurologia'],
+  campos: ctHeadCampos,
+  calcular: (v) => {
+    const canadian = opc(v, 'regra') === 'canadian'
+
+    if (!canadian) {
+      const criterios: [string, boolean][] = [
+        ['Cefaleia', sim(v, 'noCefaleia')],
+        ['Vômito', sim(v, 'noVomito')],
+        ['Idade > 60 anos', sim(v, 'noIdade60')],
+        ['Intoxicação por álcool ou drogas', sim(v, 'noIntoxicacao')],
+        ['Déficit persistente de memória anterógrada', sim(v, 'noMemoria')],
+        ['Trauma visível acima das clavículas', sim(v, 'noTrauma')],
+        ['Convulsão', sim(v, 'noConvulsao')],
+      ]
+      const positivos = criterios.filter(([, c]) => c)
+      const indica = positivos.length > 0
+      return {
+        titulo: 'New Orleans Criteria',
+        valor: indica ? 'Tomografia indicada' : 'Tomografia dispensável',
+        nivel: indica ? 'alerta' : 'ok',
+        rotuloNivel: `${positivos.length} de 7 critérios`,
+        detalhes: criterios.map(([rotulo, c]) => ({ rotulo, valor: c ? 'Presente' : 'Ausente', nivel: (c ? 'alerta' : 'ok') as Nivel })),
+        interpretacao: [
+          indica
+            ? `**${positivos.length} critério(s) presente(s): tomografia indicada.** Basta um. A New Orleans tem sensibilidade próxima de 100% para qualquer lesão intracraniana, mas especificidade muito baixa — em torno de 5 a 12% —, o que significa que ela indica exame para quase todo mundo.`
+            : '**Nenhum critério presente: tomografia dispensável.** Com os sete negativos, a probabilidade de lesão intracraniana é muito baixa.',
+          'A New Orleans aplica-se a pacientes com **Glasgow 15 e perda de consciência**, e seu desfecho é **qualquer lesão na tomografia**, não apenas a que exige cirurgia. Essa diferença de desfecho explica a especificidade baixa.',
+          'Na comparação direta com a Canadian CT Head Rule, as duas têm sensibilidade semelhante para lesão neurocirúrgica, mas a **Canadian evita muito mais exames** — e por isso é a preferida na maioria dos protocolos.',
+          'Nenhuma das duas se aplica a paciente anticoagulado, com distúrbio de coagulação, com déficit neurológico focal, trauma penetrante ou Glasgow abaixo de 15.',
+        ],
+        conduta: [
+          indica
+            ? 'Solicite **tomografia de crânio sem contraste**. Considere aplicar a Canadian CT Head Rule em paralelo: se ela for negativa, há margem para decisão compartilhada, porque a lesão que a New Orleans encontra a mais raramente muda a conduta.'
+            : 'Dispense a tomografia e dê alta com orientação escrita de sinais de retorno, desde que haja acompanhante e possibilidade de retorno rápido ao serviço.',
+          'Oriente sobre **síndrome pós-concussional**: cefaleia, tontura, irritabilidade, dificuldade de concentração e alteração do sono são comuns nas primeiras semanas e costumam resolver. Repouso cognitivo e físico relativo por 24 a 48 horas, com retorno gradual — repouso absoluto prolongado piora os sintomas.',
+          'Em atletas, aplique protocolo de **retorno gradual ao esporte** e não libere no mesmo dia: a síndrome do segundo impacto, embora rara, é catastrófica.',
+        ],
+        alertas: ['A New Orleans indica tomografia em quase todos os pacientes que avalia. Onde a redução de exames importa, a Canadian CT Head Rule é a regra a usar.'],
+      }
+    }
+
+    const alto = sim(v, 'gcs15_2h') || sim(v, 'fraturaAberta') || sim(v, 'fraturaBase') || sim(v, 'vomitos2') || sim(v, 'idade65')
+    const medio = sim(v, 'amnesia30') || sim(v, 'mecanismoPerigoso')
+    const indica = alto || medio
+
+    return {
+      titulo: 'Canadian CT Head Rule',
+      valor: indica ? 'Tomografia indicada' : 'Tomografia dispensável',
+      nivel: alto ? 'critico' : medio ? 'alerta' : 'ok',
+      rotuloNivel: alto ? 'Critério de alto risco' : medio ? 'Critério de médio risco' : 'Nenhum critério',
+      detalhes: [
+        { rotulo: 'Glasgow < 15 em 2 h', valor: sim(v, 'gcs15_2h') ? 'Sim' : 'Não', nivel: (sim(v, 'gcs15_2h') ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Fratura aberta ou com afundamento', valor: sim(v, 'fraturaAberta') ? 'Sim' : 'Não', nivel: (sim(v, 'fraturaAberta') ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Sinais de fratura de base', valor: sim(v, 'fraturaBase') ? 'Sim' : 'Não', nivel: (sim(v, 'fraturaBase') ? 'critico' : 'ok') as Nivel },
+        { rotulo: '≥ 2 episódios de vômito', valor: sim(v, 'vomitos2') ? 'Sim' : 'Não', nivel: (sim(v, 'vomitos2') ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Idade ≥ 65 anos', valor: sim(v, 'idade65') ? 'Sim' : 'Não', nivel: (sim(v, 'idade65') ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Amnésia retrógrada ≥ 30 min', valor: sim(v, 'amnesia30') ? 'Sim' : 'Não', nivel: (sim(v, 'amnesia30') ? 'alerta' : 'ok') as Nivel, nota: 'Médio risco' },
+        { rotulo: 'Mecanismo perigoso', valor: sim(v, 'mecanismoPerigoso') ? 'Sim' : 'Não', nivel: (sim(v, 'mecanismoPerigoso') ? 'alerta' : 'ok') as Nivel, nota: 'Médio risco' },
+      ],
+      interpretacao: [
+        indica
+          ? `**${alto ? 'Critério de alto risco presente' : 'Critério de médio risco presente'}: tomografia indicada.** A regra separa os dois níveis por desfecho: os de **alto risco** predizem necessidade de **intervenção neurocirúrgica** (sensibilidade de 100% nas validações) e os de **médio risco** predizem lesão visível na tomografia sem indicação cirúrgica (sensibilidade de 98 a 100%).`
+          : '**Nenhum critério: tomografia dispensável.** A Canadian CT Head Rule tem sensibilidade de 100% para lesão que exige neurocirurgia e especificidade em torno de 50%, o que a torna a mais eficiente entre as regras disponíveis — ela evita cerca de metade das tomografias sem perder lesões cirúrgicas.',
+        'A regra **exige** perda de consciência, amnésia ou desorientação testemunhadas, com Glasgow de 13 a 15 na chegada. Sem esse pré-requisito, ela não se aplica.',
+        sim(v, 'idade65')
+          ? '**Idade de 65 anos ou mais é critério de alto risco por si só.** A atrofia cerebral do idoso estira as veias emissárias que atravessam o espaço subdural e as torna vulneráveis a rupturas com trauma trivial — daí o hematoma subdural que se manifesta dias ou semanas depois, muitas vezes sem que o paciente se lembre do trauma.'
+          : 'A idade não atingiu o corte de 65 anos, que é critério de alto risco isolado na regra.',
+        'Ficam **fora** das duas regras: anticoagulados, com distúrbio de coagulação, déficit neurológico focal, convulsão pós-traumática, trauma penetrante, Glasgow abaixo de 13, gestantes e menores de 16 anos — que seguem o PECARN.',
+      ],
+      conduta: [
+        indica
+          ? '**Solicite tomografia de crânio sem contraste.** Diante de critério de alto risco, mantenha o paciente monitorado enquanto aguarda: são justamente esses os que podem precisar de neurocirurgia.'
+          : '**Dispense a tomografia** e dê alta com orientação escrita, desde que haja acompanhante e possibilidade de retorno rápido. Documente os critérios avaliados no prontuário — é essa documentação que sustenta a decisão de não pedir exame.',
+        '**Anticoagulado com trauma craniano é caso à parte.** As regras não se aplicam: tomografia para todos, e considere tomografia de controle em 6 a 24 horas ou observação prolongada mesmo com a primeira normal, pelo risco de hemorragia tardia. Reverta a anticoagulação imediatamente se houver hemorragia.',
+        'Oriente sobre **síndrome pós-concussional** — cefaleia, tontura, irritabilidade, dificuldade de concentração e alteração do sono nas primeiras semanas. Repouso relativo por 24 a 48 horas e retorno gradual às atividades; repouso absoluto prolongado piora e prolonga os sintomas.',
+        'Em idoso com trauma aparentemente trivial e alteração cognitiva ou funcional nas semanas seguintes, pense em **hematoma subdural crônico**: ele pode se manifestar semanas depois, muitas vezes sem memória do trauma, e é uma das causas reversíveis de declínio cognitivo que mais passam despercebidas.',
+      ],
+      alertas: [
+        '**Nenhuma das duas regras vale para anticoagulados** ou com distúrbio de coagulação. Nesses pacientes, o limiar é imagem para todos, com vigilância para hemorragia tardia.',
+        'A regra exige perda de consciência, amnésia ou desorientação testemunhadas, com Glasgow de 13 a 15. Fora desse quadro, ela não se aplica.',
+        'Tomografia normal não exclui **lesão axonal difusa**, que é diagnóstico de ressonância e de clínica — suspeite quando houver rebaixamento desproporcional aos achados de imagem.',
+      ],
+    }
+  },
+  formula: [
+    'Canadian — alto risco: Glasgow < 15 em 2 h · fratura aberta ou afundada · sinais de fratura de base · ≥ 2 vômitos · idade ≥ 65',
+    'Canadian — médio risco: amnésia retrógrada ≥ 30 min · mecanismo perigoso',
+    'New Orleans: cefaleia · vômito · idade > 60 · intoxicação · déficit de memória · trauma acima das clavículas · convulsão',
+  ],
+  fundamento:
+    'O trauma craniano leve é o problema clássico de agulha no palheiro: mais de 90% dos pacientes que chegam com Glasgow 13 a 15 têm tomografia normal, e menos de 1% precisa de neurocirurgia — mas esse menos de 1% morre ou fica sequelado se não for encontrado. As duas regras atacam o problema de ângulos diferentes porque escolheram **desfechos diferentes**, e é isso que explica seus perfis. A New Orleans prediz **qualquer lesão na tomografia**, o que a obriga a ser permissiva e lhe dá especificidade de 5 a 12%. A Canadian separa dois níveis: critérios de alto risco predizem **necessidade de intervenção neurocirúrgica**, e os de médio risco predizem lesão visível sem cirurgia — uma estratificação que lhe permite especificidade de cerca de 50% mantendo sensibilidade de 100% para o desfecho que importa. A inclusão da idade de 65 anos como critério de alto risco isolado tem base anatômica direta: com a atrofia cerebral, o encéfalo se retrai da calota e as **veias emissárias** que atravessam o espaço subdural ficam estiradas e tensas, de modo que uma aceleração-desaceleração leve basta para rompê-las. O sangramento venoso é lento, e o espaço subdural agora amplo acomoda volume sem sintoma — daí o hematoma subdural crônico que se manifesta semanas depois, em um paciente que nem lembra do trauma.',
+  armadilhas: [
+    'A Canadian exige perda de consciência, amnésia ou desorientação como porta de entrada — sem isso, não há regra a aplicar.',
+    'Ambas excluem anticoagulados, coagulopatas, déficit focal, convulsão pós-traumática e trauma penetrante, que são justamente os de maior risco.',
+    'Intoxicação alcoólica confunde a avaliação do Glasgow e da amnésia; na dúvida, observe e reavalie em vez de aplicar a regra sobre dados não confiáveis.',
+    'Tomografia normal não exclui lesão axonal difusa nem síndrome pós-concussional, que é clínica e frequentemente subestimada na alta.',
+  ],
+  referencias: [
+    { texto: 'Stiell IG, Wells GA, Vandemheen K, et al. The Canadian CT Head Rule for patients with minor head injury. Lancet. 2001;357(9266):1391-1396.' },
+    { texto: 'Haydel MJ, Preston CA, Mills TJ, et al. Indications for computed tomography in patients with minor head injury. N Engl J Med. 2000;343(2):100-105.' },
+    { texto: 'Stiell IG, Clement CM, Rowe BH, et al. Comparison of the Canadian CT Head Rule and the New Orleans Criteria in patients with minor head injury. JAMA. 2005;294(12):1511-1518.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   apache,
   saps3,
@@ -1156,6 +1289,7 @@ export const ferramentas: Ferramenta[] = [
   sequenciaRapida,
   cspine,
   charlson,
+  ctHead,
 ]
 
 export default ferramentas
