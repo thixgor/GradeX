@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 101,
+    total: 102,
   },
   {
     id: 'cirurgia',
@@ -148,7 +148,7 @@ export const CATEGORIAS: Categoria[] = [
       'Prescrever com segurança é dominar quatro contas — dose por peso, ajuste por função de órgão, conversão entre fármacos da mesma classe e velocidade de infusão. Esta categoria cobre as quatro, mais a farmacocinética que explica por que a dose de ataque não depende do clearance.',
     icone: 'farmacologia',
     cor: 'azul',
-    total: 22,
+    total: 23,
   },
   {
     id: 'nutricao',
@@ -198,7 +198,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escores que decidem conduta em territórios específicos e que o generalista encontra com frequência: quando uma pedra ureteral vai sair sozinha, se uma lesão pigmentada precisa de biópsia, quando uma otite exige antibiótico, qual tornozelo torcido merece radiografia. São regras de decisão de alto valor justamente porque evitam exame e procedimento desnecessários.',
     icone: 'especialidades',
     cor: 'ocre',
-    total: 8,
+    total: 9,
   },
 ]
 

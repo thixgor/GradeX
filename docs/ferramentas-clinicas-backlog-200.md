@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **242** (eram 201) |
-| Implementadas desta lista | **41** |
-| Restantes | **159** |
-| Nota média na auditoria | **100** — todas as 242 |
+| Ferramentas no catálogo | **243** (eram 201) |
+| Implementadas desta lista | **42** |
+| Restantes | **158** |
+| Nota média na auditoria | **100** — todas as 243 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -355,6 +355,7 @@ escores individuais.
     - ✅ **feito** — `twist`
 196. **SCORAD e EASI** — gravidade da dermatite atópica. **[P1]**
 197. **SCORTEN e ALDEN** — mortalidade na necrólise epidérmica tóxica e causalidade medicamentosa. **[P1]**
+    - 🟡 **parcial** — `scorten` feito, com o ALDEN descrito na conduta; o ALDEN como calculadora própria fica pendente
 198. **Melanoma: Breslow, Clark, regra ABCDE, escore de 7 pontos de Glasgow e fototipos de Fitzpatrick** — estadiamento e risco fotobiológico. **[P1]**
 199. **Conversão de acuidade visual (Snellen ↔ logMAR ↔ decimal), classificação ETDRS de retinopatia diabética e estadiamento da ROP** — leitura oftalmológica objetiva. **[P1]**
 200. **HINTS/HINTS-plus, escala de House-Brackmann, SNOT-22, média tonal e classificação OMS de perda auditiva** — vertigem central vs. periférica, paralisia facial, rinossinusite e audiometria. **[P1]**

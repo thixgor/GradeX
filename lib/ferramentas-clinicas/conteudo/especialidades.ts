@@ -580,6 +580,104 @@ const hints: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [ottawa, calculoUreteral, ipss, twist, hints]
+/* ═══════════ SCORTEN — mortalidade na necrólise epidérmica tóxica ═══════════ */
+
+const scortenCampos: Campo[] = [
+  campoSimNao('idade40', 'Idade de 40 anos ou mais', 1, undefined),
+  campoSimNao('neoplasia', 'Neoplasia maligna associada', 1, undefined),
+  campoSimNao('fc120', 'Frequência cardíaca de 120 bpm ou mais', 1, undefined),
+  campoSimNao('scd10', 'Superfície corporal descolada de 10% ou mais no primeiro dia', 1, 'Conte o **descolamento epidérmico** — áreas já desnudas somadas às de sinal de Nikolsky positivo, em que a epiderme se desloca com pressão lateral. Eritema sem descolamento não conta, e incluí-lo superestima a gravidade.'),
+  campoSimNao('ureia', 'Ureia acima de 60 mg/dL (BUN > 28 mg/dL)', 1, undefined),
+  campoSimNao('glicose', 'Glicemia acima de 252 mg/dL (14 mmol/L)', 1, undefined),
+  campoSimNao('bicarbonato', 'Bicarbonato abaixo de 20 mEq/L', 1, 'Marcador de acidose metabólica, que aqui reflete hipoperfusão e a magnitude da perda cutânea — a pele descolada é uma superfície de perda equivalente à do grande queimado.'),
+  campoSeg('espectro', 'Extensão do descolamento (classificação)', [
+    { valor: 'ssj', rotulo: 'Síndrome de Stevens-Johnson (< 10%)' },
+    { valor: 'sobreposicao', rotulo: 'Sobreposição (10 a 30%)' },
+    { valor: 'net', rotulo: 'Necrólise epidérmica tóxica (> 30%)' },
+  ], { ajuda: 'São a mesma doença em gravidades diferentes, separadas apenas pela **área de descolamento**. A distinção importa para a comunicação e para a literatura, mas o tratamento é o mesmo.' }),
+]
+
+const scorten: Ferramenta = {
+  id: 'scorten',
+  nome: 'SCORTEN — mortalidade na necrólise epidérmica tóxica',
+  sigla: 'SCORTEN',
+  sinonimos: ['scorten', 'net', 'stevens johnson', 'ssj', 'necrolise epidermica', 'lyell'],
+  resumo: 'Estima a mortalidade na síndrome de Stevens-Johnson e na necrólise epidérmica tóxica em sete variáveis das primeiras 24 horas.',
+  categorias: ['especialidades', 'emergencia', 'farmacologia'],
+  campos: scortenCampos,
+  calcular: (v) => {
+    const itens: [string, string][] = [
+      ['Idade ≥ 40 anos', 'idade40'],
+      ['Neoplasia maligna', 'neoplasia'],
+      ['Frequência ≥ 120 bpm', 'fc120'],
+      ['Descolamento ≥ 10% no 1º dia', 'scd10'],
+      ['Ureia > 60 mg/dL', 'ureia'],
+      ['Glicemia > 252 mg/dL', 'glicose'],
+      ['Bicarbonato < 20 mEq/L', 'bicarbonato'],
+    ]
+    const total = somaSimNao(v, itens.map(([, id]) => ({ id, pontos: 1 })))
+    const mortalidade = [3.2, 12.1, 35.8, 58.3, 90][Math.min(total, 4)]
+    const espectro = opc(v, 'espectro') ?? 'ssj'
+
+    const nivel: Nivel = total >= 3 ? 'critico' : total >= 2 ? 'alerta' : 'atencao'
+
+    return {
+      titulo: 'SCORTEN',
+      valor: fmtInt(total),
+      unidade: 'de 7 pontos',
+      nivel,
+      rotuloNivel: `Mortalidade estimada de ${fmt(mortalidade, 1)}%`,
+      detalhes: [
+        ...itens.map(([rotulo, id]) => ({
+          rotulo,
+          valor: sim(v, id) ? 'Presente' : 'Ausente',
+          nivel: (sim(v, id) ? 'alerta' : 'ok') as Nivel,
+        })),
+        { rotulo: 'Classificação', valor: espectro === 'ssj' ? 'Stevens-Johnson (< 10%)' : espectro === 'sobreposicao' ? 'Sobreposição (10-30%)' : 'Necrólise epidérmica tóxica (> 30%)', nivel: (espectro === 'net' ? 'critico' : 'alerta') as Nivel },
+        { rotulo: 'Mortalidade por faixa', valor: '0-1: 3,2% · 2: 12,1% · 3: 35,8% · 4: 58,3% · ≥ 5: 90%' },
+      ],
+      interpretacao: [
+        `**${total} de 7 pontos — mortalidade estimada de ${fmt(mortalidade, 1)}%.** O SCORTEN deve ser calculado nas **primeiras 24 horas** de internação, que é a janela em que foi derivado; recalculá-lo no terceiro dia melhora a acurácia segundo algumas séries, mas não substitui o cálculo inicial.`,
+        'Stevens-Johnson, sobreposição e necrólise epidérmica tóxica são **a mesma doença** em gravidades diferentes, separadas apenas pelo percentual de descolamento epidérmico: abaixo de 10%, entre 10 e 30%, e acima de 30%. O tratamento é idêntico nos três.',
+        'Conte apenas o **descolamento epidérmico** — área já desnuda mais área com sinal de Nikolsky positivo, em que a epiderme se desloca sob pressão lateral. Eritema sem descolamento não entra, e incluí-lo superestima tanto a classificação quanto o escore.',
+        total >= 3
+          ? '**Escore de 3 ou mais indica mortalidade acima de um terço.** Isso torna imperativos o encaminhamento a centro de queimados ou unidade de terapia intensiva com experiência e a suspensão imediata de todo fármaco suspeito.'
+          : 'Escore em faixa de menor mortalidade, o que não reduz a urgência: a doença é dinâmica e o descolamento progride, frequentemente por vários dias após a internação.',
+        'O SCORTEN foi derivado e validado em múltiplas coortes e é o escore de referência, mas **superestima a mortalidade em séries recentes** com cuidado de suporte especializado, e tende a subestimar em pacientes com sepse estabelecida.',
+      ],
+      conduta: [
+        '**Suspenda imediatamente todo fármaco suspeito — é a medida que mais reduz mortalidade.** Cada dia de atraso na suspensão aumenta o risco de morte. Os agentes mais implicados são alopurinol, sulfonamidas (sobretudo sulfametoxazol-trimetoprima), anticonvulsivantes aromáticos (carbamazepina, fenitoína, lamotrigina, fenobarbital), nevirapina, anti-inflamatórios do grupo oxicam e, mais recentemente, inibidores de checkpoint imunológico.',
+        'Use o **algoritmo ALDEN** para estabelecer causalidade quando houver vários fármacos: ele pontua o intervalo entre a introdução e o início da reação (a janela de risco é de 4 a 28 dias para a primeira exposição), a presença do fármaco no organismo no dia-índice, a exposição prévia, a notoriedade do agente e a existência de causas alternativas.',
+        '**Encaminhe a centro de queimados ou UTI com experiência.** O manejo é o do grande queimado: controle térmico, reposição volêmica titulada pela diurese (o volume necessário é menor que na queimadura térmica de mesma área, porque não há a mesma resposta inflamatória sistêmica), analgesia potente, curativos não aderentes e manuseio asséptico rigoroso.',
+        'Trate as **mucosas**, que definem a sequela: avaliação oftalmológica **diária** com lubrificação intensiva e lise de sinéquias — a sequela ocular é a mais incapacitante e é em boa parte evitável com cuidado precoce; higiene oral, e avaliação ginecológica ou urológica para prevenir sinéquias genitais.',
+        '**Não use antibiótico profilático**, que seleciona resistência sem reduzir infecção. Colha culturas de vigilância e trate apenas infecção documentada ou fortemente suspeita — e lembre que febre isolada é parte da doença.',
+        'A terapia imunomoduladora permanece controversa: **ciclosporina** é a que tem os dados observacionais mais favoráveis, **etanercepte** tem ensaio pequeno positivo, corticoide é debatido, e **imunoglobulina intravenosa** não mostrou benefício consistente. Nenhuma tem ensaio grande definitivo, e a decisão é de centro especializado.',
+        'Registre a alergia de forma **destacada e permanente** no prontuário, oriente o paciente por escrito e alerte sobre reatividade cruzada — entre os anticonvulsivantes aromáticos ela é alta. Em populações de risco, o rastreio de **HLA-B*1502** antes da carbamazepina e de **HLA-B*5801** antes do alopurinol previne casos.',
+      ],
+      alertas: [
+        '**A suspensão precoce do fármaco causal é a intervenção com maior impacto na mortalidade.** Cada dia de atraso conta.',
+        'O descolamento **progride por dias** após a internação: o SCORTEN da admissão não é o retrato final, e um escore baixo inicial não autoriza tranquilidade.',
+        'A sequela **ocular** é a mais incapacitante e é largamente evitável — avaliação oftalmológica diária desde o primeiro dia, e não quando a sinéquia já se formou.',
+        'Não confunda com **síndrome da pele escaldada estafilocócica** (clivagem intraepidérmica superficial, poupa mucosas, comum em crianças, tratada com antibiótico) nem com **pustulose exantemática generalizada aguda** — o tratamento diverge completamente.',
+      ],
+    }
+  },
+  formula: ['SCORTEN = idade ≥ 40 + neoplasia + FC ≥ 120 + descolamento ≥ 10% + ureia > 60 mg/dL + glicemia > 252 mg/dL + bicarbonato < 20 mEq/L', 'Mortalidade: 0-1 → 3,2% · 2 → 12,1% · 3 → 35,8% · 4 → 58,3% · ≥ 5 → 90%'],
+  fundamento:
+    'A necrólise epidérmica tóxica é uma reação de hipersensibilidade tardia mediada por linfócitos T citotóxicos CD8+ específicos contra o fármaco, que reconhecem o antígeno apresentado por moléculas de HLA de classe I nos queratinócitos — e essa dependência do HLA explica as associações étnicas tão marcadas, como o HLA-B*1502 com carbamazepina em populações asiáticas e o HLA-B*5801 com alopurinol. A morte celular maciça é executada sobretudo pela **granulisina**, uma proteína citolítica liberada pelos linfócitos e pelas células NK, cuja concentração no líquido das bolhas se correlaciona com a gravidade; vias de Fas-ligante e perforina-granzima contribuem. O resultado é apoptose disseminada de queratinócitos com clivagem na **junção dermoepidérmica** — e é essa profundidade que distingue a doença da síndrome da pele escaldada estafilocócica, em que a toxina esfoliativa cliva dentro da epiderme, num plano muito mais superficial, com prognóstico e tratamento completamente diferentes. A perda da barreira epidérmica reproduz a fisiopatologia do grande queimado: perda de água e de calor, desequilíbrio eletrolítico, porta de entrada para infecção e catabolismo intenso. Os itens do SCORTEN medem exatamente as consequências dessa perda — ureia e bicarbonato refletem hipoperfusão e magnitude da perda, glicemia reflete o estado catabólico, e frequência cardíaca reflete a resposta hemodinâmica.',
+  armadilhas: [
+    'Contar eritema como descolamento superestima área, classificação e escore — só conta pele desnuda ou com Nikolsky positivo.',
+    'O escore foi derivado para as primeiras 24 horas; aplicá-lo tardiamente sem essa ressalva distorce a estimativa.',
+    'Eritema multiforme maior é doença distinta, geralmente pós-infecciosa (herpes, micoplasma), com lesões em alvo típicas e prognóstico benigno — não se aplica o SCORTEN.',
+    'Febre e leucocitose fazem parte do quadro e não indicam necessariamente infecção; antibiótico profilático não é recomendado.',
+  ],
+  referencias: [
+    { texto: 'Bastuji-Garin S, Fouchard N, Bertocchi M, et al. SCORTEN: a severity-of-illness score for toxic epidermal necrolysis. J Invest Dermatol. 2000;115(2):149-153.' },
+    { texto: 'Sassolas B, Haddad C, Mockenhaupt M, et al. ALDEN, an algorithm for assessment of drug causality in Stevens-Johnson Syndrome and toxic epidermal necrolysis. Clin Pharmacol Ther. 2010;88(1):60-68.' },
+    { texto: 'Chung WH, Hung SI, Yang JY, et al. Granulysin is a key mediator for disseminated keratinocyte death in Stevens-Johnson syndrome and toxic epidermal necrolysis. Nat Med. 2008;14(12):1343-1350.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [ottawa, calculoUreteral, ipss, twist, hints, scorten]
 
 export default ferramentas
