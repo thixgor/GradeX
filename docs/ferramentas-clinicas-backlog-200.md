@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **251** (eram 201) |
-| Implementadas desta lista | **50** |
-| Restantes | **150** |
-| Nota média na auditoria | **100** — todas as 251 |
+| Ferramentas no catálogo | **254** (eram 201) |
+| Implementadas desta lista | **53** |
+| Restantes | **147** |
+| Nota média na auditoria | **100** — todas as 254 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -108,7 +108,7 @@ escores individuais.
 24. **MAGGIC e GWTG-HF** — mortalidade na IC crônica e na descompensação intra-hospitalar. **[P2]**
 25. **EuroSCORE II e STS score** — mortalidade em cirurgia cardíaca. **[P2]**
 26. **ORBIT, ATRIA e ABC bleeding** — risco de sangramento na fibrilação atrial, alternativas ao HAS-BLED. **[P2]**
-27. **EDACS e Marburg Heart Score** — dor torácica de baixo risco na emergência e na atenção primária. **[P1]**
+27. ✅ **EDACS e Marburg Heart Score** — dor torácica de baixo risco na emergência e na atenção primária. `dor-toracica-edacs` alterna entre os dois pelo cenário, e o EDACS entrega o EDACS-ADP completo (escore + ECG + troponina seriada), não só o número. **[P1]**
 28. **Canadian Syncope Risk Score, OESIL e EGSYS** — risco de evento grave após síncope. **[P1]**
     - 🟡 **parcial** — `canadian-syncope` feito; OESIL e EGSYS pendentes (o CSRS os supera em desempenho e foi priorizado)
 29. **ADD-RS, com classificação de Stanford e DeBakey** — probabilidade pré-teste de dissecção aórtica. **[P1]**
@@ -128,7 +128,7 @@ escores individuais.
 35. **Canadian CT Head Rule, New Orleans Criteria e Ottawa SAH Rule** — indicação de TC no TCE leve e investigação de hemorragia subaracnóidea na cefaleia aguda. **[P1]**
     - 🟡 **parcial** — `ct-head-rule` cobre Canadian CT Head e New Orleans; Ottawa SAH Rule pendente
 36. **Escore de Marshall e escore de Rotterdam** — classificação tomográfica do TCE e prognóstico. **[P2]**
-37. **RTS, ISS/AIS e TRISS** — gravidade fisiológica e anatômica do trauma e probabilidade de sobrevida. **[P1]**
+37. 🟡 **RTS, ISS/AIS e TRISS** — gravidade fisiológica e anatômica do trauma e probabilidade de sobrevida. `trauma-rts-iss` entrega RTS ponderado, RTS de triagem e ISS pelos seis segmentos AIS. **O TRISS não foi implementado**: sua regressão logística exige coeficientes distintos para trauma contuso e penetrante, derivados da MTOS, que não consegui conferir contra a fonte primária — mesma decisão tomada no item 10. A ferramenta remete ao TRISS e diz o que ele acrescenta. **[P1]**
 38. **Classificação AAST de lesão de órgãos** — graduação de lesão esplênica, hepática e renal. **[P2]**
 39. **Superfície queimada e prognóstico: regra dos nove, Lund-Browder, índice de Baux e ABSI** — cálculo de área por faixa etária (complementa o módulo de Parkland) e mortalidade no grande queimado. **[P1]**
     - ✅ **feito** — `queimadura-area-prognostico`, com regra dos nove, Lund-Browder, palma, Parkland, Baux, Baux revisado e ABSI
@@ -140,7 +140,7 @@ escores individuais.
     - 🟡 **parcial** — `fragilidade-fried` cobre CFS e fenótipo de Fried; FRAIL pendente
 43. **Escalas de risco de enfermagem: Braden, Norton, Morse e Downton** — lesão por pressão e queda intra-hospitalar. **[P1]**
     - 🟡 **parcial** — `braden-morse` cobre Braden e Morse; Norton e Downton pendentes
-44. **Escore de Aldrete e Aldrete modificado** — alta da sala de recuperação pós-anestésica. **[P1]**
+44. ✅ **Escore de Aldrete e Aldrete modificado** — alta da sala de recuperação pós-anestésica. `aldrete`, com os impeditivos que o escore não cobre (dor, náusea, sangramento, hipotermia, bloqueio neuroaxial) barrando a alta mesmo com 10 pontos, e o PADSS para alta hospitalar. **[P1]**
 45. **Vasoactive-Inotropic Score (VIS)** — quantificação objetiva da carga vasoativa. **[P2]**
 46. **Escore de Murray, RESP score e SAVE score** — lesão pulmonar aguda e indicação/prognóstico de ECMO. **[P2]**
 47. **GO-FAR, CASPRI e MIRACLE₂, com Cerebral Performance Category** — prognóstico neurológico após parada cardiorrespiratória. **[P2]**

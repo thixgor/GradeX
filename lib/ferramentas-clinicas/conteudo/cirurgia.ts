@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   campoIdade,
   campoNum,
@@ -14,6 +14,7 @@ import {
   num,
   numOu,
   opc,
+  ptsOpc,
   sim,
   somaSimNao,
 } from '../helpers'
@@ -959,6 +960,153 @@ const hidricaPerioperatoria: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [asa, rcri, gupta, alvarado, air, tokyo, possum, apfel, jejum, volemiaCirurgica, hidricaPerioperatoria]
+/* ═══════════ Aldrete — alta da sala de recuperação pós-anestésica ═══════════ */
+
+const aldreteCampos: Campo[] = [
+  campoOpc('atividade', 'Atividade motora', [
+    { valor: '2', rotulo: '2 — Move os quatro membros voluntariamente ou sob comando', pontos: 2 },
+    { valor: '1', rotulo: '1 — Move dois membros', pontos: 1 },
+    { valor: '0', rotulo: '0 — Não move nenhum membro', pontos: 0 },
+  ], { padrao: '2', ajuda: 'Após raquianestesia ou peridural, avalie também o **nível do bloqueio**: a regressão motora é esperada e o item não deve ser pontuado como depressão anestésica. O paciente só sai quando recuperar mobilidade e sensibilidade dos membros inferiores.' }),
+  campoOpc('respiracao', 'Respiração', [
+    { valor: '2', rotulo: '2 — Respira profundamente e tosse livremente', pontos: 2 },
+    { valor: '1', rotulo: '1 — Dispneia, respiração superficial ou limitada', pontos: 1 },
+    { valor: '0', rotulo: '0 — Apneia', pontos: 0 },
+  ], { padrao: '2', ajuda: '**Tossir livremente é o que se está testando**, não apenas respirar: a capacidade de tossir prova que há força muscular para proteger a via aérea. É o item que mais depende de bloqueio neuromuscular residual.' }),
+  campoOpc('circulacao', 'Circulação', [
+    { valor: '2', rotulo: '2 — Pressão arterial dentro de 20% do valor pré-anestésico', pontos: 2 },
+    { valor: '1', rotulo: '1 — Variação de 20 a 49% do valor pré-anestésico', pontos: 1 },
+    { valor: '0', rotulo: '0 — Variação de 50% ou mais', pontos: 0 },
+  ], { padrao: '2', ajuda: 'O referencial é a **pressão pré-anestésica do próprio paciente**, e não um valor absoluto de tabela. É por isso que registrar a pressão antes da indução importa: sem ela, este item não tem como ser avaliado.' }),
+  campoOpc('consciencia', 'Consciência', [
+    { valor: '2', rotulo: '2 — Completamente acordado', pontos: 2 },
+    { valor: '1', rotulo: '1 — Desperta ao ser chamado', pontos: 1 },
+    { valor: '0', rotulo: '0 — Não responde', pontos: 0 },
+  ], { padrao: '2' }),
+  campoOpc('saturacao', 'Saturação de oxigênio', [
+    { valor: '2', rotulo: '2 — Mantém SpO₂ acima de 92% em ar ambiente', pontos: 2 },
+    { valor: '1', rotulo: '1 — Precisa de oxigênio suplementar para manter acima de 90%', pontos: 1 },
+    { valor: '0', rotulo: '0 — SpO₂ abaixo de 90% mesmo com oxigênio', pontos: 0 },
+  ], { padrao: '2', ajuda: 'Este item substituiu a avaliação da cor da pele no Aldrete modificado, e foi a mudança mais importante da escala: a cianose só é perceptível com **dessaturação já avançada**, e o oxímetro detecta antes. A avaliação deve ser feita em **ar ambiente** — manter oxigênio até a alta esconde exatamente o que se quer medir.' }),
+  campoSimNao('dorNaoControlada', 'Dor não controlada', 0, 'Dor intensa não é item do Aldrete clássico, mas é causa legítima de retenção na sala de recuperação — e é um dos motivos pelos quais o escore isolado não deve autorizar a alta.'),
+  campoSimNao('nauseaVomito', 'Náusea ou vômito ativos', 0, 'Também fora do Aldrete original. Náusea e vômito pós-operatórios são a causa mais comum de internação não planejada após cirurgia ambulatorial.'),
+  campoSimNao('sangramento', 'Sangramento cirúrgico ativo', 0, undefined),
+  campoSimNao('hipotermia', 'Temperatura abaixo de 36 °C', 0, 'A hipotermia perioperatória prolonga o efeito dos anestésicos, triplica o risco de infecção de sítio cirúrgico, aumenta o sangramento por disfunção plaquetária e desencadeia tremores que elevam muito o consumo de oxigênio. Reaquecer antes da alta é intervenção, não conforto.'),
+  campoSimNao('bloqueioNeuroaxial', 'Anestesia neuroaxial (raqui ou peridural)', 0, 'Se houve bloqueio neuroaxial, a alta exige regressão do bloqueio motor e sensitivo, e a retenção urinária precisa ser avaliada antes da liberação — sobretudo em homem, em idoso e após herniorrafia ou cirurgia anorretal.'),
+]
+
+const aldrete: Ferramenta = {
+  id: 'aldrete',
+  nome: 'Aldrete — alta da sala de recuperação pós-anestésica',
+  sigla: 'Aldrete',
+  sinonimos: ['aldrete', 'recuperacao pos anestesica', 'srpa', 'alta pos anestesia', 'padss', 'sala de recuperacao'],
+  resumo: 'Avalia se o paciente pode deixar a sala de recuperação pós-anestésica, somando cinco parâmetros de 0 a 2.',
+  categorias: ['cirurgia', 'emergencia'],
+  campos: aldreteCampos,
+  calcular: (v) => {
+    const atividade = ptsOpc(aldreteCampos, v, 'atividade') ?? 0
+    const respiracao = ptsOpc(aldreteCampos, v, 'respiracao') ?? 0
+    const circulacao = ptsOpc(aldreteCampos, v, 'circulacao') ?? 0
+    const consciencia = ptsOpc(aldreteCampos, v, 'consciencia') ?? 0
+    const saturacao = ptsOpc(aldreteCampos, v, 'saturacao') ?? 0
+    const total = atividade + respiracao + circulacao + consciencia + saturacao
+
+    const impeditivos: string[] = []
+    if (sim(v, 'dorNaoControlada')) impeditivos.push('dor não controlada')
+    if (sim(v, 'nauseaVomito')) impeditivos.push('náusea ou vômito ativos')
+    if (sim(v, 'sangramento')) impeditivos.push('sangramento cirúrgico ativo')
+    if (sim(v, 'hipotermia')) impeditivos.push('hipotermia abaixo de 36 °C')
+
+    const neuroaxial = sim(v, 'bloqueioNeuroaxial')
+    const escoreOk = total >= 9
+    const liberado = escoreOk && impeditivos.length === 0
+    const nivel: Nivel = total <= 6 ? 'critico' : !escoreOk ? 'alerta' : impeditivos.length > 0 ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (total <= 6) {
+      conduta.push('**Escore de 6 ou menos: paciente não recuperado.** Mantenha na sala de recuperação sob monitorização contínua, com oxigênio e avaliação do anestesiologista. Procure ativamente as causas: bloqueio neuromuscular residual, depressão por opioide ou benzodiazepínico, hipotermia, hipoglicemia, hipóxia, hipercapnia, distúrbio eletrolítico, hipotensão e evento neurológico.')
+    } else if (!escoreOk) {
+      conduta.push(`**Escore de ${fmtInt(total)}: abaixo do limiar de 9.** Mantenha na sala de recuperação e reavalie a cada 15 minutos. O escore que não sobe ao longo do tempo é mais preocupante que o escore baixo isolado — é ele que sugere complicação em curso, e não apenas recuperação lenta.`)
+    } else if (impeditivos.length > 0) {
+      conduta.push(`**Escore de ${fmtInt(total)} atinge o limiar, mas há impedimento clínico: ${impeditivos.join(', ')}.** Resolva antes de liberar — o Aldrete não contempla esses itens, e o escore alto não os anula.`)
+    } else {
+      conduta.push(`**Escore de ${fmtInt(total)}: critérios de alta da sala de recuperação atendidos.** A liberação ainda é decisão clínica documentada, e não automática pelo número.`)
+    }
+
+    if (respiracao < 2 || saturacao < 2) {
+      conduta.push('**Comprometimento respiratório: investigue bloqueio neuromuscular residual.** É a causa mais subestimada de complicação na sala de recuperação. Avalie com o **estimulador de nervo periférico**, buscando razão do treme de quatro acima de 0,9 — os sinais clínicos, como o aperto de mão e a elevação da cabeça por 5 segundos, são insensíveis e deixam passar bloqueio residual clinicamente relevante. Considere reversão com sugamadex para rocurônio ou vecurônio, ou neostigmina associada a antimuscarínico.')
+    }
+    if (sim(v, 'dorNaoControlada')) {
+      conduta.push('**Trate a dor antes de liberar**, preferindo analgesia multimodal — dipirona ou paracetamol, anti-inflamatório quando não contraindicado, bloqueio de nervo periférico e infiltração da ferida — para poupar opioide. Dor não tratada na recuperação é preditor de dor crônica pós-operatória, além de causar taquicardia, hipertensão e aumento do consumo miocárdico de oxigênio.')
+    }
+    if (sim(v, 'nauseaVomito')) {
+      conduta.push('**Trate náusea e vômito com antiemético de classe diferente da usada na profilaxia** — não repita ondansetrona se ela já foi dada; considere dexametasona, droperidol, haloperidol em dose baixa ou metoclopramida. É a causa mais comum de internação não planejada após cirurgia ambulatorial.')
+    }
+    if (sim(v, 'hipotermia')) {
+      conduta.push('**Reaqueça com ar forçado antes da alta.** A hipotermia prolonga o efeito dos anestésicos, triplica o risco de infecção de sítio cirúrgico, aumenta o sangramento por disfunção plaquetária e provoca tremores que elevam de forma expressiva o consumo de oxigênio.')
+    }
+    if (neuroaxial) {
+      conduta.push('**Após bloqueio neuroaxial, exija regressão motora e sensitiva** e avalie retenção urinária antes de liberar — o risco é maior em homens, idosos e após herniorrafia ou cirurgia anorretal. A deambulação segura deve ser testada, e não presumida.')
+    }
+    conduta.push(
+      '**Para alta hospitalar direta após cirurgia ambulatorial, o Aldrete não basta** — ele avalia a saída da sala de recuperação, não a ida para casa. Use o **PADSS**, que acrescenta sinais vitais estáveis, deambulação sem tontura, controle de náusea e vômito, dor controlada e ausência de sangramento cirúrgico, também com limiar de 9.',
+      '**Garanta acompanhante adulto responsável e orientação por escrito.** O paciente não deve dirigir, operar máquinas, assinar documentos legais nem ingerir álcool nas 24 horas seguintes: o prejuízo cognitivo persiste bem além da sensação subjetiva de estar recuperado.',
+      'Não exija micção nem aceitação de líquidos por via oral como critério universal de alta: as diretrizes atuais **removeram essas exigências** para o paciente de baixo risco, porque atrasavam a alta sem ganho de segurança. Mantenha a avaliação de retenção urinária apenas nos grupos de risco.',
+      'Documente o escore na **admissão e na alta** da sala de recuperação, com as reavaliações intermediárias. A tendência é o dado clinicamente útil, e o registro é também proteção do serviço.',
+    )
+
+    return {
+      titulo: 'Aldrete',
+      valor: fmtInt(total),
+      unidade: 'de 10 pontos',
+      nivel,
+      rotuloNivel: liberado ? 'Critérios de alta atendidos' : impeditivos.length > 0 && escoreOk ? 'Impedimento clínico' : 'Manter em recuperação',
+      detalhes: [
+        { rotulo: 'Atividade motora', valor: fmtInt(atividade), nivel: (atividade < 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Respiração', valor: fmtInt(respiracao), nivel: (respiracao < 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Circulação', valor: fmtInt(circulacao), nivel: (circulacao < 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Consciência', valor: fmtInt(consciencia), nivel: (consciencia < 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Saturação de oxigênio', valor: fmtInt(saturacao), nivel: (saturacao < 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Limiar de alta da SRPA', valor: '≥ 9 de 10' },
+        { rotulo: 'Impedimentos fora do escore', valor: impeditivos.length > 0 ? impeditivos.join(' · ') : 'Nenhum', nivel: (impeditivos.length > 0 ? 'alerta' : 'ok') as Nivel },
+        ...(neuroaxial ? [{ rotulo: 'Bloqueio neuroaxial', valor: 'Sim — exigir regressão e avaliar retenção urinária', nivel: 'atencao' as Nivel }] : []),
+      ],
+      interpretacao: [
+        `**${total} de 10 pontos.** O Aldrete modificado soma cinco parâmetros de 0 a 2 — atividade, respiração, circulação, consciência e saturação —, e o limiar consagrado para deixar a sala de recuperação é **9 ou mais**, com nenhum item valendo zero.`,
+        'A mudança mais importante em relação ao escore original de 1970 foi **substituir a avaliação da cor da pele pela oximetria de pulso**. A cianose só se torna visível com dessaturação já avançada e depende da concentração de hemoglobina e da iluminação do ambiente; o oxímetro detecta muito antes. Por isso a saturação deve ser avaliada **em ar ambiente** — manter oxigênio até a alta esconde exatamente aquilo que o item existe para revelar.',
+        '**O escore é um piso, não um teto.** Ele não contempla dor, náusea, vômito, sangramento cirúrgico, hipotermia, retenção urinária nem regressão de bloqueio neuroaxial — todos causas legítimas de retenção na recuperação. Um Aldrete de 10 com dor intensa ou vômitos incoercíveis não autoriza alta alguma.',
+        respiracao < 2 || saturacao < 2
+          ? '**Há comprometimento respiratório.** A primeira hipótese deve ser **bloqueio neuromuscular residual**, a complicação mais subestimada da sala de recuperação: ele ocorre em parcela expressiva dos pacientes que receberam bloqueador não despolarizante e é frequentemente invisível ao exame clínico. Só o estimulador de nervo periférico, com razão do treme de quatro acima de 0,9, exclui o diagnóstico com segurança.'
+          : 'Os parâmetros respiratórios estão preservados. Ainda assim, lembre que o bloqueio neuromuscular residual pode coexistir com escore normal — os sinais clínicos clássicos são insensíveis.',
+        'A **tendência ao longo do tempo importa mais que o valor isolado**: um escore que não sobe nas reavaliações sucessivas sugere complicação em curso, ao passo que um escore baixo que melhora progressivamente costuma ser apenas recuperação lenta.',
+      ],
+      conduta,
+      alertas: [
+        '**Avalie a saturação em ar ambiente.** Manter oxigênio suplementar até a alta mascara a hipoventilação que o item existe para detectar.',
+        '**Bloqueio neuromuscular residual é a complicação mais subestimada da sala de recuperação** e não se exclui por exame clínico — aperto de mão e elevação da cabeça por 5 segundos são insensíveis.',
+        'O Aldrete não avalia dor, náusea, sangramento, hipotermia nem retenção urinária: escore 10 com qualquer um desses não autoriza a alta.',
+        'Para alta **hospitalar** após cirurgia ambulatorial, o Aldrete é insuficiente — use o PADSS e exija acompanhante adulto responsável.',
+        'A referência de pressão arterial é a **do próprio paciente antes da indução**; sem esse registro, o item circulação não pode ser pontuado.',
+      ],
+    }
+  },
+  formula: ['Aldrete = atividade (0-2) + respiração (0-2) + circulação (0-2) + consciência (0-2) + saturação de O₂ (0-2)', 'Alta da SRPA: ≥ 9, sem nenhum item zerado'],
+  fundamento:
+    'A sala de recuperação existe porque a saída da anestesia não é o espelho da indução. Durante o despertar, três sistemas retomam a função em velocidades diferentes, e o descompasso entre eles é justamente o que o escore vigia. O **controle ventilatório** é o mais lento a normalizar: anestésicos halogenados e opioides deprimem a resposta ventilatória ao dióxido de carbono e, mais grave, **abolem a resposta à hipóxia já em concentrações subanestésicas** — o paciente pode estar acordado e conversando e ainda assim não aumentar a ventilação quando dessatura. A **musculatura** recupera força de forma desigual: o diafragma se recupera antes dos músculos faríngeos e do adutor da laringe, de modo que o paciente consegue respirar adequadamente muito antes de conseguir proteger a via aérea e deglutir sem aspirar. É essa dissociação que explica por que se testa a **tosse**, e não apenas a respiração, e por que o bloqueio neuromuscular residual é tão perigoso e tão invisível. A **consciência** retorna por último em termos de função executiva completa, ainda que a resposta ao chamado volte cedo. A hipotermia perioperatória agrava tudo ao mesmo tempo, porque reduz o metabolismo hepático e prolonga a duração dos anestésicos e dos bloqueadores neuromusculares, além de aumentar o consumo de oxigênio pelos tremores. O item de saturação em ar ambiente é o que fecha a lógica: enquanto o paciente recebe oxigênio suplementar, a oximetria permanece normal mesmo com hipoventilação significativa, porque a fração inspirada elevada compensa a queda da ventilação alveolar — retirar o oxigênio é, na prática, o teste de esforço do controle ventilatório.',
+  armadilhas: [
+    'Avaliar a saturação com oxigênio suplementar em curso, o que oculta hipoventilação.',
+    'Usar valores absolutos de pressão arterial em vez da referência pré-anestésica do próprio paciente.',
+    'Confiar em sinais clínicos para excluir bloqueio neuromuscular residual, em vez do estimulador de nervo periférico.',
+    'Tratar o escore como autorização automática de alta, ignorando dor, náusea, sangramento e hipotermia.',
+    'Confundir alta da sala de recuperação com alta hospitalar — são decisões e critérios diferentes.',
+  ],
+  referencias: [
+    { texto: 'Aldrete JA. The post-anesthesia recovery score revisited. J Clin Anesth. 1995;7(1):89-91.' },
+    { texto: 'Chung F, Chan VW, Ong D. A post-anesthetic discharge scoring system for home readiness after ambulatory surgery. J Clin Anesth. 1995;7(6):500-506.' },
+    { texto: 'Apfelbaum JL, Silverstein JH, Chung FF, et al. Practice Guidelines for Postanesthetic Care: an updated report by the American Society of Anesthesiologists. Anesthesiology. 2013;118(2):291-307.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [asa, rcri, gupta, alvarado, air, tokyo, possum, apfel, jejum, volemiaCirurgica, hidricaPerioperatoria, aldrete]
 
 export default ferramentas

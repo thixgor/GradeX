@@ -14,6 +14,7 @@ import {
   num,
   numOu,
   opc,
+  ptsOpc,
   sim,
   somaSimNao,
 } from '../helpers'
@@ -1393,6 +1394,161 @@ const queimadura: Ferramenta = {
   ],
 }
 
+/* ═══════════ RTS e ISS — gravidade no trauma ═══════════ */
+
+const regioesAis: { id: string; rotulo: string; ajuda?: string }[] = [
+  { id: 'aisCabeca', rotulo: 'Cabeça e pescoço', ajuda: 'Inclui crânio, encéfalo, coluna cervical e medula cervical. É a região que mais frequentemente determina o ISS e o prognóstico.' },
+  { id: 'aisFace', rotulo: 'Face', ajuda: 'Esqueleto facial, olhos, orelhas, nariz e boca. Lesões de face raramente dominam o ISS, mas podem comprometer a via aérea de forma imediata.' },
+  { id: 'aisTorax', rotulo: 'Tórax', ajuda: 'Caixa torácica, diafragma, pulmões, coração, grandes vasos torácicos e coluna torácica.' },
+  { id: 'aisAbdome', rotulo: 'Abdome e conteúdo pélvico', ajuda: 'Vísceras abdominais e pélvicas, coluna lombar. **A fratura de pelve entra na região de extremidades**, não aqui — um erro de classificação frequente.' },
+  { id: 'aisExtremidades', rotulo: 'Extremidades e cintura pélvica', ajuda: 'Ossos longos, pelve óssea e cinturas escapular e pélvica. A fratura de pelve é classificada aqui.' },
+  { id: 'aisExterno', rotulo: 'Externo (pele, queimaduras)', ajuda: 'Lacerações, contusões, abrasões e queimaduras. Esta região é a mais esquecida no cálculo e costuma ser a razão de um ISS subestimado.' },
+]
+
+const traumaCampos: Campo[] = [
+  campoOpc('gcs', 'Escala de coma de Glasgow', [
+    { valor: '4', rotulo: '13 a 15', pontos: 4 },
+    { valor: '3', rotulo: '9 a 12', pontos: 3 },
+    { valor: '2', rotulo: '6 a 8', pontos: 2 },
+    { valor: '1', rotulo: '4 a 5', pontos: 1 },
+    { valor: '0', rotulo: '3', pontos: 0 },
+  ], { padrao: '4', ajuda: 'Use o **Glasgow da chegada**, antes de sedação, intubação ou bloqueio neuromuscular. Glasgow obtido depois da intubação não serve para o escore e é a fonte mais comum de erro no cálculo do RTS.' }),
+  campoOpc('pas', 'Pressão arterial sistólica', [
+    { valor: '4', rotulo: 'Acima de 89 mmHg', pontos: 4 },
+    { valor: '3', rotulo: '76 a 89 mmHg', pontos: 3 },
+    { valor: '2', rotulo: '50 a 75 mmHg', pontos: 2 },
+    { valor: '1', rotulo: '1 a 49 mmHg', pontos: 1 },
+    { valor: '0', rotulo: 'Sem pulso', pontos: 0 },
+  ], { padrao: '4', ajuda: 'Pressão sistólica normal **não afasta choque**: o jovem mantém a pressão por vasoconstrição até perder cerca de 30 a 40% da volemia, e então descompensa rapidamente. Taquicardia, pressão de pulso estreita, palidez e ansiedade aparecem muito antes.' }),
+  campoOpc('fr', 'Frequência respiratória', [
+    { valor: '4', rotulo: '10 a 29 irpm', pontos: 4 },
+    { valor: '3', rotulo: 'Acima de 29 irpm', pontos: 3 },
+    { valor: '2', rotulo: '6 a 9 irpm', pontos: 2 },
+    { valor: '1', rotulo: '1 a 5 irpm', pontos: 1 },
+    { valor: '0', rotulo: 'Apneia', pontos: 0 },
+  ], { padrao: '4', ajuda: 'Repare que **taquipneia acima de 29 pontua menos que a faixa normal**, mas mais que a bradipneia: o escore reconhece a taquipneia como resposta compensatória, e a bradipneia como falência.' }),
+  ...regioesAis.map((r) =>
+    campoOpc(r.id, `AIS — ${r.rotulo}`, [
+      { valor: '0', rotulo: '0 — Sem lesão', pontos: 0 },
+      { valor: '1', rotulo: '1 — Leve', pontos: 1 },
+      { valor: '2', rotulo: '2 — Moderada', pontos: 2 },
+      { valor: '3', rotulo: '3 — Grave, sem risco de vida', pontos: 3 },
+      { valor: '4', rotulo: '4 — Grave, com risco de vida', pontos: 4 },
+      { valor: '5', rotulo: '5 — Crítica, sobrevivência incerta', pontos: 5 },
+      { valor: '6', rotulo: '6 — Máxima, praticamente insobrevivível', pontos: 6 },
+    ], { padrao: '0', ajuda: r.ajuda }),
+  ),
+]
+
+const traumaGravidade: Ferramenta = {
+  id: 'trauma-rts-iss',
+  nome: 'RTS e ISS — gravidade no trauma',
+  sigla: 'RTS / ISS',
+  sinonimos: ['rts', 'iss', 'ais', 'triss', 'trauma score', 'injury severity score', 'gravidade trauma', 'triagem trauma'],
+  resumo: 'Calcula o escore fisiológico de trauma (RTS) e o escore anatômico de gravidade (ISS), e indica quem precisa de centro de trauma.',
+  categorias: ['emergencia', 'cirurgia'],
+  campos: traumaCampos,
+  calcular: (v) => {
+    const cGcs = ptsOpc(traumaCampos, v, 'gcs')
+    const cPas = ptsOpc(traumaCampos, v, 'pas')
+    const cFr = ptsOpc(traumaCampos, v, 'fr')
+    if (cGcs === null || cPas === null || cFr === null) return null
+
+    // RTS ponderado (Champion 1989): pesos derivados por regressão na MTOS.
+    const rts = 0.9368 * cGcs + 0.7326 * cPas + 0.2908 * cFr
+    const trts = cGcs + cPas + cFr
+
+    const ais = regioesAis.map((r) => ({ ...r, valor: ptsOpc(traumaCampos, v, r.id) ?? 0 }))
+    const maxAis = Math.max(...ais.map((a) => a.valor))
+    const tresMaiores = ais.map((a) => a.valor).sort((a, b) => b - a).slice(0, 3)
+    const iss = maxAis === 6 ? 75 : tresMaiores.reduce((s, n) => s + n * n, 0)
+
+    const politrauma = iss >= 16
+    const issGrave = iss >= 25
+    const rtsBaixo = rts < 4
+    const triagemPositiva = trts <= 11
+
+    const nivel: Nivel = maxAis === 6 || rts < 3 ? 'critico' : issGrave || rtsBaixo ? 'alerta' : politrauma || triagemPositiva ? 'atencao' : 'ok'
+
+    const regioesLesadas = ais.filter((a) => a.valor > 0)
+
+    const conduta: string[] = []
+    if (triagemPositiva || rtsBaixo) {
+      conduta.push(`**RTS de triagem em ${fmtInt(trts)} (limiar ≤ 11): encaminhe a centro de trauma.** Esse limiar foi calibrado deliberadamente para uma taxa alta de supertriagem, porque na triagem de trauma os dois erros não têm o mesmo custo — mandar ao centro de trauma quem não precisava custa recurso, e não mandar quem precisava custa vida.`)
+    }
+    if (maxAis === 6) {
+      conduta.push('**Há lesão AIS 6 — praticamente insobrevivível —, e o ISS é fixado em 75 por convenção.** Isso não determina conduta: a decisão de limitar esforço terapêutico é clínica, multiprofissional e nunca se apoia num escore. Considere o cuidado paliativo precoce, a comunicação estruturada com a família e, quando cabível, o protocolo de doação de órgãos.')
+    }
+    if (politrauma) {
+      conduta.push(`**ISS de ${fmtInt(iss)} — politraumatizado** (limiar ≥ 16). Ative a equipe de trauma, acione centro cirúrgico e banco de sangue, e trate as lesões na ordem de ameaça à vida, não na ordem em que foram encontradas.`)
+      conduta.push('**Previna e trate a tríade letal — hipotermia, acidose e coagulopatia — desde o primeiro minuto.** Os três se retroalimentam: a hipotermia inibe as enzimas da coagulação e a função plaquetária, a acidose degrada a atividade do fator VIIa, e o sangramento resultante agrava ambos. Aqueça o paciente e todos os fluidos, use **hemocomponentes em proporção equilibrada** em vez de cristaloide em volume, e administre **ácido tranexâmico dentro das 3 primeiras horas** — depois disso o benefício desaparece e pode se inverter.')
+      conduta.push('Adote **controle de danos** quando houver instabilidade persistente: cirurgia abreviada para conter hemorragia e contaminação, estabilização em terapia intensiva, e reconstrução definitiva depois. Operar longamente o paciente frio, acidótico e coagulopático é trocar o problema que mata agora por um que mata em seguida.')
+    }
+    if (rts >= 4 && !politrauma && !triagemPositiva) {
+      conduta.push('**Fisiologia e anatomia dentro de faixas favoráveis.** Isso não encerra a avaliação: mantenha a reavaliação seriada, porque a lesão de víscera maciça e o hematoma intracraniano podem se manifestar horas depois, e o RTS inicial normal é comum nos dois.')
+    }
+    conduta.push(
+      '**O RTS é fisiológico e o ISS é anatômico — eles respondem a perguntas diferentes e se complementam.** O RTS é calculado na chegada e serve para triagem; o ISS só se conhece depois de todas as lesões identificadas, o que frequentemente significa depois da tomografia ou da cirurgia, e serve para comparação de casuística e para pesquisa, não para decisão de beira de leito.',
+      '**Use o Glasgow da chegada, antes de sedação ou intubação.** Depois disso o valor não é aproveitável para o escore, e essa é a fonte mais comum de RTS calculado de forma incorreta.',
+      '**Considere o idoso e o anticoagulado como grupos de alto risco independentemente do escore.** O idoso tem reserva fisiológica menor, frequentemente usa betabloqueador que impede a taquicardia compensatória, e apresenta mortalidade muito maior para o mesmo ISS; o anticoagulado sangra mais e exige limiar baixo para tomografia de crânio e reversão precoce.',
+      'Lembre que os critérios de triagem para centro de trauma incluem elementos que **nenhum escore captura**: mecanismo de alta energia, ejeção do veículo, morte de outro ocupante, queda de altura superior a três vezes a estatura, atropelamento, lesão penetrante de tronco, tórax instável, duas ou mais fraturas de ossos longos proximais, amputação e paralisia.',
+      'Para estimar **probabilidade de sobrevivência**, a ferramenta consagrada é o **TRISS**, que combina RTS, ISS, idade e mecanismo — contuso ou penetrante — numa regressão logística. Ele exige coeficientes específicos por mecanismo, derivados da Major Trauma Outcome Study, e deve ser calculado com a fonte original em mãos.',
+    )
+
+    return {
+      titulo: 'Gravidade no trauma',
+      valor: `RTS ${fmt(rts, 2)} · ISS ${fmtInt(iss)}`,
+      nivel,
+      rotuloNivel: maxAis === 6 ? 'Lesão AIS 6' : issGrave ? 'Trauma grave' : politrauma ? 'Politraumatizado' : triagemPositiva ? 'Triagem positiva para centro de trauma' : 'Fora dos limiares de gravidade',
+      detalhes: [
+        { rotulo: 'RTS ponderado', valor: `${fmt(rts, 2)} de 7,84`, nivel: (rts < 3 ? 'critico' : rtsBaixo ? 'alerta' : 'ok') as Nivel, nota: rtsBaixo ? 'Abaixo de 4 — mortalidade substancialmente maior' : undefined },
+        { rotulo: 'RTS de triagem (soma simples)', valor: `${fmtInt(trts)} de 12`, nivel: (triagemPositiva ? 'alerta' : 'ok') as Nivel, nota: triagemPositiva ? 'Limiar ≤ 11 para centro de trauma' : undefined },
+        { rotulo: 'Glasgow · PAS · FR (codificados)', valor: `${fmtInt(cGcs)} · ${fmtInt(cPas)} · ${fmtInt(cFr)}` },
+        { rotulo: 'ISS', valor: `${fmtInt(iss)} de 75`, nivel: (issGrave ? 'critico' : politrauma ? 'alerta' : 'ok') as Nivel, nota: maxAis === 6 ? 'Fixado em 75 por lesão AIS 6' : undefined },
+        { rotulo: 'Maior AIS', valor: fmtInt(maxAis), nivel: (maxAis >= 5 ? 'critico' : maxAis >= 4 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Regiões lesadas', valor: regioesLesadas.length > 0 ? regioesLesadas.map((a) => `${a.rotulo} (AIS ${a.valor})`).join(' · ') : 'Nenhuma' },
+        { rotulo: 'Três maiores AIS somados ao quadrado', valor: maxAis === 6 ? 'Não se aplica — AIS 6' : `${tresMaiores[0]}² + ${tresMaiores[1]}² + ${tresMaiores[2]}² = ${fmtInt(iss)}` },
+      ],
+      interpretacao: [
+        `**RTS de ${fmt(rts, 2)} e ISS de ${fmtInt(iss)}.** São escores de naturezas distintas: o **RTS é fisiológico** e mede como o paciente está respondendo agora; o **ISS é anatômico** e mede o que foi lesado. Eles não se substituem, e a discordância entre os dois é informação clínica, não erro.`,
+        `O **RTS ponderado** varia de 0 a 7,84 e pondera o Glasgow com o maior coeficiente (0,9368), seguido da pressão sistólica (0,7326) e da frequência respiratória (0,2908) — hierarquia obtida por regressão, que reflete quanto cada variável prediz mortalidade. Valores abaixo de 4 associam-se a mortalidade substancialmente maior. Para triagem em campo usa-se a **soma simples dos códigos**, de 0 a 12, com limiar de encaminhamento em **11 ou menos**.`,
+        `O **ISS** toma as três regiões mais lesadas, eleva cada AIS ao quadrado e soma, variando de 0 a 75. **A elevação ao quadrado não é arbitrária**: ela reproduz o fato observado de que a mortalidade cresce de forma exponencial, e não linear, com a gravidade da lesão — duas lesões moderadas não equivalem a uma grave. **ISS de 16 ou mais define politraumatizado**, e de 25 ou mais define trauma grave.`,
+        maxAis === 6
+          ? '**Há lesão AIS 6**, categoria de lesão praticamente insobrevivível, e por convenção o ISS é fixado em 75 independentemente das demais lesões.'
+          : `A maior lesão isolada é **AIS ${maxAis}**. Note a principal limitação do ISS: ele considera apenas **uma lesão por região corporal**, de modo que três lesões graves no mesmo tórax contam como uma só. É por isso que o **NISS**, que toma as três lesões mais graves **independentemente da região**, prediz melhor a mortalidade no trauma penetrante e no trauma concentrado num único segmento.`,
+        `${rtsBaixo ? '**O RTS está abaixo de 4**, o que sinaliza comprometimento fisiológico relevante. ' : ''}Atenção à combinação inversa, que é a mais traiçoeira: **RTS normal com ISS alto**. Ela é comum no jovem, que compensa e mantém pressão e Glasgow normais até descompensar de forma abrupta, e no idoso em uso de betabloqueador, que não consegue fazer a taquicardia compensatória. Nos dois, a fisiologia tranquilizadora precede o colapso.`,
+      ],
+      conduta,
+      alertas: [
+        '**Glasgow após sedação ou intubação não serve para o RTS** — use o da chegada.',
+        '**Pressão sistólica normal não afasta choque**: o jovem compensa até perder 30 a 40% da volemia e então descompensa rapidamente.',
+        'O ISS conta **apenas uma lesão por região**, o que subestima o trauma concentrado num só segmento; nesses casos o NISS é mais fiel.',
+        'A fratura de pelve pertence à região de **extremidades e cintura pélvica**, não à de abdome — erro de classificação que altera o ISS.',
+        'Nenhum escore substitui os critérios de mecanismo na triagem, nem justifica limitação de esforço terapêutico.',
+      ],
+    }
+  },
+  formula: [
+    'RTS = 0,9368 × código(Glasgow) + 0,7326 × código(PAS) + 0,2908 × código(FR) — de 0 a 7,8408',
+    'RTS de triagem = código(Glasgow) + código(PAS) + código(FR) — de 0 a 12 · centro de trauma se ≤ 11',
+    'ISS = soma dos quadrados dos três maiores AIS de regiões distintas — de 0 a 75 · qualquer AIS 6 fixa o ISS em 75',
+  ],
+  fundamento:
+    'Os dois escores respondem a perguntas diferentes porque nascem de duas maneiras distintas de olhar para o traumatizado. O **RTS mede a resposta fisiológica** e se apoia na sequência com que o organismo compensa a perda de volume. A hemorragia reduz o retorno venoso e o débito cardíaco; barorreceptores aórticos e carotídeos detectam a queda e disparam descarga simpática, que produz taquicardia e vasoconstrição arteriolar seletiva — poupando cérebro e coração à custa de pele, músculo, rim e esplâncnico. Essa vasoconstrição mantém a **pressão arterial dentro da normalidade até que cerca de 30 a 40% da volemia tenham se perdido**, momento em que a compensação falha e a pressão despenca. Daí a assimetria entre os três componentes: o Glasgow, que reflete perfusão cerebral e integridade encefálica, recebe o maior peso; a pressão sistólica vem depois, porque só se altera tardiamente; e a frequência respiratória, a mais inespecífica, recebe o menor — ainda que a taquipneia seja um dos sinais mais precoces, por compensação da acidose láctica gerada pelo metabolismo anaeróbio nos tecidos hipoperfundidos. O **ISS mede o dano anatômico** e incorpora uma observação empírica que mudou a traumatologia: a mortalidade não cresce proporcionalmente à gravidade, mas de forma acelerada, e lesões em regiões diferentes interagem de modo mais que aditivo — um trauma cranioencefálico moderado somado a uma lesão torácica moderada mata mais do que a soma dos dois isolados, porque a hipóxia e a hipotensão da lesão torácica agravam diretamente a lesão cerebral secundária. Elevar cada AIS ao quadrado antes de somar é a forma que Baker encontrou, em 1974, de fazer o número acompanhar essa curva. A limitação do método decorre da mesma escolha: ao aceitar apenas uma lesão por região, o ISS enxerga mal o trauma concentrado, e foi para corrigir isso que se propôs o NISS.',
+  armadilhas: [
+    'Calcular o RTS com dados obtidos após sedação, intubação ou reposição volêmica — ele foi derivado para os valores da chegada.',
+    'Esperar o ISS para decidir conduta: ele só é calculável depois do inventário completo das lesões.',
+    'Esquecer a região externa, incluindo queimaduras, o que subestima sistematicamente o ISS.',
+    'Interpretar RTS normal como ausência de gravidade em jovem ou em idoso betabloqueado.',
+    'Usar o ISS para comparar pacientes com trauma concentrado numa única região, onde o NISS é mais adequado.',
+  ],
+  referencias: [
+    { texto: 'Champion HR, Sacco WJ, Copes WS, Gann DS, Gennarelli TA, Flanagan ME. A revision of the Trauma Score. J Trauma. 1989;29(5):623-629.' },
+    { texto: 'Baker SP, O\'Neill B, Haddon W Jr, Long WB. The injury severity score: a method for describing patients with multiple injuries and evaluating emergency care. J Trauma. 1974;14(3):187-196.' },
+    { texto: 'Osler T, Baker SP, Long W. A modification of the injury severity score that both improves accuracy and simplifies scoring. J Trauma. 1997;43(6):922-926.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   apache,
   saps3,
@@ -1406,6 +1562,7 @@ export const ferramentas: Ferramenta[] = [
   charlson,
   ctHead,
   queimadura,
+  traumaGravidade,
 ]
 
 export default ferramentas

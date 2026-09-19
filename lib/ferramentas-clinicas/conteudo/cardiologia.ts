@@ -2,6 +2,7 @@ import type { Campo, Ferramenta, Nivel, Resultado, Valores } from '../tipos'
 import {
   bsaMosteller,
   campoAltura,
+  campoIdade,
   campoNum,
   campoOpc,
   campoPeso,
@@ -3051,6 +3052,195 @@ const taquiQrsLargo: Ferramenta = {
   ],
 }
 
+/* ═══════════ EDACS e Marburg — dor torácica ═══════════ */
+
+const dorToracicaCampos: Campo[] = [
+  campoSeg('cenario', 'Cenário', [
+    { valor: 'emergencia', rotulo: 'Emergência — EDACS' },
+    { valor: 'ambulatorio', rotulo: 'Atenção primária — Marburg' },
+  ], { padrao: 'emergencia', ajuda: 'As duas escalas respondem a perguntas diferentes. O **EDACS** pergunta "posso dar alta hoje sem investigar mais?" na emergência; o **Marburg** pergunta "esta dor é coronariana?" no consultório, onde a prevalência é muito menor e o paciente já chegou estável.' }),
+  campoIdade({ min: 18, max: 110, ajuda: 'A idade é o componente de maior peso do EDACS e cresce em degraus de 5 anos — de +2 pontos aos 18 a 45 anos até +20 pontos acima dos 85.' }),
+  campoSexo(),
+  campoSimNao('fatoresRisco', 'Três ou mais fatores de risco, ou doença arterial coronariana conhecida', 0, 'Fatores considerados: dislipidemia, hipertensão, diabetes, tabagismo atual e história familiar de doença coronariana precoce. **No EDACS, este item só pontua entre 18 e 50 anos** — acima dessa idade, o peso já está embutido no componente etário, e contá-lo duas vezes distorce o escore.'),
+  campoSimNao('diaforese', 'Diaforese', 0, 'Sudorese fria e profusa, e não o suor do calor ou da ansiedade. É um sinal de descarga simpática intensa e um dos poucos achados de exame com valor discriminante real na dor torácica.'),
+  campoSimNao('irradiacao', 'Dor irradiada para braço, ombro, pescoço ou mandíbula', 0, 'A irradiação decorre de convergência de aferências: as fibras viscerais do coração entram na medula em T1 a T4, os mesmos segmentos que recebem a inervação somática dessas regiões, e o córtex atribui o estímulo ao território somático. É também por isso que a dor coronariana costuma ser **difusa e mal localizada** — o paciente a mostra com a mão aberta, não com o dedo.'),
+  campoSimNao('pleuritica', 'Dor que surgiu ou piorou com a inspiração', 0, 'Reduz a pontuação no EDACS. Aponta para pleura, pericárdio ou parede torácica — mas **não afasta embolia pulmonar nem dissecção de aorta**, que também doem à inspiração.'),
+  campoSimNao('palpacao', 'Dor reproduzida pela palpação', 0, 'É o item que mais reduz a pontuação no EDACS. Ainda assim, a reprodução à palpação **não afasta síndrome coronariana**: cerca de 5 a 10% dos infartos têm alguma reprodutibilidade à palpação, e a decisão nunca se apoia nesse item isolado.'),
+  campoSimNao('ecgIsquemico', 'Eletrocardiograma com isquemia nova', 0, 'Supradesnivelamento ou infradesnivelamento novo de ST, inversão de onda T em território coronariano. Um eletrocardiograma isquêmico **exclui o paciente de qualquer via de baixo risco**, independentemente do escore.'),
+  campoSimNao('troponinaNeg', 'Troponina negativa nas amostras seriadas do protocolo', 0, 'Com troponina ultrassensível, o protocolo aceito é **0 e 2 horas** (alguns serviços usam 0 e 1 hora). A alta pelo EDACS-ADP exige as duas amostras negativas — o escore sozinho não libera ninguém.'),
+  campoSimNao('esforco', 'Dor que piora com esforço', 0, 'Item do Marburg. É o componente de maior valor discriminante para doença coronariana estável no ambulatório, porque reproduz o desequilíbrio entre oferta e demanda de oxigênio.'),
+  campoSimNao('acreditaCardiaca', 'O paciente acredita que a dor é do coração', 0, 'Item do Marburg, e o mais contraintuitivo de todos. A percepção do próprio paciente tem valor preditivo independente e mensurável — ele integra informações que a anamnese estruturada não captura.'),
+  campoSimNao('vascularPrevia', 'Doença vascular conhecida — coronariana, cerebrovascular ou arterial periférica', 0, 'Item do Marburg. A aterosclerose é doença difusa: quem tem placa numa árvore arterial tem em outras, e o antecedente de acidente vascular cerebral ou de claudicação vale como marcador de risco coronariano.'),
+]
+
+const dorToracica: Ferramenta = {
+  id: 'dor-toracica-edacs',
+  nome: 'EDACS e Marburg — estratificação da dor torácica',
+  sigla: 'EDACS',
+  sinonimos: ['edacs', 'marburg', 'dor toracica', 'sindrome coronariana', 'alta precoce', 'adp', 'heart'],
+  resumo: 'Estratifica a dor torácica pelo EDACS na emergência e pelo escore de Marburg na atenção primária.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: dorToracicaCampos,
+  calcular: (v) => {
+    const idade = num(v, 'idade')
+    if (idade === null) return null
+    const cenario = opc(v, 'cenario') ?? 'emergencia'
+    const sexo = opc(v, 'sexo') ?? 'masculino'
+    const masculino = sexo === 'masculino'
+
+    if (cenario === 'ambulatorio') {
+      const idadeSexo = (masculino && idade >= 55) || (!masculino && idade >= 65)
+      const marburg =
+        (idadeSexo ? 1 : 0) +
+        (sim(v, 'vascularPrevia') ? 1 : 0) +
+        (sim(v, 'esforco') ? 1 : 0) +
+        (!sim(v, 'palpacao') ? 1 : 0) +
+        (sim(v, 'acreditaCardiaca') ? 1 : 0)
+
+      const faixa = marburg <= 2 ? 'baixo' : marburg === 3 ? 'intermediario' : 'alto'
+      const prob = marburg <= 2 ? 'cerca de 3%' : marburg === 3 ? 'cerca de 23%' : 'de 48 a 66%'
+      const nivel: Nivel = faixa === 'alto' ? 'alerta' : faixa === 'intermediario' ? 'atencao' : 'ok'
+
+      const conduta: string[] = []
+      if (faixa === 'baixo') {
+        conduta.push('**Marburg de 0 a 2: doença coronariana improvável** (probabilidade em torno de 3%). Investigue as causas não cardíacas, que aqui são a maioria: musculoesquelética — a mais comum de todas no ambulatório —, refluxo gastroesofágico, ansiedade e transtorno de pânico, doença pulmonar e herpes-zóster na fase pré-eruptiva.')
+        conduta.push('**Oriente retorno imediato** se a dor mudar de caráter, surgir ao esforço, vier acompanhada de dispneia, síncope ou sudorese, ou se tornar prolongada. A segurança dessa alta depende da rede de retorno, não do escore.')
+      } else if (faixa === 'intermediario') {
+        conduta.push('**Marburg de 3: probabilidade intermediária** (cerca de 23%). Investigue com teste não invasivo. A **angiotomografia de coronárias** é hoje preferida nessa faixa, por ter alto valor preditivo negativo e permitir afastar doença obstrutiva com segurança; teste ergométrico é alternativa razoável em paciente capaz de se exercitar e com eletrocardiograma basal interpretável.')
+      } else {
+        conduta.push(`**Marburg de ${fmtInt(marburg)}: probabilidade alta** (${prob}). Encaminhe ao cardiologista e investigue prontamente. Enquanto isso, inicie o tratamento da doença aterosclerótica: **estatina de alta potência, controle pressórico e antiagregação quando indicada** — não espere o resultado do exame para tratar o que já é evidente.`)
+      }
+      conduta.push(
+        '**Diante de dor torácica aguda, em curso ou com instabilidade, este escore não se aplica** — encaminhe imediatamente à emergência. O Marburg foi derivado para dor torácica **crônica ou recorrente em ambiente ambulatorial**, e usá-lo fora disso é perigoso.',
+        'Lembre-se de que a apresentação é diferente em **mulheres, diabéticos e idosos**: fadiga desproporcional, dispneia, náusea, dor epigástrica e mal-estar inespecífico substituem a dor torácica clássica com frequência, e a ausência do sintoma típico é exatamente o que atrasa o diagnóstico nesses grupos.',
+        'Procure as causas graves não coronarianas que também aparecem no ambulatório: **dissecção de aorta** (dor de início súbito e máxima intensidade desde o começo, assimetria de pulsos), **embolia pulmonar** (dispneia, taquicardia, fator de risco para trombose) e **pericardite** (dor que melhora sentado e inclinado para a frente, atrito).',
+      )
+
+      return {
+        titulo: 'Escore de Marburg',
+        valor: fmtInt(marburg),
+        unidade: 'de 5 pontos',
+        nivel,
+        rotuloNivel: faixa === 'alto' ? 'Probabilidade alta' : faixa === 'intermediario' ? 'Probabilidade intermediária' : 'Probabilidade baixa',
+        detalhes: [
+          { rotulo: `Idade (homem ≥ 55, mulher ≥ 65)`, valor: idadeSexo ? '+1' : '0' },
+          { rotulo: 'Doença vascular conhecida', valor: sim(v, 'vascularPrevia') ? '+1' : '0' },
+          { rotulo: 'Dor piora com esforço', valor: sim(v, 'esforco') ? '+1' : '0' },
+          { rotulo: 'Dor NÃO reproduzida pela palpação', valor: !sim(v, 'palpacao') ? '+1' : '0' },
+          { rotulo: 'Paciente acredita ser do coração', valor: sim(v, 'acreditaCardiaca') ? '+1' : '0' },
+          { rotulo: 'Probabilidade de doença coronariana', valor: prob },
+        ],
+        interpretacao: [
+          `**Marburg de ${marburg} de 5 pontos — probabilidade ${faixa === 'alto' ? 'alta' : faixa === 'intermediario' ? 'intermediária' : 'baixa'} (${prob}).** O escore foi derivado e validado na **atenção primária**, para dor torácica crônica ou recorrente, e não para dor aguda em curso.`,
+          'Repare que o item da palpação pontua **invertido**: é a *ausência* de reprodução pela palpação que soma ponto. O achado positivo aponta para origem musculoesquelética, que é a causa mais comum de dor torácica no consultório.',
+          'O item mais contraintuitivo — e um dos mais úteis — é **a crença do próprio paciente de que a dor é cardíaca**. Ele tem valor preditivo independente e mensurável, porque o paciente integra informação corporal e contextual que a anamnese estruturada não captura. Vale perguntar explicitamente.',
+          'A diferença essencial em relação ao EDACS é a **prevalência**: no ambulatório, a probabilidade pré-teste de doença coronariana é muito menor, e por isso o escore mira a doença **estável**, e não o evento agudo. Transplantar limiares de um cenário para o outro produz erro nos dois sentidos.',
+          'O Marburg supera a avaliação clínica não estruturada e ajuda a **evitar encaminhamentos desnecessários** sem perder casos relevantes — que é justamente o problema central da dor torácica na atenção primária.',
+        ],
+        conduta,
+        alertas: [
+          '**Não use o Marburg em dor torácica aguda ou em paciente instável** — ele foi derivado para queixa crônica ou recorrente em ambulatório.',
+          'Reprodução à palpação reduz a probabilidade mas **não afasta** síndrome coronariana.',
+          'Mulheres, diabéticos e idosos apresentam-se com fadiga, dispneia, náusea ou dor epigástrica em vez da dor clássica.',
+          'Dor de início súbito e máxima desde o começo sugere **dissecção de aorta** e não entra em escore de probabilidade coronariana.',
+        ],
+      }
+    }
+
+    // EDACS
+    const pontosIdade =
+      idade <= 45 ? 2 : idade <= 50 ? 4 : idade <= 55 ? 6 : idade <= 60 ? 8 : idade <= 65 ? 10 : idade <= 70 ? 12 : idade <= 75 ? 14 : idade <= 80 ? 16 : idade <= 85 ? 18 : 20
+    const pontosSexo = masculino ? 6 : 0
+    const pontosRisco = idade >= 18 && idade <= 50 && sim(v, 'fatoresRisco') ? 4 : 0
+    const pontosDiaforese = sim(v, 'diaforese') ? 3 : 0
+    const pontosIrradiacao = sim(v, 'irradiacao') ? 5 : 0
+    const pontosPleuritica = sim(v, 'pleuritica') ? -4 : 0
+    const pontosPalpacao = sim(v, 'palpacao') ? -6 : 0
+    const edacs = pontosIdade + pontosSexo + pontosRisco + pontosDiaforese + pontosIrradiacao + pontosPleuritica + pontosPalpacao
+
+    const ecgOk = !sim(v, 'ecgIsquemico')
+    const tropOk = sim(v, 'troponinaNeg')
+    const baixoRisco = edacs < 16 && ecgOk && tropOk
+    const nivel: Nivel = !ecgOk ? 'critico' : baixoRisco ? 'ok' : edacs >= 16 ? 'alerta' : 'atencao'
+
+    const conduta: string[] = []
+    if (!ecgOk) {
+      conduta.push('**Eletrocardiograma com isquemia nova: o paciente está fora de qualquer via de baixo risco.** Trate como síndrome coronariana aguda, repita o traçado, acione a cardiologia e, havendo supradesnivelamento de ST, ative o protocolo de reperfusão imediatamente — o escore perde qualquer relevância aqui.')
+    } else if (baixoRisco) {
+      conduta.push(`**EDACS de ${fmtInt(edacs)} (< 16), eletrocardiograma sem isquemia e troponinas seriadas negativas: critérios do EDACS-ADP para baixo risco atendidos.** Esse conjunto identifica cerca de 40 a 50% dos pacientes com dor torácica, com risco de evento cardíaco maior em 30 dias abaixo de 1% — um patamar considerado aceitável para alta sem investigação hospitalar adicional.`)
+      conduta.push('**Alta com investigação ambulatorial programada**, e não alta sem seguimento: agende teste funcional ou angiotomografia de coronárias conforme o perfil, e garanta o encaminhamento antes de o paciente sair. A segurança do protocolo depende dessa continuidade.')
+    } else if (edacs >= 16) {
+      conduta.push(`**EDACS de ${fmtInt(edacs)} (≥ 16): não é baixo risco.** Mantenha em observação com troponinas seriadas, eletrocardiogramas repetidos e avaliação da cardiologia. Considere investigação anatômica ou funcional antes da alta.`)
+    } else {
+      conduta.push(`**EDACS de ${fmtInt(edacs)} está abaixo de 16, mas o protocolo não está completo** — faltam as troponinas seriadas negativas. **O escore sozinho não libera ninguém**: o EDACS-ADP exige os três componentes simultaneamente.`)
+    }
+    conduta.push(
+      '**Repita o eletrocardiograma.** Um traçado normal na chegada não afasta nada: repita em 15 a 30 minutos, a cada recorrência da dor, e sempre que o quadro mudar. Peça derivações **V7 a V9** quando houver infradesnivelamento de V1 a V3 — o infarto de parede posterior se esconde exatamente aí — e **V3R e V4R** em todo infarto inferior, porque o acometimento de ventrículo direito muda a conduta e contraindica nitrato.',
+      '**Não use a resposta ao tratamento como teste diagnóstico.** Melhora com nitrato ocorre em espasmo esofágico; melhora com antiácido ou com a chamada "pomada gástrica" ocorre em isquemia. Nenhuma das duas respostas tem valor discriminante, e ambas já produziram altas indevidas.',
+      'Antes de fechar o raciocínio em doença coronariana, considere as demais causas de risco imediato: **dissecção de aorta**, **embolia pulmonar**, **pneumotórax hipertensivo**, **tamponamento cardíaco** e **ruptura esofágica**. Cada uma tem apresentação própria e todas matam em horas.',
+      '**Atenção às apresentações atípicas** em mulheres, diabéticos, idosos e pacientes com doença renal crônica: fadiga, dispneia, náusea, dor epigástrica ou síncope substituem a dor típica com frequência, e a confiança no quadro clássico é o que produz o diagnóstico tardio nesses grupos.',
+      'Alternativa validada e amplamente usada: o **escore HEART**, que combina história, eletrocardiograma, idade, fatores de risco e troponina. EDACS e HEART têm desempenho comparável; o EDACS foi construído para maximizar a proporção de pacientes classificados como baixo risco, e o HEART é mais simples de aplicar à beira do leito.',
+    )
+
+    return {
+      titulo: 'EDACS',
+      valor: fmtInt(edacs),
+      nivel,
+      rotuloNivel: !ecgOk ? 'ECG isquêmico — fora da via de baixo risco' : baixoRisco ? 'Baixo risco (EDACS-ADP)' : 'Não classificado como baixo risco',
+      detalhes: [
+        { rotulo: 'Idade', valor: `${fmtInt(idade)} anos → +${fmtInt(pontosIdade)}` },
+        { rotulo: 'Sexo masculino', valor: pontosSexo > 0 ? '+6' : '0' },
+        { rotulo: 'Fatores de risco (só de 18 a 50 anos)', valor: pontosRisco > 0 ? '+4' : '0' },
+        { rotulo: 'Diaforese', valor: pontosDiaforese > 0 ? '+3' : '0' },
+        { rotulo: 'Irradiação para braço, ombro, pescoço ou mandíbula', valor: pontosIrradiacao > 0 ? '+5' : '0' },
+        { rotulo: 'Dor com a inspiração', valor: pontosPleuritica < 0 ? '−4' : '0' },
+        { rotulo: 'Dor reproduzida pela palpação', valor: pontosPalpacao < 0 ? '−6' : '0' },
+        { rotulo: 'ECG sem isquemia nova', valor: ecgOk ? 'Sim' : 'Não', nivel: (ecgOk ? 'ok' : 'critico') as Nivel },
+        { rotulo: 'Troponinas seriadas negativas (0 e 2 h)', valor: tropOk ? 'Sim' : 'Não', nivel: (tropOk ? 'ok' : 'atencao') as Nivel },
+        { rotulo: 'Limiar do EDACS-ADP', valor: 'EDACS < 16 + ECG sem isquemia + troponinas negativas' },
+      ],
+      interpretacao: [
+        `**EDACS de ${edacs} pontos.** O escore é apenas um dos três componentes do **EDACS-ADP** (*accelerated diagnostic protocol*): ele só libera a alta precoce quando vem acompanhado de eletrocardiograma sem isquemia nova **e** troponinas seriadas negativas em 0 e 2 horas. O número isolado não decide nada.`,
+        'Repare na estrutura: **a idade domina o escore**, crescendo de +2 a +20 pontos em degraus de 5 anos, e o sexo masculino acrescenta 6. Juntos, esses dois itens não modificáveis podem valer mais que todas as características da dor somadas — o que é um retrato honesto de quanto a probabilidade pré-teste pesa nesta decisão.',
+        'Os **pontos negativos** são a novidade em relação a escores mais antigos: dor que piora com a inspiração subtrai 4, e dor reproduzida pela palpação subtrai 6. São os dois achados que mais deslocam a probabilidade para causas não coronarianas — sem, no entanto, afastá-las por completo.',
+        'O item de fatores de risco **só pontua entre 18 e 50 anos**. Isso não é descuido: acima dessa faixa, o peso dos fatores de risco já está embutido no componente etário, e contá-lo novamente inflaria o escore sem ganho preditivo.',
+        baixoRisco
+          ? '**Os três critérios estão satisfeitos.** O EDACS-ADP identifica cerca de 40 a 50% dos pacientes com dor torácica como de baixo risco, com incidência de evento cardíaco maior em 30 dias abaixo de 1% — patamar aceito internacionalmente para alta sem investigação hospitalar adicional, desde que o seguimento ambulatorial esteja garantido.'
+          : !ecgOk
+            ? '**Com eletrocardiograma isquêmico, nenhuma via de baixo risco se aplica**, qualquer que seja o escore.'
+            : 'Os critérios do protocolo não estão todos satisfeitos, de modo que a via de alta precoce não se aplica. Mantenha observação, seriação de marcadores e reavaliação.',
+      ],
+      conduta,
+      alertas: [
+        '**O escore sozinho não libera ninguém**: o EDACS-ADP exige simultaneamente EDACS < 16, ECG sem isquemia nova e troponinas seriadas negativas.',
+        '**Melhora com nitrato ou com antiácido não tem valor diagnóstico** — nem a favor, nem contra.',
+        'Reprodução à palpação reduz a pontuação, mas 5 a 10% dos infartos apresentam alguma reprodutibilidade à palpação.',
+        'Peça **V7 a V9** diante de infra de V1 a V3, e **V3R e V4R** em todo infarto inferior: o infarto posterior e o de ventrículo direito passam despercebidos no traçado convencional.',
+        'Alta de baixo risco só é segura com **seguimento ambulatorial garantido e agendado** antes de o paciente deixar o serviço.',
+      ],
+    }
+  },
+  formula: [
+    'EDACS = idade (+2 a +20, em degraus de 5 anos) + sexo masculino (+6) + fatores de risco se 18-50 anos (+4) + diaforese (+3) + irradiação (+5) − dor com inspiração (−4) − dor à palpação (−6)',
+    'EDACS-ADP (baixo risco) = EDACS < 16 E ECG sem isquemia nova E troponinas negativas em 0 e 2 h',
+    'Marburg = idade (homem ≥ 55 ou mulher ≥ 65) + doença vascular + dor ao esforço + dor NÃO reproduzida à palpação + paciente acredita ser cardíaca',
+  ],
+  fundamento:
+    'A dor da isquemia miocárdica tem características que decorrem diretamente de como o coração é inervado, e entender isso explica por que ela engana tanto. As fibras aferentes cardíacas são **viscerais**, amielínicas ou pouco mielinizadas, e entram na medula pelos segmentos T1 a T4 — os mesmos que recebem a inervação somática do braço, do ombro, do pescoço e da mandíbula. O sistema nervoso central não dispõe de uma representação cortical detalhada para o coração, e ao receber esse influxo atribui a dor ao território somático que compartilha a entrada medular. Daí decorrem três propriedades: a dor é **referida** para braço e mandíbula, é **difusa e mal localizada** — o paciente a descreve com a mão aberta sobre o esterno, e não apontando com o dedo — e tem caráter **opressivo ou em peso**, e não em pontada. O mesmo influxo simpático que carrega a dor ativa respostas autonômicas, o que explica por que diaforese, náusea e sensação de morte iminente acompanham o quadro e por que a diaforese tem valor discriminante tão desproporcional ao seu aparente banalidade. A contrapartida é igualmente importante: uma dor bem localizada, em pontada, que varia com a respiração ou com a posição, ou que se reproduz à palpação, estimula **nociceptores somáticos** de pleura, pericárdio ou parede torácica, cujas fibras são mielinizadas e têm representação cortical precisa — e por isso os itens correspondentes subtraem pontos no EDACS. Nas apresentações atípicas de diabéticos e idosos, a **neuropatia autonômica** degrada justamente essas fibras aferentes viscerais, e o resultado é o infarto que se manifesta apenas como dispneia, fadiga ou mal-estar. A troponina entra por outra via: é uma proteína do aparelho contrátil do miócito que só alcança a circulação quando há necrose ou lesão de membrana, e os ensaios ultrassensíveis detectam elevações tão pequenas e tão precoces que tornaram possível o protocolo de 0 e 2 horas que o EDACS-ADP exige.',
+  armadilhas: [
+    'Usar o EDACS isoladamente, sem o eletrocardiograma e sem as troponinas seriadas que compõem o protocolo.',
+    'Aplicar o Marburg em dor aguda ou em paciente instável — ele foi derivado para queixa crônica em ambulatório.',
+    'Atribuir valor diagnóstico à resposta ao nitrato ou ao antiácido.',
+    'Contar os fatores de risco acima dos 50 anos no EDACS, onde o item não pontua.',
+    'Aceitar um único eletrocardiograma normal como suficiente, sem repetir e sem derivações posteriores e direitas quando indicadas.',
+  ],
+  referencias: [
+    { texto: 'Than M, Flaws D, Sanders S, et al. Development and validation of the Emergency Department Assessment of Chest pain Score and 2 h accelerated diagnostic protocol. Emerg Med Australas. 2014;26(1):34-44.' },
+    { texto: 'Bösner S, Haasenritter J, Becker A, et al. Ruling out coronary artery disease in primary care: development and validation of a simple prediction rule. CMAJ. 2010;182(12):1295-1300.' },
+    { texto: 'Gulati M, Levy PD, Mukherjee D, et al. 2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain. Circulation. 2021;144(22):e368-e454.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -3083,6 +3273,7 @@ export const ferramentas: Ferramenta[] = [
   sincope,
   crusade,
   taquiQrsLargo,
+  dorToracica,
 ]
 
 export default ferramentas
