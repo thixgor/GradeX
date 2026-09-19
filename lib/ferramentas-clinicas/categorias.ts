@@ -68,7 +68,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas neurológicas são o exame físico transformado em número reprodutível entre plantões — é isso que permite comparar o NIHSS da porta com o de duas horas depois e decidir. Estão aqui as escalas de coma, os escores de AVC isquêmico e hemorrágico, as de sedação e delirium e a conta de perfusão cerebral.',
     icone: 'neurologia',
     cor: 'indigo',
-    total: 24,
+    total: 25,
   },
   {
     id: 'gastroenterologia',
@@ -178,7 +178,7 @@ export const CATEGORIAS: Categoria[] = [
       'Critérios de classificação foram feitos para ensaios clínicos, não para o consultório — e usá-los como critério diagnóstico é o erro que mais gera diagnóstico falso em reumatologia. O que muda conduta é a atividade de doença medida em série: DAS28, SLEDAI, BASDAI e CDAI dizem se o tratamento está funcionando e quando escalonar, que é a decisão real.',
     icone: 'reumatologia',
     cor: 'carmim',
-    total: 3,
+    total: 4,
   },
   {
     id: 'geriatria',

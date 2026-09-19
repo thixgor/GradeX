@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **243** (eram 201) |
-| Implementadas desta lista | **42** |
-| Restantes | **158** |
-| Nota média na auditoria | **100** — todas as 243 |
+| Ferramentas no catálogo | **244** (eram 201) |
+| Implementadas desta lista | **43** |
+| Restantes | **157** |
+| Nota média na auditoria | **100** — todas as 244 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -329,6 +329,7 @@ escores individuais.
 179. **Critérios ACR/EULAR para Sjögren (ESSDAI) e para esclerose sistêmica (escore de Rodnan modificado)** — classificação e atividade. **[P2]**
 180. **Vasculites: critérios ACR/EULAR 2022 para ANCA, BVAS, Five Factor Score e critérios de arterite de células gigantes e polimialgia reumática** — classificação, atividade e prognóstico. **[P2]**
 181. **Critérios ACR 2016 para fibromialgia, com WPI/SS e FIQ** — diagnóstico e impacto funcional. **[P1]**
+    - 🟡 **parcial** — `fibromialgia-acr2016` cobre WPI e SS; o FIQ para impacto funcional fica pendente
 182. **Critérios ILAR/ACR-EULAR para artrite idiopática juvenil e JADAS** — classificação e atividade na criança. **[P2]**
 183. **WOMAC, Lequesne e classificação de Kellgren-Lawrence** — osteoartrite clínica e radiográfica. **[P1]**
 

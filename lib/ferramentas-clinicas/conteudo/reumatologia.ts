@@ -1,5 +1,5 @@
 import type { Campo, Ferramenta, Nivel } from '../tipos'
-import { campoNum, campoOpc, campoSeg, campoSimNao, fmt, fmtInt, num, opc, ptsOpc, sim } from '../helpers'
+import { campoNum, campoOpc, campoSeg, campoSimNao, fmt, fmtInt, num, opc, ptsOpc, sim, somaSimNao } from '../helpers'
 
 /* ═══════════════════════════════ 1. DAS28 ═══════════════════════════════ */
 
@@ -415,6 +415,120 @@ const gota: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [das28, lesEular, gota]
+/* ═══════════ Critérios ACR 2016 para fibromialgia (WPI e SS) ═══════════ */
+
+const fibroCampos: Campo[] = [
+  campoNum('wpi', 'Índice de dor generalizada (WPI): número de áreas doloridas', { min: 0, max: 19, passo: 1, ajuda: 'Conte em quantas das **19 áreas** houve dor na última semana: cintura escapular, braço e antebraço (direito e esquerdo), quadril, coxa e perna (direito e esquerdo), mandíbula (direita e esquerda), tórax, abdome, pescoço, e dorso superior e inferior.' }),
+  campoOpc('fadiga', 'Fadiga', [
+    { valor: '0', rotulo: '0 — Ausente', pontos: 0 },
+    { valor: '1', rotulo: '1 — Leve, intermitente', pontos: 1 },
+    { valor: '2', rotulo: '2 — Moderada, frequente', pontos: 2 },
+    { valor: '3', rotulo: '3 — Grave, contínua, com grande impacto', pontos: 3 },
+  ], { padrao: '0' }),
+  campoOpc('sono', 'Sono não reparador', [
+    { valor: '0', rotulo: '0 — Ausente', pontos: 0 },
+    { valor: '1', rotulo: '1 — Leve', pontos: 1 },
+    { valor: '2', rotulo: '2 — Moderado', pontos: 2 },
+    { valor: '3', rotulo: '3 — Grave', pontos: 3 },
+  ], { padrao: '0', ajuda: 'Acordar cansado, como se não tivesse dormido. O sono da fibromialgia tem intrusão de ondas alfa no sono de ondas lentas, documentada em polissonografia — o paciente dorme, mas não atinge o sono profundo restaurador.' }),
+  campoOpc('cognitivo', 'Sintomas cognitivos ("fibrofog")', [
+    { valor: '0', rotulo: '0 — Ausente', pontos: 0 },
+    { valor: '1', rotulo: '1 — Leve', pontos: 1 },
+    { valor: '2', rotulo: '2 — Moderado', pontos: 2 },
+    { valor: '3', rotulo: '3 — Grave', pontos: 3 },
+  ], { padrao: '0', ajuda: 'Dificuldade de concentração, lentificação, falhas de memória de trabalho e de evocação de palavras. É queixa frequente e legítima, e não simulação.' }),
+  campoSimNao('cefaleia', 'Cefaleia nos últimos 6 meses', 1, undefined),
+  campoSimNao('abdome', 'Dor ou cólica abdominal nos últimos 6 meses', 1, undefined),
+  campoSimNao('depressao', 'Depressão nos últimos 6 meses', 1, undefined),
+  campoSimNao('duracao', 'Sintomas presentes há pelo menos 3 meses, em nível semelhante', 0, 'Critério obrigatório de duração. Fibromialgia é um diagnóstico de **cronicidade**, não de episódio.'),
+  campoSimNao('outraDoenca', 'Há outra doença que explique melhor a dor', 0, 'Desde 2016, a presença de outra doença **não exclui** fibromialgia — ela pode coexistir com artrite reumatoide, lúpus, espondiloartrite e hipotireoidismo, e reconhecê-la evita escalonar imunossupressão por dor que não é inflamatória.'),
+]
+
+const fibromialgia: Ferramenta = {
+  id: 'fibromialgia-acr2016',
+  nome: 'Critérios ACR 2016 para fibromialgia (WPI e SS)',
+  sinonimos: ['fibromialgia', 'wpi', 'ss score', 'dor generalizada', 'acr 2016', 'fibrofog'],
+  resumo: 'Aplica os critérios de 2016 com índice de dor generalizada e escore de gravidade, sem depender de pontos dolorosos.',
+  categorias: ['reumatologia', 'neurologia'],
+  campos: fibroCampos,
+  calcular: (v) => {
+    const wpi = num(v, 'wpi')
+    if (wpi === null) return null
+    const fadiga = ptsOpc(fibroCampos, v, 'fadiga') ?? 0
+    const sono = ptsOpc(fibroCampos, v, 'sono') ?? 0
+    const cognitivo = ptsOpc(fibroCampos, v, 'cognitivo') ?? 0
+    const somaticos = somaSimNao(v, [
+      { id: 'cefaleia', pontos: 1 },
+      { id: 'abdome', pontos: 1 },
+      { id: 'depressao', pontos: 1 },
+    ])
+    const ss = fadiga + sono + cognitivo + somaticos
+    const duracao = sim(v, 'duracao')
+
+    const criterioA = (wpi >= 7 && ss >= 5) || (wpi >= 4 && wpi <= 6 && ss >= 9)
+    const preenche = criterioA && duracao
+
+    const nivel: Nivel = preenche ? 'alerta' : 'atencao'
+
+    return {
+      titulo: 'Critérios ACR 2016',
+      valor: preenche ? 'Critérios preenchidos' : 'Critérios não preenchidos',
+      nivel,
+      rotuloNivel: `WPI ${fmtInt(wpi)} · SS ${fmtInt(ss)}`,
+      detalhes: [
+        { rotulo: 'WPI — áreas doloridas', valor: `${fmtInt(wpi)} de 19` },
+        { rotulo: 'Fadiga', valor: fmtInt(fadiga) },
+        { rotulo: 'Sono não reparador', valor: fmtInt(sono) },
+        { rotulo: 'Sintomas cognitivos', valor: fmtInt(cognitivo) },
+        { rotulo: 'Sintomas somáticos', valor: `${fmtInt(somaticos)} de 3`, nota: 'Cefaleia, dor abdominal, depressão' },
+        { rotulo: 'SS total', valor: `${fmtInt(ss)} de 12` },
+        { rotulo: 'Duração ≥ 3 meses', valor: duracao ? 'Sim' : 'Não', nivel: (duracao ? 'ok' : 'alerta') as Nivel },
+        { rotulo: 'Regra', valor: 'WPI ≥ 7 e SS ≥ 5, **ou** WPI 4-6 e SS ≥ 9' },
+      ],
+      interpretacao: [
+        `**WPI de ${fmtInt(wpi)} e SS de ${fmtInt(ss)} — critérios ${preenche ? 'preenchidos' : 'não preenchidos'}.** A regra exige WPI de 7 ou mais com SS de 5 ou mais, **ou** WPI entre 4 e 6 com SS de 9 ou mais, somados a sintomas presentes há pelo menos 3 meses.`,
+        'A revisão de 2016 trouxe três mudanças importantes. Primeiro, **abandonou os pontos dolorosos** do exame de 1990, que dependiam da força aplicada pelo examinador, tinham reprodutibilidade ruim e foram criticados por medir limiar de dor em vez de doença. Segundo, exigiu **dor generalizada** em pelo menos 4 de 5 regiões corporais, para evitar que dor regional intensa preenchesse os critérios. Terceiro — e mais importante na prática —, **deixou de excluir outras doenças**.',
+        sim(v, 'outraDoenca')
+          ? '**Foi assinalada outra doença que explica a dor, e isso não afasta o diagnóstico.** Desde 2016, a fibromialgia pode coexistir com qualquer condição, e reconhecer essa coexistência é o que evita o erro mais caro: escalonar imunossupressão em artrite reumatoide ou lúpus por uma dor que é de sensibilização central, e que não responde a imunossupressor.'
+          : 'Sem outra doença que explique melhor o quadro. Ainda assim, vale afastar mimetizadores tratáveis antes de fechar o diagnóstico.',
+        'O SS mede **gravidade sintomática**, não apenas presença, e por isso serve para acompanhar. A combinação WPI + SS é conhecida como **escala de sintomas de fibromialgia**, que vai de 0 a 31 e funciona como medida contínua — útil porque a fibromialgia se comporta mais como um espectro dimensional que como uma categoria.',
+        'Os critérios são de **classificação e de rastreio**, não de diagnóstico: o diagnóstico é clínico, e exige que causas tratáveis de dor difusa tenham sido consideradas.',
+      ],
+      conduta: [
+        '**Comece por nomear o diagnóstico e explicá-lo.** A validação — dizer que a dor é real, tem mecanismo conhecido (sensibilização central), não é imaginária e não causa dano articular progressivo — é intervenção com efeito demonstrado, e é o que muitos pacientes nunca receberam depois de anos de investigação.',
+        '**Exercício aeróbico de baixo impacto é o tratamento de primeira linha**, com a melhor evidência de todas as intervenções. A regra é começar muito abaixo do que o paciente acha que consegue e progredir devagar — o erro clássico é a progressão rápida, que gera surto de dor e abandono. Hidroterapia, caminhada e tai chi têm bons dados.',
+        'Associe **terapia cognitivo-comportamental** e higiene do sono. O sono não reparador não é consequência secundária: ele é parte do mecanismo, e tratá-lo melhora dor e fadiga.',
+        'Na farmacoterapia, os agentes com evidência atuam no **sistema nervoso central**: **amitriptilina ou ciclobenzaprina em dose baixa à noite** (primeira escolha pelo custo e pelo efeito no sono), **duloxetina** ou **milnaciprana** (especialmente com depressão associada), e **pregabalina ou gabapentina**. Titule devagar e avalie em 4 a 8 semanas.',
+        '**Não prescreva opioide.** Ele não funciona na dor nociplástica, gera tolerância, hiperalgesia induzida por opioide e dependência — e a piora paradoxal da dor é frequente. Anti-inflamatórios e corticoides também não têm papel, porque não há inflamação a tratar.',
+        'Investigue e trate o que **mimetiza ou agrava**: hipotireoidismo, deficiência de vitamina D e de B12, anemia, apneia obstrutiva do sono, miopatia por estatina, hiperparatireoidismo, polimialgia reumática em idosos e hepatite C. E rastreie comorbidade psiquiátrica, presente em boa parte dos casos e que piora o prognóstico se não tratada.',
+      ],
+      alertas: [
+        'Os critérios de 2016 **não excluem outras doenças** — a fibromialgia coexiste com artrite reumatoide, lúpus e espondiloartrite. Não reconhecer isso leva a escalonar imunossupressão por dor que não é inflamatória.',
+        '**Opioide é contraindicado**: não funciona na dor nociplástica e produz hiperalgesia e dependência.',
+        'Antes de fechar o diagnóstico, afaste hipotireoidismo, deficiência de vitamina D e B12, apneia do sono, miopatia por estatina e polimialgia reumática — todas tratáveis e todas capazes de produzir dor difusa com fadiga.',
+      ],
+    }
+  },
+  formula: [
+    'WPI = número de áreas doloridas na última semana (0 a 19)',
+    'SS = fadiga (0-3) + sono não reparador (0-3) + sintomas cognitivos (0-3) + sintomas somáticos (0-3), total de 0 a 12',
+    'Preenche: (WPI ≥ 7 e SS ≥ 5) ou (WPI 4-6 e SS ≥ 9), com sintomas há ≥ 3 meses',
+  ],
+  fundamento:
+    'A fibromialgia é o protótipo da **dor nociplástica** — a terceira categoria de dor reconhecida pela IASP, ao lado da nociceptiva (por lesão tecidual) e da neuropática (por lesão do sistema somatossensorial). Nela não há lesão detectável em nenhum dos dois sentidos: o que existe é **processamento alterado da dor** no sistema nervoso central. As evidências são convergentes e objetivas. Há **sensibilização central**, com amplificação da resposta no corno dorsal e hiperexcitabilidade por fenômeno de wind-up; há **falha da modulação descendente inibitória**, demonstrada por testes de modulação condicionada da dor, em que o estímulo que deveria inibir a percepção falha em fazê-lo; há alterações de neurotransmissores no líquor, com substância P elevada duas a três vezes e metabólitos de serotonina e noradrenalina reduzidos — o que explica por que os antidepressivos duais funcionam e os inibidores seletivos de serotonina funcionam menos; e há achados de neuroimagem funcional mostrando ativação aumentada em regiões de processamento da dor sob estímulos que não seriam dolorosos para controles. O sono não reparador tem substrato polissonográfico próprio, com intrusão de ondas alfa no sono de ondas lentas. Entender esse mecanismo é o que explica todo o tratamento: a dor não responde a anti-inflamatório porque não há inflamação, não responde a opioide porque o problema não é excesso de sinal aferente, e responde a exercício e a neuromoduladores porque ambos atuam sobre a modulação central.',
+  armadilhas: [
+    'O WPI mede dor na última semana; sintomas que flutuam muito podem ser subestimados numa semana de melhora.',
+    'Os critérios não são diagnósticos e não dispensam a busca por causas tratáveis de dor difusa.',
+    'Dor regional intensa pode inflar o SS sem preencher a exigência de dor generalizada — confira a distribuição por regiões.',
+    'O diagnóstico de fibromialgia não deve encerrar a investigação de sintomas novos: o paciente com fibromialgia adoece de outras coisas, e atribuir tudo a ela é fonte de diagnóstico tardio.',
+  ],
+  referencias: [
+    { texto: 'Wolfe F, Clauw DJ, Fitzcharles MA, et al. 2016 Revisions to the 2010/2011 fibromyalgia diagnostic criteria. Semin Arthritis Rheum. 2016;46(3):319-329.' },
+    { texto: 'Macfarlane GJ, Kronisch C, Dean LE, et al. EULAR revised recommendations for the management of fibromyalgia. Ann Rheum Dis. 2017;76(2):318-328.' },
+    { texto: 'Clauw DJ. Fibromyalgia: a clinical review. JAMA. 2014;311(15):1547-1555.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [das28, lesEular, gota, fibromialgia]
 
 export default ferramentas
