@@ -23,6 +23,42 @@ frentes:
 **[P1]** = maior volume de uso clínico e implementação direta · **[P2]** = completa a
 especialidade · **[P3]** = nicho.
 
+## Estado da implementação
+
+Atualizado no fim da sessão que revisou as 201 ferramentas existentes e
+começou esta lista.
+
+| | |
+|---|---|
+| Ferramentas no catálogo | **220** (eram 201) |
+| Implementadas desta lista | **19** |
+| Restantes | **181** |
+| Nota média na auditoria | **100** — todas as 220 |
+| Categorias | **19** (eram 15) |
+
+As quatro categorias novas — psiquiatria, reumatologia, geriatria e
+especialidades focais — já existem com infraestrutura completa: entrada em
+`categorias.ts`, id em `tipos.ts`, cor e ícone em `tema.ts` e import dinâmico
+em `index.ts`. Acrescentar uma ferramenta nelas agora é escrever o objeto e
+rodar `npm run ferramentas:sincronizar`.
+
+Os itens já atendidos estão marcados abaixo com ✅ (completo) ou 🟡 (parcial,
+com o que falta descrito). Os demais seguem como estavam.
+
+**Verificação antes de qualquer commit neste módulo** — os quatro, sempre:
+
+```
+npm run ferramentas:auditar     # conteúdo: nota mínima 85 por ferramenta
+npm run ferramentas:fumaca      # executa `calcular` de todas com os padrões
+npm run ferramentas:sincronizar # reescreve os totais por categoria
+npx tsc --noEmit                # a auditoria lê texto e não compila
+```
+
+A auditoria sozinha não basta: ela lê texto e já deu "0 reprovadas" em arquivo
+com erro de sintaxe. E o `tsc` sozinho também não: ele compila e não executa.
+
+---
+
 Vários itens agrupam escores irmãos numa ferramenta só (por exemplo "ORBIT, ATRIA e ABC
 bleeding"), seguindo o padrão já usado no catálogo em `LDL calculado: Friedewald,
 Martin-Hopkins e Sampson` e `MUST e MNA`. Somados, os 200 itens correspondem a mais de 400
@@ -33,10 +69,13 @@ escores individuais.
 ## 1. Pediatria e neonatologia (16)
 
 1. **UTICalc — probabilidade de ITU em lactentes** — 2 a 23 meses, em duas etapas (pré e pós-urinálise), definindo quem precisa de coleta por sondagem. **[P1]**
+    - ✅ **feito** — `uticalc`
 2. **PECARN — regras de TC no TCE pediátrico e de lesão intra-abdominal** — algoritmos para < 2 anos e ≥ 2 anos e quem dispensa TC de abdome após trauma fechado. **[P1]**
 3. **Escore de Westley para crupe** — gravidade da laringotraqueíte e indicação de adrenalina nebulizada. **[P1]**
+    - ✅ **feito** — `westley-crupe`
 4. **PRAM — Pediatric Respiratory Assessment Measure** — gravidade da crise asmática na criança. **[P1]**
 5. **Escore de Kocher e critério de Caird** — artrite septica do quadril vs. sinovite transitória. **[P1]**
+    - ✅ **feito** — `kocher`
 6. **Febre no lactente < 60 dias: Rochester, Filadélfia, Boston e algoritmo AAP 2021** — risco de infecção bacteriana invasiva e necessidade de punção lombar. **[P1]**
 7. **PEWS — Pediatric Early Warning Score** — deterioração clínica em enfermaria pediátrica. **[P1]**
 8. **PIM-3 e PRISM III** — mortalidade predita em UTI pediátrica. **[P2]**
@@ -52,9 +91,11 @@ escores individuais.
 ## 2. Cardiologia (16)
 
 17. **Classificação de Killip-Kimball** — gravidade hemodinâmica e mortalidade no IAM. Hoje o Killip existe apenas como campo de entrada dentro do GRACE (`cardiologia.ts:704`), sem ferramenta própria nem estimativa de mortalidade por classe. **[P1]**
+    - ✅ **feito** — `killip-kimball`
 18. **TIMI para IAM com supra de ST** — escore prognóstico próprio do STEMI, distinto do TIMI de SCA sem supra já existente. **[P1]**
 19. **CRUSADE** — risco de sangramento maior intra-hospitalar na síndrome coronariana aguda. **[P1]**
 20. **Sgarbossa, Sgarbossa modificado (Smith), Wellens e de Winter** — IAM com BRE ou marcapasso e padrões de oclusão proximal de DA. **[P1]**
+    - 🟡 **parcial** — `sgarbossa` cobre Sgarbossa e Sgarbossa modificado; Wellens e De Winter aparecem só na conduta, sem ferramenta própria
 21. **Critérios de Brugada, Vereckei e algoritmo de aVR** — taquicardia ventricular vs. supraventricular com QRS largo. **[P1]**
 22. **Critérios de sobrecarga atrial e de hipertrofia ventricular direita** — complemento eletrocardiográfico do módulo de HVE. **[P2]**
 23. **Critérios de Framingham e de Boston para IC, com classificação NYHA e angina pela CCS** — diagnóstico clínico de insuficiência cardíaca e graduação sintomática. **[P1]**
@@ -71,15 +112,20 @@ escores individuais.
 ## 3. Emergência, trauma e terapia intensiva (16)
 
 33. **Regras de Ottawa para tornozelo e para joelho** — necessidade de radiografia. **[P1]**
+    - ✅ **feito** — `regras-ottawa`, com tornozelo, pé e joelho
 34. **Canadian C-Spine Rule e NEXUS** — liberação de coluna cervical sem imagem. **[P1]**
+    - ✅ **feito** — `canadian-c-spine`, com as duas regras
 35. **Canadian CT Head Rule, New Orleans Criteria e Ottawa SAH Rule** — indicação de TC no TCE leve e investigação de hemorragia subaracnóidea na cefaleia aguda. **[P1]**
 36. **Escore de Marshall e escore de Rotterdam** — classificação tomográfica do TCE e prognóstico. **[P2]**
 37. **RTS, ISS/AIS e TRISS** — gravidade fisiológica e anatômica do trauma e probabilidade de sobrevida. **[P1]**
 38. **Classificação AAST de lesão de órgãos** — graduação de lesão esplênica, hepática e renal. **[P2]**
 39. **Superfície queimada e prognóstico: regra dos nove, Lund-Browder, índice de Baux e ABSI** — cálculo de área por faixa etária (complementa o módulo de Parkland) e mortalidade no grande queimado. **[P1]**
 40. **CIWA-Ar, PAWSS e COWS** — abstinência alcoólica, risco de delirium tremens e abstinência de opioides. **[P1]**
+    - 🟡 **parcial** — `ciwa-ar` feito; PAWSS e COWS pendentes
 41. **Índice de Charlson (CCI) e Charlson ajustado pela idade** — carga de comorbidade e mortalidade em 10 anos. **[P1]**
+    - ✅ **feito** — `charlson`, com a versão ajustada pela idade
 42. **Clinical Frailty Scale, FRAIL e fenótipo de Fried** — fragilidade como modificador de prognóstico e de conduta. **[P1]**
+    - 🟡 **parcial** — `fragilidade-fried` cobre CFS e fenótipo de Fried; FRAIL pendente
 43. **Escalas de risco de enfermagem: Braden, Norton, Morse e Downton** — lesão por pressão e queda intra-hospitalar. **[P1]**
 44. **Escore de Aldrete e Aldrete modificado** — alta da sala de recuperação pós-anestésica. **[P1]**
 45. **Vasoactive-Inotropic Score (VIS)** — quantificação objetiva da carga vasoativa. **[P2]**
@@ -92,10 +138,12 @@ escores individuais.
 49. **MMSE, MoCA, teste do desenho do relógio e fluência verbal** — rastreio cognitivo com ajuste por escolaridade. **[P1]**
 50. **CDR e GDS de Reisberg** — estadiamento da demência. **[P2]**
 51. **4AT e ICDSC** — rastreio de delirium fora da UTI e alternativa ao CAM-ICU. **[P1]**
+    - 🟡 **parcial** — `4at` feito; ICDSC pendente
 52. **ABCD3-I** — refinamento do ABCD² com imagem e estenose carotídea. **[P2]**
 53. **DRAGON, THRIVE, SEDAN e HAT** — prognóstico funcional e risco de hemorragia após trombólise. **[P2]**
 54. **CPSSS, RACE e LAMS** — triagem pré-hospitalar de oclusão de grande vaso. **[P1]**
 55. **Escore FUNC e fórmula ABC/2 (Kothari)** — desfecho funcional e volume do hematoma intracerebral. **[P1]**
+    - ✅ **feito** — `abc2-func`, com ABC/2 e FUNC
 56. **STESS e EMSE** — prognóstico do estado de mal epiléptico. **[P2]**
 57. **EGRIS, EGOS de Erasmus e escala de incapacidade de Hughes** — risco de insuficiência respiratória e desfecho na síndrome de Guillain-Barré. **[P2]**
 58. **EDSS e critérios de McDonald 2017** — incapacidade e diagnóstico de esclerose múltipla. **[P2]**
@@ -124,6 +172,7 @@ escores individuais.
 75. **TTKG — gradiente transtubular de potássio** — origem renal vs. extrarrenal da discalemia. **[P2]**
 76. **Ânion gap urinário, cloro urinário e diagnóstico das acidoses tubulares renais** — diferencial da acidose hiperclorêmica, pH urinário e resposta ao bicarbonato. **[P2]**
 77. **ROKS, STONE score, relação cálcio/creatinina urinária e sódio de 24 h** — recorrência de litíase, probabilidade de cálculo ureteral, hipercalciúria e estimativa de ingestão de sal. **[P1]**
+    - 🟡 **parcial** — `calculo-ureteral` estima a probabilidade de eliminação espontânea; ROKS, STONE e a investigação metabólica quantitativa pendentes
 78. **Cleveland Clinic AKI score e teste de estresse com furosemida** — lesão renal aguda após cirurgia cardíaca e resposta tubular. **[P2]**
 79. **Relação aldosterona/renina e algoritmo da hipertensão secundária** — rastreio de hiperaldosteronismo primário. **[P2]**
 
@@ -237,10 +286,12 @@ escores individuais.
 ## 15. Psiquiatria e saúde mental — categoria nova (11)
 
 163. **PHQ-9, PHQ-2 e GAD-7** — rastreio e monitoramento de depressão e ansiedade na atenção primária. **[P1]**
+    - ✅ **feito** — `phq-9` e `gad-7`, com as versões de 2 itens
 164. **HAM-D, HAM-A, MADRS e inventários de Beck (BDI-II, BAI)** — gravidade aplicada pelo clínico e autoavaliação. **[P1]**
 165. **C-SSRS (Columbia) e SAD PERSONS** — risco de suicídio. **[P1]**
 166. **MDQ, HCL-32 e YMRS** — rastreio de bipolaridade e gravidade da mania. **[P1]**
 167. **AUDIT, AUDIT-C, CAGE, ASSIST e teste de Fagerström** — rastreio de álcool, multissubstância e dependência de nicotina. **[P1]**
+    - 🟡 **parcial** — `audit-c` cobre AUDIT-C e CAGE; AUDIT completo de 10 itens, ASSIST e Fagerström pendentes
 168. **Y-BOCS** — gravidade do transtorno obsessivo-compulsivo. **[P2]**
 169. **ASRS-18 e SNAP-IV** — rastreio de TDAH no adulto e na criança. **[P1]**
 170. **M-CHAT-R/F** — rastreio de autismo entre 16 e 30 meses. **[P1]**
@@ -251,7 +302,9 @@ escores individuais.
 ## 16. Reumatologia e imunologia — categoria nova (10)
 
 174. **Critérios ACR/EULAR 2010 para artrite reumatoide, com DAS28, SDAI, CDAI e HAQ** — diagnóstico e atividade de doença. **[P1]**
+    - 🟡 **parcial** — `das28` cobre as duas versões (VHS e PCR); critérios ACR/EULAR 2010, SDAI, CDAI e HAQ pendentes
 175. **Critérios ACR/EULAR 2019 e SLICC para LES, com SLEDAI-2K** — classificação e atividade do lúpus. **[P1]**
+    - 🟡 **parcial** — `criterios-les` implementa os critérios EULAR/ACR 2019; SLICC e SLEDAI-2K pendentes
 176. **Critérios ASAS, BASDAI e ASDAS** — espondiloartrite axial. **[P1]**
 177. **CASPAR, PASI e DLQI** — artrite psoriásica, extensão da psoríase e impacto na qualidade de vida. **[P1]**
 178. **Critérios ACR/EULAR 2015 para gota** — classificação com e sem identificação de cristais. **[P1]**
@@ -268,6 +321,7 @@ escores individuais.
 186. **Timed Up and Go, escala de Tinetti e escala de equilíbrio de Berg** — mobilidade e risco de queda. **[P1]**
 187. **VES-13, G8, índice de Lee e índice de Schonberg** — vulnerabilidade em oncogeriatria e mortalidade em 4 e 10 anos para individualizar rastreamento. **[P2]**
 188. **Palliative Performance Scale (PPS), PPI e PaP score** — prognóstico em cuidados paliativos. **[P1]**
+    - 🟡 **parcial** — `ecog-karnofsky-pps` converte entre as três escalas; PPI e PaP pendentes
 189. **ESAS-r** — avaliação multidimensional de sintomas. **[P1]**
 190. **SPICT, NECPAL e pergunta surpresa** — identificação de necessidade paliativa. **[P1]**
 191. **Escala de Zarit** — sobrecarga do cuidador. **[P2]**
