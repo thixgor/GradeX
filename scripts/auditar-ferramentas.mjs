@@ -216,6 +216,13 @@ function tamanhoDeString(f, prop) {
  * propriedade e o código usava outro. Medir só as duas primeiras reprova
  * pelo estilo do código, não pelo conteúdo — que é exatamente o erro que
  * esta ferramenta existe para não cometer.
+ *
+ * Há ainda uma quarta: `const interpretacao: string[] = [...]` seguida da
+ * abreviação `interpretacao,` no objeto retornado. Ela enganava o medidor
+ * duas vezes — a abreviação não casa com o padrão de apelido, que exige
+ * `prop: valor`, e o regex de lista encontrava o `[]` da anotação de tipo
+ * e media um array vazio. O resultado era 0 caractere numa ferramenta com
+ * o texto inteiro escrito.
  */
 function tamanhoDeCampoDeTexto(f, prop) {
   let total = 0
@@ -223,7 +230,19 @@ function tamanhoDeCampoDeTexto(f, prop) {
   for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}:\\s*([A-Za-z_$][\\w$]*)\\s*[,}]`, 'g'))) {
     apelidos.add(m[1])
   }
+  // `const <prop>: string[] = [` — a anotação de tipo fica no caminho, então
+  // a medição começa no `[` da atribuição, e não no dois-pontos.
+  const declarada = new RegExp(`\\bconst\\s+${prop}\\s*:\\s*string\\[\\]\\s*=\\s*\\[`, 'g')
+  const jaMedido = new Set()
+  for (const m of f.corpo.matchAll(declarada)) {
+    const inicio = m.index + m[0].length - 1
+    jaMedido.add(m.index)
+    const trecho = f.corpo.slice(inicio, inicio + 6000)
+    total += somarLiterais(trecho.slice(0, delimitarLista(trecho)))
+  }
   for (const m of f.corpo.matchAll(new RegExp(`\\b${prop}:\\s*(\\[|[a-zA-Z])`, 'g'))) {
+    // Pula o dois-pontos da declaração tipada, que a varredura acima já cobriu.
+    if ([...jaMedido].some((i) => m.index > i && m.index < i + 40)) continue
     const trecho = f.corpo.slice(m.index, m.index + 4000)
     total += somarLiterais(trecho.slice(0, delimitarLista(trecho)))
   }
