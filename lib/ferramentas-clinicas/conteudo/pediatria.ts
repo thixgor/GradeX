@@ -2206,6 +2206,414 @@ const febreLactente: Ferramenta = {
   ],
 }
 
+/* ═══════════ PEWS — deterioração clínica em enfermaria pediátrica ═══════════ */
+
+const pewsCampos: Campo[] = [
+  campoOpc('comportamento', 'Comportamento', [
+    { valor: '0', rotulo: '0 — Brincando, apropriado para a idade', pontos: 0 },
+    { valor: '1', rotulo: '1 — Dormindo, ou sonolento mas desperta', pontos: 1 },
+    { valor: '2', rotulo: '2 — Irritado, difícil de consolar', pontos: 2 },
+    { valor: '3', rotulo: '3 — Letárgico, confuso, ou resposta reduzida à dor', pontos: 3 },
+  ], { padrao: '0', ajuda: 'Este item vale tanto quanto os fisiológicos e é o mais negligenciado. **A percepção dos pais de que "não está ele mesmo" é dado clínico**, e vários protocolos permitem que a família acione o time de resposta rápida diretamente por isso.' }),
+  campoOpc('cardiovascular', 'Cardiovascular', [
+    { valor: '0', rotulo: '0 — Corado, enchimento capilar de 1 a 2 s', pontos: 0 },
+    { valor: '1', rotulo: '1 — Pálido, ou enchimento de 3 s', pontos: 1 },
+    { valor: '2', rotulo: '2 — Moteado, enchimento de 4 s, ou taquicardia de +20 bpm sobre o basal', pontos: 2 },
+    { valor: '3', rotulo: '3 — Acinzentado, enchimento ≥ 5 s, taquicardia de +30 bpm, ou bradicardia', pontos: 3 },
+  ], { padrao: '0', ajuda: '**Bradicardia em criança é sinal pré-terminal**, não é achado benigno: ela indica hipóxia grave ou exaustão, e precede a parada. A criança compensa com taquicardia até não conseguir mais.' }),
+  campoOpc('respiratorio', 'Respiratório', [
+    { valor: '0', rotulo: '0 — Frequência normal, sem retração', pontos: 0 },
+    { valor: '1', rotulo: '1 — Frequência +10 acima do normal, uso de musculatura acessória, ou FiO₂ ≥ 30%', pontos: 1 },
+    { valor: '2', rotulo: '2 — Frequência +20 acima, retração, ou FiO₂ ≥ 40%', pontos: 2 },
+    { valor: '3', rotulo: '3 — Frequência abaixo do normal com retração e gemência, ou FiO₂ ≥ 50%', pontos: 3 },
+  ], { padrao: '0', ajuda: 'Assim como a bradicardia, **frequência respiratória caindo em criança com desconforto é exaustão**, não melhora. Gemência é sinal de PEEP própria e de gravidade.' }),
+  campoSimNao('nebulizacao', 'Nebulização de resgate a cada 15 minutos, ou vômito persistente no pós-operatório', 2, 'Cada um desses acrescenta 2 pontos no PEWS de Brighton.'),
+  campoNum('idadeMeses', 'Idade', { unidade: 'meses', min: 0, max: 216, passo: 1, ajuda: 'Necessária para comparar frequência cardíaca e respiratória com a faixa normal da idade — os valores normais mudam radicalmente do lactente ao adolescente, e é o desvio em relação à faixa, não o número absoluto, que importa.' }),
+  campoNum('fc', 'Frequência cardíaca', { unidade: 'bpm', min: 30, max: 260, passo: 1 }),
+  campoNum('fr', 'Frequência respiratória', { unidade: 'irpm', min: 5, max: 100, passo: 1, ajuda: 'Conte por **60 segundos**, com a criança calma. É o sinal vital mais precoce na deterioração pediátrica e o mais frequentemente estimado em vez de contado.' }),
+]
+
+/** Faixas de normalidade por idade, conforme os referenciais do PALS. */
+function faixaNormalPed(idadeMeses: number): { fc: [number, number]; fr: [number, number] } {
+  if (idadeMeses < 1) return { fc: [100, 205], fr: [30, 60] }
+  if (idadeMeses < 12) return { fc: [100, 180], fr: [30, 53] }
+  if (idadeMeses < 24) return { fc: [98, 140], fr: [22, 37] }
+  if (idadeMeses < 60) return { fc: [80, 120], fr: [20, 28] }
+  if (idadeMeses < 144) return { fc: [75, 118], fr: [18, 25] }
+  return { fc: [60, 100], fr: [12, 20] }
+}
+
+const pews: Ferramenta = {
+  id: 'pews',
+  nome: 'PEWS — escore pediátrico de alerta precoce',
+  sigla: 'PEWS',
+  sinonimos: ['pews', 'alerta precoce pediatrico', 'deterioracao crianca', 'time de resposta rapida', 'brighton'],
+  resumo: 'Detecta deterioração clínica em enfermaria pediátrica antes da parada, com faixas de normalidade por idade.',
+  categorias: ['pediatria', 'emergencia'],
+  campos: pewsCampos,
+  calcular: (v) => {
+    const idadeMeses = num(v, 'idadeMeses')
+    const fc = num(v, 'fc')
+    const fr = num(v, 'fr')
+    if (idadeMeses === null || fc === null || fr === null) return null
+
+    const comp = ptsOpc(pewsCampos, v, 'comportamento') ?? 0
+    const cardio = ptsOpc(pewsCampos, v, 'cardiovascular') ?? 0
+    const resp = ptsOpc(pewsCampos, v, 'respiratorio') ?? 0
+    const extra = sim(v, 'nebulizacao') ? 2 : 0
+    const total = comp + cardio + resp + extra
+
+    const faixa = faixaNormalPed(idadeMeses)
+    const fcAlta = fc > faixa.fc[1]
+    const fcBaixa = fc < faixa.fc[0]
+    const frAlta = fr > faixa.fr[1]
+    const frBaixa = fr < faixa.fr[0]
+
+    const preTerminal = fcBaixa || (frBaixa && resp >= 2)
+    const nivel: Nivel = preTerminal || total >= 5 ? 'critico' : total >= 3 ? 'alerta' : total >= 1 ? 'atencao' : 'ok'
+    const categoria = total >= 5 ? 'Alto risco' : total >= 3 ? 'Risco moderado' : total >= 1 ? 'Risco baixo' : 'Sem alteração'
+
+    const conduta: string[] = []
+    if (preTerminal) {
+      conduta.push('**Sinal pré-terminal presente.** Bradicardia, ou queda da frequência respiratória em criança com desconforto, indica exaustão e precede a parada. Acione a equipe imediatamente, garanta via aérea e oxigenação, e prepare-se para suporte avançado — não aguarde reavaliação.')
+    }
+    if (total >= 5) {
+      conduta.push('**PEWS ≥ 5: acione o time de resposta rápida.** Avaliação médica imediata à beira do leito, monitorização contínua e consideração de transferência para unidade de terapia intensiva pediátrica.')
+    } else if (total >= 3) {
+      conduta.push('**PEWS 3 a 4:** avaliação médica em até 30 minutos, reavaliação a cada 1 a 2 horas, e comunicação explícita com o médico assistente. É nessa faixa que a deterioração ainda é reversível com intervenção simples.')
+    } else if (total >= 1) {
+      conduta.push('**PEWS 1 a 2:** aumente a frequência de reavaliação e documente a tendência. Um escore que sobe de 1 para 3 em duas horas informa mais que um escore estável de 3.')
+    } else {
+      conduta.push('**PEWS 0:** reavaliação conforme a rotina da unidade. Mantenha o registro, porque é a **tendência** que o escore existe para revelar.')
+    }
+    conduta.push(
+      '**Ouça a família.** A percepção dos pais de que a criança "não está ela mesma" antecipa a deterioração e tem valor preditivo demonstrado — vários protocolos permitem que a família acione o time de resposta rápida diretamente, e essa é uma das poucas intervenções de segurança com efeito claro.',
+      '**Conte a frequência respiratória por 60 segundos, com a criança calma.** Ela é o sinal vital mais precoce na deterioração pediátrica e o mais frequentemente estimado em vez de contado — e a estimativa erra justamente na direção que tranquiliza.',
+      'Procure a **causa** em vez de apenas escalar o nível de cuidado: sepse, desidratação, dor não tratada, obstrução de via aérea, pneumotórax, hipoglicemia, distúrbio eletrolítico, arritmia e efeito de medicação. O escore detecta; ele não diagnostica.',
+      'Documente a **tendência** e não apenas o valor: a trajetória ao longo das horas é o que discrimina, e o escore isolado num único momento perde boa parte da sua utilidade.',
+    )
+
+    return {
+      titulo: 'PEWS',
+      valor: fmtInt(total),
+      unidade: 'de 13 pontos',
+      nivel,
+      rotuloNivel: preTerminal ? 'Sinal pré-terminal' : categoria,
+      detalhes: [
+        { rotulo: 'Comportamento', valor: fmtInt(comp), nivel: (comp >= 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Cardiovascular', valor: fmtInt(cardio), nivel: (cardio >= 2 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Respiratório', valor: fmtInt(resp), nivel: (resp >= 2 ? 'alerta' : 'ok') as Nivel },
+        ...(extra > 0 ? [{ rotulo: 'Nebulização de resgate ou vômito pós-operatório', valor: '+2' }] : []),
+        { rotulo: 'Frequência cardíaca', valor: `${fmtInt(fc)} bpm (normal ${faixa.fc[0]}-${faixa.fc[1]})`, nivel: (fcBaixa ? 'critico' : fcAlta ? 'alerta' : 'ok') as Nivel, nota: fcBaixa ? 'Bradicardia — sinal pré-terminal' : undefined },
+        { rotulo: 'Frequência respiratória', valor: `${fmtInt(fr)} irpm (normal ${faixa.fr[0]}-${faixa.fr[1]})`, nivel: (frBaixa && resp >= 2 ? 'critico' : frAlta ? 'alerta' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        `**${total} de 13 pontos — ${categoria.toLowerCase()}.** O PEWS de Brighton soma três domínios de 0 a 3 (comportamento, cardiovascular e respiratório) mais 2 pontos por nebulização de resgate frequente ou vômito persistente no pós-operatório.`,
+        `Para ${idadeMeses < 12 ? `${fmtInt(idadeMeses)} meses` : `${fmtInt(Math.round(idadeMeses / 12))} anos`}, a frequência cardíaca normal é de ${faixa.fc[0]} a ${faixa.fc[1]} bpm e a respiratória de ${faixa.fr[0]} a ${faixa.fr[1]} irpm. **Os valores normais mudam radicalmente com a idade**, e usar referências de adulto é a fonte mais comum de erro na avaliação pediátrica.`,
+        preTerminal
+          ? '**Há sinal pré-terminal.** A criança compensa a hipóxia e a hipovolemia com taquicardia e taquipneia até não conseguir mais — quando a frequência **cai**, isso não é melhora, é exaustão, e a parada é iminente. Em pediatria a parada é predominantemente **respiratória**, e não súbita e arrítmica como no adulto.'
+          : 'Sem sinal pré-terminal. Lembre que a criança mantém a pressão arterial até muito tarde — **hipotensão em criança é sinal tardio de choque descompensado**, e esperar por ela é esperar demais.',
+        'O PEWS existe porque a parada cardiorrespiratória pediátrica **raramente é súbita**: ela é precedida por horas de deterioração fisiológica progressiva, com alterações mensuráveis de frequência respiratória, perfusão e nível de consciência. O escore transforma essa janela em ação.',
+        'A evidência de que o PEWS isolado reduz mortalidade é limitada — o ensaio EPOCH, multicêntrico e randomizado, não mostrou redução de mortalidade. O que funciona é o **sistema completo**: o escore como gatilho, mais um time de resposta rápida que atende, mais uma cultura em que qualquer profissional ou familiar pode acionar sem hierarquia.',
+      ],
+      conduta,
+      alertas: [
+        '**Bradicardia em criança é sinal pré-terminal.** Queda de frequência cardíaca ou respiratória em criança com desconforto é exaustão, não melhora.',
+        '**Hipotensão em criança é sinal tardio** de choque descompensado — ela compensa com taquicardia e vasoconstrição até o colapso. Avalie perfusão, enchimento capilar e nível de consciência, não a pressão.',
+        'O escore não diagnostica: PEWS alto exige procurar a causa — sepse, desidratação, dor, obstrução, pneumotórax, hipoglicemia, arritmia —, e não apenas escalar o nível de cuidado.',
+      ],
+    }
+  },
+  formula: ['PEWS = comportamento (0-3) + cardiovascular (0-3) + respiratório (0-3) + 2 se nebulização de resgate frequente ou vômito pós-operatório persistente'],
+  fundamento:
+    'A parada cardiorrespiratória na criança difere fundamentalmente da do adulto: enquanto no adulto ela é tipicamente **súbita e arrítmica**, decorrente de fibrilação ventricular sobre doença coronariana, na criança ela é o **ponto final de uma deterioração progressiva**, quase sempre de origem respiratória ou por choque. Essa diferença tem consequência prática imediata — existe uma janela de horas, com alterações fisiológicas mensuráveis, antes do evento. A criança compensa notavelmente bem: ela aumenta frequência cardíaca e respiratória e vasoconstringe a periferia para manter a perfusão central, e consegue sustentar a **pressão arterial normal até ter perdido cerca de 30 a 40% da volemia**. É por isso que a hipotensão pediátrica é um sinal tardio e ominoso, e por que os itens do PEWS se concentram em perfusão, esforço respiratório e nível de consciência, que se alteram cedo. O contraponto dessa capacidade de compensar é que, quando ela se esgota, o colapso é abrupto: a queda da frequência cardíaca ou respiratória marca o fim da reserva e precede a parada em minutos. Daí a regra que a ferramenta repete — bradicardia e bradipneia em criança com desconforto são sinais pré-terminais, e a leitura intuitiva de que "melhorou porque está mais calma" é exatamente invertida.',
+  armadilhas: [
+    'Usar referências de frequência de adulto em criança: os valores normais variam radicalmente com a idade, e o desvio em relação à faixa é o que importa.',
+    'Estimar a frequência respiratória em vez de contar 60 segundos — o erro tende para a direção que tranquiliza.',
+    'Interpretar a criança que "acalmou" como melhora: em desconforto prolongado, a quietude pode ser exaustão.',
+    'Tratar o escore como intervenção: sem time de resposta rápida que atenda e sem cultura de acionamento sem hierarquia, o número registrado não muda desfecho.',
+  ],
+  referencias: [
+    { texto: 'Duncan H, Hutchison J, Parshuram CS. The Pediatric Early Warning System score: a severity of illness score to predict urgent medical need in hospitalized children. J Crit Care. 2006;21(3):271-278.' },
+    { texto: 'Parshuram CS, Dryden-Palmer K, Farrell C, et al. Effect of a Pediatric Early Warning System on All-Cause Mortality in Hospitalized Pediatric Patients: the EPOCH randomized clinical trial. JAMA. 2018;319(10):1002-1012.' },
+    { texto: 'Topjian AA, Raymond TT, Atkins D, et al. Part 4: Pediatric Basic and Advanced Life Support: 2020 American Heart Association Guidelines. Circulation. 2020;142(16_suppl_2):S469-S523.' },
+  ],
+}
+
+/* ═══════════ PAS — escore de apendicite pediátrica ═══════════ */
+
+const pasCampos: Campo[] = [
+  campoSimNao('tosse', 'Dor à tosse, à percussão ou ao pular', 2, 'Substitui a descompressão brusca em criança: é o mesmo fenômeno de irritação peritoneal, obtido sem a manobra dolorosa que faz a criança perder a confiança e impede todo o resto do exame. Peça para ela pular num pé só, ou tussa.'),
+  campoSimNao('anorexia', 'Anorexia', 1, 'Em criança, a recusa de comida costuma ser mais confiável que o relato de dor. Perguntar aos pais se ela recusou o alimento preferido é a forma mais sensível de obter este item.'),
+  campoSimNao('nauseas', 'Náuseas ou vômitos', 1, undefined),
+  campoSimNao('dorFid', 'Dor à palpação em fossa ilíaca direita', 2, 'Palpe por último a área de maior dor, começando pelo quadrante mais distante. Com a criança distraída e a mão aquecida, a palpação com o estetoscópio costuma vencer a defesa voluntária.'),
+  campoSimNao('migracao', 'Migração da dor para a fossa ilíaca direita', 1, 'A sequência clássica é dor periumbilical mal localizada seguida de migração — e ela reflete a transição da dor visceral referida para a dor somática do peritônio parietal. Quando presente, é um dos dados mais específicos da história.'),
+  campoSimNao('febre', 'Febre de 38 °C ou mais', 1, undefined),
+  campoSimNao('leucocitose', 'Leucócitos acima de 10.000/mm³', 1, undefined),
+  campoSimNao('neutrofilia', 'Neutrófilos acima de 75%', 1, 'O desvio à esquerda costuma preceder a leucocitose absoluta. Leucograma normal nas primeiras horas **não** afasta apendicite.'),
+  campoNum('idadeAnos', 'Idade', { unidade: 'anos', min: 1, max: 18, passo: 1, ajuda: 'Abaixo de 5 anos o escore perde acurácia e a taxa de perfuração à apresentação chega a 80 a 100% — o limiar para imagem deve ser muito mais baixo nessa faixa.' }),
+]
+
+const apendicitePed: Ferramenta = {
+  id: 'apendicite-pediatrica',
+  nome: 'PAS — escore de apendicite pediátrica',
+  sigla: 'PAS',
+  sinonimos: ['pas', 'apendicite pediatrica', 'samuel', 'alvarado pediatrico', 'dor abdominal crianca'],
+  resumo: 'Estratifica a probabilidade de apendicite em criança com dor abdominal e orienta quem pode ir para casa, quem precisa de imagem e quem vai para o centro cirúrgico.',
+  categorias: ['pediatria', 'cirurgia', 'emergencia'],
+  campos: pasCampos,
+  calcular: (v) => {
+    const idadeAnos = num(v, 'idadeAnos')
+    if (idadeAnos === null) return null
+
+    const total = somaSimNao(v, [
+      { id: 'tosse', pontos: 2 },
+      { id: 'anorexia', pontos: 1 },
+      { id: 'nauseas', pontos: 1 },
+      { id: 'dorFid', pontos: 2 },
+      { id: 'migracao', pontos: 1 },
+      { id: 'febre', pontos: 1 },
+      { id: 'leucocitose', pontos: 1 },
+      { id: 'neutrofilia', pontos: 1 },
+    ])
+
+    const menor5 = idadeAnos < 5
+    const faixa = total <= 3 ? 'baixo' : total <= 6 ? 'intermediario' : 'alto'
+    const nivel: Nivel = faixa === 'alto' ? 'alerta' : faixa === 'intermediario' ? 'atencao' : 'ok'
+    const rotulo = faixa === 'alto' ? 'Alta probabilidade' : faixa === 'intermediario' ? 'Probabilidade intermediária' : 'Baixa probabilidade'
+
+    const conduta: string[] = []
+    if (faixa === 'baixo') {
+      conduta.push('**PAS de 0 a 3: apendicite improvável.** Em criança com exame tranquilizador, considere alta com **reavaliação programada em 12 a 24 horas** e orientação explícita de retorno — o valor preditivo negativo nessa faixa é alto, mas não absoluto, e a reavaliação seriada é parte da estratégia, não uma concessão.')
+    } else if (faixa === 'intermediario') {
+      conduta.push('**PAS de 4 a 6: zona cinzenta — este é o grupo que precisa de imagem.** Solicite **ultrassonografia como primeiro exame**: sem radiação, boa acurácia em mãos treinadas, e barata. Considere também observação com reavaliação seriada por um mesmo examinador, que em muitos casos resolve a dúvida sem exame adicional.')
+      conduta.push('Se a ultrassonografia for **inconclusiva** (o apêndice não visualizado é o resultado mais comum, sobretudo em criança obesa ou com muito gás), a conduta é **ressonância magnética** onde disponível, ou observação com reavaliação — e só então tomografia. A tomografia tem a melhor acurácia, mas expõe uma criança a radiação ionizante num órgão e numa idade de alta radiossensibilidade.')
+    } else {
+      conduta.push('**PAS de 7 a 10: apendicite provável.** Avaliação cirúrgica, jejum, hidratação intravenosa, analgesia e antibiótico conforme o protocolo local. Em muitos serviços, escore alto com quadro clínico típico dispensa imagem e vai direto à cirurgia.')
+    }
+    if (menor5) {
+      conduta.push('**Abaixo de 5 anos, baixe o limiar para imagem independentemente do escore.** A apresentação é atípica, a história é indireta, o exame é limitado pela colaboração, e a taxa de perfuração à chegada chega a 80 a 100% nessa faixa — o escore não foi feito para carregar esse peso sozinho.')
+    }
+    conduta.push(
+      '**Analgesia não atrapalha o diagnóstico.** A ideia de que o opioide "mascara o abdome agudo" foi refutada por ensaios randomizados: a analgesia adequada melhora a colaboração e frequentemente **torna o exame mais confiável**, além de ser um dever. Negá-la é erro clínico e ético.',
+      'Use o **escore para decidir o próximo passo**, não para decidir a operação: ele orienta alta, imagem ou consulta cirúrgica. A decisão de operar é clínica e cirúrgica.',
+      'Considere os **diagnósticos diferenciais** que mais frequentemente se disfarçam: adenite mesentérica (a mais comum), gastroenterite, constipação, infecção urinária, pneumonia de base direita, púrpura de Henoch-Schönlein, invaginação (no lactente), e — em adolescentes — **torção ovariana, gravidez ectópica e torção testicular**. Exame genital e teste de gravidez na adolescente não são opcionais.',
+      'Reavalie ativamente: em criança com escore intermediário mantida em observação, **a reavaliação pelo mesmo examinador em 6 a 12 horas** é o teste diagnóstico de maior rendimento disponível.',
+    )
+
+    return {
+      titulo: 'PAS',
+      valor: fmtInt(total),
+      unidade: 'de 10 pontos',
+      nivel,
+      rotuloNivel: rotulo,
+      detalhes: [
+        { rotulo: 'Dor à tosse, percussão ou ao pular', valor: sim(v, 'tosse') ? '+2' : '0' },
+        { rotulo: 'Dor à palpação em fossa ilíaca direita', valor: sim(v, 'dorFid') ? '+2' : '0' },
+        { rotulo: 'Anorexia', valor: sim(v, 'anorexia') ? '+1' : '0' },
+        { rotulo: 'Náuseas ou vômitos', valor: sim(v, 'nauseas') ? '+1' : '0' },
+        { rotulo: 'Migração da dor', valor: sim(v, 'migracao') ? '+1' : '0' },
+        { rotulo: 'Febre ≥ 38 °C', valor: sim(v, 'febre') ? '+1' : '0' },
+        { rotulo: 'Leucócitos > 10.000/mm³', valor: sim(v, 'leucocitose') ? '+1' : '0' },
+        { rotulo: 'Neutrófilos > 75%', valor: sim(v, 'neutrofilia') ? '+1' : '0' },
+        { rotulo: 'Faixa etária', valor: `${fmtInt(idadeAnos)} anos`, nivel: (menor5 ? 'alerta' : 'ok') as Nivel, nota: menor5 ? 'Abaixo de 5 anos o escore perde acurácia' : undefined },
+      ],
+      interpretacao: [
+        `**${total} de 10 pontos — ${rotulo.toLowerCase()}.** O escore de apendicite pediátrica, derivado por Samuel em 2002, adapta a lógica do Alvarado à criança: as faixas de 0 a 3, 4 a 6 e 7 a 10 correspondem a baixa, intermediária e alta probabilidade.`,
+        'A diferença mais útil em relação ao Alvarado é ter substituído a **descompressão brusca** pela dor à tosse, à percussão ou ao pular. É o mesmo fenômeno — irritação peritoneal —, obtido sem a manobra dolorosa que destrói a colaboração da criança e inviabiliza todo o resto do exame.',
+        faixa === 'intermediario'
+          ? '**A faixa intermediária é onde o escore mais rende e menos decide.** Ela não é falha do instrumento: é a tradução honesta de que, nesse grupo, história e exame não bastam, e é exatamente aí que a imagem e a reavaliação seriada têm indicação.'
+          : faixa === 'alto'
+            ? 'Escore alto tem boa especificidade, e nessa faixa muitos serviços operam sem imagem quando o quadro é típico — o balanço entre apendicectomia negativa e perfuração pende para operar.'
+            : 'Escore baixo tem bom valor preditivo negativo, mas **não zera o risco**: a alta deve vir acompanhada de reavaliação programada e de orientação clara de retorno, porque a apendicite é um processo que evolui em horas.',
+        menor5
+          ? '**Atenção à idade.** Abaixo de 5 anos, a criança não localiza a dor, a história vem por terceiros, o omento é curto e não bloqueia a perfuração, e a taxa de perfuração no momento da chegada chega a 80 a 100%. Nessa faixa o escore é insuficiente como único critério.'
+          : 'Na idade escolar e na adolescência, que é a faixa de maior incidência e onde o escore foi derivado, o desempenho é o melhor descrito.',
+        'Nenhum escore de apendicite substitui a reavaliação: a sensibilidade de qualquer um deles é maior **depois** de algumas horas de evolução, porque a doença ainda estava se instalando quando a criança chegou.',
+      ],
+      conduta,
+      alertas: [
+        '**Leucograma normal não afasta apendicite** nas primeiras horas — o desvio à esquerda costuma preceder a leucocitose.',
+        '**Analgesia não mascara o abdome agudo.** Ensaios randomizados refutaram essa crença; negar analgesia a uma criança com dor é erro clínico.',
+        'Abaixo de 5 anos, considere perfuração até prova em contrário: a apresentação é atípica e o diagnóstico tardio é a regra, não a exceção.',
+        'Na adolescente, **teste de gravidez e avaliação de torção ovariana** antes de fechar o diagnóstico; no adolescente, examine a bolsa escrotal — torção testicular se apresenta com dor abdominal.',
+      ],
+    }
+  },
+  formula: ['PAS = dor à tosse/percussão/pulo (2) + dor à palpação em FID (2) + anorexia (1) + náuseas/vômitos (1) + migração (1) + febre ≥ 38 °C (1) + leucócitos > 10.000 (1) + neutrófilos > 75% (1)', 'Faixas: 0-3 baixa · 4-6 intermediária · 7-10 alta probabilidade'],
+  fundamento:
+    'A apendicite começa com a obstrução da luz apendicular — por hiperplasia linfoide após infecção viral, que é o mecanismo dominante na criança, ou por fecalito. A mucosa continua secretando contra a obstrução, a pressão intraluminal sobe, e o resultado percorre uma sequência previsível que **é o próprio escore em ordem cronológica**. Primeiro a distensão estimula fibras viscerais aferentes que entram na medula em T8-T10: a dor é referida ao dermátomo correspondente, ou seja, **periumbilical, difusa e mal localizada**, acompanhada de anorexia, náusea e vômito por reflexo visceral. Depois a pressão ultrapassa a pressão venosa, vem congestão, isquemia da mucosa e invasão bacteriana; a inflamação transmural atinge o **peritônio parietal**, que é inervado por fibras somáticas, e a dor então **migra** para o ponto onde o apêndice toca a parede — tipicamente a fossa ilíaca direita. É exatamente por isso que a migração é um dos dados mais específicos da história, e por que a dor à tosse ou ao pular tem o mesmo significado da descompressão brusca: ambas são formas de movimentar o peritônio parietal inflamado. Febre, leucocitose e neutrofilia entram por último, como resposta sistêmica, o que explica por que um leucograma normal nas primeiras horas não afasta o diagnóstico. Na criança pequena, dois fatores anatômicos agravam tudo: a parede apendicular é mais fina e perfura antes, e o **omento é curto e imaturo**, incapaz de bloquear a perfuração e formar o plastrão que no adulto contém o processo — daí a peritonite difusa precoce e as taxas de perfuração tão altas abaixo dos 5 anos.',
+  armadilhas: [
+    'Aplicar o escore abaixo de 5 anos como critério isolado: nessa faixa a acurácia cai e a perfuração já é a regra à apresentação.',
+    'Usar a descompressão brusca em criança — ela destrói a colaboração e inviabiliza o restante do exame; tosse, percussão ou pular obtêm a mesma informação.',
+    'Esquecer o apêndice retrocecal e o pélvico: o primeiro dá dor lombar e pouca defesa abdominal; o segundo dá diarreia, disúria e dor ao toque retal, e ambos derrubam o escore.',
+    'Tratar escore intermediário como escore baixo por pressão de fluxo — é justamente o grupo que precisa de imagem ou de reavaliação seriada.',
+  ],
+  referencias: [
+    { texto: 'Samuel M. Pediatric appendicitis score. J Pediatr Surg. 2002;37(6):877-881.' },
+    { texto: 'Kharbanda AB, Vazquez-Benitez G, Ballard DW, et al. Development and validation of a novel pediatric appendicitis risk calculator (pARC). Pediatrics. 2018;141(4):e20172699.' },
+    { texto: 'Green SM, Schriger DL, Yealy DM. Methodologic standards for interpreting clinical decision rules in emergency medicine. Ann Emerg Med. 2014;64(3):286-291.' },
+  ],
+}
+
+/* ═══════════ Sepse neonatal precoce — estratificação de risco ═══════════ */
+
+const sepseNeonatalCampos: Campo[] = [
+  campoNum('ig', 'Idade gestacional', { unidade: 'semanas', min: 22, max: 43, passo: 0.1, padrao: '39', ajuda: 'A prematuridade é o fator de risco isolado mais forte para sepse precoce, e o risco sobe de forma contínua conforme a idade gestacional cai — não há um degrau em 37 semanas.' }),
+  campoOpc('exame', 'Exame clínico do recém-nascido', [
+    { valor: 'bem', rotulo: 'Bem — sem qualquer sinal persistente' },
+    { valor: 'equivoco', rotulo: 'Equívoco — sinal isolado que se resolve, ou dois sinais que duram menos de 4 h' },
+    { valor: 'doente', rotulo: 'Doente — desconforto persistente, instabilidade hemodinâmica, necessidade de ventilação ou de droga vasoativa, encefalopatia' },
+  ], { padrao: 'bem', ajuda: '**Este é o item de maior peso de toda a avaliação.** Na abordagem multivariada, o exame clínico multiplica ou divide a probabilidade pós-teste em mais de uma ordem de grandeza — um recém-nascido bem, com fatores de risco, tem risco muito menor que um recém-nascido doente sem fator de risco algum.' }),
+  campoNum('tempMaterna', 'Maior temperatura materna intraparto', { unidade: '°C', min: 35, max: 42, passo: 0.1, padrao: '37', ajuda: 'Use a **maior** temperatura aferida no trabalho de parto. O limiar clássico é 38 °C; entre 37,5 e 38 °C há risco intermediário, sobretudo com analgesia peridural, que por si só eleva a temperatura materna sem infecção.' }),
+  campoNum('bolsaRota', 'Tempo de bolsa rota', { unidade: 'horas', min: 0, max: 240, passo: 1, padrao: '4', ajuda: 'O risco sobe de forma contínua com o tempo, e o limiar de 18 horas é uma convenção operacional, não um degrau biológico.' }),
+  campoSeg('gbs', 'Estreptococo do grupo B materno', [
+    { valor: 'neg', rotulo: 'Negativo' },
+    { valor: 'desc', rotulo: 'Desconhecido' },
+    { valor: 'pos', rotulo: 'Positivo' },
+  ], { padrao: 'neg', ajuda: 'A colonização materna é assintomática e transitória; a cultura de rastreio é colhida entre 36 e 37 semanas e 6 dias, de swab vaginal **e** retal. Bacteriúria por estreptococo do grupo B em qualquer momento da gestação, ou filho anterior com doença invasiva, equivalem a rastreio positivo.' }),
+  campoSeg('profilaxia', 'Profilaxia antibiótica intraparto', [
+    { valor: 'adequada', rotulo: 'Adequada — penicilina, ampicilina ou cefazolina ≥ 4 h antes do parto' },
+    { valor: 'parcial', rotulo: 'Parcial — antibiótico adequado, porém < 4 h antes do parto' },
+    { valor: 'nenhuma', rotulo: 'Nenhuma, ou agente sem eficácia comprovada' },
+  ], { padrao: 'nenhuma', ajuda: 'Apenas penicilina, ampicilina e cefazolina contam como profilaxia adequada. **Clindamicina e vancomicina não são consideradas adequadas** para este fim, porque não atingem concentração fetal confiável — um detalhe que muda a conduta e passa despercebido com frequência.' }),
+]
+
+const sepseNeonatal: Ferramenta = {
+  id: 'sepse-neonatal-precoce',
+  nome: 'Sepse neonatal precoce — estratificação de risco',
+  sigla: 'EOS',
+  sinonimos: ['sepse neonatal', 'eos', 'kaiser', 'corioamnionite', 'gbs', 'estreptococo grupo b', 'bolsa rota', 'sepse precoce'],
+  resumo: 'Estratifica o risco de sepse precoce no recém-nascido de 35 semanas ou mais e decide entre observação, hemocultura e antibiótico empírico.',
+  categorias: ['pediatria', 'infectologia', 'emergencia'],
+  campos: sepseNeonatalCampos,
+  calcular: (v) => {
+    const ig = num(v, 'ig')
+    const tempMaterna = num(v, 'tempMaterna')
+    const bolsaRota = num(v, 'bolsaRota')
+    if (ig === null || tempMaterna === null || bolsaRota === null) return null
+
+    const exame = opc(v, 'exame') ?? 'bem'
+    const gbs = opc(v, 'gbs') ?? 'neg'
+    const profilaxia = opc(v, 'profilaxia') ?? 'nenhuma'
+
+    const prematuro = ig < 37
+    const abaixoDe35 = ig < 35
+    const febre = tempMaterna >= 38
+    const tempLimitrofe = !febre && tempMaterna >= 37.5
+    const bolsaProlongada = bolsaRota >= 18
+    const profilaxiaIndicada = gbs === 'pos' || gbs === 'desc'
+    const profilaxiaFalha = profilaxiaIndicada && profilaxia !== 'adequada'
+
+    const fatores: string[] = []
+    if (febre) fatores.push('febre materna intraparto ≥ 38 °C')
+    else if (tempLimitrofe) fatores.push('temperatura materna limítrofe (37,5 a 37,9 °C)')
+    if (bolsaProlongada) fatores.push('bolsa rota ≥ 18 h')
+    if (prematuro) fatores.push('prematuridade')
+    if (gbs === 'pos') fatores.push('estreptococo do grupo B positivo')
+    else if (gbs === 'desc') fatores.push('estreptococo do grupo B desconhecido')
+    if (profilaxiaFalha) fatores.push('profilaxia intraparto indicada e não adequada')
+
+    // A conduta é determinada primeiro pelo exame; os fatores maternos só decidem no recém-nascido bem.
+    const fatoresMaiores = (febre ? 1 : 0) + (bolsaProlongada ? 1 : 0) + (prematuro ? 1 : 0) + (profilaxiaFalha ? 1 : 0)
+
+    let categoria: string
+    let nivel: Nivel
+    if (exame === 'doente') {
+      categoria = 'Antibiótico empírico'
+      nivel = 'critico'
+    } else if (exame === 'equivoco') {
+      categoria = fatoresMaiores >= 1 ? 'Antibiótico empírico' : 'Hemocultura e vigilância intensiva'
+      nivel = fatoresMaiores >= 1 ? 'critico' : 'alerta'
+    } else if (febre && fatoresMaiores >= 2) {
+      categoria = 'Hemocultura e vigilância intensiva'
+      nivel = 'alerta'
+    } else if (fatoresMaiores >= 1 || tempLimitrofe || gbs === 'desc') {
+      categoria = 'Observação clínica estruturada'
+      nivel = 'atencao'
+    } else {
+      categoria = 'Cuidados de rotina'
+      nivel = 'ok'
+    }
+
+    const conduta: string[] = []
+    if (abaixoDe35) {
+      conduta.push('**Abaixo de 35 semanas esta estratificação não se aplica.** O prematuro de muito baixa idade gestacional tem risco basal substancialmente maior, quase sempre nasce por indicação materna que já é fator de risco, e a conduta padrão é hemocultura e antibiótico empírico na admissão, com reavaliação em 36 a 48 horas.')
+    }
+    if (categoria === 'Antibiótico empírico') {
+      conduta.push('**Colha hemocultura e inicie antibiótico empírico agora.** O esquema padrão é **ampicilina associada a gentamicina**, que cobre estreptococo do grupo B, *Escherichia coli* e *Listeria*. Não atrase a primeira dose para colher exames adicionais — a hemocultura basta, e cada hora de atraso importa.')
+      conduta.push('**Reavalie em 36 a 48 horas.** Com hemocultura negativa e recém-nascido clinicamente bem, **suspenda o antibiótico**: a maior parte do dano desta via não vem de tratar, e sim de manter tratamento sem indicação. Cursos prolongados sem cultura positiva associam-se a enterocolite necrosante, candidíase invasiva e alteração duradoura da microbiota.')
+    } else if (categoria === 'Hemocultura e vigilância intensiva') {
+      conduta.push('**Colha hemocultura e mantenha vigilância intensiva**, com sinais vitais a cada 4 horas por no mínimo 24 a 36 horas e reavaliação médica documentada. Inicie antibiótico ao primeiro sinal clínico — a decisão não precisa esperar exame.')
+      conduta.push('Se usar marcadores, use-os para **suspender**, não para iniciar: proteína C reativa e procalcitonina seriadas, colhidas entre 12 e 24 horas e entre 24 e 48 horas, têm bom valor preditivo **negativo** e prestam-se a interromper antibiótico; o valor preditivo positivo é ruim e não deve iniciar tratamento.')
+    } else if (categoria === 'Observação clínica estruturada') {
+      conduta.push('**Observação clínica estruturada por 36 a 48 horas**, com sinais vitais a cada 4 horas nas primeiras 24 horas e reavaliação médica documentada — não é "observar de longe", é um protocolo com registro. Essa é a estratégia que mais reduz uso desnecessário de antibiótico sem perder casos.')
+      conduta.push('A alta precoce só é segura se houver **retorno garantido em 24 a 48 horas** e cuidador orientado por escrito sobre os sinais de alarme: recusa alimentar, letargia, irritabilidade, gemido, taquipneia, icterícia precoce, instabilidade térmica em qualquer direção.')
+    } else {
+      conduta.push('**Cuidados de rotina no alojamento conjunto**, com a avaliação habitual do recém-nascido. Sem fator de risco relevante e com exame normal, não há indicação de hemocultura, de hemograma nem de antibiótico.')
+    }
+    conduta.push(
+      '**Oriente a família sobre os sinais de alarme em todos os casos**, porque a sepse neonatal pode se manifestar após a alta: recusa alimentar, letargia, irritabilidade paradoxal, gemido, taquipneia, tiragem, icterícia nas primeiras 24 horas e — o sinal mais traiçoeiro — **hipotermia**, que no recém-nascido é tão ou mais indicativa de infecção que a febre.',
+      '**Não use hemograma para decidir iniciar antibiótico.** O leucograma tem valor preditivo positivo baixo, sofre influência de trabalho de parto, asfixia e hora da coleta, e o hemograma colhido nas primeiras 4 horas de vida é o de pior desempenho. Se for colhido, que seja após 6 a 12 horas.',
+      '**Reavalie a decisão às 36 a 48 horas em todos os que iniciaram antibiótico.** A hemocultura moderna, com volume adequado de 1 mL, detecta a maioria dos patógenos nesse intervalo; manter antibiótico com cultura negativa e criança bem é a fonte mais comum de dano evitável.',
+      'Quando houver vários fatores maternos e exame normal, considere a **calculadora multivariada de sepse neonatal precoce** do Kaiser Permanente, que integra idade gestacional, temperatura materna, tempo de bolsa rota, estado de estreptococo do grupo B e profilaxia numa estimativa quantitativa de risco por mil nascimentos, ajustada pelo exame clínico. Ela reduz o uso de antibiótico empírico em cerca de metade sem aumento de desfechos adversos, e é a abordagem endossada como alternativa pela Academia Americana de Pediatria.',
+    )
+
+    return {
+      titulo: 'Risco de sepse neonatal precoce',
+      valor: categoria,
+      nivel,
+      rotuloNivel: exame === 'doente' ? 'Recém-nascido clinicamente doente' : exame === 'equivoco' ? 'Exame equívoco' : `${fatoresMaiores} fator(es) de risco maior(es)`,
+      detalhes: [
+        { rotulo: 'Exame clínico', valor: exame === 'bem' ? 'Bem' : exame === 'equivoco' ? 'Equívoco' : 'Doente', nivel: (exame === 'doente' ? 'critico' : exame === 'equivoco' ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Idade gestacional', valor: `${fmt(ig, 1)} semanas`, nivel: (abaixoDe35 ? 'critico' : prematuro ? 'alerta' : 'ok') as Nivel, nota: abaixoDe35 ? 'Fora da faixa desta estratificação' : undefined },
+        { rotulo: 'Temperatura materna máxima', valor: `${fmt(tempMaterna, 1)} °C`, nivel: (febre ? 'alerta' : tempLimitrofe ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Bolsa rota', valor: `${fmtInt(bolsaRota)} h`, nivel: (bolsaProlongada ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Estreptococo do grupo B', valor: gbs === 'pos' ? 'Positivo' : gbs === 'desc' ? 'Desconhecido' : 'Negativo', nivel: (gbs === 'pos' ? 'alerta' : gbs === 'desc' ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Profilaxia intraparto', valor: profilaxia === 'adequada' ? 'Adequada (≥ 4 h)' : profilaxia === 'parcial' ? 'Parcial (< 4 h)' : 'Ausente ou inadequada', nivel: (profilaxiaFalha ? 'alerta' : 'ok') as Nivel, nota: profilaxiaFalha ? 'Indicada e não adequada' : undefined },
+        { rotulo: 'Fatores de risco presentes', valor: fatores.length > 0 ? fatores.join(' · ') : 'Nenhum' },
+      ],
+      interpretacao: [
+        `**${categoria}.** A estratificação aplica-se ao recém-nascido de **35 semanas ou mais** e combina os fatores de risco maternos com a categoria do exame clínico — e é o exame que manda.`,
+        '**O exame clínico é o item de maior peso de toda a avaliação.** Na abordagem multivariada ele altera a probabilidade pós-teste em mais de uma ordem de grandeza em cada direção: um recém-nascido bem com vários fatores de risco tem risco muito menor que um recém-nascido doente sem fator algum. Por isso a observação estruturada substitui, com segurança, boa parte do antibiótico empírico que se usava por critério categórico.',
+        exame === 'doente'
+          ? '**Recém-nascido clinicamente doente.** Aqui não há estratificação a fazer: hemocultura e antibiótico empírico imediatos, independentemente de qualquer fator materno.'
+          : exame === 'equivoco'
+            ? 'Exame **equívoco** — sinal isolado que se resolve, ou dois sinais com menos de 4 horas de duração. É a categoria mais difícil e a que mais exige reavaliação frequente por examinador experiente.'
+            : `Recém-nascido **bem**, com ${fatoresMaiores} fator(es) de risco maior(es). A conduta se apoia na vigilância, e não no tratamento presuntivo.`,
+        'Note dois detalhes que mudam a conduta e passam despercebidos: **clindamicina e vancomicina não contam como profilaxia adequada** contra estreptococo do grupo B, porque não atingem concentração fetal confiável; e a **analgesia peridural eleva a temperatura materna** sem infecção, o que torna a febre isolada, sem outros sinais de corioamnionite, um dado de interpretação mais cautelosa.',
+        'Os agentes dominantes são o **estreptococo do grupo B** e a ***Escherichia coli***. A profilaxia intraparto derrubou de forma expressiva a doença precoce por estreptococo do grupo B, mas **não afeta a doença tardia** nem a *E. coli* — que hoje predomina entre os prematuros e carrega letalidade maior.',
+      ],
+      conduta,
+      alertas: [
+        '**Hipotermia no recém-nascido é tão indicativa de infecção quanto a febre** — e é o sinal mais frequentemente desvalorizado.',
+        'Abaixo de 35 semanas esta estratificação não se aplica: a conduta padrão nessa faixa é hemocultura e antibiótico empírico com reavaliação em 36 a 48 horas.',
+        '**Clindamicina e vancomicina não são profilaxia adequada** para estreptococo do grupo B — o recém-nascido deve ser tratado como se não tivesse recebido profilaxia.',
+        'Não mantenha antibiótico com hemocultura negativa e recém-nascido bem: cursos prolongados sem indicação associam-se a enterocolite necrosante, candidíase invasiva e alteração duradoura da microbiota.',
+        'A punção lombar não é rotina, mas é **obrigatória** na hemocultura positiva, no recém-nascido com sinais neurológicos e naquele que piora apesar do antibiótico — a meningite pode ocorrer com hemocultura negativa.',
+      ],
+    }
+  },
+  formula: [
+    'Fatores de risco maiores: febre materna ≥ 38 °C · bolsa rota ≥ 18 h · idade gestacional < 37 semanas · profilaxia indicada e não adequada',
+    'A categoria do exame clínico (bem · equívoco · doente) tem precedência sobre os fatores maternos',
+  ],
+  fundamento:
+    'A sepse neonatal precoce, definida como a que ocorre nas primeiras 72 horas de vida, resulta de **transmissão vertical**: o patógeno coloniza o trato genital materno e alcança o feto por via ascendente após a ruptura das membranas, ou durante a passagem pelo canal de parto. Essa via explica cada um dos fatores de risco sem que seja preciso decorá-los. O **tempo de bolsa rota** é o tempo de exposição à colonização ascendente, e por isso o risco cresce de forma contínua, sem degrau real em 18 horas. A **febre materna** é o marcador clínico mais acessível de inflamação intra-amniótica, e a corioamnionite significa que o líquido amniótico — que o feto deglute e aspira — já está infectado. A **prematuridade** entra duas vezes: a infecção intra-amniótica é ela própria uma das principais causas de trabalho de parto prematuro, invertendo a seta causal, e o prematuro tem defesa muito menor, com transferência placentária de imunoglobulina G concentrada no terceiro trimestre, neutropenia relativa com reserva medular pequena e função opsonizante do complemento reduzida. Essa imaturidade imune também explica por que o recém-nascido infectado frequentemente **não faz febre**: ele responde com hipotermia, e a resposta inflamatória sistêmica que no adulto produz o quadro clássico está, aqui, atenuada e inespecífica. A profilaxia antibiótica intraparto funciona porque reduz a carga bacteriana no canal de parto no momento da exposição e atinge concentração fetal pela via transplacentária — e daí a exigência de **quatro horas** antes do parto e a exclusão de clindamicina e vancomicina, que não alcançam esse objetivo de forma confiável.',
+  armadilhas: [
+    'Usar hemograma para decidir iniciar antibiótico: o valor preditivo positivo é baixo, e o leucograma colhido nas primeiras horas é o de pior desempenho.',
+    'Aceitar clindamicina ou vancomicina como profilaxia adequada contra estreptococo do grupo B.',
+    'Atribuir a febre materna à peridural sem procurar os demais sinais de corioamnionite — taquicardia materna e fetal, líquido fétido, dor uterina.',
+    'Aplicar a estratificação abaixo de 35 semanas, faixa em que ela não foi derivada nem validada.',
+    'Manter antibiótico além de 48 horas com hemocultura negativa e recém-nascido clinicamente bem.',
+  ],
+  referencias: [
+    { texto: 'Puopolo KM, Benitz WE, Zaoutis TE; AAP Committee on Fetus and Newborn. Management of Neonates Born at ≥35 0/7 Weeks Gestation With Suspected or Proven Early-Onset Bacterial Sepsis. Pediatrics. 2018;142(6):e20182894.' },
+    { texto: 'Kuzniewicz MW, Puopolo KM, Fischer A, et al. A Quantitative, Risk-Based Approach to the Management of Neonatal Early-Onset Sepsis. JAMA Pediatr. 2017;171(4):365-371.' },
+    { texto: 'Prevention of Group B Streptococcal Early-Onset Disease in Newborns: ACOG Committee Opinion No. 797. Obstet Gynecol. 2020;135(2):e51-e72.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   dosePediatrica,
   hidratacao,
@@ -2228,6 +2636,9 @@ export const ferramentas: Ferramenta[] = [
   tanner,
   dorPediatrica,
   febreLactente,
+  pews,
+  apendicitePed,
+  sepseNeonatal,
 ]
 
 export default ferramentas

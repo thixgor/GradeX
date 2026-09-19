@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **245** (eram 201) |
-| Implementadas desta lista | **44** |
-| Restantes | **156** |
-| Nota média na auditoria | **100** — todas as 245 |
+| Ferramentas no catálogo | **248** (eram 201) |
+| Implementadas desta lista | **47** |
+| Restantes | **153** |
+| Nota média na auditoria | **100** — todas as 248 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -79,15 +79,15 @@ escores individuais.
     - ✅ **feito** — `kocher`
 6. **Febre no lactente < 60 dias: Rochester, Filadélfia, Boston e algoritmo AAP 2021** — risco de infecção bacteriana invasiva e necessidade de punção lombar. **[P1]**
     - ✅ **feito** — `febre-lactente-60d`, com o algoritmo AAP 2021 nas três faixas etárias
-7. **PEWS — Pediatric Early Warning Score** — deterioração clínica em enfermaria pediátrica. **[P1]**
+7. ✅ **PEWS — Pediatric Early Warning Score** — deterioração clínica em enfermaria pediátrica. `pews`, com faixas de normalidade de FC e FR por idade e detecção de bradicardia/bradipneia como sinal pré-terminal. **[P1]**
 8. **PIM-3 e PRISM III** — mortalidade predita em UTI pediátrica. **[P2]**
 9. **SNAPPE-II e CRIB-II** — gravidade e mortalidade em UTI neonatal. **[P2]**
-10. **Calculadora de sepse neonatal precoce (Kaiser Permanente)** — risco de sepse de início precoce e conduta em RN ≥ 34 semanas. **[P1]**
+10. 🟡 **Calculadora de sepse neonatal precoce (Kaiser Permanente)** — risco de sepse de início precoce e conduta em RN ≥ 34 semanas. `sepse-neonatal-precoce` implementa a estratificação categórica da AAP 2018 (fatores maternos + categoria do exame clínico, que tem precedência). **A estimativa numérica de risco por mil nascimentos da regressão do Kaiser não foi reproduzida** — os coeficientes não foram verificados contra a fonte primária, e publicar um número inventado seria pior que não publicá-lo. A ferramenta remete explicitamente à calculadora oficial para esse uso. **[P1]**
 11. **Escore de Finnegan (NAS)** — síndrome de abstinência neonatal e indicação de morfina. **[P2]**
 12. **Escalas de dor pediátrica: NIPS, PIPP, FLACC e escala de faces** — dor por faixa etária. **[P1]**
     - 🟡 **parcial** — `dor-pediatrica` cobre FLACC, NIPS e escala de faces; PIPP pendente
 13. **Escore de Downes e escore de Tal** — desconforto respiratório do neonato e do lactente. **[P2]**
-14. **Pediatric Appendicitis Score (Samuel)** — apendicite na criança, alternativa ao Alvarado. **[P1]**
+14. ✅ **Pediatric Appendicitis Score (Samuel)** — apendicite na criança, alternativa ao Alvarado. `apendicite-pediatrica`, com alerta específico para menores de 5 anos e via de imagem (US → RM → TC). **[P1]**
 15. **Estadiamento de Tanner** — maturação sexual: mamas, genitália e pilificação. **[P1]**
     - ✅ **feito** — `tanner`, com a janela etária esperada e a distinção entre adrenarca e gonadarca
 16. **Previsão de estatura final e altura-alvo parental** — canal familiar e velocidade de crescimento. **[P2]**
