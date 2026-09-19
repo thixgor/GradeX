@@ -68,7 +68,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas neurológicas são o exame físico transformado em número reprodutível entre plantões — é isso que permite comparar o NIHSS da porta com o de duas horas depois e decidir. Estão aqui as escalas de coma, os escores de AVC isquêmico e hemorrágico, as de sedação e delirium e a conta de perfusão cerebral.',
     icone: 'neurologia',
     cor: 'indigo',
-    total: 17,
+    total: 19,
   },
   {
     id: 'gastroenterologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 85,
+    total: 87,
   },
   {
     id: 'cirurgia',
@@ -188,7 +188,7 @@ export const CATEGORIAS: Categoria[] = [
       'Em idosos, idade cronológica prediz pouco e funcionalidade prediz quase tudo: fragilidade, capacidade funcional e cognição preveem complicação cirúrgica, delirium, institucionalização e mortalidade melhor que qualquer índice de comorbidade. Em cuidados paliativos, as escalas de desempenho e prognóstico existem para que a conversa sobre objetivos aconteça enquanto ainda há escolha.',
     icone: 'geriatria',
     cor: 'ardosia',
-    total: 3,
+    total: 4,
   },
   {
     id: 'especialidades',

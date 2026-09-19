@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   campoNum,
   campoOpc,
@@ -9,6 +9,7 @@ import {
   num,
   numOu,
   opc,
+  ptsOpc,
   sim,
   somaSimNao,
 } from '../helpers'
@@ -1354,6 +1355,223 @@ const riscoConvulsao: Ferramenta = {
   ],
 }
 
+/* ═══════════════ 4AT — rastreio rápido de delirium fora da UTI ═══════════════ */
+
+const quatroAtCampos: Campo[] = [
+  campoOpc('alerta', '1. Alerta', [
+    { valor: '0', rotulo: 'Normal, ou sonolência leve por menos de 10 s que reverte ao despertar', pontos: 0 },
+    { valor: '4', rotulo: 'Claramente anormal: sonolento, agitado ou hipervigilante', pontos: 4 },
+  ], { padrao: '0', ajuda: 'Observe nos primeiros 10 segundos. Se o paciente estiver dormindo, tente acordá-lo pela fala ou por toque leve no ombro. Este item sozinho, quando alterado, já pontua 4 e classifica como provável delirium.' }),
+  campoOpc('amt4', '2. AMT-4: idade, data de nascimento, local e ano atual', [
+    { valor: '0', rotulo: 'Acerta as quatro', pontos: 0 },
+    { valor: '1', rotulo: 'Erra uma', pontos: 1 },
+    { valor: '2', rotulo: 'Erra duas ou mais, ou não é testável', pontos: 2 },
+  ], { padrao: '0', ajuda: 'Quatro perguntas apenas: idade, data de nascimento, onde está agora (nome do local ou tipo) e o ano corrente. É o único item que mede cognição de base, e por isso pontua também em demência sem delirium.' }),
+  campoOpc('meses', '3. Meses do ano de dezembro para janeiro', [
+    { valor: '0', rotulo: 'Completa corretamente (7 ou mais meses seguidos, sem erro)', pontos: 0 },
+    { valor: '1', rotulo: 'Começa mas erra ou completa menos de 7 meses', pontos: 1 },
+    { valor: '2', rotulo: 'Não consegue começar, ou não é testável', pontos: 2 },
+  ], { padrao: '0', ajuda: 'Teste de atenção: peça para recitar os meses **de trás para frente**, começando em dezembro. Uma dica inicial ("o mês antes de janeiro é...") é permitida. Recitar na ordem direta é automático e não testa atenção.' }),
+  campoOpc('curso', '4. Mudança aguda ou curso flutuante', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '4', rotulo: 'Presente nas últimas 2 semanas, ainda evidente nas últimas 24 h', pontos: 4 },
+  ], { padrao: '0', ajuda: 'Mudança significativa em alerta, cognição, função mental ou percepção, relatada por familiar, cuidador ou equipe. **A informação colateral é indispensável**: sem saber o basal, não há como reconhecer a mudança.' }),
+]
+
+const quatroAt: Ferramenta = {
+  id: '4at',
+  nome: '4AT — rastreio rápido de delirium',
+  sigla: '4AT',
+  sinonimos: ['4at', 'delirium', 'rastreio delirium', 'confusao aguda', 'estado confusional'],
+  resumo: 'Rastreia delirium em menos de 2 minutos, sem treinamento especial, e funciona no paciente que não colabora com testes cognitivos.',
+  categorias: ['neurologia', 'geriatria', 'emergencia'],
+  campos: quatroAtCampos,
+  calcular: (v) => {
+    const ids = ['alerta', 'amt4', 'meses', 'curso']
+    const pontos = ids.map((id) => ptsOpc(quatroAtCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+    const cognitivoIsolado = total >= 1 && total <= 3
+
+    const nivel: Nivel = total >= 4 ? 'alerta' : total >= 1 ? 'atencao' : 'ok'
+    const faixa = total >= 4 ? 'Provável delirium' : total >= 1 ? 'Possível comprometimento cognitivo' : 'Improvável'
+
+    const conduta: string[] = []
+    if (total >= 4) {
+      conduta.push(
+        '**Provável delirium: procure a causa, não sede o paciente.** Percorra sistematicamente medicamentos (benzodiazepínico, anticolinérgico, opioide, corticoide), infecção, distúrbio metabólico (sódio, glicose, cálcio, ureia), hipóxia, retenção urinária, fecaloma, dor não tratada, abstinência e causa estrutural — acidente vascular, hematoma subdural.',
+        'Aplique as medidas não farmacológicas, que são as de melhor evidência: **reorientação, devolução de óculos e aparelho auditivo, mobilização precoce, higiene do sono com redução de luz e ruído noturnos, hidratação, retirada de cateteres e restrições, e presença da família**. O pacote multicomponente tipo HELP reduz a incidência de delirium em cerca de um terço.',
+        'Use **antipsicótico apenas para agitação que ameace a segurança**, na menor dose e pelo menor tempo, com ECG prévio pelo risco de prolongamento do QT. Os ensaios mostram que ele não reduz a duração do delirium nem a mortalidade — trata o sintoma, não a síndrome.',
+        '**Evite benzodiazepínico**, que é causa e não tratamento — exceto na abstinência de álcool ou de benzodiazepínico, em que a lógica se inverte.',
+      )
+    } else if (cognitivoIsolado) {
+      conduta.push(
+        '**1 a 3 pontos sugerem comprometimento cognitivo sem delirium**, e o mais provável é demência — mas delirium sobreposto à demência é comum e se manifesta justamente como piora aguda de um basal já alterado. Busque informação colateral sobre o estado prévio antes de concluir.',
+        'Reaplique o 4AT em outro momento do dia: o delirium **flutua**, e uma única avaliação normal não o exclui. A reavaliação por turno é o que muda a taxa de detecção.',
+        'Encaminhe para avaliação cognitiva formal depois da fase aguda, com MoCA ou MMSE ajustados por escolaridade — testar cognição durante uma doença aguda produz resultado falsamente ruim.',
+      )
+    } else {
+      conduta.push('**0 pontos: delirium improvável neste momento.** Mantenha a prevenção em pacientes de risco (idade avançada, demência prévia, déficit sensorial, gravidade da doença, cirurgia de grande porte) e reavalie ao menos uma vez por turno.')
+    }
+    conduta.push(
+      'Registre o resultado e o **estado basal** no prontuário. Sem o basal documentado, a próxima equipe não tem como reconhecer mudança aguda — que é o critério definidor da síndrome.',
+      'Lembre que o delirium **não é benigno**: associa-se de forma independente a mortalidade maior, internação mais longa, declínio funcional, institucionalização e demência subsequente. Tratá-lo como inconveniente de plantão é subestimar o desfecho.',
+    )
+
+    return {
+      titulo: '4AT',
+      valor: fmtInt(total),
+      unidade: 'de 12 pontos',
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: '1. Alerta', valor: fmtInt(pontos[0] as number), nivel: ((pontos[0] as number) > 0 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: '2. AMT-4', valor: fmtInt(pontos[1] as number) },
+        { rotulo: '3. Meses ao contrário', valor: fmtInt(pontos[2] as number), nota: 'Teste de atenção' },
+        { rotulo: '4. Curso agudo ou flutuante', valor: fmtInt(pontos[3] as number), nivel: ((pontos[3] as number) > 0 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Faixa', valor: faixa, nota: '0 improvável · 1-3 comprometimento cognitivo · ≥ 4 provável delirium' },
+      ],
+      interpretacao: [
+        `**${total} de 12 pontos — ${faixa.toLowerCase()}.** A leitura é em três faixas: **0** torna delirium improvável (mas não o exclui, porque ele flutua); **1 a 3** sugerem comprometimento cognitivo, tipicamente demência, sem delirium; **4 ou mais** indicam provável delirium, com ou sem demência associada.`,
+        'A sensibilidade do 4AT gira em torno de 88% e a especificidade em torno de 88% contra avaliação de referência, desempenho comparável ao do CAM com a vantagem decisiva de **não exigir treinamento** e de levar menos de 2 minutos.',
+        'Ele foi desenhado para funcionar em quem **não colabora**: os itens 1 e 4 são observacionais, e "não testável" pontua em vez de invalidar a avaliação — diferente dos testes cognitivos clássicos, que simplesmente não podem ser aplicados nesse paciente, que é justamente o de maior risco.',
+        (pontos[2] as number) > 0
+          ? 'O item de **atenção** (meses ao contrário) está alterado, e a desatenção é a característica central do delirium — está presente em praticamente todos os casos e é o que o distingue da demência isolada.'
+          : 'O item de atenção está preservado, o que reduz a probabilidade de delirium, já que a desatenção é a característica cardinal da síndrome.',
+        'O 4AT é **rastreio**, não diagnóstico. O diagnóstico é clínico, pelos critérios do DSM-5: distúrbio de atenção e consciência, de início agudo e curso flutuante, com alteração cognitiva adicional, decorrente de condição clínica, substância ou abstinência.',
+      ],
+      conduta,
+      alertas: [
+        '**Delirium flutua**: uma avaliação normal não o exclui. Reaplique ao menos uma vez por turno em pacientes de risco.',
+        'O **delirium hipoativo** é o mais comum e o de pior prognóstico, e é o que passa despercebido — o paciente é descrito como "tranquilo" ou "sonolento" e nunca chega a ser rastreado.',
+        'Sem **informação colateral** sobre o estado basal, o item 4 não pode ser avaliado com segurança, e é ele que carrega o critério de mudança aguda.',
+      ],
+    }
+  },
+  formula: ['4AT = alerta (0 ou 4) + AMT-4 (0-2) + meses ao contrário (0-2) + curso agudo (0 ou 4)', '0 improvável · 1-3 comprometimento cognitivo · ≥ 4 provável delirium'],
+  fundamento:
+    'O delirium é uma falência aguda da rede atencional, e o 4AT foi construído em torno dessa característica: dois de seus quatro itens medem atenção direta ou indiretamente, e o teste dos meses ao contrário existe porque recitar a sequência na ordem direta é automático e sobrevive à desatenção, enquanto invertê-la exige memória de trabalho e controle executivo sustentado. Fisiopatologicamente, três mecanismos convergem: **desequilíbrio de neurotransmissores**, com queda da transmissão colinérgica e excesso relativo de dopamina — o que explica por que fármacos anticolinérgicos são precipitantes tão potentes e por que a demência de Alzheimer, que já cursa com déficit colinérgico, é o maior fator de risco; **neuroinflamação**, com citocinas periféricas atravessando uma barreira hematoencefálica tornada permeável e ativando micróglia; e **desconexão funcional** entre a rede de modo padrão e as redes atencionais dorsal e ventral. O que o instrumento acrescenta ao arsenal existente é operacional e não conceitual: ele foi desenhado para ser aplicável por qualquer profissional, sem treinamento, em menos de dois minutos, e — crucialmente — para permanecer válido no paciente que não colabora, pontuando a impossibilidade de testar em vez de abandonar a avaliação.',
+  armadilhas: [
+    'Pontuação de 1 a 3 costuma refletir demência, mas delirium sobreposto à demência é frequente e é a situação de maior risco de passar despercebida.',
+    'Sem informação colateral sobre o basal, o item de curso agudo fica inavaliável — e é ele que carrega o critério definidor da síndrome.',
+    'Aplicar o item dos meses na ordem direta não testa atenção: a sequência direta é automática.',
+    'O escore não substitui a busca da causa. Delirium é sempre secundário, e o rastreio positivo é o começo da investigação, não o fim.',
+  ],
+  referencias: [
+    { texto: 'Bellelli G, Morandi A, Davis DH, et al. Validation of the 4AT, a new instrument for rapid delirium screening. Age Ageing. 2014;43(4):496-502.' },
+    { texto: 'Shenkin SD, Fox C, Godfrey M, et al. Delirium detection in older acute medical inpatients: a multicentre prospective comparative diagnostic test accuracy study of the 4AT and the confusion assessment method. BMC Med. 2019;17(1):138.' },
+    { texto: 'Inouye SK, Westendorp RG, Saczynski JS. Delirium in elderly people. Lancet. 2014;383(9920):911-922.' },
+  ],
+}
+
+/* ═══════════ Volume do hematoma pelo método ABC/2 e escore FUNC ═══════════ */
+
+const abc2Campos: Campo[] = [
+  campoNum('a', 'A — maior diâmetro do hematoma', { unidade: 'cm', min: 0.2, max: 20, passo: 0.1, ajuda: 'Meça no corte tomográfico em que o hematoma é maior. Use a régua do visualizador, não a estimativa visual.' }),
+  campoNum('b', 'B — diâmetro perpendicular a A, no mesmo corte', { unidade: 'cm', min: 0.2, max: 20, passo: 0.1, ajuda: 'Perpendicular ao maior diâmetro, **no mesmo corte**. Medir em cortes diferentes é o erro mais comum e superestima o volume.' }),
+  campoNum('cortes', 'Número de cortes em que o hematoma aparece', { min: 1, max: 60, passo: 1, ajuda: 'Conte apenas os cortes em que a área do hematoma é **pelo menos 25%** da área do corte de maior extensão; cortes entre 25% e 75% contam como meio corte. Contar todos os cortes em que há qualquer sangue superestima o volume.' }),
+  campoNum('espessura', 'Espessura do corte', { unidade: 'mm', min: 1, max: 15, passo: 0.5, padrao: '5', ajuda: 'Espessura conforme o protocolo do aparelho — habitualmente 5 mm na tomografia de crânio sem contraste. Errar esse número escala o volume inteiro de forma proporcional.' }),
+  campoNum('idade', 'Idade', { unidade: 'anos', min: 18, max: 120, passo: 1, opcional: true, ajuda: 'Necessária para o escore FUNC, que estima a chance de independência funcional em 90 dias.' }),
+  campoOpc('local', 'Localização', [
+    { valor: 'lobar', rotulo: 'Lobar', pontos: 2 },
+    { valor: 'profundo', rotulo: 'Profundo (gânglios da base, tálamo)', pontos: 1 },
+    { valor: 'infratentorial', rotulo: 'Infratentorial', pontos: 0 },
+  ], { padrao: 'profundo', ajuda: 'A localização entra no FUNC. Hematoma cerebelar maior que 3 cm é indicação cirúrgica independentemente de qualquer escore, pelo risco de compressão de tronco e hidrocefalia obstrutiva.' }),
+  campoOpc('gcs', 'Escala de Coma de Glasgow', [
+    { valor: 'alto', rotulo: '9 ou mais', pontos: 2 },
+    { valor: 'baixo', rotulo: '8 ou menos', pontos: 0 },
+  ], { padrao: 'alto' }),
+  campoSimNao('cognitivo', 'Comprometimento cognitivo prévio', 0, 'Demência ou declínio cognitivo conhecido antes do evento. Reduz a chance de recuperação funcional e entra no FUNC.'),
+]
+
+const abc2: Ferramenta = {
+  id: 'abc2-func',
+  nome: 'Volume do hematoma (ABC/2) e escore FUNC',
+  sinonimos: ['abc/2', 'abc2', 'kothari', 'volume hematoma', 'func', 'hemorragia intracerebral volume'],
+  resumo: 'Calcula o volume da hemorragia intracerebral à beira do leito e estima a chance de independência funcional em 90 dias.',
+  categorias: ['neurologia', 'emergencia'],
+  campos: abc2Campos,
+  calcular: (v) => {
+    const a = num(v, 'a')
+    const b = num(v, 'b')
+    const cortes = num(v, 'cortes')
+    const espessura = num(v, 'espessura')
+    if (a === null || b === null || cortes === null || espessura === null) return null
+    const c = (cortes * espessura) / 10
+    const volume = (a * b * c) / 2
+
+    const idade = num(v, 'idade')
+    const pontosVolume = volume < 30 ? 4 : volume <= 60 ? 2 : 0
+    const pontosIdade = idade === null ? null : idade < 70 ? 2 : idade <= 79 ? 1 : 0
+    const pontosLocal = ptsOpc(abc2Campos, v, 'local') ?? 0
+    const pontosGcs = ptsOpc(abc2Campos, v, 'gcs') ?? 0
+    const pontosCognitivo = sim(v, 'cognitivo') ? 0 : 1
+    const func = pontosIdade === null ? null : pontosVolume + pontosIdade + pontosLocal + pontosGcs + pontosCognitivo
+
+    // Independência funcional em 90 dias (GOS ≥ 4) por faixa de FUNC.
+    const independencia = func === null ? null : func <= 4 ? 0 : func <= 7 ? 13 : func <= 8 ? 42 : func <= 10 ? 66 : 82
+
+    const nivel: Nivel = volume >= 60 ? 'critico' : volume >= 30 ? 'alerta' : 'atencao'
+
+    const interpretacao: string[] = [
+      `**Volume estimado de ${fmt(volume, 1)} cm³** pelo método ABC/2, onde A é o maior diâmetro, B o perpendicular no mesmo corte, e C a extensão craniocaudal (cortes × espessura). O método aproxima o hematoma a um elipsoide, cujo volume é (4/3)π × (A/2)(B/2)(C/2) ≈ ABC/2.`,
+      volume >= 30
+        ? '**Volume acima de 30 cm³** é um dos marcadores prognósticos mais fortes na hemorragia intracerebral e um dos componentes do escore ICH. Acima de 60 cm³ com Glasgow abaixo de 9, a mortalidade em 30 dias historicamente passa de 90%.'
+        : 'Volume abaixo de 30 cm³, faixa associada a melhor prognóstico funcional — e a faixa em que a expansão do hematoma nas primeiras horas tem mais a ganhar em ser prevenida.',
+      'O método superestima hematomas de forma irregular, sobretudo os **lobares com extensão irregular** e os que se estendem ao ventrículo; nesses casos a volumetria por software é mais fiel. Para hematomas arredondados, a concordância com a volumetria planimétrica é boa.',
+    ]
+    if (func !== null && independencia !== null) {
+      interpretacao.push(
+        `**Escore FUNC de ${func} de 11 pontos**, com chance estimada de independência funcional em 90 dias em torno de ${independencia}%. O FUNC soma volume, idade, localização, Glasgow e cognição prévia, e foi construído para prever **função**, e não mortalidade — que é o que o escore ICH prevê.`,
+        func <= 4
+          ? '**FUNC de 0 a 4: nenhum paciente da coorte de derivação alcançou independência funcional em 90 dias.** Ainda assim, esse dado não autoriza limitar suporte nas primeiras horas: as diretrizes recomendam tratamento pleno por pelo menos 48 a 72 horas antes de qualquer decisão, justamente porque limitações precoces viram profecia autorrealizável e enviesam as próprias estatísticas.'
+          : 'A estimativa descreve populações, não indivíduos, e deve informar a conversa com a família — não substituí-la.',
+      )
+    }
+
+    return {
+      titulo: 'Volume do hematoma (ABC/2)',
+      valor: fmt(volume, 1),
+      unidade: 'cm³',
+      nivel,
+      rotuloNivel: volume >= 60 ? 'Volume muito grande' : volume >= 30 ? 'Volume grande' : 'Volume menor que 30 cm³',
+      detalhes: [
+        { rotulo: 'A × B × C', valor: `${fmt(a, 1)} × ${fmt(b, 1)} × ${fmt(c, 1)} cm` },
+        { rotulo: 'Extensão craniocaudal (C)', valor: `${fmt(c, 1)} cm`, nota: `${fmtInt(cortes)} cortes × ${fmt(espessura, 1)} mm` },
+        ...(func !== null ? [{ rotulo: 'Escore FUNC', valor: `${fmtInt(func)} de 11` }] : []),
+        ...(independencia !== null ? [{ rotulo: 'Independência em 90 dias', valor: `${independencia}%`, nota: 'Estimativa da coorte de derivação' }] : []),
+      ],
+      interpretacao,
+      conduta: [
+        '**Reduza a pressão sistólica para 130 a 150 mmHg** de forma controlada e precoce, evitando quedas abruptas e excessivas. O alvo existe para conter a expansão do hematoma, que ocorre nas primeiras 6 horas e é o principal determinante modificável do desfecho.',
+        '**Reverta a anticoagulação imediatamente**, conforme o agente: complexo protrombínico de 4 fatores com vitamina K para varfarina, idarucizumabe para dabigatrana, andexanet alfa ou complexo protrombínico para inibidores do fator Xa, protamina para heparina.',
+        'Repita a tomografia em **6 horas** ou diante de qualquer deterioração: a expansão do hematoma define a piora clínica e muda a conduta cirúrgica. O sinal do ponto (spot sign) na angiotomografia prediz expansão.',
+        'Acione a **neurocirurgia** diante de hemorragia cerebelar maior que 3 cm, hidrocefalia obstrutiva (derivação ventricular externa), hematoma lobar superficial com deterioração, e efeito de massa significativo. A evacuação minimamente invasiva precoce vem ganhando espaço em hematomas lobares de volume intermediário.',
+        'Investigue a **causa** quando o padrão for atípico: paciente jovem, sem hipertensão, hemorragia lobar ou localização incomum pedem angiotomografia ou angiografia para malformação arteriovenosa, aneurisma, trombose venosa e tumor. Em idoso com hemorragias lobares recorrentes, considere angiopatia amiloide — que contraindica a reintrodução de anticoagulante.',
+      ],
+      alertas: [
+        '**Conte apenas os cortes em que a área do hematoma é pelo menos 25% da maior**, e meça A e B no mesmo corte. Os dois erros mais comuns inflam o volume e, com ele, o prognóstico declarado à família.',
+        'O ABC/2 superestima hematomas irregulares e com extensão intraventricular. Quando o volume decide conduta cirúrgica, prefira volumetria por software.',
+        '**Não limite suporte nas primeiras 48 a 72 horas** com base em escore prognóstico: a limitação precoce é preditor independente de mortalidade e enviesa as próprias séries de onde os escores vieram.',
+      ],
+    }
+  },
+  formula: ['Volume ≈ (A × B × C) ÷ 2, com A e B em cm no mesmo corte e C = cortes × espessura', 'FUNC = volume (0-4) + idade (0-2) + localização (0-2) + Glasgow (0-2) + cognição prévia (0-1)'],
+  fundamento:
+    'A hemorragia intracerebral espontânea decorre, na maioria dos casos, da ruptura de pequenas artérias perfurantes lesadas cronicamente pela hipertensão — as lipo-hialinizadas de Charcot-Bouchard, nos gânglios da base, tálamo, ponte e cerebelo — ou, no idoso com hemorragias lobares, do depósito de beta-amiloide na parede de arteríolas corticais e leptomeníngeas. O dano tem dois tempos: o **primário**, mecânico, pela dissecção do parênquima e pelo efeito de massa, e o **secundário**, ao longo de dias, pela inflamação perilesional, pelo edema e pela toxicidade de produtos de degradação da hemoglobina, sobretudo ferro livre e trombina. Entre os dois há uma janela decisiva — a **expansão do hematoma**, que ocorre em cerca de um terço dos pacientes nas primeiras 6 horas e é o principal determinante modificável do desfecho, o que explica por que o controle pressórico precoce e a reversão imediata da anticoagulação são as duas intervenções que mais importam. O método ABC/2 foi validado por Kothari em 1996 contra volumetria planimétrica e sobreviveu porque resolve um problema prático: dá o volume à beira do leito, em menos de um minuto, com uma régua e a própria tomografia, sem depender de software de pós-processamento que muitos serviços não têm.',
+  armadilhas: [
+    'Medir A e B em cortes diferentes é o erro mais frequente e superestima o volume.',
+    'Contar todos os cortes em que há qualquer traço de sangue, em vez de aplicar a regra dos 25%, infla o resultado.',
+    'A fórmula assume forma elipsoide e perde acurácia em hematomas irregulares, multilobulados ou com inundação ventricular.',
+    'Volume grande com Glasgow preservado ocorre em hematomas lobares de instalação lenta — o volume isolado não substitui a avaliação neurológica seriada.',
+  ],
+  referencias: [
+    { texto: 'Kothari RU, Brott T, Broderick JP, et al. The ABCs of measuring intracerebral hemorrhage volumes. Stroke. 1996;27(8):1304-1305.' },
+    { texto: 'Rost NS, Smith EE, Chang Y, et al. Prediction of functional outcome in patients with primary intracerebral hemorrhage: the FUNC score. Stroke. 2008;39(8):2304-2309.' },
+    { texto: 'Greenberg SM, Ziai WC, Cordonnier C, et al. 2022 Guideline for the Management of Patients With Spontaneous Intracerebral Hemorrhage. Stroke. 2022;53(7):e282-e361.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   glasgow,
   nihss,
@@ -1370,6 +1588,8 @@ export const ferramentas: Ferramenta[] = [
   cefaleias,
   conversorAntiepileptico,
   riscoConvulsao,
+  quatroAt,
+  abc2,
 ]
 
 export default ferramentas
