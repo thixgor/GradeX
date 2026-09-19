@@ -1,9 +1,11 @@
 import {
+  Accessibility,
   Activity,
   Baby,
   Bone,
   Brain,
   Calculator,
+  Eye,
   Droplets,
   Flame,
   FlaskConical,
@@ -16,6 +18,7 @@ import {
   Syringe,
   TestTube,
   Flower2,
+  Smile,
   Waves,
   type LucideIcon,
 } from 'lucide-react'
@@ -55,6 +58,10 @@ export const TEMA: Record<string, TemaCor> = {
   magenta: { text: 'text-fuchsia-600 dark:text-fuchsia-400', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/30', grad: 'from-fuchsia-500/15 to-transparent', hoverBorder: 'hover:border-fuchsia-500/45', raw: '#d946ef' },
   esmeralda: { text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', grad: 'from-emerald-500/15 to-transparent', hoverBorder: 'hover:border-emerald-500/45', raw: '#10b981' },
   lima: { text: 'text-lime-600 dark:text-lime-500', bg: 'bg-lime-500/10', border: 'border-lime-500/30', grad: 'from-lime-500/15 to-transparent', hoverBorder: 'hover:border-lime-500/45', raw: '#84cc16' },
+  roxo: { text: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30', grad: 'from-purple-500/15 to-transparent', hoverBorder: 'hover:border-purple-500/45', raw: '#a855f7' },
+  carmim: { text: 'text-red-600 dark:text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/30', grad: 'from-red-500/15 to-transparent', hoverBorder: 'hover:border-red-500/45', raw: '#ef4444' },
+  ardosia: { text: 'text-slate-600 dark:text-slate-300', bg: 'bg-slate-500/10', border: 'border-slate-500/30', grad: 'from-slate-500/15 to-transparent', hoverBorder: 'hover:border-slate-500/45', raw: '#64748b' },
+  ocre: { text: 'text-yellow-700 dark:text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', grad: 'from-yellow-500/15 to-transparent', hoverBorder: 'hover:border-yellow-500/45', raw: '#eab308' },
 }
 
 export const COR_PADRAO = TEMA.azul
@@ -79,6 +86,10 @@ export const ICONES: Record<string, LucideIcon> = {
   cirurgia: Scissors,
   farmacologia: Pill,
   nutricao: Salad,
+  psiquiatria: Smile,
+  reumatologia: Bone,
+  geriatria: Accessibility,
+  especialidades: Eye,
   osso: Bone,
   padrao: Calculator,
   stetho: Stethoscope,

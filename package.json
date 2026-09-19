@@ -16,6 +16,7 @@
     "test": "vitest run",
     "ferramentas:auditar": "node scripts/auditar-ferramentas.mjs",
     "ferramentas:fumaca": "node --experimental-strip-types --no-warnings scripts/fumaca-ferramentas.mjs",
+    "ferramentas:totais": "node --experimental-strip-types --no-warnings scripts/conferir-totais-ferramentas.mjs",
     "test:watch": "vitest",
     "histologia:dados": "node --experimental-strip-types --no-warnings scripts/histologia/construir-dados.mjs",
     "histopatologia:catalogo": "node public/patologia/scripts/validar-catalogo.mjs",

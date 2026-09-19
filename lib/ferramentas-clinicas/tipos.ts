@@ -34,6 +34,10 @@ export type CategoriaId =
   | 'cirurgia'
   | 'farmacologia'
   | 'nutricao'
+  | 'psiquiatria'
+  | 'reumatologia'
+  | 'geriatria'
+  | 'especialidades'
 
 /** Mapa de valores brutos do formulário: id do campo -> texto digitado/escolhido. */
 export type Valores = Record<string, string>

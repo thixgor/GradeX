@@ -1,7 +1,7 @@
 import type { Categoria, CategoriaId } from './tipos'
 
 /**
- * As 15 famílias de ferramentas.
+ * As 19 famílias de ferramentas.
  *
  * `total` é escrito à mão porque o índice precisa mostrar o número antes de
  * carregar o módulo pesado de cada categoria (cada um é um chunk separado, só
@@ -48,7 +48,7 @@ export const CATEGORIAS: Categoria[] = [
       'A conta do sódio é a que mais mata quando feita errado: corrigir rápido demais desmieliniza, devagar demais deixa convulsionar. Estas ferramentas cobrem estimativa de função renal, as frações de excreção que separam pré-renal de necrose tubular, e os cálculos de déficit e velocidade de correção com os limites de segurança explícitos.',
     icone: 'nefrologia',
     cor: 'violeta',
-    total: 21,
+    total: 22,
   },
   {
     id: 'infectologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 76,
+    total: 78,
   },
   {
     id: 'cirurgia',
@@ -159,6 +159,46 @@ export const CATEGORIAS: Categoria[] = [
     icone: 'nutricao',
     cor: 'lima',
     total: 17,
+  },
+  {
+    id: 'psiquiatria',
+    nome: 'Psiquiatria e saúde mental',
+    subtitulo: 'Rastreio, gravidade e risco',
+    descricao:
+      'Escalas psiquiátricas não diagnosticam: elas quantificam gravidade, medem resposta ao tratamento e disparam a conversa que o clínico precisa ter. O PHQ-9 rastreia depressão em 2 minutos e tem no item 9 a pergunta sobre ideação suicida que a consulta costuma pular; o CIWA-Ar decide a dose de benzodiazepínico na abstinência alcoólica hora a hora. Aqui estão os instrumentos de rastreio, gravidade, risco e conversão de dose que sustentam essas decisões.',
+    icone: 'psiquiatria',
+    cor: 'roxo',
+    total: 3,
+  },
+  {
+    id: 'reumatologia',
+    nome: 'Reumatologia e doenças autoimunes',
+    subtitulo: 'Critérios de classificação e atividade de doença',
+    descricao:
+      'Critérios de classificação foram feitos para ensaios clínicos, não para o consultório — e usá-los como critério diagnóstico é o erro que mais gera diagnóstico falso em reumatologia. O que muda conduta é a atividade de doença medida em série: DAS28, SLEDAI, BASDAI e CDAI dizem se o tratamento está funcionando e quando escalonar, que é a decisão real.',
+    icone: 'reumatologia',
+    cor: 'carmim',
+    total: 2,
+  },
+  {
+    id: 'geriatria',
+    nome: 'Geriatria e cuidados paliativos',
+    subtitulo: 'Funcionalidade, fragilidade e prognóstico',
+    descricao:
+      'Em idosos, idade cronológica prediz pouco e funcionalidade prediz quase tudo: fragilidade, capacidade funcional e cognição preveem complicação cirúrgica, delirium, institucionalização e mortalidade melhor que qualquer índice de comorbidade. Em cuidados paliativos, as escalas de desempenho e prognóstico existem para que a conversa sobre objetivos aconteça enquanto ainda há escolha.',
+    icone: 'geriatria',
+    cor: 'ardosia',
+    total: 2,
+  },
+  {
+    id: 'especialidades',
+    nome: 'Urologia, dermatologia, oftalmologia, ORL e ortopedia',
+    subtitulo: 'Escores das especialidades focais',
+    descricao:
+      'Escores que decidem conduta em territórios específicos e que o generalista encontra com frequência: quando uma pedra ureteral vai sair sozinha, se uma lesão pigmentada precisa de biópsia, quando uma otite exige antibiótico, qual tornozelo torcido merece radiografia. São regras de decisão de alto valor justamente porque evitam exame e procedimento desnecessários.',
+    icone: 'especialidades',
+    cor: 'ocre',
+    total: 2,
   },
 ]
 

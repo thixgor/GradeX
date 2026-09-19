@@ -9,7 +9,7 @@ export { CATEGORIAS, CATEGORIA_POR_ID, IDS_CATEGORIAS, ehCategoria } from './cat
  * Carregamento por categoria.
  *
  * Cada arquivo de conteúdo vira um chunk separado do webpack porque só é
- * alcançado por `import()` dinâmico. Isso importa: juntos, os 15 módulos passam
+ * alcançado por `import()` dinâmico. Isso importa: juntos, os 19 módulos passam
  * de 400 KB de texto, e a página inicial não precisa de nenhum deles — só as
  * categorias, que são leves. A busca global carrega todos, uma vez, sob demanda.
  */
@@ -29,6 +29,10 @@ const MODULOS: Record<CategoriaId, () => Promise<{ ferramentas: Ferramenta[] }>>
   cirurgia: () => import('./conteudo/cirurgia'),
   farmacologia: () => import('./conteudo/farmacologia'),
   nutricao: () => import('./conteudo/nutricao'),
+  psiquiatria: () => import('./conteudo/psiquiatria'),
+  reumatologia: () => import('./conteudo/reumatologia'),
+  geriatria: () => import('./conteudo/geriatria'),
+  especialidades: () => import('./conteudo/especialidades'),
 }
 
 const cache = new Map<CategoriaId, Ferramenta[]>()
@@ -149,4 +153,4 @@ export function totalDeclarado(): number {
  * Número de ferramentas distintas do catálogo.
  * Mantido pelo script `scripts/contar-ferramentas.js`.
  */
-export const TOTAL_FERRAMENTAS = 201
+export const TOTAL_FERRAMENTAS = 210
