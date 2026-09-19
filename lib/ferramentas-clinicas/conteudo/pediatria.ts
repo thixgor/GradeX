@@ -2062,6 +2062,150 @@ const dorPediatrica: Ferramenta = {
   ],
 }
 
+/* ═══════════ Febre no lactente de até 60 dias — AAP 2021 ═══════════ */
+
+const febreLactenteCampos: Campo[] = [
+  campoNum('idadeDias', 'Idade', { unidade: 'dias', min: 0, max: 90, passo: 1, ajuda: 'O algoritmo da AAP de 2021 vale de **8 a 60 dias** em recém-nascidos a termo e previamente hígidos. Abaixo de 8 dias, o lactente entra no protocolo de sepse neonatal precoce e recebe investigação completa e antibiótico sempre.' }),
+  campoNum('temp', 'Temperatura retal máxima', { unidade: '°C', min: 37, max: 42, passo: 0.1, ajuda: 'Febre é definida como **temperatura retal de 38,0 °C ou mais**, aferida em casa ou no serviço. A retal é o padrão nessa faixa etária: a axilar e a timpânica não são confiáveis no lactente.' }),
+  campoSimNao('aparencia', 'Aparência doente (toxemia)', 0, 'Irritabilidade que não cede ao colo, letargia, gemência, má perfusão, palidez ou moteamento, taquipneia, recusa alimentar importante. Aparência doente **encerra o algoritmo**: investigação completa, antibiótico e internação, em qualquer idade da faixa.'),
+  campoSimNao('prematuro', 'Prematuridade (< 37 semanas), internação neonatal prévia ou comorbidade', 0, 'Qualquer um desses tira o lactente do algoritmo, que foi derivado e validado apenas em recém-nascidos a termo previamente hígidos.'),
+  campoNum('pcr', 'PCR', { unidade: 'mg/L', min: 0, max: 400, passo: 0.1, opcional: true, ajuda: 'Marcador inflamatório do algoritmo, com corte de **20 mg/L**. Ele sobe mais lentamente que a procalcitonina e pode estar normal nas primeiras horas de uma infecção bacteriana invasiva.' }),
+  campoNum('procalcitonina', 'Procalcitonina', { unidade: 'ng/mL', min: 0, max: 100, passo: 0.01, opcional: true, ajuda: 'O melhor marcador isolado do algoritmo, com corte de **0,5 ng/mL**. Sobe em 4 horas, antes da PCR, e discrimina melhor infecção bacteriana invasiva de doença viral.' }),
+  campoNum('neutrofilos', 'Neutrófilos absolutos', { unidade: '/mm³', min: 0, max: 40000, passo: 100, opcional: true, ajuda: 'Corte de **4.000 a 5.200/mm³** conforme o serviço. Use a contagem absoluta de neutrófilos, e não o leucograma total, que discrimina pior.' }),
+  campoSimNao('urinaliseAlterada', 'Urinálise alterada (esterase, nitrito ou piúria)', 0, 'A infecção urinária é a infecção bacteriana mais comum nessa faixa e, isoladamente, não exige punção lombar em lactentes acima de 21 dias com os demais marcadores normais.'),
+]
+
+const febreLactente: Ferramenta = {
+  id: 'febre-lactente-60d',
+  nome: 'Febre no lactente de até 60 dias (AAP 2021)',
+  sinonimos: ['febre sem foco', 'lactente febril', 'rochester', 'filadelfia', 'aap 2021', 'sepse neonatal tardia'],
+  resumo: 'Aplica o algoritmo da AAP por faixa etária e define quem precisa de punção lombar, antibiótico e internação.',
+  categorias: ['pediatria', 'infectologia', 'emergencia'],
+  campos: febreLactenteCampos,
+  calcular: (v) => {
+    const idade = num(v, 'idadeDias')
+    const temp = num(v, 'temp')
+    if (idade === null || temp === null) return null
+    const doente = sim(v, 'aparencia')
+    const foraDoAlgoritmo = sim(v, 'prematuro') || idade < 8 || idade > 60
+    const febre = temp >= 38
+
+    const pcr = num(v, 'pcr')
+    const pct = num(v, 'procalcitonina')
+    const neutro = num(v, 'neutrofilos')
+    const urina = sim(v, 'urinaliseAlterada')
+
+    // Qualquer marcador informado e acima do corte já eleva o risco. Marcador
+    // não informado não conta como normal — a ausência dos três é tratada à
+    // parte na interpretação, porque o algoritmo depende deles a partir do 22º dia.
+    const marcadorAlterado =
+      (pct !== null && pct > 0.5) || (pcr !== null && pcr > 20) || (neutro !== null && neutro > 4000)
+
+    const semMarcadores = pct === null && pcr === null && neutro === null
+
+    const faixa = idade <= 21 ? '8 a 21 dias' : idade <= 28 ? '22 a 28 dias' : '29 a 60 dias'
+    const nivel: Nivel = doente || foraDoAlgoritmo || idade <= 21 ? 'critico' : marcadorAlterado ? 'alerta' : 'atencao'
+
+    const interpretacao: string[] = []
+    if (!febre) {
+      interpretacao.push(`Temperatura de ${fmt(temp, 1)} °C está **abaixo do limiar de febre** (38,0 °C retal). O algoritmo se aplica a lactentes febris; sem febre documentada, a conduta é guiada pelo quadro clínico.`)
+    }
+    if (doente) {
+      interpretacao.push('**Aparência doente encerra o algoritmo.** Investigação completa — hemograma, hemocultura, urinálise e urocultura, punção lombar com cultura —, antibiótico parenteral de amplo espectro e internação, em qualquer idade da faixa.')
+    } else if (foraDoAlgoritmo) {
+      interpretacao.push(
+        idade < 8
+          ? '**Abaixo de 8 dias, o algoritmo não se aplica.** Esse lactente entra no protocolo de **sepse neonatal precoce**, que considera fatores de risco maternos (colonização por estreptococo do grupo B, corioamnionite, ruptura prolongada de membranas, febre materna) e cuja conduta padrão é investigação completa com antibiótico.'
+          : idade > 60
+            ? 'Acima de 60 dias o algoritmo não se aplica. A conduta passa a ser guiada por foco identificável, estado vacinal e ferramentas como o UTICalc para infecção urinária.'
+            : '**Prematuridade, internação neonatal prévia ou comorbidade excluem o lactente do algoritmo**, que foi derivado apenas em recém-nascidos a termo previamente hígidos. Trate como de maior risco: investigação completa e antibiótico.',
+      )
+    } else {
+      interpretacao.push(`**Faixa de ${faixa}.** O algoritmo da AAP de 2021 divide os lactentes em três faixas, e a diferença entre elas está sobretudo em **quem precisa de punção lombar** e em quem pode ir para casa.`)
+      if (idade <= 21) {
+        interpretacao.push('**De 8 a 21 dias, todos recebem investigação completa** — hemograma, marcadores inflamatórios, hemocultura, urinálise e urocultura e **punção lombar** —, antibiótico parenteral e internação, independentemente do resultado dos marcadores. A prevalência de infecção bacteriana invasiva e de meningite nessa faixa é alta demais para estratificar.')
+      } else if (idade <= 28) {
+        interpretacao.push('**De 22 a 28 dias**, com marcadores inflamatórios normais e urinálise normal, a punção lombar passa a ser **opcional** — pode ser feita ou não conforme a avaliação. Com qualquer marcador alterado, ela é indicada, junto com antibiótico.')
+      } else {
+        interpretacao.push('**De 29 a 60 dias**, com todos os marcadores normais e urinálise normal, **a punção lombar não é indicada** e o lactente pode receber alta com reavaliação em 24 horas, desde que haja acompanhamento confiável. Com marcador alterado, punção lombar e antibiótico entram.')
+      }
+      if (semMarcadores) {
+        interpretacao.push('Os marcadores inflamatórios não foram informados. O algoritmo depende deles a partir dos 22 dias — **procalcitonina acima de 0,5 ng/mL, PCR acima de 20 mg/L ou neutrófilos absolutos acima de 4.000 a 5.200/mm³** definem risco aumentado.')
+      } else if (marcadorAlterado) {
+        interpretacao.push('**Há marcador inflamatório alterado.** Isso eleva o risco de infecção bacteriana invasiva e indica punção lombar e antibiótico parenteral em qualquer faixa acima de 21 dias.')
+      } else {
+        interpretacao.push('Marcadores inflamatórios informados estão dentro dos limites, o que sustenta a estratificação de menor risco na faixa correspondente.')
+      }
+      if (urina) {
+        interpretacao.push('**Urinálise alterada** aponta infecção urinária, que é a infecção bacteriana mais comum nessa faixa. Acima de 21 dias, com marcadores inflamatórios normais, ela **não obriga** punção lombar — mas exige urocultura colhida por sondagem ou punção suprapúbica e antibiótico.')
+      }
+    }
+    interpretacao.push('A mudança conceitual de 2021 em relação aos critérios antigos (Rochester, Filadélfia, Boston) foi substituir o leucograma por **procalcitonina e PCR**, que discriminam melhor, e permitir explicitamente decisão compartilhada com a família na faixa intermediária.')
+
+    const conduta: string[] = []
+    if (doente || idade <= 21 || foraDoAlgoritmo) {
+      conduta.push('**Investigação completa e antibiótico parenteral, com internação.** Hemograma, marcadores inflamatórios, hemocultura, urinálise e urocultura por sondagem ou punção suprapúbica, e punção lombar com cultura, celularidade, glicose, proteína e PCR viral.')
+      conduta.push('**Ampicilina mais gentamicina** ou **ampicilina mais cefotaxima** cobrem os agentes desta faixa: estreptococo do grupo B, *Escherichia coli* e *Listeria monocytogenes*. Acrescente **aciclovir** diante de vesículas, convulsão, alteração hepática, pleocitose com cultura negativa, parto vaginal com lesão herpética materna ou aparência séptica — a encefalite herpética neonatal é rapidamente fatal e o tratamento empírico é barato em comparação ao desfecho.')
+    } else if (marcadorAlterado) {
+      conduta.push('**Marcador alterado: punção lombar e antibiótico parenteral**, com internação. Ceftriaxona é opção acima de 28 dias; abaixo disso, evite-a pelo risco de encefalopatia bilirrubínica por deslocamento da bilirrubina.')
+    } else if (idade > 28) {
+      conduta.push('**29 a 60 dias com marcadores e urinálise normais:** punção lombar dispensável, e a alta é possível com **reavaliação garantida em 24 horas** e comunicação clara com a família. Colha hemocultura e urocultura antes de liberar, e deixe o resultado sendo acompanhado.')
+    } else {
+      conduta.push('**22 a 28 dias com marcadores normais:** punção lombar opcional, e a decisão deve ser compartilhada com a família, explicando o risco residual. Se a punção não for feita, mantenha em observação hospitalar com hemocultura e urocultura em andamento.')
+    }
+    conduta.push(
+      '**Colha as culturas antes da primeira dose de antibiótico.** Uma dose administrada antes negativa hemocultura e cultura de líquor e inviabiliza o diagnóstico etiológico por semanas.',
+      'Pesquise **vírus** quando houver quadro compatível: painel respiratório, enterovírus no líquor (causa importante de meningite asséptica nessa faixa, sobretudo no verão) e herpes. Identificar o vírus encurta o antibiótico e a internação.',
+      'Lembre que **bronquiolite ou outro quadro viral comprovado não exclui infecção bacteriana** no lactente muito jovem — a coinfecção com infecção urinária é bem documentada abaixo de 60 dias.',
+      'Oriente a família com **precisão sobre sinais de retorno** e garanta que a reavaliação em 24 horas é realmente exequível. O algoritmo de alta pressupõe esse acompanhamento; sem ele, a estratificação não se sustenta.',
+    )
+
+    return {
+      titulo: 'Febre no lactente de até 60 dias',
+      valor: doente ? 'Investigação completa' : foraDoAlgoritmo ? 'Fora do algoritmo' : faixa,
+      nivel,
+      rotuloNivel: doente ? 'Aparência doente' : foraDoAlgoritmo ? 'Protocolo próprio' : idade <= 21 ? 'Investigação completa obrigatória' : marcadorAlterado ? 'Marcador alterado' : 'Menor risco',
+      detalhes: [
+        { rotulo: 'Idade', valor: `${fmtInt(idade)} dias`, nota: faixa },
+        { rotulo: 'Temperatura retal', valor: `${fmt(temp, 1)} °C`, nivel: (febre ? 'alerta' : 'ok') as Nivel, nota: 'Febre ≥ 38,0 °C' },
+        { rotulo: 'Aparência', valor: doente ? 'Doente' : 'Bem', nivel: (doente ? 'critico' : 'ok') as Nivel },
+        ...(pct !== null ? [{ rotulo: 'Procalcitonina', valor: `${fmt(pct, 2)} ng/mL`, nivel: (pct > 0.5 ? 'alerta' : 'ok') as Nivel, nota: 'Corte 0,5' }] : []),
+        ...(pcr !== null ? [{ rotulo: 'PCR', valor: `${fmt(pcr, 1)} mg/L`, nivel: (pcr > 20 ? 'alerta' : 'ok') as Nivel, nota: 'Corte 20' }] : []),
+        ...(neutro !== null ? [{ rotulo: 'Neutrófilos absolutos', valor: `${fmtInt(neutro)}/mm³`, nivel: (neutro > 4000 ? 'alerta' : 'ok') as Nivel, nota: 'Corte 4.000-5.200' }] : []),
+        { rotulo: 'Urinálise', valor: urina ? 'Alterada' : 'Normal', nivel: (urina ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Punção lombar', valor: doente || foraDoAlgoritmo || idade <= 21 || marcadorAlterado ? 'Indicada' : idade <= 28 ? 'Opcional' : 'Não indicada' },
+      ],
+      interpretacao,
+      conduta,
+      alertas: [
+        '**Aparência doente encerra qualquer algoritmo.** Nenhum marcador normal autoriza tranquilizar um lactente toxemiado.',
+        'Abaixo de **8 dias** o algoritmo não se aplica: é protocolo de sepse neonatal precoce, com investigação completa e antibiótico.',
+        'Colha culturas **antes** do antibiótico. Uma dose prévia negativa hemocultura e líquor por semanas.',
+        'Considere **aciclovir empírico** diante de vesículas, convulsão, alteração de transaminases, pleocitose com cultura negativa ou aparência séptica — a encefalite herpética neonatal mata rápido.',
+      ],
+    }
+  },
+  formula: [
+    '8 a 21 dias: investigação completa com punção lombar, antibiótico e internação para todos',
+    '22 a 28 dias: punção lombar opcional se marcadores e urinálise normais',
+    '29 a 60 dias: punção lombar não indicada se marcadores e urinálise normais; alta possível com reavaliação em 24 h',
+    'Marcadores: procalcitonina > 0,5 ng/mL · PCR > 20 mg/L · neutrófilos > 4.000-5.200/mm³',
+  ],
+  fundamento:
+    'A febre sem foco no lactente de até 60 dias é um dos problemas mais antigos e mais estudados da pediatria de emergência, e sua dificuldade nasce de duas características do sistema imune nessa idade. A primeira é a **imaturidade da resposta imune**: a produção de anticorpos contra antígenos polissacarídicos é deficiente até os 2 anos, a função de opsonização e a atividade do complemento são reduzidas, e a reserva de neutrófilos medulares se esgota rapidamente — de modo que a bacteremia progride a sepse e a meningite com velocidade muito maior que no adulto. A segunda é a **ausência de sinais localizatórios**: o lactente não relata sintoma, e a resposta inflamatória local que produziria os sinais clássicos é limitada, o que faz com que meningite, pielonefrite e bacteremia se apresentem igualmente como "febre e nada mais". Os agentes refletem a transmissão perinatal e a colonização intestinal precoce — estreptococo do grupo B, *Escherichia coli* e *Listeria* —, e é essa etiologia que dita a escolha empírica. A evolução dos critérios ao longo de quarenta anos, de Rochester e Filadélfia até a AAP de 2021, foi na direção de substituir marcadores grosseiros por outros de melhor desempenho: o leucograma total, que discrimina mal, deu lugar à **procalcitonina**, que sobe em 4 horas e reflete especificamente a resposta bacteriana, e à PCR. Essa troca é o que permitiu poupar punções lombares na faixa de 29 a 60 dias sem perder meningites.',
+  armadilhas: [
+    'Febre aferida em casa por método confiável conta, mesmo que a criança chegue afebril — a ausência de febre no serviço não invalida o relato.',
+    'Antitérmico administrado antes não muda a conduta: a resposta à medicação não distingue infecção bacteriana de viral.',
+    'O algoritmo pressupõe recém-nascido a termo e previamente hígido; prematuridade e comorbidade exigem investigação mais agressiva.',
+    'A alta em 29 a 60 dias depende de reavaliação garantida em 24 horas — sem esse acompanhamento, a estratificação não se sustenta.',
+  ],
+  referencias: [
+    { texto: 'Pantell RH, Roberts KB, Adams WG, et al. Evaluation and Management of Well-Appearing Febrile Infants 8 to 60 Days Old. Pediatrics. 2021;148(2):e2021052228.' },
+    { texto: 'Kuppermann N, Dayan PS, Levine DA, et al. A Clinical Prediction Rule to Identify Febrile Infants 60 Days and Younger at Low Risk for Serious Bacterial Infections. JAMA Pediatr. 2019;173(4):342-351.' },
+    { texto: 'Jaskiewicz JA, McCarthy CA, Richardson AC, et al. Febrile infants at low risk for serious bacterial infection — an appraisal of the Rochester criteria. Pediatrics. 1994;94(3):390-396.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   dosePediatrica,
   hidratacao,
@@ -2083,6 +2227,7 @@ export const ferramentas: Ferramenta[] = [
   pecarn,
   tanner,
   dorPediatrica,
+  febreLactente,
 ]
 
 export default ferramentas

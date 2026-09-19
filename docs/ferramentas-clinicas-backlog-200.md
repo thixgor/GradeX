@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **236** (eram 201) |
-| Implementadas desta lista | **35** |
-| Restantes | **165** |
-| Nota média na auditoria | **100** — todas as 236 |
+| Ferramentas no catálogo | **237** (eram 201) |
+| Implementadas desta lista | **36** |
+| Restantes | **164** |
+| Nota média na auditoria | **100** — todas as 237 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -78,6 +78,7 @@ escores individuais.
 5. **Escore de Kocher e critério de Caird** — artrite septica do quadril vs. sinovite transitória. **[P1]**
     - ✅ **feito** — `kocher`
 6. **Febre no lactente < 60 dias: Rochester, Filadélfia, Boston e algoritmo AAP 2021** — risco de infecção bacteriana invasiva e necessidade de punção lombar. **[P1]**
+    - ✅ **feito** — `febre-lactente-60d`, com o algoritmo AAP 2021 nas três faixas etárias
 7. **PEWS — Pediatric Early Warning Score** — deterioração clínica em enfermaria pediátrica. **[P1]**
 8. **PIM-3 e PRISM III** — mortalidade predita em UTI pediátrica. **[P2]**
 9. **SNAPPE-II e CRIB-II** — gravidade e mortalidade em UTI neonatal. **[P2]**
