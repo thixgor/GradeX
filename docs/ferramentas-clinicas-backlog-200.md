@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **248** (eram 201) |
-| Implementadas desta lista | **47** |
-| Restantes | **153** |
-| Nota média na auditoria | **100** — todas as 248 |
+| Ferramentas no catálogo | **251** (eram 201) |
+| Implementadas desta lista | **50** |
+| Restantes | **150** |
+| Nota média na auditoria | **100** — todas as 251 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -101,7 +101,7 @@ escores individuais.
     - ✅ **feito** — `crusade`
 20. **Sgarbossa, Sgarbossa modificado (Smith), Wellens e de Winter** — IAM com BRE ou marcapasso e padrões de oclusão proximal de DA. **[P1]**
     - 🟡 **parcial** — `sgarbossa` cobre Sgarbossa e Sgarbossa modificado; Wellens e De Winter aparecem só na conduta, sem ferramenta própria
-21. **Critérios de Brugada, Vereckei e algoritmo de aVR** — taquicardia ventricular vs. supraventricular com QRS largo. **[P1]**
+21. ✅ **Critérios de Brugada, Vereckei e algoritmo de aVR** — taquicardia ventricular vs. supraventricular com QRS largo. `taquicardia-qrs-largo` reúne os três num só painel, com a instabilidade curto-circuitando o algoritmo e o alerta de verapamil. **[P1]**
 22. **Critérios de sobrecarga atrial e de hipertrofia ventricular direita** — complemento eletrocardiográfico do módulo de HVE. **[P2]**
 23. **Critérios de Framingham e de Boston para IC, com classificação NYHA e angina pela CCS** — diagnóstico clínico de insuficiência cardíaca e graduação sintomática. **[P1]**
     - ✅ **feito** — `nyha-ccs-framingham`, com as três escalas
@@ -155,13 +155,13 @@ escores individuais.
     - 🟡 **parcial** — `4at` feito; ICDSC pendente
 52. **ABCD3-I** — refinamento do ABCD² com imagem e estenose carotídea. **[P2]**
 53. **DRAGON, THRIVE, SEDAN e HAT** — prognóstico funcional e risco de hemorragia após trombólise. **[P2]**
-54. **CPSSS, RACE e LAMS** — triagem pré-hospitalar de oclusão de grande vaso. **[P1]**
+54. ✅ **CPSSS, RACE e LAMS** — triagem pré-hospitalar de oclusão de grande vaso. `triagem-lvo`, com as três escalas selecionáveis, limiares próprios e decisão de destino pelo tempo adicional até o centro de trombectomia. **[P1]**
 55. **Escore FUNC e fórmula ABC/2 (Kothari)** — desfecho funcional e volume do hematoma intracerebral. **[P1]**
     - ✅ **feito** — `abc2-func`, com ABC/2 e FUNC
 56. **STESS e EMSE** — prognóstico do estado de mal epiléptico. **[P2]**
 57. **EGRIS, EGOS de Erasmus e escala de incapacidade de Hughes** — risco de insuficiência respiratória e desfecho na síndrome de Guillain-Barré. **[P2]**
 58. **EDSS e critérios de McDonald 2017** — incapacidade e diagnóstico de esclerose múltipla. **[P2]**
-59. **DN4, LANSS e painDETECT** — caracterização de dor neuropática. **[P1]**
+59. 🟡 **DN4, LANSS e painDETECT** — caracterização de dor neuropática. `dor-neuropatica-dn4` implementa o DN4 completo com a graduação da IASP; LANSS, painDETECT e NPSI ficam citados na conduta como alternativas, mas ainda sem calculadora própria. **[P1]**
 
 ## 5. Pneumologia e sono (11)
 

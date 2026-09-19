@@ -1572,6 +1572,334 @@ const abc2: Ferramenta = {
   ],
 }
 
+/* ═══════════ Triagem pré-hospitalar de oclusão de grande vaso ═══════════ */
+
+const lvoCampos: Campo[] = [
+  campoSeg('escala', 'Escala', [
+    { valor: 'cpsss', rotulo: 'C-STAT / CPSSS' },
+    { valor: 'race', rotulo: 'RACE' },
+    { valor: 'lams', rotulo: 'LAMS' },
+  ], { padrao: 'cpsss', ajuda: 'As três têm desempenho semelhante e nenhuma é claramente superior. **Escolha a que o seu sistema regional padronizou** — a uniformidade entre resgate, regulação e porta de entrada vale mais que a diferença estatística entre elas.' }),
+
+  // C-STAT / CPSSS
+  campoOpc('cpsssOlhar', 'Desvio conjugado do olhar', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Presente', pontos: 1 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'cpsss', ajuda: 'Peça para o paciente seguir o seu dedo, ou observe para onde os olhos repousam. **O olhar desvia para o lado da lesão** — o paciente "olha para o próprio AVC" — porque o campo ocular frontal do hemisfério lesado deixa de empurrar os olhos para o lado oposto.' }),
+  campoOpc('cpsssNivel', 'Nível de consciência: idade e mês, e obedecer a dois comandos', [
+    { valor: '0', rotulo: 'Acerta ambos e obedece a ambos os comandos', pontos: 0 },
+    { valor: '1', rotulo: 'Erra alguma pergunta ou não obedece a algum comando', pontos: 1 },
+    { valor: '2', rotulo: 'Erra as duas perguntas e não obedece a nenhum comando', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'cpsss', ajuda: 'Pergunte a **idade** e o **mês**, e peça para **fechar os olhos** e **apertar a mão**. Em afasia global o paciente não obedece nem responde, e o item pontua — o que é correto: afasia global sinaliza território extenso.' }),
+  campoOpc('cpsssBraco', 'Queda do braço', [
+    { valor: '0', rotulo: 'Sem queda, ou queda parcial', pontos: 0 },
+    { valor: '1', rotulo: 'Queda rápida, sem esforço contra a gravidade', pontos: 1 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'cpsss' }),
+
+  // RACE
+  campoOpc('raceFacial', 'Paresia facial', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Leve', pontos: 1 },
+    { valor: '2', rotulo: 'Moderada a grave', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'race' }),
+  campoOpc('raceBraco', 'Paresia braquial', [
+    { valor: '0', rotulo: 'Ausente a leve — mantém > 10 s', pontos: 0 },
+    { valor: '1', rotulo: 'Moderada — mantém < 10 s', pontos: 1 },
+    { valor: '2', rotulo: 'Grave — não vence a gravidade', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'race' }),
+  campoOpc('racePerna', 'Paresia crural', [
+    { valor: '0', rotulo: 'Ausente a leve — mantém > 5 s', pontos: 0 },
+    { valor: '1', rotulo: 'Moderada — mantém < 5 s', pontos: 1 },
+    { valor: '2', rotulo: 'Grave — não vence a gravidade', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'race' }),
+  campoOpc('raceOlhar', 'Desvio da cabeça e do olhar', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Presente', pontos: 1 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'race' }),
+  campoOpc('raceCortical', 'Função cortical', [
+    { valor: '0', rotulo: 'Normal', pontos: 0 },
+    { valor: '1', rotulo: 'Alteração moderada — afasia ou agnosia parcial', pontos: 1 },
+    { valor: '2', rotulo: 'Alteração grave — afasia global, ou não reconhece o próprio braço', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'race', ajuda: 'O item muda conforme o lado. **Hemisfério esquerdo (déficit à direita): teste a linguagem** — mandar fechar os olhos e mostrar dois dedos. **Hemisfério direito (déficit à esquerda): teste a agnosia** — pergunte de quem é o braço parético e se ele consegue movê-lo; a negação é anosognosia.' }),
+
+  // LAMS
+  campoOpc('lamsFacial', 'Paresia facial', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Presente', pontos: 1 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'lams' }),
+  campoOpc('lamsPreensao', 'Preensão da mão', [
+    { valor: '0', rotulo: 'Normal', pontos: 0 },
+    { valor: '1', rotulo: 'Fraca', pontos: 1 },
+    { valor: '2', rotulo: 'Ausente', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'lams' }),
+  campoOpc('lamsBraco', 'Força do braço', [
+    { valor: '0', rotulo: 'Sem queda', pontos: 0 },
+    { valor: '1', rotulo: 'Queda parcial', pontos: 1 },
+    { valor: '2', rotulo: 'Queda rápida', pontos: 2 },
+  ], { padrao: '0', mostrarSe: (v) => opc(v, 'escala') === 'lams' }),
+
+  campoNum('tempoCentro', 'Tempo adicional até o centro de trombectomia', { unidade: 'minutos', min: 0, max: 300, passo: 5, padrao: '20', opcional: true, ajuda: 'Quanto tempo a mais se gasta indo direto ao centro de trombectomia em vez do hospital com trombólise mais próximo. É a variável que decide o destino quando o escore é positivo.' }),
+  campoSimNao('glicemiaAferida', 'Glicemia capilar já aferida', 0, 'A hipoglicemia é o grande imitador do AVC e reverte em minutos com glicose. **Aferir glicemia capilar é obrigatório antes de acionar qualquer fluxo de AVC** — é a checagem mais barata que evita o erro mais constrangedor.'),
+]
+
+const lvoPreHospitalar: Ferramenta = {
+  id: 'triagem-lvo',
+  nome: 'Triagem pré-hospitalar de oclusão de grande vaso',
+  sigla: 'LVO',
+  sinonimos: ['lvo', 'cpsss', 'c-stat', 'race', 'lams', 'trombectomia', 'grande vaso', 'avc pre hospitalar', 'triagem avc'],
+  resumo: 'Identifica no atendimento pré-hospitalar o AVC com oclusão de grande vaso, que precisa de trombectomia, e orienta a escolha do destino.',
+  categorias: ['neurologia', 'emergencia'],
+  campos: lvoCampos,
+  calcular: (v) => {
+    const escala = opc(v, 'escala') ?? 'cpsss'
+    const tempoCentro = num(v, 'tempoCentro')
+
+    let total = 0
+    let maximo = 0
+    let limiar = 0
+    let nomeEscala = ''
+    const itens: { rotulo: string; valor: string }[] = []
+
+    if (escala === 'cpsss') {
+      nomeEscala = 'C-STAT / CPSSS'
+      maximo = 4
+      limiar = 2
+      const olhar = ptsOpc(lvoCampos, v, 'cpsssOlhar') ?? 0
+      const nivelC = ptsOpc(lvoCampos, v, 'cpsssNivel') ?? 0
+      const braco = ptsOpc(lvoCampos, v, 'cpsssBraco') ?? 0
+      total = olhar + nivelC + braco
+      itens.push(
+        { rotulo: 'Desvio conjugado do olhar', valor: fmtInt(olhar) },
+        { rotulo: 'Nível de consciência (perguntas e comandos)', valor: fmtInt(nivelC) },
+        { rotulo: 'Queda do braço', valor: fmtInt(braco) },
+      )
+    } else if (escala === 'race') {
+      nomeEscala = 'RACE'
+      maximo = 9
+      limiar = 5
+      const facial = ptsOpc(lvoCampos, v, 'raceFacial') ?? 0
+      const braco = ptsOpc(lvoCampos, v, 'raceBraco') ?? 0
+      const perna = ptsOpc(lvoCampos, v, 'racePerna') ?? 0
+      const olhar = ptsOpc(lvoCampos, v, 'raceOlhar') ?? 0
+      const cortical = ptsOpc(lvoCampos, v, 'raceCortical') ?? 0
+      total = facial + braco + perna + olhar + cortical
+      itens.push(
+        { rotulo: 'Paresia facial', valor: fmtInt(facial) },
+        { rotulo: 'Paresia braquial', valor: fmtInt(braco) },
+        { rotulo: 'Paresia crural', valor: fmtInt(perna) },
+        { rotulo: 'Desvio da cabeça e do olhar', valor: fmtInt(olhar) },
+        { rotulo: 'Função cortical', valor: fmtInt(cortical) },
+      )
+    } else {
+      nomeEscala = 'LAMS'
+      maximo = 5
+      limiar = 4
+      const facial = ptsOpc(lvoCampos, v, 'lamsFacial') ?? 0
+      const preensao = ptsOpc(lvoCampos, v, 'lamsPreensao') ?? 0
+      const braco = ptsOpc(lvoCampos, v, 'lamsBraco') ?? 0
+      total = facial + preensao + braco
+      itens.push(
+        { rotulo: 'Paresia facial', valor: fmtInt(facial) },
+        { rotulo: 'Preensão da mão', valor: fmtInt(preensao) },
+        { rotulo: 'Força do braço', valor: fmtInt(braco) },
+      )
+    }
+
+    const positivo = total >= limiar
+    const nivel: Nivel = positivo ? 'alerta' : total >= limiar - 1 ? 'atencao' : 'ok'
+    const semGlicemia = !sim(v, 'glicemiaAferida')
+
+    const conduta: string[] = []
+    if (semGlicemia) {
+      conduta.push('**Afira a glicemia capilar antes de qualquer outra coisa.** A hipoglicemia imita o AVC de forma convincente, inclusive com déficit focal lateralizado, e reverte em minutos com glicose. É a checagem mais barata que evita o erro mais constrangedor do fluxo de AVC.')
+    }
+    if (positivo) {
+      conduta.push(`**${nomeEscala} de ${fmtInt(total)} — triagem positiva para oclusão de grande vaso.** Notifique o centro de referência **antes da chegada**: a pré-notificação é a intervenção isolada que mais reduz o tempo porta-agulha e porta-punção, e não custa nada.`)
+      if (tempoCentro !== null) {
+        if (tempoCentro <= 30) {
+          conduta.push(`Com **${fmtInt(tempoCentro)} minutos adicionais** até o centro de trombectomia, o desvio direto é em geral favorável. A maioria dos protocolos regionais aceita um acréscimo de até 30 minutos para levar o paciente diretamente ao centro capaz de trombectomia.`)
+        } else if (tempoCentro <= 45) {
+          conduta.push(`**${fmtInt(tempoCentro)} minutos adicionais** ficam na faixa de decisão. Leve em conta o tempo de início dos sintomas — perto do limite da trombólise, pesa mais ir ao hospital mais próximo; com muito tempo de janela restante, pesa mais ir direto ao centro de trombectomia. Regule com o centro, não decida sozinho na ambulância.`)
+        } else {
+          conduta.push(`**${fmtInt(tempoCentro)} minutos adicionais é muito.** Nessa faixa, o modelo de "*drip and ship*" — trombólise no hospital mais próximo e transferência em seguida — costuma ser superior, porque garante a reperfusão possível agora em vez de apostar toda a janela no transporte.`)
+        }
+      } else {
+        conduta.push('Informe o tempo adicional até o centro de trombectomia para orientar a escolha do destino: acréscimo de até cerca de 30 minutos favorece o desvio direto; acima de 45 minutos, favorece trombólise no hospital mais próximo com transferência subsequente.')
+      }
+      conduta.push('**Escore positivo não contraindica trombólise** — as duas terapias são complementares, e não alternativas. O paciente elegível deve receber o trombolítico mesmo quando segue para trombectomia; nunca retarde o trombolítico por causa do escore.')
+    } else {
+      conduta.push(`**${nomeEscala} de ${fmtInt(total)} — triagem negativa para grande vaso.** Isso **não afasta AVC**: significa apenas que a probabilidade de oclusão de grande vaso é menor. Mantenha o fluxo de AVC completo, com transporte ao hospital capaz de trombólise mais próximo e pré-notificação.`)
+      conduta.push('Lembre que essas escalas são **cegas para a circulação posterior**. Oclusão de basilar pode se apresentar com vertigem, diplopia, disartria, ataxia ou rebaixamento flutuante, sem hemiparesia — e escore zero. É a apresentação mais perdida e a de pior prognóstico sem tratamento.')
+    }
+    conduta.push(
+      '**Registre o horário em que o paciente foi visto bem pela última vez**, e não o horário em que os sintomas foram notados. É o dado que define a elegibilidade terapêutica e o que mais se perde no caminho — colha o telefone de quem presenciou, porque no hospital essa testemunha já não estará.',
+      'Leve informações que o hospital não consegue obter sozinho: **anticoagulante em uso e horário da última dose**, cirurgia ou sangramento recente, antecedente de convulsão e glicemia aferida. Nada disso se recupera depois.',
+      'Considere os **imitadores de AVC**: hipoglicemia, crise convulsiva com paralisia de Todd, enxaqueca hemiplégica, encefalopatia séptica, intoxicação e transtorno funcional. Eles representam parcela relevante dos acionamentos e, com exceção da hipoglicemia, o diagnóstico é hospitalar — na dúvida, ative o fluxo.',
+    )
+
+    return {
+      titulo: `Triagem de grande vaso — ${nomeEscala}`,
+      valor: fmtInt(total),
+      unidade: `de ${maximo} pontos`,
+      nivel,
+      rotuloNivel: positivo ? 'Triagem positiva' : 'Triagem negativa',
+      detalhes: [
+        ...itens,
+        { rotulo: 'Limiar de positividade', valor: `≥ ${limiar}` },
+        { rotulo: 'Glicemia capilar', valor: semGlicemia ? 'Não aferida' : 'Aferida', nivel: (semGlicemia ? 'alerta' : 'ok') as Nivel, nota: semGlicemia ? 'Obrigatória antes de acionar o fluxo' : undefined },
+        ...(tempoCentro !== null ? [{ rotulo: 'Tempo adicional ao centro de trombectomia', valor: `${fmtInt(tempoCentro)} min` }] : []),
+      ],
+      interpretacao: [
+        `**${nomeEscala}: ${total} de ${maximo} pontos — ${positivo ? 'positiva' : 'negativa'}** (limiar ≥ ${limiar}). Estas escalas não perguntam "é AVC?", e sim **"este AVC tem oclusão de grande vaso?"** — ou seja, se o paciente precisa de um centro com trombectomia, e não apenas de um hospital com trombólise.`,
+        'As três derivam da mesma observação: a oclusão de artéria de grande calibre produz **déficit extenso**, que envolve simultaneamente território motor e território cortical. É por isso que todas combinam um item motor com um item cortical — desvio do olhar, afasia ou anosognosia. Déficit motor isolado, por mais intenso, costuma ser lacunar.',
+        'O **desvio conjugado do olhar** é o sinal mais específico e o mais subutilizado. O campo ocular frontal de cada hemisfério empurra os olhos para o lado oposto; quando um hemisfério é lesado, o outro vence, e **os olhos desviam para o lado da lesão** — o paciente "olha para o próprio AVC". Só de observar para onde os olhos repousam já se define o hemisfério.',
+        '**Sensibilidade e especificidade giram em torno de 60 a 80%, e nenhuma escala é claramente superior.** Isso tem uma consequência prática incômoda: sempre haverá falso-negativo levado ao hospital sem trombectomia e falso-positivo desviado desnecessariamente. O parâmetro que o sistema deve calibrar é **qual dos dois erros custa mais na sua região**, o que depende das distâncias e da capacidade instalada.',
+        positivo
+          ? '**Positivo não dispensa a trombólise.** As duas terapias são complementares: o paciente elegível recebe o trombolítico e segue para a trombectomia. Retardar o trombolítico por causa do escore é um erro com custo direto em tecido.'
+          : '**Negativo não afasta AVC**, e tampouco afasta grande vaso — apenas reduz a probabilidade. Mantenha o fluxo de AVC completo.',
+      ],
+      conduta,
+      alertas: [
+        '**Afira glicemia capilar sempre.** A hipoglicemia é o imitador mais comum e reverte em minutos.',
+        'Estas escalas são **cegas para a circulação posterior**: oclusão de basilar com vertigem, diplopia, ataxia ou rebaixamento flutuante pode pontuar zero, e é a apresentação de pior prognóstico sem tratamento.',
+        'Escore positivo **nunca** justifica atrasar a trombólise no paciente elegível — trombólise e trombectomia são complementares.',
+        'O horário que importa é o de **última vez visto bem**, não o de percepção dos sintomas. Colha o telefone da testemunha antes de sair da cena.',
+      ],
+    }
+  },
+  formula: [
+    'C-STAT/CPSSS (0-4): desvio do olhar (1) + nível de consciência (0-2) + queda do braço (1) · positivo ≥ 2',
+    'RACE (0-9): facial (0-2) + braço (0-2) + perna (0-2) + olhar (0-1) + função cortical (0-2) · positivo ≥ 5',
+    'LAMS (0-5): facial (0-1) + preensão (0-2) + braço (0-2) · positivo ≥ 4',
+  ],
+  fundamento:
+    'A lógica destas escalas decorre da arquitetura vascular cerebral. A artéria cerebral média irriga tanto a porção lateral do giro pré-central — onde se representam face e membro superior — quanto extensas áreas corticais associativas: as de linguagem no hemisfério dominante, as de atenção espacial no não dominante. Quando o trombo oclui o tronco da cerebral média, a carótida interna terminal ou o segmento proximal M1, o território comprometido é grande o bastante para lesar **motor e córtex ao mesmo tempo**. É exatamente esse acoplamento que as escalas detectam: nenhuma delas mede gravidade em abstrato, todas procuram a **combinação** de déficit motor com sinal cortical. O contraste esclarece — uma lacuna na cápsula interna pode produzir hemiplegia densa e completa, porque ali as fibras corticoespinhais estão condensadas num volume minúsculo, mas não produz afasia nem desvio do olhar, porque o córtex está intacto; e não há grande vaso a desobstruir. O desvio do olhar merece destaque próprio: o campo ocular frontal, na porção posterior do giro frontal médio, comanda a sacada para o lado **oposto**; lesado um lado, o outro passa a agir sem oposição e os olhos derivam para o lado da lesão. A limitação estrutural das escalas nasce da mesma anatomia: a circulação posterior não tem representação motora lateralizada equivalente nem córtex de linguagem, de modo que a oclusão de basilar — com vertigem, diplopia, ataxia, disartria e rebaixamento — atravessa todas elas sem pontuar.',
+  armadilhas: [
+    'Usar a escala para decidir se é AVC: ela pressupõe o diagnóstico e só estratifica a probabilidade de grande vaso.',
+    'Tratar resultado negativo como exclusão — sensibilidade em torno de 60 a 80% deixa escapar uma parcela relevante.',
+    'Aplicar em circulação posterior, para a qual nenhuma das três foi construída.',
+    'Deixar de aferir glicemia, ou de registrar o horário de última vez visto bem e o anticoagulante em uso.',
+    'Comparar escores de escalas diferentes: os limiares e as amplitudes não são intercambiáveis.',
+  ],
+  referencias: [
+    { texto: 'Katz BS, McMullan JT, Sucharew H, et al. Design and validation of a prehospital scale to predict stroke severity: Cincinnati Prehospital Stroke Severity Scale. Stroke. 2015;46(6):1508-1512.' },
+    { texto: 'Pérez de la Ossa N, Carrera D, Gorchs M, et al. Design and validation of a prehospital stroke scale to predict large arterial occlusion: the Rapid Arterial oCclusion Evaluation scale. Stroke. 2014;45(1):87-91.' },
+    { texto: 'Powers WJ, Rabinstein AA, Ackerson T, et al. Guidelines for the Early Management of Patients With Acute Ischemic Stroke: 2019 Update. Stroke. 2019;50(12):e344-e418.' },
+  ],
+}
+
+/* ═══════════ DN4 e LANSS — rastreio de dor neuropática ═══════════ */
+
+const dn4Campos: Campo[] = [
+  campoSimNao('queimacao', 'Queimação', 1, 'Os descritores de dor neuropática são marcadores de **atividade ectópica em fibra nervosa lesada**, e não de intensidade. Queimação costuma refletir descarga espontânea em fibras C amielínicas.'),
+  campoSimNao('frioDoloroso', 'Sensação de frio doloroso', 1, undefined),
+  campoSimNao('choque', 'Choque elétrico', 1, 'A dor em choque, paroxística e fulminante, corresponde a descarga de alta frequência em fibras mielinizadas — é o padrão da neuralgia do trigêmeo.'),
+  campoSimNao('formigamento', 'Formigamento na área dolorosa', 1, undefined),
+  campoSimNao('alfinetadas', 'Alfinetadas e agulhadas', 1, undefined),
+  campoSimNao('adormecimento', 'Adormecimento', 1, undefined),
+  campoSimNao('coceira', 'Coceira', 1, undefined),
+  campoSimNao('hipoestesiaTato', 'Ao exame: hipoestesia ao tato', 1, 'Toque leve com o algodão, comparando com a área homóloga contralateral. **A coexistência de perda sensitiva e dor na mesma área é a assinatura da dor neuropática** — a região está simultaneamente dormente e dolorosa, o que não ocorre na dor nociceptiva.'),
+  campoSimNao('hipoestesiaPicada', 'Ao exame: hipoestesia à picada', 1, undefined),
+  campoSimNao('alodinia', 'Ao exame: dor provocada ou aumentada pela escovação leve', 1, '**Alodinia** é dor provocada por estímulo que normalmente não dói. Escove a pele com um pincel ou algodão: se doer, há sensibilização central com reorganização sináptica no corno dorsal, em que fibras táteis Aβ passam a alimentar vias nociceptivas.'),
+  campoSimNao('distribuicao', 'A dor respeita um território neuroanatômico plausível', 0, 'Item não pontuado no DN4, mas **decisivo na classificação**. Segundo a graduação da IASP, dor neuropática **provável** exige distribuição neuroanatomicamente plausível somada a sinais sensitivos confirmatórios. Dor difusa, que não respeita território de nervo, raiz ou via central, deve fazer reconsiderar o diagnóstico.'),
+]
+
+const dorNeuropatica: Ferramenta = {
+  id: 'dor-neuropatica-dn4',
+  nome: 'DN4 — rastreio de dor neuropática',
+  sigla: 'DN4',
+  sinonimos: ['dn4', 'dor neuropatica', 'lanss', 'paindetect', 'neuropatia', 'alodinia', 'neuralgia'],
+  resumo: 'Distingue dor neuropática de dor nociceptiva em dez itens e orienta o tratamento, que é inteiramente diferente entre as duas.',
+  categorias: ['neurologia', 'farmacologia'],
+  campos: dn4Campos,
+  calcular: (v) => {
+    const total = somaSimNao(v, [
+      { id: 'queimacao', pontos: 1 },
+      { id: 'frioDoloroso', pontos: 1 },
+      { id: 'choque', pontos: 1 },
+      { id: 'formigamento', pontos: 1 },
+      { id: 'alfinetadas', pontos: 1 },
+      { id: 'adormecimento', pontos: 1 },
+      { id: 'coceira', pontos: 1 },
+      { id: 'hipoestesiaTato', pontos: 1 },
+      { id: 'hipoestesiaPicada', pontos: 1 },
+      { id: 'alodinia', pontos: 1 },
+    ])
+
+    const positivo = total >= 4
+    const plausivel = sim(v, 'distribuicao')
+    const sinaisExame = (sim(v, 'hipoestesiaTato') ? 1 : 0) + (sim(v, 'hipoestesiaPicada') ? 1 : 0) + (sim(v, 'alodinia') ? 1 : 0)
+    const nivel: Nivel = positivo ? (plausivel ? 'alerta' : 'atencao') : 'ok'
+
+    const conduta: string[] = []
+    if (positivo && plausivel) {
+      conduta.push('**Rastreio positivo com distribuição neuroanatômica plausível: trate como dor neuropática.** A consequência prática é grande, porque o tratamento diverge por completo do da dor nociceptiva.')
+      conduta.push('**Primeira linha:** gabapentinoides (gabapentina ou pregabalina), antidepressivos tricíclicos (amitriptilina, nortriptilina) e inibidores da recaptação de serotonina e noradrenalina (duloxetina, venlafaxina). A escolha se faz pelas **comorbidades e pelos efeitos adversos**, não por superioridade de eficácia — os números necessários para tratar são semelhantes, entre 4 e 8.')
+      conduta.push('**Titule devagar e chegue à dose eficaz.** O erro mais comum não é escolher o fármaco errado, é subdosar e abandonar cedo: a analgesia leva de duas a quatro semanas para se estabelecer, e o paciente que interrompe na primeira semana por tontura ou sonolência perde um tratamento que teria funcionado. Avise disso **antes** de começar.')
+      conduta.push('Nos quadros **localizados** — neuralgia pós-herpética, neuropatia pós-traumática, radiculopatia focal — prefira o tratamento tópico: **lidocaína a 5% em adesivo** é bem tolerada e praticamente isenta de efeito sistêmico, e o **capsaicina a 8%** em aplicação única tem efeito prolongado.')
+    } else if (positivo) {
+      conduta.push('**Rastreio positivo, porém sem distribuição neuroanatômica plausível.** Antes de tratar como neuropática, reveja o quadro: pela graduação da IASP, a dor neuropática **provável** exige território compatível com nervo, raiz, plexo ou via central. Dor difusa com descritores neuropáticos sugere mais **sensibilização central** — fibromialgia, dor nociplástica —, em que a resposta a gabapentinoides e a antidepressivos existe, mas a abordagem é predominantemente não farmacológica.')
+    } else {
+      conduta.push(`**DN4 de ${fmtInt(total)}: rastreio negativo** (positivo com 4 ou mais). O quadro provavelmente é de dor nociceptiva, em que anti-inflamatórios, analgesia simples e tratamento da causa são a base. **Não inicie gabapentinoide para dor nociceptiva**: o benefício é nulo e os efeitos adversos, reais.`)
+      conduta.push('Se a suspeita clínica permanecer alta apesar do escore, reavalie ao longo do tempo — a dor neuropática pode levar semanas a meses para desenvolver a apresentação completa, e a neuropatia diabética em particular se instala de forma insidiosa.')
+    }
+    conduta.push(
+      '**Procure e trate a causa**, que nenhum analgésico substitui: controle glicêmico na neuropatia diabética, descompressão em síndrome compressiva, tratamento antiviral e vacinação na neuralgia pós-herpética, revisão de quimioterápico neurotóxico, e investigação de deficiência de vitamina B12, hipotireoidismo, doença renal crônica, infecção pelo vírus da imunodeficiência humana, uso de álcool e hanseníase, que ainda é causa relevante no Brasil.',
+      '**Opioide não é tratamento de dor neuropática crônica.** O benefício é modesto, a tolerância se instala, e o balanço de risco a longo prazo é desfavorável — tramadol e tapentadol ficam como segunda ou terceira linha, e a morfina não tem lugar na terapia crônica desta condição.',
+      '**Estabeleça expectativa realista desde a primeira consulta.** Redução de 30 a 50% na intensidade da dor é um bom resultado; a abolição completa raramente ocorre. Combine metas funcionais — sono, marcha, trabalho — e não apenas o número da escala de dor, porque é na função que o ganho aparece primeiro.',
+      'Associe abordagem **não farmacológica**: exercício gradual, terapia cognitivo-comportamental, higiene do sono e tratamento do transtorno de humor concomitante. A depressão e a insônia amplificam a dor neuropática de forma mensurável, e tratá-las melhora a dor por si só.',
+      'Ferramentas alternativas equivalentes: o **LANSS** acrescenta o teste do limiar de picada, o **painDETECT** foi derivado em dor lombar e incorpora o padrão temporal e a irradiação, e o **NPSI** serve para caracterizar os subtipos de sintoma e acompanhar a resposta ao longo do tratamento.',
+    )
+
+    return {
+      titulo: 'DN4',
+      valor: fmtInt(total),
+      unidade: 'de 10 pontos',
+      nivel,
+      rotuloNivel: positivo ? (plausivel ? 'Dor neuropática provável' : 'Positivo, distribuição atípica') : 'Dor neuropática improvável',
+      detalhes: [
+        { rotulo: 'Descritores relatados', valor: fmtInt(total - sinaisExame) + ' de 7' },
+        { rotulo: 'Sinais ao exame', valor: fmtInt(sinaisExame) + ' de 3', nivel: (sinaisExame >= 1 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Alodinia à escovação', valor: sim(v, 'alodinia') ? 'Presente' : 'Ausente', nivel: (sim(v, 'alodinia') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Hipoestesia na área dolorosa', valor: sim(v, 'hipoestesiaTato') || sim(v, 'hipoestesiaPicada') ? 'Presente' : 'Ausente', nivel: (sim(v, 'hipoestesiaTato') || sim(v, 'hipoestesiaPicada') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Distribuição neuroanatômica plausível', valor: plausivel ? 'Sim' : 'Não', nivel: (plausivel ? 'ok' : 'atencao') as Nivel, nota: plausivel ? undefined : 'Exigida para dor neuropática provável (IASP)' },
+        { rotulo: 'Limiar', valor: '≥ 4 de 10 — sensibilidade ~83%, especificidade ~90%' },
+      ],
+      interpretacao: [
+        `**${total} de 10 pontos — ${positivo ? 'rastreio positivo' : 'rastreio negativo'}** (limiar de 4). O DN4 combina sete descritores relatados pelo paciente com três sinais obtidos ao exame, e alcança sensibilidade em torno de 83% e especificidade de cerca de 90%.`,
+        '**A assinatura da dor neuropática é a coexistência de perda sensitiva e dor na mesma área.** A região está simultaneamente dormente e dolorosa — algo que não acontece na dor nociceptiva e que, sozinho, já orienta o diagnóstico à beira do leito. Por isso os itens de exame pesam tanto.',
+        '**Alodinia** — dor provocada por estímulo normalmente indolor, como a escovação leve ou o roçar da roupa — é o achado mais característico e o mais fácil de demonstrar. Ela indica reorganização sináptica no corno dorsal, com fibras táteis Aβ passando a alimentar vias nociceptivas.',
+        plausivel
+          ? 'A dor respeita um **território neuroanatômico plausível**, o que, somado aos sinais sensitivos, satisfaz o critério de dor neuropática **provável** da graduação da IASP. A confirmação definitiva exigiria exame complementar que demonstre a lesão — eletroneuromiografia, imagem ou biópsia de pele.'
+          : '**A dor não respeita território neuroanatômico.** Isso é relevante: pela graduação da IASP, a distribuição plausível é requisito para dor neuropática provável. Descritores neuropáticos em dor difusa sugerem mais **dor nociplástica**, por sensibilização central, cujo manejo é diferente.',
+        'A distinção não é acadêmica: **anti-inflamatórios e opioides funcionam mal na dor neuropática**, enquanto gabapentinoides e antidepressivos não têm lugar na dor nociceptiva simples. Classificar errado significa tratar errado nos dois sentidos.',
+      ],
+      conduta,
+      alertas: [
+        'O DN4 é **rastreio, não diagnóstico**: a graduação da IASP exige distribuição neuroanatômica plausível somada a sinais sensitivos, e a confirmação depende de demonstrar a lesão.',
+        '**Titule devagar e chegue à dose eficaz.** Subdosar e abandonar na primeira semana é o erro mais comum — a analgesia leva de 2 a 4 semanas para aparecer.',
+        'A **pregabalina e a gabapentina exigem ajuste pela função renal** e têm potencial de uso indevido; a **amitriptilina é anticolinérgica** e deve ser evitada em idosos, em glaucoma de ângulo fechado e em retenção urinária, além de exigir cautela com o intervalo QT.',
+        'Dor neuropática de instalação aguda com déficit progressivo, disfunção esfincteriana ou anestesia em sela é **emergência** — síndrome da cauda equina ou compressão medular —, e não caso de rastreio ambulatorial.',
+      ],
+    }
+  },
+  formula: ['DN4 = 7 descritores (queimação, frio doloroso, choque, formigamento, alfinetadas, adormecimento, coceira) + 3 sinais ao exame (hipoestesia tátil, hipoestesia à picada, alodinia à escovação)', 'Positivo: ≥ 4 de 10'],
+  fundamento:
+    'A dor nociceptiva é o sistema funcionando como projetado: um estímulo lesivo ativa nociceptores íntegros, e a dor é proporcional ao dano e cessa com ele. A dor neuropática é o sistema **avariado**: a lesão está na própria via somatossensorial, e a dor deixa de informar sobre o mundo para informar apenas sobre o defeito do sinalizador. Três mecanismos explicam por que ela se parece tão pouco com a dor comum. O primeiro é a **atividade ectópica**: o axônio lesado superexpressa canais de sódio dependentes de voltagem, sobretudo Nav1.7, Nav1.8 e Nav1.3, e passa a disparar espontaneamente, sem estímulo — é daí que vêm a queimação contínua e os choques paroxísticos, e é por isso que bloqueadores de canal de sódio, como carbamazepina e lidocaína tópica, funcionam. O segundo é a **sensibilização central**: o bombardeio aferente sustentado remove o bloqueio de magnésio dos receptores NMDA no corno dorsal, amplifica a transmissão e promove brotamento de fibras táteis Aβ para lâminas nociceptivas — o toque leve passa a acessar a via da dor, e é exatamente isso que se demonstra ao provocar alodinia com um pincel. O terceiro é a **perda da inibição descendente** serotoninérgica e noradrenérgica proveniente do tronco encefálico, que normalmente filtra a entrada nociceptiva; sua falência explica por que antidepressivos duais, que aumentam a disponibilidade desses neurotransmissores na medula, produzem analgesia **independentemente do efeito sobre o humor**. Os gabapentinoides atuam por uma quarta via, ligando-se à subunidade α2δ dos canais de cálcio pré-sinápticos e reduzindo a liberação de glutamato e substância P na fenda. A convergência desses mecanismos com a lesão de fibras sensitivas resolve o paradoxo aparente de uma área que dói e está dormente ao mesmo tempo: as fibras que conduzem a sensação normal morreram, enquanto as que restaram disparam sozinhas.',
+  armadilhas: [
+    'Tratar o escore como diagnóstico: o DN4 é rastreio e não substitui a graduação da IASP nem o exame confirmatório.',
+    'Aplicar em dor difusa sem território neuroanatômico — o desempenho cai e o quadro costuma ser de dor nociplástica.',
+    'Prescrever gabapentinoide para dor nociceptiva, onde o benefício é nulo e o efeito adverso é certo.',
+    'Subdosar e suspender cedo: a analgesia leva semanas e a titulação precisa ser levada até a dose eficaz.',
+    'Esquecer de investigar causa tratável — B12, tireoide, função renal, HIV, hanseníase, álcool, quimioterápico.',
+  ],
+  referencias: [
+    { texto: 'Bouhassira D, Attal N, Alchaar H, et al. Comparison of pain syndromes associated with nervous or somatic lesions and development of a new neuropathic pain diagnostic questionnaire (DN4). Pain. 2005;114(1-2):29-36.' },
+    { texto: 'Finnerup NB, Attal N, Haroutounian S, et al. Pharmacotherapy for neuropathic pain in adults: a systematic review and meta-analysis. Lancet Neurol. 2015;14(2):162-173.' },
+    { texto: 'Finnerup NB, Haroutounian S, Kamerman P, et al. Neuropathic pain: an updated grading system for research and clinical practice. Pain. 2016;157(8):1599-1606.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   glasgow,
   nihss,
@@ -1590,6 +1918,8 @@ export const ferramentas: Ferramenta[] = [
   riscoConvulsao,
   quatroAt,
   abc2,
+  lvoPreHospitalar,
+  dorNeuropatica,
 ]
 
 export default ferramentas

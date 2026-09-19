@@ -2910,6 +2910,147 @@ const crusade: Ferramenta = {
   ],
 }
 
+/* ═══════════ Taquicardia de QRS largo — Brugada, Vereckei e aVR ═══════════ */
+
+const taquiQrsCampos: Campo[] = [
+  campoSimNao('instavel', 'Instabilidade hemodinâmica', 0, 'Hipotensão, dor torácica isquêmica, congestão aguda ou rebaixamento de consciência. **Se presente, pare de classificar e cardioverta.** O diagnóstico eletrocardiográfico pode esperar; a perfusão, não.'),
+  campoSimNao('dissociacao', 'Dissociação atrioventricular', 3, 'Ondas P marchando independentes do QRS, **batimentos de captura** (um QRS estreito súbito no meio da taquicardia) ou **batimentos de fusão** (QRS de morfologia intermediária). Procure nas derivações inferiores e em V1, com régua ou compasso. É o achado mais específico de toda a eletrocardiografia para taquicardia ventricular — quando presente, o diagnóstico está feito.'),
+  campoSimNao('ausenciaRS', 'Ausência de complexo RS em todas as derivações precordiais', 3, 'Primeiro passo do algoritmo de Brugada. Se **nenhuma** precordial de V1 a V6 tem um padrão RS — todas são QS, QR, R monofásica ou rS sem S nadir definido —, é taquicardia ventricular com especificidade próxima de 100%.'),
+  campoSimNao('rsLongo', 'Intervalo do início do R ao nadir do S maior que 100 ms em alguma precordial', 2, 'Segundo passo de Brugada. Meça do **início** da onda R até o **ponto mais baixo** da onda S, na derivação em que esse intervalo for maior. Acima de 100 ms indica despolarização que não usa o sistema His-Purkinje, ou seja, origem ventricular.'),
+  campoSimNao('concordancia', 'Concordância precordial — todos os QRS positivos ou todos negativos de V1 a V6', 2, 'Concordância negativa é praticamente diagnóstica de taquicardia ventricular. A positiva também sugere, mas pode ocorrer em via acessória posterior conduzindo anterogradamente.'),
+  campoSimNao('qrsMuitoLargo', 'QRS acima de 160 ms com padrão de bloqueio de ramo esquerdo, ou acima de 140 ms com padrão de bloqueio de ramo direito', 1, 'Quanto mais largo o QRS, mais provável a origem ventricular — **com uma exceção importante**: antiarrítmicos da classe I, hipercalemia e antidepressivo tricíclico alargam o QRS por bloqueio de canal de sódio e produzem taquicardia supraventricular de QRS muito largo.'),
+  campoSimNao('eixoNoroeste', 'Eixo no quadrante noroeste (entre −90° e ±180°)', 1, 'QRS negativo em DI e em aVF. Eixo "sem terra de ninguém" é fortemente sugestivo de origem ventricular.'),
+  campoSimNao('avrRinicial', 'Onda R inicial em aVR', 2, 'Primeiro passo do algoritmo de aVR (Vereckei). Uma **onda R inicial** em aVR significa que a ativação caminha da ponta para a base — o oposto do sentido fisiológico —, o que só ocorre com foco ventricular apical ou pré-excitação.'),
+  campoSimNao('avrEntalhe', 'Em aVR, entalhe na porção descendente inicial de um QRS predominantemente negativo', 1, 'Terceiro passo do algoritmo de aVR. O entalhe indica condução inicial lenta, característica de despolarização miócito a miócito, fora do sistema de condução.'),
+  campoSimNao('vivTardio', 'Velocidade inicial menor que a terminal (razão vi/vt ≤ 1) em aVR', 1, 'Quarto passo do algoritmo de aVR. Compare a amplitude percorrida nos **primeiros 40 ms** com a dos **últimos 40 ms** do QRS. Na taquicardia ventricular a ativação começa devagar (músculo) e termina mais rápido (Purkinje recrutado), invertendo a relação normal.'),
+  campoSeg('contexto', 'Contexto clínico', [
+    { valor: 'cardiopatia', rotulo: 'Cardiopatia estrutural ou infarto prévio' },
+    { valor: 'desconhecido', rotulo: 'Desconhecido' },
+    { valor: 'jovemSemCardiopatia', rotulo: 'Jovem, sem cardiopatia conhecida' },
+  ], { padrao: 'desconhecido', ajuda: '**O contexto pesa mais que qualquer algoritmo.** Com infarto prévio, a probabilidade pré-teste de taquicardia ventricular passa de 95%; nenhum critério eletrocardiográfico move tanto a probabilidade pós-teste quanto essa informação.' }),
+  campoSimNao('bloqueioPrevio', 'Bloqueio de ramo já conhecido, com a mesma morfologia do traçado atual', 0, 'Se o QRS da taquicardia tem **exatamente a mesma morfologia** do QRS em ritmo sinusal prévio, trata-se de taquicardia supraventricular com aberrância preexistente. Comparar com um eletrocardiograma antigo é a manobra de maior rendimento e a mais esquecida.'),
+]
+
+const taquiQrsLargo: Ferramenta = {
+  id: 'taquicardia-qrs-largo',
+  nome: 'Taquicardia de QRS largo — diferenciação ventricular',
+  sigla: 'TQL',
+  sinonimos: ['qrs largo', 'brugada', 'vereckei', 'avr', 'taquicardia ventricular', 'tv', 'aberrancia', 'taquicardia complexo largo'],
+  resumo: 'Diferencia taquicardia ventricular de supraventricular com aberrância reunindo os critérios de Brugada, de Vereckei e do algoritmo de aVR.',
+  categorias: ['cardiologia', 'emergencia'],
+  campos: taquiQrsCampos,
+  calcular: (v) => {
+    const instavel = sim(v, 'instavel')
+    const contexto = opc(v, 'contexto') ?? 'desconhecido'
+    const bloqueioPrevio = sim(v, 'bloqueioPrevio')
+
+    const brugadaPositivo = sim(v, 'ausenciaRS') || sim(v, 'rsLongo') || sim(v, 'dissociacao')
+    const avrPositivo = sim(v, 'avrRinicial') || sim(v, 'avrEntalhe') || sim(v, 'vivTardio')
+
+    const pontos = somaSimNao(v, [
+      { id: 'dissociacao', pontos: 3 },
+      { id: 'ausenciaRS', pontos: 3 },
+      { id: 'rsLongo', pontos: 2 },
+      { id: 'concordancia', pontos: 2 },
+      { id: 'qrsMuitoLargo', pontos: 1 },
+      { id: 'eixoNoroeste', pontos: 1 },
+      { id: 'avrRinicial', pontos: 2 },
+      { id: 'avrEntalhe', pontos: 1 },
+      { id: 'vivTardio', pontos: 1 },
+    ])
+    const bonusContexto = contexto === 'cardiopatia' ? 3 : 0
+    const total = pontos + bonusContexto
+
+    // A dissociação AV e a ausência de RS são, isoladamente, diagnósticas.
+    const diagnostico = sim(v, 'dissociacao') || sim(v, 'ausenciaRS')
+    const veredito = diagnostico
+      ? 'Taquicardia ventricular'
+      : total >= 4
+        ? 'Taquicardia ventricular provável'
+        : bloqueioPrevio && total <= 1
+          ? 'Supraventricular com aberrância preexistente'
+          : 'Indeterminada — trate como ventricular'
+
+    const nivel: Nivel = instavel ? 'critico' : diagnostico || total >= 4 ? 'alerta' : 'atencao'
+
+    const conduta: string[] = []
+    if (instavel) {
+      conduta.push('**Instabilidade hemodinâmica: cardioverta agora, sincronizada, com sedação se houver tempo.** Nenhum algoritmo tem prioridade sobre isso. Comece com 100 J bifásicos em taquicardia monomórfica; taquicardia polimórfica e instável recebe **desfibrilação não sincronizada**, porque o aparelho não encontra onda R para sincronizar.')
+    }
+    if (bloqueioPrevio && total <= 1) {
+      conduta.push('**Morfologia idêntica ao bloqueio de ramo prévio, com poucos critérios ventriculares.** Este é o cenário em que a origem supraventricular fica razoável — mas confirme comparando lado a lado com o traçado antigo, derivação por derivação, e não de memória.')
+    } else {
+      conduta.push('**Na dúvida, trate como taquicardia ventricular.** Os dois erros não são simétricos: tratar taquicardia ventricular como se fosse supraventricular pode matar, enquanto tratar supraventricular como ventricular quase sempre apenas atrasa. Cerca de **80% das taquicardias de QRS largo são ventriculares**, e a proporção passa de 95% com infarto prévio.')
+      conduta.push('**Nunca administre verapamil ou diltiazem numa taquicardia de QRS largo não esclarecida.** Se o ritmo for ventricular, o bloqueio de canal de cálcio causa vasodilatação e depressão inotrópica sobre um ventrículo já comprometido, e o desfecho clássico é colapso hemodinâmico e parada. Este é, historicamente, um dos erros mais letais da cardiologia de urgência.')
+      conduta.push('**Adenosina é aceitável como recurso diagnóstico em taquicardia monomórfica regular e estável**, sob monitorização contínua, registro de 12 derivações e desfibrilador à mão: ela reverte a supraventricular e não altera a ventricular. Mas é **contraindicada se houver suspeita de pré-excitação**, porque pode acelerar a condução pela via acessória e degenerar em fibrilação ventricular — e é inútil e arriscada na taquicardia irregular ou polimórfica.')
+      conduta.push('**No paciente estável, a droga de escolha é a procainamida**, que se mostrou superior à amiodarona no ensaio PROCAMIO, com mais reversão e menos eventos adversos maiores. Amiodarona permanece alternativa, sobretudo na disfunção ventricular grave. Lidocaína tem eficácia menor e cabe melhor na isquemia aguda.')
+    }
+    conduta.push(
+      '**Compare com um eletrocardiograma antigo.** É a manobra de maior rendimento diagnóstico e a mais esquecida: QRS de morfologia idêntica ao bloqueio de ramo prévio aponta para aberrância; morfologia diferente aponta para origem ventricular.',
+      '**Corrija o que é reversível enquanto decide**: potássio e magnésio (repondo magnésio mesmo com magnesemia normal), isquemia aguda, hipóxia, acidose e intoxicação. Em QRS muito largo com onda R terminal em aVR, pense em **bloqueio de canal de sódio** — antidepressivo tricíclico, antiarrítmico da classe I, cocaína — cujo tratamento é **bicarbonato de sódio**, não antiarrítmico. Na hipercalemia, a apresentação pode ser exatamente essa.',
+      'Se a taquicardia for **polimórfica**, mude de raciocínio: com QT longo é *torsades de pointes*, e o tratamento é sulfato de magnésio, correção eletrolítica, suspensão de todo fármaco que prolongue o QT e aceleração da frequência com marca-passo ou isoprenalina; com QT normal, presuma **isquemia aguda** e trate como síndrome coronariana.',
+      '**Depois da reversão, o trabalho começa.** Investigue cardiopatia estrutural com ecocardiograma e, quando indicado, ressonância magnética cardíaca; avalie isquemia; e encaminhe à eletrofisiologia. Taquicardia ventricular sustentada com cardiopatia estrutural é, na maioria dos casos, **indicação de cardiodesfibrilador implantável** — a reversão do episódio não é o desfecho, é o começo da prevenção secundária.',
+    )
+
+    return {
+      titulo: 'Taquicardia de QRS largo',
+      valor: veredito,
+      nivel,
+      rotuloNivel: instavel ? 'Instável — cardioverter' : `${fmtInt(total)} pontos a favor de origem ventricular`,
+      detalhes: [
+        { rotulo: 'Dissociação AV, captura ou fusão', valor: sim(v, 'dissociacao') ? 'Presente — diagnóstica' : 'Ausente', nivel: (sim(v, 'dissociacao') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Ausência de RS em todas as precordiais', valor: sim(v, 'ausenciaRS') ? 'Presente — diagnóstica' : 'Ausente', nivel: (sim(v, 'ausenciaRS') ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'R ao nadir do S > 100 ms', valor: sim(v, 'rsLongo') ? 'Presente' : 'Ausente' },
+        { rotulo: 'Concordância precordial', valor: sim(v, 'concordancia') ? 'Presente' : 'Ausente' },
+        { rotulo: 'Eixo no quadrante noroeste', valor: sim(v, 'eixoNoroeste') ? 'Presente' : 'Ausente' },
+        { rotulo: 'Algoritmo de Brugada', valor: brugadaPositivo ? 'Positivo para TV' : 'Não conclusivo', nivel: (brugadaPositivo ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Algoritmo de aVR (Vereckei)', valor: avrPositivo ? 'Positivo para TV' : 'Não conclusivo', nivel: (avrPositivo ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Contexto clínico', valor: contexto === 'cardiopatia' ? 'Cardiopatia estrutural ou infarto prévio' : contexto === 'jovemSemCardiopatia' ? 'Jovem sem cardiopatia conhecida' : 'Desconhecido', nivel: (contexto === 'cardiopatia' ? 'alerta' : 'ok') as Nivel, nota: contexto === 'cardiopatia' ? 'Probabilidade pré-teste de TV > 95%' : undefined },
+        { rotulo: 'Estabilidade hemodinâmica', valor: instavel ? 'Instável' : 'Estável', nivel: (instavel ? 'critico' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        instavel
+          ? '**Paciente instável.** A classificação eletrocardiográfica perde a prioridade: cardioversão sincronizada imediata, com sedação se houver tempo. Nenhum algoritmo justifica adiar a restauração da perfusão.'
+          : `**${veredito}.** ${diagnostico ? 'Há critério isoladamente diagnóstico — dissociação atrioventricular ou ausência de RS em todas as precordiais têm especificidade próxima de 100% e encerram a discussão.' : `Os critérios somam ${fmtInt(total)} pontos a favor de origem ventricular.`}`,
+        '**Cerca de 80% das taquicardias de QRS largo são ventriculares**, e essa proporção sobe acima de 95% na presença de infarto prévio. A probabilidade pré-teste, portanto, já começa alta: o papel dos algoritmos é sobretudo **confirmar**, e muito raramente afastar.',
+        '**O melhor critério é a dissociação atrioventricular** — ondas P marchando independentes do QRS, batimentos de captura ou de fusão. É o achado mais específico de toda a eletrocardiografia para taquicardia ventricular. Sua limitação é a sensibilidade: está presente em menos da metade dos casos, e nas frequências altas as ondas P se escondem dentro dos complexos.',
+        'Os algoritmos têm **especificidade alta e sensibilidade limitada**, com acurácia em torno de 70 a 90% e desempenho pior fora das mãos de eletrofisiologistas. O algoritmo de Brugada é o mais validado; o de aVR, mais simples porque usa uma única derivação; o de Vereckei aplica a razão entre a velocidade inicial e a terminal. Nenhum deles é bom o bastante para descartar taquicardia ventricular.',
+        contexto === 'cardiopatia'
+          ? '**Cardiopatia estrutural ou infarto prévio.** Este único dado pesa mais que qualquer critério eletrocardiográfico: a cicatriz do infarto é o substrato clássico da reentrada ventricular. Na prática, o algoritmo pouco acrescenta aqui.'
+          : contexto === 'jovemSemCardiopatia'
+            ? 'Paciente jovem sem cardiopatia conhecida — a probabilidade de origem supraventricular é relativamente maior, mas **não o suficiente para tratar como tal**. Considere ainda as taquicardias ventriculares idiopáticas, de via de saída do ventrículo direito e fascicular, que ocorrem em coração estruturalmente normal e têm tratamento próprio.'
+            : 'Contexto clínico desconhecido. Busque ativamente a informação: idade, infarto prévio, insuficiência cardíaca e eletrocardiograma antigo mudam mais a conduta do que qualquer medida no traçado atual.',
+      ],
+      conduta,
+      alertas: [
+        '**Nunca use verapamil ou diltiazem em taquicardia de QRS largo não esclarecida** — na taquicardia ventricular, o resultado típico é colapso hemodinâmico e parada.',
+        '**Paciente instável se cardioverte, não se classifica.** Taquicardia polimórfica instável exige desfibrilação não sincronizada.',
+        '**QRS largo não significa origem ventricular**: bloqueio de canal de sódio (tricíclico, classe I, cocaína) e hipercalemia produzem QRS muito largo com origem supraventricular, e o tratamento é bicarbonato ou correção do potássio, não antiarrítmico.',
+        'Na taquicardia irregular de QRS largo, pense em **fibrilação atrial pré-excitada**: aqui adenosina, betabloqueador, bloqueador de canal de cálcio e digoxina são contraindicados, porque bloqueiam o nó e favorecem a via acessória. O tratamento é cardioversão ou procainamida.',
+        'Taquicardia ventricular sustentada com cardiopatia estrutural costuma ser indicação de **cardiodesfibrilador implantável** — a reversão do episódio é o começo, não o fim.',
+      ],
+    }
+  },
+  formula: [
+    'Brugada: (1) ausência de RS em todas as precordiais → TV · (2) R ao nadir do S > 100 ms → TV · (3) dissociação AV → TV · (4) critérios morfológicos em V1 e V6 → TV',
+    'aVR (Vereckei): (1) R inicial em aVR → TV · (2) r ou q inicial > 40 ms → TV · (3) entalhe na descendente inicial → TV · (4) razão vi/vt ≤ 1 → TV',
+  ],
+  fundamento:
+    'Todos os critérios derivam de um único princípio: **o impulso supraventricular usa o sistema His-Purkinje, e o ventricular não**. A rede de Purkinje conduz a cerca de 2 a 4 metros por segundo, enquanto a propagação miócito a miócito pelo miocárdio comum se arrasta a 0,3 a 1 metro por segundo — uma diferença de até uma ordem de grandeza. Um estímulo que nasce acima da bifurcação do feixe de His entra nessa rede e ativa os dois ventrículos de forma quase simultânea; mesmo quando um ramo está bloqueado e o QRS se alarga, **o início da despolarização ainda é rápido**, porque o ramo íntegro distribui o impulso pelo Purkinje antes de a ativação alcançar o lado comprometido pela via lenta. Um foco ventricular faz o inverso: começa no miocárdio comum, longe da rede, e só recruta o Purkinje mais tarde, retrogradamente. Daí decorre cada critério. O **intervalo do R ao nadir do S maior que 100 ms** mede diretamente essa lentidão inicial. A **razão entre velocidade inicial e terminal** formaliza a mesma ideia, comparando a amplitude percorrida nos primeiros 40 ms com a dos últimos 40 ms: normal quando a ativação começa rápida, invertida quando começa lenta. A **ausência de RS em todas as precordiais** e a **concordância** indicam um vetor de ativação que nenhuma combinação fisiológica de bloqueio de ramo reproduz. A **onda R inicial em aVR** significa que a frente de onda caminha da ponta para a base, sentido oposto ao fisiológico, o que exige foco apical ou pré-excitação. E a **dissociação atrioventricular** é a prova mais direta de todas: se átrios e ventrículos batem em frequências independentes, o comando não pode estar acima do nó — ele está embaixo. O substrato mais comum dessa origem ventricular é a reentrada em torno de cicatriz de infarto, onde a fibrose entremeada ao miocárdio viável cria zonas de condução lenta e bloqueio unidirecional; é por isso que o antecedente de infarto pesa mais que qualquer medida feita no traçado.',
+  armadilhas: [
+    'Interpretar estabilidade hemodinâmica como evidência de origem supraventricular: taquicardia ventricular bem tolerada é comum, sobretudo em jovens e em frequências mais baixas.',
+    'Aplicar os algoritmos em taquicardia irregular ou polimórfica, para as quais não foram derivados.',
+    'Esquecer de medir do início do R até o nadir do S — o erro mais frequente é medir a largura da onda S isolada.',
+    'Não procurar dissociação AV com compasso nas derivações inferiores e em V1, onde as ondas P se escondem.',
+    'Ignorar causas metabólicas e tóxicas de QRS largo, que exigem bicarbonato ou correção do potássio, e não antiarrítmico.',
+  ],
+  referencias: [
+    { texto: 'Brugada P, Brugada J, Mont L, Smeets J, Andries EW. A new approach to the differential diagnosis of a regular tachycardia with a wide QRS complex. Circulation. 1991;83(5):1649-1659.' },
+    { texto: 'Vereckei A, Duray G, Szénási G, Altemose GT, Miller JM. New algorithm using only lead aVR for differential diagnosis of wide QRS complex tachycardia. Heart Rhythm. 2008;5(1):89-98.' },
+    { texto: 'Ortiz M, Martín A, Arribas F, et al. Randomized comparison of intravenous procainamide vs. intravenous amiodarone for the acute treatment of tolerated wide QRS tachycardia: the PROCAMIO study. Eur Heart J. 2017;38(17):1329-1335.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   fcEcg,
   qtc,
@@ -2941,6 +3082,7 @@ export const ferramentas: Ferramenta[] = [
   itb,
   sincope,
   crusade,
+  taquiQrsLargo,
 ]
 
 export default ferramentas
