@@ -16,6 +16,7 @@ import {
   Microscope,
   ShieldCheck,
   Stethoscope,
+  TrendingUp,
   Utensils,
   Wind,
 } from 'lucide-react'
@@ -107,7 +108,13 @@ export default function PaginaDosExames() {
             href="/manual-clinico/exames-laboratoriais/doencas"
             icone={<Microscope className="h-5 w-5" />}
             titulo="Por doenças"
-            detalhe="O padrão esperado, achado por achado"
+            detalhe={`${numeros.doencas} doenças com o padrão esperado, achado por achado`}
+          />
+          <Porta
+            href="/manual-clinico/exames-laboratoriais/alteracoes"
+            icone={<TrendingUp className="h-5 w-5" />}
+            titulo="Alterações"
+            detalhe={`${numeros.alteracoes} achados com nome próprio, do jeito que o laudo fala`}
           />
           <Porta
             href="/manual-clinico/exames-laboratoriais/comparar"

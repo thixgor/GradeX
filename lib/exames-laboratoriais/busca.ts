@@ -10,8 +10,11 @@
  *    quem digitou "ast".
  *
  * 2. **Alterações como termo de busca.** "Hiponatremia" não é o nome de um
- *    exame — é o nome de um achado. A tabela `ALTERACOES` mapeia esses termos
- *    para o marcador que os explica.
+ *    exame — é o nome de um achado. A tabela `ALTERACOES` descreve esses
+ *    achados e os liga ao marcador que os explica, em uma direção declarada.
+ *    Quem busca por um deles cai na página do achado, não na ficha inteira do
+ *    marcador: a ficha explica o marcador nos dois sentidos, e quem digitou
+ *    "hiponatremia" só tem um deles na mão.
  *
  * 3. **Perguntas.** Quem digita "por que a ferritina aumenta na inflamação?"
  *    não quer uma lista de resultados: quer a explicação. `PERGUNTAS` leva
@@ -33,63 +36,97 @@ export function normalizar(texto: string): string {
 /* ═════════════════════ Alterações como atalho ═════════════════════ */
 
 /**
- * Termos de alteração laboratorial que apontam para o marcador que os explica.
+ * Uma alteração laboratorial — o achado com nome próprio.
+ *
+ * "Hiponatremia" não é um exame nem uma doença: é o nome que o achado recebe
+ * quando o sódio está baixo, e é assim que a pessoa pensa ao ler um laudo. Por
+ * isso a alteração tem página própria (`/alteracao/[id]`), e não é apenas um
+ * atalho para a ficha do marcador: a ficha explica o marcador inteiro — nos dois
+ * sentidos —, enquanto a alteração explica **um** sentido, que é justamente o
+ * que a pessoa tem na mão.
+ *
+ * `direcao` é o que liga uma coisa à outra: diz qual bloco da ficha do marcador
+ * (`aumento` ou `reducao`) responde por aquele achado.
+ */
+export interface AlteracaoLaboratorial {
+  /** Identificador estável — é o que vira rota. */
+  id: string
+  /** O nome do achado, como aparece no laudo e na conversa clínica. */
+  termo: string
+  /** Outros nomes em uso para o mesmo achado ('hiperpotassemia' = 'hipercalemia'). */
+  sinonimos?: string[]
+  /** Id do marcador que mede o achado. */
+  marcador: string
+  /** Para que lado o marcador se moveu — governa qual bloco da ficha abrir. */
+  direcao: 'alta' | 'baixa'
+  /** O achado em uma linha: qual valor, em relação a qual limite. */
+  descricao: string
+}
+
+/**
+ * Termos de alteração laboratorial, cada um ligado ao marcador que o explica.
  * São o vocabulário com que a pessoa realmente pensa quando lê um laudo.
  */
-export const ALTERACOES: { termo: string; marcador: string; descricao: string }[] = [
-  { termo: 'anemia', marcador: 'hemoglobina', descricao: 'Hemoglobina abaixo da referência para sexo e idade' },
-  { termo: 'policitemia', marcador: 'hemoglobina', descricao: 'Hemoglobina e hematócrito elevados' },
-  { termo: 'microcitose', marcador: 'vcm', descricao: 'VCM abaixo de 80 fL' },
-  { termo: 'macrocitose', marcador: 'vcm', descricao: 'VCM acima de 100 fL' },
-  { termo: 'anisocitose', marcador: 'rdw', descricao: 'RDW elevado — população eritrocitária heterogênea' },
-  { termo: 'leucocitose', marcador: 'leucocitos', descricao: 'Leucócitos acima de 11.000/mm³' },
-  { termo: 'leucopenia', marcador: 'leucocitos', descricao: 'Leucócitos abaixo de 4.000/mm³' },
-  { termo: 'neutrofilia', marcador: 'neutrofilos', descricao: 'Neutrófilos absolutos elevados' },
-  { termo: 'neutropenia', marcador: 'neutrofilos', descricao: 'Neutrófilos absolutos abaixo de 1.500/mm³' },
-  { termo: 'linfocitose', marcador: 'linfocitos', descricao: 'Linfócitos absolutos elevados' },
-  { termo: 'linfopenia', marcador: 'linfocitos', descricao: 'Linfócitos absolutos reduzidos' },
-  { termo: 'eosinofilia', marcador: 'eosinofilos', descricao: 'Eosinófilos acima de 500/mm³' },
-  { termo: 'plaquetopenia', marcador: 'plaquetas', descricao: 'Plaquetas abaixo de 150.000/mm³' },
-  { termo: 'trombocitopenia', marcador: 'plaquetas', descricao: 'Plaquetas abaixo de 150.000/mm³' },
-  { termo: 'trombocitose', marcador: 'plaquetas', descricao: 'Plaquetas acima de 450.000/mm³' },
-  { termo: 'hiponatremia', marcador: 'sodio', descricao: 'Sódio abaixo de 135 mEq/L' },
-  { termo: 'hipernatremia', marcador: 'sodio', descricao: 'Sódio acima de 145 mEq/L' },
-  { termo: 'hipercalemia', marcador: 'potassio', descricao: 'Potássio acima de 5,0 mEq/L' },
-  { termo: 'hiperpotassemia', marcador: 'potassio', descricao: 'Potássio acima de 5,0 mEq/L' },
-  { termo: 'hipocalemia', marcador: 'potassio', descricao: 'Potássio abaixo de 3,5 mEq/L' },
-  { termo: 'hipopotassemia', marcador: 'potassio', descricao: 'Potássio abaixo de 3,5 mEq/L' },
-  { termo: 'hipercalcemia', marcador: 'calcio', descricao: 'Cálcio corrigido acima de 10,5 mg/dL' },
-  { termo: 'hipocalcemia', marcador: 'calcio', descricao: 'Cálcio corrigido abaixo de 8,5 mg/dL' },
-  { termo: 'hipomagnesemia', marcador: 'magnesio', descricao: 'Magnésio abaixo de 1,7 mg/dL' },
-  { termo: 'hipofosfatemia', marcador: 'fosforo', descricao: 'Fósforo abaixo de 2,5 mg/dL' },
-  { termo: 'hiperfosfatemia', marcador: 'fosforo', descricao: 'Fósforo acima de 4,5 mg/dL' },
-  { termo: 'azotemia', marcador: 'ureia', descricao: 'Retenção de produtos nitrogenados' },
-  { termo: 'uremia', marcador: 'ureia', descricao: 'Síndrome clínica do acúmulo de solutos nitrogenados' },
-  { termo: 'proteinuria', marcador: 'proteinuria', descricao: 'Proteína na urina acima de 150 mg/24h' },
-  { termo: 'hematuria', marcador: 'eas', descricao: 'Hemácias na urina acima do esperado' },
-  { termo: 'piuria', marcador: 'eas', descricao: 'Leucócitos na urina' },
-  { termo: 'colestase', marcador: 'fosfatase-alcalina', descricao: 'FA e GGT elevadas com bilirrubina direta alta' },
-  { termo: 'ictericia', marcador: 'bilirrubina-total', descricao: 'Bilirrubina total elevada' },
-  { termo: 'hiperbilirrubinemia', marcador: 'bilirrubina-total', descricao: 'Bilirrubina total elevada' },
-  { termo: 'transaminases elevadas', marcador: 'alt', descricao: 'AST e ALT acima da referência' },
-  { termo: 'hipoalbuminemia', marcador: 'albumina', descricao: 'Albumina abaixo de 3,5 g/dL' },
-  { termo: 'hiperglicemia', marcador: 'glicemia-jejum', descricao: 'Glicemia acima da referência' },
-  { termo: 'hipoglicemia', marcador: 'glicemia-jejum', descricao: 'Glicemia abaixo de 70 mg/dL com sintomas' },
-  { termo: 'dislipidemia', marcador: 'ldl', descricao: 'Alteração do perfil lipídico' },
-  { termo: 'hipertrigliceridemia', marcador: 'triglicerideos', descricao: 'Triglicerídeos acima de 150 mg/dL' },
-  { termo: 'hiperuricemia', marcador: 'acido-urico', descricao: 'Ácido úrico acima da referência' },
-  { termo: 'acidose metabolica', marcador: 'bicarbonato', descricao: 'pH baixo com bicarbonato reduzido' },
-  { termo: 'alcalose metabolica', marcador: 'bicarbonato', descricao: 'pH alto com bicarbonato elevado' },
-  { termo: 'acidose respiratoria', marcador: 'paco2', descricao: 'pH baixo com PaCO₂ elevada' },
-  { termo: 'hipoxemia', marcador: 'pao2', descricao: 'PaO₂ abaixo de 80 mmHg' },
-  { termo: 'hiperlactatemia', marcador: 'lactato', descricao: 'Lactato acima de 2 mmol/L' },
-  { termo: 'ferropenia', marcador: 'ferritina', descricao: 'Estoque de ferro reduzido' },
-  { termo: 'hipotireoidismo', marcador: 'tsh', descricao: 'TSH elevado com T4 livre reduzido' },
-  { termo: 'hipertireoidismo', marcador: 'tsh', descricao: 'TSH suprimido com T4 livre elevado' },
-  { termo: 'hiperprolactinemia', marcador: 'prolactina', descricao: 'Prolactina acima da referência' },
-  { termo: 'hipercortisolismo', marcador: 'cortisol', descricao: 'Cortisol elevado e não suprimível' },
-  { termo: 'rabdomiolise', marcador: 'ck', descricao: 'CK muito elevada com risco de lesão renal' },
+export const ALTERACOES: AlteracaoLaboratorial[] = [
+  { id: 'anemia', termo: 'anemia', marcador: 'hemoglobina', direcao: 'baixa', descricao: 'Hemoglobina abaixo da referência para sexo e idade' },
+  { id: 'policitemia', termo: 'policitemia', sinonimos: ['eritrocitose'], marcador: 'hemoglobina', direcao: 'alta', descricao: 'Hemoglobina e hematócrito elevados' },
+  { id: 'microcitose', termo: 'microcitose', marcador: 'vcm', direcao: 'baixa', descricao: 'VCM abaixo de 80 fL' },
+  { id: 'macrocitose', termo: 'macrocitose', marcador: 'vcm', direcao: 'alta', descricao: 'VCM acima de 100 fL' },
+  { id: 'anisocitose', termo: 'anisocitose', marcador: 'rdw', direcao: 'alta', descricao: 'RDW elevado — população eritrocitária heterogênea' },
+  { id: 'leucocitose', termo: 'leucocitose', marcador: 'leucocitos', direcao: 'alta', descricao: 'Leucócitos acima de 11.000/mm³' },
+  { id: 'leucopenia', termo: 'leucopenia', marcador: 'leucocitos', direcao: 'baixa', descricao: 'Leucócitos abaixo de 4.000/mm³' },
+  { id: 'neutrofilia', termo: 'neutrofilia', marcador: 'neutrofilos', direcao: 'alta', descricao: 'Neutrófilos absolutos elevados' },
+  { id: 'neutropenia', termo: 'neutropenia', marcador: 'neutrofilos', direcao: 'baixa', descricao: 'Neutrófilos absolutos abaixo de 1.500/mm³' },
+  { id: 'linfocitose', termo: 'linfocitose', marcador: 'linfocitos', direcao: 'alta', descricao: 'Linfócitos absolutos elevados' },
+  { id: 'linfopenia', termo: 'linfopenia', marcador: 'linfocitos', direcao: 'baixa', descricao: 'Linfócitos absolutos reduzidos' },
+  { id: 'eosinofilia', termo: 'eosinofilia', marcador: 'eosinofilos', direcao: 'alta', descricao: 'Eosinófilos acima de 500/mm³' },
+  { id: 'plaquetopenia', termo: 'plaquetopenia', sinonimos: ['trombocitopenia'], marcador: 'plaquetas', direcao: 'baixa', descricao: 'Plaquetas abaixo de 150.000/mm³' },
+  { id: 'trombocitose', termo: 'trombocitose', marcador: 'plaquetas', direcao: 'alta', descricao: 'Plaquetas acima de 450.000/mm³' },
+  { id: 'hiponatremia', termo: 'hiponatremia', marcador: 'sodio', direcao: 'baixa', descricao: 'Sódio abaixo de 135 mEq/L' },
+  { id: 'hipernatremia', termo: 'hipernatremia', marcador: 'sodio', direcao: 'alta', descricao: 'Sódio acima de 145 mEq/L' },
+  { id: 'hipercalemia', termo: 'hipercalemia', sinonimos: ['hiperpotassemia'], marcador: 'potassio', direcao: 'alta', descricao: 'Potássio acima de 5,0 mEq/L' },
+  { id: 'hipocalemia', termo: 'hipocalemia', sinonimos: ['hipopotassemia'], marcador: 'potassio', direcao: 'baixa', descricao: 'Potássio abaixo de 3,5 mEq/L' },
+  { id: 'hipercalcemia', termo: 'hipercalcemia', marcador: 'calcio', direcao: 'alta', descricao: 'Cálcio corrigido acima de 10,5 mg/dL' },
+  { id: 'hipocalcemia', termo: 'hipocalcemia', marcador: 'calcio', direcao: 'baixa', descricao: 'Cálcio corrigido abaixo de 8,5 mg/dL' },
+  { id: 'hipomagnesemia', termo: 'hipomagnesemia', marcador: 'magnesio', direcao: 'baixa', descricao: 'Magnésio abaixo de 1,7 mg/dL' },
+  { id: 'hipofosfatemia', termo: 'hipofosfatemia', marcador: 'fosforo', direcao: 'baixa', descricao: 'Fósforo abaixo de 2,5 mg/dL' },
+  { id: 'hiperfosfatemia', termo: 'hiperfosfatemia', marcador: 'fosforo', direcao: 'alta', descricao: 'Fósforo acima de 4,5 mg/dL' },
+  { id: 'azotemia', termo: 'azotemia', sinonimos: ['uremia'], marcador: 'ureia', direcao: 'alta', descricao: 'Retenção de produtos nitrogenados' },
+  { id: 'proteinuria', termo: 'proteinúria', marcador: 'proteinuria', direcao: 'alta', descricao: 'Proteína na urina acima de 150 mg/24h' },
+  { id: 'hematuria', termo: 'hematúria', marcador: 'eas', direcao: 'alta', descricao: 'Hemácias na urina acima do esperado' },
+  { id: 'piuria', termo: 'piúria', marcador: 'eas', direcao: 'alta', descricao: 'Leucócitos na urina' },
+  { id: 'colestase', termo: 'colestase', marcador: 'fosfatase-alcalina', direcao: 'alta', descricao: 'FA e GGT elevadas com bilirrubina direta alta' },
+  { id: 'hiperbilirrubinemia', termo: 'hiperbilirrubinemia', sinonimos: ['ictericia'], marcador: 'bilirrubina-total', direcao: 'alta', descricao: 'Bilirrubina total elevada' },
+  { id: 'transaminases-elevadas', termo: 'transaminases elevadas', sinonimos: ['hipertransaminasemia'], marcador: 'alt', direcao: 'alta', descricao: 'AST e ALT acima da referência' },
+  { id: 'hipoalbuminemia', termo: 'hipoalbuminemia', marcador: 'albumina', direcao: 'baixa', descricao: 'Albumina abaixo de 3,5 g/dL' },
+  { id: 'hiperglicemia', termo: 'hiperglicemia', marcador: 'glicemia-jejum', direcao: 'alta', descricao: 'Glicemia acima da referência' },
+  { id: 'hipoglicemia', termo: 'hipoglicemia', marcador: 'glicemia-jejum', direcao: 'baixa', descricao: 'Glicemia abaixo de 70 mg/dL com sintomas' },
+  { id: 'dislipidemia', termo: 'dislipidemia', marcador: 'ldl', direcao: 'alta', descricao: 'Alteração do perfil lipídico' },
+  { id: 'hipertrigliceridemia', termo: 'hipertrigliceridemia', marcador: 'triglicerideos', direcao: 'alta', descricao: 'Triglicerídeos acima de 150 mg/dL' },
+  { id: 'hiperuricemia', termo: 'hiperuricemia', marcador: 'acido-urico', direcao: 'alta', descricao: 'Ácido úrico acima da referência' },
+  { id: 'acidose-metabolica', termo: 'acidose metabólica', marcador: 'bicarbonato', direcao: 'baixa', descricao: 'pH baixo com bicarbonato reduzido' },
+  { id: 'alcalose-metabolica', termo: 'alcalose metabólica', marcador: 'bicarbonato', direcao: 'alta', descricao: 'pH alto com bicarbonato elevado' },
+  { id: 'acidose-respiratoria', termo: 'acidose respiratória', marcador: 'paco2', direcao: 'alta', descricao: 'pH baixo com PaCO₂ elevada' },
+  { id: 'hipoxemia', termo: 'hipoxemia', marcador: 'pao2', direcao: 'baixa', descricao: 'PaO₂ abaixo de 80 mmHg' },
+  { id: 'hiperlactatemia', termo: 'hiperlactatemia', marcador: 'lactato', direcao: 'alta', descricao: 'Lactato acima de 2 mmol/L' },
+  { id: 'ferropenia', termo: 'ferropenia', marcador: 'ferritina', direcao: 'baixa', descricao: 'Estoque de ferro reduzido' },
+  { id: 'hipotireoidismo', termo: 'hipotireoidismo', marcador: 'tsh', direcao: 'alta', descricao: 'TSH elevado com T4 livre reduzido' },
+  { id: 'hipertireoidismo', termo: 'hipertireoidismo', marcador: 'tsh', direcao: 'baixa', descricao: 'TSH suprimido com T4 livre elevado' },
+  { id: 'hiperprolactinemia', termo: 'hiperprolactinemia', marcador: 'prolactina', direcao: 'alta', descricao: 'Prolactina acima da referência' },
+  { id: 'hipercortisolismo', termo: 'hipercortisolismo', marcador: 'cortisol', direcao: 'alta', descricao: 'Cortisol elevado e não suprimível' },
+  { id: 'rabdomiolise', termo: 'rabdomiólise', marcador: 'ck', direcao: 'alta', descricao: 'CK muito elevada com risco de lesão renal' },
 ]
+
+export const ALTERACAO_POR_ID = new Map(ALTERACOES.map((a) => [a.id, a]))
+
+export function alteracaoPorId(id: string): AlteracaoLaboratorial | undefined {
+  return ALTERACAO_POR_ID.get(id)
+}
+
+/** As alterações que um marcador nomeia — hiponatremia e hipernatremia, para o sódio. */
+export function alteracoesDoMarcador(marcador: string): AlteracaoLaboratorial[] {
+  return ALTERACOES.filter((a) => a.marcador === marcador)
+}
 
 /* ═════════════════════ Perguntas diretas ═════════════════════ */
 
@@ -294,7 +331,7 @@ export function indiceDeDoencas(doencas: Doenca[]): ItemDoIndice[] {
     titulo: d.nome,
     detalhe: d.fisiopatologia.slice(0, 140) + (d.fisiopatologia.length > 140 ? '…' : ''),
     termos: [d.nome, ...(d.sinonimos ?? [])].map(normalizar),
-    href: `/manual-clinico/exames-laboratoriais/doencas#${d.id}`,
+    href: `/manual-clinico/exames-laboratoriais/doenca/${d.id}`,
   }))
 }
 
@@ -312,11 +349,11 @@ export function indiceDeSistemas(sistemas: Sistema[]): ItemDoIndice[] {
 export function indiceDeAlteracoes(): ItemDoIndice[] {
   return ALTERACOES.map((a) => ({
     tipo: 'alteracao' as const,
-    id: a.marcador,
+    id: a.id,
     titulo: a.termo.charAt(0).toUpperCase() + a.termo.slice(1),
     detalhe: a.descricao,
-    termos: [normalizar(a.termo)],
-    href: `/manual-clinico/exames-laboratoriais/marcador/${a.marcador}`,
+    termos: [a.termo, ...(a.sinonimos ?? [])].map(normalizar),
+    href: `/manual-clinico/exames-laboratoriais/alteracao/${a.id}`,
   }))
 }
 
@@ -334,7 +371,7 @@ export function indiceDePerguntas(): ItemDoIndice[] {
           ? `/manual-clinico/exames-laboratoriais/comparar#${p.destino.id}`
           : p.destino.tipo === 'padrao'
             ? `/manual-clinico/exames-laboratoriais/padroes#${p.destino.id}`
-            : `/manual-clinico/exames-laboratoriais/doencas#${p.destino.id}`,
+            : `/manual-clinico/exames-laboratoriais/doenca/${p.destino.id}`,
   }))
 }
 

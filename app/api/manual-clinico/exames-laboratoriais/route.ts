@@ -26,6 +26,7 @@ export interface ResumoDosExames {
   sistemas: number
   padroes: number
   doencas: number
+  alteracoes: number
   comparacoes: number
   mecanismos: number
   cadeias: number

@@ -6,9 +6,11 @@ import { AreaDosExames, CabecalhoDaSecao } from '@/components/exames-laboratoria
 import { Advertencia, AvisoDeContexto, AvisoDeReferencia, Etiqueta, Fluxo, TabelaComparativa } from '@/components/exames-laboratoriais/folha'
 import { BotaoFavorito, Expansivel, Profundidade } from '@/components/exames-laboratoriais/interacoes'
 import { GerarParaPraticar } from '@/components/exames-laboratoriais/laboratorio'
+import { Campo, Lista, Secao, SecaoDeAlteracao } from '@/components/exames-laboratoriais/secoes'
 import {
   MARCADORES,
   ROTULO_DO_GRUPO,
+  alteracoesDoMarcador,
   comparacoesDoMarcador,
   doencasDoMarcador,
   examesDoMarcador,
@@ -16,16 +18,21 @@ import {
   marcadoresPorIds,
   padroesDoMarcador,
 } from '@/lib/exames-laboratoriais'
-import type { Alteracao, CausasPorPeso, Marcador } from '@/lib/exames-laboratoriais/tipos'
+import type { Marcador } from '@/lib/exames-laboratoriais/tipos'
 
 /**
  * A ficha de um marcador — a peça central da seção.
  *
  * A ordem das seções não é estética: é a ordem em que o raciocínio clínico
  * acontece. O que é → como funciona normalmente → o que o exame mede → valor de
- * referência → o que significa subir e por quê → o que significa cair e por quê
- * → causas → diferenciais → como diferenciar → marcadores relacionados →
- * padrões → como tende a normalizar → casos para praticar.
+ * referência → que achados o marcador nomeia → o que significa subir e por quê
+ * → o que significa cair e por quê → causas → diferenciais → como diferenciar →
+ * marcadores relacionados → padrões → como tende a normalizar → casos para
+ * praticar.
+ *
+ * Os achados com nome próprio (hiponatremia, microcitose) têm página só deles,
+ * em `/alteracao/[id]`: esta ficha explica o marcador nos dois sentidos, e quem
+ * chegou com um laudo na mão tem apenas um deles.
  *
  * Tudo é renderizado no servidor. As únicas ilhas de cliente são o seletor de
  * profundidade, os blocos expansíveis, o botão de favorito e o gerador de
@@ -54,6 +61,7 @@ export default function PaginaDoMarcador({ params }: { params: { slug: string } 
   const exames = examesDoMarcador(marcador.id)
   const comparacoes = comparacoesDoMarcador(marcador.id)
   const estudarTambem = marcadoresPorIds(marcador.estudarTambem ?? [])
+  const alteracoes = alteracoesDoMarcador(marcador.id)
   const cenarios = Array.from(new Set(doencas.map((d) => d.cenario).filter((c): c is string => !!c)))
 
   return (
@@ -135,6 +143,35 @@ export default function PaginaDoMarcador({ params }: { params: { slug: string } 
             </div>
           )}
         </Secao>
+
+        {/* ══════════ Alterações com nome próprio ══════════ */}
+        {alteracoes.length > 0 && (
+          <Secao titulo="Os achados que este marcador nomeia" rubrica="Alterações">
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {alteracoes.map((a) => (
+                <li key={a.id}>
+                  <Link
+                    href={`/manual-clinico/exames-laboratoriais/alteracao/${a.id}`}
+                    prefetch={false}
+                    className="lab-cartao lab-cartao-link block h-full p-3.5"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="text-sm font-bold capitalize leading-snug">{a.termo}</p>
+                      <span
+                        className={`shrink-0 font-mono text-sm font-bold ${
+                          a.direcao === 'alta' ? 'text-amber-700 dark:text-amber-400' : 'text-sky-700 dark:text-sky-400'
+                        }`}
+                      >
+                        {a.direcao === 'alta' ? '↑' : '↓'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{a.descricao}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Secao>
+        )}
 
         {/* ══════════ Aumento ══════════ */}
         <SecaoDeAlteracao titulo="Quando está aumentado ↑" alteracao={marcador.aumento} tom="alta" />
@@ -320,7 +357,7 @@ export default function PaginaDoMarcador({ params }: { params: { slug: string } 
                     {doencas.map((d) => (
                       <li key={d.id}>
                         <Link
-                          href={`/manual-clinico/exames-laboratoriais/doencas#${d.id}`}
+                          href={`/manual-clinico/exames-laboratoriais/doenca/${d.id}`}
                           prefetch={false}
                           className="text-sm font-medium text-primary hover:underline"
                         >
@@ -460,124 +497,3 @@ function formatar(n?: number): string {
   return n.toLocaleString('pt-BR', { maximumFractionDigits: 3 })
 }
 
-/**
- * A seção de aumento ou redução.
- *
- * O desenho aqui é o coração da tese: primeiro o resumo do porquê, depois os
- * mecanismos fisiopatológicos, e dentro de cada mecanismo as situações clínicas
- * — cada uma com a cadeia causal desenhada. É por isso que a página não é uma
- * lista de doenças: a doença é a entrada da cadeia, não a resposta.
- */
-function SecaoDeAlteracao({ titulo, alteracao, tom }: { titulo: string; alteracao: Alteracao; tom: 'alta' | 'baixa' }) {
-  return (
-    <Secao titulo={titulo} rubrica={tom === 'alta' ? 'Por que sobe' : 'Por que cai'}>
-      <p className="rounded-lg border border-border bg-muted/25 px-4 py-3 text-sm leading-relaxed">{alteracao.resumo}</p>
-
-      {alteracao.significado && (
-        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">O que significa: </span>
-          {alteracao.significado}
-        </p>
-      )}
-
-      <div className="mt-4 space-y-2.5">
-        {alteracao.mecanismos.map((m) => (
-          <Expansivel key={m.titulo} titulo={m.titulo} detalhe={m.explicacao} contagem={m.exemplos.length} tom={tom}>
-            <ul className="space-y-4">
-              {m.exemplos.map((e) => (
-                <li key={e.causa}>
-                  <p className="text-sm font-semibold">{e.causa}</p>
-                  <div className="mt-2 rounded-lg border border-border bg-muted/20 p-3">
-                    <Fluxo etapas={e.etapas} compacto />
-                  </div>
-                  {e.nota && (
-                    <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                      <span className="font-semibold text-foreground">Detalhe que importa: </span>
-                      {e.nota}
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </Expansivel>
-        ))}
-      </div>
-
-      {alteracao.causas && <Causas causas={alteracao.causas} />}
-    </Secao>
-  )
-}
-
-/**
- * Causas separadas por peso epidemiológico.
- *
- * O rótulo é sempre sobre frequência de aparecimento na prática, nunca sobre
- * probabilidade clínica do caso concreto — o exame sozinho não estabelece
- * probabilidade, e sugerir o contrário seria ensinar errado.
- */
-function Causas({ causas }: { causas: CausasPorPeso }) {
-  const blocos: { rotulo: string; itens?: string[]; tom: 'neutro' | 'alta' | 'alerta' | 'destaque' }[] = [
-    { rotulo: 'Muito comuns', itens: causas.muitoComuns, tom: 'destaque' },
-    { rotulo: 'Comuns', itens: causas.comuns, tom: 'neutro' },
-    { rotulo: 'Menos comuns', itens: causas.menosComuns, tom: 'neutro' },
-    { rotulo: 'Importantes para não esquecer', itens: causas.naoEsquecer, tom: 'alta' },
-    { rotulo: 'Emergências associadas', itens: causas.emergencias, tom: 'alerta' },
-  ]
-  const comConteudo = blocos.filter((b) => b.itens && b.itens.length > 0)
-  if (comConteudo.length === 0) return null
-
-  return (
-    <div className="mt-5">
-      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Principais causas</p>
-      <div className="mt-2 grid gap-3 sm:grid-cols-2">
-        {comConteudo.map((b) => (
-          <div key={b.rotulo} className="rounded-xl border border-border bg-card p-3.5">
-            <Etiqueta tom={b.tom}>{b.rotulo}</Etiqueta>
-            <ul className="mt-2 space-y-1">
-              {b.itens!.map((i) => (
-                <li key={i} className="text-sm leading-relaxed text-muted-foreground">
-                  {i}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <p className="mt-2.5 text-[11px] leading-relaxed text-muted-foreground">
-        A separação é por frequência de aparecimento na prática, não por probabilidade clínica: um exame isolado não
-        estabelece probabilidade diagnóstica.
-      </p>
-    </div>
-  )
-}
-
-function Secao({ titulo, rubrica, children }: { titulo: string; rubrica?: string; children: React.ReactNode }) {
-  return (
-    <section className="mt-8">
-      {rubrica && <p className="lab-rubrica">{rubrica}</p>}
-      <h2 className="mt-1 font-heading text-xl font-semibold tracking-tight">{titulo}</h2>
-      <div className="mt-3">{children}</div>
-    </section>
-  )
-}
-
-function Campo({ rotulo, valor }: { rotulo: string; valor: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-card p-3.5">
-      <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{rotulo}</p>
-      <p className="mt-1 text-sm leading-relaxed">{valor}</p>
-    </div>
-  )
-}
-
-function Lista({ itens }: { itens: string[] }) {
-  return (
-    <ul className="space-y-1.5">
-      {itens.map((i) => (
-        <li key={i} className="text-sm leading-relaxed text-muted-foreground">
-          {i}
-        </li>
-      ))}
-    </ul>
-  )
-}

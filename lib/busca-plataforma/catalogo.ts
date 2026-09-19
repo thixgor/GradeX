@@ -228,6 +228,8 @@ const PAGINAS: ItemBusca[] = [
     ['comparar', 'diferenciar', 'diagnostico diferencial', 'ferropriva', 'talassemia'], { secao: 'manualClinico' }),
   pagina('exames-doencas', 'Doenças e padrão esperado', '/manual-clinico/exames-laboratoriais/doencas', 'Exames Laboratoriais', 'microscope',
     ['doenca', 'doencas', 'padrao esperado', 'anemia ferropriva', 'cirrose'], { secao: 'manualClinico' }),
+  pagina('exames-alteracoes', 'Alterações laboratoriais', '/manual-clinico/exames-laboratoriais/alteracoes', 'Exames Laboratoriais', 'trending-up',
+    ['alteracao', 'alteracoes', 'hiponatremia', 'hipercalemia', 'colestase', 'microcitose', 'achado'], { secao: 'manualClinico' }),
   pagina('exames-laboratorio-virtual', 'Laboratório Virtual', '/manual-clinico/exames-laboratoriais/laboratorio', 'Exames Laboratoriais', 'dices',
     ['laboratorio virtual', 'gerar exame', 'praticar', 'caso', 'desafio'], { secao: 'manualClinico' }),
 

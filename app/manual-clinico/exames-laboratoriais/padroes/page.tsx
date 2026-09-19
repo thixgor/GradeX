@@ -134,7 +134,7 @@ export default function PaginaDePadroes() {
                       return (
                         <li key={id}>
                           <Link
-                            href={`/manual-clinico/exames-laboratoriais/doencas#${id}`}
+                            href={`/manual-clinico/exames-laboratoriais/doenca/${id}`}
                             prefetch={false}
                             className="inline-flex rounded-full border border-border bg-muted/40 px-3 py-1 text-xs font-medium transition hover:border-primary/40"
                           >

@@ -144,7 +144,7 @@ export function Expansivel({
 
 /* ═══════════════════════════ Favoritos ═══════════════════════════ */
 
-export type TipoFavorito = 'marcador' | 'exame' | 'padrao' | 'doenca'
+export type TipoFavorito = 'marcador' | 'exame' | 'padrao' | 'doenca' | 'alteracao'
 
 export interface Favorito {
   tipo: TipoFavorito

@@ -53,6 +53,7 @@ import { EXAMES, EXAME_POR_ID } from './paineis'
 import { PADROES, PADRAO_POR_ID } from './padroes'
 import { SISTEMAS, SISTEMA_POR_ID } from './sistemas'
 import {
+  ALTERACOES,
   indiceDeAlteracoes,
   indiceDeDoencas,
   indiceDeExames,
@@ -60,6 +61,7 @@ import {
   indiceDePadroes,
   indiceDePerguntas,
   indiceDeSistemas,
+  type AlteracaoLaboratorial,
   type ItemDoIndice,
 } from './busca'
 import type { GrupoId, Marcador, SistemaId } from './tipos'
@@ -69,8 +71,16 @@ export { EXAMES, EXAME_POR_ID, TOTAL_DE_EXAMES } from './paineis'
 export { SISTEMAS, SISTEMA_POR_ID } from './sistemas'
 export { PADROES, PADRAO_POR_ID } from './padroes'
 export { DOENCAS, DOENCA_POR_ID, COMPARACOES, COMPARACAO_POR_ID } from './doencas'
-export { ALTERACOES, PERGUNTAS, buscar, normalizar } from './busca'
-export type { ItemDoIndice, ResultadoBusca, TipoDeResultado } from './busca'
+export {
+  ALTERACOES,
+  ALTERACAO_POR_ID,
+  PERGUNTAS,
+  alteracaoPorId,
+  alteracoesDoMarcador,
+  buscar,
+  normalizar,
+} from './busca'
+export type { AlteracaoLaboratorial, ItemDoIndice, ResultadoBusca, TipoDeResultado } from './busca'
 
 /* ═══════════════════════════ Catálogo ═══════════════════════════ */
 
@@ -212,6 +222,46 @@ function normalizarSimples(texto: string): string {
   return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
 }
 
+/* ═══════════════════════ Relações da alteração ═══════════════════════ */
+
+/**
+ * A direção escrita no acervo é texto livre — '↑↑', '↓ leve', 'normal ou ↑' —,
+ * porque é assim que ela é lida. Para cruzar com uma alteração basta saber para
+ * que lado o achado aponta, e um achado que aponta para os dois lados ('↑ ou ↓')
+ * não pertence a nenhuma das duas.
+ */
+function moveuPara(direcao: string, sentido: 'alta' | 'baixa'): boolean {
+  const sobe = direcao.includes('↑')
+  const cai = direcao.includes('↓')
+  return sentido === 'alta' ? sobe && !cai : cai && !sobe
+}
+
+/**
+ * O bloco da ficha do marcador que responde por uma alteração.
+ *
+ * É a peça central da página da alteração: quem chegou por "hiponatremia" quer
+ * ler por que o sódio *cai*, e não a ficha inteira do sódio.
+ */
+export function blocoDaAlteracao(alteracao: AlteracaoLaboratorial) {
+  const marcador = MARCADOR_POR_ID.get(alteracao.marcador)
+  if (!marcador) return undefined
+  return alteracao.direcao === 'alta' ? marcador.aumento : marcador.reducao
+}
+
+/** Doenças cujo padrão esperado move o marcador no sentido da alteração. */
+export function doencasDaAlteracao(alteracao: AlteracaoLaboratorial) {
+  return DOENCAS.filter((d) =>
+    d.esperado.some((e) => e.id === alteracao.marcador && moveuPara(e.direcao, alteracao.direcao)),
+  )
+}
+
+/** Padrões laboratoriais em que o marcador se move no sentido da alteração. */
+export function padroesDaAlteracao(alteracao: AlteracaoLaboratorial) {
+  return PADROES.filter((p) =>
+    p.achados.some((a) => a.id === alteracao.marcador && moveuPara(a.direcao, alteracao.direcao)),
+  )
+}
+
 /* ═══════════════════════════ Índice de busca ═══════════════════════════ */
 
 /**
@@ -253,6 +303,7 @@ export function resumoDoAcervo() {
     sistemas: SISTEMAS.length,
     padroes: PADROES.length,
     doencas: DOENCAS.length,
+    alteracoes: ALTERACOES.length,
     comparacoes,
     mecanismos,
     /** Cadeias causais escritas (`doença → mecanismo → alteração`). */

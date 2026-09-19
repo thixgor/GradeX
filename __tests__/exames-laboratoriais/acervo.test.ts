@@ -8,11 +8,13 @@ import {
   MARCADOR_POR_ID,
   PADROES,
   SISTEMAS,
+  blocoDaAlteracao,
+  doencasDaAlteracao,
   gruposComConteudo,
   indiceCompleto,
   resumoDoAcervo,
 } from '@/lib/exames-laboratoriais'
-import { ALTERACOES, PERGUNTAS, buscar } from '@/lib/exames-laboratoriais/busca'
+import { ALTERACOES, ALTERACAO_POR_ID, PERGUNTAS, buscar } from '@/lib/exames-laboratoriais/busca'
 import { BASE, CENARIOS, CENARIO_POR_ID, gerarExame } from '@/lib/exames-laboratoriais/laboratorio-virtual'
 
 /**
@@ -299,9 +301,28 @@ describe('busca', () => {
   })
 
   it('entende o nome da alteração, e não só o do exame', () => {
-    expect(buscar(indice, 'hiponatremia')[0]?.id).toBe('sodio')
-    expect(buscar(indice, 'hipercalemia')[0]?.id).toBe('potassio')
-    expect(buscar(indice, 'microcitose')[0]?.id).toBe('vcm')
+    expect(buscar(indice, 'hiponatremia')[0]?.id).toBe('hiponatremia')
+    expect(buscar(indice, 'hipercalemia')[0]?.id).toBe('hipercalemia')
+    expect(buscar(indice, 'microcitose')[0]?.id).toBe('microcitose')
+  })
+
+  it('leva a alteração para a própria página, e não para a ficha inteira do marcador', () => {
+    // A regressão que este teste guarda: quem busca "hiponatremia" estava caindo
+    // na ficha do sódio, que explica o marcador nos dois sentidos — o dobro do
+    // conteúdo com metade da resposta.
+    const achado = buscar(indice, 'hiponatremia')[0]
+    expect(achado?.tipo).toBe('alteracao')
+    expect(achado?.href).toBe('/manual-clinico/exames-laboratoriais/alteracao/hiponatremia')
+  })
+
+  it('encontra a alteração pelo sinônimo em uso', () => {
+    expect(buscar(indice, 'hiperpotassemia')[0]?.id).toBe('hipercalemia')
+    expect(buscar(indice, 'trombocitopenia')[0]?.id).toBe('plaquetopenia')
+  })
+
+  it('leva a doença para a página dela, e não para a lista de todas', () => {
+    const achado = buscar(indice, 'anemia ferropriva').find((r) => r.tipo === 'doenca')
+    expect(achado?.href).toBe('/manual-clinico/exames-laboratoriais/doenca/anemia-ferropriva')
   })
 
   it('responde a perguntas escritas por extenso', () => {
@@ -314,12 +335,58 @@ describe('busca', () => {
     for (const a of ALTERACOES) if (!IDS.has(a.marcador)) orfas.push(`alteração ${a.termo} → ${a.marcador}`)
     for (const p of PERGUNTAS) {
       if (p.destino.tipo === 'marcador' && !IDS.has(p.destino.id)) orfas.push(`pergunta "${p.pergunta}" → ${p.destino.id}`)
+      if (p.destino.tipo === 'doenca' && !DOENCAS.some((d) => d.id === p.destino.id)) {
+        orfas.push(`pergunta "${p.pergunta}" → ${p.destino.id}`)
+      }
     }
     expect(orfas).toEqual([])
   })
 
   it('não devolve nada para consulta curta demais', () => {
     expect(buscar(indice, 'a')).toEqual([])
+  })
+})
+
+/**
+ * As alterações laboratoriais têm página própria, e a página só se sustenta
+ * sobre três garantias: o id é único (ele é a rota), o marcador existe, e o
+ * marcador realmente explica o lado para o qual a alteração aponta. Sem a
+ * terceira, "hiponatremia" abriria uma tela sem o mecanismo — que é justamente
+ * o que a pessoa foi buscar.
+ */
+describe('alterações laboratoriais', () => {
+  it('não tem ids repetidos', () => {
+    const vistos = new Set<string>()
+    const repetidos: string[] = []
+    for (const a of ALTERACOES) {
+      if (vistos.has(a.id)) repetidos.push(a.id)
+      vistos.add(a.id)
+    }
+    expect(repetidos).toEqual([])
+  })
+
+  it('o id é utilizável como rota', () => {
+    for (const a of ALTERACOES) expect(a.id, a.termo).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+  })
+
+  it('o marcador de cada alteração explica o lado para o qual ela aponta', () => {
+    const semBloco: string[] = []
+    for (const a of ALTERACOES) {
+      const bloco = blocoDaAlteracao(a)
+      if (!bloco || bloco.mecanismos.length === 0) semBloco.push(`${a.termo} (${a.marcador} ${a.direcao})`)
+    }
+    expect(semBloco).toEqual([])
+  })
+
+  it('cruza com as doenças pelo sentido certo do achado', () => {
+    const hiponatremia = ALTERACAO_POR_ID.get('hiponatremia')!
+    const doencas = doencasDaAlteracao(hiponatremia)
+    // Toda doença devolvida precisa de fato derrubar o sódio — nenhuma pode
+    // entrar por citar o marcador em qualquer direção.
+    for (const d of doencas) {
+      const achado = d.esperado.find((e) => e.id === 'sodio')!
+      expect(achado.direcao, d.id).toContain('↓')
+    }
   })
 })
 
@@ -331,6 +398,7 @@ describe('resumo do acervo', () => {
     expect(r.sistemas).toBe(SISTEMAS.length)
     expect(r.padroes).toBe(PADROES.length)
     expect(r.doencas).toBe(DOENCAS.length)
+    expect(r.alteracoes).toBe(ALTERACOES.length)
     expect(r.cadeias).toBeGreaterThan(r.mecanismos)
   })
 
