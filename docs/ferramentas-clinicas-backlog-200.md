@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **228** (eram 201) |
-| Implementadas desta lista | **27** |
-| Restantes | **173** |
-| Nota média na auditoria | **100** — todas as 228 |
+| Ferramentas no catálogo | **229** (eram 201) |
+| Implementadas desta lista | **28** |
+| Restantes | **172** |
+| Nota média na auditoria | **100** — todas as 229 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -155,6 +155,7 @@ escores individuais.
 ## 5. Pneumologia e sono (11)
 
 60. **Interpretação de espirometria (GLI/LLN) e pico de fluxo expiratório previsto** — padrão obstrutivo, restritivo e misto, resposta a broncodilatador e gravidade da crise asmática. **[P1]**
+    - 🟡 **parcial** — `espirometria` cobre padrão, gravidade, LLN e resposta ao broncodilatador pelos dois critérios; pico de fluxo previsto e gravidade da crise asmática pendentes
 61. **CAT — COPD Assessment Test e grupos GOLD A/B/E** — classificação atual da DPOC. **[P1]**
     - ✅ **feito** — `cat-gold`, com os grupos A/B/E de 2023
 62. **DECAF e BAP-65** — mortalidade na exacerbação da DPOC. **[P2]**

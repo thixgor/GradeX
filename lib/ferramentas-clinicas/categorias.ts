@@ -38,7 +38,7 @@ export const CATEGORIAS: Categoria[] = [
       'Ventilação protetora é aritmética: peso predito define volume corrente, volume corrente e complacência definem driving pressure, e driving pressure é a variável que mais consistentemente se associa a mortalidade na SDRA. Somam-se os escores de gravidade da pneumonia, do TEP e os índices de desmame.',
     icone: 'pneumologia',
     cor: 'azul',
-    total: 22,
+    total: 23,
   },
   {
     id: 'nefrologia',

@@ -1497,6 +1497,144 @@ const catGold: Ferramenta = {
   ],
 }
 
+/* ═══════════════════ Interpretação de espirometria ═══════════════════ */
+
+const espirometriaCampos: Campo[] = [
+  campoNum('vef1', 'VEF₁ pós-broncodilatador', { unidade: '% do previsto', min: 10, max: 160, passo: 1, ajuda: 'Volume expiratório forçado no primeiro segundo, em percentual do previsto. Use sempre o valor **pós-broncodilatador** para classificar: o diagnóstico de obstrução fixa exige que ela persista depois do broncodilatador.' }),
+  campoNum('cvf', 'CVF pós-broncodilatador', { unidade: '% do previsto', min: 10, max: 160, passo: 1, ajuda: 'Capacidade vital forçada em percentual do previsto. CVF reduzida com relação normal **sugere** restrição, mas não a confirma — só a medida de volumes pulmonares, por pletismografia ou diluição de hélio, confirma restrição.' }),
+  campoNum('relacao', 'Relação VEF₁/CVF pós-broncodilatador', { min: 0.2, max: 1, passo: 0.01, ajuda: 'Expressa como fração (0,70 e não 70). É ela que define obstrução. O critério GOLD usa o valor fixo de 0,70; as sociedades respiratórias preferem o **limite inferior da normalidade (LLN)** derivado das equações GLI, que ajusta por idade, sexo, altura e etnia.' }),
+  campoNum('idade', 'Idade', { unidade: 'anos', min: 5, max: 100, passo: 1, ajuda: 'A relação VEF₁/CVF cai fisiologicamente com a idade, cerca de 0,002 por ano. É por isso que o corte fixo de 0,70 **superdiagnostica obstrução em idosos** e a subdiagnostica em jovens.' }),
+  campoNum('vef1Pre', 'VEF₁ pré-broncodilatador', { unidade: 'mL', min: 100, max: 7000, passo: 10, opcional: true, ajuda: 'Em mililitros, para calcular a resposta ao broncodilatador. Informe junto com o valor pós.' }),
+  campoNum('vef1Pos', 'VEF₁ pós-broncodilatador', { unidade: 'mL', min: 100, max: 7000, passo: 10, opcional: true, ajuda: 'Em mililitros. A resposta significativa exige aumento **de 12% e de 200 mL** pelo critério clássico; as diretrizes de 2022 passaram a recomendar o critério de aumento maior que 10% do previsto, que independe do valor de partida.' }),
+  campoSeg('clinica', 'Contexto clínico', [
+    { valor: 'dpoc', rotulo: 'Suspeita de DPOC' },
+    { valor: 'asma', rotulo: 'Suspeita de asma' },
+    { valor: 'restritivo', rotulo: 'Suspeita de doença restritiva' },
+    { valor: 'triagem', rotulo: 'Triagem ou pré-operatório' },
+  ], { ajuda: 'A espirometria não diagnostica sozinha: o mesmo padrão obstrutivo aparece em asma, DPOC, bronquiectasia e bronquiolite, e o que separa é a clínica, a reversibilidade e a evolução.' }),
+]
+
+const espirometria: Ferramenta = {
+  id: 'espirometria',
+  nome: 'Interpretação de espirometria: padrão, gravidade e resposta ao broncodilatador',
+  sinonimos: ['espirometria', 'prova de funcao pulmonar', 'vef1', 'cvf', 'tiffeneau', 'obstrutivo', 'restritivo'],
+  resumo: 'Classifica o padrão ventilatório, gradua a gravidade e calcula a resposta ao broncodilatador pelos dois critérios em uso.',
+  categorias: ['pneumologia'],
+  campos: espirometriaCampos,
+  calcular: (v) => {
+    const vef1 = num(v, 'vef1')
+    const cvf = num(v, 'cvf')
+    const relacao = num(v, 'relacao')
+    const idade = num(v, 'idade')
+    if (vef1 === null || cvf === null || relacao === null || idade === null) return null
+
+    // LLN aproximado da relação VEF1/CVF, conforme a queda fisiológica com a idade.
+    const llnAprox = 0.78 - 0.002 * (idade - 20)
+    const obstrutivoFixo = relacao < 0.7
+    const obstrutivoLln = relacao < llnAprox
+    const cvfBaixa = cvf < 80
+
+    const padrao = obstrutivoFixo || obstrutivoLln
+      ? cvfBaixa ? 'Obstrutivo com CVF reduzida (possível padrão misto)' : 'Obstrutivo'
+      : cvfBaixa ? 'Sugestivo de restrição (exige confirmação por volumes)' : 'Dentro dos limites'
+
+    const gravidade = vef1 >= 80 ? 'leve (GOLD 1)' : vef1 >= 50 ? 'moderada (GOLD 2)' : vef1 >= 30 ? 'grave (GOLD 3)' : 'muito grave (GOLD 4)'
+
+    const pre = num(v, 'vef1Pre')
+    const pos = num(v, 'vef1Pos')
+    const deltaMl = pre !== null && pos !== null ? pos - pre : null
+    const deltaPct = pre !== null && pos !== null && pre > 0 ? ((pos - pre) / pre) * 100 : null
+    const respostaClassica = deltaMl !== null && deltaPct !== null && deltaMl >= 200 && deltaPct >= 12
+
+    const nivel: Nivel = padrao === 'Dentro dos limites' ? 'ok' : vef1 < 50 ? 'alerta' : 'atencao'
+
+    const interpretacao: string[] = [
+      `**Padrão ${padrao.toLowerCase()}.** A relação de ${fmt(relacao, 2)} está ${obstrutivoFixo ? 'abaixo' : 'acima'} do corte fixo de 0,70 e ${obstrutivoLln ? 'abaixo' : 'acima'} do limite inferior da normalidade estimado para ${fmtInt(idade)} anos (aproximadamente ${fmt(llnAprox, 2)}).`,
+      obstrutivoFixo !== obstrutivoLln
+        ? `**Atenção: os dois critérios discordam neste caso.** O corte fixo de 0,70 ignora que a relação cai fisiologicamente com a idade — cerca de 0,002 por ano —, o que faz com que ele **superdiagnostique obstrução em idosos** e a subdiagnostique em jovens. As sociedades respiratórias recomendam o LLN das equações GLI; a GOLD mantém o corte fixo por simplicidade.`
+        : 'Os dois critérios — corte fixo de 0,70 e limite inferior da normalidade — concordam neste caso.',
+    ]
+    if (padrao.startsWith('Obstrutivo')) {
+      interpretacao.push(`A gravidade da obstrução pelo VEF₁ de ${fmtInt(vef1)}% do previsto é **${gravidade}** (≥ 80% leve, 50 a 79% moderada, 30 a 49% grave, < 30% muito grave).`)
+      if (cvfBaixa) {
+        interpretacao.push('**CVF reduzida junto com obstrução** pode significar aprisionamento aéreo — e não restrição associada. A diferenciação exige medida de volumes pulmonares: capacidade pulmonar total normal ou aumentada com volume residual elevado indica aprisionamento; capacidade total reduzida indica restrição verdadeira.')
+      }
+    } else if (cvfBaixa) {
+      interpretacao.push('**CVF reduzida com relação preservada sugere restrição, mas não a confirma.** O diagnóstico exige **capacidade pulmonar total abaixo do limite inferior da normalidade**, medida por pletismografia ou diluição de hélio. Manobra mal executada, esforço submáximo e obesidade produzem o mesmo padrão sem doença restritiva.')
+    }
+    if (deltaMl !== null && deltaPct !== null) {
+      interpretacao.push(
+        `**Resposta ao broncodilatador: ${fmtInt(deltaMl)} mL (${fmtPct(deltaPct, 1)}).** Pelo critério clássico, a resposta é significativa com aumento simultâneo de **12% e 200 mL** — aqui ${respostaClassica ? 'os dois foram atingidos' : 'os dois não foram atingidos'}. As diretrizes ATS/ERS de 2022 substituíram esse critério pelo aumento **maior que 10% do valor previsto**, que não penaliza quem parte de um VEF₁ muito baixo.`,
+        respostaClassica
+          ? 'Resposta significativa favorece **asma**, mas não a diagnostica: até 20 a 30% dos pacientes com DPOC também respondem, e a ausência de resposta num único exame não exclui asma, cuja obstrução é variável ao longo do tempo.'
+          : 'Ausência de resposta num exame isolado **não exclui asma**: a variabilidade é a marca da doença, e o exame pode ser feito num dia de boa função. Considere repetir, medir variabilidade do pico de fluxo, ou fazer teste de broncoprovocação.',
+      )
+    }
+    interpretacao.push('Espirometria **não faz diagnóstico sozinha**. O mesmo padrão obstrutivo aparece em asma, DPOC, bronquiectasia, bronquiolite e obstrução de via aérea central — e são a história, a exposição, a idade de início, a reversibilidade e a evolução que separam.')
+
+    const conduta: string[] = []
+    if (padrao.startsWith('Obstrutivo')) {
+      conduta.push(
+        opc(v, 'clinica') === 'asma'
+          ? '**Contexto de asma:** confirme a variabilidade — resposta ao broncodilatador, variação do pico de fluxo acima de 10% ao longo de duas semanas, ou teste de broncoprovocação. Inicie **corticoide inalatório**, que é a base do tratamento; a monoterapia com beta-agonista de curta duração foi abandonada e associa-se a mortalidade.'
+          : '**Contexto de DPOC:** o diagnóstico exige relação pós-broncodilatador abaixo de 0,70 **mais** exposição de risco e sintomas compatíveis. Classifique o grupo por sintomas (CAT) e exacerbações (A, B ou E) — o VEF₁ gradua a obstrução, mas não define o tratamento inicial.',
+      )
+      conduta.push('Investigue **deficiência de alfa-1-antitripsina** em todo paciente com DPOC, conforme recomendação da OMS — especialmente com início antes dos 45 anos, enfisema de predomínio basal, história familiar ou ausência de tabagismo relevante.')
+    } else if (cvfBaixa) {
+      conduta.push('**Confirme a restrição com medida de volumes pulmonares** (pletismografia é o padrão) antes de investigar causas. Acrescente **difusão de monóxido de carbono (DLCO)**, que é o exame que separa restrição parenquimatosa (DLCO reduzida — fibrose, pneumonite) de extraparenquimatosa (DLCO normal ou alta — obesidade, doença neuromuscular, deformidade torácica, derrame).')
+    } else {
+      conduta.push('**Espirometria dentro dos limites.** Se a dispneia persiste, ela não é explicada por distúrbio ventilatório de repouso: considere DLCO, teste cardiopulmonar de exercício, ecocardiograma, anemia, descondicionamento, disfunção de cordas vocais e causas cardíacas.')
+    }
+    conduta.push(
+      '**Confira a qualidade do exame antes de interpretá-lo.** Critérios ATS/ERS 2019: início explosivo com volume extrapolado abaixo de 5% da CVF ou 100 mL, ausência de tosse no primeiro segundo, platô expiratório de pelo menos 1 segundo (ou 6 segundos de expiração em adultos), e repetibilidade com as duas melhores curvas diferindo em até 150 mL. Exame mal feito produz padrão restritivo falso — é a causa mais comum de "restrição" laudada.',
+      'Use as equações de referência **GLI (Global Lung Function Initiative)**, que são as atualmente recomendadas, e registre qual foi usada. As equações de Pereira e de Knudson, ainda em uso em muitos serviços, produzem previstos diferentes para o mesmo paciente.',
+      'Interprete a espirometria **junto com a clínica e a imagem**, nunca isolada. E repita ao longo do tempo: a **queda anual do VEF₁** — acima de 40 a 60 mL/ano é acelerada — informa mais que qualquer valor isolado, e é o que documenta progressão e resposta.',
+    )
+
+    return {
+      titulo: 'Espirometria',
+      valor: padrao,
+      nivel,
+      rotuloNivel: padrao.startsWith('Obstrutivo') ? `Obstrução ${gravidade}` : padrao,
+      detalhes: [
+        { rotulo: 'VEF₁', valor: `${fmtInt(vef1)}% do previsto`, nivel: (vef1 < 50 ? 'alerta' : vef1 < 80 ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'CVF', valor: `${fmtInt(cvf)}% do previsto`, nivel: (cvfBaixa ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'VEF₁/CVF', valor: fmt(relacao, 2), nivel: (obstrutivoFixo || obstrutivoLln ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Corte fixo (GOLD)', valor: obstrutivoFixo ? 'Obstrução (< 0,70)' : 'Sem obstrução' },
+        { rotulo: 'LLN estimado para a idade', valor: `${fmt(llnAprox, 2)} — ${obstrutivoLln ? 'obstrução' : 'sem obstrução'}` },
+        ...(deltaMl !== null && deltaPct !== null
+          ? [{ rotulo: 'Resposta ao broncodilatador', valor: `${fmtInt(deltaMl)} mL (${fmtPct(deltaPct, 1)})`, nivel: (respostaClassica ? 'alerta' : 'ok') as Nivel, nota: respostaClassica ? 'Significativa pelo critério de 12% e 200 mL' : 'Não significativa pelo critério clássico' }]
+          : []),
+      ],
+      interpretacao,
+      conduta,
+      alertas: [
+        '**Restrição não se diagnostica por espirometria.** CVF reduzida com relação normal é apenas *sugestiva*: a confirmação exige capacidade pulmonar total medida por pletismografia ou diluição de gás.',
+        'O corte fixo de 0,70 **superdiagnostica obstrução em idosos** e a subdiagnostica em jovens, porque a relação cai fisiologicamente com a idade. Prefira o LLN das equações GLI quando o laudo o oferecer.',
+        'Exame mal executado é a causa mais comum de padrão restritivo falso. Antes de interpretar qualquer número, confira os critérios de aceitabilidade e de repetibilidade.',
+      ],
+    }
+  },
+  formula: [
+    'Obstrução: VEF₁/CVF < 0,70 (GOLD) ou < LLN (GLI, ATS/ERS)',
+    'Gravidade pelo VEF₁ % do previsto: ≥ 80 leve · 50-79 moderada · 30-49 grave · < 30 muito grave',
+    'Resposta ao broncodilatador: ≥ 12% **e** ≥ 200 mL (clássico) ou > 10% do previsto (ATS/ERS 2022)',
+  ],
+  fundamento:
+    'A espirometria mede dois fenômenos distintos, e confundi-los é a raiz da maior parte dos laudos mal interpretados. O **fluxo expiratório máximo** não depende do esforço a partir do primeiro instante da manobra: depois dos primeiros 30% da capacidade vital, o fluxo se torna independente do esforço porque ocorre o fenômeno da **compressão dinâmica das vias aéreas** — a pressão pleural positiva comprime os brônquios no ponto em que a pressão dentro do lúmen iguala a pressão ao redor, e esse "ponto de igual pressão" limita o fluxo independentemente de quanto o paciente force. É por isso que a relação VEF₁/CVF é uma medida robusta de obstrução: ela reflete a resistência das vias aéreas e a retração elástica do parênquima, não a colaboração do paciente. Já a **CVF** mede volume mobilizado e é fortemente dependente de esforço e de tempo expiratório — o paciente obstruído que interrompe a expiração cedo demais registra uma CVF falsamente baixa e produz o padrão "misto" que não existe. A distinção entre obstrução e restrição segue dessa física: na obstrução, o problema é esvaziar, e o ar aprisionado eleva o volume residual; na restrição, o problema é encher, e a capacidade pulmonar total cai. A espirometria enxerga bem a primeira e apenas sugere a segunda, porque não mede o volume que sobra no pulmão ao fim da expiração — e é exatamente esse volume que define restrição.',
+  armadilhas: [
+    'Padrão "misto" é frequentemente artefato de tempo expiratório insuficiente: o obstrutivo que não expira o suficiente registra CVF baixa e simula restrição associada.',
+    'Obesidade reduz a CVF por mecanismo extraparenquimatoso e produz padrão restritivo com DLCO normal ou elevada.',
+    'Espirometria normal não exclui asma nem doença precoce de pequenas vias aéreas — a obstrução da asma é intermitente e a das pequenas vias pode aparecer só no fluxo expiratório forçado entre 25 e 75% da CVF.',
+    'Comparar exames feitos com equações de referência diferentes (GLI, Pereira, Knudson) produz variações de percentual do previsto que não correspondem a mudança nenhuma no paciente.',
+  ],
+  referencias: [
+    { texto: 'Graham BL, Steenbruggen I, Miller MR, et al. Standardization of Spirometry 2019 Update. An Official ATS and ERS Technical Statement. Am J Respir Crit Care Med. 2019;200(8):e70-e88.' },
+    { texto: 'Stanojevic S, Kaminsky DA, Miller MR, et al. ERS/ATS technical standard on interpretive strategies for routine lung function tests. Eur Respir J. 2022;60(1):2101499.' },
+    { texto: 'Quanjer PH, Stanojevic S, Cole TJ, et al. Multi-ethnic reference values for spirometry for the 3-95-yr age range: the global lung function 2012 equations. Eur Respir J. 2012;40(6):1324-1343.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   pesoPreditoFerramenta,
   mecanicaVentilatoria,
@@ -1514,6 +1652,7 @@ export const ferramentas: Ferramenta[] = [
   pesi,
   spesi,
   catGold,
+  espirometria,
 ]
 
 export default ferramentas
