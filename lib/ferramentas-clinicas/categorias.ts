@@ -68,7 +68,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas neurológicas são o exame físico transformado em número reprodutível entre plantões — é isso que permite comparar o NIHSS da porta com o de duas horas depois e decidir. Estão aqui as escalas de coma, os escores de AVC isquêmico e hemorrágico, as de sedação e delirium e a conta de perfusão cerebral.',
     icone: 'neurologia',
     cor: 'indigo',
-    total: 20,
+    total: 21,
   },
   {
     id: 'gastroenterologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 88,
+    total: 89,
   },
   {
     id: 'cirurgia',
@@ -198,7 +198,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escores que decidem conduta em territórios específicos e que o generalista encontra com frequência: quando uma pedra ureteral vai sair sozinha, se uma lesão pigmentada precisa de biópsia, quando uma otite exige antibiótico, qual tornozelo torcido merece radiografia. São regras de decisão de alto valor justamente porque evitam exame e procedimento desnecessários.',
     icone: 'especialidades',
     cor: 'ocre',
-    total: 6,
+    total: 7,
   },
 ]
 

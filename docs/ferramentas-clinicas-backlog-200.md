@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **224** (eram 201) |
-| Implementadas desta lista | **23** |
-| Restantes | **177** |
-| Nota média na auditoria | **100** — todas as 224 |
+| Ferramentas no catálogo | **225** (eram 201) |
+| Implementadas desta lista | **24** |
+| Restantes | **176** |
+| Nota média na auditoria | **100** — todas as 225 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -341,6 +341,7 @@ escores individuais.
 198. **Melanoma: Breslow, Clark, regra ABCDE, escore de 7 pontos de Glasgow e fototipos de Fitzpatrick** — estadiamento e risco fotobiológico. **[P1]**
 199. **Conversão de acuidade visual (Snellen ↔ logMAR ↔ decimal), classificação ETDRS de retinopatia diabética e estadiamento da ROP** — leitura oftalmológica objetiva. **[P1]**
 200. **HINTS/HINTS-plus, escala de House-Brackmann, SNOT-22, média tonal e classificação OMS de perda auditiva** — vertigem central vs. periférica, paralisia facial, rinossinusite e audiometria. **[P1]**
+    - 🟡 **parcial** — `hints` cobre HINTS e HINTS-plus; House-Brackmann, SNOT-22, média tonal e classificação OMS de perda auditiva pendentes
 
 ---
 

@@ -464,6 +464,122 @@ const twist: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [ottawa, calculoUreteral, ipss, twist]
+/* ═══════════════════ HINTS e HINTS-plus — vertigem central vs. periférica ═══════════════════ */
+
+const hintsCampos: Campo[] = [
+  campoSimNao('sindrome', 'O quadro é uma síndrome vestibular aguda: vertigem contínua há mais de 24 h, com náusea, intolerância ao movimento da cabeça e nistagmo', 0, 'Este é o **pré-requisito**. O HINTS só vale aqui. Em vertigem episódica de segundos (vertigem posicional paroxística benigna) ou de minutos a horas (Menière, migrânea vestibular), ele não se aplica e pode enganar.'),
+  campoOpc('impulso', 'HI — Head Impulse Test (teste do impulso cefálico)', [
+    { valor: 'anormal', rotulo: 'Anormal: há sacada de correção (reflexo vestíbulo-ocular deficiente)', pontos: 0 },
+    { valor: 'normal', rotulo: 'Normal: sem sacada de correção', pontos: 1 },
+  ], { padrao: 'anormal', ajuda: 'Peça ao paciente para fixar o seu nariz e gire a cabeça rapidamente 10 a 20° para um lado. **Sacada de correção presente = teste anormal = tranquilizador**, porque indica lesão do nervo vestibular periférico. Teste normal em alguém francamente vertiginoso é o achado preocupante — a lógica é invertida em relação à maioria dos testes.' }),
+  campoOpc('nistagmo', 'N — Nistagmo', [
+    { valor: 'unidirecional', rotulo: 'Unidirecional, horizontal, que não muda de direção com o olhar', pontos: 0 },
+    { valor: 'bidirecional', rotulo: 'Muda de direção com o olhar, ou é vertical ou torcional puro', pontos: 1 },
+  ], { padrao: 'unidirecional', ajuda: 'Observe em posição primária e no olhar lateral para os dois lados. Nistagmo periférico bate sempre para o mesmo lado e diminui com a fixação visual; nistagmo que **troca de direção** conforme a direção do olhar, ou que é vertical ou torcional puro, é central.' }),
+  campoOpc('skew', 'TS — Test of Skew (cover test alternado)', [
+    { valor: 'ausente', rotulo: 'Sem desvio vertical ao descobrir o olho', pontos: 0 },
+    { valor: 'presente', rotulo: 'Desvio vertical (skew deviation) presente', pontos: 1 },
+  ], { padrao: 'ausente', ajuda: 'Cubra e descubra alternadamente cada olho, observando correção vertical ao descobrir. O desvio vertical é raro mas **muito específico de lesão de tronco encefálico** — quando presente, praticamente sela o diagnóstico central.' }),
+  campoOpc('audicao', 'Perda auditiva nova unilateral (HINTS-plus)', [
+    { valor: 'ausente', rotulo: 'Ausente', pontos: 0 },
+    { valor: 'presente', rotulo: 'Presente', pontos: 1 },
+  ], { padrao: 'ausente', ajuda: 'O acréscimo do HINTS-plus. Parece periférico, mas a artéria labiríntica é ramo da cerebelar ântero-inferior (AICA): um infarto nesse território produz surdez súbita **e** vertigem. Perda auditiva nova numa síndrome vestibular aguda é achado central até prova em contrário.' }),
+]
+
+const hints: Ferramenta = {
+  id: 'hints',
+  nome: 'HINTS e HINTS-plus — vertigem central ou periférica',
+  sigla: 'HINTS',
+  sinonimos: ['hints', 'hints plus', 'vertigem', 'sindrome vestibular aguda', 'nistagmo', 'avc cerebelar'],
+  resumo: 'Separa vertigem central de periférica com três manobras de cabeceira, superando a ressonância precoce em sensibilidade para acidente vascular.',
+  categorias: ['especialidades', 'neurologia', 'emergencia'],
+  campos: hintsCampos,
+  calcular: (v) => {
+    if (!sim(v, 'sindrome')) {
+      return {
+        titulo: 'HINTS',
+        valor: 'Não aplicável',
+        nivel: 'neutro',
+        rotuloNivel: 'Fora da síndrome vestibular aguda',
+        detalhes: [{ rotulo: 'Pré-requisito', valor: 'Não cumprido', nota: 'Vertigem contínua > 24 h com nistagmo' }],
+        interpretacao: [
+          '**O HINTS só é válido na síndrome vestibular aguda**: vertigem contínua há mais de 24 horas, com náusea, intolerância ao movimento cefálico e nistagmo espontâneo. Fora disso, ele não foi validado e pode induzir a erro.',
+          'Se a vertigem é **episódica de segundos**, desencadeada por mudança de posição da cabeça, pense em vertigem posicional paroxística benigna e aplique a **manobra de Dix-Hallpike**, seguida da manobra de Epley quando positiva.',
+          'Se é **episódica de minutos a horas**, com zumbido e perda auditiva flutuante, pense em doença de Menière; com cefaleia, fotofobia e história de migrânea, em migrânea vestibular.',
+          'Se há **vertigem posicional com nistagmo que não fatiga, muda de direção ou é vertical**, considere causa central mesmo em quadro posicional.',
+        ],
+        conduta: [
+          'Classifique primeiro a **temporalidade e os gatilhos** — o algoritmo TiTrATE (timing, triggers and targeted examination) organiza a vertigem por esses dois eixos e é o que define qual exame de cabeceira usar.',
+          'Em vertigem posicional típica, faça **Dix-Hallpike** e trate com **Epley** na mesma consulta: a taxa de sucesso é alta e dispensa medicação. Evite sedativos vestibulares por mais de 48 a 72 horas, porque atrasam a compensação central.',
+          'Peça imagem apenas quando houver sinal neurológico focal, cefaleia, fator de risco vascular com quadro atípico, ou vertigem que não se encaixa em nenhum padrão reconhecível.',
+        ],
+        alertas: ['Aplicar o HINTS fora da síndrome vestibular aguda é uso incorreto e produz falsa segurança — é o erro mais comum no seu uso.'],
+      }
+    }
+
+    const ids = ['impulso', 'nistagmo', 'skew', 'audicao']
+    const pontos = ids.map((id) => ptsOpc(hintsCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const central = (pontos as number[]).some((p) => p > 0)
+    const quais = [
+      (pontos[0] as number) > 0 ? 'impulso cefálico normal' : null,
+      (pontos[1] as number) > 0 ? 'nistagmo que muda de direção, vertical ou torcional' : null,
+      (pontos[2] as number) > 0 ? 'desvio vertical (skew)' : null,
+      (pontos[3] as number) > 0 ? 'perda auditiva nova' : null,
+    ].filter(Boolean)
+
+    return {
+      titulo: 'HINTS-plus',
+      valor: central ? 'Padrão central' : 'Padrão periférico',
+      nivel: central ? 'critico' : 'ok',
+      rotuloNivel: central ? `${quais.length} achado(s) central(is)` : 'INFARCT ausente',
+      detalhes: [
+        { rotulo: 'HI — impulso cefálico', valor: (pontos[0] as number) > 0 ? 'Normal (central)' : 'Anormal, com sacada (periférico)', nivel: ((pontos[0] as number) > 0 ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'N — nistagmo', valor: (pontos[1] as number) > 0 ? 'Muda de direção / vertical (central)' : 'Unidirecional (periférico)', nivel: ((pontos[1] as number) > 0 ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'TS — desvio vertical', valor: (pontos[2] as number) > 0 ? 'Presente (central)' : 'Ausente', nivel: ((pontos[2] as number) > 0 ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Perda auditiva nova (plus)', valor: (pontos[3] as number) > 0 ? 'Presente (central)' : 'Ausente', nivel: ((pontos[3] as number) > 0 ? 'critico' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        central
+          ? `**Padrão central — ${quais.join(', ')}.** Basta **um** achado central para o exame ser positivo. Nas séries de validação, o HINTS aplicado por examinador treinado tem sensibilidade em torno de 96 a 100% para acidente vascular na síndrome vestibular aguda — superior à da ressonância com difusão nas primeiras 24 a 48 horas, que perde de 10 a 20% dos infartos pequenos de fossa posterior.`
+          : '**Padrão periférico (INFARCT ausente):** impulso cefálico anormal com sacada de correção, nistagmo unidirecional e sem desvio vertical formam a tríade que aponta neurite vestibular. Com os três, e sem perda auditiva nova, o risco de acidente vascular é muito baixo.',
+        'A mnemônica dos achados centrais é **INFARCT**: **I**mpulse **N**ormal, **F**ast-phase **A**lternating, **R**efixation on **C**over **T**est. A lógica do primeiro item é contraintuitiva e é onde o exame mais erra: **teste do impulso cefálico normal é o achado preocupante**, porque significa que o reflexo vestíbulo-ocular está íntegro e a vertigem não vem do labirinto.',
+        (pontos[3] as number) > 0
+          ? '**Perda auditiva nova** numa síndrome vestibular aguda parece periférica, mas a artéria labiríntica é ramo da cerebelar ântero-inferior (AICA): infarto nesse território causa surdez súbita e vertigem juntos. É por isso que o HINTS-plus acrescentou esse item, ganhando sensibilidade.'
+          : 'Sem perda auditiva nova, o que reduz a probabilidade de infarto no território da artéria cerebelar ântero-inferior.',
+        'O exame exige **treinamento**: aplicado por profissional não treinado, a acurácia cai substancialmente, e essa é a principal limitação da sua adoção ampla. Um HINTS mal feito é pior que nenhum, porque gera confiança indevida.',
+      ],
+      conduta: [
+        central
+          ? '**Trate como acidente vascular de fossa posterior.** Acione o protocolo de AVC, faça neuroimagem — **angiotomografia ou angiorressonância de vasos cervicais e intracranianos**, porque a dissecção de artéria vertebral é causa relevante em pacientes jovens com vertigem e cervicalgia — e avalie elegibilidade para trombólise e trombectomia dentro das janelas.'
+          : '**Padrão periférico compatível com neurite vestibular.** Trate com sintomáticos por no máximo 48 a 72 horas (anti-histamínico, antiemético) e inicie **reabilitação vestibular precoce**, que acelera a compensação central. Sedativo vestibular prolongado atrasa a recuperação e é o erro mais comum no manejo.',
+        'Vigie o **edema cerebelar**, que é a complicação temida do infarto de fossa posterior: ele se instala entre o 2º e o 5º dia, comprime o quarto ventrículo e causa hidrocefalia obstrutiva e herniação. Piora do nível de consciência nesse período exige tomografia imediata e avaliação neurocirúrgica para craniectomia descompressiva.',
+        'Não se tranquilize com **tomografia normal**: ela tem sensibilidade inferior a 20% para infarto agudo de fossa posterior, por artefato ósseo. Tomografia serve para afastar hemorragia, não para afastar isquemia.',
+        'Em padrão periférico com fatores de risco vascular importantes ou evolução atípica, mantenha vigilância e limiar baixo para reimagem — o HINTS é excelente, mas nenhum exame de cabeceira é infalível.',
+      ],
+      alertas: [
+        '**Impulso cefálico normal é o achado preocupante**, não o tranquilizador. A inversão da lógica habitual é a fonte mais frequente de erro na aplicação.',
+        'Tomografia de crânio normal **não afasta** infarto de fossa posterior — a sensibilidade é inferior a 20% na fase aguda.',
+        'O HINTS exige treinamento e só vale na síndrome vestibular aguda. Fora dela, ou mal aplicado, produz falsa segurança em um cenário em que o diagnóstico perdido é um infarto de tronco.',
+      ],
+    }
+  },
+  formula: ['INFARCT = Impulse Normal, Fast-phase Alternating, Refixation on Cover Test', 'Qualquer um dos três (ou perda auditiva nova, no HINTS-plus) indica padrão central'],
+  fundamento:
+    'A vertigem é um dos sintomas em que o exame de cabeceira supera a imagem, e o HINTS mostra por quê. O **reflexo vestíbulo-ocular** é um arco de três neurônios que liga o canal semicircular ao núcleo vestibular e daí aos núcleos oculomotores, com latência de apenas 10 milissegundos — o mais rápido do corpo. Quando o labirinto ou o nervo vestibular estão lesados, esse arco falha: ao girar a cabeça, os olhos não conseguem manter a fixação e precisam de uma **sacada de correção** visível, que é o teste do impulso cefálico anormal. Numa lesão central, o arco periférico está íntegro e o teste é normal — daí a inversão lógica que torna o achado normal preocupante. O nistagmo segue princípio análogo: a lesão periférica cria um desequilíbrio tônico fixo entre os dois núcleos vestibulares, produzindo nistagmo unidirecional que bate sempre para o lado do núcleo mais ativo e que é suprimido pela fixação visual; lesões centrais desorganizam os integradores do tronco e do cerebelo, gerando nistagmo que troca de direção com o olhar, ou vertical, ou torcional puro. O desvio vertical, por fim, decorre da interrupção das vias otolíticas graviceptivas no tronco, e é raro mas quase patognomônico. O HINTS-plus acrescentou a audição porque a irrigação da cóclea depende da artéria labiríntica, ramo da cerebelar ântero-inferior — de modo que surdez súbita com vertigem pode ser infarto, e não labirintite.',
+  armadilhas: [
+    'Aplicar o HINTS a vertigem episódica ou posicional é uso fora da validação e produz resultado sem significado.',
+    'O teste do impulso cefálico exige fixação visual e giro rápido de pequena amplitude; feito devagar ou com amplitude excessiva, perde valor.',
+    'Nistagmo periférico é suprimido pela fixação visual — examinar apenas com o paciente fixando o olhar pode mascará-lo. Óculos de Frenzel ou vídeo-oculografia ajudam.',
+    'Infarto cerebelar pode cursar com HINTS periférico em uma minoria de casos, sobretudo em infartos muito pequenos do pedúnculo cerebelar médio — a clínica e os fatores de risco continuam pesando.',
+  ],
+  referencias: [
+    { texto: 'Kattah JC, Talkad AV, Wang DZ, Hsieh YH, Newman-Toker DE. HINTS to diagnose stroke in the acute vestibular syndrome. Stroke. 2009;40(11):3504-3510.' },
+    { texto: 'Newman-Toker DE, Kerber KA, Hsieh YH, et al. HINTS outperforms ABCD2 to screen for stroke in acute continuous vertigo and dizziness. Acad Emerg Med. 2013;20(10):986-996.' },
+    { texto: 'Edlow JA, Gurley KL, Newman-Toker DE. A New Diagnostic Approach to the Adult Patient with Acute Dizziness. J Emerg Med. 2018;54(4):469-483.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [ottawa, calculoUreteral, ipss, twist, hints]
 
 export default ferramentas
