@@ -58,7 +58,7 @@ export const CATEGORIAS: Categoria[] = [
       'Sepse é disfunção orgânica, não febre com taquicardia — a mudança de definição em 2016 trocou SIRS por SOFA e é a razão de escore nenhum aqui ser gatilho isolado de conduta. Ao lado dos escores de rastreio e gravidade, as ferramentas de dose, ajuste renal e alvo farmacodinâmico de antimicrobianos.',
     icone: 'infectologia',
     cor: 'verde',
-    total: 21,
+    total: 22,
   },
   {
     id: 'neurologia',
@@ -108,7 +108,7 @@ export const CATEGORIAS: Categoria[] = [
       'Criança não é adulto pequeno, e a prova disso é que quase toda conduta pediátrica passa por uma conta de peso ou superfície corporal. Estão aqui Holliday-Segar, as escalas neonatais, os percentis de crescimento, a fototerapia e as doses máximas que evitam intoxicação.',
     icone: 'pediatria',
     cor: 'turquesa',
-    total: 19,
+    total: 22,
   },
   {
     id: 'ginecologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 78,
+    total: 81,
   },
   {
     id: 'cirurgia',
@@ -168,7 +168,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas psiquiátricas não diagnosticam: elas quantificam gravidade, medem resposta ao tratamento e disparam a conversa que o clínico precisa ter. O PHQ-9 rastreia depressão em 2 minutos e tem no item 9 a pergunta sobre ideação suicida que a consulta costuma pular; o CIWA-Ar decide a dose de benzodiazepínico na abstinência alcoólica hora a hora. Aqui estão os instrumentos de rastreio, gravidade, risco e conversão de dose que sustentam essas decisões.',
     icone: 'psiquiatria',
     cor: 'roxo',
-    total: 3,
+    total: 4,
   },
   {
     id: 'reumatologia',
@@ -198,7 +198,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escores que decidem conduta em territórios específicos e que o generalista encontra com frequência: quando uma pedra ureteral vai sair sozinha, se uma lesão pigmentada precisa de biópsia, quando uma otite exige antibiótico, qual tornozelo torcido merece radiografia. São regras de decisão de alto valor justamente porque evitam exame e procedimento desnecessários.',
     icone: 'especialidades',
     cor: 'ocre',
-    total: 2,
+    total: 3,
   },
 ]
 

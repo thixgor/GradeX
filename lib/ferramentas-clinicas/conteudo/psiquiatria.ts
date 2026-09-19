@@ -374,6 +374,129 @@ const audit: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [phq9, gad7, audit]
+
+/* ═══════════════════ 4. CIWA-Ar — abstinência alcoólica ═══════════════════ */
+
+/** Alternativa de 0 a 7 usada nos oito itens escalares do CIWA-Ar. */
+function itemCiwa(id: string, rotulo: string, rotulos: string[], ajuda?: string) {
+  return campoOpc(
+    id,
+    rotulo,
+    rotulos.map((r, i) => ({ valor: String(i), rotulo: `${i} — ${r}`, pontos: i })),
+    { padrao: '0', ajuda },
+  )
+}
+
+const ciwaCampos: Campo[] = [
+  itemCiwa('nausea', 'Náusea e vômito', ['Ausente', 'Náusea leve, sem vômito', '', '', 'Náusea intermitente com ânsia', '', '', 'Náusea constante, ânsia e vômito'],
+    'Pergunte "seu estômago está embrulhado? você vomitou?" e observe. Náusea persistente em abstinência exige afastar pancreatite, hepatite alcoólica e hemorragia digestiva antes de atribuí-la à síndrome.'),
+  itemCiwa('tremor', 'Tremor (braços estendidos, dedos afastados)', ['Ausente', 'Não visível, sentido na ponta dos dedos', '', '', 'Moderado, com os braços estendidos', '', '', 'Grave, mesmo com os braços em repouso'],
+    'Peça ao paciente para estender os braços e afastar os dedos. Tremor é um dos primeiros sinais e aparece de 6 a 12 h após a última dose.'),
+  itemCiwa('sudorese', 'Sudorese paroxística', ['Não visível', 'Palmas úmidas', '', '', 'Gotículas de suor na testa', '', '', 'Sudorese profusa'],
+    'Observe a testa e as palmas. Sudorese profusa com taquicardia marca hiperatividade autonômica importante.'),
+  itemCiwa('ansiedade', 'Ansiedade', ['Tranquilo', 'Levemente ansioso', '', '', 'Moderadamente ansioso ou reticente', '', '', 'Equivalente a pânico agudo, como em delirium grave'],
+    'Pergunte "você está nervoso?" e observe.'),
+  itemCiwa('agitacao', 'Agitação', ['Atividade normal', 'Um pouco mais que o normal', '', '', 'Inquieto, muda de posição com frequência', '', '', 'Anda de um lado para outro ou se debate'], undefined),
+  itemCiwa('tatil', 'Alterações táteis', ['Nenhuma', 'Prurido, formigamento, queimação ou dormência muito leves', 'Leves', 'Moderadas', 'Alucinações moderadamente graves', 'Alucinações graves', 'Alucinações extremamente graves', 'Alucinações contínuas'],
+    'Pergunte sobre coceira, formigamento, queimação, dormência e sensação de insetos na pele. A formigação — sensação de insetos caminhando — é clássica da abstinência grave.'),
+  itemCiwa('auditiva', 'Alterações auditivas', ['Ausentes', 'Sons muito leves ou capazes de assustar', 'Leves', 'Moderadas', 'Alucinações moderadamente graves', 'Alucinações graves', 'Alucinações extremamente graves', 'Alucinações contínuas'],
+    'Pergunte se os sons parecem mais altos, ásperos ou assustadores, e se ouve coisas que sabe não estarem ali.'),
+  itemCiwa('visual', 'Alterações visuais', ['Ausentes', 'Sensibilidade muito leve à luz', 'Leves', 'Moderadas', 'Alucinações moderadamente graves', 'Alucinações graves', 'Alucinações extremamente graves', 'Alucinações contínuas'],
+    'Pergunte se a luz está incomodando, se as cores parecem diferentes e se vê coisas que sabe não estarem ali. Alucinações visuais com sensório preservado caracterizam a alucinose alcoólica; com sensório rebaixado, delirium tremens.'),
+  itemCiwa('cefaleia', 'Cefaleia ou sensação de plenitude na cabeça', ['Ausente', 'Muito leve', 'Leve', 'Moderada', 'Moderadamente grave', 'Grave', 'Muito grave', 'Extremamente grave'],
+    'Não pontue tontura ou vertigem aqui. Cefaleia de instalação súbita e intensa em etilista exige afastar hemorragia subaracnóidea e hematoma subdural, que são frequentes nessa população por trauma e coagulopatia.'),
+  campoOpc('orientacao', 'Orientação e obnubilação do sensório', [
+    { valor: '0', rotulo: '0 — Orientado, faz somas seriadas', pontos: 0 },
+    { valor: '1', rotulo: '1 — Não consegue somar, incerto quanto à data', pontos: 1 },
+    { valor: '2', rotulo: '2 — Desorientado no tempo em até 2 dias de calendário', pontos: 2 },
+    { valor: '3', rotulo: '3 — Desorientado no tempo em mais de 2 dias', pontos: 3 },
+    { valor: '4', rotulo: '4 — Desorientado no espaço ou quanto à pessoa', pontos: 4 },
+  ], { padrao: '0', ajuda: 'Este item vai só até 4, e é o mais importante: desorientação com sensório obnubilado é o que separa abstinência de **delirium tremens**, cuja mortalidade sem tratamento chega a 15%.' }),
+]
+
+const ciwa: Ferramenta = {
+  id: 'ciwa-ar',
+  nome: 'CIWA-Ar — gravidade da abstinência alcoólica',
+  sigla: 'CIWA-Ar',
+  sinonimos: ['ciwa', 'abstinencia alcoolica', 'delirium tremens', 'sindrome de abstinencia', 'desintoxicacao'],
+  resumo: 'Gradua a abstinência alcoólica em dez itens e define a dose de benzodiazepínico hora a hora, em vez de esquema fixo.',
+  categorias: ['psiquiatria', 'emergencia'],
+  campos: ciwaCampos,
+  calcular: (v) => {
+    const ids = ['nausea', 'tremor', 'sudorese', 'ansiedade', 'agitacao', 'tatil', 'auditiva', 'visual', 'cefaleia', 'orientacao']
+    const pontos = ids.map((id) => ptsOpc(ciwaCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+    const orientacao = pontos[9] as number
+    const alucinacoes = Math.max(pontos[5] as number, pontos[6] as number, pontos[7] as number)
+
+    const nivel: Nivel = total >= 20 ? 'critico' : total >= 15 ? 'alerta' : total >= 9 ? 'atencao' : 'ok'
+    const faixa = total >= 20 ? 'Grave' : total >= 15 ? 'Moderada a grave' : total >= 9 ? 'Leve a moderada' : 'Mínima'
+
+    const conduta: string[] = []
+    if (total < 9) {
+      conduta.push('**Abaixo de 9:** abstinência mínima. Reavalie a cada 4 a 8 horas enquanto durar o período de risco (as primeiras 72 h). Não é necessário benzodiazepínico de rotina nessa faixa.')
+    } else if (total < 15) {
+      conduta.push('**9 a 14:** inicie benzodiazepínico guiado por sintoma — por exemplo, diazepam 10 a 20 mg ou lorazepam 2 a 4 mg por via oral, repetindo conforme a reavaliação. Reavalie o CIWA a cada 1 a 2 horas.')
+    } else if (total < 20) {
+      conduta.push('**15 a 19:** abstinência moderada a grave. Benzodiazepínico em doses maiores e reavaliação horária, em ambiente monitorado. Considere leito de maior vigilância.')
+    } else {
+      conduta.push('**20 ou mais:** abstinência grave, com risco de convulsão e de delirium tremens. Trate agressivamente com benzodiazepínico intravenoso e monitorização contínua, em leito de terapia intensiva ou semi-intensiva. Considere fenobarbital ou propofol nos casos refratários a doses altas de benzodiazepínico.')
+    }
+    conduta.push(
+      'Prefira o **esquema guiado por sintoma** ao esquema de dose fixa: ele usa menos benzodiazepínico no total, encurta o tempo de tratamento e não aumenta convulsão nem delirium. Esquema fixo só se justifica quando a reavaliação frequente não é possível.',
+      'Escolha o benzodiazepínico pela função hepática: **diazepam e clordiazepóxido** têm meia-vida longa e autodesmame suave, mas acumulam em cirrose e em idosos; **lorazepam** é metabolizado por glicuronidação, que a hepatopatia preserva, e é a escolha nesses pacientes.',
+      '**Tiamina 300 a 500 mg por via intravenosa antes de qualquer glicose**, por 3 a 5 dias, depois por via oral. A glicose consome tiamina no metabolismo do piruvato, e administrá-la a um depletado precipita encefalopatia de Wernicke — dano neurológico irreversível causado pelo tratamento. Reponha também magnésio, folato e potássio.',
+      'Procure ativamente o que se esconde atrás da abstinência: **hematoma subdural, hemorragia subaracnóidea, meningite, pneumonia, pancreatite, hepatite alcoólica, hemorragia digestiva, hipoglicemia e distúrbio eletrolítico** são frequentes em etilistas e podem tanto mimetizar quanto agravar o quadro.',
+      'Antes da alta, ofereça tratamento para o transtorno por uso de álcool — **naltrexona, acamprosato ou dissulfiram**, com grupos de apoio e acompanhamento estruturado. A desintoxicação isolada, sem tratamento de manutenção, tem taxa de recaída muito alta e não muda a história natural.',
+    )
+
+    return {
+      titulo: 'CIWA-Ar',
+      valor: fmtInt(total),
+      unidade: 'de 67 pontos',
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: 'Orientação e sensório', valor: fmtInt(orientacao), nivel: (orientacao >= 2 ? 'critico' : 'ok') as Nivel, nota: orientacao >= 2 ? 'Obnubilação: avalie delirium tremens' : undefined },
+        { rotulo: 'Pior alucinação (tátil, auditiva ou visual)', valor: fmtInt(alucinacoes), nivel: (alucinacoes >= 4 ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Faixa', valor: faixa, nota: '< 9 mínima · 9-14 leve a moderada · 15-19 moderada a grave · ≥ 20 grave' },
+      ],
+      interpretacao: [
+        `**${total} de 67 pontos — abstinência ${faixa.toLowerCase()}.** O corte de **9** costuma ser o gatilho para iniciar benzodiazepínico guiado por sintoma, e o de **15** marca a faixa em que o risco de convulsão e de delirium tremens cresce de forma significativa.`,
+        orientacao >= 2
+          ? '**Há obnubilação do sensório.** Esse é o achado que diferencia abstinência de **delirium tremens**, que se instala tipicamente entre 48 e 96 horas após a última dose, cursa com desorientação, alucinações e hiperatividade autonômica intensa, e tem mortalidade de até 15% sem tratamento e de 1 a 4% com tratamento adequado.'
+          : 'O sensório está preservado, o que afasta delirium tremens neste momento — mas não afasta a possibilidade de ele surgir: o pico de risco é entre 48 e 96 horas após a última dose.',
+        alucinacoes >= 4
+          ? 'Há alucinações significativas. Com **sensório preservado**, o quadro é de **alucinose alcoólica**, que aparece em 12 a 24 horas e tem bom prognóstico; com sensório obnubilado, trata-se de delirium tremens, que é uma emergência.'
+          : 'Sem alucinações significativas relatadas neste momento.',
+        'O CIWA-Ar **não diagnostica** abstinência: ele gradua a gravidade em quem já se sabe estar em abstinência. Aplicá-lo a um paciente cuja agitação tem outra causa — sepse, hipóxia, hipoglicemia, hematoma subdural, encefalopatia hepática — produz escore alto e leva a sedar quem precisa de outro tratamento.',
+        'A cronologia orienta a vigilância: **tremor e ansiedade em 6 a 12 h**, **convulsão entre 12 e 48 h** (tônico-clônica generalizada, geralmente única), **alucinose entre 12 e 24 h** e **delirium tremens entre 48 e 96 h**.',
+      ],
+      conduta,
+      alertas: [
+        '**O CIWA-Ar exige paciente capaz de comunicar-se.** Ele não é válido em quem está intubado, sedado, com barreira de idioma ou com rebaixamento por outra causa — nesses casos, use escalas objetivas de hiperatividade autonômica e trate empiricamente.',
+        'Escore alto atribuído à abstinência em paciente que na verdade tem **sepse, hipóxia, hipoglicemia, hemorragia intracraniana ou encefalopatia hepática** leva a sedar quem precisa de diagnóstico. Afaste essas causas antes de aceitar o escore.',
+        'Nunca administre **glicose antes da tiamina** em etilista: a precipitação de encefalopatia de Wernicke é iatrogênica, evitável e irreversível.',
+      ],
+    }
+  },
+  formula: ['CIWA-Ar = soma de 9 itens de 0 a 7 mais 1 item de 0 a 4 (total de 0 a 67)'],
+  fundamento:
+    'O etanol potencia o receptor GABA-A e inibe o receptor NMDA do glutamato. Sob exposição crônica, o sistema nervoso compensa reduzindo a expressão e a sensibilidade dos receptores GABA-A e aumentando a de receptores NMDA — uma adaptação que mantém o equilíbrio enquanto o álcool está presente. Quando ele é retirado, a inibição gabaérgica desaparece e resta uma neurotransmissão glutamatérgica amplificada sem freio: é essa hiperexcitabilidade que produz tremor, ansiedade, hiperatividade autonômica, convulsão e, no extremo, delirium tremens. O benzodiazepínico funciona porque atua exatamente no receptor cujo tônus foi perdido, substituindo o álcool no mesmo sítio e permitindo que a regulação se reverta de forma gradual. O fenômeno do **kindling** explica por que cada episódio de abstinência tende a ser pior que o anterior: desintoxicações repetidas sensibilizam progressivamente os circuitos límbicos, de modo que o histórico de abstinências prévias, e sobretudo de convulsão ou delirium prévios, é um dos melhores preditores de gravidade — melhor, inclusive, que a quantidade consumida.',
+  armadilhas: [
+    'Aplicar o escore a quem não está em abstinência infla a pontuação por sintomas inespecíficos e leva a sedar um paciente com outra doença.',
+    'Pacientes com abstinência grave podem ter escore baixo se estiverem obnubilados demais para relatar os sintomas subjetivos, que dominam a escala — o sensório é o item a olhar nesse caso.',
+    'O CIWA não contempla os preditores de gravidade mais fortes: convulsão ou delirium tremens em abstinências anteriores, consumo diário elevado e comorbidade clínica. Para isso existe o PAWSS, aplicado na admissão.',
+    'Betabloqueador e clonidina controlam os sinais autonômicos e **mascaram o escore** sem tratar a hiperexcitabilidade glutamatérgica — podem esconder a progressão para delirium tremens.',
+  ],
+  referencias: [
+    { texto: 'Sullivan JT, Sykora K, Schneiderman J, Naranjo CA, Sellers EM. Assessment of alcohol withdrawal: the revised Clinical Institute Withdrawal Assessment for Alcohol scale (CIWA-Ar). Br J Addict. 1989;84(11):1353-1357.' },
+    { texto: 'Mayo-Smith MF, Beecher LH, Fischer TL, et al. Management of alcohol withdrawal delirium: an evidence-based practice guideline. Arch Intern Med. 2004;164(13):1405-1412.' },
+    { texto: 'The ASAM Clinical Practice Guideline on Alcohol Withdrawal Management. J Addict Med. 2020;14(3S Suppl 1):1-72.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [phq9, gad7, audit, ciwa]
 
 export default ferramentas

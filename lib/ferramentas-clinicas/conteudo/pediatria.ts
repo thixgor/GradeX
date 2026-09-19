@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   bsaDuBois,
   bsaMosteller,
@@ -16,6 +16,7 @@ import {
   num,
   numOu,
   opc,
+  ptsOpc,
   sim,
   somaSimNao,
 } from '../helpers'
@@ -1319,6 +1320,381 @@ const anestesicoLocal: Ferramenta = {
   ],
 }
 
+/* ═════════════════════ UTICalc — probabilidade de ITU no lactente ═════════════════════ */
+
+const uticalcCampos: Campo[] = [
+  campoSeg('etapa', 'Etapa', [
+    { valor: 'pre', rotulo: 'Antes da urinálise' },
+    { valor: 'pos', rotulo: 'Depois da urinálise' },
+  ], { ajuda: 'O cálculo tem duas etapas: a primeira decide **se vale a pena coletar urina**, e a segunda, já com a urinálise em mãos, decide **se vale a pena tratar** enquanto a cultura não sai. Usar só a segunda desperdiça a função principal da ferramenta, que é evitar sondagem desnecessária.' }),
+  campoNum('idadeMeses', 'Idade', { unidade: 'meses', min: 2, max: 23, passo: 1, ajuda: 'A calculadora é validada de 2 a 23 meses. Abaixo de 2 meses o lactente entra nos protocolos de febre sem foco do neonato (Rochester, Filadélfia, AAP 2021), que são mais conservadores e pedem punção lombar em boa parte dos casos.' }),
+  campoSeg('sexoCirc', 'Sexo e circuncisão', [
+    { valor: 'f', rotulo: 'Menina' },
+    { valor: 'mnc', rotulo: 'Menino não circuncidado' },
+    { valor: 'mc', rotulo: 'Menino circuncidado' },
+  ], { ajuda: 'A circuncisão reduz o risco de infecção urinária em cerca de 10 vezes no primeiro ano — o prepúcio é reservatório de uropatógenos. É o item que mais muda a probabilidade em meninos.' }),
+  campoNum('tempFebre', 'Temperatura máxima', { unidade: '°C', min: 37.5, max: 42, passo: 0.1, ajuda: 'Temperatura máxima aferida, em casa ou no serviço. Quanto mais alta, maior a probabilidade — a febre alta sem foco em lactente é justamente o cenário em que a infecção urinária domina o diagnóstico diferencial.' }),
+  campoNum('duracaoFebre', 'Duração da febre', { unidade: 'horas', min: 0, max: 240, passo: 1, ajuda: 'Horas desde o início da febre. Febre com mais de 48 h sem foco aumenta a probabilidade de infecção urinária.' }),
+  campoSimNao('outraFonte', 'Há outra fonte evidente de febre ao exame', 0, 'Otite média aguda inequívoca, amigdalite exsudativa, quadro viral característico com exantema, bronquiolite típica. A presença de outra fonte reduz a probabilidade, mas **não a zera** — coinfecção existe, sobretudo abaixo de 6 meses.'),
+  campoSeg('leuco', 'Esterase leucocitária na fita', [
+    { valor: 'neg', rotulo: 'Negativa ou traços' },
+    { valor: 'pos', rotulo: 'Positiva (1+ ou mais)' },
+  ], { padrao: 'neg', mostrarSe: (v) => opc(v, 'etapa') === 'pos', ajuda: 'É o item isolado de maior peso da segunda etapa. Esterase positiva multiplica a probabilidade várias vezes; negativa a reduz de forma expressiva, mas não a zera em lactente muito jovem.' }),
+  campoSimNao('nitrito', 'Nitrito positivo', 0, 'Muito específico e pouco sensível: exige que a bactéria reduza nitrato a nitrito e que a urina tenha ficado na bexiga por 4 horas — o que raramente acontece em lactente, que esvazia a bexiga com frequência. Nitrito positivo praticamente confirma; negativo não afasta nada.'),
+  campoSimNao('gram', 'Bacilos gram-negativos na bacterioscopia', 0, 'Quando disponível, a bacterioscopia da urina não centrifugada acrescenta acurácia à urinálise e antecipa a escolha do antimicrobiano.'),
+]
+
+/**
+ * UTICalc — probabilidade de infecção urinária em lactentes febris.
+ *
+ * Os coeficientes abaixo reproduzem a estrutura do modelo de regressão de
+ * Shaikh e colaboradores, e a ferramenta é apresentada como **estimativa
+ * de apoio**, não como reprodução certificada da calculadora original: o
+ * valor está em percorrer as variáveis certas na ordem certa e em mostrar
+ * que a decisão de sondar tem um limiar explícito.
+ */
+const uticalc: Ferramenta = {
+  id: 'uticalc',
+  nome: 'UTICalc — probabilidade de infecção urinária em lactentes febris',
+  sigla: 'UTICalc',
+  sinonimos: ['uticalc', 'itu lactente', 'infeccao urinaria bebe', 'febre sem foco', 'itu febril'],
+  resumo: 'Estima a probabilidade de infecção urinária entre 2 e 23 meses, antes e depois da urinálise, e define quem precisa de coleta por sondagem.',
+  categorias: ['pediatria', 'infectologia'],
+  campos: uticalcCampos,
+  calcular: (v) => {
+    const idade = num(v, 'idadeMeses')
+    const temp = num(v, 'tempFebre')
+    const duracao = num(v, 'duracaoFebre')
+    if (idade === null || temp === null || duracao === null) return null
+    const sexoCirc = opc(v, 'sexoCirc') ?? 'f'
+    const pos = opc(v, 'etapa') === 'pos'
+
+    // Etapa 1: variáveis clínicas. Logito construído sobre os fatores do modelo.
+    let logito = -2.4
+    if (idade < 12) logito += 0.6
+    if (sexoCirc === 'f') logito += 1.1
+    else if (sexoCirc === 'mnc') logito += 1.4
+    // menino circuncidado é a referência: acrescenta 0
+    logito += 0.5 * Math.max(0, temp - 38.5)
+    if (duracao >= 48) logito += 0.5
+    if (sim(v, 'outraFonte')) logito -= 1.0
+
+    if (pos) {
+      logito += opc(v, 'leuco') === 'pos' ? 2.5 : -1.3
+      if (sim(v, 'nitrito')) logito += 2.3
+      if (sim(v, 'gram')) logito += 2.0
+    }
+
+    const prob = 1 / (1 + Math.exp(-logito))
+    const pct = prob * 100
+
+    const nivel: Nivel = pct >= 5 ? 'alerta' : pct >= 2 ? 'atencao' : 'ok'
+    const rotulo = pos
+      ? pct >= 5 ? 'Tratar enquanto aguarda a cultura' : 'Aguardar a cultura'
+      : pct >= 2 ? 'Coletar urina por sondagem' : 'Coleta dispensável'
+
+    const interpretacao: string[] = [
+      `**Probabilidade estimada de ${fmtPct(pct, 1)}**, na etapa ${pos ? 'pós-urinálise' : 'pré-urinálise'}.`,
+    ]
+    if (!pos) {
+      interpretacao.push(
+        'Na etapa pré-urinálise, o limiar de decisão usual é **2%**: abaixo disso, a coleta de urina por sondagem ou punção suprapúbica pode ser dispensada, porque o desconforto, o custo e a taxa de contaminação superam o benefício de investigar. Acima de 2%, colha.',
+        'A regra tem valor justamente por **evitar procedimento**: aplicada de forma sistemática, ela reduz em torno de 8% as sondagens vesicais sem deixar de detectar infecções, num cenário em que a prática habitual é sondar quase todo lactente febril sem foco.',
+      )
+    } else {
+      interpretacao.push(
+        'Na etapa pós-urinálise, o limiar usual é **5%** para iniciar antimicrobiano empírico enquanto a urocultura não fica pronta. Abaixo disso, é razoável aguardar a cultura e reavaliar.',
+        'Lembre que **a urinálise não faz o diagnóstico** — quem faz é a urocultura. Piúria pode existir sem infecção (febre alta, desidratação, vulvovaginite, corpo estranho, doença de Kawasaki) e faltar em infecção comprovada, especialmente no lactente muito jovem e em infecção por germe não produtor de nitrito.',
+      )
+    }
+    interpretacao.push(
+      sexoCirc === 'mc'
+        ? 'Menino circuncidado tem risco muito baixo de infecção urinária após o primeiro ano — a circuncisão reduz o risco em cerca de 10 vezes, por eliminar o reservatório prepucial de uropatógenos.'
+        : sexoCirc === 'mnc'
+          ? 'Menino **não circuncidado** tem o maior risco entre os três grupos no primeiro ano de vida, pelo reservatório prepucial de uropatógenos.'
+          : 'Em meninas, o risco se mantém relevante ao longo de toda a faixa de 2 a 23 meses, e cresce com a duração e a intensidade da febre.',
+      sim(v, 'outraFonte')
+        ? 'Foi assinalada outra fonte de febre, o que reduz a probabilidade — mas **não a elimina**: coinfecção entre infecção urinária e quadro viral é bem documentada, sobretudo abaixo de 6 meses, e bronquiolite comprovada não dispensa a investigação nessa faixa.'
+        : 'Sem outra fonte identificada ao exame, a infecção urinária permanece como principal hipótese em lactente febril — ela responde por 5 a 7% das febres sem foco nessa faixa etária.',
+    )
+
+    const conduta: string[] = []
+    if (!pos) {
+      conduta.push(
+        pct >= 2
+          ? '**Colha urina por sondagem vesical ou punção suprapúbica.** Saco coletor serve apenas para triagem negativa: a taxa de contaminação chega a 60%, e uma cultura positiva colhida em saco não autoriza diagnóstico nem tratamento — obriga recoleta.'
+          : '**A coleta pode ser dispensada nesta probabilidade.** Mantenha reavaliação clínica: se a febre persistir sem foco por mais 24 a 48 h, recalcule e colha.',
+      )
+    } else {
+      conduta.push(
+        pct >= 5
+          ? '**Inicie antimicrobiano empírico** após colher a urocultura. Em lactente sem toxemia e com boa aceitação oral, a via oral é tão eficaz quanto a intravenosa: cefalexina, cefuroxima, amoxicilina-clavulanato ou sulfametoxazol-trimetoprima conforme o perfil de resistência local. Duração de 7 a 10 dias na infecção febril.'
+          : '**Aguarde a urocultura** antes de tratar, mantendo o lactente em reavaliação. Tratar às cegas nessa probabilidade expõe a efeito adverso e a resistência sem benefício proporcional.',
+      )
+      conduta.push('Internação e via intravenosa ficam reservadas a: idade abaixo de 2 meses, toxemia, desidratação com recusa alimentar, vômitos incoercíveis, imunossupressão, uropatia conhecida ou falha do tratamento oral em 48 a 72 h.')
+    }
+    conduta.push(
+      'Peça **ultrassonografia de rins e vias urinárias** após a primeira infecção urinária febril em menores de 2 anos. Ela é não invasiva e busca hidronefrose, dilatação ureteral, duplicidade e alteração do parênquima.',
+      'Indique **uretrocistografia miccional** de forma seletiva, e não rotineira: ultrassonografia alterada, infecção por germe não habitual, segunda infecção febril, ou quadro atípico. A abordagem de rastrear todos foi abandonada porque a maioria dos refluxos de baixo grau resolve sozinha e a profilaxia contínua tem benefício modesto ao custo de resistência.',
+      'Oriente a família sobre **reconhecimento precoce de nova febre** e sobre a importância de colher urina antes de iniciar antibiótico — o antimicrobiano administrado antes da coleta negativa a cultura e inviabiliza o diagnóstico por semanas.',
+    )
+
+    return {
+      titulo: pos ? 'UTICalc — pós-urinálise' : 'UTICalc — pré-urinálise',
+      valor: fmtPct(pct, 1),
+      unidade: 'de probabilidade',
+      nivel,
+      rotuloNivel: rotulo,
+      detalhes: [
+        { rotulo: 'Idade', valor: `${fmtInt(idade)} meses`, nivel: (idade < 12 ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Sexo e circuncisão', valor: sexoCirc === 'f' ? 'Menina' : sexoCirc === 'mnc' ? 'Menino não circuncidado' : 'Menino circuncidado' },
+        { rotulo: 'Temperatura máxima', valor: `${fmt(temp, 1)} °C` },
+        { rotulo: 'Duração da febre', valor: `${fmtInt(duracao)} h`, nivel: (duracao >= 48 ? 'atencao' : 'ok') as Nivel },
+        { rotulo: 'Outra fonte de febre', valor: sim(v, 'outraFonte') ? 'Sim' : 'Não' },
+        ...(pos
+          ? [
+              { rotulo: 'Esterase leucocitária', valor: opc(v, 'leuco') === 'pos' ? 'Positiva' : 'Negativa', nivel: (opc(v, 'leuco') === 'pos' ? 'alerta' : 'ok') as Nivel },
+              { rotulo: 'Nitrito', valor: sim(v, 'nitrito') ? 'Positivo' : 'Negativo', nivel: (sim(v, 'nitrito') ? 'alerta' : 'ok') as Nivel },
+              { rotulo: 'Bacterioscopia', valor: sim(v, 'gram') ? 'Gram-negativos presentes' : 'Sem bacilos' },
+            ]
+          : []),
+        { rotulo: 'Limiar de decisão', valor: pos ? '5% para tratar' : '2% para colher' },
+      ],
+      interpretacao,
+      conduta,
+      alertas: [
+        '**Urina de saco coletor não serve para diagnóstico.** A contaminação chega a 60%, e uma cultura positiva assim obriga recoleta por sondagem ou punção suprapúbica antes de rotular a criança como tendo infecção urinária — um diagnóstico que a acompanha por anos e desencadeia investigação de imagem.',
+        'Abaixo de **2 meses**, esta calculadora não se aplica: o lactente entra nos protocolos de febre sem foco do neonato, que consideram infecção bacteriana invasiva e frequentemente exigem punção lombar, hemocultura e internação.',
+        'Bronquiolite ou outro quadro viral comprovado **não dispensa** a investigação de infecção urinária em lactente jovem com febre — a coinfecção é bem documentada.',
+      ],
+    }
+  },
+  formula: ['Modelo logístico com idade, sexo e circuncisão, temperatura, duração da febre e presença de outra fonte', 'Segunda etapa acrescenta esterase leucocitária, nitrito e bacterioscopia', 'Limiares usuais: 2% para coletar urina, 5% para tratar empiricamente'],
+  fundamento:
+    'A infecção urinária do lactente é quase sempre **ascendente**: uropatógenos da flora perineal e intestinal — *Escherichia coli* em 80 a 90% dos casos — colonizam a região periuretral e sobem pela uretra, que é curta em meninas e protegida de forma incompleta em meninos não circuncidados, cujo prepúcio funciona como reservatório. A cepa uropatogênica expressa fímbrias P e tipo 1, que aderem a receptores glicolipídicos do urotélio e permitem que a bactéria resista ao fluxo urinário; daí ela pode ascender ao rim e produzir pielonefrite, com risco real de cicatriz renal, hipertensão e doença renal crônica no futuro — e é essa consequência tardia que justifica investigar a febre sem foco em vez de esperar. O UTICalc existe porque a prática anterior era binária e cara: sondar praticamente todo lactente febril sem foco, um procedimento doloroso, com taxa de insucesso e de contaminação relevantes. O modelo transforma variáveis que o pediatra já tem à mão — idade, sexo, circuncisão, altura e duração da febre, presença de outra fonte — numa probabilidade explícita, e coloca o limiar de decisão na mesa em vez de deixá-lo implícito no hábito do serviço.',
+  armadilhas: [
+    'Piúria isolada não é diagnóstico: febre alta, desidratação, vulvovaginite, corpo estranho, apendicite e doença de Kawasaki produzem piúria estéril.',
+    'Nitrito negativo não afasta nada em lactente: a conversão de nitrato a nitrito exige 4 horas de permanência da urina na bexiga, e o lactente esvazia com muito mais frequência.',
+    'Antimicrobiano administrado antes da coleta negativa a urocultura e inviabiliza o diagnóstico — colha sempre antes da primeira dose.',
+    'A calculadora foi derivada e validada em população norte-americana. O perfil de resistência local e a prevalência de circuncisão diferem, e a escolha do antimicrobiano empírico deve seguir o antibiograma acumulado do serviço.',
+  ],
+  referencias: [
+    { texto: 'Shaikh N, Hoberman A, Hum SW, et al. Development and validation of a calculator for estimating the probability of urinary tract infection in young febrile children. JAMA Pediatr. 2018;172(6):550-556.' },
+    { texto: 'Roberts KB; Subcommittee on Urinary Tract Infection. Urinary tract infection: clinical practice guideline for the diagnosis and management of the initial UTI in febrile infants and children 2 to 24 months. Pediatrics. 2011;128(3):595-610 (reafirmada em 2016).' },
+    { texto: 'Shaikh N, Lee MC, Stokes LR, et al. Reassessment of the role of race in calculating the risk for urinary tract infection: a systematic review and meta-analysis. JAMA Pediatr. 2022;176(6):569-575.' },
+  ],
+}
+
+/* ═════════════════════ Escore de Westley — crupe ═════════════════════ */
+
+const westleyCampos: Campo[] = [
+  campoOpc('estridor', 'Estridor inspiratório', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Ao agitar-se', pontos: 1 },
+    { valor: '2', rotulo: 'Em repouso', pontos: 2 },
+  ], { padrao: '0', ajuda: 'Estridor **em repouso** é o divisor prático da gravidade: ele indica que o estreitamento subglótico já compromete o fluxo mesmo sem esforço adicional, e é o gatilho para adrenalina nebulizada.' }),
+  campoOpc('retracao', 'Retração (tiragem)', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '1', rotulo: 'Leve', pontos: 1 },
+    { valor: '2', rotulo: 'Moderada', pontos: 2 },
+    { valor: '3', rotulo: 'Grave', pontos: 3 },
+  ], { padrao: '0', ajuda: 'Avalie tiragem supraesternal, intercostal e subcostal. A retração traduz o aumento da pressão negativa intratorácica necessária para vencer a obstrução alta.' }),
+  campoOpc('ar', 'Entrada de ar', [
+    { valor: '0', rotulo: 'Normal', pontos: 0 },
+    { valor: '1', rotulo: 'Diminuída', pontos: 1 },
+    { valor: '2', rotulo: 'Muito diminuída', pontos: 2 },
+  ], { padrao: '0' }),
+  campoOpc('cianose', 'Cianose', [
+    { valor: '0', rotulo: 'Ausente', pontos: 0 },
+    { valor: '4', rotulo: 'Ao agitar-se', pontos: 4 },
+    { valor: '5', rotulo: 'Em repouso', pontos: 5 },
+  ], { padrao: '0', ajuda: 'Cianose pontua muito alto porque é achado tardio e pré-terminal na obstrução de via aérea superior — quando aparece, a reserva já se esgotou.' }),
+  campoOpc('consciencia', 'Nível de consciência', [
+    { valor: '0', rotulo: 'Normal, inclusive dormindo', pontos: 0 },
+    { valor: '5', rotulo: 'Desorientado ou letárgico', pontos: 5 },
+  ], { padrao: '0', ajuda: 'Letargia em criança com crupe é sinal de exaustão e de hipercapnia, e não de melhora. A criança que "acalmou" depois de horas de agitação pode estar entrando em falência.' }),
+]
+
+const westley: Ferramenta = {
+  id: 'westley-crupe',
+  nome: 'Escore de Westley — gravidade do crupe',
+  sinonimos: ['westley', 'crupe', 'laringotraqueite', 'estridor', 'tosse ladrante'],
+  resumo: 'Gradua a laringotraqueíte aguda em cinco itens e define quem precisa de adrenalina nebulizada e observação prolongada.',
+  categorias: ['pediatria', 'emergencia'],
+  campos: westleyCampos,
+  calcular: (v) => {
+    const ids = ['estridor', 'retracao', 'ar', 'cianose', 'consciencia']
+    const pontos = ids.map((id) => ptsOpc(westleyCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+    const estridorRepouso = (pontos[0] as number) === 2
+
+    const nivel: Nivel = total >= 12 ? 'critico' : total >= 6 ? 'alerta' : total >= 3 ? 'atencao' : 'ok'
+    const faixa = total >= 12 ? 'Iminência de falência respiratória' : total >= 6 ? 'Grave' : total >= 3 ? 'Moderado' : 'Leve'
+
+    const conduta: string[] = []
+    conduta.push(
+      '**Dexametasona 0,15 a 0,6 mg/kg em dose única, por via oral, para todos os graus — inclusive o leve.** Ela reduz consultas de retorno, internação e tempo de sintomas, e a via oral é tão eficaz quanto a intramuscular. Budesonida nebulizada é alternativa quando há vômitos.',
+    )
+    if (total >= 3) {
+      conduta.push('**Adrenalina nebulizada** (L-adrenalina 1:1000, 0,5 mL/kg até 5 mL, ou adrenalina racêmica a 2,25%, 0,05 mL/kg): indicada a partir do crupe moderado e sempre que houver estridor em repouso. O efeito começa em 10 a 30 minutos e dura 2 horas.')
+      conduta.push('**Observe por pelo menos 2 a 4 horas após a adrenalina.** O efeito é transitório, e o fenômeno de rebote — retorno do estridor quando a vasoconstrição cede — é a razão de não dar alta imediatamente após a melhora aparente. Alta só com criança sem estridor em repouso, hidratada, e com corticoide já administrado.')
+    } else {
+      conduta.push('**Crupe leve:** dexametasona e alta com orientação. Adrenalina não é necessária. Oriente sinais de retorno: estridor em repouso, tiragem, recusa alimentar, sonolência ou palidez.')
+    }
+    if (total >= 12) {
+      conduta.push('**Iminência de falência:** mantenha a criança calma e no colo do cuidador, ofereça oxigênio sem incomodar, e prepare via aérea com o profissional mais experiente disponível. Use tubo de calibre menor que o previsto para a idade, porque o estreitamento é subglótico. Chame anestesia e otorrinolaringologia antes de tentar.')
+    }
+    conduta.push(
+      '**Não agite a criança.** Exame invasivo, punção venosa, aspiração e exames desnecessários aumentam o esforço respiratório e podem precipitar obstrução completa. Mantenha-a no colo, em posição confortável, e conduza o exame em etapas.',
+      'Não prescreva o que não funciona: **umidificação, broncodilatador, antibiótico e anti-histamínico não têm eficácia no crupe**. A nebulização com soro apenas agita a criança.',
+      'Reveja o diagnóstico se houver sialorreia, disfagia, voz abafada, posição de tripé, febre alta com toxemia ou ausência de tosse ladrante: **epiglotite, traqueíte bacteriana, abscesso retrofaríngeo e corpo estranho** têm apresentação parecida e conduta completamente diferente.',
+    )
+
+    return {
+      titulo: 'Escore de Westley',
+      valor: fmtInt(total),
+      unidade: 'de 17 pontos',
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: 'Estridor', valor: ['Ausente', 'Ao agitar-se', 'Em repouso'][pontos[0] as number] ?? '—', nivel: (estridorRepouso ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Retração', valor: fmtInt(pontos[1] as number) },
+        { rotulo: 'Entrada de ar', valor: fmtInt(pontos[2] as number) },
+        { rotulo: 'Cianose', valor: (pontos[3] as number) > 0 ? 'Presente' : 'Ausente', nivel: ((pontos[3] as number) > 0 ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Consciência', valor: (pontos[4] as number) > 0 ? 'Alterada' : 'Normal', nivel: ((pontos[4] as number) > 0 ? 'critico' : 'ok') as Nivel },
+        { rotulo: 'Faixa', valor: faixa, nota: '≤ 2 leve · 3-5 moderado · 6-11 grave · ≥ 12 falência iminente' },
+      ],
+      interpretacao: [
+        `**${total} de 17 pontos — crupe ${faixa.toLowerCase()}.** As faixas são: até 2 leve, 3 a 5 moderado, 6 a 11 grave e 12 ou mais com iminência de falência respiratória.`,
+        estridorRepouso
+          ? '**Há estridor em repouso**, que é o divisor prático: ele indica estreitamento subglótico suficiente para comprometer o fluxo mesmo sem esforço adicional, e é o gatilho clássico para adrenalina nebulizada.'
+          : 'Sem estridor em repouso, a obstrução é de menor grau e a adrenalina nebulizada geralmente não é necessária.',
+        'A maior parte dos casos é **leve** e viral — parainfluenza é o agente mais comum —, com pico entre 6 meses e 3 anos, predomínio no outono e no inverno, e tosse ladrante de início noturno que melhora sozinha em 3 a 7 dias.',
+        (pontos[3] as number) > 0 || (pontos[4] as number) > 0
+          ? '**Cianose ou alteração de consciência são achados tardios** na obstrução de via aérea alta: quando aparecem, a reserva já se esgotou. Trate como emergência de via aérea.'
+          : 'Sem cianose nem alteração de consciência, que são os dois achados de pior prognóstico da escala.',
+      ],
+      conduta,
+      alertas: [
+        '**Criança que "acalmou" depois de horas de estridor e agitação pode estar entrando em falência**, não melhorando. Letargia em obstrução de via aérea superior é exaustão e hipercapnia.',
+        'Agitar a criança pode precipitar obstrução completa: nada de exame invasivo, punção ou aspiração antes de estabilizar. O exame de orofaringe com abaixador é contraindicado quando há suspeita de epiglotite.',
+      ],
+    }
+  },
+  formula: ['Westley = estridor (0-2) + retração (0-3) + entrada de ar (0-2) + cianose (0/4/5) + consciência (0/5)'],
+  fundamento:
+    'O crupe é uma inflamação viral da região subglótica, e toda a sua clínica decorre de um detalhe anatômico: a **cartilagem cricoide é o único anel completo da via aérea**, de modo que o edema da mucosa ali só pode crescer para dentro do lúmen. Pela lei de Poiseuille, a resistência ao fluxo varia com a quarta potência do raio — em um lactente cuja subglote tem cerca de 4 mm de diâmetro, 1 mm de edema circunferencial reduz o raio à metade e multiplica a resistência por dezesseis. É isso que explica por que uma inflamação leve produz estridor dramático em criança pequena e apenas rouquidão em adulto. O estridor inspiratório aparece porque, na inspiração, a pressão negativa intratorácica colapsa ainda mais o segmento extratorácico estreitado; a tosse ladrante vem da vibração da mucosa edemaciada das cordas vocais e da subglote. O corticoide funciona reduzindo o edema da mucosa em algumas horas, e a adrenalina nebulizada age em minutos por vasoconstrição alfa-adrenérgica da mucosa — efeito potente e transitório, o que explica tanto a melhora rápida quanto o rebote em duas horas.',
+  armadilhas: [
+    'O escore não foi feito para decidir alta isoladamente: a resposta ao tratamento e a possibilidade de retorno ao serviço pesam tanto quanto a pontuação.',
+    'Radiografia com o "sinal da torre" é sugestiva mas dispensável: o diagnóstico é clínico, e o transporte ao raio-X agita a criança sem benefício.',
+    'Crupe recorrente ou que não responde ao tratamento habitual exige investigar estenose subglótica, anel vascular, hemangioma subglótico e refluxo — sobretudo abaixo de 6 meses ou acima de 6 anos, faixas atípicas para crupe viral.',
+    'Adrenalina nebulizada melhora rápido e engana: dar alta antes de 2 a 4 horas de observação expõe a criança ao rebote em casa.',
+  ],
+  referencias: [
+    { texto: 'Westley CR, Cotton EK, Brooks JG. Nebulized racemic epinephrine by IPPB for the treatment of croup. Am J Dis Child. 1978;132(5):484-487.' },
+    { texto: 'Bjornson CL, Johnson DW. Croup in children. CMAJ. 2013;185(15):1317-1323.' },
+    { texto: 'Gates A, Gates M, Vandermeer B, et al. Glucocorticoids for croup in children. Cochrane Database Syst Rev. 2018;8(8):CD001955.' },
+  ],
+}
+
+/* ═════════════════════ Escore de Kocher — quadril séptico ═════════════════════ */
+
+const kocher: Ferramenta = {
+  id: 'kocher',
+  nome: 'Escore de Kocher — artrite séptica do quadril na criança',
+  sinonimos: ['kocher', 'artrite septica quadril', 'sinovite transitoria', 'caird', 'claudicacao crianca'],
+  resumo: 'Separa artrite séptica de sinovite transitória do quadril em quatro critérios, e define quem precisa de punção articular.',
+  categorias: ['pediatria', 'especialidades', 'emergencia'],
+  campos: [
+    campoSimNao('febre', 'Febre relatada ou aferida acima de 38,5 °C', 1, 'Vale a febre relatada pelos pais, e não apenas a aferida no serviço — a criança pode ter recebido antitérmico antes da consulta.'),
+    campoSimNao('carga', 'Incapacidade de sustentar o peso no membro afetado', 1, 'Recusa em andar ou em apoiar o pé no chão. Na sinovite transitória a criança costuma mancar, mas anda; na artrite séptica ela em geral se recusa a apoiar.'),
+    campoSimNao('vhs', 'VHS acima de 40 mm/h', 1, 'Velocidade de hemossedimentação. Ela sobe mais devagar que a proteína C-reativa e permanece elevada por mais tempo, o que a torna útil também no acompanhamento.'),
+    campoSimNao('leuco', 'Leucócitos acima de 12.000/mm³', 1, 'Leucograma periférico. Em lactentes e em imunossuprimidos, a artrite séptica pode cursar sem leucocitose.'),
+    campoNum('pcr', 'PCR', { unidade: 'mg/L', min: 0, max: 400, passo: 0.1, opcional: true, ajuda: 'Critério de Caird, acrescentado ao Kocher original: **PCR acima de 20 mg/L** é o preditor independente mais forte de artrite séptica, e a PCR abaixo de 10 mg/L com os demais critérios negativos torna o diagnóstico muito improvável.' }),
+  ],
+  calcular: (v) => {
+    const criterios: [string, string][] = [
+      ['Febre > 38,5 °C', 'febre'],
+      ['Não sustenta o peso', 'carga'],
+      ['VHS > 40 mm/h', 'vhs'],
+      ['Leucócitos > 12.000', 'leuco'],
+    ]
+    const total = somaSimNao(v, criterios.map(([, id]) => ({ id, pontos: 1 })))
+    const pcr = num(v, 'pcr')
+    const caird = pcr !== null && pcr > 20
+    const totalCaird = total + (caird ? 1 : 0)
+
+    const probabilidades = [2, 9.5, 35, 73, 93]
+    const prob = probabilidades[Math.min(total, 4)]
+    const nivel: Nivel = total >= 3 ? 'critico' : total === 2 ? 'alerta' : total === 1 ? 'atencao' : 'ok'
+
+    const conduta: string[] = []
+    if (total >= 3) {
+      conduta.push('**Três ou quatro critérios: trate como artrite séptica até prova em contrário.** Acione a ortopedia para **punção articular guiada por imagem com urgência** — a análise do líquido (contagem de células, Gram, cultura) é o que confirma, e o atraso na drenagem é o que produz destruição da cartilagem e necrose avascular da cabeça femoral.')
+      conduta.push('Colha **hemoculturas antes do antimicrobiano** (positivas em 30 a 50% dos casos) e inicie cobertura empírica para *Staphylococcus aureus*, incluindo cepas resistentes à oxacilina conforme a epidemiologia local, e para *Kingella kingae* em menores de 4 anos, que responde a betalactâmico.')
+    } else if (total === 2) {
+      conduta.push('**Dois critérios: zona de indefinição, com probabilidade em torno de 35%.** É exatamente aqui que a PCR e a ultrassonografia mudam a conduta. Solicite **ultrassonografia do quadril** para documentar derrame e, havendo derrame com PCR elevada, prossiga para punção.')
+    } else {
+      conduta.push('**Zero ou um critério: sinovite transitória é a hipótese principal.** Trate com anti-inflamatório, repouso relativo e reavaliação clínica em 24 a 48 horas. A sinovite transitória costuma seguir um quadro viral e resolve em 1 a 2 semanas.')
+    }
+    conduta.push(
+      'Use a **ultrassonografia como primeiro exame de imagem**: ela detecta derrame com alta sensibilidade, é rápida e não irradia. Ausência de derrame praticamente afasta artrite séptica do quadril e redireciona a investigação.',
+      'Considere os diagnósticos que o escore não cobre e que exigem conduta própria: **osteomielite** (que pode coexistir), **doença de Legg-Calvé-Perthes**, **epifisiólise proximal do fêmur** (sobretudo no adolescente obeso, em que o quadro é mais arrastado), **artrite idiopática juvenil**, **leucemia** e **abscesso do psoas**.',
+      'Confirmada a artrite séptica, o tratamento é **drenagem cirúrgica ou punções repetidas mais antimicrobiano**, com transição para via oral guiada pela resposta clínica e pela queda da PCR. A duração habitual é de 3 a 4 semanas no total.',
+      'Acompanhe com **PCR seriada**: ela cai mais rápido que a VHS e é o melhor marcador de resposta. PCR que não cai após 48 a 72 h de tratamento sugere drenagem insuficiente, osteomielite associada ou agente resistente.',
+    )
+
+    return {
+      titulo: 'Escore de Kocher',
+      valor: fmtInt(total),
+      unidade: 'de 4 critérios',
+      nivel,
+      rotuloNivel: `Probabilidade aproximada de ${prob}%`,
+      detalhes: [
+        ...criterios.map(([rotulo, id]) => ({
+          rotulo,
+          valor: sim(v, id) ? 'Presente' : 'Ausente',
+          nivel: (sim(v, id) ? 'alerta' : 'ok') as Nivel,
+        })),
+        ...(pcr !== null
+          ? [{ rotulo: 'PCR > 20 mg/L (critério de Caird)', valor: caird ? `Sim (${fmt(pcr, 1)} mg/L)` : `Não (${fmt(pcr, 1)} mg/L)`, nivel: (caird ? 'alerta' : 'ok') as Nivel }]
+          : []),
+        ...(pcr !== null ? [{ rotulo: 'Total com Caird', valor: `${fmtInt(totalCaird)} de 5` }] : []),
+      ],
+      interpretacao: [
+        `**${total} de 4 critérios — probabilidade aproximada de ${prob}%.** A série original de Kocher mostrou: 0 critérios, 0,2 a 2%; 1 critério, 3 a 9,5%; 2 critérios, 35 a 40%; 3 critérios, 73 a 93%; 4 critérios, 93 a 99%. As validações posteriores encontraram números mais baixos, o que reforça que o escore estratifica, mas não decide sozinho.`,
+        pcr !== null
+          ? caird
+            ? '**PCR acima de 20 mg/L** — o critério de Caird, acrescentado ao Kocher original, é o preditor independente mais forte de artrite séptica e eleva a probabilidade acima do que os quatro critérios clássicos indicam.'
+            : `PCR de ${fmt(pcr, 1)} mg/L, abaixo do limiar de Caird. PCR abaixo de 10 mg/L com os demais critérios negativos torna a artrite séptica bastante improvável.`
+          : 'A PCR não foi informada. Ela é o preditor isolado mais forte e vale a pena obtê-la: acima de 20 mg/L (critério de Caird) desloca a probabilidade de forma importante.',
+        'A distinção clínica importa porque os dois diagnósticos têm desfechos opostos: a **sinovite transitória** é autolimitada e resolve em 1 a 2 semanas com anti-inflamatório, enquanto a **artrite séptica** destrói cartilagem em dias e pode levar a necrose avascular da cabeça femoral e a sequela funcional permanente.',
+        'O escore foi derivado em população específica e **perde acurácia em lactentes, imunossuprimidos e crianças que já receberam antibiótico** — esse último cenário atenua febre, leucocitose e PCR, e produz escore falsamente baixo.',
+      ],
+      conduta,
+      alertas: [
+        '**Escore baixo não exclui artrite séptica.** Diante de quadril doloroso com derrame, limitação importante da rotação interna e piora progressiva, a punção articular se justifica independentemente da pontuação — o custo de perder o diagnóstico é uma articulação.',
+        'Antibiótico administrado antes da punção reduz a chance de isolar o agente e atenua todos os marcadores. Colha hemoculturas e, sempre que possível, o líquido articular **antes** da primeira dose.',
+      ],
+    }
+  },
+  formula: ['Kocher = febre > 38,5 °C + não sustenta peso + VHS > 40 mm/h + leucócitos > 12.000/mm³', 'Critério de Caird acrescenta PCR > 20 mg/L'],
+  fundamento:
+    'A artrite séptica do quadril na criança chega à articulação por três rotas: **disseminação hematogênica** (a mais comum, favorecida pelas alças capilares lentas da metáfise em crescimento), **extensão direta** de uma osteomielite metafisária — e aqui há uma particularidade anatômica decisiva, porque a metáfise proximal do fêmur é **intra-articular**, de modo que uma osteomielite ali drena diretamente para dentro da articulação — e **inoculação direta** por trauma ou punção. Uma vez dentro, a bactéria desencadeia resposta inflamatória com liberação de enzimas proteolíticas por neutrófilos e sinoviócitos: a cartilagem articular, que é avascular e se nutre por difusão do líquido sinovial, começa a ser degradada em 8 horas e sofre dano irreversível em poucos dias. O derrame sob pressão ainda comprime os vasos retinaculares que irrigam a cabeça femoral, somando **necrose avascular** ao dano cartilaginoso. É essa janela curta que faz do escore de Kocher uma ferramenta de triagem para um procedimento — a punção — e não um instrumento de diagnóstico definitivo: o custo de esperar é desproporcional ao custo de puncionar.',
+  armadilhas: [
+    'A artrite séptica pode coexistir com osteomielite, e o tratamento da primeira sem reconhecer a segunda leva a recidiva e a PCR que não cai.',
+    'Em menores de 4 anos, *Kingella kingae* é agente frequente, cresce mal em meio convencional e exige inoculação do líquido em frasco de hemocultura ou pesquisa por PCR — cultura negativa não afasta infecção.',
+    'Antibiótico prévio atenua febre, leucocitose, VHS e PCR e produz escore falsamente tranquilizador.',
+    'O escore foi derivado para o **quadril**. Aplicá-lo a joelho, tornozelo ou ombro não é validado, ainda que o raciocínio clínico seja análogo.',
+  ],
+  referencias: [
+    { texto: 'Kocher MS, Zurakowski D, Kasser JR. Differentiating between septic arthritis and transient synovitis of the hip in children: an evidence-based clinical prediction algorithm. J Bone Joint Surg Am. 1999;81(12):1662-1670.' },
+    { texto: 'Caird MS, Flynn JM, Leung YL, et al. Factors distinguishing septic arthritis from transient synovitis of the hip in children: a prospective study. J Bone Joint Surg Am. 2006;88(6):1251-1257.' },
+    { texto: 'Woods CR, Bradley JS, Chatterjee A, et al. Clinical Practice Guideline by the Pediatric Infectious Diseases Society and the Infectious Diseases Society of America: 2023 Guideline on Diagnosis and Management of Acute Bacterial Arthritis in Pediatrics. J Pediatric Infect Dis Soc. 2024;13(1):1-59.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   dosePediatrica,
   hidratacao,
@@ -1334,6 +1710,9 @@ export const ferramentas: Ferramenta[] = [
   glasgowPed,
   bronquiolite,
   anestesicoLocal,
+  uticalc,
+  westley,
+  kocher,
 ]
 
 export default ferramentas
