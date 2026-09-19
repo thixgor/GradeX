@@ -1,5 +1,5 @@
 import type { Campo, Ferramenta, Nivel } from '../tipos'
-import { campoOpc, campoSeg, campoSimNao, fmtInt, opc, ptsOpc, sim, somaSimNao } from '../helpers'
+import { campoNum, campoOpc, campoSeg, campoSimNao, fmtInt, num, opc, ptsOpc, sim, somaSimNao } from '../helpers'
 
 /* ═════════════════ 1. Fenótipo de fragilidade e índice clínico ═════════════════ */
 
@@ -241,6 +241,205 @@ const desempenhoPaliativo: Ferramenta = {
   ],
 }
 
-export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo]
+/* ═══════════ Índice de Barthel, Katz e Lawton-Brody ═══════════ */
+
+const barthelCampos: Campo[] = [
+  campoSeg('instrumento', 'Instrumento', [
+    { valor: 'barthel', rotulo: 'Barthel (básicas, 0-100)' },
+    { valor: 'katz', rotulo: 'Katz (básicas, 0-6)' },
+    { valor: 'lawton', rotulo: 'Lawton-Brody (instrumentais, 0-8)' },
+  ], { ajuda: 'Barthel e Katz medem atividades **básicas** (autocuidado); Lawton mede as **instrumentais** (vida em comunidade). As instrumentais se perdem primeiro, e por isso o Lawton detecta declínio mais cedo — é o instrumento a usar quando a queixa é "ele está mais esquecido".' }),
+  campoOpc('alimentacao', 'Alimentação', [
+    { valor: '10', rotulo: 'Independente', pontos: 10 },
+    { valor: '5', rotulo: 'Precisa de ajuda (cortar, passar manteiga)', pontos: 5 },
+    { valor: '0', rotulo: 'Dependente', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('banho', 'Banho', [
+    { valor: '5', rotulo: 'Independente', pontos: 5 },
+    { valor: '0', rotulo: 'Dependente', pontos: 0 },
+  ], { padrao: '5', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('higiene', 'Higiene pessoal (rosto, cabelo, dentes, barba)', [
+    { valor: '5', rotulo: 'Independente', pontos: 5 },
+    { valor: '0', rotulo: 'Dependente', pontos: 0 },
+  ], { padrao: '5', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('vestir', 'Vestir-se', [
+    { valor: '10', rotulo: 'Independente, inclusive botões e zíper', pontos: 10 },
+    { valor: '5', rotulo: 'Precisa de ajuda, mas faz metade sozinho', pontos: 5 },
+    { valor: '0', rotulo: 'Dependente', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('intestino', 'Controle intestinal', [
+    { valor: '10', rotulo: 'Continente', pontos: 10 },
+    { valor: '5', rotulo: 'Acidente ocasional', pontos: 5 },
+    { valor: '0', rotulo: 'Incontinente', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('bexiga', 'Controle urinário', [
+    { valor: '10', rotulo: 'Continente', pontos: 10 },
+    { valor: '5', rotulo: 'Acidente ocasional', pontos: 5 },
+    { valor: '0', rotulo: 'Incontinente ou sondado', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('banheiro', 'Uso do banheiro', [
+    { valor: '10', rotulo: 'Independente', pontos: 10 },
+    { valor: '5', rotulo: 'Precisa de alguma ajuda', pontos: 5 },
+    { valor: '0', rotulo: 'Dependente', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('transferencia', 'Transferência (cama para cadeira)', [
+    { valor: '15', rotulo: 'Independente', pontos: 15 },
+    { valor: '10', rotulo: 'Ajuda mínima ou supervisão', pontos: 10 },
+    { valor: '5', rotulo: 'Consegue sentar, mas precisa de muita ajuda', pontos: 5 },
+    { valor: '0', rotulo: 'Incapaz, sem equilíbrio sentado', pontos: 0 },
+  ], { padrao: '15', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('deambulacao', 'Deambulação', [
+    { valor: '15', rotulo: 'Independente por 50 m (pode usar bengala)', pontos: 15 },
+    { valor: '10', rotulo: 'Caminha 50 m com ajuda', pontos: 10 },
+    { valor: '5', rotulo: 'Independente em cadeira de rodas por 50 m', pontos: 5 },
+    { valor: '0', rotulo: 'Imóvel', pontos: 0 },
+  ], { padrao: '15', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoOpc('escadas', 'Escadas', [
+    { valor: '10', rotulo: 'Independente', pontos: 10 },
+    { valor: '5', rotulo: 'Precisa de ajuda ou supervisão', pontos: 5 },
+    { valor: '0', rotulo: 'Incapaz', pontos: 0 },
+  ], { padrao: '10', mostrarSe: (v) => opc(v, 'instrumento') === 'barthel' }),
+  campoNum('katzTotal', 'Atividades preservadas (banho, vestir, uso do banheiro, transferência, continência, alimentação)', { min: 0, max: 6, passo: 1, mostrarSe: (v) => opc(v, 'instrumento') === 'katz', ajuda: 'Conte quantas das seis o paciente faz **sem qualquer supervisão, direção ou assistência pessoal**. O Katz é hierárquico: a perda segue a ordem inversa do desenvolvimento infantil — banho primeiro, alimentação por último.' }),
+  campoNum('lawtonTotal', 'Atividades instrumentais preservadas (telefone, compras, comida, casa, roupa, transporte, medicação, dinheiro)', { min: 0, max: 8, passo: 1, mostrarSe: (v) => opc(v, 'instrumento') === 'lawton', ajuda: 'Conte quantas das oito o paciente faz de forma independente. Em homens, a escala original dispensava comida, casa e roupa por convenção da época — hoje isso é considerado viés e a recomendação é aplicar as oito a todos.' }),
+]
+
+const barthel: Ferramenta = {
+  id: 'barthel-katz-lawton',
+  nome: 'Barthel, Katz e Lawton-Brody — atividades de vida diária',
+  sinonimos: ['barthel', 'katz', 'lawton', 'avd', 'aivd', 'atividades de vida diaria', 'funcionalidade'],
+  resumo: 'Mede independência em atividades básicas e instrumentais, o dado que prediz desfecho no idoso melhor que a lista de diagnósticos.',
+  categorias: ['geriatria', 'neurologia'],
+  campos: barthelCampos,
+  calcular: (v) => {
+    const qual = opc(v, 'instrumento') ?? 'barthel'
+
+    if (qual === 'katz') {
+      const n = num(v, 'katzTotal')
+      if (n === null) return null
+      const nivel: Nivel = n <= 2 ? 'critico' : n <= 4 ? 'alerta' : n === 5 ? 'atencao' : 'ok'
+      return {
+        titulo: 'Índice de Katz',
+        valor: fmtInt(n),
+        unidade: 'de 6 atividades',
+        nivel,
+        rotuloNivel: n === 6 ? 'Independente' : n >= 4 ? 'Dependência moderada' : 'Dependência grave',
+        detalhes: [
+          { rotulo: 'Atividades preservadas', valor: `${fmtInt(n)} de 6` },
+          { rotulo: 'Leitura', valor: '6 independente · 4-5 dependência moderada · ≤ 3 dependência grave' },
+        ],
+        interpretacao: [
+          `**${n} de 6 atividades básicas preservadas.** O Katz avalia banho, vestir-se, uso do banheiro, transferência, continência e alimentação, e considera independente apenas quem realiza a atividade **sem qualquer supervisão, direção ou assistência pessoal**.`,
+          'A escala é **hierárquica**, e essa é sua contribuição conceitual: a perda segue uma ordem previsível, aproximadamente inversa à aquisição dessas mesmas habilidades na infância — o banho se perde primeiro e a alimentação por último. Uma perda fora dessa ordem sugere causa focal, como um acidente vascular, e não declínio global.',
+          'O Katz é mais **grosseiro** que o Barthel: com apenas 6 itens dicotômicos, ele detecta mal mudanças pequenas e serve melhor para classificar do que para acompanhar resposta à reabilitação.',
+          'Funcionalidade prediz mortalidade, institucionalização, reinternação e complicação cirúrgica **melhor que idade e melhor que a lista de comorbidades** — e é o dado que menos costuma estar registrado no prontuário.',
+        ],
+        conduta: [
+          n < 6
+            ? '**Há dependência.** Antes de aceitá-la como definitiva, procure causas reversíveis: dor não tratada, depressão, déficit visual e auditivo, efeito de medicamento (sedativo, anticolinérgico, anti-hipertensivo com hipotensão postural), anemia, hipotireoidismo, desnutrição e descondicionamento por imobilidade recente.'
+            : '**Independente nas seis.** Registre isso como basal: é contra ele que uma internação futura será comparada, e é essa comparação que orienta decisão em crise.',
+          'Acione **fisioterapia e terapia ocupacional**. A perda funcional adquirida no hospital é frequente, começa em poucos dias de repouso e é em grande parte evitável com mobilização precoce.',
+          'Avalie o domicílio e o **cuidador**: barras de apoio, retirada de tapetes, iluminação noturna, altura do vaso e da cama, e sobrecarga de quem cuida — que se mede pela escala de Zarit e prediz institucionalização de forma independente.',
+          'Aplique o **Lawton** em paralelo: as instrumentais se perdem antes das básicas, e um Katz de 6 com Lawton reduzido é o padrão do comprometimento cognitivo inicial.',
+        ],
+        alertas: [
+          'Avalie o que a pessoa **faz**, não o que ela seria capaz de fazer. Idoso que pode tomar banho sozinho mas não toma há meses é dependente para efeito prognóstico.',
+          'Informação colateral é indispensável: tanto o paciente quanto o familiar distorcem — um por autonomia percebida, outro por proteção.',
+        ],
+      }
+    }
+
+    if (qual === 'lawton') {
+      const n = num(v, 'lawtonTotal')
+      if (n === null) return null
+      const nivel: Nivel = n <= 3 ? 'critico' : n <= 5 ? 'alerta' : n <= 7 ? 'atencao' : 'ok'
+      return {
+        titulo: 'Escala de Lawton-Brody',
+        valor: fmtInt(n),
+        unidade: 'de 8 atividades',
+        nivel,
+        rotuloNivel: n === 8 ? 'Independente' : n >= 6 ? 'Dependência leve' : n >= 4 ? 'Dependência moderada' : 'Dependência grave',
+        detalhes: [
+          { rotulo: 'Atividades instrumentais preservadas', valor: `${fmtInt(n)} de 8` },
+          { rotulo: 'Avaliadas', valor: 'Telefone, compras, preparo de comida, tarefas domésticas, roupa, transporte, medicação e dinheiro' },
+        ],
+        interpretacao: [
+          `**${n} de 8 atividades instrumentais preservadas.** As instrumentais exigem função executiva, memória e julgamento — planejar, sequenciar, calcular, antecipar —, e por isso **se perdem antes** das básicas, que dependem sobretudo de motricidade.`,
+          'Essa precedência torna o Lawton o instrumento mais sensível para detectar declínio funcional precoce. Perda de instrumentais com básicas preservadas é o padrão do **comprometimento cognitivo leve e da demência inicial**, e é o achado que justifica investigação cognitiva formal.',
+          'Os itens de maior valor discriminante são **gerenciar a própria medicação** e **administrar as finanças**: ambos exigem função executiva íntegra, e ambos têm consequências imediatas quando falham — erro de dose e vulnerabilidade a golpe financeiro.',
+          'A versão original atribuía apenas 5 itens aos homens, excluindo preparo de comida, tarefas domésticas e lavar roupa por convenção da época. Hoje isso é reconhecido como viés, e a recomendação é aplicar as **oito atividades a todos**.',
+        ],
+        conduta: [
+          n < 8
+            ? '**Há perda de atividades instrumentais.** Investigue cognição com MoCA ou MMSE ajustados por escolaridade, rastreie depressão com a GDS-15, e revise a prescrição procurando fármacos com carga anticolinérgica.'
+            : 'Independente nas oito. Registre como basal e reavalie periodicamente — a perda de instrumentais costuma ser o primeiro sinal objetivo de declínio.',
+          'Priorize a segurança nos dois itens de maior risco: **organize a medicação** (caixa semanal, dispensador, supervisão de terceiro) e **proteja as finanças**, que é onde a perda executiva produz dano irreversível e onde a família costuma perceber o problema tarde demais.',
+          'Ofereça **terapia ocupacional** para adaptação de tarefas e do ambiente: ela preserva independência por mais tempo e reduz sobrecarga do cuidador.',
+          'Reavalie a cada 6 a 12 meses, ou antes se houver queixa. A **trajetória** informa mais que o valor isolado, e a queda rápida sugere causa aguda — delirium, depressão, fármaco novo, evento vascular.',
+        ],
+        alertas: [
+          'Nunca pontue por presunção de papel: um homem que nunca cozinhou não é "dependente" para esse item por hábito, e uma mulher que nunca dirigiu tampouco. Pergunte se ele **conseguiria** fazer hoje o que fazia antes.',
+          'Perda de instrumentais tem diagnóstico diferencial amplo — depressão, déficit sensorial, artrose, medicação — e não é sinônimo de demência.',
+        ],
+      }
+    }
+
+    const ids = ['alimentacao', 'banho', 'higiene', 'vestir', 'intestino', 'bexiga', 'banheiro', 'transferencia', 'deambulacao', 'escadas']
+    const pontos = ids.map((id) => ptsOpc(barthelCampos, v, id))
+    if (pontos.some((p) => p === null)) return null
+    const total = (pontos as number[]).reduce((a, b) => a + b, 0)
+
+    const nivel: Nivel = total < 20 ? 'critico' : total < 60 ? 'alerta' : total < 90 ? 'atencao' : 'ok'
+    const faixa = total >= 100 ? 'Independente' : total >= 90 ? 'Dependência mínima' : total >= 60 ? 'Dependência leve' : total >= 20 ? 'Dependência moderada' : 'Dependência total'
+
+    return {
+      titulo: 'Índice de Barthel',
+      valor: fmtInt(total),
+      unidade: 'de 100 pontos',
+      nivel,
+      rotuloNivel: faixa,
+      detalhes: [
+        { rotulo: 'Mobilidade (transferência + deambulação + escadas)', valor: fmtInt((pontos[7] as number) + (pontos[8] as number) + (pontos[9] as number)), nota: 'de 40 — é o bloco de maior peso' },
+        { rotulo: 'Continência (intestinal + urinária)', valor: fmtInt((pontos[4] as number) + (pontos[5] as number)), nota: 'de 20' },
+        { rotulo: 'Autocuidado', valor: fmtInt((pontos[0] as number) + (pontos[1] as number) + (pontos[2] as number) + (pontos[3] as number) + (pontos[6] as number)), nota: 'de 40' },
+        { rotulo: 'Faixa', valor: faixa, nota: '100 independente · 90-99 mínima · 60-89 leve · 20-59 moderada · < 20 total' },
+      ],
+      interpretacao: [
+        `**${total} de 100 pontos — ${faixa.toLowerCase()}.** O Barthel pontua em múltiplos de 5 e dá peso maior à **mobilidade** (transferência, deambulação e escadas somam 40 pontos), porque é ela que determina, na prática, se a pessoa consegue viver em casa.`,
+        'Uma variação de **20 pontos** é a diferença clinicamente relevante habitualmente citada, e é o que se usa para medir resposta à reabilitação. O índice é mais granular que o Katz e por isso melhor para acompanhamento seriado.',
+        'O Barthel tem **efeito teto**: um paciente com 100 pontos pode ainda assim ter perdas instrumentais importantes, e é por isso que ele deve ser lido em conjunto com o Lawton em avaliação ambulatorial.',
+        'Em reabilitação de acidente vascular cerebral, o Barthel é um dos desfechos mais usados, e o valor na alta prediz destino (domicílio, instituição) e necessidade de cuidador de forma independente.',
+      ],
+      conduta: [
+        total < 100
+          ? '**Há dependência mensurável.** Procure causas reversíveis antes de aceitá-la: dor, depressão, déficit sensorial, medicação sedativa ou anticolinérgica, anemia, hipotireoidismo, desnutrição e descondicionamento.'
+          : 'Independente. Registre como basal — é a referência contra a qual uma internação futura será comparada.',
+        'Acione **fisioterapia e terapia ocupacional** precocemente. A perda funcional hospitalar começa em poucos dias de repouso e é em boa parte evitável com mobilização precoce, que reduz delirium, tempo de internação e institucionalização.',
+        'Combine com **nutrição**: 1,2 a 1,5 g/kg/dia de proteína somados a exercício resistido são a base da recuperação funcional, e a oferta sem estímulo mecânico produz pouco ganho.',
+        'Planeje a alta a partir do escore: avalie domicílio, escadas, banheiro, disponibilidade de cuidador e necessidade de equipamento. Escore baixo sem suporte domiciliar adequado é causa evitável de reinternação precoce.',
+        'Reavalie na admissão, semanalmente e na alta. A **trajetória** é o que orienta o plano de reabilitação, e a comparação com o basal é o que define se o objetivo é recuperar ou compensar.',
+      ],
+      alertas: [
+        'Pontue o **desempenho real nas últimas 24 a 48 horas**, não a capacidade teórica nem o que o paciente fazia antes de adoecer.',
+        'Efeito teto: Barthel de 100 não significa ausência de declínio — aplique o Lawton em paralelo, porque as instrumentais se perdem antes.',
+      ],
+    }
+  },
+  formula: ['Barthel: 10 itens, 0 a 100 em múltiplos de 5', 'Katz: 6 atividades básicas preservadas, 0 a 6', 'Lawton-Brody: 8 atividades instrumentais preservadas, 0 a 8'],
+  fundamento:
+    'A funcionalidade é o desfecho que mais importa para o idoso e o preditor mais forte de praticamente tudo o que interessa clinicamente — mortalidade, institucionalização, reinternação, delirium e complicação cirúrgica —, superando idade e índices de comorbidade. A razão é conceitual: enquanto a lista de diagnósticos descreve quais sistemas estão doentes, a funcionalidade mede o que restou de **reserva integrada** depois que todos eles interagiram com o envelhecimento e com o ambiente. A distinção entre atividades básicas e instrumentais tem base neuropsicológica: as **básicas** (banho, vestir, higiene, transferência, continência, alimentação) dependem sobretudo de integridade motora, sensorial e de circuitos automatizados; as **instrumentais** (telefone, compras, cozinhar, finanças, medicação, transporte) exigem função executiva — planejar, sequenciar, monitorar, corrigir — que depende de circuitos frontoestriatais. Como o declínio cognitivo atinge o lobo frontal antes de comprometer a motricidade, as instrumentais se perdem primeiro, e essa precedência transforma o Lawton num detector precoce. O Katz acrescentou ainda a observação de que a perda das básicas é **hierárquica** e aproximadamente inversa à ordem em que a criança as adquire — uma regularidade que torna a perda fora de ordem um sinal de causa focal, e não de declínio global.',
+  armadilhas: [
+    'Pontuar capacidade presumida em vez de desempenho real é o erro mais comum e superestima a independência.',
+    'O relato do paciente superestima e o do familiar subestima; a triangulação com observação direta é o que resolve.',
+    'Barthel e Katz têm efeito teto e não detectam declínio inicial — nesse cenário, o Lawton é o instrumento.',
+    'Avaliar funcionalidade durante a doença aguda mede a doença, não o basal. Registre os dois separadamente, e classifique o basal pelo estado de duas semanas antes.',
+  ],
+  referencias: [
+    { texto: 'Mahoney FI, Barthel DW. Functional evaluation: the Barthel Index. Md State Med J. 1965;14:61-65.' },
+    { texto: 'Katz S, Ford AB, Moskowitz RW, Jackson BA, Jaffe MW. Studies of illness in the aged. The index of ADL. JAMA. 1963;185:914-919.' },
+    { texto: 'Lawton MP, Brody EM. Assessment of older people: self-maintaining and instrumental activities of daily living. Gerontologist. 1969;9(3):179-186.' },
+  ],
+}
+
+export const ferramentas: Ferramenta[] = [fragilidade, desempenhoPaliativo, barthel]
 
 export default ferramentas

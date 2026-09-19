@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **220** (eram 201) |
-| Implementadas desta lista | **19** |
-| Restantes | **181** |
-| Nota média na auditoria | **100** — todas as 220 |
+| Ferramentas no catálogo | **222** (eram 201) |
+| Implementadas desta lista | **21** |
+| Restantes | **179** |
+| Nota média na auditoria | **100** — todas as 222 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -153,6 +153,7 @@ escores individuais.
 
 60. **Interpretação de espirometria (GLI/LLN) e pico de fluxo expiratório previsto** — padrão obstrutivo, restritivo e misto, resposta a broncodilatador e gravidade da crise asmática. **[P1]**
 61. **CAT — COPD Assessment Test e grupos GOLD A/B/E** — classificação atual da DPOC. **[P1]**
+    - ✅ **feito** — `cat-gold`, com os grupos A/B/E de 2023
 62. **DECAF e BAP-65** — mortalidade na exacerbação da DPOC. **[P2]**
 63. **SMART-COP e SMRT-CO** — necessidade de suporte ventilatório ou vasopressor na pneumonia. **[P1]**
 64. **Critérios ATS/IDSA de pneumonia grave e DRIP score** — indicação de UTI e risco de patógeno resistente. **[P1]**
@@ -317,6 +318,7 @@ escores individuais.
 ## 17. Geriatria e cuidados paliativos — categoria nova (8)
 
 184. **Índice de Barthel, índice de Katz e escala de Lawton-Brody** — atividades básicas e instrumentais de vida diária. **[P1]**
+    - 🟡 **parcial** — `barthel-katz-lawton` cobre os três; falta a versão com pontuação graduada do Lawton
 185. **GDS-15 e escala de Cornell** — depressão no idoso e no idoso com demência. **[P1]**
 186. **Timed Up and Go, escala de Tinetti e escala de equilíbrio de Berg** — mobilidade e risco de queda. **[P1]**
 187. **VES-13, G8, índice de Lee e índice de Schonberg** — vulnerabilidade em oncogeriatria e mortalidade em 4 e 10 anos para individualizar rastreamento. **[P2]**

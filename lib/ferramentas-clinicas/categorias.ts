@@ -38,7 +38,7 @@ export const CATEGORIAS: Categoria[] = [
       'Ventilação protetora é aritmética: peso predito define volume corrente, volume corrente e complacência definem driving pressure, e driving pressure é a variável que mais consistentemente se associa a mortalidade na SDRA. Somam-se os escores de gravidade da pneumonia, do TEP e os índices de desmame.',
     icone: 'pneumologia',
     cor: 'azul',
-    total: 21,
+    total: 22,
   },
   {
     id: 'nefrologia',
@@ -68,7 +68,7 @@ export const CATEGORIAS: Categoria[] = [
       'Escalas neurológicas são o exame físico transformado em número reprodutível entre plantões — é isso que permite comparar o NIHSS da porta com o de duas horas depois e decidir. Estão aqui as escalas de coma, os escores de AVC isquêmico e hemorrágico, as de sedação e delirium e a conta de perfusão cerebral.',
     icone: 'neurologia',
     cor: 'indigo',
-    total: 19,
+    total: 20,
   },
   {
     id: 'gastroenterologia',
@@ -188,7 +188,7 @@ export const CATEGORIAS: Categoria[] = [
       'Em idosos, idade cronológica prediz pouco e funcionalidade prediz quase tudo: fragilidade, capacidade funcional e cognição preveem complicação cirúrgica, delirium, institucionalização e mortalidade melhor que qualquer índice de comorbidade. Em cuidados paliativos, as escalas de desempenho e prognóstico existem para que a conversa sobre objetivos aconteça enquanto ainda há escolha.',
     icone: 'geriatria',
     cor: 'ardosia',
-    total: 4,
+    total: 5,
   },
   {
     id: 'especialidades',

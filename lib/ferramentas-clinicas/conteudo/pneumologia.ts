@@ -1,4 +1,4 @@
-import type { Ferramenta, Nivel, Resultado } from '../tipos'
+import type { Campo, Ferramenta, Nivel, Resultado } from '../tipos'
 import {
   campoAltura,
   campoNum,
@@ -1395,6 +1395,108 @@ const spesi: Ferramenta = {
   ],
 }
 
+/* ═══════════════════ CAT e grupos GOLD A/B/E ═══════════════════ */
+
+const catCampos: Campo[] = [
+  campoNum('tosse', '1. Tosse (0 = nunca tusso · 5 = tusso o tempo todo)', { min: 0, max: 5, passo: 1, ajuda: 'Cada um dos 8 itens do CAT vai de 0 a 5, sempre do melhor para o pior cenário, e o paciente responde sozinho — o questionário é autoaplicável e leva cerca de 2 minutos.' }),
+  campoNum('catarro', '2. Catarro no peito (0 = nenhum · 5 = completamente cheio)', { min: 0, max: 5, passo: 1 }),
+  campoNum('aperto', '3. Aperto no peito (0 = nenhum · 5 = muito apertado)', { min: 0, max: 5, passo: 1 }),
+  campoNum('subir', '4. Falta de ar ao subir uma ladeira ou um lance de escada (0 = nenhuma · 5 = muita)', { min: 0, max: 5, passo: 1, ajuda: 'Esta é a pergunta que melhor captura a hiperinsuflação dinâmica: o paciente para não por falta de força, mas porque não consegue esvaziar o pulmão entre uma respiração e a seguinte.' }),
+  campoNum('atividades', '5. Limitação nas atividades domésticas (0 = nenhuma · 5 = muito limitado)', { min: 0, max: 5, passo: 1 }),
+  campoNum('sair', '6. Confiança para sair de casa (0 = total · 5 = nenhuma)', { min: 0, max: 5, passo: 1 }),
+  campoNum('sono', '7. Sono (0 = durmo profundamente · 5 = não durmo bem por causa da doença)', { min: 0, max: 5, passo: 1 }),
+  campoNum('energia', '8. Energia (0 = muita · 5 = nenhuma)', { min: 0, max: 5, passo: 1 }),
+  campoNum('exacerbacoes', 'Exacerbações moderadas no último ano', { min: 0, max: 20, passo: 1, ajuda: 'Moderada é a que exigiu corticoide sistêmico ou antibiótico sem internação. Conte apenas as do último ano — é essa a janela que prediz as do ano seguinte.' }),
+  campoNum('internacoes', 'Internações por exacerbação no último ano', { min: 0, max: 20, passo: 1, ajuda: 'Uma única internação por exacerbação já coloca o paciente no grupo E, independentemente dos sintomas, porque é o preditor isolado mais forte de novas exacerbações e de mortalidade.' }),
+  campoNum('mmrc', 'Escala mMRC de dispneia (0 a 4)', { min: 0, max: 4, passo: 1, opcional: true, ajuda: 'Alternativa ao CAT para classificar sintomas. O corte é mMRC ≥ 2, equivalente ao corte de CAT ≥ 10 — mas os dois não classificam sempre o mesmo paciente do mesmo jeito, e o CAT é preferido por ser multidimensional.' }),
+]
+
+const catGold: Ferramenta = {
+  id: 'cat-gold',
+  nome: 'CAT e grupos GOLD A, B e E na DPOC',
+  sigla: 'CAT',
+  sinonimos: ['cat', 'copd assessment test', 'gold', 'dpoc grupos', 'abe', 'classificacao dpoc'],
+  resumo: 'Mede o impacto sintomático da DPOC em oito itens e classifica nos grupos GOLD A, B ou E, que definem o tratamento inicial.',
+  categorias: ['pneumologia'],
+  campos: catCampos,
+  calcular: (v) => {
+    const itens = ['tosse', 'catarro', 'aperto', 'subir', 'atividades', 'sair', 'sono', 'energia']
+    const valores = itens.map((id) => num(v, id))
+    if (valores.some((x) => x === null)) return null
+    const cat = (valores as number[]).reduce((a, b) => a + b, 0)
+    const exac = num(v, 'exacerbacoes') ?? 0
+    const intern = num(v, 'internacoes') ?? 0
+    const mmrc = num(v, 'mmrc')
+
+    const muitoSintomatico = cat >= 10 || (mmrc !== null && mmrc >= 2)
+    const altoRiscoExacerbacao = intern >= 1 || exac >= 2
+    const grupo = altoRiscoExacerbacao ? 'E' : muitoSintomatico ? 'B' : 'A'
+
+    const nivel: Nivel = grupo === 'E' ? 'alerta' : grupo === 'B' ? 'atencao' : 'ok'
+    const impacto = cat >= 30 ? 'muito alto' : cat >= 20 ? 'alto' : cat >= 10 ? 'médio' : 'baixo'
+
+    const conduta: string[] = []
+    if (grupo === 'A') {
+      conduta.push('**Grupo A:** broncodilatador de longa duração — um LAMA ou um LABA. A escolha inicial é menos importante que a adesão e a técnica inalatória. Reavalie em 3 meses com o próprio CAT.')
+    } else if (grupo === 'B') {
+      conduta.push('**Grupo B:** inicie com **LAMA + LABA em associação**, e não com monoterapia. A diretriz de 2023 mudou essa recomendação: a combinação supera qualquer broncodilatador isolado em sintomas e em função pulmonar, e o grupo B é definido justamente pela carga sintomática.')
+    } else {
+      conduta.push('**Grupo E (exacerbador):** comece com **LAMA + LABA**. Acrescente **corticoide inalatório** se houver eosinófilos no sangue ≥ 300/µL, ou ≥ 100/µL com exacerbações frequentes, ou história de asma associada — a tripla terapia reduz exacerbações e mortalidade nesse subgrupo.')
+      conduta.push('**Evite corticoide inalatório com eosinófilos abaixo de 100/µL**: o benefício é mínimo e o risco de pneumonia, de candidíase oral e de perda óssea é real. A contagem de eosinófilos virou o biomarcador que decide essa prescrição.')
+    }
+    conduta.push(
+      'Prescreva o que muda mortalidade e que costuma ficar de fora da receita: **cessação do tabagismo** (a única intervenção que altera a queda do VEF₁), **reabilitação pulmonar** (ganho funcional maior que o de qualquer fármaco, e subindicada de forma crônica), **vacinação** (influenza anual, pneumocócica, coqueluche, covid-19 e vírus sincicial respiratório conforme a faixa) e **oxigenoterapia domiciliar** apenas com PaO₂ ≤ 55 mmHg, ou ≤ 59 mmHg com cor pulmonale ou policitemia.',
+      '**Confira a técnica inalatória em toda consulta.** Erro de técnica é mais frequente que falha do fármaco, e trocar o medicamento sem checar o dispositivo é a causa mais comum de "DPOC refratária" aparente.',
+      'Reavalie o CAT a cada 3 meses e use a variação: **queda de 2 pontos** já é diferença clinicamente relevante e é a medida de resposta ao tratamento e à reabilitação.',
+      'Procure e trate as **comorbidades** que definem prognóstico: doença cardiovascular (a principal causa de morte na DPOC leve a moderada), ansiedade e depressão, osteoporose, sarcopenia, apneia do sono e câncer de pulmão — rastreie-o com tomografia de baixa dose nos elegíveis.',
+    )
+
+    return {
+      titulo: 'CAT e grupo GOLD',
+      valor: fmtInt(cat),
+      unidade: 'de 40 pontos',
+      nivel,
+      rotuloNivel: `Grupo ${grupo} · impacto ${impacto}`,
+      detalhes: [
+        { rotulo: 'CAT', valor: `${fmtInt(cat)} de 40`, nota: '< 10 baixo · 10-20 médio · 21-30 alto · > 30 muito alto' },
+        { rotulo: 'Eixo sintomas', valor: muitoSintomatico ? 'Muito sintomático' : 'Pouco sintomático', nota: 'Corte: CAT ≥ 10 ou mMRC ≥ 2' },
+        { rotulo: 'Exacerbações no último ano', valor: `${fmtInt(exac)} moderadas, ${fmtInt(intern)} com internação`, nivel: (altoRiscoExacerbacao ? 'alerta' : 'ok') as Nivel },
+        { rotulo: 'Grupo GOLD', valor: grupo, nota: 'A pouco sintomático · B muito sintomático · E exacerbador' },
+        ...(mmrc !== null ? [{ rotulo: 'mMRC', valor: fmtInt(mmrc) }] : []),
+      ],
+      interpretacao: [
+        `**CAT de ${fmtInt(cat)} — impacto ${impacto}.** As faixas são: abaixo de 10 impacto baixo, 10 a 20 médio, 21 a 30 alto, acima de 30 muito alto. Uma **variação de 2 pontos** já é a diferença mínima clinicamente relevante.`,
+        `**Grupo GOLD ${grupo}.** A classificação de 2023 substituiu os antigos quatro grupos (A, B, C, D) por três: o antigo C — pouco sintomático mas exacerbador — foi fundido ao D, formando o **grupo E**, porque o histórico de exacerbações prediz o desfecho independentemente da carga de sintomas, e os dois grupos recebiam praticamente o mesmo tratamento.`,
+        altoRiscoExacerbacao
+          ? '**O paciente é exacerbador.** Duas ou mais exacerbações moderadas, ou uma internação, no último ano definem o grupo E — e o preditor isolado mais forte de exacerbação futura é a exacerbação passada.'
+          : 'Sem critério de exacerbador no último ano. Lembre que a exacerbação prévia é o melhor preditor da próxima, e que esse histórico deve ser perguntado ativamente: o paciente frequentemente não reconhece como "exacerbação" o episódio em que tomou corticoide ou antibiótico.',
+        'O CAT é **multidimensional** — inclui tosse, secreção, aperto, dispneia, atividade, confiança, sono e energia —, enquanto o mMRC mede apenas dispneia. Por isso o CAT é preferido para classificar: dois pacientes com o mesmo mMRC podem ter impactos muito diferentes.',
+        'A **espirometria continua necessária** para o diagnóstico (relação VEF₁/CVF pós-broncodilatador abaixo de 0,70) e para graduar a obstrução em GOLD 1 a 4, mas o grau espirométrico **não** define mais o grupo nem o tratamento inicial.',
+      ],
+      conduta,
+      alertas: [
+        'O grupo GOLD é definido por **sintomas e exacerbações**, não pelo VEF₁. Usar o grau espirométrico para escolher o tratamento inicial é a prática antiga, abandonada desde 2017.',
+        'Corticoide inalatório com **eosinófilos abaixo de 100/µL** tem benefício mínimo e aumenta pneumonia, candidíase oral e perda óssea. A contagem de eosinófilos é o que decide.',
+        'Uma única **internação** por exacerbação já coloca no grupo E, ainda que o CAT seja baixo — e essa é a informação que mais escapa quando não se pergunta explicitamente por ela.',
+      ],
+    }
+  },
+  formula: ['CAT = soma de 8 itens de 0 a 5 (total de 0 a 40)', 'Grupo A: CAT < 10 e mMRC < 2, sem exacerbação relevante', 'Grupo B: CAT ≥ 10 ou mMRC ≥ 2, sem exacerbação relevante', 'Grupo E: ≥ 2 exacerbações moderadas ou ≥ 1 internação no último ano'],
+  fundamento:
+    'A DPOC deixou de ser entendida como uma doença de um único número. Durante décadas o VEF₁ era o eixo do diagnóstico, do estadiamento e do tratamento, mas ele explica mal aquilo que incapacita o paciente: dois indivíduos com o mesmo VEF₁ podem ter dispneia e limitação funcional radicalmente diferentes. A razão é a **hiperinsuflação dinâmica** — com a obstrução ao fluxo expiratório, o paciente não termina de esvaziar o pulmão antes da próxima inspiração, e o ar aprisionado eleva progressivamente a capacidade residual funcional durante o esforço. O diafragma é empurrado para uma posição achatada, fora da sua curva ótima de comprimento-tensão, e passa a gerar menos força com mais trabalho; o volume de reserva inspiratória se esgota e a dispneia se torna intolerável. Esse mecanismo depende da frequência respiratória e do tempo expiratório disponível, não do VEF₁ de repouso — o que explica por que broncodilatador de longa duração melhora sintoma e tolerância ao esforço muito além do que melhora o VEF₁. O CAT nasceu dessa constatação, medindo o impacto em oito domínios, e a classificação ABE de 2023 completou o raciocínio ao reconhecer que **exacerbação e sintoma são eixos independentes**: o exacerbador tem inflamação e risco próprios, e precisa de tratamento dirigido a esse risco, com ou sem sintomas no dia a dia.',
+  armadilhas: [
+    'O CAT não diagnostica DPOC nem substitui a espirometria — ele mede impacto em quem já tem o diagnóstico confirmado.',
+    'Comorbidades como insuficiência cardíaca, anemia, depressão e obesidade elevam o CAT sem que haja piora da doença pulmonar.',
+    'A troca entre CAT e mMRC não é neutra: os dois cortes não classificam sempre o mesmo paciente no mesmo grupo, e a diretriz prefere o CAT.',
+    'Exacerbações precisam ser perguntadas de forma específica — muitos pacientes não reconhecem como tal o episódio em que usaram corticoide ou antibiótico.',
+  ],
+  referencias: [
+    { texto: 'Jones PW, Harding G, Berry P, et al. Development and first validation of the COPD Assessment Test. Eur Respir J. 2009;34(3):648-654.' },
+    { texto: 'Global Initiative for Chronic Obstructive Lung Disease. Global Strategy for the Diagnosis, Management, and Prevention of COPD: 2023 Report.' },
+    { texto: 'Silva GPF, Morano MTAP, Viana CMS, Magalhães CBA, Pereira EDB. Validação do Teste de Avaliação da DPOC em português para uso no Brasil. J Bras Pneumol. 2013;39(4):402-408.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   pesoPreditoFerramenta,
   mecanicaVentilatoria,
@@ -1411,6 +1513,7 @@ export const ferramentas: Ferramenta[] = [
   light,
   pesi,
   spesi,
+  catGold,
 ]
 
 export default ferramentas
