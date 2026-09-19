@@ -108,7 +108,7 @@ export const CATEGORIAS: Categoria[] = [
       'Criança não é adulto pequeno, e a prova disso é que quase toda conduta pediátrica passa por uma conta de peso ou superfície corporal. Estão aqui Holliday-Segar, as escalas neonatais, os percentis de crescimento, a fototerapia e as doses máximas que evitam intoxicação.',
     icone: 'pediatria',
     cor: 'turquesa',
-    total: 26,
+    total: 27,
   },
   {
     id: 'ginecologia',
@@ -128,7 +128,7 @@ export const CATEGORIAS: Categoria[] = [
       'Na emergência a conta precisa sair em segundos e sem erro de vírgula: mcg/kg/min para mL/h, diluição padrão, gotas por minuto, dose máxima de anestésico local. Ao lado, os escores de gravidade que definem UTI e o checklist de sequência rápida.',
     icone: 'emergencia',
     cor: 'vermelho',
-    total: 94,
+    total: 95,
   },
   {
     id: 'cirurgia',
@@ -138,7 +138,7 @@ export const CATEGORIAS: Categoria[] = [
       'A avaliação pré-operatória é um exercício de estratificação: ASA descreve o doente, RCRI estima evento cardíaco, Caprini estima trombose e POSSUM estima morbimortalidade global. Junto, os escores diagnósticos de abdome agudo e as contas de volemia e transfusão.',
     icone: 'cirurgia',
     cor: 'esmeralda',
-    total: 16,
+    total: 17,
   },
   {
     id: 'farmacologia',

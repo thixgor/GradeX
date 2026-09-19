@@ -5,6 +5,7 @@ import {
   campoOpc,
   campoPeso,
   campoSeg,
+  campoSexo,
   campoSimNao,
   fmt,
   fmtInt,
@@ -1278,6 +1279,120 @@ const ctHead: Ferramenta = {
   ],
 }
 
+/* ═══════════ Superfície queimada, índice de Baux e ABSI ═══════════ */
+
+const queimaduraCampos: Campo[] = [
+  campoSeg('metodo', 'Método de cálculo da área', [
+    { valor: 'nove', rotulo: 'Regra dos nove (adulto)' },
+    { valor: 'lund', rotulo: 'Lund-Browder (por faixa etária)' },
+    { valor: 'palma', rotulo: 'Palma da mão (áreas pequenas)' },
+  ], { ajuda: 'A **regra dos nove não vale em crianças**: a cabeça representa até 18% da superfície no lactente contra 9% no adulto, e cada membro inferior 14% contra 18%. Use Lund-Browder abaixo dos 10 anos. Para áreas pequenas e esparsas, a palma da mão do **paciente** (com os dedos) equivale a cerca de 1%.' }),
+  campoNum('idade', 'Idade', { unidade: 'anos', min: 0, max: 110, passo: 1, ajuda: 'A idade entra diretamente no índice de Baux e é, junto com a área, o determinante mais forte de mortalidade no grande queimado.' }),
+  campoPeso({ ajuda: 'Necessário para a fórmula de Parkland. Em crianças, some a manutenção hídrica basal ao volume de reposição — elas não toleram apenas o volume da fórmula.' }),
+  campoNum('scq', 'Superfície corporal queimada (2º e 3º graus)', { unidade: '%', min: 0, max: 100, passo: 0.5, ajuda: 'Conte **apenas** as queimaduras de 2º grau (espessura parcial, com bolhas) e de 3º grau (espessura total). **Queimadura de 1º grau — eritema sem bolha, como a solar — não entra no cálculo**, e incluí-la é o erro mais comum, levando a hiper-hidratação.' }),
+  campoSimNao('inalatoria', 'Lesão inalatória suspeita ou confirmada', 0, 'Queimadura em ambiente fechado, escarro carbonáceo, vibrissas nasais chamuscadas, rouquidão, estridor ou queimadura facial. A lesão inalatória **triplica a mortalidade** para a mesma área e é o item que mais pesa no ABSI depois da própria área.'),
+  campoSexo('sexo', 'Sexo biológico'),
+  campoSimNao('terceiroGrau', 'Há área de 3º grau (espessura total)', 0, 'Pele branca nacarada, marrom ou carbonizada, seca, sem dor e sem enchimento capilar — a ausência de dor decorre da destruição das terminações nervosas e é um sinal de **maior** gravidade, não de menor.'),
+]
+
+const queimadura: Ferramenta = {
+  id: 'queimadura-area-prognostico',
+  nome: 'Superfície queimada, Parkland, índice de Baux e ABSI',
+  sinonimos: ['queimadura', 'regra dos nove', 'lund browder', 'parkland', 'baux', 'absi', 'grande queimado'],
+  resumo: 'Calcula a área queimada por faixa etária, o volume de reposição e a mortalidade estimada pelos índices de Baux e ABSI.',
+  categorias: ['emergencia', 'cirurgia', 'pediatria'],
+  campos: queimaduraCampos,
+  calcular: (v) => {
+    const idade = num(v, 'idade')
+    const peso = num(v, 'peso')
+    const scq = num(v, 'scq')
+    if (idade === null || peso === null || scq === null) return null
+    const inalatoria = sim(v, 'inalatoria')
+    const feminino = opc(v, 'sexo') === 'f'
+    const terceiro = sim(v, 'terceiroGrau')
+
+    // Parkland: 4 mL x peso x %SCQ nas primeiras 24 h, metade nas primeiras 8 h.
+    const parkland = 4 * peso * scq
+    const primeiras8h = parkland / 2
+    const taxa8h = primeiras8h / 8
+
+    // Baux e Baux revisado (acrescenta 17 pontos por lesão inalatória).
+    const baux = idade + scq
+    const bauxRevisado = baux + (inalatoria ? 17 : 0)
+
+    // ABSI: sexo feminino 1, lesão inalatória 1, 3º grau 1, faixas de idade e de área.
+    const pontosIdade = idade <= 20 ? 1 : idade <= 40 ? 2 : idade <= 60 ? 3 : idade <= 80 ? 4 : 5
+    const pontosArea = Math.min(10, Math.ceil(scq / 10))
+    const absi = (feminino ? 1 : 0) + (inalatoria ? 1 : 0) + (terceiro ? 1 : 0) + pontosIdade + pontosArea
+    const sobrevidaAbsi = absi <= 3 ? '≥ 99%' : absi <= 5 ? '98%' : absi <= 7 ? '80-90%' : absi <= 9 ? '50-70%' : absi <= 11 ? '20-40%' : '≤ 10%'
+
+    const grande = scq >= 20 || (idade < 10 || idade > 50 ? scq >= 10 : false) || terceiro || inalatoria
+    const nivel: Nivel = bauxRevisado >= 100 ? 'critico' : bauxRevisado >= 75 ? 'alerta' : grande ? 'atencao' : 'ok'
+
+    return {
+      titulo: 'Queimadura — área, reposição e prognóstico',
+      valor: fmtPct(scq, 1),
+      unidade: 'de superfície corporal',
+      nivel,
+      rotuloNivel: `Baux revisado ${fmtInt(bauxRevisado)} · ABSI ${fmtInt(absi)}`,
+      detalhes: [
+        { rotulo: 'Parkland — 24 h', valor: `${fmtInt(parkland)} mL de Ringer lactato`, nota: '4 mL × peso × %SCQ' },
+        { rotulo: 'Primeiras 8 horas', valor: `${fmtInt(primeiras8h)} mL (${fmtInt(taxa8h)} mL/h)`, nota: 'Contadas a partir do **momento da queimadura**, não da chegada' },
+        { rotulo: 'Índice de Baux', valor: fmtInt(baux), nota: 'Idade + %SCQ' },
+        { rotulo: 'Baux revisado', valor: fmtInt(bauxRevisado), nivel: (bauxRevisado >= 100 ? 'critico' : bauxRevisado >= 75 ? 'alerta' : 'ok') as Nivel, nota: inalatoria ? '+17 por lesão inalatória' : 'sem lesão inalatória' },
+        { rotulo: 'ABSI', valor: `${fmtInt(absi)} — sobrevida estimada ${sobrevidaAbsi}` },
+        { rotulo: 'Critério de grande queimado', valor: grande ? 'Preenchido' : 'Não preenchido', nivel: (grande ? 'alerta' : 'ok') as Nivel },
+      ],
+      interpretacao: [
+        `**${fmtPct(scq, 1)} de superfície corporal queimada.** Só entram no cálculo as queimaduras de **2º e 3º graus** — o eritema de 1º grau não conta, e incluí-lo é a causa mais comum de hiper-hidratação.`,
+        `**Parkland: ${fmtInt(parkland)} mL nas primeiras 24 horas**, sendo metade (${fmtInt(primeiras8h)} mL) nas primeiras 8 horas, contadas a partir do **momento da queimadura** e não da chegada ao hospital. Se o paciente chegou 3 horas depois, as mesmas metade devem ser infundidas nas 5 horas restantes.`,
+        `**Índice de Baux revisado de ${fmtInt(bauxRevisado)}** (idade + área + 17 se houver lesão inalatória). O Baux original, de 1961, considerava 100 como praticamente letal; com o cuidado moderno, o ponto de mortalidade de 50% subiu para a faixa de 110 a 130, o que mostra o quanto o prognóstico do grande queimado mudou.`,
+        `**ABSI de ${fmtInt(absi)}, com sobrevida estimada de ${sobrevidaAbsi}.** O ABSI acrescenta ao Baux o sexo, a presença de área de 3º grau e a lesão inalatória, com pontuação por faixas.`,
+        inalatoria
+          ? '**Lesão inalatória triplica a mortalidade** para a mesma área queimada, e aumenta em 30 a 50% a necessidade de volume — a fórmula de Parkland subestima nesse cenário. O edema de via aérea progride nas primeiras horas: a intubação deve ser **precoce e eletiva**, porque depois de instalado o edema a via aérea pode se tornar impossível.'
+          : 'Sem lesão inalatória assinalada. Mantenha vigilância nas primeiras 24 horas se houve exposição a ambiente fechado: rouquidão, estridor e escarro carbonáceo podem surgir tardiamente.',
+        terceiro
+          ? '**Há área de espessura total (3º grau).** Ela não reepiteliza e exige enxertia. A ausência de dor nessa área decorre da destruição das terminações nervosas e indica **maior** gravidade — a queimadura que dói muito é a de espessura parcial.'
+          : 'Sem área de espessura total assinalada, o que favorece a cicatrização espontânea com curativos.',
+      ],
+      conduta: [
+        '**Comece pelo ABCDE do trauma, não pela queimadura.** Via aérea primeiro: em queimadura de face, rouquidão, estridor, escarro carbonáceo ou queimadura em ambiente fechado, **intube precocemente e de forma eletiva** — o edema progride e a via aérea fecha.',
+        `**Reposição volêmica com Ringer lactato**, ${fmtInt(taxa8h)} mL/h nas primeiras 8 horas a partir do momento da queimadura. A fórmula é apenas o **ponto de partida**: titule pela **diurese**, que é o alvo real — 0,5 mL/kg/h no adulto e 1 mL/kg/h na criança. Volume em excesso causa a "fluid creep", com síndrome compartimental abdominal e de extremidades, edema pulmonar e conversão de queimaduras superficiais em profundas.`,
+        'Em **crianças**, some a manutenção hídrica basal (Holliday-Segar) ao volume de reposição e acrescente glicose à solução de manutenção, porque as reservas de glicogênio são pequenas e a hipoglicemia é frequente.',
+        'Faça **escarotomia** de urgência diante de queimadura circunferencial de membro com sinais de isquemia (dor, parestesia, ausência de pulso ao Doppler, enchimento capilar lento) ou de tórax com restrição ventilatória — a escara de espessura total é inelástica e o edema subjacente cria uma síndrome compartimental.',
+        'Suspeite de **intoxicação por monóxido de carbono e por cianeto** em queimadura de ambiente fechado. A oximetria de pulso é falsamente normal na intoxicação por monóxido: peça **co-oximetria** e trate com oxigênio a 100% em máscara não reinalante. Acidose lática grave desproporcional sugere cianeto, cujo antídoto é a hidroxocobalamina.',
+        'Analgesia com **opioide por via intravenosa**, em dose titulada: a queimadura de espessura parcial é uma das dores mais intensas da medicina, e a via intramuscular ou subcutânea tem absorção errática pela vasoconstrição.',
+        'Encaminhe ao **centro de queimados** conforme os critérios clássicos: mais de 10% de superfície em menores de 10 ou maiores de 50 anos; mais de 20% em qualquer idade; queimadura de espessura total acima de 5%; envolvimento de face, mãos, pés, genitália, períneo ou articulações maiores; queimadura elétrica ou química; lesão inalatória; comorbidade significativa; e suspeita de maus-tratos.',
+        'Não esqueça de **profilaxia antitetânica**, curativo com cobertura estéril, controle de temperatura (o grande queimado perde calor rapidamente e a hipotermia agrava a coagulopatia) e suporte nutricional precoce, com necessidade proteica elevada — 1,5 a 2 g/kg/dia.',
+      ],
+      alertas: [
+        '**Queimadura de 1º grau não entra no cálculo da área.** Incluí-la infla o volume de Parkland e causa hiper-hidratação, que tem morbidade própria.',
+        'A regra dos nove **não vale em crianças**: a cabeça é proporcionalmente muito maior. Use Lund-Browder.',
+        'As 8 horas de Parkland contam a partir do **momento da queimadura**, não da chegada ao hospital.',
+        'Em queimadura **elétrica de alta voltagem**, a área visível subestima grosseiramente o dano: a corrente lesa músculo profundo no trajeto, causando rabdomiólise e síndrome compartimental. O volume necessário é maior e a diurese-alvo sobe para 1 a 2 mL/kg/h enquanto houver mioglobinúria.',
+      ],
+    }
+  },
+  formula: [
+    'Parkland: 4 mL × peso (kg) × %SCQ nas primeiras 24 h · metade nas primeiras 8 h a partir da queimadura',
+    'Baux = idade + %SCQ · Baux revisado = idade + %SCQ + 17 se houver lesão inalatória',
+    'ABSI = sexo feminino (1) + lesão inalatória (1) + 3º grau (1) + faixa de idade (1-5) + faixa de área (1-10)',
+  ],
+  fundamento:
+    'A queimadura extensa não é uma doença de pele: acima de 20 a 30% da superfície corporal, ela se torna uma **doença sistêmica** por liberação maciça de mediadores inflamatórios. O resultado é um aumento generalizado da permeabilidade capilar, que extravasa plasma não apenas para o tecido queimado mas para todo o organismo, com queda da pressão oncótica e edema difuso. A isso soma-se a **alteração das forças de Starling no próprio tecido queimado**, onde a pressão intersticial se torna fortemente negativa nas primeiras horas por desnaturação do colágeno, literalmente sugando líquido do intravascular. Essa combinação explica o choque do queimado — que é distributivo e hipovolêmico ao mesmo tempo — e explica por que a reposição precisa ser tão agressiva nas primeiras horas e por que ela pode, se excessiva, virar o problema principal. A fórmula de Parkland, derivada nos anos 1960, é uma estimativa média: a variação individual é enorme, e é por isso que a diurese, e não a fórmula, é o alvo. O índice de Baux tem beleza própria pela simplicidade — a soma de idade e área prediz mortalidade porque os dois fatores representam, respectivamente, a **reserva fisiológica** disponível e a **magnitude do insulto**. O acréscimo de 17 pontos pela lesão inalatória, no Baux revisado, quantifica algo consistente entre séries: ela equivale, em impacto prognóstico, a 17 anos de idade ou a 17% de superfície queimada.',
+  armadilhas: [
+    'Superestimar a área é mais comum que subestimar, sobretudo em queimaduras esparsas — e leva a hiper-hidratação com morbidade própria.',
+    'A fórmula de Parkland subestima a necessidade em lesão inalatória, queimadura elétrica e intoxicação alcoólica associada.',
+    'Queimadura de espessura total é indolor; interpretar a ausência de dor como sinal de benignidade é erro grave.',
+    'Índices prognósticos foram derivados em coortes antigas e superestimam a mortalidade atual: a sobrevida do grande queimado melhorou muito em centros especializados, e o Baux de 100 já não é sentença.',
+  ],
+  referencias: [
+    { texto: 'Baxter CR, Shires T. Physiological response to crystalloid resuscitation of severe burns. Ann N Y Acad Sci. 1968;150(3):874-894.' },
+    { texto: 'Osler T, Glance LG, Hosmer DW. Simplified estimates of the probability of death after burn injuries: extending and updating the Baux score. J Trauma. 2010;68(3):690-697.' },
+    { texto: 'ISBI Practice Guidelines Committee. ISBI Practice Guidelines for Burn Care, Part 2. Burns. 2018;44(7):1617-1706.' },
+  ],
+}
+
 export const ferramentas: Ferramenta[] = [
   apache,
   saps3,
@@ -1290,6 +1405,7 @@ export const ferramentas: Ferramenta[] = [
   cspine,
   charlson,
   ctHead,
+  queimadura,
 ]
 
 export default ferramentas

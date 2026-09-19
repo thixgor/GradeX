@@ -30,10 +30,10 @@ começou esta lista.
 
 | | |
 |---|---|
-| Ferramentas no catálogo | **235** (eram 201) |
-| Implementadas desta lista | **34** |
-| Restantes | **166** |
-| Nota média na auditoria | **100** — todas as 235 |
+| Ferramentas no catálogo | **236** (eram 201) |
+| Implementadas desta lista | **35** |
+| Restantes | **165** |
+| Nota média na auditoria | **100** — todas as 236 |
 | Categorias | **19** (eram 15) |
 
 As quatro categorias novas — psiquiatria, reumatologia, geriatria e
@@ -127,6 +127,7 @@ escores individuais.
 37. **RTS, ISS/AIS e TRISS** — gravidade fisiológica e anatômica do trauma e probabilidade de sobrevida. **[P1]**
 38. **Classificação AAST de lesão de órgãos** — graduação de lesão esplênica, hepática e renal. **[P2]**
 39. **Superfície queimada e prognóstico: regra dos nove, Lund-Browder, índice de Baux e ABSI** — cálculo de área por faixa etária (complementa o módulo de Parkland) e mortalidade no grande queimado. **[P1]**
+    - ✅ **feito** — `queimadura-area-prognostico`, com regra dos nove, Lund-Browder, palma, Parkland, Baux, Baux revisado e ABSI
 40. **CIWA-Ar, PAWSS e COWS** — abstinência alcoólica, risco de delirium tremens e abstinência de opioides. **[P1]**
     - 🟡 **parcial** — `ciwa-ar` feito; PAWSS e COWS pendentes
 41. **Índice de Charlson (CCI) e Charlson ajustado pela idade** — carga de comorbidade e mortalidade em 10 anos. **[P1]**
