@@ -1,5 +1,26 @@
 # Backlog de cenas com imagem
 
+## Estado em 2026-09-20 (quinta leva)
+
+Entraram **112 sinais novos, só com fotografia** (`lib/semiologia/sinais-leva-5-*.ts`):
+pele 24, anexos/mucosas/olho 25, tronco/abdome/genital 22, MSK/trauma 18,
+neuro/pediatria 17 e 6 extras (polidactilia/sindactilia, onfalocele/gastrosquise,
+mielomeningocele, anquiloglossia, rânula/mucocele, queratoacantoma). Seis temas
+da lista original já existiam com outro nome (bócio, ginecomastia, mão em garra,
+sinal de Trousseau, icterícia neonatal/Kramer, hipópio) — as fotos colhidas foram
+para essas fichas antigas em vez de duplicar. Acervo: 2480 mídias em 895 cenas
+(DermNet ~150, Commons ~215, Radiopaedia ~115 nesta leva); nenhum sinal da leva
+ficou sem mídia.
+
+**Onde a foto ainda é fraca** (1 a 2 imagens ou só imagem/radiografia): fácies
+hipocrática (só a gravura da febre tifoide), Noonan/Klinefelter (só Noonan),
+Prader-Willi (só o skin picking), heterocromia (só Waardenburg), dermatocálase,
+unha em vidro de relógio (1 DermNet), eritrasma, cutis marmorata, língua
+saburrosa, pinguécula, mão reumatoide (fotos foram para dedos-em-pescoco-de-cisne),
+hemorroidas grau IV e priapismo (só Doppler e esfregaço falciforme). São os
+candidatos para o material dos titulares (Stanford 25, Hawke, EyeRounds, Atlas
+Dermatológico).
+
 ## Estado em 2026-09-18 (quarta leva)
 
 Implementado da lista abaixo: **A** inteira (62 sinais com foto), **B** inteira

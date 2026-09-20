@@ -11,6 +11,12 @@ import { SINAIS_LEVA_4_PELE } from './sinais-leva-4-pele'
 import { SINAIS_LEVA_4_CORPO } from './sinais-leva-4-corpo'
 import { SINAIS_LEVA_4_DINAMICOS } from './sinais-leva-4-dinamicos'
 import { SINAIS_LEVA_4_AUSCULTA } from './sinais-leva-4-ausculta'
+import { SINAIS_LEVA_5_PELE } from './sinais-leva-5-pele'
+import { SINAIS_LEVA_5_ANEXOS_OLHO } from './sinais-leva-5-anexos-olho'
+import { SINAIS_LEVA_5_TRONCO } from './sinais-leva-5-tronco'
+import { SINAIS_LEVA_5_MSK } from './sinais-leva-5-msk'
+import { SINAIS_LEVA_5_NEURO_PEDIATRIA } from './sinais-leva-5-neuro-pediatria'
+import { SINAIS_LEVA_5_EXTRA } from './sinais-leva-5-extra'
 
 /**
  * O acervo de sinais do exame físico.
@@ -1180,6 +1186,12 @@ export const SINAIS: Sinal[] = [
   ...SINAIS_LEVA_4_CORPO,
   ...SINAIS_LEVA_4_DINAMICOS,
   ...SINAIS_LEVA_4_AUSCULTA,
+  ...SINAIS_LEVA_5_PELE,
+  ...SINAIS_LEVA_5_ANEXOS_OLHO,
+  ...SINAIS_LEVA_5_TRONCO,
+  ...SINAIS_LEVA_5_MSK,
+  ...SINAIS_LEVA_5_NEURO_PEDIATRIA,
+  ...SINAIS_LEVA_5_EXTRA,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

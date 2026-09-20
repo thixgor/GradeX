@@ -187,6 +187,22 @@ raspáveis ou estão fora do ar): UMich Heart Sound Library, Littmann,
 Thinklabs, EasyAuscultation, R.A.L.E., Hawke Library, EyeRounds, Retina Image
 Bank, Gastrolab, Atlas Dermatológico, Stanford 25 e Neurosigns.
 
+## Quinta leva: 112 sinais só com foto (2026-09-20)
+
+Receita que funcionou, na ordem: (1) escrever as fichas primeiro e rodar
+`tsc` + `vitest` antes de qualquer imagem; (2) conferir com `grep slug:` se o
+tema já existe sob outro nome — seis da lista existiam, e a foto nova foi para
+a ficha antiga; (3) DermNet para tudo que é pele, unha, cabelo, mucosa e
+pálpebra (o `class` das imagens sensíveis é `[ js-gallery-image ][ sensitive-image ]`
+— o regex precisa aceitar o sufixo, senão a galeria de fraldas volta vazia);
+(4) Commons pela API (`buscar_leva5.py` + `mestre_leva5.py`, folhas de contato com
+`grade.py`) para o resto, escolhendo índices à mão; (5) Radiopaedia em lote pelo
+navegador — `rp_artigos5.js` corre dentro da aba `radiopaedia.org`, guarda em
+`localStorage['rp5:<artigo>']` e devolve `f0` (id do primeiro frame) para montar
+a URL da galeria; 45 artigos em ~6 minutos; (6) `curar-acervo.mjs --baixar
+--gerar` com o cache de reuso (só baixa o novo) e `enviar-espelho.mjs` com
+`NEXT_PUBLIC_SEMIOLOGIA_MIDIA_BASE` para pular o que já está no Blob.
+
 ## O que o caso real acrescenta ao esquema
 
 Ele não substitui. As figuras esquemáticas do módulo ensinam o **padrão** —

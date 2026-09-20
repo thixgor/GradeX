@@ -8836,6 +8836,120 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/abscesso-periodontal": [
+    {
+      "id": "wc-abscesso-periodontal-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/36/GingivalAbscess.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:GingivalAbscess.jpg",
+      "legenda": "Abscesso gengival: tumefação flutuante e eritematosa na gengiva junto ao dente. («GingivalAbscess», Wikimedia Commons)",
+      "autoria": "DRosenbach (Talk / DRosenbach at en.wikipedia · CC BY-SA 3.0",
+      "sha256": "bd82fa87c61cb32031db452a62632bd3a7c6e41ab4bc3713fff97bbd5f01ea28",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-abscesso-periodontal-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/48/Abces_parulique.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Abces_parulique.jpg",
+      "legenda": "Abscesso periodontal com ponto de drenagem (parúlide) na mucosa. («Abces parulique», Wikimedia Commons)",
+      "autoria": "Damdent · CC BY-SA 3.0",
+      "sha256": "18ad0122444f5d434755a3249b6e6e6fbc1a444660781776ca19d7d04d1b136e",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-abscesso-periodontal-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d8/Periapical_abscess_up.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Periapical_abscess_up.jpg",
+      "legenda": "Abscesso periapical: abaulamento com pus no fundo de vestíbulo. («Periapical abscess up», Wikimedia Commons)",
+      "autoria": "Michele Gardini · CC BY-SA 3.0",
+      "sha256": "3284521e7dab54695875c61395f5bbb6c90ff4efb642c79c36042e55df8ade3d",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-abscesso-periodontal-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/43/Abces_dentaire.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Abces_dentaire.jpg",
+      "legenda": "Celulite facial de origem dentária: edema da hemiface. («Abces dentaire», Wikimedia Commons)",
+      "autoria": "Égoïté · CC BY-SA 3.0",
+      "sha256": "b45135da23c2bfb19ec0c2560596edb9ca52fcbd46912c10b2f3ca302a1ad18f",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/abscesso-peritonsilar": [
+    {
+      "id": "wc-abscesso-peritonsilar-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/39/PeritonsilarAbsess.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PeritonsilarAbsess.jpg",
+      "legenda": "Abscesso peritonsilar: abaulamento do pilar amigdaliano com desvio da úvula para o lado oposto (seta). («PeritonsilarAbsess», Wikimedia Commons)",
+      "autoria": "James Heilman,MD · CC BY-SA 3.0",
+      "sha256": "780ab0c6ee9974d508313013c50a00d79a5532b8509478375a7ba7bd18d3699a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-abscesso-peritonsilar-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d4/Absceso_periamigdalino.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Absceso_periamigdalino.png",
+      "legenda": "Abscesso periamigdaliano: amígdala empurrada para a linha média e trismo. («Absceso periamigdalino», Wikimedia Commons)",
+      "autoria": "Yeza · CC BY-SA 4.0",
+      "sha256": "e7dbcd17ec0982dd5c7801194479c0357589feea1dd2b4ae968a7fa9d63fca4a",
+      "ext": "png"
+    },
+    {
+      "id": "wc-abscesso-peritonsilar-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Peritonsilarabs.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Peritonsilarabs.png",
+      "legenda": "TC: coleção peritonsilar (seta) com realce periférico. («Peritonsilarabs», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "915187ccbd9c5d8e7373e33e72d53b27655ed2df3b825aad1d9e22773cf6d98f",
+      "ext": "png"
+    },
+    {
+      "id": "rp-61970474",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61970474/c2b0d6bfdf38ae6145b666e8f8fce0502cea5f6a26f6e6c7885864ad7d566d29_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/peritonsillar-abscess-22",
+      "legenda": "TC axial do pescoço: coleção peritonsilar com realce periférico deslocando a amígdala para a linha média.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "d1b8a4f4a8d395cfeeaf87169e61f7363b1f9f5c634fdfaaddb4a9216db4688a",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72982147",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72982147/9b143e65468279eb40df3df57d320b261512efe921adc643e7a39db9ccadf419_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/peritonsillar-abscess-with-deep-neck-extension",
+      "legenda": "TC coronal: abscesso peritonsilar — a coleção lateral à amígdala.",
+      "autoria": "Derek Smith — Radiopaedia.org",
+      "sha256": "b7e1d0e40c3f6aa87153f88ae2a2804811ab926274f1c077c74ce9559e28b965",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-61970574",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61970574/a0cdb89de24a77113b8d032f3bf768c13cbe6978800cb9aa98080b6a05460f8c_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/peritonsillar-abscess-22",
+      "legenda": "TC coronal do abscesso peritonsilar com edema dos tecidos adjacentes.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "fd8dafb4b9b4bf8f0be89808f3bedd57114f0c7991042674bd841cb3e2e8ae1b",
+      "ext": "jpg"
+    }
+  ],
   "sinais/acantose-nigricans": [
     {
       "id": "wc-acanthosis-negricans-elbow-jpg",
@@ -9064,6 +9178,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/acromegalia-progressao": [
+    {
+      "id": "dn-7786",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/acromegaly2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/acromegaly",
+      "legenda": "Mãos em pá da acromegalia: dedos grossos e pele espessa. (DermNet: Acromegaly)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "9387b18cceb92cb1678f5b13538e2e219e6406ca59bed54939bc3a4dff7e3c33",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7772",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/acromegaly1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/acromegaly",
+      "legenda": "Face acromegálica: arcadas supraorbitárias e nariz alargados, pele espessa com sulcos profundos. (DermNet: Acromegaly)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0ad84e3ca1c6e5a815b052360e6c40c2499ad139da1250af653c92a544879869",
+      "ext": "jpg"
+    }
+  ],
   "sinais/adenomegalia-cervical": [
     {
       "id": "wc-cervical-lymphadenopathy-right-neck-png",
@@ -9132,6 +9270,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal tactustherapy",
       "videoId": "3oef68YabD0",
       "miniatura": "https://i.ytimg.com/vi/3oef68YabD0/hqdefault.jpg"
+    }
+  ],
+  "sinais/alopecia-androgenetica": [
+    {
+      "id": "dn-18966",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/s/pattern.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/male-pattern-hair-loss",
+      "legenda": "Calvície de padrão masculino: recessão bitemporal e rarefação do vértex. (DermNet: Pattern balding)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f25bfb9eeb62cb9550e13ac360d3098732234fcfe2480d99ae21188d19c6b842",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9751",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/aga-mild.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/male-pattern-hair-loss",
+      "legenda": "Padrão masculino avançado. (DermNet: Pattern balding)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c93679689d9236ca6c2addba9fe5ed66cace127913e351ac1b4b807450804b3c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-5141",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/fphl2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/female-pattern-hair-loss",
+      "legenda": "Alopecia de padrão feminino: rarefação difusa do topo com a linha frontal preservada e alargamento da risca. (DermNet: Female pattern hair loss)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "142594488f3bf045f6f5f068a4dfb0ff1f92f44983af3e1accfced817bffaaeb",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9801",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/fphl4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/female-pattern-hair-loss",
+      "legenda": "Padrão feminino grau avançado (Sinclair 5): a \"árvore de Natal\" na risca. (DermNet: Female pattern hair loss)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "35bd74455b1fbf94244051ebf7af558d1252c5aa453f3ef9f1d11ac89cc010b1",
+      "ext": "jpg"
     }
   ],
   "sinais/alopecia-areata": [
@@ -9307,6 +9491,98 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/angioma-rubi": [
+    {
+      "id": "dn-12792",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/cherry-angioma/1315.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/cherry-angioma-images",
+      "legenda": "Pápulas vermelho-rubi, lisas, em cúpula, no tronco do adulto — angiomas rubi (Campbell de Morgan). (DermNet: Cherry angioma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8dea63bf6e0dff5fa61f9af62c3f24afe9b6bdd8be376557bfb815232a985d5d",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-12790",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/cherry-angioma/1317.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/cherry-angioma-images",
+      "legenda": "Múltiplos angiomas rubi de tamanhos variados no tronco. (DermNet: Cherry angioma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5141bbed9d75fe3778b3a562c043c0a38fb3e1fc1025f695f62cb6fca06b270b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-12791",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/cherry-angioma/1316.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/cherry-angioma-images",
+      "legenda": "Dezenas de pontos rubi no tórax: aumentam com a idade. (DermNet: Cherry angioma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f17fa889276167073d426cd7a1d95f1fe15f52ae730bb9f9598bea8e698d036b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-5588",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/213647.15950390.20160303082608019.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/cherry-angioma-images",
+      "legenda": "Angioma rubi único visto de perto: cor vermelho-cereja, superfície lisa. (DermNet: Cherry angioma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "4f97be9a7c535ef63d181d964d52ace7a0ddb8fe042b2c9347dafd4b5376cfa9",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/anisocoria": [
+    {
+      "id": "wc-anisocoria-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/55/Anisocoria.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anisocoria.jpg",
+      "legenda": "Anisocoria: pupilas de tamanhos diferentes — perguntar em qual luz a diferença aumenta. («Anisocoria», Wikimedia Commons)",
+      "autoria": "Russavia · CC BY 3.0",
+      "sha256": "1237c6da8ab568082fe01f6f1b0d79c5e47fb1f8fbe3c8530099824d908b4d6b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anisocoria-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Anisocoria0.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anisocoria0.jpg",
+      "legenda": "Anisocoria fisiológica discreta, igual no claro e no escuro. («Anisocoria0», Wikimedia Commons)",
+      "autoria": "Tair1978 · CC BY-SA 4.0",
+      "sha256": "dc70023543a9268ca2c5f71146a8a15e9ccfefc3041c182df42c2bfad15dd589",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anisocoria-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/51/Anisocoria_in_human_eyes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anisocoria_in_human_eyes.jpg",
+      "legenda": "Anisocoria em olho humano: a pupila maior à esquerda. («Anisocoria in human eyes», Wikimedia Commons)",
+      "autoria": "Avemokh · CC BY-SA 4.0",
+      "sha256": "aaae06d2f658472ab49768e3c01d9a13c5cd203b7a5f009f839c41a539b30f7f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anisocoria-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2e/Anizokoria.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Anizokoria.JPG",
+      "legenda": "Anisocoria: comparação direta das duas pupilas. («Anizokoria», Wikimedia Commons)",
+      "autoria": "Radomil talk · CC BY-SA 3.0",
+      "sha256": "cdae240eed1f10e581761dcbe5aa599dd393a39607b58be43f42d0d70f908530",
+      "ext": "jpg"
+    }
+  ],
   "sinais/anisocoria-nao-reativa": [
     {
       "id": "wc-anisocoria-jovem",
@@ -9328,6 +9604,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Anisocoria farmacológica: pupila direita dilatada após instilação de tropicamida. É a armadilha mais comum da pupila fixa em paciente lúcido — pergunte por colírios antes de pedir a tomografia.",
       "autoria": "Radomil — CC BY-SA 3.0",
       "sha256": "cdae240eed1f10e581761dcbe5aa599dd393a39607b58be43f42d0d70f908530",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/anquiloglossia": [
+    {
+      "id": "wc-anquiloglossia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Ankyloglossia_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ankyloglossia_1.jpg",
+      "legenda": "Anquiloglossia: freio lingual curto que prende a língua ao assoalho da boca. («Ankyloglossia 1», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "2ba31b6918cfe5ac6ec3d53366372b768df4560a76919ce843a29a023ec62ecb",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anquiloglossia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Ankyloglossia_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ankyloglossia_3.jpg",
+      "legenda": "Língua presa: a ponta em \"coração\" ao tentar projetá-la. («Ankyloglossia 3», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "200ec33a32318273517824b2dc66363cfee81b6edac1a4fca07564638c12276b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anquiloglossia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Frenulum_linguae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Frenulum_linguae.jpg",
+      "legenda": "Freio lingual normal levantado para comparação. («Frenulum linguae», Wikimedia Commons)",
+      "autoria": "Klaus Peter-Kuttig, Wiehl, Germany\n\n\n\n\nDiese Datei aus meinem Archiv habe ich unter der „Creative-Commons-Lizenz“ veröff · CC BY 3.0 de",
+      "sha256": "68314b17a31585a4827fddd4157fb2feb2efe922d424b3fb70236f4480359b33",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-anquiloglossia-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3d/Ankyloglossia_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ankyloglossia_2.jpg",
+      "legenda": "Anquiloglossia com inserção do freio próxima à ponta da língua. («Ankyloglossia 2», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "8d9cc817e5eed7fd107db2fa82fbb87b58dc9bf35dade360e92dff5d3c3bb168",
       "ext": "jpg"
     }
   ],
@@ -9366,6 +9688,87 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/artrite-mutilante": [
+    {
+      "id": "dn-7242",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ps-arth1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/psoriatic-arthritis",
+      "legenda": "Dedos encurtados e instáveis com pele redundante em pregas e unhas psoriásicas — artrite mutilante. (DermNet: Psoriatic arthritis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "aa822608d63e4c5858b9a808d6304d8010e49236248307edafdd94620008898f",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-16546",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/r-hand-psa.JPG",
+      "urlDoCaso": "https://dermnetnz.org/topics/psoriatic-arthritis",
+      "legenda": "Radiografia: deformidade em \"lápis na xícara\" e osteólise das falanges. (DermNet: X-ray of right hand affected by psoriatic arthritis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "85006b3f7b30d46838e0f4d1af57a95af1ba3a38d5a05ab0777ac1b5f3d2f87b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7219",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ps-arth3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/psoriatic-arthritis",
+      "legenda": "Mãos com dedos \"em telescópio\" na artrite psoriásica mutilante. (DermNet: Psoriatic arthritis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "311d209c872acb4afa07407a2fed134aac088ee8fb5413b4402b0afe5e7d6b01",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7229",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ps-arth2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/psoriatic-arthritis",
+      "legenda": "Dactilite e deformidade dos dedos na artrite psoriásica. (DermNet: Psoriatic arthritis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "743c9b35300d4d079e239b0dd43d5c44a219d3c9dc957b89ada6a68066709789",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/artrite-septica-de-tornozelo": [
+    {
+      "id": "wc-artrite-septica-de-tornozelo-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/89/Swollen_ankle.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Swollen_ankle.jpg",
+      "legenda": "Tornozelo direito inchado e avermelhado comparado ao esquerdo: derrame e edema periarticular. («Swollen ankle», Wikimedia Commons)",
+      "autoria": "The original uploader was Daniel Olsen at English Wikipedia. · CC BY 2.5",
+      "sha256": "19084b8399d320a1a3ae86f197093e7f68bce8c92ed428bdd36549c9835e52b4",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-artrite-septica-de-tornozelo-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Swelling_of_the_ankle_joints.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Swelling_of_the_ankle_joints.jpg",
+      "legenda": "Edema do tornozelo com apagamento dos contornos maleolares. («Swelling of the ankle joints», Wikimedia Commons)",
+      "autoria": "CDC · CC0",
+      "sha256": "649e8c73c4d9bcd861ba47b6aaaff961d5e78b740433807ef779cb16bd3672f8",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-artrite-septica-de-tornozelo-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/55/SepticArth2011.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:SepticArth2011.jpg",
+      "legenda": "Artroscopia na artrite séptica: sinóvia inflamada e pus (A) versus articulação limpa (B). («SepticArth2011», Wikimedia Commons)",
+      "autoria": "Tetsuo Hagino, Masanori Wako, Satoshi Ochiai · CC BY 2.5",
+      "sha256": "3ac36c85be6ff9047c7dc904c3d43412f8ccb8da4ad355874e82ab18e886ecac",
+      "ext": "jpg"
+    }
+  ],
   "sinais/artrite-septica-do-joelho": [
     {
       "id": "wc-kneeffusion-jpg",
@@ -9392,6 +9795,74 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/assimetria-de-pregas-e-ddq": [
+    {
+      "id": "wc-assimetria-de-pregas-e-ddq-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a6/Congenital_dislocation_of_the_hip_Wellcome_L0061332.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Congenital_dislocation_of_the_hip_Wellcome_L0061332.jpg",
+      "legenda": "Luxação congênita do quadril não tratada: encurtamento do membro e assimetria das pregas glúteas. («Congenital dislocation of the hip Wellcome L0061332», Wikimedia Commons)",
+      "autoria": "Godart, Thomas · CC BY 4.0",
+      "sha256": "9417ced5fc0c4f018912da274c29ffcf89d92050f342af39dd7908746cadcfa2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-assimetria-de-pregas-e-ddq-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/85/Hip-dysplasia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hip-dysplasia.jpg",
+      "legenda": "Radiografia da pelve: displasia do quadril com cabeça femoral luxada e acetábulo raso. («Hip-dysplasia», Wikimedia Commons)",
+      "autoria": "OrthoPat · CC BY-SA 4.0",
+      "sha256": "58b4abacc107c29d7e824a8fcb53ffc746da5354baf7f1601be3e5c90a5c36c1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-assimetria-de-pregas-e-ddq-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Ultrasound_measuring_the_developmental_dysplasia_of_right_hip.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ultrasound_measuring_the_developmental_dysplasia_of_right_hip.jpg",
+      "legenda": "Ultrassom do quadril (Graf): medida dos ângulos alfa e beta para classificar a displasia. («Ultrasound measuring the developmental dysplasia of right hip», Wikimedia Commons)",
+      "autoria": "Cerevisae · CC BY-SA 4.0",
+      "sha256": "93184bdd258ea4eb5ca216f2851d1e5beafa46a66a80e4f9ef211c825fe82140",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75221633",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75221633/3f1a477aeb25d5a1824ae8aeb79eb62fff916e9d5aab9d48076b628e068cd0cb_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/developmental-dysplasia-of-the-left-hip-1",
+      "legenda": "Radiografia AP da pelve: displasia do quadril com cabeça femoral lateralizada e acetábulo raso.",
+      "autoria": "Aayush Agrawal — Radiopaedia.org",
+      "sha256": "06d74dc97cd010d2d6b2eeb8b96240431a0861b510507e3291880530b332a9a7",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72267551",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72267551/05cd1702d1b77c38e6ea1be487d4aa4087cf2e3fd50def4a5fc34556c66927e2_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/congenital-muscular-torticollis",
+      "legenda": "Ultrassom do quadril do lactente (Graf): a cabeça femoral e a cobertura acetabular.",
+      "autoria": "Yusra Almas Brakhas — Radiopaedia.org",
+      "sha256": "86685efacb054a8ecab4717860aba34a76c59aea81eb2c173bd6c4ea518bc232",
+      "ext": "png"
+    },
+    {
+      "id": "rp-72267552",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72267552/cb76b3ba2e2fc52c5303a4ffe7a62c785b51f27337ea0aec28a769d364f07bfd_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/congenital-muscular-torticollis",
+      "legenda": "Ultrassom com medida dos ângulos alfa e beta — a classificação de Graf.",
+      "autoria": "Yusra Almas Brakhas — Radiopaedia.org",
+      "sha256": "379602b34b9d92a92dec7666c78533b136ce7e43e1974e4027e2681c2a1f5d54",
+      "ext": "png"
+    }
+  ],
   "sinais/asterixe": [
     {
       "id": "yt-sEnp2ss8VoA",
@@ -9414,6 +9885,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Nedunuri Sai Tejan",
       "videoId": "ADNYCjZAld8",
       "miniatura": "https://i.ytimg.com/vi/ADNYCjZAld8/hqdefault.jpg"
+    }
+  ],
+  "sinais/atrofia-interossea": [
+    {
+      "id": "wc-atrofia-interossea-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d6/ALS_clinical_picture.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:ALS_clinical_picture.png",
+      "legenda": "Esclerose lateral amiotrófica: atrofia dos músculos das mãos e dos ombros — a mão esquelética. («ALS clinical picture», Wikimedia Commons)",
+      "autoria": "Okumiya K, Wada T, Fujisawa M, Ishine M, Garcia Del Saz E, Hirata Y, Kuzuhara S, Kokubo Y, Seguchi H, Sakamoto R, Manuab · CC BY 3.0",
+      "sha256": "a26e31545f9f2926727a5e906f6ec180cc43b205a9cf65ca9544b40df184306c",
+      "ext": "png"
+    },
+    {
+      "id": "wc-atrofia-interossea-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Amyotrophic_paralysis_and_wasting_of_the_muscles_of_the_hands_Wellcome_L0062621.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Amyotrophic_paralysis_and_wasting_of_the_muscles_of_the_hands_Wellcome_L0062621.jpg",
+      "legenda": "Amiotrofia dos músculos das mãos (fotografia histórica): os espaços interósseos escavados. («Amyotrophic paralysis and wasting of the muscles of the hands Wellcome L0062621», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "45a4172f59fceae405c501672180f3dd1f143a74fcb7c515e8268a5450bbd6cb",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-atrofia-interossea-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Greatly_distorted_hand_Wellcome_L0061424.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Greatly_distorted_hand_Wellcome_L0061424.jpg",
+      "legenda": "Mão gravemente deformada com atrofia dos intrínsecos — gravura clínica. («Greatly distorted hand Wellcome L0061424», Wikimedia Commons)",
+      "autoria": "Mark, Leonard Portal · CC BY 4.0",
+      "sha256": "9cea635edf6bfdf5a4bcea391f2dceabbde856de1d20d86b29e8fc96b668a0b0",
+      "ext": "jpg"
     }
   ],
   "sinais/atrofia-tenar": [
@@ -9600,6 +10106,39 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Gould &amp; Pyle · Public domain",
       "sha256": "06795e58c5606bbfd26b4666b350fe97b2bdeca27c5af4fa764002112b13b18e",
       "ext": "jpg"
+    },
+    {
+      "id": "rp-73817585",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73817585/ce24cb65bfdbe3b99231de56357fab94a6e8fef96590d53db135b5ee67b90dd7_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/goiter-with-positive-cervicothoracic-sign",
+      "legenda": "Radiografia de tórax: bócio mergulhante desviando a traqueia — a compressão que o Pemberton revela.",
+      "autoria": "Stefan Tigges — Radiopaedia.org",
+      "sha256": "d23dcff4b1451ad4ae4a30f3496312ddd20c993bc6bb3cca2186aaec21640fdb",
+      "ext": "png"
+    },
+    {
+      "id": "rp-73210435",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73210435/da2e3fc6a2deaa72718c2de88918d7924a68954c744ac270e63d303cf955e8f3_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/colloid-nodule-thyroid-8",
+      "legenda": "Ultrassom da tireoide: bócio multinodular com nódulos de tamanhos variados.",
+      "autoria": "Salah Ibrahim Hanouneh — Radiopaedia.org",
+      "sha256": "b2333f20d9f29af20a3f153281457445057c721715da2c71e6584c1c3d2f422e",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71041043",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71041043/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/giant-goiter-1",
+      "legenda": "TC: bócio retroesternal comprimindo a traqueia no mediastino superior.",
+      "autoria": "Guillermo César Vélez Parra — Radiopaedia.org",
+      "sha256": "9bc1d2e4fce92608f23852e0de1036af1637cbe4ab723cf64d732cd15f8bf51a",
+      "ext": "jpg"
     }
   ],
   "sinais/buffalo-hump": [
@@ -9634,6 +10173,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Giba de búfalo: Coxim adiposo proeminente na região dorsocervical (C7–T1) e preenchimento das fossas supraclaviculares, com obesidade central e membros finos;",
       "autoria": "Ozlem Celik, Mutlu Niyazoglu, Hikmet Soylu and Pinar Kadioglu · CC BY 2.5",
       "sha256": "cd1fd081c15aa02f21640dccf5b3b3a81a53f8367ef0e89ff72aa54464c6f2ba",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/buftalmo": [
+    {
+      "id": "wc-buftalmo-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/59/Buphthalmus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Buphthalmus.jpg",
+      "legenda": "Buftalmo: olho aumentado com córnea grande e opaca no lactente com glaucoma congênito. («Buphthalmus», Wikimedia Commons)",
+      "autoria": "Michalgoback · CC BY-SA 4.0",
+      "sha256": "c0050c7a0815155b64203b305f078327506499e82754489c4cf04cdde4395b2c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-buftalmo-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Congenital_eye_diseases_associated_with_neural_crest_defects_in_the_anterior_segment.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Congenital_eye_diseases_associated_with_neural_crest_defects_in_the_anterior_segment.jpg",
+      "legenda": "Glaucoma congênito: córnea aumentada e turva (A), edema corneano (B) e estrias de Haab (C). («Congenital eye diseases associated with neural crest defects in the anterior segment», Wikimedia Commons)",
+      "autoria": "Williams AL and Bohnsack BL · CC BY 4.0",
+      "sha256": "2ababaffc37393e9f1ea442d62604638053d240fdd97e89db373c2eed945d0a1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-buftalmo-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/af/Buphthalmus._Cornea_globosa_%28Ball_18564%29%2C_National_Museum_of_Health_and_Medicine_%283300165782%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Buphthalmus._Cornea_globosa_(Ball_18564),_National_Museum_of_Health_and_Medicine_(3300165782).jpg",
+      "legenda": "Buftalmo: gravura clássica do olho \"de boi\" com córnea gigante. («Buphthalmus. Cornea globosa (Ball 18564), National Museum of Health and Medicine (3300165782)», Wikimedia Commons)",
+      "autoria": "National Museum of  Health and Medicine · CC BY 2.0",
+      "sha256": "b83d2116fff6896c82890b877ff880f33efc0d9bd8435d88518619c80c2479d5",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-10030688",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/10030688/cc0a35e28a1ce6c31a8adb354cfe6b_gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/buphthalmos-and-phthisis-bulbi-1",
+      "legenda": "TC axial: buftalmo — globo ocular aumentado por glaucoma congênito.",
+      "autoria": "Chris O&#39;Donnell — Radiopaedia.org",
+      "sha256": "acd92b1c1f794650ea9088723267d339726234247c4012da17ecc98cec5276df",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-10030686",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/10030686/a130833bb771d496e30d5c42c47e97_gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/buphthalmos-and-phthisis-bulbi-1",
+      "legenda": "TC coronal: assimetria dos globos no buftalmo unilateral.",
+      "autoria": "Chris O&#39;Donnell — Radiopaedia.org",
+      "sha256": "a9190671fdef2e64f8e2a2fad89b9f995414654cd22de06e112ee332a966d060",
       "ext": "jpg"
     }
   ],
@@ -9899,6 +10495,96 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Úlcera única, indolor, de fundo limpo e base endurecida nos genitais, com gânglio duro e indolor na virilha — a porta de entrada da sífilis, 3 semanas após o contato. (DermNet: Primary syphilis)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "a4428ad2d5421414ebcb75408b08d845b4557f5f3fba40ab05f21dd15cd63f9a",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/caput-vs-cefalo-hematoma": [
+    {
+      "id": "wc-caput-vs-cefalo-hematoma-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Caput_succedaneum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Caput_succedaneum.jpg",
+      "legenda": "Caput succedaneum: edema mole e mal delimitado do couro cabeludo que cruza as suturas, presente ao nascimento. («Caput succedaneum», Wikimedia Commons)",
+      "autoria": "Muago · CC0",
+      "sha256": "7028e1a06e7dd844cf7a55311100d77404b7ab9390c94712888b2345c1ceb505",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-caput-vs-cefalo-hematoma-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Scalp_hematomas-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scalp_hematomas-2.jpg",
+      "legenda": "Esquema das coleções do couro cabeludo: caput (subcutâneo), céfalo-hematoma (subperiosteal, limitado pelas suturas) e hemorragia subgaleal. («Scalp hematomas-2», Wikimedia Commons)",
+      "autoria": "AMH Sheikh · CC BY-SA 3.0",
+      "sha256": "3ca916ce30ecb6de71922bf5c4401e90bdf70654563fbd6660753fb641fde847",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74269118",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74269118/822b1a62d00e648fc68531184a3d7b9d6bfa1a1d4cd44aa8885cb051a0a66aba_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cephalohematoma-5",
+      "legenda": "Céfalo-hematoma parietal: abaulamento firme e bem delimitado que não cruza as suturas.",
+      "autoria": "Adriano Solino — Radiopaedia.org",
+      "sha256": "a422d55bc31fd7de4d3ddb8aa1c031e8506d901a728948bd831a633864c65d4c",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74269119",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74269119/0eb6784453a49c7ef178284415ae5c0de812e60ad57b00e6b133da03ce744187_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cephalohematoma-5",
+      "legenda": "O mesmo céfalo-hematoma visto de cima: limitado a um único osso.",
+      "autoria": "Adriano Solino — Radiopaedia.org",
+      "sha256": "b4169dba5c3d775aedc553976b38e5e2c3ecf0cfd28f1310bef2620d1d438cb6",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74269131",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74269131/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cephalohematoma-5",
+      "legenda": "Ultrassom do couro cabeludo: coleção subperiosteal — céfalo-hematoma.",
+      "autoria": "Adriano Solino — Radiopaedia.org",
+      "sha256": "3a4baca9d8069b6686f72c93f8f9f904c0ae47afb03f11093ec3be62c1311052",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71262101",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71262101/f1d460738f2c795703e557bf6a5565dda980a337e43153218e0a2fdb69490c3f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/ossified-cephalohematoma-2",
+      "legenda": "TC axial: coleção subperiosteal delimitada pela sutura, sem lesão intracraniana.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "740e2bd6298d07a7b9f85d4da3d755d1a91a41ea2561ac17dc505a49ac3ad45b",
+      "ext": "png"
+    },
+    {
+      "id": "rp-62120902",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62120902/7b630563714a4b0c5f5716507e3d08407cb7180ed55c384a4d65a9b595661c37_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cephalohaematomas",
+      "legenda": "Ultrassom do couro cabeludo: caput succedaneum — edema subcutâneo difuso.",
+      "autoria": "Dennis Odhiambo Agolah — Radiopaedia.org",
+      "sha256": "e7d920cb2cc987fda96c12f7dae96a55a64e8901a0288d16971cca9f931906bb",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-62120914",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62120914/660d5d3332336b5dad43c0617a80b1fb6a781cd153820d10aad5052055f1f307_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cephalohaematomas",
+      "legenda": "Ultrassom: o caput cruza as suturas porque está acima do periósteo.",
+      "autoria": "Dennis Odhiambo Agolah — Radiopaedia.org",
+      "sha256": "c3939dea5b90ee11a908d5f787519b4d729ac68c2fcb4774220ee0f6ac4735d2",
       "ext": "jpg"
     }
   ],
@@ -10200,6 +10886,98 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/ceratose-pilar": [
+    {
+      "id": "dn-17655",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/keratosis-pilaris/3016.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratosis-pilaris",
+      "legenda": "Pápulas foliculares ásperas e monomórficas na face extensora do braço — \"pele de galinha\". (DermNet: Keratosis pilaris)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "26a6de962c09fe44f2f2b838c55f682eef24adda44e8ee62f25366d468ad4958",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17650",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/keratosis-pilaris/3024.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratosis-pilaris",
+      "legenda": "Pápulas foliculares eritematosas na coxa: a variante rubra. (DermNet: Keratosis pilaris)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d1afc8a8e9925a5f038a603f2d8ca28c64ebd066a0101ce91634a622972ad0d3",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17657",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/keratosis-pilaris/3013.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratosis-pilaris",
+      "legenda": "Ceratose pilar do braço: rugosidade ao toque mais que ao olhar. (DermNet: Keratosis pilaris)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "b06eda146101d438c45522aed6552e810e99294b841743f560b80c86951675ea",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17606",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/s/kerapil2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratosis-pilaris",
+      "legenda": "Ceratose pilar rubra na bochecha do adolescente. (DermNet: Keratosis pilaris)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "cd34e834d0d29312af34319fc4040b63f8173aa9279c7d75c365256d595032f3",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ceratose-seborreica": [
+    {
+      "id": "dn-8610",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/bcp2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/seborrhoeic-keratosis",
+      "legenda": "Múltiplas placas castanhas verrucosas, \"coladas\" na pele, de superfície gordurosa — ceratoses seborreicas do tronco. (DermNet: Seborrhoeic keratosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f6bcb59cb086f5ea03d65f342f01085f14472b88bc126a6ef0a8bed6df6d346e",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8653",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/bcp1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/seborrhoeic-keratosis",
+      "legenda": "Dezenas de lesões no dorso do idoso: o padrão típico de distribuição. (DermNet: Seborrhoeic keratosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ed0753f579f9d280a26a41b143345f973ecc777196d095f5c835d18ccff906ba",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8567",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/pigmented-lesion-06.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/seborrhoeic-keratosis",
+      "legenda": "Lesão pigmentada única, bem delimitada, com superfície cerebriforme e pseudocistos — o diferencial com melanoma é dermatoscópico. (DermNet: Pigmented seborrhoeic keratosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "407c18fc52b8a235028d1094ebc20287b82b830659899423618cdcfd8de5c52a",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8801",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/bcp8.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/seborrhoeic-keratosis",
+      "legenda": "Ceratose seborreica pedunculada e verrucosa na dobra. (DermNet: Seborrhoeic keratosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ab22b771a790abd5d6afac6b4b69284be9a5f99d319db10806541216f9b9d482",
+      "ext": "jpg"
+    }
+  ],
   "sinais/cianose": [
     {
       "id": "wc-cianose-polpas-digitais",
@@ -10270,6 +11048,74 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/cifose-de-scheuermann": [
+    {
+      "id": "wc-cifose-de-scheuermann-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Scheuermanns_disease.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scheuermanns_disease.jpg",
+      "legenda": "Cifose de Scheuermann: à flexão anterior, a cifose torácica é angular e rígida. («Scheuermanns disease», Wikimedia Commons)",
+      "autoria": "MusicNewz · CC0",
+      "sha256": "e316af5c61875e68ce87e5f0c94fee639d6e9d2268994ca8629c0f97432d0da2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-cifose-de-scheuermann-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Scheuermanns70.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scheuermanns70.jpg",
+      "legenda": "Radiografia de perfil: acunhamento anterior de vértebras adjacentes e hipercifose. («Scheuermanns70», Wikimedia Commons)",
+      "autoria": "Daniel McFadden · Public domain",
+      "sha256": "1bfabbcea7ece108800c98886f7122ad14dd585ba3bf7c8533fb458d4fda643c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-cifose-de-scheuermann-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2f/ScheuermannDiseaseT6to10CT.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:ScheuermannDiseaseT6to10CT.png",
+      "legenda": "TC sagital: platôs irregulares e nódulos de Schmorl na cifose juvenil. («ScheuermannDiseaseT6to10CT», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "d07b9c86159a41da05e045eb63b647ae5e5ceb1f9030939c09f75e4b90a01746",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71724019",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71724019/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/ossification-of-the-ligamentum-flavum",
+      "legenda": "TC sagital: acunhamento anterior de vértebras adjacentes e irregularidade dos platôs — Scheuermann.",
+      "autoria": "Gil Antero da Mata Duarte Paz — Radiopaedia.org",
+      "sha256": "54f20f476b63783757a717278491c17eb0b03b2ecc0ceba8c0a152339fb90d08",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71091102",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71091102/2fe8beb34b1828c0f27fcf4a74c6d312e99800efe154413a6c161666205a936f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/scheuermann-disease-14",
+      "legenda": "Radiografia lateral: hipercifose torácica rígida com vértebras em cunha.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "ff13c874f290a8ccd76e048b3960bf0b3642bfb5d36a75fecfa79f9aa3018d5d",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71091104",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71091104/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/scheuermann-disease-14",
+      "legenda": "Perfil da coluna toracolombar: cifose de Scheuermann com nódulos de Schmorl.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "9dad461d7dfa55acb136e48a9347e6639b5bc7c0c0b396385cf0360b2edcb9d9",
+      "ext": "jpg"
+    }
+  ],
   "sinais/circulacao-colateral-de-cava": [
     {
       "id": "wc-superior-vena-cava-syndrome-aak-jpg-1",
@@ -10315,6 +11161,109 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Massa cística lisa, indolor, na borda anterior do esternocleidomastóideo, no terço superior do pescoço, que aparece em adulto jovem depois de uma infecção de via aérea — resto embrionário da segunda fenda branquial. («Right Branchial Cleft Cyst after excision», Wikimedia Commons)",
       "autoria": "BigBill58 · CC BY-SA 4.0",
       "sha256": "c1cfb05c5c7414455fc5541274202ed14508d6107789856209f8b38a0d39832e",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/cisto-de-baker": [
+    {
+      "id": "wc-cisto-de-baker-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/15/Baker%27s_cyst.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Baker%27s_cyst.jpg",
+      "legenda": "Ultrassom: cisto de Baker — coleção anecoica na fossa poplítea, entre o gastrocnêmio medial e o semimembranoso. («Baker's cyst», Wikimedia Commons)",
+      "autoria": "Intermedichbo · CC BY-SA 3.0",
+      "sha256": "a7e1337b641d00f79b439c811781168930c4d2cf934e68e9e1ced73ebdf3a5a7",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-cisto-de-baker-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/03/Grosse_lobulierte_Baker-Zyste_an_typischer_Stelle_26W_-_MR_-_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Grosse_lobulierte_Baker-Zyste_an_typischer_Stelle_26W_-_MR_-_001.jpg",
+      "legenda": "Ressonância: grande cisto poplíteo lobulado comunicando-se com a articulação. («Grosse lobulierte Baker-Zyste an typischer Stelle 26W - MR - 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "a86984e6b9aef5e95ab5e640046b80f81547982e363c6b4365859ad75ea4ad77",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75017824",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75017824/276abdef99da0d1dbfbdc7994b0fdb3c9cf63ac83b2582e5f360cb9554e0a65f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/bilateral-knee-synovitis-with-suspected-gouty-involvement-of-the-popliteus-tendons",
+      "legenda": "RM sagital: cisto de Baker atrás do joelho, comunicando-se com a articulação.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "19b0842f313b52e40eab109053e165c5dbb4c767d81e1bd3252ba0112a8c4156",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75017869",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75017869/145583c3e073206c4dc07553c8ba56a63ad59644c34552fa8b9bcc73f72fafaa_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/bilateral-knee-synovitis-with-suspected-gouty-involvement-of-the-popliteus-tendons",
+      "legenda": "RM coronal: coleção líquida entre o gastrocnêmio medial e o semimembranoso.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "d4e57c02dcd78edfb860f7f812ab7263409126eca09dce4f5a8b5b2030956805",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75017915",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75017915/882fbf80c811d5c071d3bf71739d6f0a0806b27bb7e6c6da5f2d21332aac8e7d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/bilateral-knee-synovitis-with-suspected-gouty-involvement-of-the-popliteus-tendons",
+      "legenda": "RM axial: o colo do cisto passando entre o gastrocnêmio medial e o semimembranoso — a assinatura anatômica.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "03f15ab7ac6cd88252f2493b9126d75e44d783b306a4906e6f3ba77255c9e072",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/cisto-epidermico": [
+    {
+      "id": "dn-5518",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/cyst2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermoid-cyst",
+      "legenda": "Nódulo dérmico liso, móvel, com telangiectasias na superfície — cisto epidérmico. (DermNet: Epidermoid cyst)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "756f2da1a07c1e12b0090843932d73de3e78ebc0f6652379c9d0d5bcd67d7776",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-4472",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/ateroma.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermoid-cyst",
+      "legenda": "Cisto epidérmico com o ponto (comedão) central que marca a abertura folicular. (DermNet: Epidermoid cyst)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ad48d73eedbb62e3ff2001391273a7decf6a831052c71ce935e7187461a65203",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8755",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/cyst14.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermoid-cyst",
+      "legenda": "Cisto epidérmico inflamado: eritema, dor e flutuação. (DermNet: Cyst)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "84d13a2f666117f6bb40f32223766487ef3a7be75d7ed2dcb9fac8be397994ed",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8864",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/cyst10.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermoid-cyst",
+      "legenda": "Conteúdo de queratina branco-amarelado e fétido saindo pelo orifício. (DermNet: Cyst)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "9ee27dc4b16f0e2e3be7637f36ca5d7bed37a732c4104317eae016d0ace2c81f",
       "ext": "jpg"
     }
   ],
@@ -10436,6 +11385,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/coloboma-de-iris": [
+    {
+      "id": "wc-coloboma-de-iris-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Coloboma-2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Coloboma-2.png",
+      "legenda": "Coloboma de íris: pupila em \"buraco de fechadura\" por falha de fechamento da fissura óptica inferior. («Coloboma-2», Wikimedia Commons)",
+      "autoria": "Coloboma.gif: National Eye Institute\nderivative work: Redlinux (talk) · Public domain",
+      "sha256": "df89f6ead9ed26ac6a955d1698bae41d75d18daea14c282ff80e2565f18955ca",
+      "ext": "png"
+    },
+    {
+      "id": "wc-coloboma-de-iris-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Coloboma.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Coloboma.png",
+      "legenda": "Coloboma inferior da íris: a pupila alongada para baixo. («Coloboma», Wikimedia Commons)",
+      "autoria": "National Eye Institute · Public domain",
+      "sha256": "8df2af19c86662cb2504a4a4ab8c83056f5ef3285fe0e3a9f48fe3f25d752037",
+      "ext": "png"
+    },
+    {
+      "id": "wc-coloboma-de-iris-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Coloboma_of_the_iris.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Coloboma_of_the_iris.JPG",
+      "legenda": "Coloboma de íris com o defeito no quadrante inferonasal. («Coloboma of the iris», Wikimedia Commons)",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "ae6a0aa84ce45793295cdb8e23259fed40f81cd77c7ed2420755a786e7ce9937",
+      "ext": "jpg"
+    }
+  ],
   "sinais/condiloma-acuminado": [
     {
       "id": "wc-condiloma-acuminado-1",
@@ -10528,6 +11512,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/conjuntivite-tipos": [
+    {
+      "id": "dn-25726",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Conjunctivitis/conjunctivitis-0002.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/conjunctivitis-images",
+      "legenda": "Conjuntivite bacteriana: hiperemia conjuntival difusa com secreção mucopurulenta. (DermNet: Conjunctivitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "12385d2a557426f3351f7ecbad26fe0c2b64f675c08486a6cecfe8d3ef514b98",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-25725",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Conjunctivitis/conjunctivitis-0001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/conjunctivitis-images",
+      "legenda": "Conjuntivite viral bilateral do sarampo: hiperemia e lacrimejamento. (DermNet: Conjunctivitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "94e07e3e5850b7885a593ae03659ebc456695077d97b87086473dcf717fb626c",
+      "ext": "jpg"
+    }
+  ],
   "sinais/contratura-de-dupuytren": [
     {
       "id": "wc-dupuytren-s-contracture-jpg",
@@ -10607,6 +11615,166 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Medchrome",
       "videoId": "R2zCH18e0n0",
       "miniatura": "https://i.ytimg.com/vi/R2zCH18e0n0/hqdefault.jpg"
+    }
+  ],
+  "sinais/coto-de-amputacao": [
+    {
+      "id": "wc-coto-de-amputacao-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/51/Infected_amputation_stump.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Infected_amputation_stump.jpg",
+      "legenda": "Coto de amputação infectado: gangrena do dedo remanescente e osso exposto com tecido de granulação. («Infected amputation stump», Wikimedia Commons)",
+      "autoria": "Drgnu23 (talk) · CC BY-SA 3.0",
+      "sha256": "de8a2caa49c119417672dae9c78732f1abb76c39e344852d735ab6fb2e5a0624",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-coto-de-amputacao-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Gas_gangarene_in_amputation_stump_0.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gas_gangarene_in_amputation_stump_0.jpg",
+      "legenda": "Coto de amputação com gangrena gasosa: crepitação e necrose — a complicação que exige reamputação. («Gas gangarene in amputation stump 0», Wikimedia Commons)",
+      "autoria": "Ashashyou · CC BY-SA 4.0",
+      "sha256": "8180b4b189dd16f2c34ac093366dc18ac5e9d49afe2373c0de03138cd6c8649e",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-coto-de-amputacao-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/47/Stump_massage_for_amputee_%28Reeve_000287%29%2C_National_Museum_of_Health_and_Medicine_%283304258977%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Stump_massage_for_amputee_(Reeve_000287),_National_Museum_of_Health_and_Medicine_(3304258977).jpg",
+      "legenda": "Massagem e dessensibilização do coto de amputação: parte do preparo para a prótese. («Stump massage for amputee (Reeve 000287), National Museum of Health and Medicine (3304258977)», Wikimedia Commons)",
+      "autoria": "National Museum of  Health and Medicine · CC BY 2.0",
+      "sha256": "93dd7e6ca68de7ec579ef4998037cc02a0aa7a18fdaefa2967f741a543bb77cc",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-coto-de-amputacao-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Pvt._Eben_E._Smith_%28SP_29%29%2C_National_Museum_of_Health_and_Medicine_%285298477752%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pvt._Eben_E._Smith_(SP_29),_National_Museum_of_Health_and_Medicine_(5298477752).jpg",
+      "legenda": "Coto transtibial bem formado: forma cônica com cicatriz fora da zona de carga. («Pvt. Eben E. Smith (SP 29), National Museum of Health and Medicine (5298477752)», Wikimedia Commons)",
+      "autoria": "National Museum of  Health and Medicine · CC BY 2.0",
+      "sha256": "1ad7b6126e91daab1dc474b5d7b3953f8df73f52a20ccd74b9e4582985319571",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/craniotabes-e-punhos-alargados": [
+    {
+      "id": "wc-craniotabes-e-punhos-alargados-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Rickets_wrist.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rickets_wrist.jpg",
+      "legenda": "Punho alargado no raquitismo: as metáfises expandidas formam \"pulseiras\". («Rickets wrist», Wikimedia Commons)",
+      "autoria": "DRPEDS at English Wikipedia · Public domain",
+      "sha256": "c76c4e409a40f21942262c743c4ddb3534f4830e2f63c6ac6f62b4ed62000070",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-craniotabes-e-punhos-alargados-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6f/E._Mellanby%2C_Experimental_rickets._Wellcome_L0000954.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:E._Mellanby,_Experimental_rickets._Wellcome_L0000954.jpg",
+      "legenda": "Criança com raquitismo: genu varum, abdome protuso e tórax deformado. («E. Mellanby, Experimental rickets. Wellcome L0000954», Wikimedia Commons)",
+      "autoria": "Edward Mellanby, Medical Research Council London · CC BY 4.0",
+      "sha256": "5d1d30a82d9fb0f7e25c47921aed39a0ff63175a5d4028c5b246cf4dfd714917",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-craniotabes-e-punhos-alargados-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/18/Child_with_rachitic_deformity_of_the_thorax_Wellcome_L0062568.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Child_with_rachitic_deformity_of_the_thorax_Wellcome_L0062568.jpg",
+      "legenda": "Lactente raquítico: fronte olímpica, tórax em quilha e punhos alargados. («Child with rachitic deformity of the thorax Wellcome L0062568», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "b81f8e65abe6b54c89825a82123256104f3bcf4e7193b369ff8f76b8b0e8208f",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-65561855",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/65561855/046d3fb57ba60182c57d9e9aff770f86d653ff26c9b918aba980df50a719f2b6_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/rickets-40",
+      "legenda": "Radiografia do punho no raquitismo: metáfises alargadas, irregulares e em taça, com fise ampla.",
+      "autoria": "Ian Bickle — Radiopaedia.org",
+      "sha256": "a764b14f39ad6d5d8188d53d50f4b20ac03374f65f92cd3e1bde9227d1b22367",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71090837",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71090837/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/rickets-43",
+      "legenda": "Membros inferiores no raquitismo: arqueamento e metáfises esgarçadas dos joelhos.",
+      "autoria": "Gabriel Orlando González Herrera — Radiopaedia.org",
+      "sha256": "226477fa64e561061f44b4c34cfd32a5e8a0d9e4dff4194ef4925f20d91184a2",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-66933988",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66933988/22847a12e8635e2e47b99b0f9dae334283e5178c5827aa8207901a7c37d44e95_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/active-rickets-7",
+      "legenda": "Perfil do joelho raquítico: metáfises alargadas e em taça.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "ed212236d8007400b3363c0c67ae98b8c37c06c9082874be4ec1f31feca9b613",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/criptorquidia": [
+    {
+      "id": "wc-criptorquidia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/43/Cryptorchidism_Male.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cryptorchidism_Male.png",
+      "legenda": "Criptorquidia: hemiescroto esquerdo vazio e hipoplásico. («Cryptorchidism Male», Wikimedia Commons)",
+      "autoria": "Unwilling235 · CC0",
+      "sha256": "3870ceb6bcc8711150bf4d6673151ed7c3b094a14c3ae083c38c62f1df09a0cf",
+      "ext": "png"
+    },
+    {
+      "id": "wc-criptorquidia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/23/Undescended_testicle_Cryptorchidism_0530162434000_8M.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Undescended_testicle_Cryptorchidism_0530162434000_8M.jpg",
+      "legenda": "Testículo não descido na criança: bolsa assimétrica, pouco pregueada do lado afetado. («Undescended testicle Cryptorchidism 0530162434000 8M», Wikimedia Commons)",
+      "autoria": "Nevit Dilmen (talk) · CC BY-SA 3.0",
+      "sha256": "c39cfce8a94dca255f9dcf6ff8e17efa51a9bbd969f768650a44dc8116e16671",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-criptorquidia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/48/Undescended_Testicles._Hodenhochstand.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Undescended_Testicles._Hodenhochstand.jpg",
+      "legenda": "Criptorquidia bilateral: escroto vazio e hipoplásico. («Undescended Testicles. Hodenhochstand», Wikimedia Commons)",
+      "autoria": "Sansoe23 · CC0",
+      "sha256": "7301e19a0519924b37bdedd8fd6e4fe454f58f217687068dad9a7ac599592f0d",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-criptorquidia-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Hodensack_leer.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hodensack_leer.jpg",
+      "legenda": "Bolsa escrotal vazia — o achado que exige a \"ordenha\" do canal inguinal. («Hodensack leer», Wikimedia Commons)",
+      "autoria": "Peeta1000 · CC0",
+      "sha256": "39639e8889cb4ac9812e0203d1866dfff6bb57cf6064b9a51ba1b28d5cf8b4a0",
+      "ext": "jpg"
     }
   ],
   "sinais/crise-de-ausencia": [
@@ -10711,6 +11879,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Placa verrucosa, vegetante, com pontos pretos na superfície, crescendo por anos na perna ou no pé de um trabalhador rural — os \"corpos muriformes\" do fungo dematiáceo estão nos pontos pretos. («Sclerotic body», Wikimedia Commons)",
       "autoria": "Sherry A. Brinkman · Public domain",
       "sha256": "2f4379a2b4c19a5ff5b1ec488b415b36239501d27ea376817b007155793b4f14",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/cutis-marmorata": [
+    {
+      "id": "dn-9564",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/cutis-marmorata1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/cutis-marmorata",
+      "legenda": "Cutis marmorata: padrão reticulado simétrico que some ao aquecer. (DermNet: Cutis marmorata)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8ba013abdc703aa95588ec3d4ceedcb1c47cc415df1b6cd563a14893c660c574",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9644",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/livedo1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/livedo-reticularis",
+      "legenda": "Livedo reticular fixo: rede violácea que não desaparece com o calor — investigar. (DermNet: Livedo reticularis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "99fda6a0ead1b421fd9e7b483aaf9f5e782352b35dce526eb1386a4adc0c3446",
       "ext": "jpg"
     }
   ],
@@ -10819,6 +12011,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/dedos-em-martelo-e-bunionette": [
+    {
+      "id": "wc-dedos-em-martelo-e-bunionette-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/59/Hammer_toes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hammer_toes.jpg",
+      "legenda": "Dedos em martelo: flexão da interfalangiana proximal com calo dorsal onde o sapato roça. («Hammer toes», Wikimedia Commons)",
+      "autoria": "Wwcmdmsha at neurosigns.org · CC BY-SA 4.0",
+      "sha256": "ce65aa50fbdb84ce50c609125048cf69f1987bb7320876bed5b8532f623df950",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-dedos-em-martelo-e-bunionette-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Human_foot_with_mallet_toe.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Human_foot_with_mallet_toe.jpg",
+      "legenda": "Dedo em maço (mallet toe): flexão isolada da interfalangiana distal. («Human foot with mallet toe», Wikimedia Commons)",
+      "autoria": "User:Bprender22 · Public domain",
+      "sha256": "65c7b22021e89c45e9ab6aa23007adefed0d4fda862348fc821cfd1c2cc0e511",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-dedos-em-martelo-e-bunionette-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/79/Bunionplasty_Hidden_Incision.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Bunionplasty_Hidden_Incision.jpg",
+      "legenda": "Hálux valgo e antepé triangular; o bunionette é a proeminência na base do quinto dedo. («Bunionplasty Hidden Incision», Wikimedia Commons)",
+      "autoria": "DrNealBlitz · CC BY-SA 3.0",
+      "sha256": "2c3987feca738f0bbf480a68efe0160d3c1817e20bf3b3dc334047b7addc5429",
+      "ext": "jpg"
+    }
+  ],
   "sinais/dedos-em-pescoco-de-cisne": [
     {
       "id": "wc-schwanenhalsring-jpg",
@@ -10911,6 +12138,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal OTGeddie",
       "videoId": "IMmu1YifXdQ",
       "miniatura": "https://i.ytimg.com/vi/IMmu1YifXdQ/hqdefault.jpg"
+    }
+  ],
+  "sinais/deformidade-de-haglund": [
+    {
+      "id": "wc-deformidade-de-haglund-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/99/Heel_with_Haglund_exotose_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Heel_with_Haglund_exotose_1.jpg",
+      "legenda": "Deformidade de Haglund: proeminência óssea posterossuperior do calcanhar (círculo). («Heel with Haglund exotose 1», Wikimedia Commons)",
+      "autoria": "Sciencia58 · CC0",
+      "sha256": "fa7f32498eb717b9bd7357bb642cdbff2e7a14f87f7b304d548d836a989fc88a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-deformidade-de-haglund-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/53/Heel_with_Haglund_exotose_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Heel_with_Haglund_exotose_2.jpg",
+      "legenda": "O mesmo calcanhar visto de outro ângulo: a exostose sob a pele espessada pelo atrito. («Heel with Haglund exotose 2», Wikimedia Commons)",
+      "autoria": "Sciencia58 · CC0",
+      "sha256": "130035efb817bd070e9c6f23f6a45ac4ae2a3413efb0d80951092ff21de7b6f8",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75535317",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75535317/f2e7c244a013307dd4015b3482fb53da70f26e90915ac555f5aac7a32018837d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/insertional-calcific-tendinopathy-of-the-achilles-tendon-1",
+      "legenda": "Radiografia lateral do calcanhar: proeminência posterossuperior do calcâneo — Haglund.",
+      "autoria": "Salah Ibrahim Hanouneh — Radiopaedia.org",
+      "sha256": "e766de420af0be55db87515786a0744f661ae42c3a9da6999061430a5472f44e",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71695096",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71695096/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/haglund-syndrome-33",
+      "legenda": "RM sagital: exostose de Haglund com bursite retrocalcânea e tendinopatia insercional.",
+      "autoria": "Nikolay Balabin — Radiopaedia.org",
+      "sha256": "b7c580af4f19085f52fa42c9c20e3a37c7f78306704ae57838b0e976fe378e83",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75055442",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75055442/2de1a2098e49a67eeba3259de6fbffc1dd602f9db34d2bb04696eebd81cad777_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/haglund-syndrome-34",
+      "legenda": "RM sagital: edema ósseo e líquido na bolsa retrocalcânea.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "ae41fc752fefaf425312154855b58919de7755c3a9ae13bcd3ac6440fe394220",
+      "ext": "png"
     }
   ],
   "sinais/deformidade-em-dorso-de-garfo": [
@@ -11038,6 +12322,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/dermatite-das-fraldas": [
+    {
+      "id": "dn-17378",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/dermatitis/napkin-dermatitis03-sm.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/napkin-dermatitis-images",
+      "legenda": "Dermatite irritativa: eritema nas superfícies convexas em contato com a fralda, poupando as dobras. (DermNet: Napkin dermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "7210343382db26af1b08ac619bc75b76899b1e53a7d5ef61ee3e9c952b973898",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17368",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/dermatitis/napkin-dermatitis04-sm.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/napkin-dermatitis-images",
+      "legenda": "Eritema das convexidades com as dobras inguinais poupadas — irritativa. (DermNet: Napkin dermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a8a4e4f3f49b9ce5e363389a53fb01d17fa25dd21ee128c3029540c5fb5c6a43",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17395",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/dermatitis/napkin-dermatitis07-sm.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/napkin-dermatitis-images",
+      "legenda": "Candidíase da área da fralda: eritema vermelho-vivo que invade as dobras, com borda descamativa. (DermNet: Napkin dermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "7d441382b79d6e8559e21b0194d8788b0b4a87427b86381e9656c799de6a7fb7",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17385",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/dermatitis/napkin-dermatitis13-sm.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/napkin-dermatitis-images",
+      "legenda": "Pápulas e pústulas satélites além da borda: a assinatura da Candida. (DermNet: Napkin dermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "7d3754c02969ebd3c53ff41f3c934128e5d5900500fb1b3c103ae3f2a12827fb",
+      "ext": "jpg"
+    }
+  ],
   "sinais/dermatite-de-contato": [
     {
       "id": "dn-2529",
@@ -11117,6 +12447,87 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/dermatite-de-estase": [
+    {
+      "id": "dn-15193",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/grav-derm-alt-v2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/venous-eczema",
+      "legenda": "Eczema de estase: eritema, descamação e hiperpigmentação ocre no terço distal da perna com edema. (DermNet: Venous eczema)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "82b5e3664aa3a2a4532bac099630a4521b42d3629c7f52665ced1aad31d9778c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-18920",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/s/lds2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/lipodermatosclerosis",
+      "legenda": "Lipodermatoesclerose: perna em \"garrafa de champanhe invertida\" com pele endurecida e pigmentada. (DermNet: Lipodermatosclerosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d48c91ad88df458385c5f3fb0fa07c71af2ef06e665f44bb655d8b2db32487a8",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9638",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/lds4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/lipodermatosclerosis",
+      "legenda": "Dermatite ocre e endurecimento no tornozelo por insuficiência venosa crônica. (DermNet: Lipodermatosclerosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0c84b4582f0baa55b675c476be1fbb33520e8a9de5f5fc1cd1bfecf8cc33f107",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/dermatite-herpetiforme": [
+    {
+      "id": "dn-2155",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dermatitis-herpetiformis/dermatitis-herpetiformis-0001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dermatitis-herpetiformis-images",
+      "legenda": "Vesículas agrupadas e escoriadas nos cotovelos — dermatite herpetiforme (doença celíaca da pele). (DermNet: Dermatitis herpetiformis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d27cfad9d2f226772ffdad04ddcbff5a22cfa6f2b45f9d49cb3634d88726a739",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-2160",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dermatitis-herpetiformis/dermatitis-herpetiformis-0004.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dermatitis-herpetiformis-images",
+      "legenda": "Pápulo-vesículas escoriadas simétricas nas nádegas e região sacral. (DermNet: Dermatitis herpetiformis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d908f5d163c5aa0dac4e5938ca4b7cc60bf4761307709759f746ce1802b1df75",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-2137",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dermatitis-herpetiformis/dermatitis-herpetiformis-0018.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dermatitis-herpetiformis-images",
+      "legenda": "Lesões anulares e escoriadas na perna. (DermNet: Dermatitis herpetiformis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fe7ea8fa1fb5a80d0a3c8f53855ddaaf93561d382b88f574fb3bd442d499d49d",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-2133",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dermatitis-herpetiformis/dermatitis-herpetiformis-0009.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dermatitis-herpetiformis-images",
+      "legenda": "Escoriações nos joelhos: as vesículas são coçadas antes de serem vistas. (DermNet: Dermatitis herpetiformis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8553616c467f025da56cecbeb59ca53136123bc97b8f6ab6b9febb4022afb930",
+      "ext": "jpg"
+    }
+  ],
   "sinais/dermatite-seborreica": [
     {
       "id": "dn-2063",
@@ -11160,6 +12571,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Escamas amareladas e gordurosas sobre base rosada nos sulcos nasogenianos, sobrancelhas, couro cabeludo e tórax — onde há sebo, há Malassezia. (DermNet: Confluent erythema and scale due to scalp seborrhoeic dermatitis.)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "01820efe49e659fdaf43245c362dca1a50fa43229a1fede88cd983e3338e5467",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/dermatocalase": [
+    {
+      "id": "wc-dermatocalase-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/15/Dermatochalasis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Dermatochalasis.jpg",
+      "legenda": "Dermatocálase: excesso de pele da pálpebra superior que se dobra sobre os cílios e reduz o campo visual. («Dermatochalasis», Wikimedia Commons)",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "9c59e3cce8f861c1c36cff72d5f3b4c3560807ce7c2d761aa572219bc9abc41c",
       "ext": "jpg"
     }
   ],
@@ -11242,6 +12666,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/derrame-articular-de-joelho": [
+    {
+      "id": "wc-derrame-articular-de-joelho-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/21/Knee_Effusion.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Knee_Effusion.jpg",
+      "legenda": "Derrame articular do joelho direito: apagamento dos sulcos parapatelares e abaulamento suprapatelar. («Knee Effusion», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "5cbd59edf1fe6a84f57f32991d09858824f8d98f470661c5769393be22adb4fe",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-derrame-articular-de-joelho-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/Knee_effusion%2C_annotated.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Knee_effusion,_annotated.jpg",
+      "legenda": "Radiografia de perfil: densidade de líquido na bolsa suprapatelar (setas) — derrame. («Knee effusion, annotated», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "1e92bdf6c8ce81203c9d3d6204481efa32ff6f930e58e17647918ac7bc0e0114",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-derrame-articular-de-joelho-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Knee_ultrasound_110331101733_1025420.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Knee_ultrasound_110331101733_1025420.jpg",
+      "legenda": "Ultrassom do recesso suprapatelar: líquido anecoico distendendo a bolsa. («Knee ultrasound 110331101733 1025420», Wikimedia Commons)",
+      "autoria": "Nevit Dilmen (talk) · CC BY-SA 3.0",
+      "sha256": "08398a075c58e39ce0580520a6d2cd0802c1c8586c05a4cf10f0c8fb35cc7e85",
+      "ext": "jpg"
+    }
+  ],
   "sinais/descompressao-dolorosa": [
     {
       "id": "yt-TXbd54TkqaQ",
@@ -11310,6 +12769,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
       "sha256": "0e4e9752d9f41ef00acfd1ca55620ab717ab1019f1762400fb849a8aa3aa1974",
       "ext": "mp3"
+    }
+  ],
+  "sinais/desenho-do-relogio-e-negligencia": [
+    {
+      "id": "wc-desenho-do-relogio-e-negligencia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/29/Letter_search_neglect_test_result.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Letter_search_neglect_test_result.png",
+      "legenda": "Teste de busca de letras na negligência espacial: só os alvos do lado direito foram circulados. («Letter search neglect test result», Wikimedia Commons)",
+      "autoria": "Eliran t · CC BY-SA 4.0",
+      "sha256": "bc6d3026de260873b0cd3426d7c8ea58d5f465549c1c4951ee3d3fe9c7e47991",
+      "ext": "png"
+    },
+    {
+      "id": "wc-desenho-do-relogio-e-negligencia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/98/Line_cancellation_neglect_test_result.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Line_cancellation_neglect_test_result.png",
+      "legenda": "Cancelamento de linhas na negligência: o lado esquerdo da folha fica intocado. («Line cancellation neglect test result», Wikimedia Commons)",
+      "autoria": "Eliran t · CC BY-SA 4.0",
+      "sha256": "bac9f7d4aeb1ff69d220e15244bdb2ccbf2a24ad7a21296bf0418701979df9bb",
+      "ext": "png"
+    },
+    {
+      "id": "wc-desenho-do-relogio-e-negligencia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Neglect_LINE_BISECTION_test.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Neglect_LINE_BISECTION_test.png",
+      "legenda": "Bissecção de linhas: o paciente com negligência marca o \"meio\" desviado para a direita. («Neglect LINE BISECTION test», Wikimedia Commons)",
+      "autoria": "Eliran t · CC BY-SA 4.0",
+      "sha256": "6b0d67b12ec3a8ce2b4451b366e9cbb6902e8f7fc49471a0e2340639acea89d4",
+      "ext": "png"
+    },
+    {
+      "id": "wc-desenho-do-relogio-e-negligencia-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Letter_search_neglect_test.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Letter_search_neglect_test.png",
+      "legenda": "Folha de busca de letras usada no rastreio da heminegligência. («Letter search neglect test», Wikimedia Commons)",
+      "autoria": "Eliran t · CC BY-SA 4.0",
+      "sha256": "17681820d774aacba287fc19f0d4889e62475d78d69536d4dcaf244070770386",
+      "ext": "png"
     }
   ],
   "sinais/desvio-de-lingua": [
@@ -11476,6 +12981,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal onlinemedicalvideo",
       "videoId": "KMeHyhfGckM",
       "miniatura": "https://i.ytimg.com/vi/KMeHyhfGckM/hqdefault.jpg"
+    }
+  ],
+  "sinais/distensao-abdominal-obstrutiva": [
+    {
+      "id": "wc-distensao-abdominal-obstrutiva-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/ac/A_woman_with_a_distended_stomach%3B_with_two_dissected_views_o_Wellcome_V0009582.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:A_woman_with_a_distended_stomach;_with_two_dissected_views_o_Wellcome_V0009582.jpg",
+      "legenda": "Distensão abdominal maciça: a gravura clássica do abdome globoso e tenso. («A woman with a distended stomach; with two dissected views o Wellcome V0009582», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "9aaba9d25a8aea74ffd9c08bb1140bb23f670e84aa308a4c2db937a051a76c08",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-distensao-abdominal-obstrutiva-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4e/UOTW_32_-_Ultrasound_of_the_Week_4.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:UOTW_32_-_Ultrasound_of_the_Week_4.jpg",
+      "legenda": "Ultrassom no abdome distendido: alças dilatadas cheias de líquido — obstrução. («UOTW 32 - Ultrasound of the Week 4», Wikimedia Commons)",
+      "autoria": "Ben Smith · CC BY-SA 4.0",
+      "sha256": "880fed1548c15f391e27aac8e4c34ca5644d8b09a91eb6dc8598d1b6efaff696",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75966989",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75966989/7db18f83efae97cdf2b3536a566521e14cd47bafce98166c5b799fbd339810a9_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/gallstone-ileus-104",
+      "legenda": "Radiografia do abdome em pé: alças de delgado dilatadas com níveis hidroaéreos — obstrução.",
+      "autoria": "Rand Jamal Hamarsheh — Radiopaedia.org",
+      "sha256": "54d255f33a8f3e2c8e0ce0eddc01cf8023d7d3c00db2d2a3ecfdcaff3a851d8d",
+      "ext": "png"
+    },
+    {
+      "id": "rp-75228979",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75228979/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/small-bowel-obstruction-secondary-to-internal-hernia",
+      "legenda": "TC coronal: alças dilatadas com o ponto de transição — obstrução do intestino delgado.",
+      "autoria": "Abenezer Kebede Bekele — Radiopaedia.org",
+      "sha256": "bde7dab8bf4ee2690b33b9a296b7ec77570433c7b2c74e125cdc62d49edb3f23",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75303644",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75303644/d11b875920672d7a98aea1d7b46581c27ba7155bccc05e8f6b68f473e8769099_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/petersen-type-internal-hernia",
+      "legenda": "TC oblíqua: a zona de transição da obstrução.",
+      "autoria": "Raghad Soboh — Radiopaedia.org",
+      "sha256": "80ae3d253cb7fc119b0070d9237d4f5c35f1efffbff9044c08af5fcf5a438dca",
+      "ext": "png"
     }
   ],
   "sinais/distonia-cervical": [
@@ -11664,6 +13226,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/eczema-disidrotico": [
+    {
+      "id": "dn-1061",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dyshidrotic-eczema/dyshidrotic-eczema-0001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dyshidrotic-eczema-images",
+      "legenda": "Vesículas profundas, tensas, \"em sagu\" nas palmas — eczema disidrótico. (DermNet: Dyshidrotic eczema (pompholyx))",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8e5581a11c598f7afb88b3c233b55e777c584d449386f64e497b0686e09634a7",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1057",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dyshidrotic-eczema/dyshidrotic-eczema-0016.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dyshidrotic-eczema-images",
+      "legenda": "Vesículas nas faces laterais dos dedos: o local mais característico. (DermNet: Dyshidrotic eczema (pompholyx))",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "76436457cbe6a9b1fc1a4bb6f0a287af36640d024e2e7ecb0380920f9406a540",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1063",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dyshidrotic-eczema/dyshidrotic-eczema-0010.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dyshidrotic-eczema-images",
+      "legenda": "Disidrose dos dedos com descamação após a fase vesicular. (DermNet: Dyshidrotic eczema (pompholyx))",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "9011458cc538dc21dac7649fe2258113471a3529adfa4345c2183e8eaf44ef5d",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1066",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Dyshidrotic-eczema/dyshidrotic-eczema-0011.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/dyshidrotic-eczema-images",
+      "legenda": "Vesículas agrupadas com prurido intenso nas faces laterais dos dedos. (DermNet: Dyshidrotic eczema (pompholyx))",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1c314c331194573d76fe9757a0b8dc3a1b7b96a9d068dd546d922a5607e45d02",
+      "ext": "jpg"
+    }
+  ],
   "sinais/edema-de-membros-inferiores": [
     {
       "id": "wc-edema-cacifo-hepatico",
@@ -11723,6 +13331,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/efluvio-telogeno": [
+    {
+      "id": "dn-15284",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/telogen-effluvium-regrowth-v3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/telogen-effluvium",
+      "legenda": "Rarefação difusa com recessão temporal após doença ou parto — eflúvio telógeno. (DermNet: Telogen effluvium regrowth)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8e48a6b610e5b828fac880324b279643803959a3be803e70b0bbb82165a5d347",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15807",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/telogen-effluvium-1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/telogen-effluvium",
+      "legenda": "Eflúvio telógeno: cabelo fino e rarefeito sem áreas de alopecia total. (DermNet: Telogen effluvium)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "b6cfce2511412e7e6d57a2c2f6290ab3d1010589634069e16711818cc9a09dcd",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15647",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/telogen-effluvium-2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/telogen-effluvium",
+      "legenda": "Punhado de cabelos com bulbo branco (telógeno) que caem à tração leve. (DermNet: Hair shedding)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c583b64d8a3493fa8d090ec471d5ceffb8e00c28439b31b855b1e9069fbec285",
+      "ext": "jpg"
+    }
+  ],
   "sinais/elefantiase-filarial": [
     {
       "id": "wc-elefantiase-filarial-2",
@@ -11756,6 +13399,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "autor não identificado · CC BY 4.0",
       "sha256": "a4a9e1a9e036c9f1f696dcab9aebab4ed5a26c5e7494f8053d7a4d3590277223",
       "ext": "jpg"
+    }
+  ],
+  "sinais/episclerite-e-esclerite": [
+    {
+      "id": "wc-episclerite-e-esclerite-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/41/Episcleritis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Episcleritis.jpg",
+      "legenda": "Episclerite: hiperemia setorial superficial, indolor, dos vasos episclerais. («Episcleritis», Wikimedia Commons)",
+      "autoria": "Imrankabirhossain · CC BY-SA 4.0",
+      "sha256": "3b65585f045c971d4cde4132d373522e530c88503420d4b9a1aed5cf0ea2209f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-episclerite-e-esclerite-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Episcleritiseye.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Episcleritiseye.jpg",
+      "legenda": "Episclerite nodular: vasos radiais dilatados num setor, que branqueiam com fenilefrina. («Episcleritiseye», Wikimedia Commons)",
+      "autoria": "Asagan · CC BY-SA 3.0",
+      "sha256": "d08a72198fb37f699ff52b543a3ad6906cf50a6a94e89ec280e6f21c57262dc3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-episclerite-e-esclerite-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/63/Recurrent_scleritis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Recurrent_scleritis.jpg",
+      "legenda": "Esclerite recorrente: hiperemia profunda e violácea com dor intensa. («Recurrent scleritis», Wikimedia Commons)",
+      "autoria": "Imrankabirhossain · CC BY-SA 4.0",
+      "sha256": "b45e0efd756a1f5f0536a8dde4175e23027b12b803e19a497e6c9833e3de468a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-episclerite-e-esclerite-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/43/Scleritis.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scleritis.png",
+      "legenda": "Esclerite: vermelhidão azul-violácea profunda que não branqueia — doença sistêmica até prova contrária. («Scleritis», Wikimedia Commons)",
+      "autoria": "Kribz · CC BY-SA 3.0",
+      "sha256": "19736fbae92e5c117ca28d3687755470f89c1f1c740b56cc6cce4e092e0d72c7",
+      "ext": "png"
     }
   ],
   "sinais/erisipela": [
@@ -11812,6 +13501,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Placa vermelha, quente, brilhante e dolorosa, de borda **nítida e elevada**, na perna ou na face, com febre e calafrios — o estreptococo na derme superficial. (DermNet: Erysipelas)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "a61f96bb8c317ff1b9525a66f00a9239b0cc7327ba70da6338240f5dca54e844",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/eritema-ab-igne": [
+    {
+      "id": "dn-8397",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/reactions/igne1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythema-ab-igne",
+      "legenda": "Retículo hiperpigmentado nas coxas por calor crônico do notebook — eritema ab igne. (DermNet: Erythema ab igne)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "812200b1faf2cda672f26559c9b2f88b9cfc6cd51bdd0f18da7b3792bd7d30fc",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-13966",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/igne2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythema-ab-igne",
+      "legenda": "Reticulado castanho-vinhoso no dorso por bolsa de água quente. (DermNet: Erythema ab igne)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d157f3696c7450df647e70c02dbac15b6dc4f854cbe4a23e1491a1d7ca77e63a",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9623",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/igne3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythema-ab-igne",
+      "legenda": "Padrão em rede na região lombar exposta a aquecedor. (DermNet: Erythema ab igne)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "50481c5ef7dcc64d7d749cc05822f5c2b7732560e7057165eed5294e02acdee0",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9670",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/igne4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythema-ab-igne",
+      "legenda": "Eritema ab igne inicial: rede eritematosa que depois pigmenta. (DermNet: Erythema ab igne)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c29b7d7a304fe8699e7bb39b19f34bfdc8500d5a4b98a9b66a7e26d2255b5c81",
       "ext": "jpg"
     }
   ],
@@ -12100,6 +13835,54 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/eritema-toxico-neonatal": [
+    {
+      "id": "dn-9162",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/e-toxicum1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/toxic-erythema-of-the-newborn",
+      "legenda": "Máculas eritematosas irregulares com pápula central no tronco do recém-nascido de 2 dias — eritema tóxico. (DermNet: Toxic erythema of the newborn)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a1ba96b96b998d86804f40e1ae0c1d24d0d8e67741e626ae960b3cc47c0037b0",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9139",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/e-toxicum2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/toxic-erythema-of-the-newborn",
+      "legenda": "Eritema tóxico neonatal: mácula vermelha com pústula central amarelada. (DermNet: Toxic erythema of the newborn)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0d0cd4c172839bb46597b9db80666aa13d0f622b805d9f7afdbab59b418fc39f",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/eritrasma": [
+    {
+      "id": "dn-8032",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/bacterial/erythrasma.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythrasma",
+      "legenda": "Placa castanho-avermelhada, fina, de bordas nítidas na axila — eritrasma (Corynebacterium). (DermNet: Erythrasma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "4a0fe17ef71dc8d0d43744b88344a659525bbb1ad15d7ae067cd640c6b9e8705",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8006",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/bacterial/erythrasma13.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/erythrasma",
+      "legenda": "Eritrasma da virilha: placa acastanhada com descamação fina. (DermNet: Erythrasma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "dc418f422b08384f7658df10a7c158dfd748f91a2f09877975ddd07dad77f08f",
+      "ext": "jpg"
+    }
+  ],
   "sinais/escabiose": [
     {
       "id": "wc-scabiesd06-jpg",
@@ -12154,6 +13937,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Coceira que piora à noite, em toda a família, com pápulas e túneis finos entre os dedos, nos punhos e na genitália — o ácaro que cava sob a pele. (DermNet: Numerous  palmar scabies burrows in an elderly lady)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "289603bcb9d6f31b56d802b278e52823add7bb29576b39febba466c390669bf6",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/escabiose-crostosa": [
+    {
+      "id": "dn-1436",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Scabies/scabies-0045.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/crusted-scabies",
+      "legenda": "Placas hiperceratósicas espessas e fissuradas nas mãos — escabiose crostosa (norueguesa), com milhões de ácaros. (DermNet: Scabies)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a5e9487106ffae026f8a5fa3fa76639a168035193660ff29820aa0310d0d0e96",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1446",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Scabies/scabies-0023.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/crusted-scabies",
+      "legenda": "Crostas espessas nos pés e dedos na escabiose crostosa. (DermNet: Scabies)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fa0b838d62644bdc8513e697316327ebe792bcb2852a6fef1bd34abc6e424209",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-24612",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Acquired-palmoplantar-keratoderma/acquired-palmoplantar-keratoderma-0005.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/crusted-scabies",
+      "legenda": "Mãos com hiperceratose maciça: altamente contagiosa. (DermNet: Acquired palmoplantar keratoderma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f29bd5f350218c4fff771394eb3937692cd78963e3482d9c475e3054fc6c8442",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-4753",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scabies-014.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/crusted-scabies",
+      "legenda": "Hiperceratose e crostas no cotovelo e antebraço. (DermNet: Severe crusted scabies)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8d8482dec3666a1ddcc1312b52e082faef65f96ca19c81720ebfc8785184d4f4",
       "ext": "jpg"
     }
   ],
@@ -12360,6 +14189,142 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Pápulas vermelhas brilhantes no sulco nasogeniano e nas bochechas, manchas brancas em folha de freixo e uma placa rugosa lombar (chagrém) — em criança com epilepsia, é esclerose tuberosa. («Adenoma sebaceum 01», Wikimedia Commons)",
       "autoria": "M. Sand, D. Sand, C. Thrandorf, V. Paech, P. Altmeyer, F. G. Bechara · CC BY 2.0",
       "sha256": "31bf1152217a464c857f41b098e4f1b1c68717713b6092e86fa706296cae7a72",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/escoliose-congenita-hemivertebra": [
+    {
+      "id": "wc-escoliose-congenita-hemivertebra-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/70/Scoliosis-mehmetnurierdem.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Scoliosis-mehmetnurierdem.webp",
+      "legenda": "Escoliose congênita: curva curta e angular na radiografia (esquerda) e após a correção com instrumentação (direita). («Scoliosis-mehmetnurierdem», Wikimedia Commons)",
+      "autoria": "https://mehmetnurierdem.com · CC BY-SA 4.0",
+      "sha256": "3978b7881adc73ee0b168f6e4a24a002e349dcd9ab7d85ccb950fb4e1cab3d79",
+      "ext": "webp"
+    },
+    {
+      "id": "wc-escoliose-congenita-hemivertebra-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Schmetterlingswirbel_SWK_-_MRT_T2_cor_001_-_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Schmetterlingswirbel_SWK_-_MRT_T2_cor_001_-_01.jpg",
+      "legenda": "Vértebra em borboleta: falha de formação da linha média — o espectro das malformações vertebrais. («Schmetterlingswirbel SWK - MRT T2 cor 001 - 01», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 3.0",
+      "sha256": "9c1c56b7639bedd7fb41d2b5661665bb3de09b77645753591a0c87784fa9cc8a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-escoliose-congenita-hemivertebra-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/57/Lumbar_disc_herniation_L-4_L-5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Lumbar_disc_herniation_L-4_L-5.jpg",
+      "legenda": "Radiografia da coluna lombar com malformação vertebral marcada. («Lumbar disc herniation L-4 L-5», Wikimedia Commons)",
+      "autoria": "SilverBullet X · CC0",
+      "sha256": "ddba8b3a98dbd915a0b42ffd75e87253c5ed95c3c205c28cec561f02bc3691e5",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-62457053",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62457053/c11456db0cce540d247dc149d776864c8a20f7fb63f4f53ca90561f59725cce8_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/ventriculoperitoneal-shunt-and-coxa-valga",
+      "legenda": "Radiografia panorâmica: escoliose congênita — curva curta e angular por malformação vertebral.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "2de1c78a3556f8afb8a119cefc24b0f537cc0d8b07ef40f2fa94cf2a644b4171",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-68324432",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68324432/ed4a28ee9e9560c00e7953cefb7aa870a2a3ab83b0ef86ad7b2c64287f24b59d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/hemivertebra-with-congenital-scoliosis-4",
+      "legenda": "RM coronal da coluna: hemivértebra e a curva que ela impõe.",
+      "autoria": "Dalia Ibrahim — Radiopaedia.org",
+      "sha256": "47f8ac42443e30945a5a62cb2c7c9a4da590c94fe185660e86c0b98114d64a22",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72365022",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72365022/719abe7aff1e0c27e9d8f0fb4e4b7461e6c609c81feca30e33460f33c250154b_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/semi-segmented-hemivertebra",
+      "legenda": "Radiografia: hemivértebra torácica — a vértebra triangular com pedículo único que gera a curva.",
+      "autoria": "Sawsan Bawadi — Radiopaedia.org",
+      "sha256": "dfc1fb883c454774c32c5446032304158e4a8b8d532c6f072fdb2ac922c7ec6c",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71820631",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71820631/ff7012c6393759c9a6a11ed10feacb8468b7aad774ff9eb4fd4df469bc25522a_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/congenital-scoliosis-6",
+      "legenda": "Hemivértebra em incidência frontal: falha de formação de metade do corpo vertebral.",
+      "autoria": "Leonardo Lustosa — Radiopaedia.org",
+      "sha256": "5c5f1f5cf90bd2990e11ebd87904b292d49454578f2a2a8edcb453a3912213fb",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70224622",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70224622/6721816b2f7302cd8ab0c71a2c758813eec24778a2afdc9b3f9e120826b1d62f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/congenital-scoliosis-5",
+      "legenda": "Escoliose congênita por hemivértebra na radiografia de tórax.",
+      "autoria": "Leonardo Lustosa — Radiopaedia.org",
+      "sha256": "2926dfa13d9bbd0926f98b9aa4d1d692c2921e5fff9fb8f5c8ab218aedddf2e8",
+      "ext": "png"
+    },
+    {
+      "id": "rp-69608194",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69608194/6e0907264e0b0212f9e90bd5240f1b4a288407d24a1400a6a35c6823d43e400d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/congenital-scoliosis-wedge-semisegmented-and-segmented-hemivertebrae-1",
+      "legenda": "Hemivértebra torácica alta (ampliada).",
+      "autoria": "Leonardo Lustosa — Radiopaedia.org",
+      "sha256": "5ed65b075f50fc34f59ee3c4659c09ac9a799f3f1fd5fdd1abcaa89d5efb0de9",
+      "ext": "png"
+    }
+  ],
+  "sinais/escoliose-teste-de-adams": [
+    {
+      "id": "wc-escoliose-teste-de-adams-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Initial_diagnosis_of_scoliosis_with_adams_test_and_x-rays.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Initial_diagnosis_of_scoliosis_with_adams_test_and_x-rays.jpg",
+      "legenda": "Escoliose idiopática do adolescente: assimetria de ombros e talhe à inspeção e curva na radiografia. («Initial diagnosis of scoliosis with adams test and x-rays», Wikimedia Commons)",
+      "autoria": "Rigo M, Negrini S, Weiss HR, Grivas TB, Maruyama T, Kotwicki T · CC BY 2.0",
+      "sha256": "2bb066826f414d49d527373c36664affb23cc215a8314baa96e991244096ca9b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-escoliose-teste-de-adams-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/13/Boy_with_marked_lateral_curvature_of_the_spine_Wellcome_L0061466.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Boy_with_marked_lateral_curvature_of_the_spine_Wellcome_L0061466.jpg",
+      "legenda": "Dorso com escoliose acentuada: escápula proeminente e desvio do tronco. («Boy with marked lateral curvature of the spine Wellcome L0061466», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "dbfcb07d96c7f27213c5bb6436d76f7be95d4b4018f400c8ee5ec4da808be577",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-escoliose-teste-de-adams-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/66/GenotropinAQ.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:GenotropinAQ.jpg",
+      "legenda": "Radiografia panorâmica: curva toracolombar com rotação vertebral. («GenotropinAQ», Wikimedia Commons)",
+      "autoria": "Hunted230 · CC BY-SA 3.0",
+      "sha256": "c1b6cd9cae3c2b3995fa1b7fbf4f5dfb67885471c7d549ef255ef8caeafa21a0",
       "ext": "jpg"
     }
   ],
@@ -12669,6 +14634,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/ATlbp5-rroM/hqdefault.jpg"
     }
   ],
+  "sinais/eventracao-com-perda-de-domicilio": [
+    {
+      "id": "wc-eventracao-com-perda-de-domicilio-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/35/Gould_Pyle_Plate_7.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gould_Pyle_Plate_7.jpg",
+      "legenda": "Hérnia ventral gigante com perda de domicílio: o saco pendente que abriga as vísceras (Gould & Pyle). («Gould Pyle Plate 7», Wikimedia Commons)",
+      "autoria": "George M. Gould and Walter L. Pyle · Public domain",
+      "sha256": "f0df33d7f576145da5b91a3822713b9ec58eafa9c81edff694a9ee28f9b7ce0c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-eventracao-com-perda-de-domicilio-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/88/Gould_Pyle_154.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gould_Pyle_154.jpg",
+      "legenda": "Eventração volumosa da parede abdominal — gravura clássica. («Gould Pyle 154», Wikimedia Commons)",
+      "autoria": "George M. Gould and Walter L. Pyle · Public domain",
+      "sha256": "a0e97975257c8600aced7f85c1fc3d3dde26844f294bdb2b4ea40758dc5b09d7",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-eventracao-com-perda-de-domicilio-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/89/12893_2021_1125_Fig1_HTML.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:12893_2021_1125_Fig1_HTML.webp",
+      "legenda": "TC: hérnia incisional com alças no saco (setas) — a medida do volume herniado orienta a cirurgia. («12893 2021 1125 Fig1 HTML», Wikimedia Commons)",
+      "autoria": "Immanueltjahjadi · CC BY-SA 4.0",
+      "sha256": "ac893702b41f9546a759e0d487a8cd0296d21c17b39bfeeb75c34ccb41a30d4c",
+      "ext": "webp"
+    }
+  ],
   "sinais/exantema-do-dengue": [
     {
       "id": "wc-erythema-with-petechiae-on-patient-with-dengue-fev",
@@ -12712,6 +14712,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Vermelhidão confluente com ilhas de pele normal, nos braços, pernas e tronco, que aparece quando a febre cai — e é o momento de olhar as plaquetas e os sinais de alarme. (DermNet: Dengue rash)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "9a5f57b635910affe7f48b347f46d56af68d30cf7900b83d46c0da23f828e363",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/exantema-subito": [
+    {
+      "id": "dn-15795",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/roseola-002.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/roseola",
+      "legenda": "Exantema róseo, maculopapular, discreto, no tronco do lactente após a queda da febre — exantema súbito. (DermNet: Roseola)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fbb94b95960e2c258bb3759ba7d95751f309ff269013a6b9131a81f7229ae46c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15897",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/roseola-003.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/roseola",
+      "legenda": "Roséola: máculas rosadas não confluentes no tronco. (DermNet: Roseola)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d10849d83199719765e3d83e78d29209d4c3899efdbd42152bae68c3db49725b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15623",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/roseola-001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/roseola",
+      "legenda": "Exantema discreto do lactente com febre que cedeu. (DermNet: Roseola)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f0f09e46f0d689522c65d0e36d91656fc6969f0cac812b7d4febc8de1c97ef0c",
       "ext": "jpg"
     }
   ],
@@ -12971,6 +15006,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/facies-hipocratica": [
+    {
+      "id": "wc-facies-hipocratica-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Typhoid_facies.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Typhoid_facies.jpg",
+      "legenda": "Fácies hipocrática na febre tifoide: olhos fundos, têmporas escavadas, pele terrosa e expressão apática. («Typhoid facies», Wikimedia Commons)",
+      "autoria": "Rosemary A Jones · CC BY-SA 4.0",
+      "sha256": "418abd57f4d76ba5b99ee4138c4766774f192067b171fb9d4055a6a9f95cbdff",
+      "ext": "jpg"
+    }
+  ],
   "sinais/facies-leonina": [
     {
       "id": "wc-leonine-facies-lepromatous-leprosy-jpg",
@@ -13026,6 +15074,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "821f31556b8a496e0300d287c3dfcd1f754097c310c8877f957d79b10c4b6671",
       "ext": "jpg"
+    }
+  ],
+  "sinais/facies-miopatica-e-miotonica": [
+    {
+      "id": "wc-facies-miopatica-e-miotonica-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Landouzy-Dejerine_FSHD_Georges_Profile.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Landouzy-Dejerine_FSHD_Georges_Profile.png",
+      "legenda": "Distrofia fascio-escápulo-umeral (Landouzy-Dejerine): face inexpressiva e escápulas aladas em perfil. («Landouzy-Dejerine FSHD Georges Profile», Wikimedia Commons)",
+      "autoria": "Landouzy, L.; Dejerine, J. · Public domain",
+      "sha256": "625f48cc7768e65f1661df79c9f15ebd8110c8e711a1842773a6d188161a906f",
+      "ext": "png"
+    },
+    {
+      "id": "wc-facies-miopatica-e-miotonica-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/71/Landouzy-Dejerine_FSHD_L%C3%A9on.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Landouzy-Dejerine_FSHD_L%C3%A9on.png",
+      "legenda": "Fácies miopática: gravura clássica da FSH com lábios protrusos e escápulas salientes. («Landouzy-Dejerine FSHD Léon», Wikimedia Commons)",
+      "autoria": "Image from series of pictures of two brothers, both affected by FSHD, followed by Landouzy and Dejerine, the first to di · Public domain",
+      "sha256": "34d039c716e0a2823ef38c1c55599ed958147d0df089fc38c62c65c1f32da789",
+      "ext": "png"
+    },
+    {
+      "id": "wc-facies-miopatica-e-miotonica-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8c/Facioscapulohumeral_muscular_dystrophy_-_Scapular_winging.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Facioscapulohumeral_muscular_dystrophy_-_Scapular_winging.png",
+      "legenda": "Escápula alada assimétrica na distrofia fascio-escápulo-umeral ao elevar os braços. («Facioscapulohumeral muscular dystrophy - Scapular winging», Wikimedia Commons)",
+      "autoria": "Shinya Ishizuka, Akinori Kobayakawa, Hideki Hiraiwa, Hiroki Oba, Takefumi Sakaguchi, Masaru Idota, Takahiro Haga, Takafu · CC BY-SA 4.0",
+      "sha256": "ff64c72741f059956dca16d1ab0d853cf4c241e48f9eae1e2b80050b424a978f",
+      "ext": "png"
+    },
+    {
+      "id": "wc-facies-miopatica-e-miotonica-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Before_and_after_Scapula-to-scapula_scapulopexy_FSHD.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Before_and_after_Scapula-to-scapula_scapulopexy_FSHD.png",
+      "legenda": "Dorso na FSH: escápulas aladas antes e depois da fixação escapular. («Before and after Scapula-to-scapula scapulopexy FSHD», Wikimedia Commons)",
+      "autoria": "Lukelahood · CC BY-SA 4.0",
+      "sha256": "dce13b5814fcb530b155d9c50424d81f1c6baca7fa6b534f13c0c1a72d395556",
+      "ext": "png"
     }
   ],
   "sinais/facies-mixedematosa": [
@@ -13308,6 +15402,98 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/fitofotodermatose": [
+    {
+      "id": "dn-3655",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Phytophotodermatitis/phytophotodermatitis-00010.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/phytophotodermatitis-images",
+      "legenda": "Estrias eritematosas lineares e bizarras onde o suco de limão escorreu e o sol bateu — fitofotodermatose. (DermNet: Phytophotodermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "52faac48f5bc730cbae9c1f53d09890919831c0b83a34f3ce6def31f6aecf7ce",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-3651",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Phytophotodermatitis/phytophotodermatitis-00015.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/phytophotodermatitis-images",
+      "legenda": "Faixa linear hiperpigmentada residual no braço: o desenho do respingo. (DermNet: Phytophotodermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f1fb2e96b38e39f1a4a5a8ee5668607196a65b11b2aaa594a52e1c0325ca42da",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-3654",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Phytophotodermatitis/phytophotodermatitis-00011.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/phytophotodermatitis-images",
+      "legenda": "Eritema e vesículas na mão após manipular limão ao sol. (DermNet: Phytophotodermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a36311173aeb1a3819ab042a76ee5899e1ea0e4da6699387bf009aa5ec9790bd",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-3635",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Phytophotodermatitis/phytophotodermatitis-00022.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/phytophotodermatitis-images",
+      "legenda": "Eritema recortado em \"salpicos\" no ombro. (DermNet: Phytophotodermatitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ae45580b1d00911a6c9b802c80e130851594ef28b418f5404f07819ae61d3783",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/foliculite": [
+    {
+      "id": "dn-11360",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/s/follicul1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/folliculitis",
+      "legenda": "Pústulas centradas por pelo com halo eritematoso — foliculite bacteriana superficial. (DermNet: Superficial bacterial folliculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c6af70aad8ab0f4fcb5f17f8ee1a313ef310a84b0589d30b975bc09cb3f51cf5",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-11366",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/s/folliculitis5.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/folliculitis",
+      "legenda": "Foliculite estafilocócica: pústulas foliculares agrupadas. (DermNet: Superficial bacterial folliculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "29219802f7122e1bd2c98cb417a12073650f9cabbf3840d379992f60a15da8b7",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-11367",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/s/folliculitis6.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/folliculitis",
+      "legenda": "Foliculite da barba (sicose) na face lateral e no pescoço. (DermNet: Folliculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fb9abc6c596efb40353ca2a1c188765d1a56ea183a3f44fcbe49fccfda24add7",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7495",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/folliculitis1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/folliculitis",
+      "legenda": "Pápulas e pústulas foliculares na nádega. (DermNet: Folliculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f28aa9bfe7df355e8f9b183c363277aefc4de7aec1075cb8454989e46c6f8c0c",
+      "ext": "jpg"
+    }
+  ],
   "sinais/fontanela-abaulada": [
     {
       "id": "yt-rtt_8ZHQGpQ",
@@ -13364,6 +15550,129 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Deformidade em degrau sobre a clavícula, com o ombro caído e rodado para dentro, o braço sustentado pela outra mão e, às vezes, a pele levantada em tenda pelo fragmento — o osso que mais quebra na queda sobre o ombro. («Clavicle (re)fracture (6024801949)», Wikimedia Commons)",
       "autoria": "siegertmarc · CC BY 2.0",
       "sha256": "f5c45e73e032b94e5b0d84068ea70dc4e8b0bf8adbd1acf0faad4975ace88744",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/fratura-em-galho-verde": [
+    {
+      "id": "wc-fratura-em-galho-verde-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Greenstick_fracture%2C_A-P_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Greenstick_fracture,_A-P_view.jpg",
+      "legenda": "Fratura em galho verde do antebraço: cortical rompida de um lado e encurvada do outro (AP). («Greenstick fracture, A-P view», Wikimedia Commons)",
+      "autoria": "Sara Nabih · CC BY-SA 4.0",
+      "sha256": "9992a4128b16bb992d68db16cb836d105d1340ba9ee2390272756ffa3a0b8021",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-fratura-em-galho-verde-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/83/Greenstick_fracture%2C_lateral_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Greenstick_fracture,_lateral_view.jpg",
+      "legenda": "A mesma fratura em perfil: angulação com periósteo íntegro do lado côncavo. («Greenstick fracture, lateral view», Wikimedia Commons)",
+      "autoria": "Sara Nabih · CC BY-SA 4.0",
+      "sha256": "63b8df14919fa3af7aa48b6abf16ac45a6b4e54af905824eabc85e4623f68342",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-fratura-em-galho-verde-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/57/Gruenholzfraktur_-_Unterarmfraktur.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gruenholzfraktur_-_Unterarmfraktur.jpg",
+      "legenda": "Fratura em galho verde do rádio (setas) na criança. («Gruenholzfraktur - Unterarmfraktur», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 3.0",
+      "sha256": "9c1e39cf7b844ddc7d030c9afdfaae622c3029501f308293d7ef8b658185814c",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72445160",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72445160/f794e7c6809d5204556e6da25c69c297dbc440f07891fa693a36b4eed6171fde_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/displaced-salter-harris-fracture-type-ii-distal-radius-1",
+      "legenda": "Fratura em galho verde do antebraço na criança: cortical rompida de um lado e encurvada do outro.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "7e614067901b24810464af3b30c2ca1a62750b57583e423a42a07591a07c378a",
+      "ext": "png"
+    },
+    {
+      "id": "rp-72445159",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72445159/7350970abb56f3369891043d2499cb0c7a9473d9dd359283da55148d7db7d546_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/displaced-salter-harris-fracture-type-ii-distal-radius-1",
+      "legenda": "Perfil da mesma fratura: a angulação com o periósteo íntegro do lado côncavo.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "12f9f0d18847db5ce933577414286c4665a00024ad18888e664adb049953d3c8",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70219804",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70219804/8202566f7fe0bc2c80cb38c77e37b8e28a230f11954b900138ab297b85e9cef2_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/greenstick-and-buckle-fractures-distal-radius-and-ulna",
+      "legenda": "Galho verde do rádio e da ulna (asteriscos): incidência frontal.",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "f46f30cda184c670684fe3b02816873296bf9da79838fcf2e90474ad81f82f46",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-70219805",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70219805/bac33d003df55dfff13028eb8669746c738f75314b214842f98883e6e3dea538_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/greenstick-and-buckle-fractures-distal-radius-and-ulna",
+      "legenda": "Galho verde do rádio e da ulna: incidência lateral.",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "7c9c82055d186147a05b9d1531e1f905f2cfa0464d02c4c33c854e4a7d0d507e",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74125076",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74125076/63684a589434239786d48b4eeff7e0f442642276686de71a6fac34aba5cef332_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/buckle-fracture-14",
+      "legenda": "Fratura em torus (buckle) do rádio distal: abaulamento da cortical metafisária sem traço completo.",
+      "autoria": "Salah Ibrahim Hanouneh — Radiopaedia.org",
+      "sha256": "9c29c5acb5a02d01bfdb94bbcffda63965431f02303e4a4c4bff1ab5063baf2c",
+      "ext": "png"
+    },
+    {
+      "id": "rp-74125077",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74125077/1a3287ede211bbf3f5798b7a2e53f4479bc6a9c099d175df344c4cdf9778080c_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/buckle-fracture-14",
+      "legenda": "Torus do rádio distal em perfil: a saliência cortical dorsal.",
+      "autoria": "Salah Ibrahim Hanouneh — Radiopaedia.org",
+      "sha256": "79cea05b9d25d63011e2b699b0da8d11826756cf673ff1c47c06ebb97a951803",
+      "ext": "png"
+    },
+    {
+      "id": "rp-75168487",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75168487/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/proximal-tibial-buckle-fracture",
+      "legenda": "Fratura em torus da tíbia distal no lactente (frontal).",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "26828b294043837fc9a0f979410769d343c53dc51b4d4a50f74d1039576dbcb5",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75168488",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75168488/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/proximal-tibial-buckle-fracture",
+      "legenda": "Fratura em torus da tíbia distal (perfil).",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "5e05985d0daee6d478bfa1f7ea8562f57bc7e738a039a01526c7a4e732ea724c",
       "ext": "jpg"
     }
   ],
@@ -13632,6 +15941,17 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "David Andrew Copeland, Dr. Mordcai Blau · CC BY-SA 3.0",
       "sha256": "330a6583512a745f6783d9ceaa2985b1a4ac6a6ee1248b6b8583bf3b6850705c",
       "ext": "jpg"
+    },
+    {
+      "id": "wc-ginecomastia-l5-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Adolescent_Gynecomasta_Frontal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Adolescent_Gynecomasta_Frontal.jpg",
+      "legenda": "Ginecomastia puberal: disco glandular retroareolar bilateral no adolescente. («Adolescent Gynecomasta Frontal», Wikimedia Commons)",
+      "autoria": "Dr. Mordcai Blau www.cosmetic-md.com · CC BY-SA 3.0",
+      "sha256": "2f28b623c53e9670c11af9c9a1029a3c2038fa0649c88ea4b97a18f76273de2b",
+      "ext": "jpg"
     }
   ],
   "sinais/glossite-atrofica": [
@@ -13666,6 +15986,65 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Glossite atrófica: Perda difusa das papilas filiformes e fungiformes: dorso liso, brilhante, vermelho-carne ou pálido, com ardência e dor a alimentos condimentados, frequentemente com queilite angular e alterações de paladar.",
       "autoria": "Martin Kronawitter · CC BY-SA 2.5",
       "sha256": "985ad80e132e35b7988a14debe4d2511dfe78341e949527a0066b7b925b95637",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/granuloma-piogenico": [
+    {
+      "id": "dn-19588",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/doctors/lesions/images/pg1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/pyogenic-granuloma",
+      "legenda": "Pápula vermelho-vinhosa, friável, sangrante, no lábio — granuloma piogênico. (DermNet: Pyogenic granuloma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "440e7d918367d60f8b3222d310e73c82199049deedbf689afce4b0376efb692c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9651",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/pyo-gran3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/pyogenic-granuloma",
+      "legenda": "Nódulo vascular pediculado com colarete epidérmico na base e crosta hemorrágica. (DermNet: Pyogenic granuloma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c3ddda316bd13e45f3ebccf1daab71aded52c37bd15e7d8e463920977b614249",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9463",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/pyogenic-granuloma-2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/pyogenic-granuloma",
+      "legenda": "Granuloma piogênico periungueal do dedo: lesão nova, de crescimento rápido. (DermNet: Pyogenic granuloma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5ff78678c00c6df6fa22a8942aed77a7e46a7d9006f63d078d4069309ba42778",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-13537",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/doctors/lesions/images/pg4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/pyogenic-granuloma",
+      "legenda": "Granuloma piogênico no dedo, com superfície erosada. (DermNet: Pyogenic granuloma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5f91d5dc1c28380d89e420d3441ac4e23e52c144731ebe5638926b246e096c6b",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/habito-de-prader-willi": [
+    {
+      "id": "dn-6688",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/skin-picking.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/prader-willi-syndrome",
+      "legenda": "Escoriações por \"skin picking\" (beliscar compulsivo da pele) — comportamento característico da síndrome de Prader-Willi. (DermNet: Excoriations due to compulsive skin picking)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a8df9633564cda65f6bae4465575bdf343245ffecb09373972772a22b4ad5778",
       "ext": "jpg"
     }
   ],
@@ -13897,6 +16276,74 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/hemartrose-na-hemofilia": [
+    {
+      "id": "wc-hemartrose-na-hemofilia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Knee_joint_of_a_haemophiliac_Wellcome_L0062595.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Knee_joint_of_a_haemophiliac_Wellcome_L0062595.jpg",
+      "legenda": "Articulação do joelho de um hemofílico: sinóvia espessada e pigmentada por hemossiderina — a artropatia hemofílica. («Knee joint of a haemophiliac Wellcome L0062595», Wikimedia Commons)",
+      "autoria": "Godart, Thomas · CC BY 4.0",
+      "sha256": "de31d37e73a56bd4ea30995c43ddd862f09f9b8b7e17e2d24ff8a9e2535bbcca",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hemartrose-na-hemofilia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Medical_X-Ray_imaging_JDH05_nevit.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Medical_X-Ray_imaging_JDH05_nevit.jpg",
+      "legenda": "Radiografia do joelho na artropatia hemofílica: epífises alargadas, osteopenia e incisura intercondilar ampla. («Medical X-Ray imaging JDH05 nevit», Wikimedia Commons)",
+      "autoria": "Nevit Dilmen (talk) · CC BY-SA 3.0",
+      "sha256": "ffeded90d5e674bdc356fbc8a9eeccaa66a9d5e8585fe8c51b7b57e5ce8de229",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hemartrose-na-hemofilia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/83/Haemarthros_mit_Fettspiegel_bei_Fraktur_Knie_47W_-_USCTMRI_-_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Haemarthros_mit_Fettspiegel_bei_Fraktur_Knie_47W_-_USCTMRI_-_001.jpg",
+      "legenda": "Hemartrose com nível gordura-sangue (lipo-hemartrose) na bolsa suprapatelar — sangue na articulação. («Haemarthros mit Fettspiegel bei Fraktur Knie 47W - USCTMRI - 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "cd7a9fbf030e7344fec9ed0e402f2496691abee9b781c4f50db8d673936b62f7",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72315523",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72315523/20428a507acaf2464fe023dd5d18b1ed98f33528e38346f9ef7a6b3af37fae10_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/elbow-fracture-background-haemophilic-arthropathy",
+      "legenda": "Artropatia hemofílica do joelho: epífises alargadas, osteopenia e redução do espaço articular.",
+      "autoria": "Agustín Álvarez — Radiopaedia.org",
+      "sha256": "2552282ab272e3bb527a4031e070d94949bdfd92ccca7732abfa4e752552cf3d",
+      "ext": "png"
+    },
+    {
+      "id": "rp-67119825",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67119825/74a5aaebcf6e027f991fa10065758bdb2c774e791e7dae94d7571f96b052cab0_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/haemophilic-arthropathy-knee-3",
+      "legenda": "Perfil do joelho hemofílico: incisura intercondilar alargada e alterações degenerativas precoces.",
+      "autoria": "Dalia Ibrahim — Radiopaedia.org",
+      "sha256": "b39071e72418fa8fb4c2c8b5484bf5fea0209bf26aa25bbb487ee8ef6d257a73",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-67120089",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67120089/f9e1807f81c04aff21789072f1cce941a47755d510915e3cf42d8c45ddb85326_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/haemophilic-arthropathy-knee-3",
+      "legenda": "RM axial: sinóvia espessada com depósito de hemossiderina (baixo sinal) — a marca das hemartroses repetidas.",
+      "autoria": "Dalia Ibrahim — Radiopaedia.org",
+      "sha256": "fc577862368dd05ffec71d63b05f8416e4b8d6577580b8a3d2b053fb5474e9b7",
+      "ext": "png"
+    }
+  ],
   "sinais/hematoma-auricular": [
     {
       "id": "wc-hematoma-ear-jpg",
@@ -14118,6 +16565,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/hemorroidas-internas-prolapsadas": [
+    {
+      "id": "wc-hemorroidas-internas-prolapsadas-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/70/Piles_4th_deg_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Piles_4th_deg_01.jpg",
+      "legenda": "Hemorroidas internas grau IV: mamilos de mucosa permanentemente prolapsados, com sulcos radiais entre eles. («Piles 4th deg 01», Wikimedia Commons)",
+      "autoria": "Dr. K.-H. Günther, Klinikum Main Spessart, Lohr am Main · CC BY 3.0",
+      "sha256": "715eceb6722155edd4b014319ee3097bbef406f8b6c8e6f6d662ba7a0f0c14d3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hemorroidas-internas-prolapsadas-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6d/Piles_4th_deg_necrosed_throbosed_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Piles_4th_deg_necrosed_throbosed_01.jpg",
+      "legenda": "Hemorroidas prolapsadas e trombosadas com necrose — o grau IV encarcerado. («Piles 4th deg necrosed throbosed 01», Wikimedia Commons)",
+      "autoria": "Dr. K.-H. Günther, Klinikum Main Spessart, Lohr am Main · CC BY 3.0",
+      "sha256": "0566ae97cfda6520a8c76e2f874ae1d9b378acf9c1caab12d5facf862725c8dc",
+      "ext": "jpg"
+    }
+  ],
   "sinais/hepatomegalia": [
     {
       "id": "wc-hepatomegalia-hcc-fita",
@@ -14139,6 +16610,131 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "O mesmo paciente visto de frente: a assimetria do abdome superior, com o hemiabdome direito abaulado pelo fígado aumentado.",
       "autoria": "Anandselvam85 — CC BY-SA 4.0",
       "sha256": "d116f89e0c90b71afe1be409e88eb8ea57e1f54514c00acbe0a41535ce77be19",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/hernia-epigastrica-e-de-spiegel": [
+    {
+      "id": "wc-hernia-epigastrica-e-de-spiegel-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/40/Epigastric_bulging.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Epigastric_bulging.jpg",
+      "legenda": "Hérnia epigástrica: abaulamento na linha média entre umbigo e xifoide ao esforço. («Epigastric bulging», Wikimedia Commons)",
+      "autoria": "Ferdinand Köckerling1, Marinos Damianos Botsinis, Christine Rohde and Wolfgang Reinpold · CC BY 4.0",
+      "sha256": "9e8f6483c78f7c1b757b2203c4918af863f5cb0277e7d4d06bdf3e19072095d7",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hernia-epigastrica-e-de-spiegel-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/26/Hernia_epig%C3%A1strica.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hernia_epig%C3%A1strica.png",
+      "legenda": "Hérnia epigástrica visível na linha alba supraumbilical. («Hernia epigástrica», Wikimedia Commons)",
+      "autoria": "PacoPeramo · CC BY-SA 3.0",
+      "sha256": "86c33ddeea1aeb7116faf4726f8a5d060680e8d5e17729ad2f5227c688478653",
+      "ext": "png"
+    },
+    {
+      "id": "wc-hernia-epigastrica-e-de-spiegel-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/12/Hernia_spiegheli_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hernia_spiegheli_01.JPG",
+      "legenda": "Hérnia de Spiegel: abaulamento discreto na borda lateral do reto abdominal, abaixo do umbigo. («Hernia spiegheli 01», Wikimedia Commons)",
+      "autoria": "AfroBrazilian · CC BY-SA 3.0",
+      "sha256": "86a1aee35245487a717e6cf3797ac09e295ff8955b00be3a095f25146245c1b5",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hernia-epigastrica-e-de-spiegel-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Spieghel-Hernie_links_63W_-_CT_-_001_-_Annotation.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Spieghel-Hernie_links_63W_-_CT_-_001_-_Annotation.jpg",
+      "legenda": "TC: hérnia de Spiegel (seta) atravessando a linha semilunar, contida pelo oblíquo externo. («Spieghel-Hernie links 63W - CT - 001 - Annotation», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "98c6c24e7c90c87f9048898294b811fd29519860239b2804db862f8d1e78eedc",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71461449",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71461449/a5555d7366370950de12e9b20398a8fb6b804eda1399421295fd05b8199579c3_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/umbilical-and-spigelian-hernias",
+      "legenda": "Ultrassom da parede abdominal: hérnia de Spiegel — o saco atravessando a linha semilunar.",
+      "autoria": "Siang Ching Raymond Chieng — Radiopaedia.org",
+      "sha256": "0cb073b5986e054eab2c313bdf995deb1b337894f03cf9adbfeb41fdefb6f5c1",
+      "ext": "png"
+    },
+    {
+      "id": "rp-61563263",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61563263/7d93231fffb3189ef5223fa666cc26fc0ff5d3b42be72ba9f92c9fa9bca0a01b_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/spigelian-hernia-28",
+      "legenda": "TC coronal: hérnia de Spiegel na borda lateral do reto abdominal.",
+      "autoria": "Qutaiba Jaf&#39;ar Mahmoud — Radiopaedia.org",
+      "sha256": "62e2addbf4e3aaca2faf052bcaf54c5ba937ee430a11515a84abbff59ca9a82a",
+      "ext": "png"
+    }
+  ],
+  "sinais/hernia-femoral": [
+    {
+      "id": "wc-hernia-femoral-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Large_femoral_hernia_Wellcome_L0061768.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Large_femoral_hernia_Wellcome_L0061768.jpg",
+      "legenda": "Hérnia femoral volumosa: massa na raiz da coxa, abaixo do ligamento inguinal. («Large femoral hernia Wellcome L0061768», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "2727431778324b52a9e8a3637b28acfbd447061086c6b7bf81e9210223ce05f2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hernia-femoral-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/ac/Inkarzerierte_Femoralhernie_mit_Ileus_92W_-_CT_-_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Inkarzerierte_Femoralhernie_mit_Ileus_92W_-_CT_-_001.jpg",
+      "legenda": "TC: hérnia femoral encarcerada, medial à veia femoral, com alça intestinal no saco. («Inkarzerierte Femoralhernie mit Ileus 92W - CT - 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "ea0d6d2c42e8cd7b15caa6c391250c48106cac2e72a62062b8f156878acf948e",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74334891",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74334891/7316f4756c686648b71d31fc1ff92636abeafeb137571849eea8980a17b1fa6b_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/small-bowel-obstruction-secondary-to-femoral-hernia-4",
+      "legenda": "Foto intraoperatória: saco da hérnia femoral abaixo do ligamento inguinal.",
+      "autoria": "Abdullahi Abdi Farah Horri — Radiopaedia.org",
+      "sha256": "61a4617fff881761337b937b3e4eadb6719baf55538045575dcd2de8e7d73edf",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-73123246",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73123246/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/femoral-hernia-containing-the-ipsilateral-adnexa",
+      "legenda": "TC axial: hérnia femoral medial à veia femoral, com alça no saco.",
+      "autoria": "Tünde Séra — Radiopaedia.org",
+      "sha256": "c0205e26d4a01a3d5b70452656aa0558d74e0fbdabc5cbcfe7502743cd639f6a",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-76208446",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76208446/6e7817606f47b1d8a0683ec9170ed20e86e602fab5e083c35778cef71c3a3905_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/femoral-hernia-bilateral",
+      "legenda": "Ultrassom da região inguinal: saco herniário femoral.",
+      "autoria": "Maulik S Patel — Radiopaedia.org",
+      "sha256": "989098f3d144dbf8848cc74630f6389154acbc8012de3eb7bf00e713e1892c2a",
       "ext": "jpg"
     }
   ],
@@ -14486,6 +17082,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/heterocromia": [
+    {
+      "id": "dn-15602",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/waardenburg-2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/waardenburg-syndrome",
+      "legenda": "Heterocromia de íris (um olho azul, outro castanho) na síndrome de Waardenburg. (DermNet: Hetereochromia irides)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5589e231982b63da084fc66d1f555eca762580428a002d8d63b9678bd39e20e0",
+      "ext": "jpg"
+    }
+  ],
   "sinais/hidradenite-supurativa": [
     {
       "id": "wc-hidrenitis-supprotiva-jpg",
@@ -14599,6 +17208,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Hidrocele com transiluminação: Aumento indolor, liso e tenso do hemiescroto, que transmite a luz da lanterna encostada por trás (brilho vermelho-alaranjado homogêneo), com o testículo não palpável ou palpado dentro do líquido.",
       "autoria": "EvguenieSokolov · CC BY-SA 4.0",
       "sha256": "dbabe264be48ad81dada4b1957346e6d840d0c479963ea52962cff5700e30219",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/hidrocele-vs-hernia": [
+    {
+      "id": "wc-hidrocele-vs-hernia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b2/Grosse_Hydrocele_testis_rechts_57M_-_CT_KM_pv_-_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Grosse_Hydrocele_testis_rechts_57M_-_CT_KM_pv_-_001.jpg",
+      "legenda": "Hidrocele volumosa: bolsa escrotal tensa e lisa, com o cordão palpável acima da massa. («Grosse Hydrocele testis rechts 57M - CT KM pv - 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "4ab00154f30e16caf1c6b98d3c03503a64734f42144994795af3efbf3e9d870f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hidrocele-vs-hernia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/42/Male_Hydrocele_Testis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Male_Hydrocele_Testis.jpg",
+      "legenda": "Hidrocele de testículo: aumento escrotal indolor que transilumina. («Male Hydrocele Testis», Wikimedia Commons)",
+      "autoria": "Dsteph12 · CC BY-SA 4.0",
+      "sha256": "513ad6aa4e48c46f4ecb3fd48f3b9099e592a0b8e4c2ec7a0bea9bdc61e1452c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hidrocele-vs-hernia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/98/Hydrocele_testis_01.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hydrocele_testis_01.JPG",
+      "legenda": "Hidrocele no lactente: hemiescroto aumentado e translúcido. («Hydrocele testis 01», Wikimedia Commons)",
+      "autoria": "AfroBrazilian · CC BY-SA 3.0",
+      "sha256": "32dcdfc6c6e57e44ee2e0a49398252c29db237c37c76f3267f7340558b1c880d",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hidrocele-vs-hernia-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Hydrozele_2mo.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hydrozele_2mo.jpeg",
+      "legenda": "Ultrassom: líquido anecoico ao redor do testículo — hidrocele. («Hydrozele 2mo», Wikimedia Commons)",
+      "autoria": "Kinderradiologie Olgahospital Klinikum Stuttgart · CC BY-SA 4.0",
+      "sha256": "3164289a42caf208af6af661acc3550525c197d8149a51b605ce7aa66e5fa9a8",
       "ext": "jpg"
     }
   ],
@@ -14913,6 +17568,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/4SrhgjGIZ30/hqdefault.jpg"
     }
   ],
+  "sinais/hipertricose": [
+    {
+      "id": "dn-18967",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/s/hypertrichosis4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hypertrichosis",
+      "legenda": "Hipertricose congênita lanuginosa no dorso da criança. (DermNet: Congenital hypertrichosis terminalis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "29c329dfd040c9a7663343134172ec9d3ef729cc21245967c49a9f66703991d9",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9854",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/lanuginosa1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hypertrichosis",
+      "legenda": "Hipertricose do lábio superior. (DermNet: Hypertrichosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "e09ac862adcb91af56b1bb925ed1b2e1e69022fdd8da1aa0a9ece46f204a7d1f",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9839",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/lanuginosa2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hypertrichosis",
+      "legenda": "Pelos terminais na fronte: hipertricose por fármaco (minoxidil, ciclosporina). (DermNet: Hypertrichosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1f9f4f127c7a090369a2535fefe679524f4e840d42c5643d95da723e0b8c4740",
+      "ext": "jpg"
+    }
+  ],
   "sinais/hipopio": [
     {
       "id": "wc-hypopyon-1-jpg",
@@ -14923,6 +17613,28 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Hipópio: Acúmulo de leucócitos na câmara anterior formando nível horizontal branco ou amarelado inferior, em olho com hiperemia ciliar (ao redor da córnea), dor, fotofobia e baixa visual;",
       "autoria": "Imrankabirhossain · CC BY-SA 4.0",
       "sha256": "891ed79fe68719d0c61d279f6a926435df4787aff806268761fe5ad59f04b3d1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hipopio-l5-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/32/Contact_Lens_Related_Small_Corneal_Ulcer_with_Sodium_Fluorescein_Staining_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Contact_Lens_Related_Small_Corneal_Ulcer_with_Sodium_Fluorescein_Staining_3.jpg",
+      "legenda": "Ceratite por lente de contato: infiltrado corneano com hiperemia ciliar. («Contact Lens Related Small Corneal Ulcer with Sodium Fluorescein Staining 3», Wikimedia Commons)",
+      "autoria": "Iceclanl · CC BY-SA 4.0",
+      "sha256": "18d33e7aa87272e9439e3150cc59e2bc29693a0323bcccca8c64d9614c4bcd29",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-hipopio-l5-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Nummular_keratitis_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Nummular_keratitis_1.jpg",
+      "legenda": "Ceratite numular: infiltrados subepiteliais arredondados na córnea. («Nummular keratitis 1», Wikimedia Commons)",
+      "autoria": "Jkokavec · CC BY-SA 3.0",
+      "sha256": "160e67f2dec28e85d27e7581ded81e0ccf27dd72c21ff96db8b949d723274835",
       "ext": "jpg"
     }
   ],
@@ -15163,6 +17875,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Vtbijoy · CC BY-SA 3.0",
       "sha256": "8e6e74b356ccc84aa89e9147aa421ce5766862f129a8db2134b8e0791622ae97",
       "ext": "jpg"
+    },
+    {
+      "id": "wc-ictericia-neonatal-l5-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/85/Neonatal_jaundice.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Neonatal_jaundice.png",
+      "legenda": "Zonas de Kramer: a progressão cefalocaudal da icterícia e a bilirrubina estimada em cada zona. («Neonatal jaundice», Wikimedia Commons)",
+      "autoria": "Manco Capac · CC BY-SA 3.0",
+      "sha256": "057cd86fb9fd12b54a7798a2302961492ae21cfe0485283f4138780513b2d9f5",
+      "ext": "png"
+    }
+  ],
+  "sinais/ictiose-vulgar": [
+    {
+      "id": "dn-17513",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/s/ichthyosis3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/ichthyosis",
+      "legenda": "Escamas poligonais finas, aderidas ao centro e soltas na borda, em \"pele de peixe\" — ictiose vulgar da perna. (DermNet: ichthyosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "189453c1c7017b0896e185eea39ba1c09d21c1f186d7cf43689b7fd7d3a75f4e",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7344",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ichthyosis-28.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/ichthyosis",
+      "legenda": "Escamas em mosaico na face extensora, poupando as dobras. (DermNet: Ichthyosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "21eded2bf9c9cf3972dabdc16b62a0d2d0afa545113fa91b89a0d6b8d72ecdc0",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7210",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ichthyosis1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/ichthyosis",
+      "legenda": "Descamação fina difusa da perna com pele seca. (DermNet: ichthyosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "e150b92f40cc87b319c5ffe4ce50b421d044f14460afc459ce06de4e55eed19d",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7137",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/scaly/ichthyosis-vulgaris-4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/ichthyosis-vulgaris",
+      "legenda": "Palmas hiperlineares: o sinal associado da ictiose vulgar (deficiência de filagrina). (DermNet: Ichthyosis vulgaris)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1b8686df2dfa5a2346c5a2af0d0d52a9eed7befab16ec5afcb5b34069d04c3db",
+      "ext": "jpg"
     }
   ],
   "sinais/impetigo": [
@@ -15244,6 +18013,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Yale Medicine",
       "videoId": "uG0Aye08wpM",
       "miniatura": "https://i.ytimg.com/vi/uG0Aye08wpM/hqdefault.jpg"
+    }
+  ],
+  "sinais/intertrigo-candidiasico": [
+    {
+      "id": "dn-12895",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/fungal/candida-intertrigo/1308.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/candida-intertrigo-images",
+      "legenda": "Eritema vivo e úmido da dobra inframamária com pápulas e pústulas satélites além da borda — Candida. (DermNet: Candida intertrigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d4e48f608c39c71f2a4ac36ba0cb601076e8fa6de2c83e8aa15c9aab64bbcda8",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-12899",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/fungal/candida-intertrigo/1298.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/candida-intertrigo-images",
+      "legenda": "Placa eritematosa macerada na dobra com colarete descamativo e lesões satélites. (DermNet: Candida intertrigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "880403b574b55530e89ff2549165a46e0dce62a4b825d6917ba8e3af47adfcee",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-12898",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/fungal/candida-intertrigo/1312.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/candida-intertrigo-images",
+      "legenda": "Intertrigo candidiásico na dobra abdominal do obeso. (DermNet: Candida intertrigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "adf886217f90120b948dce197f76f96102f973a852910ab860e402d65171e9e6",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-12891",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/fungal/candida-intertrigo/1309.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/candida-intertrigo-images",
+      "legenda": "Pústulas satélites em torno da placa: a assinatura da Candida. (DermNet: Candida intertrigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "55f4f1f4b481d8d5792c7fb450776fb425cfeec24c28d8c66ad6fb03ea5ae403",
+      "ext": "jpg"
     }
   ],
   "sinais/isquemia-aguda-de-membro": [
@@ -15430,6 +18245,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/lentigo-solar": [
+    {
+      "id": "dn-8576",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/solar-lentigo-16.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/solar-lentigo-images",
+      "legenda": "Mácula castanha, plana, de bordas irregulares mas nítidas, em área fotoexposta da face — lentigo solar. (DermNet: Solar lentigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8af7b6d550adb0e9e7af0a9f3236f6fb29e65f64690daca925f4165d78d15626",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8708",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/solar-lentigo-07.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/solar-lentigo-images",
+      "legenda": "Mácula castanha, plana, de bordas irregulares mas nítidas, em área fotoexposta da face — lentigo solar. (DermNet: Solar lentigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "26bc87c475830c0ca9af9ea21399860c8e731d57f7be3766d2070a7cb2746ed3",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17959",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/s/solar-lentigo-21.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/solar-lentigo-images",
+      "legenda": "Mácula castanha, plana, de bordas irregulares mas nítidas, em área fotoexposta da face — lentigo solar. (DermNet: Solar lentigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fb2942e7b044afa2d982742d8a278988fe4714ad5a3caaa829f2a64c9a40b33f",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8779",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/solar-lentigo-08.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/solar-lentigo-images",
+      "legenda": "Mácula castanha, plana, de bordas irregulares mas nítidas, em área fotoexposta da face — lentigo solar. (DermNet: Solar lentigo)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "fb402b757bb3dfb626323d3ab970eca5131ea404c9e7cc2f2d60231560b6ba6d",
+      "ext": "jpg"
+    }
+  ],
   "sinais/lesao-por-pressao": [
     {
       "id": "wc-wound-stage-jpg",
@@ -15508,6 +18369,96 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Lesões de Janeway: Máculas ou pápulas eritematosas ou hemorrágicas, irregulares, de poucos milímetros, indolores, nas palmas das mãos e plantas dos pés, especialmente nas eminências tenar e hipotenar.",
       "autoria": "Roberto J. Galindo · CC BY-SA 4.0",
       "sha256": "021f29cefd81963384773ece89ba18ea9c48190189a0ef79d3ecd0f8ced07f25",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/leucocoria": [
+    {
+      "id": "wc-leucocoria-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2d/13023_2006_Article_31_Fig1_HTML.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:13023_2006_Article_31_Fig1_HTML.webp",
+      "legenda": "Leucocoria: reflexo pupilar branco no olho esquerdo — retinoblastoma até prova contrária. («13023 2006 Article 31 Fig1 HTML», Wikimedia Commons)",
+      "autoria": "Isabelle Aerts,corresponding author1 Livia Lumbroso-Le Rouic,2 Marion Gauthier-Villars,3 Hervé Brisse,4 François Doz,1 a · CC BY 2.5",
+      "sha256": "482a83f0d492c065af48443c7057af99aefd1b868b2879f2b896e12da94c9013",
+      "ext": "webp"
+    },
+    {
+      "id": "wc-leucocoria-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Retinoblastoma.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Retinoblastoma.jpg",
+      "legenda": "Retinoblastoma: reflexo branco na fotografia com flash, o \"olho de gato\". («Retinoblastoma», Wikimedia Commons)",
+      "autoria": "autor não informado · Public domain",
+      "sha256": "e9db2b861cfedab7bb892a72a284a196e0de032813ca8972def250a1e644970e",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-leucocoria-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/01/A_child_with_a_white_eye_reflection_as_a_result_of_retinoblastoma.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:A_child_with_a_white_eye_reflection_as_a_result_of_retinoblastoma.jpg",
+      "legenda": "Criança com pupila branca: a leucocoria vista a olho nu. («A child with a white eye reflection as a result of retinoblastoma», Wikimedia Commons)",
+      "autoria": "J Morley-Smith (talk) · Public domain",
+      "sha256": "0dc29d7ea3ac843a1a3a469564bc0e219373a8fea12086963ac0610131e0468f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-leucocoria-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/55/Coats_disease_-_camera_with_flash.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Coats_disease_-_camera_with_flash.jpg",
+      "legenda": "Doença de Coats: leucocoria amarelada ao flash — diferencial do retinoblastoma. («Coats disease - camera with flash», Wikimedia Commons)",
+      "autoria": "Peter Puype · CC BY-SA 3.0",
+      "sha256": "381e5677f66a53b3316aadd6738c9146b28d84b511ad518f6187d8271515c05c",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74941216",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74941216/4b226938220d1f29dba5d3177e5ff547f3d974250595cc26900b20cdfc5f7b18_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-post-traumatic-vitreous-haemorrhage-in-child-4",
+      "legenda": "Ultrassom ocular: massa intraocular com calcificações — retinoblastoma, a causa da leucocoria.",
+      "autoria": "Abdulkhaleq A. BinNuhaid — Radiopaedia.org",
+      "sha256": "e4ec898e6001b8fa29581444133a519da0ec39999e3f974e7c6417a807fec1f1",
+      "ext": "png"
+    },
+    {
+      "id": "rp-74941218",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74941218/0faeba6850a4934c12b800bf1d68ff7312d136319ffc61d7e9d8b07fd9caa1a9_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-post-traumatic-vitreous-haemorrhage-in-child-4",
+      "legenda": "Doppler do retinoblastoma: fluxo dentro da massa retiniana.",
+      "autoria": "Abdulkhaleq A. BinNuhaid — Radiopaedia.org",
+      "sha256": "57c41c816aa8fbb446880d18da5be3cd68947b60a12c2d9b6998ef5be4bbe76d",
+      "ext": "png"
+    },
+    {
+      "id": "rp-74419070",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74419070/cd279a173293343b05228964fec37eae8bf79aa3271be5a61ad99787c80790cf_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/bilateral-retinoblastoma-6",
+      "legenda": "RM coronal: massas intraoculares bilaterais no retinoblastoma.",
+      "autoria": "Ammar Haouimi — Radiopaedia.org",
+      "sha256": "1bf5054b8ef4230a264ec196c1608d5c9a506a144984820da42d93652387eab1",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74419024",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74419024/b52259a298fef4b46673aa3083960ff7a437d5fcfa7ca8bc8c41cb95014ebf6a_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/bilateral-retinoblastoma-6",
+      "legenda": "RM sagital: retinoblastoma preenchendo o globo.",
+      "autoria": "Ammar Haouimi — Radiopaedia.org",
+      "sha256": "5f218b4fb470672e8cb43624b20a7b54d22ec1b98ea1f14b2d52015b7fe68582",
       "ext": "jpg"
     }
   ],
@@ -15603,6 +18554,87 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/linfonodo-de-virchow": [
+    {
+      "id": "wc-linfonodo-de-virchow-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f6/Virchow%27sNodeMark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Virchow%27sNodeMark.png",
+      "legenda": "TC do pescoço: linfonodo de Virchow (seta) na fossa supraclavicular esquerda, junto ao ducto torácico. («Virchow'sNodeMark», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "1d60495ce16e346d37386149a71f22cd276ce0fa5474df6ee6b9931971e54819",
+      "ext": "png"
+    },
+    {
+      "id": "wc-linfonodo-de-virchow-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Enlarged_left_supraclavicular_lymph_node_as_shown_on_ultrasound_neck.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Enlarged_left_supraclavicular_lymph_node_as_shown_on_ultrasound_neck.jpg",
+      "legenda": "Ultrassom: linfonodo supraclavicular esquerdo aumentado, arredondado, com hilo apagado — Virchow. («Enlarged left supraclavicular lymph node as shown on ultrasound neck», Wikimedia Commons)",
+      "autoria": "Cerevisae · CC BY-SA 4.0",
+      "sha256": "c011ef8d2a40ccc7e848dea352ad2a7b44121098c20bc372df3e34db92ce5d77",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-linfonodo-de-virchow-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Lymph_node_regions.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Lymph_node_regions.jpg",
+      "legenda": "Regiões linfonodais do corpo: a supraclavicular esquerda drena o abdome pelo ducto torácico. («Lymph node regions», Wikimedia Commons)",
+      "autoria": "http://training.seer.cancer.gov/ss_module08_lymph_leuk/lymph_unit02_sec02_reg_lns.html · Public domain",
+      "sha256": "5183a5a76e70f55868a2f334ea300f9e8396992458dcdfb5064bd1ab4ae3c9fe",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-61889561",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61889561/cdf85a14c0bb69fb5de5d1a0fd24048da2a9da02d2719dd793d104bf1b967115_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/colon-cancer-metastatic-to-lymph-nodes-including-the-virchow-node",
+      "legenda": "TC axial da base do pescoço: linfonodo de Virchow aumentado na fossa supraclavicular esquerda.",
+      "autoria": "Stefan Tigges — Radiopaedia.org",
+      "sha256": "235ad6f81b3ea4a9a312649d348eae45aa8550868647679fd2b634aac686fb5a",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-61889797",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61889797/ff7bb13c720a9c6a937083a5bf9aa32868ced6e2b0918a6f31a30d67d53627e4_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/colon-cancer-metastatic-to-lymph-nodes-including-the-virchow-node",
+      "legenda": "TC coronal: linfadenopatia supraclavicular esquerda — Virchow.",
+      "autoria": "Stefan Tigges — Radiopaedia.org",
+      "sha256": "8514abfdbde0f3072b1eaddf8689f2de514081c9ca73cec72f781a49e57007dc",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/lingua-em-framboesa": [
+    {
+      "id": "wc-lingua-em-framboesa-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/41/Stomatite_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Stomatite_001.jpg",
+      "legenda": "Língua em morango: papilas fungiformes proeminentes após a descamação da saburra. («Stomatite 001», Wikimedia Commons)",
+      "autoria": "Grook Da Oger · CC BY-SA 3.0",
+      "sha256": "0b262bc31b0cce90f03dee6b7d72bc034ae03cea33c95937e6dac0025a22daa1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-lingua-em-framboesa-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/96/Kawasaki_symptoms_B.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kawasaki_symptoms_B.jpg",
+      "legenda": "Doença de Kawasaki: língua em framboesa e lábios fissurados. («Kawasaki symptoms B», Wikimedia Commons)",
+      "autoria": "Kawasaki_symptoms.jpg: Dong Soo Kim\nderivative work: Natr (talk) · CC BY 2.0",
+      "sha256": "41bd84b98969d53bb3f39afdd3b3937d3f73eff00f6eb5d190848f501747f2e4",
+      "ext": "jpg"
+    }
+  ],
   "sinais/lingua-geografica": [
     {
       "id": "wc-geographic-tongue-jpg",
@@ -15681,6 +18713,65 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Língua pilosa negra: Alongamento das papilas filiformes (até vários milímetros) no dorso da língua, à frente das papilas circunvaladas, com pigmentação preta, marrom, amarelada ou esverdeada;",
       "autoria": "Mohammad2018 · CC BY-SA 4.0",
       "sha256": "d78554fcbadd75188228b9fd2b43aa39e19b8bce21d6ad695500d3962619afdf",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/lingua-saburrosa-e-despapilada": [
+    {
+      "id": "wc-lingua-saburrosa-e-despapilada-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/98/Langue_saburrale.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Langue_saburrale.jpg",
+      "legenda": "Língua saburrosa: camada esbranquiçada de restos e bactérias sobre o dorso. («Langue saburrale», Wikimedia Commons)",
+      "autoria": "Grook da oger · CC BY-SA 3.0",
+      "sha256": "65196bdd986127325bdac93082d67ec235f7102592524990b44826d04ade56ed",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-lingua-saburrosa-e-despapilada-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/37/Image_of_the_tongue_in_a_B12-deficient_patient_without_a_history_of_gastrectomy.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Image_of_the_tongue_in_a_B12-deficient_patient_without_a_history_of_gastrectomy.webp",
+      "legenda": "Língua atrófica e brilhante — deficiência de B12, ferro ou folato. («Image of the tongue in a B12-deficient patient without a history of gastrectomy», Wikimedia Commons)",
+      "autoria": "Jihoon Kim, Moon-Jong Kim &amp; Hong-Seop Kho · CC BY 4.0",
+      "sha256": "b7566e16ad9a52bc49d46999849c2db63f860eb342a8bc19d4e1a441048c7b70",
+      "ext": "webp"
+    }
+  ],
+  "sinais/linha-nigra-e-estrias-gravidicas": [
+    {
+      "id": "dn-17252",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/pregnancy-01.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/linea-nigra",
+      "legenda": "Linha nigra: hiperpigmentação da linha alba do púbis ao umbigo na gestante. (DermNet: Linea nigra)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "14450f3ec27e8bccf5268e48bfa8d609b365ccb77d639374bcb04b4035a7953c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15273",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/linea-nigra-02.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/linea-nigra",
+      "legenda": "Linha nigra e estrias róseas nos flancos do abdome gravídico. (DermNet: Linea nigra)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d7d83f2476e4222507d438397f812d91a041961efd2c5324f78a88281632aa83",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15108",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/linea-nigra-01.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/linea-nigra",
+      "legenda": "Linha nigra com hiperpigmentação periumbilical. (DermNet: Linea nigra)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c0a95115010cc53b4a621e4be92cf8e98b8b744ad170599685f2547e39940b58",
       "ext": "jpg"
     }
   ],
@@ -15830,6 +18921,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Bochechas e têmporas escavadas, com os ossos da face marcados e veias das pernas e braços salientes — a gordura subcutânea que os antirretrovirais antigos destruíram, e o estigma que denuncia o diagnóstico. (DermNet: Facial lipodystrophy in HIV)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "a78c0b6a6cd35bfe84fb88ea268b0a010a4992e4bd5fc09cf79b3a2a248a75f0",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/lipoma": [
+    {
+      "id": "dn-19960",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Lipoma/lipoma-0001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/lipoma-images",
+      "legenda": "Lipoma típico do ombro: massa subcutânea macia, lobulada, móvel, indolor. (DermNet: Lipoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "107e940b732b3943d40d8b8805d87417c08f89934c7eb73c49daa2b5cfdb70cb",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-19962",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Lipoma/lipoma-0003.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/lipoma-images",
+      "legenda": "Lipoma do braço: tumoração mole que desliza sob os dedos. (DermNet: Lipoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f6346d0462c91aab4b4e6c776692c7d0250a2a1af39c7f370fa6a038293c6366",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-19956",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Lipoma/lipoma-0009.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/lipoma-images",
+      "legenda": "Lipoma volumoso na fronte. (DermNet: Lipoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "08331a66ecf0b3dda90b2d2ef5832b5fd8e9edaab1592693c0e0e6d6c420d9d1",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-19964",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Lipoma/lipoma-0016.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/lipoma-images",
+      "legenda": "Lipoma do ombro visto de perfil: contorno arredondado sob pele normal. (DermNet: Lipoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "88b0503c9041a6e4fcdaf7853cb40cb54570aff557865f30cd0cf4cb5c367f52",
       "ext": "jpg"
     }
   ],
@@ -16129,6 +19266,96 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/luxacao-de-cotovelo": [
+    {
+      "id": "wc-luxacao-de-cotovelo-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/12/Radiographie_d%E2%80%99une_luxation_post%C3%A9rieur_du_coude_gauche_sans_fracture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Radiographie_d%E2%80%99une_luxation_post%C3%A9rieur_du_coude_gauche_sans_fracture.jpg",
+      "legenda": "Luxação posterior do cotovelo: o olécrano deslocado para trás do úmero em perfil. («Radiographie d’une luxation postérieur du coude gauche sans fracture», Wikimedia Commons)",
+      "autoria": "Flibust1er · CC0",
+      "sha256": "606fde68ff61f34a8c19f9d1475e6ed9de48fd187c1ee2fcd143573a722f12fc",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-luxacao-de-cotovelo-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Elbow1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Elbow1.jpg",
+      "legenda": "Luxação de cotovelo em perfil: perda da congruência ulnoumeral. («Elbow1», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "77694097540b20c0a7990814f2ca7613156d057be48291637a7d6375d9bcf9a9",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-luxacao-de-cotovelo-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/39/Elbow2010D.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Elbow2010D.jpg",
+      "legenda": "Luxação posterolateral do cotovelo na incidência AP. («Elbow2010D», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "eac7280c27cf34f75f3794e9d318458e26a341dabf4c2fa05184502576e28a33",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-73421748",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73421748/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/elbow-joint-dislocation-3",
+      "legenda": "Radiografia lateral: luxação posterior do cotovelo — ulna e rádio atrás do úmero.",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "dddbba0c85fd7f853cc9ebc673af55a2a34191b92c30fc23c51bb256d922215c",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-73421749",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73421749/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/elbow-joint-dislocation-3",
+      "legenda": "Incidência frontal da luxação de cotovelo.",
+      "autoria": "Andrew Kirby — Radiopaedia.org",
+      "sha256": "9f6f4e5394313921b1cc4bcf36c3b2c0e483dfd1236c77965af2ad4f761c697b",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71500498",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71500498/cc115c576b912cb4aa2555a792c386ae7de2084b0e7f0658725f2ed9a35136d6_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/elbow-dislocation-15",
+      "legenda": "Luxação posterolateral do cotovelo (perfil).",
+      "autoria": "Tornike Mshvildadze — Radiopaedia.org",
+      "sha256": "f53d0d9f8fbace462795f0df24c43104c66e79ea8a30ccaf8e060df39a6ddc25",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71500501",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71500501/615a5c71f23c79faf435c6b23a472d82964b71368cb4719ebf2ad6f90d1534a0_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/elbow-dislocation-15",
+      "legenda": "Luxação posterior do cotovelo em perfil: a perda de congruência ulnoumeral.",
+      "autoria": "Tornike Mshvildadze — Radiopaedia.org",
+      "sha256": "4e415491c67458220ef8cae7dce40bf117c70d51e873e3103d90b45b37410d0d",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70153903",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70153903/e88fed7e8c8827e169d1af02facef83ef70ed28b5cbb6746147d0c4a5d3beb82_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/posterior-elbow-dislocation-5",
+      "legenda": "Luxação de cotovelo com fratura do processo coronoide (perfil).",
+      "autoria": "Felipe Rojas — Radiopaedia.org",
+      "sha256": "3701cd48ea668380d51f12eca911ee113fe2348a40af8efde7a65754ff1b0a65",
+      "ext": "png"
+    }
+  ],
   "sinais/luxacao-de-ombro": [
     {
       "id": "wc-shoulder-dislocation-while-carrying-a-frail-elder-",
@@ -16139,6 +19366,85 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Luxação de ombro: Luxação anterior (95%): perda do contorno deltóideo com acrômio proeminente (sinal da dragona ou do ombro em charretera), depressão sob o acrômio, cabeça umeral palpável anterior e inferiormente, braço em leve abdução e rotação externa sustentado pela outra mão, bloqueio da adução e rotação interna (não toca o ombro oposto).",
       "autoria": "Ashashyou · CC BY-SA 4.0",
       "sha256": "3cac10551147629378bac9715f589107985c0617945f67c18e2f6cbbd5156ebb",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/luxacao-de-patela": [
+    {
+      "id": "wc-luxacao-de-patela-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e0/PetellardislocationChildMark.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PetellardislocationChildMark.png",
+      "legenda": "Luxação lateral da patela (seta): a patela fora da tróclea, sobre o côndilo lateral. («PetellardislocationChildMark», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "0db8fbb5550549751bbc1e428849fbf0156daeb785963cfa2a14771e49a58635",
+      "ext": "png"
+    },
+    {
+      "id": "wc-luxacao-de-patela-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ec/Patellaluxation_ap_001.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Patellaluxation_ap_001.png",
+      "legenda": "Luxação de patela na incidência AP: patela deslocada lateralmente. («Patellaluxation ap 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 3.0",
+      "sha256": "d734dffba99230f1ea611d380f36c4be71204e99499ece6ea3a4931436275a59",
+      "ext": "png"
+    },
+    {
+      "id": "wc-luxacao-de-patela-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/64/Patellaluxation_ap_002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Patellaluxation_ap_002.jpg",
+      "legenda": "Luxação lateral da patela: incidência AP do joelho. («Patellaluxation ap 002», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 3.0",
+      "sha256": "6af6181fba8fd2e616ffd28dbbd335ed5ed0bfba08f8372c50f9513fb000b655",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-76083664",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76083664/82b31b83b55ebf57ee4bfda906ab7f394c7ec0b6b91215772d7573d5c1d60e4d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/lateral-patellar-dislocation-43",
+      "legenda": "RM axial anotada: ângulo do sulco troclear raso — a displasia que predispõe à luxação de patela.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "2a447c9e3da69e678e36bc8f2483e21f6fec29e9a8ff2cce7d2d22ecfce743a6",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-76083666",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76083666/c139fdc615c8371bca893b62bbfa62bb4cfe3b89a7b996ce6a0cc5f7564009dc_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/lateral-patellar-dislocation-43",
+      "legenda": "RM axial: distância TA-GT aumentada, fator de instabilidade patelar.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "7dd5a450ec55e4bdce36223cac994490e889ddbdde3b09bc3e70bd91c83127dc",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-75130550",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75130550/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/patellar-chondral-injury",
+      "legenda": "RM sagital: patela alta e edema pós-luxação.",
+      "autoria": "Mostafa Elfeky — Radiopaedia.org",
+      "sha256": "c2d0571eb0fd03dd894c617711f2134c9569b039f0fa1bc5a23c8cb956a3c3ba",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-76083566",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76083566/3d4f2d6530db3dc0319bd6c55824693a04ba0a4689b9fce277c235fae098d317_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/lateral-patellar-dislocation-43",
+      "legenda": "RM axial após luxação de patela: contusão óssea no côndilo lateral e na faceta medial (bone bruise).",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "3e122219e7dc58cdeb0a3d9dfba685536c78b16f576ed832868366b017f24611",
       "ext": "jpg"
     }
   ],
@@ -16245,6 +19551,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Rastogi and LaFranchi; licensee BioMed Central Ltd. · CC BY 2.5",
       "sha256": "767486e91d45a711be12d94e29aee32c0ba4b11e62b21743438cabba2dee224a",
       "ext": "png"
+    }
+  ],
+  "sinais/mal-perfurante-plantar": [
+    {
+      "id": "dn-3879",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection-O/Diabetic-foot-ulcer/diabetic-foot-ulcer-00004.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/diabetic-foot-ulcer",
+      "legenda": "Úlcera plantar arredondada, indolor, com borda calosa espessa — mal perfurante do pé insensível. (DermNet: diabetic foot ulcer 00004)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "738d74c659c602a3287edf1bf17af70f6902d00809381448c9585ef8a4e6c2ab",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-3877",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection-O/Diabetic-foot-ulcer/diabetic-foot-ulcer-00001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/diabetic-foot-ulcer",
+      "legenda": "Úlcera sob a cabeça do metatarso no pé diabético com deformidade dos dedos. (DermNet: diabetic foot ulcer 00001)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "3273728cdc189446aa6de24f1bf688f230655516e11bddeb6e54ed154ea2334f",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-14459",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection-O/Leprosy/leprosy-pure-neural-00002.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/leprosy",
+      "legenda": "Úlcera trófica plantar na hanseníase: o mesmo mecanismo, outra causa. (DermNet: Leprosy pure neural)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a41d2dded33977c4f30a379123bf0e460bcb2e932f584cece34db6966bc52d36",
+      "ext": "jpg"
     }
   ],
   "sinais/mancha-mongolica": [
@@ -16372,6 +19713,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/manchas-de-koplik": [
+    {
+      "id": "wc-manchas-de-koplik-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Koplik_spots%2C_measles_6111_lores.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Koplik_spots,_measles_6111_lores.jpg",
+      "legenda": "Koplik: os \"grãos de sal\" na mucosa jugal ao nível dos molares. («Koplik spots, measles 6111 lores», Wikimedia Commons)",
+      "autoria": "CDC · Public domain",
+      "sha256": "89ae73f00b6ce186a7c496111e14481b47249fe5762add80510b1b92a34a7b85",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-manchas-de-koplik-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Measles_enanthema.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Measles_enanthema.jpg",
+      "legenda": "Enantema do sarampo no palato. («Measles enanthema», Wikimedia Commons)",
+      "autoria": "de:User:Steffen Bernard · Public domain",
+      "sha256": "a0d93621027fc6a297443d5e85c72bc299d3a9a9f92c64c80abd2a77fb5661bc",
+      "ext": "jpg"
+    }
+  ],
   "sinais/manobra-de-ortolani": [
     {
       "id": "yt-Qy3uSkDhMZs",
@@ -16431,6 +19796,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/DuTHUc_aq58/hqdefault.jpg"
     }
   ],
+  "sinais/mao-de-garcom-erb": [
+    {
+      "id": "wc-mao-de-garcom-erb-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a9/Erb%27s_Palsy_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Erb%27s_Palsy_1.jpg",
+      "legenda": "Paralisia de Erb no lactente: braço esquerdo em rotação interna, cotovelo estendido e punho fletido — a \"mão de garçom\". («Erb's Palsy 1», Wikimedia Commons)",
+      "autoria": "r · CC BY-SA 4.0",
+      "sha256": "fd09da1ea32fefba9e6d3693b952ec2e6c1cc36ef93cb6d742c666665c9fc691",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mao-de-garcom-erb-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/da/Erb%27s_Palsy_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Erb%27s_Palsy_2.jpg",
+      "legenda": "O mesmo lactente: assimetria dos membros superiores em repouso. («Erb's Palsy 2», Wikimedia Commons)",
+      "autoria": "r · CC BY-SA 4.0",
+      "sha256": "5689fd336211b0e51e3dd8c22e2620d0549a5851e7e6ba94721e21b70bf8a521",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mao-de-garcom-erb-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/47/Birth-Palsy_%28girl%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Birth-Palsy_(girl).jpg",
+      "legenda": "Paralisia obstétrica do plexo braquial (fotografia histórica): o braço pendente e rodado para dentro. («Birth-Palsy (girl)», Wikimedia Commons)",
+      "autoria": "G. E. Shuttleworth &amp; W. A. Potts · Public domain",
+      "sha256": "3dc7c0d4143de0c4a923dd3a2a4d92e1b2fb3e53c638134f8bdd84dbb9f2f9f0",
+      "ext": "jpg"
+    }
+  ],
   "sinais/mao-em-garra": [
     {
       "id": "wc-ulnar-claw-hand-jpg",
@@ -16453,6 +19853,87 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Tav.byerhoff · CC BY-SA 4.0",
       "sha256": "775921d2a1daca4d52548da2794d862f5a94f08f79858bf24f9060da74cf652e",
       "ext": "jpg"
+    }
+  ],
+  "sinais/mao-reumatoide": [
+    {
+      "id": "wc-mao-reumatoide-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/SWAN_NECK_SS.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:SWAN_NECK_SS.png",
+      "legenda": "Deformidade em pescoço de cisne: hiperextensão da IFP com flexão da IFD. («SWAN NECK SS», Wikimedia Commons)",
+      "autoria": "Abdulaziz Alkanderi · CC BY-SA 3.0",
+      "sha256": "47b3435caadb2ad157ff7ff7063db2a87b894d496cb6782d69b7da4b040ddbba",
+      "ext": "png"
+    },
+    {
+      "id": "wc-mao-reumatoide-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d2/Reumatoidalne_zapalenie_stawow_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Reumatoidalne_zapalenie_stawow_01.jpg",
+      "legenda": "Radiografia: erosões, desvio ulnar e subluxação das MCF na artrite reumatoide. («Reumatoidalne zapalenie stawow 01», Wikimedia Commons)",
+      "autoria": "Jojo at Polish Wikipedia · Public domain",
+      "sha256": "85cb6dac9b757ce3d9740c705c788343ac8df854f46bf8f980d6b9a13e10c68c",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/marasmo-vs-kwashiorkor": [
+    {
+      "id": "wc-marasmo-vs-kwashiorkor-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Kwashiorkor_6180.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kwashiorkor_6180.jpg",
+      "legenda": "Kwashiorkor: face de lua com edema e cabelo descorado e fino. («Kwashiorkor 6180», Wikimedia Commons)",
+      "autoria": "Centers for Disease Control and Prevention · Public domain",
+      "sha256": "79f6a02efefece02c2e367ba711eb21d78869eea959c2e4b0e330bbfd08563f7",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-marasmo-vs-kwashiorkor-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Mustikarasa_%28page_108_crop%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mustikarasa_(page_108_crop).jpg",
+      "legenda": "Marasmo: perda total da gordura subcutânea, costelas salientes e fácies senil. («Mustikarasa (page 108 crop)», Wikimedia Commons)",
+      "autoria": "Kementerian Pertanian Republik Indonesia · Public domain",
+      "sha256": "4f5efbdf9ccea02419acd2baf26730facf8903fcc8ffc34f87993d19190ed604",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-marasmo-vs-kwashiorkor-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c4/Kwashiorkor_dermatosis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kwashiorkor_dermatosis.jpg",
+      "legenda": "Dermatose do kwashiorkor: descamação em \"pintura descascada\" com hiperpigmentação. («Kwashiorkor dermatosis», Wikimedia Commons)",
+      "autoria": "autor não informado · Public domain",
+      "sha256": "a84163147b26ac0eca181f8a4bef8afa484a81eedae722e47d83d1c1dfa56f85",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-marasmo-vs-kwashiorkor-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/47/Starved_girl.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Starved_girl.jpg",
+      "legenda": "Marasmo: a criança-esqueleto com pele solta sobre os ossos. («Starved girl», Wikimedia Commons)",
+      "autoria": "Dr. Lyle Conrad · Public domain",
+      "sha256": "5f92eba42543ba92c8035f83feaaa3af0439d4e29f1f9ab7841bc920210e4749",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-marasmo-vs-kwashiorkor-5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/89/Depiction_of_children_suffering_from_two_types_of_malnutrition.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Depiction_of_children_suffering_from_two_types_of_malnutrition.png",
+      "legenda": "Kwashiorkor × marasmo: edema e abdome protuso versus atrofia sem edema. («Depiction of children suffering from two types of malnutrition», Wikimedia Commons)",
+      "autoria": "https://www.myupchar.com/en · CC BY-SA 4.0",
+      "sha256": "efcf5221e3b6a67d58bb54c86e244e1cd498ee47d7907a586fe20768f5525061",
+      "ext": "png"
     }
   ],
   "sinais/marcha-anserina": [
@@ -16706,6 +20187,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/uuDDiT_1iJU/hqdefault.jpg"
     }
   ],
+  "sinais/mastite-e-abscesso-mamario": [
+    {
+      "id": "wc-mastite-e-abscesso-mamario-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Mastitis_in_breast.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mastitis_in_breast.jpg",
+      "legenda": "Mastite lactacional: eritema em cunha, calor e edema num segmento da mama. («Mastitis in breast», Wikimedia Commons)",
+      "autoria": "XXXANONXXX3245 · CC BY-SA 4.0",
+      "sha256": "82e501178392826b32d381db304e46d396b3d57e4e1a495bf59001cd862a7fd0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mastite-e-abscesso-mamario-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Pecho_enrojecido.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pecho_enrojecido.jpg",
+      "legenda": "Mama vermelha e endurecida na mastite puerperal. («Pecho enrojecido», Wikimedia Commons)",
+      "autoria": "Arturoborrero · CC BY-SA 4.0",
+      "sha256": "3bdc930b5c56ccf3b84eab388847fb314d395a6f5a40d49f451f5169fbfd678e",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mastite-e-abscesso-mamario-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Breast_Abscess_for_Incision_and_Drainage.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Breast_Abscess_for_Incision_and_Drainage.jpg",
+      "legenda": "Abscesso mamário: área flutuante com pele brilhante e violácea. («Breast Abscess for Incision and Drainage», Wikimedia Commons)",
+      "autoria": "Jmelendres · CC BY 3.0",
+      "sha256": "efd9e6e52a2e33958fd0018d3d2a34dc2721285e5ef7acc2e5922cb5a8fdf818",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mastite-e-abscesso-mamario-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Mama_con_drenaje.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mama_con_drenaje.jpg",
+      "legenda": "Abscesso mamário drenado: a coleção sob a aréola. («Mama con drenaje», Wikimedia Commons)",
+      "autoria": "Arturoborrero · CC BY-SA 4.0",
+      "sha256": "052597ba674c857ac5f1d65dae42f7fcba2a10c10c960d52a9a4de5d4fc08ce0",
+      "ext": "jpg"
+    }
+  ],
   "sinais/mastoidite": [
     {
       "id": "wc-mastoiditis1-jpg",
@@ -16795,6 +20322,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Mancha escura assimétrica, de bordas irregulares, cores variadas, maior que 6 mm e que mudou — o câncer de pele que mata, e que o olho pode achar cedo. (DermNet: Superficial spreading malignant melanoma - an enlarging pigmented lesion with variable pigmentation, irregular edge, and asymmetry)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "528c2cd377386216c090b10e5ec4fbbac856688c79186d2180e29f1645919758",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/melanoma-subungueal": [
+    {
+      "id": "dn-15975",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/pseudomonas-nail.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanonychia",
+      "legenda": "Banda pigmentada larga e irregular com pigmento invadindo a dobra proximal (sinal de Hutchinson) — melanoma subungueal. (DermNet: Pseudomonas stained nail)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f6753da4df68d0078854ceb6232e79a6309717fbb32bcb4e63f126142706b35e",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-14815",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/dithranol-stained-nail.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanonychia",
+      "legenda": "Melanoma subungueal avançado com destruição da lâmina e pigmento periungueal. (DermNet: Dithranol stained nail)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "4e8f490c7e74a26fb382a02e67a1c6e5e01c56665c9a1f0a95f3bb80e959471b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9808",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/melanonychia-06.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanonychia",
+      "legenda": "Melanoníquia longitudinal: banda castanha estreita e uniforme — a benigna, para comparar. (DermNet: Melanonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ed277a779ebd0f228d4089b0731e11e5f835016914639473481da1de897c4801",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9834",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/melanonychia-09.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanonychia",
+      "legenda": "Melanoníquia longitudinal fina e regular. (DermNet: Melanonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "6db43c0eeacb7c0c06a596fb74b5470977c9a36f7e8c528563a62b5bd77558ff",
       "ext": "jpg"
     }
   ],
@@ -16993,6 +20566,96 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/mielomeningocele": [
+    {
+      "id": "wc-mielomeningocele-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b9/Child_with_spina_bifida_in_the_lumbo-sacral_region_Wellcome_L0062486.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Child_with_spina_bifida_in_the_lumbo-sacral_region_Wellcome_L0062486.jpg",
+      "legenda": "Criança com espinha bífida: mielomeningocele lombossacra — o saco na linha média (ilustração clássica). («Child with spina bifida in the lumbo-sacral region Wellcome L0062486», Wikimedia Commons)",
+      "autoria": "Mark, Leonard Portal · CC BY 4.0",
+      "sha256": "a5ad110f5ae7e1d6b6bfc69317d385b08810ae9283a87662e9af9b7639938312",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mielomeningocele-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Large_pendulous_spina_bifida_in_the_lumbo-sacral_region_Wellcome_L0062485.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Large_pendulous_spina_bifida_in_the_lumbo-sacral_region_Wellcome_L0062485.jpg",
+      "legenda": "Grande mielomeningocele pendulosa na região lombar. («Large pendulous spina bifida in the lumbo-sacral region Wellcome L0062485», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "ec18cfa422026c60ee15b1b57e0842e3e87c80a51d8923d397c2d560cf32c8a3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mielomeningocele-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Laengerstreckige_sakrale_Dysraphie_40W_-_CR_und_CT_Volumen_Rendering_-_001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Laengerstreckige_sakrale_Dysraphie_40W_-_CR_und_CT_Volumen_Rendering_-_001.jpg",
+      "legenda": "Espinha bífida na radiografia e no modelo 3D: falha de fusão dos arcos posteriores sacrais. («Laengerstreckige sakrale Dysraphie 40W - CR und CT Volumen Rendering - 001», Wikimedia Commons)",
+      "autoria": "Hellerhoff · CC BY-SA 4.0",
+      "sha256": "0df864bfc5a27496b4ceae83ff7798454b9f3da1cf3d506d0f5e6a1059b6e2f5",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-mielomeningocele-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Spina_bifida_lombare_sagittale.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Spina_bifida_lombare_sagittale.jpg",
+      "legenda": "Ultrassom fetal: defeito espinhal aberto com saco meníngeo. («Spina bifida lombare sagittale», Wikimedia Commons)",
+      "autoria": "This Photo was taken by Wolfgang Moroder.  \n\nFeel free to use my photos, but please mention me as the author and send me · CC BY-SA 3.0",
+      "sha256": "cb357f25e74f2de6d67070f049628b94aa5139332d9b94638eeaa779aa5b3633",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74841324",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74841324/88ad56d8ea72c4578d253ca725b62a0a945526754a99a12a2fe60661dc05bd58_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/prenatal-skin-covered-lumbosacral-myelomeningocele",
+      "legenda": "Ultrassom fetal: sinal do limão (crânio afilado na frente) — marcador de mielomeningocele com Chiari II.",
+      "autoria": "Keshaw Kumar — Radiopaedia.org",
+      "sha256": "057823d180de2ac459f0967efe31086faec9c003cd6057793182e928a3f8b7d0",
+      "ext": "png"
+    },
+    {
+      "id": "rp-66601703",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66601703/72b13f59aa1ca9d06c4798de1b6679b1d2e219d4745abcf471718c0eb118288b_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chiari-ii-malformation-24",
+      "legenda": "Ultrassom fetal: cerebelo em banana, esmagado contra o tronco — o Chiari II da mielomeningocele.",
+      "autoria": "Martin Bundi Rugendo — Radiopaedia.org",
+      "sha256": "e9ae9dc93764f03b3da5a73c235d548499c578282b12377b13c47ca52a9c9c93",
+      "ext": "png"
+    },
+    {
+      "id": "rp-69597603",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69597603/5213159daa74064693f6075fdb8e686a7d500f08d5b80858391d6b405d181538_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/myelomeningocele-7",
+      "legenda": "RM axial do defeito: placódio neural exposto e saco meníngeo posterior.",
+      "autoria": "Frida Sofia Contreras — Radiopaedia.org",
+      "sha256": "f1efa6a84d79171737266f51cc16cd4eba616876aabcc25cb2aaee8262275da5",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-69597460",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69597460/ed741281c8335db788daa73f84596044ffc55912be424d114c1c96643cbb346d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/myelomeningocele-7",
+      "legenda": "RM sagital: mielomeningocele lombossacra com a medula presa e o saco posterior.",
+      "autoria": "Frida Sofia Contreras — Radiopaedia.org",
+      "sha256": "03b516954bd2bb14805c849b8fc53ad6b03d892ae1976c565cc3b2653291e9fd",
+      "ext": "jpg"
+    }
+  ],
   "sinais/miiase": [
     {
       "id": "wc-pntd-0007858-1-jpg",
@@ -17014,6 +20677,65 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Miíase: Miíase furunculoide (berne, Dermatobia hominis): nódulo eritematoso de 1 a 3 cm, doloroso, com orifício central que exsuda líquido seroso e por onde se vê o espiráculo da larva;",
       "autoria": "Various · Public domain",
       "sha256": "0820da053eca2be4e60826f5e6f17908c83614fff590af362852295f7cf08cc6",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/miliaria": [
+    {
+      "id": "dn-13978",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/miliaria1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/miliaria",
+      "legenda": "Vesículas e pápulas eritematosas minúsculas em área de calor e oclusão — miliária rubra (\"brotoeja\"). (DermNet: Miliaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "8f5519143bc28c590e6eed3b02dca0f0250491ac9955d0e296806b6ca34b240b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-13976",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/miliaria2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/miliaria",
+      "legenda": "Miliária no tronco por sudorese retida. (DermNet: Miliaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0193254c372ab9420b124f18350c5897c9289fdaae776cd79946f18be232af96",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9780",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/miliaria3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/miliaria",
+      "legenda": "Miliária cristalina: vesículas claras superficiais como gotas de orvalho. (DermNet: Miliaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "005a44a31274b610baf0d7a6e21c55248751a3f6c78933a6d24845a83515ec41",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/milium-e-acne-neonatal": [
+    {
+      "id": "dn-7500",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/neonatal-acne.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/neonatal-cephalic-pustulosis",
+      "legenda": "Pápulas e pústulas nas bochechas do recém-nascido de 3 semanas — pustulose cefálica neonatal (\"acne neonatal\"). (DermNet: Neonatal cephalic pustulosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "e2b665c72708948e48e83b943c06e741a69a397a92d6ed28fb65507e1f6c628b",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-7483",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/acne/neonatal-acne3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/neonatal-cephalic-pustulosis",
+      "legenda": "Acne neonatal: pápulas inflamatórias sem comedões na face. (DermNet: Neonatal cephalic pustulosis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "00aa1241813eca96b13c176043456f64da7218ca0ad10ce679f7689f395e9a13",
       "ext": "jpg"
     }
   ],
@@ -17361,6 +21083,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "png"
     }
   ],
+  "sinais/nevo-melanocitico": [
+    {
+      "id": "dn-17237",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/small.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanocytic-naevus",
+      "legenda": "Nevo composto: pápula castanha homogênea, simétrica, de bordas regulares. (DermNet: Congenital naevus)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "2353d5fe0c85a54822461da235b8f1167a25b31a1e444207f4f34ae3b62f7adf",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17224",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/medium.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanocytic-naevus",
+      "legenda": "Nevo melanocítico adquirido em relevo, castanho uniforme. (DermNet: Congenital naevus)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0d923c3bc76743bc61f49e7f3f973281e277dff56248ce3f27255b12b89c35d0",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-8666",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/mole2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanocytic-naevus",
+      "legenda": "Nevo juncional plano com régua: menor que 6 mm, cor única, bordas nítidas. (DermNet: Junctional naevus)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ed7b715d4e5ce4a28cc6a29b176d21d046bb9b95b48dbfc4c1eb7b2f1918e4d9",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-22736",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/manualthumbnails/lesions/img/combined-naevus-sm.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanocytic-naevus",
+      "legenda": "Nevo com centro mais escuro e halo castanho — simetria preservada (padrão em \"olho de boi\" benigno). (DermNet: combined naevus sm)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d2e44b11b5db3089c8b1b048f08e3e5e6dc2d9036e03a8e58018cb985a3d6a55",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17222",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/globular.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/melanocytic-naevus",
+      "legenda": "Nevo com pontos regulares à dermatoscopia: padrão globular benigno. (DermNet: Globular naevus dermoscopy)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "65f528f1a084a853ad7756e2c0c6aa4571425ddd81ed95d07d500ea44591af34",
+      "ext": "jpg"
+    }
+  ],
   "sinais/nistagmo": [
     {
       "id": "yt-_1kVVn2pcHA",
@@ -17383,6 +21162,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal NEJM Group",
       "videoId": "KLt2LtISPmQ",
       "miniatura": "https://i.ytimg.com/vi/KLt2LtISPmQ/hqdefault.jpg"
+    }
+  ],
+  "sinais/nodulos-de-bouchard": [
+    {
+      "id": "wc-nodulos-de-bouchard-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Bouchards_node_2024.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Bouchards_node_2024.png",
+      "legenda": "Nódulo de Bouchard: alargamento ósseo duro da interfalangiana proximal. («Bouchards node 2024», Wikimedia Commons)",
+      "autoria": "Whoisjohngalt · CC0",
+      "sha256": "cb3525320607c274a2f5e74b9bbbe81f0d63ea29223e86d632d271b924877cc1",
+      "ext": "png"
+    },
+    {
+      "id": "wc-nodulos-de-bouchard-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/92/Bouchard_nodes_Armenian.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Bouchard_nodes_Armenian.png",
+      "legenda": "Nódulos de Bouchard e Heberden com a radiografia correspondente: osteófitos marginais. («Bouchard nodes Armenian», Wikimedia Commons)",
+      "autoria": "Davplast · CC BY-SA 4.0",
+      "sha256": "8a662bbb1b5f0d3c7159406edde3eced828520b89f9a8f507d5509ea006a5f00",
+      "ext": "png"
+    },
+    {
+      "id": "wc-nodulos-de-bouchard-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Roe-heberden.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Roe-heberden.jpg",
+      "legenda": "Radiografia da mão: redução do espaço e osteófitos nas interfalangianas — artrose nodal. («Roe-heberden», Wikimedia Commons)",
+      "autoria": "J. Lengerke 21:37, 27. Mai 2009 (CEST) · CC BY-SA 3.0 de",
+      "sha256": "a350d8607aa12128098ff17bc5e793ecf7686fc0ca07b2818d92d872d41bdf90",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-73618382",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73618382/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/osteoarthritis-with-cppd-1",
+      "legenda": "Radiografia das mãos: artrose nodal — osteófitos e redução do espaço nas interfalangianas proximais (Bouchard) e distais (Heberden).",
+      "autoria": "Henry Knipe — Radiopaedia.org",
+      "sha256": "3bfe75a6fa3839304592706e3af1c4c3dacb1dde642b47eb308c8833147fec64",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-65588603",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/65588603/d4b1a11545e0d7d32311ec2c80699eee2a261bbe65f9f4d829de66dd2dc3dd2d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/paronychia-and-heberden-nodes",
+      "legenda": "Artrose das interfalangianas: esclerose subcondral e osteófitos marginais.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "d60d2b4007cbf697a6feea31fdad95133761c6302babaa1e59044dd8b6b1349f",
+      "ext": "jpg"
     }
   ],
   "sinais/nodulos-de-heberden": [
@@ -17430,6 +21266,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Nódulos de Osler: Nódulos subcutâneos de 2 a 15 mm, eritematosos ou violáceos, dolorosos, na polpa dos dedos das mãos e dos pés, na eminência tenar ou hipotenar, com duração de horas a dias.",
       "autoria": "Roberto J. Galindo · CC BY-SA 4.0",
       "sha256": "021f29cefd81963384773ece89ba18ea9c48190189a0ef79d3ecd0f8ced07f25",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/noonan-e-klinefelter": [
+    {
+      "id": "dn-14604",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/Noonan-syndrome.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/noonan-syndrome",
+      "legenda": "Síndrome de Noonan: pescoço alado com implantação baixa dos cabelos, tórax largo com pectus e mamilos afastados. (DermNet: Noonan syndrome)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "06dd649ee8393c800123466f4805ffc181d2d0d6b864bc22224b774af10a2833",
       "ext": "jpg"
     }
   ],
@@ -17524,6 +21373,177 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Olhos em sol poente: Desvio tônico dos olhos para baixo com retração da pálpebra superior, expondo a esclera acima da íris que fica parcialmente escondida pela pálpebra inferior;",
       "autoria": "E. Feer, translated by Julius Parker Sedgwick &amp; Carl Ahrendt Scherer · Public domain",
       "sha256": "202b4a7c294d650b72cb0ea3d5b89fb5c4e4af10c166f2ab11313fff93b30002",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/onfalite-e-granuloma-umbilical": [
+    {
+      "id": "wc-onfalite-e-granuloma-umbilical-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Umbilical_Granulation.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Umbilical_Granulation.jpg",
+      "legenda": "Granuloma umbilical: botão rosado e úmido no fundo do umbigo após a queda do coto. («Umbilical Granulation», Wikimedia Commons)",
+      "autoria": "Cullen, Thomas Stephen, 1868-1953 · Public domain",
+      "sha256": "ac908b5fec01404a128be35689da477f5f3625ffd9c4a09dc2edb9dabe81313c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-onfalite-e-granuloma-umbilical-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Omphalitis_of_adult.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Omphalitis_of_adult.jpg",
+      "legenda": "Onfalite: eritema e edema periumbilical com secreção — a celulite do umbigo. («Omphalitis of adult», Wikimedia Commons)",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "8d66a97ec0de98a5cfd6c7165045534ab4585a16308b38dc8077db76a7880b82",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-onfalite-e-granuloma-umbilical-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c0/P%C4%99pek.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:P%C4%99pek.jpg",
+      "legenda": "Coto umbilical em mumificação no recém-nascido: o que se examina a cada consulta. («Pępek», Wikimedia Commons)",
+      "autoria": "Stagiryta · CC BY-SA 4.0",
+      "sha256": "742b7c3a84ea96f5994a71e75999de4ebd747d8dfdb91c6ea5837c4fe6c39571",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/onfalocele-e-gastrosquise": [
+    {
+      "id": "wc-onfalocele-e-gastrosquise-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Captura_de_pantalla_2022-09-26_204202.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Captura_de_pantalla_2022-09-26_204202.png",
+      "legenda": "Gastrosquise: alças intestinais evisceradas à direita de um cordão umbilical de inserção normal. («Captura de pantalla 2022-09-26 204202», Wikimedia Commons)",
+      "autoria": "Instituto Nacional de Pediatría México · CC BY-SA 4.0",
+      "sha256": "ca37116f7b1b95c0463e9a4598bb67366e2f01c09766f81b4773b4fcd89e1700",
+      "ext": "png"
+    },
+    {
+      "id": "wc-onfalocele-e-gastrosquise-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Gastrochisis_0001.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Gastrochisis_0001.jpg",
+      "legenda": "Ultrassom pré-natal: gastrosquise — alças flutuando no líquido amniótico ao lado da inserção do cordão. («Gastrochisis 0001», Wikimedia Commons)",
+      "autoria": "Mme Mim · CC BY-SA 4.0",
+      "sha256": "a1d503b197eb2903872b23ae7e68e70d44e8712e1c23c4543d683451747d15c9",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-onfalocele-e-gastrosquise-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/0d/Omphalocele-drawing.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Omphalocele-drawing.jpg",
+      "legenda": "Onfalocele: saco de membrana contendo intestino e fígado com o cordão inserido no ápice (ilustração). («Omphalocele-drawing», Wikimedia Commons)",
+      "autoria": "Centers for Disease Control and Prevention, National Center on Birth Defects and Developmental Disabilities · Public domain",
+      "sha256": "1bca667588e60bfcff3c6f03572d286b1d7890ea0a3eb0da6493264dfec2ba3d",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74648697",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74648697/8549a16540565068ad45f4cc7db48ba05341d3730f0f282af62655b43f8bdfb8_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/omphalocele-with-multiple-congenital-anomaly",
+      "legenda": "Ultrassom pré-natal: onfalocele — massa coberta por membrana na base do cordão, com os vasos umbilicais no ápice ao Doppler.",
+      "autoria": "Nefisa Desokey Hussin — Radiopaedia.org",
+      "sha256": "b25736247b414c92c9e39031beb232a02a07931075e0a07f8a20cd578dbed408",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70600586",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70600586/78b2f9abb19d83342b88c77d2406aee852f8ce517b6f1a98bb2cdf1f7a692cf9_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/omphalocele-17",
+      "legenda": "Onfalocele ao ultrassom: conteúdo abdominal herniado dentro de saco delimitado.",
+      "autoria": "Ali Abdullah Obaid — Radiopaedia.org",
+      "sha256": "5193a2d395d2b49bc9ecf9bf1925176a195ebe35d8794b9f8e98e22a3b7fe613",
+      "ext": "png"
+    },
+    {
+      "id": "rp-61781643",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61781643/4c41a1d499b83739c305416e044a1dad896a04f46aff55d0858e5bd70abe1010_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/gastroschisis-11",
+      "legenda": "Ultrassom pré-natal: gastrosquise — alças intestinais flutuando livres no líquido amniótico, sem membrana.",
+      "autoria": "Dennis Odhiambo Agolah — Radiopaedia.org",
+      "sha256": "8e2e3975f042dd7e9fa57dc4382e1defc7ea1682a0ef6ed7448ae70ad2077fcf",
+      "ext": "png"
+    },
+    {
+      "id": "rp-21878066",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/21878066/997c37b8f24ee097e1c37d140be2c7_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/gastroschisis-7",
+      "legenda": "Radiografia do recém-nascido com gastrosquise: alças fora da cavidade abdominal.",
+      "autoria": "Yusra Sheikh — Radiopaedia.org",
+      "sha256": "59e2abb1d917003887fbdec324009cd3cb662ca5b9d48bfe00fa6d7bf6f0480a",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-4199800",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/4199800/2d92a31d8a49ca9303b85ac75c3771_gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/gastroschisis-4",
+      "legenda": "Gastrosquise: alças evisceradas à direita do cordão na radiografia.",
+      "autoria": "Jeremy Jones — Radiopaedia.org",
+      "sha256": "5a0ba1a3a62a5ff7e6460180387870dcdb9332fe178aa5d9733892f30271cd18",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/onicolise": [
+    {
+      "id": "dn-9787",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/olysis1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/onycholysis",
+      "legenda": "Descolamento distal da lâmina, que fica branca-amarelada sobre o ar — onicólise. (DermNet: Onycholysis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "43566ef3d124868c1c99329a2d45e49a400c7cce103c3c00018f849ff6db74ea",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-13591",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/doctors/principles/images/onych-q.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/onycholysis",
+      "legenda": "Onicólise idiopática: descolamento distal em várias unhas. (DermNet: Onycholysis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "af4c6469a432de22875f4c31d36d35973ce8a198f6b700bc06b08f74b1556bca",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-15474",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/psornail1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/onycholysis",
+      "legenda": "Onicólise psoriásica com a borda eritematosa e pitting. (DermNet: Psoriatic nail dystrophy)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1da14e09c06641d1ae0fd32680f5acf60f808960f7fd8a0e87046b88d4734180",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9923",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hair-nails-sweat/onych-photo.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/onycholysis",
+      "legenda": "Foto-onicólise: descolamento após fármaco fotossensibilizante e sol. (DermNet: Photo-onycholysis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c12fea5571322b2e5255f962b4f63f51f95de56c1cd1d81f3da3e70428e927b0",
       "ext": "jpg"
     }
   ],
@@ -17684,6 +21704,140 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Adolescente esportista com um calombo doloroso logo abaixo do joelho, na inserção do tendão patelar, que dói ao ajoelhar, correr e pular — a apófise tracionada pelo quadríceps em crescimento. («Osgood», Wikimedia Commons)",
       "autoria": "Lucien Monfils · CC BY-SA 3.0",
       "sha256": "c716f9106452cc1f49ca2115e7a0fc0053807472ff476c67ecec8d42e7f33aa6",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/osteomielite-cronica-com-fistula": [
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Osteomyelitis_of_Tibia_in_Child.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Osteomyelitis_of_Tibia_in_Child.jpg",
+      "legenda": "Osteomielite crônica da tíbia: espessamento cortical, esclerose e cavidade com sequestro. («Osteomyelitis of Tibia in Child», Wikimedia Commons)",
+      "autoria": "sarindam7 · CC BY-SA 4.0",
+      "sha256": "0192845094ab4ae05383388f4dc3e718eeae7e95d5cbfc902006c6c8f185e54a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Osteomyelitis_of_the_1st_MTP.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Osteomyelitis_of_the_1st_MTP.jpg",
+      "legenda": "Osteomielite crônica do primeiro dedo do pé: destruição e reação periosteal. («Osteomyelitis of the 1st MTP», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 4.0",
+      "sha256": "64e75e8f269140a15ce3f0dc4fd943af3faadce4066fc45534a8fc2581c39fbc",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/06/4821323599_676b57f7b5_bSEQUESTRA_OSTEOMYELITIS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:4821323599_676b57f7b5_bSEQUESTRA_OSTEOMYELITIS.jpg",
+      "legenda": "Sequestros ósseos removidos de uma osteomielite crônica: fragmentos de osso morto que o antibiótico não alcança. («4821323599 676b57f7b5 bSEQUESTRA OSTEOMYELITIS», Wikimedia Commons)",
+      "autoria": "Otis Historical Archives  of “National Museum of Health &amp; Medicine”  (OTIS Archive 1) · CC BY 2.0",
+      "sha256": "53b984f526e5c907c73aa43ea0b784f34d8b859072dc4afb16f89f9a0826b4e2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b9/5437007656_0e3ec95342_bOsteomyelitis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:5437007656_0e3ec95342_bOsteomyelitis.jpg",
+      "legenda": "Fêmur com osteomielite crônica: invólucro espessado e cloacas — peça anatômica. («5437007656 0e3ec95342 bOsteomyelitis», Wikimedia Commons)",
+      "autoria": "Otis Historical Archives Nat'l Museum of Health &amp; Medicine  USA · CC BY 2.0",
+      "sha256": "e7dbc247ab055a6c142040ef9b324aa669a36addd5839ea5d0ec6abac5cc30ba",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/21/BrodieAbscessRadiograph.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:BrodieAbscessRadiograph.jpg",
+      "legenda": "Radiografia: abscesso de Brodie na metáfise tibial — cavidade com halo esclerótico. («BrodieAbscessRadiograph», Wikimedia Commons)",
+      "autoria": "Jto410 · CC BY-SA 3.0",
+      "sha256": "c2458d8bea4ccddb695ab83a1b1e52e61e16486835200f085521a6aa2d5a1211",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-osteomielite-cronica-com-fistula-6",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/77/Involucrum_%28Extracortical_New_Bone_Formation%29_in_Chronic_Osteomyelitis_%2848327308712%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Involucrum_(Extracortical_New_Bone_Formation)_in_Chronic_Osteomyelitis_(48327308712).jpg",
+      "legenda": "Invólucro de osso novo ao redor do sequestro (histologia). («Involucrum (Extracortical New Bone Formation) in Chronic Osteomyelitis (48327308712)», Wikimedia Commons)",
+      "autoria": "Ed Uthman from Houston, TX, USA · CC BY 2.0",
+      "sha256": "2d0f9d20d4c9bbe8b3de692669f20f99839a2cef153227e2a96272232bbbfd89",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71264812",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71264812/29f88955525ce21267b8cbf1dca6534eccba1707edc32a17a85f33658569040e_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-tibia-2",
+      "legenda": "RM axial anotada: sequestro (osso morto), invólucro (osso novo ao redor) e cloaca — a anatomia da osteomielite crônica.",
+      "autoria": "Mostafa Mohamed — Radiopaedia.org",
+      "sha256": "f4ba6bd9f66aa303e43c4bfdd708adfad65cb9d411feaa5698bafeeb1e131793",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-69473720",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69473720/2ea76c36645c5972184e10d63644a0b46206d72267ffe6a4efdcf117fcc76f86_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-18",
+      "legenda": "Radiografia: sequestro denso dentro de cavidade na tíbia distal.",
+      "autoria": "Leonardo Lustosa — Radiopaedia.org",
+      "sha256": "ee1b098956b635c5876474a07438c486c01a5e8fb68327b4dbb49e1d5f65ace5",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71264814",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71264814/249f1758f01a4fe57f641975dba494a0edcdb5468a4840d3294f78099e4102ca_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-tibia-2",
+      "legenda": "Osteomielite crônica da tíbia: espessamento cortical e esclerose ao redor do sequestro.",
+      "autoria": "Mostafa Mohamed — Radiopaedia.org",
+      "sha256": "5762d06eb3a5fd2e0ae98d0badfd68491304ff5ec18f7c13f827f8359f0a6c07",
+      "ext": "png"
+    },
+    {
+      "id": "rp-71629862",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71629862/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-with-cloaca-2",
+      "legenda": "Osteomielite crônica da tíbia: esclerose, espessamento cortical e deformidade do osso.",
+      "autoria": "Maurice Wu — Radiopaedia.org",
+      "sha256": "6b4e57225038b25b022407499d370b543c357ab96fbc92b7bdeb2c4f5582bf01",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71629861",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71629861/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-with-cloaca-2",
+      "legenda": "Perfil da tíbia com osteomielite crônica: cavidade e osso esclerótico.",
+      "autoria": "Maurice Wu — Radiopaedia.org",
+      "sha256": "c1286b98ea96f2a82121fd7a4c18dab230688460c40b1c1973511b71c65cd4e7",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-71628641",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71628641/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/chronic-osteomyelitis-with-cloaca-2",
+      "legenda": "TC sagital: cavidade intramedular com sequestro na osteomielite crônica.",
+      "autoria": "Maurice Wu — Radiopaedia.org",
+      "sha256": "56d5186909248c24695f585a827688cd1c44e9dceb2ea521f2ec91584f502b6a",
       "ext": "jpg"
     }
   ],
@@ -18140,6 +22294,131 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/pe-equino-na-paralisia-cerebral": [
+    {
+      "id": "wc-pe-equino-na-paralisia-cerebral-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/19/Child_with_Cerebral_Palsy.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Child_with_Cerebral_Palsy.png",
+      "legenda": "Criança com paralisia cerebral espástica na cadeira postural: pés em equino e joelhos fletidos. («Child with Cerebral Palsy», Wikimedia Commons)",
+      "autoria": "UCT MOOCs · CC BY 4.0",
+      "sha256": "4c5f64d3efa2890170e6c34c8c108e9e3744868882b52da20d8c2d15e4b7eb47",
+      "ext": "png"
+    },
+    {
+      "id": "wc-pe-equino-na-paralisia-cerebral-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/50/Cerebral_Palsy_SSOG.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cerebral_Palsy_SSOG.jpg",
+      "legenda": "Paralisia cerebral: postura em flexão dos membros inferiores e pés em equino na cadeira de rodas. («Cerebral Palsy SSOG», Wikimedia Commons)",
+      "autoria": "Sombir9555 · CC BY-SA 3.0",
+      "sha256": "51ccf21700a2101ec54dd58849729af2ec272d2a4726e048f56ad65c40e7a1d3",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pe-equino-na-paralisia-cerebral-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Amsterdam_Gait_Classification.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Amsterdam_Gait_Classification.jpg",
+      "legenda": "Classificação de marcha de Amsterdam na paralisia cerebral: do apoio em equino ao crouch. («Amsterdam Gait Classification», Wikimedia Commons)",
+      "autoria": "Orthokin · CC BY-SA 4.0",
+      "sha256": "2162652cc87c24644cd5aa497a6f4f65b6d8d938abbe0cdc53d48803376bc55a",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/pe-plano-vs-cavo": [
+    {
+      "id": "wc-pe-plano-vs-cavo-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/de/Fallen_arch_%28flat_feet%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Fallen_arch_(flat_feet).jpg",
+      "legenda": "Pé plano: visto por trás, valgo do retropé e arco medial desabado. («Fallen arch (flat feet)», Wikimedia Commons)",
+      "autoria": "Anviteri · CC BY-SA 3.0",
+      "sha256": "8778b16d801805cfd39965361d09c43505c09f3f5981ce30832de66d09649244",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pe-plano-vs-cavo-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Flat_feet_%281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Flat_feet_(1).jpg",
+      "legenda": "Pé plano valgo: o eixo do calcâneo desvia-se para fora (linhas). («Flat feet (1)», Wikimedia Commons)",
+      "autoria": "Χαράλαμπος Γκούβας (Harrygouvas) · CC BY-SA 3.0",
+      "sha256": "a0c39d86f0cd6a24aa0c8ab06a33ac5239f2e382c47396a6a25635b97f7a7637",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pe-plano-vs-cavo-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Charcot-marie-tooth_foot.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Charcot-marie-tooth_foot.jpg",
+      "legenda": "Pé cavo na doença de Charcot-Marie-Tooth: arco alto, dedos em garra e varo do retropé. («Charcot-marie-tooth foot», Wikimedia Commons)",
+      "autoria": "Benefros at English Wikipedia · CC BY-SA 3.0",
+      "sha256": "4699d535a770cdc7dcde6babb6d86a315ea4471572bd83a40e44e2b8711c706b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pe-plano-vs-cavo-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Pes_cavus_and_os_peroneum_on_lateral_foot_X-ray.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pes_cavus_and_os_peroneum_on_lateral_foot_X-ray.jpg",
+      "legenda": "Radiografia de perfil do pé cavo: arco longitudinal elevado. («Pes cavus and os peroneum on lateral foot X-ray», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "caa043ac888277a1facbb1814aef677027e1f8993ddb81595b244efc3b10a3b1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pe-plano-vs-cavo-5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/Flat_feet_%28left%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Flat_feet_(left).jpg",
+      "legenda": "Pé plano visto de perfil: o arco medial toca o chão. («Flat feet (left)», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "66a13e499eefea1f24636122c719d5795ef8d72662aa6ca30884f9852783620c",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-63435077",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63435077/9804e35dae2d75cf38f94d47593f9870d42b5784d5df82dfc5b402db5445c3df_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/subtalar-arthroereisis-2",
+      "legenda": "Radiografia lateral com carga: pé cavo — arco longitudinal elevado e calcâneo verticalizado.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "47f6f63eb32ac3235f2f1d4d8a140e1ca4487b691bc3be1a7cca6c90cd2fc12a",
+      "ext": "png"
+    },
+    {
+      "id": "rp-63435076",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63435076/ad119202276b7d45652f58b0931ba1bd3e4bac138f4daa64b9ba467598577f6d_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/subtalar-arthroereisis-2",
+      "legenda": "Perfil do pé cavo em pé: o ângulo de Meary quebrado para cima.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "0845468e0e02e1a0585abfe68f3c661a9b6856eb806a690319e2512309b03bea",
+      "ext": "png"
+    },
+    {
+      "id": "rp-59114296",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59114296/5b108399e5a7501a69db0b9df70ad89b059a32b469dcd744ba59a187742b4267_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/pes-cavovalgus",
+      "legenda": "Pé cavo no perfil com carga: dedos em garra e antepé caído.",
+      "autoria": "Henry Knipe — Radiopaedia.org",
+      "sha256": "5d2bca1bcf29c9d45a5dffada05888b9b1eafdaa386cb925e90ba7f4049fe755",
+      "ext": "jpg"
+    }
+  ],
   "sinais/pe-torto-congenito": [
     {
       "id": "wc-813-clubfoot-jpg",
@@ -18497,6 +22776,54 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/peteqias-do-palato": [
+    {
+      "id": "wc-peteqias-do-palato-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Streptococcal_pharyngitis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Streptococcal_pharyngitis.jpg",
+      "legenda": "Faringite estreptocócica: petéquias no palato mole e úvula com amígdalas hiperemiadas. («Streptococcal pharyngitis», Wikimedia Commons)",
+      "autoria": "Photo Credit:\nContent Providers: CDC/Dr. Heinz F. Eichenwald · Public domain",
+      "sha256": "ad5da4232ea0725c9d69201d8dad0fbde3a5f066e8cab63fb769ba44f55124f6",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-peteqias-do-palato-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/75/Angine_MNI_EBV.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Angine_MNI_EBV.jpg",
+      "legenda": "Mononucleose infecciosa: petéquias no palato e exsudato amigdaliano. («Angine MNI EBV», Wikimedia Commons)",
+      "autoria": "Grook Da Oger · CC BY-SA 3.0",
+      "sha256": "aad8e81309a886d503dd933fae1301f3313419214a3bc68d24de65b09f35c77f",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/pinguecula": [
+    {
+      "id": "wc-pinguecula-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/53/PRE-OPERATIVE_PINGUECULA.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PRE-OPERATIVE_PINGUECULA.JPG",
+      "legenda": "Pinguécula: nódulo amarelado na conjuntiva bulbar nasal, sem invadir a córnea. («PRE-OPERATIVE PINGUECULA», Wikimedia Commons)",
+      "autoria": "Red eye2008 · CC BY-SA 3.0",
+      "sha256": "779316771a47cd1ae54b120c06f4524d6d78521afabbed9ca1bb3715d2ab5024",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-pinguecula-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/12/Pterygium.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Pterygium.png",
+      "legenda": "Pterígio: a \"asa\" triangular que cresce da conjuntiva para a córnea. («Pterygium», Wikimedia Commons)",
+      "autoria": "Sciencia58 · CC BY-SA 4.0",
+      "sha256": "17b3d85a7ebb1bf51d2fca8d5db1ca0478d890612d0c008c8724e38f4abb64dc",
+      "ext": "png"
+    }
+  ],
   "sinais/pioderma-gangrenoso": [
     {
       "id": "dn-1359",
@@ -18725,6 +23052,85 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/plagiocefalia-posicional": [
+    {
+      "id": "wc-plagiocefalia-posicional-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/35/Plagioc%C3%A9phalie.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Plagioc%C3%A9phalie.JPG",
+      "legenda": "Plagiocefalia posicional: achatamento occipital unilateral no lactente visto de cima. («Plagiocéphalie», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "74fa3e0b30c8caa89417fdfd0c9b7015a9c75c307a216540eebc28c65f27875f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-plagiocefalia-posicional-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Helmtherapie.vorher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Helmtherapie.vorher.jpg",
+      "legenda": "Reconstrução 3D do crânio em paralelogramo antes do tratamento com órtese. («Helmtherapie.vorher», Wikimedia Commons)",
+      "autoria": "User:Masin Al-Dujaili · CC BY 3.0",
+      "sha256": "16a2fb1cd2dff53b51355ffa6d091b0d25965e8ac4159822fa9036bdea95e474",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-plagiocefalia-posicional-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/97/Helmtherapie.nachher.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Helmtherapie.nachher.jpg",
+      "legenda": "O mesmo crânio após a órtese craniana: contorno simetrizado. («Helmtherapie.nachher», Wikimedia Commons)",
+      "autoria": "Masin Al-Dujaili · CC BY 3.0",
+      "sha256": "0a1c343db88d95a4c473b18ea37d8a81a180dbb46350e7faef756d1008d9b285",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-73962463",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73962463/1cd72193c98e6cd51eb33207928f839285eec6c5831ace3a073339054dde2ebb_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/occipital-plagiocephaly",
+      "legenda": "TC 3D: plagiocefalia posicional — achatamento occipital unilateral com suturas abertas.",
+      "autoria": "Osama Omari — Radiopaedia.org",
+      "sha256": "759816492acacb2cd4ad5b04239281edc16a2ed642fe03b0c8df730dbd3ea867",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-61016462",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61016462/ead57200fd93f53ac5ef7d2b8c2d68f6a154dae319ebca28e4bd44dbe93c4e67_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/scaphocephaly-19",
+      "legenda": "Reconstrução 3D lateral: o occipício achatado e a sutura lambdoide íntegra.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "c61dc209ed05d3ac31f4c5612a9ca21b84cd28db053ad53ff593881509720d57",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-61016477",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61016477/e93df8a5dbf8dd1b7a79dfd952fa57c797ff1ca4e151a4edcf3d0f2d9f798f95_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/scaphocephaly-19",
+      "legenda": "Reconstrução 3D frontal: assimetria da fronte e das órbitas na plagiocefalia deformacional.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "5fd1df8b23c0e13447a1ff5722e42edc9ce45d150c7e7c39fd88d97b5d37a705",
+      "ext": "png"
+    },
+    {
+      "id": "rp-59527556",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59527556/abac71e53288b707ce02e138ba1a757a41c4386653fddf67155982351f66c6bd_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/craniosynostosis-plagiocephaly-1",
+      "legenda": "TC 3D vista de cima: o crânio em paralelogramo.",
+      "autoria": "Zentout Sofiane — Radiopaedia.org",
+      "sha256": "973efd02b8bc0edaa1357d2a0eab2457caa2dceba4cea3d53d4d60040010e5bd",
+      "ext": "png"
+    }
+  ],
   "sinais/podagra": [
     {
       "id": "wc-podagra-jpg",
@@ -18746,6 +23152,208 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Podagra: Monoartrite aguda da primeira metatarsofalângica: início súbito (horas, frequentemente noturno), dor intensa, edema, eritema violáceo brilhante, calor, hipersensibilidade extrema ao toque, com descamação na resolução em 7 a 10 dias;",
       "autoria": "www.scientificanimations.com/ · CC BY-SA 4.0",
       "sha256": "fc78df8a7837a865d295126005af6d4e443ab39750cd765f7e236cb60908b2b8",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/polidactilia-e-sindactilia": [
+    {
+      "id": "wc-polidactilia-e-sindactilia-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Preaxial_polydactyly_right_hand.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Preaxial_polydactyly_right_hand.jpg",
+      "legenda": "Polidactilia pré-axial: polegar duplicado no recém-nascido. («Preaxial polydactyly right hand», Wikimedia Commons)",
+      "autoria": "Patou Tantbirojn, Mana Taweevisit, Suchila Sritippayawan, Boonchai Uerpairojkit. · CC BY 2.0",
+      "sha256": "86c37e70d862fbf3e2853c9bd4903408d9526ce549da397a422eff7911f97062",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polidactilia-e-sindactilia-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/aa/Polydactyly_ECS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Polydactyly_ECS.jpg",
+      "legenda": "Polidactilia pós-axial: dedo extranumerário rudimentar junto ao mínimo no lactente. («Polydactyly ECS», Wikimedia Commons)",
+      "autoria": "Baujat G, Le Merrer M. · CC BY 2.0",
+      "sha256": "c3022cc5fc98b32f6feaa085be2d6b9cb794b656e5a87e59ed9cb36fe8dfbbab",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polidactilia-e-sindactilia-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Polydactyly_01_Lhand_AP.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Polydactyly_01_Lhand_AP.jpg",
+      "legenda": "Radiografia: polidactilia pós-axial com metacarpo e falanges do sexto dedo. («Polydactyly 01 Lhand AP», Wikimedia Commons)",
+      "autoria": "en:User:Drgnu23, subsequently altered by en:user:Grendelkhan, en:user: Raul654, and en:user:Solipsist. · CC BY-SA 3.0",
+      "sha256": "780a51ff34815120a90d1c2ba6e771e68d1472981ac4c84d3b43aa1158d11d67",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polidactilia-e-sindactilia-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/0a/CRIM.DENTISTRY2013-845405.002.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:CRIM.DENTISTRY2013-845405.002.jpg",
+      "legenda": "Sindactilia complexa das mãos: dedos fundidos. («CRIM.DENTISTRY2013-845405.002», Wikimedia Commons)",
+      "autoria": "Meera Sandhu, Pooja Malik, and Rooposhi Saha · CC BY 4.0",
+      "sha256": "715d63d6bf6a0441c2d6f06a35d21dd7f277d6287b482e9891d0157d177503da",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polidactilia-e-sindactilia-5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e5/Hand_in_Apert_syndrome_%281%29.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hand_in_Apert_syndrome_(1).JPG",
+      "legenda": "Mão na síndrome de Apert: sindactilia complexa em \"luva\". («Hand in Apert syndrome (1)», Wikimedia Commons)",
+      "autoria": "Gzzz · CC BY-SA 4.0",
+      "sha256": "4be10fece94f31a8641c1a3ad84b8432bed150e22bea36d5de552d0b5f632f65",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-polidactilia-e-sindactilia-6",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Feet_with_six_toes_on_each.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Feet_with_six_toes_on_each.jpg",
+      "legenda": "Polidactilia do pé: seis dedos. («Feet with six toes on each», Wikimedia Commons)",
+      "autoria": "Zhnka · CC0",
+      "sha256": "1016e7c9ff530c34b5e374e84313b9fe18c40fd81108d1f9c28c38e5282a47e2",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-70709294",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70709294/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/ectrodactyly-split-foot-1",
+      "legenda": "Radiografia: sindactilia complexa — falanges fundidas dos dedos vizinhos.",
+      "autoria": "Mostafa Mohamed — Radiopaedia.org",
+      "sha256": "77c63072f2442bbd6a0e09a8d67dd3ee18ebdf348c8701f2996b14948eb90569",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-66699157",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66699157/downloaded_image20240716-23789-8fig8o_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/apert-syndrome-8",
+      "legenda": "Sindactilia e polidactilia da mão na radiografia frontal.",
+      "autoria": "Christine Lee — Radiopaedia.org",
+      "sha256": "3d2ee11bd5f9dfe027ea1e6c9baac893defac7b352a489d1f7864eb0f4258723",
+      "ext": "png"
+    },
+    {
+      "id": "rp-66699159",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66699159/downloaded_image20240716-23789-js55i6_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/apert-syndrome-8",
+      "legenda": "Sindactilia da mão em perfil.",
+      "autoria": "Christine Lee — Radiopaedia.org",
+      "sha256": "0b65005b6784678d06cad5898788b6f9807a81ab5bf3ae8c7a2d0f4156d68587",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70709295",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70709295/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/ectrodactyly-split-foot-1",
+      "legenda": "Sindactilia dos dedos do pé na radiografia lateral.",
+      "autoria": "Mostafa Mohamed — Radiopaedia.org",
+      "sha256": "721c564cd805112ca039374e8492b2919020db7a39d0b94ac9f1fcad7f0c5fd0",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-70990470",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70990470/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/polydactyly-17",
+      "legenda": "Radiografia: polidactilia pós-axial da mão — sexto dedo com metacarpo próprio.",
+      "autoria": "Gabriel Orlando González Herrera — Radiopaedia.org",
+      "sha256": "1b87ec496b2a47885d30181e5798cfa849f5515e6419e2cbc3c42041c9ce132e",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-70666421",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70666421/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/postaxial-polydactyly-4",
+      "legenda": "Polidactilia pós-axial do pé (oblíqua).",
+      "autoria": "Gabriel Orlando González Herrera — Radiopaedia.org",
+      "sha256": "7329a0bdccc78ef86f0e04423dda361a4980ab55df803971e9c76f6f6a835883",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-68902911",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68902911/downloaded_image20241221-820-qpjee7_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/preaxial-polydactyly-3",
+      "legenda": "Polidactilia pré-axial: polegar duplicado na radiografia.",
+      "autoria": "Sagar Patil — Radiopaedia.org",
+      "sha256": "fe5c22f5697a07e7e649d2177d3b604dcbedfd0b9c07e65aaa60bfd59e6a1688",
+      "ext": "png"
+    },
+    {
+      "id": "rp-73334822",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73334822/dr-gallery.jpg",
+      "urlDoCaso": "https://radiopaedia.org/cases/preaxial-polydactyly-of-the-first-toe",
+      "legenda": "Polidactilia do pé: seis raios na incidência frontal.",
+      "autoria": "Sakshi Priya — Radiopaedia.org",
+      "sha256": "24928842cd31af48682b09e447389458a6cbdef8b34da89e35ef7136bf4db86d",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/politelia": [
+    {
+      "id": "dn-9198",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/supernumerary-nipple-01.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/supernumerary-nipple",
+      "legenda": "Mamilo supranumerário na linha mamária, abaixo da mama, com aréola miniatura — politelia. (DermNet: supernumerary nipple)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "7b1a6d896dfaf73d2aacb7e23fa03c60e66bebe77514d97464379e169cd23f44",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9217",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/supernumerary-nipple-02.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/supernumerary-nipple",
+      "legenda": "Mamilo acessório: pápula rosada com relevo central, tomada por nevo. (DermNet: supernumerary nipple)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "2a882850fd235c8d08665866dd74166ae3be651b2ab0d2c2019a195f8333aa49",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9218",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/supernumerary-nipple-03.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/supernumerary-nipple",
+      "legenda": "Politelia em pele escura: mácula castanha com aréola. (DermNet: supernumerary nipple)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "32901c41dd511e55750cae9f33ea35b808faeabcb716e0413376d2063547ae90",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-18185",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/site-age-specific/s/supernumnipple.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/supernumerary-nipple",
+      "legenda": "Mamilo supranumerário no abdome (asterisco). (DermNet: supernumerary nipple)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5904dd9721809b60e1a0d7895760ca3865aa2ccf3b9a70d445f706b527e8c9d8",
       "ext": "jpg"
     }
   ],
@@ -18784,6 +23392,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Core IM",
       "videoId": "IPoYwiB-r9w",
       "miniatura": "https://i.ytimg.com/vi/IPoYwiB-r9w/hqdefault.jpg"
+    }
+  ],
+  "sinais/priapismo": [
+    {
+      "id": "wc-priapismo-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/df/Ultrasonography_of_traumatic_arteriovenous_fistula_of_the_penis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ultrasonography_of_traumatic_arteriovenous_fistula_of_the_penis.jpg",
+      "legenda": "Doppler do pênis no priapismo: ausência de fluxo cavernoso (isquêmico) versus fluxo turbulento de fístula (não isquêmico). («Ultrasonography of traumatic arteriovenous fistula of the penis», Wikimedia Commons)",
+      "autoria": "Article authors: Maitê Aline Vieira Fernandes, Luis Ronan Marquez, Ferreira de Souza and Luciano Pousa Cartafina3 · CC BY 4.0",
+      "sha256": "c129b10258ba3b30e05b9630953ccec79e4c8b28856e2e9889d9811c4b3d024f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-priapismo-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/Target_Cells_%2851391831913%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Target_Cells_(51391831913).jpg",
+      "legenda": "Hemácias em foice e células-alvo: a anemia falciforme, causa mais comum de priapismo na criança e no adolescente. («Target Cells (51391831913)», Wikimedia Commons)",
+      "autoria": "Ed Uthman from Houston, TX, USA · CC BY 2.0",
+      "sha256": "ef6bcf76cdf1fa8b17d2d16d11ab867c23c712b3db52b7d5edad01d5363b54f8",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-62754891",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62754891/82cb1ce7ed7230040b079bb640b5ef429bf5cf2e4058a6513ec4fcf067212da5_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/mondor-disease-5",
+      "legenda": "Doppler dos corpos cavernosos no priapismo: fluxo nas artérias cavernosas — a distinção entre isquêmico e de alto fluxo.",
+      "autoria": "Martin Bundi Rugendo — Radiopaedia.org",
+      "sha256": "af2174ac0368fe1d47a0e16a055c6e4324224d0ebe15bbeb5cefddb5695e0c08",
+      "ext": "png"
+    },
+    {
+      "id": "rp-62754892",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62754892/ce168176d1bf155fcc8ded8890632d3c15a46896d9f81e9db54ddfb19d1a3d10_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/mondor-disease-5",
+      "legenda": "Doppler peniano longitudinal no priapismo.",
+      "autoria": "Martin Bundi Rugendo — Radiopaedia.org",
+      "sha256": "5344a9a7e74d20791ed28fe6235dfd3efe474af30d692f3130f590ea38910c28",
+      "ext": "png"
     }
   ],
   "sinais/prolapso-mitral-click": [
@@ -18856,6 +23510,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/prolapso-uterino-e-cistocele": [
+    {
+      "id": "wc-prolapso-uterino-e-cistocele-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/59/Prolapse_of_the_uterus_Wellcome_L0061324.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Prolapse_of_the_uterus_Wellcome_L0061324.jpg",
+      "legenda": "Prolapso uterino total (procidência): o colo e o corpo do útero exteriorizados pela vagina. («Prolapse of the uterus Wellcome L0061324», Wikimedia Commons)",
+      "autoria": "Godart, Thomas · CC BY 4.0",
+      "sha256": "2befff437099178b729131ce58b42302b2c94989e49c75a21e39a2a71ca4b448",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-prolapso-uterino-e-cistocele-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Uterine_prolapse.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Uterine_prolapse.jpg",
+      "legenda": "Prolapso uterino: o colo visível no introito ao esforço. («Uterine prolapse», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "a669d55cb6fa7b2fec342188a35ca1d1053116e88d22aab29902032e72e45449",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-prolapso-uterino-e-cistocele-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/32/Cystocele.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cystocele.jpg",
+      "legenda": "Cistocele: abaulamento da parede vaginal anterior pela bexiga. («Cystocele», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "f5d185bcc0ff0a9dc345c355c12d7bac6a541c28779ce1bf2ba6332f35e9a6f0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-prolapso-uterino-e-cistocele-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Uterine_prolapse_-_standing.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Uterine_prolapse_-_standing.jpg",
+      "legenda": "Prolapso de órgão pélvico em estágio avançado com mucosa exposta. («Uterine prolapse - standing», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "3944fabf86bfbb753002e6efd4d9223b1071295f13748f8b09d82caa750b5fdf",
+      "ext": "jpg"
+    }
+  ],
   "sinais/pronator-drift": [
     {
       "id": "yt-o8zkr3tmszQ",
@@ -18878,6 +23578,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal neurozone videos",
       "videoId": "4YiK9JT7DJo",
       "miniatura": "https://i.ytimg.com/vi/4YiK9JT7DJo/hqdefault.jpg"
+    }
+  ],
+  "sinais/prurigo-estrofulo": [
+    {
+      "id": "dn-14512",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection-O/Papularurticaria/papular-urticaria-00001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/papular-urticaria",
+      "legenda": "Pápulas escoriadas agrupadas nas pernas da criança — prurigo estrófulo (urticária papular por picadas). (DermNet: Papular urticaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "35abf2c7290026068d8a197841b1744360be27cb949bc27fa6ac11319f757706",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-10332",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/arthropods/papurt3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/papular-urticaria",
+      "legenda": "Pápulas urticadas agrupadas no ombro, algumas com vesícula central. (DermNet: Papular urticaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "014339c4c6009582281011ee0629d6e829f398bacd4a0120cf5dad79cd4b40ea",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-10336",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/arthropods/papurt2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/papular-urticaria",
+      "legenda": "Pápulas e bolhas tensas por picada de inseto no antebraço. (DermNet: Papular urticaria)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "7704c62f9c326ddd8b5f84c0fd9523d657209e17c1fc918c1bdf4371504498f9",
+      "ext": "jpg"
     }
   ],
   "sinais/pseudo-hipertrofia-de-panturrilha": [
@@ -19015,6 +23750,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Pterígio: Proliferação fibrovascular triangular da conjuntiva bulbar, com ápice avançando sobre a córnea a partir do limbo, mais frequente do lado nasal, uni ou bilateral;",
       "autoria": "Red eye2008 · CC BY-SA 3.0",
       "sha256": "0a0557c71f88689960d224f7b0ecdef46c6a87f60419aeeb4d7a3aefa81d2854",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ptose-bilateral-miastenica": [
+    {
+      "id": "wc-ptose-bilateral-miastenica-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/57/Myasthenia_gravis_ptosis_reversal.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Myasthenia_gravis_ptosis_reversal.jpg",
+      "legenda": "Miastenia gravis: ptose bilateral assimétrica (a) que melhora após repouso ou gelo (b). («Myasthenia gravis ptosis reversal», Wikimedia Commons)",
+      "autoria": "Mohankumar Kurukumbi, Roger L Weir, Janaki Kalyanam, Mansoor Nasim, Annapurni Jayam-Trouth. · CC BY 2.0",
+      "sha256": "c551f29975726a24716db3aec5c4d7c78a2da6684934cc236cc0fcc41695a45c",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ptose-bilateral-miastenica-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/33/Ptosis_myasthenia_gravis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ptosis_myasthenia_gravis.jpg",
+      "legenda": "Ptose bilateral da miastenia gravis com testa franzida para compensar. («Ptosis myasthenia gravis», Wikimedia Commons)",
+      "autoria": "Mohankumar Kurukumbi, Roger L Weir, Janaki Kalyanam, Mansoor Nasim, Annapurni Jayam-Trouth. · CC BY 2.0",
+      "sha256": "c0d3ba0eb21e2e5311e4eea8dcb52a1b3d5768a382de4c786a02e3aef08f5786",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ptose-bilateral-miastenica-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Myasthenia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Myasthenia.jpg",
+      "legenda": "Olhar \"sonolento\" da miastenia: ptose e paresia ocular variáveis. («Myasthenia», Wikimedia Commons)",
+      "autoria": "Cumulus at Dutch Wikipedia · CC BY-SA 3.0",
+      "sha256": "118109742621e4d546d41f77fee9d6b3bb7addf7cad37777c5a21039f204d4e0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ptose-bilateral-miastenica-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b2/DiplopiaMG1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DiplopiaMG1.jpg",
+      "legenda": "Estrabismo e ptose na miastenia gravis ocular — a diplopia que flutua. («DiplopiaMG1», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "a8092188356a6fb44e0508b10bdc5167eb746c0f2d3f6204dd5ec6cd78d62b15",
       "ext": "jpg"
     }
   ],
@@ -19173,6 +23954,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/l_1uhSENtxA/hqdefault.jpg"
     }
   ],
+  "sinais/pupila-de-adie": [
+    {
+      "id": "wc-pupila-de-adie-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Adies.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Adies.png",
+      "legenda": "Pupila de Adie: midríase unilateral que reage lentamente à luz e melhor à acomodação. («Adies», Wikimedia Commons)",
+      "autoria": "Casper · CC BY-SA 3.0",
+      "sha256": "756569211b7206eb5620b860c251d3e2316f07fb70e8e39240fe92cc166fc039",
+      "ext": "png"
+    },
+    {
+      "id": "wc-pupila-de-adie-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/31/Dilated_pupil.gk.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Dilated_pupil.gk.jpg",
+      "legenda": "Pupila dilatada unilateral — anisocoria maior no claro (a pupila grande é a doente). («Dilated pupil.gk», Wikimedia Commons)",
+      "autoria": "grendel|khan and Lady Byron · CC BY-SA 3.0",
+      "sha256": "96e6318838c1b5f1cc580a4eb0a9401d28a1c9a4bbaf38553f54b3ee16e968f3",
+      "ext": "jpg"
+    }
+  ],
   "sinais/pupila-de-argyll-robertson": [
     {
       "id": "yt-SxkY0T7zLvI",
@@ -19286,6 +24091,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Púrpura de Henoch-Schönlein: Púrpura palpável (pápulas purpúricas de 2 a 10 mm) simétrica nos membros inferiores e nádegas, em surtos, com plaquetas normais;",
       "autoria": "Madhero88 · CC BY-SA 3.0",
       "sha256": "472e5073a61384e5fad990ec31fa1c093601d97d7f59ac383341dc6b1458ef1e",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/purpura-senil": [
+    {
+      "id": "dn-9610",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/senile-purpura-1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/senile-purpura",
+      "legenda": "Placas purpúricas irregulares, de bordas nítidas, no antebraço atrófico do idoso, sem trauma proporcional — púrpura senil (actínica). (DermNet: Senile purpura)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c517185063d34c81f58a76976300d7ed636bc63ffd73182dfbca6b41f2198f63",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9628",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/senile-purpura-2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/senile-purpura",
+      "legenda": "Placas purpúricas irregulares, de bordas nítidas, no antebraço atrófico do idoso, sem trauma proporcional — púrpura senil (actínica). (DermNet: Senile purpura)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "93b0fc29e04054bd668bac6c9430ee5dcd7c497bf48769f09ddae7385cac8991",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9655",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/senile-purpura-4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/senile-purpura",
+      "legenda": "Placas purpúricas irregulares, de bordas nítidas, no antebraço atrófico do idoso, sem trauma proporcional — púrpura senil (actínica). (DermNet: Senile purpura)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "24abd9a5d8042340f0e5cd541ce5fe5ddaff103fac611ffdf9451e570f09c1a3",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9652",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/senile-purpura-6.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/senile-purpura",
+      "legenda": "Placas purpúricas irregulares, de bordas nítidas, no antebraço atrófico do idoso, sem trauma proporcional — púrpura senil (actínica). (DermNet: Senile purpura)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "953e1239b034fa7b874f039bef9144b262f3f851051afc01621ff7e5db66733a",
       "ext": "jpg"
     }
   ],
@@ -19514,6 +24365,142 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Cicatriz que virou tumor: firme, brilhante, rosada ou escura, que ultrapassa as bordas da ferida original e cresce em garra — no lóbulo da orelha, no ombro, no tórax. («Keloid-Hyperinflammatory , Chest Wall Keloid, Butterfly Keloid», Wikimedia Commons)",
       "autoria": "Htirgan · CC BY-SA 3.0",
       "sha256": "db386a80013434c74de10ae7b7791532596f23f812ae6b8fa27504bd9d8ee507",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/queratoacantoma": [
+    {
+      "id": "dn-17861",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/keratoacanthoma/2991.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratoacanthoma",
+      "legenda": "Queratoacantoma: nódulo em cúpula com cratera central preenchida por rolha de queratina, surgido em semanas. (DermNet: Keratoacanthoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "abe02cc6cf9b96a185e0f40b2a8b6453900b3b6c323cdeda17e02aa0b3e0b985",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-11752",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/keratoacanthoma/3003.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratoacanthoma",
+      "legenda": "Queratoacantoma na pele fotoexposta: borda lisa e brilhante ao redor da cratera córnea. (DermNet: Keratoacanthoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d39dac89b83f6865f1f8068e57e3304c636c03dd82a8524b026ecf1d84c9a98d",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-17858",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/lesions/keratoacanthoma/2997.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/keratoacanthoma",
+      "legenda": "Queratoacantoma em fase proliferativa — o crescimento rápido é a pista. (DermNet: Keratoacanthoma)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1ac3f3362dadc98bff1215eb64d4f812ebb26930f53743d9d782c3f88df4ccb8",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-queratoacantoma-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/98/Keratoacanthoma_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Keratoacanthoma_2.jpg",
+      "legenda": "Queratoacantoma: nódulo em cúpula com cratera central de queratina e crosta hemorrágica. («Keratoacanthoma 2», Wikimedia Commons)",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "f486347204118b11d39da851062208f3384552a31733666c84bc2e23f702f0e0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-queratoacantoma-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/02/Keratoacanthoma.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Keratoacanthoma.jpg",
+      "legenda": "Queratoacantoma visto de perto: a cratera cheia de queratina cercada por borda lisa e elevada. («Keratoacanthoma», Wikimedia Commons)",
+      "autoria": "The Armed Forces Institute of Pathology · Public domain",
+      "sha256": "d77ec18aa9cc454f4baac58e6b578873dae6473827d7d41b95e5a323d7ef1b47",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/ranula-e-mucocele": [
+    {
+      "id": "wc-ranula-e-mucocele-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Ranula_human_09.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ranula_human_09.jpg",
+      "legenda": "Rânula: tumefação azulada e translúcida no assoalho da boca, lateral ao freio, elevando a língua. («Ranula human 09», Wikimedia Commons)",
+      "autoria": "Ph0t0happy · CC BY-SA 3.0",
+      "sha256": "a36592f27361a599007b9f773935a692c6790452bf0709a0a569b89e574fdbf8",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ranula-e-mucocele-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/48/Ranula_large.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ranula_large.jpg",
+      "legenda": "Rânula volumosa no assoalho da boca. («Ranula large», Wikimedia Commons)",
+      "autoria": "Dikkisherpa5 · CC0",
+      "sha256": "4029d44e40945c1522af26a9248bd28d6e514dc3ceda59a9dcb2412fc9a6d8eb",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ranula-e-mucocele-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Mucocele02-17-06cropped.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mucocele02-17-06cropped.jpg",
+      "legenda": "Mucocele do lábio inferior: bolha azulada e mole que estoura e volta. («Mucocele02-17-06cropped», Wikimedia Commons)",
+      "autoria": "No machine-readable author provided. Dozenist assumed (based on copyright claims). · CC BY-SA 3.0",
+      "sha256": "c588067d436f14ec55013ee3f005180791a46198dcc7a5ed79de850874d4a4ea",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ranula-e-mucocele-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/bb/Surgical_removal_of_a_Mucocele..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Surgical_removal_of_a_Mucocele..jpg",
+      "legenda": "Mucocele labial antes e depois da excisão cirúrgica. («Surgical removal of a Mucocele.», Wikimedia Commons)",
+      "autoria": "Jeffrey Dorfman · CC BY-SA 3.0",
+      "sha256": "ecd21a7a0ebf6429c1a855ac7c57fc98be30cb3e1f197654fd38fe4298b0c861",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-66401702",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66401702/ec8736e731069ccdea62046795953bc9bc62442115b9e3e451db372fc016e408_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/thyroglossal-duct-cyst-31",
+      "legenda": "TC axial: rânula — lesão cística de baixa densidade no assoalho da boca, no espaço sublingual.",
+      "autoria": "Tariq Walizai — Radiopaedia.org",
+      "sha256": "eceff24b2253fd14e21c6af540cd1fbbf547c06e11cb95e727800394926ad520",
+      "ext": "png"
+    },
+    {
+      "id": "rp-66400648",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66400648/edd61de3eb0c055b05324f91b545b7159b6a7551a6d05134b3a841b7e0493857_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/thyroglossal-duct-cyst-31",
+      "legenda": "TC coronal da rânula: o cisto sublingual e sua relação com o milo-hióideo.",
+      "autoria": "Tariq Walizai — Radiopaedia.org",
+      "sha256": "c9d3325e2efd43a92c00ca8a658cccdd4986efe8a4bb099b7e41cf82dd0499ed",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-66400956",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66400956/30bb48e400bc8a2ff3b94bb8e482263bd7d20c961280cfbfae76f2a89ef994b1_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/thyroglossal-duct-cyst-31",
+      "legenda": "TC sagital: rânula mergulhante estendendo-se do assoalho da boca ao espaço submandibular.",
+      "autoria": "Tariq Walizai — Radiopaedia.org",
+      "sha256": "0dfc5fdc61cae6c70ca77f4b07e02fdc4aef0466a405b68f6b0099ff26d3f3d3",
       "ext": "jpg"
     }
   ],
@@ -19891,6 +24878,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/rubeola": [
+    {
+      "id": "dn-10175",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/viral/rubella3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/rubella",
+      "legenda": "Exantema róseo, fino e não confluente da rubéola no tronco da criança. (DermNet: Rubella rash)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ba1c01af6627757788b6235a56f17a7d839057f878fc3b111eaddbb99fa4c0fe",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-10189",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/viral/rubella2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/rubella",
+      "legenda": "Máculas rosadas discretas — rubéola. (DermNet: Rubella rash)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "65d6d817248c2535bff639bf0bb1e2530128b7a11aa55199ae3fb1819248b299",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-10207",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/viral/rubella1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/rubella",
+      "legenda": "Exantema rubeólico visto de perto: máculas pequenas, róseas, separadas por pele sã. (DermNet: Rubella rash)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "c0d5e170a92ddb88ef6d09b251ced637d314bfb7b42a7fba7799399055ca8051",
+      "ext": "jpg"
+    }
+  ],
   "sinais/sarampo": [
     {
       "id": "wc-rougeoledp-jpg",
@@ -20002,6 +25024,96 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Máculas, placas ou nódulos violáceos ou marrom-avermelhados, indolores, na pele e na boca de um paciente com HIV — o tumor vascular do herpesvírus 8, e uma doença definidora de aids. (DermNet: Patch stage KS)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "f74ea8b8b2b3c5fac78be6280ecc188ec1fd1969b7504b32d4f124dd9da02102",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sialolitiase-wharton": [
+    {
+      "id": "wc-sialolitiase-wharton-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/55/Salivary_stone_in_submandibular_salivary_duct.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Salivary_stone_in_submandibular_salivary_duct.jpg",
+      "legenda": "Cálculo no ducto de Wharton: a pedra visível no assoalho da boca, junto à carúncula (seta). («Salivary stone in submandibular salivary duct», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "cbb073aa06562803235756dca73ddb61a42cfbfeea55a9789afd71e044cbe0f8",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sialolitiase-wharton-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Salivary_gland_stone_removed.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Salivary_gland_stone_removed.jpeg",
+      "legenda": "Sialolitíase: cálculo extraído do ducto submandibular. («Salivary gland stone removed», Wikimedia Commons)",
+      "autoria": "Peternickson · CC0",
+      "sha256": "1b7d796509b8f7d5b4a570b62ed96605d5fe4250360adb844fcecde215e47273",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sialolitiase-wharton-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Submandular2.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Submandular2.JPG",
+      "legenda": "Tumefação submandibular dolorosa às refeições: a glândula obstruída pelo cálculo. («Submandular2», Wikimedia Commons)",
+      "autoria": "James Heilman, MD · CC BY-SA 3.0",
+      "sha256": "2ed64ae22ce341827e800f2e7bcb92904b6e92254136a4b24705abe00be352b1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sialolitiase-wharton-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/85/Bild_Speichelstein.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Bild_Speichelstein.jpg",
+      "legenda": "Sialolito submandibular com régua: formato alongado do ducto. («Bild Speichelstein», Wikimedia Commons)",
+      "autoria": "Dr. Ogen · CC BY-SA 4.0",
+      "sha256": "57a2bed09a5781185bf2b815fb4558b756929c8bff2753c279286e20fa04fd00",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74900955",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74900955/0721ffc76450ce0a0a1073849b4426531f2c3029f423f27c2224774aa85c0274_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/submandibular-duct-calculi-1",
+      "legenda": "TC axial: cálculo denso no ducto de Wharton, no assoalho da boca.",
+      "autoria": "Soo Tze Hui — Radiopaedia.org",
+      "sha256": "2bf0d7d757c39a195280bc8e79e0e62a30817c001572d1ee948b2165c7526a24",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74901015",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74901015/01c1a5545199cef3632bc1aa8197c08dcfdd77785718b16f25f7852f1e8e6ba8_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/submandibular-duct-calculi-1",
+      "legenda": "TC coronal: sialolito submandibular com a glândula aumentada a montante.",
+      "autoria": "Soo Tze Hui — Radiopaedia.org",
+      "sha256": "82f1325dd1a3949f6061bc8de98b7d905280bc97298350d82ef05ba95bd49ec9",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-74071127",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74071127/97f068b1a5a0bd46e5666a7c675effd3550ce8ced990d0ff22e5c6271a03fcd8_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/submandibular-sialolithiasis-8",
+      "legenda": "Ultrassom: cálculo ecogênico com sombra no ducto submandibular dilatado.",
+      "autoria": "Magdi Mahsoub — Radiopaedia.org",
+      "sha256": "548241db9ad4821cbf846e6bf5554e4703643bba21e62d8b48defefb88f4f72b",
+      "ext": "png"
+    },
+    {
+      "id": "rp-70983378",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70983378/0a32ad55e0d4aa578da9abfaf4b9e0b1910541abb57c7d6aced86157f87f7b6e_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/sialolithiasis-17",
+      "legenda": "TC axial ampliada: o cálculo no trajeto do ducto de Wharton.",
+      "autoria": "James Bott — Radiopaedia.org",
+      "sha256": "ff2cbde698d24426ddfd7151c979ea89e4f90d66993c000788c081eeb3b89f43",
       "ext": "jpg"
     }
   ],
@@ -20547,6 +25659,28 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal Clinical Examination Skills with Dr Naimat",
       "videoId": "Nj8102-iTQQ",
       "miniatura": "https://i.ytimg.com/vi/Nj8102-iTQQ/hqdefault.jpg"
+    },
+    {
+      "id": "wc-sinal-de-trousseau-l5-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/40/%D0%A0%D1%83%D0%BA%D0%B0_%D0%B0%D0%BA%D1%83%D1%88%D0%B5%D1%80%D0%B0..jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%D0%A0%D1%83%D0%BA%D0%B0_%D0%B0%D0%BA%D1%83%D1%88%D0%B5%D1%80%D0%B0..jpg",
+      "legenda": "Espasmo carpal da tetania. («Рука акушера.», Wikimedia Commons)",
+      "autoria": "Eminamrah · CC BY-SA 4.0",
+      "sha256": "2b21e344ed6632d23b3f3bdd6e52a1dfa1425d13fa8bce12bc3a0b8a2a2fe341",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sinal-de-trousseau-l5-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/03/ECG_Hypocalcemia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:ECG_Hypocalcemia.jpg",
+      "legenda": "ECG na hipocalcemia: intervalo QT prolongado. («ECG Hypocalcemia», Wikimedia Commons)",
+      "autoria": "Ewingdo · CC BY-SA 4.0",
+      "sha256": "61fe91ad28ed649e0a0f53fc72fd9818eee38ca1aa4113c6a4ace970f7e465fb",
+      "ext": "jpg"
     }
   ],
   "sinais/sinal-do-polegar-e-do-punho": [
@@ -20805,6 +25939,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/sinovite-de-punho": [
+    {
+      "id": "wc-sinovite-de-punho-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/35/Rheumatoid_Arthritis_Hand.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rheumatoid_Arthritis_Hand.jpg",
+      "legenda": "Sinovite do punho na artrite reumatoide: edema dorsal difuso que apaga os tendões extensores. («Rheumatoid Arthritis Hand», Wikimedia Commons)",
+      "autoria": "Amm0nium · CC BY-SA 4.0",
+      "sha256": "2b6f3e70398aaae3cbd9e7364f15bcefae05c3f2affd6014bc252feaba45cd13",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sinovite-de-punho-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7a/Rheumatoid_arthritis_with_carpal_ankylosis_2017.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rheumatoid_arthritis_with_carpal_ankylosis_2017.jpg",
+      "legenda": "Radiografia do punho reumatoide: erosões, redução do espaço radiocárpico e osteopenia periarticular. («Rheumatoid arthritis with carpal ankylosis 2017», Wikimedia Commons)",
+      "autoria": "Mikael Häggström · CC0",
+      "sha256": "3204635e0931d5ddbe16aa54c9d36da1e1dfa861a9a9668b8c4387e59e6a85b8",
+      "ext": "jpg"
+    }
+  ],
   "sinais/sopro-de-estenose-aortica": [
     {
       "id": "yt-8V31MlDrg_0",
@@ -20945,6 +26103,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Richard D. Judge, MD e Rajesh Mangrulkar, MD — Heart Sound & Murmur Library, University of Michigan (CC BY-SA 3.0)",
       "sha256": "55e8a2c29cfca28ed0f3abb52b75bac497c5e1864082652674f043f213038481",
       "ext": "mp3"
+    }
+  ],
+  "sinais/sulco-de-harrison": [
+    {
+      "id": "wc-sulco-de-harrison-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/0e/A_child_with_rickets_in_1949.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:A_child_with_rickets_in_1949.jpg",
+      "legenda": "Criança com raquitismo: sulco de Harrison na base do tórax, abdome protuso e pernas arqueadas. («A child with rickets in 1949», Wikimedia Commons)",
+      "autoria": "Photo Division, Ministry of Information &amp; Broadcasting, Government of India · Public domain",
+      "sha256": "3a853535507ee9f4701c3a168f1b731bd513516962e8e26b2590dee1a4833dea",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sulco-de-harrison-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/16/Before_and_after_photographs_for_heliotherapy_Wellcome_L0074522.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Before_and_after_photographs_for_heliotherapy_Wellcome_L0074522.jpg",
+      "legenda": "Raquitismo antes e depois do tratamento: o sulco diafragmático e a deformidade torácica. («Before and after photographs for heliotherapy Wellcome L0074522», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "cf3656d9206c88ff0c36bec4a06493db6c33ccab42e7dd1186ba4672faf282d0",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sulco-de-harrison-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Before_and_after_photographs_for_therapy_for_rickets_Wellcome_L0074524.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Before_and_after_photographs_for_therapy_for_rickets_Wellcome_L0074524.jpg",
+      "legenda": "Tórax raquítico com sulco de Harrison e rosário costal — fotografia histórica. («Before and after photographs for therapy for rickets Wellcome L0074524», Wikimedia Commons)",
+      "autoria": "autor não informado · CC BY 4.0",
+      "sha256": "cfeeee9c8bb2a6a0cf55060d0a5651bd9fda596b27c0e9ce2b7c2ef506869288",
+      "ext": "jpg"
     }
   ],
   "sinais/telangiectasias": [
@@ -21457,6 +26650,177 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/U3Ktz-UbqDo/hqdefault.jpg"
     }
   ],
+  "sinais/tricotilomania": [
+    {
+      "id": "dn-19574",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/doctors/follicular/images/hairloss10.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/trichotillomania",
+      "legenda": "Área de alopecia irregular com cabelos quebrados em comprimentos diferentes — tricotilomania. (DermNet: Trichotillomania)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "32dbfd10d1eb6766cd9fb773ac3b7139f06418f0b3af9e289c7876f6c4b2a9c5",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-16630",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/trichotillomania-03.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/trichotillomania",
+      "legenda": "Placa de rarefação de contorno bizarro, com cabelos curtos e quebrados de várias alturas. (DermNet: trichotillomania 03)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "2c2b8fdb3a241ab057e64ce4a5f3ff17ddf01c7c25dc8ba753e274440992e2f2",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-16153",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/trichotillomania2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/trichotillomania",
+      "legenda": "Cabelos quebrados a alturas diferentes vistos de perto. (DermNet: trichotillomania2)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "02b20fda09bed44e2025dae8f33b19f42a89ec160b2c46dba6051cb50fb3679d",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/triquiase-e-tracoma": [
+    {
+      "id": "wc-triquiase-e-tracoma-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1d/Trachoma_1.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Trachoma_1.png",
+      "legenda": "Tracoma: folículos na conjuntiva tarsal evertida (a, b), cicatrizes e triquíase com opacidade corneana (c, d). («Trachoma 1», Wikimedia Commons)",
+      "autoria": "Hu VH, Harding-Esch EM, Burton MJ, Bailey RL, Kadimpeul J, Mabey DC. · CC BY 2.5",
+      "sha256": "f1096d6c84958b982c60dde6543431b201e1f8cbf2e0fe65561b2304ede3c47b",
+      "ext": "png"
+    },
+    {
+      "id": "wc-triquiase-e-tracoma-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Entropion_and_trichiasis_secondary_to_trachoma_A44-652-11.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Entropion_and_trichiasis_secondary_to_trachoma_A44-652-11.jpg",
+      "legenda": "Entrópio com triquíase: os cílios voltados contra a córnea, corrigidos cirurgicamente. («Entropion and trichiasis secondary to trachoma A44-652-11», Wikimedia Commons)",
+      "autoria": "Otis Historical Archives Nat'l Museum of Health &amp; Medicine · CC BY 2.0",
+      "sha256": "f4f1eb6b927bb72c4c8c41c9180f5bfb6f50b36f6bac3e58767af8245bce08c4",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/trissomias-18-e-13": [
+    {
+      "id": "wc-trissomias-18-e-13-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Overlapping_fingers.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Overlapping_fingers.JPG",
+      "legenda": "Trissomia 18: mão cerrada com o indicador cavalgando o médio e o mínimo sobre o anular. («Overlapping fingers», Wikimedia Commons)",
+      "autoria": "Bobjgalindo · CC BY-SA 4.0",
+      "sha256": "6325ce2911f9e03813f1ef2888e694ba5cf712927df889767d6de4cfbb74d2af",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-trissomias-18-e-13-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Trisomy_17-18_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Trisomy_17-18_1.jpg",
+      "legenda": "Síndrome de Edwards: occipício proeminente, micrognatia e orelhas baixas. («Trisomy 17-18 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "6f440fdafa8f8429b5064d810961c77f1d70a9afe4256bdf0b834bd0295f16e5",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-trissomias-18-e-13-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Trisomy_17-18_5.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Trisomy_17-18_5.jpg",
+      "legenda": "Pés em mata-borrão (rocker-bottom) da trissomia 18: calcanhar saliente e planta convexa. («Trisomy 17-18 5», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "5d962b90c9630838c4239b7f5794f2b04f2efeaa20b5e297d96a827725efa3ed",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-trissomias-18-e-13-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/18/Trisomy_13-15_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Trisomy_13-15_2.jpg",
+      "legenda": "Síndrome de Patau: fenda labiopalatina mediana e microftalmia. («Trisomy 13-15 2», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "980174160c71d161f4a644d493828006a209f8375972477c4075db0cfb4924c8",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-trissomias-18-e-13-5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Patauface.PNG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Patauface.PNG",
+      "legenda": "Trissomia 13: defeitos faciais da linha média por holoprosencefalia. («Patauface», Wikimedia Commons)",
+      "autoria": "Chan A et al · CC BY 2.0",
+      "sha256": "82faaac6afbd2a0258d55fb199489455e8ef219a7bd4b40ceb53430735bd82d8",
+      "ext": "png"
+    },
+    {
+      "id": "rp-64885990",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64885990/09b14a03b5a37bce6a26f823f678f5799f9a895a953338ec750850fe90c767ca_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/triphalangeal-thumb-3",
+      "legenda": "Radiografia da mão na trissomia 13: polidactilia pós-axial.",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "c44207652c06798ee0288d0dca7a949b920256d3340805f4dae86821ce2d5ab5",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-64885989",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64885989/462499309aa647b47b15d2858779b3536e3a0a18c5ba5680a01ceb4d3cd7139f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/triphalangeal-thumb-3",
+      "legenda": "Polidactilia na síndrome de Patau (oblíqua).",
+      "autoria": "Ashesh Ishwarlal Ranchod — Radiopaedia.org",
+      "sha256": "a986a7e6e0b82504be904b8a93174b4c8a8f2e280a5cdaf6795a6b15a34a60d8",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-51614205",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/51614205/1a6634bd2dd597db0af86a724bfac1_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/meckel-gruber-syndrome-2",
+      "legenda": "Ultrassom fetal na trissomia 13: rins aumentados bilateralmente.",
+      "autoria": "Shazia Wasim Khan — Radiopaedia.org",
+      "sha256": "cc32a4348bcbecab36cd2c3defac332267d2e1f103c234f590f33eeace222e88",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-51614206",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/51614206/b2d8086f03925a8dd7864a588fc5ef_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/meckel-gruber-syndrome-2",
+      "legenda": "Ultrassom fetal: encefalocele na síndrome de Patau.",
+      "autoria": "Shazia Wasim Khan — Radiopaedia.org",
+      "sha256": "bf769c2a01c63c296669adfd52bf57421dc51f49ee6603f49c7bce6f4d5771e8",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-5696198",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/5696198/fcdbbf9f70123526718fcdbc0fb8bb3ee34af668ce8258a24dd980e7482db1e8_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/cyclopia-with-proboscis",
+      "legenda": "Ultrassom fetal: probóscide — holoprosencefalia alobar da trissomia 13.",
+      "autoria": "Rupesh Namdev — Radiopaedia.org",
+      "sha256": "9d6997eaf496447d81399f10343a110c437523b553596bb33d88d95f2cbfd9b3",
+      "ext": "jpg"
+    }
+  ],
   "sinais/tromboflebite-superficial": [
     {
       "id": "wc-angiokeratoma-new-photo-for-diagnosis-jpg",
@@ -21768,6 +27132,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/unha-em-vidro-de-relogio": [
+    {
+      "id": "dn-17687",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/s/clubbing1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/nail-terminology",
+      "legenda": "Baqueteamento digital: unhas em vidro de relógio, convexas em todos os sentidos, com perda do ângulo de Lovibond. (DermNet: Clubbing)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "64f6e26cd76d55fde2e882bdce01db0c5f28ec3fb585edf137b7096a8b230fd8",
+      "ext": "jpg"
+    }
+  ],
   "sinais/unha-encravada": [
     {
       "id": "dn-18971",
@@ -21844,6 +27221,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Borda lateral da unha do hálux enterrada na prega, que responde com dor, eritema e um tecido de granulação vermelho e úmido que sangra ao toque. («Ingrown Toenail, Onychocryptosis, Wedge Resection 01», Wikimedia Commons)",
       "autoria": "Dr. Harry Gouvas · CC BY-SA 3.0",
       "sha256": "d5324e5482a5d373f7cde1e2fb0fc406a539f977f49141f5427c157d6dec8c07",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/unhas-de-muehrcke-e-lindsay": [
+    {
+      "id": "dn-1140",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Leukonychia/leukonychia-0001.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/leukonychia-images",
+      "legenda": "Bandas brancas transversais paralelas que não se movem com o crescimento — linhas de Muehrcke (hipoalbuminemia). (DermNet: Leukonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "39e7a75831f9e4deb8e2b53cc33dcaaa1ec79a81e4af27a278a3890a1e562376",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1141",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Leukonychia/leukonychia-0004.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/leukonychia-images",
+      "legenda": "Unha \"meio a meio\" (Lindsay): metade proximal branca, distal castanho-avermelhada — doença renal crônica. (DermNet: Leukonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "adc148efd670c09d6433f4c32b0ae74d5f88a4e073f3e9658a0161b3c3ea3f2c",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1147",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Leukonychia/leukonychia-0006.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/leukonychia-images",
+      "legenda": "Unha half-and-half do renal crônico. (DermNet: Leukonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "e10dfcaf2926e25adabc2934e35da15ec90a7fac8bc625d5de2542dbb4bfbe2f",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-1146",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/collection/Leukonychia/leukonychia-0007.jpg",
+      "urlDoCaso": "https://dermnetnz.org/images/leukonychia-images",
+      "legenda": "Half-and-half nails em várias unhas: a demarcação transversa nítida. (DermNet: Leukonychia)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "9951a0fc30b8c2938fdc63fb3836729cad50495fa1416211cf62e5726fbf6917",
       "ext": "jpg"
     }
   ],
@@ -22009,6 +27432,74 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/varicocele-exame-fisico": [
+    {
+      "id": "wc-varicocele-exame-fisico-1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Varicocele%2C_front_view.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Varicocele,_front_view.jpg",
+      "legenda": "Varicocele grau III à esquerda: o \"saco de vermes\" visível através da pele escrotal em pé. («Varicocele, front view», Wikimedia Commons)",
+      "autoria": "Jfday · CC BY-SA 4.0",
+      "sha256": "e89311f7779b10e31d3c876a88cc9be8db8eccc9a6a8c331e3c64ee881696496",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-varicocele-exame-fisico-2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7f/Varicocele_Hoden.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Varicocele_Hoden.JPG",
+      "legenda": "Varicocele volumosa deformando o hemiescroto esquerdo. («Varicocele Hoden», Wikimedia Commons)",
+      "autoria": "Dynamit888 · CC BY-SA 4.0",
+      "sha256": "80f69d690ab009b3c22682442182f44b46b2e36038dc3dcdf2d143fe14d3baa1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-varicocele-exame-fisico-3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Photo_varicocele_testicule_gauche_l%C3%A9gend%C3%A9.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Photo_varicocele_testicule_gauche_l%C3%A9gend%C3%A9.jpg",
+      "legenda": "Varicocele: plexo pampiniforme dilatado acima do testículo, comparado ao lado normal. («Photo varicocele testicule gauche légendé», Wikimedia Commons)",
+      "autoria": "Devtura · CC BY 4.0",
+      "sha256": "87df5cc47b05b1404823fe29a6bf712f6aa3055615f1f72d754f90aed8a95436",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-varicocele-exame-fisico-4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Left_testicular_seminoma%2C_varicocele%2C_ultrasound_image.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Left_testicular_seminoma,_varicocele,_ultrasound_image.jpg",
+      "legenda": "Doppler: veias do plexo pampiniforme dilatadas com refluxo ao Valsalva. («Left testicular seminoma, varicocele, ultrasound image», Wikimedia Commons)",
+      "autoria": "Jmarchn · CC BY-SA 3.0",
+      "sha256": "9d38c5a3f3a46eefd0b92910fe86813a0097d9928bfca1505806fd1622a39c17",
+      "ext": "jpg"
+    },
+    {
+      "id": "rp-72889330",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72889330/33315ad26a162c1b4f109718decfe5e6418276d91c6f5ceb1749ae852bc50664_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/varicocele-15",
+      "legenda": "Varicocele ao Doppler transversal: veias tortuosas acima do testículo esquerdo.",
+      "autoria": "Salah Ibrahim Hanouneh — Radiopaedia.org",
+      "sha256": "247e3fa40fde4f26a54a063f3cbfa212cb9f5857be4d048135646b90519ca7c1",
+      "ext": "png"
+    },
+    {
+      "id": "rp-68525518",
+      "tipo": "imagem",
+      "fonte": "radiopaedia",
+      "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68525518/32d9df8fa3b11cf0ef6ffac219f1e51c04b2e0c61ea9d7aa9fe64d453f25d31f_gallery.jpeg",
+      "urlDoCaso": "https://radiopaedia.org/cases/nutcracker-syndrome-24",
+      "legenda": "Ultrassom com Doppler: as veias dilatadas do cordão se enchem ao esforço.",
+      "autoria": "Moaz Abd Almaged Sharshar — Radiopaedia.org",
+      "sha256": "7beccef6344707e92a6e22789aefc77be59955aed534ec002d9037ea032bec4d",
+      "ext": "jpg"
+    }
+  ],
   "sinais/varizes-de-membros-inferiores": [
     {
       "id": "wc-varicose-veins-jpeg",
@@ -22052,6 +27543,52 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Varizes de membros inferiores: Veias subcutâneas dilatadas (> 3 mm) e tortuosas em pé, no território da safena magna (face medial) ou parva (posterior);",
       "autoria": "Sewell, S A · CC BY 4.0",
       "sha256": "b7eb2c88d11c14ae68054321a83dcbe13157f61fd3c25af7eaefab86977c7f4c",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/vasculite-leucocitoclastica": [
+    {
+      "id": "dn-6439",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/hypersensitivity-vasculitis-v2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/cutaneous-small-vessel-vasculitis",
+      "legenda": "Púrpura palpável: pápulas purpúricas simétricas nas pernas — vasculite leucocitoclástica. (DermNet: Hypersensitivity vasculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d4cd9f8f5135aa6346938b22cb0a5d7cd7360d304727e4ab5aa80e188fa747d9",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9600",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/vasc3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/cutaneous-vasculitis",
+      "legenda": "Púrpura palpável nas nádegas e coxas. (DermNet: Cutaneous vasculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "4ddae5ac9c858c36948382f6ae1e2dbcadb3327185653fd4833fa3b154a6b2ad",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9539",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/vasc6.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/cutaneous-small-vessel-vasculitis",
+      "legenda": "Lesões purpúricas com necrose e bolhas hemorrágicas: vasculite grave. (DermNet: Cutaneous vasculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "f458c57e4cbd6e83221c6e8e55eb972b837d1a6de535f7fe7e697e8e420bf112",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-9533",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/vasc7.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/cutaneous-small-vessel-vasculitis",
+      "legenda": "Púrpura, necrose e úlceras no tornozelo por vasculite de pequenos vasos. (DermNet: Cutaneous vasculitis)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "ce226d8cc874eaf639bddeec2eb24e808bf43b167f497710ccffac39dda01627",
       "ext": "jpg"
     }
   ],
@@ -23547,4 +29084,4 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
 }
 
 /** Quando o acervo foi gerado pela última vez. */
-export const GERADO_EM: string | null = "2026-09-18"
+export const GERADO_EM: string | null = "2026-09-20"
