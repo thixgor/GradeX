@@ -4309,7 +4309,12 @@ body.has-guest-notice {
    deles. Sem o fallback a declaração inteira seria inválida ali e a trilha
    de volta continuaria escondida atrás do menu no celular e no tablet. */
 @media (max-width: 1023.98px) {
-  .rx-abaixo-flutuantes {
+  /* `.abaixo-dos-flutuantes` é o mesmo recuo sem o prefixo do negatoscópio:
+     qualquer seção que peça `showHeader={false}` ao AppShell recebe os mesmos
+     botões flutuantes por cima e precisa da mesma folga. A Semiologia usa esta
+     grafia; a Radiologia manteve a antiga para não mexer em vinte arquivos. */
+  .rx-abaixo-flutuantes,
+  .abaixo-dos-flutuantes {
     padding-top: var(--rx-flutuantes, calc(3.5rem + env(safe-area-inset-top)));
   }
 }

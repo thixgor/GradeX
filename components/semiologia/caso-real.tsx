@@ -137,7 +137,7 @@ function Palco({ midia, src }: { midia: MidiaClinica; src: string }) {
     return (
       <video
         src={src}
-        className="mx-auto max-h-[70vh] w-full object-contain"
+        className="mx-auto max-h-[70vh] w-full max-w-full object-contain"
         muted
         loop
         playsInline
@@ -149,7 +149,7 @@ function Palco({ midia, src }: { midia: MidiaClinica; src: string }) {
   }
   if (midia.tipo === 'video') {
     return midia.fonte === 'youtube' ? <PlayerExterno midia={midia} src={src} /> : (
-      <video src={src} className="mx-auto max-h-[70vh] w-full object-contain" controls playsInline preload="metadata" aria-label={midia.legenda} />
+      <video src={src} className="mx-auto max-h-[70vh] w-full max-w-full object-contain" controls playsInline preload="metadata" aria-label={midia.legenda} />
     )
   }
   if (midia.tipo === 'audio') {
@@ -173,7 +173,7 @@ function Palco({ midia, src }: { midia: MidiaClinica; src: string }) {
       sizes="(min-width: 1024px) 50vw, 100vw"
       priority
       unoptimized={!otimizavel(src)}
-      className="mx-auto h-auto max-h-[70vh] w-full object-contain"
+      className="mx-auto h-auto max-h-[70vh] w-full max-w-full object-contain"
     />
   )
 }

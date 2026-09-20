@@ -399,8 +399,7 @@ export function OfertaDoPacote({
             Você não escolhe um manual. Você leva os {TOTAL_DE_MODULOS}.
           </h2>
           <p className={`mt-2 text-sm leading-relaxed ${t.fraco}`}>
-            Patologias, farmacologia, eletrocardiograma, radiologia, histologia, anatomia e as calculadoras
-            clínicas. Tudo na mesma conta, aberto no mesmo segundo.
+            {NOMES_DO_PACOTE}. Tudo na mesma conta, aberto no mesmo segundo.
           </p>
           <ul className="mt-4 space-y-1.5">
             {garantias.map((g) => (
@@ -601,10 +600,22 @@ export function BarraDoPacote({
 
 /* ══════════════════════════════ FAQ ══════════════════════════════ */
 
+/**
+ * Os nomes do pacote escritos por extenso, na ordem canônica.
+ *
+ * Montado da lista e não digitado: o texto dizia "as sete seções" e nomeava
+ * sete manuais muito depois de o pacote ter nove — na mesma tela em que o selo
+ * do topo anunciava "9 manuais". Acrescentar um módulo é editar um array, e
+ * esta frase acompanha sozinha.
+ */
+const NOMES_DO_PACOTE = MODULOS_DO_PACOTE.map((m) => m.nomeCurto)
+  .join(', ')
+  .replace(/, ([^,]*)$/, ' e $1')
+
 const PERGUNTAS_DO_PACOTE = [
   {
     q: `Os ${TOTAL_DE_MODULOS} manuais vêm mesmo na mesma compra?`,
-    a: 'Vêm. Não é upsell, não é pacote promocional que expira, não é versão de degustação de cada um. É uma compra só, e ela libera as sete seções completas na mesma hora: Manual Clínico, Farmacologia, Eletrocardiograma, Radiologia, Histologia, Domine Anatomia e Ferramentas Clínicas.',
+    a: `Vêm. Não é upsell, não é pacote promocional que expira, não é versão de degustação de cada um. É uma compra só, e ela libera as ${TOTAL_DE_MODULOS} seções completas na mesma hora: ${NOMES_DO_PACOTE}.`,
   },
   {
     q: 'Dá para comprar só um deles, mais barato?',
@@ -612,7 +623,7 @@ const PERGUNTAS_DO_PACOTE = [
   },
   {
     q: 'Já assino o Manual Clínico. Preciso pagar de novo por algum?',
-    a: `Não, por nenhum. Se você já assina o Manual Clínico ou tem ${PLUS_LABEL}, as sete seções já estão liberadas na sua conta. Basta entrar.`,
+    a: `Não, por nenhum. Se você já assina o Manual Clínico ou tem ${PLUS_LABEL}, as ${TOTAL_DE_MODULOS} seções já estão liberadas na sua conta. Basta entrar.`,
   },
   {
     q: 'O que entra depois eu pago à parte?',

@@ -69,9 +69,16 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        {/* Caso real primeiro, quando existe; figura e controle depois. */}
+        {/* Caso real primeiro, quando existe; figura e controle depois.
+
+            `min-w-0` não é enfeite: abaixo de `lg` a grade tem uma coluna só,
+            e coluna de grade nasce com `min-width: auto` — ou seja, larga o
+            bastante para o conteúdo mínimo do filho. Como a fotografia do caso
+            é limitada pela ALTURA (`max-h-[70vh]`), o mínimo dela é a largura
+            correspondente àquela altura: 800 px numa tela de 390. A coluna
+            inteira estourava a tela e a imagem saía cortada pela direita. */}
         {(sinal.ilustracao || sinal.midiaReal?.length) && (
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-3">
             {sinal.midiaReal && sinal.midiaReal.length > 0 && <CasoReal midias={sinal.midiaReal} cenaId={sinal.slug} />}
             {sinal.ilustracao && sinal.midiaReal && sinal.midiaReal.length > 0 && (
               <h3 className="pt-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Esquema de referência</h3>
@@ -88,7 +95,7 @@ export function FichaDeSinal({ sinal }: { sinal: Sinal }) {
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <Bloco icone={Target} titulo="O que conta como presente">
             <p className="text-sm leading-relaxed"><Enfase texto={sinal.definicao} /></p>
           </Bloco>

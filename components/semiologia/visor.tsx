@@ -253,8 +253,14 @@ export function VisorDeCenas({
         </div>
       </div>
 
+      {/* `min-w-0` nas duas colunas: abaixo de `lg` a grade tem uma coluna só,
+          e uma coluna de grade nasce com `min-width: auto` — larga o bastante
+          para o conteúdo mínimo do filho. A fotografia do caso é limitada pela
+          ALTURA (`max-h-[70vh]`), então o mínimo dela é a largura equivalente
+          àquela altura: ~800 px numa tela de 390. Sem isto a coluna estourava
+          a tela e a imagem saía cortada pela direita no celular. */}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           {/* O caso real vem primeiro quando existe. A fotografia é o que o
               aluno vai encontrar na clínica; o esquema é o gabarito que explica
               o que ele está vendo. A ordem diz qual é qual — e o esquema nunca
@@ -400,7 +406,7 @@ export function VisorDeCenas({
         </div>
 
         {/* Leitura da cena. */}
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           <Bloco icone={Target} titulo="Diagnóstico">
             <p className="text-sm font-medium">{cenaAtual.diagnostico}</p>
           </Bloco>

@@ -6,29 +6,9 @@ import {
   getManualClinicoConfig,
   serializeManualClinicoProduct,
 } from '@/lib/manual-clinico-product'
-import { COMPARADORES } from '@/lib/semiologia/comparadores'
-import { SINAIS } from '@/lib/semiologia/sinais'
-import { TOTAIS } from '@/lib/semiologia/catalogo'
-import { JANELAS_ULTRASSOM } from '@/lib/semiologia/ultrassom'
-import { VISTAS } from '@/lib/semiologia/vistas'
+import { RESUMO_DA_SEMIOLOGIA } from '@/lib/semiologia/resumo'
 
 export const dynamic = 'force-dynamic'
-
-/**
- * Resumo do Manual de Semiologia para a vitrine.
- *
- * Calculado do próprio conteúdo, e não escrito à mão, para que os números
- * anunciados nunca desencontrem do que o módulo entrega. Só títulos e totais
- * atravessam a rede — o corpo das fichas é justamente o que está do outro lado
- * do muro.
- */
-const RESUMO = {
-  ...TOTAIS,
-  titulosSinais: SINAIS.map((sinal) => sinal.nome),
-  titulosVistas: VISTAS.map((vista) => vista.nome),
-  titulosJanelas: JANELAS_ULTRASSOM.map((janela) => janela.nome),
-  titulosComparadores: COMPARADORES.map((comparador) => comparador.titulo),
-}
 
 /**
  * Verificação de acesso ao Manual de Semiologia.
@@ -38,6 +18,12 @@ const RESUMO = {
  * (ambos cobertos por `hasFullAccess`). Não entra na cota de aberturas
  * gratuitas de patologia — o atlas é indivisível, e "três otoscopias grátis"
  * não é uma unidade que signifique alguma coisa.
+ *
+ * O `resumo` que acompanha o veredito é o mesmo que a landing usa, e é só
+ * título e contagem: calculado do próprio conteúdo (ver
+ * `lib/semiologia/resumo.ts`) para que os números anunciados nunca
+ * desencontrem do que o módulo entrega. O corpo das fichas é justamente o que
+ * está do outro lado do muro e nunca atravessa daqui.
  */
 export async function GET() {
   try {
@@ -53,7 +39,7 @@ export async function GET() {
         includedPlan: access.includedPlan ?? null,
       },
       product: serializeManualClinicoProduct(config),
-      resumo: RESUMO,
+      resumo: RESUMO_DA_SEMIOLOGIA,
     })
   } catch (error) {
     console.error('Erro ao verificar acesso ao Manual de Semiologia:', error)

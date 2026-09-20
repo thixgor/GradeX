@@ -13,7 +13,11 @@ export default function SemiologiaPage() {
   return (
     <AreaSemiologia busca={false}>
       <div className="surface-page min-h-screen">
-        <div className="container mx-auto max-w-6xl px-4 py-10">
+        {/* A home é a única rota do módulo sem a barra de busca no topo — lá a
+            busca é o hero. Sem a barra, nada empurra o conteúdo para baixo dos
+            botões flutuantes do AppShell, e o H1 nascia debaixo do menu no
+            celular. `abaixo-dos-flutuantes` é o mesmo recuo que a barra faz. */}
+        <div className="abaixo-dos-flutuantes container mx-auto max-w-6xl px-4 py-10">
           <HomeSemiologia catalogo={montarCatalogo()} />
         </div>
       </div>

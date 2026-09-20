@@ -36,19 +36,29 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
             achar. Ela entende sinônimo, inglês, gíria e erro de digitação. */}
         <div className="mt-6 max-w-2xl">
           <BuscaGlobal variante="hero" placeholder="Buscar sinal, cena ou janela…" />
-          <p className="mt-2 text-[11px] text-muted-foreground">
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
             Experimente <Exemplo termo="flapping" /> <Exemplo termo="linhas B" /> <Exemplo termo="joanete" />{' '}
-            <Exemplo termo="sinal do D" /> <Exemplo termo="Graves" /> — ou tecle <kbd className="rounded border border-border bg-muted px-1 font-mono">/</kbd> de qualquer página do módulo.
+            <Exemplo termo="sinal do D" /> <Exemplo termo="Graves" />
+            {/* O atalho de teclado só existe onde há teclado. Prometê-lo a quem
+                está no celular é ruído numa linha que já está cheia. */}
+            <span className="hidden sm:inline">
+              {' '}
+              — ou tecle <kbd className="rounded border border-border bg-muted px-1 font-mono">/</kbd> de qualquer
+              página do módulo.
+            </span>
           </p>
         </div>
-        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3">
+        {/* Grade e não `flex-wrap`: com quatro números de larguras diferentes, a
+            fileira quebrava em 1 + 2 + 1 no celular e as colunas não alinhavam
+            com nada. Duas colunas fixas põem os quatro em bloco. */}
+        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-8">
           {[
             [totais.sinais, 'sinais do exame físico'],
             [totais.cenas + totais.cenasUltrassom, 'cenas de imagem e ultrassom'],
             [totais.vistas + totais.janelas, 'janelas'],
             [totais.comparadores, 'comparadores'],
           ].map(([valor, rotulo]) => (
-            <div key={String(rotulo)}>
+            <div key={String(rotulo)} className="min-w-0">
               <dt className="sr-only">{rotulo}</dt>
               <dd>
                 <span className="text-2xl font-bold tabular-nums">{valor}</span>{' '}

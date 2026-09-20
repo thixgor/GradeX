@@ -21,26 +21,48 @@ export interface PlanoResumo {
   price: number
   durationMonths: number | null
   enabled: boolean
+  /** Lote dinâmico que desconta este plano, quando há um. */
+  pricingEventId?: string | null
+}
+
+/**
+ * O que a vitrine recebe do servidor.
+ *
+ * Tudo aqui é título e contagem — nunca o corpo de uma ficha. É o recorte
+ * exato que a landing precisa para provar o tamanho do acervo sem entregar o
+ * que está sendo vendido, e por isso ele vale igual para quem tem acesso e
+ * para quem nunca criou conta.
+ */
+export interface ResumoSemiologia {
+  sinais: number
+  vistas: number
+  cenas: number
+  estruturas: number
+  janelas: number
+  cenasUltrassom?: number
+  comparadores: number
+  titulosVistas: string[]
+  titulosJanelas: string[]
+  titulosSinais: string[]
+  titulosComparadores?: string[]
+  perguntasDosComparadores?: string[]
+  sistemas?: { titulo: string; total: number }[]
+  sinaisComDesempenho?: number
+  sinaisComComparador?: number
 }
 
 export interface AcessoSemiologia {
   isAuthenticated: boolean
   access: { hasFullAccess: boolean; reason: string; includedPlan: string | null }
   product: { isActive: boolean; currentPrice: number; price: number; plans?: PlanoResumo[] }
-  resumo?: {
-    sinais: number
-    vistas: number
-    cenas: number
-    estruturas: number
-    janelas: number
-    comparadores: number
-    titulosVistas: string[]
-    titulosJanelas: string[]
-    titulosSinais: string[]
-  }
+  resumo?: ResumoSemiologia
 }
 
-const CHAVE_SESSAO = 'semiologia:acesso:v1'
+// v2: o resumo ganhou os campos que a landing usa (sistemas, contagens de
+// profundidade, perguntas dos comparadores). Reaproveitar a chave antiga faria
+// a vitrine nascer com metade das seções vazias para quem já tinha o veredito
+// v1 guardado na sessão.
+const CHAVE_SESSAO = 'semiologia:acesso:v2'
 
 let promessa: Promise<AcessoSemiologia | null> | null = null
 

@@ -95,6 +95,10 @@ const publicRoutes = [
   // layout do módulo, via lib/histologia/acesso.ts; quem decide se o módulo
   // existe é lib/histologia/licenca.ts. Nenhum dos dois é o middleware.
   '/manual-clinico/histologia',
+  // A landing de vendas do Manual de Semiologia. É pública e é SÓ ela: as
+  // páginas do módulo seguem exigindo sessão, e o visitante sem conta é
+  // reescrito para cá pelo portão logo abaixo — ver ROTA_VITRINE_SEMIOLOGIA.
+  '/manual-clinico/semiologia/vitrine',
   // Landing page lê settings publicamente (videoEmbedUrl, landingPageEnabled,
   // etc). A própria rota faz checagem de admin internamente para PUT.
   '/api/admin/settings',
@@ -270,6 +274,11 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/manual-clinico/eletrocardiograma' ||
     pathname === '/api/manual-clinico/tomografia' ||
     pathname === '/api/manual-clinico/ferramentas' ||
+    // O veredito de acesso ao Manual de Semiologia. Responde sem sessão para
+    // que a sessão expirada no meio do estudo caia na landing completa em vez
+    // de numa vitrine vazia — e o que ele devolve a quem não comprou são
+    // totais, títulos e preço, nunca o corpo de uma ficha.
+    pathname === '/api/manual-clinico/semiologia' ||
     pathname === '/api/farmacologia'
   ) return true
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}$/.test(pathname)) return true
@@ -294,6 +303,27 @@ function withNoIndex(response: NextResponse): NextResponse {
 const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || 'your-secret-key-change-this'
 )
+
+/** A landing pública do Manual de Semiologia. */
+const ROTA_VITRINE_SEMIOLOGIA = '/manual-clinico/semiologia/vitrine'
+
+/**
+ * Só "existe sessão?", sem tocar no banco.
+ *
+ * É o que o Edge consegue responder, e é o bastante para o portão da
+ * Semiologia: quem não tem sessão certamente não comprou. Se comprou ou não,
+ * quem decide continua sendo o handler da API, com o banco na mão.
+ */
+async function temSessaoValida(request: NextRequest): Promise<boolean> {
+  const token = request.cookies.get('auth-token')?.value
+  if (!token) return false
+  try {
+    await jwtVerify(token, secret)
+    return true
+  } catch {
+    return false
+  }
+}
 
 function isDevAuthBypass(): boolean {
   // Edge-safe: only env checks. Never true in production builds.
@@ -424,6 +454,34 @@ export async function middleware(request: NextRequest) {
         // Token expirado ou inválido: segue para a landing normalmente.
       }
     }
+  }
+
+  // ══════════ Portão do Manual de Semiologia ══════════
+  //
+  // Link de sinal compartilhado no grupo de estudo abria no formulário de
+  // login: quem não tem conta nunca via o que havia do outro lado, e a página
+  // de vendas do módulo era inalcançável justamente para o público dela.
+  //
+  // A saída aqui NÃO é abrir a rota como a Radiologia faz. As páginas do
+  // módulo são pré-renderizadas e o portão delas é de cliente — o conteúdo da
+  // ficha viaja no payload mesmo quando a tela mostra a vitrine. Abrir a rota
+  // entregaria o acervo inteiro a qualquer robô.
+  //
+  // Então: reescrita. O visitante sem sessão recebe a landing, com o endereço
+  // que ele abriu preservado na barra (é reescrita, não redirecionamento) e o
+  // caminho original em `?de=` para a página dizer o que ele tentou abrir. A
+  // página do sinal não chega a ser montada, e nada dela sai daqui. Quem tem
+  // sessão segue o caminho de sempre, e o veredito de assinatura continua
+  // sendo do servidor, em /api/manual-clinico/semiologia.
+  if (
+    /^\/manual-clinico\/semiologia(\/|$)/.test(pathname) &&
+    pathname !== ROTA_VITRINE_SEMIOLOGIA &&
+    !isDevAuthBypass() &&
+    !(await temSessaoValida(request))
+  ) {
+    const destino = new URL(ROTA_VITRINE_SEMIOLOGIA, request.url)
+    destino.searchParams.set('de', pathname)
+    return NextResponse.rewrite(destino)
   }
 
   // Rotas públicas: permitir acesso sem autenticação.

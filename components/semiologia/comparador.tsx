@@ -29,6 +29,15 @@ import { Ilustracao } from './ilustracoes/registro'
  * tabela — ninguém memoriza trinta e cinco células, mas cinco chaves cabem na
  * cabeça e resolvem a maioria dos casos.
  */
+/** Quantas figuras cabem lado a lado em tela larga, por número de causas. */
+const COLUNAS_DE_FIGURA: Record<number, string> = {
+  1: 'lg:grid-cols-1',
+  2: 'lg:grid-cols-2',
+  3: 'lg:grid-cols-3',
+  4: 'lg:grid-cols-4',
+  5: 'lg:grid-cols-5',
+}
+
 export function VisorDeComparador({ comparador }: { comparador: Comparador }) {
   const [colunaAtiva, setColunaAtiva] = useState(comparador.colunas[0]?.id ?? '')
   const coluna = comparador.colunas.find((c) => c.id === colunaAtiva) ?? comparador.colunas[0]
@@ -67,9 +76,16 @@ export function VisorDeComparador({ comparador }: { comparador: Comparador }) {
         </ul>
       </section>
 
-      {/* Figuras das causas, lado a lado. */}
+      {/* Figuras das causas, lado a lado.
+
+          As classes são literais e vêm de um mapa: o Tailwind varre o
+          código-fonte procurando nomes de classe, então a variante montada por
+          interpolação (`lg:grid-cols-${n}`) nunca chegava a existir no CSS — em
+          tela larga a fileira caía silenciosamente de volta para duas colunas.
+          Duas no celular continuam sendo a leitura certa: cinco quadrados numa
+          tela de 390 px viram cinco selos. */}
       {comparador.colunas.some((c) => c.ilustracao) && (
-        <div className={`grid gap-3 grid-cols-2 lg:grid-cols-${Math.min(5, comparador.colunas.length)}`}>
+        <div className={`grid grid-cols-2 gap-3 ${COLUNAS_DE_FIGURA[Math.min(5, comparador.colunas.length)] ?? 'lg:grid-cols-5'}`}>
           {comparador.colunas.map((c) =>
             c.ilustracao ? (
               <figure key={c.id} className="space-y-1.5">

@@ -158,10 +158,15 @@ export const MODULOS_DO_PACOTE: ModuloDoPacote[] = [
       'O exame que você faz com a própria mão: cada sinal com definição operacional, manobra, mecanismo e o que muda na conduta — mais otoscopia, fundo de olho, orofaringe, rinoscopia e as janelas do ultrassom à beira do leito.',
     destaque:
       'As figuras são geradas por parâmetro, como os traçados do Eletro: você arrasta a bilirrubina e vê exatamente onde a icterícia nasce.',
+    // Apurados de `lib/semiologia/catalogo.ts` (TOTAIS): 343 sinais, 142 + 328
+    // cenas entre beira-leito e ultrassom, 15 + 22 janelas. Os números antigos
+    // (12 · 29 · 3) eram da primeira leva do acervo e ficaram uma ordem de
+    // grandeza atrás — a vitrine da própria Semiologia, que conta ao vivo pela
+    // API, contradizia este cartão na mesma tela.
     numeros: [
-      { v: '12', r: 'sinais aprofundados' },
-      { v: '29', r: 'cenas normais e alteradas' },
-      { v: '3', r: 'comparadores de causa' },
+      { v: '343', r: 'sinais do exame físico' },
+      { v: '470', r: 'cenas normais e alteradas' },
+      { v: '37', r: 'janelas de exame e POCUS' },
     ],
     href: '/manual-clinico/semiologia',
     icone: 'Stethoscope',
