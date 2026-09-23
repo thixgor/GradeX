@@ -33,6 +33,7 @@ import { BuscaGlobal } from '@/components/busca/busca-global'
 import { PendingReviewReminder } from '@/components/reviews/pending-review-reminder'
 import { QuestaoDoDiaCard } from '@/components/retencao/questao-do-dia-card'
 import { ContinueReading } from '@/components/materiais/continue-reading'
+import { ComunidadeWhatsAppCard } from '@/components/comunidade-whatsapp'
 import { ExperienceCarousel } from '@/components/dashboard/experience-carousel'
 import { TourTrigger } from '@/components/dashboard/tour-trigger'
 import { usePlatformTour } from '@/hooks/use-platform-tour'
@@ -543,6 +544,13 @@ function DashboardContent() {
             Só aparece para quem tem leitura em andamento neste aparelho.
            ═══════════════════════════════════════════════════════ */}
         <ContinueReading className="dash-rise" />
+
+        {/* ═══════════════════════════════════════════════════════
+            1.7 COMUNIDADE NO WHATSAPP
+            Ofertas, materiais gratuitos e simulados ao vivo. Some para
+            quem já entrou; quem dispensa volta a ver semanas depois.
+           ═══════════════════════════════════════════════════════ */}
+        <ComunidadeWhatsAppCard className="dash-rise" />
 
         {/* ═══════════════════════════════════════════════════════
             2. PERFORMANCE OVERVIEW CARDS

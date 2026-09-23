@@ -9,6 +9,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { InstalarApp } from '@/components/pwa/instalar-app'
+import { COMUNIDADE_WHATSAPP_URL, WhatsAppGlyph } from '@/components/comunidade-whatsapp'
 // Os ícones do menu são os mesmos de lib/sidebar-icons.ts — a barra lateral da
 // demonstração é a barra lateral do produto, não um desenho parecido.
 import {
@@ -1869,6 +1870,7 @@ export default function LandingPage() {
       <Differentiators />
       <Plans />
       <InstallApp />
+      <Comunidade />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
       <MobileDock signupHref={signupHref} isLoggedIn={isLoggedIn} />
@@ -3889,6 +3891,118 @@ function InstallApp() {
         <Reveal delay={80}>
           <InstalarApp aparencia="landing" />
         </Reveal>
+      </div>
+    </section>
+  )
+}
+
+/* ---------- COMUNIDADE NO WHATSAPP ---------- */
+
+const GRUPOS_DA_COMUNIDADE = [
+  {
+    nome: 'Ofertas',
+    texto: 'Cupons e promoções saem primeiro lá — às vezes, só lá.',
+  },
+  {
+    nome: 'Materiais gratuitos',
+    texto: 'Resumos, mapas e PDFs liberados de graça para quem está no grupo.',
+  },
+  {
+    nome: 'Simulados ao vivo',
+    texto: 'Data e hora de cada simulado, com a turma fazendo junto.',
+  },
+] as const
+
+/**
+ * Convite para a comunidade do WhatsApp. A comunidade é o guarda-chuva; os
+ * grupos moram dentro dela, então o card mostra os grupos para o visitante
+ * saber o que vai encontrar antes de sair da página.
+ */
+function Comunidade() {
+  return (
+    <section
+      id="comunidade"
+      className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]"
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(600px 320px at 85% 20%, rgba(37,211,102,.10), transparent 70%)',
+        }}
+      />
+      <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
+        <Reveal>
+          <SectionMark n="Grupos" label="Comunidade no WhatsApp" />
+        </Reveal>
+        <div className="grid gap-10 md:grid-cols-[1.05fr_1fr] md:items-center md:gap-14">
+          <Reveal>
+            <h2 className="max-w-xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
+              A turma também estuda pelo WhatsApp.
+            </h2>
+            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
+              Entre na comunidade do Domine Aqui e escolha os grupos que fazem sentido para
+              você. Sem spam: só aviso de oferta, material liberado e simulado marcado.
+            </p>
+            <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+              <a
+                href={COMUNIDADE_WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 font-da-display font-semibold text-[#07361A] shadow-[0_14px_30px_-16px_rgba(37,211,102,.9)] transition hover:bg-[#2EE274] active:scale-[0.98]"
+              >
+                <WhatsAppGlyph className="h-5 w-5" />
+                Entrar na comunidade
+              </a>
+              <span className="text-center font-da-mono text-[11px] text-da-muted sm:text-left md:text-xs">
+                Grátis · sai quando quiser
+              </span>
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="rounded-3xl border border-[color:var(--da-neutral-line)] bg-da-panel/50 p-2 backdrop-blur-sm">
+              <div className="flex items-center gap-3 px-4 pb-3 pt-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/15 text-[#1FAF55] dark:text-[#25D366]">
+                  <WhatsAppGlyph className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-da-display text-[15px] font-semibold leading-tight">
+                    Comunidade Domine Aqui
+                  </p>
+                  <p className="font-da-mono text-[11px] text-da-muted">
+                    {GRUPOS_DA_COMUNIDADE.length} grupos dentro
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-1">
+                {GRUPOS_DA_COMUNIDADE.map((g) => (
+                  <li key={g.nome}>
+                    <a
+                      href={COMUNIDADE_WHATSAPP_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group flex items-center gap-3 rounded-2xl bg-da-ground/70 px-4 py-3.5 transition hover:bg-da-ground"
+                    >
+                      <span aria-hidden className="h-2 w-2 flex-shrink-0 rounded-full bg-[#25D366]" />
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-da-display text-[15px] font-semibold leading-tight">
+                          {g.nome}
+                        </span>
+                        <span className="mt-0.5 block text-[13px] leading-snug text-da-muted">
+                          {g.texto}
+                        </span>
+                      </span>
+                      <span className="font-da-mono text-[11px] text-da-muted transition group-hover:text-[#1FAF55] dark:group-hover:text-[#25D366]">
+                        Entrar →
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   )
