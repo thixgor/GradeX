@@ -117,6 +117,17 @@ import {
   ZOOM_STEP,
 } from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
+import {
+  clampZoomRatio,
+  isLandscapePage,
+  legacyZoomRatio,
+  majorityPageSize,
+  PAGE_FRAME_EXTRA,
+  pageSizeKey,
+  pageWidthFit,
+  restingZoomFor,
+  zoomRatioFor,
+} from '@/lib/pdf-viewer-fit'
 import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 import {
   MENSAGEM_DE_REDE,
@@ -1420,7 +1431,17 @@ function buildTourSteps(): TourStep[] {
 const PREFS_STORAGE_KEY = 'domineaqui:pdf-viewer:prefs:v1'
 
 interface ViewerPrefs {
+  /**
+   * Zoom ABSOLUTO — formato antigo, só lido para migrar. Ver `zoomRatio`.
+   */
   zoom?: number
+  /**
+   * Zoom RELATIVO ao tamanho de repouso da página ("1,3x o normal"). O
+   * absoluto não sobrevivia à troca de formato: 0,6 é "A4 ajustado" no
+   * celular, mas um material em paisagem nesse zoom sai da tela. Ver
+   * `lib/pdf-viewer-fit.ts`.
+   */
+  zoomRatio?: number
   mode?: ViewerMode
   scrollAxis?: ScrollAxis
   tool?: AnnotationTool
@@ -1482,6 +1503,52 @@ function writeViewerPrefs(patch: ViewerPrefs) {
   }, 300)
 }
 
+// Formato da página de cada material, lembrado entre aberturas.
+//
+// Até a primeira página chegar, o leitor só pode CHUTAR o formato — e o chute
+// era sempre A4 em pé. Num material em paisagem isso dava uma moldura alta
+// que, meio segundo depois, desabava para a metade da altura: salto de layout
+// na abertura e, na retomada, a leitura parando no lugar errado. Com o formato
+// lembrado, a segunda abertura em diante já nasce no tamanho certo.
+const PAGE_SIZE_MEMORY_KEY = 'domineaqui:pdf-viewer:page-size:v1'
+const PAGE_SIZE_MEMORY_MAX = 80
+
+function readRememberedPageSize(materialId: string): PageSize | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(PAGE_SIZE_MEMORY_KEY)
+    if (!raw) return null
+    const entry = JSON.parse(raw)?.[materialId]
+    const width = Number(entry?.[0])
+    const height = Number(entry?.[1])
+    return width > 0 && height > 0 && Number.isFinite(width) && Number.isFinite(height) ? { width, height } : null
+  } catch {
+    return null
+  }
+}
+
+function rememberPageSize(materialId: string, size: PageSize) {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = window.localStorage.getItem(PAGE_SIZE_MEMORY_KEY)
+    const parsed = raw ? JSON.parse(raw) : {}
+    const memory: Record<string, [number, number, number]> = parsed && typeof parsed === 'object' ? parsed : {}
+    const width = Math.round(size.width * 100) / 100
+    const height = Math.round(size.height * 100) / 100
+    const current = memory[materialId]
+    if (current && current[0] === width && current[1] === height) return
+    memory[materialId] = [width, height, Date.now()]
+    const ids = Object.keys(memory)
+    if (ids.length > PAGE_SIZE_MEMORY_MAX) {
+      ids
+        .sort((a, b) => (Number(memory[a]?.[2]) || 0) - (Number(memory[b]?.[2]) || 0))
+        .slice(0, ids.length - PAGE_SIZE_MEMORY_MAX)
+        .forEach((id) => { delete memory[id] })
+    }
+    window.localStorage.setItem(PAGE_SIZE_MEMORY_KEY, JSON.stringify(memory))
+  } catch {}
+}
+
 // Abertura do leitor: quanto tempo esperar por tentativa e quantas tentar. Doze
 // segundos é generoso para uma rede ruim e curto para quem está olhando a tela.
 const ACCESS_FETCH_TIMEOUT_MS = 12000
@@ -1518,6 +1585,89 @@ async function fetchWithDeadline(url: string, timeoutMs: number, attempts = 1): 
     }
   }
   throw lastError instanceof Error ? lastError : new Error('fetch failed')
+}
+
+/**
+ * Largura útil para a página, descontados os respiros que o layout põe em
+ * volta dela. A conta antiga era `largura da área - 24` para tudo, e errava
+ * pelos dois lados: no celular a página "ajustada" passava 8px da coluna (a
+ * borda da moldura ficava cortada e a linha rolava de lado por 4px); num
+ * monitor largo ignorava o `max-w-6xl` da coluna, e "ajustar à largura"
+ * criava uma página mais larga que a própria coluna.
+ *
+ * Os números espelham as classes do JSX: a seção tem `px-2 sm:px-4` (px-0 na
+ * fileira horizontal), a coluna `max-w-6xl`, a linha da página `sm:px-2` (a
+ * casa da fileira, `px-2.5`), e a moldura `p-2` + borda.
+ */
+function pageAvailableWidth(contentWidth: number, horizontal: boolean) {
+  if (!(contentWidth > 0)) return 0
+  if (horizontal) return Math.max(120, contentWidth - 20 - PAGE_FRAME_EXTRA)
+  const sm = typeof window !== 'undefined' && window.matchMedia?.('(min-width: 640px)').matches
+  const column = Math.min(contentWidth - (sm ? 32 : 16), 1152)
+  return Math.max(120, column - (sm ? 16 : 0) - PAGE_FRAME_EXTRA)
+}
+
+/**
+ * Altura útil para a página: a tela menos o que fica PRESO nela (cabeçalho em
+ * cima, barra de navegação do celular embaixo) e o respiro da área de leitura.
+ * Medida na hora, e não uma constante: o cabeçalho muda de altura com o modo
+ * enxuto, com a faixa de ferramentas e entre celular e desktop.
+ *
+ * `documentElement.clientHeight` e não `innerHeight`: este acompanha o layout
+ * e não encolhe com a pinça do iOS.
+ */
+function pageAvailableHeight(
+  header: HTMLElement | null,
+  bottomBar: HTMLElement | null,
+  content: HTMLElement | null
+) {
+  if (typeof window === 'undefined') return 0
+  const viewport = document.documentElement.clientHeight || window.innerHeight
+  let paddingY = 32
+  if (content) {
+    const style = window.getComputedStyle(content)
+    paddingY = (parseFloat(style.paddingTop) || 0) + (parseFloat(style.paddingBottom) || 0)
+  }
+  // `offsetHeight` de um elemento escondido (`lg:hidden`) é 0 — a barra de
+  // baixo só conta onde ela existe.
+  const chrome = (header?.offsetHeight ?? 0) + (bottomBar?.offsetHeight ?? 0)
+  return Math.max(0, viewport - chrome - paddingY - PAGE_FRAME_EXTRA - 4)
+}
+
+/**
+ * Altura da tela, reativa — com dois filtros que importam:
+ *
+ * - teclado aberto (um campo de texto em foco) não conta: no Android antigo ele
+ *   encolhe o layout, e reajustar a página no meio de uma anotação de texto
+ *   tiraria o campo de debaixo do dedo;
+ * - variações pequenas não contam: a barra de endereço do celular aparece e
+ *   some com a rolagem, e a página não pode mudar de tamanho junto.
+ */
+function useViewportHeight() {
+  const [height, setHeight] = useState(0)
+  useEffect(() => {
+    let frame = 0
+    const read = () => {
+      frame = 0
+      const active = document.activeElement as HTMLElement | null
+      const typing = !!active && (active.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(active.tagName))
+      if (typing) return
+      const next = document.documentElement.clientHeight || window.innerHeight
+      setHeight((current) => (current === 0 || Math.abs(current - next) >= 48 ? next : current))
+    }
+    read()
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(read)
+    }
+    window.addEventListener('resize', schedule, { passive: true })
+    window.addEventListener('orientationchange', schedule, { passive: true })
+    return () => {
+      window.removeEventListener('resize', schedule)
+      window.removeEventListener('orientationchange', schedule)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [])
+  return height
 }
 
 function clampZoom(value: number, min = 0.55, max = 2.6) {
@@ -2175,7 +2325,26 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Coluna das páginas. Só o gesto de swipe escreve nela (transform), para a
   // página acompanhar o dedo sem passar por re-render a cada quadro.
   const pagesTrackRef = useRef<HTMLDivElement>(null)
-  const zoomTouchedRef = useRef(false)
+  // Cabeçalho e barra de baixo do celular: medidos para a página em paisagem
+  // caber inteira entre os dois (ver pageAvailableHeight).
+  const headerRef = useRef<HTMLElement>(null)
+  const bottomBarRef = useRef<HTMLDivElement>(null)
+  // Zoom RELATIVO ao tamanho de repouso ("1,3x o normal") — o que o leitor
+  // escolheu, e o que sobrevive a girar a tela, abrir um painel ou abrir um
+  // material de outro formato. `null` = ainda não se sabe (preferências por
+  // hidratar). Ver `lib/pdf-viewer-fit.ts`.
+  const zoomRatioRef = useRef<number | null>(null)
+  // Zoom absoluto das preferências antigas, à espera da primeira medida para
+  // virar relativo.
+  const legacyZoomRef = useRef<number | null>(null)
+  // Tamanho de repouso vigente, para os callbacks estáveis converterem zoom
+  // absoluto em relativo sem depender do estado.
+  const restingZoomRef = useRef<number | null>(null)
+  // O zoom de repouso já foi aplicado alguma vez nesta abertura?
+  const restingAppliedRef = useRef(false)
+  // Quantas páginas de cada formato já apareceram — a referência do documento
+  // é a maioria (ver majorityPageSize).
+  const pageSizeCountsRef = useRef(new Map<string, { size: PageSize; pages: Set<number> }>())
   // O leitor já escolheu um modo de leitura à mão? Se sim, não sobrescrevemos.
   const modeTouchedRef = useRef(false)
   // Zoom atual num ref: a pinça precisa do valor no INÍCIO do gesto, sem
@@ -2302,7 +2471,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     align: 'left',
   })
 
-  const minZoom = access?.viewer.minZoom ?? 0.55
+  const apiMinZoom = access?.viewer.minZoom ?? 0.55
   const apiMaxZoom = access?.viewer.maxZoom ?? 2.6
   const pageCount = access?.material.pageCount ?? 0
   const summary = useMemo(() => access?.viewer.summary ?? [], [access])
@@ -2388,14 +2557,39 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const pagesRef = useRef<number[]>(pages)
   pagesRef.current = pages
   const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
+  const viewportHeight = useViewportHeight()
+  // Largura útil de verdade para a página (ver pageAvailableWidth).
+  const availableWidth = useMemo(
+    () => pageAvailableWidth(contentWidth, horizontal),
+    [contentWidth, horizontal]
+  )
 
   // Zoom em que a página cabe exatamente na largura disponível. É a referência
   // do que é "tamanho normal" para ESTE aparelho — no celular costuma ser bem
   // menos que 100%, porque uma A4 é mais larga que a tela.
   const fitWidthZoom = useMemo(() => {
-    if (!pageSize?.width || !contentWidth) return null
-    return (contentWidth - 24) / pageSize.width
-  }, [contentWidth, pageSize])
+    if (!pageSize?.width || !availableWidth) return null
+    return availableWidth / pageSize.width
+  }, [availableWidth, pageSize])
+
+  // O documento é em paisagem? Muda o que é "tamanho normal" (a página cabe
+  // INTEIRA na tela, não só na largura) — ver `lib/pdf-viewer-fit.ts`.
+  const landscapeDocument = isLandscapePage(pageSize)
+  // Proporção para as miniaturas — um número (e arredondado), para o `memo`
+  // do painel não se desfazer a cada objeto de tamanho novo.
+  const thumbAspect = pageSize ? Math.round((pageSize.width / pageSize.height) * 1000) / 1000 : undefined
+
+  // Tamanho de repouso da página nesta tela. Estado (e não só ref) porque o
+  // piso do zoom e a pastilha de "ajustar" dependem dele.
+  const [restingZoom, setRestingZoom] = useState<number | null>(null)
+
+  // Altura em que a página fica centralizada na tela, nos modos em que ela é
+  // mostrada sozinha ("uma página por vez" e a fileira horizontal). Um slide
+  // deitado no celular em pé ocupa um terço da altura; colado no topo, deixava
+  // dois terços de tela vazia embaixo, com cara de página que não carregou.
+  // Nos modos de rolagem vertical as páginas se empilham e centralizar não
+  // faz sentido — ali fica 0.
+  const [pageStageHeight, setPageStageHeight] = useState(0)
 
   // Teto de zoom relativo ao aparelho, não absoluto. O teto da API (280%)
   // significava, num celular onde a página cabe a ~45%, uma página SEIS vezes
@@ -2406,6 +2600,16 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!fitWidthZoom) return apiMaxZoom
     return Math.min(apiMaxZoom, Math.max(1, fitWidthZoom * 2.5))
   }, [apiMaxZoom, fitWidthZoom])
+
+  // Piso de zoom, também relativo ao aparelho. O piso da API (35%) é absoluto,
+  // e um slide exportado grande (1440pt de largura, comum no Keynote) só cabe
+  // na tela de um celular a ~25%: preso a 35%, ele nascia mais largo que a
+  // tela e não havia como diminuir. O piso agora nunca fica acima de pouco
+  // mais que a metade do tamanho de repouso.
+  const minZoom = useMemo(
+    () => (restingZoom ? Math.max(0.1, Math.min(apiMinZoom, restingZoom * 0.6)) : apiMinZoom),
+    [apiMinZoom, restingZoom]
+  )
 
   // Está ampliado além do que cabe na tela? É o que o indicador mostra.
   const zoomedIn = fitWidthZoom != null && zoom > fitWidthZoom * 1.02
@@ -2460,14 +2664,43 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // página renderizada chamava setPageSize com um objeto NOVO (mesmo valor),
   // disparando re-render de todas as páginas vivas a cada scroll — uma
   // tempestade de re-renders que contribuía para os travamentos.
-  const handlePageSize = useCallback((size: PageSize) => {
+  //
+  // E a referência é o formato da MAIORIA das páginas, não o da última que
+  // chegou: num material que mistura páginas em pé e deitadas, "a última"
+  // trocava a cada página na tela, e junto o zoom de repouso, a altura dos
+  // espaçadores e o teto de zoom. Ver majorityPageSize.
+  const handlePageSize = useCallback((size: PageSize, page: number) => {
+    const counts = pageSizeCountsRef.current
+    const key = pageSizeKey(size)
+    const entry = counts.get(key)
+    if (entry) entry.pages.add(page)
+    else counts.set(key, { size, pages: new Set([page]) })
+    // A mesma página pode já ter sido contada com outro formato (voltou com o
+    // documento recarregado): conta só o último.
+    for (const [otherKey, other] of counts) {
+      if (otherKey !== key) other.pages.delete(page)
+    }
+    const reference = majorityPageSize(counts) ?? size
     setPageSize((current) => {
-      if (current && Math.abs(current.width - size.width) < 0.5 && Math.abs(current.height - size.height) < 0.5) {
+      if (current && Math.abs(current.width - reference.width) < 0.5 && Math.abs(current.height - reference.height) < 0.5) {
         return current
       }
-      return size
+      return reference
     })
   }, [])
+
+  // Material novo (navegação sem desmontar o leitor): o formato do anterior não
+  // vale mais. E, se já abrimos este antes, o formato lembrado entra como
+  // chute inicial no lugar do A4 (ver readRememberedPageSize).
+  useEffect(() => {
+    pageSizeCountsRef.current = new Map()
+    restingAppliedRef.current = false
+    setPageSize(readRememberedPageSize(materialId))
+  }, [materialId])
+
+  useEffect(() => {
+    if (pageSize && pageSizeCountsRef.current.size > 0) rememberPageSize(materialId, pageSize)
+  }, [materialId, pageSize])
 
   // Tamanho de reserva do espaçador de virtualização — deve casar com a altura
   // que a página real reserva (dimensões da página * zoom + moldura), para o
@@ -2483,9 +2716,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     height: (pageSize?.height ?? DEFAULT_PAGE_HEIGHT) * settledZoom,
   }), [pageSize, settledZoom])
 
-  // Altura que cada página ocupa no fluxo: moldura (16px) + gap-5 (20px).
+  // Altura que cada página ocupa no fluxo: moldura (padding + borda, 18px) +
+  // gap-5 (20px).
   // Num ref para o listener de rolagem lê-la sem precisar ser reanexado.
-  const pageSlotHeight = spacerSize.height + 36
+  const pageSlotHeight = spacerSize.height + PAGE_FRAME_EXTRA + 20
   const pageSlotHeightRef = useRef(pageSlotHeight)
   pageSlotHeightRef.current = pageSlotHeight
 
@@ -2791,11 +3025,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const prefsHydratedRef = useRef(false)
   useEffect(() => {
     const prefs = readViewerPrefs()
-    if (typeof prefs.zoom === 'number' && Number.isFinite(prefs.zoom)) {
-      setZoom(prefs.zoom)
-      // Sem isto, o auto-ajuste-à-largura sobrescreveria a escolha do usuário
-      // logo na primeira medição da página.
-      zoomTouchedRef.current = true
+    // O zoom não é aplicado aqui: relativo, ele só vira número quando a
+    // página e a tela forem medidas (ver o efeito do tamanho de repouso).
+    if (typeof prefs.zoomRatio === 'number' && Number.isFinite(prefs.zoomRatio)) {
+      zoomRatioRef.current = clampZoomRatio(prefs.zoomRatio)
+    } else if (typeof prefs.zoom === 'number' && Number.isFinite(prefs.zoom) && prefs.zoom > 0) {
+      legacyZoomRef.current = prefs.zoom
     }
     if (prefs.tool) setTool(prefs.tool)
     if (typeof prefs.showThumbs === 'boolean') setShowThumbs(prefs.showThumbs)
@@ -2834,7 +3069,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   useEffect(() => {
     if (!prefsHydratedRef.current) return
     writeViewerPrefs({
-      zoom,
+      // Só grava depois de existir um relativo de verdade: `undefined` aqui
+      // apagaria o que está salvo.
+      ...(zoomRatioRef.current != null ? { zoomRatio: zoomRatioRef.current } : null),
       mode,
       scrollAxis,
       tool,
@@ -3049,9 +3286,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
    * o defeito nasceu: cada um deles chamava `setZoom` por conta própria.
    */
   const applyZoom = useCallback((next: number | ((current: number) => number)) => {
-    zoomTouchedRef.current = true
     const current = zoomRef.current
     const value = clampZoom(typeof next === 'function' ? next(current) : next, minZoom, maxZoom)
+    // A escolha passa a valer em RELATIVO: girar a tela ou abrir outro
+    // material mantém "1,3x o normal", não "130% de uma A4".
+    const ratio = restingZoomRef.current ? zoomRatioFor(value, restingZoomRef.current) : null
+    if (ratio != null) zoomRatioRef.current = ratio
     if (value === current) return
     // O espelho anda junto, e não só no efeito que roda depois do render: dois
     // toques no mesmo quadro precisam somar dois passos, não um.
@@ -3163,12 +3403,65 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     settleToPage(target, { minMs: 1200, deadlineMs: 6000 })
   }, [access, singlePage, horizontal, contentWidth, settleToPage])
 
+  // ── Tamanho de repouso ──────────────────────────────────────────────────
+  // Decide o zoom sempre que muda o que define "tamanho normal": o formato da
+  // página, a largura da área (girar, abrir painel), a altura da tela, o
+  // cabeçalho (modo enxuto) e o modo ("Largura da tela" ajusta à largura).
+  //
+  // O zoom resultante é o repouso vezes o relativo que o leitor escolheu. É o
+  // que substitui o "só diminui, e só se ninguém mexeu" de antes, que tinha
+  // dois defeitos: girar o celular para deitado deixava a página do tamanho
+  // de quando estava em pé (só diminuía, nunca aumentava), e o zoom absoluto
+  // salvo de um material em pé fazia um material em paisagem nascer mais
+  // largo que a tela.
   useEffect(() => {
-    if (!pageSize || !contentWidth || zoomTouchedRef.current) return
-    const availableWidth = Math.max(280, contentWidth - 24)
-    const fittedZoom = clampZoom(availableWidth / pageSize.width, minZoom, maxZoom)
-    if (fittedZoom < 0.98) setZoom(fittedZoom)
-  }, [contentWidth, maxZoom, minZoom, pageSize])
+    if (!pageSize || !availableWidth) return
+    const availableHeight = pageAvailableHeight(headerRef.current, bottomBarRef.current, contentRef.current)
+    const fitWidth = mode === 'width'
+    const resting = restingZoomFor({ page: pageSize, availableWidth, availableHeight, fitWidth })
+    if (resting == null) return
+    restingZoomRef.current = resting
+    setRestingZoom((current) => (current != null && Math.abs(current - resting) < 0.001 ? current : resting))
+    const stage = (singlePage || horizontal) ? Math.floor(availableHeight + PAGE_FRAME_EXTRA) : 0
+    setPageStageHeight((current) => (Math.abs(current - stage) < 1 ? current : stage))
+
+    if (zoomRatioRef.current == null && legacyZoomRef.current != null) {
+      // Preferência antiga, em zoom absoluto: foi gravada lendo A4 em pé (o
+      // único formato que existia), então é contra o repouso de uma A4 nesta
+      // tela que ela vira relativo.
+      const legacyResting = restingZoomFor({
+        page: { width: DEFAULT_PAGE_WIDTH, height: DEFAULT_PAGE_HEIGHT },
+        availableWidth,
+        availableHeight,
+        fitWidth,
+      })
+      zoomRatioRef.current = legacyResting ? legacyZoomRatio(legacyZoomRef.current, legacyResting) : null
+      legacyZoomRef.current = null
+    }
+    const ratio = zoomRatioRef.current ?? 1
+    // Piso e teto calculados aqui com o repouso NOVO — os do estado ainda são
+    // os da medida anterior.
+    const floor = Math.max(0.1, Math.min(apiMinZoom, resting * 0.6))
+    const ceiling = Math.min(apiMaxZoom, Math.max(1, (availableWidth / pageSize.width) * 2.5))
+    // Para BAIXO na segunda casa decimal: `clampZoom` arredonda, e um ajuste
+    // arredondado para cima passava 1 a 5px da largura — a linha da página
+    // ganhava uma rolagem lateral minúscula e a borda da moldura, um corte.
+    const target = clampZoom(Math.floor(resting * ratio * 100) / 100, floor, Math.max(floor, ceiling))
+    const firstFit = !restingAppliedRef.current
+    restingAppliedRef.current = true
+    if (Math.abs(target - zoomRef.current) < 0.005) return
+    // Numa troca de tamanho no meio da leitura (painel abrindo, janela
+    // redimensionada), a página que está sendo lida fica no lugar. Numa
+    // viagem em curso (retomada, rotação) quem segura é o assentamento. E no
+    // PRIMEIRO ajuste não há leitura a segurar: segurar ali empurrava a
+    // abertura para baixo, com a página 1 entrando por baixo do cabeçalho.
+    if (!firstFit && pendingTargetRef.current == null) holdReadingAnchor()
+    zoomRef.current = target
+    setZoom(target)
+  }, [
+    pageSize, availableWidth, viewportHeight, mode, singlePage, horizontal, compactChrome,
+    apiMinZoom, apiMaxZoom, holdReadingAnchor,
+  ])
 
   useEffect(() => {
     if (!access) return
@@ -3405,27 +3698,46 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   }, [goToPage])
 
   const fitToWidth = useCallback(() => {
-    const element = contentRef.current || viewerRef.current
-    if (!element || !pageSize) return
-    const availableWidth = element.clientWidth - 24
+    if (!pageSize || !availableWidth) return
     // Mesma âncora dos botões de zoom: "ajustar à largura" também engorda todas
     // as páginas de uma vez, e sem ela a leitura escorregaria do mesmo jeito.
-    applyZoom(availableWidth / pageSize.width)
+    // Para baixo na segunda casa: arredondado para cima, "ajustado" passaria
+    // da largura por um ou dois pixels.
+    applyZoom(Math.floor((availableWidth / pageSize.width) * 100) / 100)
+    // No modo "Largura" o repouso É o ajustado à largura — relativo 1. O efeito
+    // do repouso confirma o mesmo zoom quando o modo mudar.
+    zoomRatioRef.current = 1
     setMode('width')
-  }, [applyZoom, pageSize])
+  }, [applyZoom, availableWidth, pageSize])
 
   const fitToPage = useCallback(() => {
-    const element = contentRef.current || viewerRef.current
-    if (!element || !pageSize) return
-    zoomTouchedRef.current = true
-    const availableWidth = element.clientWidth - 24
-    // `documentElement.clientHeight` acompanha o layout; `window.innerHeight`
-    // encolhe/cresce com a pinça no iOS e daria uma altura falsa aqui.
-    const viewportHeight = document.documentElement.clientHeight || window.innerHeight
-    const availableHeight = viewportHeight - 148
-    setZoom(clampZoom(Math.min(availableWidth / pageSize.width, availableHeight / pageSize.height), minZoom, maxZoom))
-    setMode('single')
-  }, [maxZoom, minZoom, pageSize])
+    if (!pageSize) return
+    // A página inteira na tela, qualquer que seja o formato. Com a altura
+    // MEDIDA (cabeçalho, barra do celular, respiros): a constante de antes
+    // (148px) valia para um cabeçalho só, e no celular — que tem barra embaixo
+    // — a página ficava cortada no rodapé.
+    // Na fileira horizontal não existe "uma página por vez" (ela já é uma por
+    // vez); a largura é a da casa.
+    const width = pageAvailableWidth(contentRef.current?.clientWidth ?? contentWidth, horizontal)
+    const height = pageAvailableHeight(headerRef.current, bottomBarRef.current, contentRef.current)
+    if (!width) return
+    const byHeight = height > 0 ? height / pageSize.height : Infinity
+    const contained = Math.min(width / pageSize.width, byHeight)
+    const value = clampZoom(Math.floor(contained * 100) / 100, minZoom, maxZoom)
+    // Relativo ao repouso do modo em que a leitura vai ficar: "uma página por
+    // vez" na vertical; na fileira o modo não muda, e pode ser "Largura".
+    const resting = restingZoomFor({
+      page: pageSize,
+      availableWidth: width,
+      availableHeight: height,
+      fitWidth: horizontal && mode === 'width',
+    })
+    const ratio = resting ? zoomRatioFor(value, resting) : null
+    if (ratio != null) zoomRatioRef.current = ratio
+    zoomRef.current = value
+    setZoom(value)
+    if (!horizontal) setMode('single')
+  }, [contentWidth, horizontal, maxZoom, minZoom, mode, pageSize])
 
   // Troca de modo em um lugar só: "Largura" precisa recalcular o zoom, os
   // outros dois não. Antes essa diferença estava espalhada pelo JSX e o modo
@@ -3903,7 +4215,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   if (loading) {
     return (
       <ViewerShell>
-        <ViewerLoading onRetry={() => setLoadAttempt((attempt) => attempt + 1)} />
+        <ViewerLoading
+          onRetry={() => setLoadAttempt((attempt) => attempt + 1)}
+          aspect={thumbAspect}
+        />
       </ViewerShell>
     )
   }
@@ -4057,6 +4372,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             (/95 e não /82: opacidade fora da escala do Tailwind não vira regra
             nenhuma, e o cabeçalho ficava sem fundo sobre página branca.) */}
         <header
+          ref={headerRef}
           className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950 shadow-xl shadow-black/25"
           style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
         >
@@ -4578,6 +4894,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 pageList={previewActive ? allowedPages : undefined}
                 currentPage={currentPage}
                 coverPage={coverPage}
+                pageAspect={thumbAspect}
                 onGoTo={navigateTo}
               />
             </aside>
@@ -4674,6 +4991,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     onPageSize={handlePageSize}
                     fallbackSize={pageSize}
                     containerWidth={contentWidth}
+                    stageHeight={pageStageHeight}
                     onPageCount={updateKnownPageCount}
                     onCreateAnnotation={createAnnotation}
                     onUpdateAnnotation={updateAnnotation}
@@ -4712,7 +5030,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         {zoomedIn && (
           <button
             type="button"
-            onClick={() => { if (fitWidthZoom) applyZoom(fitWidthZoom) }}
+            // Em paisagem "ajustar" é a página INTEIRA na tela (o repouso); só
+            // a largura deixaria o slide cortado embaixo num celular deitado.
+            onClick={() => {
+              const target = landscapeDocument && restingZoom ? Math.min(restingZoom, fitWidthZoom ?? restingZoom) : fitWidthZoom
+              if (target) applyZoom(Math.floor(target * 100) / 100)
+            }}
             // Sobe quando a barra de ferramentas está na tela: os dois moram no
             // mesmo canto, e sobrepostos nenhum dos dois serve para nada.
             className={`pointer-events-auto fixed left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm ${
@@ -4739,6 +5062,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             A área segura (a faixa do indicador de home, ~34pt no iPhone) deixou
             de ser padding vazio e virou a assinatura da casa — ver abaixo. */}
         <div
+          ref={bottomBarRef}
           className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 lg:hidden"
           style={{
             transform: 'translateZ(0)',
@@ -5034,6 +5358,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               pageList={previewActive ? allowedPages : undefined}
               currentPage={currentPage}
               coverPage={coverPage}
+              pageAspect={thumbAspect}
               // `navigateTo` JÁ fecha a folha, e é uma referência estável. A
               // closure que estava aqui era recriada a cada render do leitor
               // (isto é, a cada mudança de página), o que anulava o `memo` do
@@ -5181,6 +5506,7 @@ const SidePanel = memo(function SidePanel({
   pageList,
   currentPage,
   coverPage,
+  pageAspect,
   onGoTo,
 }: {
   tab: 'pages' | 'summary'
@@ -5193,6 +5519,9 @@ const SidePanel = memo(function SidePanel({
   pageList?: number[]
   currentPage: number
   coverPage?: number
+  /** Proporção (largura/altura) do formato do documento, para a miniatura já
+   * reservar o espaço certo antes de ser desenhada. */
+  pageAspect?: number
   onGoTo: (page: number) => void
 }) {
   const activeTab = !hasSummary ? 'pages' : tab
@@ -5323,6 +5652,7 @@ const SidePanel = memo(function SidePanel({
                 pageNumber={page}
                 active={page === currentPage}
                 isCover={page === coverPage}
+                fallbackAspect={pageAspect}
                 onSelect={onGoTo}
                 registerObserver={registerThumb}
               />
@@ -5593,6 +5923,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
   pageNumber,
   active,
   isCover,
+  fallbackAspect,
   onSelect,
   registerObserver,
 }: {
@@ -5600,6 +5931,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
   pageNumber: number
   active: boolean
   isCover?: boolean
+  fallbackAspect?: number
   // Recebe o handler estável e passa a própria página — evita recriar uma
   // closure por miniatura a cada render (o que quebrava a memoização).
   onSelect: (page: number) => void
@@ -5612,6 +5944,11 @@ const PdfThumbnail = memo(function PdfThumbnail({
   const renderedRef = useRef(false)
   const [shouldRender, setShouldRender] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
+  // Proporção desta página, depois de desenhada. A caixa era sempre 3:4: um
+  // slide deitado virava uma faixa colada no topo de um retângulo em pé, com
+  // dois terços de branco embaixo.
+  const [ownAspect, setOwnAspect] = useState<number | null>(null)
+  const aspect = ownAspect ?? fallbackAspect ?? 3 / 4
 
   useEffect(() => {
     // Só o painel de miniaturas se mexe — nunca o documento. Ver scrollIntoPanel.
@@ -5659,6 +5996,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
         await renderTask.promise
         if (!cancelled) {
           renderedRef.current = true
+          if (base.width > 0 && base.height > 0) setOwnAspect(base.width / base.height)
           setStatus('ready')
         }
       } catch (err: any) {
@@ -5682,14 +6020,22 @@ const PdfThumbnail = memo(function PdfThumbnail({
       onClick={() => onSelect(pageNumber)}
       // content-visibility: miniaturas fora da tela pulam layout/paint,
       // deixando o scroll do painel leve mesmo com muitas páginas.
-      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 224px' }}
+      style={{
+        contentVisibility: 'auto',
+        // Altura estimada pela proporção: um palpite de miniatura em pé para
+        // um documento deitado deixava a barra do painel pulando ao rolar.
+        containIntrinsicSize: `auto ${Math.round(136 / aspect + 42)}px`,
+      }}
       className={`w-full rounded-xl border p-1.5 text-left transition-colors ${
         active
           ? 'border-emerald-300/60 bg-emerald-400/20 text-white'
           : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
       }`}
     >
-      <div className="relative mb-1 aspect-[3/4] overflow-hidden rounded-lg bg-white/90 shadow-inner">
+      <div
+        className="relative mb-1 overflow-hidden rounded-lg bg-white/90 shadow-inner"
+        style={{ aspectRatio: String(aspect) }}
+      >
         <canvas ref={canvasRef} className={`h-full w-full object-contain ${status === 'ready' ? 'opacity-100' : 'opacity-0'} transition-opacity`} />
         {status !== 'ready' && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -5723,7 +6069,7 @@ function ViewerShell({ children }: { children: React.ReactNode }) {
 // Esqueleto no FORMATO do leitor (barra + moldura de página), não um cartão
 // centralizado. Um esqueleto que já tem a silhueta da tela final faz a espera
 // parecer mais curta e evita o salto de layout quando o conteúdo entra.
-function ViewerLoading({ onRetry }: { onRetry: () => void }) {
+function ViewerLoading({ onRetry, aspect }: { onRetry: () => void; aspect?: number }) {
   // Depois de alguns segundos a espera silenciosa vira suspeita de travamento —
   // e era exatamente esse o caso em que o leitor não tinha o que fazer além de
   // fechar o app. Dizer que ainda estamos tentando, e oferecer o botão, é o
@@ -5750,7 +6096,10 @@ function ViewerLoading({ onRetry }: { onRetry: () => void }) {
         <div className="w-full max-w-3xl">
           <div
             className="w-full animate-pulse rounded-xl border border-white/10 bg-white/[0.06]"
-            style={{ aspectRatio: '595 / 842' }}
+            // O formato lembrado deste material, quando já foi aberto antes
+            // (ver readRememberedPageSize): o esqueleto de um slide deitado
+            // não pode ser uma folha em pé.
+            style={{ aspectRatio: aspect ? String(aspect) : '595 / 842' }}
           />
           <p className="mt-4 text-center text-xs text-white/45">Preparando seu material…</p>
           {slow && (
@@ -5804,8 +6153,8 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
     return observePageFocus(element, () => onPageFocus(pageNumber))
   }, [horizontal, onPageFocus, pageNumber])
 
-  const frameWidth = Math.ceil(size.width + 16)
-  const frameHeight = Math.ceil(size.height + 16)
+  const frameWidth = Math.ceil(size.width + PAGE_FRAME_EXTRA)
+  const frameHeight = Math.ceil(size.height + PAGE_FRAME_EXTRA)
   // Precisa reservar a MESMA altura que a página real ocupa; se o espaçador
   // fosse clampado à largura do container (como era, com `max-w-full`) e a
   // página real não, o scroll saltaria toda vez que um virasse o outro.
@@ -5848,7 +6197,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   materialId,
   pageNumber,
   active,
-  zoom,
+  zoom: documentZoom,
   annotations,
   tool,
   drawingStyle,
@@ -5864,6 +6213,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   onPageSize,
   fallbackSize,
   containerWidth,
+  stageHeight,
   onPageCount,
   onCreateAnnotation,
   onUpdateAnnotation,
@@ -5889,8 +6239,18 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   allowTouchDrawing: boolean
   axis: ScrollAxis
   onPageFocus: (page: number) => void
-  onPageSize: (size: PageSize) => void
+  onPageSize: (size: PageSize, page: number) => void
+  /**
+   * Formato de referência do documento (a maioria das páginas). Serve de
+   * chute antes de a página chegar e de régua para a página mais larga que as
+   * outras (ver pageWidthFit).
+   */
   fallbackSize: PageSize | null
+  /**
+   * Altura em que a página fica centralizada ("uma página por vez" e fileira
+   * horizontal). 0 = sem centralizar (pilha vertical).
+   */
+  stageHeight: number
   onPageCount: (totalPages?: number) => void
   onCreateAnnotation: (annotation: Partial<PdfAnnotation>) => void
   onUpdateAnnotation: (annotation: PdfAnnotation, patch: Partial<PdfAnnotation>) => void
@@ -6006,6 +6366,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // troca de foco durante a rolagem redesenharia tudo.
   const activeRef = useRef(active)
   activeRef.current = active
+  // Formato desta página, assim que o PDF dela chega. Numa página MAIS LARGA
+  // que a referência do documento (a tabela deitada no meio de uma apostila em
+  // pé) o zoom do documento a deixaria mais larga que a tela do celular — ela
+  // encolhe até a largura das outras. Página de formato igual: fator 1, nada
+  // muda. Daqui para baixo, `zoom` é o zoom DESTA página.
+  const ownPageSize = useMemo<PageSize | null>(() => {
+    if (!pageProxy) return null
+    try {
+      const base = pageProxy.page.getViewport({ scale: 1 })
+      return { width: base.width, height: base.height }
+    } catch {
+      return null
+    }
+  }, [pageProxy])
+  const zoom = documentZoom * pageWidthFit(ownPageSize, fallbackSize)
   // Zoom pedido pelo layout, num ref: a rasterização precisa dele para escolher
   // o orçamento certo (ver rasterScaleFor), mas não pode redesenhar a cada
   // passo de zoom — para isso existe o `renderScale`, que vem com atraso.
@@ -6176,6 +6551,15 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // 1,1 o primeiro passo de zoom já redesenha; o debounce de 180ms continua
   // impedindo que arrastar o zoom dispare um render por passo.
   useEffect(() => {
+    // Antes do primeiro desenho não há bitmap para reescalar nem gesto a
+    // esperar: a escala certa entra na hora, e exata. Com o debounce, a
+    // abertura (em que o zoom de repouso chega logo depois da montagem)
+    // desenhava a página duas vezes — uma na escala velha, outra 180ms depois
+    // — ou ficava para sempre levemente fora de escala, dentro da faixa morta.
+    if (!hasBitmapRef.current) {
+      if (Math.abs(zoom - renderScale) > 0.0001) setRenderScale(zoom)
+      return
+    }
     const ratio = zoom / renderScale
     if (ratio > 0.9 && ratio < 1.1) return
     const timer = window.setTimeout(() => setRenderScale(zoom), 180)
@@ -6186,6 +6570,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   useEffect(() => {
     const entry = pageProxy
     if (!entry) return
+    // Primeira pintura com a escala ainda por acertar (o formato da página
+    // acabou de chegar e mudou o zoom dela): o efeito de cima já pediu a
+    // escala certa, e desenhar agora seria jogar um render fora.
+    if (!hasBitmapRef.current && Math.abs(zoomPropRef.current - renderScale) > 0.0001) return
     let cancelled = false
     let renderTask: any
 
@@ -6202,7 +6590,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       try {
         const page = entry!.page
         const baseViewport = page.getViewport({ scale: 1 })
-        onPageSize({ width: baseViewport.width, height: baseViewport.height })
+        onPageSize({ width: baseViewport.width, height: baseViewport.height }, pageNumber)
 
         // Escala de rasterização com teto de megapixels (ver rasterScaleFor).
         // Independe de `active`: manter a qualidade estável evita re-render de
@@ -6301,7 +6689,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       if (idleHandle != null) cancelIdle(idleHandle)
       renderTask?.cancel?.()
     }
-  }, [density, onPageSize, pageProxy, renderScale, repaintNonce])
+  }, [density, onPageSize, pageNumber, pageProxy, renderScale, repaintNonce])
 
   // Libera a memória do canvas ao desmontar. O Safari do iOS segura o backing
   // store mesmo depois de o nó sair do DOM; zerar as dimensões devolve na hora.
@@ -6434,8 +6822,12 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       ? { width: fallbackSize.width * zoom, height: fallbackSize.height * zoom }
       : { width: 595 * zoom, height: 842 * zoom }
 
-  // +16 = padding p-2 da moldura nos dois lados.
-  const frameOuterWidth = Math.ceil(pageFrameSize.width + 16)
+  // Padding `p-2` da moldura nos dois lados E a borda de 1px (a caixa é
+  // border-box). Com +16, como era, o canvas ficava 2px mais estreito que o
+  // bitmap desenhado para ele — reamostragem, ou seja, página levemente
+  // borrada — e a altura real 2px maior que a do espaçador, erro que se
+  // somava página a página na posição estimada da rolagem.
+  const frameOuterWidth = Math.ceil(pageFrameSize.width + PAGE_FRAME_EXTRA)
   const overflowing = containerWidth > 0 && frameOuterWidth > containerWidth
 
   // ── Medida da página ────────────────────────────────────────────────────
@@ -7591,6 +7983,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         : 'pdf-page-fade flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2'}
       style={{
         justifyContent: overflowing ? 'flex-start' : 'center',
+        // Página sozinha na tela: centralizada na altura útil (ver
+        // `pageStageHeight` no leitor). Página maior que a tela cresce
+        // normalmente — `minHeight` nunca corta nada.
+        ...(stageHeight > 0 ? { minHeight: stageHeight, alignItems: 'center' } : null),
         ...(horizontal
           ? {
               width: containerWidth > 0 ? containerWidth : undefined,
