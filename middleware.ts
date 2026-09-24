@@ -60,6 +60,10 @@ const publicRoutes = [
   // antes de decidir criar uma. Sem sessão a rota só devolve a oferta; nada de
   // solicitação ou dado pessoal.
   '/api/prouni/beneficio',
+  // A chamada do Plus+ nos checkouts (components/checkout/plus-upsell). As
+  // telas de compra sem login precisam dela; sem sessão a rota devolve só o
+  // plano público e o que ele inclui — nada da conta de ninguém.
+  '/api/plus/oferta',
   '/flashcards',
   '/ldpg-mnclinico',
   '/prescricao-real-no-sus',

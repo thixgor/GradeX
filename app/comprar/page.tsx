@@ -14,6 +14,8 @@ import { BuyerDataConfirmation, EmailQualityNotice } from '@/components/checkout
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
+import { PlusUpsell } from '@/components/checkout/plus-upsell'
+import type { ContextoDaOferta } from '@/lib/plus-oferta'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS, precoPorDia, precoPorModulo } from '@/lib/manual-clinico/pacote'
@@ -428,6 +430,17 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
         valor={formatBRL(payableAmount)}
         ativa={product.isActive !== false && step === 'buyer'}
       />
+      {/* Quem compra o Manual avulso quase nunca sabe que o Plus+ traz ele
+          junto com o resto. Some sozinho para Plus+ e quando o Manual não
+          está incluso no plano (ver lib/plus-oferta). */}
+      {product.isActive !== false && (
+        <PlusUpsell
+          contexto="manual_clinico"
+          valorAtual={payableAmount}
+          origem="Manual Clínico (sem login)"
+          className="mb-5"
+        />
+      )}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
           <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
@@ -762,6 +775,14 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 // Fluxo genérico (material, pacote, flashcard, assinatura) — inalterado.
 // ─────────────────────────────────────────────────────────────────────────
 
+/** O que o checkout genérico está vendendo, na língua da oferta do Plus+. */
+function contextoDaOferta(productType: string): ContextoDaOferta {
+  if (productType === 'package') return 'pacote'
+  if (productType === 'flashcard') return 'flashcard'
+  if (isPlusAccount(productType)) return 'plano'
+  return 'material'
+}
+
 function GenericComprarContent({ productType }: { productType: string }) {
   const params = useSearchParams()
   const productId = params.get('productId') || ''
@@ -788,6 +809,14 @@ function GenericComprarContent({ productType }: { productType: string }) {
   const [couponError, setCouponError] = useState('')
   const couponEligible = productType === 'material' || productType === 'package' || productType === 'flashcard' || isPlusAccount(productType)
   const couponItemType: 'package' | 'material' | 'plus' = productType === 'package' ? 'package' : isPlusAccount(productType) ? 'plus' : 'material'
+
+  // O upgrade do Quest+ (PlusUpsell) troca o produto sem sair da rota: o cupom
+  // validado para o produto anterior não vale automaticamente no novo.
+  useEffect(() => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    setCouponError('')
+  }, [productType, productId])
 
   useEffect(() => {
     if (!productType) { setError('Produto não informado.'); setLoading(false); return }
@@ -960,6 +989,16 @@ function GenericComprarContent({ productType }: { productType: string }) {
 
       {/* Mesma razão da variante do Manual Clínico: no celular o formulário
           nasce depois da capa, do preço, do ProUni e do cupom. */}
+      {/* A chamada do Plus+: compra avulsa vira "leve tudo"; compra do Quest+
+          vira upgrade; compra do próprio Plus+ não mostra nada. */}
+      <PlusUpsell
+        contexto={contextoDaOferta(productType)}
+        valorAtual={payableAmount}
+        planoAtual={isPlusAccount(productType) ? product.productId : null}
+        origem="Compra sem login"
+        className="mb-7"
+      />
+
       <BarraDePagamento
         alvo={refDoFormulario}
         valor={formatBRL(payableAmount)}

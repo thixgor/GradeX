@@ -23,6 +23,7 @@ import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
+import { PlusUpsell } from '@/components/checkout/plus-upsell'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -848,6 +849,19 @@ export default function MateriaisCheckoutPage() {
             </div>
           )}
 
+          {/* Carrinho de avulsos é o caso clássico de quem não sabe que o Plus+
+              traz tudo isso junto — e muitas vezes por menos. */}
+          {payableAmount > 0 && (
+            <PlusUpsell
+              contexto="carrinho"
+              valorAtual={payableAmount}
+              quantidadeDeItens={cartPreview.items.length}
+              aparencia="dark"
+              origem="Carrinho de materiais"
+              className="mb-6"
+            />
+          )}
+
           <CheckoutAddonOffers
             materialIds={cartPreview.items.filter(i => i.itemType === 'material').map(i => i.itemId)}
             packageIds={cartPreview.items.filter(i => i.itemType === 'package').map(i => i.itemId)}
@@ -1428,6 +1442,18 @@ export default function MateriaisCheckoutPage() {
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>
           Você está adquirindo: <strong style={{ color: '#34d399' }}>{item.title}</strong>
         </p>
+
+        {/* A chamada do Plus+ (some sozinha para quem já é Plus+; Quest+ vê
+            upgrade). Ver lib/plus-oferta. */}
+        {payablePrice > 0 && (
+          <PlusUpsell
+            contexto={itemType === 'package' ? 'pacote' : item.type === 'flashcard_deck' ? 'flashcard' : 'material'}
+            valorAtual={payablePrice}
+            aparencia="dark"
+            origem="Checkout de materiais"
+            className="mb-6"
+          />
+        )}
 
         <CheckoutAddonOffers
           materialIds={itemType === 'material' ? [itemId] : []}

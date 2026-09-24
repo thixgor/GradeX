@@ -6,6 +6,7 @@ import { trackMeta } from '@/lib/meta-pixel'
 import { ArrowLeft, BookOpen, Check, Flame, GraduationCap, Lock, Loader2, Percent, Sparkles, TrendingDown, X, Clock, Crown } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
+import { PlusUpsell } from '@/components/checkout/plus-upsell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
@@ -418,6 +419,19 @@ export default function ManualClinicoCheckoutView({
           valor={formatBRL(payableAmount)}
           ativa={product.isActive !== false}
         />
+
+        {/* O Manual avulso × o Plus+, que traz o Manual e todo o resto. Some
+            para quem já é Plus+ e quando o Manual não está incluso no plano;
+            Quest+ vê o upgrade. Ver lib/plus-oferta. */}
+        {product.isActive !== false && payableAmount > 0 && (
+          <PlusUpsell
+            contexto="manual_clinico"
+            valorAtual={payableAmount}
+            aparencia="dark"
+            origem="Manual Clínico (logado)"
+            className="mb-6"
+          />
+        )}
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
           <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">

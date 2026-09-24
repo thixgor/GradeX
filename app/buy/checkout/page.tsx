@@ -37,6 +37,7 @@ import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
+import { PlusUpsell } from '@/components/checkout/plus-upsell'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import {
   computeCheckoutCharge,
@@ -161,6 +162,12 @@ function BuyCheckoutContent() {
   const prouniSupported = payMode === 'one_time'
 
   const escolherModo = (modo: PayMode) => setPayMode(modo)
+
+  // O upgrade do Quest+ (PlusUpsell) troca o `?plan=` sem sair da rota: um
+  // cupom validado para o plano anterior não vale automaticamente no novo.
+  useEffect(() => {
+    setAppliedCoupon(null)
+  }, [planId])
 
   useEffect(() => {
     if (!planId) {
@@ -373,6 +380,16 @@ function BuyCheckoutContent() {
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           Finalizar compra
         </h1>
+
+        {/* Só aparece quando o plano escolhido é o Quest+: aí a conversa é o
+            upgrade para o Plus+. Para qualquer ciclo do Plus+ não desenha nada. */}
+        <PlusUpsell
+          contexto="plano"
+          valorAtual={payableAmount}
+          planoAtual={plan.tipo}
+          origem="Checkout de plano"
+          className="mt-4"
+        />
 
         {/* No celular o cartão de pagamento cai inteiro embaixo do resumo —
             ver components/checkout/barra-de-pagamento.
