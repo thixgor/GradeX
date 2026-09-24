@@ -64,6 +64,15 @@ export const LANDSCAPE_MIN_HEIGHT_SHARE = 0.7
  */
 export const PAGE_FRAME_EXTRA = 18
 
+/**
+ * Teto do repouso em pé nas telas de TOQUE. No computador o A4 em pé para em
+ * 100% (a regra de sempre: mais que isso, num monitor, é letra de cartaz).
+ * No tablet em pé e no celular deitado esse teto deixava a página com
+ * margens largas dos dois lados e a letra menor do que a tela permite — e
+ * quem segura o aparelho na mão lê mais perto. 1,25x enche um iPad em pé.
+ */
+export const TOUCH_PORTRAIT_MAX_RESTING_ZOOM = 1.25
+
 /** Limites do zoom relativo guardado nas preferências. */
 const MIN_ZOOM_RATIO = 0.25
 const MAX_ZOOM_RATIO = 8
@@ -81,12 +90,15 @@ export interface RestingZoomInput {
   availableHeight: number
   /** "Largura da tela": a escolha explícita de ajustar à largura. */
   fitWidth?: boolean
+  /** Teto do repouso em pé (1 no computador; ver TOUCH_PORTRAIT_MAX_RESTING_ZOOM). */
+  portraitMaxZoom?: number
 }
 
 /**
  * Zoom em que a página fica "no tamanho normal" para esta tela.
  *
- * - Em pé: ajustada à largura, nunca acima de 100% (a regra de sempre).
+ * - Em pé: ajustada à largura, nunca acima de 100% (a regra de sempre) — ou
+ *   de TOUCH_PORTRAIT_MAX_RESTING_ZOOM em tela de toque.
  * - Paisagem: inteira na tela (largura E altura), até LANDSCAPE_MAX_RESTING_ZOOM
  *   — a menos que a tela seja baixa demais (ver LANDSCAPE_MIN_HEIGHT_SHARE):
  *   aí, na largura.
@@ -94,11 +106,17 @@ export interface RestingZoomInput {
  *
  * Devolve `null` quando a medida ainda não serve (layout sem largura).
  */
-export function restingZoomFor({ page, availableWidth, availableHeight, fitWidth }: RestingZoomInput): number | null {
+export function restingZoomFor({
+  page,
+  availableWidth,
+  availableHeight,
+  fitWidth,
+  portraitMaxZoom = 1,
+}: RestingZoomInput): number | null {
   if (!(page.width > 0) || !(page.height > 0) || !(availableWidth > 0)) return null
   const byWidth = availableWidth / page.width
   if (fitWidth) return byWidth
-  if (!isLandscapePage(page)) return Math.min(1, byWidth)
+  if (!isLandscapePage(page)) return Math.min(Math.max(1, portraitMaxZoom), byWidth)
 
   const widthFit = Math.min(byWidth, LANDSCAPE_MAX_RESTING_ZOOM)
   if (!(availableHeight > 0)) return widthFit

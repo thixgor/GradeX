@@ -10,6 +10,7 @@ import {
   pageSizeKey,
   pageWidthFit,
   restingZoomFor,
+  TOUCH_PORTRAIT_MAX_RESTING_ZOOM,
   zoomRatioFor,
   type FitPageSize,
 } from '@/lib/pdf-viewer-fit'
@@ -63,6 +64,16 @@ describe('restingZoomFor — em pé (a regra de sempre)', () => {
   it('nunca passa de 100% numa tela larga', () => {
     expect(restingZoomFor({ page: A4_PORTRAIT, ...DESKTOP_1080 })).toBe(1)
     expect(restingZoomFor({ page: A4_PORTRAIT, ...TABLET_LANDSCAPE })).toBe(1)
+  })
+
+  it('em tela de toque cresce até encher o tablet em pé, com teto', () => {
+    const touch = { portraitMaxZoom: TOUCH_PORTRAIT_MAX_RESTING_ZOOM }
+    // iPad em pé: ajusta à largura (a A4 a 100% deixava margens largas).
+    expect(restingZoomFor({ page: A4_PORTRAIT, availableWidth: 700, availableHeight: 850, ...touch })).toBeCloseTo(700 / 595)
+    // Tela larga de toque: para no teto.
+    expect(restingZoomFor({ page: A4_PORTRAIT, ...DESKTOP_1080, ...touch })).toBe(TOUCH_PORTRAIT_MAX_RESTING_ZOOM)
+    // Celular em pé: igual ao computador (a largura manda).
+    expect(restingZoomFor({ page: A4_PORTRAIT, ...PHONE_PORTRAIT, ...touch })).toBeCloseTo(356 / 595)
   })
 
   it('não olha a altura: a página em pé rola, como sempre rolou', () => {

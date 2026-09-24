@@ -126,6 +126,7 @@ import {
   pageSizeKey,
   pageWidthFit,
   restingZoomFor,
+  TOUCH_PORTRAIT_MAX_RESTING_ZOOM,
   zoomRatioFor,
 } from '@/lib/pdf-viewer-fit'
 import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
@@ -1608,6 +1609,30 @@ function pageAvailableWidth(contentWidth: number, horizontal: boolean) {
 }
 
 /**
+ * Teto do repouso da página em pé neste aparelho: 100% no computador, mais em
+ * tela de toque (ver TOUCH_PORTRAIT_MAX_RESTING_ZOOM). `pointer: coarse` é o
+ * ponteiro PRINCIPAL — notebook com tela de toque continua sendo computador.
+ */
+function portraitRestingCap() {
+  if (typeof window === 'undefined') return 1
+  return window.matchMedia?.('(pointer: coarse)').matches ? TOUCH_PORTRAIT_MAX_RESTING_ZOOM : 1
+}
+
+/** `matchMedia` reativo. Começa `false` (igual no servidor e na hidratação). */
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(false)
+  useEffect(() => {
+    const list = window.matchMedia?.(query)
+    if (!list) return
+    const update = () => setMatches(list.matches)
+    update()
+    list.addEventListener?.('change', update)
+    return () => list.removeEventListener?.('change', update)
+  }, [query])
+  return matches
+}
+
+/**
  * Altura útil para a página: a tela menos o que fica PRESO nela (cabeçalho em
  * cima, barra de navegação do celular embaixo) e o respiro da área de leitura.
  * Medida na hora, e não uma constante: o cabeçalho muda de altura com o modo
@@ -2503,7 +2528,28 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     [previewActive, allowedPages]
   )
   // Painel de anotações nunca aparece na prévia (leitura apenas / não salva).
-  const annotationsVisible = showAnnotations && !previewActive
+  //
+  // E, em tela estreita, o painel VAZIO começa fechado. São 352px fixos: num
+  // iPad deitado, num iPad Pro em pé ou num notebook pequeno, ele deixava a
+  // página com metade da largura da tela para mostrar uma frase de "use uma
+  // ferramenta para criar sua primeira anotação". Quem já tem anotações neste
+  // material vê o painel como sempre; quem o abre pelo menu, também. A decisão
+  // é tomada UMA vez, com as anotações da abertura: criar a primeira anotação
+  // não abre o painel no meio do traço (a página mudaria de tamanho debaixo da
+  // caneta). Não mexe na preferência salva — é só o ponto de partida.
+  const annotationsRoomy = useMediaQuery('(min-width: 1300px)')
+  const [annotationsAtOpen, setAnnotationsAtOpen] = useState<number | null>(null)
+  const [annotationsPinned, setAnnotationsPinned] = useState(false)
+  const annotationsAutoHidden = !annotationsRoomy && !annotationsPinned && !(annotationsAtOpen != null && annotationsAtOpen > 0)
+  const annotationsVisible = showAnnotations && !previewActive && !annotationsAutoHidden
+  const toggleAnnotationsPanel = useCallback(() => {
+    if (annotationsVisible) {
+      setShowAnnotations(false)
+      return
+    }
+    setAnnotationsPinned(true)
+    setShowAnnotations(true)
+  }, [annotationsVisible])
 
   // Convite de avaliação ao fechar o material. A prévia fica de fora: quem
   // ainda não comprou não tem o que avaliar (e o servidor recusaria de todo
@@ -2556,7 +2602,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // callback a cada troca de página no modo página única).
   const pagesRef = useRef<number[]>(pages)
   pagesRef.current = pages
-  const contentWidth = useResizeWidth(contentRef, [loading, showAnnotations, showThumbs])
+  const contentWidth = useResizeWidth(contentRef, [loading, annotationsVisible, showThumbs])
   const viewportHeight = useViewportHeight()
   // Largura útil de verdade para a página (ver pageAvailableWidth).
   const availableWidth = useMemo(
@@ -2756,6 +2802,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       const json = await res.json()
       const list: PdfAnnotation[] = json.annotations || []
       setAnnotations(list.map((annotation) => adoptAnnotation(annotation)))
+      setAnnotationsAtOpen((current) => current ?? list.length)
     }
   }, [materialId])
 
@@ -3418,7 +3465,13 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!pageSize || !availableWidth) return
     const availableHeight = pageAvailableHeight(headerRef.current, bottomBarRef.current, contentRef.current)
     const fitWidth = mode === 'width'
-    const resting = restingZoomFor({ page: pageSize, availableWidth, availableHeight, fitWidth })
+    const resting = restingZoomFor({
+      page: pageSize,
+      availableWidth,
+      availableHeight,
+      fitWidth,
+      portraitMaxZoom: portraitRestingCap(),
+    })
     if (resting == null) return
     restingZoomRef.current = resting
     setRestingZoom((current) => (current != null && Math.abs(current - resting) < 0.001 ? current : resting))
@@ -3697,6 +3750,97 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     setMobileSheet(null)
   }, [goToPage])
 
+  // ── Barras que saem da frente no celular deitado ────────────────────────
+  // Deitado, o celular tem ~340px de altura, e cabeçalho + barra de navegação
+  // levavam mais de 140 deles — sobrava para a página menos que a metade da
+  // tela. Ali as duas barras saem de cena ao rolar para baixo (a leitura) e
+  // voltam ao rolar para cima, no topo, no fim do material e ao abrir qualquer
+  // folha — o mesmo gesto que o navegador do celular já ensinou.
+  //
+  // Por `transform`, direto no DOM: não muda layout (nada de rolagem pulando,
+  // nem o tamanho de repouso da página se recalculando) e não re-renderiza o
+  // leitor a cada troca. Só vale em tela baixa, deitada e de toque: em pé e no
+  // computador as barras ficam onde sempre estiveram.
+  const revealChromeRef = useRef<() => void>(() => {})
+  useEffect(() => {
+    if (loading) return
+    const header = headerRef.current
+    const bar = bottomBarRef.current
+    const query = window.matchMedia?.('(orientation: landscape) and (max-height: 520px) and (pointer: coarse)')
+    if (!header || !query) return
+    let hidden = false
+    let lastY = window.scrollY
+    let turnY = lastY
+    let frame = 0
+    const apply = (next: boolean) => {
+      if (next === hidden) return
+      hidden = next
+      header.style.transform = next ? 'translate3d(0, -100%, 0)' : 'translateZ(0)'
+      if (bar) bar.style.transform = next ? 'translate3d(0, 100%, 0)' : 'translateZ(0)'
+    }
+    const reveal = () => {
+      apply(false)
+      lastY = turnY = window.scrollY
+    }
+    const read = () => {
+      frame = 0
+      const y = window.scrollY
+      // Viagem programada (sumário, retomada, rotação) não é leitura: as
+      // barras não somem porque o leitor PEDIU para ir a algum lugar.
+      if (!query.matches || pendingTargetRef.current != null) {
+        reveal()
+        return
+      }
+      const end = document.documentElement.scrollHeight - window.innerHeight
+      if (y < 48 || y > end - 24) {
+        reveal()
+        return
+      }
+      const delta = y - lastY
+      if (delta === 0) return
+      // Mudou de sentido: a conta recomeça dali.
+      if ((delta > 0) !== (lastY >= turnY)) turnY = lastY
+      lastY = y
+      if (y - turnY > 40) apply(true)
+      else if (turnY - y > 24) apply(false)
+    }
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(read)
+    }
+    revealChromeRef.current = reveal
+    window.addEventListener('scroll', onScroll, { passive: true })
+    query.addEventListener?.('change', reveal)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      query.removeEventListener?.('change', reveal)
+      if (frame) window.cancelAnimationFrame(frame)
+      revealChromeRef.current = () => {}
+      header.style.transform = 'translateZ(0)'
+      if (bar) bar.style.transform = 'translateZ(0)'
+    }
+  }, [loading])
+
+  // Folha aberta ou ferramenta trocada: as barras voltam — é por elas que se
+  // fecha a folha e se vê a ferramenta ativa.
+  useEffect(() => {
+    revealChromeRef.current()
+  }, [mobileSheet, tool])
+
+  // Altura REAL do cabeçalho, para os painéis laterais (miniaturas e
+  // anotações) grudarem logo abaixo dele. Era um 132px fixo: com o cabeçalho
+  // de 108px sobrava uma faixa vazia, e no modo enxuto o dobro dela.
+  useEffect(() => {
+    if (loading) return
+    const header = headerRef.current
+    const shell = viewerRef.current
+    if (!header || !shell || typeof ResizeObserver === 'undefined') return
+    const update = () => shell.style.setProperty('--viewer-header-h', `${Math.round(header.offsetHeight)}px`)
+    update()
+    const observer = new ResizeObserver(update)
+    observer.observe(header)
+    return () => observer.disconnect()
+  }, [loading])
+
   const fitToWidth = useCallback(() => {
     if (!pageSize || !availableWidth) return
     // Mesma âncora dos botões de zoom: "ajustar à largura" também engorda todas
@@ -3731,6 +3875,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       availableWidth: width,
       availableHeight: height,
       fitWidth: horizontal && mode === 'width',
+      portraitMaxZoom: portraitRestingCap(),
     })
     const ratio = resting ? zoomRatioFor(value, resting) : null
     if (ratio != null) zoomRatioRef.current = ratio
@@ -4373,7 +4518,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             nenhuma, e o cabeçalho ficava sem fundo sobre página branca.) */}
         <header
           ref={headerRef}
-          className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950 shadow-xl shadow-black/25"
+          className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950 shadow-xl shadow-black/25 transition-transform duration-200 ease-out motion-reduce:transition-none"
           style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
         >
           {/* Progresso de leitura. Uma linha fina no topo responde à pergunta
@@ -4594,8 +4739,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     <>
                       <SheetAction
                         icon={<StickyNote className="h-4 w-4" />}
-                        label={showAnnotations ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
-                        onClick={() => { setShowAnnotations((value) => !value); setMoreMenuOpen(false) }}
+                        label={annotationsVisible ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
+                        onClick={() => { toggleAnnotationsPanel(); setMoreMenuOpen(false) }}
                       />
                       <SheetAction
                         icon={<PenTool className="h-4 w-4" />}
@@ -4605,7 +4750,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                       <SheetAction
                         icon={<HelpCircle className="h-4 w-4" />}
                         label={showGuide ? 'Ocultar guia das ferramentas' : 'Mostrar guia das ferramentas'}
-                        onClick={() => { setShowGuide((value) => !value); setShowAnnotations(true); setMoreMenuOpen(false) }}
+                        onClick={() => { setShowGuide((value) => !value); setShowAnnotations(true); setAnnotationsPinned(true); setMoreMenuOpen(false) }}
                       />
                     </>
                   )}
@@ -4883,7 +5028,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               rolagem da lista de miniaturas/sumário. Um preto um pouco mais
               fechado dá o mesmo resultado na tela. */}
           {showThumbs && (
-            <aside className="hidden border-r border-white/10 bg-black/30 p-3 lg:sticky lg:top-[132px] lg:col-start-1 lg:block lg:h-[calc(100vh-132px)] lg:overflow-hidden">
+            <aside className="hidden border-r border-white/10 bg-black/30 p-3 lg:sticky lg:top-[var(--viewer-header-h,132px)] lg:col-start-1 lg:block lg:h-[calc(100vh_-_var(--viewer-header-h,132px))] lg:overflow-hidden">
               <SidePanel
                 tab={sidePanelTab}
                 onTabChange={setSidePanelTab}
@@ -5063,7 +5208,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             de ser padding vazio e virou a assinatura da casa — ver abaixo. */}
         <div
           ref={bottomBarRef}
-          className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 lg:hidden"
+          className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 transition-transform duration-200 ease-out motion-reduce:transition-none lg:hidden"
           style={{
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
@@ -5437,8 +5582,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             {!previewActive && (
               <SheetAction
                 icon={<StickyNote className="h-4 w-4" />}
-                label={showAnnotations ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
-                onClick={() => { setShowAnnotations((value) => !value); setMobileSheet(null) }}
+                label={annotationsVisible ? 'Ocultar minhas anotações' : 'Ver minhas anotações'}
+                onClick={() => { toggleAnnotationsPanel(); setMobileSheet(null) }}
               />
             )}
             <SheetAction icon={<Sparkles className="h-4 w-4" />} label="Ver o tutorial de novo" onClick={() => { setMobileSheet(null); startTour() }} />
@@ -9081,7 +9226,7 @@ const AnnotationsPanel = memo(function AnnotationsPanel({
       // Sem `backdrop-blur` (mesmo motivo da coluna de navegação) e com a
       // rolagem contida: no celular este painel fica logo abaixo das páginas, e
       // a inércia ao chegar no fim da lista continuava no documento.
-      className="overflow-y-auto border-t border-white/10 bg-black/30 p-3 lg:sticky lg:top-[132px] lg:col-start-3 lg:h-[calc(100vh-132px)] lg:border-l lg:border-t-0"
+      className="overflow-y-auto border-t border-white/10 bg-black/30 p-3 lg:sticky lg:top-[var(--viewer-header-h,132px)] lg:col-start-3 lg:h-[calc(100vh_-_var(--viewer-header-h,132px))] lg:border-l lg:border-t-0"
       style={{ overscrollBehavior: 'contain' }}
     >
       {showGuide && <ToolGuide />}
