@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   computeCardInstallmentCharge,
+  isInstallmentAvailable,
   computeCheckoutCharge,
   parsePayerCosts,
   DEFAULT_FEE_POLICY,
@@ -157,15 +158,62 @@ describe('resolveCheckoutCharge (servidor)', () => {
     expect(r.error).toContain('máximo 3x')
   })
 
-  it('consulta falhou: segue com o valor à vista, sem somar juro nosso', async () => {
+  it('consulta falhou: recusa o parcelado em vez de cobrar sem saber o valor da fatura', async () => {
     fetchPayerCosts.mockResolvedValue(null)
     const r = await resolve(6)
-    expect(r.ok && r.charge.transactionAmount).toBe(A_VISTA)
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.status).toBe(503)
+  })
+
+  it('libera até 18x quando o MP cobra os juros do comprador', async () => {
+    fetchPayerCosts.mockResolvedValue([
+      { installments: 1, installmentRate: 0, installmentAmount: A_VISTA, totalAmount: A_VISTA },
+      { installments: 18, installmentRate: 29.99, installmentAmount: 20.05, totalAmount: 360.9 },
+    ])
+    const r = await resolve(18)
+    expect(r.ok).toBe(true)
+    if (!r.ok) return
+    expect(r.charge.installments).toBe(18)
+    expect(r.charge.transactionAmount).toBe(A_VISTA)
+    expect(r.charge.totalAmount).toBe(360.9)
+  })
+
+  it('sem juros para o comprador, não oferece parcela sem custo na tabela (13x+)', async () => {
+    fetchPayerCosts.mockResolvedValue([
+      { installments: 1, installmentRate: 0, installmentAmount: A_VISTA, totalAmount: A_VISTA },
+      { installments: 12, installmentRate: 0, installmentAmount: 23.15, totalAmount: A_VISTA },
+      { installments: 18, installmentRate: 0, installmentAmount: 15.43, totalAmount: A_VISTA },
+    ])
+    const r = await resolve(18)
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.error).toContain('máximo 12x')
   })
 
   it('Pix não passa pelo parcelamento', async () => {
     const r = await resolve(1, { paymentMethodId: 'pix', hasCardToken: false })
     expect(fetchPayerCosts).not.toHaveBeenCalled()
     expect(r.ok && r.charge.method).toBe('pix')
+  })
+})
+
+describe('isInstallmentAvailable', () => {
+  const comJuros: ProviderPayerCost = { installments: 18, installmentRate: 29.99, installmentAmount: 20, totalAmount: 360 }
+  const semJuros: ProviderPayerCost = { installments: 18, installmentRate: 0, installmentAmount: 15, totalAmount: 277 }
+
+  it('à vista sempre', () => {
+    expect(isInstallmentAvailable(1, null)).toBe(true)
+  })
+  it('parcelado exige o parcelamento do MP', () => {
+    expect(isInstallmentAvailable(6, null)).toBe(false)
+  })
+  it('18x com juros do comprador: sim; sem juros e sem custo na tabela: não', () => {
+    expect(isInstallmentAvailable(18, comJuros)).toBe(true)
+    expect(isInstallmentAvailable(18, semJuros)).toBe(false)
+    expect(isInstallmentAvailable(12, { ...semJuros, installments: 12 })).toBe(true)
+  })
+  it('respeita o limite da política', () => {
+    expect(isInstallmentAvailable(18, comJuros, { ...DEFAULT_FEE_POLICY, maxInstallments: 12 })).toBe(false)
   })
 })

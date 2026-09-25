@@ -37,6 +37,35 @@ import { trimAttachmentsToEmailLimit } from './email-attachment-size'
 import { formatDuration, formatDurationMinutes, normalizeDuration } from './material-timed-access'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
+import { paidSummaryOf, type PaidSummary } from './payments/receipt'
+
+/**
+ * Total efetivamente pago (com taxa e juros do parcelamento) pela compra que
+ * gerou estas keys — o valor do comprovante do Mercado Pago.
+ *
+ * `key.amount` é o preço do ITEM; o comprador pagou isso mais a taxa do meio de
+ * pagamento (e, no parcelado, os juros do MP). Só usamos o total da order
+ * quando o e-mail cobre TODAS as keys dela — um e-mail com parte do carrinho
+ * mostrando o total inteiro estaria tão errado quanto o contrário. Sem order
+ * (keys de formulário, cortesia) devolve `undefined` e fica o preço do item.
+ */
+async function paidSummaryForKeys(db: Db, keys: SerialKey[]): Promise<PaidSummary | undefined> {
+  try {
+    const orderId = keys[0]?.orderId
+    if (!orderId || !ObjectId.isValid(orderId)) return undefined
+    if (keys.some(k => k.orderId !== orderId)) return undefined
+    const [order, totalKeys] = await Promise.all([
+      db.collection<PaymentOrder>('payment_orders').findOne({ _id: new ObjectId(orderId) as any }),
+      db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).countDocuments({ orderId } as any),
+    ])
+    if (!order || totalKeys !== keys.length) return undefined
+    const paid = paidSummaryOf(order)
+    return paid.total > 0 ? paid : undefined
+  } catch (err) {
+    console.error('[serial-key] falha ao ler o total pago da order:', err)
+    return undefined
+  }
+}
 
 /**
  * Resolve os anexos de PDF (com marca d'água do comprador) para uma serial key
@@ -160,7 +189,7 @@ function timedAccessOf(serial: SerialKey): SerialKeyReceiptData['timedAccess'] {
   }
 }
 
-function buildReceiptData(serial: SerialKey, paymentMethod?: string): SerialKeyReceiptData {
+function buildReceiptData(serial: SerialKey, paymentMethod?: string, paid?: PaidSummary): SerialKeyReceiptData {
   const activationUrl = serial.activationToken ? getActivationUrl(serial.activationToken) : ''
   return {
     buyerName: serial.buyerName || '',
@@ -168,7 +197,8 @@ function buildReceiptData(serial: SerialKey, paymentMethod?: string): SerialKeyR
     buyerPhone: serial.buyerPhone || '',
     productTitle: serial.productTitle || 'Produto',
     productTypeLabel: productTypeLabel(serial.productType),
-    amount: serial.amount || 0,
+    amount: paid?.total ?? (serial.amount || 0),
+    paid,
     paymentStatusLabel: paymentStatusLabel(serial.paymentStatus),
     paymentMethodLabel: paymentMethod ? (PAYMENT_METHOD_LABELS[paymentMethod] || paymentMethod) : undefined,
     transactionId: serial.providerPaymentId,
@@ -190,7 +220,7 @@ export async function sendSerialKeyEmail(
 ): Promise<boolean> {
   if (!serial.buyerEmail || !serial.activationToken) return false
   const kind = opts.kind || 'purchase'
-  const receipt = buildReceiptData(serial, opts.paymentMethod)
+  const receipt = buildReceiptData(serial, opts.paymentMethod, await paidSummaryForKeys(db, [serial]))
 
   let log: SerialKeyEmailLog
   try {
@@ -218,7 +248,7 @@ export async function sendSerialKeyEmail(
       buyerPhone: serial.buyerPhone || '',
       productTitle: receipt.productTitle,
       productTypeLabel: receipt.productTypeLabel,
-      amount: receipt.amount,
+      amount: receipt.paid ?? receipt.amount,
       paymentStatusLabel: receipt.paymentStatusLabel,
       paymentMethodLabel: receipt.paymentMethodLabel,
       transactionId: receipt.transactionId,
@@ -286,13 +316,15 @@ export async function sendSerialKeyCartEmail(
       }
     }))
 
+    const paid = await paidSummaryForKeys(db, keys)
     const receipt: SerialKeyReceiptData = {
       buyerName: first.buyerName || '',
       buyerEmail: first.buyerEmail,
       buyerPhone: first.buyerPhone || '',
       productTitle: `Carrinho (${keys.length} itens)`,
       productTypeLabel: 'Compra de vários produtos',
-      amount: keys.reduce((s, k) => s + (k.amount || 0), 0),
+      amount: paid?.total ?? keys.reduce((s, k) => s + (k.amount || 0), 0),
+      paid,
       paymentStatusLabel: paymentStatusLabel(first.paymentStatus),
       paymentMethodLabel: opts.paymentMethod ? (PAYMENT_METHOD_LABELS[opts.paymentMethod] || opts.paymentMethod) : undefined,
       transactionId: first.providerPaymentId,
@@ -321,7 +353,7 @@ export async function sendSerialKeyCartEmail(
       email: first.buyerEmail!,
       buyerName: first.buyerName || '',
       buyerPhone: first.buyerPhone || '',
-      totalAmount: receipt.amount,
+      totalAmount: receipt.paid ?? receipt.amount,
       paymentStatusLabel: receipt.paymentStatusLabel,
       purchasedAt: receipt.purchasedAt,
       items,
@@ -488,8 +520,10 @@ async function sendAccountPurchaseEmail(
       )
     }
 
-    const totalAmount = applied.reduce((sum, entry) => sum + (entry.key.amount || 0), 0)
+    const paid = await paidSummaryForKeys(db, applied.map(entry => entry.key))
+    const totalAmount = paid ?? applied.reduce((sum, entry) => sum + (entry.key.amount || 0), 0)
     const single = applied.length === 1 ? applied[0] : null
+    const singleAmount = paid ?? (single?.key.amount || 0)
 
     await sendWithRetry('confirmação de compra aplicada na conta', async () => {
       if (single?.purchase?.kind === 'plan') {
@@ -498,7 +532,7 @@ async function sendAccountPurchaseEmail(
           name,
           single.purchase.planLabel,
           single.purchase.durationMonths,
-          single.key.amount || 0
+          singleAmount
         )
         return
       }
@@ -509,7 +543,7 @@ async function sendAccountPurchaseEmail(
           planLabel: single.purchase.planLabel,
           planKey: single.purchase.planKey,
           durationMonths: single.purchase.durationMonths,
-          amount: single.key.amount || 0,
+          amount: singleAmount,
           expiresAt: single.purchase.expiresAt,
           paymentMethod: opts.paymentMethod,
         })
@@ -522,7 +556,7 @@ async function sendAccountPurchaseEmail(
           single.purchase?.kind === 'material'
             ? single.purchase.itemTitle
             : (single.key.productTitle || 'Material'),
-          single.key.amount || 0,
+          singleAmount,
           fittingPdfs
         )
         return

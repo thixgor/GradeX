@@ -40,6 +40,7 @@ import {
   computeCheckoutCharge,
   DEFAULT_FEE_POLICY,
   formatBrl,
+  isInstallmentAvailable,
   parsePayerCosts,
   type CheckoutCharge,
   type FeePolicy,
@@ -488,7 +489,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     [method, detectedCardMethodId]
   )
 
-  const maxInstallments = Math.max(1, Math.min(12, feePolicy?.maxInstallments || 12))
+  const maxInstallments = Math.max(1, Math.min(18, feePolicy?.maxInstallments || 18))
 
   /**
    * Valor À VISTA no crédito (preço + taxa do crédito 1x). É com ele que o
@@ -525,9 +526,11 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
    */
   const installmentOptions = useMemo(() => {
     if (!payerCosts) return [1]
-    const opts = payerCosts.map(pc => pc.installments).filter(n => n >= 1 && n <= maxInstallments)
+    const opts = payerCosts
+      .filter(pc => pc.installments <= maxInstallments && isInstallmentAvailable(pc.installments, pc, feePolicy))
+      .map(pc => pc.installments)
     return opts.includes(1) ? opts : [1, ...opts]
-  }, [payerCosts, maxInstallments])
+  }, [payerCosts, maxInstallments, feePolicy])
 
   // Débito não parcela, e trocar de cartão (ou o limite da política) não pode
   // deixar uma seleção órfã (ex.: 12x num cartão que só vai até 6x).

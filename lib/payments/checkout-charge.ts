@@ -2,6 +2,7 @@ import {
   computeCardInstallmentCharge,
   computeCheckoutCharge,
   getFeePolicy,
+  isInstallmentAvailable,
   type CheckoutCharge,
   type FeePolicy,
 } from './fees'
@@ -60,26 +61,27 @@ export async function resolveCheckoutCharge(input: {
     issuerId: input.issuer,
   })
 
+  // Sem o parcelamento do MP não dá para saber quem paga os juros nem o valor
+  // da fatura — e cobrar sem saber é arriscar juro em dobro para o comprador
+  // ou custo de parcelamento para nós. O checkout já não deixa chegar aqui.
   if (!custos) {
-    console.warn(
-      `[checkout-charge] parcelamento do MP indisponível — cobrando o valor à vista em ${charge.installments}x`,
-      { paymentMethodId: input.paymentMethodId, amount: aVista.totalAmount }
-    )
+    console.warn('[checkout-charge] parcelamento do MP indisponível', {
+      paymentMethodId: input.paymentMethodId,
+      amount: aVista.totalAmount,
+      installments: charge.installments,
+    })
     return {
-      ok: true,
-      charge: computeCardInstallmentCharge({
-        baseAmount: input.baseAmount,
-        paymentMethodId: input.paymentMethodId,
-        installments: charge.installments,
-        payerCost: null,
-        policy,
-      }),
+      ok: false,
+      status: 503,
+      error: 'Não conseguimos confirmar o parcelamento com o Mercado Pago agora. Tente de novo em instantes ou pague à vista.',
     }
   }
 
   const linha = custos.find(c => c.installments === charge.installments)
-  if (!linha) {
-    const max = custos.reduce((m, c) => Math.max(m, c.installments), 1)
+  if (!linha || !isInstallmentAvailable(charge.installments, linha, policy)) {
+    const max = custos
+      .filter(c => isInstallmentAvailable(c.installments, c, policy))
+      .reduce((m, c) => Math.max(m, c.installments), 1)
     return {
       ok: false,
       status: 400,

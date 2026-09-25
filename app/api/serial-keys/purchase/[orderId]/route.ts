@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
+import { formatPaidSummary, paidSummaryOf } from '@/lib/payments/receipt'
 import {
   SERIAL_KEYS_COLLECTION,
   serializeSerialKeyPublic,
@@ -78,7 +79,9 @@ export async function GET(request: NextRequest, { params }: { params: { orderId:
     productType: current.metadata?.productType,
     productTypeLabel: productTypeLabel(current.metadata?.productType),
     productTitle: current.metadata?.itemTitle,
-    amount: current.amount,
+    // Total pago com taxa e juros do parcelamento — o do comprovante do MP.
+    amount: paidSummaryOf(current).total,
+    paidLabel: formatPaidSummary(paidSummaryOf(current)),
     paymentMethod: current.paymentMethod,
     buyerName: current.metadata?.buyerName || current.payerName,
     buyerFirstName: String(current.metadata?.buyerName || current.payerName || 'Comprador').split(' ')[0],

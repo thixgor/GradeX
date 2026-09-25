@@ -2397,6 +2397,17 @@ export interface PaymentOrder {
   baseAmount?: number
   /** Taxa operacional / juros de parcelamento somados ao `amount`. */
   feeAmount?: number
+  /**
+   * Total que o comprador pagou, lido do Mercado Pago na aprovação
+   * (`transaction_details.total_paid_amount`). Difere de `amount` no cartão
+   * parcelado com juros para o comprador — é o valor da fatura e do
+   * comprovante do MP, e é o que os nossos e-mails mostram.
+   */
+  paidAmount?: number
+  /** Parcelas do pagamento aprovado (1 = à vista). */
+  paidInstallments?: number
+  /** Valor de cada parcela, como no comprovante do Mercado Pago. */
+  paidInstallmentAmount?: number
   currency: 'BRL'
   status: PaymentStatus
   paymentMethod?: PaymentMethodKind

@@ -6,6 +6,7 @@
 
 import jsPDF from 'jspdf'
 import QRCode from 'qrcode'
+import { formatPaidSummary, type PaidSummary } from './payments/receipt'
 
 export interface SerialKeyReceiptData {
   buyerName: string
@@ -14,6 +15,11 @@ export interface SerialKeyReceiptData {
   productTitle: string
   productTypeLabel: string
   amount: number
+  /**
+   * Total pago com taxa e juros (e as parcelas), quando a key veio de uma
+   * compra — é o que o comprovante mostra, igual ao do Mercado Pago.
+   */
+  paid?: PaidSummary
   paymentStatusLabel: string
   paymentMethodLabel?: string
   transactionId?: string
@@ -83,7 +89,7 @@ export function buildReceiptText(data: SerialKeyReceiptData): string {
     `Telefone: ${data.buyerPhone}`,
     `Produto: ${data.productTitle}`,
     `Tipo: ${data.productTypeLabel}`,
-    `Valor pago: ${formatBRL(data.amount)}`,
+    `Valor pago: ${data.paid ? formatPaidSummary(data.paid) : formatBRL(data.amount)}`,
     `Status do pagamento: ${data.paymentStatusLabel}`,
     data.paymentMethodLabel ? `Forma de pagamento: ${data.paymentMethodLabel}` : '',
     data.transactionId ? `ID da transação: ${data.transactionId}` : '',
@@ -154,7 +160,7 @@ export async function generateReceiptPdf(data: SerialKeyReceiptData): Promise<Bu
   row('E-mail', data.buyerEmail)
   row('Telefone', data.buyerPhone)
   row('Produto', `${data.productTitle} (${data.productTypeLabel})`)
-  row('Valor pago', formatBRL(data.amount))
+  row('Valor pago', data.paid ? formatPaidSummary(data.paid) : formatBRL(data.amount))
   row('Status do pagamento', data.paymentStatusLabel)
   if (data.paymentMethodLabel) row('Forma de pagamento', data.paymentMethodLabel)
   if (data.transactionId) row('ID da transação', data.transactionId)

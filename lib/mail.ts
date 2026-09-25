@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer'
 import { getMarketingEmailTemplate, personalize, renderEmailButton } from '@/lib/comms/email-render'
 import { partirEmNegrito } from '@/lib/provas/pitch-de-vendas'
 import { ADMIN_EMAILS } from '@/lib/constants'
+import { formatPaidSummary, toPaidSummary, type PaidSummary } from '@/lib/payments/receipt'
 
 // Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
 // rajada — daí os erros de "auth limit". O pool reaproveita poucas conexões e
@@ -399,12 +400,13 @@ export async function sendPlanPurchasedEmail(
   name: string,
   planName: string,
   durationMonths: number,
-  amount?: number
+  /** Total pago (com taxa e juros) — o mesmo do comprovante do Mercado Pago. */
+  amount?: number | PaidSummary
 ) {
   const firstName = name.split(' ')[0]
   const durationText = durationMonths === 0 || durationMonths > 300 ? 'Vitalício' : `${durationMonths} meses`
-  const amountLine = amount
-    ? `<p style="font-size:14px;color:#718096;">Valor cobrado: <strong style="color:#0f3d2e;">R$ ${amount.toFixed(2).replace('.', ',')}</strong></p>`
+  const amountLine = amount && toPaidSummary(amount).total > 0
+    ? `<p style="font-size:14px;color:#718096;">Valor pago: <strong style="color:#0f3d2e;">${formatPaidSummary(amount)}</strong></p>`
     : ''
 
   const content = `
@@ -450,7 +452,7 @@ export async function sendMaterialPurchasedEmail(
   email: string,
   name: string,
   itemTitle: string,
-  amount: number,
+  amount: number | PaidSummary,
   attachments: MaterialEmailAttachment[] = []
 ) {
   const firstName = name ? name.split(' ')[0] : 'Aluno'
@@ -465,7 +467,7 @@ export async function sendMaterialPurchasedEmail(
     <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
       <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">${itemTitle}</p>
-      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">R$ ${amount.toFixed(2).replace('.', ',')}</p>
+      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">${formatPaidSummary(amount)}</p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
     </div>
 
@@ -493,7 +495,7 @@ export async function sendManualClinicoPurchasedEmail(input: {
   planLabel: string
   planKey: 'semestral' | 'anual' | 'vitalicio'
   durationMonths: number | null
-  amount: number
+  amount: number | PaidSummary
   expiresAt: Date | string | null
   paymentMethod?: string | null
 }) {
@@ -515,7 +517,7 @@ export async function sendManualClinicoPurchasedEmail(input: {
     <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
       <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; font-weight: 700;">Comprovante de Compra</p>
       <p style="margin: 0 0 4px 0; font-size: 16px; font-weight: 700; color: #92400e;">Manual Clínico Completo — Plano ${input.planLabel}</p>
-      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">R$ ${input.amount.toFixed(2).replace('.', ',')}</p>
+      <p style="margin: 4px 0 2px 0; font-size: 15px; font-weight: 700; color: #0f3d2e;">${formatPaidSummary(input.amount)}</p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Duração: <strong>${durationStr}</strong></p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Expira em: <strong>${expiresStr}</strong></p>
       <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Data da compra: ${new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
@@ -619,6 +621,17 @@ function formatBRLEmail(value: number) {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }
 
+/**
+ * Linha que explica a diferença entre a soma dos itens e o total pago — a taxa
+ * do meio de pagamento e, no parcelado, os juros do Mercado Pago. Sem ela o
+ * comprovante mostra itens que somam X e um "total pago" maior, sem dizer por quê.
+ */
+function paymentCostNote(totalPaid: number, itemsTotal: number): string {
+  const diff = Math.round((totalPaid - itemsTotal) * 100) / 100
+  if (!(itemsTotal > 0) || diff < 0.01) return ''
+  return `<p style="margin: 6px 0 0 0; font-size: 12px; color: #718096;">Inclui ${formatBRLEmail(diff)} além dos itens: taxa do meio de pagamento e, quando houver, juros do parcelamento e frete.</p>`
+}
+
 /** Anexo de PDF de material (com marca d'água) para os e-mails de compra. */
 export interface MaterialEmailAttachment {
   title: string
@@ -690,7 +703,7 @@ export async function sendCartPurchasedEmail(
   email: string,
   name: string,
   items: CartPurchasedEmailItem[],
-  totalAmount: number,
+  totalAmount: number | PaidSummary,
   skippedItems: CartPurchasedEmailSkippedItem[] = [],
   attachments: MaterialEmailAttachment[] = []
 ) {
@@ -753,8 +766,9 @@ export async function sendCartPurchasedEmail(
       </table>
       <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 2px solid #fde68a;">
         <p style="margin: 0; font-size: 13px; color: #92400e; font-weight: 600;">Total pago</p>
-        <p style="margin: 0; font-size: 18px; font-weight: 800; color: #0f3d2e;">${formatBRLEmail(totalAmount)}</p>
+        <p style="margin: 0; font-size: 18px; font-weight: 800; color: #0f3d2e;">${formatPaidSummary(totalAmount)}</p>
       </div>
+      ${paymentCostNote(toPaidSummary(totalAmount).total, items.reduce((sum, item) => sum + (Number(item.price) || 0), 0))}
       <p style="margin: 8px 0 0 0; font-size: 12px; color: #718096;">Data: ${dateLabel}</p>
     </div>
 
@@ -1216,7 +1230,7 @@ export async function sendRafflePurchaseEmail(input: {
   prizeName: string
   numbers: number[]
   totalNumbers: number
-  amount: number
+  amount: number | PaidSummary
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Participante'
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
@@ -1231,7 +1245,7 @@ export async function sendRafflePurchaseEmail(input: {
       <p style="margin: 0 0 6px 0; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: #059669; font-weight: 700;">Seus números</p>
       <p style="margin: 0 0 10px 0; font-size: 18px; font-weight: 800; color: #047857; word-break: break-word;">${numbersStr}</p>
       <p style="margin: 0; font-size: 13px; color: #718096;">Prêmio: <strong>${input.prizeName}</strong></p>
-      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Total pago: <strong>R$ ${input.amount.toFixed(2).replace('.', ',')}</strong></p>
+      <p style="margin: 4px 0 0 0; font-size: 13px; color: #718096;">Total pago: <strong>${formatPaidSummary(input.amount)}</strong></p>
     </div>
 
     <p>Acompanhe o andamento e o sorteio ao vivo na página da rifa.</p>
@@ -1353,7 +1367,7 @@ export async function sendSerialKeyPurchaseEmail(input: {
   buyerPhone: string
   productTitle: string
   productTypeLabel: string
-  amount: number
+  amount: number | PaidSummary
   paymentStatusLabel: string
   paymentMethodLabel?: string
   transactionId?: string
@@ -1432,7 +1446,7 @@ export async function sendSerialKeyPurchaseEmail(input: {
         <tr><td style="padding: 3px 0; color: #718096;">Telefone</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerPhone}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Produto</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.productTitle}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Tipo</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.productTypeLabel}</td></tr>
-        <tr><td style="padding: 3px 0; color: #718096;">Valor pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">R$ ${input.amount.toFixed(2).replace('.', ',')}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Valor pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">${formatPaidSummary(input.amount)}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${input.paymentStatusLabel}</td></tr>
         ${input.transactionId ? `<tr><td style="padding: 3px 0; color: #718096;">ID da transação</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.transactionId}</td></tr>` : ''}
         <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
@@ -1488,7 +1502,7 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
   email: string
   buyerName: string
   buyerPhone: string
-  totalAmount: number
+  totalAmount: number | PaidSummary
   paymentStatusLabel: string
   purchasedAt: Date
   items: Array<{
@@ -1562,7 +1576,7 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
         <tr><td style="padding: 3px 0; color: #718096;">E-mail</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.email}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Telefone</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.buyerPhone}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Itens</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${input.items.length}</td></tr>
-        <tr><td style="padding: 3px 0; color: #718096;">Total pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">R$ ${input.totalAmount.toFixed(2).replace('.', ',')}</td></tr>
+        <tr><td style="padding: 3px 0; color: #718096;">Total pago</td><td style="padding: 3px 0; text-align: right; font-weight: 700; color: #0f3d2e;">${formatPaidSummary(input.totalAmount)}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Status</td><td style="padding: 3px 0; text-align: right; font-weight: 600; color: #059669;">${input.paymentStatusLabel}</td></tr>
         <tr><td style="padding: 3px 0; color: #718096;">Data e hora</td><td style="padding: 3px 0; text-align: right; font-weight: 600;">${dateStr}</td></tr>
       </table>
@@ -1614,6 +1628,8 @@ export async function sendShopOrderConfirmedEmail(input: {
   subtotal: number
   freight: number
   total: number
+  /** Total pago no Mercado Pago (pedido + taxa/juros do pagamento). */
+  paid?: PaidSummary
   deliveryType: 'pickup' | 'shipping'
   pickupPointName?: string
   deliveryMethodName?: string
@@ -1656,6 +1672,12 @@ export async function sendShopOrderConfirmedEmail(input: {
         <tr><td style="color:#718096;">Subtotal</td><td style="text-align:right;color:#4a5568;">${brl(input.subtotal)}</td></tr>
         <tr><td style="color:#718096;">Frete</td><td style="text-align:right;color:#4a5568;">${input.freight > 0 ? brl(input.freight) : 'Grátis'}</td></tr>
         <tr><td style="font-weight:700;color:#0f3d2e;padding-top:6px;">Total</td><td style="text-align:right;font-weight:700;color:#0f3d2e;padding-top:6px;">${brl(input.total)}</td></tr>
+        ${
+          input.paid && Math.round((input.paid.total - input.total) * 100) >= 1
+            ? `<tr><td style="color:#718096;">Taxa do pagamento${input.paid.installments && input.paid.installments > 1 ? ' e juros do parcelamento' : ''}</td><td style="text-align:right;color:#4a5568;">${brl(input.paid.total - input.total)}</td></tr>
+        <tr><td style="font-weight:700;color:#0f3d2e;">Total pago</td><td style="text-align:right;font-weight:700;color:#0f3d2e;">${formatPaidSummary(input.paid)}</td></tr>`
+            : ''
+        }
       </table>
     </div>
 

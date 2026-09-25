@@ -37,6 +37,8 @@ interface Purchase extends TimedAccessInfo {
   productTypeLabel?: string
   productTitle?: string
   amount?: number
+  /** "R$ 317,51 (6x de R$ 52,92)" — o mesmo texto do comprovante por e-mail. */
+  paidLabel?: string
   buyerName?: string
   buyerFirstName?: string
   buyerEmail?: string
@@ -308,7 +310,10 @@ function ApprovedView({ data }: { data: Purchase }) {
       <div style={{ ...glassCard, padding: '24px' }}>
         <h3 style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: '12px' }}>Resumo da compra</h3>
         <SummaryRow label="Produto" value={`${data.productTitle || ''}${data.productTypeLabel ? ` (${data.productTypeLabel})` : ''}`} />
-        <SummaryRow label="Valor pago" value={data.amount != null ? `R$ ${data.amount.toFixed(2).replace('.', ',')}` : undefined} />
+        <SummaryRow
+          label="Valor pago"
+          value={data.paidLabel || (data.amount != null ? `R$ ${data.amount.toFixed(2).replace('.', ',')}` : undefined)}
+        />
         <SummaryRow
           label="Modalidade de acesso"
           value={data.accessMode === 'timed' && data.accessDurationLabel

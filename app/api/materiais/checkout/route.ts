@@ -74,7 +74,7 @@ const PayerAddressSchema = z.object({
 const paymentFields = {
   paymentMethodId: z.string().min(1),
   cardToken: z.string().optional(),
-  installments: z.number().int().min(1).max(12).optional(),
+  installments: z.number().int().min(1).max(18).optional(),
   issuer: z.string().optional(),
   // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
   deviceId: z.string().max(200).optional(),

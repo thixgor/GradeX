@@ -53,7 +53,7 @@ const Schema = z.object({
   paymentMethodId: z.string().min(1),
   // Cartão (server-side com tokenização do Brick)
   cardToken: z.string().optional(),
-  installments: z.number().int().min(1).max(12).optional(),
+  installments: z.number().int().min(1).max(18).optional(),
   issuer: z.string().optional(),
   // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
   deviceId: z.string().max(200).optional(),

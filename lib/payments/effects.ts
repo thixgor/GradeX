@@ -11,6 +11,7 @@ import { ObjectId } from 'mongodb'
 import { getDb } from '../mongodb'
 import { sendPlanPurchasedEmail, sendMaterialPurchasedEmail, sendCartPurchasedEmail, sendManualClinicoPurchasedEmail, sendRafflePurchaseEmail, sendShopOrderConfirmedEmail } from '../mail'
 import { markNumbersSold, releaseReservation } from '../raffles'
+import { paidFieldsFromMercadoPago, paidSummaryOf } from './receipt'
 import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
 import { normalizeAccountType } from '../account-tier'
@@ -84,6 +85,9 @@ export async function applyPaymentResult(
     paidAt: result.paidAt || order.paidAt,
     pix: result.pix || order.pix,
     boleto: result.boleto || order.boleto,
+    // Total pago com juros/parcelas, como no comprovante do MP — é o que os
+    // e-mails de compra mostram (ver lib/payments/receipt.ts).
+    ...paidFieldsFromMercadoPago(result.raw),
     updatedAt: new Date(),
   }
   await orders.updateOne({ _id: order._id as any }, { $set: update })
@@ -142,7 +146,9 @@ export async function applyPaymentResult(
         contentName: updatedOrder.metadata?.itemTitle || updatedOrder.metadata?.planName || 'Compra',
       })
     }
-    await runApprovedEffects(order, result)
+    // Os efeitos recebem a order com o status ANTERIOR (como sempre), mas já
+    // com o total pago lido do MP — é dele que saem os valores dos e-mails.
+    await runApprovedEffects({ ...order, ...paidFieldsFromMercadoPago(result.raw) }, result)
   }
 
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
@@ -381,7 +387,7 @@ async function applyPlanPurchase(order: PaymentOrder) {
     user.name,
     planoConfig.nome || 'Plano Plus+',
     planoConfig.durationMonths || 0,
-    order.amount
+    paidSummaryOf(order)
   ).catch(err => console.error('[effects] e-mail plano falhou:', err))
 }
 
@@ -468,6 +474,9 @@ async function applyPhysicalOrder(order: PaymentOrder, result?: ProviderOrder) {
       subtotal: shopOrder.subtotal,
       freight: shopOrder.freight,
       total: shopOrder.total,
+      // Só no pedido da loja: no checkout unificado a order também paga o
+      // digital, e o total pago não seria o deste pedido.
+      ...(order.type === 'physical' ? { paid: paidSummaryOf(order) } : {}),
       deliveryType: shopOrder.deliveryType,
       pickupPointName: shopOrder.pickupPointName,
       deliveryMethodName: shopOrder.deliveryMethodName,
@@ -583,7 +592,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
           itemTitle: item.itemTitle,
           price: item.price,
         })),
-        order.amount,
+        paidSummaryOf(order),
         skippedItems,
         fittingPdfs
       ).catch(err => console.error('[effects] e-mail carrinho falhou:', err))
@@ -695,7 +704,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
       order.payerEmail,
       order.payerName || '',
       item.title || 'Material',
-      order.amount,
+      paidSummaryOf(order),
       autoPdfs
     ).catch(err => console.error('[effects] e-mail material falhou:', err))
   }
@@ -800,7 +809,7 @@ async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder)
       planLabel: plan.label,
       planKey: plan.key,
       durationMonths: plan.durationMonths,
-      amount: order.amount,
+      amount: paidSummaryOf(order),
       expiresAt: purchase.expiresAt || null,
       paymentMethod: result?.paymentMethod || order.paymentMethod,
     }).catch(err => console.error('[effects] e-mail manual clinico falhou:', err))
@@ -880,7 +889,7 @@ async function applyRafflePurchase(order: PaymentOrder, result?: ProviderOrder) 
       prizeName: raffle.prizeName,
       numbers: purchase.numbers,
       totalNumbers: raffle.totalNumbers,
-      amount: order.amount,
+      amount: paidSummaryOf(order),
     }).catch(err => console.error('[effects] e-mail rifa falhou:', err))
   }
 }

@@ -35,7 +35,7 @@
  *   PAYMENT_FEE_PASS_CREDIT=false      não repassa a taxa do crédito à vista
  *   PAYMENT_FEE_PASS_INSTALLMENTS=false  cartão parcelado sem juros para o comprador
  *                                        (o custo do parcelamento volta a ser nosso)
- *   PAYMENT_FEE_MAX_INSTALLMENTS=12    limite de parcelas oferecidas
+ *   PAYMENT_FEE_MAX_INSTALLMENTS=18    limite de parcelas oferecidas (máx. 18, o do Mercado Pago)
  *   PAYMENT_FEE_TABLE={"creditPercent":4.98,...}   JSON parcial que sobrescreve a tabela
  *
  * Este arquivo é PURO (sem I/O) de propósito: o mesmo cálculo roda no servidor,
@@ -120,7 +120,7 @@ export interface FeePolicy {
 export const DEFAULT_FEE_POLICY: FeePolicy = {
   enabled: true,
   pass: { pix: true, boleto: true, debit: true, credit: true, installments: true },
-  maxInstallments: 12,
+  maxInstallments: 18,
   table: MERCADO_PAGO_FEE_TABLE,
 }
 
@@ -219,7 +219,7 @@ export function getFeePolicy(): FeePolicy {
 
   const maxInstallments = Math.max(
     1,
-    Math.min(12, Math.trunc(toNumber(readEnv('PAYMENT_FEE_MAX_INSTALLMENTS'), 12)) || 12)
+    Math.min(18, Math.trunc(toNumber(readEnv('PAYMENT_FEE_MAX_INSTALLMENTS'), 18)) || 18)
   )
 
   cachedPolicy = {
@@ -476,6 +476,28 @@ export function parsePayerCosts(raw: unknown): ProviderPayerCost[] {
 }
 
 /**
+ * O parcelamento em `n`x pode ser oferecido sem prejuízo para nós?
+ *
+ *  - com juros para o comprador (`installmentRate > 0`): sim, até o limite da
+ *    política — o custo do parcelamento é do comprador e o nosso é só a taxa do
+ *    crédito, que já está no valor à vista;
+ *  - sem juros para o comprador: só se a tabela tiver o custo daquela parcela
+ *    (`installmentPercent[n]`). Sem ele o gross-up somaria zero e o custo do
+ *    parcelamento sairia do nosso bolso — a tabela vai até 12x.
+ */
+export function isInstallmentAvailable(
+  n: number,
+  payerCost: ProviderPayerCost | null | undefined,
+  policy: FeePolicy = DEFAULT_FEE_POLICY
+): boolean {
+  if (!Number.isInteger(n) || n < 1 || n > policy.maxInstallments) return false
+  if (n === 1) return true
+  if (!payerCost) return false
+  if (payerCost.installmentRate > 0) return true
+  return policy.table.installmentPercent[n] != null
+}
+
+/**
  * Cobrança do cartão PARCELADO conciliada com o que o Mercado Pago de fato
  * cobra do comprador.
  *
@@ -523,7 +545,8 @@ export function computeCardInstallmentCharge(input: {
   const n = parcelado.installments
   const pc = input.payerCost
 
-  // Sem juros para o comprador: o custo é nosso e o gross-up já cobre.
+  // Sem juros para o comprador: o custo é nosso e o gross-up já cobre (só é
+  // oferecido quando a tabela tem o custo da parcela — `isInstallmentAvailable`).
   if (pc && !(pc.installmentRate > 0)) return parcelado
 
   const aVista = computeCheckoutCharge({
