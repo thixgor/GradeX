@@ -690,8 +690,11 @@ function AdminMateriaisContent() {
     finally { setGrantLoading(false) }
   }
 
-  const revokeAccess = async (purchaseId: string) => {
-    if (!confirm('Revogar acesso deste usuário?')) return
+  const revokeAccess = async (purchaseId: string, viaPackageTitle?: string) => {
+    const message = viaPackageTitle
+      ? `Este acesso vem do pacote "${viaPackageTitle}". Revogar remove o acesso ao pacote inteiro. Continuar?`
+      : 'Revogar acesso deste usuário?'
+    if (!confirm(message)) return
     try {
       await fetch(`/api/materiais/admin-access?purchaseId=${purchaseId}`, { method: 'DELETE' })
       setAccessPurchases(prev => prev.filter(p => p._id !== purchaseId))
@@ -3455,6 +3458,11 @@ function AdminMateriaisContent() {
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{p.userName || '—'}</p>
                             <p className="text-xs text-muted-foreground truncate">{p.userEmail}</p>
+                            {p.viaPackage && (
+                              <p className="text-[10px] text-violet-500 truncate flex items-center gap-1" title="Acesso pelo pacote que contém este material">
+                                <Package className="h-3 w-3 flex-shrink-0" /> via pacote {p.viaPackage.title}
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center gap-1.5 flex-shrink-0">
                             {planBadge && (
@@ -3497,7 +3505,7 @@ function AdminMateriaisContent() {
                                   ? <CheckCheck className="h-3.5 w-3.5 text-green-500" />
                                   : <MailCheck className="h-3.5 w-3.5" />}
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive flex-shrink-0" onClick={() => revokeAccess(p._id)} title="Revogar acesso">
+                            <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive hover:text-destructive flex-shrink-0" onClick={() => revokeAccess(p._id, p.viaPackage?.title)} title={p.viaPackage ? 'Revogar acesso ao pacote' : 'Revogar acesso'}>
                               <UserMinus className="h-3.5 w-3.5" />
                             </Button>
                           </div>

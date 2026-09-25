@@ -36,6 +36,33 @@ export async function GET(request: NextRequest) {
       .sort({ purchasedAt: -1 })
       .toArray()
 
+    // Num material, quem comprou (ou recebeu) um pacote que o contém também é
+    // dono dele — é assim que o acesso é resolvido em /api/materiais/[id].
+    // Essas linhas vêm marcadas com o pacote de origem (`viaPackage`); quem já
+    // tem o material direto não é repetido.
+    if (itemType === 'material') {
+      const packages = await db
+        .collection('material_packages')
+        .find({ materialIds: itemId, isHidden: { $ne: true } }, { projection: { _id: 1, title: 1 } })
+        .toArray()
+      if (packages.length > 0) {
+        const packageTitles = new Map(packages.map((pkg: any) => [String(pkg._id), pkg.title || 'Pacote']))
+        const packagePurchases = await db
+          .collection('material_purchases')
+          .find({ itemType: 'package', itemId: { $in: [...packageTitles.keys()] }, status: 'completed' })
+          .sort({ purchasedAt: -1 })
+          .toArray()
+        const directOwners = new Set(purchases.map((p: any) => p.userId))
+        const seen = new Set<string>()
+        for (const p of packagePurchases) {
+          const owner = p.userId || p.userEmail
+          if (!owner || directOwners.has(p.userId) || seen.has(owner)) continue
+          seen.add(owner)
+          purchases.push({ ...p, viaPackage: { id: p.itemId, title: packageTitles.get(p.itemId) } })
+        }
+      }
+    }
+
     // Enriquecer com dados atuais do usuário (accountType)
     const userIds = [...new Set(purchases.map((p: any) => p.userId))]
     const users = userIds.length
