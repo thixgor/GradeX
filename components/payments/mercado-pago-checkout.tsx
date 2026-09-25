@@ -36,11 +36,14 @@ import { useEffect, useMemo, useState } from 'react'
 import { Loader2, CheckCircle2, AlertCircle, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, Info, FileText } from 'lucide-react'
 import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import {
+  computeCardInstallmentCharge,
   computeCheckoutCharge,
   DEFAULT_FEE_POLICY,
   formatBrl,
+  parsePayerCosts,
   type CheckoutCharge,
   type FeePolicy,
+  type ProviderPayerCost,
 } from '@/lib/payments/fees'
 import {
   brandFromMercadoPagoId,
@@ -55,7 +58,63 @@ import {
 declare global {
   interface Window {
     MercadoPago?: any
+    /** Device ID do antifraude, gerado pelo script de segurança do Mercado Pago. */
+    MP_DEVICE_SESSION_ID?: string
   }
+}
+
+/**
+ * Parcelamento que o Mercado Pago oferece para o cartão digitado, consultado
+ * com o valor à vista — é esse valor que vai como `transaction_amount`.
+ */
+interface CardInstallmentsInfo {
+  bin: string
+  /** Valor à vista usado na consulta. Se o preço mudar, a consulta é refeita. */
+  amount: number
+  paymentMethodId: string
+  issuerId: string | null
+  payerCosts: ProviderPayerCost[]
+}
+
+type InstallmentsStatus = 'idle' | 'loading' | 'ready' | 'error'
+
+/**
+ * `status_detail` do Mercado Pago em português. "Detalhe: cc_rejected_high_risk"
+ * não diz nada a quem teve o cartão recusado — e sem saber o motivo a pessoa
+ * tenta de novo do mesmo jeito, ou desiste da compra.
+ */
+const REJECTION_MESSAGES: Record<string, string> = {
+  cc_rejected_bad_filled_card_number: 'O número do cartão está incorreto. Confira e tente de novo.',
+  cc_rejected_bad_filled_date: 'A data de validade está incorreta. Confira e tente de novo.',
+  cc_rejected_bad_filled_security_code: 'O código de segurança (CVV) está incorreto. Confira e tente de novo.',
+  cc_rejected_bad_filled_other: 'Algum dado do cartão está incorreto. Confira número, validade, CVV e nome.',
+  cc_rejected_call_for_authorize:
+    'O banco pediu autorização para esta compra. Libere o pagamento no app do seu banco (ou ligue para ele) e tente de novo.',
+  cc_rejected_card_disabled: 'O cartão está bloqueado ou não foi ativado. Ative-o com o banco ou use outro cartão.',
+  cc_rejected_duplicated_payment: 'Você já fez um pagamento com esse valor há pouco. Se precisar pagar de novo, use outro cartão ou o Pix.',
+  cc_rejected_high_risk:
+    'O pagamento foi recusado pela análise de segurança do Mercado Pago. Tente com outro cartão ou pague com Pix — é aprovado na hora.',
+  cc_rejected_insufficient_amount: 'O cartão não tem limite suficiente. Tente menos parcelas, outro cartão ou Pix.',
+  cc_rejected_invalid_installments: 'O cartão não aceita esse número de parcelas. Escolha outra opção.',
+  cc_rejected_max_attempts: 'Você atingiu o limite de tentativas com este cartão. Use outro cartão ou o Pix.',
+  cc_rejected_blacklist: 'Este cartão não pode ser usado nesta compra. Use outro cartão ou o Pix.',
+  cc_rejected_card_error: 'O banco não conseguiu processar o cartão. Tente de novo em instantes ou use outro cartão.',
+  cc_rejected_other_reason: 'O banco emissor recusou o pagamento. Fale com o seu banco, tente outro cartão ou pague com Pix.',
+  cc_amount_rate_limit_exceeded: 'O cartão atingiu o limite de valor permitido. Tente outro cartão ou o Pix.',
+  rejected_by_bank: 'O banco emissor recusou o pagamento. Fale com o seu banco, tente outro cartão ou pague com Pix.',
+  rejected_insufficient_data: 'Faltaram dados para aprovar o pagamento. Confira o CPF e os dados do cartão.',
+}
+
+export function describeRejection(statusDetail?: string | null): string | null {
+  if (!statusDetail) return null
+  return REJECTION_MESSAGES[statusDetail] || null
+}
+
+/** Device ID do antifraude, se o script de segurança já tiver gerado. */
+function readDeviceId(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  const id = window.MP_DEVICE_SESSION_ID
+  return typeof id === 'string' && id.trim() ? id.trim() : undefined
 }
 
 type Method = 'card' | 'pix' | 'boleto'
@@ -287,6 +346,17 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
    * crédito para quem vai pagar no débito.
    */
   const [detectedCardMethodId, setDetectedCardMethodId] = useState<string | null>(null)
+  /**
+   * Parcelas que o MERCADO PAGO oferece para este cartão, com os valores dele.
+   *
+   * Antes, a tela montava as parcelas pela nossa tabela de taxas e mostrava,
+   * por exemplo, 6x de R$ 49,16. Só que a conta do MP cobra os juros do
+   * parcelamento do comprador e somava os dele por cima do total que mandávamos
+   * — a fatura vinha 6x de R$ 56,20. Agora cada opção do <select> é a que o MP
+   * devolve para o cartão digitado, e o total exibido é o da fatura.
+   */
+  const [cardInstallments, setCardInstallments] = useState<CardInstallmentsInfo | null>(null)
+  const [installmentsStatus, setInstallmentsStatus] = useState<InstallmentsStatus>('idle')
 
   useEffect(() => {
     if (!allowed.includes(method)) {
@@ -331,6 +401,20 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     return () => {
       cancelled = true
     }
+  }, [])
+
+  // Script de segurança do Mercado Pago: gera o device ID (MP_DEVICE_SESSION_ID)
+  // que o antifraude usa para reconhecer o aparelho. Sem ele, cartões bons caem
+  // bem mais em "cc_rejected_high_risk". Falhar aqui não trava o checkout.
+  useEffect(() => {
+    if (typeof window === 'undefined' || readDeviceId()) return
+    if (document.querySelector('script[data-mp-security]')) return
+    const s = document.createElement('script')
+    s.src = 'https://www.mercadopago.com/v2/security.js'
+    s.async = true
+    s.setAttribute('view', 'checkout')
+    s.setAttribute('data-mp-security', '1')
+    document.head.appendChild(s)
   }, [])
 
   // Carregar mp.js v2
@@ -406,33 +490,90 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
 
   const maxInstallments = Math.max(1, Math.min(12, feePolicy?.maxInstallments || 12))
 
-  const installmentOptions = useMemo(
-    () => [1, 2, 3, 4, 5, 6, 8, 10, 12].filter(n => n <= maxInstallments),
-    [maxInstallments]
-  )
-
-  // Débito não parcela, e mudar o limite de parcelas pela política não pode
-  // deixar uma seleção órfã (ex.: 12x com o limite baixado para 6).
-  useEffect(() => {
-    if (isDebitCard && installments !== 1) setInstallments(1)
-    else if (installments > maxInstallments) setInstallments(1)
-  }, [isDebitCard, installments, maxInstallments])
-
   /**
-   * Total a cobrar = preço de tabela + taxa do meio escolhido. Mesma função
-   * que roda no servidor (lib/payments/fees.ts), com a mesma política.
+   * Valor À VISTA no crédito (preço + taxa do crédito 1x). É com ele que o
+   * parcelamento é consultado no Mercado Pago, e é ele que vai como
+   * `transaction_amount` quando o MP cobra juros do comprador.
    */
-  const charge: CheckoutCharge = useMemo(
+  const cardCashAmount = useMemo(
     () =>
       computeCheckoutCharge({
         baseAmount: props.amount,
         paymentMethodId: pricingMethodId,
-        installments: method === 'card' && !isDebitCard ? installments : 1,
-        hasCardToken: method === 'card',
+        installments: 1,
+        hasCardToken: true,
         policy: feePolicy,
-      }),
-    [props.amount, pricingMethodId, method, isDebitCard, installments, feePolicy]
+      }).totalAmount,
+    [props.amount, pricingMethodId, feePolicy]
   )
+
+  const bin = card.number.replace(/\D/g, '').slice(0, 6)
+
+  /** Parcelamento do MP válido para o cartão E o valor que estão na tela agora. */
+  const payerCosts: ProviderPayerCost[] | null =
+    cardInstallments &&
+    cardInstallments.bin === bin &&
+    cardInstallments.amount === cardCashAmount &&
+    cardInstallments.paymentMethodId === detectedCardMethodId
+      ? cardInstallments.payerCosts
+      : null
+
+  /**
+   * Só oferecemos parcelas que o Mercado Pago confirmou para o cartão. Mandar
+   * um número de parcelas que o cartão não aceita vira "pagamento recusado"; e
+   * mostrar um valor que não é o da fatura é o que gerou a reclamação.
+   */
+  const installmentOptions = useMemo(() => {
+    if (!payerCosts) return [1]
+    const opts = payerCosts.map(pc => pc.installments).filter(n => n >= 1 && n <= maxInstallments)
+    return opts.includes(1) ? opts : [1, ...opts]
+  }, [payerCosts, maxInstallments])
+
+  // Débito não parcela, e trocar de cartão (ou o limite da política) não pode
+  // deixar uma seleção órfã (ex.: 12x num cartão que só vai até 6x).
+  useEffect(() => {
+    if (isDebitCard && installments !== 1) setInstallments(1)
+    else if (!installmentOptions.includes(installments)) setInstallments(1)
+  }, [isDebitCard, installments, installmentOptions])
+
+  /** Cobrança de N parcelas conciliada com o parcelamento real do Mercado Pago. */
+  const cardChargeFor = useMemo(
+    () => (n: number): CheckoutCharge => {
+      if (n <= 1) {
+        return computeCheckoutCharge({
+          baseAmount: props.amount,
+          paymentMethodId: pricingMethodId,
+          installments: 1,
+          hasCardToken: true,
+          policy: feePolicy,
+        })
+      }
+      return computeCardInstallmentCharge({
+        baseAmount: props.amount,
+        paymentMethodId: pricingMethodId,
+        installments: n,
+        payerCost: payerCosts?.find(pc => pc.installments === n) || null,
+        policy: feePolicy,
+      })
+    },
+    [props.amount, pricingMethodId, feePolicy, payerCosts]
+  )
+
+  /**
+   * Total a cobrar = preço de tabela + taxa do meio escolhido (+ juros do MP,
+   * no parcelado com juros para o comprador). Mesmas funções que rodam no
+   * servidor (lib/payments/fees.ts), com a mesma política.
+   */
+  const charge: CheckoutCharge = useMemo(() => {
+    if (method === 'card' && !isDebitCard && installments > 1) return cardChargeFor(installments)
+    return computeCheckoutCharge({
+      baseAmount: props.amount,
+      paymentMethodId: pricingMethodId,
+      installments: 1,
+      hasCardToken: method === 'card',
+      policy: feePolicy,
+    })
+  }, [props.amount, pricingMethodId, method, isDebitCard, installments, feePolicy, cardChargeFor])
 
   // O resumo do pedido, que vive fora deste componente, precisa do mesmo total
   // que o botão de pagar mostra. `onChargeChange` é a única via entre os dois.
@@ -457,18 +598,6 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     [props.amount, feePolicy]
   )
 
-  /** Total de cada opção do <select> de parcelas, com os juros já somados. */
-  const chargeForInstallments = useMemo(
-    () => (n: number) =>
-      computeCheckoutCharge({
-        baseAmount: props.amount,
-        paymentMethodId: pricingMethodId,
-        installments: n,
-        hasCardToken: true,
-        policy: feePolicy,
-      }),
-    [props.amount, pricingMethodId, feePolicy]
-  )
 
   // Detecção de bandeira pelo BIN enquanto digita (6 dígitos bastam).
   useEffect(() => {
@@ -494,6 +623,55 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       clearTimeout(timer)
     }
   }, [card.number, method, mpInstance])
+
+  // Parcelamento do Mercado Pago para o cartão digitado, no valor à vista.
+  useEffect(() => {
+    if (method !== 'card' || !mpInstance || bin.length < 6 || !detectedCardMethodId || isDebitCard) {
+      setInstallmentsStatus('idle')
+      return
+    }
+    if (
+      cardInstallments &&
+      cardInstallments.bin === bin &&
+      cardInstallments.amount === cardCashAmount &&
+      cardInstallments.paymentMethodId === detectedCardMethodId
+    ) {
+      setInstallmentsStatus('ready')
+      return
+    }
+    let cancelled = false
+    setInstallmentsStatus('loading')
+    mpInstance
+      .getInstallments({ amount: cardCashAmount.toFixed(2), bin, paymentTypeId: 'credit_card' })
+      .then((resp: any) => {
+        if (cancelled) return
+        const lista: any[] = Array.isArray(resp) ? resp : []
+        const linha = lista.find(l => l?.payment_method_id === detectedCardMethodId) || lista[0]
+        const custos = parsePayerCosts(linha?.payer_costs)
+        if (!linha || custos.length === 0) {
+          setCardInstallments(null)
+          setInstallmentsStatus('error')
+          return
+        }
+        setCardInstallments({
+          bin,
+          amount: cardCashAmount,
+          paymentMethodId: detectedCardMethodId,
+          issuerId: linha?.issuer?.id != null ? String(linha.issuer.id) : null,
+          payerCosts: custos,
+        })
+        setInstallmentsStatus('ready')
+      })
+      .catch(() => {
+        if (cancelled) return
+        setCardInstallments(null)
+        setInstallmentsStatus('error')
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [method, mpInstance, bin, detectedCardMethodId, isDebitCard, cardCashAmount])
 
   const cpfDigits = onlyCpfDigits(cpf)
   /**
@@ -577,11 +755,21 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         // assim mesmo faria o Mercado Pago recusar o pagamento.
         const debito = /^deb|^maestro/.test(paymentMethodId)
 
+        const parcelas = debito ? 1 : charge.installments
+        // Parcelado só com o parcelamento do MP em mãos: é ele que garante que
+        // o total da tela é o total da fatura.
+        if (parcelas > 1 && !payerCosts?.some(pc => pc.installments === parcelas)) {
+          throw new Error('Não conseguimos confirmar o parcelamento deste cartão. Tente de novo em instantes ou pague à vista.')
+        }
+        const deviceId = readDeviceId()
+
         body = {
           ...body,
           paymentMethodId,
           cardToken: cardToken.id,
-          installments: debito ? 1 : charge.installments,
+          installments: parcelas,
+          ...(cardInstallments?.issuerId && cardInstallments.bin === bin ? { issuer: cardInstallments.issuerId } : {}),
+          ...(deviceId ? { deviceId } : {}),
         }
       } else if (method === 'pix') {
         body = { ...body, paymentMethodId: 'pix' }
@@ -762,7 +950,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                   style={{ ...terminalSelect, cursor: submitting ? 'not-allowed' : 'pointer' }}
                 >
                   {installmentOptions.map(n => {
-                    const opt = chargeForInstallments(n)
+                    const opt = cardChargeFor(n)
                     return (
                       <option key={n} value={n} style={{ background: 'hsl(var(--card))' }}>
                         {n === 1
@@ -775,7 +963,13 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
                   })}
                 </select>
                 <span style={{ display: 'block', marginTop: '5px', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
-                  O juro do parcelamento é o custo que o Mercado Pago cobra por financiar as parcelas.
+                  {installmentsStatus === 'loading'
+                    ? 'Consultando as parcelas do seu cartão no Mercado Pago...'
+                    : installmentsStatus === 'error'
+                      ? 'Não conseguimos consultar o parcelamento deste cartão agora — o pagamento segue à vista.'
+                      : payerCosts
+                        ? 'Valores do Mercado Pago para o seu cartão — é exatamente o que vem na fatura.'
+                        : 'Digite o número do cartão para ver as opções de parcelamento.'}
                 </span>
               </div>
             )}
@@ -1083,7 +1277,9 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         <AlertCircle size={48} style={{ color: 'hsl(var(--destructive))', margin: '0 auto 16px' }} />
         <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'hsl(var(--destructive))', marginBottom: '8px' }}>{STATUS_LABELS[order.status]}</h3>
         {order.statusDetail && (
-          <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '20px' }}>Detalhe: {order.statusDetail}</p>
+          <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '20px', lineHeight: 1.5 }}>
+            {describeRejection(order.statusDetail) || `Detalhe: ${order.statusDetail}`}
+          </p>
         )}
         <button
           onClick={onReset}

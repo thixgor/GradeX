@@ -9,7 +9,8 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
-import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCharge } from '@/lib/payments/checkout-charge'
 import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { minutosDesde, pagamentoEmCartaoJaAberto } from '@/lib/payments/duplicate-guard'
 import {
@@ -54,6 +55,8 @@ const Schema = z.object({
   cardToken: z.string().optional(),
   installments: z.number().int().min(1).max(12).optional(),
   issuer: z.string().optional(),
+  // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
+  deviceId: z.string().max(200).optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
   // Só tem efeito para type: 'plan' — pagamento único de um plano Plus+/premium.
@@ -230,15 +233,20 @@ export async function POST(request: NextRequest) {
   // Taxa operacional / juros do parcelamento somados ao valor cobrado. O
   // cliente já mostrou essa mesma conta; aqui ela é refeita porque quem manda
   // no valor cobrado é o servidor.
-  const charge = computeCheckoutCharge({
+  const chargeResult = await resolveCheckoutCharge({
     baseAmount: amount,
     paymentMethodId: data.paymentMethodId,
     installments: data.installments,
     hasCardToken: !!data.cardToken,
+    issuer: data.issuer,
     policy: getFeePolicy(),
   })
+  if (!chargeResult.ok) {
+    return NextResponse.json({ error: chargeResult.error }, { status: chargeResult.status })
+  }
+  const charge = chargeResult.charge
   const baseAmount = charge.baseAmount
-  amount = charge.totalAmount
+  amount = charge.transactionAmount
 
   // Trava contra cobrança dupla: outra tentativa em cartão do mesmo usuário
   // ainda em análise/aguardando não pode virar um segundo pagamento aberto.
@@ -348,8 +356,9 @@ export async function POST(request: NextRequest) {
       idempotencyKey,
       paymentMethodId: data.paymentMethodId,
       cardToken: data.cardToken,
-      installments: data.installments,
+      installments: charge.installments,
       issuer: data.issuer,
+      deviceId: data.deviceId,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
       metadata: {

@@ -113,6 +113,12 @@ export interface PaymentProvider {
     cardToken?: string
     installments?: number
     issuer?: string
+    /**
+     * Device ID do antifraude do Mercado Pago (`MP_DEVICE_SESSION_ID`, gerado
+     * no navegador). Vai no header `X-meli-session-id`; sem ele o antifraude
+     * recusa bem mais cartão bom como `cc_rejected_high_risk`.
+     */
+    deviceId?: string
     payerDocumentType?: 'CPF' | 'CNPJ'
     payerDocumentNumber?: string
     payerAddress?: PayerAddress

@@ -28,6 +28,7 @@ export class MercadoPagoProvider implements PaymentProvider {
       cardToken?: string
       installments?: number
       issuer?: string
+      deviceId?: string
       payerDocumentType?: 'CPF' | 'CNPJ'
       payerDocumentNumber?: string
       payerAddress?: PayerAddress
@@ -103,8 +104,31 @@ export class MercadoPagoProvider implements PaymentProvider {
     if (input.cardToken) {
       body.token = input.cardToken
       body.installments = input.installments || 1
-      if (input.issuer) body.issuer_id = input.issuer
+      // O `issuer_id` vem do parcelamento consultado no checkout. Sem ele o MP
+      // adivinha o emissor pelo BIN — e, quando erra, recusa o cartão.
+      const issuerId = Number(input.issuer)
+      if (input.issuer && Number.isFinite(issuerId) && issuerId > 0) body.issuer_id = issuerId
       body.capture = true
+      // Dados do item para o antifraude. É das recomendações de "qualidade da
+      // integração" do Mercado Pago que mais pesam na aprovação do cartão —
+      // sem nada disso a transação chega "anônima" e cai mais em high_risk.
+      body.additional_info = {
+        items: [
+          {
+            id: input.externalReference,
+            title: String(input.description || 'Compra').slice(0, 250),
+            description: String(input.description || 'Compra').slice(0, 250),
+            category_id: 'services',
+            quantity: 1,
+            unit_price: round2(input.amount),
+          },
+        ],
+        ...(body.payer.first_name
+          ? { payer: { first_name: body.payer.first_name, last_name: body.payer.last_name } }
+          : {}),
+      }
+      const descriptor = (process.env.MERCADOPAGO_STATEMENT_DESCRIPTOR || '').trim()
+      if (descriptor) body.statement_descriptor = descriptor.slice(0, 22)
     }
 
     // Para Pix/boleto, precisamos avisar o vencimento (24h padrão)
@@ -133,9 +157,13 @@ export class MercadoPagoProvider implements PaymentProvider {
       }
     }
 
+    const deviceId = (input.deviceId || '').trim()
     const response = await payment.create({
       body,
-      requestOptions: { idempotencyKey: input.idempotencyKey },
+      requestOptions: {
+        idempotencyKey: input.idempotencyKey,
+        ...(deviceId ? { meliSessionId: deviceId } : {}),
+      },
     })
 
     return mpPaymentToProviderOrder(response)

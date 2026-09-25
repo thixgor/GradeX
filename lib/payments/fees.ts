@@ -283,8 +283,21 @@ export interface CheckoutCharge {
   baseAmount: number
   /** Acréscimo repassado ao comprador. */
   feeAmount: number
-  /** O que será efetivamente cobrado (base + taxa). */
+  /**
+   * O que o comprador paga no total — é o número da fatura do cartão. Inclui
+   * os juros que o próprio Mercado Pago soma quando o parcelamento é "com
+   * juros para o comprador" (ver `providerInterestAmount`).
+   */
   totalAmount: number
+  /**
+   * O que vai ao Mercado Pago como `transaction_amount`. É igual a
+   * `totalAmount`, exceto quando o Mercado Pago cobra juros do comprador no
+   * parcelamento: aí ele recebe o valor à vista e soma os juros por conta
+   * própria — mandar o total já com juros faria o juro incidir duas vezes.
+   */
+  transactionAmount: number
+  /** Juros que o Mercado Pago soma por cima do `transactionAmount` (0 quando não há). */
+  providerInterestAmount: number
   /** Percentual do acréscimo em relação à base — para exibir na tela. */
   feePercentOfBase: number
   method: FeeMethodKind
@@ -326,6 +339,8 @@ export function computeCheckoutCharge(input: ComputeChargeInput): CheckoutCharge
     baseAmount: base,
     feeAmount: 0,
     totalAmount: base,
+    transactionAmount: base,
+    providerInterestAmount: 0,
     feePercentOfBase: 0,
     method,
     installments,
@@ -350,6 +365,8 @@ export function computeCheckoutCharge(input: ComputeChargeInput): CheckoutCharge
     baseAmount: base,
     feeAmount,
     totalAmount: total,
+    transactionAmount: total,
+    providerInterestAmount: 0,
     feePercentOfBase: Math.round((feeAmount / base) * 10000) / 100,
     method,
     installments,
@@ -412,6 +429,135 @@ export function chargeMetadata(charge: CheckoutCharge): Record<string, number | 
     feeMethod: charge.method,
     feeInstallments: charge.installments,
     feeLabel: charge.label,
+    ...(charge.providerInterestAmount > 0
+      ? {
+          transactionAmount: charge.transactionAmount,
+          providerInterestAmount: charge.providerInterestAmount,
+          payerTotalAmount: charge.totalAmount,
+        }
+      : {}),
+  }
+}
+
+/**
+ * Uma linha do parcelamento que o PRÓPRIO Mercado Pago oferece para o cartão
+ * (`payer_costs` de `/v1/payment_methods/installments`, ou `getInstallments`
+ * no mercadopago.js).
+ */
+export interface ProviderPayerCost {
+  installments: number
+  /** Juros totais do parcelamento, em % do valor enviado. 0 = sem juros para o comprador. */
+  installmentRate: number
+  installmentAmount: number
+  totalAmount: number
+}
+
+/** Converte a resposta crua do Mercado Pago, descartando linhas malformadas. */
+export function parsePayerCosts(raw: unknown): ProviderPayerCost[] {
+  if (!Array.isArray(raw)) return []
+  const out: ProviderPayerCost[] = []
+  for (const pc of raw as any[]) {
+    const installments = Math.trunc(Number(pc?.installments))
+    const installmentRate = Number(pc?.installment_rate ?? pc?.installmentRate ?? 0)
+    const installmentAmount = Number(pc?.installment_amount ?? pc?.installmentAmount)
+    const totalAmount = Number(pc?.total_amount ?? pc?.totalAmount)
+    if (!Number.isInteger(installments) || installments < 1) continue
+    if (![installmentRate, installmentAmount, totalAmount].every(Number.isFinite)) continue
+    out.push({ installments, installmentRate, installmentAmount, totalAmount })
+  }
+  return out.sort((a, b) => a.installments - b.installments)
+}
+
+/**
+ * Cobrança do cartão PARCELADO conciliada com o que o Mercado Pago de fato
+ * cobra do comprador.
+ *
+ * POR QUE ISTO EXISTE: a conta de `computeCheckoutCharge` supõe parcelamento
+ * "sem juros para o comprador" (o vendedor paga o custo e nós o repassamos no
+ * preço). Só que a conta do Mercado Pago pode estar configurada — e estava —
+ * para cobrar os juros do COMPRADOR. Nesse caso o MP recebe o
+ * `transaction_amount` e soma os juros dele por cima. Resultado: a tela
+ * mostrava 6x de R$ 49,16 (total R$ 294,96, já com o nosso "juro") e a fatura
+ * vinha 6x de R$ 56,20 (R$ 337,20) — juro sobre juro, e um valor na fatura que
+ * não aparecia em lugar nenhum do checkout.
+ *
+ * A regra agora segue a linha de `payer_costs` que o MP devolve para o cartão:
+ *  - `installmentRate > 0`: quem cobra os juros é o MP. Mandamos o valor À
+ *    VISTA (base + taxa do crédito 1x) e o total exibido é o `total_amount`
+ *    dele — o mesmo número que vai para a fatura.
+ *  - `installmentRate === 0`: o parcelamento é "sem juros" para o comprador e
+ *    o custo é do vendedor — vale o gross-up da tabela, como antes.
+ *  - sem a linha (consulta ao MP falhou): mandamos o valor à vista. Se o MP
+ *    somar juros, é o juro dele, uma vez só; nunca juro em dobro. O checkout
+ *    não chega aqui — ele só oferece parcelas que o MP confirmou.
+ *
+ * `payerCost` precisa ter sido consultado com `amount` = valor à vista
+ * (`computeCheckoutCharge` em 1x), que é o que vai como `transaction_amount`.
+ */
+export function computeCardInstallmentCharge(input: {
+  baseAmount: number
+  paymentMethodId?: string
+  installments: number
+  payerCost: ProviderPayerCost | null | undefined
+  policy?: FeePolicy
+}): CheckoutCharge {
+  const policy = input.policy || DEFAULT_FEE_POLICY
+  const parcelado = computeCheckoutCharge({
+    baseAmount: input.baseAmount,
+    paymentMethodId: input.paymentMethodId,
+    installments: input.installments,
+    hasCardToken: true,
+    policy,
+  })
+  if (parcelado.method !== 'credit_card' || parcelado.installments <= 1 || parcelado.baseAmount <= 0) {
+    return parcelado
+  }
+
+  const n = parcelado.installments
+  const pc = input.payerCost
+
+  // Sem juros para o comprador: o custo é nosso e o gross-up já cobre.
+  if (pc && !(pc.installmentRate > 0)) return parcelado
+
+  const aVista = computeCheckoutCharge({
+    baseAmount: input.baseAmount,
+    paymentMethodId: input.paymentMethodId,
+    installments: 1,
+    hasCardToken: true,
+    policy,
+  })
+  const transaction = aVista.totalAmount
+  const base = aVista.baseAmount
+
+  const total = pc ? Math.max(transaction, Math.round(pc.totalAmount * 100) / 100) : transaction
+  const juros = Math.round((total - transaction) * 100) / 100
+  const feeAmount = Math.round((total - base) * 100) / 100
+  const installmentAmount =
+    pc && pc.installmentAmount > 0 ? Math.round(pc.installmentAmount * 100) / 100 : floorCents(total / n)
+
+  const partes: string[] = []
+  if (juros > 0) {
+    partes.push(
+      `Em ${n}x o Mercado Pago cobra juros de ${formatPercent(pc!.installmentRate)} sobre o valor à vista (${formatBrl(transaction)}).`
+    )
+  }
+  if (aVista.feeAmount > 0) {
+    partes.push(`O valor à vista já inclui a taxa operacional do cartão (${formatBrl(aVista.feeAmount)}).`)
+  }
+  if (juros > 0) partes.push('O total é exatamente o que aparece na fatura.')
+
+  return {
+    baseAmount: base,
+    feeAmount: Math.max(0, feeAmount),
+    totalAmount: total,
+    transactionAmount: transaction,
+    providerInterestAmount: Math.max(0, juros),
+    feePercentOfBase: base > 0 ? Math.round((Math.max(0, feeAmount) / base) * 10000) / 100 : 0,
+    method: 'credit_card',
+    installments: n,
+    installmentAmount,
+    label: juros > 0 ? chargeLabel('credit_card', n) : aVista.label,
+    description: partes.join(' ') || aVista.description,
   }
 }
 

@@ -8,7 +8,8 @@ import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
-import { chargeMetadata, computeCheckoutCharge, getFeePolicy } from '@/lib/payments/fees'
+import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
+import { resolveCheckoutCharge } from '@/lib/payments/checkout-charge'
 import { resolveCheckoutCpf } from '@/lib/payments/checkout-identity'
 import { findRaffleByIdOrSlug, canPurchase, reserveNumbers, releaseReservation, RAFFLE_RESERVATION_MINUTES, sanitizeRaffleText } from '@/lib/raffles'
 import type { PaymentOrder, RaffleParticipant, RafflePurchase } from '@/lib/types'
@@ -27,6 +28,8 @@ const Schema = z.object({
   cardToken: z.string().optional(),
   installments: z.number().int().min(1).max(12).optional(),
   issuer: z.string().optional(),
+  // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
+  deviceId: z.string().max(200).optional(),
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
 })
@@ -114,14 +117,19 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   // Taxa operacional / juros do parcelamento. `amount` continua sendo o valor
   // dos números (é o que a rifa vale e o que a apuração usa); `chargedAmount`
   // é o que sai do bolso do comprador.
-  const charge = computeCheckoutCharge({
+  const chargeResult = await resolveCheckoutCharge({
     baseAmount: amount,
     paymentMethodId: data.paymentMethodId,
     installments: data.installments,
     hasCardToken: !!data.cardToken,
+    issuer: data.issuer,
     policy: getFeePolicy(),
   })
-  const chargedAmount = charge.totalAmount
+  if (!chargeResult.ok) {
+    return NextResponse.json({ error: chargeResult.error }, { status: chargeResult.status })
+  }
+  const charge = chargeResult.charge
+  const chargedAmount = charge.transactionAmount
 
   const now = new Date()
   const name = sanitizeRaffleText(data.name, 120)
@@ -235,8 +243,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       idempotencyKey,
       paymentMethodId: data.paymentMethodId,
       cardToken: data.cardToken,
-      installments: data.installments,
+      installments: charge.installments,
       issuer: data.issuer,
+      deviceId: data.deviceId,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
       metadata: {
