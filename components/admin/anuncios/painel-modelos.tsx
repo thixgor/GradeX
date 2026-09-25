@@ -14,6 +14,7 @@ import { ChevronDown, Eye, Lightbulb, Sparkles, Wand2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { ANUNCIO_TEMPLATES, type AnuncioTemplate } from '@/lib/anuncio-templates'
+import { formatarConteudoAnuncio } from '@/lib/anuncio-formatacao'
 import { cn } from '@/lib/utils'
 
 interface PainelModelosProps {
@@ -158,8 +159,8 @@ function CardModelo({
             {modelo.modalTitulo}
           </p>
           <div
-            className="max-h-40 overflow-y-auto rounded-lg bg-background/80 p-2 leading-relaxed [&_li]:ml-4 [&_li]:list-disc [&_p]:mb-1.5"
-            dangerouslySetInnerHTML={{ __html: modelo.modalConteudo }}
+            className="max-h-40 overflow-y-auto rounded-lg bg-background/80 p-2 leading-relaxed [&_blockquote]:border-l-2 [&_blockquote]:pl-2 [&_blockquote]:italic [&_li]:ml-4 [&_li]:list-disc [&_ol>li]:list-decimal [&_p]:mb-1.5 [&_small]:text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: formatarConteudoAnuncio(modelo.modalConteudo) }}
           />
         </div>
       )}

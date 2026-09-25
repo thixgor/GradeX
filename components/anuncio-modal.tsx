@@ -38,6 +38,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toInternalPath } from '@/lib/anuncio-destinos'
+import { formatarConteudoAnuncio } from '@/lib/anuncio-formatacao'
 
 export interface AnuncioModalAd {
   imagemUrl?: string
@@ -53,14 +54,17 @@ const ALLOWED_TAGS = new Set([
   'B',
   'BLOCKQUOTE',
   'BR',
+  'DEL',
   'EM',
   'H3',
   'H4',
   'HR',
   'I',
   'LI',
+  'MARK',
   'OL',
   'P',
+  'S',
   'SMALL',
   'SPAN',
   'STRONG',
@@ -137,8 +141,18 @@ export function sanitizeModalHtml(html: string) {
   return doc.body.innerHTML
 }
 
+/**
+ * Do texto do editor ao HTML exibido: formata (`**negrito**`, listas, quebras de
+ * linha — ver `lib/anuncio-formatacao.ts`) e só então saneia. Exibição pública,
+ * pré-visualização e editor usam esta mesma função, para nenhum deles mostrar
+ * algo diferente do que o usuário vai ver.
+ */
+export function renderizarConteudoModal(texto: string | null | undefined) {
+  return sanitizeModalHtml(formatarConteudoAnuncio(texto))
+}
+
 /** Classes de tipografia do conteúdo. Fora do JSX só para não virar um muro. */
-const CONTEUDO_CLASSES = cn(
+export const CONTEUDO_CLASSES = cn(
   'min-w-0 max-w-none overflow-x-hidden break-words text-[15px] leading-relaxed text-slate-700 [overflow-wrap:anywhere] dark:text-slate-100 sm:text-base',
   '[&_*]:max-w-full',
   '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
@@ -146,8 +160,11 @@ const CONTEUDO_CLASSES = cn(
   '[&_p]:mb-3 [&_p]:break-words [&_p]:leading-relaxed [&_p]:[overflow-wrap:anywhere]',
   '[&_strong]:font-black [&_strong]:text-[#2f6f3f] dark:[&_strong]:text-emerald-200',
   '[&_em]:text-slate-700 dark:[&_em]:text-slate-200',
-  '[&_ul]:my-3 [&_ul]:space-y-1.5 [&_ul]:rounded-xl [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:py-3 [&_ul]:pl-7 [&_ul]:pr-4 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04]',
-  '[&_ol]:my-3 [&_ol]:space-y-1.5 [&_ol]:rounded-xl [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:py-3 [&_ol]:pl-7 [&_ol]:pr-4 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04]',
+  '[&_u]:underline-offset-2',
+  '[&_del]:text-slate-500 dark:[&_del]:text-slate-400 [&_s]:text-slate-500 dark:[&_s]:text-slate-400',
+  '[&_mark]:rounded [&_mark]:bg-[#E2A43E]/30 [&_mark]:px-1 [&_mark]:text-inherit dark:[&_mark]:bg-[#E2A43E]/25 dark:[&_mark]:text-amber-50',
+  '[&_ul]:my-3 [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:rounded-xl [&_ul]:border [&_ul]:border-slate-200 [&_ul]:bg-slate-50 [&_ul]:py-3 [&_ul]:pl-7 [&_ul]:pr-4 dark:[&_ul]:border-emerald-300/12 dark:[&_ul]:bg-white/[0.04]',
+  '[&_ol]:my-3 [&_ol]:list-decimal [&_ol]:space-y-1.5 [&_ol]:rounded-xl [&_ol]:border [&_ol]:border-slate-200 [&_ol]:bg-slate-50 [&_ol]:py-3 [&_ol]:pl-7 [&_ol]:pr-4 dark:[&_ol]:border-emerald-300/12 dark:[&_ol]:bg-white/[0.04]',
   '[&_li]:my-0 [&_li]:text-slate-700 dark:[&_li]:text-slate-100',
   '[&_h3]:mb-2 [&_h3]:mt-4 [&_h3]:text-base [&_h3]:font-black [&_h3]:leading-tight [&_h3]:text-slate-950 dark:[&_h3]:text-white sm:[&_h3]:text-lg',
   '[&_h4]:mb-1 [&_h4]:mt-3 [&_h4]:text-sm [&_h4]:font-bold [&_h4]:text-slate-950 dark:[&_h4]:text-white',
@@ -158,7 +175,7 @@ const CONTEUDO_CLASSES = cn(
 
 interface AnuncioModalProps {
   ad: AnuncioModalAd | null
-  /** Conteúdo já sanitizado (o chamador memoriza para não reprocessar a cada render). */
+  /** Conteúdo já renderizado com `renderizarConteudoModal` (o chamador memoriza para não reprocessar a cada render). */
   html: string
   open: boolean
   onOpenChange: (open: boolean) => void

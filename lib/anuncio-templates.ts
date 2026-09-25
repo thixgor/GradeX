@@ -9,9 +9,10 @@
  *
  *  - Os trechos a trocar vêm em [COLCHETES MAIÚSCULOS]. É o que sinaliza, de
  *    relance, o que ainda é rascunho — e o formulário avisa quando sobra algum.
- *  - O HTML usa só as tags que `components/platform-ads.tsx` aceita ao exibir
- *    (p, strong, em, ul, ol, li, h3, blockquote, small, br). Qualquer outra é
- *    removida na exibição pública, então não adianta usá-la aqui.
+ *  - O corpo usa a formatação simples do editor (`lib/anuncio-formatacao.ts`):
+ *    **negrito**, `- item`, `> citação`, `-# letra miúda`, linha em branco entre
+ *    parágrafos. Nada de HTML — o modelo cai no campo de texto do admin e tem de
+ *    ser fácil de editar ali.
  *  - Promessa vaga não vende e ainda gera reclamação: todo modelo pede número,
  *    prazo ou condição concreta no lugar do superlativo.
  */
@@ -31,7 +32,7 @@ export interface AnuncioTemplate {
   ctaTexto: string
   /** Título do modal. */
   modalTitulo: string
-  /** Corpo do modal, em HTML simples. */
+  /** Corpo do modal, na formatação simples do editor (ver `lib/anuncio-formatacao.ts`). */
   modalConteudo: string
   /** Texto do botão final do modal. */
   modalBotaoTexto: string
@@ -48,10 +49,10 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Garantir vaga',
     modalTitulo: 'Sobraram [Nº] vagas de [PRODUTO]',
     modalConteudo:
-      '<p>Abrimos <strong>[TOTAL] vagas</strong> para [PRODUTO] e <strong>[Nº] ainda estão livres</strong>.</p>' +
-      '<p>O limite não é estratégia de venda: [MOTIVO REAL DO LIMITE — correção individual, tiragem impressa, turma pequena].</p>' +
-      '<ul><li>[O QUE A PESSOA RECEBE — item 1]</li><li>[ITEM 2]</li><li>[ITEM 3]</li></ul>' +
-      '<p><small>Quando as vagas acabarem, a próxima abertura é só em [PRÓXIMA DATA].</small></p>',
+      'Abrimos **[TOTAL] vagas** para [PRODUTO] e **[Nº] ainda estão livres**.\n\n' +
+      'O limite não é estratégia de venda: [MOTIVO REAL DO LIMITE — correção individual, tiragem impressa, turma pequena].\n\n' +
+      '- [O QUE A PESSOA RECEBE — item 1]\n- [ITEM 2]\n- [ITEM 3]\n\n' +
+      '-# Quando as vagas acabarem, a próxima abertura é só em [PRÓXIMA DATA].',
     modalBotaoTexto: 'Pegar uma das [Nº] vagas',
   },
   {
@@ -64,9 +65,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Aproveitar agora',
     modalTitulo: 'Acaba [DIA], às [HORA]',
     modalConteudo:
-      '<p>Até <strong>[DIA], [HORA]</strong>, [PRODUTO] sai por <strong>[PREÇO PROMOCIONAL]</strong> no lugar de [PREÇO CHEIO].</p>' +
-      '<p>Depois desse horário o valor volta para [PREÇO CHEIO] — sem prorrogação, porque [MOTIVO].</p>' +
-      '<ul><li>[BENEFÍCIO CONCRETO 1]</li><li>[BENEFÍCIO CONCRETO 2]</li></ul>',
+      'Até **[DIA], [HORA]**, [PRODUTO] sai por **[PREÇO PROMOCIONAL]** no lugar de [PREÇO CHEIO].\n\n' +
+      'Depois desse horário o valor volta para [PREÇO CHEIO] — sem prorrogação, porque [MOTIVO].\n\n' +
+      '- [BENEFÍCIO CONCRETO 1]\n- [BENEFÍCIO CONCRETO 2]',
     modalBotaoTexto: 'Quero antes de [DIA]',
   },
   {
@@ -79,9 +80,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Ver por quê',
     modalTitulo: 'O que [Nº] estudantes já resolveram com [PRODUTO]',
     modalConteudo:
-      '<p><strong>[Nº] estudantes de [CURSO/PERÍODO]</strong> já usam [PRODUTO]. A nota média que eles dão é <strong>[NOTA]/5</strong>.</p>' +
-      '<blockquote>[DEPOIMENTO CURTO E REAL] — [NOME], [PERÍODO]º período</blockquote>' +
-      '<p>O relato mais frequente: [RESULTADO QUE MAIS APARECE NOS FEEDBACKS].</p>',
+      '**[Nº] estudantes de [CURSO/PERÍODO]** já usam [PRODUTO]. A nota média que eles dão é **[NOTA]/5**.\n\n' +
+      '> [DEPOIMENTO CURTO E REAL] — [NOME], [PERÍODO]º período\n\n' +
+      'O relato mais frequente: [RESULTADO QUE MAIS APARECE NOS FEEDBACKS].',
     modalBotaoTexto: 'Entrar para os [Nº]',
   },
   {
@@ -94,11 +95,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Conhecer o material',
     modalTitulo: 'Conteúdo revisado por quem vive a área',
     modalConteudo:
-      '<p>[PRODUTO] foi escrito e revisado por <strong>[NOME], [TITULAÇÃO/ESPECIALIDADE]</strong>.</p>' +
-      '<ul><li>Referências: [FONTES USADAS — diretriz, tratado, ano]</li>' +
-      '<li>Atualizado em: [MÊS/ANO]</li>' +
-      '<li>Revisão: [COMO É FEITA A REVISÃO]</li></ul>' +
-      '<p>É o tipo de material que você pode citar no [APG/SEMINÁRIO/PROVA] sem precisar conferir em outro lugar.</p>',
+      '[PRODUTO] foi escrito e revisado por **[NOME], [TITULAÇÃO/ESPECIALIDADE]**.\n\n' +
+      '- Referências: [FONTES USADAS — diretriz, tratado, ano]\n- Atualizado em: [MÊS/ANO]\n- Revisão: [COMO É FEITA A REVISÃO]\n\n' +
+      'É o tipo de material que você pode citar no [APG/SEMINÁRIO/PROVA] sem precisar conferir em outro lugar.',
     modalBotaoTexto: 'Ver o conteúdo',
   },
   {
@@ -111,10 +110,10 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Não quero perder',
     modalTitulo: 'A conta de deixar para depois',
     modalConteudo:
-      '<p>Faltam <strong>[Nº] dias</strong> para [EVENTO — prova, entrega, encerramento].</p>' +
-      '<p>Sem [PRODUTO], o caminho costuma ser: [O QUE A PESSOA FAZ HOJE] — que custa <strong>[TEMPO/DINHEIRO GASTO]</strong> e ainda deixa [LACUNA].</p>' +
-      '<p>Com ele: [RESULTADO CONCRETO, COM NÚMERO].</p>' +
-      '<p><small>Nenhuma mágica: [LIMITAÇÃO HONESTA DO PRODUTO].</small></p>',
+      'Faltam **[Nº] dias** para [EVENTO — prova, entrega, encerramento].\n\n' +
+      'Sem [PRODUTO], o caminho costuma ser: [O QUE A PESSOA FAZ HOJE] — que custa **[TEMPO/DINHEIRO GASTO]** e ainda deixa [LACUNA].\n\n' +
+      'Com ele: [RESULTADO CONCRETO, COM NÚMERO].\n\n' +
+      '-# Nenhuma mágica: [LIMITAÇÃO HONESTA DO PRODUTO].',
     modalBotaoTexto: 'Resolver isso agora',
   },
   {
@@ -127,10 +126,10 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Ver o preço',
     modalTitulo: 'Quanto custa, comparado com o quê',
     modalConteudo:
-      '<p>Comprando separado: <strong>[SOMA DAS PARTES]</strong>.</p>' +
-      '<p>No pacote [PRODUTO]: <strong>[PREÇO ATUAL]</strong> — [PERCENTUAL]% a menos.</p>' +
-      '<ul><li>[ITEM 1] — [VALOR AVULSO]</li><li>[ITEM 2] — [VALOR AVULSO]</li><li>[ITEM 3] — [VALOR AVULSO]</li></ul>' +
-      '<p>Dá <strong>[VALOR POR MÊS/POR DIA]</strong> — menos que [COMPARAÇÃO DO COTIDIANO].</p>',
+      'Comprando separado: **[SOMA DAS PARTES]**.\n\n' +
+      'No pacote [PRODUTO]: **[PREÇO ATUAL]** — [PERCENTUAL]% a menos.\n\n' +
+      '- [ITEM 1] — [VALOR AVULSO]\n- [ITEM 2] — [VALOR AVULSO]\n- [ITEM 3] — [VALOR AVULSO]\n\n' +
+      'Dá **[VALOR POR MÊS/POR DIA]** — menos que [COMPARAÇÃO DO COTIDIANO].',
     modalBotaoTexto: 'Quero por [PREÇO ATUAL]',
   },
   {
@@ -143,9 +142,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Ler a prévia',
     modalTitulo: 'Leia antes de decidir',
     modalConteudo:
-      '<p>As <strong>[Nº] primeiras páginas</strong> de [PRODUTO] estão liberadas, sem cadastro extra e sem pagar nada.</p>' +
-      '<p>Escolhemos justamente [TRECHO ESCOLHIDO — o capítulo mais difícil, o resumo de X], para você julgar pelo que interessa.</p>' +
-      '<p>Se servir, o material completo tem [O QUE MAIS VEM JUNTO].</p>',
+      'As **[Nº] primeiras páginas** de [PRODUTO] estão liberadas, sem cadastro extra e sem pagar nada.\n\n' +
+      'Escolhemos justamente [TRECHO ESCOLHIDO — o capítulo mais difícil, o resumo de X], para você julgar pelo que interessa.\n\n' +
+      'Se servir, o material completo tem [O QUE MAIS VEM JUNTO].',
     modalBotaoTexto: 'Abrir a prévia',
   },
   {
@@ -158,9 +157,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Descobrir',
     modalTitulo: 'O detalhe que quase todo mundo erra em [ASSUNTO]',
     modalConteudo:
-      '<p>Em [Nº] correções de [PROVA/SIMULADO], <strong>[PERCENTUAL]%</strong> das pessoas erraram [PONTO ESPECÍFICO] — e quase sempre pelo mesmo motivo.</p>' +
-      '<p>O motivo é [RESUMO DA CAUSA, SEM ENTREGAR A SOLUÇÃO INTEIRA].</p>' +
-      '<p>Em [PRODUTO] isso está explicado em [ONDE], com [O QUE TEM LÁ — esquema, caso, questão comentada].</p>',
+      'Em [Nº] correções de [PROVA/SIMULADO], **[PERCENTUAL]%** das pessoas erraram [PONTO ESPECÍFICO] — e quase sempre pelo mesmo motivo.\n\n' +
+      'O motivo é [RESUMO DA CAUSA, SEM ENTREGAR A SOLUÇÃO INTEIRA].\n\n' +
+      'Em [PRODUTO] isso está explicado em [ONDE], com [O QUE TEM LÁ — esquema, caso, questão comentada].',
     modalBotaoTexto: 'Ver a explicação',
   },
   {
@@ -173,9 +172,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Conhecer',
     modalTitulo: '[PRODUTO] acabou de entrar na plataforma',
     modalConteudo:
-      '<p>Lançamos [PRODUTO] em [DATA]. Em resumo: <strong>[O QUE É, EM UMA FRASE]</strong>.</p>' +
-      '<ul><li>[O QUE DÁ PARA FAZER 1]</li><li>[O QUE DÁ PARA FAZER 2]</li><li>[O QUE DÁ PARA FAZER 3]</li></ul>' +
-      '<p>Já está incluso em [PLANO/CONDIÇÃO]. Encontrou algo estranho? [COMO RELATAR].</p>',
+      'Lançamos [PRODUTO] em [DATA]. Em resumo: **[O QUE É, EM UMA FRASE]**.\n\n' +
+      '- [O QUE DÁ PARA FAZER 1]\n- [O QUE DÁ PARA FAZER 2]\n- [O QUE DÁ PARA FAZER 3]\n\n' +
+      'Já está incluso em [PLANO/CONDIÇÃO]. Encontrou algo estranho? [COMO RELATAR].',
     modalBotaoTexto: 'Abrir [PRODUTO]',
   },
   {
@@ -188,9 +187,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Ver o que tem',
     modalTitulo: 'Montado para o [Nº]º período',
     modalConteudo:
-      '<p>Se você está em [MÓDULO/DISCIPLINA ATUAL], provavelmente está lidando com <strong>[DOR ESPECÍFICA DO PERÍODO]</strong>.</p>' +
-      '<p>[PRODUTO] cobre exatamente: [TÓPICO 1], [TÓPICO 2] e [TÓPICO 3] — na ordem em que caem em [PROVA/APG].</p>' +
-      '<p>Quem está em outro período pode usar, mas o recorte foi feito pensando no seu.</p>',
+      'Se você está em [MÓDULO/DISCIPLINA ATUAL], provavelmente está lidando com **[DOR ESPECÍFICA DO PERÍODO]**.\n\n' +
+      '[PRODUTO] cobre exatamente: [TÓPICO 1], [TÓPICO 2] e [TÓPICO 3] — na ordem em que caem em [PROVA/APG].\n\n' +
+      'Quem está em outro período pode usar, mas o recorte foi feito pensando no seu.',
     modalBotaoTexto: 'Ver conteúdo do [Nº]º período',
   },
   {
@@ -203,9 +202,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Testar sem risco',
     modalTitulo: 'Se não servir, você pede o dinheiro de volta',
     modalConteudo:
-      '<p>Você tem <strong>[Nº] dias</strong> para usar [PRODUTO] inteiro. Não gostou, devolvemos [VALOR/PERCENTUAL] — [COMO PEDIR, EM UMA FRASE].</p>' +
-      '<p>Sem formulário de retenção, sem ligação, sem pergunta constrangedora.</p>' +
-      '<p><small>Condições: [CONDIÇÕES REAIS DA GARANTIA].</small></p>',
+      'Você tem **[Nº] dias** para usar [PRODUTO] inteiro. Não gostou, devolvemos [VALOR/PERCENTUAL] — [COMO PEDIR, EM UMA FRASE].\n\n' +
+      'Sem formulário de retenção, sem ligação, sem pergunta constrangedora.\n\n' +
+      '-# Condições: [CONDIÇÕES REAIS DA GARANTIA].',
     modalBotaoTexto: 'Começar sem risco',
   },
   {
@@ -218,9 +217,9 @@ export const ANUNCIO_TEMPLATES: AnuncioTemplate[] = [
     ctaTexto: 'Fazer o primeiro passo',
     modalTitulo: 'Dois minutos hoje, o resto vem depois',
     modalConteudo:
-      '<p>Não é para reorganizar sua vida de estudos agora. É só <strong>[AÇÃO PEQUENA E CONCRETA]</strong> — leva [TEMPO].</p>' +
-      '<p>Depois disso, a plataforma cuida de [O QUE ACONTECE SOZINHO — lembrete, revisão programada, próximo passo].</p>' +
-      '<p>Quem faz esse primeiro passo costuma [RESULTADO OBSERVADO].</p>',
+      'Não é para reorganizar sua vida de estudos agora. É só **[AÇÃO PEQUENA E CONCRETA]** — leva [TEMPO].\n\n' +
+      'Depois disso, a plataforma cuida de [O QUE ACONTECE SOZINHO — lembrete, revisão programada, próximo passo].\n\n' +
+      'Quem faz esse primeiro passo costuma [RESULTADO OBSERVADO].',
     modalBotaoTexto: 'Levar [TEMPO] e começar',
   },
 ]

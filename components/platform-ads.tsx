@@ -12,7 +12,7 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { AnuncioModal, sanitizeModalHtml } from '@/components/anuncio-modal'
+import { AnuncioModal, renderizarConteudoModal } from '@/components/anuncio-modal'
 import { cn } from '@/lib/utils'
 import { toInternalPath, type AnuncioDestinoTipo } from '@/lib/anuncio-destinos'
 import {
@@ -202,7 +202,7 @@ export function PlatformAds() {
       : false
   const ctaLabel = currentAd?.ctaTexto?.trim() || (isLinkAd ? 'Ver agora' : 'Abrir')
   const sanitizedModalContent = useMemo(
-    () => sanitizeModalHtml(selectedAd?.modalConteudo || ''),
+    () => renderizarConteudoModal(selectedAd?.modalConteudo),
     [selectedAd?.modalConteudo],
   )
 

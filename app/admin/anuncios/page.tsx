@@ -44,17 +44,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { LogoLoading } from '@/components/logo-loading'
 import { cn } from '@/lib/utils'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { CampoDestino } from '@/components/admin/anuncios/campo-destino'
 import { CampoImagem } from '@/components/admin/anuncios/campo-imagem'
+import { EditorConteudo } from '@/components/admin/anuncios/editor-conteudo'
 import { PainelDiagnostico } from '@/components/admin/anuncios/painel-diagnostico'
 import { PainelModelos } from '@/components/admin/anuncios/painel-modelos'
-import { AnuncioModal, sanitizeModalHtml } from '@/components/anuncio-modal'
+import { AnuncioModal, renderizarConteudoModal } from '@/components/anuncio-modal'
 import { listarPlaceholders, type AnuncioTemplate } from '@/lib/anuncio-templates'
+import { resumirConteudoAnuncio } from '@/lib/anuncio-formatacao'
 import {
   ANUNCIO_DESTINO_LABEL,
   isInternalPath,
@@ -280,7 +281,7 @@ function AdminAnunciosContent() {
   // O mesmo saneamento da exibição pública: a pré-visualização tem de mostrar
   // inclusive o que será REMOVIDO do texto, e não uma versão mais generosa.
   const previewHtml = useMemo(
-    () => sanitizeModalHtml(previewAd?.modalConteudo || ''),
+    () => renderizarConteudoModal(previewAd?.modalConteudo),
     [previewAd?.modalConteudo],
   )
 
@@ -817,17 +818,12 @@ function AdminAnunciosContent() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="modalConteudo">Conteudo do modal *</Label>
-                    <Textarea
+                    <EditorConteudo
                       id="modalConteudo"
-                      placeholder="<p>Mensagem curta do anuncio...</p>"
+                      placeholder={'Mensagem curta do anuncio.\n\nUse **negrito** para o que importa e - no inicio da linha para listas.'}
                       value={formData.modalConteudo}
-                      onChange={(event) => setFormData({ ...formData, modalConteudo: event.target.value })}
-                      rows={6}
+                      onChange={(modalConteudo) => setFormData((current) => ({ ...current, modalConteudo }))}
                     />
-                    <p className="text-xs text-muted-foreground">
-                      Tags simples como p, strong, em, ul, ol, li, h3, blockquote, small e a sao aceitas na
-                      exibicao publica. O resto e removido.
-                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="modalBotaoTexto">Texto do botao</Label>
@@ -1181,7 +1177,7 @@ function AdListItem({
           <p className="mt-1 truncate text-sm text-muted-foreground">
             {anuncio.tipoAcao === 'link' && anuncio.linkUrl
               ? getDestinationLabel(anuncio.linkUrl)
-              : anuncio.modalConteudo || 'Modal sem resumo'}
+              : resumirConteudoAnuncio(anuncio.modalConteudo) || 'Modal sem resumo'}
           </p>
           <p className="mt-2 truncate text-xs text-muted-foreground">Imagem: {anuncio.imagemUrl}</p>
         </div>

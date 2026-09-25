@@ -61,8 +61,35 @@ Os trechos a trocar vêm em `[COLCHETES]`. O formulário avisa quando algum sobr
 e só salva com um segundo clique ("Salvar assim mesmo") — colchete também pode
 ser texto legítimo.
 
-O conteúdo do modal aceita apenas `p, strong, em, b, i, u, small, span, br, ul,
-ol, li, h3, h4, blockquote, hr, a`; o resto é removido na exibição pública.
+## Formatação do conteúdo do modal
+
+O campo tem barra de formatação (`components/admin/anuncios/editor-conteudo.tsx`),
+atalhos Ctrl+B / Ctrl+I / Ctrl+U / Ctrl+K e aba "Visualizar". Não é preciso
+digitar HTML: **Enter quebra a linha** e linha em branco começa outro parágrafo.
+
+| Escreva | Vira |
+| --- | --- |
+| `**negrito**` | negrito |
+| `*itálico*` ou `_itálico_` | itálico |
+| `++sublinhado++` | sublinhado |
+| `~~riscado~~` | riscado |
+| `==destaque==` | marca-texto |
+| `[texto](/materiais/1)` | link (URL solta vira link sozinha) |
+| `# Título` / `### Subtítulo` | título |
+| `- item` / `1. item` | lista / lista numerada |
+| `> texto` | citação |
+| `-# texto` | letra miúda |
+| `---` | linha divisória |
+| `\*` | o símbolo, sem formatar |
+
+A conversão fica em `lib/anuncio-formatacao.ts` e roda antes do saneamento
+(`renderizarConteudoModal` em `components/anuncio-modal.tsx`), igual na exibição
+pública, na pré-visualização e no editor.
+
+HTML continua aceito — anúncios antigos não mudam. Uma linha que começa com tag
+de bloco (`<p>`, `<ul>`...) passa como está até a tag fechar. Na exibição
+sobrevivem apenas `p, strong, em, b, i, u, s, del, mark, small, span, br, ul, ol,
+li, h3, h4, blockquote, hr, a`; o resto é removido.
 
 ## "Criei o anúncio e não aparece"
 
@@ -84,7 +111,7 @@ frequência:
 
 Também dá para conferir a peça sem publicar: o botão do olho na lista (e o
 "Ver como o modal fica" dentro do formulário) abre o modal **real**, com o mesmo
-saneamento de HTML da exibição pública.
+formatação e saneamento da exibição pública.
 
 ## Segmentação
 

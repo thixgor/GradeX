@@ -9,6 +9,7 @@ import {
 } from '@/lib/anuncio-destinos'
 import { ANUNCIO_TEMPLATES, listarPlaceholders } from '@/lib/anuncio-templates'
 import { anuncioVisivelParaPeriodo, shouldHideAdsOnRoute } from '@/lib/anuncio-exibicao'
+import { formatarConteudoAnuncio, resumirConteudoAnuncio } from '@/lib/anuncio-formatacao'
 
 const ORIGEM = 'https://domineaqui.com'
 
@@ -80,13 +81,21 @@ describe('modelos persuasivos', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('usa só as tags aceitas na exibição pública', () => {
+  it('é escrito na formatação simples, sem HTML', () => {
+    // O modelo cai no campo de texto do admin: tag ali é o que o editor novo evita.
+    for (const modelo of ANUNCIO_TEMPLATES) {
+      expect(modelo.modalConteudo).not.toMatch(/<[a-z]/i)
+    }
+  })
+
+  it('gera só as tags aceitas na exibição pública', () => {
     const permitidas = new Set([
-      'a', 'b', 'blockquote', 'br', 'em', 'h3', 'h4', 'hr', 'i', 'li', 'ol', 'p', 'small', 'span', 'strong', 'u', 'ul',
+      'a', 'b', 'blockquote', 'br', 'del', 'em', 'h3', 'h4', 'hr', 'i', 'li', 'mark', 'ol', 'p', 's', 'small', 'span',
+      'strong', 'u', 'ul',
     ])
 
     for (const modelo of ANUNCIO_TEMPLATES) {
-      for (const tag of modelo.modalConteudo.match(/<\/?([a-zA-Z0-9]+)/g) ?? []) {
+      for (const tag of formatarConteudoAnuncio(modelo.modalConteudo).match(/<\/?([a-zA-Z0-9]+)/g) ?? []) {
         expect(permitidas.has(tag.replace(/[</]/g, '').toLowerCase())).toBe(true)
       }
     }
@@ -143,5 +152,72 @@ describe('onde e para quem o anúncio aparece', () => {
 
     // Sem período definido, o usuário só vê anúncio sem segmentação.
     expect(anuncioVisivelParaPeriodo([3], null)).toBe(false)
+  })
+})
+
+describe('formatação do conteúdo do modal', () => {
+  it('Enter quebra a linha e linha em branco separa parágrafos', () => {
+    expect(formatarConteudoAnuncio('Linha 1\nLinha 2\n\nOutro parágrafo')).toBe(
+      '<p>Linha 1<br>Linha 2</p><p>Outro parágrafo</p>',
+    )
+    expect(formatarConteudoAnuncio('a\r\nb')).toBe('<p>a<br>b</p>')
+  })
+
+  it('converte as ênfases sem precisar de tag', () => {
+    expect(formatarConteudoAnuncio('**negrito** *itálico* _itálico_ ++sub++ ~~risco~~ ==marca==')).toBe(
+      '<p><strong>negrito</strong> <em>itálico</em> <em>itálico</em> <u>sub</u> <del>risco</del> <mark>marca</mark></p>',
+    )
+    expect(formatarConteudoAnuncio('**negrito com *itálico* dentro**')).toBe(
+      '<p><strong>negrito com <em>itálico</em> dentro</strong></p>',
+    )
+  })
+
+  it('não formata o que só parece marcação', () => {
+    expect(formatarConteudoAnuncio('nome_de_arquivo, 5 * 3 * 2, C++ e C++, a == b')).toBe(
+      '<p>nome_de_arquivo, 5 * 3 * 2, C++ e C++, a == b</p>',
+    )
+    expect(formatarConteudoAnuncio('\\*literal\\*')).toBe('<p>*literal*</p>')
+    // Marcador de rascunho dos modelos não é link.
+    expect(formatarConteudoAnuncio('[PRODUTO] (novo)')).toBe('<p>[PRODUTO] (novo)</p>')
+  })
+
+  it('monta títulos, listas, citação, letra miúda e divisória', () => {
+    expect(
+      formatarConteudoAnuncio('# Título\n### Sub\n- a\n- b\n1. um\n2) dois\n> cit 1\n> cit 2\n---\n-# miúdo'),
+    ).toBe(
+      '<h3>Título</h3><h4>Sub</h4><ul><li>a</li><li>b</li></ul><ol><li>um</li><li>dois</li></ol>' +
+        '<blockquote>cit 1<br>cit 2</blockquote><hr><p><small>miúdo</small></p>',
+    )
+  })
+
+  it('cria links, inclusive de URL solta, sem estragar o endereço', () => {
+    expect(formatarConteudoAnuncio('[clique **aqui**](/materiais/1)')).toBe(
+      '<p><a href="/materiais/1">clique <strong>aqui</strong></a></p>',
+    )
+    expect(formatarConteudoAnuncio('Veja https://site.com/a_b_c.')).toBe(
+      '<p>Veja <a href="https://site.com/a_b_c">https://site.com/a_b_c</a>.</p>',
+    )
+    expect(formatarConteudoAnuncio('www.site.com')).toBe('<p><a href="https://www.site.com">www.site.com</a></p>')
+    // Aspas no endereço não fecham o atributo.
+    expect(formatarConteudoAnuncio('[x](https://a.com/?q="onclick=y)')).toBe(
+      '<p><a href="https://a.com/?q=&quot;onclick=y">x</a></p>',
+    )
+  })
+
+  it('mantém o HTML dos anúncios antigos', () => {
+    const antigo = '<p>Antigo <strong>html</strong></p><ul><li>x</li></ul>'
+    expect(formatarConteudoAnuncio(antigo)).toBe(antigo)
+    expect(formatarConteudoAnuncio('<ul>\n<li>x</li>\n</ul>')).toBe('<ul>\n<li>x</li>\n</ul>')
+    // Parágrafo de HTML em várias linhas também respeita o Enter.
+    expect(formatarConteudoAnuncio('<p>linha 1\nlinha 2</p>\ndepois')).toBe('<p>linha 1<br>linha 2</p><p>depois</p>')
+    // Tag inline no começo não desliga a formatação.
+    expect(formatarConteudoAnuncio('<strong>a</strong> e **b**\nc')).toBe(
+      '<p><strong>a</strong> e <strong>b</strong><br>c</p>',
+    )
+  })
+
+  it('resume em texto corrido para a lista do admin', () => {
+    expect(resumirConteudoAnuncio('# Título\n- **a**\n- b\n\ntexto')).toBe('Título a b texto')
+    expect(resumirConteudoAnuncio(undefined)).toBe('')
   })
 })
