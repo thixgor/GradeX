@@ -45,9 +45,9 @@ describe('resolveFeeMethod', () => {
 
 describe('feePercentFor', () => {
   it('soma o custo do parcelamento ao percentual do crédito', () => {
-    // Âncora pública do Mercado Pago: 3,03% (crédito) + 14,80% (12x) = 17,83%.
-    expect(feePercentFor('credit_card', 12)).toBeCloseTo(17.83, 2)
-    expect(feePercentFor('credit_card', 1)).toBeCloseTo(3.03, 2)
+    // Crédito da nossa conta (recebimento na hora) 4,98% + 14,80% (12x) = 19,78%.
+    expect(feePercentFor('credit_card', 12)).toBeCloseTo(19.78, 2)
+    expect(feePercentFor('credit_card', 1)).toBeCloseTo(4.98, 2)
   })
 
   it('cresce monotonicamente com o número de parcelas', () => {
@@ -65,7 +65,7 @@ describe('feePercentFor', () => {
 
   it('permite absorver só os juros do parcelamento, mantendo a taxa do crédito', () => {
     const semJuros = policy({ pass: { ...DEFAULT_FEE_POLICY.pass, installments: false } })
-    expect(feePercentFor('credit_card', 12, semJuros)).toBeCloseTo(3.03, 2)
+    expect(feePercentFor('credit_card', 12, semJuros)).toBeCloseTo(4.98, 2)
   })
 })
 
@@ -228,7 +228,7 @@ describe('getFeePolicy (env)', () => {
     const p = getFeePolicy()
     expect(p.enabled).toBe(true)
     expect(p.table.pixPercent).toBeCloseTo(0.99, 2)
-    expect(p.table.creditPercent).toBeCloseTo(3.03, 2)
+    expect(p.table.creditPercent).toBeCloseTo(4.98, 2)
   })
 
   it('PAYMENT_FEE_ENABLED=false desliga o repasse inteiro', () => {
@@ -280,7 +280,7 @@ describe('computeSubscriptionCharge', () => {
   })
 
   it('faz o gross-up, para o líquido bater com o preço de tabela', () => {
-    // total = base / (1 - 3,03%) — somar o percentual direto deixaria resíduo.
+    // total = base / (1 - 4,98%) — somar o percentual direto deixaria resíduo.
     const { totalAmount, baseAmount } = computeSubscriptionCharge(100, DEFAULT_FEE_POLICY)
     const liquido = totalAmount * (1 - MERCADO_PAGO_FEE_TABLE.creditPercent / 100)
 

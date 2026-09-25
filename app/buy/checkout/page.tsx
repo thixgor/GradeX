@@ -300,8 +300,8 @@ function BuyCheckoutContent() {
    * O TOTAL QUE VAI SER COBRADO — o mesmo do botão de pagar.
    *
    * No pagamento único o Mercado Pago cobra uma taxa operacional por meio
-   * escolhido (0,99% no Pix, R$ 3,49 no boleto, 3,03% no crédito à vista e até
-   * 17,83% em 12x), e essa taxa é somada ao preço de tabela. O formulário de
+   * escolhido (0,99% no Pix, R$ 3,49 no boleto, 4,98% no crédito; no parcelado
+   * os juros são do Mercado Pago, pagos pelo comprador), e essa taxa é somada ao preço de tabela. O formulário de
    * pagamento já mostrava a conta discriminada; este resumo, não — exibia o
    * preço-base em corpo três vezes maior, ao lado de um botão dizendo outro
    * número. Quem não lia a linha da taxa achava que tinha sido cobrado a mais.

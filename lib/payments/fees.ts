@@ -36,7 +36,7 @@
  *   PAYMENT_FEE_PASS_INSTALLMENTS=false  cartão parcelado sem juros para o comprador
  *                                        (o custo do parcelamento volta a ser nosso)
  *   PAYMENT_FEE_MAX_INSTALLMENTS=12    limite de parcelas oferecidas
- *   PAYMENT_FEE_TABLE={"creditPercent":3.03,...}   JSON parcial que sobrescreve a tabela
+ *   PAYMENT_FEE_TABLE={"creditPercent":4.98,...}   JSON parcial que sobrescreve a tabela
  *
  * Este arquivo é PURO (sem I/O) de propósito: o mesmo cálculo roda no servidor,
  * que é quem manda no valor cobrado, e no navegador, que só precisa mostrar a
@@ -65,19 +65,26 @@ export interface OperationalFeeTable {
 }
 
 /**
- * Tabela padrão — Mercado Pago, venda online, liberação em 30 dias.
+ * Tabela padrão — a da NOSSA conta do Mercado Pago, aba Checkout, com
+ * recebimento NA HORA (conferida no app em "Taxas e parcelas"):
+ *   Pix 0,99% · crédito à vista 4,98% · parcelado cliente: vendedor paga
+ *   4,98% e o comprador paga os juros do parcelamento.
  *
- * Âncoras conferidas na comunicação pública do Mercado Pago: crédito à vista
- * 3,03% e 12x com custo adicional de 14,80% (3,03% + 14,80% = 17,83%). Os
- * degraus intermediários seguem a progressão da tabela de "parcelamento
- * vendedor". Ajuste por `PAYMENT_FEE_TABLE` se a sua conta tiver outra.
+ * A tabela usava 3,03%, que é a taxa de liberação em 30 dias. Com recebimento
+ * na hora o Mercado Pago cobra 4,98%, e a diferença (~1,95% de toda venda no
+ * cartão) saía do nosso bolso.
+ *
+ * `installmentPercent` só vale se a conta mudar para "parcelamento sem juros
+ * para o comprador" (custo do parcelamento pago pelo vendedor). Os degraus
+ * vêm da tabela pública de liberação em 30 dias — confira no simulador da
+ * conta antes de mudar essa configuração. Ajuste tudo por `PAYMENT_FEE_TABLE`.
  */
 export const MERCADO_PAGO_FEE_TABLE: OperationalFeeTable = {
   pixPercent: 0.99,
   boletoPercent: 0,
   boletoFixed: 3.49,
   debitPercent: 1.99,
-  creditPercent: 3.03,
+  creditPercent: 4.98,
   installmentPercent: {
     1: 0,
     2: 2.66,

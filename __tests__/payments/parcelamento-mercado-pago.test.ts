@@ -22,36 +22,49 @@ vi.mock('@/lib/payments/mercado-pago/installments', () => ({
 
 const BASE = 263.9 // Plus+ Semestral do print da reclamação
 
+// À vista no crédito com a taxa da conta (4,98%, recebimento na hora):
+// 263,90 / (1 - 4,98%) = 277,73... → 277,74 (arredonda para cima no centavo).
+const A_VISTA = 277.74
+
 describe('computeCardInstallmentCharge', () => {
   const aVista = computeCheckoutCharge({ baseAmount: BASE, paymentMethodId: 'master', installments: 1, hasCardToken: true })
 
   it('reproduz o cenário antigo: nosso gross-up em 6x dá os R$ 294,96 da tela', () => {
-    const antigo = computeCheckoutCharge({ baseAmount: BASE, paymentMethodId: 'master', installments: 6, hasCardToken: true })
+    // Com a tabela da época (crédito 3,03%).
+    const tabelaAntiga = { ...DEFAULT_FEE_POLICY, table: { ...DEFAULT_FEE_POLICY.table, creditPercent: 3.03 } }
+    const antigo = computeCheckoutCharge({
+      baseAmount: BASE,
+      paymentMethodId: 'master',
+      installments: 6,
+      hasCardToken: true,
+      policy: tabelaAntiga,
+    })
     expect(antigo.totalAmount).toBe(294.96)
     expect(antigo.installmentAmount).toBe(49.16)
   })
 
   it('MP cobra juros do comprador: manda o valor à vista e exibe o total da fatura', () => {
-    const pc: ProviderPayerCost = { installments: 6, installmentRate: 14.32, installmentAmount: 51.86, totalAmount: 311.16 }
+    const pc: ProviderPayerCost = { installments: 6, installmentRate: 14.32, installmentAmount: 52.92, totalAmount: 317.51 }
     const c = computeCardInstallmentCharge({ baseAmount: BASE, paymentMethodId: 'master', installments: 6, payerCost: pc })
 
     // O que vai ao MP é o à vista — os juros ele soma uma vez só.
     expect(c.transactionAmount).toBe(aVista.totalAmount)
     // O que a tela mostra é o que ele cobra.
-    expect(c.totalAmount).toBe(311.16)
-    expect(c.installmentAmount).toBe(51.86)
-    expect(c.providerInterestAmount).toBeCloseTo(311.16 - aVista.totalAmount, 2)
-    expect(c.feeAmount).toBeCloseTo(311.16 - BASE, 2)
+    expect(c.totalAmount).toBe(317.51)
+    expect(c.installmentAmount).toBe(52.92)
+    expect(c.providerInterestAmount).toBeCloseTo(317.51 - aVista.totalAmount, 2)
+    expect(c.feeAmount).toBeCloseTo(317.51 - BASE, 2)
     expect(c.installments).toBe(6)
     expect(c.label).toBe('Juros de parcelamento (6x)')
     expect(c.description).toContain('fatura')
   })
 
   it('parcelamento sem juros para o comprador: vale o gross-up da tabela, como antes', () => {
-    const pc: ProviderPayerCost = { installments: 6, installmentRate: 0, installmentAmount: 45.36, totalAmount: 272.15 }
+    const pc: ProviderPayerCost = { installments: 6, installmentRate: 0, installmentAmount: 46.29, totalAmount: 277.74 }
     const c = computeCardInstallmentCharge({ baseAmount: BASE, paymentMethodId: 'master', installments: 6, payerCost: pc })
-    expect(c.totalAmount).toBe(294.96)
-    expect(c.transactionAmount).toBe(294.96)
+    const grossUp = computeCheckoutCharge({ baseAmount: BASE, paymentMethodId: 'master', installments: 6, hasCardToken: true })
+    expect(c.totalAmount).toBe(grossUp.totalAmount)
+    expect(c.transactionAmount).toBe(grossUp.totalAmount)
     expect(c.providerInterestAmount).toBe(0)
   })
 
@@ -83,7 +96,7 @@ describe('parsePayerCosts', () => {
   it('converte a resposta do MP e descarta linhas quebradas', () => {
     const out = parsePayerCosts([
       { installments: 3, installment_rate: 5.1, installment_amount: 95.3, total_amount: 285.9 },
-      { installments: 1, installment_rate: 0, installment_amount: 272.15, total_amount: 272.15 },
+      { installments: 1, installment_rate: 0, installment_amount: A_VISTA, total_amount: A_VISTA },
       { installments: 'x' },
       null,
     ])
@@ -116,25 +129,25 @@ describe('resolveCheckoutCharge (servidor)', () => {
   it('à vista não consulta o MP', async () => {
     const r = await resolve(1)
     expect(fetchPayerCosts).not.toHaveBeenCalled()
-    expect(r.ok && r.charge.totalAmount).toBe(272.15)
+    expect(r.ok && r.charge.totalAmount).toBe(A_VISTA)
   })
 
   it('consulta o parcelamento com o valor à vista e o emissor', async () => {
     fetchPayerCosts.mockResolvedValue([
-      { installments: 1, installmentRate: 0, installmentAmount: 272.15, totalAmount: 272.15 },
-      { installments: 6, installmentRate: 14.32, installmentAmount: 51.86, totalAmount: 311.16 },
+      { installments: 1, installmentRate: 0, installmentAmount: A_VISTA, totalAmount: A_VISTA },
+      { installments: 6, installmentRate: 14.32, installmentAmount: 52.92, totalAmount: 317.51 },
     ])
     const r = await resolve(6)
-    expect(fetchPayerCosts).toHaveBeenCalledWith({ amount: 272.15, paymentMethodId: 'master', issuerId: '24' })
+    expect(fetchPayerCosts).toHaveBeenCalledWith({ amount: A_VISTA, paymentMethodId: 'master', issuerId: '24' })
     expect(r.ok).toBe(true)
     if (!r.ok) return
-    expect(r.charge.transactionAmount).toBe(272.15)
-    expect(r.charge.totalAmount).toBe(311.16)
+    expect(r.charge.transactionAmount).toBe(A_VISTA)
+    expect(r.charge.totalAmount).toBe(317.51)
   })
 
   it('recusa com mensagem clara um parcelamento que o cartão não aceita', async () => {
     fetchPayerCosts.mockResolvedValue([
-      { installments: 1, installmentRate: 0, installmentAmount: 272.15, totalAmount: 272.15 },
+      { installments: 1, installmentRate: 0, installmentAmount: A_VISTA, totalAmount: A_VISTA },
       { installments: 3, installmentRate: 6, installmentAmount: 96.16, totalAmount: 288.47 },
     ])
     const r = await resolve(6)
@@ -147,7 +160,7 @@ describe('resolveCheckoutCharge (servidor)', () => {
   it('consulta falhou: segue com o valor à vista, sem somar juro nosso', async () => {
     fetchPayerCosts.mockResolvedValue(null)
     const r = await resolve(6)
-    expect(r.ok && r.charge.transactionAmount).toBe(272.15)
+    expect(r.ok && r.charge.transactionAmount).toBe(A_VISTA)
   })
 
   it('Pix não passa pelo parcelamento', async () => {
