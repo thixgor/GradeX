@@ -401,10 +401,15 @@ export default function ProfilePage() {
             />
           )}
 
-          {/* ====== Navegação entre seções ====== */}
+          {/* ====== Navegação entre seções ======
+              Grade de cinco colunas, e não uma faixa com rolagem lateral: com
+              a barra de rolagem escondida, "Configurações" ficava fora da tela
+              no celular e no tablet, sem nenhuma pista de que existia. Até o
+              `lg` o ícone vai em cima do rótulo, para caber em qualquer largura;
+              daí em diante, lado a lado. */}
           <nav
             aria-label="Seções do perfil"
-            className="scrollbar-hide mb-6 flex w-full gap-1 overflow-x-auto rounded-lg border border-border bg-muted/40 p-1"
+            className="mb-6 grid w-full grid-cols-5 gap-0.5 rounded-lg border border-border bg-muted/40 p-1 sm:gap-1"
           >
             {TABS.map(({ id, label, short, icon: Icon }) => (
               <button
@@ -413,15 +418,15 @@ export default function ProfilePage() {
                 aria-current={tab === id ? 'page' : undefined}
                 onClick={() => changeTab(id)}
                 className={cn(
-                  'flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition-colors sm:px-4',
+                  'flex min-w-0 flex-col items-center justify-center gap-1 rounded-md border px-0.5 py-2 text-[11px] font-semibold leading-tight transition-colors sm:px-1 sm:text-xs lg:flex-row lg:gap-2 lg:px-3 lg:text-sm',
                   tab === id
-                    ? 'border border-border bg-card text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground',
+                    ? 'border-border bg-card text-foreground shadow-sm'
+                    : 'border-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground',
                 )}
               >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">{label}</span>
-                <span className="sm:hidden">{short}</span>
+                <Icon className="h-5 w-5 shrink-0 lg:h-4 lg:w-4" />
+                <span className="hidden max-w-full truncate sm:inline">{label}</span>
+                <span className="max-w-full truncate sm:hidden">{short}</span>
               </button>
             ))}
           </nav>
