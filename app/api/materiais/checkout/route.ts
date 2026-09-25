@@ -841,6 +841,19 @@ async function handleCartCheckout(
   const serializedFreeItems = resolution.freeItems.map(serializeMaterialCartItem)
   const serializedPayableItems = resolution.payableItems.map(serializeMaterialCartItem)
 
+  // Assinante Plus+ não compra o que a assinatura já inclui: resgata. A tela
+  // do checkout oferece o resgate antes de chegar aqui; isto é a trava.
+  const plusClaimableItems = resolution.skippedItems.filter(item => item.reason === 'plus_claimable')
+  if (plusClaimableItems.length > 0) {
+    return NextResponse.json({
+      error: plusClaimableItems.length === 1
+        ? 'Este item já está incluso na sua assinatura Plus+. Resgate-o sem custo em vez de comprar.'
+        : 'Estes itens já estão inclusos na sua assinatura Plus+. Resgate-os sem custo em vez de comprar.',
+      plusClaimable: true,
+      skippedItems: resolution.skippedItems,
+    }, { status: 409 })
+  }
+
   if (resolution.items.length === 0) {
     const allAlreadyOwned = resolution.skippedItems.length > 0 &&
       resolution.skippedItems.every(item => item.reason === 'already_owned')

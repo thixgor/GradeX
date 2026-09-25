@@ -4,9 +4,13 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { findAccountByEmail, isValidEmail, logSerialKeySecurity } from '@/lib/serial-keys'
 import { emailDomainOf } from '@/lib/email-check'
 import { checkEmailDomain } from '@/lib/email-domain-check'
+import { contaResgataMateriaisComPlus } from '@/lib/plus-claims'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
+/** Compras que o Plus+ cobre por resgate — ver `/api/materiais/resgatar`. */
+const PRODUTOS_DO_RESGATE_PLUS = new Set(['material', 'package', 'flashcard', 'cart'])
 
 /**
  * POST — o que o servidor sabe sobre o e-mail digitado numa compra SEM LOGIN
@@ -39,6 +43,14 @@ export const runtime = 'nodejs'
  * antes do pagamento — e nunca bloqueia sozinho, só avisa: `unknown` (timeout,
  * SERVFAIL) não pode custar uma venda de verdade.
  *
+ * A única exceção ao "só um booleano" é `plusIncludes`, e só quando a compra é
+ * de material, pacote, flashcard ou carrinho de materiais (`productType`): a
+ * conta é Plus+ e a assinatura já inclui o que está sendo comprado. Sem isso o
+ * assinante que compra sem entrar paga por algo que podia resgatar de graça —
+ * e o aviso só existe para evitar esse pagamento. Continua sendo um booleano
+ * sobre o e-mail digitado, atrás do mesmo rate limit; nada de nome, plano ou
+ * prazo.
+ *
  * ATENÇÃO: esta rota NÃO decide nada. A escolha do comprador é revalidada no
  * checkout autoritativo (/api/serial-keys/checkout), que procura a conta de
  * novo pelo e-mail da compra — o client nunca manda o id da conta de destino.
@@ -55,6 +67,8 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => null)
   const email = String((body as any)?.email ?? '').trim().toLowerCase()
+  const productType = String((body as any)?.productType ?? '')
+  const perguntaPlus = PRODUTOS_DO_RESGATE_PLUS.has(productType)
   if (!isValidEmail(email)) {
     return NextResponse.json({ error: 'Informe um e-mail válido.' }, { status: 400 })
   }
@@ -66,7 +80,10 @@ export async function POST(request: NextRequest) {
   try {
     const db = await getDb()
     const [account, emailDomain] = await Promise.all([findAccountByEmail(db, email), domainStatus])
-    return NextResponse.json({ email, exists: !!account, emailDomain })
+    const plusIncludes = account && perguntaPlus
+      ? await contaResgataMateriaisComPlus(db, account.userId).catch(() => false)
+      : false
+    return NextResponse.json({ email, exists: !!account, emailDomain, ...(plusIncludes ? { plusIncludes: true } : {}) })
   } catch (err) {
     console.error('[serial-keys/account-lookup] falha ao consultar conta:', err)
     // Falha aqui não pode travar a compra: a tela segue no caminho da Serial Key.

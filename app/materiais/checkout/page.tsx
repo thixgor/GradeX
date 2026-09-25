@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertCircle, Check, ChevronLeft, Clock, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
+import { AlertCircle, Check, ChevronLeft, Clock, Crown, FileText, Flame, Loader2, Package, Percent, ShoppingCart, Sparkles, Trash2, X } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { TimedAccessNotice, type TimedAccessVersionView } from '@/components/materiais/timed-access'
 import { computeAccessExpiry, formatAccessDate } from '@/lib/material-timed-access'
@@ -24,6 +24,8 @@ import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
+import { PlusAccountNotice, resgatarComPlus } from '@/components/checkout/plus-claim'
+import { PLUS_LABEL, ROTA_ASSINATURA } from '@/lib/account-tier'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -296,6 +298,112 @@ function CouponBox({
   )
 }
 
+/** Moldura das telas de resgate pelo Plus+ (item único e carrinho). */
+function PlusClaimShell({
+  title,
+  onBack,
+  children,
+}: {
+  title: string
+  onBack: () => void
+  children: React.ReactNode
+}) {
+  const router = useRouter()
+  return (
+    <div style={pageStyle}>
+      <div style={{ maxWidth: '540px', margin: '0 auto', paddingTop: '48px' }}>
+        <div style={{ ...glassCard, padding: '40px 28px', textAlign: 'center' }}>
+          <div style={{
+            width: '64px', height: '64px', borderRadius: '18px',
+            background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.28)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px',
+          }}>
+            <Crown size={32} style={{ color: '#fbbf24' }} />
+          </div>
+          <span style={{ ...emeraldBadge, background: 'linear-gradient(135deg, #d97706, #fbbf24)', color: '#1c1203', marginBottom: '14px' }}>
+            Incluso no seu {PLUS_LABEL}
+          </span>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.25, margin: '14px 0 12px' }}>
+            {title}
+          </h1>
+          {children}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+            <button
+              onClick={() => router.push('/materiais?tab=mine')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: '100%', height: '46px', borderRadius: '13px',
+                border: '1px solid rgba(255,255,255,0.15)', background: 'transparent',
+                color: 'rgba(255,255,255,0.72)', fontWeight: 600, fontSize: '14px', cursor: 'pointer',
+              }}
+            >
+              Ver meus materiais
+            </button>
+            <button
+              onClick={onBack}
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.5)',
+                cursor: 'pointer', fontSize: '13px', padding: '6px',
+              }}
+            >
+              <ChevronLeft size={15} /> Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PlusClaimButton({
+  loading,
+  onClick,
+  children,
+}: {
+  loading: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      style={{
+        display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        width: '100%', minHeight: '50px', padding: '0 16px', borderRadius: '13px', border: 'none',
+        background: '#fbbf24', color: '#1c1203', fontWeight: 800, fontSize: '15px',
+        cursor: loading ? 'wait' : 'pointer', opacity: loading ? 0.75 : 1,
+      }}
+    >
+      {loading ? <Loader2 size={17} className="animate-spin" /> : <Crown size={17} />}
+      {loading ? 'Resgatando…' : children}
+    </button>
+  )
+}
+
+function PlusClaimErrorBox({ error }: { error: { message: string; requiresUpgrade?: boolean } }) {
+  return (
+    <div style={{
+      display: 'flex', gap: '10px', textAlign: 'left',
+      padding: '12px 14px', borderRadius: '12px', marginBottom: '14px',
+      background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.26)',
+      color: '#fca5a5', fontSize: '13px', lineHeight: 1.5,
+    }}>
+      <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+      <div style={{ minWidth: 0 }}>
+        <p style={{ margin: 0 }}>{error.message}</p>
+        {error.requiresUpgrade && (
+          <a href={ROTA_ASSINATURA} style={{ display: 'inline-block', marginTop: '6px', color: '#fbbf24', fontWeight: 800 }}>
+            Ver planos {PLUS_LABEL}
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function MateriaisCheckoutPage() {
   const router = useRouter()
   const params = useSearchParams()
@@ -340,15 +448,27 @@ export default function MateriaisCheckoutPage() {
   // o carrinho deve cair direto nela ou virar Serial Keys no e-mail.
   const accountDelivery = useAccountDeliveryChoice(
     buyer.email,
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim())
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(buyer.email.trim()),
+    'cart'
   )
   const cartAppliesToAccount = accountDelivery.deliveryMode === 'account'
 
   // Usuário logado que já possui o item avulso: mostramos um aviso claro (em vez
   // de redirecionar em silêncio para a página do material, o que confundia).
   const [alreadyOwnedInfo, setAlreadyOwnedInfo] = useState<
+    { redirect: string; title: string; type: 'material' | 'package' | 'flashcard'; claimedWithPlus?: boolean } | null
+  >(null)
+
+  // Assinante Plus+ com o item incluso e ainda não resgatado: no lugar do
+  // pagamento (que o servidor recusa), a tela oferece o resgate sem custo.
+  const [plusClaimInfo, setPlusClaimInfo] = useState<
     { redirect: string; title: string; type: 'material' | 'package' | 'flashcard' } | null
   >(null)
+  const [plusClaimLoading, setPlusClaimLoading] = useState(false)
+  const [plusClaimError, setPlusClaimError] = useState<{ message: string; requiresUpgrade?: boolean } | null>(null)
+  // O mesmo no carrinho: itens que a assinatura inclui (`plus_claimable`).
+  const [cartPlusClaimItems, setCartPlusClaimItems] = useState<CartSkippedItem[]>([])
+  const [cartPlusClaimErrors, setCartPlusClaimErrors] = useState<Record<string, { message: string; requiresUpgrade?: boolean }>>({})
 
   useEffect(() => {
     let active = true
@@ -399,6 +519,7 @@ export default function MateriaisCheckoutPage() {
   useEffect(() => {
     if (isCartMode) {
       if (cartPayload.length === 0) {
+        setCartPlusClaimItems([])
         setError(removedAccessibleItems.length > 0
           ? `${buildRemovedItemsMessage(removedAccessibleItems)} Seu carrinho ficou vazio.`
           : 'Seu carrinho está vazio'
@@ -425,6 +546,22 @@ export default function MateriaisCheckoutPage() {
         .then(([previewResp, pkResp]) => {
           const skippedItems = Array.isArray(previewResp?.skippedItems) ? previewResp.skippedItems : []
           const alreadyOwnedItems = skippedItems.filter((item: CartSkippedItem) => item.reason === 'already_owned')
+          // Plus+: o que a assinatura inclui vai para a tela de resgate. Não sai
+          // do carrinho como "já possui" — a pessoa ainda não tem o item.
+          const plusClaimable = skippedItems.filter((item: CartSkippedItem) => item.reason === 'plus_claimable')
+          setCartPlusClaimItems(plusClaimable)
+          if (plusClaimable.length > 0) {
+            if (alreadyOwnedItems.length > 0) {
+              setRemovedAccessibleItems(alreadyOwnedItems)
+              alreadyOwnedItems.forEach((item: CartSkippedItem) => removeItem(item.itemType, item.itemId))
+            }
+            setCartPreview({
+              ...previewResp,
+              skippedItems: skippedItems.filter((item: CartSkippedItem) => item.reason !== 'already_owned'),
+            })
+            setPublicKey(pkResp.publicKey || '')
+            return
+          }
           if (alreadyOwnedItems.length > 0) {
             setRemovedAccessibleItems(alreadyOwnedItems)
             alreadyOwnedItems.forEach((item: CartSkippedItem) => removeItem(item.itemType, item.itemId))
@@ -458,6 +595,8 @@ export default function MateriaisCheckoutPage() {
     }
 
     setAlreadyOwnedInfo(null)
+    setPlusClaimInfo(null)
+    setPlusClaimError(null)
 
     if (!itemId) {
       setError('Item não informado')
@@ -509,14 +648,24 @@ export default function MateriaisCheckoutPage() {
         const alreadyOwned = !hasTimedAccess && (itemType === 'package'
           ? !!(itemResp?.access?.hasAccess || itemResp?.access?.isPurchased)
           : !!(itemResp?.hasAccess || itemResp?.isPurchased || found?._hasAccess || found?._isPurchased))
+        const ownedInfo = {
+          redirect: getOwnedRedirect(found),
+          title: found.title || found.name || (itemType === 'package' ? 'Este pacote' : 'Este material'),
+          type: itemType === 'package'
+            ? 'package' as const
+            : (found?.type === 'flashcard_deck' ? 'flashcard' as const : 'material' as const),
+        }
         if (alreadyOwned) {
-          setAlreadyOwnedInfo({
-            redirect: getOwnedRedirect(found),
-            title: found.title || found.name || (itemType === 'package' ? 'Este pacote' : 'Este material'),
-            type: itemType === 'package'
-              ? 'package'
-              : (found?.type === 'flashcard_deck' ? 'flashcard' : 'material'),
-          })
+          setAlreadyOwnedInfo(ownedInfo)
+          return
+        }
+        // Plus+ com o item incluso e ainda não resgatado. O servidor só marca
+        // `includedInPlus` quando a conta é Plus+ e ainda não tem acesso.
+        const includedInPlus = itemType === 'package'
+          ? !!itemResp?.access?.includedInPlus
+          : !!itemResp?.includedInPlus
+        if (includedInPlus) {
+          setPlusClaimInfo(ownedInfo)
           return
         }
         setItem(found)
@@ -596,13 +745,17 @@ export default function MateriaisCheckoutPage() {
             }}>
               <Check size={34} style={{ color: '#34d399' }} />
             </div>
-            <span style={{ ...emeraldBadge, marginBottom: '14px' }}>Você já tem acesso</span>
+            <span style={{ ...emeraldBadge, marginBottom: '14px' }}>
+              {alreadyOwnedInfo.claimedWithPlus ? `Resgatado com o ${PLUS_LABEL}` : 'Você já tem acesso'}
+            </span>
             <h1 style={{ fontSize: '24px', fontWeight: 800, color: 'white', letterSpacing: '-0.02em', lineHeight: 1.25, marginBottom: '12px' }}>
-              Este {typeWord} já é seu
+              {alreadyOwnedInfo.claimedWithPlus ? `Pronto! Este ${typeWord} agora é seu` : `Este ${typeWord} já é seu`}
             </h1>
             <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: '6px' }}>
-              <strong style={{ color: '#34d399' }}>{alreadyOwnedInfo.title}</strong> já está liberado na sua conta — sem
-              precisar comprar de novo nem gastar nada.
+              <strong style={{ color: '#34d399' }}>{alreadyOwnedInfo.title}</strong>{' '}
+              {alreadyOwnedInfo.claimedWithPlus
+                ? `entrou na sua conta pela assinatura ${PLUS_LABEL} — sem pagar nada.`
+                : 'já está liberado na sua conta — sem precisar comprar de novo nem gastar nada.'}
             </p>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.6, marginBottom: '30px' }}>
               É só abrir e continuar de onde você parou.
@@ -633,6 +786,117 @@ export default function MateriaisCheckoutPage() {
           </div>
         </div>
       </div>
+    )
+  }
+
+  if (!isCartMode && plusClaimInfo) {
+    const typeWord = plusClaimInfo.type === 'package'
+      ? 'pacote'
+      : plusClaimInfo.type === 'flashcard' ? 'baralho' : 'material'
+    const claim = async () => {
+      setPlusClaimLoading(true)
+      setPlusClaimError(null)
+      const result = await resgatarComPlus(itemType, itemId)
+      setPlusClaimLoading(false)
+      if (!result.ok) {
+        setPlusClaimError({ message: result.message, requiresUpgrade: result.requiresUpgrade })
+        return
+      }
+      setAlreadyOwnedInfo({ ...plusClaimInfo, claimedWithPlus: true })
+      setPlusClaimInfo(null)
+    }
+    return (
+      <PlusClaimShell
+        title={`Este ${typeWord} já está no seu ${PLUS_LABEL}`}
+        onBack={() => router.push(itemType === 'package' ? `/pacotes/${itemId}` : `/materiais/${itemId}`)}
+      >
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: '6px' }}>
+          <strong style={{ color: '#fbbf24' }}>{plusClaimInfo.title}</strong> faz parte da sua assinatura. Não
+          precisa pagar: é só resgatar e ele entra na hora em Meus materiais.
+        </p>
+        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.6, marginBottom: '26px' }}>
+          O resgate vale enquanto o {PLUS_LABEL} estiver ativo.
+        </p>
+        {plusClaimError && <PlusClaimErrorBox error={plusClaimError} />}
+        <PlusClaimButton loading={plusClaimLoading} onClick={claim}>
+          Resgatar com o {PLUS_LABEL} · sem custo
+        </PlusClaimButton>
+      </PlusClaimShell>
+    )
+  }
+
+  if (isCartMode && cartPlusClaimItems.length > 0) {
+    const count = cartPlusClaimItems.length
+    const claimAll = async () => {
+      setPlusClaimLoading(true)
+      const errors: Record<string, { message: string; requiresUpgrade?: boolean }> = {}
+      const claimed: CartSkippedItem[] = []
+      // Um por vez: a rota conta cota do Plus+ Guard a cada resgate, e uma
+      // rajada paralela só trocaria resgates por 429.
+      for (const skipped of cartPlusClaimItems) {
+        const result = await resgatarComPlus(skipped.itemType, skipped.itemId)
+        if (result.ok) claimed.push(skipped)
+        else errors[`${skipped.itemType}:${skipped.itemId}`] = { message: result.message, requiresUpgrade: result.requiresUpgrade }
+      }
+      setPlusClaimLoading(false)
+      setCartPlusClaimErrors(errors)
+      claimed.forEach((skipped) => removeItem(skipped.itemType, skipped.itemId))
+      if (claimed.length === count && cartPreview?.items.length === 0) {
+        router.push('/materiais?tab=mine')
+      }
+    }
+    return (
+      <PlusClaimShell
+        title={count === 1 ? `Este item já está no seu ${PLUS_LABEL}` : `Estes ${count} itens já estão no seu ${PLUS_LABEL}`}
+        onBack={() => router.push('/materiais')}
+      >
+        <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: '18px' }}>
+          Sua assinatura já inclui {count === 1 ? 'o item do carrinho' : 'os itens do carrinho'}. Não precisa
+          pagar: resgate sem custo e {count === 1 ? 'ele entra' : 'eles entram'} na hora em Meus materiais.
+        </p>
+        {removedAccessibleItems.length > 0 && (
+          <p style={{ fontSize: '12px', color: 'rgba(253,230,138,0.9)', lineHeight: 1.5, marginBottom: '14px', textAlign: 'left' }}>
+            {buildRemovedItemsMessage(removedAccessibleItems)}
+          </p>
+        )}
+        <ul style={{ listStyle: 'none', margin: '0 0 22px 0', padding: 0, display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+          {cartPlusClaimItems.map((skipped) => {
+            const key = `${skipped.itemType}:${skipped.itemId}`
+            const itemError = cartPlusClaimErrors[key]
+            return (
+              <li
+                key={key}
+                style={{
+                  padding: '10px 12px',
+                  borderRadius: '12px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${itemError ? 'rgba(248,113,113,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  {skipped.itemType === 'package'
+                    ? <Package size={16} style={{ color: '#fbbf24', flexShrink: 0 }} />
+                    : <FileText size={16} style={{ color: '#fbbf24', flexShrink: 0 }} />}
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'white', minWidth: 0 }}>
+                    {skipped.itemTitle || (skipped.itemType === 'package' ? 'Pacote' : 'Material')}
+                  </span>
+                </div>
+                {itemError && (
+                  <p style={{ margin: '6px 0 0 26px', fontSize: '12px', color: '#fca5a5', lineHeight: 1.45 }}>
+                    {itemError.message}
+                  </p>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+        {Object.values(cartPlusClaimErrors).some((e) => e.requiresUpgrade) && (
+          <PlusClaimErrorBox error={{ message: 'Renove ou revise sua assinatura para resgatar.', requiresUpgrade: true }} />
+        )}
+        <PlusClaimButton loading={plusClaimLoading} onClick={claimAll}>
+          {count === 1 ? `Resgatar com o ${PLUS_LABEL}` : `Resgatar os ${count} itens com o ${PLUS_LABEL}`} · sem custo
+        </PlusClaimButton>
+      </PlusClaimShell>
     )
   }
 
@@ -1264,6 +1528,7 @@ export default function MateriaisCheckoutPage() {
                     buyer={buyer}
                     setBuyer={setBuyer}
                     accountDelivery={accountDelivery}
+                    itemCount={cartPreview.items.length}
                     deliveryLine={cartAppliesToAccount
                       ? `Os ${cartPreview.payableItems.length} itens entram direto na conta ${accountDelivery.email} assim que o pagamento for aprovado — não há chave para ativar.`
                       : `As Serial Keys (uma por produto) serão enviadas para ${buyer.email.trim().toLowerCase()} — é por elas que você libera o acesso.`}
@@ -1737,12 +2002,14 @@ function GuestBuyerForm({
   buyer,
   setBuyer,
   accountDelivery,
+  itemCount,
   deliveryLine,
   onConfirm,
 }: {
   buyer: { name: string; email: string; phone: string }
   setBuyer: (b: { name: string; email: string; phone: string }) => void
   accountDelivery: AccountDeliveryState
+  itemCount: number
   deliveryLine: string
   onConfirm: () => void
 }) {
@@ -1805,6 +2072,15 @@ function GuestBuyerForm({
         <input value={buyer.phone} onChange={(e) => setBuyer({ ...buyer, phone: e.target.value })} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={input} />
         {touched && !phoneValid && <span style={{ fontSize: '11px', color: '#f87171' }}>Telefone inválido.</span>}
       </div>
+      {/* E-mail de assinante Plus+: o carrinho sai de graça pelo resgate. */}
+      {accountDelivery.plusIncludes && (
+        <PlusAccountNotice
+          email={accountDelivery.email}
+          loginRedirect="/materiais/checkout?cart=1"
+          itemCount={itemCount}
+          tone="dark"
+        />
+      )}
       <AccountDeliveryChoice state={accountDelivery} tone="dark" highlightMissing={touched} />
       <button
         onClick={() => { setTouched(true); if (valid) setReviewing(true) }}

@@ -202,6 +202,11 @@ export async function POST(request: NextRequest) {
     const materialItems = items.filter((item) => item.itemType === 'material' || item.itemType === 'package') as Array<{ itemType: 'material' | 'package'; itemId: string }>
     const resolution = await resolveMaterialCart(db, cartSession, materialItems)
     const payableItems = resolution.payableItems
+    if (resolution.skippedItems.some(item => item.reason === 'plus_claimable')) {
+      return NextResponse.json({
+        error: 'Itens inclusos na sua assinatura Plus+ são resgatados sem custo — não precisam de cupom.',
+      }, { status: 409 })
+    }
     if (resolution.skippedItems.some(item => item.reason === 'already_owned')) {
       return NextResponse.json({
         error: resolution.items.length === 0

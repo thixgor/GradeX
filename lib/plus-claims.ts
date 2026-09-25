@@ -33,6 +33,8 @@
 import { Db, ObjectId } from 'mongodb'
 import { getDb } from './mongodb'
 import { audit } from './payments/audit'
+import { isPlusAccount } from './account-tier'
+import { areaLiberada, resolverPermissoes } from './plan-entitlements-server'
 import type { MaterialPurchase } from './types'
 
 /**
@@ -183,4 +185,32 @@ export async function countRevokedPlusClaims(userId: string, db?: Db): Promise<n
   return database
     .collection<MaterialPurchase>('material_purchases')
     .countDocuments(claimFilter(userId, PLUS_CLAIM_REVOKED_STATUS) as any)
+}
+
+/**
+ * Esta conta consegue resgatar materiais pelo Plus+ agora?
+ *
+ * As mesmas travas de entrada de `/api/materiais/resgatar`: cargo Plus+,
+ * assinatura dentro do prazo (o cargo só cai quando o cron passa) e a área de
+ * materiais liberada no plano. A cota fica de fora de propósito — ela depende
+ * do item e muda a cada resgate; quem estourar recebe a explicação da rota.
+ *
+ * Usado para avisar, na compra sem login, que o e-mail digitado é de um
+ * assinante que não precisa pagar pelo item.
+ */
+export async function contaResgataMateriaisComPlus(db: Db, userId: string): Promise<boolean> {
+  if (!ObjectId.isValid(userId)) return false
+  const user = await db.collection('users').findOne(
+    { _id: new ObjectId(userId) },
+    { projection: { accountType: 1, premiumExpiresAt: 1, premiumPlanType: 1, role: 1 } },
+  )
+  if (!user || !isPlusAccount(user.accountType)) return false
+  if (user.premiumExpiresAt && new Date(user.premiumExpiresAt) <= new Date()) return false
+  const permissoes = await resolverPermissoes(db, {
+    userId,
+    role: user.role,
+    accountType: user.accountType,
+    premiumPlanType: (user.premiumPlanType as string | null) ?? null,
+  })
+  return areaLiberada(permissoes, 'materiais')
 }

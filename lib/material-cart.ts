@@ -61,7 +61,12 @@ export interface MaterialCartResolvedItem {
 export interface MaterialCartSkippedItem {
   itemType: MaterialCartItemType
   itemId: string
-  reason: 'invalid' | 'duplicate' | 'not_found' | 'already_owned' | 'included_in_cart_package'
+  /**
+   * `plus_claimable`: a conta é Plus+ e o item está incluso, mas ainda não foi
+   * resgatado. Não é "já possui" — o acesso só existe depois do resgate
+   * (POST /api/materiais/resgatar) — e também não pode ser cobrado.
+   */
+  reason: 'invalid' | 'duplicate' | 'not_found' | 'already_owned' | 'included_in_cart_package' | 'plus_claimable'
   itemTitle?: string
   /** Quando reason === 'included_in_cart_package', título do pacote do carrinho que contém este material. */
   includedInPackageTitle?: string
@@ -236,7 +241,10 @@ export async function resolveMaterialCart(
   const userGroups = buildUserGroups(userDoc)
   // Assinante Plus+ leva o item pelo resgate (sem custo), então cobrá-lo no
   // carrinho seria vender o que já está incluso. O item é recusado aqui com
-  // `already_owned` e a interface oferece "Resgatar" no lugar de "Comprar".
+  // `plus_claimable` (ou `already_owned`, se já foi resgatado/comprado) e a
+  // interface oferece "Resgatar" no lugar de "Comprar". Tratar os dois como
+  // `already_owned` fazia o checkout tirar do carrinho, como "você já possui",
+  // itens que a pessoa ainda não tinha.
   const isPlus = isPlusAccount((userDoc as any)?.accountType)
 
   const materialsById = new Map(materials.map((material: any) => [String(material._id), material]))
@@ -301,13 +309,12 @@ export async function resolveMaterialCart(
     }
     const hasPackageAccess =
       isAdmin ||
-      isPlus ||
       ownedPackageIds.has(requested.itemId) ||
       (pkg.pricing !== 'paid' && matchesAllowedGroups(pkg.allowedGroups, userGroups))
-    if (hasPackageAccess) {
+    if (hasPackageAccess || isPlus) {
       skippedItems.push({
         ...requested,
-        reason: 'already_owned',
+        reason: hasPackageAccess ? 'already_owned' : 'plus_claimable',
         itemTitle: pkg.title || 'Pacote',
       })
       continue
@@ -391,13 +398,12 @@ export async function resolveMaterialCart(
     }
     const hasMaterialAccess =
       isAdmin ||
-      isPlus ||
       ownedMaterialIds.has(requested.itemId) ||
       (material.pricing === 'free' && matchesAllowedGroups(material.allowedGroups, userGroups))
-    if (hasMaterialAccess) {
+    if (hasMaterialAccess || isPlus) {
       skippedItems.push({
         ...requested,
-        reason: 'already_owned',
+        reason: hasMaterialAccess ? 'already_owned' : 'plus_claimable',
         itemTitle: material.title || 'Material',
       })
       continue

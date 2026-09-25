@@ -15,6 +15,7 @@ import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
+import { PlusAccountNotice } from '@/components/checkout/plus-claim'
 import type { ContextoDaOferta } from '@/lib/plus-oferta'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
@@ -850,9 +851,14 @@ function GenericComprarContent({ productType }: { productType: string }) {
 
   // O e-mail digitado já tem conta? Se tiver, perguntamos antes do pagamento se
   // o acesso deve entrar direto nela ou vir por Serial Key.
-  const accountDelivery = useAccountDeliveryChoice(email, emailValid)
+  const accountDelivery = useAccountDeliveryChoice(email, emailValid, productType)
   const appliesToAccount = accountDelivery.deliveryMode === 'account'
   const canGoToPayment = buyerValid && accountDelivery.canProceed
+  // O e-mail é de um assinante Plus+ cuja assinatura já inclui este item: o
+  // login devolve ao checkout logado, que troca o pagamento pelo resgate.
+  const plusClaimRedirect = product?.productId && (productType === 'material' || productType === 'package' || productType === 'flashcard')
+    ? `/materiais/checkout?type=${productType === 'package' ? 'package' : 'material'}&id=${encodeURIComponent(product.productId)}`
+    : null
 
   const baseAmount = Number(product?.amount ?? 0)
   const tierPct = pricingEventState?.activeTier?.discountPercent || 0
@@ -1178,6 +1184,9 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
                 {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
+              {accountDelivery.plusIncludes && plusClaimRedirect && (
+                <PlusAccountNotice email={accountDelivery.email} loginRedirect={plusClaimRedirect} />
+              )}
               <AccountDeliveryChoice state={accountDelivery} highlightMissing={touched} />
               <p className="text-xs leading-relaxed text-muted-foreground">
                 {appliesToAccount

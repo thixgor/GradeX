@@ -45,6 +45,11 @@ export interface AccountDeliveryState {
   identity: AccountIdentityState
   /** Qualidade do e-mail digitado — erro de digitação e domínio que recebe. */
   emailCheck: EmailCheckState
+  /**
+   * A conta encontrada é Plus+ e a assinatura já inclui o que está sendo
+   * comprado (só é perguntado quando o hook recebe `productType`).
+   */
+  plusIncludes: boolean
 }
 
 /**
@@ -97,8 +102,14 @@ function formatCpfInput(value: string): string {
  * Consulta o e-mail digitado (com debounce) e guarda a escolha do comprador.
  * Falha de rede não trava nada: a compra segue pelo caminho da Serial Key.
  */
-export function useAccountDeliveryChoice(email: string, emailValid: boolean): AccountDeliveryState {
+export function useAccountDeliveryChoice(
+  email: string,
+  emailValid: boolean,
+  /** O que está sendo comprado — material/pacote/flashcard/carrinho ativa o aviso do Plus+. */
+  productType?: string,
+): AccountDeliveryState {
   const [status, setStatus] = useState<LookupStatus>('idle')
+  const [plusIncludes, setPlusIncludes] = useState(false)
   const [checkedEmail, setCheckedEmail] = useState('')
   const [emailDomain, setEmailDomain] = useState<EmailCheckState['domain']>('unknown')
   const [deliveryMode, setDeliveryMode] = useState<DeliveryMode | null>(null)
@@ -127,6 +138,7 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
     resetIdentity()
 
     setEmailDomain('unknown')
+    setPlusIncludes(false)
 
     if (!emailValid) {
       setStatus('idle')
@@ -140,13 +152,14 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
       fetch('/api/serial-keys/account-lookup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: normalized }),
+        body: JSON.stringify({ email: normalized, ...(productType ? { productType } : {}) }),
       })
         .then(res => res.json())
         .then((data) => {
           if (id !== requestId.current) return
           setCheckedEmail(normalized)
           setStatus(data?.exists ? 'found' : 'none')
+          setPlusIncludes(Boolean(data?.exists && data?.plusIncludes))
           setEmailDomain(
             data?.emailDomain === 'ok' || data?.emailDomain === 'undeliverable'
               ? data.emailDomain
@@ -161,7 +174,7 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [normalized, emailValid, resetIdentity])
+  }, [normalized, emailValid, resetIdentity, productType])
 
   const choose = useCallback((mode: DeliveryMode) => setDeliveryMode(mode), [])
 
@@ -235,6 +248,7 @@ export function useAccountDeliveryChoice(email: string, emailValid: boolean): Ac
       domain: emailDomain,
       suspicious: Boolean(suggestion) || emailDomain === 'undeliverable',
     },
+    plusIncludes: found && plusIncludes,
   }
 }
 
