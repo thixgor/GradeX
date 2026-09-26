@@ -52,6 +52,7 @@ import {
   pickCardPaymentMethod,
   type DetectedCardMethod,
 } from '@/lib/payments/card-method'
+import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 import {
   brandFromMercadoPagoId,
   CardTerminal,
@@ -848,7 +849,12 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         return
       }
       if (!res.ok) {
-        throw new Error(data.error || 'Falha ao processar pagamento')
+        const campos = invalidFieldsFrom(data?.details)
+        throw new Error(
+          campos.length > 0
+            ? `${data.error || 'Dados inválidos'} (${campos.join(', ')}). Recarregue a página e tente de novo.`
+            : data.error || 'Falha ao processar pagamento'
+        )
       }
       setOrder(data)
       if (data.status === 'approved') props.onApproved?.(data)

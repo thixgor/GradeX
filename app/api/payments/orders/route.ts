@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
+import { deviceIdSchema } from '@/lib/payments/device-id'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -56,7 +57,7 @@ const Schema = z.object({
   installments: z.number().int().min(1).max(18).optional(),
   issuer: z.string().optional(),
   // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
-  deviceId: z.string().max(200).optional(),
+  deviceId: deviceIdSchema,
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
   // Só tem efeito para type: 'plan' — pagamento único de um plano Plus+/premium.

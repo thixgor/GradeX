@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { z } from 'zod'
+import { deviceIdSchema } from '@/lib/payments/device-id'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -29,7 +30,7 @@ const Schema = z.object({
   installments: z.number().int().min(1).max(18).optional(),
   issuer: z.string().optional(),
   // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
-  deviceId: z.string().max(200).optional(),
+  deviceId: deviceIdSchema,
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
 })
