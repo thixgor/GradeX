@@ -176,6 +176,10 @@ export class MercadoPagoProvider implements PaymentProvider {
         body,
         requestOptions: {
           idempotencyKey: input.idempotencyKey,
+          // 8s por tentativa (o SDK refaz uma vez em timeout/5xx, com a mesma
+          // idempotency key): mesmo no pior caso a rota termina dentro dos 30s
+          // da função, com tempo de procurar o pagamento se a resposta sumir.
+          timeout: 8000,
           ...(deviceId ? { meliSessionId: deviceId } : {}),
         },
       })
@@ -198,6 +202,31 @@ export class MercadoPagoProvider implements PaymentProvider {
     const payment = getMpPaymentWithToken(auth.accessToken)
     const response = await payment.get({ id: providerPaymentId })
     return mpPaymentToProviderOrder(response)
+  }
+
+  async findPaymentByExternalReference(externalReference: string): Promise<ProviderOrder | null> {
+    const auth = await getEffectiveMpAuth()
+    if (!auth.accessToken) return null
+    const params = new URLSearchParams({
+      external_reference: externalReference,
+      sort: 'date_created',
+      criteria: 'desc',
+      limit: '1',
+    })
+    // fetch direto, e não o `payment.search` do SDK: aquele herda 10s de
+    // timeout com novas tentativas, e isto roda DENTRO de um checkout que já
+    // gastou tempo esperando o Mercado Pago.
+    const res = await fetch(`https://api.mercadopago.com/v1/payments/search?${params}`, {
+      headers: { Authorization: `Bearer ${auth.accessToken}` },
+      signal: AbortSignal.timeout(3500),
+      cache: 'no-store',
+    })
+    if (!res.ok) throw new Error(`busca de pagamento recusada: ${res.status}`)
+    const data = await res.json()
+    const found = Array.isArray(data?.results)
+      ? data.results.find((p: any) => String(p?.external_reference || '') === externalReference)
+      : null
+    return found ? mpPaymentToProviderOrder(found) : null
   }
 
   async refundPayment(providerPaymentId: string): Promise<void> {

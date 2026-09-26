@@ -5,6 +5,8 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import type { ProviderOrder } from '@/lib/payments/types'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
@@ -497,6 +499,8 @@ export async function POST(request: NextRequest) {
     ...getRequestAnalyticsMeta(request),
   })
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -526,6 +530,7 @@ export async function POST(request: NextRequest) {
         productType: resolved.productType,
       },
     })
+    created = result
 
     // Aplica resultado (idempotente). Se aprovado (cartão), a serial key já é
     // gerada e o e-mail enviado aqui. Pix/boleto: acontece no webhook.
@@ -557,6 +562,10 @@ export async function POST(request: NextRequest) {
       successRedirect: getSuccessUrl(orderId, receiptToken),
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedAmount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, receiptToken, successRedirect: getSuccessUrl(orderId, receiptToken) })
     console.error('[serial-keys/checkout] erro ao criar payment:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
@@ -824,6 +833,8 @@ async function handleCartCheckout(
     ...getRequestAnalyticsMeta(request),
   })
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -846,6 +857,7 @@ async function handleCartCheckout(
       payerAddress: data.payerAddress,
       metadata: { orderId, type: 'serial_key_cart', cartSize: String(itemCount) },
     })
+    created = result
 
     await applyPaymentResult(orderId, result)
     await audit({
@@ -874,6 +886,10 @@ async function handleCartCheckout(
       successRedirect: getSuccessUrl(orderId, receiptToken),
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedAmount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, receiptToken, successRedirect: getSuccessUrl(orderId, receiptToken) })
     console.error('[serial-keys/checkout/cart] erro ao criar payment:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')

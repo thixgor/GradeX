@@ -6,6 +6,8 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import type { ProviderOrder } from '@/lib/payments/types'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
@@ -232,6 +234,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   )
 
   // 5) Cria o pagamento no Mercado Pago.
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -259,6 +263,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         purchaseId,
       },
     })
+    created = result
 
     await db.collection<RafflePurchase>('raffle_purchases').updateOne(
       { _id: purchaseRes.insertedId },
@@ -293,6 +298,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       successRedirect: `/rifas/${raffle.slug}?compra=ok`,
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedAmount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, purchaseId, successRedirect: `/rifas/${raffle.slug}?compra=ok` })
     console.error('[raffle-checkout] erro ao criar payment:', err)
     // Libera reserva e marca order como rejeitada.
     await releaseReservation(db, String(raffle._id), orderId)

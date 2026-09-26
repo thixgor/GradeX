@@ -127,6 +127,12 @@ export interface PaymentProvider {
   }): Promise<ProviderOrder>
 
   getPayment(providerPaymentId: string): Promise<ProviderOrder>
+  /**
+   * Pagamento mais recente com este `external_reference` (o id da nossa
+   * order), ou `null`. Usado quando a criação estourou o tempo e não dá para
+   * saber se o pagamento existe. Não deve lançar por "não encontrado".
+   */
+  findPaymentByExternalReference?(externalReference: string): Promise<ProviderOrder | null>
 
   refundPayment(providerPaymentId: string): Promise<void>
 

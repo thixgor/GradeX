@@ -6,6 +6,8 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import type { ProviderOrder } from '@/lib/payments/types'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { getRequestAnalyticsMeta, recordOrderCheckoutEvent } from '@/lib/analytics'
@@ -344,6 +346,8 @@ export async function POST(request: NextRequest) {
   })
 
   // Chamar provider
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -372,6 +376,7 @@ export async function POST(request: NextRequest) {
         ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
+    created = result
 
     // Aplicar resultado (idempotente). Para Pix/boleto, status virá pending — pendente OK.
     await applyPaymentResult(orderId, result)
@@ -407,6 +412,10 @@ export async function POST(request: NextRequest) {
       feeLabel: charge.label,
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: amount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered })
     console.error('[orders] erro ao criar payment:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')

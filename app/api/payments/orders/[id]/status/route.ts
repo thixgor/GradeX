@@ -5,6 +5,7 @@ import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
+import { PROVIDER_UNCONFIRMED, resolveUnconfirmedOrder } from '@/lib/payments/provider-failure'
 import type { PaymentOrder } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -53,6 +54,18 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const TERMINAL = ['approved', 'rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
   if (TERMINAL.includes(order.status)) {
     return NextResponse.json(serialize(order))
+  }
+
+  // A criação do pagamento não deu resposta clara (timeout/queda): procura o
+  // pagamento pelo id da order e, se ele não aparecer, resolve como recusa.
+  if (!order.providerPaymentId && order.statusDetail === PROVIDER_UNCONFIRMED) {
+    try {
+      const resolved = await resolveUnconfirmedOrder(order)
+      return NextResponse.json(serialize(resolved || order))
+    } catch (err: any) {
+      console.error('[orders/status] falha ao resolver order sem confirmação:', err)
+      return NextResponse.json(serialize(order))
+    }
   }
 
   // Reconsulta MP se temos providerPaymentId

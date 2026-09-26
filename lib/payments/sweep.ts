@@ -4,6 +4,7 @@ import type { Db } from 'mongodb'
 
 import { getPaymentProvider } from './index'
 import { applyPaymentResult } from './effects'
+import { PROVIDER_UNCONFIRMED, resolveUnconfirmedOrder } from './provider-failure'
 import type { PaymentOrder } from '../types'
 
 export interface ResultadoDaVarredura {
@@ -84,6 +85,35 @@ export async function reconciliarPagamentosPendentes(
     } catch (err) {
       stats.errors++
       console.error('[payments-sweep] reconcile fail', String(order._id), order.providerPaymentId, err)
+    }
+  }
+
+  // Pedidos cuja criação não teve resposta clara do MP (timeout): ainda sem
+  // id do pagamento, então a consulta acima não os alcança. Procura pelo id da
+  // order; se não aparecer, a janela vence e vira recusa (devolvendo cupom).
+  const incertos = await ordersCol
+    .find({
+      status: 'pending',
+      statusDetail: PROVIDER_UNCONFIRMED,
+      providerPaymentId: { $in: [null, ''] },
+      createdAt: { $gte: since },
+    } as any)
+    .sort({ createdAt: -1 })
+    .limit(limite)
+    .toArray()
+
+  for (const order of incertos) {
+    if (Date.now() > prazo) break
+    stats.checked++
+    try {
+      const resolved = await resolveUnconfirmedOrder(order)
+      if (resolved && resolved.status !== order.status) {
+        stats.reconciled++
+        if (resolved.status === 'approved') stats.approved++
+      }
+    } catch (err) {
+      stats.errors++
+      console.error('[payments-sweep] unconfirmed fail', String(order._id), err)
     }
   }
 

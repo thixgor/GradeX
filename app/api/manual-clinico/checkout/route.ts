@@ -5,6 +5,8 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import type { ProviderOrder } from '@/lib/payments/types'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
@@ -423,6 +425,8 @@ export async function POST(request: NextRequest) {
     ...getRequestAnalyticsMeta(request),
   })
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -453,6 +457,7 @@ export async function POST(request: NextRequest) {
         ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
+    created = result
 
     await applyPaymentResult(orderId, result)
     await audit({
@@ -487,6 +492,10 @@ export async function POST(request: NextRequest) {
       successRedirect: `/manual-clinico?purchase=success&value=${amount}&plan=${plan.key}&oid=${orderId}`,
     })
   } catch (error: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: amount, err: error, created })
+    if (recovered) return NextResponse.json({ ...recovered, successRedirect: `/manual-clinico?purchase=success&value=${amount}&plan=${plan.key}&oid=${orderId}` })
     console.error('[manual-clinico/checkout] erro:', error)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')

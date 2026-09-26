@@ -113,11 +113,41 @@ const REJECTION_MESSAGES: Record<string, string> = {
   cc_amount_rate_limit_exceeded: 'O cartão atingiu o limite de valor permitido. Tente outro cartão ou o Pix.',
   rejected_by_bank: 'O banco emissor recusou o pagamento. Fale com o seu banco, tente outro cartão ou pague com Pix.',
   rejected_insufficient_data: 'Faltaram dados para aprovar o pagamento. Confira o CPF e os dados do cartão.',
+  cc_rejected_3ds_mandatory:
+    'O banco exige uma autenticação extra para esta compra. Tente com outro cartão ou pague com Pix — é aprovado na hora.',
+  cc_rejected_3ds_challenge:
+    'A autenticação do banco não foi concluída. Tente de novo, use outro cartão ou pague com Pix.',
+  cc_rejected_fraud: 'O banco emissor bloqueou o pagamento por segurança. Fale com o seu banco, tente outro cartão ou pague com Pix.',
+  cc_rejected_card_type_not_allowed: 'Este tipo de cartão não é aceito nesta compra. Use um cartão de crédito ou pague com Pix.',
+  bank_error: 'O banco não respondeu a tempo. Nenhuma cobrança foi feita — tente de novo em instantes ou pague com Pix.',
+  provider_error: 'Não conseguimos confirmar o pagamento com o Mercado Pago e nenhuma cobrança foi feita. Pode tentar de novo.',
 }
 
 export function describeRejection(statusDetail?: string | null): string | null {
   if (!statusDetail) return null
-  return REJECTION_MESSAGES[statusDetail] || null
+  if (REJECTION_MESSAGES[statusDetail]) return REJECTION_MESSAGES[statusDetail]
+  // Código novo que ainda não mapeamos: nunca mostrar só o código cru.
+  return `O pagamento não foi aprovado (código ${statusDetail}). Tente outro cartão, fale com o seu banco ou pague com Pix.`
+}
+
+/**
+ * Pagamento em cartão ainda sem decisão final. `provider_*` são estados
+ * nossos (ver lib/payments/provider-failure.ts): o Mercado Pago demorou a
+ * responder, e cobrar de novo no escuro é o que gera cobrança dupla.
+ */
+const PENDING_MESSAGES: Record<string, string> = {
+  pending_review_manual:
+    'Seu cartão está em análise de segurança do Mercado Pago — pode levar até 2 dias úteis. Não é preciso pagar de novo: esta tela atualiza sozinha assim que sair o resultado.',
+  pending_contingency:
+    'O Mercado Pago está processando o pagamento. Em geral leva poucos minutos — não pague de novo: esta tela atualiza sozinha e você recebe a confirmação por e-mail.',
+  provider_confirming:
+    'Pagamento recebido pelo Mercado Pago — estamos concluindo a liberação. Não pague de novo: esta tela atualiza sozinha em instantes.',
+  provider_unconfirmed:
+    'O Mercado Pago demorou a responder e estamos confirmando se o pagamento entrou. Não pague de novo agora: em até 3 minutos esta tela mostra o resultado.',
+}
+
+export function describePending(statusDetail?: string | null): string {
+  return (statusDetail && PENDING_MESSAGES[statusDetail]) || 'Processando o pagamento... esta tela atualiza sozinha.'
 }
 
 /** Device ID do antifraude, se o script de segurança já tiver gerado. */
@@ -851,7 +881,15 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       })
-      const data = await res.json()
+      // Resposta que não é JSON é a plataforma cortando a função (timeout,
+      // 502/504) — e o pagamento pode ter entrado. Mandar "tentar de novo"
+      // aqui era receita de cobrança dupla.
+      const data = await res.json().catch(() => null)
+      if (!data) {
+        throw new Error(
+          'Não recebemos a resposta do pagamento a tempo. Antes de tentar de novo, confira em alguns minutos o seu e-mail ou o app do banco — se a cobrança aparecer, a compra foi concluída.'
+        )
+      }
       if (data?.alreadyOwned && data.redirectTo) {
         window.location.href = data.redirectTo
         return
@@ -1380,7 +1418,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         <h3 style={{ fontSize: '20px', fontWeight: 700, color: 'hsl(var(--destructive))', marginBottom: '8px' }}>{STATUS_LABELS[order.status]}</h3>
         {order.statusDetail && (
           <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '13px', marginBottom: '20px', lineHeight: 1.5 }}>
-            {describeRejection(order.statusDetail) || `Detalhe: ${order.statusDetail}`}
+            {describeRejection(order.statusDetail)}
           </p>
         )}
         <button
@@ -1502,10 +1540,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
    * deles pode levar até 2 dias úteis, e a tela agora atualiza sozinha (via
    * polling) quando resolver — sem o comprador precisar pagar de novo.
    */
-  const detalhe =
-    order.statusDetail === 'pending_review_manual'
-      ? 'Seu cartão está em análise de segurança do Mercado Pago — pode levar até 2 dias úteis. Não é preciso pagar de novo: esta tela atualiza sozinha assim que sair o resultado.'
-      : order.statusDetail || 'Processando...'
+  const detalhe = describePending(order.statusDetail)
 
   // Generic pending
   return (

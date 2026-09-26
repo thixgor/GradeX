@@ -16,8 +16,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 const getPaymentMock = vi.fn()
 const applyPaymentResultMock = vi.fn()
 
+const findByRefMock = vi.fn()
+
 vi.mock('@/lib/payments', () => ({
-  getPaymentProvider: () => ({ getPayment: getPaymentMock }),
+  getPaymentProvider: () => ({ getPayment: getPaymentMock, findPaymentByExternalReference: findByRefMock }),
 }))
 
 vi.mock('@/lib/payments/effects', () => ({
@@ -35,13 +37,20 @@ function pedido(id: string, overrides: Partial<any> = {}) {
 }
 
 function dbCom(pedidos: any[]) {
-  const find = vi.fn(() => ({
-    sort: () => ({
-      limit: (n: number) => ({
-        toArray: async () => pedidos.slice(0, n),
+  // Respeita o único filtro que distingue as duas consultas da varredura: com
+  // id do MP (reconsulta) ou "aguardando confirmação" sem id (busca por ref).
+  const find = vi.fn((q: any = {}) => {
+    const lista = q.statusDetail
+      ? pedidos.filter(p => p.statusDetail === q.statusDetail && !p.providerPaymentId)
+      : pedidos.filter(p => p.providerPaymentId)
+    return {
+      sort: () => ({
+        limit: (n: number) => ({
+          toArray: async () => lista.slice(0, n),
+        }),
       }),
-    }),
-  }))
+    }
+  })
   return { collection: () => ({ find }), _find: find } as any
 }
 
@@ -117,5 +126,30 @@ describe('reconciliarPagamentosPendentes', () => {
     // A trava chega direto no `.limit()` da query — é o Mongo que já devolve
     // só os 2, não um corte depois de buscar tudo.
     expect(getPaymentMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('pedido sem confirmação do MP: acha pelo id da order e aplica', async () => {
+    const { reconciliarPagamentosPendentes } = await import('@/lib/payments/sweep')
+    const db = dbCom([pedido('u', { providerPaymentId: undefined, statusDetail: 'provider_unconfirmed' })])
+    findByRefMock.mockResolvedValue({ providerOrderId: 'mp-u', status: 'approved' })
+    applyPaymentResultMock.mockResolvedValue({ applied: true, order: { status: 'approved' } })
+
+    const stats = await reconciliarPagamentosPendentes(db)
+
+    expect(findByRefMock).toHaveBeenCalledWith('u')
+    expect(stats).toEqual({ checked: 1, reconciled: 1, approved: 1, errors: 0 })
+  })
+
+  it('pedido sem confirmação que não aparece no MP vira recusa depois da janela', async () => {
+    const { reconciliarPagamentosPendentes } = await import('@/lib/payments/sweep')
+    const antigo = new Date(Date.now() - 10 * 60_000)
+    const db = dbCom([pedido('v', { providerPaymentId: undefined, statusDetail: 'provider_unconfirmed', createdAt: antigo, updatedAt: antigo })])
+    findByRefMock.mockResolvedValue(null)
+    applyPaymentResultMock.mockResolvedValue({ applied: true, order: { status: 'rejected' } })
+
+    const stats = await reconciliarPagamentosPendentes(db)
+
+    expect(applyPaymentResultMock.mock.calls[0][1]).toMatchObject({ status: 'rejected', statusDetail: 'provider_error' })
+    expect(stats.reconciled).toBe(1)
   })
 })

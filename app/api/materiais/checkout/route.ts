@@ -6,6 +6,8 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import type { ProviderOrder } from '@/lib/payments/types'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
@@ -757,6 +759,8 @@ export async function POST(request: NextRequest) {
     ...getRequestAnalyticsMeta(request),
   })
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -787,6 +791,7 @@ export async function POST(request: NextRequest) {
         ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
+    created = result
 
     await applyPaymentResult(orderId, result)
     await audit({
@@ -818,6 +823,14 @@ export async function POST(request: NextRequest) {
           : '/materiais',
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedAmount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, successRedirect: physicalShopOrderId
+          ? '/profile?tab=pedidos'
+          : item.type === 'flashcard_deck' && item.linkedDeckSlug
+            ? `/flashcards/d/${item.linkedDeckSlug}`
+            : '/materiais' })
     console.error('[materiais/checkout] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')
@@ -1295,6 +1308,8 @@ async function handleCartCheckout(
     ...getRequestAnalyticsMeta(request),
   })
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -1325,6 +1340,7 @@ async function handleCartCheckout(
         ...(couponValidation ? { couponCode: couponValidation.code } : {}),
       },
     })
+    created = result
 
     await applyPaymentResult(orderId, result)
     await audit({
@@ -1354,6 +1370,10 @@ async function handleCartCheckout(
       successRedirect: physicalShopOrderId ? '/profile?tab=pedidos' : '/materiais?tab=mine&purchase=success',
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedAmount, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, successRedirect: physicalShopOrderId ? '/profile?tab=pedidos' : '/materiais?tab=mine&purchase=success' })
     console.error('[materiais/checkout/cart] erro:', err)
     if (couponValidation) {
       await releaseCouponRedemption(db, orderId, 'provider_error')

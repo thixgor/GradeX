@@ -6,6 +6,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider, deriveIdempotencyKey } from '@/lib/payments'
+import { recoverFromProviderFailure } from '@/lib/payments/provider-failure'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
 import { chargeMetadata, getFeePolicy } from '@/lib/payments/fees'
@@ -336,6 +337,8 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Resultado do Mercado Pago, se a chamada voltou — o catch precisa saber.
+  let created: ProviderOrder | null = null
   try {
     const provider = getPaymentProvider()
     const result = await provider.createPayment({
@@ -358,6 +361,7 @@ export async function POST(request: NextRequest) {
       payerDocumentNumber: payerCpf || undefined,
       metadata: { orderId, type: 'physical', shopOrderId },
     })
+    created = result
 
     // Reflete status de pagamento no pedido físico e dispara efeitos (idempotente)
     await db.collection('shop_orders').updateOne(
@@ -394,6 +398,10 @@ export async function POST(request: NextRequest) {
       successRedirect: '/profile?tab=pedidos',
     })
   } catch (err: any) {
+    // Pagamento criado (ou talvez criado) no MP não vira "falha" na tela:
+    // ver lib/payments/provider-failure.ts.
+    const recovered = await recoverFromProviderFailure({ db, orderId, amount: chargedTotal, err, created })
+    if (recovered) return NextResponse.json({ ...recovered, shopOrderId, orderNumber, successRedirect: '/profile?tab=pedidos' })
     console.error('[loja/checkout] erro:', err)
     await db.collection<PaymentOrder>('payment_orders').updateOne(
       { _id: inserted.insertedId },
