@@ -119,6 +119,8 @@ export interface PaymentProvider {
      * recusa bem mais cartão bom como `cc_rejected_high_risk`.
      */
     deviceId?: string
+    /** CPF do titular do cartão, quando ele não é o comprador. */
+    cardholderDocumentNumber?: string
     payerDocumentType?: 'CPF' | 'CNPJ'
     payerDocumentNumber?: string
     payerAddress?: PayerAddress

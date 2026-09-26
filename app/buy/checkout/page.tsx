@@ -64,6 +64,7 @@ import {
   type MesesDeRecorrencia,
 } from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
+import { cardTokenError } from '@/lib/payments/card-token-errors'
 
 type PayMode = 'subscription' | 'one_time'
 
@@ -827,13 +828,17 @@ function SubscriptionCheckout({
       const { month, year } = splitExpiry(card.expiry)
       const tk = await mpInstance.createCardToken({
         cardNumber: card.number.replace(/\s/g, ''),
-        cardholderName: card.holder.trim(),
+        cardholderName: card.holder.trim().replace(/\s+/g, ' '),
         cardExpirationMonth: month,
         cardExpirationYear: year,
         securityCode: card.cvv,
         identificationType: 'CPF',
         identificationNumber: cpfDigits,
+      }).catch((err: unknown) => {
+        throw cardTokenError(err)
       })
+      // Sem token não há o que mandar: seguir daria "Dados inválidos" no servidor.
+      if (!tk?.id) throw cardTokenError(tk)
 
       fetch('/api/analytics/checkout-event', {
         method: 'POST',

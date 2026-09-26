@@ -13,6 +13,7 @@ import { validateMpWebhook } from './webhook'
 import { getPaymentConfig } from '../config'
 import { getEffectiveMpAuth } from './marketplace-store'
 import { describeMercadoPagoApiError, MercadoPagoPaymentError } from './errors'
+import { payerIdentificationNumber } from '../card-payload'
 
 /**
  * Adapter Mercado Pago para a interface PaymentProvider.
@@ -30,6 +31,7 @@ export class MercadoPagoProvider implements PaymentProvider {
       installments?: number
       issuer?: string
       deviceId?: string
+      cardholderDocumentNumber?: string
       payerDocumentType?: 'CPF' | 'CNPJ'
       payerDocumentNumber?: string
       payerAddress?: PayerAddress
@@ -78,7 +80,16 @@ export class MercadoPagoProvider implements PaymentProvider {
       body.payer.last_name = rest.join(' ') || first
     }
 
-    if (input.payerDocumentType && input.payerDocumentNumber) {
+    // No cartão, o documento do pagador tem de ser o mesmo da tokenização — o
+    // do TITULAR. Cartão de terceiro com o CPF do comprador aqui era recusa.
+    const identificationNumber = payerIdentificationNumber({
+      hasCardToken: !!input.cardToken,
+      buyerDocumentNumber: input.payerDocumentType === 'CPF' ? input.payerDocumentNumber : undefined,
+      cardholderDocumentNumber: input.cardholderDocumentNumber,
+    })
+    if (identificationNumber) {
+      body.payer.identification = { type: 'CPF', number: identificationNumber }
+    } else if (input.payerDocumentType && input.payerDocumentNumber) {
       body.payer.identification = {
         type: input.payerDocumentType,
         number: input.payerDocumentNumber.replace(/\D/g, ''),

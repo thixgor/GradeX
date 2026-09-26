@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'crypto'
 import { z } from 'zod'
-import { deviceIdSchema } from '@/lib/payments/device-id'
+import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -28,9 +28,11 @@ const Schema = z.object({
   paymentMethodId: z.string().min(1),
   cardToken: z.string().optional(),
   installments: z.number().int().min(1).max(18).optional(),
-  issuer: z.string().optional(),
+  issuer: issuerIdSchema,
   // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
   deviceId: deviceIdSchema,
+  // CPF do titular quando o cartão é de outra pessoa (vai em payer.identification).
+  cardholderDocumentNumber: cardholderDocumentSchema,
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
 })
@@ -247,6 +249,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       installments: charge.installments,
       issuer: data.issuer,
       deviceId: data.deviceId,
+      cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
       metadata: {

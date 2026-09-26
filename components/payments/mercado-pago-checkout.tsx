@@ -53,6 +53,7 @@ import {
   type DetectedCardMethod,
 } from '@/lib/payments/card-method'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
+import { cardTokenError } from '@/lib/payments/card-token-errors'
 import {
   brandFromMercadoPagoId,
   CardTerminal,
@@ -760,16 +761,21 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         const { month: cardExpirationMonth, year: cardExpirationYear } = splitExpiry(card.expiry)
 
         // Tokeniza no client
-        const cardToken = await mpInstance.createCardToken({
-          cardNumber: digitsOnlyCard,
-          cardholderName: card.holder.trim(),
-          cardExpirationMonth,
-          cardExpirationYear,
-          securityCode: card.cvv,
-          identificationType: 'CPF',
-          // Documento do TITULAR do cartão (pode não ser o comprador).
-          identificationNumber: holderIsOther ? holderCpfDigits : cpfDigits,
-        })
+        const cardToken = await mpInstance
+          .createCardToken({
+            cardNumber: digitsOnlyCard,
+            cardholderName: card.holder.trim().replace(/\s+/g, ' '),
+            cardExpirationMonth,
+            cardExpirationYear,
+            securityCode: card.cvv,
+            identificationType: 'CPF',
+            // Documento do TITULAR do cartão (pode não ser o comprador).
+            identificationNumber: holderIsOther ? holderCpfDigits : cpfDigits,
+          })
+          .catch((err: unknown) => {
+            throw cardTokenError(err)
+          })
+        if (!cardToken?.id) throw cardTokenError(cardToken)
 
         // Bandeira: a detecção já rodou enquanto ele digitava; refazemos aqui
         // só quando ela não chegou a valer (digitação rápida, rede lenta).
@@ -807,6 +813,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
             ? { issuer: (cardInstallments?.bin === bin && cardInstallments.issuerId) || issuerId }
             : {}),
           ...(deviceId ? { deviceId } : {}),
+          // Mesmo CPF da tokenização: o servidor o usa em payer.identification.
+          ...(holderIsOther ? { cardholderDocumentNumber: holderCpfDigits } : {}),
         }
       } else if (method === 'pix') {
         body = { ...body, paymentMethodId: 'pix' }
