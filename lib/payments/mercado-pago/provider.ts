@@ -12,6 +12,7 @@ import { mapMpPaymentStatus, mapMpPreapprovalStatus, mapMpPaymentMethod } from '
 import { validateMpWebhook } from './webhook'
 import { getPaymentConfig } from '../config'
 import { getEffectiveMpAuth } from './marketplace-store'
+import { describeMercadoPagoApiError, MercadoPagoPaymentError } from './errors'
 
 /**
  * Adapter Mercado Pago para a interface PaymentProvider.
@@ -158,13 +159,25 @@ export class MercadoPagoProvider implements PaymentProvider {
     }
 
     const deviceId = (input.deviceId || '').trim()
-    const response = await payment.create({
-      body,
-      requestOptions: {
-        idempotencyKey: input.idempotencyKey,
-        ...(deviceId ? { meliSessionId: deviceId } : {}),
-      },
-    })
+    let response: any
+    try {
+      response = await payment.create({
+        body,
+        requestOptions: {
+          idempotencyKey: input.idempotencyKey,
+          ...(deviceId ? { meliSessionId: deviceId } : {}),
+        },
+      })
+    } catch (err) {
+      // Erro de validação da API (não é recusa do banco): traduz para algo que
+      // o comprador consiga resolver. O detalhe técnico fica no log.
+      const amigavel = describeMercadoPagoApiError(err)
+      if (amigavel) {
+        console.warn('[mp] erro ao criar pagamento:', (err as any)?.message, JSON.stringify((err as any)?.cause ?? null))
+        throw new MercadoPagoPaymentError(amigavel, err)
+      }
+      throw err
+    }
 
     return mpPaymentToProviderOrder(response)
   }

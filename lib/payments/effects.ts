@@ -75,6 +75,10 @@ export async function applyPaymentResult(
   const prevStatus = order.status
   const newStatus = result.status
 
+  // Total pago com juros/parcelas, como no comprovante do MP — é o que os
+  // e-mails de compra mostram (ver lib/payments/receipt.ts).
+  const paidFields = paidFieldsFromMercadoPago(result.raw)
+
   // Atualiza order
   const update: Partial<PaymentOrder> = {
     status: newStatus,
@@ -85,9 +89,7 @@ export async function applyPaymentResult(
     paidAt: result.paidAt || order.paidAt,
     pix: result.pix || order.pix,
     boleto: result.boleto || order.boleto,
-    // Total pago com juros/parcelas, como no comprovante do MP — é o que os
-    // e-mails de compra mostram (ver lib/payments/receipt.ts).
-    ...paidFieldsFromMercadoPago(result.raw),
+    ...paidFields,
     updatedAt: new Date(),
   }
   await orders.updateOne({ _id: order._id as any }, { $set: update })
@@ -148,7 +150,7 @@ export async function applyPaymentResult(
     }
     // Os efeitos recebem a order com o status ANTERIOR (como sempre), mas já
     // com o total pago lido do MP — é dele que saem os valores dos e-mails.
-    await runApprovedEffects({ ...order, ...paidFieldsFromMercadoPago(result.raw) }, result)
+    await runApprovedEffects({ ...order, ...paidFields }, result)
   }
 
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {

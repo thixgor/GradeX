@@ -47,8 +47,15 @@ import {
   type ProviderPayerCost,
 } from '@/lib/payments/fees'
 import {
+  isDebitMethodId,
+  mercadoPagoIdFromBrand,
+  pickCardPaymentMethod,
+  type DetectedCardMethod,
+} from '@/lib/payments/card-method'
+import {
   brandFromMercadoPagoId,
   CardTerminal,
+  detectBrand,
   EMPTY_CARD_FIELDS,
   splitExpiry,
   validateCard,
@@ -346,7 +353,15 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
    * crédito e não admite parcelamento. Sem isso a tela mostraria juros de
    * crédito para quem vai pagar no débito.
    */
-  const [detectedCardMethodId, setDetectedCardMethodId] = useState<string | null>(null)
+  const [detectedCard, setDetectedCard] = useState<(DetectedCardMethod & { bin: string }) | null>(null)
+  /**
+   * Cartão de outra pessoa (pai, mãe, cônjuge): o CPF do comprador continua
+   * sendo o da nota fiscal, mas a tokenização vai com o CPF do TITULAR. Mandar
+   * o CPF do comprador como documento do titular é divergência que o
+   * antifraude do Mercado Pago e o banco pesam contra — e virava recusa.
+   */
+  const [holderIsOther, setHolderIsOther] = useState(false)
+  const [holderCpf, setHolderCpf] = useState('')
   /**
    * Parcelas que o MERCADO PAGO oferece para este cartão, com os valores dele.
    *
@@ -358,6 +373,17 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
    */
   const [cardInstallments, setCardInstallments] = useState<CardInstallmentsInfo | null>(null)
   const [installmentsStatus, setInstallmentsStatus] = useState<InstallmentsStatus>('idle')
+
+  /** BIN atual (6 primeiros dígitos). A detecção só vale para ele. */
+  const bin = card.number.replace(/\D/g, '').slice(0, 6)
+  /**
+   * Bandeira detectada — só enquanto o BIN for o mesmo da consulta. Sem essa
+   * amarração, colar outro cartão por cima deixava valendo a bandeira do
+   * anterior até a nova consulta voltar; um submit nessa janela ia com a
+   * bandeira errada e o Mercado Pago recusava.
+   */
+  const detectedCardMethodId = detectedCard && detectedCard.bin === bin ? detectedCard.id : null
+  const detectedIssuerId = detectedCard && detectedCard.bin === bin ? detectedCard.issuerId : null
 
   useEffect(() => {
     if (!allowed.includes(method)) {
@@ -484,10 +510,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     return detectedCardMethodId || 'credit_card'
   }, [method, detectedCardMethodId])
 
-  const isDebitCard = useMemo(
-    () => method === 'card' && !!detectedCardMethodId && /^deb|^maestro/.test(detectedCardMethodId),
-    [method, detectedCardMethodId]
-  )
+  const isDebitCard = method === 'card' && isDebitMethodId(detectedCardMethodId)
 
   const maxInstallments = Math.max(1, Math.min(18, feePolicy?.maxInstallments || 18))
 
@@ -507,8 +530,6 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       }).totalAmount,
     [props.amount, pricingMethodId, feePolicy]
   )
-
-  const bin = card.number.replace(/\D/g, '').slice(0, 6)
 
   /** Parcelamento do MP válido para o cartão E o valor que estão na tela agora. */
   const payerCosts: ProviderPayerCost[] | null =
@@ -602,20 +623,17 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   )
 
 
-  // Detecção de bandeira pelo BIN enquanto digita (6 dígitos bastam).
+  // Detecção de bandeira pelo BIN enquanto digita (6 dígitos bastam). Só
+  // refaz a consulta quando o BIN muda — não a cada dígito digitado depois.
   useEffect(() => {
-    if (method !== 'card' || !mpInstance) return
-    const bin = card.number.replace(/\D/g, '').slice(0, 6)
-    if (bin.length < 6) {
-      setDetectedCardMethodId(null)
-      return
-    }
+    if (method !== 'card' || !mpInstance || bin.length < 6) return
+    if (detectedCard?.bin === bin) return
     let cancelled = false
     const timer = setTimeout(async () => {
       try {
         const resp = await mpInstance.getPaymentMethods({ bin })
-        const id = resp?.results?.[0]?.id
-        if (!cancelled && id) setDetectedCardMethodId(id)
+        const escolhido = pickCardPaymentMethod(resp?.results)
+        if (!cancelled && escolhido) setDetectedCard({ ...escolhido, bin })
       } catch {
         // Falha na detecção não quebra nada: o submit refaz a consulta e, até
         // lá, a tela segue precificando como crédito.
@@ -625,7 +643,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       cancelled = true
       clearTimeout(timer)
     }
-  }, [card.number, method, mpInstance])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bin, method, mpInstance])
 
   // Parcelamento do Mercado Pago para o cartão digitado, no valor à vista.
   useEffect(() => {
@@ -686,6 +705,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   // Dispensado e em branco: segue. Preenchido, tem de ser válido — um CPF pela
   // metade não vira "opcional".
   const cpfOk = cpfFilled ? isValidCpf(cpfDigits) : !cpfRequired
+  const holderCpfDigits = onlyCpfDigits(holderCpf)
+  const holderCpfOk = !holderIsOther || isValidCpf(holderCpfDigits)
 
   const cardValidation = useMemo(
     () => validateCard(card, brandFromMercadoPagoId(detectedCardMethodId)),
@@ -700,7 +721,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         : 'idle'
 
   const podeEnviar =
-    cpfOk && !submitting && (method !== 'card' || (mpReady && cardValidation.complete))
+    cpfOk && !submitting && (method !== 'card' || (mpReady && cardValidation.complete && holderCpfOk))
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -731,6 +752,9 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         if (!cardValidation.complete) {
           throw new Error('Confira os dados do cartão antes de continuar.')
         }
+        if (!holderCpfOk) {
+          throw new Error('Informe o CPF do titular do cartão.')
+        }
         const digitsOnlyCard = card.number.replace(/\D/g, '')
         const { month: cardExpirationMonth, year: cardExpirationYear } = splitExpiry(card.expiry)
 
@@ -742,21 +766,28 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           cardExpirationYear,
           securityCode: card.cvv,
           identificationType: 'CPF',
-          identificationNumber: cpfDigits,
+          // Documento do TITULAR do cartão (pode não ser o comprador).
+          identificationNumber: holderIsOther ? holderCpfDigits : cpfDigits,
         })
 
         // Bandeira: a detecção já rodou enquanto ele digitava; refazemos aqui
         // só quando ela não chegou a valer (digitação rápida, rede lenta).
         let paymentMethodId: string = detectedCardMethodId || ''
+        let issuerId: string | null = detectedIssuerId
         if (!paymentMethodId) {
-          const pmResp = await mpInstance.getPaymentMethods({ bin: digitsOnlyCard.slice(0, 6) })
-          paymentMethodId = pmResp?.results?.[0]?.id || 'visa'
+          const pmResp = await mpInstance.getPaymentMethods({ bin: digitsOnlyCard.slice(0, 6) }).catch(() => null)
+          const escolhido = pickCardPaymentMethod(pmResp?.results)
+          paymentMethodId = escolhido?.id || mercadoPagoIdFromBrand(detectBrand(digitsOnlyCard)) || ''
+          issuerId = escolhido?.issuerId ?? null
+          if (!paymentMethodId) {
+            throw new Error('Não conseguimos identificar a bandeira do cartão. Confira o número e tente de novo.')
+          }
         }
 
         // Se a bandeira só apareceu agora e for de débito, a tela precificou
         // como crédito parcelado — e débito não parcela. Mandar as parcelas
         // assim mesmo faria o Mercado Pago recusar o pagamento.
-        const debito = /^deb|^maestro/.test(paymentMethodId)
+        const debito = isDebitMethodId(paymentMethodId)
 
         const parcelas = debito ? 1 : charge.installments
         // Parcelado só com o parcelamento do MP em mãos: é ele que garante que
@@ -771,7 +802,9 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           paymentMethodId,
           cardToken: cardToken.id,
           installments: parcelas,
-          ...(cardInstallments?.issuerId && cardInstallments.bin === bin ? { issuer: cardInstallments.issuerId } : {}),
+          ...((cardInstallments?.bin === bin && cardInstallments.issuerId) || issuerId
+            ? { issuer: (cardInstallments?.bin === bin && cardInstallments.issuerId) || issuerId }
+            : {}),
           ...(deviceId ? { deviceId } : {}),
         }
       } else if (method === 'pix') {
@@ -978,6 +1011,58 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
             )}
 
             {cpfField}
+
+            {/* Cartão de terceiro: o CPF acima é o da nota fiscal (comprador);
+                a tokenização precisa do documento do TITULAR. */}
+            <div>
+              <label
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '12px',
+                  color: 'hsl(var(--muted-foreground))',
+                  cursor: submitting ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={holderIsOther}
+                  disabled={submitting}
+                  onChange={e => setHolderIsOther(e.target.checked)}
+                />
+                O cartão é de outra pessoa (pai, mãe, cônjuge...)
+              </label>
+              {holderIsOther && (
+                <div style={{ marginTop: '10px' }}>
+                  <label style={terminalLabel}>CPF do titular do cartão</label>
+                  <input
+                    name="holderDocNumber"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    required
+                    disabled={submitting}
+                    value={formatCpf(holderCpf)}
+                    onChange={e => setHolderCpf(onlyCpfDigits(e.target.value))}
+                    placeholder="000.000.000-00"
+                    aria-invalid={holderCpfDigits.length === 11 && !holderCpfOk}
+                    style={{
+                      ...terminalSelect,
+                      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                      borderColor:
+                        holderCpfDigits.length === 11 && !holderCpfOk
+                          ? 'hsl(var(--destructive) / 0.6)'
+                          : 'hsl(var(--border))',
+                    }}
+                  />
+                  <span style={{ display: 'block', marginTop: '5px', fontSize: '11px', color: 'hsl(var(--muted-foreground))' }}>
+                    {holderCpfDigits.length === 11 && !holderCpfOk
+                      ? 'CPF inválido. Confira os números digitados.'
+                      : 'O banco confere o CPF de quem é dono do cartão. Divergência é um dos motivos mais comuns de recusa.'}
+                  </span>
+                </div>
+              )}
+            </div>
           </CardTerminal>
         )}
 
