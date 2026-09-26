@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ObjectId } from 'mongodb'
 import { NextRequest } from 'next/server'
 import corpo from './fixtures/corpo-do-formulario-celular.json'
+import corpoDaAbaAntiga from './fixtures/corpo-do-formulario-antigo.json'
 
 /**
  * Ponta a ponta do /comprar do Plus+: o corpo abaixo NÃO foi escrito à mão —
@@ -72,5 +73,25 @@ describe('formulário real (celular) → rota real do /comprar', () => {
     expect(input.deviceId).toBe((corpo as any).deviceId)
     expect(input.payerDocumentNumber).toBe('05232939769')
     expect(input.description).toBe('DomineAqui Plus+ — Semestral')
+  })
+
+  it('aba antiga ainda aberta no celular (formulário de antes da correção): também passa', async () => {
+    // Gerado pelo formulário da versão que estava no ar quando a compradora
+    // tentou (56c27e35), no mesmo Chromium com tela de Android. Quem não
+    // recarregar a página continua comprando: a correção que importa é no
+    // servidor, que agora aceita o device ID longo.
+    expect((corpoDaAbaAntiga as any).deviceId.length).toBeGreaterThan(200)
+    expect('cardholderDocumentNumber' in corpoDaAbaAntiga).toBe(false)
+
+    const { POST } = await import('@/app/api/serial-keys/checkout/route')
+    const res = await POST(
+      new NextRequest('http://localhost/api/serial-keys/checkout', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(corpoDaAbaAntiga),
+      })
+    )
+    expect(res.status).toBe(200)
+    expect(createPayment.mock.calls[0][0].amount).toBe(396.76)
   })
 })

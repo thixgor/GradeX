@@ -42,6 +42,7 @@ vi.mock('@/lib/serial-keys', async importOriginal => {
 })
 
 const users = new Map<string, any>()
+const escritas: string[] = []
 vi.mock('@/lib/mongodb', () => ({
   getDb: async () => ({
     collection: (name: string) => ({
@@ -50,8 +51,14 @@ vi.mock('@/lib/mongodb', () => ({
         if (q?._id) return users.get(String(q._id)) || null
         return null
       },
-      insertOne: async () => ({ insertedId: new ObjectId() }),
-      updateOne: async () => ({ modifiedCount: 1 }),
+      insertOne: async () => {
+        escritas.push(`insert:${name}`)
+        return { insertedId: new ObjectId() }
+      },
+      updateOne: async () => {
+        escritas.push(`update:${name}`)
+        return { modifiedCount: 1 }
+      },
     }),
   }),
 }))
@@ -94,6 +101,7 @@ beforeEach(() => {
   session.mockReset()
   session.mockResolvedValue(null)
   users.clear()
+  escritas.length = 0
 })
 
 describe('compra da Cristiane (Plus+ no cartão, pelo celular)', () => {
@@ -152,5 +160,23 @@ describe('compra da Cristiane (Plus+ no cartão, pelo celular)', () => {
     expect(data.error).toBe('Dados inválidos')
     expect(Object.keys(data.details.fieldErrors)).toContain('paymentMethodId')
     expect(createPayment).not.toHaveBeenCalled()
+  })
+
+  it('as tentativas recusadas antes não deixam rastro: nada gravado, nada no MP, e a próxima compra passa', async () => {
+    // O que aconteceu com ela: o corpo era recusado na validação. Isso ocorre
+    // ANTES de qualquer escrita no banco e de qualquer chamada ao Mercado
+    // Pago — não sobra pedido pendente, cupom reservado nem tentativa no
+    // cartão que possa bloquear ou pesar contra a compra de agora.
+    for (let i = 0; i < 3; i++) {
+      const { status } = await post(corpoDoCelular({ paymentMethodId: '' }))
+      expect(status).toBe(400)
+    }
+    expect(escritas.filter(e => e.includes('payment_orders') || e.includes('coupon'))).toEqual([])
+    expect(createPayment).not.toHaveBeenCalled()
+
+    const { status, data } = await post(corpoDoCelular())
+    expect(status).toBe(200)
+    expect(data.status).toBe('approved')
+    expect(createPayment).toHaveBeenCalledTimes(1)
   })
 })
