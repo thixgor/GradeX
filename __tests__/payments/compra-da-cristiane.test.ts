@@ -150,7 +150,7 @@ describe('compra da Cristiane (Plus+ no cartão, pelo celular)', () => {
     const { status, data } = await post(corpoDoCelular({ paymentMethodId: undefined }))
     expect(status).toBe(400)
     expect(data.error).toBe('Dados inválidos')
-    expect(Object.keys(data.details)).toContain('paymentMethodId')
+    expect(Object.keys(data.details.fieldErrors)).toContain('paymentMethodId')
     expect(createPayment).not.toHaveBeenCalled()
   })
 })

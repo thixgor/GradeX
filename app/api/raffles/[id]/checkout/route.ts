@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
   const parsed = Schema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.format() }, { status: 400 })
+    return invalidCheckoutPayload('raffles/checkout', parsed.error)
   }
   const data = parsed.data
 

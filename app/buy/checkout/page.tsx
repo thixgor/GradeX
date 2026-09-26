@@ -65,6 +65,7 @@ import {
 } from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
 import { cardTokenError } from '@/lib/payments/card-token-errors'
+import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 
 type PayMode = 'subscription' | 'one_time'
 
@@ -867,8 +868,22 @@ function SubscriptionCheckout({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ planId: plan.tipo, cardTokenId: tk.id }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Não foi possível criar a assinatura. Confira os dados do cartão.')
+      // Resposta que não é JSON é a plataforma cortando a função — a assinatura
+      // pode ter sido criada. Não mandar "tentar de novo" no escuro.
+      const data = await res.json().catch(() => null)
+      if (!data) {
+        throw new Error(
+          'Não recebemos a resposta a tempo. Antes de tentar de novo, confira em alguns minutos o seu perfil ou o app do banco — se a assinatura aparecer, está tudo certo.'
+        )
+      }
+      if (!res.ok) {
+        const campos = invalidFieldsFrom(data?.details)
+        throw new Error(
+          campos.length > 0
+            ? `${data.error} (${campos.join(', ')}). Recarregue a página e tente de novo.`
+            : data.error || 'Não foi possível criar a assinatura. Confira os dados do cartão.'
+        )
+      }
 
       if (data.status === 'authorized') {
         setResultado('ativa')

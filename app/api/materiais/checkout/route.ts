@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
@@ -124,7 +125,7 @@ export async function POST(request: NextRequest) {
   }
 
   const parsed = Schema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  if (!parsed.success) return invalidCheckoutPayload('materiais/checkout', parsed.error)
   const data = parsed.data
 
   const db = await getDb()

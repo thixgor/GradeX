@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
 import { getSession } from '@/lib/auth'
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
   }
 
   const parsed = Schema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+  if (!parsed.success) return invalidCheckoutPayload('manual-clinico/checkout', parsed.error)
   const data = parsed.data
 
   const db = await getDb()

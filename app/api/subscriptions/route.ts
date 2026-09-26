@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 
   const parsed = Schema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+    return invalidCheckoutPayload('subscriptions', parsed.error)
   }
   const { planId, cardTokenId } = parsed.data
 

@@ -1,0 +1,14 @@
+{
+  "productType": "premium",
+  "productId": "plus_semestral",
+  "buyerName": "Cristiane Souza",
+  "buyerEmail": "cristiane@example.com",
+  "buyerPhone": "(21) 99999-9999",
+  "payerDocumentType": "CPF",
+  "payerDocumentNumber": "05232939769",
+  "paymentMethodId": "master",
+  "cardToken": "tok_1",
+  "installments": 1,
+  "issuer": "24",
+  "deviceId": "armor.3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d3f9a1c7e5b2d.a1b2c3d4a1b2c3d4a1b2c3d4a1b2c3d4"
+}

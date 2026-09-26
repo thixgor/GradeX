@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
 import { getSession } from '@/lib/auth'
@@ -252,14 +253,14 @@ export async function POST(request: NextRequest) {
   if (Array.isArray(body?.cart)) {
     const parsedCart = CartSchema.safeParse(body)
     if (!parsedCart.success) {
-      return NextResponse.json({ error: 'Dados inválidos', details: parsedCart.error.format() }, { status: 400 })
+      return invalidCheckoutPayload('serial-keys/checkout/cart', parsedCart.error)
     }
     return handleCartCheckout(request, ip, userAgent, session, parsedCart.data)
   }
 
   const parsed = Schema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Dados inválidos', details: parsed.error.format() }, { status: 400 })
+    return invalidCheckoutPayload('serial-keys/checkout', parsed.error)
   }
   const data = parsed.data
 
