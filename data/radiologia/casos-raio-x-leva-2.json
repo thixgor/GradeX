@@ -1,0 +1,3798 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-26T03:25:43.442Z",
+  "casos": [
+    {
+      "categoria": "infeccoes",
+      "slug": "pneumonia-lobar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — consolidação lobar com broncograma aéreo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/pneumonia-lobar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73988713/006fefac75e8f94a7c555e8a1750d5a8b2d8db58977bb35af92cb5452a3eb8d3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/right-upper-lobe-pneumonia-24",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 365,
+          "altura": 442,
+          "bytes": 148216,
+          "sha256": "e298e8f24d2564619c47297c7dcec17f5c72a0c9f540050b16a4704f434ec975"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — consolidação lobar com broncograma aéreo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/pneumonia-lobar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72056398/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/right-upper-lobe-pneumonia-21",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 381,
+          "altura": 442,
+          "bytes": 60464,
+          "sha256": "b94df9f1aabfd3c7e1a9c0e50e1abdc05dae20731ddce01afc9ad32e50273139"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "broncopneumonia",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — opacidades multifocais bilaterais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/broncopneumonia/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66689460/0767c439cfec61f0aecc4a0587705b67c718c9300151990c77fb106ff250cd3b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bronchopneumonia-9",
+          "autoria": "Nico Behnke",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 426,
+          "altura": 442,
+          "bytes": 83684,
+          "sha256": "9fc0f7c2a0584b1ace86d4a69df57bb75a8f5139b8fe45ea91182bd094c43a65"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — opacidades multifocais bilaterais (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/broncopneumonia/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/54349049/covid19.PNG1_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bronchopneumonia-8",
+          "autoria": "Mohammad Osama Hussein Yonso",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 436,
+          "bytes": 42700,
+          "sha256": "8c02a620830f8e1d5cdc0db4bea3d6a45be13183afc27eefeebeeaa55f097c64"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "lobo-abaulado-klebsiella",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — lobo superior direito consolidado com fissura menor abaulada",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/lobo-abaulado-klebsiella/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72020538/65b223e5f40c09b1e8ec654389b6daa83ccb414c5912ed64c54f94314be1388f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumococcal-pneumonia-2",
+          "autoria": "Henry Knipe",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 362,
+          "bytes": 82576,
+          "sha256": "e411c8c5b999af80141bdf65a10fe88078223ec0ae9ecd0b6c8377a15627f8d3"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — lobo superior direito consolidado com fissura menor abaulada (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/lobo-abaulado-klebsiella/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/53054648/dc025523f07c043550a2c9de68ae50_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/klebsiella-pneumonia-causing-a-bulging-fissure",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 389,
+          "bytes": 90505,
+          "sha256": "b28cb9494238fea823f1c4fba745740e1355b028f16a84760f23009268e433e3"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "abscesso-pulmonar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — cavidade com nível hidroaéreo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/abscesso-pulmonar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71028736/c87707ac39d1edf05d27356bc3a51185addf37648b3a01c9dcc51d9427ffad84_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/apical-lung-bullae-1",
+          "autoria": "Marta Guillén Garcia",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 435,
+          "altura": 442,
+          "bytes": 55015,
+          "sha256": "3518bef835f14186b1c91b77cbbafeded9e0f211e808710e60fa067ca0619c9e"
+        },
+        {
+          "indice": 2,
+          "titulo": "Perfil — a cavidade tem o mesmo diâmetro e ângulo agudo com a pleura",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/abscesso-pulmonar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71028737/ecad2573133729f37e7204952c4fd3ae4cfce88f7ba7d88fc9b5e6002c5277db_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/apical-lung-bullae-1",
+          "autoria": "Marta Guillén Garcia",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 386,
+          "altura": 442,
+          "bytes": 60137,
+          "sha256": "1fc0cc3b1e755acb88fa13d64cad5603d539a186f9b408450c1ee28d7f9efff8"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "tuberculose-primaria",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — consolidação com adenopatia hilar ipsilateral",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-primaria/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61207900/d9c07ce8224ba31a493a9132a9f5304fdfccd35330d58b32be197d33c1c5de47_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/post-primary-pulmonary-tuberculosis-15",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 434,
+          "bytes": 29299,
+          "sha256": "fd4de54a83c1c18104006be2227a91d15b63ecaaf5c89ee57302710929e28d08"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — consolidação com adenopatia hilar ipsilateral",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-primaria/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61207899/e76175df70cebafab35f089e2692a7c072db7e5e72b3d31784891e969f1d0aae_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/post-primary-pulmonary-tuberculosis-15",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 415,
+          "altura": 442,
+          "bytes": 24441,
+          "sha256": "bb2745f794e492fa9e5c167063b004c5e88f43f21f80ae46ddab24162c74ed28"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — consolidação com adenopatia hilar ipsilateral (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-primaria/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52677864/dcfa9312f7fa833f9b5dfd83c11fa3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-tuberculosis-4",
+          "autoria": "Sarah AlJahdali",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 85057,
+          "sha256": "f99a0f2fd1e9582ff4ea37d5585f6c6ce6cb1ca83b93799fbe360457b92b5b9b"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "tuberculose-pos-primaria",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — cavidade apical com opacidades fibronodulares",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-pos-primaria/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74071804/75f6b0a814626ec2e73c228b3c045f5125f897f52cf60221f9d16488ed3a47dd_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cavitating-tuberculosis",
+          "autoria": "Liz Silverstone",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 415,
+          "altura": 442,
+          "bytes": 95612,
+          "sha256": "f6d221bb97e96682a6318a342aefb0b2ce8956626ec2dca08d2623b17036564a"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — cavidade apical com opacidades fibronodulares (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-pos-primaria/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/57004052/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cavitary-lung-lesion-1",
+          "autoria": "Laila Adel Mohsen",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 381,
+          "bytes": 34749,
+          "sha256": "64109f2d8826b72e5af35c2baa15e0b9b5fabbaf89ef540432e68281015766e8"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "tuberculose-miliar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — micronódulos difusos e uniformes",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/tuberculose-miliar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74634583/b95c79a08ef924ce5f5d35e2af93d55fa4ca2170a542120702294ab9f004b001_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/miliary-tuberculosis-44",
+          "autoria": "Jairo Avella",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 401,
+          "bytes": 123298,
+          "sha256": "e59b1e59445d6de1538c187cf3e942b460f56857bc6e96d4becd18e2df3ad502"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "sequela-de-tuberculose",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — fibrose apical com retração hilar e calcificações",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/sequela-de-tuberculose/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59585000/d4e8f01863b7ae76c1d5250eabe55c71e6a8ec4b06861a486c8951d6efef15b7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/fibrothorax-8",
+          "autoria": "Mohammad walid Ahmad Amin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 422,
+          "bytes": 143810,
+          "sha256": "32e4b575c4422ead9f0ab523392e5bf229cab24c8b6c6024779a22263ae59789"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — fibrose apical com retração hilar e calcificações (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/sequela-de-tuberculose/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/54064644/IM-0001-0001_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/fibrothorax-6",
+          "autoria": "Dr Nilay Singh Shinde",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 350,
+          "altura": 442,
+          "bytes": 61804,
+          "sha256": "8eedc5c93dbb019c47e0bef454db00621d28997545b1abfe7dd45eef0f1fb48b"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "empiema",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — coleção pleural lenticular com nível hidroaéreo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/empiema/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63868861/55d77688da584449b11df0bef9863674fe24f56e364017f3d5d5c012fa9ec831_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pleural-empyema-13",
+          "autoria": "Anson Chan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 412,
+          "altura": 442,
+          "bytes": 146555,
+          "sha256": "0a2f43c967ed09c618415de656cd013ccfb3f5c5905045c64a07687cbc88c098"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — coleção pleural lenticular com nível hidroaéreo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/empiema/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59796702/e4b05e4f009e61ed7df1df4ba57ea3e20452a8fb60b9d4f87019d448a770a6e1_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/complete-hemithorax-white-out-paediatric-empyema",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 387,
+          "bytes": 147100,
+          "sha256": "2c688e855c4f0a2fa2e198a8f4b68a7170c28b83d80df5f64430afd95554f3c1"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "pneumonia-por-aspiracao",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — consolidação basal direita em paciente com disfagia",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/pneumonia-por-aspiracao/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75238944/70c75307c73f26bf0a60ee5b17ca40f382eb60fcb79e540c983c27dba23babf9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/barium-aspiration-7",
+          "autoria": "Abenezer Kebede Bekele",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 421,
+          "altura": 442,
+          "bytes": 96418,
+          "sha256": "1d54d5d69283366a24a598b71d42c74491c0639993114221e2861dcecf47f327"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "pneumocistose",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — vidro fosco peri-hilar bilateral simétrico",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/pneumocistose/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59581366/5c63e19f2dff74ae3c09dcffd9da7a19d1917bb77a3c2509ec1dc8ef9ac12baf_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumocystis-jirovecii-pneumonia-11",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 402,
+          "bytes": 134331,
+          "sha256": "0ba0830a815647432dfd1e5e98ee8eb82a0a5e0f5a2d61dde9e0760ebec4ff2f"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "aspergiloma",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — bola fúngica com crescente aéreo em cavidade apical",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/aspergiloma/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52222905/f39ab4b254ebd5e38a4371ed62a755_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/aspergilloma-23",
+          "autoria": "Mahmoud Nady Hassan Mostafa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 413,
+          "bytes": 41423,
+          "sha256": "e907ad6fcf2e88f4a76361ad80b600e2f8db6205e330105c8c8d79caa3c115c4"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — bola fúngica com crescente aéreo em cavidade apical (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/aspergiloma/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/5246862/4c819e24e149778839cb529cf3a94c_gallery.JPG",
+          "urlDoCaso": "https://radiopaedia.org/cases/secondary-mycetoma",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 415,
+          "bytes": 27814,
+          "sha256": "184025cb0072ae5c7a5d0917f4973f346b3a12f96e3a6dfb309af071920bd62d"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "bronquiectasias",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — trilhos de trem e anéis nas bases",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/bronquiectasias/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72041009/e2cfaab58d93f1c22b7f3f27714aade129d4c84d161130a4aaa34288fcdd984b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/kartagener-syndrome-39",
+          "autoria": "Raman Mathur",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 422,
+          "altura": 442,
+          "bytes": 72564,
+          "sha256": "2e0d16f8232949530d62efab78f32a50b40edae2966f6e8fcbcfe1abd63c6729"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — trilhos de trem e anéis nas bases",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/bronquiectasias/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72041010/643fb150e0dc710208b049bf1c8f4bded7a5a16758211d0697bf8be4722dbad4_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/kartagener-syndrome-39",
+          "autoria": "Raman Mathur",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 392,
+          "altura": 442,
+          "bytes": 57151,
+          "sha256": "4e608abce1722745164339d66cf5ae61f07789f81746f832855e66e7b706e626"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — trilhos de trem e anéis nas bases (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/bronquiectasias/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71208601/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cystic-bronchiectasis-with-left-lower-lobe-atelectasis",
+          "autoria": "Mukiza Festus",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 360,
+          "altura": 442,
+          "bytes": 59539,
+          "sha256": "44a2669fe28a1e561413a06f594c60a7f51ae97b886d6d760868d60c17418d03"
+        }
+      ]
+    },
+    {
+      "categoria": "infeccoes",
+      "slug": "covid-19",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — opacidades periféricas bilaterais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/covid-19/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52180311/8549249b763152e944d3ad092a2a2d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/covid-19-pneumonia-15",
+          "autoria": "Ali Mashalla Åhre",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 367,
+          "altura": 442,
+          "bytes": 19671,
+          "sha256": "d8b7509d7ec5a73075d674acc7b78f8c1ae9157f0f3f82291db4563fc58fa849"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — opacidades periféricas bilaterais",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/covid-19/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52180312/90589c7833171fd6a88b2520959f6c_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/covid-19-pneumonia-15",
+          "autoria": "Ali Mashalla Åhre",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 363,
+          "altura": 442,
+          "bytes": 15529,
+          "sha256": "ee9cdd837ec1e10e8fdb02c4c227219ed7371ce146e12e53153ae887a9fc2e76"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — opacidades periféricas bilaterais (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/infeccoes/covid-19/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52140940/092a320812722a9fdaa4aeb645868f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/covid-19-pneumonia-12",
+          "autoria": "Fabio Macori",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 340,
+          "bytes": 81292,
+          "sha256": "5ef6e40e269392305dbcd7e79b1b826e0ab75692c144729c1daf30d4de56fc5d"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "fibrose-pulmonar-idiopatica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — reticulado basal e periférico com volumes reduzidos",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/fibrose-pulmonar-idiopatica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/29294228/3e5e6c4079c4d1b5d4266fae482286d476c2b41c7aee0e2b0fcef14b206e60de_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-fibrosis-with-unilateral-lung-transplant-1",
+          "autoria": "Mark Hall",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 414,
+          "bytes": 76209,
+          "sha256": "1c5c779758e475ec2e7cd3ea828963f7a9bd401baa3030dbb6036e969f51a648"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — reticulado basal e periférico com volumes reduzidos (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/fibrose-pulmonar-idiopatica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/26958553/4d258ba1e9e21784a12191ba9bbb93_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/usual-interstitial-pneumonia-11",
+          "autoria": "Abdallah Alqudah",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 17426,
+          "sha256": "bb285cecbe0cd207d79ddb613058a31c52add9a98c0234ac1ca98c571c098a0b"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "sarcoidose",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — adenopatia hilar bilateral simétrica",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/sarcoidose/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69320634/549b6124a1a42099d266bab2c7e00fd53fdf8bcdca7c781cda072a0adbfb65f3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-sarcoidosis-23",
+          "autoria": "Keshaw Kumar",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 391,
+          "bytes": 160592,
+          "sha256": "61436f9f86e0daf91b5ce4bd4f9c367f2a217e9ba8c0fe466f7714633c6d195b"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — adenopatia hilar bilateral simétrica (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/sarcoidose/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/65371230/b701d3d0a503fe6bc26782755ba27f273f8b79ca6d80e9affa1c695ffdfb3ca9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/sarcoidosis-113",
+          "autoria": "Hussam Mohammad Almashaqbeh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 319,
+          "bytes": 115499,
+          "sha256": "ad63c13fd37de9a46b3c13d379038fa922dc33521b2c30f92383566e07ed20eb"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "silicose",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — nódulos nos lobos superiores com linfonodos em casca de ovo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/silicose/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74812348/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/silicosis-simple-2",
+          "autoria": "Augustus Rottenberg",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 390,
+          "bytes": 71140,
+          "sha256": "d5f2654e29fad477e5cc278da53c68387e32405969f43685656fc3ae205a7dec"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — nódulos nos lobos superiores com linfonodos em casca de ovo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/silicose/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52265196/3ee111c9086b48a3c12b71b3ba84c9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/silicosis-with-progressive-massive-fibrosis-6",
+          "autoria": "Adrià Roset Altadill",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 396,
+          "bytes": 39287,
+          "sha256": "5f90911324ba1398af378ac8c75e751e2ffecba16a313af7d917c3eec10cacd7"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "asbestose-placas-pleurais",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — placas pleurais calcificadas bilaterais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/asbestose-placas-pleurais/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69354080/cc1921f31e4465299b37100566272b7b8333bf9fd266ac39d44053b2cfd88925_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pleural-calcification-mri",
+          "autoria": "Daniel J Bell",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 95252,
+          "sha256": "580b59d717714632c76fa8cb00d894c0afedb266899da0f842d1bda379143435"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — placas pleurais calcificadas bilaterais (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/asbestose-placas-pleurais/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59934643/9513255066795efab042c06179d25b33192bf94d2c42541ffa9c92dc637e800d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lung-cancer-due-to-asbestos-exposure",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 381,
+          "bytes": 37107,
+          "sha256": "50bce2b0b9be79b63b63200c3044d6185c4f1c40bc195fe869b7360bed606ae3"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "linfangite-carcinomatosa",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — reticulado assimétrico com linhas de Kerley e derrame",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/linfangite-carcinomatosa/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68616417/e08429577a9c520cf176927f12b9ffdd275d39ee44cfcbc18e0035e31519f619_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-metastases-from-lung-adenocarcinoma",
+          "autoria": "Cristina Roncero Perez",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 407,
+          "bytes": 80379,
+          "sha256": "8ff5b5d2d4507c4e714d8a37d52df897b0d19cc82b4195762aab7b935cd988c7"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — reticulado assimétrico com linhas de Kerley e derrame",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/linfangite-carcinomatosa/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68616418/9e4f7f6f300e1c69d70f46789a007fe04964491d03cd88d174a4033b84fd92a7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-metastases-from-lung-adenocarcinoma",
+          "autoria": "Cristina Roncero Perez",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 412,
+          "altura": 442,
+          "bytes": 62428,
+          "sha256": "ab73ae0143556a2d91e12a42a8e35aa7bf5e822746555b78d9352c500b4b5150"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — reticulado assimétrico com linhas de Kerley e derrame (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/linfangite-carcinomatosa/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/58744863/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lymphangitic-carcinomatosis-6",
+          "autoria": "Muhammad Qasim Khan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 364,
+          "bytes": 26757,
+          "sha256": "e4f1fd059333d256b3d08cf485dcb24689bc524042e1c488cf4443b583573e32"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "sdra",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP no leito — opacidades bilaterais difusas com coração normal",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/sdra/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/56097749/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/respiratory-distress-syndrome-14",
+          "autoria": "Andrew Kirby",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 368,
+          "bytes": 25926,
+          "sha256": "c80cdc654b85740d4a3788f40d08813209e326955308ac4ba4645b1b53c09570"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "enfisema-dpoc",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — hiperinsuflação com cúpulas achatadas",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/enfisema-dpoc/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73348799/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/alpha-1-antitrypsin-deficiency-17",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 69817,
+          "sha256": "4207b40eccf41b4f362d7a27d5f4ae23ab0dc9f202dfab531d4851f4c60b2959"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — hiperinsuflação com cúpulas achatadas (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/enfisema-dpoc/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/58999217/36601d2df644140fb0008ad6cda23cf531c2d135ac5b3c43902987c399eff7da_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bullous-emphysema-5",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 415,
+          "altura": 442,
+          "bytes": 28895,
+          "sha256": "de5943db0e15498970d284d54fac1c42eb0c5d9c689f757f9da019be64c5d8df"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "fibrose-cistica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — bronquiectasias difusas de predomínio superior com hiperinsuflação",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/fibrose-cistica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64011725/dc5d96cd984fbb08d7d56007df16f74b731f428ee571e3dd0f2771fc161c5807_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cystic-fibrosis-42",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 366,
+          "altura": 442,
+          "bytes": 77764,
+          "sha256": "ffe9827ce4400ae251b925115ade6a41f1fa74c1eed7bee494f85fa71e6857c5"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — bronquiectasias difusas de predomínio superior com hiperinsuflação",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/fibrose-cistica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64011726/87867d56309729f9e57a90ada346dc791b870ef5fa0821b8c098c74262b81e07_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cystic-fibrosis-42",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 331,
+          "altura": 442,
+          "bytes": 70967,
+          "sha256": "9196e1fb8501005099add2c86f2496bd6edc8a2e2016f815d1fb426bf198d3cf"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — bronquiectasias difusas de predomínio superior com hiperinsuflação (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/fibrose-cistica/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61119379/47a01ec33044e11a77df4fecf9aaac365d959a688f1b801a5c46c5088ae4f4fc_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cystic-fibrosis-36",
+          "autoria": "Hazem M. Almasarei",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 379,
+          "bytes": 151298,
+          "sha256": "f9358e466c3fede3a90fbde4c6014c10c7da19fc01057eb4a738884a2c39e02c"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "nodulo-pulmonar-solitario",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — nódulo solitário no campo médio",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/nodulo-pulmonar-solitario/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59528065/62057d3051ceed07b6fea873a54b80ed0c0ea833f921476e605b140c364df8a2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/solitary-pulmonary-nodule-incidental",
+          "autoria": "Mohammad walid Ahmad Amin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 425,
+          "bytes": 32009,
+          "sha256": "9e3670834fa73bd3263ce4e2b03cb0826cb02f9072250bb555513fff3be92ca8"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — nódulo solitário no campo médio",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/nodulo-pulmonar-solitario/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59528064/7ef491eafc4da2b81be637d91a2ec40a81851ca2cb57b3bd25990d8a22ec4669_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/solitary-pulmonary-nodule-incidental",
+          "autoria": "Mohammad walid Ahmad Amin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 431,
+          "altura": 442,
+          "bytes": 31099,
+          "sha256": "5181b11417c8b8149e9ce035614dbc613f38a812055b004b8f727a26fd732060"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — nódulo solitário no campo médio (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/nodulo-pulmonar-solitario/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60591151/840a52fb67f4ca78bd02365b117576472e289703b3d4c3cb1ff88268e52ac7d5_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/nipple-shadows-1",
+          "autoria": "Wedyan Yousef Alrasheed",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 380,
+          "altura": 442,
+          "bytes": 116993,
+          "sha256": "d2616622a848e8b79facede1afd3ae58def44549f14446bdcc2bd4752ee134be"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "hamartoma-pulmonar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — nódulo bem delimitado com calcificação em pipoca",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/hamartoma-pulmonar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60072626/7496f471d741fdd6ec9bccd1eeeefb77b73294a39e2d00679d00e7d1473ee133_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-hamartoma-40",
+          "autoria": "Abenezer Zinaye Assefa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 441,
+          "altura": 442,
+          "bytes": 71610,
+          "sha256": "431521137b1a97e8cb7ce8da9d8126d35a7677ac136abadd59f7d1d216311990"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — nódulo bem delimitado com calcificação em pipoca",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/hamartoma-pulmonar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60072891/9083a3f183c6f9f2227a98a3a1513ca3083e9a1e968ad4db63b1e0177d92d149_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-hamartoma-40",
+          "autoria": "Abenezer Zinaye Assefa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 441,
+          "altura": 442,
+          "bytes": 60695,
+          "sha256": "f99ad7a9a5702232f5773b6fb64b54b054b9ce99f3c0e0ae48ea25dc82885d28"
+        }
+      ]
+    },
+    {
+      "categoria": "intersticial",
+      "slug": "metastases-em-bala-de-canhao",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — múltiplos nódulos redondos de tamanhos variados",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/metastases-em-bala-de-canhao/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70423229/92b2cedcdff58104eafdf1d1d5fb5c0044a8b38c9a57778b8e580a3a71daeceb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cannonball-pulmonary-metastases-4",
+          "autoria": "Abdulkhaleq A. BinNuhaid",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 431,
+          "altura": 442,
+          "bytes": 128166,
+          "sha256": "13a6bf534fc807249ea3b80e4252b9969d3ceead2898b045606c33005585da67"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — múltiplos nódulos redondos de tamanhos variados (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/intersticial/metastases-em-bala-de-canhao/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70264330/626fa442055dcc597c26e3c3c5b73334a6669f9b0adfc6aa446e036186ff9dee_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/cannonball-metastases-breast-cancer",
+          "autoria": "Magdi Mahsoub",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 424,
+          "bytes": 75344,
+          "sha256": "81634b084c577cd31119c200c2bc6e84841f0a4e2f54685180667453d4e495c5"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "derrame-subpulmonar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — \"cúpula\" elevada com ápice lateralizado",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-subpulmonar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59332729/366f6a79e980582b9de3e35e451870891ce01540d9ab0182c43cafa54017a762_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/subpulmonic-effusion-6",
+          "autoria": "Komal Kritika Singh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 22974,
+          "sha256": "a28cba02200bd58627b25ac463ba6a03f3e52825b21390566c634e94c38414e3"
+        },
+        {
+          "indice": 2,
+          "titulo": "Decúbito lateral — o líquido escorre ao longo da parede",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-subpulmonar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59332730/8f5921776106c266dc1d14e53d4d618e13e5bebe7b1e0ae73505d08419bceb30_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/subpulmonic-effusion-6",
+          "autoria": "Komal Kritika Singh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 16189,
+          "sha256": "1a059d0b47115753ecf19a7a939ca181516d941cbb38a549c224239be1a3b9a7"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — \"cúpula\" elevada com ápice lateralizado (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-subpulmonar/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/57275911/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/subpulmonic-pleural-effusion-4",
+          "autoria": "James Kirkland",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 311,
+          "bytes": 23461,
+          "sha256": "e0cc5df9d5ad47495a8708a87c91cff82977e9f4d72b9a9693e406c5598c8d4e"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "derrame-loculado",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — coleção lenticular de contorno convexo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-loculado/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74942802/bd2ac435fa4f17b44aa4ab17d14a11a07ed9769062f3a3e09fcd0e278309e97e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/re-expansion-pulmonary-oedema-7",
+          "autoria": "Carlos Miguel Saraiva",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 376,
+          "bytes": 86698,
+          "sha256": "21cd9f9c0444c5d7285c47e0184090c1b9c4f70bd53bc88988f9c33569a21bb0"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — coleção lenticular de contorno convexo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-loculado/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71415914/f6977053d223dbdf2a80e619af0308397847ccbdadf1cf63f6fdf300a1c95dcb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bats-wings-of-pulmonary-oedema-2",
+          "autoria": "Tornike Mshvildadze",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 81335,
+          "sha256": "71384946e5dce0b76976cb73636854ef21638fefde6cd5549d6527b9ba534fa9"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "hidropneumotorax",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA em pé — nível hidroaéreo pleural com pneumotórax acima",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/hidropneumotorax/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74136536/6cc37cdd3352b63c2ec90436a4b4e7efb369e25eda1c257ff4999339957ed618_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/loculated-hydropneumothorax-2",
+          "autoria": "Wen Li Sia",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 401,
+          "bytes": 156842,
+          "sha256": "e6eadc629d2386c607c49cbff7f36620dbf2e3a5d783b560f8c7b0ba6ffc657c"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — nível hidroaéreo pleural com pneumotórax acima (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/hidropneumotorax/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72419596/f0985a5650693d4a7e971895af1d3159563156a7be974f989573735065037116_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/large-simple-hydropneumothorax",
+          "autoria": "Hein Els",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 435,
+          "altura": 442,
+          "bytes": 135054,
+          "sha256": "4a1e708c64b4e8dd6efc331748c696ca05800b13c6d6c2af69c2853e904cbf10"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "hemotorax",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP em decúbito — véu opaco no hemitórax com fraturas costais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/hemotorax/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73248856/366588187f90bdddcecedfc1bf7bca72fa6be7765e451c532dd1644d5c834d82_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posteriorly-layering-hemothorax",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 392,
+          "bytes": 135002,
+          "sha256": "e07ee8827f581a8e8315bce37bf79b561af8fab77fcf04c9c47c07f7ca5dfcbd"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em pé — menisco de derrame após trauma",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/hemotorax/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70758417/59f9d966819eab60c1216a28644148f327a12f28f172850b6cb62482b341188a_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/active-bleeding-from-intercostal-artery-injury",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 418,
+          "bytes": 84595,
+          "sha256": "a5e7dbbcfbd12e899cda102aaef0dde4bdd5ac77bfbf4a213ecc2f2be1dc3f4a"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "mesotelioma",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — espessamento pleural nodular circunferencial com hemitórax retraído",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/mesotelioma/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/55133819/29af037dc62435f7edd29d5107b6747450facfb6950b109cf8b53d943a2fa853_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/mesothelioma-24",
+          "autoria": "Davina Bates",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 76523,
+          "sha256": "b995bd6fac8b0e7e953386d91bf92694a0e12e72b4dd232bfc80ec9295a05438"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — espessamento pleural nodular circunferencial com hemitórax retraído",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/mesotelioma/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/55133820/6fdcb0b26f8eed19e623aaecd2e021885ecf8ff7b6405f7863fe4afb7b020255_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/mesothelioma-24",
+          "autoria": "Davina Bates",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 441,
+          "altura": 442,
+          "bytes": 67867,
+          "sha256": "4993c4af07d87739fa285abdd8eb77313f6885a5666b4a8c7bf02873326e41b3"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "calcificacao-pleural",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — calcificação pleural extensa unilateral com hemitórax retraído",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/calcificacao-pleural/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73733579/458292064f9e4a8dc4fccd399b6f1c86b7071a85dccbc8fe0b205baaf87c7dda_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-alveolar-microlithiasis-21",
+          "autoria": "Parth M. Patel",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 371,
+          "altura": 442,
+          "bytes": 114519,
+          "sha256": "377573da42dbdb82a4d97dfcba7d2887f2711efd9fcef40c465cda9e83ccd245"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — calcificação pleural extensa unilateral com hemitórax retraído (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/calcificacao-pleural/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69354080/cc1921f31e4465299b37100566272b7b8333bf9fd266ac39d44053b2cfd88925_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pleural-calcification-mri",
+          "autoria": "Daniel J Bell",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 95252,
+          "sha256": "580b59d717714632c76fa8cb00d894c0afedb266899da0f842d1bda379143435"
+        }
+      ]
+    },
+    {
+      "categoria": "pleura",
+      "slug": "derrame-em-decubito",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP em decúbito — véu homogêneo no hemitórax com vasos preservados",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-em-decubito/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74942802/bd2ac435fa4f17b44aa4ab17d14a11a07ed9769062f3a3e09fcd0e278309e97e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/re-expansion-pulmonary-oedema-7",
+          "autoria": "Carlos Miguel Saraiva",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 376,
+          "bytes": 86698,
+          "sha256": "21cd9f9c0444c5d7285c47e0184090c1b9c4f70bd53bc88988f9c33569a21bb0"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — véu homogêneo no hemitórax com vasos preservados (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pleura/derrame-em-decubito/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73248856/366588187f90bdddcecedfc1bf7bca72fa6be7765e451c532dd1644d5c834d82_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posteriorly-layering-hemothorax",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 392,
+          "bytes": 135002,
+          "sha256": "e07ee8827f581a8e8315bce37bf79b561af8fab77fcf04c9c47c07f7ca5dfcbd"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "fraturas-de-costelas",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — fraturas costais em série com hemotórax",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/fraturas-de-costelas/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73248856/366588187f90bdddcecedfc1bf7bca72fa6be7765e451c532dd1644d5c834d82_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posteriorly-layering-hemothorax",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 392,
+          "bytes": 135002,
+          "sha256": "e07ee8827f581a8e8315bce37bf79b561af8fab77fcf04c9c47c07f7ca5dfcbd"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — fraturas costais em série com hemotórax (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/fraturas-de-costelas/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70983177/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/scapular-fracture-25",
+          "autoria": "Gabriel Orlando González Herrera",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 441,
+          "altura": 442,
+          "bytes": 89508,
+          "sha256": "932092bf7f32d2e23fd8408feed025a9738c8951b259c2a22e0692a2a4289c4f"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "contusao-pulmonar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — opacidade não segmentar sob fraturas costais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/contusao-pulmonar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73730013/886981ae2649024f494edcafaffa57fa51e381031f5e427f46e20c89e86c3d69_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-contusion-11",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 398,
+          "altura": 442,
+          "bytes": 71267,
+          "sha256": "015360b979f2ae3a6b9a65445eb21e7e30a55aa36984d8878ecca9606e45f394"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — opacidade não segmentar sob fraturas costais (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/contusao-pulmonar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68276409/downloaded_image20241202-825-v1xk1p_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-contusions-and-pneumomediastinum-paediatric",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 369,
+          "altura": 442,
+          "bytes": 160332,
+          "sha256": "b731c4d0512020ab56309baebc9c217922c07845dd06bde5495021c04d06db38"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "ruptura-diafragmatica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — estômago no hemitórax esquerdo com sonda nasogástrica enrolada acima do diafragma",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/ruptura-diafragmatica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72027186/e96a7eea4aaba6bc1005863b7a520c46f9e0a9b2f3199aa26a4c94cb2cfc8630_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/diaphragm-tear",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 411,
+          "bytes": 73599,
+          "sha256": "439927b9f0079401bc8ca66201c9e1f242789860f2e92b2c782a9104c79eb1f8"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — estômago no hemitórax esquerdo com sonda nasogástrica enrolada acima do diafragma",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/ruptura-diafragmatica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72027187/8e5f0f5e39f2f9afc02ef2459fd477fffd127cfc546ad5f341117c9503dbd92e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/diaphragm-tear",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 387,
+          "altura": 442,
+          "bytes": 57713,
+          "sha256": "8f7f088c9f9c81edc005ac4123b6060223d1610a3a7a7754e168f68153ef72bf"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — estômago no hemitórax esquerdo com sonda nasogástrica enrolada acima do diafragma (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/ruptura-diafragmatica/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69123158/downloaded_image20250103-820-wci0su_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/delayed-left-diaphragm-rupture",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 437,
+          "altura": 442,
+          "bytes": 85490,
+          "sha256": "495173f2347657588b2d023097f8446791f86cba2bedc644be72b3647de8bb67"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "lesao-aortica-traumatica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — mediastino alargado com botão aórtico apagado e traqueia desviada",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/lesao-aortica-traumatica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75634598/9a64e96478bdbdd420a72347b840171c45fedb0db56e6660e22fed216703d963_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/traumatic-aortic-injury-12",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 398,
+          "altura": 442,
+          "bytes": 79931,
+          "sha256": "a85b50c7264b3b4399a5630c313d285a3a46c615338d10ee48f93c1413951b4e"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — mediastino alargado com botão aórtico apagado e traqueia desviada (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/lesao-aortica-traumatica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75246198/ddb2ecf4cfdbaf433b41887916bb39e2fbc31214d183e8fa5e5fd19397be7c7c_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/traumatic-aortic-injury-thoracic",
+          "autoria": "Sohail Syed Hussaini",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 357,
+          "bytes": 80852,
+          "sha256": "d0336b46e80a2deb4e8ff4876f5cfaf93425a4fcad6bde021a21d3c05e13e4a6"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "sinal-do-sulco-profundo",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP em decúbito — sulco costofrênico profundo e hiperlucente",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/sinal-do-sulco-profundo/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62470334/39f72285abe0a12af50eca9e0f9a81c578155c11b422fdcdb5c23d3b2022c46d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/loculated-tension-hydropneumothorax",
+          "autoria": "Hoe Han Guan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 429,
+          "bytes": 81465,
+          "sha256": "c9dc89976d1881b31e18af5b239cd289349f045d224b809019a7d2941381c435"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — sulco costofrênico profundo e hiperlucente (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/sinal-do-sulco-profundo/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59030663/608915c0818dbd0d14ac7c6b117c79f38c073a53c39787a4295204998f546b14_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/deep-sulcus-sign-due-to-pneumothorax",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 420,
+          "bytes": 79583,
+          "sha256": "cd844e1b55eee043cb3918d866a54588fc6e6a3b636d93836de75fb967dec46a"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "sonda-nasogastrica-mal-posicionada",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — sonda seguindo o brônquio direito com a ponta no pulmão",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/sonda-nasogastrica-mal-posicionada/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70678956/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/malpositioned-nasogastric-tube-in-left-main-bronchus",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 364,
+          "bytes": 54703,
+          "sha256": "49fc4e2184e98569a4785765da4bd73361a65d8c996005331b513ca972ce5e05"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — sonda seguindo o brônquio direito com a ponta no pulmão (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/sonda-nasogastrica-mal-posicionada/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70265919/8a0e3a5174769ce91ad5b7be336dae6c6f6f9facdf9f79d9d44f637d11d84a06_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/malpositioned-nasogastric-tube-neonatal",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 365,
+          "bytes": 113091,
+          "sha256": "64f6317bf7c0bd05e9664ca0e107efc26cda16692294851cad31fd02cf85bbf3"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — sonda seguindo o brônquio direito com a ponta no pulmão (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/sonda-nasogastrica-mal-posicionada/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71260628/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/misplaced-nasogastric-tube-15",
+          "autoria": "Rupinder Singh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 344,
+          "bytes": 54495,
+          "sha256": "bd2cf9f8c2a170a80027efd5586a277abceb5a7dceb971afd7b43ca1ae4a74e0"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "cateter-central-mal-posicionado",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — cateter com a ponta na jugular interna",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/cateter-central-mal-posicionado/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71460403/651b04bac50007d1f1b8bbeb6a37a3c2dae6884bd88296c5125914f1cb50d5a1_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/jugular-central-venous-catheter-in-the-left-superior-intercostal-vein",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 369,
+          "bytes": 30388,
+          "sha256": "a72a6796b7b33cacb80253d98a4ea6d80320eb0fa5ce4a76d11962425befdb5b"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — cateter com a ponta na jugular interna (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/cateter-central-mal-posicionado/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72977309/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/implanted-port-fracture-and-pulmonary-embolization-1",
+          "autoria": "Fernando Figueredo Savi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 441,
+          "bytes": 67140,
+          "sha256": "aa39576e14e110bf32b7d120768a97390f606f4b7ea1fc54fc91824813784516"
+        }
+      ]
+    },
+    {
+      "categoria": "trauma-uti",
+      "slug": "atelectasia-por-rolha-de-muco",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — hemitórax opaco com traqueia e mediastino puxados para o mesmo lado",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/atelectasia-por-rolha-de-muco/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52031412/ddc8a15b21a836135a8ad1bfac810c_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/middle-lobe-pneumonia-mucous-plugging-and-bronchiectasis-in-cystic-fibrosis",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 393,
+          "altura": 442,
+          "bytes": 28684,
+          "sha256": "2a9be3b038b22ec5c343a65e7d0d50d8dba33783a129ba0d7aa2b9cb249edbad"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — hemitórax opaco com traqueia e mediastino puxados para o mesmo lado (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/trauma-uti/atelectasia-por-rolha-de-muco/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/33700747/b54b8dec233b60ccb5476ceffbcae79683210134f81c98fd2728f0df33c7f2ee_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/post-intubation-upper-lobe-collapse",
+          "autoria": "Dayu Gai",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 387,
+          "bytes": 80578,
+          "sha256": "3bab8408a6ad25115696b2636bd6bf92e607275cfb2bb7df7442d5973d95f644"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "bronquiolite",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — hiperinsuflação com espessamento peribrônquico",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/bronquiolite/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/55504808/3006661561_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/nivolumab-induced-pneumonitis-1",
+          "autoria": "Phillippa Gray",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 432,
+          "altura": 442,
+          "bytes": 25785,
+          "sha256": "c15b92acf0ee22c85bd206089422bf25fb77b66dcaf1ebf0dbdfc0044d712a2b"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — hiperinsuflação com espessamento peribrônquico (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/bronquiolite/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/4339839/e80944d5b301fc227d1b56b8e02cf5_gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/multifocal-collapse-secondary-to-underventilation-when-intubated",
+          "autoria": "Jeremy Jones",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 21183,
+          "sha256": "a596d1bc9e6f718337a8919c07c5da31c5557a71fe4b38916489e3b665c202b0"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "corpo-estranho-aspirado",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — pulmão hiperinsuflado com desvio mediastinal contralateral",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/corpo-estranho-aspirado/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63757188/d6e3e792f1240a8244196475e572a77daa471f3d670b9f51087401dbb3193ff2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/airway-foreign-body-in-a-child-nail-1",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 412,
+          "altura": 442,
+          "bytes": 89986,
+          "sha256": "d3e6c513e7a466408e7ed7744b2cbadc2411f834629560b5f44a448d92d698af"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — pulmão hiperinsuflado com desvio mediastinal contralateral",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/corpo-estranho-aspirado/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63757189/0c13eeb4b1fe89d12a2288f2d2c76f8184037b037bb6a9ceaaf45a09b9d64073_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/airway-foreign-body-in-a-child-nail-1",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 336,
+          "altura": 442,
+          "bytes": 55926,
+          "sha256": "d9c84a091b745315a1b37be43e089c527488bcc84c6d97365572af19887e328e"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — pulmão hiperinsuflado com desvio mediastinal contralateral (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/corpo-estranho-aspirado/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64162493/be9f9cc8df9b7718833ef57c873f7ae651ee1b32a8a96fc04e0315ac68616426_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/facial-gunshot-with-aspirated-tooth-and-ingested-shrapnel",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 412,
+          "bytes": 77054,
+          "sha256": "2bdc9e2ba059b5b94fb88c76a0fd4e788e06fa11b7b206775bab4b598a567f09"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "epiglotite",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia lateral do pescoço — epiglote em polegar",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/epiglotite/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60573007/428f3172e79641fceff0d263ec2f85f7878ddb109fd347dc98e1b7bffce930fb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/epiglottitis-7",
+          "autoria": "Siobhan Lee",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 365,
+          "altura": 442,
+          "bytes": 75403,
+          "sha256": "3932fffb78aa97cce0630dec74448738904d35375786235bbaba4a050fea7ebb"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — epiglote em polegar (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/epiglotite/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/38113149/39eb225384d195acd4c45a1cf780dc_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/epiglottitis-6",
+          "autoria": "Maxime St-Amant",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 438,
+          "bytes": 29434,
+          "sha256": "0db16db469eba5a52566db26c63ec87db7948e262a69d9e9d3137a58ec9f946a"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "crupe",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal do pescoço — estreitamento subglótico em torre",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/crupe/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74182875/5e8c4e15d13cab8ea8ff02f7349da84696f2b6e0a9288039e6f51cf084f5643e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/croup-inverted-v-sign",
+          "autoria": "Osama Ibrahim",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 393,
+          "bytes": 85249,
+          "sha256": "9b5d8599582dfecf13709a094a83bbd170cea097fc1fe5913f418bbbfc3ed57d"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — estreitamento subglótico em torre",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/crupe/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74182873/2e7dd2954906d4b1e5daac18c6bdd217a02454c5251cf3613fb22f6a58a00c43_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/croup-inverted-v-sign",
+          "autoria": "Osama Ibrahim",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 321,
+          "altura": 442,
+          "bytes": 77406,
+          "sha256": "b1466d4a9e6a9b94c7e7a7b70f43a24331ea81ea6b73eedac627de0d8fc547a1"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — estreitamento subglótico em torre (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/crupe/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73487379/7d653420e464fc944c6a9424505567bd25f8eadf970b191cc5e65fec3fa1218e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/croup-14",
+          "autoria": "Baraah Farun",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 411,
+          "altura": 442,
+          "bytes": 73712,
+          "sha256": "4d0e36de6eae70247e9d67f7fbea31a08af911e90fa5209c2478f24b2fbdba8a"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "timo-normal",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP — timo em vela projetado à direita do mediastino superior",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/timo-normal/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52391818/f6991a06a9f4bc15de833da052bc91_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/thymic-sail-sign-7",
+          "autoria": "Claire Isidro",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 433,
+          "bytes": 26012,
+          "sha256": "5519762c9feeb79e56717149a10438db7e53f3b018f3aa317980f5b8a0d93860"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "hernia-diafragmatica-congenita",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do recém-nascido — alças no hemitórax esquerdo com mediastino desviado",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/hernia-diafragmatica-congenita/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74873434/b1ea184466d64871a88d6a1c037784e38d331a3fac6b9575f079f0e4c899021e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/congenital-diaphragmatic-hernia-79",
+          "autoria": "Abenezer Kebede Bekele",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 362,
+          "altura": 442,
+          "bytes": 47191,
+          "sha256": "8eae2afe981668123d4f85b530ee452ffabfce58e4609e917a176341077bc41d"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — alças no hemitórax esquerdo com mediastino desviado (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/hernia-diafragmatica-congenita/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74822977/186cfae2ad989e8094b39d6be0ac96048f0a46161adaf77cc25b5daea6d164cb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/diaphragmatic-eventration-with-ipsilateral-lung-hypoplasia-in-neonate",
+          "autoria": "Keshaw Kumar",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 437,
+          "bytes": 61762,
+          "sha256": "ea5eff14290c70ef07cda66853c849a7ef481aa41ddfd3bd052316d6f17abb37"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "doenca-da-membrana-hialina",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do prematuro — padrão granular difuso com broncogramas",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/doenca-da-membrana-hialina/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74741504/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/respiratory-distress-syndrome-with-pneumothorax-3",
+          "autoria": "Andrew Kirby",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 436,
+          "altura": 442,
+          "bytes": 75329,
+          "sha256": "1780a9c78c3673202f8875a4ad4b8b0f54363a25c720ea16ce27a4766ca63310"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — padrão granular difuso com broncogramas (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/doenca-da-membrana-hialina/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68805546/dr-original_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/respiratory-distress-syndrome-and-malpositioned-uvc",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 434,
+          "bytes": 76201,
+          "sha256": "66ee508dcbcf8b85611466c644d853f5f295c8732b4e2319e4c6d6923fc34dc3"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "taquipneia-transitoria",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do recém-nascido a termo — estrias peri-hilares com líquido na fissura",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/taquipneia-transitoria/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74741703/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/transient-tachypnoea-of-the-newborn-7",
+          "autoria": "Andrew Kirby",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 341,
+          "bytes": 59501,
+          "sha256": "73f61f435d753ece3275e428c15052f24aead1f704091d497312c3efab225397"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — estrias peri-hilares com líquido na fissura (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/taquipneia-transitoria/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/54446745/V_g_lap01_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/wet-lung-and-pulmonary-venous-congestion-patent-ductus-arteriosus-and-patent-foramen-ovale-2",
+          "autoria": "Bálint Botz",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 398,
+          "altura": 442,
+          "bytes": 88673,
+          "sha256": "1653da24ae7601c960c2ed2875ec6536d2c1d4382106eac4a5bf90a5557b192c"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "pneumonia-redonda",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA — opacidade esférica posterior em lobo inferior",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/pneumonia-redonda/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66830078/3909bc7526305584dd22209b1521449a457c057b8cf3be084175ae9f27fadc30_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/round-pneumonia-29",
+          "autoria": "Tom Foster",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 429,
+          "bytes": 33741,
+          "sha256": "8343057319e5ab3bbf08f0eaaa993ad5f940b80585a84c72b65ba77e1dccf549"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — opacidade esférica posterior em lobo inferior",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/pneumonia-redonda/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66830079/d0211a03a1d1411d2f66eb5fd132bc19f12a29d190902374f11a0086d1f0f011_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/round-pneumonia-29",
+          "autoria": "Tom Foster",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 362,
+          "bytes": 28796,
+          "sha256": "a2b5ed2d868225e13745d046dd9b3d0a93d65f6316bbb174243a5b70803af268"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — opacidade esférica posterior em lobo inferior (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/pneumonia-redonda/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66855714/226601d8dcfcea7a0bcb30514ab8baa337156359e4795134db4da98ff3c66dbf_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/round-pneumonia-30",
+          "autoria": "Sepehr Haghighi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 437,
+          "bytes": 18563,
+          "sha256": "4d87c87c4d4d21c1269c1884e5f167f7cf642abf1f1b131d272ba9cb2cc8a25b"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "aspiracao-de-meconio",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do recém-nascido a termo — opacidades grosseiras assimétricas com hiperinsuflação",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/aspiracao-de-meconio/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/62104832/8c1a10da582e057c3522089412a5a0872e815c6ffb9f1c94a595bf811695bae9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/meconium-aspiration-17",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 430,
+          "altura": 442,
+          "bytes": 91631,
+          "sha256": "8754290a4a476b03bf148e44296638070c38b3f6fa694add75de813a4124c3dc"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — opacidades grosseiras assimétricas com hiperinsuflação (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/aspiracao-de-meconio/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59121043/1cbe097e386ea7fb180c9747689a5a2cdcd97c09dbf0d2e59e9fd9f99619c7a7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/meconium-aspiration-15",
+          "autoria": "Juan Fernando Paz",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 388,
+          "bytes": 34574,
+          "sha256": "b4bf1e195ddcebe23228d24a53dd0119bdf68049bf3f6beee2c3ba72f5e7ec2d"
+        }
+      ]
+    },
+    {
+      "categoria": "pediatrico",
+      "slug": "fraturas-de-maus-tratos",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do joelho — lesão metafisária em canto",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/fraturas-de-maus-tratos/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75885912/e94648311c314ba61afac22c39a10849e918f1751c0ea9a4667694abf52a35c7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/non-accidental-injury-multiple-fractures",
+          "autoria": "Rand Jamal Hamarsheh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 335,
+          "altura": 442,
+          "bytes": 64364,
+          "sha256": "4af0b7a1151613caf409dbf628719c9791a326dc1e59f2025a81f2e46b2bd478"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — lesão metafisária em canto",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/fraturas-de-maus-tratos/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75885915/acef172c41b9798a2a9656d32bb79e990cd35c754d80256292e6289301a92235_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/non-accidental-injury-multiple-fractures",
+          "autoria": "Rand Jamal Hamarsheh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 364,
+          "bytes": 76772,
+          "sha256": "f9e3583c69afcc39d88a410e292cf39cfc840afab9f065101daacb758683f6dc"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — lesão metafisária em canto (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/pediatrico/fraturas-de-maus-tratos/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/59906555/e58873b3a74e5824d6ca4ce6f11c99f5e612d3d3263c05481ee787efdd5aba92_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/non-accidental-injury-11",
+          "autoria": "Sally Ayesa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 385,
+          "bytes": 77107,
+          "sha256": "f0a4dc75c6ba0c3f2324855d81f5d143803b71f2bb63dabe181594eb5875240d"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "pneumoperitonio",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de tórax em pé — ar livre sob as duas cúpulas",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pneumoperitonio/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74555250/22d843673ae1d35444085ed31d504c882da1920f813fc55d0f04fee321f96b37_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumoperitoneum-86",
+          "autoria": "Awoke Terefe Birchiko",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 428,
+          "altura": 442,
+          "bytes": 128224,
+          "sha256": "d7deb33dceb453a8cfc3f59edd2ffb2ac0a3169ad8601ebdd6c9235be0bae932"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — ar livre sob as duas cúpulas (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pneumoperitonio/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74473912/0cf19943830a336b40896c7f5c26bc96c9618f54a16ec65d1516b260cf7e512c_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/hydropneumoperitoneum-paediatric",
+          "autoria": "Kenechi Ani-Nwangwu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 417,
+          "altura": 442,
+          "bytes": 26254,
+          "sha256": "b39935acdeb2ee1021cc2172e64cbfe2c786aee1d9a0486fd1d9c552304b6e25"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "sinal-de-rigler",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome em decúbito — dupla parede das alças (Rigler)",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/sinal-de-rigler/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74555250/22d843673ae1d35444085ed31d504c882da1920f813fc55d0f04fee321f96b37_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumoperitoneum-86",
+          "autoria": "Awoke Terefe Birchiko",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 428,
+          "altura": 442,
+          "bytes": 128224,
+          "sha256": "d7deb33dceb453a8cfc3f59edd2ffb2ac0a3169ad8601ebdd6c9235be0bae932"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — dupla parede das alças (Rigler) (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/sinal-de-rigler/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68118785/ac1e98c1b0c8f6f1ddc60a9f02f6c7d49d272a73d5314fd455bb4905de7ff2e4_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/rigler-sign-bowel-2",
+          "autoria": "Anil Kumar Geetha Virupakshappa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 362,
+          "altura": 442,
+          "bytes": 63717,
+          "sha256": "51ba9c7ec1eb80d6bc2a9fa4ab0c8cbe6f607bb7b4436a94fec7e0b9f45bec1b"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "obstrucao-de-delgado",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em pé — níveis hidroaéreos em alças centrais dilatadas",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/obstrucao-de-delgado/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75966989/7db18f83efae97cdf2b3536a566521e14cd47bafce98166c5b799fbd339810a9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/gallstone-ileus-104",
+          "autoria": "Rand Jamal Hamarsheh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 427,
+          "bytes": 72233,
+          "sha256": "54d255f33a8f3e2c8e0ce0eddc01cf8023d7d3c00db2d2a3ecfdcaff3a851d8d"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "obstrucao-de-colon",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em decúbito — cólon dilatado com haustrações até o ponto de parada",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/obstrucao-de-colon/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70763158/05a13d9df991fb120afa8c14bf9c7598f5c14774dc90f48970fcb906fb2455fb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/severe-faecal-impaction-1",
+          "autoria": "Victor Kwan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 405,
+          "altura": 442,
+          "bytes": 93680,
+          "sha256": "c55a50765ad58cfbb62f202449853a36ff5ab0762ebfe749b887364de6592b0a"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — cólon dilatado com haustrações até o ponto de parada (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/obstrucao-de-colon/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63417401/393db405d8aeef967bc74fda2aa65fe30edb6e16a695a9f23c68630e868a5252_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/postoperative-ileus-1",
+          "autoria": "Kevan English",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 364,
+          "altura": 442,
+          "bytes": 92081,
+          "sha256": "237f71ccc3d3cf8b3130a07efabcdc558b353603d354b64e32d6577f1ece7b6d"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "volvo-de-sigmoide",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em decúbito — alça em grão de café subindo da pelve",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/volvo-de-sigmoide/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74508584/0375bb050b7f79d69721e53911de3541540a581782ec21a8bfb4b9663c01d251_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/sigmoid-volvulus-127",
+          "autoria": "Soo Tze Hui",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 322,
+          "altura": 442,
+          "bytes": 127618,
+          "sha256": "866ce838bed89c9f9e1d629429150861df6cac757b4abce6323dc425997eae18"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — alça em grão de café subindo da pelve (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/volvo-de-sigmoide/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70337577/0d4c39f1d08915d072bbaaeff0f723c5d211dfa9012b20ac951a391b7444afdc_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/colonic-pseudo-obstruction-and-flatus-tube",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 288,
+          "bytes": 42627,
+          "sha256": "9d2fa10f4baf16601652358b1c9ebc3529a4e8a9c60f27979a1de5edeaefac4b"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "volvo-cecal",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em decúbito — ceco dilatado no hipocôndrio esquerdo com delgado dilatado",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/volvo-cecal/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68430501/downloaded_image20241216-806-tszxn4_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/sigmoid-volvulus-115",
+          "autoria": "Akash Mukherjee",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 372,
+          "altura": 442,
+          "bytes": 82112,
+          "sha256": "bf0567ff165fa0e41a3ccbdc327e433a3c55985be8cd1b3e6b32b0736afbc4cc"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "ileo-paralitico",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em decúbito — gás difuso em delgado e cólon sem transição",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/ileo-paralitico/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63417401/393db405d8aeef967bc74fda2aa65fe30edb6e16a695a9f23c68630e868a5252_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/postoperative-ileus-1",
+          "autoria": "Kevan English",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 364,
+          "altura": 442,
+          "bytes": 92081,
+          "sha256": "237f71ccc3d3cf8b3130a07efabcdc558b353603d354b64e32d6577f1ece7b6d"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — gás difuso em delgado e cólon sem transição (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/ileo-paralitico/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/58366094/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumoperitoneum-rigler-sign-1",
+          "autoria": "Leonardo Lustosa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 417,
+          "altura": 442,
+          "bytes": 35156,
+          "sha256": "49d4f55f79c84c76f1d661772464ded1f34e87e8f9cb950d74ac90a6b50992e9"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "megacolon-toxico",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em decúbito — transverso dilatado sem haustras com ilhas de mucosa",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/megacolon-toxico/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52962810/03f41b895758a848a892df701b6468_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/toxic-megacolon-4",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 356,
+          "altura": 442,
+          "bytes": 29471,
+          "sha256": "f1f660fc28e386c05997b1b61ecc2817e69f751c7c8ec3feef60e8bf5608634d"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "calculo-renal-radiopaco",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — cálculo coraliforme moldando o sistema coletor",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calculo-renal-radiopaco/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74909658/2ff8b972ea048ea8e72a41037807fe661ff23f4ffed009f9823774abd66779df_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/renal-calculi-bilateral",
+          "autoria": "Tariq Walizai",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 402,
+          "altura": 442,
+          "bytes": 89932,
+          "sha256": "df9f816d649a1b7b684e147f38092092e8d7358650bdc1212306e35adb35b949"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia de abdome — cálculo no trajeto ureteral distal",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calculo-renal-radiopaco/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60587656/907bf5090abdd60f1558ab60acdc2f135323fe9b0e44838f77f3a90be6b36345_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/staghorn-calculus-20",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 358,
+          "altura": 442,
+          "bytes": 133691,
+          "sha256": "4cc486634d59b34bba9824bc4dbc7f4fe7439882eda3cd1c738b056fb22d3812"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "calculos-biliares-e-vesicula-em-porcelana",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — cálculos facetados no hipocôndrio direito",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calculos-biliares-e-vesicula-em-porcelana/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68474600/b5352c8c58f58ff8cf824a5f1e5e58192567c511b74e95070cbbd451f0ad8ac3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/porcelain-gallbladder-18",
+          "autoria": "Fernando Figueredo Savi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 367,
+          "bytes": 57969,
+          "sha256": "7c67778cc509920a46d14fd94e077ee205db7f604b8d8d20b044c4b8ee5b4aa9"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia de abdome — vesícula em porcelana",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calculos-biliares-e-vesicula-em-porcelana/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/56409399/VP2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/porcelain-gallbladder-15",
+          "autoria": "Luis Gerardo Duque F",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 35511,
+          "sha256": "9f56347a4397d2ab1f5e17c5f15385c835c1d2a8a8146a8449a020eef3202ed8"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "pneumatose-intestinal",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — gás linear na parede das alças",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pneumatose-intestinal/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72477256/359e60610df6e9ee90bb3fb615c010aaaf3ad247659f799f89b8c492fcb5822f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotising-enterocolitis-18",
+          "autoria": "Ayman A A Elhosny",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 338,
+          "altura": 442,
+          "bytes": 70033,
+          "sha256": "975ba2e250397e25695723fa4a2a2f0cfb318287dc397424d4c8e7eabe3cb16f"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — gás linear na parede das alças",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pneumatose-intestinal/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72477260/e2ac5aba1ea26898f9884207113f48a43f7157e29673293fe2c651b7a5551bf3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotising-enterocolitis-18",
+          "autoria": "Ayman A A Elhosny",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 282,
+          "bytes": 52605,
+          "sha256": "3739990547fc9eaa28d59e7fd405f78cd42a0ce3789206da806fc7f69d3fabad"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — gás linear na parede das alças (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pneumatose-intestinal/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73988910/a98fbae6fe990fc9fb09d26e720168299e5db7a31ff76be88cf88604ee8713b8_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotising-enterocolitis-20",
+          "autoria": "Aung Ko Ko Oo",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 355,
+          "altura": 442,
+          "bytes": 70599,
+          "sha256": "d5f76399f2ab17d70cc437c5ee3ef5f06b14e983f896cdab193dfd8007b5a13c"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "ileo-biliar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — aerobilia com alças dilatadas e cálculo ectópico",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/ileo-biliar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74346943/4c70687c0801c5aa5e1f21cd409bf5e149a7c646fd3d6bd4ea8750eeee751ab3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/portal-venous-gas-secondary-to-small-bowel-strangulation",
+          "autoria": "Samuel Tomášů",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 428,
+          "bytes": 89406,
+          "sha256": "e3cbd9bdad6b6a1df7b0077457b683875b9ae711c7505baf13301b0d64db11e2"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — aerobilia com alças dilatadas e cálculo ectópico",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/ileo-biliar/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74346944/a4706817fb3b002d8b3f0df18e02bd803c5f10e886fd099c88ccda0d7e999786_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/portal-venous-gas-secondary-to-small-bowel-strangulation",
+          "autoria": "Samuel Tomášů",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 406,
+          "altura": 442,
+          "bytes": 76562,
+          "sha256": "c15316de56bc4e0c68679f1aeda0fa34a8a1437d24a64f65f38dd3185f0609c2"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "corpo-estranho-ingerido",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de tórax — moeda impactada no esôfago superior",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/corpo-estranho-ingerido/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74462542/48fc6641e3591e0d2002190f46072772149c7dbfcfc8cf9c073aa6556870f1e2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ingested-button-battery-7",
+          "autoria": "Kenechi Ani-Nwangwu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 345,
+          "bytes": 21214,
+          "sha256": "c39a9ddbccae85416518c6d5741d985bfdbbb0ad0d48eb4124b9c0b5ef0a54a5"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — moeda impactada no esôfago superior",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/corpo-estranho-ingerido/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74462543/83b988029917d36647d98217c1ef96e23cd56f20bee7a6da7bf2556ffb7cb821_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ingested-button-battery-7",
+          "autoria": "Kenechi Ani-Nwangwu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 397,
+          "altura": 442,
+          "bytes": 19092,
+          "sha256": "fec4f4f57074f4d897eecaed38d040de6d9d7eaba561bd347a91f966bd7bcfb8"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — moeda impactada no esôfago superior (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/corpo-estranho-ingerido/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73053665/d214c29b6e1c99af0d1b56e8e4a2ab1bb23cf7acb5431625fc8490987a5e2b76_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ingested-button-battery-6",
+          "autoria": "Maulik S Patel",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 361,
+          "altura": 442,
+          "bytes": 24378,
+          "sha256": "c1c552d16de3f3f0bc087e8852c560546cd231b891dbb9ed6df7094ea8b83582"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "fecaloma",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — grande fecaloma retossigmoideo com padrão em vidro moído",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/fecaloma/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70763158/05a13d9df991fb120afa8c14bf9c7598f5c14774dc90f48970fcb906fb2455fb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/severe-faecal-impaction-1",
+          "autoria": "Victor Kwan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 405,
+          "altura": 442,
+          "bytes": 93680,
+          "sha256": "c55a50765ad58cfbb62f202449853a36ff5ab0762ebfe749b887364de6592b0a"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "pancreatite-cronica-calcificada",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de abdome — calcificações no trajeto do pâncreas sobre L1-L2",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pancreatite-cronica-calcificada/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/8747028/baefea42a0455239a91b3d6c216b8d_gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pancreatic-calcification-5",
+          "autoria": "Saikat Sarkar",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 285,
+          "altura": 442,
+          "bytes": 38584,
+          "sha256": "5c3051d8530ec2577cf4e6bfe216b6049dfa15ec1857f8e0bbf28b8e362ac495"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — calcificações no trajeto do pâncreas sobre L1-L2 (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/pancreatite-cronica-calcificada/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/23965/cbadbb3d890ae2069cc5eb209d216d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pancreatic-calcification-with-cystic-fibrosis",
+          "autoria": "Michael Sargent",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 43412,
+          "sha256": "d65a696c2fba4f7d4d0070f6e7f83faf2bc41a8268e75a968a2ba29244590651"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "dupla-bolha",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do recém-nascido — dupla bolha sem gás distal",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/dupla-bolha/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/56949915/f15b1e72291e0bcd64cd922d6df6fe5babfe77263122b12b5005fcfc6544c8c1_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/duodenal-atresia-17",
+          "autoria": "Marwan Zeidan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 276,
+          "altura": 442,
+          "bytes": 24507,
+          "sha256": "aec66fa9962f9de16fc1475b6059221c8f2802d16bb34311860c29226684ae2f"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — dupla bolha sem gás distal",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/dupla-bolha/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/56997367/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/duodenal-atresia-17",
+          "autoria": "Marwan Zeidan",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 314,
+          "altura": 442,
+          "bytes": 27570,
+          "sha256": "72f187ed4522f2c1c5e112c24d2e7a104fec495c8c884a1971df765037367d69"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — dupla bolha sem gás distal (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/dupla-bolha/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/55945954/fa8bdd292bfba68dd2676479ab3a71b714662c2fefeb81b40c9e334d72509cda_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/duodenal-atresia-16",
+          "autoria": "Andrew Kirby",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 412,
+          "bytes": 83647,
+          "sha256": "ae912ea35462249138e8341e3d95085b2126bce6a0a701fc41a5eb23a03579b0"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "enterocolite-necrosante",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do prematuro — pneumatose intestinal com alça fixa",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/enterocolite-necrosante/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72477256/359e60610df6e9ee90bb3fb615c010aaaf3ad247659f799f89b8c492fcb5822f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotising-enterocolitis-18",
+          "autoria": "Ayman A A Elhosny",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 338,
+          "altura": 442,
+          "bytes": 70033,
+          "sha256": "975ba2e250397e25695723fa4a2a2f0cfb318287dc397424d4c8e7eabe3cb16f"
+        },
+        {
+          "indice": 2,
+          "titulo": "Decúbito lateral — gás portal e pneumoperitônio",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/enterocolite-necrosante/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72477260/e2ac5aba1ea26898f9884207113f48a43f7157e29673293fe2c651b7a5551bf3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotising-enterocolitis-18",
+          "autoria": "Ayman A A Elhosny",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 282,
+          "bytes": 52605,
+          "sha256": "3739990547fc9eaa28d59e7fd405f78cd42a0ce3789206da806fc7f69d3fabad"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — pneumatose intestinal com alça fixa (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/enterocolite-necrosante/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68202975/512521b0fe9c3a1ed2f8be39884a2b8bf15ea11f5d64d7544a20922d9bd08f3d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/necrotizing-enterocolitis-nec-3",
+          "autoria": "Eva Gimenez",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 359,
+          "altura": 442,
+          "bytes": 124453,
+          "sha256": "0669f3e1141488e7544a762c941be08a8e5857566d9b12987bbb25ea92663ce0"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "aneurisma-de-aorta-calcificado",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em perfil — parede aórtica calcificada delimitando aneurisma",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/aneurisma-de-aorta-calcificado/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67143520/e9c4778922427e69d76c49387a87ebcf4b16dab45e3dd5e4416f2c119d8c3a9e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/abdominal-aorta-calcification",
+          "autoria": "Fernando Figueredo Savi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 312,
+          "altura": 442,
+          "bytes": 48423,
+          "sha256": "be92a7ccfa86df35a58d696764677a1595f95efa4f5921324a2e9b002dec4153"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "sinal-de-chilaiditi",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de tórax em pé — alça com haustras sob a cúpula direita",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/sinal-de-chilaiditi/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64552795/3a54efe56bbc90bd6cc4022e794a6e4beec16905e73774eb30158f224e81d2d9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/chilaiditi-sign-chest-x-ray-1",
+          "autoria": "Aldo Mijail Pacheco-Carrillo",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 433,
+          "bytes": 86572,
+          "sha256": "3570774270640f161b52b8ae6a2d6b031834a51a002cf1272642c869d869f4bf"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — alça com haustras sob a cúpula direita (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/sinal-de-chilaiditi/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/63919775/9df8fac6c1d860a3f3edbd40857c89f3dd514a3ad62f12e9f9a3ef98f7ebc410_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/raised-hemidiaphragm-with-chilaiditi-sign",
+          "autoria": "Sahar Al-Talqani",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 433,
+          "bytes": 86394,
+          "sha256": "d8215c9a6f7e23adfcd273fe8af8cf8ebec087dfc5a6c80b0c8f8dc5a22b3f49"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia em perfil — alça com haustras sob a cúpula direita (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/sinal-de-chilaiditi/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/64548009/6bfd3603837de549cbcd016753be409997f3b0a58138b43b85966397c84bfb14_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/chilaiditi-sign-19",
+          "autoria": "Mohammad Osama Hussein Yonso",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 347,
+          "altura": 442,
+          "bytes": 99881,
+          "sha256": "e319fe478fff8b8975c9ee0f5c0aba637460ad1218fc8c9772f994e06fc8d919"
+        }
+      ]
+    },
+    {
+      "categoria": "abdome",
+      "slug": "calcificacoes-abdominais-benignas",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia de pelve — flebólitos com centro lucente",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calcificacoes-abdominais-benignas/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71975489/e335b7733f435d6b1ac44aa61e9f9df5c90637e4ce8690d40abe11e5a625d26f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/calcified-uterine-fibroid-4",
+          "autoria": "Abdul Rehman",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 440,
+          "altura": 442,
+          "bytes": 87317,
+          "sha256": "5b2cd4f56374ec56e6ae2230617308df382ffc9d3f4b819c7decd01922ad234c"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia de abdome — linfonodos mesentéricos calcificados",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/abdome/calcificacoes-abdominais-benignas/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/24126440/a10aa8a928c7c583dfa341c56bb354_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/abdominal-calcifications-1",
+          "autoria": "Varun Babu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 389,
+          "altura": 442,
+          "bytes": 48253,
+          "sha256": "7500972cca8cf721dbff86cccb1ce36dae35d497118c704eb10b0b828a85e6e5"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-colles",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA do punho — fratura do rádio distal com encurtamento",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-colles/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75931182/12028ed63fa305d2417719aaa772296909faaf73ec090a0a08b8580bf904021e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/colles-fracture-45",
+          "autoria": "Karen Payán Díaz",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 281,
+          "altura": 442,
+          "bytes": 20421,
+          "sha256": "4037bceb8b47a46c11220f78e37e99ef4e4c42ea1562f8334e691d0a24486722"
+        },
+        {
+          "indice": 2,
+          "titulo": "Perfil — angulação dorsal (dorso de garfo)",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-colles/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75931183/d84304481f5efa0d4908f245039d27d856980d3a09bab0dc9c6479ec24587387_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/colles-fracture-45",
+          "autoria": "Karen Payán Díaz",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 321,
+          "altura": 442,
+          "bytes": 27637,
+          "sha256": "daef5ac712865f2e3b922991b70d1e26627c6400dfa22c0be0f2c0146a00f127"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — fratura do rádio distal com encurtamento (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-colles/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73040875/93501ab59c9a4ae539b0f7f59076d16b1679b5efc2e9eb0e86053605c9457e0a_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/colles-fracture-with-ulnar-styloid-fracture",
+          "autoria": "Aayush Agrawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 312,
+          "altura": 442,
+          "bytes": 60875,
+          "sha256": "e158a18ba859eb054a3e87ddef49308475119233fe96439da2edba752668bc55"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-escafoide",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia PA com desvio ulnar — fratura da cintura do escafoide",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-escafoide/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74943654/b7ba852590c66dd994e069d831a0facf43784a2ab69866b1577890fd31a84c4a_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/scaphoid-fracture-62",
+          "autoria": "Ethan DiBlasio",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 389,
+          "bytes": 95770,
+          "sha256": "39da62b07fcc5a05ec1da7fa1037c92955848549eff97e9760511d0f35847934"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia oblíqua — fratura da cintura do escafoide",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-escafoide/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74943811/f3b18a17842fdaae035a0dd42fce08ec0f5d612831b2a8e597e36a88a5a51dcb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/scaphoid-fracture-62",
+          "autoria": "Ethan DiBlasio",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 395,
+          "bytes": 102743,
+          "sha256": "9f286bdb2ca81059e45ef20ecffcebfae8166848cbf01da21d6ec4eea7c6fd54"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — fratura da cintura do escafoide (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-escafoide/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71884994/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/scaphoid-tubercle-fracture-1",
+          "autoria": "Henry Knipe",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 210,
+          "altura": 442,
+          "bytes": 28591,
+          "sha256": "3d89d012c3a79759bb2745f9c3ee122b5bedcf32241b9e4485a20bb3ed89b2eb"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-do-boxeador",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia oblíqua da mão — fratura do colo do 5º metacarpo com angulação volar",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-do-boxeador/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74639813/f5f57a50d695c0dc2fc61516faded07935b8c310e822c3666c6c6364e8b4a807_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/boxer-fracture-51",
+          "autoria": "Dalia Ibrahim",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 410,
+          "bytes": 80189,
+          "sha256": "b06e2779d5c513a59841ab75d1c3d7ad01157907c6182b8ad285fcb01e688565"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — fratura do colo do 5º metacarpo com angulação volar",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-do-boxeador/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74639814/d02f2a24be95f45ee26f25fc22e5f5f5acccc1d607ac2bfa649b518028e2a4fd_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/boxer-fracture-51",
+          "autoria": "Dalia Ibrahim",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 412,
+          "altura": 442,
+          "bytes": 74379,
+          "sha256": "deada6dc5d7771fccfcc9a864147b1d39635484d4c21de9d8fd8ec223cf50edd"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia oblíqua — fratura do colo do 5º metacarpo com angulação volar (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-do-boxeador/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73984411/5f391d13ff9bf99cb6f915b31398fc425a4a3e80afdd5c55f6b56c7adcba07d0_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/metacarpal-fracture-18",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 318,
+          "altura": 442,
+          "bytes": 66584,
+          "sha256": "498f91c4cb6330e68f927c2f421979abaa5e03c4a492f54dc897d073989fdfdc"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-colo-de-femur",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP da pelve — fratura subcapital do colo femoral com varo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-colo-de-femur/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74751899/896adf7c6ab27e4337977c59664e008cef7384e31176229b3c4ac81f0f1c9208_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/femoral-neck-fracture-13",
+          "autoria": "Kenechi Ani-Nwangwu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 395,
+          "bytes": 22421,
+          "sha256": "48b22f07a16f693a1852ed7f9a4b4d99258d827578cd9e1f227f0a9ed029f347"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — fratura subcapital do colo femoral com varo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-colo-de-femur/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71657400/0f6d06b088eff33c4ff93743d606fbeb41496a9ee4111b460b52c103b5f44bbd_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/subcapital-neck-of-femur-fracture-4",
+          "autoria": "Siang Ching Raymond Chieng",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 340,
+          "bytes": 118972,
+          "sha256": "4830ec794e081f8f9f5f618dd58f87f8a0dc46f993f931684d7172d5de285ad2"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-intertrocanterica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do quadril — fratura intertrocantérica cominuta com varo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-intertrocanterica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/65539381/1b708f2f19924dfaa9d116802e34347ece9e7a95fcf8e28a809606603ac09223_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/intertrochanteric-fracture-11",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 308,
+          "altura": 442,
+          "bytes": 174110,
+          "sha256": "c26d4341a3ff30fe9fc7ffb137875c6a590303a4b6f7cfd446c4ba20373cf345"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — fratura intertrocantérica cominuta com varo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-intertrocanterica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/3114315/726bf0a3c805552ceabdc97ba10cb07947c4715dcfdc3c32b0d860ccafe0338b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/intertrochanteric-fracture-8",
+          "autoria": "Samir Benoudina",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 411,
+          "altura": 442,
+          "bytes": 76177,
+          "sha256": "505d62bf85d182027f50cec817d1911b7e44a18f394ec9a8abe327cc00e720e3"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "luxacao-anterior-de-ombro",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do ombro — cabeça umeral subcoracóidea",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-anterior-de-ombro/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72828670/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/anterior-and-posterior-shoulder-dislocations",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 406,
+          "bytes": 76111,
+          "sha256": "16522c597e552efce68901ad77d042d0ef7b8bc3c915ff180ed62f312aa756da"
+        },
+        {
+          "indice": 2,
+          "titulo": "Incidência em Y de escápula — a cabeça à frente da glenoide",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-anterior-de-ombro/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72828669/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/anterior-and-posterior-shoulder-dislocations",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 388,
+          "bytes": 64287,
+          "sha256": "c44025acc13b47e933c9d1311b087dff3dc9c323b656b7e377343b5c91ca3ef8"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia pós-redução — lesão de Hill-Sachs",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-anterior-de-ombro/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71620928/0956fda409c0058cf2b4babaa517b198d13ceb9dce849843043b774cf2e488d6_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/anterior-shoulder-dislocation-65",
+          "autoria": "Bahman Rasuli",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 425,
+          "altura": 442,
+          "bytes": 24633,
+          "sha256": "ac67985dca99504ace4b5903ab597930af7a98834ce8e2b09cd2b308630d1ed9"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "luxacao-posterior-de-ombro",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do ombro — sinal da lâmpada",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-ombro/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72828670/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/anterior-and-posterior-shoulder-dislocations",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 406,
+          "bytes": 76111,
+          "sha256": "16522c597e552efce68901ad77d042d0ef7b8bc3c915ff180ed62f312aa756da"
+        },
+        {
+          "indice": 2,
+          "titulo": "Incidência axilar — a cabeça posterior à glenoide",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-ombro/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72828669/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/anterior-and-posterior-shoulder-dislocations",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 388,
+          "bytes": 64287,
+          "sha256": "c44025acc13b47e933c9d1311b087dff3dc9c323b656b7e377343b5c91ca3ef8"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — sinal da lâmpada (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-ombro/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67906224/downloaded_image20241016-232401-bdb72b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bilateral-posterior-shoulder-dislocations-with-reverse-hill-sachs-defects",
+          "autoria": "Ian Bickle",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 394,
+          "bytes": 85568,
+          "sha256": "6e6f10bbf20319586a55b5b4b7bed2ece907b810c9f01c4bf29b8638b9a51a0e"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-supracondiliana",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Perfil do cotovelo — coxins gordurosos anterior e posterior elevados",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-supracondiliana/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70415225/44c7dc4a15f6bdb9a0be8011fa01d339d6698007b4f2808b56095a215631c615_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/supracondylar-fracture-42",
+          "autoria": "Mohd Radhwan Bin Abidin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 439,
+          "altura": 442,
+          "bytes": 34498,
+          "sha256": "01ed63fd96ec920a7622eaabc85eacc16cae62a73e62d9413a3ccc491b9ae417"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — coxins gordurosos anterior e posterior elevados",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-supracondiliana/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/70415226/974c98177fb4aee748b091f542545a71a04248d783f9c8b7488a0e166d16bb69_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/supracondylar-fracture-42",
+          "autoria": "Mohd Radhwan Bin Abidin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 417,
+          "bytes": 39017,
+          "sha256": "2013e5b71f55787f21002845fba8ba20aa8e4f1ce89d620097cd6f28f7e34a01"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — coxins gordurosos anterior e posterior elevados (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-supracondiliana/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67481656/downloaded_image20240924-24595-cru7w2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/supracondylar-humeral-fracture-2",
+          "autoria": "Veer Jhaveri",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 231,
+          "altura": 442,
+          "bytes": 67987,
+          "sha256": "250d5cf97dd025fab8276103358ed263133e182c1f55c5e83eaae8a322dec6c3"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-monteggia-e-galeazzi",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do antebraço — Monteggia: fratura da ulna com luxação da cabeça do rádio",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-monteggia-e-galeazzi/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75915827/2364b8e8d9474cd6e4aceed4ea019d0db92b0c18560434367952243e08d2844a_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/monteggia-fracture-dislocation-8",
+          "autoria": "Aayush Agrawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 216,
+          "altura": 442,
+          "bytes": 46694,
+          "sha256": "f21a9b3070986f04432bd2bd2396a666e39603635ce1cdc89b4331a85cb351ac"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — Monteggia: fratura da ulna com luxação da cabeça do rádio",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-monteggia-e-galeazzi/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75915828/9219449a18e33f0f1e8530c1b2b9a3fc00cc28f41be7c59517a496547dd0f13d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/monteggia-fracture-dislocation-8",
+          "autoria": "Aayush Agrawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 208,
+          "altura": 442,
+          "bytes": 37499,
+          "sha256": "8465b29311f1277590a9861db133e1f86ec7e1601a3e07f9b4bf8805a18f97d5"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — Monteggia: fratura da ulna com luxação da cabeça do rádio (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-monteggia-e-galeazzi/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/60524565/ac8e518dd8ea41ff0fd4dadf3d33836dda94a800db2f406dfc872470e0cebfe7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/monteggia-fracture-dislocation-ulnar-plastic-deformity",
+          "autoria": "Stefan Lazic",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 252,
+          "altura": 442,
+          "bytes": 49166,
+          "sha256": "aadd6623a59c0f312e8f0c63c77383563fbb898719166209fd33fb54984ea174"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-tornozelo-weber",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em perfil — Weber B com espaço medial preservado",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-tornozelo-weber/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76045443/5eb6397c7bb66392d9e87f5d7e68508fb8d4899887920ba0bbbd0cc3781248ee_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ankle-fracture-weber-c-11",
+          "autoria": "Naqibullah Foladi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 430,
+          "bytes": 127198,
+          "sha256": "b6dc43f6885273a949f0962b9e3cf6b511d1dcbb9cd0494cc7bfafba7619982a"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — Weber B com espaço medial preservado",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-tornozelo-weber/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/76045442/36913a10bd6e97ef002e6418f6616356917c52b713b4fac22e9d53905d0e35ab_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ankle-fracture-weber-c-11",
+          "autoria": "Naqibullah Foladi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 297,
+          "altura": 442,
+          "bytes": 97988,
+          "sha256": "162dc013cd6c87a5e51e76baa68b16fa0eabf7bede88afd6a86d4b2f972e7d1f"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — Weber B com espaço medial preservado (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-tornozelo-weber/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74524545/054b877e60d5e6db9767b4de2eacd0ca3406611c6b082a584ec93e0a6ef440e7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/fibula-fracture-1",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 344,
+          "altura": 442,
+          "bytes": 17871,
+          "sha256": "b5bb128e63b1f21e8c31f2be273b964d337378a20e5d057ddf90d04fe713950d"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-jones",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — fratura de Jones na junção metafisodiafisária",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-jones/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74683675/ca2c2e20f1efaf655d34c6c0954adc482e85ed285305a6488baf869a7e0bb0af_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/os-vesalianum-pedis-4",
+          "autoria": "Debabrata Maitra",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 186,
+          "altura": 442,
+          "bytes": 48979,
+          "sha256": "5920c18e0927a93b6ee313fa1cca6ef70316a2fb340e11b5a8f223b337c0eb19"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia oblíqua — avulsão da tuberosidade (pseudo-Jones)",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-jones/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74683676/8201cde988608877e6b889ba6cfd54524c4ee7a272bff7bcd33f0fb28b458e49_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/os-vesalianum-pedis-4",
+          "autoria": "Debabrata Maitra",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 190,
+          "altura": 442,
+          "bytes": 56172,
+          "sha256": "bc5e879cba221880250046e8744ee78fcd22e24a5b79323bab8bb07620f0e59c"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — fratura de Jones na junção metafisodiafisária (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-jones/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74230978/ca73a557d57130f9f63b45b18f50fdd35ad379d504f2db4001000db1a62046d9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/avulsion-fracture-of-the-5th-metatarsal-tuberosity-3",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 415,
+          "bytes": 28599,
+          "sha256": "72c98a8023b2dfefd5d1e2baf471f73be11c1fa247caea5953ba11981969d4ff"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "lesao-de-lisfranc",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em perfil — diástase entre 1º e 2º metatarso com sinal do fleck",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/lesao-de-lisfranc/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75259621/ff39b9f318fb75f4f29edf5846f34fef9cf8f808cce188f884f27d55ba9f051a_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lisfranc-fracture-dislocation-10",
+          "autoria": "Aditya D. Rao",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 371,
+          "bytes": 66492,
+          "sha256": "ccf898d5d7fd97432c3cbba55196b7debde648306dd993c3266ddd9e89626e00"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — diástase entre 1º e 2º metatarso com sinal do fleck",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/lesao-de-lisfranc/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75259622/dc271663275a357c4cd02c1df032f8abf81e9b33e534f05c460fd6da7b0e996c_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lisfranc-fracture-dislocation-10",
+          "autoria": "Aditya D. Rao",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 372,
+          "bytes": 72211,
+          "sha256": "7a2e706e347ee5ea567f1b3befce2bdfb97cdb8c8a10cfdcfee9073070b8f6cf"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — diástase entre 1º e 2º metatarso com sinal do fleck (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/lesao-de-lisfranc/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75152071/5a5571ef843bc8f1697d4e999275f818eed5e73901a6b68647a508001953169f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lisfranc-injury-27",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 196,
+          "altura": 442,
+          "bytes": 32217,
+          "sha256": "49c2fc3cf3b99849c66c5aedb7caafac13064e4643c465a0dca8516580c68057"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-patela",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — fratura transversa da patela com diástase",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-patela/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72768590/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/avulsion-fracture-inferior-pole-of-patella",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 385,
+          "altura": 442,
+          "bytes": 56744,
+          "sha256": "e09d38bb8a3f3e1ade42542e492854e6f4eb20c1fae67eec1816f8f5467df8ae"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia oblíqua — fratura transversa da patela com diástase",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-patela/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72768591/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/avulsion-fracture-inferior-pole-of-patella",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 326,
+          "altura": 442,
+          "bytes": 47678,
+          "sha256": "b6b602c015aca57b7908398a9bf14859baa50045ad23cec3f78b6adc64695235"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — fratura transversa da patela com diástase (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-patela/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/69378182/2f1c9208389532a187983856a4bfe21475d3b159df0b84ea3a27f186bb74f012_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/sinding-larsen-johansson-disease-14",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 393,
+          "bytes": 54221,
+          "sha256": "b9fb16aa31dbe036e3c0130cdd7a9da0dca44574804a0bd7a3e436ec28320072"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "osteoartrose-de-joelho",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP com carga — estreitamento do compartimento medial com osteófitos",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteoartrose-de-joelho/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75502862/726012b2161895d3b0f2de010113d8607242135648d379c10ff444cd442dac61_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/secondary-synovial-osteochondromatosis-with-chronic-degenerative-enthesopathy",
+          "autoria": "Adam Olalere Lawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 240,
+          "altura": 442,
+          "bytes": 14035,
+          "sha256": "087bf96be0251e1cd75ff3c6c58d82b334cc0117e87bd23b1b77aabbd59cc953"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — estreitamento do compartimento medial com osteófitos",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteoartrose-de-joelho/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75502861/49ff9676456f8be0e562866c26fa2896b35df1dce4deba2118411ac719b42344_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/secondary-synovial-osteochondromatosis-with-chronic-degenerative-enthesopathy",
+          "autoria": "Adam Olalere Lawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 312,
+          "altura": 442,
+          "bytes": 22373,
+          "sha256": "48a47447b3e3649b1af9d4f378d52e6afedf7b92dedc8b25c826443fa188c6d1"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia em perfil — estreitamento do compartimento medial com osteófitos (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteoartrose-de-joelho/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72602282/717ef688e92594c7a0683f427911d34c6f5365a9930c7c6f8981579f35d1c4dc_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/fracture-non-union-medial-femoral-condyle-1",
+          "autoria": "Motasem Ibrahim Shilbayeh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 335,
+          "altura": 442,
+          "bytes": 99105,
+          "sha256": "610c130b9aafcf7c21320727d53fcebd4df149ad4f08125fa4d460ffbb358cad"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "gota-tofacea",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do pé — erosões em saca-bocado no 1º metatarsofalangiano com tofo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/gota-tofacea/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74758182/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/gouty-arthritis-2",
+          "autoria": "Abenezer Kebede Bekele",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 269,
+          "altura": 442,
+          "bytes": 29092,
+          "sha256": "1c0febb8249c22640fb36a4d75bf304c59a53801cf1e404878a25d2c828485d4"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — erosões em saca-bocado no 1º metatarsofalangiano com tofo",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/gota-tofacea/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74775256/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/gouty-arthritis-2",
+          "autoria": "Abenezer Kebede Bekele",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 300,
+          "bytes": 26817,
+          "sha256": "7e3742d224ee477fc5357791618f9c8a3bc777127a0e025014ba0a53cc066976"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — erosões em saca-bocado no 1º metatarsofalangiano com tofo (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/gota-tofacea/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74089473/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/gouty-arthropathy-5",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 235,
+          "altura": 442,
+          "bytes": 44829,
+          "sha256": "8b28f3c4b2d071ddb655035c7804472d078d7236798d43acdde4541e57f4e8bb"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "doenca-de-paget",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia da pelve — trabéculas grosseiras e cortical espessa no hemipelve",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/doenca-de-paget/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74580905/265a43770be3d8eb5dc57fd0673659b48b38d2513223a5ce82034bf7b1387b61_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/paget-disease-of-bone-6",
+          "autoria": "Justin G Peacock",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 429,
+          "altura": 442,
+          "bytes": 90970,
+          "sha256": "f11df3fa099b00ec1d714aad96edbe6fcfe80b67c3961619a0bbba9ea8bac1e2"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia da tíbia — osso arqueado e aumentado com lise em chama de vela",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/doenca-de-paget/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73506451/d0dccf56b4b031ec8ae03fc3198d47be790833d59a72a8eb3fd7cb646517f325_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pagets-disease-of-the-pelvis-3",
+          "autoria": "Aayush Agrawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 403,
+          "bytes": 83684,
+          "sha256": "0d41c5a07e6751d8806ffdaf8315f885b1e62fa3a3e392eebda74bd8cd10f814"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "metastases-osseas",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia em perfil — pedículo apagado por metástase lítica",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/metastases-osseas/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74703691/c41b698673006a546303d3df5306657f5368f6578a256bba2b2b4a4768a949da_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osseous-metastasis",
+          "autoria": "Daniel Chin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 43463,
+          "sha256": "ecbbb46682616c54267dd6d5065d1d4a65b86fb7b0d5e7f9da5bbb7403706b18"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia da pelve — metástases blásticas de próstata",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/metastases-osseas/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74703692/4730961f9cf2ec9aadd3182dfbf770bbd08d77abf6f404f41cf9585868b9ddeb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osseous-metastasis",
+          "autoria": "Daniel Chin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 237,
+          "altura": 442,
+          "bytes": 45178,
+          "sha256": "d89eec82739b177741425ff658fe0845ca1fc9c6569981ca2d4712d0b339d236"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — pedículo apagado por metástase lítica (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/metastases-osseas/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72878719/df6b3e144051a934c971966ae153188120dffe9a10b26fbefbea9e70a312a907_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/lesser-trochanter-pathological-fracture-1",
+          "autoria": "Bahman Rasuli",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 315,
+          "altura": 442,
+          "bytes": 9485,
+          "sha256": "5426a83615817f2a53ef0ba38290cbbc70d6459cdbeb17c2ba3ba43cdc477bea"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "mieloma-multiplo",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — múltiplas lesões líticas em saca-bocado",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/mieloma-multiplo/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67827820/a66d8b30d5d248ff21b388171c8097492362b508145d22125082a86cd3357ea4_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/multiple-myeloma-71",
+          "autoria": "Mohammad walid Ahmad Amin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 282,
+          "altura": 442,
+          "bytes": 92023,
+          "sha256": "49e0e9906c9b37ad265aa9f3eecffbe7125c51a1bf0de0597a7f84e9bcb7d8df"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — múltiplas lesões líticas em saca-bocado",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/mieloma-multiplo/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67827821/0d5f7c2f98c0dcba6cfb73fbc7ecb9611f83ec113b5c91fcc521b60df6465cf8_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/multiple-myeloma-71",
+          "autoria": "Mohammad walid Ahmad Amin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 434,
+          "altura": 442,
+          "bytes": 131942,
+          "sha256": "3313111454099edf5f3312a46dc7e1cb5ead038a3b74214bf6480ff5403cee88"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia em perfil — múltiplas lesões líticas em saca-bocado (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/mieloma-multiplo/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/61753702/85301f53b407e4bac4c2b5a5ff2ce3d677941573b5bf5ebeb80d791376fbc85f_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/multiple-myeloma-disseminated-1",
+          "autoria": "Eid Kakish",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 419,
+          "altura": 442,
+          "bytes": 78599,
+          "sha256": "23c4a26fd18f83616b5c4426f23ee247caf69321c03bbad0ae190456f05f65c6"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "osteomielite-aguda",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia da tíbia — rarefação metafisária com reação periosteal",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteomielite-aguda/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73562245/757a9c119bf88d5b4d0fba3dd263405391d374259fb932b2919a1825cd0349de_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/claw-toe-deformities-and-osteomyelitis",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 382,
+          "bytes": 28302,
+          "sha256": "f2af398395ac38d121ae9ddc4c64a109135d607af14a1d059f3bfdd283a3c8fd"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia oblíqua — rarefação metafisária com reação periosteal",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteomielite-aguda/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73562246/05664a41b54e8a940d570b3ef78f38eefd9b21764a6c436134cd4625d7420fb9_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/claw-toe-deformities-and-osteomyelitis",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 415,
+          "altura": 442,
+          "bytes": 28134,
+          "sha256": "8ad8858b5377fe5dfcfff7c9b9251c98355ffb577346bee57c4c0e964beb257a"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — rarefação metafisária com reação periosteal (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteomielite-aguda/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71873958/2e0b58ef715bcd828b3b3f6bef1067768fad46a2a337871169ad956e5f013d69_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/brodie-abscess-15",
+          "autoria": "Ryan Thibodeau",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 130,
+          "altura": 442,
+          "bytes": 22223,
+          "sha256": "c28a27c5b9e0096870994af25d644eebfe0488d38997f57a2ae28b0f29a2a1ea"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "osteossarcoma",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do fêmur distal — lesão metafisária mista com reação em raio de sol e triângulo de Codman",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteossarcoma/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74311899/e23e7455adaebf772d626c2502421986c22a5126882ed36dd3440e0a23e8a9f3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osteosarcoma-humerus-1",
+          "autoria": "Daniel Chin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 438,
+          "altura": 442,
+          "bytes": 106631,
+          "sha256": "430f446144e3beec7d44acd138c4d95ad55e567649248a6d5e053dfb9b23b17c"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — lesão metafisária mista com reação em raio de sol e triângulo de Codman (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteossarcoma/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72845089/cb0fb51bbacf8fa7200d73be3e8d49e580e04d4c5d842a406fc1f86ab589fd2e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osteogenic-sarcoma-7",
+          "autoria": "Subhan Iqbal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 430,
+          "bytes": 126280,
+          "sha256": "e98e6dc603699b141d7e8d119ab6191acffb558bf9573f5b1b3939f73ef8491f"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "osteocondroma",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia do joelho — osteocondroma pediculado apontando para longe da articulação",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteocondroma/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73309734/1676c3bf2c209385816aa2604700806f1336d947a8d835f58413e7e108c0b5ab_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osteochondromas-with-ischiofemoral-impingement",
+          "autoria": "Mohammed Ansari",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 353,
+          "bytes": 85388,
+          "sha256": "40984e812679819908a60171a987a4b90e8e1e8b6d0f02d4991bd316973436fa"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — osteocondroma pediculado apontando para longe da articulação",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteocondroma/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73309737/dc588d7ce301e4ffa4f361fa07e553f46e1396a922145018c5f018f622452f17_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osteochondromas-with-ischiofemoral-impingement",
+          "autoria": "Mohammed Ansari",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 342,
+          "altura": 442,
+          "bytes": 47024,
+          "sha256": "02fc4d7ae502df3b777745fb1d7c6d11ead2c43ea957b39e0e3d0ec47b39a809"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-vertebral-por-compressao",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia lateral da coluna toracolombar — vértebra em cunha com parede posterior preservada",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-vertebral-por-compressao/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75722329/6897368507e78174b09426f07986055c5cbbedc0abb2a8451f0a6cb41d7ba1c4_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/t5-t6-block-vertebra-with-t7-compression-fracture-1",
+          "autoria": "Lukuya Emmanuel",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 266,
+          "altura": 442,
+          "bytes": 90363,
+          "sha256": "333097159766e00305569d3ba87ad7dbcc9ebeed8eb70a76b7b96047f2b62e4b"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "espondilolistese",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — anterolistese de L5 sobre S1",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/espondilolistese/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74107733/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/spondylolisthesis-with-follow-up-1",
+          "autoria": "Leonardo Lustosa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 251,
+          "altura": 442,
+          "bytes": 58578,
+          "sha256": "8f0069b294b6c46ec6184e8196d7a1fb7756ed2a98b63fe6a3d9786aea1b2131"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — anterolistese de L5 sobre S1",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/espondilolistese/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74107734/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/spondylolisthesis-with-follow-up-1",
+          "autoria": "Leonardo Lustosa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 273,
+          "altura": 442,
+          "bytes": 50787,
+          "sha256": "cdca82ca84e1967726af223f253d98888123d9b05cde8a4d19aff52280b9d3a0"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia em perfil — anterolistese de L5 sobre S1 (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/espondilolistese/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72418119/e35fce7b5e05a88e4e47ea552e0b3083cd9687b93e6f2eb716968b414fb03903_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/grade-i-anterolisthesis-with-pars-defect-1",
+          "autoria": "Wooseok Choi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 337,
+          "altura": 442,
+          "bytes": 52208,
+          "sha256": "0cb29dc8d6a05243b6d50107a4a5f2f1697240314ff46215842cdf114329c054"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "espondilite-anquilosante",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia frontal — sacroileíte bilateral com fusão",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/espondilite-anquilosante/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/67617737/b67de64b322caf5cd1de60e10ee9e8064ab6a2925fd13605e9212526e43849bb_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ankylosing-spondylitis-pelvic-x-ray-2",
+          "autoria": "Anil Kumar Geetha Virupakshappa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 363,
+          "bytes": 66985,
+          "sha256": "dd67e1cf08dbf1f8ef4f419f61665a93f7f44f50b51a9cdd7cfdc7287e0c0f98"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — sacroileíte bilateral com fusão (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/espondilite-anquilosante/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/65751285/downloaded_image20240514-982-9xv9nw_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/ankylosing-spondylitis-83",
+          "autoria": "Ammar Haouimi",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 329,
+          "altura": 442,
+          "bytes": 61995,
+          "sha256": "b46fbbd5010ac4350f36f7276d5b13973872bb37811544cf33796978cd343600"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "legg-calve-perthes",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP da pelve — epífise pequena e densa à esquerda",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/legg-calve-perthes/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71949856/4a2426ba59893343acc1063a345493089bd5a083ad08c611fe1e8a6aaffd85ea_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/legg-calve-perthes-disease-39",
+          "autoria": "Abdullahi Abdi Farah Horri",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 344,
+          "altura": 442,
+          "bytes": 79709,
+          "sha256": "b0faf628b0eba2cbb4ce04d1bff98373bcff09595171e1c9cde2b4848b92cdf1"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — epífise pequena e densa à esquerda",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/legg-calve-perthes/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71949857/c43f4b902d3d2dc7189c9a49f7ba376a68bb3b31977847a44ce58dfd2695ba44_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/legg-calve-perthes-disease-39",
+          "autoria": "Abdullahi Abdi Farah Horri",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 366,
+          "altura": 442,
+          "bytes": 78490,
+          "sha256": "ad5f704d901a7d33869fe581e0019f4a3fceb0d758fa11cae71e46e62724b118"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia em perfil — epífise pequena e densa à esquerda (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/legg-calve-perthes/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75166709/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/perthes-osteonecrosis-2",
+          "autoria": "Andrew Kirby",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 342,
+          "bytes": 63153,
+          "sha256": "4046ac96098f738710f6b7d567b3d3d65e6fe1a79e98f448e83c67c1a815bb76"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "epifisiolise",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP da pelve — linha de Klein não cruza a epífise à direita",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/epifisiolise/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74507010/21362706d93c11f944a6c4c4d59e0e878d2a60edf65a2ae5da1d9617141f28d6_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/slipped-upper-femoral-epiphysis-sufe-2",
+          "autoria": "Daniel Chin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 112480,
+          "sha256": "e3409238553d47b3acc4f02531b7fa172f3cefd878c435d385ad70f7ad1b3e09"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — linha de Klein não cruza a epífise à direita",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/epifisiolise/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74507008/b2a9012ef662cd24cbaeef963e3c5d2d5f73ca412237e14541dc84725e6f0564_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/slipped-upper-femoral-epiphysis-sufe-2",
+          "autoria": "Daniel Chin",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 68761,
+          "sha256": "aed70ab81555dccfa9fe40fec2c8dbd2aca963d854494fe2155f8596af012470"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "luxacao-posterior-de-quadril",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP da pelve — cabeça femoral luxada posterossuperiormente com fratura da parede acetabular",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-quadril/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74405816/1058c0050ee22b3e42b45ca80e4234d9ef5c7de23af1140048cecad3dccad38e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posterior-hip-dislocation-16",
+          "autoria": "Kenechi Ani-Nwangwu",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 348,
+          "bytes": 17256,
+          "sha256": "a071f7abc6e96576802eb6799f853088d550978178da3fe325857efc5a53ee11"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia frontal — cabeça femoral luxada posterossuperiormente com fratura da parede acetabular (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-quadril/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/57991386/0._gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posterior-hip-dislocation-10",
+          "autoria": "Leonardo Lustosa",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 419,
+          "altura": 442,
+          "bytes": 42120,
+          "sha256": "0f367939c1a8c553a5caed05e33f8831d18bab4c3857f2281e98a9b5c15046cf"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — cabeça femoral luxada posterossuperiormente com fratura da parede acetabular (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/luxacao-posterior-de-quadril/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/66692683/493404aac3f5d48b2c6f04f22b223b8f47b755d4dcc379893d60a7b17fe9ca26_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/posterior-hip-dislocation-with-femoral-head-fracture",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 347,
+          "bytes": 35438,
+          "sha256": "4f5c0726c54c62d9ccda535390b8f95a2e41683a3fb7b703835caedb6ba89d7e"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "fratura-de-clavicula",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP da clavícula — fratura do terço médio com cavalgamento",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-clavicula/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74205656/3c78241387bdfc6abe29ab2839eb27ce1a7d1286656dde972bef2fbaa3e2e76e_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/clavicular-fracture-15",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 301,
+          "bytes": 86441,
+          "sha256": "1f831b25f74e5e27f9f760f9638f675a2fa3fda236d696d17625c24cbcd70a2c"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — fratura do terço médio com cavalgamento",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-clavicula/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74205657/c7fd4cd164ca42842189ad1e27d0a151d44bae692d10e8dd9bf87ca43e10a478_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/clavicular-fracture-15",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 284,
+          "bytes": 72008,
+          "sha256": "bce52d6be2dcf3023a46d4ca32bacd2a117c2b9b3b68edc91754f263a7836f85"
+        },
+        {
+          "indice": 3,
+          "titulo": "Radiografia frontal — fratura do terço médio com cavalgamento (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/fratura-de-clavicula/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74129924/0abc870667903be6a8adb715bb218f1066da86de5810d6e35e9d249ad8a0ca4b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/clavicular-fracture-14",
+          "autoria": "Salah Ibrahim Hanouneh",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 350,
+          "bytes": 123422,
+          "sha256": "06194535b46c45c58c16e373d2a335223d8483cb197bfad32b70ba7f5f46b4ff"
+        }
+      ]
+    },
+    {
+      "categoria": "osteoarticular",
+      "slug": "osteonecrose-da-cabeca-femoral",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Radiografia AP do quadril — esclerose subcondral e crescente lucente",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteonecrose-da-cabeca-femoral/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74697383/31ae06ddefb0dde71a9a4fb4461468e3fcbb63129eaf111b4cdb2641ab17ee14_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/avascular-necrosis-of-the-femoral-head-crescent-sign-2",
+          "autoria": "Teo Lopez Bernal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 101749,
+          "sha256": "f5a898f7b410b3cbff4f843046c170f9965cf4b891882c66854e1cfbdf4c9790"
+        },
+        {
+          "indice": 2,
+          "titulo": "Radiografia em perfil — esclerose subcondral e crescente lucente",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteonecrose-da-cabeca-femoral/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74697386/3b200edd6b1801ea642804117e887a9cd24cf2a0346ed42688aefa643bb0d44d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/avascular-necrosis-of-the-femoral-head-crescent-sign-2",
+          "autoria": "Teo Lopez Bernal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 60445,
+          "sha256": "cef5d7f092658606afe1f0f0ecb196e94d4cdb003fa0b46bff565197e69ee737"
+        },
+        {
+          "indice": 3,
+          "titulo": "Incidência em rã — esclerose subcondral e crescente lucente (outro paciente)",
+          "propria": false,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/osteoarticular/osteonecrose-da-cabeca-femoral/03.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73576861/93b084be56d4aa142b72b614fc192fea0c41a0a509aa7a94da70063c660b4bb2_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/osteonecrosis-of-the-femoral-head-bilateral-3",
+          "autoria": "Aayush Agrawal",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 368,
+          "bytes": 96313,
+          "sha256": "88abc3825f07a2c7416bab80ae8900ab2cd65b081eba1c6c63983caa3afdec94"
+        }
+      ]
+    }
+  ]
+}

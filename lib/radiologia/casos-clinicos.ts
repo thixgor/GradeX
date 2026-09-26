@@ -1,4 +1,8 @@
 import type { CategoriaCasoRaioX } from './casos-raio-x'
+import { VINHETAS_LEVA_2_TORAX } from './casos-clinicos-leva-2-torax'
+import { VINHETAS_LEVA_2_TRAUMA_PEDIATRIA } from './casos-clinicos-leva-2-trauma-pediatria'
+import { VINHETAS_LEVA_2_ABDOME } from './casos-clinicos-leva-2-abdome'
+import { VINHETAS_LEVA_2_OSTEOARTICULAR } from './casos-clinicos-leva-2-osteoarticular'
 
 /**
  * A consulta que antecede o filme.
@@ -3177,6 +3181,10 @@ export const VINHETAS_CASOS_RAIO_X: Record<string, VinhetaClinica> = {
   ...PNEUMOTORAX,
   ...CANCER,
   ...MEDIASTINO,
+  ...VINHETAS_LEVA_2_TORAX,
+  ...VINHETAS_LEVA_2_TRAUMA_PEDIATRIA,
+  ...VINHETAS_LEVA_2_ABDOME,
+  ...VINHETAS_LEVA_2_OSTEOARTICULAR,
 }
 
 export function vinhetaDoCaso(slug: string): VinhetaClinica | null {

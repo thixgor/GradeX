@@ -32,7 +32,7 @@ import {
 import { holdScrollAtTop } from '@/components/scroll-to-top'
 import type { VinhetaClinica } from '@/lib/radiologia/casos-clinicos'
 import type { AchadoMarcado, TipoMarcacao } from '@/lib/radiologia/casos-raio-x-detalhes'
-import type { ImagemCasoRaioX } from '@/lib/radiologia/casos-raio-x'
+import { estiloDoQuadro, type ImagemCasoRaioX } from '@/lib/radiologia/casos-raio-x'
 import type {
   QuestaoCasoClinico,
   QuizCasoClinico,
@@ -923,11 +923,7 @@ function Camada({
       aria-hidden
       data-imagem-clinica
       className={`absolute inset-0 bg-black bg-no-repeat ${classe}`}
-      style={{
-        backgroundImage: `url("${imagem.sprite}")`,
-        backgroundSize: '200% 100%',
-        backgroundPosition: marcada ? '100% 0' : '0 0',
-      }}
+      style={estiloDoQuadro(imagem, marcada)}
     />
   )
 }
@@ -955,9 +951,7 @@ export function FilmeSprite({
       className={`block bg-black bg-no-repeat ${className}`}
       style={{
         aspectRatio: `${imagem.largura} / ${imagem.altura}`,
-        backgroundImage: `url("${imagem.sprite}")`,
-        backgroundSize: '200% 100%',
-        backgroundPosition: marcado ? '100% 0' : '0 0',
+        ...estiloDoQuadro(imagem, marcado),
       }}
     />
   )

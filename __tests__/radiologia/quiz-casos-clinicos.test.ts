@@ -23,7 +23,7 @@ describe('quiz de casos clínicos do Raio-X', () => {
 
     for (const quiz of QUIZZES_CLINICOS) {
       expect(quiz.total, quiz.slug).toBeGreaterThan(0)
-      expect(quiz.capa?.sprite, quiz.slug).toMatch(/^\/img\/radiologia\/casos-raio-x\/v1\//)
+      expect(quiz.capa?.sprite, quiz.slug).toMatch(/^\/img\/radiologia\/casos-raio-x\/v[12]\//)
       expect(quiz.descricao.length, quiz.slug).toBeGreaterThan(80)
     }
   })

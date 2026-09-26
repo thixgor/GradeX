@@ -1,4 +1,6 @@
 import manifesto from '@/data/radiologia/casos-raio-x-assets.json'
+import manifestoLeva2 from '@/data/radiologia/casos-raio-x-leva-2.json'
+import { DEFINICOES_LEVA_2 } from './casos-raio-x-leva-2'
 
 export type CategoriaCasoRaioX =
   | 'cardiovascular'
@@ -8,14 +10,48 @@ export type CategoriaCasoRaioX =
   | 'pneumotorax'
   | 'cancer-pulmao'
   | 'mediastino'
+  | 'infeccoes'
+  | 'intersticial'
+  | 'pleura'
+  | 'trauma-uti'
+  | 'pediatrico'
+  | 'abdome'
+  | 'osteoarticular'
 
 export interface ImagemCasoRaioX {
   id: string
   titulo: string
+  /** Arquivo servido: sprite de dois quadros (limpo | marcado) ou imagem única. */
   sprite: string
+  /** Largura de UM quadro, não do arquivo inteiro. */
   largura: number
   altura: number
   indice: number
+  /**
+   * 2 = sprite com o filme limpo à esquerda e o marcado à direita (galeria do
+   * Radiology Masterclass). 1 = radiografia única sem versão anotada (casos do
+   * Radiopaedia): os modos "Marcadores" e "Comparar" não trocam o quadro — a
+   * lista de alterações continua acendendo, e é ela que ensina.
+   */
+  quadros: 1 | 2
+  /** Proveniência de imagem única: página do caso, autor e licença. */
+  fonte?: FonteImagemCasoRaioX
+}
+
+export interface FonteImagemCasoRaioX {
+  nome: string
+  url: string
+  autoria: string
+  licenca: string
+}
+
+/** Estilo de fundo que mostra o quadro certo do arquivo, seja sprite ou imagem única. */
+export function estiloDoQuadro(imagem: ImagemCasoRaioX, marcada: boolean) {
+  return {
+    backgroundImage: `url("${imagem.sprite}")`,
+    backgroundSize: imagem.quadros === 2 ? '200% 100%' : '100% 100%',
+    backgroundPosition: imagem.quadros === 2 && marcada ? '100% 0' : '0 0',
+  } as const
 }
 
 export interface CasoRaioX {
@@ -28,6 +64,8 @@ export interface CasoRaioX {
   sinais: string[]
   armadilhas: string[]
   imagens: ImagemCasoRaioX[]
+  /** Nome curto da fonte do acervo (para o rodapé de créditos do caso). */
+  acervo: 'Radiology Masterclass' | 'Radiopaedia'
 }
 
 export interface GuiaCategoriaCasoRaioX {
@@ -138,7 +176,107 @@ export const GUIAS_CASOS_RAIO_X: Record<CategoriaCasoRaioX, GuiaCategoriaCasoRai
     ],
     cor: 'indigo',
   },
+  infeccoes: {
+    id: 'infeccoes',
+    titulo: 'Infecções pulmonares',
+    resumo: 'Consolidação, cavitação, padrão miliar, empiema e as sequelas que ficam depois da infecção.',
+    pergunta: 'A opacidade é consolidação, cavidade ou nódulos — e ela respeita os limites de um lobo?',
+    roteiro: [
+      'Localize a opacidade pelo sinal da silhueta e pelas fissuras.',
+      'Procure broncogramas aéreos: consolidação alveolar sem perda de volume.',
+      'Procure cavidade, nível hidroaéreo e parede espessa.',
+      'Olhe os ápices e os hilos: tuberculose gosta dos lobos superiores.',
+      'Compare com exame anterior: sequela não muda; infecção ativa muda.',
+    ],
+    cor: 'orange',
+  },
+  intersticial: {
+    id: 'intersticial',
+    titulo: 'Doença difusa e nódulos',
+    resumo: 'Padrões reticular, nodular e em vidro fosco, hiperinsuflação e o nódulo solitário.',
+    pergunta: 'O padrão é reticular, nodular ou alveolar — e onde ele predomina, base ou ápice?',
+    roteiro: [
+      'Classifique o padrão: linhas, pontos, vidro fosco ou consolidação.',
+      'Defina a distribuição: bases ou ápices, periferia ou hilos, simetria.',
+      'Meça o volume pulmonar: fibrose reduz, enfisema aumenta.',
+      'Procure adenopatia hilar e derrame associados.',
+      'Num nódulo, descreva tamanho, borda e calcificação antes de decidir.',
+    ],
+    cor: 'violet',
+  },
+  pleura: {
+    id: 'pleura',
+    titulo: 'Doenças da pleura',
+    resumo: 'Derrames atípicos, loculações, hidropneumotórax, hemotórax, espessamentos e calcificações.',
+    pergunta: 'A opacidade é pleural ou pulmonar — e o líquido está livre ou preso?',
+    roteiro: [
+      'Confirme o menisco e a posição do paciente (em pé, deitado, decúbito lateral).',
+      'Procure a cúpula falsa: hemidiafragma alto com ápice lateral é derrame subpulmonar.',
+      'Loculação não muda com a posição e tem borda convexa para o pulmão.',
+      'Nível hidroaéreo reto na pleura é hidropneumotórax.',
+      'Espessamento nodular e circunferencial pede TC — pode ser tumor.',
+    ],
+    cor: 'teal',
+  },
+  'trauma-uti': {
+    id: 'trauma-uti',
+    titulo: 'Trauma e terapia intensiva',
+    resumo: 'O filme do politrauma e o filme portátil em decúbito: fraturas, contusão, mediastino, tubos e cateteres.',
+    pergunta: 'O que há de ameaçador agora — e cada tubo e cateter está onde deveria?',
+    roteiro: [
+      'Mediastino: largura, botão aórtico, desvio da traqueia e da sonda.',
+      'Pleura: sulco profundo, ápice e base lúcidos em decúbito.',
+      'Parede torácica: costelas em série, clavícula, escápula, enfisema subcutâneo.',
+      'Parênquima: contusão surge cedo e some em dias; aspiração e SDRA vêm depois.',
+      'Dispositivos, um a um: ponta, trajeto e o que pode ter perfurado.',
+    ],
+    cor: 'red',
+  },
+  pediatrico: {
+    id: 'pediatrico',
+    titulo: 'Radiologia pediátrica',
+    resumo: 'O tórax do recém-nascido e da criança: timo, vias aéreas, bronquiolite, corpo estranho e maus-tratos.',
+    pergunta: 'Isso é normal para a idade — ou é doença numa anatomia que ainda está mudando?',
+    roteiro: [
+      'Conheça o timo: sinal da vela e da onda são normais até os 3 anos.',
+      'Vias aéreas: a coluna de ar na lateral do pescoço e a traqueia na frontal.',
+      'Hiperinsuflação assimétrica em criança pequena: corpo estranho até prova contrária.',
+      'Recém-nascido com desconforto: padrão granular, estrias ou hiperinsuflação — cada um tem uma causa.',
+      'Fratura em quem não anda, ou em várias idades: registre e notifique.',
+    ],
+    cor: 'pink',
+  },
+  abdome: {
+    id: 'abdome',
+    titulo: 'Abdome',
+    resumo: 'Gás onde não deveria, alças dilatadas, cálculos e calcificações: o que a radiografia simples de abdome ainda responde.',
+    pergunta: 'Há gás fora da luz intestinal, alças dilatadas com nível, ou uma calcificação que explica a dor?',
+    roteiro: [
+      'Em pé ou decúbito lateral: ar sob a cúpula ou sobre o fígado.',
+      'Diâmetro das alças: delgado > 3 cm, cólon > 6 cm, ceco > 9 cm.',
+      'Distribuição do gás: onde ele para e o que está vazio a jusante.',
+      'Procure ar na parede da alça, na via biliar e na veia porta.',
+      'Calcificações: trajeto do ureter, hipocôndrio direito, pâncreas, aorta e pelve.',
+    ],
+    cor: 'amber',
+  },
+  osteoarticular: {
+    id: 'osteoarticular',
+    titulo: 'Osso e articulação',
+    resumo: 'Fraturas e luxações que o pronto-socorro vê todo dia, artropatias, lesões ósseas e o quadril da criança.',
+    pergunta: 'Onde a cortical se interrompe, e a articulação está no lugar?',
+    roteiro: [
+      'Duas incidências ortogonais, sempre, e as articulações acima e abaixo.',
+      'Siga cada cortical como um contorno contínuo.',
+      'Procure sinais indiretos: coxim gorduroso, derrame, apagamento de gordura.',
+      'Numa lesão óssea, descreva margem, matriz, reação periosteal e partes moles.',
+      'Na criança, compare com a fise e com o lado contralateral.',
+    ],
+    cor: 'lime',
+  },
 }
+
+export type DefinicaoCasoRaioX = Definicao
 
 type Definicao = {
   categoria: CategoriaCasoRaioX
@@ -251,7 +389,7 @@ const paginas = new Map(
   }>).map((pagina) => [`${pagina.category}/${pagina.slug}`, pagina]),
 )
 
-export const CASOS_RAIO_X: CasoRaioX[] = DEFINICOES.map((definicao) => {
+const CASOS_MASTERCLASS: CasoRaioX[] = DEFINICOES.map((definicao) => {
   const guia = GUIAS_CASOS_RAIO_X[definicao.categoria]
   const pagina = paginas.get(`${definicao.categoria}/${definicao.slug}`)
   if (!pagina) throw new Error(`Manifesto ausente para ${definicao.categoria}/${definicao.slug}`)
@@ -267,6 +405,7 @@ export const CASOS_RAIO_X: CasoRaioX[] = DEFINICOES.map((definicao) => {
     explicacao: definicao.explicacao,
     sinais: definicao.sinais ?? [],
     armadilhas: definicao.armadilhas ?? [],
+    acervo: 'Radiology Masterclass',
     imagens: definicao.imagens.map((titulo, indice) => {
       const imagem = pagina.images[indice]
       return {
@@ -276,10 +415,58 @@ export const CASOS_RAIO_X: CasoRaioX[] = DEFINICOES.map((definicao) => {
         largura: imagem.frameWidth,
         altura: imagem.height,
         indice: indice + 1,
+        quadros: 2 as const,
       }
     }),
   }
 })
+
+/**
+ * Segunda leva: casos do Radiopaedia (termo conjunto de 18/09/2026), uma
+ * radiografia por imagem, sem versão anotada. O manifesto guarda, por caso, a
+ * página de origem e o autor de cada imagem — é o que a tela de créditos exibe.
+ */
+const paginasLeva2 = new Map(
+  (manifestoLeva2.casos as Array<{
+    categoria: CategoriaCasoRaioX
+    slug: string
+    imagens: Array<{ indice: number; titulo: string; arquivo: string; largura: number; altura: number; urlDoCaso: string; autoria: string; licenca: string }>
+  }>).map((pagina) => [`${pagina.categoria}/${pagina.slug}`, pagina]),
+)
+
+const CASOS_LEVA_2: CasoRaioX[] = DEFINICOES_LEVA_2.map((definicao) => {
+  const guia = GUIAS_CASOS_RAIO_X[definicao.categoria]
+  const pagina = paginasLeva2.get(`${definicao.categoria}/${definicao.slug}`)
+  if (!pagina) throw new Error(`Manifesto (leva 2) ausente para ${definicao.categoria}/${definicao.slug}`)
+  if (!pagina.imagens.length) throw new Error(`Caso sem imagens (leva 2): ${definicao.slug}`)
+  return {
+    slug: definicao.slug,
+    categoria: definicao.categoria,
+    categoriaTitulo: guia.titulo,
+    titulo: definicao.titulo,
+    resumo: definicao.resumo,
+    explicacao: definicao.explicacao,
+    sinais: definicao.sinais ?? [],
+    armadilhas: definicao.armadilhas ?? [],
+    acervo: 'Radiopaedia',
+    // Os títulos vêm do manifesto: cada um descreve a incidência da imagem que foi
+    // efetivamente escolhida para aquele caso.
+    imagens: pagina.imagens.map((imagem, indice) => {
+      return {
+        id: `${definicao.slug}-${indice + 1}`,
+        titulo: imagem.titulo,
+        sprite: imagem.arquivo,
+        largura: imagem.largura,
+        altura: imagem.altura,
+        indice: indice + 1,
+        quadros: 1 as const,
+        fonte: { nome: 'Radiopaedia.org', url: imagem.urlDoCaso, autoria: imagem.autoria, licenca: imagem.licenca },
+      }
+    }),
+  }
+})
+
+export const CASOS_RAIO_X: CasoRaioX[] = [...CASOS_MASTERCLASS, ...CASOS_LEVA_2]
 
 export const CASOS_POR_SLUG = new Map(CASOS_RAIO_X.map((caso) => [caso.slug, caso]))
 export const TOTAL_CASOS_RAIO_X = CASOS_RAIO_X.length

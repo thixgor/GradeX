@@ -22,6 +22,12 @@
  * conteúdo base. Toda adição é aditiva por design.
  */
 
+import manifestoLeva2 from '@/data/radiologia/casos-raio-x-leva-2.json'
+import { DETALHES_LEVA_2_TORAX } from './casos-raio-x-detalhes-leva-2-torax'
+import { DETALHES_LEVA_2_TRAUMA_PEDIATRIA } from './casos-raio-x-detalhes-leva-2-trauma-pediatria'
+import { DETALHES_LEVA_2_ABDOME } from './casos-raio-x-detalhes-leva-2-abdome'
+import { DETALHES_LEVA_2_OSTEOARTICULAR } from './casos-raio-x-detalhes-leva-2-osteoarticular'
+
 export type TipoMarcacao = 'achado' | 'medida' | 'referencia' | 'armadilha'
 
 export interface AchadoMarcado {
@@ -3152,6 +3158,30 @@ export const DETALHES_CASOS_RAIO_X: Record<string, DetalheCaso> = {
   ...PNEUMOTORAX,
   ...CANCER,
   ...MEDIASTINO,
+  ...DETALHES_LEVA_2_TORAX,
+  ...DETALHES_LEVA_2_TRAUMA_PEDIATRIA,
+  ...DETALHES_LEVA_2_ABDOME,
+  ...DETALHES_LEVA_2_OSTEOARTICULAR,
+}
+
+/**
+ * Na segunda leva, as imagens 2 e 3 de um caso nem sempre são as que o dossiê
+ * descreveu: quando a curadoria trocou a incidência (ou o paciente), a
+ * marcação escrita para aquele índice descreveria outra imagem. Nesses casos o
+ * filme herda as alterações da imagem 1 — é a mesma doença, e são os mesmos
+ * achados a procurar.
+ */
+for (const caso of (manifestoLeva2 as { casos: Array<{ slug: string; imagens: Array<{ indice: number; propria?: boolean }> }> }).casos) {
+  const detalhe = DETALHES_CASOS_RAIO_X[caso.slug]
+  if (!detalhe) continue
+  const base = detalhe.marcacoes[1] ?? []
+  const marcacoes: Record<number, AchadoMarcado[]> = { 1: base }
+  for (const imagem of caso.imagens) {
+    if (imagem.indice === 1) continue
+    const propria = imagem.propria ? detalhe.marcacoes[imagem.indice] : undefined
+    marcacoes[imagem.indice] = propria ?? base
+  }
+  detalhe.marcacoes = marcacoes
 }
 
 export function detalheDoCaso(slug: string): DetalheCaso | null {

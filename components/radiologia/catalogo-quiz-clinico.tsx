@@ -5,16 +5,23 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   ArrowRight,
+  Baby,
+  Biohazard,
+  Bone,
   ChevronRight,
+  Circle,
   ClipboardList,
   Crosshair,
+  Grid3x3,
   HeartPulse,
   Layers,
   Play,
   ScanSearch,
   ShieldAlert,
+  Siren,
   Stethoscope,
   Trophy,
+  Waves,
   Wind,
 } from 'lucide-react'
 import { FilmeSprite } from '@/components/radiologia/quiz-caso-clinico'
@@ -40,6 +47,13 @@ const ICONES: Record<CategoriaCasoRaioX, typeof HeartPulse> = {
   pneumotorax: ShieldAlert,
   'cancer-pulmao': Crosshair,
   mediastino: ScanSearch,
+  infeccoes: Biohazard,
+  intersticial: Grid3x3,
+  pleura: Waves,
+  'trauma-uti': Siren,
+  pediatrico: Baby,
+  abdome: Circle,
+  osteoarticular: Bone,
 }
 
 export function CatalogoQuizClinico({

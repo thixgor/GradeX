@@ -114,6 +114,17 @@ describe('vinhetas clínicas dos casos de Raio-X', () => {
       }
     })
 
+    it('não entrega distrator por advérbio absoluto nem por forma banal', () => {
+      // Distrator com "exclusivamente", "sempre", "nunca" ou "somente" se
+      // descarta pela palavra, sem olhar o filme. O aluno tem de pensar.
+      const absoluto = /\w+mente|sempre|nunca|jamais|todos?|nenhum/i
+      for (const { slug, alternativas } of questoes) {
+        for (const alternativa of alternativas) {
+          expect(alternativa, `${slug}: "${alternativa}" tem termo absoluto`).not.toMatch(absoluto)
+        }
+      }
+    })
+
     it('escreve toda alternativa como rótulo de diferencial, não como explicação', () => {
       for (const { slug, alternativas } of questoes) {
         for (const alternativa of alternativas) {

@@ -247,10 +247,29 @@ export function CasoRaioXPagina({
                         </p>
                         <ol className="mt-2 space-y-2 text-xs leading-relaxed text-muted-foreground">
                           <li><strong className="text-foreground">1.</strong> Descreva a imagem limpa sem olhar o título.</li>
-                          <li><strong className="text-foreground">2.</strong> Ligue <strong className="text-foreground">Marcadores</strong> e leia as alterações que aparecem no topo.</li>
-                          <li><strong className="text-foreground">3.</strong> Use <strong className="text-foreground">Comparar</strong> e arraste o divisor sobre cada achado.</li>
+                          {imagem.quadros === 2 ? (
+                            <>
+                              <li><strong className="text-foreground">2.</strong> Ligue <strong className="text-foreground">Marcadores</strong> e leia as alterações que aparecem no topo.</li>
+                              <li><strong className="text-foreground">3.</strong> Use <strong className="text-foreground">Comparar</strong> e arraste o divisor sobre cada achado.</li>
+                            </>
+                          ) : (
+                            <>
+                              <li><strong className="text-foreground">2.</strong> Ligue <strong className="text-foreground">Alterações</strong> e procure cada item da lista na própria radiografia — aqui não há setas, o olho é seu.</li>
+                              <li><strong className="text-foreground">3.</strong> Use <strong className="text-foreground">zoom</strong> e <strong className="text-foreground">inversão</strong> (tecla I) para confirmar o que achou.</li>
+                            </>
+                          )}
                         </ol>
                       </div>
+
+                      {imagem.fonte && (
+                        <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                          Caso de{' '}
+                          <a href={imagem.fonte.url} target="_blank" rel="noreferrer" className="font-semibold text-sky-700 underline-offset-2 hover:underline dark:text-sky-300">
+                            {imagem.fonte.autoria}
+                          </a>
+                          , {imagem.fonte.nome} · {imagem.fonte.licenca}
+                        </p>
+                      )}
 
                       {marcacoes.length > 0 && (
                         <div className="mt-4 rounded-xl border border-border bg-muted/25 p-3.5">

@@ -5,16 +5,23 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   ArrowRight,
+  Baby,
+  Biohazard,
+  Bone,
+  Circle,
   Crosshair,
   Grid2x2,
+  Grid3x3,
   HeartPulse,
   Layers,
   Rows3,
   ScanSearch,
   Search,
   ShieldAlert,
+  Siren,
   Sparkles,
   Stethoscope,
+  Waves,
   Wind,
   X,
 } from 'lucide-react'
@@ -40,6 +47,13 @@ const PALETA: Record<
   pneumotorax: { sobreFilme: 'border-orange-300/45 text-orange-100', chip: 'border-orange-500/40 bg-orange-500/10 text-orange-600 dark:text-orange-300', ponto: 'bg-orange-500', texto: 'text-orange-600 dark:text-orange-300', borda: 'border-orange-500/25', brilho: 'group-hover:border-orange-500/50' },
   'cancer-pulmao': { sobreFilme: 'border-violet-300/45 text-violet-100', chip: 'border-violet-500/40 bg-violet-500/10 text-violet-600 dark:text-violet-300', ponto: 'bg-violet-500', texto: 'text-violet-600 dark:text-violet-300', borda: 'border-violet-500/25', brilho: 'group-hover:border-violet-500/50' },
   mediastino: { sobreFilme: 'border-indigo-300/45 text-indigo-100', chip: 'border-indigo-500/40 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300', ponto: 'bg-indigo-500', texto: 'text-indigo-600 dark:text-indigo-300', borda: 'border-indigo-500/25', brilho: 'group-hover:border-indigo-500/50' },
+  infeccoes: { sobreFilme: 'border-red-300/45 text-red-100', chip: 'border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300', ponto: 'bg-red-500', texto: 'text-red-600 dark:text-red-300', borda: 'border-red-500/25', brilho: 'group-hover:border-red-500/50' },
+  intersticial: { sobreFilme: 'border-fuchsia-300/45 text-fuchsia-100', chip: 'border-fuchsia-500/40 bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300', ponto: 'bg-fuchsia-500', texto: 'text-fuchsia-600 dark:text-fuchsia-300', borda: 'border-fuchsia-500/25', brilho: 'group-hover:border-fuchsia-500/50' },
+  pleura: { sobreFilme: 'border-teal-300/45 text-teal-100', chip: 'border-teal-500/40 bg-teal-500/10 text-teal-600 dark:text-teal-300', ponto: 'bg-teal-500', texto: 'text-teal-600 dark:text-teal-300', borda: 'border-teal-500/25', brilho: 'group-hover:border-teal-500/50' },
+  'trauma-uti': { sobreFilme: 'border-yellow-300/45 text-yellow-100', chip: 'border-yellow-500/40 bg-yellow-500/10 text-yellow-600 dark:text-yellow-300', ponto: 'bg-yellow-500', texto: 'text-yellow-600 dark:text-yellow-300', borda: 'border-yellow-500/25', brilho: 'group-hover:border-yellow-500/50' },
+  pediatrico: { sobreFilme: 'border-pink-300/45 text-pink-100', chip: 'border-pink-500/40 bg-pink-500/10 text-pink-600 dark:text-pink-300', ponto: 'bg-pink-500', texto: 'text-pink-600 dark:text-pink-300', borda: 'border-pink-500/25', brilho: 'group-hover:border-pink-500/50' },
+  abdome: { sobreFilme: 'border-lime-300/45 text-lime-100', chip: 'border-lime-500/40 bg-lime-500/10 text-lime-600 dark:text-lime-300', ponto: 'bg-lime-500', texto: 'text-lime-600 dark:text-lime-300', borda: 'border-lime-500/25', brilho: 'group-hover:border-lime-500/50' },
+  osteoarticular: { sobreFilme: 'border-sky-300/45 text-sky-100', chip: 'border-sky-500/40 bg-sky-500/10 text-sky-600 dark:text-sky-300', ponto: 'bg-sky-500', texto: 'text-sky-600 dark:text-sky-300', borda: 'border-sky-500/25', brilho: 'group-hover:border-sky-500/50' },
 }
 
 const ICONES: Record<CategoriaCasoRaioX, typeof HeartPulse> = {
@@ -50,6 +64,13 @@ const ICONES: Record<CategoriaCasoRaioX, typeof HeartPulse> = {
   pneumotorax: ShieldAlert,
   'cancer-pulmao': Crosshair,
   mediastino: ScanSearch,
+  infeccoes: Biohazard,
+  intersticial: Grid3x3,
+  pleura: Waves,
+  'trauma-uti': Siren,
+  pediatrico: Baby,
+  abdome: Circle,
+  osteoarticular: Bone,
 }
 
 export function CatalogoCasosRaioX({

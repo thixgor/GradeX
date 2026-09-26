@@ -23,7 +23,7 @@ describe('catálogo de casos e alterações no Raio-X', () => {
       expect(caso.imagens.length).toBeGreaterThan(0)
       expect(GUIAS_CASOS_RAIO_X[caso.categoria]).toBeDefined()
       for (const imagem of caso.imagens) {
-        expect(imagem.sprite).toMatch(/^\/img\/radiologia\/casos-raio-x\/v1\//)
+        expect(imagem.sprite).toMatch(/^\/img\/radiologia\/casos-raio-x\/v[12]\//)
         expect(imagem.largura).toBeGreaterThan(0)
         expect(imagem.altura).toBeGreaterThan(0)
         expect(imagem.titulo.length).toBeGreaterThan(3)
@@ -31,8 +31,8 @@ describe('catálogo de casos e alterações no Raio-X', () => {
     }
   })
 
-  it('oferece os sete capítulos e mais de cem exemplos selecionados', () => {
-    expect(Object.keys(GUIAS_CASOS_RAIO_X)).toHaveLength(7)
-    expect(TOTAL_IMAGENS_CASOS_RAIO_X).toBeGreaterThan(100)
+  it('oferece os catorze capítulos e quase trezentos exemplos selecionados', () => {
+    expect(Object.keys(GUIAS_CASOS_RAIO_X)).toHaveLength(14)
+    expect(TOTAL_IMAGENS_CASOS_RAIO_X).toBeGreaterThan(280)
   })
 })

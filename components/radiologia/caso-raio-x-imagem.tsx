@@ -17,7 +17,7 @@ import {
   ScanLine,
   X,
 } from 'lucide-react'
-import type { ImagemCasoRaioX } from '@/lib/radiologia/casos-raio-x'
+import { estiloDoQuadro, type ImagemCasoRaioX } from '@/lib/radiologia/casos-raio-x'
 import type { AchadoMarcado, TipoMarcacao } from '@/lib/radiologia/casos-raio-x-detalhes'
 
 type Modo = 'limpa' | 'marcada' | 'comparar'
@@ -56,6 +56,9 @@ export function CasoRaioXImagem({
 
   const temMarcacoes = marcacoes.length > 0
   const marcado = modo === 'marcada'
+  // Imagem única (Radiopaedia): não existe quadro marcado para comparar. O modo
+  // "Marcadores" ainda acende a lista de alterações — é ela que faz o trabalho.
+  const semQuadroMarcado = imagem.quadros === 1
 
   const alterarZoom = useCallback((delta: number) => {
     setZoom((atual) => Math.min(4, Math.max(1, Number((atual + delta).toFixed(2)))))
@@ -115,7 +118,7 @@ export function CasoRaioXImagem({
       if (evento.metaKey || evento.ctrlKey || evento.altKey) return
       const tecla = evento.key.toLowerCase()
       if (tecla === 'm') { evento.preventDefault(); alternarMarcacao() }
-      else if (tecla === 'c') { evento.preventDefault(); trocarModo(modo === 'comparar' ? 'limpa' : 'comparar') }
+      else if (tecla === 'c' && !semQuadroMarcado) { evento.preventDefault(); trocarModo(modo === 'comparar' ? 'limpa' : 'comparar') }
       else if (tecla === 'i') { evento.preventDefault(); setInverter((v) => !v) }
       else if (evento.key === '+' || evento.key === '=') { evento.preventDefault(); alterarZoom(0.25) }
       else if (evento.key === '-') { evento.preventDefault(); alterarZoom(-0.25) }
@@ -124,7 +127,7 @@ export function CasoRaioXImagem({
     }
     window.addEventListener('keydown', aoTeclar)
     return () => window.removeEventListener('keydown', aoTeclar)
-  }, [alterarZoom, alternarMarcacao, ampliada, modo, resetar, trocarModo])
+  }, [alterarZoom, alternarMarcacao, ampliada, modo, resetar, semQuadroMarcado, trocarModo])
 
   useEffect(() => {
     if (!ampliada) return
@@ -179,7 +182,11 @@ export function CasoRaioXImagem({
     return partes.length ? partes.join(' ') : undefined
   }, [inverter, realce])
 
-  const etiqueta = modo === 'limpa' ? 'Sem marcações' : modo === 'marcada' ? 'Com marcações' : 'Marcada · Limpa'
+  const etiqueta = modo === 'limpa'
+    ? (semQuadroMarcado ? 'Radiografia' : 'Sem marcações')
+    : modo === 'marcada'
+      ? (semQuadroMarcado ? 'Alterações listadas' : 'Com marcações')
+      : 'Marcada · Limpa'
 
   const painel = (
     <section
@@ -292,7 +299,7 @@ export function CasoRaioXImagem({
 
           <Camada imagem={imagem} marcada={false} prioridade={prioridade} />
 
-          {marcado && <Camada key={`marcada-${revelacao}`} imagem={imagem} marcada classe="rx-revela" />}
+          {marcado && !semQuadroMarcado && <Camada key={`marcada-${revelacao}`} imagem={imagem} marcada classe="rx-revela" />}
 
           {modo === 'comparar' && (
             <>
@@ -350,10 +357,12 @@ export function CasoRaioXImagem({
       )}
 
       {/* ── Modos ────────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-3 gap-1 border-t border-white/10 bg-white/[0.02] p-2" role="group" aria-label="Modo de visualização">
-        <BotaoModo ativo={modo === 'limpa'} onClick={() => trocarModo('limpa')} icone={<EyeOff />} titulo="Limpa" descricao="Sem marcações" />
-        <BotaoModo ativo={marcado} onClick={() => trocarModo('marcada')} icone={<Eye />} titulo="Marcadores" descricao="Revela alterações" destaque />
-        <BotaoModo ativo={modo === 'comparar'} onClick={() => trocarModo('comparar')} icone={<Columns2 />} titulo="Comparar" descricao="Arraste o divisor" />
+      <div className={`grid ${semQuadroMarcado ? 'grid-cols-2' : 'grid-cols-3'} gap-1 border-t border-white/10 bg-white/[0.02] p-2`} role="group" aria-label="Modo de visualização">
+        <BotaoModo ativo={modo === 'limpa'} onClick={() => trocarModo('limpa')} icone={<EyeOff />} titulo="Limpa" descricao={semQuadroMarcado ? 'Só a radiografia' : 'Sem marcações'} />
+        <BotaoModo ativo={marcado} onClick={() => trocarModo('marcada')} icone={<Eye />} titulo={semQuadroMarcado ? 'Alterações' : 'Marcadores'} descricao={semQuadroMarcado ? 'Lista o que procurar' : 'Revela alterações'} destaque />
+        {!semQuadroMarcado && (
+          <BotaoModo ativo={modo === 'comparar'} onClick={() => trocarModo('comparar')} icone={<Columns2 />} titulo="Comparar" descricao="Arraste o divisor" />
+        )}
       </div>
 
       <p className="sr-only" aria-live="polite">
@@ -420,9 +429,7 @@ function Camada({
       className={`absolute inset-0 bg-black bg-no-repeat ${classe}`}
       style={{
         width: largura,
-        backgroundImage: `url("${imagem.sprite}")`,
-        backgroundSize: '200% 100%',
-        backgroundPosition: marcada ? '100% 0' : '0 0',
+        ...estiloDoQuadro(imagem, marcada),
         // Faz o navegador priorizar apenas a primeira imagem sem alterar o sprite.
         contentVisibility: prioridade ? 'visible' : 'auto',
       }}
@@ -509,11 +516,7 @@ export function MiniaturaCasoRaioX({
       aria-hidden={marcada || undefined}
       data-imagem-clinica
       className={`block bg-black bg-no-repeat ${className}`}
-      style={{
-        backgroundImage: `url("${imagem.sprite}")`,
-        backgroundSize: '200% 100%',
-        backgroundPosition: marcada ? '100% 0' : '0 0',
-      }}
+      style={estiloDoQuadro(imagem, marcada)}
     />
   )
 }
