@@ -201,6 +201,9 @@ const PAGINAS: ItemBusca[] = [
   // com o mesmo destino. O que segue são as páginas INTERNAS de cada uma.
   pagina('histologia-atlas', 'Atlas de lâminas', '/manual-clinico/histologia/atlas', 'Histologia', 'microscope',
     ['atlas', 'laminas', 'acervo', 'ver laminas'], { secao: 'manualClinico' }),
+  pagina('histologia-zoom', 'Histologia com Zoom', '/manual-clinico/histologia/zoom', 'Histologia', 'scan',
+    ['zoom', 'lamina virtual', 'microscopio virtual', 'microscopia virtual', 'tela cheia', 'sistemas', 'orgaos'],
+    { secao: 'manualClinico' }),
   pagina('histologia-caderno', 'Caderno de histologia', '/manual-clinico/histologia/caderno', 'Histologia', 'book-marked',
     ['caderno', 'anotacoes', 'progresso', 'estudo dirigido'], { secao: 'manualClinico' }),
   pagina('histologia-laboratorio', 'Laboratório de histologia', '/manual-clinico/histologia/laboratorio', 'Histologia', 'flask-conical',

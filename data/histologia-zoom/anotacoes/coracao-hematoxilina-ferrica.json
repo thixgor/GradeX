@@ -1,0 +1,79 @@
+{
+ "slug": "coracao-hematoxilina-ferrica",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "disco",
+   "estrutura": "disco-intercalar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.567,
+      0.1965
+     ],
+     "angulo": 90
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.617,
+      0.3655
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.5,
+    0.15,
+    0.68,
+    0.4
+   ],
+   "nota": "A hematoxilina férrica escurece os discos intercalares, que cruzam a fibra em degraus (a fibra cardíaca é uma cadeia de células unidas ponta a ponta)."
+  },
+  {
+   "id": "estrias",
+   "estrutura": "estriacao-transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.24
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.45,
+    0.2,
+    0.53,
+    0.3
+   ]
+  },
+  {
+   "id": "cardiomiocito",
+   "estrutura": "fibra-muscular-cardiaca",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.27
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.5,
+    0.15,
+    0.7,
+    0.4
+   ]
+  }
+ ]
+}

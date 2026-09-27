@@ -1,0 +1,72 @@
+{
+ "slug": "esofago-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso não queratinizado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.513,
+      0.252
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.23,
+    0.53,
+    0.26
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5118,
+      0.2395
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.5,
+    0.23,
+    0.53,
+    0.26
+   ]
+  },
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2,
+      0.6
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.5,
+    0.3,
+    0.7
+   ]
+  }
+ ]
+}

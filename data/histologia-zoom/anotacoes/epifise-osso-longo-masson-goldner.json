@@ -1,0 +1,197 @@
+{
+ "slug": "epifise-osso-longo-masson-goldner",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "trabecula",
+   "estrutura": "trabecula-ossea",
+   "rotulo": "Trabécula de osso mineralizado (verde no Masson-Goldner)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1739,
+      0.2776
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ],
+   "nota": "No tricrômico de Masson-Goldner o osso mineralizado fica verde e o osteoide (matriz ainda não mineralizada) fica vermelho-alaranjado: a faixa vermelha mostra onde há formação óssea."
+  },
+  {
+   "id": "osteoide",
+   "estrutura": "osteoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1767,
+      0.2832
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ]
+  },
+  {
+   "id": "osteoblasto",
+   "estrutura": "osteoblasto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1736,
+      0.2747
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ]
+  },
+  {
+   "id": "osteocito",
+   "estrutura": "osteocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1789,
+      0.278
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócito da medula óssea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1832,
+      0.274
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Arteríola da medula óssea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1882,
+      0.2753
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.168,
+    0.268,
+    0.192,
+    0.287
+   ]
+  },
+  {
+   "id": "disco",
+   "estrutura": "disco-epifisario",
+   "rotulo": "Disco epifisário",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.22,
+      0.35
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.08,
+    0.28,
+    0.36,
+    0.45
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem articular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.083,
+      0.26
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.04,
+    0.15,
+    0.2,
+    0.35
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Fibras musculares esqueléticas (vermelhas no Masson-Goldner)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7688,
+      0.606
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.65,
+    0.55,
+    0.9,
+    0.66
+   ]
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+{
+ "slug": "bexiga-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "urotelio",
+   "estrutura": "urotelio",
+   "rotulo": "Urotélio em pregas (bexiga vazia)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3763,
+      0.4875
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.35,
+    0.4,
+    0.45,
+    0.5
+   ]
+  }
+ ]
+}

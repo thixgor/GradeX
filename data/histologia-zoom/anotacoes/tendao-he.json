@@ -1,0 +1,102 @@
+{
+ "slug": "tendao-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "feixe",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Feixe de fibras colágenas paralelas (colágeno tipo I)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3417,
+      0.4203
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.3,
+    0.38,
+    0.4,
+    0.47
+   ],
+   "nota": "Denso modelado: todos os feixes correm na mesma direção, a da força que o tendão transmite."
+  },
+  {
+   "id": "tenocito",
+   "estrutura": "tenocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4083,
+      0.6195
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4081,
+      0.6275
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.398,
+    0.607,
+    0.42,
+    0.632
+   ]
+  },
+  {
+   "id": "endotendao",
+   "estrutura": "endotendao",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3795,
+      0.4245
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.36,
+    0.4,
+    0.4,
+    0.45
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Fibra muscular esquelética: o músculo de onde o tendão parte",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1584,
+      1.3017
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.14,
+    1.28,
+    0.175,
+    1.31
+   ],
+   "nota": "Mais eosinófilas que o colágeno, onduladas pela contração, com núcleos na periferia e estriação transversal fina em grande aumento."
+  }
+ ]
+}

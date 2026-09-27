@@ -1,0 +1,53 @@
+{
+ "slug": "vesicula-biliar-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Epitélio simples colunar alto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3405,
+      0.3355
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.33,
+    0.35,
+    0.35
+   ],
+   "nota": "Vesícula biliar: mucosa pregueada com epitélio simples colunar, sem caliciformes e sem muscular da mucosa."
+  },
+  {
+   "id": "pregas",
+   "estrutura": "prega-da-mucosa",
+   "rotulo": "Pregas da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.34
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

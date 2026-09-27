@@ -1,0 +1,124 @@
+{
+ "slug": "timo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "hassall",
+   "estrutura": "corpusculo-de-hassall",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6515,
+      0.6737
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6765,
+      0.6462
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.645,
+    0.664,
+    0.663,
+    0.682
+   ],
+   "nota": "Timo de indivíduo jovem: lóbulos com córtex escuro (timócitos densos) e medula mais clara, onde ficam os corpúsculos de Hassall."
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-timica",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.668,
+      0.69
+     ],
+     "raios": [
+      0.03,
+      0.04
+     ]
+    }
+   ],
+   "vista": [
+    0.62,
+    0.63,
+    0.72,
+    0.75
+   ]
+  },
+  {
+   "id": "cortex",
+   "estrutura": "cortex-timico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.605,
+      0.72
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.56,
+    0.63,
+    0.7,
+    0.75
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.568,
+      0.675
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.55,
+    0.6,
+    0.7,
+    0.75
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      1.126
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    1.08,
+    0.48,
+    1.15
+   ]
+  }
+ ]
+}

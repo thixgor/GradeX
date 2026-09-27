@@ -1,0 +1,137 @@
+{
+ "slug": "arteria-coronaria-sirius-resorcina-hematoxilina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Artéria coronária (artéria muscular)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.505,
+      0.625
+     ],
+     "raios": [
+      0.05,
+      0.047
+     ]
+    }
+   ],
+   "vista": [
+    0.4,
+    0.52,
+    0.6,
+    0.73
+   ],
+   "nota": "Artéria epicárdica cercada por gordura, junto ao miocárdio (amarelo no picrossírius)."
+  },
+  {
+   "id": "lei",
+   "estrutura": "lamina-elastica-interna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4688,
+      0.6035
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.456,
+    0.59,
+    0.476,
+    0.61
+   ]
+  },
+  {
+   "id": "lee",
+   "estrutura": "lamina-elastica-externa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4612,
+      0.5985
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.456,
+    0.59,
+    0.476,
+    0.61
+   ]
+  },
+  {
+   "id": "media",
+   "estrutura": "tunica-media",
+   "rotulo": "Média de músculo liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4648,
+      0.6015
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.456,
+    0.59,
+    0.476,
+    0.61
+   ]
+  },
+  {
+   "id": "adventicia",
+   "estrutura": "tunica-adventicia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4585,
+      0.593
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.456,
+    0.59,
+    0.476,
+    0.61
+   ]
+  },
+  {
+   "id": "miocardio",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Miocárdio (amarelo)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.575
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.43,
+    0.57,
+    0.47,
+    0.61
+   ]
+  }
+ ]
+}

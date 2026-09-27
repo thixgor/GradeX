@@ -1,0 +1,90 @@
+{
+ "slug": "nervo-periferico-osmio-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "no",
+   "estrutura": "no-de-ranvier",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2482,
+      0.3568
+     ],
+     "angulo": 90
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1896,
+      0.3348
+     ],
+     "angulo": 300
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6287,
+      0.2722
+     ],
+     "angulo": 45
+    }
+   ],
+   "nota": "Preparação dissociada (fibras separadas com agulha após o ósmio): cada fibra aparece inteira, e a mielina se interrompe a intervalos regulares."
+  },
+  {
+   "id": "internodo",
+   "estrutura": "internodo",
+   "rotulo": "Internodo: segmento mielinizado por uma única célula de Schwann",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.2288,
+       0.3494
+      ],
+      [
+       0.2477,
+       0.3566
+      ],
+      [
+       0.2477,
+       0.3588
+      ],
+      [
+       0.2288,
+       0.3516
+      ]
+     ]
+    }
+   ],
+   "vista": [
+    0.2,
+    0.34,
+    0.26,
+    0.37
+   ]
+  },
+  {
+   "id": "fibra",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Fibra mielinizada isolada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.3715
+     ],
+     "angulo": 270
+    }
+   ]
+  }
+ ]
+}

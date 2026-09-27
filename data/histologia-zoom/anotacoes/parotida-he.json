@@ -1,0 +1,31 @@
+{
+ "slug": "parotida-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "seroso",
+   "estrutura": "acino-seroso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4075,
+      0.5175
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.51,
+    0.415,
+    0.525
+   ],
+   "nota": "Parótida: glândula puramente serosa — ácinos de células piramidais com núcleo redondo basal e citoplasma apical granuloso."
+  }
+ ]
+}

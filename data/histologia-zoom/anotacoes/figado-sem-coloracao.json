@@ -1,0 +1,32 @@
+{
+ "slug": "figado-sem-coloracao",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "rotulo": "Placas de hepatócitos (sem coloração: só contraste óptico)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.32
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.3,
+    0.4,
+    0.35
+   ],
+   "nota": "Corte sem corante: a arquitetura aparece só pelo contraste de fase/refração — um lembrete de por que a histologia depende das colorações."
+  }
+ ]
+}

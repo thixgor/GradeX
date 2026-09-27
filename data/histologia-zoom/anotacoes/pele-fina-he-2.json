@@ -1,0 +1,71 @@
+{
+ "slug": "pele-fina-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3668,
+      0.138
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.11,
+    0.39,
+    0.17
+   ],
+   "nota": "Pele humana exposta ao sol, em fragmentos."
+  },
+  {
+   "id": "eretor",
+   "estrutura": "musculo-eretor-do-pelo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3795,
+      0.15
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.11,
+    0.39,
+    0.17
+   ]
+  },
+  {
+   "id": "derme",
+   "estrutura": "derme-reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.16
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.11,
+    0.39,
+    0.17
+   ]
+  }
+ ]
+}

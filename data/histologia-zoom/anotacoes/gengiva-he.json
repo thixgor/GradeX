@@ -1,0 +1,53 @@
+{
+ "slug": "gengiva-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio gengival (paraqueratinizado), com cristas longas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.215
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.45,
+    0.15,
+    0.65,
+    0.35
+   ],
+   "nota": "Gengiva de cão: mucosa mastigatória, com epitélio espesso e queratinizado e lâmina própria densa presa ao osso alveolar."
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria densa (conjuntivo denso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2,
+      0.3
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.1,
+    0.1,
+    0.4,
+    0.4
+   ]
+  }
+ ]
+}

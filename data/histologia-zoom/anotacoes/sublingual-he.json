@@ -1,0 +1,51 @@
+{
+ "slug": "sublingual-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Veia no septo, com sangue",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4305,
+      0.655
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.64,
+    0.435,
+    0.665
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4232,
+      0.6466
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.64,
+    0.435,
+    0.665
+   ]
+  }
+ ]
+}

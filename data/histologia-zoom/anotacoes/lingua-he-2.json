@@ -1,0 +1,52 @@
+{
+ "slug": "lingua-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "papila",
+   "estrutura": "papila-filiforme",
+   "rotulo": "Papila filiforme em corte transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0905,
+      0.339
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.05,
+    0.3,
+    0.13,
+    0.38
+   ],
+   "nota": "Coloração pálida; as papilas filiformes aparecem como anéis de epitélio cortados em várias alturas."
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1195,
+      0.342
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.05,
+    0.3,
+    0.13,
+    0.38
+   ]
+  }
+ ]
+}

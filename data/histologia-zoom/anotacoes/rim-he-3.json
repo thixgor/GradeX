@@ -1,0 +1,54 @@
+{
+ "slug": "rim-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "corpusculo",
+   "estrutura": "corpusculo-renal",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.1152,
+      0.2405
+     ],
+     "raios": [
+      0.0038,
+      0.0038
+     ]
+    }
+   ],
+   "vista": [
+    0.11,
+    0.235,
+    0.125,
+    0.25
+   ],
+   "nota": "Rim humano (GTEx): glomérulo com o espaço de Bowman e túbulos contorcidos em volta."
+  },
+  {
+   "id": "proximal",
+   "estrutura": "tubulo-contorcido-proximal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1225,
+      0.2465
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.11,
+    0.235,
+    0.125,
+    0.25
+   ]
+  }
+ ]
+}

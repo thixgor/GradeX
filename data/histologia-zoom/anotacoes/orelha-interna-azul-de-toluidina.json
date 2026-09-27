@@ -1,0 +1,53 @@
+{
+ "slug": "orelha-interna-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "nervo",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Nervo coclear no modíolo: fibras mielinizadas em corte transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.628,
+      0.81
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.6,
+    0.78,
+    0.66,
+    0.84
+   ],
+   "nota": "Corte semifino da cóclea: osso da cápsula ótica (azul), rampas cheias de perilinfa e, no eixo (modíolo), o nervo coclear."
+  },
+  {
+   "id": "osso",
+   "estrutura": "osso-cortical",
+   "rotulo": "Osso da cápsula ótica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.4
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.42,
+    0.3,
+    0.6,
+    0.48
+   ]
+  }
+ ]
+}

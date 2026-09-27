@@ -1,0 +1,108 @@
+{
+ "slug": "cortex-cerebral-prata",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "piramidal",
+   "estrutura": "neuronio-piramidal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5505,
+      0.505
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5655,
+      0.408
+     ],
+     "angulo": 180
+    }
+   ],
+   "nota": "A prata impregna só uma fração dos neurônios, mas por inteiro: corpo, dendritos e início do axônio aparecem negros sobre o fundo claro."
+  },
+  {
+   "id": "dendrito",
+   "estrutura": "dendrito",
+   "rotulo": "Dendritos do neurônio, voltados para a superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.53,
+      0.4625
+     ],
+     "angulo": 90
+    }
+   ]
+  },
+  {
+   "id": "superficie",
+   "estrutura": "glia-limitans",
+   "rotulo": "Superfície do córtex (glia limitante)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.438,
+      0.4
+     ],
+     "angulo": 180
+    }
+   ]
+  },
+  {
+   "id": "meninges",
+   "estrutura": "pia-mater",
+   "rotulo": "Leptomeninges (pia-máter e aracnoide) descoladas da superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.403,
+      0.41
+     ],
+     "angulo": 0
+    }
+   ]
+  },
+  {
+   "id": "vaso-meninge",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso do espaço subaracnóideo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.433,
+      0.345
+     ],
+     "angulo": 45
+    }
+   ]
+  },
+  {
+   "id": "vaso-cortical",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso penetrando o córtex, com espaço perivascular claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5295,
+      0.3755
+     ],
+     "angulo": 270
+    }
+   ]
+  }
+ ]
+}

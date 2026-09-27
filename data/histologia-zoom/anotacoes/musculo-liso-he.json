@@ -1,0 +1,134 @@
+{
+ "slug": "musculo-liso-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "celula",
+   "estrutura": "celula-muscular-lisa",
+   "rotulo": "Célula muscular lisa: núcleo alongado e central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4652,
+      0.3131
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.455,
+    0.305,
+    0.478,
+    0.328
+   ],
+   "nota": "Parede da bexiga: o detrusor é formado por feixes de músculo liso cortados em vários planos, separados por conjuntivo."
+  },
+  {
+   "id": "feixe",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Feixe de músculo liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3955,
+      0.105
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.38,
+    0.09,
+    0.41,
+    0.12
+   ]
+  },
+  {
+   "id": "urotelio",
+   "estrutura": "urotelio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6566,
+      0.535
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.64,
+    0.52,
+    0.67,
+    0.55
+   ]
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.662,
+      0.527
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.64,
+    0.52,
+    0.67,
+    0.55
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6584,
+      0.5277
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.645,
+    0.52,
+    0.665,
+    0.535
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos congestos da adventícia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.353,
+      0.176
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.14,
+    0.42,
+    0.22
+   ]
+  }
+ ]
+}

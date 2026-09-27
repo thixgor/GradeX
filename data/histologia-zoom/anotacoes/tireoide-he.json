@@ -1,0 +1,54 @@
+{
+ "slug": "tireoide-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-tireoidiano",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.415,
+      0.2242
+     ],
+     "raios": [
+      0.0045,
+      0.0042
+     ]
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.43,
+    0.23
+   ],
+   "nota": "Tireoide: folículos de epitélio simples cúbico cheios de coloide (tireoglobulina), a reserva extracelular de hormônio."
+  },
+  {
+   "id": "coloide",
+   "estrutura": "coloide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.415,
+      0.2235
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.43,
+    0.23
+   ]
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+{
+ "slug": "papilas-linguais-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "valada",
+   "estrutura": "papila-valada",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.64,
+      0.625
+     ],
+     "raios": [
+      0.11,
+      0.12
+     ]
+    }
+   ],
+   "vista": [
+    0.5,
+    0.4,
+    0.9,
+    0.8
+   ]
+  },
+  {
+   "id": "ebner",
+   "estrutura": "glandula-de-von-ebner",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6016,
+      0.4895
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.55,
+    0.44,
+    0.65,
+    0.54
+   ]
+  }
+ ]
+}

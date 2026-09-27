@@ -1,0 +1,73 @@
+{
+ "slug": "mitose-meristema-feulgen-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "metafase",
+   "estrutura": "metafase",
+   "rotulo": "Metáfase vista de lado: cromossomos na placa equatorial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4812,
+      0.5096
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.41,
+    0.495,
+    0.5,
+    0.535
+   ],
+   "nota": "Neste meristema as células são pequenas e o índice mitótico é mais baixo que na outra lâmina; procure figuras com a cromatina em bastões, sem contorno nuclear."
+  },
+  {
+   "id": "profase",
+   "estrutura": "profase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4205,
+      0.5136
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.41,
+    0.495,
+    0.5,
+    0.535
+   ]
+  },
+  {
+   "id": "interfase",
+   "estrutura": "nucleo-interfasico",
+   "rotulo": "Núcleo em interfase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4262,
+      0.5378
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.41,
+    0.495,
+    0.5,
+    0.535
+   ]
+  }
+ ]
+}

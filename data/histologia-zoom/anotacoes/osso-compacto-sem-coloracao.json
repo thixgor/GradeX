@@ -1,0 +1,103 @@
+{
+ "slug": "osso-compacto-sem-coloracao",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "havers",
+   "estrutura": "canal-de-havers",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.271,
+      0.289
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.587,
+      0.325
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.15,
+    0.17,
+    0.4,
+    0.42
+   ],
+   "nota": "Osso desgastado, sem coloração: tudo o que é cavidade (canais, lacunas, canalículos) aparece escuro, cheio de ar e resíduo do polimento."
+  },
+  {
+   "id": "osteon",
+   "estrutura": "osteon",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.264,
+      0.3
+     ],
+     "raios": [
+      0.085,
+      0.088
+     ]
+    }
+   ],
+   "vista": [
+    0.15,
+    0.19,
+    0.38,
+    0.41
+   ]
+  },
+  {
+   "id": "lacuna",
+   "estrutura": "osteocito",
+   "rotulo": "Lacuna de osteócito (vazia) com canalículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.304,
+      0.295
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.27,
+    0.26,
+    0.34,
+    0.33
+   ]
+  },
+  {
+   "id": "cimentante",
+   "estrutura": "linha-cimentante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.348,
+      0.295
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.28,
+    0.22,
+    0.42,
+    0.36
+   ]
+  }
+ ]
+}

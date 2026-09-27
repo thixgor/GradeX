@@ -1,0 +1,85 @@
+{
+ "slug": "fibrocartilagem-tricromico-azul-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "condrocito",
+   "estrutura": "condrocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7208,
+      0.2008
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.62,
+    0.1,
+    0.82,
+    0.3
+   ]
+  },
+  {
+   "id": "fileira",
+   "estrutura": "condrocitos-em-fileira",
+   "rotulo": "Condrócitos alinhados em fileira entre os feixes",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.69,
+       0.18
+      ],
+      [
+       0.8,
+       0.185
+      ],
+      [
+       0.8,
+       0.225
+      ],
+      [
+       0.69,
+       0.22
+      ]
+     ]
+    }
+   ],
+   "vista": [
+    0.62,
+    0.1,
+    0.85,
+    0.3
+   ]
+  },
+  {
+   "id": "colageno",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Feixes de colágeno tipo I (azuis), paralelos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.71,
+      0.143
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.62,
+    0.08,
+    0.82,
+    0.28
+   ]
+  }
+ ]
+}

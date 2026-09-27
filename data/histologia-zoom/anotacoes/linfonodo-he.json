@@ -1,0 +1,85 @@
+{
+ "slug": "linfonodo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "capsula",
+   "estrutura": "capsula-do-linfonodo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2884,
+      0.191
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.27,
+    0.18,
+    0.34,
+    0.25
+   ]
+  },
+  {
+   "id": "seio",
+   "estrutura": "seio-subcapsular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.301,
+      0.204
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.27,
+    0.18,
+    0.34,
+    0.25
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-linfoide",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.3068,
+      0.226
+     ],
+     "raios": [
+      0.016,
+      0.014
+     ]
+    },
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.366,
+      0.4
+     ],
+     "raios": [
+      0.018,
+      0.016
+     ]
+    }
+   ],
+   "vista": [
+    0.27,
+    0.18,
+    0.34,
+    0.25
+   ],
+   "nota": "Linfonodo em HE pálido: os folículos do córtex se reconhecem pela borda escura (manto) em volta do centro germinativo claro."
+  }
+ ]
+}

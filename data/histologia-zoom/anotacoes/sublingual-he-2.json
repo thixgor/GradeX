@@ -1,0 +1,31 @@
+{
+ "slug": "sublingual-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4495,
+      0.651
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.64,
+    0.47,
+    0.67
+   ],
+   "nota": "Predomínio de ácinos mucosos, claros e espumosos."
+  }
+ ]
+}

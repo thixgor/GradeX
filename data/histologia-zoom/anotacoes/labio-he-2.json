@@ -1,0 +1,96 @@
+{
+ "slug": "labio-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandula",
+   "estrutura": "glandula-salivar-labial",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.6,
+      0.29
+     ],
+     "raios": [
+      0.05,
+      0.07
+     ]
+    }
+   ],
+   "vista": [
+    0.5,
+    0.18,
+    0.7,
+    0.42
+   ],
+   "nota": "O lábio tem três faces: pele (com pelos e glândulas), zona vermelha (epitélio fino, sem anexos) e mucosa oral (epitélio espesso não queratinizado com glândulas labiais); no centro, o músculo orbicular da boca."
+  },
+  {
+   "id": "orbicular",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo orbicular da boca (esquelético)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.25
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.15,
+    0.55,
+    0.35
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.547,
+      0.965
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.8,
+    0.62,
+    1.02
+   ]
+  },
+  {
+   "id": "mucosa",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio da mucosa oral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.886,
+      0.64
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.78,
+    0.55,
+    0.95,
+    0.75
+   ]
+  }
+ ]
+}

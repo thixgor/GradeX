@@ -1,0 +1,139 @@
+{
+ "slug": "epifise-osso-longo-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "osteon",
+   "estrutura": "osteon",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.6534,
+      0.2332
+     ],
+     "raios": [
+      0.0042,
+      0.0042
+     ]
+    }
+   ],
+   "vista": [
+    0.648,
+    0.228,
+    0.668,
+    0.248
+   ],
+   "nota": "Corte transversal da diáfise: o anel todo é osso compacto, formado por ósteons. O azul de toluidina realça as lamelas, as linhas cimentantes e os canalículos."
+  },
+  {
+   "id": "havers",
+   "estrutura": "canal-de-havers",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6534,
+      0.2332
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.648,
+    0.228,
+    0.668,
+    0.248
+   ]
+  },
+  {
+   "id": "osteocito",
+   "estrutura": "osteocito",
+   "rotulo": "Lacuna do osteócito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.658,
+      0.2397
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.6555,
+    0.2365,
+    0.6615,
+    0.2425
+   ]
+  },
+  {
+   "id": "canaliculos",
+   "estrutura": "canaliculo-osseo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6572,
+      0.2402
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6555,
+    0.2365,
+    0.6615,
+    0.2425
+   ]
+  },
+  {
+   "id": "cimentante",
+   "estrutura": "linha-cimentante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6575,
+      0.2332
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.648,
+    0.228,
+    0.668,
+    0.248
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Canal vascular largo com vaso (ramo nutrício)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.7085,
+      0.262
+     ],
+     "raios": [
+      0.011,
+      0.012
+     ]
+    }
+   ],
+   "vista": [
+    0.68,
+    0.235,
+    0.735,
+    0.29
+   ]
+  }
+ ]
+}

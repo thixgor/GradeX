@@ -1,0 +1,52 @@
+{
+ "slug": "glandula-pineal-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "capsula",
+   "estrutura": "pia-mater",
+   "rotulo": "Cápsula de pia-máter",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.065
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.2,
+    0.0,
+    0.6,
+    0.2
+   ]
+  },
+  {
+   "id": "pinealocitos",
+   "estrutura": "pinealocito",
+   "rotulo": "Parênquima de pinealócitos, muito celular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.365,
+      0.35
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "slug": "rim-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "arteria",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Artéria interlobular do córtex",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.3383,
+      0.5213
+     ],
+     "raios": [
+      0.0042,
+      0.0042
+     ]
+    }
+   ],
+   "vista": [
+    0.33,
+    0.5,
+    0.37,
+    0.54
+   ]
+  },
+  {
+   "id": "cortex",
+   "estrutura": "cortex-renal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.355,
+      0.53
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.5,
+    0.37,
+    0.54
+   ]
+  }
+ ]
+}

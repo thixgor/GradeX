@@ -1,0 +1,55 @@
+{
+ "slug": "figado-van-gieson",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "portal",
+   "estrutura": "espaco-porta",
+   "rotulo": "Espaço-porta: colágeno vermelho no van Gieson",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.401,
+      0.583
+     ],
+     "raios": [
+      0.009,
+      0.009
+     ]
+    }
+   ],
+   "vista": [
+    0.38,
+    0.56,
+    0.41,
+    0.59
+   ],
+   "nota": "Van Gieson: colágeno vermelho, hepatócitos amarelos. Só o espaço-porta e a parede dos vasos têm colágeno."
+  },
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.57
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.38,
+    0.56,
+    0.41,
+    0.59
+   ]
+  }
+ ]
+}

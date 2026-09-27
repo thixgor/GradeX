@@ -1,0 +1,94 @@
+{
+ "slug": "pulmao-orceina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Placa de cartilagem do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3326,
+      0.2947
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.3,
+    0.28,
+    0.38,
+    0.36
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Mucosa pregueada do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.323,
+      0.3137
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.3,
+    0.28,
+    0.38,
+    0.36
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "lamina-elastica",
+   "rotulo": "Artéria pulmonar: fibras elásticas escuras na parede (orceína)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4126,
+      0.482
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.36,
+    0.44,
+    0.44,
+    0.52
+   ]
+  },
+  {
+   "id": "alveolo",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Alvéolos com fibras elásticas finas nos septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3684,
+      0.4926
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.36,
+    0.44,
+    0.44,
+    0.52
+   ]
+  }
+ ]
+}

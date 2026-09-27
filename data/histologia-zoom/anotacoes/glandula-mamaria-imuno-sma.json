@@ -1,0 +1,52 @@
+{
+ "slug": "glandula-mamaria-imuno-sma",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mioepitelio",
+   "estrutura": "celula-mioepitelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3447,
+      0.4184
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ],
+   "nota": "Imuno-histoquímica para actina de músculo liso (SMA): as células mioepiteliais em volta de ductos e alvéolos ficam marrons; a parede dos vasos também."
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ductos pequenos com anel mioepitelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4184,
+      0.35
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

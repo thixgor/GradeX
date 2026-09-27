@@ -1,0 +1,136 @@
+{
+ "slug": "germe-dentario-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "germe",
+   "estrutura": "germe-dentario",
+   "rotulo": "Germe dentário em fase de campânula tardia (aposição)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.31,
+      1.06
+     ],
+     "raios": [
+      0.045,
+      0.055
+     ]
+    }
+   ],
+   "vista": [
+    0.25,
+    1.0,
+    0.4,
+    1.15
+   ],
+   "nota": "Da papila para fora: odontoblastos, dentina (rosa), esmalte (mais escuro) e ameloblastos colunares. A fenda clara entre dentina e esmalte é artefato de retração."
+  },
+  {
+   "id": "papila",
+   "estrutura": "papila-dentaria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3186,
+      1.0433
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.315,
+    1.03,
+    0.335,
+    1.05
+   ]
+  },
+  {
+   "id": "dentina",
+   "estrutura": "dentina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3261,
+      1.0389
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.315,
+    1.03,
+    0.335,
+    1.05
+   ]
+  },
+  {
+   "id": "esmalte",
+   "estrutura": "esmalte",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3297,
+      1.0438
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.315,
+    1.03,
+    0.335,
+    1.05
+   ]
+  },
+  {
+   "id": "ameloblastos",
+   "estrutura": "ameloblasto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3328,
+      1.0447
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.315,
+    1.03,
+    0.335,
+    1.05
+   ]
+  },
+  {
+   "id": "osso",
+   "estrutura": "trabecula-ossea",
+   "rotulo": "Osso da mandíbula em formação (intramembranosa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.54
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.5,
+    0.43,
+    0.6
+   ]
+  }
+ ]
+}

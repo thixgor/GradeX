@@ -1,0 +1,51 @@
+{
+ "slug": "ovario-he-6",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "estroma",
+   "estrutura": "estroma-ovariano",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3579,
+      0.3737
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.35,
+    0.38,
+    0.38
+   ],
+   "nota": "Coloração pálida: nesta panorâmica marcamos só o que se confirma com segurança — estroma ovariano de células fusiformes e vasos."
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3717,
+      0.3618
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.35,
+    0.35,
+    0.38,
+    0.38
+   ]
+  }
+ ]
+}

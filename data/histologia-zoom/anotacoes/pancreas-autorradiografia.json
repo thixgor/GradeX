@@ -1,0 +1,59 @@
+{
+ "slug": "pancreas-autorradiografia",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "prata",
+   "estrutura": "graos-de-prata",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3355,
+      0.1985
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3452,
+      0.2071
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.19,
+    0.35,
+    0.21
+   ],
+   "nota": "Autorradiografia: os grãos de prata pretos marcam a proteína recém-sintetizada, marcada com aminoácido radioativo."
+  },
+  {
+   "id": "acino",
+   "estrutura": "acino-pancreatico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.26
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.5,
+    0.3
+   ]
+  }
+ ]
+}

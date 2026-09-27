@@ -1,0 +1,30 @@
+{
+ "slug": "pancreas-autorradiografia-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "zimogenio",
+   "estrutura": "graos-de-zimogenio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3188,
+      0.3985
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.36,
+    0.4,
+    0.46
+   ]
+  }
+ ]
+}

@@ -1,0 +1,135 @@
+{
+ "slug": "ovario-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "primario",
+   "estrutura": "foliculo-primario",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.2047,
+      0.5842
+     ],
+     "raios": [
+      0.0055,
+      0.0055
+     ]
+    }
+   ],
+   "vista": [
+    0.19,
+    0.55,
+    0.23,
+    0.59
+   ],
+   "nota": "Córtex ovariano: folículos em várias fases dentro do estroma de células fusiformes; o folículo primário tem uma camada de células foliculares cúbicas em volta do ovócito."
+  },
+  {
+   "id": "ovocito",
+   "estrutura": "ovocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2031,
+      0.5842
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.19,
+    0.55,
+    0.23,
+    0.59
+   ]
+  },
+  {
+   "id": "superficie",
+   "estrutura": "epitelio-superficial-ovario",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1953,
+      0.5656
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.19,
+    0.55,
+    0.23,
+    0.59
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-ovariano",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2205,
+      0.562
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.19,
+    0.55,
+    0.23,
+    0.59
+   ]
+  },
+  {
+   "id": "secundario",
+   "estrutura": "foliculo-secundario",
+   "rotulo": "Folículo em crescimento: cavidades de líquido folicular se formando entre as células da granulosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2244,
+      0.7067
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.17,
+    0.64,
+    0.27,
+    0.74
+   ]
+  },
+  {
+   "id": "granulosa",
+   "estrutura": "granulosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1878,
+      0.6844
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.17,
+    0.64,
+    0.27,
+    0.74
+   ]
+  }
+ ]
+}

@@ -1,0 +1,59 @@
+{
+ "slug": "osso-compacto-sem-coloracao-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "havers",
+   "estrutura": "canal-de-havers",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.593,
+      0.221
+     ],
+     "angulo": 225
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.32
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.45,
+    0.1,
+    0.75,
+    0.35
+   ]
+  },
+  {
+   "id": "canaliculos",
+   "estrutura": "canaliculo-osseo",
+   "rotulo": "Canalículos radiais, do canal de Havers para as lacunas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.671,
+      0.264
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.55,
+    0.15,
+    0.75,
+    0.33
+   ]
+  }
+ ]
+}

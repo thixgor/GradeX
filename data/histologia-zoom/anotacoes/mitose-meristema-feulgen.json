@@ -1,0 +1,92 @@
+{
+ "slug": "mitose-meristema-feulgen",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "interfase",
+   "estrutura": "nucleo-interfasico",
+   "rotulo": "Núcleo em interfase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4234,
+      0.4272
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4095,
+    0.4225,
+    0.4355,
+    0.4405
+   ],
+   "nota": "A reação de Feulgen cora só o DNA (magenta); citoplasma e parede celular ficam quase incolores. Esta região do meristema tem várias células em divisão lado a lado."
+  },
+  {
+   "id": "profase",
+   "estrutura": "profase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4198,
+      0.4278
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4095,
+    0.4225,
+    0.4355,
+    0.4405
+   ]
+  },
+  {
+   "id": "prometafase",
+   "estrutura": "prometafase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4246,
+      0.4281
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4095,
+    0.4225,
+    0.4355,
+    0.4405
+   ]
+  },
+  {
+   "id": "anafase",
+   "estrutura": "anafase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.416,
+      0.4379
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4095,
+    0.4225,
+    0.4355,
+    0.4405
+   ]
+  }
+ ]
+}

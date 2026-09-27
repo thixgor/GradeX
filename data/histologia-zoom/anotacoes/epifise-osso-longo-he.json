@@ -1,0 +1,216 @@
+{
+ "slug": "epifise-osso-longo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "disco",
+   "estrutura": "disco-epifisario",
+   "rotulo": "Disco (placa) epifisário de crescimento",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.3,
+       0.388
+      ],
+      [
+       0.35,
+       0.399
+      ],
+      [
+       0.4,
+       0.405
+      ],
+      [
+       0.4,
+       0.43
+      ],
+      [
+       0.35,
+       0.429
+      ],
+      [
+       0.3,
+       0.428
+      ]
+     ]
+    }
+   ],
+   "vista": [
+    0.28,
+    0.36,
+    0.42,
+    0.47
+   ],
+   "nota": "Osso em crescimento: a cartilagem do disco epifisário prolifera em colunas, hipertrofia, calcifica e é substituída por osso — é assim que o osso longo cresce em comprimento."
+  },
+  {
+   "id": "proliferativa",
+   "estrutura": "zona-proliferativa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3543,
+      0.407
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.335,
+    0.385,
+    0.365,
+    0.46
+   ]
+  },
+  {
+   "id": "hipertrofica",
+   "estrutura": "zona-hipertrofica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3533,
+      0.4225
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.335,
+    0.385,
+    0.365,
+    0.46
+   ]
+  },
+  {
+   "id": "calcificacao",
+   "estrutura": "zona-de-calcificacao",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3515,
+      0.429
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.335,
+    0.385,
+    0.365,
+    0.46
+   ]
+  },
+  {
+   "id": "espongiosa",
+   "estrutura": "espongiosa-primaria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3503,
+      0.4425
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.335,
+    0.385,
+    0.365,
+    0.46
+   ]
+  },
+  {
+   "id": "placa-ossea",
+   "estrutura": "trabecula-ossea",
+   "rotulo": "Placa óssea do centro secundário, acima do disco",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3525,
+      0.392
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.335,
+    0.385,
+    0.365,
+    0.46
+   ]
+  },
+  {
+   "id": "centro-secundario",
+   "estrutura": "centro-de-ossificacao-secundario",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.28
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.18,
+    0.1,
+    0.47,
+    0.4
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem hialina da epífise (futura cartilagem articular)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.153
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.2,
+    0.1,
+    0.45,
+    0.25
+   ]
+  },
+  {
+   "id": "ligamento",
+   "estrutura": "conjuntivo-denso-modelado",
+   "rotulo": "Ligamento/tendão: conjuntivo denso modelado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8,
+      0.2
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.62,
+    0.1,
+    0.9,
+    0.36
+   ]
+  }
+ ]
+}

@@ -1,0 +1,212 @@
+{
+ "slug": "hipocampo-hematoxilina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "granular",
+   "estrutura": "camada-granular-giro-denteado",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.265,
+       0.37
+      ],
+      [
+       0.258,
+       0.45
+      ],
+      [
+       0.262,
+       0.53
+      ],
+      [
+       0.275,
+       0.6
+      ],
+      [
+       0.295,
+       0.655
+      ],
+      [
+       0.315,
+       0.705
+      ],
+      [
+       0.345,
+       0.755
+      ],
+      [
+       0.385,
+       0.805
+      ],
+      [
+       0.43,
+       0.835
+      ],
+      [
+       0.475,
+       0.845
+      ],
+      [
+       0.575,
+       0.81
+      ],
+      [
+       0.545,
+       0.755
+      ],
+      [
+       0.48,
+       0.7
+      ],
+      [
+       0.44,
+       0.685
+      ],
+      [
+       0.4,
+       0.662
+      ],
+      [
+       0.36,
+       0.62
+      ],
+      [
+       0.32,
+       0.55
+      ],
+      [
+       0.305,
+       0.47
+      ],
+      [
+       0.298,
+       0.37
+      ]
+     ]
+    }
+   ],
+   "nota": "Núcleo de microarranjo de 1 mm: mostra só um trecho do giro denteado, cortado pela borda do círculo."
+  },
+  {
+   "id": "granulosa",
+   "estrutura": "celula-granular-giro-denteado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4395,
+      0.736
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.41,
+    0.71,
+    0.47,
+    0.76
+   ]
+  },
+  {
+   "id": "molecular",
+   "estrutura": "camada-molecular-giro-denteado",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.172,
+       0.4
+      ],
+      [
+       0.255,
+       0.38
+      ],
+      [
+       0.255,
+       0.53
+      ],
+      [
+       0.27,
+       0.6
+      ],
+      [
+       0.29,
+       0.655
+      ],
+      [
+       0.31,
+       0.705
+      ],
+      [
+       0.335,
+       0.75
+      ],
+      [
+       0.315,
+       0.76
+      ],
+      [
+       0.26,
+       0.7
+      ],
+      [
+       0.215,
+       0.64
+      ],
+      [
+       0.18,
+       0.53
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "hilo",
+   "estrutura": "hilo-giro-denteado",
+   "rotulo": "Hilo (região polimórfica, CA4)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.395,
+      0.53
+     ],
+     "raios": [
+      0.075,
+      0.075
+     ]
+    }
+   ]
+  },
+  {
+   "id": "neuronio-hilo",
+   "estrutura": "neuronio-piramidal",
+   "rotulo": "Neurônio grande do hilo (célula musgosa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4339,
+      0.5731
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.555,
+    0.46,
+    0.59
+   ]
+  }
+ ]
+}

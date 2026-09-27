@@ -1,0 +1,73 @@
+{
+ "slug": "cordao-umbilical-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "veia",
+   "estrutura": "veia-umbilical",
+   "rotulo": "Vaso umbilical com parede muscular espessa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.165
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.45,
+    0.25
+   ],
+   "nota": "Cordão umbilical: dois ou três vasos de parede muscular espessa (duas artérias, uma veia) mergulhados na geleia de Wharton; não há vasa vasorum nem nervos."
+  },
+  {
+   "id": "wharton",
+   "estrutura": "geleia-de-wharton",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.3
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5,
+    0.2,
+    0.7,
+    0.4
+   ]
+  },
+  {
+   "id": "parede",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Parede muscular lisa do vaso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.625,
+      0.55
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6,
+    0.5,
+    0.7,
+    0.6
+   ]
+  }
+ ]
+}

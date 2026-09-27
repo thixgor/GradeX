@@ -1,0 +1,31 @@
+{
+ "slug": "pulmao-he-4",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "alveolo",
+   "estrutura": "alveolo-pulmonar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3376,
+      0.2568
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.328,
+    0.248,
+    0.352,
+    0.272
+   ],
+   "nota": "Parênquima pulmonar: a maior parte do corte são alvéolos — espaços vazios separados por septos finíssimos com capilares."
+  }
+ ]
+}

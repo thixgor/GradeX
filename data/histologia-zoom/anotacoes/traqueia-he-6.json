@@ -1,0 +1,53 @@
+{
+ "slug": "traqueia-he-6",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandula",
+   "estrutura": "glandula-seromucosa",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.18,
+      0.28
+     ],
+     "raios": [
+      0.05,
+      0.07
+     ]
+    }
+   ],
+   "vista": [
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      1.0
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.25,
+    0.7,
+    0.6,
+    1.2
+   ]
+  }
+ ]
+}

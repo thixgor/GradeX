@@ -1,0 +1,367 @@
+{
+ "slug": "medula-espinal-tionina-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "corno-anterior",
+   "estrutura": "corno-anterior",
+   "rotulo": "Corno anterior (coluna lateral de motoneurônios)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.08,
+       0.1
+      ],
+      [
+       0.3,
+       0.09
+      ],
+      [
+       0.4,
+       0.12
+      ],
+      [
+       0.42,
+       0.3
+      ],
+      [
+       0.38,
+       0.44
+      ],
+      [
+       0.24,
+       0.43
+      ],
+      [
+       0.12,
+       0.33
+      ],
+      [
+       0.075,
+       0.22
+      ]
+     ]
+    }
+   ],
+   "nota": "O campo mostra meia medula, com a linha média na borda superior: o canal central está no alto, o corno anterior à esquerda e o posterior descendo à direita."
+  },
+  {
+   "id": "motoneuronio",
+   "estrutura": "motoneuronio-alfa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1555,
+      0.182
+     ],
+     "angulo": 240
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1315,
+      0.137
+     ],
+     "angulo": 180
+    }
+   ]
+  },
+  {
+   "id": "nissl",
+   "estrutura": "corpusculos-de-nissl",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.121,
+      0.1395
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.105,
+    0.12,
+    0.14,
+    0.15
+   ]
+  },
+  {
+   "id": "nucleo",
+   "estrutura": "nucleo-do-neuronio",
+   "rotulo": "Núcleo claro (eucromático) do motoneurônio",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.1505,
+      0.1752
+     ],
+     "raios": [
+      0.0029,
+      0.0028
+     ]
+    }
+   ],
+   "vista": [
+    0.138,
+    0.16,
+    0.164,
+    0.19
+   ],
+   "nota": "Neste plano de corte o nucléolo não aparece; as manchas escuras na borda do núcleo são corpúsculos de Nissl."
+  },
+  {
+   "id": "satelite",
+   "estrutura": "celula-satelite-do-snc",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1428,
+      0.1685
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.135,
+    0.16,
+    0.165,
+    0.185
+   ]
+  },
+  {
+   "id": "retracao",
+   "estrutura": "retracao-pericelular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7065,
+      0.3015
+     ],
+     "angulo": 300
+    }
+   ],
+   "vista": [
+    0.69,
+    0.29,
+    0.73,
+    0.345
+   ]
+  },
+  {
+   "id": "corno-posterior",
+   "estrutura": "corno-posterior",
+   "rotulo": "Corno posterior (base)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.8,
+       0.48
+      ],
+      [
+       0.9,
+       0.47
+      ],
+      [
+       0.99,
+       0.55
+      ],
+      [
+       0.99,
+       0.8
+      ],
+      [
+       0.94,
+       0.79
+      ],
+      [
+       0.87,
+       0.68
+      ],
+      [
+       0.81,
+       0.57
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "canal",
+   "estrutura": "canal-central",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.706,
+      0.044
+     ],
+     "raios": [
+      0.034,
+      0.03
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ependima",
+   "estrutura": "ependima",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.677,
+      0.046
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.66,
+    0.02,
+    0.75,
+    0.075
+   ]
+  },
+  {
+   "id": "funiculo-anterior",
+   "estrutura": "funiculo-anterior",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.01,
+       0.01
+      ],
+      [
+       0.46,
+       0.01
+      ],
+      [
+       0.44,
+       0.075
+      ],
+      [
+       0.3,
+       0.08
+      ],
+      [
+       0.1,
+       0.085
+      ],
+      [
+       0.01,
+       0.11
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "funiculo-lateral",
+   "estrutura": "funiculo-lateral",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.02,
+       0.45
+      ],
+      [
+       0.2,
+       0.55
+      ],
+      [
+       0.45,
+       0.62
+      ],
+      [
+       0.62,
+       0.68
+      ],
+      [
+       0.74,
+       0.78
+      ],
+      [
+       0.8,
+       0.87
+      ],
+      [
+       0.02,
+       0.87
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "funiculo-posterior",
+   "estrutura": "funiculo-posterior",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.77,
+       0.01
+      ],
+      [
+       0.99,
+       0.01
+      ],
+      [
+       0.99,
+       0.4
+      ],
+      [
+       0.95,
+       0.39
+      ],
+      [
+       0.87,
+       0.29
+      ],
+      [
+       0.81,
+       0.19
+      ],
+      [
+       0.77,
+       0.09
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vaso-mediano",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso da linha média, à frente da comissura (provável ramo sulcal da artéria espinal anterior)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.537,
+      0.05
+     ],
+     "angulo": 300
+    }
+   ]
+  }
+ ]
+}

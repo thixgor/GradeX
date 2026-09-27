@@ -1,0 +1,80 @@
+{
+ "slug": "estomago-corpo-fundo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandula-gastrica-fundica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      0.5
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.48,
+    0.44,
+    0.52
+   ],
+   "nota": "Mucosa do corpo/fundo: glândulas retas e longas, com células parietais (rosa, citoplasma claro) e principais (basófilas) — as que produzem HCl e pepsinogênio."
+  },
+  {
+   "id": "parietal",
+   "estrutura": "celula-parietal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4079,
+      0.4644
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4099,
+      0.4666
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.405,
+    0.462,
+    0.411,
+    0.468
+   ]
+  },
+  {
+   "id": "mucosa",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Mucosa gástrica em pregas (rugas)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.47
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.35,
+    0.45,
+    0.55,
+    0.65
+   ]
+  }
+ ]
+}

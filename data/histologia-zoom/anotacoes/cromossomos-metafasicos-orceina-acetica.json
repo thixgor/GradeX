@@ -1,0 +1,80 @@
+{
+ "slug": "cromossomos-metafasicos-orceina-acetica",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 1
+ },
+ "estruturas": [
+  {
+   "id": "metafase",
+   "estrutura": "metafase",
+   "rotulo": "Metáfase espalhada (cromossomos soltos da célula rompida)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.6213,
+      0.1665
+     ],
+     "raios": [
+      0.021,
+      0.022
+     ]
+    },
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.809,
+      0.1775
+     ],
+     "raios": [
+      0.027,
+      0.034
+     ]
+    }
+   ],
+   "nota": "Preparação citogenética: as células em cultura são paradas em metáfase (colchicina), incham em solução hipotônica e são espalhadas na lâmina, liberando os cromossomos."
+  },
+  {
+   "id": "cromossomo",
+   "estrutura": "cromossomo-metafasico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6285,
+      0.1827
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.615,
+    0.172,
+    0.64,
+    0.192
+   ]
+  },
+  {
+   "id": "interfase",
+   "estrutura": "nucleo-interfasico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4405,
+      0.148
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.135,
+    0.455,
+    0.165
+   ]
+  }
+ ]
+}

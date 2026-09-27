@@ -1,0 +1,52 @@
+{
+ "slug": "rim-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "proximal",
+   "estrutura": "tubulo-contorcido-proximal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4537,
+      0.1442
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.12,
+    0.48,
+    0.16
+   ],
+   "nota": "Corte semifino: nas células dos túbulos proximais aparecem gotas de reabsorção e lisossomos (grânulos escuros) — as proteínas filtradas são reabsorvidas por endocitose e digeridas."
+  },
+  {
+   "id": "lisossomo",
+   "estrutura": "lisossomo",
+   "rotulo": "Lisossomo / gota de reabsorção",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4656,
+      0.1387
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.12,
+    0.48,
+    0.16
+   ]
+  }
+ ]
+}

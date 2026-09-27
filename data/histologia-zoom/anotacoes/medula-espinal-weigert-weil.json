@@ -1,0 +1,231 @@
+{
+ "slug": "medula-espinal-weigert-weil",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "medula",
+   "estrutura": "cone-medular",
+   "rotulo": "Medula no nível do cone medular",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.495,
+      0.545
+     ],
+     "raios": [
+      0.138,
+      0.147
+     ]
+    }
+   ],
+   "nota": "Corte baixo da medula: o cordão é pequeno e fica cercado pelas raízes da cauda equina, todas dentro do saco dural."
+  },
+  {
+   "id": "branca",
+   "estrutura": "substancia-branca",
+   "rotulo": "Substância branca: fibras mielinizadas em corte transversal (anéis escuros)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.385,
+      0.5
+     ],
+     "angulo": 0
+    }
+   ]
+  },
+  {
+   "id": "cinzenta",
+   "estrutura": "substancia-cinzenta",
+   "rotulo": "Substância cinzenta: sem anéis de mielina, neurópilo homogêneo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.575
+     ],
+     "angulo": 300
+    }
+   ]
+  },
+  {
+   "id": "raiz",
+   "estrutura": "raiz-nervosa-espinal",
+   "rotulo": "Raiz da cauda equina",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.577,
+      0.368
+     ],
+     "raios": [
+      0.107,
+      0.054
+     ]
+    }
+   ],
+   "nota": "Cada perfil em volta da medula é uma raiz (anterior ou posterior) descendo até o forame da sua vértebra."
+  },
+  {
+   "id": "fibra",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.572,
+      0.3565
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.545,
+    0.335,
+    0.605,
+    0.38
+   ]
+  },
+  {
+   "id": "ganglio",
+   "estrutura": "ganglio-sensitivo",
+   "rotulo": "Gânglio sensitivo (da raiz posterior)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.64,
+       0.8
+      ],
+      [
+       0.7,
+       0.7
+      ],
+      [
+       0.76,
+       0.62
+      ],
+      [
+       0.82,
+       0.595
+      ],
+      [
+       0.87,
+       0.63
+      ],
+      [
+       0.885,
+       0.72
+      ],
+      [
+       0.84,
+       0.8
+      ],
+      [
+       0.76,
+       0.85
+      ],
+      [
+       0.68,
+       0.85
+      ]
+     ]
+    },
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.23,
+       0.24
+      ],
+      [
+       0.3,
+       0.17
+      ],
+      [
+       0.4,
+       0.165
+      ],
+      [
+       0.47,
+       0.22
+      ],
+      [
+       0.47,
+       0.29
+      ],
+      [
+       0.38,
+       0.34
+      ],
+      [
+       0.3,
+       0.41
+      ],
+      [
+       0.24,
+       0.38
+      ],
+      [
+       0.22,
+       0.3
+      ]
+     ]
+    }
+   ],
+   "nota": "Fica fora do saco dural, no forame intervertebral."
+  },
+  {
+   "id": "pseudounipolar",
+   "estrutura": "neuronio-pseudounipolar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.252,
+      0.3085
+     ],
+     "angulo": 90
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2627,
+      0.318
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.225,
+    0.285,
+    0.3,
+    0.355
+   ]
+  },
+  {
+   "id": "dural",
+   "estrutura": "dura-mater",
+   "rotulo": "Saco dural (dura-máter com a aracnoide)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.207,
+      0.585
+     ],
+     "angulo": 0
+    }
+   ]
+  }
+ ]
+}

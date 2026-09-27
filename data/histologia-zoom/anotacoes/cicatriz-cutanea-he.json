@@ -1,0 +1,84 @@
+{
+ "slug": "cicatriz-cutanea-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.38,
+      0.175
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.45,
+    0.25
+   ]
+  },
+  {
+   "id": "sebacea",
+   "estrutura": "glandula-sebacea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8175,
+      0.179
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.75,
+    0.1,
+    0.95,
+    0.3
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.8955,
+      0.189
+     ],
+     "raios": [
+      0.012,
+      0.02
+     ]
+    },
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.871,
+      0.245
+     ],
+     "raios": [
+      0.012,
+      0.014
+     ]
+    }
+   ],
+   "vista": [
+    0.75,
+    0.1,
+    0.95,
+    0.3
+   ]
+  }
+ ]
+}

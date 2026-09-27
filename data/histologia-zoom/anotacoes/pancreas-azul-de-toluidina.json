@@ -1,0 +1,51 @@
+{
+ "slug": "pancreas-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "zimogenio",
+   "estrutura": "graos-de-zimogenio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3285,
+      0.3093
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.32,
+    0.3,
+    0.345,
+    0.325
+   ],
+   "nota": "Corte semifino: os grânulos de zimogênio (pró-enzimas digestivas) se acumulam no polo apical das células acinares, voltados para a luz."
+  },
+  {
+   "id": "acino",
+   "estrutura": "acino-pancreatico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.338,
+      0.3
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.45,
+    0.4
+   ]
+  }
+ ]
+}

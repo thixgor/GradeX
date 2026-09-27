@@ -1,0 +1,31 @@
+{
+ "slug": "glandula-salivar-menor-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Ácinos mucosos da glândula salivar menor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4489,
+      0.2237
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.43,
+    0.2,
+    0.46,
+    0.23
+   ]
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "slug": "juncao-esofagogastrica-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa espessa (músculo liso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.35
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.7,
+    0.5
+   ]
+  },
+  {
+   "id": "mucosa",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Mucosa glandular (lado gástrico)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.62,
+      0.08
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.5,
+    0.0,
+    0.75,
+    0.2
+   ]
+  }
+ ]
+}

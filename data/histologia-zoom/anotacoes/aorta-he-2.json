@@ -1,0 +1,91 @@
+{
+ "slug": "aorta-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "intima",
+   "estrutura": "tunica-intima",
+   "rotulo": "Íntima espessada (celular, mais clara)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.162,
+      0.745
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.13,
+    0.72,
+    0.18,
+    0.77
+   ]
+  },
+  {
+   "id": "media",
+   "estrutura": "tunica-media",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.12,
+      0.735
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.08,
+    0.7,
+    0.18,
+    0.78
+   ]
+  },
+  {
+   "id": "adventicia",
+   "estrutura": "tunica-adventicia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.045,
+      0.745
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.02,
+    0.7,
+    0.12,
+    0.8
+   ]
+  },
+  {
+   "id": "vasa",
+   "estrutura": "vasa-vasorum",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.063,
+      0.781
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.03,
+    0.75,
+    0.1,
+    0.8
+   ]
+  }
+ ]
+}

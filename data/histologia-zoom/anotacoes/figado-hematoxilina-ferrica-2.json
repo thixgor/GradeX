@@ -1,0 +1,51 @@
+{
+ "slug": "figado-hematoxilina-ferrica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócito: núcleo redondo central com nucléolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4393,
+      0.0895
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.43,
+    0.08,
+    0.45,
+    0.1
+   ]
+  },
+  {
+   "id": "sinusoide",
+   "estrutura": "sinusoide-hepatico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4415,
+      0.0858
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.43,
+    0.08,
+    0.45,
+    0.1
+   ]
+  }
+ ]
+}

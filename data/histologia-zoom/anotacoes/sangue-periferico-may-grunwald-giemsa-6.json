@@ -1,0 +1,70 @@
+{
+ "slug": "sangue-periferico-may-grunwald-giemsa-6",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "neutrofilo",
+   "estrutura": "neutrofilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5009,
+      0.4014
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4995,
+    0.3995,
+    0.5045,
+    0.4035
+   ]
+  },
+  {
+   "id": "plaqueta",
+   "estrutura": "plaqueta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5011,
+      0.402
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4995,
+    0.3995,
+    0.5045,
+    0.4035
+   ]
+  },
+  {
+   "id": "hemacia",
+   "estrutura": "hemacia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5023,
+      0.4011
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4995,
+    0.3995,
+    0.5045,
+    0.4035
+   ]
+  }
+ ]
+}

@@ -1,0 +1,74 @@
+{
+ "slug": "figado-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "portal",
+   "estrutura": "espaco-porta",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.4605,
+      0.698
+     ],
+     "raios": [
+      0.009,
+      0.013
+     ]
+    }
+   ],
+   "vista": [
+    0.44,
+    0.68,
+    0.47,
+    0.71
+   ],
+   "nota": "Fígado: placas de hepatócitos separadas por sinusoides, irradiando da veia central; nos cantos dos lóbulos, espaços-porta com ramos da veia porta, artéria hepática e ducto biliar."
+  },
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4838,
+      0.6456
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.46,
+    0.64,
+    0.49,
+    0.67
+   ]
+  },
+  {
+   "id": "sinusoide",
+   "estrutura": "sinusoide-hepatico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4792,
+      0.6535
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.46,
+    0.64,
+    0.49,
+    0.67
+   ]
+  }
+ ]
+}

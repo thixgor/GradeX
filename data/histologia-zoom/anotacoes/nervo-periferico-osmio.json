@@ -1,0 +1,181 @@
+{
+ "slug": "nervo-periferico-osmio",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "fasciculo",
+   "estrutura": "fasciculo-nervoso",
+   "rotulo": "Fascículo nervoso (o maior dos vários deste nervo)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.27,
+       0.5
+      ],
+      [
+       0.3,
+       0.4
+      ],
+      [
+       0.38,
+       0.33
+      ],
+      [
+       0.5,
+       0.305
+      ],
+      [
+       0.62,
+       0.32
+      ],
+      [
+       0.7,
+       0.4
+      ],
+      [
+       0.72,
+       0.5
+      ],
+      [
+       0.7,
+       0.62
+      ],
+      [
+       0.62,
+       0.7
+      ],
+      [
+       0.5,
+       0.735
+      ],
+      [
+       0.38,
+       0.72
+      ],
+      [
+       0.3,
+       0.66
+      ],
+      [
+       0.27,
+       0.58
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "perineuro",
+   "estrutura": "perineuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2816,
+      0.465
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.25,
+    0.44,
+    0.32,
+    0.5
+   ]
+  },
+  {
+   "id": "epineuro",
+   "estrutura": "epineuro",
+   "rotulo": "Epineuro: conjuntivo denso entre e em volta dos fascículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.235,
+      0.37
+     ],
+     "angulo": 45
+    }
+   ]
+  },
+  {
+   "id": "fibra",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3078,
+      0.4504
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.29,
+    0.44,
+    0.32,
+    0.46
+   ],
+   "nota": "O tetróxido de ósmio fixa e escurece os lipídios da mielina: cada anel preto é a bainha de uma fibra, e o centro claro, o axônio."
+  },
+  {
+   "id": "vaso-endoneural",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Vaso do endoneuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2988,
+      0.488
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.29,
+    0.475,
+    0.315,
+    0.495
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos do epineuro (a gordura fica preta no ósmio)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.763,
+      0.08
+     ],
+     "angulo": 270
+    }
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo esquelético vizinho, em corte longitudinal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      0.125
+     ],
+     "angulo": 225
+    }
+   ]
+  }
+ ]
+}

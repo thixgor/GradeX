@@ -1,0 +1,93 @@
+{
+ "slug": "musculo-esqueletico-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "estrias",
+   "estrutura": "estriacao-transversal",
+   "rotulo": "Estriação transversal: bandas A (escuras) e I (claras)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5025,
+      0.5015
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.5,
+    0.51,
+    0.51
+   ],
+   "nota": "Corte semifino em azul de toluidina, longitudinal: as estrias ficam nítidas em grande aumento."
+  },
+  {
+   "id": "nucleo",
+   "estrutura": "nucleo-periferico-da-fibra-muscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5051,
+      0.5081
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5,
+    0.5,
+    0.51,
+    0.51
+   ]
+  },
+  {
+   "id": "fibra",
+   "estrutura": "fibra-muscular-esqueletica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.635,
+      0.63
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.6,
+    0.6,
+    0.64,
+    0.64
+   ]
+  },
+  {
+   "id": "endomisio",
+   "estrutura": "endomisio",
+   "rotulo": "Endomísio e espaço entre fibras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6275,
+      0.61
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6,
+    0.6,
+    0.64,
+    0.64
+   ]
+  }
+ ]
+}

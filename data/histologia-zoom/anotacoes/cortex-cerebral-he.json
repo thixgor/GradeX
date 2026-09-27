@@ -1,0 +1,160 @@
+{
+ "slug": "cortex-cerebral-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 1
+ },
+ "estruturas": [
+  {
+   "id": "camada-i",
+   "estrutura": "camada-molecular-cortical",
+   "rotulo": "Camada I (molecular)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.372,
+       0.0975
+      ],
+      [
+       0.385,
+       0.091
+      ],
+      [
+       0.4,
+       0.0875
+      ],
+      [
+       0.425,
+       0.0855
+      ],
+      [
+       0.425,
+       0.0955
+      ],
+      [
+       0.4,
+       0.0975
+      ],
+      [
+       0.385,
+       0.1005
+      ],
+      [
+       0.372,
+       0.106
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "piramidal",
+   "estrutura": "neuronio-piramidal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3979,
+      0.1613
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.388,
+    0.152,
+    0.408,
+    0.168
+   ],
+   "nota": "Em HE só o corpo e o início do dendrito apical aparecem; os prolongamentos precisam de prata para ser vistos."
+  },
+  {
+   "id": "retracao",
+   "estrutura": "retracao-pericelular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6092,
+      0.7068
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.598,
+    0.702,
+    0.618,
+    0.716
+   ]
+  },
+  {
+   "id": "cinzenta",
+   "estrutura": "substancia-cinzenta",
+   "rotulo": "Substância cinzenta (córtex): neurônios esparsos em neurópilo claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.745,
+      0.555
+     ],
+     "angulo": 300
+    }
+   ]
+  },
+  {
+   "id": "branca",
+   "estrutura": "substancia-branca",
+   "rotulo": "Substância branca no eixo do giro: mais eosinófila, com núcleos de oligodendrócitos em fileiras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.768,
+      0.6
+     ],
+     "angulo": 315
+    }
+   ]
+  },
+  {
+   "id": "meninges",
+   "estrutura": "pia-mater",
+   "rotulo": "Leptomeninges (pia-máter e aracnoide)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.603,
+      0.6975
+     ],
+     "angulo": 90
+    }
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3907,
+      0.1257
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.38,
+    0.118,
+    0.4,
+    0.133
+   ]
+  }
+ ]
+}

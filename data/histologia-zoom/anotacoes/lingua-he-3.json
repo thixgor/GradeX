@@ -1,0 +1,51 @@
+{
+ "slug": "lingua-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio do dorso da língua, com papilas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4565,
+      0.297
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.55,
+    0.35
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.447,
+      0.228
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.55,
+    0.35
+   ]
+  }
+ ]
+}

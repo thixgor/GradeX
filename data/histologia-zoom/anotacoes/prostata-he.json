@@ -1,0 +1,52 @@
+{
+ "slug": "prostata-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandula",
+   "estrutura": "glandula-prostatica",
+   "rotulo": "Glândula prostática: epitélio pregueado, luz ampla",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8403,
+      0.1957
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.82,
+    0.18,
+    0.86,
+    0.22
+   ],
+   "nota": "Próstata: glândulas túbulo-alveolares de contorno irregular, com projeções papilares, num estroma fibromuscular abundante."
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-fibromuscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8507,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.82,
+    0.18,
+    0.86,
+    0.22
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1543 @@
+{
+ "fonte": "https://gtexportal.org",
+ "coletadoEm": "2026-09-27",
+ "especimes": [
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-ZUA1/GTEX-ZUA1-2926_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Brain - Cerebellum",
+   "texto": "4 pieces. Good Purkinje cells.",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-ZUA1-2926",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-ZUA1/GTEX-ZUA1-2926_files/8/0_0.jpeg",
+   "miniaturaL": 141,
+   "miniaturaA": 145,
+   "doador": {
+    "idade": "40-49",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0787,
+     "pasta": "8/",
+     "largura": 141,
+     "altura": 145,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1567,
+     "pasta": "9/",
+     "largura": 281,
+     "altura": 289,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.3129,
+     "pasta": "10/",
+     "largura": 561,
+     "altura": 577,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 3
+    },
+    {
+     "magn": 0.6253,
+     "pasta": "11/",
+     "largura": 1121,
+     "altura": 1154,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 5
+    },
+    {
+     "magn": 1.25,
+     "pasta": "12/",
+     "largura": 2241,
+     "altura": 2307,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 9,
+     "ny": 10
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 4482,
+     "altura": 4614,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 18,
+     "ny": 19
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 8964,
+     "altura": 9227,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 36,
+     "ny": 37
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 17928,
+     "altura": 18453,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 71,
+     "ny": 73
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 35855,
+     "altura": 36905,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 142,
+     "ny": 146
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-1128S/GTEX-1128S-2726_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Brain - Cortex",
+   "texto": "2 pieces, no abnormalities",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-1128S-2726",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-1128S/GTEX-1128S-2726_files/8/0_0.jpeg",
+   "miniaturaL": 179,
+   "miniaturaA": 156,
+   "doador": {
+    "idade": "60-69",
+    "sexo": "female"
+   },
+   "niveis": [
+    {
+     "magn": 0.0781,
+     "pasta": "8/",
+     "largura": 179,
+     "altura": 156,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1563,
+     "pasta": "9/",
+     "largura": 358,
+     "altura": 311,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.3126,
+     "pasta": "10/",
+     "largura": 716,
+     "altura": 621,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 3
+    },
+    {
+     "magn": 0.6251,
+     "pasta": "11/",
+     "largura": 1432,
+     "altura": 1242,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 6,
+     "ny": 5
+    },
+    {
+     "magn": 1.2502,
+     "pasta": "12/",
+     "largura": 2864,
+     "altura": 2484,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 12,
+     "ny": 10
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 5727,
+     "altura": 4968,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 23,
+     "ny": 20
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 11454,
+     "altura": 9935,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 46,
+     "ny": 40
+    },
+    {
+     "magn": 10.0002,
+     "pasta": "15/",
+     "largura": 22908,
+     "altura": 19870,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 91,
+     "ny": 79
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 45815,
+     "altura": 39739,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 181,
+     "ny": 157
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-145MO/GTEX-145MO-3126_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Pituitary",
+   "texto": "1 piece adenohypophysis + ~1.5mm fragment of neurohypophysis, encircled, no abnormalities",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-145MO-3126",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-145MO/GTEX-145MO-3126_files/8/0_0.jpeg",
+   "miniaturaL": 156,
+   "miniaturaA": 102,
+   "doador": {
+    "idade": "60-69",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.1566,
+     "pasta": "8/",
+     "largura": 156,
+     "altura": 102,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.3133,
+     "pasta": "9/",
+     "largura": 312,
+     "altura": 203,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.6255,
+     "pasta": "10/",
+     "largura": 623,
+     "altura": 405,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 1.2501,
+     "pasta": "11/",
+     "largura": 1245,
+     "altura": 809,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 4
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "12/",
+     "largura": 2490,
+     "altura": 1617,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 10,
+     "ny": 7
+    },
+    {
+     "magn": 5.0003,
+     "pasta": "13/",
+     "largura": 4980,
+     "altura": 3234,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 20,
+     "ny": 13
+    },
+    {
+     "magn": 10.0005,
+     "pasta": "14/",
+     "largura": 9960,
+     "altura": 6468,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 40,
+     "ny": 26
+    },
+    {
+     "magn": 20,
+     "pasta": "15/",
+     "largura": 19919,
+     "altura": 12936,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 79,
+     "ny": 51
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-ZQUD/GTEX-ZQUD-1326_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Artery - Tibial",
+   "texto": "2 pieces, good clean specimens, no atherosis noted",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-ZQUD-1326",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-ZQUD/GTEX-ZQUD-1326_files/8/0_0.jpeg",
+   "miniaturaL": 234,
+   "miniaturaA": 162,
+   "doador": {
+    "idade": "30-39",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.1566,
+     "pasta": "8/",
+     "largura": 234,
+     "altura": 162,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.3126,
+     "pasta": "9/",
+     "largura": 467,
+     "altura": 324,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.6252,
+     "pasta": "10/",
+     "largura": 934,
+     "altura": 648,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 4,
+     "ny": 3
+    },
+    {
+     "magn": 1.2504,
+     "pasta": "11/",
+     "largura": 1868,
+     "altura": 1296,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 8,
+     "ny": 6
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "12/",
+     "largura": 3735,
+     "altura": 2592,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 15,
+     "ny": 11
+    },
+    {
+     "magn": 5.0002,
+     "pasta": "13/",
+     "largura": 7470,
+     "altura": 5184,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 30,
+     "ny": 21
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "14/",
+     "largura": 14940,
+     "altura": 10367,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 59,
+     "ny": 41
+    },
+    {
+     "magn": 20,
+     "pasta": "15/",
+     "largura": 29879,
+     "altura": 20734,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 118,
+     "ny": 82
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-ZT9X/GTEX-ZT9X-2126_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Nerve - Tibial",
+   "texto": "2 pieces, good clean specimens",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-ZT9X-2126",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-ZT9X/GTEX-ZT9X-2126_files/8/0_0.jpeg",
+   "miniaturaL": 148,
+   "miniaturaA": 93,
+   "doador": {
+    "idade": "40-49",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0782,
+     "pasta": "8/",
+     "largura": 148,
+     "altura": 93,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1564,
+     "pasta": "9/",
+     "largura": 296,
+     "altura": 185,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.3128,
+     "pasta": "10/",
+     "largura": 592,
+     "altura": 370,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 0.6251,
+     "pasta": "11/",
+     "largura": 1183,
+     "altura": 740,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 3
+    },
+    {
+     "magn": 1.2503,
+     "pasta": "12/",
+     "largura": 2366,
+     "altura": 1479,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 10,
+     "ny": 6
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 4731,
+     "altura": 2957,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 19,
+     "ny": 12
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 9462,
+     "altura": 5914,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 38,
+     "ny": 24
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 18924,
+     "altura": 11828,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 75,
+     "ny": 47
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 37847,
+     "altura": 23655,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 150,
+     "ny": 94
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-ZYFG/GTEX-ZYFG-2026_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Small Intestine - Terminal Ileum",
+   "texto": "6 pieces, 4 with excellent lymphoid patches [annotated]",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-ZYFG-2026",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-ZYFG/GTEX-ZYFG-2026_files/8/0_0.jpeg",
+   "miniaturaL": 203,
+   "miniaturaA": 172,
+   "doador": {
+    "idade": "60-69",
+    "sexo": "female"
+   },
+   "niveis": [
+    {
+     "magn": 0.0784,
+     "pasta": "8/",
+     "largura": 203,
+     "altura": 172,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1564,
+     "pasta": "9/",
+     "largura": 405,
+     "altura": 344,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.3128,
+     "pasta": "10/",
+     "largura": 810,
+     "altura": 688,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 4,
+     "ny": 3
+    },
+    {
+     "magn": 0.6252,
+     "pasta": "11/",
+     "largura": 1619,
+     "altura": 1376,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 7,
+     "ny": 6
+    },
+    {
+     "magn": 1.25,
+     "pasta": "12/",
+     "largura": 3237,
+     "altura": 2751,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 13,
+     "ny": 11
+    },
+    {
+     "magn": 2.5,
+     "pasta": "13/",
+     "largura": 6474,
+     "altura": 5502,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 26,
+     "ny": 22
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 12948,
+     "altura": 11003,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 51,
+     "ny": 44
+    },
+    {
+     "magn": 10.0002,
+     "pasta": "15/",
+     "largura": 25896,
+     "altura": 22005,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 102,
+     "ny": 87
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 51791,
+     "altura": 44009,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 204,
+     "ny": 174
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-RU1J/GTEX-RU1J-1426_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Vagina",
+   "texto": "6 pieces up to 9x5 mm; excellent preservation",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-RU1J-1426",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-RU1J/GTEX-RU1J-1426_files/8/0_0.jpeg",
+   "miniaturaL": 133,
+   "miniaturaA": 82,
+   "doador": {
+    "idade": "20-29",
+    "sexo": "female"
+   },
+   "niveis": [
+    {
+     "magn": 0.0393,
+     "pasta": "8/",
+     "largura": 133,
+     "altura": 82,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.0783,
+     "pasta": "9/",
+     "largura": 265,
+     "altura": 164,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.1565,
+     "pasta": "10/",
+     "largura": 530,
+     "altura": 327,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 0.3127,
+     "pasta": "11/",
+     "largura": 1059,
+     "altura": 654,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 3
+    },
+    {
+     "magn": 0.6252,
+     "pasta": "12/",
+     "largura": 2117,
+     "altura": 1308,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 9,
+     "ny": 6
+    },
+    {
+     "magn": 1.25,
+     "pasta": "13/",
+     "largura": 4233,
+     "altura": 2616,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 17,
+     "ny": 11
+    },
+    {
+     "magn": 2.5,
+     "pasta": "14/",
+     "largura": 8466,
+     "altura": 5231,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 34,
+     "ny": 21
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "15/",
+     "largura": 16932,
+     "altura": 10462,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 67,
+     "ny": 42
+    },
+    {
+     "magn": 10.0001,
+     "pasta": "16/",
+     "largura": 33864,
+     "altura": 20923,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 134,
+     "ny": 83
+    },
+    {
+     "magn": 20,
+     "pasta": "17/",
+     "largura": 67727,
+     "altura": 41846,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 267,
+     "ny": 165
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-Y3I4/GTEX-Y3I4-1926_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Minor Salivary Gland",
+   "texto": "3 pieces, up to 4x3.5mm; excellent specimens, well-preserved, 2mm nubbin non keratinizing squamous (inner lip) mucosa is present",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-Y3I4-1926",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-Y3I4/GTEX-Y3I4-1926_files/8/0_0.jpeg",
+   "miniaturaL": 148,
+   "miniaturaA": 90,
+   "doador": {
+    "idade": "50-59",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0782,
+     "pasta": "8/",
+     "largura": 148,
+     "altura": 90,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1564,
+     "pasta": "9/",
+     "largura": 296,
+     "altura": 180,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.3128,
+     "pasta": "10/",
+     "largura": 592,
+     "altura": 359,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 0.6251,
+     "pasta": "11/",
+     "largura": 1183,
+     "altura": 717,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 3
+    },
+    {
+     "magn": 1.2503,
+     "pasta": "12/",
+     "largura": 2366,
+     "altura": 1433,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 10,
+     "ny": 6
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 4731,
+     "altura": 2865,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 19,
+     "ny": 12
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 9462,
+     "altura": 5729,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 38,
+     "ny": 23
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 18924,
+     "altura": 11457,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 75,
+     "ny": 46
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 37847,
+     "altura": 22913,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 150,
+     "ny": 91
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-R55E/GTEX-R55E-2026_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Kidney - Medulla",
+   "texto": "2 pieces, 7.5x7.5 mm & 10x5 mm; 10x5mm is all medulla; 7.5 square piece is 25% medulla, 75% cortex;",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-R55E-2026",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-R55E/GTEX-R55E-2026_files/8/0_0.jpeg",
+   "miniaturaL": 156,
+   "miniaturaA": 110,
+   "doador": {
+    "idade": "20-29",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0783,
+     "pasta": "8/",
+     "largura": 156,
+     "altura": 110,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1566,
+     "pasta": "9/",
+     "largura": 312,
+     "altura": 219,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.3128,
+     "pasta": "10/",
+     "largura": 623,
+     "altura": 437,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 0.625,
+     "pasta": "11/",
+     "largura": 1245,
+     "altura": 874,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 4
+    },
+    {
+     "magn": 1.25,
+     "pasta": "12/",
+     "largura": 2490,
+     "altura": 1748,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 10,
+     "ny": 7
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 4980,
+     "altura": 3495,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 20,
+     "ny": 14
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 9960,
+     "altura": 6989,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 40,
+     "ny": 28
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 19920,
+     "altura": 13977,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 79,
+     "ny": 56
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 39839,
+     "altura": 27953,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 157,
+     "ny": 111
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-1GMR3/GTEX-1GMR3-0826_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Adipose - Visceral (Omentum)",
+   "texto": "2 pieces, no abnormalities; fascia/vascular elements are ~5-10% of tissue (rep delineated)",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-1GMR3-0826",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-1GMR3/GTEX-1GMR3-0826_files/8/0_0.jpeg",
+   "miniaturaL": 156,
+   "miniaturaA": 127,
+   "doador": {
+    "idade": "40-49",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0783,
+     "pasta": "8/",
+     "largura": 156,
+     "altura": 127,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1566,
+     "pasta": "9/",
+     "largura": 312,
+     "altura": 254,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 1
+    },
+    {
+     "magn": 0.3128,
+     "pasta": "10/",
+     "largura": 623,
+     "altura": 508,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 2
+    },
+    {
+     "magn": 0.625,
+     "pasta": "11/",
+     "largura": 1245,
+     "altura": 1016,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 5,
+     "ny": 4
+    },
+    {
+     "magn": 1.25,
+     "pasta": "12/",
+     "largura": 2490,
+     "altura": 2032,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 10,
+     "ny": 8
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 4980,
+     "altura": 4063,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 20,
+     "ny": 16
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 9960,
+     "altura": 8125,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 40,
+     "ny": 32
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 19920,
+     "altura": 16249,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 79,
+     "ny": 64
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 39839,
+     "altura": 32497,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 157,
+     "ny": 128
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-WEY5/GTEX-WEY5-0426_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Heart - Left Ventricle",
+   "texto": "2 pieces, 9x6 & 7x6mm; good specimen",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-WEY5-0426",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-WEY5/GTEX-WEY5-0426_files/8/0_0.jpeg",
+   "miniaturaL": 125,
+   "miniaturaA": 151,
+   "doador": {
+    "idade": "40-49",
+    "sexo": "female"
+   },
+   "niveis": [
+    {
+     "magn": 0.0784,
+     "pasta": "8/",
+     "largura": 125,
+     "altura": 151,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1563,
+     "pasta": "9/",
+     "largura": 249,
+     "altura": 301,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 2
+    },
+    {
+     "magn": 0.3125,
+     "pasta": "10/",
+     "largura": 498,
+     "altura": 602,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 3
+    },
+    {
+     "magn": 0.625,
+     "pasta": "11/",
+     "largura": 996,
+     "altura": 1204,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 4,
+     "ny": 5
+    },
+    {
+     "magn": 1.25,
+     "pasta": "12/",
+     "largura": 1992,
+     "altura": 2407,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 8,
+     "ny": 10
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 3984,
+     "altura": 4813,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 16,
+     "ny": 19
+    },
+    {
+     "magn": 5.0002,
+     "pasta": "14/",
+     "largura": 7968,
+     "altura": 9625,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 32,
+     "ny": 38
+    },
+    {
+     "magn": 10.0003,
+     "pasta": "15/",
+     "largura": 15936,
+     "altura": 19249,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 63,
+     "ny": 76
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 31871,
+     "altura": 38497,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 126,
+     "ny": 152
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-Y114/GTEX-Y114-2526_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Muscle - Skeletal",
+   "texto": "2 pieces, 10x7 & 11x10mm; less than 2% interstitial fat, good specimens",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-Y114-2526",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-Y114/GTEX-Y114-2526_files/8/0_0.jpeg",
+   "miniaturaL": 179,
+   "miniaturaA": 154,
+   "doador": {
+    "idade": "50-59",
+    "sexo": "female"
+   },
+   "niveis": [
+    {
+     "magn": 0.0781,
+     "pasta": "8/",
+     "largura": 179,
+     "altura": 154,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1563,
+     "pasta": "9/",
+     "largura": 358,
+     "altura": 308,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.3126,
+     "pasta": "10/",
+     "largura": 716,
+     "altura": 615,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 3,
+     "ny": 3
+    },
+    {
+     "magn": 0.6251,
+     "pasta": "11/",
+     "largura": 1432,
+     "altura": 1229,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 6,
+     "ny": 5
+    },
+    {
+     "magn": 1.2502,
+     "pasta": "12/",
+     "largura": 2864,
+     "altura": 2458,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 12,
+     "ny": 10
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 5727,
+     "altura": 4916,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 23,
+     "ny": 20
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 11454,
+     "altura": 9832,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 46,
+     "ny": 39
+    },
+    {
+     "magn": 10.0002,
+     "pasta": "15/",
+     "largura": 22908,
+     "altura": 19663,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 91,
+     "ny": 78
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 45815,
+     "altura": 39325,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 181,
+     "ny": 155
+    }
+   ]
+  },
+  {
+   "fonte": "gtex",
+   "formato": "dzi",
+   "extensao": "jpeg",
+   "sobreposicao": 1,
+   "base": "https://gtexportal.org/openslide/gtexhip/GTEX-PSDG/GTEX-PSDG-0226_files/",
+   "hvId": 0,
+   "caixa": "gtex",
+   "caixas": [
+    "gtex"
+   ],
+   "curso": "GTEx",
+   "nr": "",
+   "nome": "Skin - Sun Exposed (Lower leg)",
+   "texto": "6 pieces, ~8x2.5mm; good appendages",
+   "coloracao": "HE",
+   "objetiva": "20x",
+   "aberturaNumerica": null,
+   "root": "GTEX-PSDG-0226",
+   "miniatura": "https://gtexportal.org/openslide/gtexhip/GTEX-PSDG/GTEX-PSDG-0226_files/8/0_0.jpeg",
+   "miniaturaL": 195,
+   "miniaturaA": 154,
+   "doador": {
+    "idade": "50-59",
+    "sexo": "male"
+   },
+   "niveis": [
+    {
+     "magn": 0.0783,
+     "pasta": "8/",
+     "largura": 195,
+     "altura": 154,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 0.1566,
+     "pasta": "9/",
+     "largura": 390,
+     "altura": 308,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 2,
+     "ny": 2
+    },
+    {
+     "magn": 0.3129,
+     "pasta": "10/",
+     "largura": 779,
+     "altura": 615,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 4,
+     "ny": 3
+    },
+    {
+     "magn": 0.6253,
+     "pasta": "11/",
+     "largura": 1557,
+     "altura": 1229,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 7,
+     "ny": 5
+    },
+    {
+     "magn": 1.2502,
+     "pasta": "12/",
+     "largura": 3113,
+     "altura": 2457,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 13,
+     "ny": 10
+    },
+    {
+     "magn": 2.5001,
+     "pasta": "13/",
+     "largura": 6225,
+     "altura": 4913,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 25,
+     "ny": 20
+    },
+    {
+     "magn": 5.0001,
+     "pasta": "14/",
+     "largura": 12450,
+     "altura": 9825,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 50,
+     "ny": 39
+    },
+    {
+     "magn": 10.0002,
+     "pasta": "15/",
+     "largura": 24900,
+     "altura": 19650,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 99,
+     "ny": 78
+    },
+    {
+     "magn": 20,
+     "pasta": "16/",
+     "largura": 49799,
+     "altura": 39299,
+     "tileL": 254,
+     "tileA": 254,
+     "nx": 197,
+     "ny": 155
+    }
+   ]
+  }
+ ]
+}

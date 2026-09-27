@@ -1,0 +1,605 @@
+{
+ "coletadoEm": "2026-09-27",
+ "especimes": [
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Pineal gland - low mag",
+   "texto": "Low magnification micrograph of a normal pineal gland. H&amp;E stain. The pineal gland is very cellular and can be mistaken for a neoplasm.[1] Related images Intermed. mag. High mag. Very high mag. References ↑ Kleinschmidt-DeMasters BK, Prayson RA (November 2006). \"An algorithmic approach to the brain biopsy--part I\". Arch. Pathol. Lab. Med. 130 (11): 1630–8. PMID 17076524.",
+   "coloracao": "HE",
+   "objetiva": "~4x",
+   "aberturaNumerica": null,
+   "root": "commons-pineal-baixo",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Pineal_gland_-_low_mag.jpg/1280px-Pineal_gland_-_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 1920,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Nephron",
+    "licenca": "CC BY-SA 3.0",
+    "urlLicenca": "https://creativecommons.org/licenses/by-sa/3.0",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Pineal_gland_-_low_mag.jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 1.7978,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4c/Pineal_gland_-_low_mag.jpg/1280px-Pineal_gland_-_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 1920,
+     "tileL": 1280,
+     "tileA": 1920,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 4,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Pineal_gland_-_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 2848,
+     "altura": 4272,
+     "tileL": 2848,
+     "tileA": 4272,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Pineal gland - high mag",
+   "texto": "High magnification micrograph of a normal pineal gland. H&amp;E stain. The pineal gland is very cellular and can be mistaken for a neoplasm.[1] Related images Low mag. Intermed. mag. Very high mag. References ↑ Kleinschmidt-DeMasters BK, Prayson RA (November 2006). \"An algorithmic approach to the brain biopsy--part I\". Arch. Pathol. Lab. Med. 130 (11): 1630–8. PMID 17076524.",
+   "coloracao": "HE",
+   "objetiva": "~40x",
+   "aberturaNumerica": null,
+   "root": "commons-pineal-alto",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Pineal_gland_-_high_mag.jpg/1280px-Pineal_gland_-_high_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 1920,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Nephron",
+    "licenca": "CC BY-SA 3.0",
+    "urlLicenca": "https://creativecommons.org/licenses/by-sa/3.0",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Pineal_gland_-_high_mag.jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 17.9775,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Pineal_gland_-_high_mag.jpg/1280px-Pineal_gland_-_high_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 1920,
+     "tileL": 1280,
+     "tileA": 1920,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 40,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/3/30/Pineal_gland_-_high_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 2848,
+     "altura": 4272,
+     "tileL": 2848,
+     "tileA": 4272,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Seminal vesicle low mag",
+   "texto": "Low magnification micrograph of seminal vesicle. H&amp;E stain. Prostatectomy specimen. The epithelium of seminal vesicle is the same as ejaculatory duct.[1] References ↑ Leroy X, Ballereau C, Villers A, et al. (April 2003). \"MUC6 is a marker of seminal vesicle-ejaculatory duct epithelium and is useful for the differential diagnosis with prostate adenocarcinoma\". Am. J. Surg. Pathol. 27 (4): 519–2",
+   "coloracao": "HE",
+   "objetiva": "~4x",
+   "aberturaNumerica": null,
+   "root": "commons-vesicula-seminal-baixo",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Seminal_vesicle_low_mag.jpg/1280px-Seminal_vesicle_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 1920,
+   "especieDeclarada": "humana",
+   "credito": {
+    "autor": "Nephron",
+    "licenca": "CC BY-SA 3.0",
+    "urlLicenca": "https://creativecommons.org/licenses/by-sa/3.0",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Seminal_vesicle_low_mag.jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 1.7978,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Seminal_vesicle_low_mag.jpg/1280px-Seminal_vesicle_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 1920,
+     "tileL": 1280,
+     "tileA": 1920,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 4,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/8/89/Seminal_vesicle_low_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 2848,
+     "altura": 4272,
+     "tileL": 2848,
+     "tileA": 4272,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Seminal vesicle intermed mag",
+   "texto": "Intermediate magnification micrograph of seminal vesicle. H&amp;E stain. Prostatectomy specimen. The epithelium of seminal vesicle is the same as ejaculatory duct.[1] References ↑ Leroy X, Ballereau C, Villers A, et al. (April 2003). \"MUC6 is a marker of seminal vesicle-ejaculatory duct epithelium and is useful for the differential diagnosis with prostate adenocarcinoma\". Am. J. Surg. Pathol. 27 (",
+   "coloracao": "HE",
+   "objetiva": "~10x",
+   "aberturaNumerica": null,
+   "root": "commons-vesicula-seminal-medio",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Seminal_vesicle_intermed_mag.jpg/1280px-Seminal_vesicle_intermed_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 853,
+   "especieDeclarada": "humana",
+   "credito": {
+    "autor": "Nephron",
+    "licenca": "CC BY-SA 3.0",
+    "urlLicenca": "https://creativecommons.org/licenses/by-sa/3.0",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Seminal_vesicle_intermed_mag.jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 2.9963,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Seminal_vesicle_intermed_mag.jpg/1280px-Seminal_vesicle_intermed_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 853,
+     "tileL": 1280,
+     "tileA": 853,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 10,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/7/7c/Seminal_vesicle_intermed_mag.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 4272,
+     "altura": 2848,
+     "tileL": 4272,
+     "tileA": 2848,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Compact Bone (41068141944)",
+   "texto": "cross section: ground human bone magnification: 100x",
+   "coloracao": "unstained",
+   "objetiva": "~10x",
+   "aberturaNumerica": null,
+   "root": "commons-osso-compacto-100",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Connective_Tissue_Compact_Bone_%2841068141944%29.jpg/1280px-Connective_Tissue_Compact_Bone_%2841068141944%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "humana",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Compact_Bone_(41068141944).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 3.9216,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Connective_Tissue_Compact_Bone_%2841068141944%29.jpg/1280px-Connective_Tissue_Compact_Bone_%2841068141944%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 10,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/6/6e/Connective_Tissue_Compact_Bone_%2841068141944%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Compact Bone (39978304920)",
+   "texto": "cross section: ground human bone magnification: 200x",
+   "coloracao": "unstained",
+   "objetiva": "~20x",
+   "aberturaNumerica": null,
+   "root": "commons-osso-compacto-200",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Connective_Tissue_Compact_Bone_%2839978304920%29.jpg/1280px-Connective_Tissue_Compact_Bone_%2839978304920%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "humana",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Compact_Bone_(39978304920).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 7.8431,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/Connective_Tissue_Compact_Bone_%2839978304920%29.jpg/1280px-Connective_Tissue_Compact_Bone_%2839978304920%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 20,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/5/52/Connective_Tissue_Compact_Bone_%2839978304920%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Fibrocartilage (27988651538)",
+   "texto": "cross section: fibrocartilage magnification: 40x",
+   "coloracao": "tricromico-azul",
+   "objetiva": "~4x",
+   "aberturaNumerica": null,
+   "root": "commons-fibrocartilagem-40",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Connective_Tissue_Fibrocartilage_%2827988651538%29.jpg/1280px-Connective_Tissue_Fibrocartilage_%2827988651538%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Fibrocartilage_(27988651538).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 1.5686,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Connective_Tissue_Fibrocartilage_%2827988651538%29.jpg/1280px-Connective_Tissue_Fibrocartilage_%2827988651538%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 4,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Connective_Tissue_Fibrocartilage_%2827988651538%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Fibrocartilage (41140134634)",
+   "texto": "cross section: fibrocartilage magnification: 400x",
+   "coloracao": "tricromico-azul",
+   "objetiva": "~40x",
+   "aberturaNumerica": null,
+   "root": "commons-fibrocartilagem-400",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Connective_Tissue_Fibrocartilage_%2841140134634%29.jpg/1280px-Connective_Tissue_Fibrocartilage_%2841140134634%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Fibrocartilage_(41140134634).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 15.6863,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/12/Connective_Tissue_Fibrocartilage_%2841140134634%29.jpg/1280px-Connective_Tissue_Fibrocartilage_%2841140134634%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 40,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/1/12/Connective_Tissue_Fibrocartilage_%2841140134634%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Loose Aerolar (41743648512)",
+   "texto": "tissue spread magnification: 100x",
+   "coloracao": "distensao",
+   "objetiva": "~10x",
+   "aberturaNumerica": null,
+   "root": "commons-areolar-100",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Connective_Tissue_Loose_Aerolar_%2841743648512%29.jpg/1280px-Connective_Tissue_Loose_Aerolar_%2841743648512%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Loose_Aerolar_(41743648512).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 3.9216,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Connective_Tissue_Loose_Aerolar_%2841743648512%29.jpg/1280px-Connective_Tissue_Loose_Aerolar_%2841743648512%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 10,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/4/48/Connective_Tissue_Loose_Aerolar_%2841743648512%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Connective Tissue Loose Aerolar (39977987580)",
+   "texto": "tissue spread magnification: 200x",
+   "coloracao": "distensao",
+   "objetiva": "~20x",
+   "aberturaNumerica": null,
+   "root": "commons-areolar-200",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Connective_Tissue_Loose_Aerolar_%2839977987580%29.jpg/1280px-Connective_Tissue_Loose_Aerolar_%2839977987580%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Connective_Tissue_Loose_Aerolar_(39977987580).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 7.8431,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Connective_Tissue_Loose_Aerolar_%2839977987580%29.jpg/1280px-Connective_Tissue_Loose_Aerolar_%2839977987580%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 20,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/a/af/Connective_Tissue_Loose_Aerolar_%2839977987580%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "commons",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "commons",
+   "caixas": [
+    "commons"
+   ],
+   "curso": "Wikimedia Commons",
+   "nr": "",
+   "nome": "Muscle Tissue Intercalated Discs in Cardiac Muscle (41931906281)",
+   "texto": "long section: cardiac muscle magnification: 200x",
+   "coloracao": "Iron hematoxylin",
+   "objetiva": "~20x",
+   "aberturaNumerica": null,
+   "root": "commons-discos-intercalares",
+   "miniatura": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_%2841931906281%29.jpg/1280px-Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_%2841931906281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "miniaturaL": 1280,
+   "miniaturaA": 722,
+   "especieDeclarada": "nao-informada",
+   "credito": {
+    "autor": "Berkshire Community College Bioscience Image Library",
+    "licenca": "CC0",
+    "urlLicenca": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "urlFonte": "https://commons.wikimedia.org/wiki/File:Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_(41931906281).jpg",
+    "acervo": "Wikimedia Commons"
+   },
+   "niveis": [
+    {
+     "magn": 7.8431,
+     "pasta": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d6/Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_%2841931906281%29.jpg/1280px-Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_%2841931906281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "largura": 1280,
+     "altura": 722,
+     "tileL": 1280,
+     "tileA": 722,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 20,
+     "pasta": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Muscle_Tissue_Intercalated_Discs_in_Cardiac_Muscle_%2841931906281%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+     "largura": 3264,
+     "altura": 1840,
+     "tileL": 3264,
+     "tileA": 1840,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  },
+  {
+   "fonte": "hpa",
+   "formato": "imagem",
+   "hvId": 0,
+   "caixa": "hpa",
+   "caixas": [
+    "hpa"
+   ],
+   "curso": "Human Protein Atlas",
+   "nr": "",
+   "nome": "Hippocampus (tissue microarray core)",
+   "texto": "Núcleo de microarranjo de tecido humano normal; anticorpo sem marcação neste tecido — só a contracoloração de hematoxilina.",
+   "coloracao": "hematoxilina",
+   "objetiva": "~20x",
+   "aberturaNumerica": null,
+   "root": "hpa-hipocampo-giro-denteado",
+   "miniatura": "https://images.proteinatlas.org/48/1985_B_8_6_medium.jpg",
+   "miniaturaL": 872,
+   "miniaturaA": 872,
+   "especieDeclarada": "humana",
+   "credito": {
+    "autor": "Human Protein Atlas",
+    "licenca": "CC BY-SA 4.0",
+    "urlLicenca": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "urlFonte": "https://www.proteinatlas.org/ENSG00000254647-INS/tissue/hippocampus",
+    "acervo": "Human Protein Atlas (proteinatlas.org)"
+   },
+   "niveis": [
+    {
+     "magn": 4.6016,
+     "pasta": "https://images.proteinatlas.org/48/1985_B_8_6_medium.jpg",
+     "largura": 872,
+     "altura": 872,
+     "tileL": 872,
+     "tileA": 872,
+     "nx": 1,
+     "ny": 1
+    },
+    {
+     "magn": 20,
+     "pasta": "https://images.proteinatlas.org/48/1985_B_8_6.jpg",
+     "largura": 3790,
+     "altura": 3790,
+     "tileL": 3790,
+     "tileA": 3790,
+     "nx": 1,
+     "ny": 1
+    }
+   ]
+  }
+ ]
+}

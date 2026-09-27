@@ -1,0 +1,30 @@
+{
+ "slug": "utero-he-4",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "miometrio",
+   "estrutura": "miometrio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.379,
+      0.379
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.45,
+    0.45
+   ]
+  }
+ ]
+}

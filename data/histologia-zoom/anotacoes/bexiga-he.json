@@ -1,0 +1,71 @@
+{
+ "slug": "bexiga-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "urotelio",
+   "estrutura": "urotelio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4046,
+      0.4265
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.41,
+    0.41,
+    0.43
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.418
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.41,
+    0.41,
+    0.43
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Feixes de músculo liso (detrusor)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.37
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.35,
+    0.45,
+    0.45
+   ]
+  }
+ ]
+}

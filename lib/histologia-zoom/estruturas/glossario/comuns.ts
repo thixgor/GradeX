@@ -1,0 +1,138 @@
+import type { Estrutura } from '../tipos'
+
+/** Estruturas presentes em praticamente todos os órgãos, e artefatos de preparo. */
+export const ESTRUTURAS_COMUNS: Estrutura[] = [
+  {
+    id: 'capilar-sanguineo',
+    nome: 'Capilar sanguíneo',
+    sinonimos: ['capillary', 'capilar', 'vaso capilar'],
+    tipo: 'vaso',
+    resumo: 'O menor vaso: um tubo de endotélio de 5–10 µm, muitas vezes com hemácias em fila única.',
+    caracteristicas: [
+      'Parede de uma única camada de células endoteliais achatadas, com núcleo alongado que faz saliência na luz.',
+      'Luz do tamanho de uma hemácia: em corte, as hemácias aparecem enfileiradas ou empilhadas.',
+      'Pericitos esparsos, envoltos pela mesma lâmina basal.',
+    ],
+    aprofundado: [
+      'Três tipos: contínuo (músculo, SNC, pele — no SNC forma a barreira hematoencefálica com junções de oclusão), fenestrado (glândulas endócrinas, rim, intestino) e sinusoide/descontínuo (fígado, baço, medula óssea).',
+      'O pericito é contrátil e regula o fluxo capilar; no SNC é peça da barreira hematoencefálica.',
+    ],
+    funcoes: [
+      'Troca de gases, nutrientes e metabólitos entre o sangue e os tecidos.',
+      'No SNC, barreira hematoencefálica.',
+    ],
+    regeneracao: {
+      nivel: 'alta',
+      texto: 'Formam-se novos capilares por angiogênese (brotamento de endotélio) em cicatrização, inflamação e tumores.',
+    },
+    ondeEncontrar: ['Em todos os tecidos vascularizados; ausentes em epitélios, cartilagem, córnea e cristalino.'],
+    alteracoes: [
+      'Congestão (hemácias acumuladas): insuficiência cardíaca, processos agonais.',
+      'Microangiopatia diabética: espessamento da lâmina basal.',
+      'Trombos de fibrina em coagulação intravascular disseminada.',
+    ],
+  },
+  {
+    id: 'vaso-sanguineo',
+    nome: 'Vaso sanguíneo de pequeno calibre',
+    sinonimos: ['vênula', 'arteríola', 'blood vessel'],
+    tipo: 'vaso',
+    resumo: 'Arteríola ou vênula: luz maior que a de um capilar, com parede de endotélio e poucas camadas de células.',
+    caracteristicas: [
+      'Endotélio revestindo a luz, geralmente com hemácias.',
+      'Arteríola: parede relativamente espessa, 1–2 camadas de músculo liso, luz pequena e redonda.',
+      'Vênula: parede fina, luz ampla e irregular, muitas vezes colapsada.',
+    ],
+    aprofundado: [
+      'As arteríolas são o principal ponto de resistência vascular: regulam a pressão e a distribuição do fluxo.',
+      'As vênulas pós-capilares são o local da diapedese de leucócitos na inflamação (e, nos linfonodos, das vênulas de endotélio alto).',
+    ],
+    funcoes: ['Distribuição (arteríolas) e drenagem (vênulas) do sangue na microcirculação.'],
+    regeneracao: { nivel: 'alta', texto: 'Remodelam-se e neoformam-se a partir de capilares.' },
+    ondeEncontrar: ['Em todos os órgãos, no tecido conjuntivo e nos septos.'],
+    alteracoes: [
+      'Arteriolosclerose hialina (hipertensão, diabetes): parede espessada, rosa, homogênea.',
+      'Vasculite: infiltrado inflamatório e necrose fibrinoide da parede.',
+    ],
+  },
+  {
+    id: 'artefato-dobra',
+    nome: 'Dobra do corte (artefato)',
+    sinonimos: ['fold', 'prega do corte', 'artefato'],
+    tipo: 'artefato',
+    resumo: 'Faixa mais escura e densa onde o corte dobrou sobre si mesmo ao ser estendido na lâmina.',
+    caracteristicas: [
+      'Linha ou faixa de cor mais intensa, com o dobro da espessura de tecido.',
+      'Atravessa as estruturas sem respeitar limites anatômicos.',
+    ],
+    aprofundado: [
+      'Acontece quando o corte, retirado do micrótomo, não é bem estendido no banho-maria antes de ir à lâmina.',
+      'Reconhecer artefatos é parte da leitura: uma dobra não é fibrose, vaso nem camada.',
+    ],
+    funcoes: ['Nenhuma — não é estrutura biológica.'],
+    regeneracao: { nivel: 'nao-se-aplica', texto: 'Artefato de preparo.' },
+    ondeEncontrar: ['Qualquer lâmina; mais comum em cortes grandes e finos.'],
+    alteracoes: ['Outros artefatos a reconhecer: fendas por retração, faca riscando o tecido (marcas paralelas), bolhas sob a lamínula, pigmento de formol.'],
+  },
+  {
+    id: 'retracao-pericelular',
+    nome: 'Retração pericelular (artefato)',
+    sinonimos: ['halo de retração', 'espaço pericelular', 'shrinkage artifact', 'retração'],
+    tipo: 'artefato',
+    resumo: 'Espaço claro em volta de uma célula ou estrutura, criado pela retração do tecido na fixação e desidratação — não existe no tecido vivo.',
+    caracteristicas: [
+      'Halo branco, vazio, contornando o corpo celular ou separando o epitélio do conjuntivo.',
+      'Sem revestimento endotelial (diferente de um vaso) e sem conteúdo.',
+    ],
+    aprofundado: [
+      'É mais intenso em material fixado tarde (post-mortem) ou por imersão, e em tecidos ricos em água, como o SNC.',
+      'No encéfalo, o neurópilo se retrai do corpo neuronal; em carcinomas, a retração do estroma em volta dos ninhos imita invasão vascular.',
+    ],
+    funcoes: ['Nenhuma — não é estrutura biológica.'],
+    regeneracao: { nivel: 'nao-se-aplica', texto: 'Artefato de preparo.' },
+    ondeEncontrar: ['Em volta de neurônios no SNC, de adipócitos, de ninhos epiteliais e sob epitélios que se descolam.'],
+    alteracoes: ['Não confundir com edema (espaços com material proteico pálido) nem com invasão linfovascular (espaço revestido por endotélio).'],
+  },
+  {
+    id: 'nucleolo',
+    nome: 'Nucléolo',
+    sinonimos: ['nucleolus', 'nucléolo proeminente'],
+    tipo: 'celula',
+    resumo: 'Corpúsculo denso e basófilo dentro do núcleo, onde se transcreve e monta o RNA ribossômico; grande e nítido nas células que sintetizam muita proteína.',
+    caracteristicas: [
+      'Ponto redondo, escuro (basófilo), de 1–3 µm, dentro de um núcleo claro.',
+      'Só aparece quando o plano de corte passa por ele; o mesmo neurônio, cortado mais à margem, mostra o núcleo sem nucléolo.',
+      'Um ou mais por núcleo.',
+    ],
+    aprofundado: [
+      'Três componentes à microscopia eletrônica: centro fibrilar (DNA ribossômico), componente fibrilar denso (transcrição) e componente granular (montagem das subunidades).',
+      'Organiza-se em volta das regiões organizadoras do nucléolo dos cromossomos acrocêntricos 13, 14, 15, 21 e 22.',
+    ],
+    funcoes: ['Síntese do RNA ribossômico e montagem das subunidades dos ribossomos.'],
+    regeneracao: { nivel: 'nao-se-aplica', texto: 'Organela: some na mitose e se refaz na telófase.' },
+    ondeEncontrar: ['Neurônios grandes (motoneurônios, Purkinje), ovócitos, plasmócitos, hepatócitos, células em proliferação.'],
+    alteracoes: [
+      'Nucléolos grandes e múltiplos são critério de malignidade (carcinomas, melanoma).',
+      'Nucléolo "em olho de coruja" gigante na célula de Reed-Sternberg (linfoma de Hodgkin).',
+    ],
+  },
+  {
+    id: 'artefato-deposito',
+    nome: 'Partícula ou precipitado sobre o corte (artefato)',
+    sinonimos: ['sujeira', 'precipitado de corante', 'pigmento de formol', 'debris'],
+    tipo: 'artefato',
+    resumo: 'Grão opaco e muito escuro, fora de foco em relação ao tecido, que não corresponde a nenhuma estrutura: poeira, precipitado de corante ou pigmento de fixação.',
+    caracteristicas: [
+      'Preto ou marrom, opaco, de bordas nítidas, sem estrutura interna.',
+      'Não respeita a arquitetura: fica por cima de qualquer tecido.',
+    ],
+    aprofundado: [
+      'O pigmento de formol (hematina ácida) é marrom, granular e birrefringente; forma-se quando o formol fica ácido e aparece perto de hemácias.',
+      'Precipitados de corante aparecem quando a solução não é filtrada.',
+    ],
+    funcoes: ['Nenhuma — não é estrutura biológica.'],
+    regeneracao: { nivel: 'nao-se-aplica', texto: 'Artefato de preparo.' },
+    ondeEncontrar: ['Qualquer lâmina.'],
+    alteracoes: ['Não confundir com pigmentos verdadeiros: melanina, hemossiderina, lipofuscina, antracose.'],
+  },
+]

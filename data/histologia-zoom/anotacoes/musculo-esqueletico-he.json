@@ -1,0 +1,91 @@
+{
+ "slug": "musculo-esqueletico-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "transversal",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Fibras em corte transversal: poligonais, núcleos na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.137,
+      0.515
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.12,
+    0.5,
+    0.2,
+    0.58
+   ]
+  },
+  {
+   "id": "perimisio",
+   "estrutura": "perimisio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1627,
+      0.5315
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.12,
+    0.5,
+    0.2,
+    0.58
+   ]
+  },
+  {
+   "id": "nucleos",
+   "estrutura": "nucleo-periferico-da-fibra-muscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6051,
+      0.2549
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6,
+    0.25,
+    0.61,
+    0.26
+   ]
+  },
+  {
+   "id": "estrias",
+   "estrutura": "estriacao-transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6023,
+      0.2545
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.6,
+    0.25,
+    0.61,
+    0.26
+   ]
+  }
+ ]
+}

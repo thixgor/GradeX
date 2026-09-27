@@ -1,0 +1,52 @@
+{
+ "slug": "cornea-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio anterior da córnea (estratificado pavimentoso não queratinizado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.37
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.45,
+    0.45
+   ],
+   "nota": "Córnea de camundongo: epitélio anterior, estroma de lamelas colágenas regulares e transparentes, e endotélio posterior de uma camada."
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-corneano",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.4
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.45,
+    0.45
+   ]
+  }
+ ]
+}

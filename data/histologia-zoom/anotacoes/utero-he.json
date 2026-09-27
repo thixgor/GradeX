@@ -1,0 +1,31 @@
+{
+ "slug": "utero-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "miometrio",
+   "estrutura": "miometrio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1092,
+      0.2592
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.05,
+    0.2,
+    0.2,
+    0.35
+   ],
+   "nota": "Miométrio: feixes de músculo liso entrelaçados em várias direções, com vasos calibrosos."
+  }
+ ]
+}

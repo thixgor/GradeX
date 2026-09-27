@@ -1,0 +1,51 @@
+{
+ "slug": "paratireoide-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "principais",
+   "estrutura": "celula-principal-paratireoide",
+   "rotulo": "Células principais em cordões densos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4618,
+      0.3366
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.28,
+    0.5,
+    0.38
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4118,
+      0.31
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.28,
+    0.5,
+    0.38
+   ]
+  }
+ ]
+}

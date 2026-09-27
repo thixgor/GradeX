@@ -1,0 +1,31 @@
+{
+ "slug": "vesicula-seminal-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Epitélio colunar da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.5,
+    0.3
+   ]
+  }
+ ]
+}

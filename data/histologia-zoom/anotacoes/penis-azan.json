@@ -1,0 +1,74 @@
+{
+ "slug": "penis-azan",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "uretra",
+   "estrutura": "uretra-peniana",
+   "rotulo": "Uretra peniana (luz pregueada)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1737,
+      0.455
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.35,
+    0.3,
+    0.55
+   ],
+   "nota": "Pênis em Azan: colágeno azul, hemácias vermelhas. A uretra passa pelo corpo esponjoso; os dois corpos cavernosos têm espaços vasculares amplos."
+  },
+  {
+   "id": "cavernoso",
+   "estrutura": "corpo-cavernoso",
+   "rotulo": "Espaços vasculares do corpo cavernoso (com hemácias vermelhas)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4565,
+      0.346
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.35,
+    0.3,
+    0.65,
+    0.6
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Artéria do corpo cavernoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5486,
+      0.369
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.35,
+    0.3,
+    0.65,
+    0.6
+   ]
+  }
+ ]
+}

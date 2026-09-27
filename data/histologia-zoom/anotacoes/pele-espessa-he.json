@@ -1,0 +1,133 @@
+{
+ "slug": "pele-espessa-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cornea",
+   "estrutura": "camada-cornea",
+   "rotulo": "Camada córnea muito espessa (pele espessa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.115,
+      0.585
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.105,
+    0.57,
+    0.16,
+    0.6
+   ],
+   "nota": "Pele espessa (palma/planta): córnea enorme, camada granulosa nítida e cristas epidérmicas profundas, sem pelos."
+  },
+  {
+   "id": "granulosa",
+   "estrutura": "camada-granulosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1263,
+      0.584
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.118,
+    0.576,
+    0.136,
+    0.594
+   ]
+  },
+  {
+   "id": "espinhosa",
+   "estrutura": "camada-espinhosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.131,
+      0.5925
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.105,
+    0.57,
+    0.16,
+    0.6
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "camada-basal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1382,
+      0.5885
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.105,
+    0.57,
+    0.16,
+    0.6
+   ]
+  },
+  {
+   "id": "papila",
+   "estrutura": "derme-papilar",
+   "rotulo": "Papila dérmica entre as cristas epidérmicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1335,
+      0.5815
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.105,
+    0.57,
+    0.16,
+    0.6
+   ]
+  },
+  {
+   "id": "reticular",
+   "estrutura": "derme-reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.152,
+      0.59
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.105,
+    0.57,
+    0.16,
+    0.6
+   ]
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+{
+ "slug": "conjuntivo-frouxo-distensao-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "elastica",
+   "estrutura": "fibra-elastica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.641,
+      0.3497
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.55,
+    0.28,
+    0.8,
+    0.5
+   ]
+  },
+  {
+   "id": "colageno",
+   "estrutura": "feixe-de-colageno",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6865,
+      0.4165
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.55,
+    0.28,
+    0.8,
+    0.5
+   ]
+  },
+  {
+   "id": "fibroblasto",
+   "estrutura": "fibroblasto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.666,
+      0.3755
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.577,
+      0.316
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.55,
+    0.28,
+    0.72,
+    0.42
+   ]
+  }
+ ]
+}

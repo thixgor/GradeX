@@ -1,0 +1,51 @@
+{
+ "slug": "hipofise-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "acidofila",
+   "estrutura": "celula-acidofila",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4126,
+      0.4075
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.43,
+    0.43
+   ],
+   "nota": "Adeno-hipófise: células em cordões entre capilares; acidófilas (rosa: GH, prolactina), basófilas (violáceas: TSH, FSH/LH, ACTH) e cromófobas (pálidas)."
+  },
+  {
+   "id": "cromofoba",
+   "estrutura": "celula-cromofoba",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4075,
+      0.4197
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.43,
+    0.43
+   ]
+  }
+ ]
+}

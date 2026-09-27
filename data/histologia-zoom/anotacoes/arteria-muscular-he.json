@@ -1,0 +1,113 @@
+{
+ "slug": "arteria-muscular-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "media",
+   "estrutura": "tunica-media",
+   "rotulo": "Média: músculo liso em camadas circulares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.245,
+      0.455
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.3,
+    0.5
+   ],
+   "nota": "Artéria tibial humana: artéria muscular (distributiva) com média espessa de músculo liso e uma lâmina elástica interna nítida."
+  },
+  {
+   "id": "lei",
+   "estrutura": "lamina-elastica-interna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2765,
+      0.4518
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.262,
+    0.44,
+    0.29,
+    0.468
+   ]
+  },
+  {
+   "id": "intima",
+   "estrutura": "tunica-intima",
+   "rotulo": "Íntima: endotélio e camada subendotelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2755,
+      0.4538
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.27,
+    0.447,
+    0.284,
+    0.461
+   ]
+  },
+  {
+   "id": "endotelio",
+   "estrutura": "endotelio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2778,
+      0.4551
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.27,
+    0.445,
+    0.29,
+    0.465
+   ]
+  },
+  {
+   "id": "adventicia",
+   "estrutura": "tunica-adventicia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.41
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.3,
+    0.5
+   ]
+  }
+ ]
+}

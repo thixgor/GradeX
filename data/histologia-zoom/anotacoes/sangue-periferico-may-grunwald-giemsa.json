@@ -1,0 +1,163 @@
+{
+ "slug": "sangue-periferico-may-grunwald-giemsa",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "neutrofilo",
+   "estrutura": "neutrofilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3312,
+      0.4669
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4008,
+      0.4965
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3298,
+    0.4649,
+    0.3338,
+    0.4689
+   ],
+   "nota": "Esfregaço em May-Grünwald-Giemsa: os leucócitos são poucos entre milhares de hemácias. Use \"próximo\" para ver cada exemplo marcado."
+  },
+  {
+   "id": "linfocito",
+   "estrutura": "linfocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3881,
+      0.2448
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3954,
+      0.3282
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3867,
+    0.2428,
+    0.3907,
+    0.2468
+   ]
+  },
+  {
+   "id": "monocito",
+   "estrutura": "monocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5622,
+      0.453
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5608,
+    0.451,
+    0.5648,
+    0.455
+   ]
+  },
+  {
+   "id": "basofilo",
+   "estrutura": "basofilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4469,
+      0.3544
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3542,
+      0.4478
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4455,
+    0.3524,
+    0.4495,
+    0.3564
+   ]
+  },
+  {
+   "id": "plaqueta",
+   "estrutura": "plaqueta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5017,
+      0.3029
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5095,
+      0.3024
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.502,
+    0.3,
+    0.508,
+    0.306
+   ]
+  },
+  {
+   "id": "hemacia",
+   "estrutura": "hemacia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5023,
+      0.303
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.502,
+    0.3,
+    0.508,
+    0.306
+   ]
+  }
+ ]
+}

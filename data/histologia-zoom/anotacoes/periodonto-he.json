@@ -1,0 +1,32 @@
+{
+ "slug": "periodonto-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio gengival, com cristas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.266,
+      0.129
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.2,
+    0.1,
+    0.3,
+    0.2
+   ],
+   "nota": "Coloração muito pálida: das estruturas do periodonto, só a gengiva se reconhece com segurança neste corte."
+  }
+ ]
+}

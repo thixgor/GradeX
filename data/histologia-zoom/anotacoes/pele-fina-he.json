@@ -1,0 +1,93 @@
+{
+ "slug": "pele-fina-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme fina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1055,
+      0.55
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.08,
+    0.5,
+    0.18,
+    0.6
+   ],
+   "nota": "Pele fina com coloração muito pálida; a epiderme é delgada e a córnea, fina."
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículo piloso cortado obliquamente (o pelo saiu no corte)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2,
+      0.535
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.17,
+    0.46,
+    0.27,
+    0.56
+   ]
+  },
+  {
+   "id": "sebacea",
+   "estrutura": "glandula-sebacea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2555,
+      0.5045
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.17,
+    0.46,
+    0.27,
+    0.56
+   ]
+  },
+  {
+   "id": "derme",
+   "estrutura": "derme-reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.18,
+      0.47
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.13,
+    0.4,
+    0.28,
+    0.55
+   ]
+  }
+ ]
+}

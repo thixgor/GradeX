@@ -1,0 +1,73 @@
+{
+ "slug": "epiglote-resorcina-fucsina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandula",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas mucosas da laringe",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.268,
+      0.21
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.255,
+    0.195,
+    0.29,
+    0.23
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo esquelético da laringe (corte longitudinal)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0895,
+      0.412
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.08,
+    0.4,
+    0.11,
+    0.43
+   ]
+  },
+  {
+   "id": "musculo-transversal",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo esquelético em corte transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.96
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.29,
+    0.95,
+    0.33,
+    0.98
+   ]
+  }
+ ]
+}

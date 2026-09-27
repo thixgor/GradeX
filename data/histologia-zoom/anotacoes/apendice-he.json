@@ -1,0 +1,51 @@
+{
+ "slug": "apendice-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "linfoide",
+   "estrutura": "foliculo-linfoide",
+   "rotulo": "Tecido linfoide abundante na mucosa e submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4242,
+      0.5558
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.54,
+    0.44,
+    0.58
+   ]
+  },
+  {
+   "id": "cripta",
+   "estrutura": "cripta-de-lieberkuhn",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4105,
+      0.5589
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.54,
+    0.44,
+    0.58
+   ]
+  }
+ ]
+}

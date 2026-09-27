@@ -1,0 +1,52 @@
+{
+ "slug": "canal-anal-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso do canal anal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.392,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.35,
+    0.1,
+    0.55,
+    0.3
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos calibrosos da submucosa (plexo hemorroidário)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.25
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.35,
+    0.1,
+    0.55,
+    0.3
+   ]
+  }
+ ]
+}

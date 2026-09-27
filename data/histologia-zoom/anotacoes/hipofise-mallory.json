@@ -1,0 +1,74 @@
+{
+ "slug": "hipofise-mallory",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "acidofila",
+   "estrutura": "celula-acidofila",
+   "rotulo": "Acidófila (vermelha no Mallory)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3138,
+      0.4182
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.4,
+    0.33,
+    0.43
+   ]
+  },
+  {
+   "id": "basofila",
+   "estrutura": "celula-basofila",
+   "rotulo": "Basófila (azul-violácea)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3043,
+      0.4138
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.4,
+    0.33,
+    0.43
+   ]
+  },
+  {
+   "id": "neuro",
+   "estrutura": "neuro-hipofise",
+   "rotulo": "Neuro-hipófise: fibras nervosas pálidas, sem cordões celulares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.725,
+      0.625
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.7,
+    0.6,
+    0.75,
+    0.65
+   ],
+   "nota": "Mallory: acidófilas vermelhas, basófilas azuladas, colágeno azul. A pars nervosa é fibrilar e pálida."
+  }
+ ]
+}

@@ -1,0 +1,320 @@
+{
+ "slug": "cerebelo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "molecular",
+   "estrutura": "camada-molecular-cerebelar",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.2375,
+       0.857
+      ],
+      [
+       0.2455,
+       0.857
+      ],
+      [
+       0.2458,
+       0.864
+      ],
+      [
+       0.2465,
+       0.872
+      ],
+      [
+       0.2482,
+       0.88
+      ],
+      [
+       0.2375,
+       0.88
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "purkinje-camada",
+   "estrutura": "camada-de-purkinje",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.2459,
+       0.8555
+      ],
+      [
+       0.2461,
+       0.86
+      ],
+      [
+       0.2465,
+       0.864
+      ],
+      [
+       0.2471,
+       0.868
+      ],
+      [
+       0.2478,
+       0.872
+      ],
+      [
+       0.2485,
+       0.876
+      ],
+      [
+       0.2493,
+       0.88
+      ],
+      [
+       0.2507,
+       0.88
+      ],
+      [
+       0.2499,
+       0.876
+      ],
+      [
+       0.2492,
+       0.872
+      ],
+      [
+       0.2485,
+       0.868
+      ],
+      [
+       0.2479,
+       0.864
+      ],
+      [
+       0.2475,
+       0.86
+      ],
+      [
+       0.2473,
+       0.8555
+      ]
+     ]
+    }
+   ],
+   "nota": "Os halos claros em volta das células são retração de processamento — comum em material post-mortem."
+  },
+  {
+   "id": "purkinje",
+   "estrutura": "celula-de-purkinje",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2461,
+      0.8558
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2462,
+      0.8594
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.2432,
+    0.8535,
+    0.2502,
+    0.8615
+   ],
+   "nota": "A de baixo mostra o início do dendrito apical subindo para a camada molecular."
+  },
+  {
+   "id": "granular",
+   "estrutura": "camada-granular-cerebelar",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.249,
+       0.861
+      ],
+      [
+       0.2535,
+       0.86
+      ],
+      [
+       0.26,
+       0.866
+      ],
+      [
+       0.264,
+       0.872
+      ],
+      [
+       0.264,
+       0.88
+      ],
+      [
+       0.254,
+       0.882
+      ],
+      [
+       0.2505,
+       0.876
+      ],
+      [
+       0.2488,
+       0.868
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "granulares",
+   "estrutura": "celula-granular-cerebelar",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.2555,
+      0.8649
+     ],
+     "raios": [
+      0.0004,
+      0.0004
+     ]
+    }
+   ],
+   "vista": [
+    0.252,
+    0.8612,
+    0.259,
+    0.8686
+   ]
+  },
+  {
+   "id": "glomerulo",
+   "estrutura": "glomerulo-cerebelar",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.2535,
+      0.8624
+     ],
+     "raios": [
+      0.00045,
+      0.00035
+     ]
+    }
+   ],
+   "vista": [
+    0.2515,
+    0.8605,
+    0.256,
+    0.8645
+   ]
+  },
+  {
+   "id": "substancia-branca",
+   "estrutura": "substancia-branca-cerebelar",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.146,
+       0.806
+      ],
+      [
+       0.182,
+       0.806
+      ],
+      [
+       0.182,
+       0.836
+      ],
+      [
+       0.146,
+       0.838
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vênula junto à camada de Purkinje",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2462,
+      0.8741
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.2435,
+    0.8705,
+    0.2505,
+    0.877
+   ]
+  },
+  {
+   "id": "vaso-2",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso na substância branca",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1648,
+      0.8183
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.16,
+    0.813,
+    0.171,
+    0.823
+   ]
+  },
+  {
+   "id": "dobra",
+   "estrutura": "artefato-dobra",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.196,
+      0.73
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.18,
+    0.72,
+    0.21,
+    0.74
+   ]
+  }
+ ]
+}

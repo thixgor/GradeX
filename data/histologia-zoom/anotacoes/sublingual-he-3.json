@@ -1,0 +1,32 @@
+{
+ "slug": "sublingual-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Ácino mucoso: citoplasma claro e espumoso, núcleo achatado na base",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4439,
+      0.4443
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.44,
+    0.455,
+    0.455
+   ],
+   "nota": "Sublingual: glândula mista predominantemente mucosa."
+  }
+ ]
+}

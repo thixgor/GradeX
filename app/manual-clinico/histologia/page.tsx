@@ -10,6 +10,7 @@ import {
   Library,
   ListChecks,
   Microscope,
+  ScanSearch,
   Search,
   Stethoscope,
   Target,
@@ -39,6 +40,8 @@ import {
 import { BASE, rotaDaPagina } from '@/lib/histologia/seo'
 import { montarVitrine } from '@/lib/histologia/vitrine'
 import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
+import { LAMINAS as LAMINAS_ZOOM, TOTAIS as TOTAIS_ZOOM } from '@/lib/histologia-zoom/repositorio'
+import { BASE_ZOOM, rotaDaLaminaZoom } from '@/lib/histologia-zoom/rotas'
 import { rotaDoAtlas, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
 import { TOTAIS as TOTAIS_DA_PATOLOGIA } from '@/lib/histopatologia/repositorio'
 
@@ -214,6 +217,13 @@ export default async function HomeDaHistologia() {
                     <Search className="h-4 w-4" aria-hidden />
                     Buscar estrutura
                   </Link>
+                  <Link
+                    href={BASE_ZOOM}
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-md border border-border bg-card px-5 text-sm font-bold transition-colors hover:border-teal-600/50"
+                  >
+                    <ScanSearch className="h-4 w-4" aria-hidden />
+                    Histologia com Zoom
+                  </Link>
                   {comPatologia && (
                     <Link
                       href={`${BASE}/histopatologia`}
@@ -289,6 +299,10 @@ export default async function HomeDaHistologia() {
 
           {/* ══════════ Escolher o assunto ══════════ */}
           <EscolherAssunto capas={capas} />
+
+          {/* ══════════ Histologia com Zoom ══════════
+              Lâminas inteiras em alta resolução, catalogadas por sistema. */}
+          <HistologiaComZoom />
 
           {/* ══════════ A outra metade: Histopatologia ══════════
               Seção própria, logo depois dos assuntos — e não duas fichas no
@@ -850,3 +864,55 @@ const PERCURSO: Array<{ destino: string[]; chamada: string }> = [
     chamada: 'Como os tecidos se combinam em camadas e padrões, sistema por sistema.',
   },
 ]
+
+/** Vitrine da Histologia com Zoom: quatro miniaturas reais e a porta de entrada. */
+const VITRINE_ZOOM = ['medula-espinal-tionina', 'rim-he', 'epiglote-orceina', 'pulmao-he']
+
+function HistologiaComZoom() {
+  const laminas = VITRINE_ZOOM.map((s) => LAMINAS_ZOOM.find((l) => l.slug === s)).filter(
+    (l): l is (typeof LAMINAS_ZOOM)[number] => Boolean(l),
+  )
+  return (
+    <section aria-labelledby="zoom" className="mt-12 overflow-hidden rounded-2xl border border-border bg-[#0d1210] text-white">
+      <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.14em] text-teal-300">Histologia com Zoom</p>
+          <h2 id="zoom" className="font-heading text-2xl font-semibold tracking-tight">
+            {TOTAIS_ZOOM.laminas} lâminas inteiras, até a objetiva de imersão
+          </h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-white/70">
+            Organizadas em {TOTAIS_ZOOM.sistemas} sistemas e {TOTAIS_ZOOM.orgaos} órgãos. Zoom contínuo,
+            tela cheia, ocular circular, ajustes de imagem e a ficha de tecidos e células de cada lâmina.
+          </p>
+          <Link
+            href={BASE_ZOOM}
+            className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-md bg-white px-5 text-sm font-bold text-[#0d1210] transition-colors hover:bg-teal-100"
+          >
+            <ScanSearch className="h-4 w-4" aria-hidden /> Abrir o catálogo
+          </Link>
+        </div>
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
+          {laminas.map((l) => (
+            <li key={l.slug}>
+              <Link
+                href={rotaDaLaminaZoom(l.sistema, l.slug)}
+                className="group relative block aspect-[4/3] overflow-hidden rounded-lg ring-1 ring-white/10"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={l.piramide.miniatura.url}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 to-transparent px-2 pb-1.5 pt-6 text-[11px] font-semibold">
+                  {l.titulo}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

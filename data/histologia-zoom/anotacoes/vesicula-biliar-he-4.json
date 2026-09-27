@@ -1,0 +1,53 @@
+{
+ "slug": "vesicula-biliar-he-4",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "pregas",
+   "estrutura": "prega-da-mucosa",
+   "rotulo": "Parede fina da vesícula com pregas da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.419,
+      0.741
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.6,
+    0.5,
+    0.8
+   ],
+   "nota": "Vesícula biliar distendida, presa ao leito hepático: a parede fica fina e as pregas se achatam."
+  },
+  {
+   "id": "figado",
+   "estrutura": "hepatocito",
+   "rotulo": "Fígado no leito da vesícula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.85
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.75,
+    0.55,
+    0.95
+   ]
+  }
+ ]
+}

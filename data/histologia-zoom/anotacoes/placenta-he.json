@@ -1,0 +1,93 @@
+{
+ "slug": "placenta-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "vilosidade",
+   "estrutura": "vilosidade-corial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4133,
+      0.6095
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.41,
+    0.605,
+    0.42,
+    0.615
+   ],
+   "nota": "Placenta a termo: vilosidades coriais cortadas em vários planos, banhadas pelo sangue materno do espaço interviloso."
+  },
+  {
+   "id": "sinciciotrofoblasto",
+   "estrutura": "sinciciotrofoblasto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4121,
+      0.6098
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.41,
+    0.605,
+    0.42,
+    0.615
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-fetal",
+   "rotulo": "Capilar fetal com hemácias no eixo da vilosidade",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4154,
+      0.6109
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.605,
+    0.42,
+    0.615
+   ]
+  },
+  {
+   "id": "interviloso",
+   "estrutura": "espaco-interviloso",
+   "rotulo": "Espaço interviloso com sangue materno",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4165,
+      0.609
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.605,
+    0.42,
+    0.615
+   ]
+  }
+ ]
+}

@@ -1,0 +1,71 @@
+{
+ "slug": "traqueia-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.733,
+      0.455
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.72,
+    0.44,
+    0.76,
+    0.48
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.85,
+      0.45
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.8,
+    0.4,
+    0.9,
+    0.5
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria/submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.745,
+      0.47
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.72,
+    0.44,
+    0.78,
+    0.5
+   ]
+  }
+ ]
+}

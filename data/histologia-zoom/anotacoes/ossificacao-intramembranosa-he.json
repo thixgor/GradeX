@@ -1,0 +1,74 @@
+{
+ "slug": "ossificacao-intramembranosa-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículos pilosos em formação na pele fetal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8395,
+      0.448
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.79,
+    0.39,
+    0.89,
+    0.49
+   ],
+   "nota": "Corte de cabeça fetal com a hematoxilina muito desbotada: os núcleos quase não coram, e as espículas de osso novo são difíceis de separar do mesênquima. Marcamos só o que se reconhece sem dúvida."
+  },
+  {
+   "id": "encefalo",
+   "estrutura": "substancia-cinzenta",
+   "rotulo": "Encéfalo em desenvolvimento (parede do hemisfério)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.73,
+      0.55
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6,
+    0.35,
+    0.9,
+    0.85
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso calibroso cheio de hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.375,
+      0.655
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.33,
+    0.6,
+    0.41,
+    0.68
+   ]
+  }
+ ]
+}

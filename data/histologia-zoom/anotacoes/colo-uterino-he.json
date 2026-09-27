@@ -1,0 +1,52 @@
+{
+ "slug": "colo-uterino-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cisto",
+   "estrutura": "cisto-de-naboth",
+   "rotulo": "Cisto de Naboth: glândula endocervical dilatada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.905,
+      0.68
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.8,
+    0.55,
+    1.0,
+    0.75
+   ],
+   "nota": "Colo uterino: estroma fibroso denso e glândulas endocervicais; quando o orifício de uma glândula é obstruído, ela vira um cisto de Naboth."
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-cervical",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      1.1
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    1.07,
+    0.43,
+    1.15
+   ]
+  }
+ ]
+}

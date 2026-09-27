@@ -1,0 +1,71 @@
+{
+ "slug": "adrenal-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "capsula",
+   "estrutura": "capsula-adrenal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.405,
+      0.272
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.39,
+    0.25,
+    0.43,
+    0.29
+   ],
+   "nota": "Adrenal humana: sob a cápsula, o córtex em três zonas — glomerulosa (ninhos), fasciculada (cordões de células claras) e reticular — e a medula no centro."
+  },
+  {
+   "id": "glomerulosa",
+   "estrutura": "zona-glomerulosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4055,
+      0.2795
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.25,
+    0.43,
+    0.29
+   ]
+  },
+  {
+   "id": "fasciculada",
+   "estrutura": "zona-fasciculada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.412,
+      0.312
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.29,
+    0.43,
+    0.33
+   ]
+  }
+ ]
+}

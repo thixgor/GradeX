@@ -1,0 +1,72 @@
+{
+ "slug": "tonsila-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cripta",
+   "estrutura": "cripta-tonsilar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2684,
+      0.4274
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.26,
+    0.4,
+    0.3,
+    0.44
+   ],
+   "nota": "Tonsila palatina: epitélio estratificado pavimentoso que afunda em criptas, com folículos linfoides logo abaixo."
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio da cripta (estratificado pavimentoso, infiltrado por linfócitos)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2779,
+      0.4263
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.26,
+    0.4,
+    0.3,
+    0.44
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-linfoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3895,
+      0.6
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.35,
+    0.55,
+    0.45,
+    0.65
+   ]
+  }
+ ]
+}

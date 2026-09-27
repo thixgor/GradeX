@@ -1,0 +1,71 @@
+{
+ "slug": "duodeno-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "brunner",
+   "estrutura": "glandula-de-brunner",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3695,
+      0.9595
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.34,
+    0.93,
+    0.38,
+    0.97
+   ],
+   "nota": "As glândulas de Brunner na submucosa identificam o duodeno: secretam muco alcalino que neutraliza o ácido gástrico."
+  },
+  {
+   "id": "vilosidade",
+   "estrutura": "vilosidade-intestinal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.28,
+      0.9
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.2,
+    0.85,
+    0.4,
+    1.05
+   ]
+  },
+  {
+   "id": "dobra",
+   "estrutura": "artefato-dobra",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.96
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.26,
+    0.93,
+    0.34,
+    0.99
+   ]
+  }
+ ]
+}

@@ -23,7 +23,10 @@ function arquivosDoModulo(): string[] {
 }
 
 const ARQUIVOS = arquivosDoModulo()
-const FONTES = new Map(ARQUIVOS.map((a) => [path.relative(RAIZ, a), readFileSync(a, 'utf8')]))
+// Chaves sempre com '/': no Windows `path.relative` devolve '\' e nenhum `FONTES.get` casava.
+const FONTES = new Map(
+  ARQUIVOS.map((a) => [path.relative(RAIZ, a).split(path.sep).join('/'), readFileSync(a, 'utf8')]),
+)
 
 describe('rotas declaradas na interface existem no currículo', () => {
   const rotas = new Set<string>()

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookMarked, FlaskConical, Layers, ListChecks, Search, Stethoscope } from 'lucide-react'
+import { BookMarked, FlaskConical, Layers, ListChecks, ScanSearch, Search, Stethoscope } from 'lucide-react'
 
 import { BASE } from '@/lib/histologia/rotas'
 
@@ -77,6 +77,12 @@ const DESTINOS: Destino[] = [
     rotulo: 'Atlas',
     icone: <Search className="h-3.5 w-3.5" aria-hidden />,
     prefixo: `${BASE}/atlas`,
+  },
+  {
+    href: `${BASE}/zoom`,
+    rotulo: 'Zoom',
+    icone: <ScanSearch className="h-3.5 w-3.5" aria-hidden />,
+    prefixo: `${BASE}/zoom`,
   },
   {
     href: `${BASE}/laboratorio`,

@@ -1,0 +1,51 @@
+{
+ "slug": "coracao-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cardiomiocito",
+   "estrutura": "fibra-muscular-cardiaca",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7215,
+      0.9635
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.72,
+    0.96,
+    0.73,
+    0.97
+   ],
+   "nota": "Fibras cardíacas ramificadas, com um ou dois núcleos centrais e estrias transversais finas."
+  },
+  {
+   "id": "estrias",
+   "estrutura": "estriacao-transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7245,
+      0.9668
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.72,
+    0.96,
+    0.73,
+    0.97
+   ]
+  }
+ ]
+}

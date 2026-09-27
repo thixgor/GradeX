@@ -1,0 +1,51 @@
+{
+ "slug": "ileo-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "peyer",
+   "estrutura": "placa-de-peyer",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1395,
+      0.597
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.55,
+    0.25,
+    0.7
+   ],
+   "nota": "Íleo humano: as placas de Peyer — agregados de folículos linfoides na mucosa e submucosa — identificam o segmento."
+  },
+  {
+   "id": "vilosidade",
+   "estrutura": "vilosidade-intestinal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.191,
+      0.5895
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.1,
+    0.55,
+    0.25,
+    0.7
+   ]
+  }
+ ]
+}

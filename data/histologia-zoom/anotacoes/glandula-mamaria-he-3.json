@@ -1,0 +1,52 @@
+{
+ "slug": "glandula-mamaria-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-mamario",
+   "rotulo": "Lóbulos repletos de alvéolos secretores",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4316,
+      0.4316
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ],
+   "nota": "Mama em fase proliferativa/lactante: os lóbulos ocupam quase todo o tecido, com alvéolos dilatados e pouco estroma."
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3526,
+      0.3605
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

@@ -1,0 +1,81 @@
+{
+ "slug": "medula-ossea-may-grunwald-giemsa",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "metamielocito",
+   "estrutura": "metamielocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4122,
+      0.4196
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6143,
+      0.3086
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4101,
+    0.4166,
+    0.4161,
+    0.4226
+   ],
+   "nota": "Aspirado de medula: a maioria das células nucleadas são precursores de granulócitos e de hemácias, em várias etapas de maturação."
+  },
+  {
+   "id": "eosinofilo",
+   "estrutura": "eosinofilo",
+   "rotulo": "Eosinófilo (grânulos laranja)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4078,
+      0.4072
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4059,
+    0.4042,
+    0.4119,
+    0.4102
+   ]
+  },
+  {
+   "id": "hemacias",
+   "estrutura": "hemacia",
+   "rotulo": "Hemácias aglomeradas (aspirado espesso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4045,
+      0.4032
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.399,
+    0.399,
+    0.411,
+    0.411
+   ]
+  }
+ ]
+}

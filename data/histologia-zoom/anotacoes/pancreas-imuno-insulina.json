@@ -1,0 +1,75 @@
+{
+ "slug": "pancreas-imuno-insulina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "ilhota",
+   "estrutura": "ilhota-de-langerhans",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.4312,
+      0.572
+     ],
+     "raios": [
+      0.0065,
+      0.005
+     ]
+    }
+   ],
+   "vista": [
+    0.42,
+    0.565,
+    0.45,
+    0.595
+   ],
+   "nota": "Imuno-histoquímica para insulina: as células beta da ilhota ficam marrom-avermelhadas; os ácinos exócrinos em volta ficam só com a contracoloração azul."
+  },
+  {
+   "id": "beta",
+   "estrutura": "celula-beta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4285,
+      0.5705
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.565,
+    0.45,
+    0.595
+   ]
+  },
+  {
+   "id": "acino",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Ácinos exócrinos (sem marcação)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.585
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.565,
+    0.45,
+    0.595
+   ]
+  }
+ ]
+}

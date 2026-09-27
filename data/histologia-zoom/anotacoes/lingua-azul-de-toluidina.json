@@ -1,0 +1,100 @@
+{
+ "slug": "lingua-azul-de-toluidina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mastocito",
+   "estrutura": "mastocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4636,
+      0.4787
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4764,
+      0.476
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.445,
+    0.465,
+    0.48,
+    0.495
+   ],
+   "nota": "Azul de toluidina: os grânulos dos mastócitos (heparina, histamina) ficam violeta-avermelhados — metacromasia — enquanto o resto cora de azul."
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Fibras musculares esqueléticas em corte transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4145,
+      0.4165
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.44,
+    0.44
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.379,
+      0.358
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3767,
+      0.3866
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.368,
+    0.378,
+    0.386,
+    0.396
+   ]
+  }
+ ]
+}

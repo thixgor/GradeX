@@ -1,0 +1,31 @@
+{
+ "slug": "submandibular-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "lobulo",
+   "estrutura": "acino-seroso",
+   "rotulo": "Lóbulo glandular com ácinos serosos e mucosos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3621,
+      0.3621
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.34,
+    0.34,
+    0.37,
+    0.37
+   ]
+  }
+ ]
+}

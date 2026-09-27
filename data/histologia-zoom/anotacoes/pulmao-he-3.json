@@ -1,0 +1,92 @@
+{
+ "slug": "pulmao-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório de um brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4326,
+      0.2916
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.26,
+    0.44,
+    0.34
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandula-seromucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3994,
+      0.3048
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.388,
+    0.288,
+    0.412,
+    0.312
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Placa de cartilagem do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.385,
+      0.334
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.37,
+    0.31,
+    0.41,
+    0.345
+   ]
+  },
+  {
+   "id": "alveolo",
+   "estrutura": "alveolo-pulmonar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.372,
+      0.29
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.36,
+    0.26,
+    0.4,
+    0.31
+   ]
+  }
+ ]
+}

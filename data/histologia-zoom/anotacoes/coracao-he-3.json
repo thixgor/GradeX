@@ -1,0 +1,73 @@
+{
+ "slug": "coracao-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cardiomiocito",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Núcleo central e alongado do cardiomiócito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6085,
+      0.2582
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.606,
+    0.254,
+    0.614,
+    0.262
+   ],
+   "nota": "Ventrículo esquerdo humano: fibras com núcleo central, às vezes com um halo claro perinuclear (lipofuscina, glicogênio)."
+  },
+  {
+   "id": "estrias",
+   "estrutura": "estriacao-transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6115,
+      0.2555
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.606,
+    0.254,
+    0.614,
+    0.262
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vênula do interstício",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6085,
+      0.2665
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.6,
+    0.25,
+    0.62,
+    0.27
+   ]
+  }
+ ]
+}

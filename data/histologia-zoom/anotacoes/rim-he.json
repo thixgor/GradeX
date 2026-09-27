@@ -1,0 +1,94 @@
+{
+ "slug": "rim-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "corpusculo",
+   "estrutura": "corpusculo-renal",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.1505,
+      0.3455
+     ],
+     "raios": [
+      0.0055,
+      0.0055
+     ]
+    }
+   ],
+   "vista": [
+    0.14,
+    0.33,
+    0.17,
+    0.36
+   ],
+   "nota": "Rim em corte frontal: córtex granuloso com corpúsculos renais na periferia, medula estriada (túbulos retos e ductos coletores) no centro."
+  },
+  {
+   "id": "proximal",
+   "estrutura": "tubulo-contorcido-proximal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1618,
+      0.3395
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.14,
+    0.33,
+    0.17,
+    0.36
+   ]
+  },
+  {
+   "id": "cortex",
+   "estrutura": "cortex-renal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.36
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.1,
+    0.3,
+    0.2,
+    0.4
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-renal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.455,
+      0.455
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.44,
+    0.44,
+    0.47,
+    0.47
+   ]
+  }
+ ]
+}

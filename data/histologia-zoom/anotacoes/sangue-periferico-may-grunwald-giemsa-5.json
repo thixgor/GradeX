@@ -1,0 +1,67 @@
+{
+ "slug": "sangue-periferico-may-grunwald-giemsa-5",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "neutrofilo",
+   "estrutura": "neutrofilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4604,
+      0.2903
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3878,
+      0.2394
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4601,
+    0.2891,
+    0.4621,
+    0.2911
+   ],
+   "nota": "Esfregaço mais espesso: as hemácias se sobrepõem. Os leucócitos ficam nítidos nas áreas mais finas."
+  },
+  {
+   "id": "linfocito",
+   "estrutura": "linfocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3877,
+      0.2398
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5193,
+      0.2609
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.387,
+    0.2388,
+    0.389,
+    0.2408
+   ]
+  }
+ ]
+}

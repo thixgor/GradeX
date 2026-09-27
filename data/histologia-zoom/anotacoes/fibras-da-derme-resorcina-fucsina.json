@@ -1,0 +1,174 @@
+{
+ "slug": "fibras-da-derme-resorcina-fucsina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8124,
+      0.94
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.785,
+    0.91,
+    0.83,
+    0.95
+   ]
+  },
+  {
+   "id": "cornea",
+   "estrutura": "camada-cornea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8153,
+      0.925
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.785,
+    0.91,
+    0.83,
+    0.95
+   ]
+  },
+  {
+   "id": "papilar",
+   "estrutura": "derme-papilar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8035,
+      0.9275
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.785,
+    0.91,
+    0.83,
+    0.95
+   ],
+   "nota": "Fibras elásticas finas e delicadas, que sobem em direção à epiderme (fibras oxitalânicas e elaunínicas)."
+  },
+  {
+   "id": "elastica",
+   "estrutura": "fibra-elastica",
+   "rotulo": "Fibra elástica grossa da derme reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.603,
+      0.965
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.58,
+    0.945,
+    0.625,
+    0.985
+   ],
+   "nota": "A resorcina-fucsina de Weigert cora a elastina em violeta-escuro; o colágeno quase não cora."
+  },
+  {
+   "id": "reticular",
+   "estrutura": "derme-reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.56,
+      0.92
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.5,
+    0.85,
+    0.65,
+    1.0
+   ]
+  },
+  {
+   "id": "sudoripara",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.582,
+      0.652
+     ],
+     "raios": [
+      0.034,
+      0.025
+     ]
+    }
+   ],
+   "vista": [
+    0.53,
+    0.61,
+    0.635,
+    0.695
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.543,
+      0.673
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.535,
+    0.625,
+    0.58,
+    0.665
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Veia da hipoderme, com fibras elásticas na parede",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.513,
+      2.0255
+     ],
+     "raios": [
+      0.032,
+      0.07
+     ]
+    }
+   ]
+  }
+ ]
+}

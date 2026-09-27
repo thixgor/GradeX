@@ -1,0 +1,52 @@
+{
+ "slug": "pancreas-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo interlobular com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.37
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.45,
+    0.45
+   ]
+  },
+  {
+   "id": "lobulo",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Lóbulo de ácinos pancreáticos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.42
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.45,
+    0.45
+   ]
+  }
+ ]
+}

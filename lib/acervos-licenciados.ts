@@ -75,6 +75,8 @@ export type FonteLicenciadaId =
   | 'gastrolab'
   | 'stanford-25'
   | 'neurosigns'
+  // Autorização própria (26/09/2026) — lâminas da Histologia com Zoom.
+  | 'histoviewer'
 
 export interface FonteLicenciada {
   id: FonteLicenciadaId
@@ -109,6 +111,8 @@ export interface FonteLicenciada {
     versao?: string
     data: string
     sha256: string
+    /** Hash que o próprio instrumento declara no rodapé, quando há — distinto do hash do arquivo. */
+    hashDeclarado?: string
   }
 }
 
@@ -490,6 +494,51 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
     comprovante: TERMO_CONJUNTO_2,
     natureza: 'Vídeos de sinais neurológicos',
   }),
+  /**
+   * HistoViewer (Aarhus University) — lâminas digitalizadas da Histologia com
+   * Zoom (`lib/histologia-zoom/`).
+   *
+   * Diferente das outras: a cláusula 3.1 **dispensa** o crédito aos criadores,
+   * e a interface apresenta o acervo como "Microscopia Virtual — Domine Aqui".
+   * Por isso esta fonte fica fora de `LISTA_DE_FONTES`, que é a lista impressa
+   * nos créditos da Semiologia. O registro existe para a procedência, não para
+   * a vitrine.
+   *
+   * Ponto a observar: a cláusula 4 diz que, em caso de revogação, o conteúdo
+   * já publicado "deverá manter os créditos" — em tensão com a 3.1. Se houver
+   * revogação, restaure o crédito aos criadores nas lâminas publicadas.
+   */
+  histoviewer: {
+    id: 'histoviewer',
+    nome: 'HistoViewer',
+    url: 'https://histoviewer.biomed.au.dk',
+    titular: 'Aarhus University — Department of Biomedicine (Dinamarca)',
+    signatarios: ['Mariola Monika Golas — Pesquisadora', 'Bjoern Sander — Pesquisador'],
+    licencaBase: 'Conteúdo proprietário da Aarhus University (todos os direitos reservados)',
+    excecao:
+      'Autorização escrita, por prazo indeterminado, para utilizar, indexar, catalogar, organizar, traduzir e aprofundar imagens, textos, vídeos, áudios e metadados do HistoViewer, com disponibilização gratuita ou paga.',
+    credito:
+      'Crédito aos criadores dispensado pela cláusula 3.1 da autorização de 26/09/2026; as lâminas são apresentadas como Microscopia Virtual — Domine Aqui.',
+    creditoCurto: 'Microscopia Virtual · Domine Aqui',
+    permissoes: [
+      'Utilizar, indexar, catalogar, organizar e reorganizar o acervo (imagens, textos, vídeos, áudios e metadados).',
+      'Traduzir integral ou parcialmente para o português brasileiro e aprofundar o conteúdo.',
+      'Disponibilizar o conteúdo de forma gratuita ou paga (assinaturas, cursos, materiais premium).',
+      'Dispensar os créditos aos criadores originais (cláusula 3.1).',
+    ],
+    restricoes: [
+      'Vale para a DomineAqui e seus subdomínios oficiais (domineaqui.com.br); para terceiros, os direitos continuam integralmente da Aarhus University.',
+      'Não transfere a propriedade intelectual dos conteúdos originais (cláusula 3.4).',
+      'Revogável por qualquer das partes com 30 dias de aviso por escrito; o conteúdo já publicado passa então a manter os créditos (cláusula 4).',
+    ],
+    dominiosDeMidia: ['histoviewer.biomed.au.dk'],
+    comprovante: {
+      arquivo: 'Autorizacao - HistoViewer_DomineAqui.pdf',
+      data: '2026-09-26',
+      sha256: '46a609037a0b21f3784805b790fa253d636d5f4a2d3ad6ccbd4f818fae02ec2f',
+      hashDeclarado: '7ebf13c572b1296a56d7d8a0729e185a94fb2fc8e58afe04b465a27010b61657',
+    },
+  },
 }
 
 export const LISTA_DE_FONTES: FonteLicenciada[] = [

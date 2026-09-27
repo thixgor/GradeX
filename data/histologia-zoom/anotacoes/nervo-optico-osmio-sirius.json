@@ -1,0 +1,53 @@
+{
+ "slug": "nervo-optico-osmio-sirius",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "feixes",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Feixes de fibras mielinizadas (mielina escura no ósmio)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4145,
+      0.4215
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.35,
+    0.5,
+    0.5
+   ],
+   "nota": "Nervo óptico: é trato do SNC (mielina de oligodendrócitos), dividido em feixes por septos de colágeno (vermelhos no picrossírius) e envolto pelas meninges."
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo de colágeno (vermelho)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.387,
+      0.371
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.35,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

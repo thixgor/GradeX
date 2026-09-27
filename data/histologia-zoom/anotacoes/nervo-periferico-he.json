@@ -1,0 +1,161 @@
+{
+ "slug": "nervo-periferico-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "fasciculo",
+   "estrutura": "fasciculo-nervoso",
+   "rotulo": "Fascículo nervoso",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.3212,
+      0.3799
+     ],
+     "raios": [
+      0.0155,
+      0.0155
+     ]
+    }
+   ],
+   "nota": "O nervo tibial tem dezenas de fascículos, cada um envolto por perineuro, dentro de um epineuro abundante com gordura."
+  },
+  {
+   "id": "fibra",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3184,
+      0.3764
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.313,
+    0.371,
+    0.325,
+    0.38
+   ],
+   "nota": "Em HE a mielina é extraída no processamento: sobra um anel claro e rendado (neuroqueratina) em volta do axônio rosa."
+  },
+  {
+   "id": "schwann",
+   "estrutura": "celula-de-schwann",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3216,
+      0.3746
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.316,
+    0.371,
+    0.327,
+    0.379
+   ]
+  },
+  {
+   "id": "perineuro",
+   "estrutura": "perineuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3058,
+      0.3745
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.301,
+    0.369,
+    0.311,
+    0.378
+   ]
+  },
+  {
+   "id": "endoneuro",
+   "estrutura": "endoneuro",
+   "rotulo": "Endoneuro: conjuntivo delicado entre as fibras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3165,
+      0.3745
+     ],
+     "angulo": 300
+    }
+   ],
+   "vista": [
+    0.313,
+    0.371,
+    0.321,
+    0.378
+   ]
+  },
+  {
+   "id": "epineuro",
+   "estrutura": "epineuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.315,
+      0.358
+     ],
+     "angulo": 90
+    }
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso do endoneuro, junto ao perineuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3112,
+      0.3704
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.305,
+    0.366,
+    0.318,
+    0.375
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos no epineuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.153,
+      0.403
+     ],
+     "angulo": 45
+    }
+   ]
+  }
+ ]
+}

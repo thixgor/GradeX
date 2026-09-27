@@ -1,0 +1,52 @@
+{
+ "slug": "parotida-azan-mallory",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "seroso",
+   "estrutura": "acino-seroso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5279,
+      0.5479
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.52,
+    0.54,
+    0.54,
+    0.56
+   ],
+   "nota": "Azan-Mallory: núcleos vermelhos, citoplasma azul-violáceo e colágeno dos septos azul vivo."
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Colágeno do septo (azul)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5305,
+      0.5584
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.52,
+    0.54,
+    0.54,
+    0.56
+   ]
+  }
+ ]
+}

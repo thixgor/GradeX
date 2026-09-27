@@ -1,0 +1,71 @@
+{
+ "slug": "submandibular-he-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto intralobular (estriado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4542,
+      0.3447
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.34,
+    0.47,
+    0.37
+   ]
+  },
+  {
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4447,
+      0.3518
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.34,
+    0.47,
+    0.37
+   ]
+  },
+  {
+   "id": "seroso",
+   "estrutura": "acino-seroso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4582,
+      0.3637
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.34,
+    0.47,
+    0.37
+   ]
+  }
+ ]
+}

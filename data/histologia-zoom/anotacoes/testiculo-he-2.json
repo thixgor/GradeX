@@ -1,0 +1,50 @@
+{
+ "slug": "testiculo-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "espermatocito",
+   "estrutura": "espermatocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4043,
+      0.4143
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.41,
+    0.41,
+    0.42
+   ]
+  },
+  {
+   "id": "propria",
+   "estrutura": "tunica-propria-seminifera",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4038,
+      0.4187
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.4,
+    0.41,
+    0.41,
+    0.42
+   ]
+  }
+ ]
+}

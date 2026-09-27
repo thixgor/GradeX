@@ -1,0 +1,123 @@
+{
+ "slug": "cromossomos-metafasicos-orceina-acetica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "metafase",
+   "estrutura": "metafase",
+   "rotulo": "Metáfase espalhada",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.489,
+      0.401
+     ],
+     "raios": [
+      0.028,
+      0.028
+     ]
+    },
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.689,
+      0.315
+     ],
+     "raios": [
+      0.018,
+      0.02
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cromossomo",
+   "estrutura": "cromossomo-metafasico",
+   "rotulo": "Cromossomo com as duas cromátides-irmãs",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4862,
+      0.4035
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.476,
+    0.386,
+    0.496,
+    0.41
+   ]
+  },
+  {
+   "id": "centromero",
+   "estrutura": "centromero",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4857,
+      0.3995
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.478,
+    0.39,
+    0.492,
+    0.408
+   ]
+  },
+  {
+   "id": "profase",
+   "estrutura": "nucleo-interfasico",
+   "rotulo": "Núcleo com cromatina condensando (provável prófase inicial)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8325,
+      0.1865
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.815,
+    0.17,
+    0.865,
+    0.2
+   ],
+   "nota": "Mais escuro e granuloso que os núcleos em interfase ao redor: a cromatina começa a se condensar em fios."
+  },
+  {
+   "id": "interfase",
+   "estrutura": "nucleo-interfasico",
+   "rotulo": "Núcleo em interfase",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4365,
+      0.3411
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.42,
+    0.325,
+    0.465,
+    0.36
+   ]
+  }
+ ]
+}

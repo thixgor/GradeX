@@ -1,0 +1,51 @@
+{
+ "slug": "pulmao-he-5",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "bronquiolo",
+   "estrutura": "bronquiolo",
+   "rotulo": "Epitélio do bronquíolo (cúbico/colunar simples)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.333,
+      0.3476
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.321,
+    0.338,
+    0.345,
+    0.362
+   ]
+  },
+  {
+   "id": "alveolo",
+   "estrutura": "alveolo-pulmonar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.42
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.26,
+    0.38,
+    0.34,
+    0.46
+   ]
+  }
+ ]
+}

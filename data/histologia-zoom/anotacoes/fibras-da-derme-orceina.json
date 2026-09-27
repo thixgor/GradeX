@@ -1,0 +1,161 @@
+{
+ "slug": "fibras-da-derme-orceina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.228,
+      0.5213
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.18,
+    0.47,
+    0.33,
+    0.6
+   ],
+   "nota": "Pele da axila: epiderme com cristas profundas, muitos folículos pilosos e lóbulos de glândulas apócrinas na derme profunda."
+  },
+  {
+   "id": "elastica",
+   "estrutura": "fibra-elastica",
+   "rotulo": "Fibras elásticas (a orceína cora a elastina em marrom-avermelhado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4226,
+      0.5222
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.47,
+    0.43,
+    0.54
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículo piloso em corte transversal",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.5133,
+      0.7065
+     ],
+     "raios": [
+      0.023,
+      0.02
+     ]
+    }
+   ],
+   "vista": [
+    0.47,
+    0.67,
+    0.56,
+    0.74
+   ]
+  },
+  {
+   "id": "apocrina",
+   "estrutura": "glandula-sudoripara-apocrina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5222,
+      0.6365
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.508,
+    0.622,
+    0.54,
+    0.65
+   ],
+   "nota": "Luz ampla e epitélio de uma camada com brotos apicais: a secreção sai levando parte do citoplasma (decapitação)."
+  },
+  {
+   "id": "lobulo",
+   "estrutura": "glandula-sudoripara-apocrina",
+   "rotulo": "Lóbulo de glândula apócrina: túbulos dilatados e enovelados",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.565,
+      0.35
+     ],
+     "raios": [
+      0.05,
+      0.05
+     ]
+    }
+   ],
+   "vista": [
+    0.5,
+    0.29,
+    0.63,
+    0.41
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-sudoriparo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4816,
+      0.6698
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.475,
+    0.655,
+    0.505,
+    0.685
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.481,
+      0.632
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.46,
+    0.62,
+    0.51,
+    0.66
+   ]
+  }
+ ]
+}

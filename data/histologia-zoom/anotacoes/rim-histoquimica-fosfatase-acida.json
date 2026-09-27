@@ -1,0 +1,40 @@
+{
+ "slug": "rim-histoquimica-fosfatase-acida",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "lisossomo",
+   "estrutura": "lisossomo",
+   "rotulo": "Lisossomos (fosfatase ácida: precipitado preto)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2518,
+      0.2416
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2895,
+      0.2592
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.2,
+    0.2,
+    0.3,
+    0.3
+   ],
+   "nota": "Histoquímica enzimática: o produto preto da reação marca onde há fosfatase ácida — a enzima-marcadora dos lisossomos, abundantes no túbulo proximal."
+  }
+ ]
+}

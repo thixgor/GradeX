@@ -1,0 +1,50 @@
+{
+ "slug": "prostata-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "glandula",
+   "estrutura": "glandula-prostatica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4555,
+      0.4247
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.44,
+    0.42,
+    0.47,
+    0.45
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-fibromuscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4542,
+      0.4287
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.44,
+    0.42,
+    0.47,
+    0.45
+   ]
+  }
+ ]
+}

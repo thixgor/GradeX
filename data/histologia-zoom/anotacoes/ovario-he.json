@@ -1,0 +1,52 @@
+{
+ "slug": "ovario-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "granulosa",
+   "estrutura": "granulosa",
+   "rotulo": "Granulosa de um folículo antral grande",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.786,
+      0.236
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.76,
+    0.19,
+    0.82,
+    0.25
+   ]
+  },
+  {
+   "id": "antro",
+   "estrutura": "foliculo-antral",
+   "rotulo": "Antro com líquido folicular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7758,
+      0.2453
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.76,
+    0.19,
+    0.82,
+    0.25
+   ]
+  }
+ ]
+}

@@ -1,0 +1,53 @@
+{
+ "slug": "vagina-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso não queratinizado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.592,
+      0.4465
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.52,
+    0.4,
+    0.62,
+    0.5
+   ],
+   "nota": "Vagina humana: epitélio espesso não queratinizado, rico em glicogênio, sobre lâmina própria densa com muitas veias, sem glândulas."
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria densa, rica em vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.585,
+      0.48
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.52,
+    0.4,
+    0.62,
+    0.5
+   ]
+  }
+ ]
+}

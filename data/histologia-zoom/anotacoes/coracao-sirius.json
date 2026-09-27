@@ -1,0 +1,73 @@
+{
+ "slug": "coracao-sirius",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epicardio",
+   "estrutura": "epicardio",
+   "rotulo": "Epicárdio com gordura e vasos coronários",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.925,
+      0.36
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.84,
+    0.3,
+    0.94,
+    0.4
+   ]
+  },
+  {
+   "id": "coronaria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Ramo arterial coronário",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.863,
+      0.316
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.84,
+    0.3,
+    0.9,
+    0.34
+   ]
+  },
+  {
+   "id": "miocardio",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Miocárdio (amarelo no picrossírius)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.87,
+      0.37
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.84,
+    0.3,
+    0.94,
+    0.4
+   ]
+  }
+ ]
+}

@@ -1,0 +1,52 @@
+{
+ "slug": "adiposo-unilocular-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "lobulo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Lóbulo de adipócitos uniloculares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2258,
+      0.2358
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.18,
+    0.2,
+    0.3,
+    0.3
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo conjuntivo com vasos, entre os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2878,
+      0.298
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.24,
+    0.25,
+    0.34,
+    0.34
+   ]
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+ "slug": "olho-pas-hematoxilina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cristalino",
+   "estrutura": "cristalino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.86
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.28,
+    0.76,
+    0.5,
+    0.97
+   ],
+   "nota": "Olho inteiro (roedor): o PAS realça em magenta as membranas basais espessas — a cápsula do cristalino é a mais evidente. A retina se descolou e fragmentou no preparo."
+  },
+  {
+   "id": "capsula",
+   "estrutura": "capsula-do-cristalino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.806
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.78,
+    0.45,
+    0.93
+   ]
+  },
+  {
+   "id": "ciliar",
+   "estrutura": "processos-ciliares",
+   "rotulo": "Processos ciliares com epitélio pigmentado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.222,
+      0.845
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.15,
+    0.8,
+    0.25,
+    0.9
+   ]
+  },
+  {
+   "id": "esclera",
+   "estrutura": "esclera",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.027,
+      0.43
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.4,
+    0.08,
+    0.48
+   ]
+  }
+ ]
+}

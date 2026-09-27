@@ -1,0 +1,72 @@
+{
+ "slug": "papilas-linguais-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "foliada",
+   "estrutura": "papila-foliada",
+   "rotulo": "Pregas da papila foliada, separadas por fendas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.77
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.7,
+    0.2,
+    0.9
+   ]
+  },
+  {
+   "id": "mucosas",
+   "estrutura": "glandula-lingual-mucosa",
+   "rotulo": "Glândulas linguais mucosas entre os feixes musculares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.278,
+      0.44
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.2,
+    0.3,
+    0.4,
+    0.5
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.36
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.2,
+    0.3,
+    0.4,
+    0.5
+   ]
+  }
+ ]
+}

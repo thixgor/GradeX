@@ -1,0 +1,149 @@
+{
+ "slug": "corpo-vertebral-masson-goldner",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "placa",
+   "estrutura": "placa-terminal-vertebral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.265
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      1.545
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.38,
+    0.1,
+    0.62,
+    0.3
+   ],
+   "nota": "O corpo vertebral é osso esponjoso fechado por uma fina camada cortical; em cima e embaixo, a placa terminal de cartilagem hialina (laranja) o separa do disco intervertebral."
+  },
+  {
+   "id": "disco",
+   "estrutura": "anel-fibroso",
+   "rotulo": "Disco intervertebral — anel fibroso (fibrocartilagem)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      1.68
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    1.45,
+    0.6,
+    1.75
+   ]
+  },
+  {
+   "id": "trabecula",
+   "estrutura": "trabecula-ossea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5345,
+      0.635
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.5,
+    0.6,
+    0.56,
+    0.66
+   ]
+  },
+  {
+   "id": "osteoide",
+   "estrutura": "osteoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5248,
+      0.6173
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5,
+    0.6,
+    0.56,
+    0.66
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-ossea-hematopoetica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5088,
+      0.64
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.6,
+    0.56,
+    0.66
+   ]
+  },
+  {
+   "id": "cortical",
+   "estrutura": "osso-cortical",
+   "rotulo": "Cortical fina do corpo vertebral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.403,
+      0.9
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.85,
+    0.46,
+    0.95
+   ]
+  }
+ ]
+}

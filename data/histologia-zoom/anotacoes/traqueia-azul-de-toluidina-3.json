@@ -1,0 +1,54 @@
+{
+ "slug": "traqueia-azul-de-toluidina-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7,
+      0.134
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.64,
+    0.08,
+    0.78,
+    0.2
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso de parede fina da lâmina própria (vênula ou linfático)",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.585,
+      0.296
+     ],
+     "raios": [
+      0.031,
+      0.029
+     ]
+    }
+   ],
+   "vista": [
+    0.55,
+    0.24,
+    0.64,
+    0.33
+   ]
+  }
+ ]
+}

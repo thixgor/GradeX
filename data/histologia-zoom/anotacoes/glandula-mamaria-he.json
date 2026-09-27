@@ -1,0 +1,53 @@
+{
+ "slug": "glandula-mamaria-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "lobulo",
+   "estrutura": "lobulo-mamario",
+   "rotulo": "Lóbulo (unidade ductolobular terminal)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.3895
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ],
+   "nota": "Mama em repouso: poucos lóbulos pequenos com ductos, dispersos num estroma abundante."
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.3737
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.5,
+    0.5
+   ]
+  }
+ ]
+}

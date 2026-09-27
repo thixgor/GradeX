@@ -1,0 +1,75 @@
+{
+ "slug": "germe-dentario-hematoxilina-picrofucsina",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "germe",
+   "estrutura": "germe-dentario",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.455,
+      0.265
+     ],
+     "raios": [
+      0.035,
+      0.06
+     ]
+    }
+   ],
+   "vista": [
+    0.38,
+    0.18,
+    0.52,
+    0.34
+   ]
+  },
+  {
+   "id": "osso",
+   "estrutura": "trabecula-ossea",
+   "rotulo": "Trabéculas do osso alveolar em formação (vermelhas na picrofucsina)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.175
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.34,
+    0.14,
+    0.4,
+    0.2
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-ossea-hematopoetica",
+   "rotulo": "Medula entre as trabéculas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3545,
+      0.1528
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.14,
+    0.4,
+    0.2
+   ]
+  }
+ ]
+}

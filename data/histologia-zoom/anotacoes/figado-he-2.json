@@ -1,0 +1,50 @@
+{
+ "slug": "figado-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.515
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.49,
+    0.44,
+    0.53
+   ]
+  },
+  {
+   "id": "portal",
+   "estrutura": "espaco-porta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.424,
+      0.495
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.49,
+    0.44,
+    0.53
+   ]
+  }
+ ]
+}

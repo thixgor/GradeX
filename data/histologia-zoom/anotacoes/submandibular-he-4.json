@@ -1,0 +1,30 @@
+{
+ "slug": "submandibular-he-4",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "seroso",
+   "estrutura": "acino-seroso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4318,
+      0.2718
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.26,
+    0.45,
+    0.29
+   ]
+  }
+ ]
+}

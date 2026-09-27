@@ -1,0 +1,52 @@
+{
+ "slug": "coracao-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "cardiomiocito",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Cardiomiócito em corte transversal: núcleo central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1868,
+      0.3238
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.18,
+    0.32,
+    0.19,
+    0.33
+   ]
+  },
+  {
+   "id": "interstício",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Interstício com capilares entre as fibras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1843,
+      0.3255
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.18,
+    0.32,
+    0.19,
+    0.33
+   ]
+  }
+ ]
+}

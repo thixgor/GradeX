@@ -1,0 +1,99 @@
+{
+ "slug": "sangue-periferico-may-grunwald-giemsa-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "neutrofilo",
+   "estrutura": "neutrofilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5079,
+      0.2825
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5089,
+      0.2821
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5075,
+    0.2815,
+    0.5095,
+    0.2835
+   ]
+  },
+  {
+   "id": "linfocito",
+   "estrutura": "linfocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4895,
+      0.202
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4884,
+    0.2011,
+    0.4902,
+    0.2029
+   ],
+   "nota": "Linfócito pequeno: núcleo redondo e escuro que ocupa quase toda a célula, com um aro fino de citoplasma azul."
+  },
+  {
+   "id": "monocito",
+   "estrutura": "monocito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5897,
+      0.3059
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.589,
+    0.3049,
+    0.591,
+    0.3069
+   ]
+  },
+  {
+   "id": "plaqueta",
+   "estrutura": "plaqueta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5419,
+      0.2996
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.5412,
+    0.2992,
+    0.5424,
+    0.3004
+   ]
+  }
+ ]
+}

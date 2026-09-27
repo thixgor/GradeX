@@ -1,0 +1,99 @@
+{
+ "slug": "baco-he",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "polpa-vermelha",
+   "estrutura": "polpa-vermelha",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.255,
+      0.125
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.24,
+    0.11,
+    0.27,
+    0.14
+   ]
+  },
+  {
+   "id": "polpa-branca",
+   "estrutura": "polpa-branca",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3184,
+      0.1366
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.12,
+    0.37,
+    0.19
+   ]
+  },
+  {
+   "id": "trabecula",
+   "estrutura": "trabecula-esplenica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.434,
+      0.279
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3424,
+      0.179
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.5,
+    0.3
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Veia trabecular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.226
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.5,
+    0.3
+   ]
+  }
+ ]
+}

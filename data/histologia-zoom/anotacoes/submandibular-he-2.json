@@ -1,0 +1,31 @@
+{
+ "slug": "submandibular-he-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-27",
+  "conferencias": 2
+ },
+ "estruturas": [
+  {
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Ácinos mucosos claros misturados a serosos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3615,
+      0.35
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.35,
+    0.34,
+    0.38,
+    0.37
+   ]
+  }
+ ]
+}
