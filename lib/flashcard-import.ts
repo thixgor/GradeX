@@ -56,7 +56,12 @@ export interface ApplyImagesResult {
   assignments: Array<ImageAssignment | null>
 }
 
-export const IMPORT_IMAGE_LIMIT = 200
+/**
+ * Teto de imagens por importação. Precisa comportar um deck inteiro no modo
+ * alternado (duas por cartão): com 200, um deck de 154 cartões perdia em
+ * silêncio as imagens a partir do cartão 101.
+ */
+export const IMPORT_IMAGE_LIMIT = 2000
 
 // ---------------------------------------------------------------------------
 // CSV

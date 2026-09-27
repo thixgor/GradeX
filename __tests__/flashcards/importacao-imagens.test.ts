@@ -216,6 +216,20 @@ describe('baralho feito só de imagens', () => {
     expect(cardCountForImages(3, 'none')).toBe(0)
   })
 
+  it('não corta as imagens depois do cartão 100', () => {
+    const images = Array.from({ length: 308 }, (_, i) => IMG(i + 1))
+    const { cards, usedImages } = buildImportCards({
+      format: 'images',
+      payload: '',
+      images,
+      imageMode: 'alternate',
+    })
+    expect(usedImages).toBe(308)
+    expect(cards).toHaveLength(154)
+    expect(cards[100].front.image).toBe(IMG(201))
+    expect(cards[153].back.image).toBe(IMG(308))
+  })
+
   it('sem imagem e sem texto não importa nada', () => {
     const { cards } = buildImportCards({ format: 'images', payload: '', images: [] })
     expect(cards).toHaveLength(0)
