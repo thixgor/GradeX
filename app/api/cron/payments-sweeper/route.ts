@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isCronAuthorized } from '@/lib/cron-auth'
 import { getDb } from '@/lib/mongodb'
 import { reconciliarPagamentosPendentes } from '@/lib/payments/sweep'
 
@@ -30,9 +31,5 @@ export async function GET(request: NextRequest) {
 }
 
 function isAuthorized(request: NextRequest): boolean {
-  // Vercel Cron envia header `x-vercel-cron`. Em outros ambientes, validamos o bearer.
-  if (request.headers.get('x-vercel-cron')) return true
-  const auth = request.headers.get('authorization') || ''
-  const expected = `Bearer ${process.env.CRON_SECRET || ''}`
-  return !!process.env.CRON_SECRET && auth === expected
+  return isCronAuthorized(request)
 }

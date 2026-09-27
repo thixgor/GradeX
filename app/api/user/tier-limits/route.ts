@@ -6,6 +6,7 @@ import { getTierLimits, getCronogramasLimit, getFlashcardsLimit, getPersonalExam
 import { ObjectId } from 'mongodb'
 import { sendOneTimePaymentEndedEmail } from '@/lib/mail'
 import { contaEhPaga } from '@/lib/cargos-server'
+import { keepAccessIfSubscribed } from '@/lib/payments/subscription-sync'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,7 +52,15 @@ export async function GET(request: NextRequest) {
     const isPaid = await contaEhPaga(accountType, db)
     const expiresAt = isPaid ? user.premiumExpiresAt : (accountType === 'trial' ? user.trialExpiresAt : null)
 
-    if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin') {
+    // Assinante recorrente em dia não é rebaixado: a data pode ter ficado para
+    // trás só porque a renovação ainda não foi sincronizada. Confere no MP (só
+    // aqui, no caso raro de data vencida) e segue com o acesso estendido.
+    const assinaturaEmDia =
+      isPaid && expiresAt && new Date(expiresAt) <= now && session.role !== 'admin'
+        ? await keepAccessIfSubscribed(db, String(user._id))
+        : false
+
+    if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin' && !assinaturaEmDia) {
       console.log(`Plano ${accountType} expirou para o usuário ${user._id}. Revertendo para gratuito.`)
       accountType = 'gratuito'
       const updateData: any = {

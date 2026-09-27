@@ -285,6 +285,23 @@ export class MercadoPagoProvider implements PaymentProvider {
     return mpPreapprovalToProviderSub(response)
   }
 
+  async findPreapprovalByExternalReference(externalReference: string): Promise<ProviderSubscription | null> {
+    const auth = await getEffectiveMpAuth()
+    if (!auth.accessToken) return null
+    const params = new URLSearchParams({ external_reference: externalReference, limit: '1' })
+    const res = await fetch(`https://api.mercadopago.com/preapproval/search?${params}`, {
+      headers: { Authorization: `Bearer ${auth.accessToken}` },
+      signal: AbortSignal.timeout(3500),
+      cache: 'no-store',
+    })
+    if (!res.ok) throw new Error(`busca de assinatura recusada: ${res.status}`)
+    const data = await res.json()
+    const found = Array.isArray(data?.results)
+      ? data.results.find((p: any) => String(p?.external_reference || '') === externalReference)
+      : null
+    return found ? mpPreapprovalToProviderSub(found) : null
+  }
+
   async cancelPreapproval(providerSubscriptionId: string): Promise<ProviderSubscription> {
     const auth = await getEffectiveMpAuth()
     const pre = getMpPreApprovalWithToken(auth.accessToken)

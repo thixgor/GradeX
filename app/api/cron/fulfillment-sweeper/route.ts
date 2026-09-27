@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isCronAuthorized } from '@/lib/cron-auth'
 import { getDb } from '@/lib/mongodb'
 import { SERIAL_KEYS_COLLECTION } from '@/lib/serial-keys'
 import {
@@ -146,22 +147,7 @@ export async function GET(request: NextRequest) {
 }
 
 function isAuthorized(request: NextRequest): boolean {
-  if (request.headers.get('x-vercel-cron')) return true
-
-  const secret = (process.env.CRON_SECRET || '').trim()
-  if (!secret) return false
-
-  const url = new URL(request.url)
-  // Aceita o segredo por várias vias — tolerante a como o cron-job.org é
-  // configurado (com ou sem prefixo "Bearer", em header dedicado ou na URL).
-  const candidates = [
-    (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, ''),
-    request.headers.get('x-cron-secret') || '',
-    url.searchParams.get('secret') || '',
-    url.searchParams.get('token') || '',
-  ].map(s => s.trim())
-
-  return candidates.some(c => c.length > 0 && safeEqual(c, secret))
+  return isCronAuthorized(request)
 }
 
 /** Comparação de tempo constante para o segredo. */

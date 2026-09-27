@@ -4,8 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { getPaymentProvider } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { audit } from '@/lib/payments/audit'
-import { mapMpPreapprovalStatus } from '@/lib/payments/mercado-pago/status-mapper'
-import { getMpPreApproval, getMpPayment } from '@/lib/payments/mercado-pago/client'
+import { preapprovalIdFromPayment, syncSubscription } from '@/lib/payments/subscription-sync'
 import type {
   PaymentOrder,
   SubscriptionRecord,
@@ -175,6 +174,18 @@ async function handlePaymentEvent(paymentId: string) {
     })
   }
   if (!orderDoc) {
+    // Cobrança de RENOVAÇÃO de assinatura: não tem order nossa, e era aqui que
+    // ela morria — o acesso nunca era estendido. Sincroniza a assinatura.
+    const preapprovalId = preapprovalIdFromPayment(raw)
+    if (preapprovalId) {
+      const sub = await db.collection<SubscriptionRecord>('subscriptions').findOne({
+        providerSubscriptionId: preapprovalId,
+      })
+      if (sub) {
+        await syncSubscription(db, sub)
+        return
+      }
+    }
     console.warn('[mp-webhook] order não encontrada para payment', paymentId)
     return
   }
@@ -184,8 +195,6 @@ async function handlePaymentEvent(paymentId: string) {
 
 async function handlePreapprovalEvent(preapprovalId: string) {
   if (!preapprovalId) return
-  const pre = getMpPreApproval()
-  const data = await pre.get({ id: preapprovalId })
   const db = await getDb()
   const sub = await db.collection<SubscriptionRecord>('subscriptions').findOne({
     providerSubscriptionId: preapprovalId,
@@ -195,26 +204,18 @@ async function handlePreapprovalEvent(preapprovalId: string) {
     return
   }
 
-  const newStatus = mapMpPreapprovalStatus((data as any)?.status)
-  const nextBilling = (data as any)?.next_payment_date
-    ? new Date((data as any).next_payment_date)
-    : sub.nextBillingAt
-
-  await db.collection<SubscriptionRecord>('subscriptions').updateOne(
-    { _id: sub._id as any },
-    {
-      $set: {
-        status: newStatus,
-        nextBillingAt: nextBilling,
-        updatedAt: new Date(),
-      },
-    }
-  )
+  // Pelo provider (e não pelo cliente do ambiente): a assinatura foi criada
+  // com a credencial EFETIVA — a do marketplace, quando a conta está ligada
+  // por OAuth. Consultar com a outra dava 404 e o webhook falhava.
+  const remote = await getPaymentProvider().getPreapproval(preapprovalId)
+  // Status, próxima cobrança e — o que faltava — o acesso da conta estendido
+  // até a próxima cobrança enquanto a assinatura estiver autorizada.
+  const resultado = await syncSubscription(db, sub, remote)
 
   // Cancelamento server-side ou expiração: registra audit
-  if (newStatus === 'cancelled' || newStatus === 'expired') {
+  if (resultado.status !== sub.status && (resultado.status === 'cancelled' || resultado.status === 'expired')) {
     await audit({
-      action: newStatus === 'cancelled' ? 'subscription_canceled' : 'subscription_expired',
+      action: resultado.status === 'cancelled' ? 'subscription_canceled' : 'subscription_expired',
       targetUserId: sub.userId,
       resourceType: 'subscription',
       resourceId: preapprovalId,

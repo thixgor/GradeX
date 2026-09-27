@@ -7,6 +7,9 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
+import { describeMercadoPagoApiError } from '@/lib/payments/mercado-pago/errors'
+import { isAmbiguousProviderError } from '@/lib/payments/provider-failure'
+import { accessUntilForSubscription } from '@/lib/payments/subscription-sync'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { computeSubscriptionCharge, getFeePolicy } from '@/lib/payments/fees'
@@ -22,6 +25,23 @@ import type { SubscriptionRecord, User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+
+/** Por quanto tempo uma assinatura `pending` impede criar outra. */
+const PENDING_BLOQUEIA_MS = 30 * 60_000
+
+/** Erro do MP na criação da assinatura, em português. */
+function describeSubscriptionError(err: any): string {
+  const traduzido = describeMercadoPagoApiError(err)
+  if (traduzido) return traduzido
+  const texto = `${err?.message || ''} ${JSON.stringify(err?.cause ?? '')}`
+  if (/CC_VAL_433|card validation|credit card validation/i.test(texto)) {
+    return 'O banco recusou o cartão para a assinatura. Tente outro cartão ou use o pagamento único (Pix ou cartão).'
+  }
+  if (isAmbiguousProviderError(err)) {
+    return 'O Mercado Pago não respondeu a tempo. Confira no seu perfil em alguns minutos antes de tentar de novo.'
+  }
+  return 'Não foi possível criar a assinatura com este cartão. Confira os dados ou use o pagamento único (Pix ou cartão).'
+}
 
 /**
  * Cria uma assinatura recorrente (Preapproval) no Mercado Pago.
@@ -105,11 +125,17 @@ export async function POST(request: NextRequest) {
   const charge = computeSubscriptionCharge(baseAmount, getFeePolicy())
   const amount = charge.totalAmount
 
-  // Bloqueia múltiplas assinaturas ativas
+  // Bloqueia múltiplas assinaturas ativas. `pending` só conta enquanto é
+  // recente: com o cartão já tokenizado o MP autoriza ou recusa na hora, e um
+  // `pending` antigo é tentativa abandonada — antes ele barrava a pessoa de
+  // assinar para sempre ("já possui uma assinatura ativa ou pendente").
   const existing = await db.collection<SubscriptionRecord>('subscriptions').findOne({
     userId: session.userId,
-    status: { $in: ['authorized', 'pending'] },
-  })
+    $or: [
+      { status: 'authorized' },
+      { status: 'pending', createdAt: { $gte: new Date(Date.now() - PENDING_BLOQUEIA_MS) } },
+    ],
+  } as any)
   if (existing) {
     return NextResponse.json(
       { error: 'Você já possui uma assinatura ativa ou pendente.' },
@@ -118,17 +144,39 @@ export async function POST(request: NextRequest) {
   }
 
   const provider = getPaymentProvider()
-  const sub = await provider.createPreapproval({
-    externalReference: `${session.userId}:${planId}:${Date.now()}`,
-    payerEmail: session.email,
-    amount,
-    currency: 'BRL',
-    reason: `${plano.nome} — ${plano.periodo || 'Assinatura'}`,
-    frequencyMonths: months as MesesDeRecorrencia,
-    cardTokenId,
-    backUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/profile?subscription=success`,
-    metadata: { userId: session.userId, planId },
-  })
+  const externalReference = `${session.userId}:${planId}:${Date.now()}`
+  let sub: Awaited<ReturnType<typeof provider.createPreapproval>>
+  try {
+    sub = await provider.createPreapproval({
+      externalReference,
+      payerEmail: session.email,
+      amount,
+      currency: 'BRL',
+      reason: `${plano.nome} — ${plano.periodo || 'Assinatura'}`,
+      frequencyMonths: months as MesesDeRecorrencia,
+      cardTokenId,
+      backUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/profile?subscription=success`,
+      metadata: { userId: session.userId, planId },
+    })
+  } catch (err: any) {
+    // Antes o erro subia sem tratamento: 500 sem corpo, e a tela dizia que a
+    // resposta "não chegou a tempo" para um cartão que o MP simplesmente
+    // recusou.
+    console.warn('[subscriptions] criação da assinatura falhou:', err?.message, JSON.stringify(err?.cause ?? null))
+    // Timeout/queda: a assinatura PODE existir no MP (e cobrar). Procura pela
+    // nossa referência antes de dizer que falhou — senão a pessoa pagaria sem
+    // ter o registro que libera o acesso.
+    const encontrada = isAmbiguousProviderError(err)
+      ? await provider.findPreapprovalByExternalReference?.(externalReference).catch(() => null)
+      : null
+    if (!encontrada) {
+      return NextResponse.json(
+        { error: describeSubscriptionError(err) },
+        { status: isAmbiguousProviderError(err) ? 502 : 400 }
+      )
+    }
+    sub = encontrada
+  }
 
   const now = new Date()
   const periodEnd = new Date(now)
@@ -173,7 +221,10 @@ export async function POST(request: NextRequest) {
           accountType: normalizeAccountType(plano.role),
           premiumPlanType: planId as any,
           premiumActivatedAt: now,
-          premiumExpiresAt: periodEnd,
+          // Próxima cobrança + folga: a renovação estende a partir daqui
+          // (lib/payments/subscription-sync.ts).
+          premiumExpiresAt:
+            accessUntilForSubscription({ currentPeriodEndsAt: periodEnd, nextBillingAt: sub.nextBillingAt }) || periodEnd,
           premiumPrice: amount,
           mercadoPagoPreapprovalId: sub.providerSubscriptionId,
         },

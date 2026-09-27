@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
-import { getPaymentProvider } from '@/lib/payments'
-import { mapMpPreapprovalStatus } from '@/lib/payments/mercado-pago/status-mapper'
+import { syncSubscription } from '@/lib/payments/subscription-sync'
+import { isCronAuthorized } from '@/lib/cron-auth'
 import { audit } from '@/lib/payments/audit'
 import { sendSubscriptionCancelledEmail } from '@/lib/mail'
 import { revokePlusClaims } from '@/lib/plus-claims'
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
   const usersCol = db.collection<User>('users')
 
   const now = new Date()
-  const stats = { reconciled: 0, expired: 0, claimsRevoked: 0, errors: 0 }
+  const stats = { reconciled: 0, accessExtended: 0, cancelRetried: 0, expired: 0, claimsRevoked: 0, errors: 0 }
 
   // 1) Reconciliar todas as ativas/pendentes (best-effort, em lotes)
   const candidates = await subsCol
@@ -40,18 +40,15 @@ export async function GET(request: NextRequest) {
     .limit(200)
     .toArray()
 
-  const provider = getPaymentProvider()
+  // Além do status, `syncSubscription` estende o acesso de quem está com a
+  // assinatura em dia (antes a data nunca andava e o pagante era rebaixado)
+  // e refaz no MP o cancelamento que a pessoa pediu e não pegou.
   for (const sub of candidates) {
     try {
-      const remote = await provider.getPreapproval(sub.providerSubscriptionId)
-      const newStatus = remote.status
-      const updates: Partial<SubscriptionRecord> = {
-        status: newStatus,
-        nextBillingAt: remote.nextBillingAt,
-        updatedAt: now,
-      }
-      if (newStatus !== sub.status) stats.reconciled++
-      await subsCol.updateOne({ _id: sub._id as any }, { $set: updates })
+      const r = await syncSubscription(db, sub)
+      if (r.status !== sub.status) stats.reconciled++
+      if (r.userUpdated) stats.accessExtended++
+      if (r.cancelRetried) stats.cancelRetried++
     } catch (err) {
       stats.errors++
       console.error('[cron-subs] reconcile fail', sub.providerSubscriptionId, err)
@@ -218,10 +215,5 @@ export async function GET(request: NextRequest) {
 }
 
 function isAuthorized(request: NextRequest): boolean {
-  // Vercel Cron envia header `x-vercel-cron`. Em outros ambientes, validamos
-  // o bearer.
-  if (request.headers.get('x-vercel-cron')) return true
-  const auth = request.headers.get('authorization') || ''
-  const expected = `Bearer ${process.env.CRON_SECRET || ''}`
-  return !!process.env.CRON_SECRET && auth === expected
+  return isCronAuthorized(request)
 }

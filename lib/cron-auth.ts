@@ -12,7 +12,15 @@
 //   x-cron-secret: <CRON_SECRET>
 //   ?secret=<CRON_SECRET>
 //   ?token=<CRON_SECRET>
-//   header x-vercel-cron (só a Vercel consegue enviá-lo)
+//   header x-vercel-cron — SÓ quando CRON_SECRET não está definida
+//
+// Por que o x-vercel-cron deixou de bastar sozinho: é um cabeçalho comum, que
+// qualquer um pode mandar num curl. Valer sempre deixava qualquer pessoa
+// disparar as rotinas (a de assinaturas rebaixa contas e faz centenas de
+// chamadas ao Mercado Pago). Com CRON_SECRET definida, a própria Vercel manda
+// `Authorization: Bearer <CRON_SECRET>` nas chamadas de cron — o segredo passa
+// a ser obrigatório sem quebrar nada. Sem segredo configurado, o cabeçalho
+// continua aceito para não parar as rotinas de um ambiente sem essa variável.
 // ────────────────────────────────────────────────────────────────────────────
 
 import type { NextRequest } from 'next/server'
@@ -27,10 +35,8 @@ function safeEqual(a: string, b: string): boolean {
 
 /** true quando a requisição está autorizada a rodar uma rotina de cron. */
 export function isCronAuthorized(request: NextRequest): boolean {
-    if (request.headers.get('x-vercel-cron')) return true
-
     const secret = (process.env.CRON_SECRET || '').trim()
-    if (!secret) return false
+    if (!secret) return !!request.headers.get('x-vercel-cron')
 
     const url = new URL(request.url)
     const candidates = [

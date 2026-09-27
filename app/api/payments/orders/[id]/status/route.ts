@@ -20,13 +20,21 @@ export const runtime = 'nodejs'
  */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
-  const rl = await checkRateLimit(ip, 'payments_status_poll', 60, 60_000)
-  if (!rl.success) {
-    return NextResponse.json({ error: 'Muitas requisições. Tente novamente em instantes.' }, { status: 429 })
-  }
   const orderId = params.id
   if (!orderId || !ObjectId.isValid(orderId)) {
     return NextResponse.json({ error: 'orderId inválido' }, { status: 400 })
+  }
+  // Limite por IP + PEDIDO, com um teto por IP bem mais alto. Antes era um
+  // limite só por IP (60/min): operadoras de celular põem muita gente atrás do
+  // mesmo IP (CGNAT), e três pessoas acompanhando o Pix ao mesmo tempo já
+  // estouravam — a tela parava de ver a aprovação. O teto por IP continua
+  // barrando quem tenta varrer ids de pedido.
+  const [porPedido, porIp] = await Promise.all([
+    checkRateLimit(`${ip}:${orderId}`, 'payments_status_poll_order', 40, 60_000),
+    checkRateLimit(ip, 'payments_status_poll_ip', 300, 60_000),
+  ])
+  if (!porPedido.success || !porIp.success) {
+    return NextResponse.json({ error: 'Muitas requisições. Tente novamente em instantes.' }, { status: 429 })
   }
 
   const db = await getDb()

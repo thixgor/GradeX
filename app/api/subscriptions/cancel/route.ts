@@ -55,7 +55,10 @@ export async function POST(request: NextRequest) {
     await provider.cancelPreapproval(sub.providerSubscriptionId)
   } catch (err: any) {
     console.error('[cancel-sub] erro no MP:', err?.message)
-    // Continuar — registramos a intenção de cancelamento mesmo se a chamada falhar
+    // Continuar — registramos a intenção de cancelamento mesmo se a chamada
+    // falhar. O cron de assinaturas (syncSubscription) refaz o cancelamento no
+    // MP enquanto ele seguir autorizado; antes ninguém refazia, e o MP
+    // continuava cobrando de quem já tinha perdido o acesso.
   }
 
   await subsCol.updateOne(

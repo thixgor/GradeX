@@ -139,6 +139,11 @@ export interface PaymentProvider {
   createPreapproval(input: CreatePreapprovalInput): Promise<ProviderSubscription>
 
   getPreapproval(providerSubscriptionId: string): Promise<ProviderSubscription>
+  /**
+   * Assinatura com este `external_reference`, ou `null`. Usado quando a
+   * criação estourou o tempo e não dá para saber se ela existe no provedor.
+   */
+  findPreapprovalByExternalReference?(externalReference: string): Promise<ProviderSubscription | null>
 
   cancelPreapproval(providerSubscriptionId: string): Promise<ProviderSubscription>
 
