@@ -95,12 +95,12 @@ export function validateMpWebhook(input: {
 
   // Replay protection: rejeita timestamps com mais de 5 minutos.
   const now = Date.now()
-  const tsMs = Number(ts) * 1000
-  if (!Number.isFinite(tsMs) || Math.abs(now - tsMs) > 5 * 60 * 1000) {
+  const tsMs = timestampMs(ts)
+  if (tsMs == null || Math.abs(now - tsMs) > 5 * 60 * 1000) {
     return { valid: false, reason: 'timestamp fora da janela aceita' }
   }
 
-  const manifest = `id:${dataId};request-id:${requestId};ts:${ts};`
+  const manifest = buildManifest(String(dataId || ''), requestId, ts)
   const expected = crypto
     .createHmac('sha256', secret)
     .update(manifest)
@@ -128,3 +128,29 @@ function headerValue(
   if (Array.isArray(v)) return v[0] || ''
   return v || ''
 }
+
+/**
+ * `ts` do `x-signature` em milissegundos. O Mercado Pago já mandou esse valor
+ * em segundos e em milissegundos (13 dígitos); tratar tudo como segundos
+ * jogava o timestamp milhares de anos no futuro e TODO webhook era recusado
+ * como "fora da janela" — a aprovação do Pix ficava esperando o polling da
+ * tela (ou a varredura diária, se o comprador tivesse fechado a aba).
+ */
+export function timestampMs(ts: string): number | null {
+  if (!/^\d{9,14}$/.test(ts)) return null
+  const n = Number(ts)
+  return ts.length >= 12 ? n : n * 1000
+}
+
+/**
+ * Texto assinado, como na documentação do MP: `id` em minúsculas (ids
+ * alfanuméricos) e cada parte ausente omitida — não enviada vazia.
+ */
+export function buildManifest(dataId: string, requestId: string, ts: string): string {
+  let manifest = ''
+  if (dataId) manifest += `id:${dataId.toLowerCase()};`
+  if (requestId) manifest += `request-id:${requestId};`
+  manifest += `ts:${ts};`
+  return manifest
+}
+

@@ -92,7 +92,16 @@ export async function applyPaymentResult(
     ...paidFields,
     updatedAt: new Date(),
   }
-  await orders.updateOne({ _id: order._id as any }, { $set: update })
+  // Compare-and-set no status lido: webhook e polling da tela chegam juntos
+  // com frequência (é o caminho rápido do Pix). Sem a condição, os dois viam
+  // `pending`, os dois "venciam" a transição e os efeitos (liberar acesso,
+  // gerar key, e-mail) rodavam duas vezes. Quem perde a corrida só devolve o
+  // estado atual — o vencedor já está aplicando.
+  const cas = await orders.updateOne({ _id: order._id as any, status: prevStatus }, { $set: update })
+  if (cas?.matchedCount === 0) {
+    const atual = await orders.findOne({ _id: order._id as any })
+    return { applied: false, reason: 'transição concorrente', order: atual }
+  }
   const updatedOrder = { ...order, ...update } as PaymentOrder
 
   // Registra/atualiza payment

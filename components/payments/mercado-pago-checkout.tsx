@@ -55,6 +55,13 @@ import {
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 import { cardTokenError } from '@/lib/payments/card-token-errors'
 import {
+  clearPendingCheckout,
+  pendingStorageKey,
+  pollingDelayMs,
+  readPendingCheckout,
+  writePendingCheckout,
+} from '@/lib/payments/polling'
+import {
   brandFromMercadoPagoId,
   CardTerminal,
   detectBrand,
@@ -512,23 +519,79 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     if (!order || !order.orderId) return
     if (order.status === 'approved' || order.status === 'rejected' || order.status === 'cancelled' || order.status === 'expired') return
 
-    const interval = setInterval(async () => {
+    // Ritmo em lib/payments/polling.ts: rápido nos primeiros minutos, mais
+    // espaçado depois, e NADA com a aba escondida (a pessoa está no app do
+    // banco). Ao voltar para a página, consulta na hora — é o momento em que
+    // o Pix acabou de ser pago.
+    let parado = false
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const inicio = Date.now()
+    const visivel = () => typeof document === 'undefined' || document.visibilityState !== 'hidden'
+
+    const consultar = async () => {
+      if (parado) return
       try {
-        const res = await fetch(`/api/payments/orders/${order.orderId}/status`)
-        if (!res.ok) return
+        const res = await fetch(`/api/payments/orders/${order.orderId}/status`, { cache: 'no-store' })
+        if (!res.ok || parado) return
         const data = await res.json()
+        if (parado) return
         setOrder(prev => prev ? { ...prev, status: data.status, statusDetail: data.statusDetail, paymentMethod: data.paymentMethod } : prev)
         if (data.status === 'approved') {
+          parado = true
           props.onApproved?.({ ...order, status: 'approved' })
-          clearInterval(interval)
         } else if (['rejected', 'cancelled', 'expired'].includes(data.status)) {
+          parado = true
           props.onRejected?.({ ...order, status: data.status })
-          clearInterval(interval)
         }
       } catch {}
-    }, 4000)
-    return () => clearInterval(interval)
+    }
+
+    const agendar = () => {
+      if (parado) return
+      timer = setTimeout(() => {
+        // Sem await: se uma consulta demorar (efeitos da aprovação rodando no
+        // servidor), a próxima segue no horário e lê o status já gravado.
+        if (visivel()) void consultar()
+        agendar()
+      }, pollingDelayMs(Date.now() - inicio))
+    }
+
+    const aoVoltar = () => {
+      if (visivel()) void consultar()
+    }
+    document.addEventListener('visibilitychange', aoVoltar)
+    window.addEventListener('focus', aoVoltar)
+    window.addEventListener('pageshow', aoVoltar)
+    agendar()
+    return () => {
+      parado = true
+      if (timer) clearTimeout(timer)
+      document.removeEventListener('visibilitychange', aoVoltar)
+      window.removeEventListener('focus', aoVoltar)
+      window.removeEventListener('pageshow', aoVoltar)
+    }
   }, [order?.orderId, order?.status, method])
+
+  // Retomada: o Android descarta a aba enquanto a pessoa paga no app do banco.
+  // Sem isto, ao voltar a página recarregava no formulário — sem o QR e sem
+  // acompanhar a aprovação.
+  const pendingKey = pendingStorageKey(props.endpoint, props.description)
+  const sessao = () => (typeof window === 'undefined' ? null : (() => { try { return window.sessionStorage } catch { return null } })())
+  useEffect(() => {
+    const snap = readPendingCheckout<CheckoutOrderResponse, Method>(sessao(), pendingKey)
+    if (snap && allowed.includes(snap.method)) {
+      setMethod(snap.method)
+      setOrder(snap.order)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingKey])
+  useEffect(() => {
+    if (!order?.orderId) return
+    const finalizado = ['approved', 'rejected', 'cancelled', 'expired', 'refunded', 'charged_back'].includes(order.status)
+    if (finalizado) clearPendingCheckout(sessao(), pendingKey)
+    else writePendingCheckout(sessao(), pendingKey, { order, method, savedAt: Date.now() })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.orderId, order?.status, method, pendingKey])
 
   /**
    * `payment_method_id` usado para PRECIFICAR. No cartão ele vem da detecção de
@@ -914,7 +977,16 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
 
   // Tela de resultado (após criar order)
   if (order) {
-    return <ResultPanel order={order} method={method} onReset={() => setOrder(null)} />
+    return (
+      <ResultPanel
+        order={order}
+        method={method}
+        onReset={() => {
+          clearPendingCheckout(sessao(), pendingKey)
+          setOrder(null)
+        }}
+      />
+    )
   }
 
   // CPF: um campo só, montado aqui e posicionado conforme o meio — dentro do
@@ -1378,6 +1450,32 @@ function MethodTab({
   )
 }
 
+/**
+ * Saída do QR/boleto pendente. A tela agora retoma o pagamento pendente depois
+ * de recarregar a aba; sem este botão, quem desistisse do Pix ficaria preso
+ * nele. Pix e boleto só cobram se a pessoa pagar — trocar de forma é seguro.
+ */
+function TrocarForma({ onReset }: { onReset: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onReset}
+      style={{
+        background: 'none',
+        border: 'none',
+        padding: 0,
+        cursor: 'pointer',
+        fontSize: '12px',
+        color: 'hsl(var(--muted-foreground))',
+        textDecoration: 'underline',
+        alignSelf: 'center',
+      }}
+    >
+      Escolher outra forma de pagamento
+    </button>
+  )
+}
+
 function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse; method: Method; onReset: () => void }) {
   const [copied, setCopied] = useState(false)
 
@@ -1493,6 +1591,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
           <Loader2 size={14} className="animate-spin" />
           Aguardando confirmação — sua tela atualiza automaticamente.
         </p>
+        <TrocarForma onReset={onReset} />
       </div>
     )
   }
@@ -1528,6 +1627,7 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         <p style={{ fontSize: '12px', color: 'hsl(var(--muted-foreground) / 0.75)' }}>
           Liberação ocorre automaticamente após a compensação (até 2 dias úteis).
         </p>
+        <TrocarForma onReset={onReset} />
       </div>
     )
   }
