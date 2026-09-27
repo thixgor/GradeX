@@ -125,6 +125,9 @@ export function PackageContents({
           border: '1px solid rgba(52,211,153,0.16)',
           background: 'rgba(255,255,255,0.035)',
           overflow: 'hidden',
+          minWidth: 0,
+          maxWidth: '100%',
+          contain: 'inline-size',
         }}
       >
         <button
@@ -147,7 +150,7 @@ export function PackageContents({
           }}
         >
           <Package size={14} style={{ color: '#34d399', flexShrink: 0 }} />
-          <span style={{ flex: 1 }}>Tudo que este pacote cobre · {countLabel}</span>
+          <span style={{ flex: 1, minWidth: 0 }}>Tudo que este pacote cobre · {countLabel}</span>
           <ChevronDown
             size={15}
             style={{ transition: 'transform 0.2s', transform: open ? 'rotate(180deg)' : 'none', flexShrink: 0 }}
@@ -187,7 +190,7 @@ export function PackageContents({
 
   // variant === 'light'
   return (
-    <div className={`rounded-lg border border-border bg-background overflow-hidden ${className || ''}`}>
+    <div className={`min-w-0 max-w-full overflow-hidden rounded-lg border border-border bg-background [contain:inline-size] ${className || ''}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -195,7 +198,7 @@ export function PackageContents({
         className="flex w-full items-center gap-2 px-3.5 py-3 text-left text-sm font-bold text-foreground transition hover:bg-muted/40"
       >
         <Package className="h-4 w-4 flex-none text-primary" />
-        <span className="flex-1">Tudo que este pacote cobre · {countLabel}</span>
+        <span className="min-w-0 flex-1">Tudo que este pacote cobre · {countLabel}</span>
         <ChevronDown className={`h-4 w-4 flex-none transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (

@@ -1010,9 +1010,9 @@ function GenericComprarContent({ productType }: { productType: string }) {
         valor={formatBRL(payableAmount)}
         ativa={step === 'buyer'}
       />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
-        <div className="flex flex-col gap-4">
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
+        <div className="flex min-w-0 flex-col gap-4">
+          <div className="min-w-0 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
             {product.coverImageUrl && (
               <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
                 <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover" />
