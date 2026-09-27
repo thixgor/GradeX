@@ -144,7 +144,37 @@ export function paradasDaMarcacao(m: MarcacaoNaLamina): number {
   return m.marcas.length > 1 && m.marcas.every((k) => k.tipo === 'seta') ? m.marcas.length : 1
 }
 
-export function vistaDaMarcacao(m: MarcacaoNaLamina, parada = 0): [number, number, number, number] {
+/**
+ * Menor campo que o enquadramento mostra, em pixels reais da imagem. Abaixo
+ * disso a tela ampliaria a imagem além da resolução do scan e a estrutura
+ * apareceria borrada — acontecia nas fotomicrografias e lâminas pequenas.
+ */
+export const CAMPO_MINIMO_EM_PIXELS = 700
+
+/** Garante o campo mínimo (em fração da largura da lâmina), mantendo o centro. */
+function comCampoMinimo(v: [number, number, number, number], larguraDaLamina?: number): [number, number, number, number] {
+  if (!larguraDaLamina) return v
+  const minimo = CAMPO_MINIMO_EM_PIXELS / larguraDaLamina
+  const [x0, y0, x1, y1] = v
+  const lado = Math.max(x1 - x0, y1 - y0)
+  if (lado >= minimo) return v
+  const cx = (x0 + x1) / 2
+  const cy = (y0 + y1) / 2
+  const f = minimo / Math.max(lado, 1e-9)
+  const mw = ((x1 - x0) * f) / 2
+  const mh = ((y1 - y0) * f) / 2
+  return [cx - mw, cy - mh, cx + mw, cy + mh]
+}
+
+export function vistaDaMarcacao(
+  m: MarcacaoNaLamina,
+  parada = 0,
+  larguraDaLamina?: number,
+): [number, number, number, number] {
+  return comCampoMinimo(vistaBruta(m, parada), larguraDaLamina)
+}
+
+function vistaBruta(m: MarcacaoNaLamina, parada: number): [number, number, number, number] {
   const n = paradasDaMarcacao(m)
   if (n > 1) {
     const alvo = m.marcas[((parada % n) + n) % n]

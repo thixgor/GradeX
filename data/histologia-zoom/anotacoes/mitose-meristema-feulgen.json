@@ -3,7 +3,7 @@
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
   "data": "2026-09-27",
-  "conferencias": 2
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -21,10 +21,10 @@
     }
    ],
    "vista": [
-    0.4095,
-    0.4225,
-    0.4355,
-    0.4405
+    0.0,
+    0.0,
+    0.005,
+    0.005
    ],
    "nota": "A reação de Feulgen cora só o DNA (magenta); citoplasma e parede celular ficam quase incolores. Esta região do meristema tem várias células em divisão lado a lado."
   },
@@ -42,10 +42,10 @@
     }
    ],
    "vista": [
-    0.4095,
-    0.4225,
-    0.4355,
-    0.4405
+    0.0,
+    0.0,
+    0.005,
+    0.005
    ]
   },
   {
@@ -62,10 +62,10 @@
     }
    ],
    "vista": [
-    0.4095,
-    0.4225,
-    0.4355,
-    0.4405
+    0.0,
+    0.0,
+    0.005,
+    0.005
    ]
   },
   {
@@ -82,10 +82,10 @@
     }
    ],
    "vista": [
-    0.4095,
-    0.4225,
-    0.4355,
-    0.4405
+    0.0,
+    0.0,
+    0.005,
+    0.005
    ]
   }
  ]

@@ -3,7 +3,7 @@
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
   "data": "2026-09-27",
-  "conferencias": 2
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -37,27 +37,6 @@
       0.535
      ],
      "angulo": 270
-    }
-   ],
-   "vista": [
-    0.48,
-    0.45,
-    0.58,
-    0.55
-   ]
-  },
-  {
-   "id": "dobra",
-   "estrutura": "artefato-dobra",
-   "rotulo": "Dobra do corte (linha escura)",
-   "marcas": [
-    {
-     "tipo": "seta",
-     "ponta": [
-      0.521,
-      0.515
-     ],
-     "angulo": 0
     }
    ],
    "vista": [

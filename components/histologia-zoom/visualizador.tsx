@@ -618,7 +618,7 @@ export function Visualizador({
     }
     desenharRef.current()
     if (!viewer || !OSD || !alvo || !viewer.world.getItemCount()) return
-    const [x0, y0, x1, y1] = vistaDaMarcacao(alvo, parada)
+    const [x0, y0, x1, y1] = vistaDaMarcacao(alvo, parada, lamina.piramide.niveis.at(-1)?.largura)
     viewer.viewport.fitBoundsWithConstraints(new OSD.Rect(x0, y0, x1 - x0, y1 - y0))
   }, [selecao, estruturas, versao, parada])
 

@@ -131,3 +131,14 @@ describe('vista declarada', () => {
     expect((y0 + y1) / 2).toBeCloseTo(0.224)
   })
 })
+
+describe('campo mínimo do enquadramento', () => {
+  it('nunca amplia além da resolução do scan', async () => {
+    const { vistaDaMarcacao, CAMPO_MINIMO_EM_PIXELS } = await import('@/lib/histologia-zoom/desenho-de-marcacoes')
+    const m = { id: 'x', estrutura: 'coloide', marcas: [{ tipo: 'seta' as const, ponta: [0.5, 0.5] as [number, number], angulo: 0 }] }
+    const [x0, , x1] = vistaDaMarcacao(m, 0, 3264)
+    expect((x1 - x0) * 3264).toBeGreaterThanOrEqual(CAMPO_MINIMO_EM_PIXELS - 1)
+    const [a0, , a1] = vistaDaMarcacao(m, 0, 200000)
+    expect(a1 - a0).toBeLessThan(0.01)
+  })
+})

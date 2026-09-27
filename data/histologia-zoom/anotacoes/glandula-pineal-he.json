@@ -3,7 +3,7 @@
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
   "data": "2026-09-27",
-  "conferencias": 2
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -35,8 +35,8 @@
     {
      "tipo": "seta",
      "ponta": [
-      0.365,
-      0.35
+      0.3625,
+      0.3515
      ],
      "angulo": 225
     }
