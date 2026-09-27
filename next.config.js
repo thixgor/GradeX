@@ -123,13 +123,35 @@ const nextConfig = {
    */
   async rewrites() {
     const base = (process.env.BLOB_PUBLIC_BASE_URL || '').replace(/\/+$/, '')
-    if (!base) return { beforeFiles: [] }
     return {
       beforeFiles: [
+        /**
+         * `/apg?periodo=N` → `/apg/periodo/N`: o período sai da query string e
+         * vai para o caminho de uma página pré-gerada.
+         *
+         * Com o período na query, a rota tinha de ser dinâmica, e a borda
+         * guardava uma cópia por URL completa, com `fbclid` e `utm_*` juntos.
+         * Cada clique de anúncio era um cache miss servido por função. Como
+         * arquivo estático, a query não entra na chave e o parâmetro de
+         * rastreio deixa de custar alguma coisa.
+         *
+         * O Next ancora o `value` (`^...$`), então `periodo=12` não casa e cai
+         * na visão geral, como antes. Os períodos são os de
+         * `lib/apg-pagina.ts`.
+         */
         {
-          source: '/midia/:caminho*',
-          destination: `${base}/midia/:caminho*`,
+          source: '/apg',
+          has: [{ type: 'query', key: 'periodo', value: '(?<periodo>[1-4])' }],
+          destination: '/apg/periodo/:periodo',
         },
+        ...(base
+          ? [
+              {
+                source: '/midia/:caminho*',
+                destination: `${base}/midia/:caminho*`,
+              },
+            ]
+          : []),
       ],
     }
   },

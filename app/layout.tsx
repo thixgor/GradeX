@@ -326,7 +326,13 @@ export default function RootLayout({
            </ShopCartProvider>
           </MaterialCartProvider>
           <Analytics />
-          <SpeedInsights />
+          {/*
+           * Metade das visitas, e não todas. O Speed Insights é cobrado por
+           * data point, e cada visita manda vários (LCP, FCP, CLS, INP, TTFB).
+           * Com o volume do site, 50% ainda dá um p75 estável por rota. Os
+           * números de visita vêm do <Analytics />, que segue sem amostragem.
+           */}
+          <SpeedInsights sampleRate={0.5} />
           <MetaPixel />
         </ThemeProvider>
         </UIPreferencesProvider>

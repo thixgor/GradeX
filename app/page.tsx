@@ -1,8 +1,16 @@
 import { redirect } from 'next/navigation'
 import { LandingShell } from '@/components/landing-shell'
 
-// A landing é HTML ESTÁTICO, regenerado no máximo a cada 5 minutos — e na
-// hora, via `revalidatePath('/')`, quando o admin mexe em `landing_settings`.
+// A landing é HTML ESTÁTICO, regenerado no máximo a cada hora — e na hora,
+// via `revalidatePath('/')`, quando o admin mexe em `landing_settings`.
+//
+// Uma hora, e não os 5 minutos de antes. O único dado de servidor aqui é
+// `landingPageEnabled`, e mudá-lo já invalida a página na hora. Com 5 minutos,
+// o prazo não trazia nada novo: só regenerava ~210 KB de HTML (mais o payload
+// RSC) até 288 vezes por dia, e cada regeneração é uma função, uma escrita de
+// ISR e uma nova leitura da borda. O que ele ainda cobre é o caso em que uma
+// regeneração pega o banco fora do ar e cai no padrão (landing ligada). Uma
+// hora mantém esse desvio curto.
 //
 // Antes era `force-dynamic`: toda visita — inclusive a de quem chegou de um
 // anúncio e nunca fez login — acordava uma função serverless, esperava
@@ -18,7 +26,7 @@ import { LandingShell } from '@/components/landing-shell'
 //   • ?landing=true (ver a landing mesmo logado, ou com ela desligada): o
 //     middleware reescreve para /previa-landing, que é dinâmica. Ler
 //     `searchParams` aqui tornaria esta rota dinâmica de novo.
-export const revalidate = 300
+export const revalidate = 3600
 
 interface LandingSettings {
   landingPageEnabled?: boolean

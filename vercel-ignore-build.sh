@@ -31,7 +31,43 @@ case "$VERCEL_GIT_COMMIT_REF" in
     ;;
 esac
 
-# ── 2. Push que só mexeu em documentação não constrói ─────────────────────────
+# ── 2. Commit que já não é a ponta da branch não constrói ─────────────────────
+#
+# O Pro constrói um deploy por vez, e os outros esperam na fila. Numa rajada de
+# pushes (em 19/09 foram 11 commits entre 12:56 e 14:08, cada um no seu push),
+# cada item da fila construía produção inteira, e cada build tornava o anterior
+# obsoleto minutos depois. Quando este commit chega a buildar e a branch já
+# aponta para outro mais novo, o deploy desse mais novo está atrás na fila e vai
+# publicar tudo isto junto.
+#
+# A regra 3 não esconde nada aqui: a base dela é o último deploy BEM-SUCEDIDO,
+# então o commit mais novo compara contra antes deste e enxerga as mudanças dele
+# também.
+#
+# O repositório é público, então `ls-remote` não precisa de credencial. Qualquer
+# falha (rede, variável ausente, resposta vazia) cai fora do `if` e constrói.
+# O limite de uma hora poupa o "Redeploy" manual de um commit antigo, que também
+# não é a ponta: quem pede isso de propósito quer o build.
+if [ -n "$VERCEL_GIT_REPO_OWNER" ] && [ -n "$VERCEL_GIT_REPO_SLUG" ] \
+  && [ -n "$VERCEL_GIT_COMMIT_REF" ] && [ -n "$VERCEL_GIT_COMMIT_SHA" ] \
+  && [ "$VERCEL_GIT_PROVIDER" = github ]; then
+  idade=$(( $(date +%s) - $(git log -1 --format=%ct HEAD 2>/dev/null || echo 0) ))
+  if [ "$idade" -ge 0 ] && [ "$idade" -lt 3600 ]; then
+    ponta="$(GIT_TERMINAL_PROMPT=0 timeout 10 git ls-remote \
+      "https://github.com/$VERCEL_GIT_REPO_OWNER/$VERCEL_GIT_REPO_SLUG.git" \
+      "refs/heads/$VERCEL_GIT_COMMIT_REF" 2>/dev/null | cut -f1)"
+    case "$ponta" in
+      *[!0-9a-f]* | '') ;;
+      "$VERCEL_GIT_COMMIT_SHA") ;;
+      *)
+        echo "ignorado: $VERCEL_GIT_COMMIT_REF já aponta para $ponta, que vem atrás na fila"
+        exit 0
+        ;;
+    esac
+  fi
+fi
+
+# ── 3. Push que só mexeu em documentação não constrói ─────────────────────────
 #
 # A base de comparação é `VERCEL_GIT_PREVIOUS_SHA`, o último deploy de fato — e
 # não `HEAD~1`. Comparar com `HEAD~1` olhava um commit só: num push com vários
@@ -55,17 +91,31 @@ fi
   exit 1
 }
 
+#
+# `scripts/`, `server/` e a `img/` da raiz também não entram no deploy: são
+# ferramentas de curadoria e de manutenção rodadas à mão, o worker de WebSocket e
+# de WhatsApp (que roda fora da Vercel) e originais de arte (o que o site serve
+# está em `public/img/`). Nada no app importa essas pastas, e o `package.json`
+# não tem `prebuild` nem `postinstall`. Nos últimos 60 dias, `scripts/` apareceu
+# em 95 commits, e os que só mexiam ali construíam produção do zero para
+# publicar exatamente o mesmo site. Os caminhos sem `*` são relativos à raiz,
+# então `img` não pega `public/img`.
 if git diff --quiet "$base" HEAD -- \
   ':(exclude)*.md' \
   ':(exclude)*.txt' \
+  ':(exclude)*.py' \
   ':(exclude)docs' \
   ':(exclude)__tests__' \
+  ':(exclude)vitest.config.ts' \
+  ':(exclude)scripts' \
+  ':(exclude)server' \
+  ':(exclude)img' \
   ':(exclude).claude' \
   ':(exclude).windsurf' \
   ':(exclude).github' \
   ':(exclude)last_commit.diff'
 then
-  echo "ignorado: $base..HEAD só mexeu em documentação e testes"
+  echo "ignorado: $base..HEAD só mexeu em documentação, testes e ferramentas fora do deploy"
   exit 0
 fi
 

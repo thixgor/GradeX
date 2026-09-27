@@ -18,11 +18,13 @@ export async function GET() {
       'content-type': 'text/html; charset=utf-8',
       // `s-maxage` de um ano, não de uma hora.
       //
-      // Esta página é um HTML de ~10 MB lido do disco e devolvido pela função.
-      // Com `s-maxage=3600` cada região da borda voltava à origem de hora em
-      // hora para buscar de novo os mesmos 10 MB — 24 vezes por dia, vezes o
-      // número de regiões com tráfego. Era parte dos 10,49 GB de Fast Origin
-      // Transfer de agosto (US$ 3,72), gastos em bytes idênticos.
+      // Esta página é um HTML lido do disco e devolvido pela função (eram
+      // ~10 MB até as imagens embutidas passarem por
+      // `scripts/ebooks/otimizar-imagens.py`). Com `s-maxage=3600` cada região
+      // da borda voltava à origem de hora em hora para buscar de novo o mesmo
+      // HTML — 24 vezes por dia, vezes o número de regiões com tráfego. Era
+      // parte dos 10,49 GB de Fast Origin Transfer de agosto (US$ 3,72),
+      // gastos em bytes idênticos.
       //
       // Um ano é seguro porque o conteúdo só muda em deploy, e cada deploy da
       // Vercel tem chave de cache própria: a borda parte fria. `max-age=0`

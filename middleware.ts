@@ -207,6 +207,10 @@ function isPublicRoute(pathname: string): boolean {
   // grande mas nenhuma miniatura — elas cairiam no portão de login.
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/thumb$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Destino da reescrita de `/apg?periodo=N` (ver next.config.js). O visitante
+  // entra por `/apg`, que já é pública; esta linha cobre quem abrir o destino
+  // pelo endereço direto.
+  if (/^\/apg\/periodo\/[1-4]$/.test(pathname)) return true
   // Formulários públicos: a página e o GET/submit são acessíveis sem login por
   // padrão. Formulários com "Exigir Login" ou "Entregar Material" validam a
   // sessão internamente (page + /api/forms/[id]/submit) e retornam o portão de

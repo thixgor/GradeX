@@ -401,7 +401,20 @@ let _hasMountedOnce = false
 // Rotas do menu já aquecidas nesta sessão. Vive no módulo porque a sidebar
 // remonta a cada navegação — num ref o conjunto seria perdido e o prefetch
 // rodaria de novo toda vez.
+//
+// São dois conjuntos porque são dois prefetches diferentes. O aquecimento
+// ocioso pede o parcial (`auto`) de todas as rotas; o hover/toque pede a página
+// inteira (`full`) só da que o usuário está prestes a abrir. Um conjunto único
+// faria o aquecimento bloquear o `full` do hover.
+const _warmedRoutes = new Set<string>()
 const _prefetchedRoutes = new Set<string>()
+
+// Parcial: numa rota dinâmica, o servidor renderiza só os layouts até o
+// `loading.tsx` e para ali. Numa rota estática, é o payload inteiro do CDN. É o
+// que um `<Link>` faz por padrão. Sem `kind`, o `router.prefetch` do Next 14
+// usa `full`. O valor é o do enum `PrefetchKind` do Next, que não é exportado
+// por um caminho público.
+const PREFETCH_PARCIAL = { kind: 'auto' } as unknown as Parameters<ReturnType<typeof useRouter>['prefetch']>[1]
 // Grupos abertos/fechados. Mesmo motivo: sem este cache de módulo, cada
 // navegação remontaria a sidebar com tudo fechado e só depois o efeito leria o
 // localStorage — o grupo aberto piscaria fechado a cada clique.
@@ -614,8 +627,17 @@ export function Sidebar({
   // Os itens são <button> com router.push, não <Link>, então o Next nunca
   // aquecia nada: o chunk JS e o payload RSC do destino só começavam a baixar
   // DEPOIS do clique. Aqui pedimos o prefetch de todas as rotas visíveis do
-  // menu assim que o browser fica ocioso — uma única vez por sessão. Depois
-  // disso, cada navegação da sidebar já encontra o destino em cache.
+  // menu assim que o browser fica ocioso — uma única vez por sessão.
+  //
+  // O aquecimento é PARCIAL. Ele pedia `full`, o padrão do `router.prefetch`
+  // no Next 14, e numa rota dinâmica (`/provas`, `/banco-questoes`,
+  // `/cronogramas`, `/aulas`, `/forum`, `/games`) isso é a página inteira
+  // renderizada no servidor, com todas as consultas ao banco. Eram ~12 rotas a
+  // cada carregamento do app, para um aluno que abre uma ou duas: funções,
+  // CPU e transferência gastos em páginas que ninguém via. No parcial, a rota
+  // dinâmica devolve só layout e esqueleto (todas essas têm `loading.tsx`), e
+  // a estática vem inteira do CDN. O `full` fica para o hover/toque abaixo,
+  // que é quando o clique está para acontecer.
   const navHrefsKey = useMemo(() => {
     const hrefs = [homeItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
     for (const node of tree) {
@@ -637,10 +659,10 @@ export function Sidebar({
 
     const run = () => {
       for (const href of hrefs) {
-        if (_prefetchedRoutes.has(href)) continue
-        _prefetchedRoutes.add(href)
+        if (_warmedRoutes.has(href) || _prefetchedRoutes.has(href)) continue
+        _warmedRoutes.add(href)
         try {
-          router.prefetch(href)
+          router.prefetch(href, PREFETCH_PARCIAL)
         } catch {
           // rota não prefetchável — ignora, o clique continua funcionando
         }
@@ -656,8 +678,9 @@ export function Sidebar({
     return () => window.clearTimeout(timer)
   }, [navHrefsKey, router, liteMode])
 
-  // Prefetch imediato no toque/hover: cobre o caso de o usuário clicar antes
-  // do aquecimento ocioso acontecer.
+  // Prefetch completo no toque/hover: é o sinal de que o clique vem aí, então
+  // vale trazer a página inteira. Também cobre o clique antes do aquecimento
+  // ocioso acontecer.
   const handleNavPrefetch = useCallback(
     (item: NavItem) => {
       if (!item.href || _prefetchedRoutes.has(item.href)) return
