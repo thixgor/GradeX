@@ -8,6 +8,7 @@ import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { avaliarEntrega } from '@/lib/provas/entrega-da-prova'
+import { corrigirPorGabarito, temGabaritoFlexivel } from '@/lib/provas/resposta-flexivel'
 import { MOTIVO_NOTA_PRESA, resolverNotaDaProva } from '@/lib/provas/nota-da-prova'
 
 export const dynamic = 'force-dynamic'
@@ -340,11 +341,26 @@ export async function POST(
     // Se tem questões com correção automática (discursivas ou redações), corrigir agora
     if (needsCorrection) {
       const shouldAutoCorrectDiscursive = hasDiscursiveQuestions && exam.discursiveCorrectionMethod === 'ai'
+      // Gabarito flexível: só as discursivas que têm respostas aceitas. As que
+      // o admin deixou sem gabarito ficam pendentes para correção manual.
+      const shouldAnswerKeyDiscursive =
+        hasDiscursiveQuestions &&
+        exam.discursiveCorrectionMethod === 'answer-key' &&
+        exam.questions.some(q => q.type === 'discursive' && temGabaritoFlexivel(q))
       const hasAutoCorrectEssay = hasEssayQuestions && exam.questions.some(q => q.type === 'essay' && q.essayCorrectionMethod === 'ai')
 
-      if (shouldAutoCorrectDiscursive || hasAutoCorrectEssay) {
+      if (shouldAutoCorrectDiscursive || shouldAnswerKeyDiscursive || hasAutoCorrectEssay) {
         try {
           const corrections: any[] = []
+
+          // Corrigir discursivas pelo gabarito flexível — local, sem IA, e
+          // também para quem deixou em branco (nota zero é uma correção).
+          if (shouldAnswerKeyDiscursive) {
+            for (const question of exam.questions.filter(q => q.type === 'discursive' && temGabaritoFlexivel(q))) {
+              const answer = respostas.find(a => a.questionId === question.id)
+              corrections.push(corrigirPorGabarito(question, answer?.discursiveText))
+            }
+          }
 
           // Corrigir questões discursivas
           if (shouldAutoCorrectDiscursive) {

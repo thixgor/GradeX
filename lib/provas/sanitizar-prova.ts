@@ -51,6 +51,9 @@ export function sanitizarQuestaoParaAluno(questao: Question): QuestaoSanitizada 
     explanation: _explanation,
     commentedFeedback: _commentedFeedback,
     keyPoints: _keyPoints,
+    // As respostas aceitas da discursiva são o gabarito escrito por extenso.
+    acceptedAnswers: _acceptedAnswers,
+    acceptedAnswersRigor: _acceptedAnswersRigor,
     // As imagens da resposta comentada são resposta comentada: um fluxograma
     // com a via correta circulada entrega o gabarito tão bem quanto o texto, e
     // o endereço delas viajava no mesmo JSON.

@@ -361,7 +361,7 @@ export default function AdminCorrectionsPage({ params }: { params: { id: string 
                                     ✓ Corrigida
                                   </Label>
                                   <span className="text-sm">
-                                    {correction.method === 'ai' ? '🤖 IA' : '👤 Manual'}
+                                    {correction.method === 'ai' ? '🤖 IA' : correction.method === 'answer-key' ? '🎯 Gabarito' : '👤 Manual'}
                                   </span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-2 text-sm">

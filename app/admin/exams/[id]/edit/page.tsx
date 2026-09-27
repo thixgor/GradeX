@@ -9,6 +9,7 @@ import { ExcecoesDeOcultacao } from '@/components/admin/provas/excecoes-de-ocult
 import { TRAVAS_PADRAO, type TravasAntiCola, normalizarTravas } from '@/lib/provas/anti-cola'
 import { EXCECOES_PADRAO, normalizarExcecoes } from '@/lib/provas/visibilidade-da-prova'
 import { Textarea } from '@/components/ui/textarea'
+import { GabaritoFlexivel } from '@/components/admin/provas/gabarito-flexivel'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
@@ -63,7 +64,7 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
     isHidden: false,
     hiddenExcept: EXCECOES_PADRAO,
     // Configurações padrão para cada tipo de questão
-    discursiveCorrectionMethod: 'prompt' as 'manual' | 'ai' | 'prompt',
+    discursiveCorrectionMethod: 'prompt' as 'manual' | 'ai' | 'prompt' | 'answer-key',
     discursiveAiRigor: 0.45,
     essayStyle: 'enem' as EssayStyle,
     essayCorrectionMethod: 'ai' as CorrectionMethod,
@@ -872,13 +873,21 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                       value={examData.discursiveCorrectionMethod}
                       onChange={(e) => setExamData({
                         ...examData,
-                        discursiveCorrectionMethod: e.target.value as 'manual' | 'ai' | 'prompt'
+                        discursiveCorrectionMethod: e.target.value as 'manual' | 'ai' | 'prompt' | 'answer-key'
                       })}
                     >
                       <option value="prompt">Correção por Prompt (copiar e colar)</option>
                       <option value="ai">Correção por IA</option>
                       <option value="manual">Correção Manual</option>
+                      <option value="answer-key">🎯 Gabarito automático (respostas aceitas + sinônimos)</option>
                     </select>
+
+                    {examData.discursiveCorrectionMethod === 'answer-key' && (
+                      <p className="text-xs text-purple-700 dark:text-purple-300">
+                        Cada discursiva recebe a lista de respostas aceitas. A correção é instantânea e tolera
+                        maiúsculas, acentos, pontuação e erros de digitação. Questões sem lista ficam para correção manual.
+                      </p>
+                    )}
 
                     {examData.discursiveCorrectionMethod === 'ai' && (
                       <div className="space-y-2">
@@ -1940,6 +1949,14 @@ export default function EditExamPage({ params }: { params: { id: string } }) {
                         Nota máxima que o aluno pode receber nesta questão
                       </p>
                     </div>
+
+                    <GabaritoFlexivel
+                      key={currentQuestion.id}
+                      acceptedAnswers={currentQuestion.acceptedAnswers}
+                      rigor={currentQuestion.acceptedAnswersRigor}
+                      metodoAtivo={examData.discursiveCorrectionMethod === 'answer-key'}
+                      onChange={(mudanca) => updateQuestion(currentQuestionIndex, mudanca)}
+                    />
 
                     <div className="space-y-3">
                       <Label>Pontos-Chave para Correção *</Label>

@@ -101,6 +101,14 @@ export interface Question {
   // Para questões discursivas
   keyPoints?: KeyPoint[]
   maxScore?: number // Nota máxima para questão discursiva
+  /**
+   * Respostas aceitas (gabarito + sinônimos) para a correção automática por
+   * gabarito flexível — ver `lib/provas/resposta-flexivel.ts`. É gabarito:
+   * `sanitizarQuestaoParaAluno` remove antes de a prova chegar ao aluno.
+   */
+  acceptedAnswers?: string[]
+  /** Quanto erro de digitação o gabarito flexível perdoa. Padrão: 'normal'. */
+  acceptedAnswersRigor?: 'exato' | 'normal' | 'flexivel'
   // Para redações (essay)
   essayStyle?: EssayStyle // 'enem' ou 'uerj'
   essayTheme?: string // Tema da redação
@@ -140,7 +148,7 @@ export interface Exam {
     usuarios?: string[]
   }
   // Para questões discursivas
-  discursiveCorrectionMethod?: 'manual' | 'ai' | 'prompt' // manual: correção externa; ai: IA; prompt: autoavaliação pelo aluno
+  discursiveCorrectionMethod?: 'manual' | 'ai' | 'prompt' | 'answer-key' // manual: correção externa; ai: IA; prompt: autoavaliação pelo aluno; answer-key: gabarito flexível (respostas aceitas + sinônimos)
   aiRigor?: number // Rigor da IA (0-1) se usar correção automática
   // Modo de navegação da prova
   navigationMode?: 'paginated' | 'scroll' // paginated: navegação com botões, scroll: todas questões visíveis com scroll
@@ -288,7 +296,7 @@ export interface Correction {
   score: number // Nota obtida nesta questão
   maxScore: number // Nota máxima possível
   feedback: string // Feedback do corretor (manual ou IA)
-  method: CorrectionMethod // 'manual' ou 'ai'
+  method: CorrectionMethod | 'answer-key' // 'manual', 'ai' ou 'answer-key' (gabarito flexível — lib/provas/resposta-flexivel.ts)
   correctedBy?: string // ID do admin que corrigiu (se manual)
   correctedAt: Date
   keyPointsFound?: string[] // IDs dos pontos-chave identificados (discursivas)
