@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight, Circle, Maximize, PawPrint, QrCode, SlidersHorizontal } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Circle, Maximize, PawPrint, QrCode, SlidersHorizontal, Target } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
 import { BuscaDoZoom } from '@/components/histologia-zoom/busca'
@@ -76,6 +76,13 @@ export default async function CatalogoDoZoom() {
                   traz a comparação com a peça humana.
                 </span>
               </p>
+              <Link
+                href={`${BASE_ZOOM}/quiz`}
+                className="mt-4 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-teal-700 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-teal-800"
+              >
+                <Target className="h-4 w-4" aria-hidden /> Quiz de identificação
+                <ArrowRight className="h-4 w-4" aria-hidden />
+              </Link>
               <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
                 <Numero valor={TOTAIS.laminas} rotulo="lâminas" />
                 <Numero valor={TOTAIS.orgaos} rotulo="órgãos e preparações" />

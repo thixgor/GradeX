@@ -115,7 +115,8 @@ export function desenharMarcacao(
     if (!ancora || topo[1] < ancora[1]) ancora = topo
   }
 
-  if (ancora) {
+  // Sem nome, sem rótulo: no quiz a seta não pode entregar a resposta.
+  if (ancora && marcacao.nome) {
     // Rótulo com quebra de linha: mede o texto real e nunca deixa as letras
     // saírem da caixa, nem a caixa sair da tela (celular incluído).
     const maximo = Math.max(120, Math.min(280, largura - 8)) - 2 * FOLGA_DO_ROTULO
