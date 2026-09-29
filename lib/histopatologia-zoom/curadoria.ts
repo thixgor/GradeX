@@ -462,4 +462,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Bronchiectasis / abscess',
     },
   },
+  {
+    doenca: 'pneumonia-em-organizacao',
+    caminho: '/Research_4/Teaching/EQA/FRCPath/2014/Autumn/296470.svs',
+    largura: 27887,
+    altura: 30878,
+    objetiva: 20,
+    mpp: 0.5036,
+    subtitulo: 'Biópsias por agulha de uma “massa”',
+    caso: {
+      sexo: 'M',
+      idade: 76,
+      historia: 'Massa no pulmão esquerdo na radiografia; biópsias percutâneas por agulha.',
+      diagnosticoOriginal: 'Organising pneumonia',
+    },
+  },
 ]

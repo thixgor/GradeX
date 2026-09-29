@@ -669,4 +669,29 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Pneumonite de hipersensibilidade', 'Pneumonias virais e atípicas', 'Pneumonia intersticial não específica', 'Colagenoses'],
     armadilhas: ['Septos colapsados (atelectasia) parecem grossos e celulares; o infiltrado verdadeiro é de células inflamatórias, não capilares justapostos.'],
   },
+  {
+    id: 'corpos-de-masson',
+    nome: 'Corpos de Masson (plugs de tecido de granulação intra-alveolar)',
+    sinonimos: ['corpos de Masson', 'plugs fibroblásticos', 'pólipos de granulação intraluminais'],
+    categoria: 'reparo',
+    resumo:
+      'Tampões de fibroblastos e miofibroblastos em matriz frouxa, pálida e mixoide, dentro de alvéolos, ductos alveolares e bronquíolos — o exsudato que não foi reabsorvido e está sendo organizado.',
+    comoReconhecer: [
+      'No médio aumento: estruturas alongadas ou arredondadas, pálidas, "em forma de serpente", ocupando espaços aéreos.',
+      'No grande aumento: fibroblastos fusiformes ou estrelados em matriz azul-rosada frouxa, frequentemente com capilares; revestidos por pneumócitos e às vezes ligados à parede por um pedículo.',
+      'Arquitetura pulmonar preservada ao redor, com inflamação intersticial leve.',
+    ],
+    mecanismo: [
+      'Lesão alveolar deixa fibrina no espaço aéreo; em vez de ser digerida por macrófagos, ela é invadida por fibroblastos vindos da parede, como numa cicatrização.',
+    ],
+    significado: [
+      'Define o padrão de pneumonia em organização — que pode ser criptogênica ou secundária (pneumonia infecciosa que não resolveu, drogas, colagenoses, radiação, aspiração, borda de tumores ou abscessos).',
+      'Diferente da fibrose madura, é potencialmente reversível: responde bem a corticoides.',
+    ],
+    ondeOcorre: ['Pneumonia em organização (criptogênica ou secundária)', 'Pneumonias bacterianas não resolvidas', 'Pneumonite de hipersensibilidade', 'Periferia de massas pulmonares'],
+    armadilhas: [
+      'Focos fibroblásticos da PIU ficam no interstício, na interface com fibrose densa, não dentro dos espaços aéreos.',
+      'Em biópsias por agulha de uma "massa", encontrar só pneumonia em organização não exclui tumor ao lado.',
+    ],
+  },
 ]

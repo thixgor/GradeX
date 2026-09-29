@@ -1,0 +1,132 @@
+{
+ "slug": "pneumonia-em-organizacao-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsias pulmonares por agulha de uma \"massa\" com pneumonia em organização: tampões de tecido de granulação mixoide (corpos de Masson) dentro dos espaços aéreos e pneumócitos tipo II reativos, com arquitetura preservada. Nenhuma neoplasia nos fragmentos.",
+ "marcacoes": [
+  {
+   "id": "masson",
+   "estrutura": "corpos-de-masson",
+   "categoria": "patologica",
+   "rotulo": "Corpo de Masson: tampão fibroblástico no espaço aéreo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.286,
+      0.604
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.275,
+    0.595,
+    0.297,
+    0.614
+   ],
+   "nota": "Fibroblastos em matriz frouxa e pálida preenchem o espaço aéreo, revestidos por pneumócitos — tecido de granulação dentro do alvéolo."
+  },
+  {
+   "id": "masson-2",
+   "estrutura": "corpos-de-masson",
+   "categoria": "patologica",
+   "rotulo": "Outro tampão mixoide intra-alveolar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.228,
+      0.62
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.215,
+    0.61,
+    0.245,
+    0.64
+   ]
+  },
+  {
+   "id": "pneumocitos",
+   "estrutura": "hiperplasia-de-pneumocitos-tipo-ii",
+   "categoria": "patologica",
+   "rotulo": "Pneumócitos tipo II reativos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2905,
+      0.587
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.283,
+    0.58,
+    0.297,
+    0.594
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Antracose em área de fibrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.575,
+      0.911
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.54,
+    0.88,
+    0.61,
+    0.94
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "corpos-de-masson",
+   "status": "presente",
+   "marcacoes": [
+    "masson",
+    "masson-2"
+   ],
+   "nota": "Vários tampões de tecido de granulação dentro dos espaços aéreos."
+  },
+  {
+   "achado": "hiperplasia-de-pneumocitos-tipo-ii",
+   "status": "presente",
+   "marcacoes": [
+    "pneumocitos"
+   ],
+   "nota": "Pneumócitos tipo II reativos nos septos vizinhos."
+  },
+  {
+   "achado": "pneumonite-intersticial-cronica",
+   "status": "nao-avaliavel",
+   "nota": "Os cilindros de agulha são pequenos e fragmentados; a inflamação intersticial é leve e irregular."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Pigmento antracótico em área fibrosa de um dos cilindros."
+  }
+ ]
+}

@@ -312,4 +312,78 @@ export const DOENCAS_RESPIRATORIO: DoencaZoom[] = [
       'Na pneumonite de hipersensibilidade, os septos ficam grossos, cheios de linfócitos, sobretudo perto dos bronquíolos, mas os alvéolos continuam com ar.',
     ],
   },
+  {
+    id: 'pneumonia-em-organizacao',
+    nome: 'Pneumonia em organização',
+    sinonimos: ['pneumonia organizante', 'pneumonia em organização criptogênica', 'COP', 'BOOP', 'bronquiolite obliterante com pneumonia em organização'],
+    nomesEmIngles: ['organising pneumonia', 'cryptogenic organizing pneumonia', 'BOOP'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 5,
+    resumo:
+      'Padrão de reparo pulmonar em que os espaços aéreos distais (alvéolos, ductos, bronquíolos) são preenchidos por tampões de tecido de granulação jovem — os corpos de Masson —, com a arquitetura pulmonar preservada.',
+    epidemiologia:
+      'Adultos de 50–60 anos. Pode ser criptogênica (idiopática) ou secundária: pneumonia infecciosa que não se resolve, drogas (amiodarona, metotrexato), colagenoses, radioterapia, transplante, aspiração. Na TC pode simular massa ou pneumonia que não melhora.',
+    patogenese: [
+      'Lesão do epitélio alveolar deixa exsudato rico em fibrina nos espaços aéreos.',
+      'Em vez de reabsorvido (resolução), o exsudato é invadido por fibroblastos e capilares vindos das paredes alveolares.',
+      'Formam-se tampões de tecido de granulação que se estendem de alvéolo em alvéolo pelos poros de Kohn e para dentro dos bronquíolos.',
+      'Os septos mostram inflamação leve e pneumócitos tipo II reativos; a arquitetura não é destruída — por isso o processo é reversível com corticoide.',
+    ],
+    roteiro: [
+      'Panorâmico: arquitetura preservada, com áreas mais densas em manchas.',
+      'Médio aumento: procure tampões pálidos, mixoides, dentro dos espaços aéreos (corpos de Masson).',
+      'Grande aumento: fibroblastos em matriz frouxa revestidos por pneumócitos; septos com linfócitos leves e pneumócitos tipo II reativos.',
+      'Procure a causa e exclua o que muda a conduta: tumor ao lado (biópsia de "massa"), infecção, granulomas, membranas hialinas (DAD).',
+    ],
+    achados: [
+      {
+        achado: 'corpos-de-masson',
+        tipo: 'especifico',
+        comoAparece: 'Tampões de tecido de granulação mixoide dentro de alvéolos e ductos alveolares.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'hiperplasia-de-pneumocitos-tipo-ii',
+        tipo: 'geral',
+        comoAparece: 'Pneumócitos tipo II volumosos revestindo septos e tampões.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'pneumonite-intersticial-cronica',
+        tipo: 'geral',
+        comoAparece: 'Inflamação intersticial leve nos septos vizinhos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'antracose',
+        tipo: 'geral',
+        comoAparece: 'Pigmento de carvão em áreas de fibrose, incidental.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Dano alveolar difuso organizante',
+        comoSeparar: 'Organização predominantemente INTERSTICIAL e difusa, com restos de membranas hialinas; clínica de SDRA.',
+      },
+      {
+        nome: 'Pneumonia intersticial usual (PIU)',
+        comoSeparar: 'Fibrose densa, subpleural e heterogênea com faveolamento; focos fibroblásticos no interstício, não em tampões intra-alveolares.',
+      },
+      {
+        nome: 'Adenocarcinoma ou outra lesão na borda',
+        comoSeparar: 'Em biópsias por agulha, a pneumonia em organização pode ser só a reação ao redor de um tumor: correlacione com a imagem e reveja se a lesão persiste.',
+      },
+    ],
+    correlacaoClinica: [
+      'Quadro subagudo de semanas: tosse, dispneia, febre e perda de peso, frequentemente tratado como pneumonia sem melhora com antibióticos.',
+      'TC: consolidações periféricas migratórias, sinal do halo invertido ("atol"); às vezes massa.',
+      'Tratamento: corticoides, com boa resposta; recidivas são comuns ao reduzir a dose.',
+    ],
+    comparacaoComNormal: [
+      'No pulmão normal, alvéolos vazios com septos finos.',
+      'Na pneumonia em organização, dentro de muitos alvéolos há "rolhas" pálidas de fibroblastos — como se o alvéolo estivesse cicatrizando por dentro —, mas as paredes continuam no lugar.',
+    ],
+  },
 ]
