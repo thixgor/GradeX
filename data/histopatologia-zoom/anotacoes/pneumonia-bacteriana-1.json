@@ -1,0 +1,210 @@
+{
+ "slug": "pneumonia-bacteriana-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Pulmão com pneumonia bacteriana do padrão lobar: consolidação uniforme de todo o corte, com alvéolos cheios de neutrófilos, fibrina e hemácias (hepatização), septos preservados e pleurite fibrinosa. Lâmina da coleção de graduação de Leeds sem diagnóstico registrado; a classificação foi feita pelo exame microscópico.",
+ "marcacoes": [
+  {
+   "id": "exsudato",
+   "estrutura": "exsudato-alveolar-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Alvéolo cheio de neutrófilos e fibrina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.666,
+      0.295
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.66,
+    0.29,
+    0.675,
+    0.305
+   ],
+   "nota": "Cada alvéolo está preenchido por neutrófilos presos numa rede de fibrina, com hemácias entre eles — o ar foi substituído por exsudato."
+  },
+  {
+   "id": "consolidacao",
+   "estrutura": "exsudato-alveolar-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Consolidação uniforme de todo o parênquima",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.68,
+      0.32
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.62,
+    0.25,
+    0.72,
+    0.35
+   ],
+   "nota": "Todos os alvéolos do campo estão na mesma fase: é o aspecto homogêneo da pneumonia lobar (hepatização)."
+  },
+  {
+   "id": "hemacias",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Hemácias no exsudato (hepatização vermelha)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.67,
+      0.3015
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.664,
+    0.296,
+    0.676,
+    0.308
+   ]
+  },
+  {
+   "id": "pleurite",
+   "estrutura": "exsudato-fibrinopurulento",
+   "categoria": "patologica",
+   "rotulo": "Pleura espessada com fibrina (pleurite)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.885,
+      0.115
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.83,
+    0.06,
+    0.93,
+    0.16
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Antracose perivascular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.857,
+      0.087
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.83,
+    0.06,
+    0.93,
+    0.16
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-alveolar",
+   "rotulo": "Septo alveolar preservado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.706,
+      0.286
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.695,
+    0.27,
+    0.715,
+    0.29
+   ]
+  },
+  {
+   "id": "arteriola",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Ramo arterial pulmonar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7065,
+      0.2795
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.695,
+    0.27,
+    0.715,
+    0.29
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "exsudato-alveolar-neutrofilico",
+   "status": "presente",
+   "marcacoes": [
+    "exsudato",
+    "consolidacao"
+   ],
+   "nota": "Consolidação difusa: alvéolos cheios de neutrófilos, fibrina e hemácias, com septos íntegros."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "hemacias"
+   ],
+   "nota": "Hemácias abundantes no exsudato e septos congestos."
+  },
+  {
+   "achado": "exsudato-fibrinopurulento",
+   "status": "presente",
+   "marcacoes": [
+    "pleurite"
+   ],
+   "nota": "Pleura espessada por fibrina e células inflamatórias sobre o parênquima consolidado."
+  },
+  {
+   "achado": "abscesso",
+   "status": "ausente",
+   "nota": "Os septos estão preservados em todo o corte: não há necrose com formação de abscesso."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "ausente",
+   "nota": "Não há organização do exsudato (sem fibroblastos dentro dos alvéolos)."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Antracose perivascular e subpleural, incidental."
+  }
+ ]
+}

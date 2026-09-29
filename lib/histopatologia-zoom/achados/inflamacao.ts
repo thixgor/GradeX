@@ -571,4 +571,83 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Hepatites crônicas virais e autoimunes', 'Hepatite por drogas'],
     armadilhas: ['Cortes tangenciais do espaço-porta podem imitar interface irregular.'],
   },
+  {
+    id: 'exsudato-alveolar-neutrofilico',
+    nome: 'Exsudato alveolar neutrofílico (consolidação)',
+    sinonimos: ['consolidação', 'hepatização', 'alvéolos cheios de pus', 'exsudato intra-alveolar'],
+    categoria: 'inflamacao',
+    resumo:
+      'Alvéolos preenchidos por neutrófilos, fibrina, hemácias e macrófagos no lugar do ar — o pulmão fica sólido ("hepatizado"), mas as paredes alveolares continuam íntegras.',
+    comoReconhecer: [
+      'No pequeno aumento: o pulmão perde o aspecto rendado e fica compacto e arroxeado; os septos continuam desenhando os alvéolos.',
+      'No grande aumento: dentro de cada alvéolo, lençóis de neutrófilos (núcleos segmentados) presos em fibrina rosa; hemácias nas fases iniciais, macrófagos na resolução.',
+    ],
+    mecanismo: [
+      'Bactérias que alcançam os alvéolos (pneumococo, Haemophilus, Klebsiella, Staphylococcus) ativam macrófagos alveolares, que recrutam neutrófilos.',
+      'Capilares septais congestos deixam sair plasma, fibrinogênio e hemácias; o exsudato preenche os alvéolos e se espalha pelos poros de Kohn.',
+    ],
+    significado: [
+      'É a lesão da pneumonia bacteriana. Como a arquitetura septal é preservada, a pneumonia lobar costuma se resolver sem cicatriz.',
+      'Fases da pneumonia lobar: congestão (dia 1–2), hepatização vermelha (hemácias + neutrófilos + fibrina, dias 2–4), hepatização cinzenta (fibrina e neutrófilos degenerando, dias 4–8) e resolução.',
+    ],
+    ondeOcorre: ['Pneumonia lobar', 'Broncopneumonia', 'Pneumonia aspirativa'],
+    armadilhas: [
+      'Edema pulmonar também enche os alvéolos, mas com líquido rosa homogêneo e poucas células.',
+      'Hemorragia alveolar: hemácias sem neutrófilos nem fibrina organizada.',
+    ],
+  },
+  {
+    id: 'exsudato-espumoso-alveolar',
+    nome: 'Exsudato alveolar espumoso (em favo de mel)',
+    sinonimos: ['exsudato espumoso', 'exsudato em favo de mel', 'cast espumoso'],
+    categoria: 'agente',
+    resumo:
+      'Alvéolos preenchidos por material eosinofílico espumoso, com pequenas bolhas claras ("favo de mel"), quase sem neutrófilos — os agregados de Pneumocystis jirovecii e restos celulares.',
+    comoReconhecer: [
+      'No pequeno aumento: alvéolos com um conteúdo rosa, "rendado", que não é líquido homogêneo (edema) nem células (pneumonia bacteriana).',
+      'No grande aumento: textura espumosa com pontinhos; os microrganismos (4–6 µm) aparecem na prata de Grocott como cistos em forma de xícara ou uva-passa.',
+      'Septos levemente espessados por linfócitos e pneumócitos tipo II reativos.',
+    ],
+    mecanismo: [
+      'Pneumocystis jirovecii (fungo) se multiplica na superfície alveolar quando falta imunidade celular (CD4 < 200/µL).',
+      'O exsudato é formado pelos próprios organismos, surfactante e restos de células, com pouca resposta neutrofílica.',
+    ],
+    significado: [
+      'Praticamente diagnóstico de pneumocistose; confirmar com Grocott ou imunofluorescência. Doença definidora de aids.',
+    ],
+    ondeOcorre: ['Pneumonia por Pneumocystis (aids, transplantados, quimioterapia, corticoide em altas doses)'],
+    armadilhas: ['Edema e proteinose alveolar também enchem alvéolos de material rosa; o edema é homogêneo, a proteinose é granular e PAS+ sem espuma.'],
+  },
+  {
+    id: 'membranas-hialinas',
+    nome: 'Membranas hialinas',
+    sinonimos: ['membrana hialina', 'dano alveolar difuso exsudativo'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Faixas eosinofílicas densas e homogêneas que revestem as paredes dos alvéolos e ductos alveolares — proteínas plasmáticas e restos de pneumócitos necróticos.',
+    comoReconhecer: ['Tiras rosa-vivo, vítreas, coladas à superfície interna dos alvéolos, acompanhando o contorno dos septos.'],
+    mecanismo: [
+      'Lesão difusa do endotélio capilar e dos pneumócitos tipo I (sepse, choque, pneumonia grave, aspiração, drogas, vírus) deixa sair plasma rico em fibrinogênio.',
+      'Fibrina e restos celulares se depositam sobre a membrana basal desnuda, formando as membranas.',
+    ],
+    significado: [
+      'Marca da fase exsudativa (primeira semana) do dano alveolar difuso, correlato histológico da síndrome do desconforto respiratório agudo (SDRA).',
+      'Na fase organizante (após a primeira semana), sobram restos de membrana, com fibroblastos e hiperplasia de pneumócitos tipo II.',
+    ],
+    ondeOcorre: ['Dano alveolar difuso/SDRA', 'Doença da membrana hialina do recém-nascido prematuro', 'Pneumonias virais graves (influenza, COVID-19)'],
+    armadilhas: ['Fibrina solta dentro dos alvéolos (pneumonia) não reveste as paredes como uma membrana.'],
+  },
+  {
+    id: 'hiperplasia-de-pneumocitos-tipo-ii',
+    nome: 'Hiperplasia de pneumócitos tipo II',
+    sinonimos: ['pneumócitos reativos', 'hiperplasia pneumocitária'],
+    categoria: 'reparo',
+    resumo:
+      'Revestimento alveolar formado por células cúbicas, volumosas, em fileira contínua ("em tacha"), com núcleos grandes e nucléolos — reepitelização após lesão.',
+    comoReconhecer: ['Células cúbicas salientes, lado a lado, revestindo alvéolos cujo epitélio normal seria plano e quase invisível.'],
+    mecanismo: ['Os pneumócitos tipo II são as células-tronco do alvéolo: proliferam para cobrir a membrana basal desnuda e depois se diferenciam em tipo I.'],
+    significado: ['Sinal de lesão alveolar em reparo (dano alveolar difuso organizante, pneumonias virais). A atipia reativa pode imitar neoplasia.'],
+    ondeOcorre: ['Dano alveolar difuso organizante', 'Pneumonias virais e por Pneumocystis', 'Fibrose pulmonar'],
+    armadilhas: ['Não confundir com adenocarcinoma in situ, que tem atipia monótona e transição abrupta com alvéolos normais.'],
+  },
 ]

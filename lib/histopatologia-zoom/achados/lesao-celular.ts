@@ -244,4 +244,17 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Trombos arteriais e venosos persistentes'],
     armadilhas: ['Parede espessada por placa aterosclerótica pode imitar trombo organizado; procure camadas de fibrina.'],
   },
+  {
+    id: 'antracose',
+    nome: 'Antracose (pigmento de carvão)',
+    sinonimos: ['pigmento antracótico', 'antracose pulmonar'],
+    categoria: 'deposito',
+    resumo:
+      'Grânulos pretos de carbono inalado, dentro de macrófagos, ao longo dos vasos, septos, pleura e linfonodos do pulmão.',
+    comoReconhecer: ['Depósitos pretos, finos e granulares, sem refringência, em torno de bronquíolos e vasos e sob a pleura.'],
+    mecanismo: ['Partículas de fuligem e fumaça (tabaco, poluição) são fagocitadas por macrófagos alveolares e drenadas pelos linfáticos.'],
+    significado: ['Achado comum e em geral inócuo em moradores urbanos e fumantes; em grande quantidade com fibrose, pneumoconiose do mineiro de carvão.'],
+    ondeOcorre: ['Pulmões e linfonodos hilares de adultos urbanos', 'Pneumoconiose (antracossilicose)'],
+    armadilhas: ['Hemossiderina é marrom-dourada e refringente; pigmento de formalina é marrom e fora das células.'],
+  },
 ]

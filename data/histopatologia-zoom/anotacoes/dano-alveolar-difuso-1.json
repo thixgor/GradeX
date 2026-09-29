@@ -1,0 +1,154 @@
+{
+ "slug": "dano-alveolar-difuso-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia pulmonar com dano alveolar difuso em fase organizante: septos difusamente espessados por fibroblastos em matriz mixoide, revestidos por pneumócitos tipo II hiperplásicos, e congestão. Quadro de insuficiência respiratória aguda com febre.",
+ "marcacoes": [
+  {
+   "id": "pneumocitos",
+   "estrutura": "hiperplasia-de-pneumocitos-tipo-ii",
+   "categoria": "patologica",
+   "rotulo": "Pneumócitos tipo II cúbicos revestindo o septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4477,
+      0.4445
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.44,
+    0.438,
+    0.455,
+    0.453
+   ],
+   "nota": "Células cúbicas lado a lado, com núcleos grandes, cobrindo a parede alveolar que perdeu os pneumócitos tipo I."
+  },
+  {
+   "id": "organizacao",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Septo espessado por fibroblastos em matriz frouxa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.446,
+      0.448
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.442,
+    0.455,
+    0.457
+   ],
+   "nota": "Fibroblastos em proliferação, em matriz mixoide pálida, alargam o septo: é a fase organizante."
+  },
+  {
+   "id": "septos-panoramico",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Septos difusamente espessados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4665,
+      0.4815
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.52,
+    0.52
+   ]
+  },
+  {
+   "id": "congestao",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Vasos congestos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4145,
+      0.4465
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.43,
+    0.43,
+    0.46
+   ]
+  },
+  {
+   "id": "bronquiolo",
+   "estrutura": "bronquiolo",
+   "rotulo": "Bronquíolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4495,
+      0.4085
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.43,
+    0.39,
+    0.47,
+    0.43
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "membranas-hialinas",
+   "status": "nao-avaliavel",
+   "nota": "Na fase organizante as membranas já foram em grande parte incorporadas; há material eosinofílico denso em alguns espaços aéreos, mas não com o aspecto inequívoco de membrana revestindo a parede."
+  },
+  {
+   "achado": "hiperplasia-de-pneumocitos-tipo-ii",
+   "status": "presente",
+   "marcacoes": [
+    "pneumocitos"
+   ],
+   "nota": "Hiperplasia difusa de pneumócitos tipo II."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "presente",
+   "marcacoes": [
+    "organizacao",
+    "septos-panoramico"
+   ],
+   "nota": "Septos difusamente espessados por fibroblastos em matriz frouxa."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "congestao"
+   ],
+   "nota": "Congestão vascular e focos de hemorragia."
+  }
+ ]
+}
