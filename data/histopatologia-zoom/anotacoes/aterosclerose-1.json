@@ -1,0 +1,184 @@
+{
+ "slug": "aterosclerose-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Aorta abdominal com aneurisma e placa aterosclerótica complicada: núcleo lipídico-necrótico com fendas de colesterol, células espumosas, hemorragia intraplaca e capa fibrosa; na parede oposta, túnica média preservada.",
+ "marcacoes": [
+  {
+   "id": "fendas",
+   "estrutura": "fendas-de-colesterol",
+   "categoria": "patologica",
+   "rotulo": "Fendas de colesterol (cristais dissolvidos)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3158,
+      0.1791
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.31,
+    0.165,
+    0.335,
+    0.19
+   ]
+  },
+  {
+   "id": "nucleo",
+   "estrutura": "fendas-de-colesterol",
+   "categoria": "patologica",
+   "rotulo": "Núcleo lipídico-necrótico cheio de fendas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.1
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.08,
+    0.46,
+    0.22
+   ],
+   "nota": "Grande área com centenas de fendas em agulha: é o núcleo da placa, onde o colesterol extracelular se acumulou."
+  },
+  {
+   "id": "espumosas",
+   "estrutura": "celulas-espumosas",
+   "categoria": "patologica",
+   "rotulo": "Células espumosas (citoplasma vacuolado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3263,
+      0.1352
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.13,
+    0.335,
+    0.145
+   ]
+  },
+  {
+   "id": "capa",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Capa fibrosa voltada para a luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.2005
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.14,
+    0.46,
+    0.24
+   ],
+   "nota": "Colágeno denso entre o núcleo da placa e a luz: é o que impede a placa de romper."
+  },
+  {
+   "id": "hemorragia",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Hemácias extravasadas dentro da placa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3195,
+      0.1395
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.305,
+    0.125,
+    0.335,
+    0.155
+   ]
+  },
+  {
+   "id": "media",
+   "estrutura": "tunica-media",
+   "rotulo": "Túnica média em parede sem placa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.915,
+      0.34
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.86,
+    0.3,
+    0.95,
+    0.39
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "fendas-de-colesterol",
+   "status": "presente",
+   "marcacoes": [
+    "fendas",
+    "nucleo"
+   ],
+   "nota": "Núcleo necrótico extenso com fendas de colesterol."
+  },
+  {
+   "achado": "celulas-espumosas",
+   "status": "presente",
+   "marcacoes": [
+    "espumosas"
+   ],
+   "nota": "Macrófagos vacuolados junto ao núcleo necrótico."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "capa"
+   ],
+   "nota": "Capa fibrosa de colágeno entre o núcleo e a luz."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "hemorragia"
+   ],
+   "nota": "Focos de hemorragia dentro da placa."
+  },
+  {
+   "achado": "trombo-com-linhas-de-zahn",
+   "status": "nao-avaliavel",
+   "nota": "Há uma massa de hemácias compactadas aderida à parede, compatível com o trombo mural do aneurisma, mas fragmentada e sem linhas de Zahn nítidas; não se separa com segurança da hemorragia da placa."
+  }
+ ]
+}

@@ -1,0 +1,156 @@
+{
+ "slug": "trombose-arterial-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Artérias de médio calibre com trombos ocluindo a luz: camadas alternadas de fibrina/plaquetas e hemácias, fixação à íntima espessada e organização inicial a partir da parede. As faixas escuras em cunha são dobras do corte.",
+ "marcacoes": [
+  {
+   "id": "zahn",
+   "estrutura": "trombo-com-linhas-de-zahn",
+   "categoria": "patologica",
+   "rotulo": "Trombo com faixas de fibrina alternadas com hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.62,
+      0.185
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.56,
+    0.12,
+    0.8,
+    0.3
+   ],
+   "nota": "Faixas rosa-pálidas de plaquetas e fibrina alternam com faixas vermelhas de hemácias: as linhas de Zahn, que mostram que o trombo se formou com sangue circulando."
+  },
+  {
+   "id": "fibrina",
+   "estrutura": "trombo-com-linhas-de-zahn",
+   "categoria": "patologica",
+   "rotulo": "Fibrina e hemácias no trombo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6525,
+      0.1795
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.64,
+    0.17,
+    0.66,
+    0.19
+   ]
+  },
+  {
+   "id": "organizacao",
+   "estrutura": "organizacao-do-trombo",
+   "categoria": "patologica",
+   "rotulo": "Organização a partir da parede",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6665,
+      0.1575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.64,
+    0.125,
+    0.72,
+    0.175
+   ],
+   "nota": "No ponto em que o trombo se prende à íntima, células fusiformes e mononucleares penetram a massa de fibrina: organização inicial."
+  },
+  {
+   "id": "trombo-2",
+   "estrutura": "trombo-com-linhas-de-zahn",
+   "categoria": "patologica",
+   "rotulo": "Segundo trombo ocluindo outra artéria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.37
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.26,
+    0.48,
+    0.5
+   ]
+  },
+  {
+   "id": "intima",
+   "estrutura": "espessamento-arterial",
+   "categoria": "patologica",
+   "rotulo": "Parede arterial espessada em torno da luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.46
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.2,
+    0.26,
+    0.48,
+    0.5
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trombo-com-linhas-de-zahn",
+   "status": "presente",
+   "marcacoes": [
+    "zahn",
+    "fibrina",
+    "trombo-2"
+   ],
+   "nota": "Trombos ocluindo a luz de duas artérias, com camadas de fibrina e hemácias."
+  },
+  {
+   "achado": "organizacao-do-trombo",
+   "status": "presente",
+   "marcacoes": [
+    "organizacao"
+   ],
+   "nota": "Organização inicial no ponto de fixação."
+  },
+  {
+   "achado": "espessamento-arterial",
+   "status": "presente",
+   "marcacoes": [
+    "intima"
+   ],
+   "nota": "Parede espessada de forma concêntrica (a separação entre íntima e média exigiria coloração para fibras elásticas)."
+  },
+  {
+   "achado": "fendas-de-colesterol",
+   "status": "ausente",
+   "nota": "Não há núcleo ateromatoso com fendas de colesterol sob os trombos neste corte."
+  }
+ ]
+}

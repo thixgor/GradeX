@@ -163,4 +163,85 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
       'Necrose supurativa (abscesso) é cheia de neutrófilos, não de restos granulares.',
     ],
   },
+  {
+    id: 'fendas-de-colesterol',
+    nome: 'Fendas de colesterol',
+    sinonimos: ['cristais de colesterol', 'clefts de colesterol'],
+    categoria: 'deposito',
+    resumo:
+      'Espaços vazios em forma de agulha ou de fuso, pontiagudos nas extremidades, deixados pelos cristais de colesterol que se dissolvem no processamento da lâmina.',
+    comoReconhecer: [
+      'No pequeno aumento: "fendas" brancas, alongadas e paralelas ou em leque, dentro de um material rosa-pálido.',
+      'No grande aumento: bordas nítidas, sem células dentro; às vezes com células gigantes de corpo estranho ao redor.',
+    ],
+    mecanismo: [
+      'O colesterol livre se acumula fora das células (macrófagos espumosos que morrem liberam o conteúdo) e cristaliza.',
+      'O álcool e o xilol da preparação dissolvem os cristais: resta o molde vazio.',
+    ],
+    significado: [
+      'Marca o núcleo lipídico-necrótico da placa aterosclerótica; também aparece em hemorragias antigas, colesteatoma e xantogranulomas.',
+    ],
+    ondeOcorre: ['Placa aterosclerótica', 'Êmbolos de colesterol (ateroembolia)', 'Colesteatoma', 'Hemorragias antigas'],
+    armadilhas: ['Retração em torno de fibras (artefato) é irregular; a fenda de colesterol tem forma de agulha com pontas agudas.'],
+  },
+  {
+    id: 'celulas-espumosas',
+    nome: 'Células espumosas (macrófagos carregados de lipídio)',
+    sinonimos: ['foam cells', 'macrófagos xantomatosos', 'histiócitos espumosos'],
+    categoria: 'deposito',
+    resumo:
+      'Macrófagos com citoplasma claro, cheio de vacúolos pequenos de lipídio ("espuma"), e núcleo pequeno e central.',
+    comoReconhecer: [
+      'Células redondas ou poligonais, maiores que as vizinhas, de citoplasma pálido e finamente vacuolado.',
+      'Em grupos na íntima (estrias gordurosas, placas) ou no interstício de órgãos com lipídio retido.',
+    ],
+    mecanismo: [
+      'A LDL que atravessa o endotélio lesado fica retida na íntima e é oxidada; macrófagos a captam por receptores scavenger, sem freio, e se enchem de ésteres de colesterol.',
+    ],
+    significado: ['Primeira lesão da aterosclerose (estria gordurosa); nas placas avançadas, cercam o núcleo necrótico.'],
+    ondeOcorre: ['Aterosclerose', 'Xantomas e xantelasma', 'Pielonefrite xantogranulomatosa', 'Colecistite (colesterolose)'],
+    armadilhas: ['Células em anel de sinete e adipócitos pequenos são diferentes: o núcleo não fica central e a gota é única.'],
+  },
+  {
+    id: 'trombo-com-linhas-de-zahn',
+    nome: 'Trombo (com linhas de Zahn)',
+    sinonimos: ['trombo', 'linhas de Zahn', 'trombose', 'trombo mural', 'trombo oclusivo'],
+    categoria: 'circulatorio',
+    resumo:
+      'Massa sólida formada dentro de um vaso ou câmara cardíaca em vida, composta de plaquetas, fibrina e hemácias dispostas em camadas alternadas — as linhas de Zahn — e aderida à parede.',
+    comoReconhecer: [
+      'No pequeno aumento: massa vermelha ocupando a luz do vaso, parcial (mural) ou totalmente (oclusiva).',
+      'No médio aumento: lâminas alternadas rosa-pálidas (plaquetas e fibrina) e vermelhas (hemácias) — as linhas de Zahn.',
+      'Ponto de fixação à parede, onde o endotélio foi lesado; com o tempo, células e capilares invadem o trombo a partir dele (organização).',
+    ],
+    mecanismo: [
+      'Tríade de Virchow: lesão endotelial (placa rota, vasculite), alteração do fluxo (estase, turbulência) e hipercoagulabilidade.',
+      'Plaquetas aderem ao colágeno exposto, agregam e ativam a coagulação; a fibrina prende hemácias. Em fluxo, esse processo se repete em camadas — daí as linhas de Zahn.',
+    ],
+    significado: [
+      'Linhas de Zahn provam que o trombo se formou com sangue circulando (em vida); o coágulo post-mortem é homogêneo, gelatinoso, sem camadas e sem aderência.',
+      'Destinos: propagação, embolização, dissolução, organização com recanalização. Nas artérias causa infarto; nas veias, edema e embolia pulmonar.',
+    ],
+    ondeOcorre: ['Artérias coronárias e cerebrais sobre placas', 'Veias profundas dos membros inferiores', 'Átrio esquerdo na fibrilação atrial', 'Aneurismas (trombo mural)'],
+    armadilhas: [
+      'Coágulo post-mortem: "gordura de galinha" (camada amarela de plasma) sobre "geleia de groselha" (hemácias), sem camadas e sem aderência à parede.',
+      'Sangue retido no vaso durante a fixação não tem fibrina organizada nem plaquetas em lâminas.',
+    ],
+  },
+  {
+    id: 'organizacao-do-trombo',
+    nome: 'Organização do trombo',
+    sinonimos: ['recanalização', 'trombo em organização'],
+    categoria: 'reparo',
+    resumo:
+      'Invasão do trombo, a partir da parede do vaso, por células musculares lisas, fibroblastos e capilares — o trombo vira tecido conjuntivo, às vezes com novos canais (recanalização).',
+    comoReconhecer: ['No ponto de fixação, células fusiformes e capilares penetrando a massa de fibrina e hemácias.'],
+    mecanismo: ['O trombo persistente é tratado como corpo estranho: o tecido de granulação da parede o incorpora.'],
+    significado: [
+      'Data o trombo: organização indica pelo menos dias de evolução.',
+      'A recanalização pode restaurar parte do fluxo; o trombo organizado fica incorporado à parede e espessa a íntima.',
+    ],
+    ondeOcorre: ['Trombos arteriais e venosos persistentes'],
+    armadilhas: ['Parede espessada por placa aterosclerótica pode imitar trombo organizado; procure camadas de fibrina.'],
+  },
 ]

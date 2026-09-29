@@ -85,4 +85,246 @@ export const DOENCAS_CARDIOVASCULAR: DoencaZoom[] = [
       'No infarto antigo, no lugar das fibras há colágeno — rosa-pálido, sem estriações e com poucos núcleos finos.',
     ],
   },
+  {
+    id: 'pericardite-fibrinosa',
+    nome: 'Pericardite fibrinosa',
+    sinonimos: ['pericardite aguda', 'pericardite serofibrinosa', 'coração em pão com manteiga'],
+    nomesEmIngles: ['fibrinous pericarditis', 'acute pericarditis'],
+    sistema: 'cardiovascular',
+    orgao: 'coracao',
+    prioridade: 2,
+    resumo:
+      'Inflamação aguda do pericárdio com exsudato rico em fibrina depositado sobre o epicárdio — a superfície fica áspera e felpuda ("pão com manteiga") — e, com o tempo, organização por tecido de granulação.',
+    epidemiologia:
+      'A forma mais comum de pericardite. Causas: viral (a maioria dos casos idiopáticos), pós-infarto (precoce, 1–3 dias, ou síndrome de Dressler, semanas depois), uremia, febre reumática, lúpus e outras colagenoses, radiação, pós-cirurgia cardíaca e tuberculose.',
+    patogenese: [
+      'O agressor (vírus, necrose miocárdica transmural, toxinas urêmicas, imunocomplexos) lesa o mesotélio e os vasos do pericárdio.',
+      'A permeabilidade vascular aumenta e sai plasma rico em fibrinogênio, que se converte em fibrina sobre as superfícies serosas.',
+      'Neutrófilos e depois macrófagos e linfócitos se juntam à rede de fibrina.',
+      'O atrito dos dois folhetos recobertos de fibrina produz o atrito pericárdico audível.',
+      'Se a fibrina não é removida, fibroblastos e capilares a invadem (organização): aderências e, raramente, pericardite constritiva.',
+    ],
+    roteiro: [
+      'Panorâmico: identifique o miocárdio e, por fora dele, a gordura epicárdica; procure na superfície externa uma camada rosa, irregular e "felpuda".',
+      'Médio aumento: a camada é fibrina em rede ou em placas, com células inflamatórias presas; não há mesotélio liso.',
+      'Logo abaixo da fibrina, procure tecido de granulação — capilares novos e fibroblastos — invadindo o exsudato (organização).',
+      'Grande aumento: identifique neutrófilos, linfócitos e macrófagos; veja se o miocárdio subjacente está preservado.',
+    ],
+    achados: [
+      {
+        achado: 'exsudato-fibrinopurulento',
+        tipo: 'especifico',
+        comoAparece: 'Fibrina eosinofílica em rede ou em placas sobre o epicárdio, com células inflamatórias presas na malha.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'tecido-de-granulacao',
+        tipo: 'geral',
+        comoAparece: 'Capilares neoformados e fibroblastos sob e dentro da fibrina: organização do exsudato.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos e macrófagos no tecido subepicárdico nas fases mais tardias.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-neutrofilico',
+        tipo: 'geral',
+        comoAparece: 'Neutrófilos no exsudato, mais numerosos nas fases iniciais e nas causas bacterianas (purulenta).',
+        peso: 'frequente',
+      },
+      {
+        achado: 'hiperemia-e-congestao',
+        tipo: 'geral',
+        comoAparece: 'Vasos subepicárdicos dilatados.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Pericardite purulenta',
+        comoSeparar: 'Exsudato dominado por neutrófilos e pus, geralmente bacteriana; mais grave.',
+      },
+      {
+        nome: 'Pericardite tuberculosa',
+        comoSeparar: 'Granulomas com necrose caseosa no pericárdio espessado.',
+      },
+      {
+        nome: 'Pericardite neoplásica',
+        comoSeparar: 'Células malignas (carcinoma de pulmão, mama, linfoma) no pericárdio, geralmente com derrame hemorrágico.',
+      },
+      {
+        nome: 'Coágulo aderido à superfície',
+        comoSeparar: 'Predominam hemácias em camadas, sem organização por tecido de granulação e sem reação do epicárdio.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dor torácica pleurítica que melhora ao sentar inclinado para a frente; atrito pericárdico à ausculta.',
+      'ECG com supradesnivelamento difuso do ST e infradesnivelamento do PR; ecocardiograma pode mostrar derrame.',
+      'Tratamento da causa; AINE e colchicina na viral/idiopática. Grandes derrames podem causar tamponamento.',
+    ],
+    comparacaoComNormal: [
+      'No coração normal, o epicárdio é uma camada fina de mesotélio sobre tecido adiposo e vasos coronários, com superfície lisa.',
+      'Na pericardite fibrinosa, essa superfície fica recoberta por fibrina e células inflamatórias, e o tecido subepicárdico se enche de capilares novos e fibroblastos.',
+    ],
+  },
+  {
+    id: 'aterosclerose',
+    nome: 'Aterosclerose',
+    sinonimos: ['ateroma', 'placa aterosclerótica', 'doença aterosclerótica'],
+    nomesEmIngles: ['atherosclerosis', 'atheroma'],
+    sistema: 'cardiovascular',
+    orgao: 'aorta',
+    prioridade: 3,
+    resumo:
+      'Doença crônica das artérias de grande e médio calibre em que a íntima acumula lipídio, macrófagos espumosos, células musculares lisas e colágeno, formando placas com núcleo necrótico rico em colesterol e capa fibrosa — base do infarto, do AVC e dos aneurismas da aorta.',
+    epidemiologia:
+      'Principal causa de morte no mundo por suas consequências (infarto, AVC, doença arterial periférica, aneurisma de aorta abdominal). Fatores de risco: idade, sexo masculino, hipercolesterolemia (LDL), hipertensão, tabagismo, diabetes, obesidade e história familiar.',
+    patogenese: [
+      'Lesão endotelial crônica (hipertensão, tabaco, hiperglicemia, fluxo turbulento nas bifurcações) aumenta a permeabilidade e a adesividade do endotélio.',
+      'LDL entra na íntima, é retida e oxidada; monócitos aderem, migram e viram macrófagos que captam a LDL oxidada — células espumosas (estria gordurosa).',
+      'Citocinas e fatores de crescimento (PDGF) atraem células musculares lisas da média, que proliferam na íntima e produzem colágeno: forma-se a capa fibrosa.',
+      'Células espumosas morrem e liberam lipídio: o núcleo necrótico, com cristais de colesterol, cresce sob a capa.',
+      'Placas com capa fina e núcleo grande rompem; o trombo formado sobre elas oclui a artéria (infarto). Na aorta, a placa enfraquece a média e favorece o aneurisma, com trombo mural.',
+    ],
+    roteiro: [
+      'Panorâmico: compare a espessura da parede ao redor da circunferência — a placa é um espessamento excêntrico da íntima.',
+      'Na placa, procure o núcleo com fendas de colesterol (agulhas brancas) e material amorfo.',
+      'Entre o núcleo e a luz, identifique a capa fibrosa (colágeno e células musculares lisas).',
+      'Grande aumento: células espumosas (citoplasma claro vacuolado) ao redor do núcleo; hemorragia dentro da placa.',
+      'Procure trombo aderido à superfície (mural) e compare com a parede sem placa (média íntegra, íntima fina).',
+    ],
+    achados: [
+      {
+        achado: 'fendas-de-colesterol',
+        tipo: 'especifico',
+        comoAparece: 'Agulhas brancas no núcleo lipídico-necrótico da placa.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'celulas-espumosas',
+        tipo: 'especifico',
+        comoAparece: 'Macrófagos de citoplasma vacuolado em torno do núcleo e na íntima.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'geral',
+        comoAparece: 'Capa fibrosa de colágeno separando o núcleo da luz.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'hemorragia-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Hemorragia dentro da placa, que a expande e desestabiliza.',
+        peso: 'ocasional',
+      },
+      {
+        achado: 'trombo-com-linhas-de-zahn',
+        tipo: 'geral',
+        comoAparece: 'Trombo aderido à placa: oclusivo nas coronárias, mural nos aneurismas.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Arteriosclerose de Mönckeberg',
+        comoSeparar: 'Calcificação da MÉDIA de artérias musculares em idosos, sem estreitar a luz nem formar placa.',
+      },
+      {
+        nome: 'Arteriolosclerose hialina',
+        comoSeparar: 'Espessamento homogêneo e rosa de arteríolas pequenas (hipertensão, diabetes), sem lipídio nem necrose.',
+      },
+      {
+        nome: 'Aortite (Takayasu, células gigantes, sífilis)',
+        comoSeparar: 'Inflamação granulomatosa ou linfoplasmocitária da média e da adventícia, com destruição das lâminas elásticas.',
+      },
+    ],
+    correlacaoClinica: [
+      'Silenciosa até estreitar a luz (angina estável, claudicação) ou romper e tromboses (síndrome coronariana aguda, AVC).',
+      'Na aorta abdominal, a placa enfraquece a parede: aneurisma, que pode romper (dor abdominal ou lombar e choque).',
+      'Prevenção e tratamento: estatinas, controle de pressão, diabetes, cessação do tabagismo, antiagregantes; revascularização quando indicada.',
+    ],
+    comparacaoComNormal: [
+      'Na aorta normal, a íntima é uma camada fina de endotélio; a média é espessa, com lâminas elásticas paralelas e músculo liso.',
+      'Na aterosclerose, a íntima cresce muito — colágeno, macrófagos espumosos e um núcleo com fendas de colesterol — e a média sob a placa fica adelgaçada.',
+    ],
+  },
+  {
+    id: 'trombose-arterial',
+    nome: 'Trombose arterial',
+    sinonimos: ['trombo arterial', 'trombose', 'oclusão trombótica'],
+    nomesEmIngles: ['arterial thrombosis', 'thrombus'],
+    sistema: 'cardiovascular',
+    orgao: 'arteria-muscular',
+    prioridade: 4,
+    resumo:
+      'Formação, em vida, de uma massa sólida de plaquetas, fibrina e hemácias dentro de uma artéria, aderida à parede e com linhas de Zahn — obstrui o fluxo e causa isquemia e infarto a jusante.',
+    epidemiologia:
+      'A trombose sobre placa aterosclerótica é a causa imediata da maioria dos infartos do miocárdio e dos AVC isquêmicos. Outras causas: vasculites, dissecção, síndrome antifosfolipídica, neoplasias e trombofilias.',
+    patogenese: [
+      'Lesão endotelial expõe colágeno e fator tecidual (placa rota, erosão, vasculite).',
+      'Plaquetas aderem (fator de von Willebrand), se ativam, liberam ADP e tromboxano A2 e agregam.',
+      'A cascata da coagulação gera trombina e fibrina, que consolidam o tampão e prendem hemácias.',
+      'No fluxo arterial, camadas de plaquetas e fibrina se alternam com camadas de hemácias: linhas de Zahn.',
+      'O trombo cresce até ocluir a luz; depois pode embolizar, dissolver-se (fibrinólise) ou organizar-se, sendo invadido por células a partir da parede.',
+    ],
+    roteiro: [
+      'Panorâmico: artéria com a luz ocupada por massa vermelha.',
+      'Médio aumento: procure camadas alternadas rosa-pálidas (fibrina/plaquetas) e vermelhas (hemácias) — linhas de Zahn — que provam formação em vida.',
+      'Localize o ponto de fixação à parede e veja se células e capilares entram no trombo (organização).',
+      'Examine a parede: íntima espessada por placa ou fibrose (a causa do trombo).',
+    ],
+    achados: [
+      {
+        achado: 'trombo-com-linhas-de-zahn',
+        tipo: 'especifico',
+        comoAparece: 'Massa aderida à parede, com camadas alternadas de fibrina/plaquetas e hemácias.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'organizacao-do-trombo',
+        tipo: 'especifico',
+        comoAparece: 'Células fusiformes e capilares invadindo o trombo a partir da parede.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'espessamento-arterial',
+        tipo: 'geral',
+        comoAparece: 'Íntima espessada por fibrose ou placa, sobre a qual o trombo se formou.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fendas-de-colesterol',
+        tipo: 'geral',
+        comoAparece: 'Se a causa é placa aterosclerótica, o núcleo com fendas de colesterol aparece sob o trombo.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Coágulo post-mortem',
+        comoSeparar: 'Homogêneo, gelatinoso, sem linhas de Zahn e sem aderência à parede; com camada amarela (plasma) sobre a vermelha.',
+      },
+      {
+        nome: 'Êmbolo',
+        comoSeparar: 'Material vindo de outro lugar, sem ponto de fixação na parede local; pode conter placa, gordura, tumor.',
+      },
+      {
+        nome: 'Hiperplasia endotelial papilar intravascular (tumor de Masson)',
+        comoSeparar: 'Papilas revestidas por endotélio sobre trombo organizado, dentro de um vaso dilatado.',
+      },
+    ],
+    correlacaoClinica: [
+      'Os sintomas dependem do território: infarto do miocárdio, AVC, isquemia mesentérica ou de membros (dor, palidez, ausência de pulso).',
+      'Tratamento: antiagregantes, anticoagulação, trombólise ou trombectomia e revascularização conforme o leito.',
+      'Trombos venosos (TVP) são mais vermelhos, com menos plaquetas, e embolizam para o pulmão.',
+    ],
+    comparacaoComNormal: [
+      'Na artéria muscular normal, a luz é livre e a íntima é fina, com lâmina elástica interna ondulada e média de músculo liso em camadas.',
+      'Na trombose, a luz é ocupada por uma massa em camadas aderida à parede, e a íntima costuma estar espessada.',
+    ],
+  },
 ]
