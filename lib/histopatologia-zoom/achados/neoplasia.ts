@@ -643,4 +643,29 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Angiomiolipoma', 'Lipoma e lipossarcoma', 'Teratoma'],
     armadilhas: ['Gordura do seio renal ou perirrenal aprisionada na borda de um carcinoma não é componente do tumor.'],
   },
+  {
+    id: 'trabeculas-hepatocelulares-espessas',
+    nome: 'Trabéculas espessas de hepatócitos neoplásicos',
+    sinonimos: ['padrão trabecular', 'trabéculas com mais de 3 células', 'pseudoácinos', 'padrão pseudoglandular'],
+    categoria: 'arquitetura',
+    resumo:
+      'Células de aspecto hepatocitário organizadas em placas de 3 ou mais células de espessura (no fígado normal as placas têm 1–2 células), separadas por sinusoides e sem espaços-porta; às vezes formam pseudoácinos com bile.',
+    comoReconhecer: [
+      'No pequeno aumento: nódulo de hepatócitos sem espaços-porta nem veias centrais — a arquitetura lobular desapareceu.',
+      'No médio aumento: cordões grossos de células poligonais separados por espaços vasculares finos; pseudoácinos (pequenas luzes redondas entre células).',
+      'No grande aumento: núcleos maiores e mais escuros que os dos hepatócitos vizinhos, nucléolos evidentes, relação núcleo/citoplasma alta.',
+    ],
+    mecanismo: [
+      'Hepatócitos com mutações acumuladas (TERT, CTNNB1, TP53) proliferam como clone; perdem a relação com a microcirculação portal e passam a ser nutridos por artérias novas, "não pareadas".',
+    ],
+    significado: [
+      'Critério arquitetural do carcinoma hepatocelular; o reticulina mostra a perda da trama normal.',
+      'Na biópsia, separa CHC de nódulo displásico ou de regeneração, cujas placas continuam finas e com espaços-porta.',
+    ],
+    ondeOcorre: ['Carcinoma hepatocelular', 'Hepatoblastoma (placas finas fetais e embrionárias)'],
+    armadilhas: [
+      'Regeneração intensa e adenoma hepatocelular podem ter placas de duas células; pesquise artérias isoladas, perda de reticulina e atipia.',
+      'Metástases de tumores de células poligonais (rim, adrenal, melanoma) imitam CHC: imuno com HepPar-1, arginase-1 e glipicano-3.',
+    ],
+  },
 ]

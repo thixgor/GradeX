@@ -1,0 +1,177 @@
+{
+ "slug": "colangiocarcinoma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Colangiocarcinoma intra-hepático (hepatectomia direita, tumor de 15 cm): glândulas pequenas de epitélio biliar atípico em estroma desmoplásico abundante; hepatócitos residuais na borda. Imuno: CK7 e CK19 positivos, CK20 e CDX2 negativos.",
+ "marcacoes": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas pequenas espalhadas no estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.24
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.5,
+    0.3
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândula de epitélio biliar atípico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4523,
+      0.2208
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.445,
+    0.215,
+    0.455,
+    0.225
+   ]
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma fibroso desmoplásico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4475,
+      0.219
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.445,
+    0.215,
+    0.455,
+    0.225
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos vesiculosos com nucléolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4526,
+      0.2186
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.445,
+    0.215,
+    0.455,
+    0.225
+   ]
+  },
+  {
+   "id": "infiltracao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Tumor infiltrando o fígado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.145
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.14,
+    0.37,
+    0.19
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos residuais na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3051,
+      0.065
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.06,
+    0.31,
+    0.07
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas",
+    "glandula"
+   ],
+   "nota": "Glândulas pequenas, tubulares e anastomosadas, de células cúbicas, distribuídas por toda a massa."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma fibroso abundante e pálido entre as glândulas — o tumor é branco e duro na macroscopia."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados, redondos e vesiculosos com nucléolo, em células cúbicas."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "infiltracao"
+   ],
+   "nota": "Glândulas e cordões infiltram o parênquima sem cápsula."
+  }
+ ]
+}

@@ -1,0 +1,177 @@
+{
+ "slug": "metastase-hepatica-de-adenocarcinoma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Metástases hepáticas de adenocarcinoma colorretal (hepatectomia após quimioterapia): nódulos bem delimitados de glândulas cribriformes com necrose suja central, cercados por fibrose; fígado de fundo não cirrótico com esteatose.",
+ "marcacoes": [
+  {
+   "id": "nodulo",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Nódulo metastático bem delimitado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.42
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.08,
+    0.36,
+    0.26,
+    0.54
+   ]
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas cribriformes de epitélio colunar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1197,
+      0.4515
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.11,
+    0.44,
+    0.13,
+    0.46
+   ]
+  },
+  {
+   "id": "necrose",
+   "estrutura": "necrose-suja",
+   "categoria": "patologica",
+   "rotulo": "Necrose suja com detritos nucleares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.172,
+      0.451
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.16,
+    0.44,
+    0.18,
+    0.46
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos alongados, hipercromáticos, estratificados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.148,
+      0.406
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.14,
+    0.4,
+    0.16,
+    0.42
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Faixa fibrosa entre tumor e fígado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.204,
+      0.5025
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.195,
+    0.495,
+    0.215,
+    0.515
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos comprimidos na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.204,
+      0.511
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.195,
+    0.495,
+    0.215,
+    0.515
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "nodulo",
+    "glandulas"
+   ],
+   "nota": "Nódulos de glândulas cribriformes e sólidas de epitélio colunar estratificado, bem delimitados do parênquima."
+  },
+  {
+   "achado": "necrose-suja",
+   "status": "presente",
+   "marcacoes": [
+    "necrose"
+   ],
+   "nota": "Necrose central com detritos nucleares, típica da origem colorretal."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos alongados e ovais, hipercromáticos, pleomórficos, estratificados."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Faixa de fibrose em volta de cada nódulo, com hepatócitos comprimidos por fora."
+  }
+ ]
+}

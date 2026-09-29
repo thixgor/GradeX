@@ -973,4 +973,228 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'Na pancreatite crônica, os ácinos quase somem: sobram ilhas pequenas de ácinos e ilhotas dentro de muita fibrose, e os ductos se dilatam.',
     ],
   },
+  {
+    id: 'carcinoma-hepatocelular',
+    nome: 'Carcinoma hepatocelular',
+    sinonimos: ['CHC', 'hepatocarcinoma', 'hepatoma maligno'],
+    nomesEmIngles: ['hepatocellular carcinoma', 'HCC'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 11,
+    resumo:
+      'Tumor maligno primário dos hepatócitos, surgido quase sempre em fígado cirrótico: nódulos de células de aspecto hepatocitário em trabéculas espessas, sem espaços-porta.',
+    epidemiologia:
+      'Tumor primário de fígado mais comum e uma das principais causas de morte por câncer no mundo. Mais de 80 % surgem em cirrose — hepatites B e C, álcool, esteatose associada à disfunção metabólica, hemocromatose. Aflatoxina e hepatite B causam CHC até sem cirrose (Ásia e África). Homens 3:1.',
+    patogenese: [
+      'A lesão crônica (vírus, álcool, gordura) mantém ciclos de morte e regeneração dos hepatócitos durante décadas.',
+      'Cada ciclo é uma chance de mutação; o estresse oxidativo e a inflamação danificam o DNA (e o VHB se integra ao genoma).',
+      'Surgem nódulos displásicos de baixo e de alto grau, que evoluem para carcinoma: mutações em TERT, CTNNB1 (β-catenina) e TP53.',
+      'O tumor passa a receber sangue de artérias novas (neoangiogênese): na imagem, capta contraste na fase arterial e "lava" na fase portal.',
+      'Invade ramos da veia porta (trombose tumoral) e se espalha dentro do fígado; metástases a distância são mais tardias (pulmão, osso).',
+    ],
+    roteiro: [
+      'Panorâmico: nódulos arredondados, alguns com cápsula fibrosa, diferentes do fígado ao redor; procure a cirrose de fundo.',
+      'Médio aumento: dentro do nódulo não há espaços-porta nem veias centrais; as células formam trabéculas espessas e pseudoácinos.',
+      'Grande aumento: compare o núcleo tumoral com o do hepatócito do fundo — maior, mais escuro, com nucléolo; avalie o grau de diferenciação.',
+      'Procure invasão vascular (ramos portais) e o estado do fígado não tumoral (fibrose, esteatose, hepatite).',
+    ],
+    achados: [
+      {
+        achado: 'trabeculas-hepatocelulares-espessas',
+        tipo: 'especifico',
+        comoAparece: 'Placas de hepatócitos neoplásicos com 3 ou mais células, pseudoácinos e ausência de espaços-porta.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos grandes e hipercromáticos, nucléolos evidentes e relação núcleo/citoplasma alta em comparação com o fígado vizinho.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'pseudocapsula-fibrosa',
+        tipo: 'geral',
+        comoAparece: 'Cápsula fibrosa ao redor dos nódulos tumorais.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'nodulos-regenerativos',
+        tipo: 'geral',
+        comoAparece: 'Cirrose de fundo: nódulos de hepatócitos cercados por septos fibrosos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'invasao-angiolinfatica',
+        tipo: 'geral',
+        comoAparece: 'Tumor dentro de ramos da veia porta — pior prognóstico e maior recidiva.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Nódulo displásico de alto grau',
+        comoSeparar: 'Placas ainda finas, espaços-porta presentes em parte do nódulo, sem invasão do estroma nem trabéculas grossas.',
+      },
+      {
+        nome: 'Colangiocarcinoma intra-hepático',
+        comoSeparar: 'Glândulas de epitélio biliar em estroma desmoplásico denso, com mucina; sem trabéculas de hepatócitos nem bile.',
+      },
+      {
+        nome: 'Metástase de carcinoma',
+        comoSeparar: 'Glândulas (colorretal) ou células de outro tipo; fígado de fundo geralmente sem cirrose; imuno (HepPar-1 e arginase-1 negativos).',
+      },
+    ],
+    correlacaoClinica: [
+      'Na cirrose, rastreamento com ultrassom a cada 6 meses (± alfafetoproteína). Descompensação súbita da cirrose (ascite, icterícia) sugere CHC.',
+      'Diagnóstico muitas vezes só pela imagem (TC/RM com realce arterial e washout, LI-RADS 5), sem biópsia.',
+      'Tratamento pelo estadiamento BCLC: ressecção, ablação ou transplante (critérios de Milão) nos iniciais; quimioembolização; imunoterapia e inibidores de tirosina-quinase nos avançados.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, placas de hepatócitos de 1–2 células irradiam da veia central para os espaços-porta, separadas por sinusoides.',
+      'No carcinoma hepatocelular, as placas ficam grossas, os espaços-porta desaparecem dentro do nódulo e os núcleos crescem e escurecem.',
+    ],
+  },
+  {
+    id: 'colangiocarcinoma',
+    nome: 'Colangiocarcinoma intra-hepático',
+    sinonimos: ['carcinoma colangiocelular', 'adenocarcinoma de vias biliares intra-hepáticas'],
+    nomesEmIngles: ['intrahepatic cholangiocarcinoma'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 12,
+    resumo:
+      'Adenocarcinoma do epitélio dos ductos biliares: glândulas pequenas e tubulares, de células cúbicas, infiltrando um estroma fibroso denso (desmoplásico) no fígado.',
+    epidemiologia:
+      'Segundo tumor primário do fígado (10–15 %). Fatores de risco: colangite esclerosante primária, cálculos intra-hepáticos, cistos de colédoco, infecção por Clonorchis e Opisthorchis (Sudeste Asiático), hepatites B e C e cirrose. Maioria após os 60 anos.',
+    patogenese: [
+      'Inflamação crônica e estase biliar (colangite, cálculos, parasitas) lesam repetidamente o epitélio dos ductos.',
+      'Surgem lesões precursoras — neoplasia intraepitelial biliar e neoplasia papilífera intraductal — por mutações em KRAS, TP53, IDH1/2 e fusões de FGFR2.',
+      'As células invadem o estroma formando glândulas pequenas e induzem uma reação fibrosa intensa (desmoplasia), o que torna o tumor duro e branco.',
+      'Infiltra ao longo dos espaços-porta, dos nervos e dos linfáticos: metástases linfonodais precoces e prognóstico ruim.',
+    ],
+    roteiro: [
+      'Panorâmico: massa pálida, mal delimitada, ocupando o fígado; na borda, parênquima hepático residual.',
+      'Médio aumento: glândulas pequenas, tubulares, irregulares e espaçadas em muito estroma fibroso.',
+      'Grande aumento: células cúbicas a colunares com núcleos atípicos, nucléolos e às vezes mucina; procure invasão perineural.',
+      'Compare com hepatócitos da borda: células completamente diferentes (sem citoplasma granular rosa, formando luz).',
+    ],
+    achados: [
+      {
+        achado: 'glandulas-neoplasicas-complexas',
+        tipo: 'especifico',
+        comoAparece: 'Glândulas pequenas, tubulares e anastomosadas de epitélio biliar atípico.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'reacao-desmoplasica',
+        tipo: 'especifico',
+        comoAparece: 'Estroma fibroso denso e abundante entre as glândulas — característica marcante.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos aumentados, vesiculosos, com nucléolos, em células cúbicas.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Glândulas e células isoladas infiltrando o parênquima e os espaços-porta.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Metástase de adenocarcinoma (pâncreas, estômago, cólon)',
+        comoSeparar: 'Morfologia pode ser idêntica à de pâncreas e estômago: a diferença depende da clínica, da imagem e da imuno. Metástase colorretal tem glândulas grandes com necrose suja central e é CK20+/CDX2+.',
+      },
+      {
+        nome: 'Hamartoma de ductos biliares (complexo de von Meyenburg)',
+        comoSeparar: 'Lesão pequena (< 5 mm) de ductos dilatados com bile, epitélio achatado sem atipia, estroma não desmoplásico.',
+      },
+      {
+        nome: 'Carcinoma hepatocelular',
+        comoSeparar: 'Trabéculas de células hepatocitárias, bile, pouco estroma.',
+      },
+    ],
+    correlacaoClinica: [
+      'Intra-hepático: massa hepática com dor e perda de peso, geralmente sem icterícia. Peri-hilar (tumor de Klatskin) e distal: icterícia obstrutiva indolor.',
+      'CA 19-9 elevado. Diagnóstico por imagem e biópsia.',
+      'Tratamento: ressecção cirúrgica quando possível; quimioterapia (gencitabina + cisplatina + imunoterapia) e terapias-alvo (FGFR2, IDH1). Prognóstico reservado.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, os ductos biliares ficam só nos espaços-porta: um ducto pequeno de epitélio cúbico ao lado de uma artéria e de uma veia.',
+      'No colangiocarcinoma, glândulas semelhantes a ductos aparecem por toda parte, fora dos espaços-porta, com núcleos atípicos, dentro de fibrose densa.',
+    ],
+  },
+  {
+    id: 'metastase-hepatica-de-adenocarcinoma',
+    nome: 'Metástase hepática de adenocarcinoma colorretal',
+    sinonimos: ['metástase hepática', 'tumor secundário do fígado', 'implante hepático'],
+    nomesEmIngles: ['colorectal liver metastasis', 'metastatic adenocarcinoma to the liver'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 13,
+    resumo:
+      'Nódulos de adenocarcinoma originados no intestino grosso que chegaram ao fígado pela veia porta: glândulas grandes e cribriformes com necrose "suja" no centro, bem delimitadas do parênquima hepático.',
+    epidemiologia:
+      'No fígado, os tumores malignos mais comuns são metástases (≈ 20 vezes mais que os primários). Origens principais: cólon e reto, pâncreas, estômago, mama, pulmão e melanoma. Cerca de metade dos pacientes com câncer colorretal desenvolve metástase hepática.',
+    patogenese: [
+      'O sangue venoso do intestino drena pela veia porta direto para o fígado: o fígado é o primeiro filtro das células tumorais do trato digestivo.',
+      'Células do tumor primário que invadiram veias chegam aos sinusoides, aderem ao endotélio e atravessam para o parênquima.',
+      'Crescem como nódulos expansivos, comprimindo os hepatócitos em volta e induzindo uma faixa de fibrose.',
+      'O centro, longe dos vasos, necrosa: a necrose "suja", cheia de detritos nucleares, é típica da origem colorretal.',
+    ],
+    roteiro: [
+      'Panorâmico: nódulos múltiplos, redondos, bem delimitados, de cor diferente do fígado ao redor.',
+      'Médio aumento: glândulas grandes, cribriformes, de epitélio colunar alto, com necrose central cheia de detritos.',
+      'Na borda: faixa fibrosa e hepatócitos comprimidos e atróficos — o fígado de fundo em geral não é cirrótico.',
+      'Grande aumento: núcleos alongados, em paliçada, estratificados (como no adenocarcinoma do cólon).',
+    ],
+    achados: [
+      {
+        achado: 'glandulas-neoplasicas-complexas',
+        tipo: 'especifico',
+        comoAparece: 'Glândulas cribriformes de epitélio colunar alto, estratificado — idênticas às do tumor do cólon.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'necrose-suja',
+        tipo: 'especifico',
+        comoAparece: 'Necrose central com detritos nucleares dentro das luzes e no centro do nódulo.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos alongados, hipercromáticos e estratificados, com mitoses.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'reacao-desmoplasica',
+        tipo: 'geral',
+        comoAparece: 'Faixa fibrosa entre o nódulo e os hepatócitos comprimidos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Colangiocarcinoma intra-hepático',
+        comoSeparar: 'Glândulas pequenas de células cúbicas em estroma denso, sem necrose suja; CK7+/CK20−.',
+      },
+      {
+        nome: 'Carcinoma hepatocelular',
+        comoSeparar: 'Trabéculas de células hepatocitárias em fígado cirrótico, sem glândulas colunares.',
+      },
+    ],
+    correlacaoClinica: [
+      'Descoberta no estadiamento ou seguimento do câncer colorretal (TC, RM, CEA elevado).',
+      'Diferente de muitos cânceres, metástases hepáticas colorretais ressecáveis podem ser curadas: hepatectomia (às vezes após quimioterapia) dá sobrevida de 5 anos de 40–50 %.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, só há hepatócitos em placas e espaços-porta; epitélio colunar formando glândulas não existe.',
+      'Na metástase, um nódulo de glândulas do intestino ocupa o fígado e empurra os hepatócitos, que ficam achatados na borda.',
+    ],
+  },
 ]

@@ -1,0 +1,182 @@
+{
+ "slug": "carcinoma-hepatocelular-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma hepatocelular moderadamente diferenciado em fígado cirrótico (ressecção): nódulos encapsulados de hepatócitos atípicos em trabéculas grossas, ao lado de hepatócitos não tumorais para comparação.",
+ "marcacoes": [
+  {
+   "id": "nodulos",
+   "estrutura": "trabeculas-hepatocelulares-espessas",
+   "categoria": "patologica",
+   "rotulo": "Nódulos tumorais sem espaços-porta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.42
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.65,
+    0.6
+   ]
+  },
+  {
+   "id": "trabeculas",
+   "estrutura": "trabeculas-hepatocelulares-espessas",
+   "categoria": "patologica",
+   "rotulo": "Trabéculas grossas e pseudoácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.355
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.53,
+    0.33,
+    0.57,
+    0.37
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes, escuros, com nucléolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5498,
+      0.3585
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.546,
+    0.355,
+    0.554,
+    0.363
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Cápsula fibrosa do nódulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.372
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.65,
+    0.6
+   ]
+  },
+  {
+   "id": "cirrose",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Fígado cirrótico de fundo (nódulo com esteatose)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.665,
+      0.445
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.42,
+    0.68,
+    0.5
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócito não tumoral, para comparar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6051,
+      0.5238
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.52,
+    0.608,
+    0.528
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trabeculas-hepatocelulares-espessas",
+   "status": "presente",
+   "marcacoes": [
+    "nodulos",
+    "trabeculas"
+   ],
+   "nota": "Nódulos de células hepatocitárias em trabéculas grossas e pseudoácinos, sem espaços-porta nem veias centrais."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos muito maiores e mais escuros que os dos hepatócitos do fundo, nucléolos evidentes e relação núcleo/citoplasma alta: moderadamente diferenciado."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Faixas fibrosas envolvem os nódulos tumorais."
+  },
+  {
+   "achado": "nodulos-regenerativos",
+   "status": "presente",
+   "marcacoes": [
+    "cirrose"
+   ],
+   "nota": "Fígado não tumoral cirrótico, com nódulos separados por septos com inflamação e esteatose macrovesicular focal."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Não se identifica tumor dentro de vasos com segurança nesta lâmina."
+  }
+ ]
+}
