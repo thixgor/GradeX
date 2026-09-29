@@ -1,0 +1,141 @@
+{
+ "slug": "giardiase-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsias duodenais de mulher de 80 anos com anemia inexplicada: arquitetura vilositária normal e trofozoítos de Giardia na luz, junto à superfície.",
+ "marcacoes": [
+  {
+   "id": "trofozoitos",
+   "estrutura": "trofozoitos-de-giardia",
+   "categoria": "patologica",
+   "rotulo": "Trofozoítos em forma de foice na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.19,
+      0.2636
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.183,
+    0.258,
+    0.193,
+    0.268
+   ]
+  },
+  {
+   "id": "trofozoito-isolado",
+   "estrutura": "trofozoitos-de-giardia",
+   "categoria": "patologica",
+   "rotulo": "Trofozoíto isolado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1332,
+      0.2885
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.128,
+    0.283,
+    0.14,
+    0.295
+   ]
+  },
+  {
+   "id": "superficie",
+   "estrutura": "trofozoitos-de-giardia",
+   "categoria": "patologica",
+   "rotulo": "Parasitas junto à superfície das vilosidades",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1886,
+      0.263
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.255,
+    0.196,
+    0.271
+   ]
+  },
+  {
+   "id": "vilosidade",
+   "estrutura": "vilosidade-intestinal",
+   "rotulo": "Vilosidade de altura normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.172,
+      0.226
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.125,
+    0.215,
+    0.205,
+    0.295
+   ]
+  },
+  {
+   "id": "criptas",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.172,
+      0.265
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.125,
+    0.215,
+    0.205,
+    0.295
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trofozoitos-de-giardia",
+   "status": "presente",
+   "marcacoes": [
+    "trofozoitos",
+    "trofozoito-isolado",
+    "superficie"
+   ],
+   "nota": "Grupos de trofozoítos em forma de foice ou folha curva na luz, perto da borda em escova; não invadem a mucosa."
+  },
+  {
+   "achado": "atrofia-vilositaria",
+   "status": "ausente",
+   "nota": "Vilosidades altas e delgadas, com relação vilo:cripta normal."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "ausente",
+   "nota": "Lâmina própria com população inflamatória normal, incluindo plasmócitos."
+  }
+ ]
+}

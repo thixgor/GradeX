@@ -694,4 +694,110 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
       'Em biópsias por agulha de uma "massa", encontrar só pneumonia em organização não exclui tumor ao lado.',
     ],
   },
+  {
+    id: 'ovos-de-schistosoma',
+    nome: 'Ovos de Schistosoma no tecido',
+    sinonimos: ['ovos de esquistossoma', 'ovos com miracídio', 'ovos calcificados'],
+    categoria: 'agente',
+    resumo:
+      'Ovos ovais grandes (cerca de 110–170 × 40–70 µm) com casca fina e refringente, contendo um embrião (miracídio) com vários núcleos quando viáveis, ou casca vazia, colapsada e calcificada quando mortos; a espícula (terminal no S. haematobium, lateral no S. mansoni) só aparece em alguns cortes.',
+    comoReconhecer: [
+      'No pequeno aumento: estruturas ovais rosadas e bem delimitadas no meio de inflamação, isoladas ou em grupos.',
+      'No grande aumento: casca como um contorno refringente; dentro, o miracídio granular com núcleos. Ovos velhos: casca amassada, escura ou calcificada (azul-arroxeada).',
+      'Procure a espícula: terminal (S. haematobium — bexiga) ou lateral (S. mansoni — intestino e fígado).',
+    ],
+    mecanismo: [
+      'As fêmeas vivem nas veias (plexo vesical no S. haematobium; mesentéricas no S. mansoni) e põem centenas de ovos por dia.',
+      'Parte dos ovos atravessa a parede para sair na urina ou nas fezes; muitos ficam presos no tecido, onde os antígenos que liberam induzem resposta Th2: eosinófilos, granulomas e fibrose.',
+    ],
+    significado: [
+      'Achado diagnóstico da esquistossomose: a espécie é inferida pelo órgão e pela posição da espícula.',
+      'A reação granulomatosa e fibrosante aos ovos — e não o verme — é que causa a doença: fibrose periportal (hipertensão portal) no S. mansoni; fibrose, calcificação da bexiga e carcinoma escamoso no S. haematobium.',
+    ],
+    ondeOcorre: ['Bexiga e ureter (S. haematobium)', 'Intestino, fígado e baço (S. mansoni — o do Brasil)', 'Pulmão (hipertensão pulmonar), SNC, genitais'],
+    armadilhas: ['Ovos cortados de través podem parecer células gigantes ou corpos estranhos; a casca refringente e o miracídio definem o ovo.'],
+  },
+  {
+    id: 'trofozoitos-de-giardia',
+    nome: 'Trofozoítos de Giardia',
+    sinonimos: ['Giardia lamblia', 'Giardia intestinalis', 'Giardia duodenalis'],
+    categoria: 'agente',
+    resumo:
+      'Protozoários flagelados na luz do intestino delgado, junto à superfície das vilosidades: de perfil têm forma de foice ou folha curva; de frente são piriformes, com dois núcleos simétricos ("rosto com olhos").',
+    comoReconhecer: [
+      'No médio aumento: pontinhos cinza-azulados, em grupos, soltos no muco ou encostados na borda em escova.',
+      'No grande aumento: estruturas de 10–15 µm em crescente, pálidas; de frente, pera com dois núcleos. Não invadem a mucosa.',
+    ],
+    mecanismo: [
+      'Os cistos são ingeridos com água ou alimento contaminados; no duodeno liberam trofozoítos, que se prendem ao epitélio por um disco ventral.',
+      'Não invadem: a lesão das microvilosidades e a reação imune causam má absorção de gorduras e dissacaridases.',
+    ],
+    significado: [
+      'Diagnóstico de giardíase em biópsia duodenal — muitas vezes a mucosa é normal e só os parasitas denunciam a doença.',
+      'Infecção persistente sugere deficiência de IgA ou imunodeficiência comum variável (procure falta de plasmócitos).',
+    ],
+    ondeOcorre: ['Duodeno e jejuno', 'Raramente estômago e cólon'],
+    armadilhas: ['Muco e fragmentos de células descamadas imitam trofozoítos; procure a forma de foice regular e repetida e os pares de núcleos.'],
+  },
+  {
+    id: 'atrofia-vilositaria',
+    nome: 'Atrofia vilositária',
+    sinonimos: ['achatamento das vilosidades', 'vilosidades curtas', 'mucosa plana'],
+    categoria: 'adaptacao',
+    resumo:
+      'Vilosidades do intestino delgado mais curtas, largas ou ausentes, com criptas alongadas (hiperplásicas) — a relação vilo:cripta, normalmente de 3–5:1, cai.',
+    comoReconhecer: [
+      'No pequeno aumento: a mucosa perde os "dedos" altos e fica plana ou com vilos baixos e grossos.',
+      'Compare a altura do vilo com a profundidade da cripta; conte linfócitos intraepiteliais (> 25 por 100 enterócitos sugere doença celíaca).',
+    ],
+    mecanismo: ['Lesão do epitélio da superfície acelera a perda de enterócitos; as criptas proliferam para repor, mas os vilos encurtam.'],
+    significado: [
+      'Causa má absorção. Principal causa: doença celíaca; também giardíase intensa, imunodeficiências, enteropatia autoimune, drogas (olmesartana).',
+    ],
+    ondeOcorre: ['Doença celíaca', 'Giardíase (em parte dos casos)', 'Espru tropical', 'Imunodeficiência comum variável'],
+    armadilhas: ['Biópsias cortadas de través ou sobre folículos linfoides e glândulas de Brunner parecem ter vilos curtos; avalie só áreas bem orientadas.'],
+  },
+  {
+    id: 'trofozoitos-de-entamoeba',
+    nome: 'Trofozoítos de Entamoeba histolytica',
+    sinonimos: ['amebas', 'trofozoítos amebianos', 'eritrofagocitose'],
+    categoria: 'agente',
+    resumo:
+      'Células redondas grandes (20–40 µm), de citoplasma espumoso e acinzentado, núcleo pequeno e redondo com cariossoma central, que frequentemente contêm hemácias fagocitadas — o que prova a patogenicidade.',
+    comoReconhecer: [
+      'No médio aumento: células grandes e pálidas, em grupos, no exsudato necrótico da superfície de úlceras.',
+      'No grande aumento: citoplasma finamente vacuolado, contorno nítido, núcleo pequeno e excêntrico; hemácias dentro do citoplasma. PAS positivo.',
+    ],
+    mecanismo: [
+      'Cistos ingeridos liberam trofozoítos no cólon; a lectina de adesão, amebaporos e proteases matam células do epitélio e da lâmina própria por contato.',
+      'Os trofozoítos invadem a submucosa e se espalham lateralmente: úlceras em "botão de camisa" (colo estreito, base larga). Pela veia porta chegam ao fígado (abscesso amebiano).',
+    ],
+    significado: [
+      'Diagnóstico de amebíase invasiva (colite amebiana). É fundamental: corticoide dado por engano, pensando em doença inflamatória intestinal, pode causar colite fulminante.',
+    ],
+    ondeOcorre: ['Ceco e cólon ascendente, reto', 'Abscesso hepático amebiano', 'Raramente pulmão, cérebro e pele'],
+    armadilhas: ['Macrófagos são muito parecidos: têm núcleo maior e irregular, não têm cariossoma e raramente fagocitam hemácias. O PAS realça as amebas.'],
+  },
+  {
+    id: 'enterobius-vermicularis',
+    nome: 'Enterobius vermicularis (oxiúro) no tecido',
+    sinonimos: ['oxiúro', 'pinworm', 'threadworm', 'Oxyuris'],
+    categoria: 'agente',
+    resumo:
+      'Verme nematódeo cortado transversalmente na luz do apêndice ou do cólon: cutícula eosinofílica espessa com duas cristas laterais pontiagudas (asas laterais) e, dentro, intestino e órgãos genitais — nas fêmeas, útero com ovos.',
+    comoReconhecer: [
+      'No pequeno aumento: vários círculos e ovais de 100–500 µm soltos na luz, cada um com uma "casca" vermelha.',
+      'No grande aumento: cutícula lisa e brilhante com duas espículas laterais simétricas; musculatura sob a cutícula; tubo intestinal central; ovos ovais achatados de um lado nas fêmeas grávidas.',
+    ],
+    mecanismo: [
+      'Os ovos são ingeridos (mãos, roupa de cama); as larvas amadurecem no ceco e apêndice, e as fêmeas migram à noite até o ânus para pôr ovos — causando prurido anal.',
+      'Na luz do apêndice, raramente invadem a mucosa; podem causar dor que imita apendicite.',
+    ],
+    significado: [
+      'É o helminto mais encontrado em apendicectomias, sobretudo em crianças. Na maioria, o apêndice não está inflamado.',
+      'Presença de vermes sem inflamação aguda da parede: não é apendicite aguda — mas o paciente e os contactantes devem ser tratados.',
+    ],
+    ondeOcorre: ['Apêndice cecal', 'Ceco e cólon', 'Região perianal e trato genital feminino (raro, com granulomas)'],
+    armadilhas: ['Larvas de outros nematódeos (Strongyloides, Ascaris) têm tamanhos e estruturas diferentes; as asas laterais pontiagudas e a localização apontam oxiúro.'],
+  },
 ]

@@ -1,0 +1,143 @@
+{
+ "slug": "enterobiase-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Apêndice de menina de 6 anos com dor na fossa ilíaca direita: luz com muitos Enterobius vermicularis (asas laterais evidentes), sem apendicite aguda.",
+ "marcacoes": [
+  {
+   "id": "vermes",
+   "estrutura": "enterobius-vermicularis",
+   "categoria": "patologica",
+   "rotulo": "Vários vermes cortados na luz do apêndice",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.295,
+      0.515
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.23,
+    0.46,
+    0.37,
+    0.56
+   ]
+  },
+  {
+   "id": "verme",
+   "estrutura": "enterobius-vermicularis",
+   "categoria": "patologica",
+   "rotulo": "Verme com cutícula espessa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.27,
+      0.496
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.255,
+    0.485,
+    0.285,
+    0.515
+   ]
+  },
+  {
+   "id": "asa-lateral",
+   "estrutura": "enterobius-vermicularis",
+   "categoria": "patologica",
+   "rotulo": "Asa lateral da cutícula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2666,
+      0.4918
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.255,
+    0.485,
+    0.285,
+    0.515
+   ]
+  },
+  {
+   "id": "intestino-do-verme",
+   "estrutura": "enterobius-vermicularis",
+   "categoria": "patologica",
+   "rotulo": "Tubo intestinal do verme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3185,
+      0.5164
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.505,
+    0.33,
+    0.535
+   ]
+  },
+  {
+   "id": "criptas",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Mucosa do apêndice preservada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.245,
+      0.525
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.23,
+    0.46,
+    0.37,
+    0.56
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "enterobius-vermicularis",
+   "status": "presente",
+   "marcacoes": [
+    "vermes",
+    "verme",
+    "asa-lateral",
+    "intestino-do-verme"
+   ],
+   "nota": "Muitos cortes transversais do verme na luz, com cutícula eosinofílica, asas laterais pontiagudas, musculatura e tubo intestinal."
+  },
+  {
+   "achado": "inflamacao-aguda-transmural",
+   "status": "ausente",
+   "nota": "Mucosa íntegra, sem úlcera nem neutrófilos na muscular: não há apendicite aguda."
+  },
+  {
+   "achado": "eosinofilos-teciduais",
+   "status": "nao-avaliavel",
+   "nota": "A lâmina própria tem o tecido linfoide abundante próprio da criança; não se identifica aumento claro de eosinófilos nesta resolução."
+  }
+ ]
+}
