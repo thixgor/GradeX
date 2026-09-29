@@ -372,4 +372,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Hepatitis C',
     },
   },
+  {
+    doenca: 'pancreatite-cronica',
+    caminho: '/Research_4/Teaching/EQA/FRCPath/2016/Spring/347553.svs',
+    largura: 35855,
+    altura: 39622,
+    objetiva: 20,
+    mpp: 0.5036,
+    subtitulo: 'Não complicada (pancreatectomia subtotal)',
+    caso: {
+      sexo: 'F',
+      idade: 65,
+      historia: 'Dor abdominal crônica; pancreatectomia subtotal.',
+      diagnosticoOriginal: 'Chronic pancreatitis',
+    },
+  },
 ]

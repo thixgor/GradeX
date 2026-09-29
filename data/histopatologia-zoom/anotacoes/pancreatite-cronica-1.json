@@ -1,0 +1,178 @@
+{
+ "slug": "pancreatite-cronica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Pâncreas de pancreatectomia com pancreatite crônica não complicada: fibrose extensa substituindo o parênquima, lóbulos residuais com ácinos atróficos e ilhotas preservadas, e ductos dilatados de epitélio benigno. Sem neoplasia.",
+ "marcacoes": [
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Fibrose densa substituindo o parênquima",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.55
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.48,
+    0.54,
+    0.52,
+    0.58
+   ]
+  },
+  {
+   "id": "fibrose-panoramica",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Pâncreas transformado em fibrose com ilhas residuais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.58,
+      0.68
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.52,
+    0.62,
+    0.74
+   ]
+  },
+  {
+   "id": "lobulo-residual",
+   "estrutura": "atrofia-acinar-com-ilhotas-preservadas",
+   "categoria": "patologica",
+   "rotulo": "Lóbulo residual isolado na fibrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5305,
+      0.5685
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.525,
+    0.555,
+    0.55,
+    0.58
+   ]
+  },
+  {
+   "id": "ilhota",
+   "estrutura": "atrofia-acinar-com-ilhotas-preservadas",
+   "categoria": "patologica",
+   "rotulo": "Ilhota de Langerhans preservada entre ácinos atróficos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5372,
+      0.5735
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.525,
+    0.555,
+    0.55,
+    0.58
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "dilatacao-cistica-glandular",
+   "categoria": "patologica",
+   "rotulo": "Ducto dilatado de epitélio benigno",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.5075,
+      0.608
+     ],
+     "raios": [
+      0.0075,
+      0.012
+     ]
+    }
+   ],
+   "vista": [
+    0.49,
+    0.59,
+    0.52,
+    0.625
+   ]
+  },
+  {
+   "id": "acinos",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Ácinos com grânulos de zimogênio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5417,
+      0.5684
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.535,
+    0.555,
+    0.55,
+    0.57
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose",
+    "fibrose-panoramica"
+   ],
+   "nota": "Fibrose extensa e pobre em células ocupando a maior parte do órgão."
+  },
+  {
+   "achado": "atrofia-acinar-com-ilhotas-preservadas",
+   "status": "presente",
+   "marcacoes": [
+    "lobulo-residual",
+    "ilhota"
+   ],
+   "nota": "Lóbulos residuais com ácinos escassos e ilhotas, isolados em fibrose."
+  },
+  {
+   "achado": "dilatacao-cistica-glandular",
+   "status": "presente",
+   "marcacoes": [
+    "ducto"
+   ],
+   "nota": "Ductos dilatados com epitélio colunar/cúbico sem atipia."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "nao-avaliavel",
+   "nota": "A inflamação é escassa nos campos examinados; na fase avançada, a fibrose predomina sobre a inflamação."
+  }
+ ]
+}

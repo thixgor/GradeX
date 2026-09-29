@@ -198,4 +198,23 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Cirrose', 'Obstrução biliar extra-hepática', 'Hepatites crônicas avançadas', 'Colangite biliar primária'],
     armadilhas: ['Não confundir com adenocarcinoma (colangiocarcinoma): os dúctulos reativos são pequenos, uniformes, sem atipia e sem invasão.'],
   },
+  {
+    id: 'atrofia-acinar-com-ilhotas-preservadas',
+    nome: 'Atrofia acinar com ilhotas relativamente preservadas',
+    sinonimos: ['agregação de ilhotas', 'lóbulos residuais', 'atrofia acinar'],
+    categoria: 'adaptacao',
+    resumo:
+      'Na fibrose do pâncreas, os ácinos desaparecem primeiro; sobram lóbulos pequenos e ilhotas de Langerhans, que ficam agrupadas e desproporcionalmente evidentes.',
+    comoReconhecer: [
+      'Pequenas ilhas de tecido pancreático isoladas em fibrose densa.',
+      'Dentro delas, ácinos com grânulos de zimogênio vermelhos e, no meio, uma ilhota pálida de células endócrinas de citoplasma claro.',
+    ],
+    mecanismo: ['Os ácinos sofrem mais com a obstrução ductal, a inflamação e a isquemia; as ilhotas resistem mais tempo, mas acabam também destruídas.'],
+    significado: [
+      'Marca a pancreatite crônica e mostra que a arquitetura lobular é preservada — argumento importante contra adenocarcinoma.',
+      'Explica a sequência clínica: primeiro insuficiência exócrina (esteatorreia), depois diabetes.',
+    ],
+    ondeOcorre: ['Pancreatite crônica', 'Fibrose pancreática a montante de obstrução tumoral', 'Fibrose cística'],
+    armadilhas: ['Agregados de ilhotas podem ser confundidos com tumor neuroendócrino; na pancreatite estão dentro de lóbulos residuais, com ácinos em volta.'],
+  },
 ]

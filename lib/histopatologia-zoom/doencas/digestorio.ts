@@ -897,4 +897,80 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'Na hepatite crônica, o espaço-porta fica cheio de linfócitos, e eles transbordam para os hepatócitos vizinhos; os hepatócitos podem conter gordura.',
     ],
   },
+  {
+    id: 'pancreatite-cronica',
+    nome: 'Pancreatite crônica',
+    sinonimos: ['pancreatite crônica calcificante', 'pancreatite alcoólica crônica'],
+    nomesEmIngles: ['chronic pancreatitis'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'pancreas',
+    prioridade: 10,
+    resumo:
+      'Inflamação crônica do pâncreas que substitui o parênquima exócrino por fibrose, com perda de ácinos, ductos dilatados com concreções, inflamação crônica e ilhotas residuais — levando a insuficiência exócrina e endócrina irreversíveis.',
+    epidemiologia:
+      'Causa principal: álcool (70 % em adultos); também tabagismo, obstrução ductal (cálculos, tumores, pâncreas divisum), fibrose cística, hipertrigliceridemia, hipercalcemia, mutações (PRSS1, SPINK1, CFTR) e pancreatite autoimune.',
+    patogenese: [
+      'Surtos repetidos de pancreatite aguda (necrose-fibrose) ou lesão contínua pelo álcool ativam as células estreladas do pâncreas.',
+      'O suco pancreático fica mais viscoso: proteínas precipitam em tampões nos ductos, que calcificam e obstruem a drenagem.',
+      'A obstrução e a inflamação destroem os ácinos; as células estreladas depositam colágeno em volta e dentro dos lóbulos.',
+      'O parênquima encolhe em lóbulos residuais isolados na fibrose; os ductos a montante se dilatam.',
+      'Primeiro falha a função exócrina (lipase, amilase → má absorção); por fim as ilhotas também são destruídas (diabetes pancreatogênico). Nervos envolvidos pela fibrose explicam a dor.',
+    ],
+    roteiro: [
+      'Panorâmico: o pâncreas perdeu o aspecto de lóbulos compactos: predomina fibrose pálida com pequenas ilhas de parênquima residual.',
+      'Médio aumento: em cada ilha, procure ácinos (grânulos vermelhos), ductos e ilhotas de Langerhans pálidas — a arquitetura lobular persiste, só que reduzida.',
+      'Procure ductos dilatados com concreções eosinofílicas ou calcificadas e inflamação linfoplasmocitária ao redor.',
+      'Grande aumento: confirme que o epitélio ductal é benigno (núcleos pequenos, basais) — o diagnóstico diferencial com adenocarcinoma é a pergunta mais importante.',
+    ],
+    achados: [
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'especifico',
+        comoAparece: 'Fibrose extensa inter e intralobular substituindo o parênquima exócrino.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'atrofia-acinar-com-ilhotas-preservadas',
+        tipo: 'especifico',
+        comoAparece: 'Lóbulos residuais pequenos, com ácinos escassos e ilhotas proeminentes.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'dilatacao-cistica-glandular',
+        tipo: 'geral',
+        comoAparece: 'Ductos dilatados, às vezes com tampões proteicos ou cálculos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Infiltrado crônico focal em torno de ductos e lóbulos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Adenocarcinoma ductal do pâncreas',
+        comoSeparar:
+          'Glândulas atípicas desorganizadas, sem padrão lobular, com núcleos pleomórficos, glândulas incompletas e invasão perineural ou vascular; a pancreatite mantém os lóbulos e o epitélio benigno.',
+      },
+      {
+        nome: 'Pancreatite autoimune (IgG4)',
+        comoSeparar: 'Infiltrado linfoplasmocitário denso periductal, fibrose estoriforme, flebite obliterante e plasmócitos IgG4+.',
+      },
+      {
+        nome: 'Tumor neuroendócrino',
+        comoSeparar: 'Massa de células endócrinas monótonas, não ilhotas isoladas dentro de lóbulos residuais.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dor epigástrica crônica irradiando para o dorso, pior após refeições e álcool; perda de peso.',
+      'Esteatorreia e diabetes nos estágios avançados; calcificações pancreáticas na radiografia/TC.',
+      'Tratamento: abstinência de álcool e tabaco, enzimas pancreáticas, analgesia, tratamento do diabetes e drenagem endoscópica ou cirúrgica em casos selecionados. Risco aumentado de adenocarcinoma.',
+    ],
+    comparacaoComNormal: [
+      'No pâncreas normal, lóbulos compactos de ácinos serosos (base basofílica, ápice com grânulos vermelhos) enchem o órgão, com ilhotas pálidas espalhadas e septos finos.',
+      'Na pancreatite crônica, os ácinos quase somem: sobram ilhas pequenas de ácinos e ilhotas dentro de muita fibrose, e os ductos se dilatam.',
+    ],
+  },
 ]
