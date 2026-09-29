@@ -210,9 +210,9 @@ export const DOENCAS_RESPIRATORIO: DoencaZoom[] = [
       },
       {
         achado: 'tecido-de-granulacao',
-        tipo: 'geral',
-        comoAparece: 'Fibroblastos em matriz mixoide espessando os septos (organização).',
-        peso: 'frequente',
+        tipo: 'especifico',
+        comoAparece: 'Proliferação difusa de fibroblastos em matriz mixoide nos septos: é o critério da fase organizante, quando as membranas já foram incorporadas.',
+        peso: 'criterio',
       },
       {
         achado: 'hiperemia-e-congestao',
