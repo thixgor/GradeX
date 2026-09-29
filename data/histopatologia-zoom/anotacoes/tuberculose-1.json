@@ -1,0 +1,207 @@
+{
+ "slug": "tuberculose-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Linfonodo cervical com linfadenite granulomatosa caseosa (tuberculose): grande parte do órgão substituída por necrose caseosa confluente, cercada por macrófagos epitelioides, células gigantes de Langhans e linfócitos; granulomas em formação no tecido linfoide restante.",
+ "marcacoes": [
+  {
+   "id": "caseose",
+   "estrutura": "necrose-caseosa",
+   "categoria": "patologica",
+   "rotulo": "Necrose caseosa: material amorfo, sem arquitetura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6255,
+      0.2555
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.62,
+    0.25,
+    0.632,
+    0.262
+   ],
+   "nota": "Material eosinofílico granular, sem contorno de célula nem de vaso, com raros fragmentos nucleares."
+  },
+  {
+   "id": "caseose-panoramica",
+   "estrutura": "necrose-caseosa",
+   "categoria": "patologica",
+   "rotulo": "Áreas confluentes de caseose substituindo o linfonodo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.3
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.22,
+    0.12,
+    0.82,
+    0.7
+   ]
+  },
+  {
+   "id": "langhans",
+   "estrutura": "celula-gigante-de-langhans",
+   "categoria": "patologica",
+   "rotulo": "Célula gigante de Langhans (núcleos em ferradura)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5728,
+      0.2748
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.568,
+    0.268,
+    0.58,
+    0.28
+   ]
+  },
+  {
+   "id": "epitelioides",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Macrófagos epitelioides na borda da necrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5875,
+      0.2655
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.584,
+    0.262,
+    0.596,
+    0.274
+   ],
+   "nota": "Células de citoplasma pálido e núcleo alongado ou \"em sola de sapato\", com limites mal definidos, entre a caseose e os linfócitos."
+  },
+  {
+   "id": "granuloma-inicial",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granuloma em formação no tecido linfoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3535,
+      0.2552
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.23,
+    0.37,
+    0.28
+   ]
+  },
+  {
+   "id": "linfocitos",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Coroa de linfócitos em torno do granuloma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5775,
+      0.2735
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.568,
+    0.264,
+    0.584,
+    0.28
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "capsula-do-linfonodo",
+   "rotulo": "Cápsula do linfonodo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.145
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.34,
+    0.1,
+    0.46,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "necrose-caseosa",
+   "status": "presente",
+   "marcacoes": [
+    "caseose",
+    "caseose-panoramica"
+   ],
+   "nota": "Caseose extensa e confluente ocupa a maior parte do linfonodo."
+  },
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "presente",
+   "marcacoes": [
+    "epitelioides",
+    "granuloma-inicial"
+   ],
+   "nota": "Macrófagos epitelioides em torno da necrose e granulomas menores, ainda sem necrose, no tecido linfoide residual."
+  },
+  {
+   "achado": "celula-gigante-de-langhans",
+   "status": "presente",
+   "marcacoes": [
+    "langhans"
+   ],
+   "nota": "Numerosas células de Langhans na borda das áreas caseosas."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "linfocitos"
+   ],
+   "nota": "Linfócitos em volta dos granulomas."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "ausente",
+   "nota": "Não há fibrose nem calcificação significativas: lesão ativa, não cicatrizada."
+  }
+ ]
+}

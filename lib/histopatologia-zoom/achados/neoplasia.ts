@@ -299,5 +299,52 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Adenomas vilosos e tubulovilosos colorretais', 'Adenomas duodenais e da ampola'],
     armadilhas: ['A mucosa do intestino delgado tem vilosidades normais — com enterócitos e caliciformes, sem displasia.'],
   },
+  {
+    id: 'ninhos-basaloides',
+    nome: 'Ninhos de células basaloides',
+    sinonimos: ['células basaloides', 'ilhas basaloides'],
+    categoria: 'neoplasia',
+    resumo:
+      'Ilhas e cordões de células pequenas, azuladas, de núcleo ovalado e escasso citoplasma, parecidas com as células da camada basal da epiderme — o tumor do carcinoma basocelular.',
+    comoReconhecer: [
+      'No pequeno aumento: massas arroxeadas, bem delimitadas, na derme, ligadas ou não à epiderme.',
+      'No grande aumento: núcleos ovais, uniformes, hipercromáticos, com pouco citoplasma e limites celulares mal visíveis; mitoses e células apoptóticas.',
+    ],
+    mecanismo: [
+      'Mutações ativadoras da via Hedgehog (perda de PTCH1 ou ganho de SMO), induzidas pela radiação UV, fazem as células germinativas do folículo piloso proliferarem sem controle.',
+    ],
+    significado: [
+      'Define o carcinoma basocelular: localmente invasivo e destrutivo, mas com metástase raríssima.',
+    ],
+    ondeOcorre: ['Carcinoma basocelular', 'Tumores anexiais (tricoepitelioma), que são benignos'],
+    armadilhas: ['Tricoepitelioma e tricoblastoma também são basaloides, mas têm estroma próprio, sem fendas de retração e com diferenciação folicular.'],
+  },
+  {
+    id: 'paliçada-periferica',
+    nome: 'Paliçada periférica',
+    sinonimos: ['paliçada nuclear', 'disposição em paliçada'],
+    categoria: 'arquitetura',
+    resumo:
+      'Na borda de cada ninho tumoral, as células se alinham lado a lado, com os núcleos alongados perpendiculares à margem, como as estacas de uma cerca.',
+    comoReconhecer: ['No grande aumento: uma fileira nítida de núcleos alongados e paralelos contornando o ninho, mais organizada que o centro, onde as células se dispõem ao acaso.'],
+    mecanismo: ['As células da periferia do ninho conservam a polaridade da camada basal, orientada para a membrana basal e o estroma.'],
+    significado: ['Um dos sinais mais característicos do carcinoma basocelular.'],
+    ondeOcorre: ['Carcinoma basocelular', 'Ameloblastoma', 'Alguns tumores anexiais'],
+    armadilhas: ['Paliçada parcial também aparece em outros tumores; deve ser vista junto com os demais critérios.'],
+  },
+  {
+    id: 'fenda-de-retracao',
+    nome: 'Fenda de retração peritumoral',
+    sinonimos: ['artefato de retração', 'retração estromal'],
+    categoria: 'arquitetura',
+    resumo:
+      'Espaço vazio em forma de fenda entre o ninho tumoral e o estroma que o cerca, formado durante o processamento.',
+    comoReconhecer: ['Linha branca contornando o ninho, separando-o do estroma, sem células dentro dela.'],
+    mecanismo: [
+      'O estroma do carcinoma basocelular é rico em mucina, e a adesão entre o ninho e o estroma é frágil; na desidratação da peça, os dois se retraem de modo diferente e se separam.',
+    ],
+    significado: ['É um artefato, mas muito útil para o diagnóstico do carcinoma basocelular: os tumores benignos parecidos (tricoepitelioma) raramente a mostram.'],
+    ondeOcorre: ['Carcinoma basocelular'],
+    armadilhas: ['Não confundir com invasão vascular: a fenda não tem endotélio.'],
+  },
 ]
-

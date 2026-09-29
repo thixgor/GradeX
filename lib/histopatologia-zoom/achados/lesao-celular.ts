@@ -136,4 +136,31 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Esteato-hepatite metabólica e alcoólica'],
     armadilhas: ['Hepatócitos claros por glicogênio ou edema de artefato não são balonizados.'],
   },
+  {
+    id: 'necrose-caseosa',
+    nome: 'Necrose caseosa',
+    sinonimos: ['caseificação', 'caseum', 'necrose caseificante'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Necrose em que a arquitetura do tecido desaparece por completo e fica um material eosinofílico, amorfo e granuloso, com poeira nuclear — "como queijo" na macroscopia —, cercado por granulomas.',
+    comoReconhecer: [
+      'No pequeno aumento: áreas rosa-pálidas, homogêneas e amorfas, sem nenhum contorno de célula, vaso ou fibra, com borda arroxeada (a reação granulomatosa).',
+      'No grande aumento: material granular fino, eosinofílico, com fragmentos nucleares esparsos; ao redor, macrófagos epitelioides em paliçada, células gigantes de Langhans e linfócitos.',
+      'Diferente da necrose coagulativa, as "células-fantasma" não se reconhecem.',
+    ],
+    mecanismo: [
+      'A resposta imune celular (Th1, IFN-γ, TNF) contra antígenos da micobactéria mata os macrófagos infectados e o tecido ao redor.',
+      'Os lipídios da parede micobacteriana (ácidos micólicos) e a hipóxia do centro do granuloma dão o aspecto seco e granular.',
+      'O caseum pode calcificar (lesão cicatrizada) ou liquefazer e drenar, formando cavidades (tuberculose pulmonar cavitária).',
+    ],
+    significado: [
+      'Muito sugestiva de tuberculose; também ocorre em infecções fúngicas (histoplasmose, criptococose) — confirme com Ziehl-Neelsen, cultura ou PCR.',
+      'Granuloma com necrose caseosa × sem necrose (sarcoidose, Crohn) é uma das distinções mais cobradas em prova.',
+    ],
+    ondeOcorre: ['Tuberculose (pulmão, linfonodos, rim, osso)', 'Infecções fúngicas', 'Algumas micobacterioses atípicas'],
+    armadilhas: [
+      'Necrose de tumores e de infartos antigos pode ficar amorfa, mas não é cercada por granulomas epitelioides com células de Langhans.',
+      'Necrose supurativa (abscesso) é cheia de neutrófilos, não de restos granulares.',
+    ],
+  },
 ]

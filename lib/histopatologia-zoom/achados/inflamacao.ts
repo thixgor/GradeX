@@ -464,4 +464,24 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Infarto do miocárdio antigo', 'Cicatrizes cutâneas', 'Fibrose de órgãos após inflamação crônica'],
     armadilhas: ['Fibrose intersticial difusa (hipertensão, cardiomiopatias) é diferente da cicatriz em bloco do infarto.'],
   },
+  {
+    id: 'celula-gigante-de-langhans',
+    nome: 'Célula gigante de Langhans',
+    sinonimos: ['célula gigante multinucleada', 'célula de Langhans'],
+    categoria: 'inflamacao',
+    resumo:
+      'Célula enorme, formada pela fusão de macrófagos, com dezenas de núcleos dispostos na periferia em ferradura ou coroa e citoplasma eosinofílico abundante no centro.',
+    comoReconhecer: [
+      'No médio aumento: "manchas" grandes, rosadas, na borda dos granulomas.',
+      'No grande aumento: muitos núcleos ovais enfileirados em arco na periferia da célula, como uma ferradura.',
+      'A célula gigante de corpo estranho, ao contrário, tem os núcleos espalhados de forma desordenada e às vezes contém o material estranho.',
+    ],
+    mecanismo: ['IFN-γ e outras citocinas induzem a fusão de macrófagos ativados diante de um antígeno persistente e difícil de digerir.'],
+    significado: [
+      'Faz parte do granuloma imune — típico da tuberculose, mas não exclusivo (sarcoidose, hanseníase, fungos, Crohn).',
+      'Não confundir com a célula de Langerhans (célula dendrítica da epiderme) — nomes parecidos, células completamente diferentes.',
+    ],
+    ondeOcorre: ['Tuberculose', 'Sarcoidose', 'Hanseníase tuberculoide', 'Infecções fúngicas'],
+    armadilhas: ['Megacariócitos da medula e sinciciotrofoblasto também são multinucleados, em outros contextos.'],
+  },
 ]
