@@ -1,0 +1,131 @@
+{
+ "slug": "carcinoma-de-pequenas-celulas-de-pulmao-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia brônquica de tumor do lobo superior direito: carcinoma de pequenas células — lençóis de células pequenas com moldagem nuclear e sem nucléolo, infiltrando o estroma, com artefato de esmagamento.",
+ "marcacoes": [
+  {
+   "id": "lencois",
+   "estrutura": "celulas-pequenas-com-moldagem-nuclear",
+   "categoria": "patologica",
+   "rotulo": "Fragmento tomado por células pequenas azuis",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.2
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.41,
+    0.17,
+    0.48,
+    0.24
+   ]
+  },
+  {
+   "id": "moldagem",
+   "estrutura": "celulas-pequenas-com-moldagem-nuclear",
+   "categoria": "patologica",
+   "rotulo": "Núcleos amoldados, sem nucléolo, citoplasma escasso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4423,
+      0.1985
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.195,
+    0.448,
+    0.203
+   ]
+  },
+  {
+   "id": "esmagamento",
+   "estrutura": "artefato-de-esmagamento",
+   "categoria": "patologica",
+   "rotulo": "Esmagamento: cromatina estirada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.478,
+      0.137
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.47,
+    0.13,
+    0.482,
+    0.142
+   ]
+  },
+  {
+   "id": "infiltracao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Cordões de células tumorais entre fibras do estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.129
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.494,
+    0.122,
+    0.506,
+    0.134
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celulas-pequenas-com-moldagem-nuclear",
+   "status": "presente",
+   "marcacoes": [
+    "lencois",
+    "moldagem"
+   ],
+   "nota": "Lençóis de células pequenas com citoplasma escasso, moldagem nuclear, cromatina fina e sem nucléolos visíveis, em vários fragmentos."
+  },
+  {
+   "achado": "artefato-de-esmagamento",
+   "status": "presente",
+   "marcacoes": [
+    "esmagamento"
+   ],
+   "nota": "Faixas de cromatina estirada nas bordas de vários fragmentos."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "infiltracao"
+   ],
+   "nota": "Células tumorais em cordões dissecando o estroma fibroso da parede brônquica."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "nao-avaliavel",
+   "nota": "Não há área de necrose inequívoca nestes fragmentos; o material vermelho em vários deles é sangue da biópsia."
+  }
+ ]
+}

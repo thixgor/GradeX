@@ -1,0 +1,166 @@
+{
+ "slug": "carcinoide-pulmonar-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoide típico do lobo superior esquerdo (ressecção segmentar): tumor bem delimitado, de células uniformes em ninhos organoides com cromatina em sal e pimenta, sem necrose; brônquio com cartilagem e glândulas seromucosas ao lado.",
+ "marcacoes": [
+  {
+   "id": "tumor",
+   "estrutura": "ninhos-neuroendocrinos-organoides",
+   "categoria": "patologica",
+   "rotulo": "Tumor bem delimitado e uniforme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.9
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.15,
+    0.45,
+    0.85,
+    1.6
+   ]
+  },
+  {
+   "id": "ninhos",
+   "estrutura": "ninhos-neuroendocrinos-organoides",
+   "categoria": "patologica",
+   "rotulo": "Ninhos organoides separados por septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.38,
+      0.525
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.45,
+    0.45,
+    0.6
+   ]
+  },
+  {
+   "id": "sal-pimenta",
+   "estrutura": "ninhos-neuroendocrinos-organoides",
+   "categoria": "patologica",
+   "rotulo": "Núcleos uniformes com cromatina em sal e pimenta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4735,
+      0.9213
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.47,
+    0.92,
+    0.476,
+    0.926
+   ]
+  },
+  {
+   "id": "parede",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Ninhos entre feixes fibrosos na periferia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.53
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.45,
+    0.45,
+    0.6
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem brônquica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.18
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.05,
+    0.6,
+    0.45
+   ]
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.47
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.45,
+    0.45,
+    0.6
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-neuroendocrinos-organoides",
+   "status": "presente",
+   "marcacoes": [
+    "tumor",
+    "ninhos",
+    "sal-pimenta"
+   ],
+   "nota": "Tumor bem delimitado de células uniformes em ninhos e trabéculas, com cromatina finamente granular e citoplasma eosinofílico moderado."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "parede"
+   ],
+   "nota": "Na periferia, ninhos se estendem entre feixes fibrosos e perto das glândulas brônquicas."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Sem necrose, e mitoses raras nos campos examinados — padrão de carcinoide típico."
+  }
+ ]
+}

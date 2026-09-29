@@ -1,0 +1,194 @@
+{
+ "slug": "carcinoma-escamoso-de-pulmao-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma escamoso moderadamente diferenciado, endobrônquico: ninhos de células escamosas atípicas enchendo as luzes brônquicas, com necrose e queratina; epitélio respiratório, glândulas seromucosas e cartilagem do brônquio para comparação.",
+ "marcacoes": [
+  {
+   "id": "tumor-na-luz",
+   "estrutura": "ninhos-escamosos-infiltrativos",
+   "categoria": "patologica",
+   "rotulo": "Tumor ocupando a luz do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.72
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.55,
+    0.4,
+    0.75
+   ]
+  },
+  {
+   "id": "ninhos",
+   "estrutura": "ninhos-escamosos-infiltrativos",
+   "categoria": "patologica",
+   "rotulo": "Ninhos de células escamosas separados por estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.295,
+      0.715
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.7,
+    0.32,
+    0.74
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes, pleomórficos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.303,
+      0.718
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.715,
+    0.306,
+    0.721
+   ]
+  },
+  {
+   "id": "necrose",
+   "estrutura": "necrose-coagulativa",
+   "categoria": "patologica",
+   "rotulo": "Necrose com lamelas de queratina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.355,
+      0.676
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.345,
+    0.665,
+    0.365,
+    0.685
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.692
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.66,
+    0.26,
+    0.72
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem brônquica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.635
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.55,
+    0.4,
+    0.75
+   ]
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.208,
+      0.678
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.66,
+    0.26,
+    0.72
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-escamosos-infiltrativos",
+   "status": "presente",
+   "marcacoes": [
+    "tumor-na-luz",
+    "ninhos"
+   ],
+   "nota": "Ninhos e lençóis de células escamosas de citoplasma eosinofílico ocupam as luzes brônquicas e invadem a parede."
+  },
+  {
+   "achado": "perola-cornea",
+   "status": "nao-avaliavel",
+   "nota": "Há queratinização de células isoladas e lamelas de queratina misturadas à necrose na luz, mas não se encontram pérolas córneas bem formadas dentro dos ninhos — compatível com tumor moderadamente diferenciado."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos grandes, ovais a fusiformes, hipercromáticos, com nucléolos e mitoses."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "presente",
+   "marcacoes": [
+    "necrose"
+   ],
+   "nota": "Necrose com células-fantasma e queratina na superfície do tumor dentro da luz."
+  }
+ ]
+}

@@ -386,4 +386,299 @@ export const DOENCAS_RESPIRATORIO: DoencaZoom[] = [
       'Na pneumonia em organização, dentro de muitos alvéolos há "rolhas" pálidas de fibroblastos — como se o alvéolo estivesse cicatrizando por dentro —, mas as paredes continuam no lugar.',
     ],
   },
+  {
+    id: 'adenocarcinoma-de-pulmao',
+    nome: 'Adenocarcinoma de pulmão',
+    sinonimos: ['adenocarcinoma pulmonar', 'câncer de pulmão não pequenas células (adenocarcinoma)'],
+    nomesEmIngles: ['lung adenocarcinoma'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 6,
+    resumo:
+      'Carcinoma de pulmão com diferenciação glandular (glândulas, papilas, crescimento lepídico ou produção de mucina); é o tipo histológico mais comum de câncer de pulmão, inclusive em não fumantes.',
+    epidemiologia:
+      'Cerca de 40–50 % dos cânceres de pulmão; é o tipo mais frequente em mulheres, em não fumantes e em jovens. Geralmente periférico. Fatores: tabagismo, radônio, poluição, asbesto, história familiar.',
+    patogenese: [
+      'Precursor: hiperplasia adenomatosa atípica → adenocarcinoma in situ (lepídico) → minimamente invasivo → invasivo.',
+      'Mutações "condutoras" (drivers) ativam vias de proliferação: KRAS (fumantes), EGFR (não fumantes, asiáticos, mulheres), fusões de ALK, ROS1, RET, e BRAF, MET, HER2.',
+      'O tumor cresce sobre os septos alveolares (lepídico) e depois invade o estroma, formando glândulas (acinar), papilas, micropapilas ou lençóis sólidos com reação desmoplásica.',
+      'Essas alterações são alvos terapêuticos: todo adenocarcinoma avançado deve ter pesquisa molecular e de PD-L1.',
+    ],
+    roteiro: [
+      'Panorâmico: nódulo periférico; identifique áreas de arquitetura alveolar preservada (lepídico) e áreas sólidas com fibrose (invasão).',
+      'Médio aumento: defina o padrão predominante — lepídico, acinar, papilífero, micropapilífero ou sólido.',
+      'Grande aumento: células cúbicas a colunares com núcleos grandes, nucléolos e às vezes mucina; compare com pneumócitos normais.',
+      'Procure antracose, invasão pleural e vascular; na biópsia, o laudo inclui a imuno (TTF-1, napsina A) e o material para biologia molecular.',
+    ],
+    achados: [
+      {
+        achado: 'glandulas-neoplasicas-complexas',
+        tipo: 'especifico',
+        comoAparece: 'Glândulas acinares, papilas ou lençóis de células atípicas com formação de luzes.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'crescimento-lepidico',
+        tipo: 'especifico',
+        comoAparece: 'Células atípicas revestindo septos alveolares preservados, na periferia do tumor.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos grandes, vesiculosos, com nucléolos evidentes e às vezes em "tachinha".',
+        peso: 'criterio',
+      },
+      {
+        achado: 'reacao-desmoplasica',
+        tipo: 'geral',
+        comoAparece: 'Estroma fibroso reativo com células tumorais infiltrando — o componente invasivo.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'antracose',
+        tipo: 'geral',
+        comoAparece: 'Pigmento de carvão aprisionado na cicatriz do tumor.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Pneumócitos reativos (pneumonia, dano alveolar)',
+        comoSeparar: 'Atipia com inflamação, membranas hialinas ou fibrina; transição gradual, sem glândulas invasivas.',
+      },
+      {
+        nome: 'Metástase de adenocarcinoma (cólon, mama, pâncreas)',
+        comoSeparar: 'Clínica e imuno: TTF-1 e napsina A positivos favorecem pulmão; CDX2/CK20 cólon; GATA3 mama.',
+      },
+      {
+        nome: 'Mesotelioma epitelioide',
+        comoSeparar: 'Crescimento difuso na pleura, calretinina/WT1/D2-40 positivos, TTF-1 negativo.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitas vezes assintomático, descoberto como nódulo periférico em TC (rastreamento com TC de baixa dose em fumantes de 50–80 anos).',
+      'Sintomas tardios: tosse, hemoptise, perda de peso, derrame pleural; metástases para cérebro, osso, adrenal e fígado.',
+      'Tratamento: ressecção nos estágios iniciais; terapia-alvo (osimertinibe para EGFR, alectinibe para ALK) e imunoterapia nos avançados.',
+    ],
+    comparacaoComNormal: [
+      'No pulmão normal, os alvéolos são revestidos por pneumócitos achatados, quase invisíveis, e os septos são finos.',
+      'No adenocarcinoma, as paredes ficam revestidas por células grandes e atípicas (lepídico) ou são substituídas por glândulas em estroma fibroso.',
+    ],
+  },
+  {
+    id: 'carcinoma-escamoso-de-pulmao',
+    nome: 'Carcinoma de células escamosas de pulmão',
+    sinonimos: ['carcinoma epidermoide de pulmão', 'carcinoma espinocelular de pulmão'],
+    nomesEmIngles: ['squamous cell carcinoma of the lung'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 7,
+    resumo:
+      'Carcinoma de pulmão com diferenciação escamosa (queratinização ou pontes intercelulares), em geral central, nascido no epitélio brônquico metaplásico de fumantes.',
+    epidemiologia:
+      'Cerca de 25–30 % dos cânceres de pulmão; fortemente associado ao tabagismo (mais que o adenocarcinoma), mais comum em homens. Tipicamente central (brônquios principais e lobares); pode cavitar.',
+    patogenese: [
+      'A fumaça lesa o epitélio respiratório ciliado, que é substituído por epitélio escamoso (metaplasia escamosa) — mais resistente, mas sem cílios.',
+      'Mutações se acumulam (TP53, CDKN2A, amplificação de SOX2 e FGFR1): metaplasia → displasia → carcinoma in situ.',
+      'O carcinoma invade a parede brônquica, cresce para dentro da luz e obstrui o brônquio (atelectasia, pneumonia pós-obstrutiva).',
+      'Pode produzir PTHrP: hipercalcemia paraneoplásica.',
+    ],
+    roteiro: [
+      'Panorâmico: tumor em relação com um brônquio (cartilagem e glândulas seromucosas ao lado), ocupando ou obstruindo a luz.',
+      'Médio aumento: ninhos e lençóis de células poligonais com citoplasma eosinofílico, separados por estroma; procure necrose central nos ninhos.',
+      'Grande aumento: pontes intercelulares, queratinização individual (células muito rosadas) e pérolas córneas; gradue pela quantidade de queratina.',
+    ],
+    achados: [
+      {
+        achado: 'ninhos-escamosos-infiltrativos',
+        tipo: 'especifico',
+        comoAparece: 'Ninhos e lençóis de células poligonais escamosas infiltrando a parede brônquica e o pulmão.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'perola-cornea',
+        tipo: 'especifico',
+        comoAparece: 'Queratina lamelar em pérolas no centro dos ninhos (tumores bem diferenciados).',
+        peso: 'frequente',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos grandes, hipercromáticos, pleomórficos, com mitoses.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'necrose-coagulativa',
+        tipo: 'geral',
+        comoAparece: 'Necrose no centro dos ninhos e na superfície do tumor, misturada com queratina.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Adenocarcinoma sólido',
+        comoSeparar: 'Sem queratina nem pontes; mucina em algumas células; TTF-1+ e p40−.',
+      },
+      {
+        nome: 'Metástase de carcinoma escamoso (cabeça e pescoço, colo uterino)',
+        comoSeparar: 'Clínica; carcinoma in situ no brônquio adjacente favorece primário pulmonar; p16/HPV em metástases de orofaringe e colo.',
+      },
+      {
+        nome: 'Metaplasia escamosa reativa',
+        comoSeparar: 'Epitélio escamoso maduro na superfície, sem atipia importante nem invasão.',
+      },
+    ],
+    correlacaoClinica: [
+      'Tosse, hemoptise, sibilo localizado; pneumonia de repetição no mesmo lobo por obstrução brônquica.',
+      'Hipercalcemia paraneoplásica (PTHrP); tumor de Pancoast quando no ápice (síndrome de Horner).',
+      'Diagnóstico por broncoscopia com biópsia (p40/p63+, TTF-1−). Tratamento: cirurgia nos iniciais; quimio-radioterapia e imunoterapia.',
+    ],
+    comparacaoComNormal: [
+      'O brônquio normal é revestido por epitélio respiratório (pseudoestratificado, ciliado, com células caliciformes), sobre glândulas seromucosas e cartilagem.',
+      'No carcinoma escamoso, massas de células escamosas atípicas substituem esse epitélio, crescem para a luz e invadem a parede.',
+    ],
+  },
+  {
+    id: 'carcinoma-de-pequenas-celulas-de-pulmao',
+    nome: 'Carcinoma de pequenas células de pulmão',
+    sinonimos: ['oat cell', 'carcinoma de células em grão de aveia', 'CPPC', 'carcinoma neuroendócrino de pequenas células'],
+    nomesEmIngles: ['small cell lung carcinoma', 'SCLC'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 8,
+    resumo:
+      'Carcinoma neuroendócrino de alto grau formado por células pequenas, de citoplasma escasso e núcleos que se amoldam, com necrose, muitas mitoses e esmagamento fácil; o mais agressivo dos cânceres de pulmão.',
+    epidemiologia:
+      'Cerca de 15 % dos cânceres de pulmão; quase exclusivamente em fumantes pesados. Central, perihilar, com metástases linfonodais e a distância precoces (fígado, osso, cérebro, adrenal) — 2/3 já em doença extensa ao diagnóstico.',
+    patogenese: [
+      'Inativação quase universal de TP53 e RB1 pela carga mutagênica do tabaco.',
+      'As células adquirem programa neuroendócrino (ASCL1, NEUROD1): grânulos neurossecretores e produção de hormônios ectópicos.',
+      'Proliferação altíssima (Ki-67 > 70 %) com necrose extensa; crescimento na submucosa, em volta dos brônquios, com disseminação linfática precoce.',
+      'Hormônios e anticorpos explicam as síndromes paraneoplásicas: SIADH (hiponatremia), Cushing (ACTH), Lambert-Eaton (anticanais de cálcio).',
+    ],
+    roteiro: [
+      'Panorâmico: fragmentos de biópsia brônquica muito azuis, com áreas de esmagamento e necrose.',
+      'Médio aumento: lençóis de células pequenas infiltrando o estroma da submucosa, com a mucosa por cima às vezes preservada.',
+      'Grande aumento: moldagem nuclear, cromatina fina, ausência de nucléolo, citoplasma escasso, mitoses e apoptoses abundantes.',
+      'Confirme com imuno (TTF-1, sinaptofisina, CD56, Ki-67 alto; CD45 negativo para excluir linfoma).',
+    ],
+    achados: [
+      {
+        achado: 'celulas-pequenas-com-moldagem-nuclear',
+        tipo: 'especifico',
+        comoAparece: 'Lençóis de células pequenas com moldagem nuclear, cromatina fina, sem nucléolo.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'artefato-de-esmagamento',
+        tipo: 'especifico',
+        comoAparece: 'Faixas de cromatina estirada nas bordas dos fragmentos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Cordões e ninhos de células tumorais infiltrando o estroma fibroso da parede brônquica.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'necrose-coagulativa',
+        tipo: 'geral',
+        comoAparece: 'Necrose extensa em lençóis.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Linfoma ou infiltrado linfoide',
+        comoSeparar: 'Células sem moldagem, que não formam ninhos; CD45+ e citoqueratina negativa.',
+      },
+      {
+        nome: 'Carcinoide (típico/atípico)',
+        comoSeparar: 'Células com citoplasma moderado, arranjo organoide, poucas mitoses, sem necrose extensa; Ki-67 baixo.',
+      },
+      {
+        nome: 'Carcinoma escamoso basaloide',
+        comoSeparar: 'Nucléolos, paliçada periférica, p40+ e sem marcadores neuroendócrinos.',
+      },
+    ],
+    correlacaoClinica: [
+      'Tosse, dispneia, perda de peso; síndrome da veia cava superior por massa mediastinal.',
+      'Síndromes paraneoplásicas: SIADH, Cushing ectópico, Lambert-Eaton, degeneração cerebelar.',
+      'Tratamento: quimioterapia (platina + etoposídeo) + imunoterapia; radioterapia torácica e cerebral profilática. Sobrevida mediana de cerca de 1 ano na doença extensa.',
+    ],
+    comparacaoComNormal: [
+      'Na mucosa brônquica normal, as células neuroendócrinas são raras e isoladas na base do epitélio; a submucosa tem glândulas e estroma frouxo.',
+      'No carcinoma de pequenas células, lençóis de células "azuis" pequenas ocupam toda a submucosa e se esmagam ao toque da pinça.',
+    ],
+  },
+  {
+    id: 'carcinoide-pulmonar',
+    nome: 'Tumor carcinoide pulmonar',
+    sinonimos: ['carcinoide típico', 'tumor neuroendócrino bem diferenciado do pulmão', 'adenoma brônquico (termo antigo)'],
+    nomesEmIngles: ['pulmonary carcinoid tumour', 'typical carcinoid'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 9,
+    resumo:
+      'Tumor neuroendócrino bem diferenciado do pulmão: células uniformes em ninhos e trabéculas com cromatina em "sal e pimenta", estroma vascular, poucas mitoses e sem necrose.',
+    epidemiologia:
+      '1–2 % dos tumores pulmonares; qualquer idade (média 45–55 anos), sem relação forte com tabagismo. É o tumor pulmonar primário mais comum em crianças e adolescentes. Maioria central, em brônquios; associado a NEM-1.',
+    patogenese: [
+      'Origina-se das células neuroendócrinas (Kulchitsky) do epitélio brônquico, às vezes sobre hiperplasia de células neuroendócrinas (DIPNECH).',
+      'Alterações genéticas poucas (MEN1, remodeladores de cromatina) — diferente dos carcinomas neuroendócrinos de alto grau (sem TP53/RB1).',
+      'Cresce lentamente como massa polipoide dentro do brônquio, recoberta por mucosa, e se estende pela parede em "iceberg".',
+      'Secreta aminas e peptídeos (serotonina, ACTH); a síndrome carcinoide é rara porque o pulmão drena direto para a circulação sistêmica apenas quando há metástases volumosas.',
+    ],
+    roteiro: [
+      'Panorâmico: tumor bem delimitado e muito celular, em relação com brônquio e cartilagem.',
+      'Médio aumento: padrão organoide — ninhos, trabéculas, rosetas — separados por septos vasculares finos.',
+      'Grande aumento: núcleos redondos a ovais e uniformes, cromatina "sal e pimenta", citoplasma eosinofílico moderado.',
+      'Conte mitoses (< 2/2 mm² = típico; 2–10 = atípico) e procure necrose (atípico).',
+    ],
+    achados: [
+      {
+        achado: 'ninhos-neuroendocrinos-organoides',
+        tipo: 'especifico',
+        comoAparece: 'Ninhos e trabéculas de células uniformes com cromatina em sal e pimenta, separados por capilares.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Ninhos estendendo-se pela parede brônquica e entre os feixes fibrosos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'necrose-coagulativa',
+        tipo: 'geral',
+        comoAparece: 'Ausente no carcinoide típico; focal no atípico.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Carcinoma de pequenas células',
+        comoSeparar: 'Citoplasma escasso, moldagem, mitoses abundantes, necrose extensa, Ki-67 > 70 %.',
+      },
+      {
+        nome: 'Adenocarcinoma sólido',
+        comoSeparar: 'Pleomorfismo, nucléolos, mucina; marcadores neuroendócrinos negativos ou focais.',
+      },
+      {
+        nome: 'Paraganglioma e tumor glômico',
+        comoSeparar: 'Raríssimos no pulmão; citoqueratina negativa (paraganglioma) ou actina de músculo liso positiva (glômico).',
+      },
+    ],
+    correlacaoClinica: [
+      'Tosse, sibilo localizado, hemoptise (tumor muito vascular) e pneumonia de repetição por obstrução; muitos são achados em exame de imagem.',
+      'Diagnóstico por broncoscopia (lesão polipoide vermelho-cereja) e biópsia; cintilografia/PET com análogos de somatostatina.',
+      'Tratamento: ressecção cirúrgica conservadora de parênquima (broncoplastia, lobectomia). Sobrevida em 10 anos > 90 % no típico.',
+    ],
+    comparacaoComNormal: [
+      'No brônquio normal, as células neuroendócrinas são poucas, isoladas entre as células ciliadas, invisíveis no H&E.',
+      'No carcinoide, elas formam uma massa de ninhos de células iguais, com cromatina pontilhada, que empurra ou atravessa a parede brônquica.',
+    ],
+  },
 ]

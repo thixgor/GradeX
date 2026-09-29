@@ -668,4 +668,86 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
       'Metástases de tumores de células poligonais (rim, adrenal, melanoma) imitam CHC: imuno com HepPar-1, arginase-1 e glipicano-3.',
     ],
   },
+  {
+    id: 'crescimento-lepidico',
+    nome: 'Crescimento lepídico',
+    sinonimos: ['padrão lepídico', 'bronquioloalveolar', 'crescimento ao longo dos septos alveolares'],
+    categoria: 'arquitetura',
+    resumo:
+      'Células neoplásicas cúbicas ou colunares revestindo septos alveolares preservados, como uma "tinta" sobre as paredes, sem invadir o estroma — a arquitetura pulmonar continua visível.',
+    comoReconhecer: [
+      'No pequeno aumento: os alvéolos mantêm o desenho, mas as paredes parecem "contornadas" por uma fileira de núcleos grandes e escuros.',
+      'No grande aumento: células atípicas enfileiradas (às vezes em "tachinha") substituindo os pneumócitos; septos finos ou pouco espessados.',
+    ],
+    mecanismo: ['As células do adenocarcinoma (derivadas de pneumócitos tipo II ou de células de Clara) proliferam usando as paredes alveolares como arcabouço antes de invadir.'],
+    significado: [
+      'Componente in situ do adenocarcinoma de pulmão: o adenocarcinoma in situ (≤ 3 cm, só lepídico) e o minimamente invasivo têm sobrevida próxima de 100 % após ressecção.',
+      'Para o estadiamento, mede-se apenas o componente invasivo.',
+    ],
+    ondeOcorre: ['Adenocarcinoma de pulmão (in situ, minimamente invasivo, predominante lepídico)', 'Metástases que se espalham pelos alvéolos (pâncreas, cólon)'],
+    armadilhas: [
+      'Pneumócitos tipo II reativos (pneumonia, dano alveolar) também ficam volumosos; são mais variados, sem transição abrupta e com inflamação.',
+      'Em biópsias por agulha, alvéolos colapsados e cortes tangenciais simulam lepídico ou invasão — o padrão só é bem avaliado na peça.',
+    ],
+  },
+  {
+    id: 'celulas-pequenas-com-moldagem-nuclear',
+    nome: 'Células pequenas com moldagem nuclear',
+    sinonimos: ['células em grão de aveia', 'oat cells', 'moldagem nuclear', 'células azuis pequenas'],
+    categoria: 'neoplasia',
+    resumo:
+      'Lençóis de células cerca de 2–3 vezes o tamanho de um linfócito, quase sem citoplasma, com núcleos escuros, redondos a fusiformes, de cromatina fina ("sal e pimenta") e sem nucléolo, que se amoldam uns aos outros.',
+    comoReconhecer: [
+      'No pequeno aumento: tecido muito azul-escuro, em lençóis ou ninhos, com necrose e esmagamento.',
+      'No grande aumento: núcleos encostados e deformados pelo vizinho (moldagem), citoplasma quase invisível, cromatina granular fina, nucléolo ausente, muitas mitoses e apoptoses.',
+    ],
+    mecanismo: [
+      'Carcinoma neuroendócrino de alto grau: perda quase universal de TP53 e RB1, proliferação altíssima (Ki-67 > 70 %).',
+      'O núcleo ocupa quase toda a célula e é frágil — por isso as células se amoldam e se esmagam facilmente na biópsia.',
+    ],
+    significado: [
+      'Define o carcinoma de pequenas células (~15 % dos cânceres de pulmão), quase exclusivo de fumantes e disseminado ao diagnóstico.',
+      'Tratado com quimio-radioterapia (não com cirurgia); muito sensível no início, mas recidiva rapidamente.',
+    ],
+    ondeOcorre: ['Carcinoma de pequenas células do pulmão', 'Carcinomas neuroendócrinos extrapulmonares (colo uterino, esôfago, bexiga)', 'Carcinoma de células de Merkel'],
+    armadilhas: [
+      'Linfomas e infiltrados linfoides também são "azuis pequenos" e se esmagam; os linfócitos não se amoldam e são CD45+.',
+      'O carcinoide típico tem núcleos semelhantes em cromatina, mas citoplasma evidente, poucas mitoses e sem necrose.',
+    ],
+  },
+  {
+    id: 'artefato-de-esmagamento',
+    nome: 'Artefato de esmagamento (crush)',
+    sinonimos: ['crush artifact', 'esmagamento nuclear', 'estiramento da cromatina'],
+    categoria: 'arquitetura',
+    resumo:
+      'Faixas e borrões azul-escuros de cromatina estirada, sem contorno celular, produzidos pela pinça ou agulha ao retirar a biópsia.',
+    comoReconhecer: ['Riscos basofílicos em "fios" ou manchas, sem núcleos individualizados, geralmente nas bordas do fragmento.'],
+    mecanismo: ['Células com pouco citoplasma e núcleo frágil (pequenas células, linfócitos) se rompem sob pressão e a cromatina escorre.'],
+    significado: [
+      'Muito característico do carcinoma de pequenas células em biópsias brônquicas — mas é um artefato: sozinho não fecha o diagnóstico.',
+      'Procure áreas preservadas para ver a morfologia e use imuno (TTF-1, sinaptofisina, CD56, Ki-67).',
+    ],
+    ondeOcorre: ['Carcinoma de pequenas células', 'Linfomas e tecido linfoide', 'Qualquer biópsia com pinça'],
+    armadilhas: ['Linfócitos esmagados de um agregado linfoide dão o mesmo aspecto: nunca diagnostique pequenas células apenas em área esmagada.'],
+  },
+  {
+    id: 'ninhos-neuroendocrinos-organoides',
+    nome: 'Ninhos e trabéculas neuroendócrinos (padrão organoide)',
+    sinonimos: ['padrão organoide', 'cromatina em sal e pimenta', 'padrão trabecular neuroendócrino'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células uniformes, de citoplasma moderado e eosinofílico, e núcleos redondos a ovais com cromatina finamente granular ("sal e pimenta"), organizadas em ninhos, trabéculas ou fitas separados por estroma rico em capilares.',
+    comoReconhecer: [
+      'No pequeno aumento: tumor bem delimitado, de aspecto uniforme, dividido em ninhos por septos vasculares finos.',
+      'No grande aumento: núcleos iguais entre si, cromatina pontilhada, nucléolo discreto; mitoses raras e sem necrose (carcinoide típico).',
+    ],
+    mecanismo: ['Células neuroendócrinas (de Kulchitsky) produzem e armazenam peptídeos em grânulos; o crescimento lento e a vascularização rica reproduzem o arranjo das glândulas endócrinas.'],
+    significado: [
+      'Aspecto dos tumores neuroendócrinos bem diferenciados (carcinoides). No pulmão, o carcinoide típico tem < 2 mitoses/2 mm² e sem necrose; o atípico, 2–10 mitoses ou necrose focal.',
+      'Confirmação por sinaptofisina, cromogranina e INSM1.',
+    ],
+    ondeOcorre: ['Carcinoide pulmonar típico e atípico', 'Tumores neuroendócrinos do trato gastrointestinal e do pâncreas', 'Paraganglioma'],
+    armadilhas: ['Carcinoide fusocelular periférico pode lembrar tumor mesenquimal; carcinoide com esmagamento na biópsia pode imitar pequenas células — o Ki-67 separa.'],
+  },
 ]

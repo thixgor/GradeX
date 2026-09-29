@@ -1,0 +1,161 @@
+{
+ "slug": "adenocarcinoma-de-pulmao-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia por agulha de massa de 17 mm no lobo inferior esquerdo: adenocarcinoma com glândulas, papilas e células atípicas em estroma desmoplásico; CK7 e TTF-1 positivos.",
+ "marcacoes": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas e cordões de células atípicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.505
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.47,
+    0.27,
+    0.54
+   ]
+  },
+  {
+   "id": "papilas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Células tumorais revestindo espaços, formando papilas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.801,
+      0.485
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.76,
+    0.45,
+    0.83,
+    0.52
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes com nucléolo evidente",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8012,
+      0.48
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.795,
+    0.47,
+    0.815,
+    0.49
+   ]
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma desmoplásico com células tumorais infiltrando",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.448,
+      0.67
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.43,
+    0.66,
+    0.46,
+    0.69
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Antracose aprisionada na cicatriz tumoral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.436,
+      0.705
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.42,
+    0.65,
+    0.52,
+    0.75
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas",
+    "papilas"
+   ],
+   "nota": "Glândulas, cordões e papilas de células epiteliais atípicas, com luzes irregulares."
+  },
+  {
+   "achado": "crescimento-lepidico",
+   "status": "nao-avaliavel",
+   "nota": "O relatório descreve componente lepídico, mas nesta biópsia por agulha os alvéolos estão colapsados e fragmentados: não é possível separar com segurança revestimento lepídico de invasão. O padrão é avaliado na peça cirúrgica."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Células grandes, de citoplasma eosinofílico, núcleos vesiculosos e nucléolos proeminentes."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma fibroso reativo com células tumorais isoladas e em pequenos grupos."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Pigmento antracótico na área fibrosa central do tumor."
+  }
+ ]
+}
