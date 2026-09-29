@@ -1,0 +1,124 @@
+{
+ "slug": "carcinoma-renal-cromofobo-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma renal cromófobo de nefrectomia radical: lençóis e trabéculas de células grandes com membranas espessas, núcleos irregulares e binucleação, limitados por pseudocápsula fibrosa.",
+ "marcacoes": [
+  {
+   "id": "lencois",
+   "estrutura": "membranas-celulares-vegetais",
+   "categoria": "patologica",
+   "rotulo": "Lençóis de células grandes de membranas nítidas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.425
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.4,
+    0.36,
+    0.46
+   ]
+  },
+  {
+   "id": "binucleada",
+   "estrutura": "membranas-celulares-vegetais",
+   "categoria": "patologica",
+   "rotulo": "Célula binucleada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3361,
+      0.4357
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.43,
+    0.34,
+    0.44
+   ]
+  },
+  {
+   "id": "membrana",
+   "estrutura": "membranas-celulares-vegetais",
+   "categoria": "patologica",
+   "rotulo": "Membrana celular espessa (\"célula vegetal\")",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3322,
+      0.431
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.43,
+    0.34,
+    0.44
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Pseudocápsula fibrosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.135,
+      0.265
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1,
+    0.2,
+    0.3,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "membranas-celulares-vegetais",
+   "status": "presente",
+   "marcacoes": [
+    "lencois",
+    "binucleada",
+    "membrana"
+   ],
+   "nota": "Células poligonais grandes, de citoplasma pálido-reticulado a eosinofílico, membranas espessas, núcleos de contorno irregular e células binucleadas."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Cápsula fibrosa contínua na periferia do tumor."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "nao-avaliavel",
+   "nota": "A peça descreve hemorragia focal, mas nos campos examinados só há hemácias esparsas entre as trabéculas, sem área de hemorragia demonstrável."
+  }
+ ]
+}

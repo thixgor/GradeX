@@ -1,0 +1,161 @@
+{
+ "slug": "carcinoma-renal-de-celulas-claras-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma renal de células claras de baixo grau nuclear: ninhos de células claras envoltos por rede capilar delicada, com hemorragia extensa, cistos e área central de regressão hialina; pseudocápsula fibrosa na periferia.",
+ "marcacoes": [
+  {
+   "id": "claras",
+   "estrutura": "celulas-claras-neoplasicas",
+   "categoria": "patologica",
+   "rotulo": "Células de citoplasma claro formando ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6655,
+      0.3355
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.662,
+    0.332,
+    0.668,
+    0.338
+   ]
+  },
+  {
+   "id": "claras-medio",
+   "estrutura": "celulas-claras-neoplasicas",
+   "categoria": "patologica",
+   "rotulo": "Ninhos de células claras sob a pseudocápsula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5174,
+      0.066
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.045,
+    0.53,
+    0.075
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "rede-capilar-delicada",
+   "categoria": "patologica",
+   "rotulo": "Capilar fino com hemácias entre os ninhos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6648,
+      0.3363
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.662,
+    0.332,
+    0.668,
+    0.338
+   ]
+  },
+  {
+   "id": "hemorragia",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Lagos de hemorragia dentro do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.28
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.38,
+    0.18,
+    0.58,
+    0.38
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Pseudocápsula fibrosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.512,
+      0.0575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.045,
+    0.53,
+    0.075
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celulas-claras-neoplasicas",
+   "status": "presente",
+   "marcacoes": [
+    "claras",
+    "claras-medio"
+   ],
+   "nota": "Ninhos e ácinos de células poligonais de citoplasma claro e membranas nítidas; núcleos pequenos e redondos, sem nucléolos evidentes no médio aumento (baixo grau nuclear)."
+  },
+  {
+   "achado": "rede-capilar-delicada",
+   "status": "presente",
+   "marcacoes": [
+    "capilar"
+   ],
+   "nota": "Capilares finos cheios de hemácias contornando cada ninho, em todo o tumor."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "hemorragia"
+   ],
+   "nota": "Grande área de hemorragia com lagos de sangue entre os ninhos, além de espaços císticos com sangue."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Faixa fibrosa na periferia do tumor. Não há parênquima renal normal nesta lâmina."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há necrose tumoral. A área central pálida é estroma hialinizado e edemaciado com hemossiderina — alteração regressiva, sem células-fantasma."
+  }
+ ]
+}

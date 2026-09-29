@@ -507,4 +507,140 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Linfoma de Hodgkin clássico, esclerose nodular'],
     armadilhas: ['Linfonodos com fibrose por outras causas (pós-tratamento, fibrose de hilo) não têm os nódulos com células lacunares.'],
   },
+  {
+    id: 'celulas-claras-neoplasicas',
+    nome: 'Células neoplásicas de citoplasma claro',
+    sinonimos: ['células claras', 'citoplasma opticamente vazio', 'clear cells'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células tumorais poligonais cujo citoplasma parece vazio ("água") porque o glicogênio e os lipídios que o enchiam foram dissolvidos no processamento; a membrana celular fica nítida, como uma parede fina.',
+    comoReconhecer: [
+      'No médio aumento: ninhos e ácinos de células pálidas, quase brancas, com membranas bem desenhadas — lembram células vegetais.',
+      'No grande aumento: núcleo redondo, central, pequeno a médio; avalie o nucléolo (base da graduação ISUP/OMS).',
+    ],
+    mecanismo: [
+      'No carcinoma renal de células claras, a perda do gene VHL (cromossomo 3p) estabiliza o HIF: a célula passa a agir como se estivesse em hipóxia, acumula glicogênio e lipídios e secreta VEGF.',
+      'O álcool e o xilol do processamento dissolvem lipídios e o glicogênio não é corado pela eosina: o citoplasma fica claro.',
+    ],
+    significado: [
+      'Achado central do carcinoma de células renais de células claras, o tipo mais comum de câncer renal (~70 %).',
+      'Tumores de células claras de outros órgãos (metástases no pulmão, osso, tireoide, pele) devem sempre lembrar origem renal.',
+    ],
+    ondeOcorre: ['Carcinoma renal de células claras (primário e metástases)', 'Carcinoma de células claras de ovário e endométrio', 'Adenoma de paratireoide de células claras', 'Hemangioblastoma'],
+    armadilhas: [
+      'Artefato de retração e adipócitos também parecem vazios; as células claras têm núcleo e formam ninhos epiteliais.',
+      'Células claras aparecem focalmente em outros tumores renais (papilífero, cromófobo): o diagnóstico depende do conjunto.',
+    ],
+  },
+  {
+    id: 'rede-capilar-delicada',
+    nome: 'Rede capilar delicada ("tela de galinheiro")',
+    sinonimos: ['vascularização sinusoidal', 'padrão em tela de galinheiro', 'chicken-wire', 'estroma vascular fino'],
+    categoria: 'arquitetura',
+    resumo:
+      'Capilares finos e ramificados, com hemácias, que envolvem cada pequeno ninho de células tumorais — o tumor é dividido em compartimentos por uma malha vascular.',
+    comoReconhecer: [
+      'Linhas finas cor-de-rosa com hemácias contornando grupos de 5–20 células claras.',
+      'Frequentemente com hemorragia recente e antiga (hemossiderina) no meio do tumor.',
+    ],
+    mecanismo: ['O HIF ativo (perda de VHL) faz as células secretarem VEGF, que induz angiogênese intensa.'],
+    significado: [
+      'Junto com as células claras, fecha o padrão do carcinoma renal de células claras.',
+      'Explica por que o tumor é muito vascular, sangra, forma cistos hemorrágicos e responde a antiangiogênicos (inibidores de VEGF).',
+    ],
+    ondeOcorre: ['Carcinoma renal de células claras', 'Hemangioblastoma', 'Paraganglioma (padrão Zellballen)'],
+    armadilhas: ['Tecido glandular normal também tem capilares; o padrão é diagnóstico quando envolve ninhos de células neoplásicas.'],
+  },
+  {
+    id: 'pseudocapsula-fibrosa',
+    nome: 'Pseudocápsula fibrosa',
+    sinonimos: ['cápsula tumoral', 'pseudocápsula'],
+    categoria: 'arquitetura',
+    resumo:
+      'Faixa de colágeno que separa um tumor expansivo do órgão ao redor, formada em parte pelo tecido normal comprimido e fibrosado.',
+    comoReconhecer: [
+      'No pequeno aumento: uma linha rosa de fibrose entre o tumor e o parênquima normal (túbulos e glomérulos no rim, hepatócitos no fígado).',
+      'Avalie se o tumor atravessa a cápsula (invasão) — importante para o estadiamento.',
+    ],
+    mecanismo: ['O tumor cresce empurrando o tecido vizinho; o parênquima comprimido atrofia e é substituído por fibrose, reforçada por reação do estroma.'],
+    significado: [
+      'Indica crescimento expansivo. Não significa benignidade: carcinomas renais e hepatocelulares costumam ter pseudocápsula.',
+      'A invasão da cápsula, da gordura perirrenal ou dos vasos piora o estadiamento.',
+    ],
+    ondeOcorre: ['Carcinomas de células renais', 'Carcinoma hepatocelular', 'Adenomas (tireoide, hepatocelular)', 'Tumores neuroendócrinos'],
+    armadilhas: ['A cápsula normal do órgão (cápsula renal, de Glisson) é outra estrutura: a pseudocápsula fica entre tumor e parênquima.'],
+  },
+  {
+    id: 'papilas-com-eixo-fibrovascular',
+    nome: 'Papilas com eixo fibrovascular',
+    sinonimos: ['arquitetura papilífera', 'padrão tubulopapilífero'],
+    categoria: 'arquitetura',
+    resumo:
+      'Projeções digitiformes revestidas por células neoplásicas, cada uma com um eixo central de tecido conjuntivo e vaso — cortadas transversalmente, parecem círculos com um vaso no meio.',
+    comoReconhecer: [
+      'No médio aumento: espaços com dedos ou círculos de epitélio flutuando, com um miolo pálido ou vascular.',
+      'Nos eixos, procure macrófagos espumosos, hemossiderina e corpos psamomatosos (calcificações lamelares).',
+    ],
+    mecanismo: ['As células proliferam sobre um arcabouço de vasos e estroma, empurrando-o para a luz e formando dobras ramificadas.'],
+    significado: [
+      'Define os tumores papilíferos: carcinoma papilífero renal, carcinoma papilífero de tireoide, carcinoma urotelial papilífero, tumores serosos do ovário.',
+      'No rim, papilas com macrófagos espumosos nos eixos sugerem carcinoma papilífero (2º tipo mais comum, ~15 %).',
+    ],
+    ondeOcorre: ['Carcinoma papilífero renal', 'Carcinoma papilífero da tireoide', 'Carcinoma urotelial papilífero', 'Tumores serosos do ovário', 'Mesotelioma'],
+    armadilhas: ['Descamação e cortes tangenciais criam pseudopapilas sem eixo conjuntivo.'],
+  },
+  {
+    id: 'membranas-celulares-vegetais',
+    nome: 'Membranas celulares nítidas ("células vegetais") com halo perinuclear',
+    sinonimos: ['plant-like cells', 'halo perinuclear', 'núcleos em uva-passa', 'raisinoid nuclei'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células grandes e poligonais, de citoplasma pálido ou rosa finamente reticulado, com a membrana celular espessa e muito evidente, núcleos enrugados ("uva-passa"), halos claros ao redor do núcleo e células binucleadas.',
+    comoReconhecer: [
+      'No médio aumento: lençóis de células com contornos muito marcados, como um mosaico de azulejos.',
+      'No grande aumento: núcleo de contorno irregular, enrugado, com halo claro em volta; células com dois núcleos.',
+    ],
+    mecanismo: ['O citoplasma é cheio de microvesículas (derivadas de mitocôndrias defeituosas), que o deixam pálido e reticulado e empurram o conteúdo para a periferia.'],
+    significado: [
+      'Aparência típica do carcinoma renal cromófobo (~5 % dos tumores renais), de prognóstico melhor que o de células claras.',
+      'Diferencial principal: oncocitoma (benigno), que tem células de citoplasma rosa granular e núcleos redondos e regulares; o ferro coloidal de Hale cora difusamente o cromófobo.',
+    ],
+    ondeOcorre: ['Carcinoma renal cromófobo', 'Tumores oncocíticos híbridos (síndrome de Birt-Hogg-Dubé)'],
+    armadilhas: ['Halos perinucleares também surgem como artefato de fixação em muitos tecidos; valorize junto com núcleos enrugados e membranas nítidas.'],
+  },
+  {
+    id: 'vasos-de-parede-espessa-dismorficos',
+    nome: 'Vasos de parede espessa, sem lâmina elástica organizada',
+    sinonimos: ['vasos dismórficos', 'vasos hialinizados anômalos'],
+    categoria: 'arquitetura',
+    resumo:
+      'Vasos sanguíneos anormais, de parede muscular grossa e desorganizada, dos quais o músculo liso parece "descascar" para o estroma ao redor.',
+    comoReconhecer: [
+      'No pequeno aumento: muitos vasos de paredes grossas e rosadas, espalhados dentro do tumor.',
+      'No grande aumento: feixes de células musculares lisas saindo da parede do vaso em direção ao tumor (padrão radial).',
+    ],
+    mecanismo: ['No angiomiolipoma, a célula neoplásica (célula epitelioide perivascular, família PEComa) nasce ao redor dos vasos e se diferencia em músculo liso e gordura.'],
+    significado: [
+      'Um dos três componentes do angiomiolipoma (vasos dismórficos, músculo liso e gordura).',
+      'Esses vasos sem elástica formam aneurismas e explicam o sangramento retroperitoneal (síndrome de Wunderlich) em tumores > 4 cm.',
+    ],
+    ondeOcorre: ['Angiomiolipoma renal e hepático', 'Outros PEComas', 'Malformações vasculares'],
+    armadilhas: ['Artérias normais do hilo renal também têm parede grossa, mas com camadas organizadas e lâmina elástica.'],
+  },
+  {
+    id: 'tecido-adiposo-no-tumor',
+    nome: 'Adipócitos maduros dentro do tumor',
+    sinonimos: ['componente lipomatoso', 'gordura intratumoral'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células de gordura maduras, grandes e vazias, misturadas às células tumorais — no angiomiolipoma, fazem parte do próprio tumor.',
+    comoReconhecer: ['Vacúolos redondos grandes e vazios, com núcleo achatado na periferia, em grupos dentro da massa.'],
+    mecanismo: ['A célula perivascular epitelioide neoplásica consegue se diferenciar em adipócito.'],
+    significado: [
+      'A gordura no tumor aparece na TC com densidade negativa e permite o diagnóstico radiológico do angiomiolipoma sem biópsia.',
+      'Associação com esclerose tuberosa (angiomiolipomas múltiplos e bilaterais).',
+    ],
+    ondeOcorre: ['Angiomiolipoma', 'Lipoma e lipossarcoma', 'Teratoma'],
+    armadilhas: ['Gordura do seio renal ou perirrenal aprisionada na borda de um carcinoma não é componente do tumor.'],
+  },
 ]

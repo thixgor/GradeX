@@ -1,0 +1,143 @@
+{
+ "slug": "angiomiolipoma-renal-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Angiomiolipoma renal de 18 mm (nefrectomia parcial): vasos de parede espessa, feixes de músculo liso e adipócitos maduros; córtex renal normal no fragmento vizinho.",
+ "marcacoes": [
+  {
+   "id": "vasos",
+   "estrutura": "vasos-de-parede-espessa-dismorficos",
+   "categoria": "patologica",
+   "rotulo": "Vasos de parede espessa por todo o tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.16
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.14,
+    0.5,
+    0.2
+   ]
+  },
+  {
+   "id": "vaso-parede",
+   "estrutura": "vasos-de-parede-espessa-dismorficos",
+   "categoria": "patologica",
+   "rotulo": "Parede grossa e desorganizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.1745
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.46,
+    0.16,
+    0.49,
+    0.19
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "tecido-adiposo-no-tumor",
+   "categoria": "patologica",
+   "rotulo": "Adipócitos maduros dentro do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.391,
+      0.236
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.2,
+    0.42,
+    0.26
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Células musculares lisas fusiformes do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.1832
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.476,
+    0.176,
+    0.486,
+    0.186
+   ]
+  },
+  {
+   "id": "glomerulo",
+   "estrutura": "corpusculo-renal",
+   "rotulo": "Glomérulo do rim normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.432,
+      0.3484
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.28,
+    0.48,
+    0.36
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "vasos-de-parede-espessa-dismorficos",
+   "status": "presente",
+   "marcacoes": [
+    "vasos",
+    "vaso-parede"
+   ],
+   "nota": "Numerosos vasos de parede muscular grossa, hialina e desorganizada, com células fusiformes se desprendendo para o estroma."
+  },
+  {
+   "achado": "tecido-adiposo-no-tumor",
+   "status": "presente",
+   "marcacoes": [
+    "gordura"
+   ],
+   "nota": "Adipócitos maduros isolados e em grupos no meio das células fusiformes; componente de gordura minoritário neste tumor."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "nao-avaliavel",
+   "nota": "Há hemácias soltas em focos pequenos, mas não se distinguem com segurança de capilares congestos; não há hemorragia extensa neste tumor pequeno."
+  }
+ ]
+}

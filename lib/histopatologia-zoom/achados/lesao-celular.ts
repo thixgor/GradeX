@@ -199,7 +199,7 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
       'A LDL que atravessa o endotélio lesado fica retida na íntima e é oxidada; macrófagos a captam por receptores scavenger, sem freio, e se enchem de ésteres de colesterol.',
     ],
     significado: ['Primeira lesão da aterosclerose (estria gordurosa); nas placas avançadas, cercam o núcleo necrótico.'],
-    ondeOcorre: ['Aterosclerose', 'Xantomas e xantelasma', 'Pielonefrite xantogranulomatosa', 'Colecistite (colesterolose)'],
+    ondeOcorre: ['Aterosclerose', 'Xantomas e xantelasma', 'Pielonefrite xantogranulomatosa', 'Colecistite (colesterolose)', 'Carcinoma papilífero de células renais (nos eixos das papilas)'],
     armadilhas: ['Células em anel de sinete e adipócitos pequenos são diferentes: o núcleo não fica central e a gota é única.'],
   },
   {
