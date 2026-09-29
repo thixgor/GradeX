@@ -44,4 +44,32 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Hiperplasia prostática benigna', 'Hiperplasia endometrial', 'Bócio nodular', 'Hiperplasia da mama'],
     armadilhas: ['Hiperplasia endometrial com atipia é precursora de carcinoma: sempre avalie a citologia.'],
   },
+  {
+    id: 'metaplasia-oncocitica',
+    nome: 'Metaplasia oncocítica (células de Hürthle)',
+    sinonimos: ['células de Hürthle', 'oncócitos', 'células de Askanazy'],
+    categoria: 'adaptacao',
+    resumo:
+      'Células foliculares da tireoide aumentadas, de citoplasma eosinofílico abundante e granular e núcleo grande com nucléolo — cheias de mitocôndrias.',
+    comoReconhecer: [
+      'No médio aumento: folículos pequenos revestidos por células grandes e rosa-intensas, diferentes do epitélio cúbico baixo normal.',
+      'No grande aumento: citoplasma granular fino (as mitocôndrias), núcleo redondo, às vezes com nucléolo evidente.',
+    ],
+    mecanismo: ['Estresse celular crônico (inflamação autoimune, envelhecimento) induz proliferação de mitocôndrias, muitas disfuncionais.'],
+    significado: ['Achado característico da tireoidite de Hashimoto; também forma as neoplasias oncocíticas (adenoma e carcinoma de células de Hürthle).'],
+    ondeOcorre: ['Tireoidite de Hashimoto', 'Bócio nodular', 'Neoplasias oncocíticas da tireoide, glândulas salivares (tumor de Warthin) e rim (oncocitoma)'],
+    armadilhas: ['Em tireoidite, a atipia nuclear das células de Hürthle é reativa — não confundir com carcinoma papilífero, que tem núcleos em vidro fosco, fendas e pseudoinclusões.'],
+  },
+  {
+    id: 'atrofia-folicular',
+    nome: 'Atrofia folicular tireoidiana',
+    sinonimos: ['atrofia de folículos', 'folículos pequenos com pouco coloide'],
+    categoria: 'adaptacao',
+    resumo: 'Folículos pequenos, com pouco coloide ou colapsados, espalhados entre o infiltrado inflamatório — perda de parênquima funcionante.',
+    comoReconhecer: ['Folículos menores e mais escassos que o normal, de luz estreita, com coloide escasso ou ausente.'],
+    mecanismo: ['A destruição imune (linfócitos T citotóxicos, anticorpos anti-TPO) mata as células foliculares; o que resta encolhe e produz menos hormônio.'],
+    significado: ['Base morfológica do hipotireoidismo: menos folículos, menos coloide, menos tiroxina.'],
+    ondeOcorre: ['Tireoidite de Hashimoto', 'Tireoidite pós-radiação', 'Envelhecimento'],
+    armadilhas: ['Tireoide hiperestimulada (Graves) também tem pouco coloide, mas com epitélio alto e hiperplásico, não atrófico.'],
+  },
 ]

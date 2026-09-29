@@ -207,4 +207,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Invasive ductal carcinoma',
     },
   },
+  {
+    doenca: 'tireoidite-de-hashimoto',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1058.svs',
+    largura: 44022,
+    altura: 40871,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'Com centros germinativos e células de Hürthle',
+    caso: {
+      sexo: 'F',
+      idade: 45,
+      historia: 'Fadiga e aumento da tireoide.',
+      diagnosticoOriginal: 'Hashimoto\'s thyroiditis',
+    },
+  },
 ]

@@ -1,0 +1,181 @@
+{
+ "slug": "tireoidite-de-hashimoto-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Tireoide com tireoidite de Hashimoto: infiltrado linfoplasmocitário denso com folículos linfoides e centros germinativos, folículos tireoidianos atróficos e metaplasia oncocítica (células de Hürthle); folículos com coloide preservados na periferia.",
+ "marcacoes": [
+  {
+   "id": "centro-germinativo",
+   "estrutura": "hiperplasia-linfoide-reativa",
+   "categoria": "patologica",
+   "rotulo": "Folículo linfoide com centro germinativo na tireoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.475,
+      0.282
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.455,
+    0.265,
+    0.495,
+    0.3
+   ],
+   "nota": "Tecido linfoide organizado, com centro germinativo claro — não existe na tireoide normal."
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos e plasmócitos entre os folículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4463,
+      0.2907
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.29,
+    0.455,
+    0.305
+   ]
+  },
+  {
+   "id": "hurthle",
+   "estrutura": "metaplasia-oncocitica",
+   "categoria": "patologica",
+   "rotulo": "Células de Hürthle: citoplasma rosa-granular abundante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4865,
+      0.2955
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.483,
+    0.287,
+    0.495,
+    0.299
+   ]
+  },
+  {
+   "id": "atrofia",
+   "estrutura": "atrofia-folicular",
+   "categoria": "patologica",
+   "rotulo": "Folículos pequenos, com pouco coloide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.438,
+      0.273
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.25,
+    0.5,
+    0.35
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-tireoidiano",
+   "rotulo": "Folículo tireoidiano grande, com coloide (periferia menos acometida)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0805,
+      0.3175
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.05,
+    0.25,
+    0.15,
+    0.35
+   ]
+  },
+  {
+   "id": "coloide",
+   "estrutura": "coloide",
+   "rotulo": "Coloide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.068,
+      0.318
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.28,
+    0.12,
+    0.35
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Infiltrado denso e difuso em quase todo o órgão."
+  },
+  {
+   "achado": "hiperplasia-linfoide-reativa",
+   "status": "presente",
+   "marcacoes": [
+    "centro-germinativo"
+   ],
+   "nota": "Folículos linfoides com centros germinativos."
+  },
+  {
+   "achado": "metaplasia-oncocitica",
+   "status": "presente",
+   "marcacoes": [
+    "hurthle"
+   ],
+   "nota": "Grupos de células de Hürthle revestindo folículos pequenos."
+  },
+  {
+   "achado": "atrofia-folicular",
+   "status": "presente",
+   "marcacoes": [
+    "atrofia"
+   ],
+   "nota": "Folículos pequenos e esparsos entre o infiltrado; na periferia, folículos maiores com coloide."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "nao-avaliavel",
+   "nota": "Há septos entre lóbulos, mas a fibrose não foi avaliada com coloração específica; não é proeminente em H&E."
+  }
+ ]
+}
