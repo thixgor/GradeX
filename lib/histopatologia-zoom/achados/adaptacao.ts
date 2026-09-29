@@ -72,4 +72,35 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Tireoidite de Hashimoto', 'Tireoidite pós-radiação', 'Envelhecimento'],
     armadilhas: ['Tireoide hiperestimulada (Graves) também tem pouco coloide, mas com epitélio alto e hiperplásico, não atrófico.'],
   },
+  {
+    id: 'glandulas-com-dupla-camada',
+    nome: 'Glândulas com dupla camada epitelial preservada',
+    sinonimos: ['células basais preservadas', 'camada basal'],
+    categoria: 'arquitetura',
+    resumo:
+      'Glândulas revestidas por duas camadas — células colunares luminais, claras e secretoras, e uma fileira de células basais achatadas por fora —, o sinal mais importante de benignidade na próstata.',
+    comoReconhecer: [
+      'No grande aumento: por fora das células colunares, uma segunda fileira de núcleos escuros, achatados, paralelos à membrana basal.',
+      'As glândulas benignas são grandes, com contorno ondulado e dobras papilares para a luz.',
+    ],
+    mecanismo: ['Na hiperplasia, as unidades glandulares normais se multiplicam sem perder sua organização; as células basais permanecem.'],
+    significado: [
+      'Separa glândulas benignas (hiperplasia, atrofia) do adenocarcinoma, que tem uma só camada (perdeu as células basais).',
+      'Em casos difíceis, a imuno-histoquímica para células basais (p63, citoqueratina de alto peso) confirma.',
+    ],
+    ondeOcorre: ['Hiperplasia prostática benigna', 'Próstata normal', 'Adenose e atrofia prostática'],
+    armadilhas: ['Células basais podem ser difíceis de ver em glândulas atróficas ou cortadas tangencialmente.'],
+  },
+  {
+    id: 'dilatacao-cistica-glandular',
+    nome: 'Dilatação cística das glândulas',
+    sinonimos: ['glândulas císticas', 'cistos de retenção'],
+    categoria: 'arquitetura',
+    resumo: 'Glândulas muito dilatadas, com epitélio achatado e secreção rosa na luz, formando espaços arredondados vistos a olho nu.',
+    comoReconhecer: ['No pequeno aumento: buracos redondos, grandes, com conteúdo rosa-pálido, dentro dos nódulos.'],
+    mecanismo: ['Obstrução da drenagem pelos nódulos vizinhos faz a secreção se acumular e distender a glândula.'],
+    significado: ['Comum na hiperplasia prostática; benigno.'],
+    ondeOcorre: ['Hiperplasia prostática benigna', 'Hiperplasia endometrial simples', 'Doença fibrocística da mama'],
+    armadilhas: ['Não confundir com neoplasia cística: o epitélio não tem atipia.'],
+  },
 ]

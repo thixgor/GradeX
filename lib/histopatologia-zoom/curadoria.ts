@@ -222,4 +222,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Hashimoto\'s thyroiditis',
     },
   },
+  {
+    doenca: 'hiperplasia-prostatica-benigna',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1119.svs',
+    largura: 60030,
+    altura: 45539,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'Nodular, com glândulas dilatadas',
+    caso: {
+      sexo: 'M',
+      idade: 70,
+      historia: 'Retenção urinária.',
+      diagnosticoOriginal: 'Benign prostatic hyperplasia',
+    },
+  },
 ]
