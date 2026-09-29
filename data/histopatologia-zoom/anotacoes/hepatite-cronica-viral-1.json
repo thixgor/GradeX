@@ -1,0 +1,177 @@
+{
+ "slug": "hepatite-cronica-viral-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia hepática (três cilindros) com hepatite C crônica leve a moderada: espaços-porta expandidos por agregados linfoides, com lesão de ducto biliar, hepatite de interface e esteatose leve.",
+ "marcacoes": [
+  {
+   "id": "portal",
+   "estrutura": "inflamacao-portal-linfoide",
+   "categoria": "patologica",
+   "rotulo": "Espaço-porta expandido por agregado linfoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.228,
+      0.452
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.42,
+    0.32,
+    0.54
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "inflamacao-portal-linfoide",
+   "categoria": "patologica",
+   "rotulo": "Ducto biliar cercado por linfócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2355,
+      0.4465
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.225,
+    0.44,
+    0.255,
+    0.47
+   ],
+   "nota": "O ducto biliar do espaço-porta está envolvido e infiltrado por linfócitos — lesão ductal típica da hepatite C."
+  },
+  {
+   "id": "interface",
+   "estrutura": "hepatite-de-interface",
+   "categoria": "patologica",
+   "rotulo": "Hepatite de interface: linfócitos invadindo o parênquima",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2105,
+      0.474
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.205,
+    0.46,
+    0.225,
+    0.49
+   ],
+   "nota": "A borda entre espaço-porta e hepatócitos perdeu a nitidez: linfócitos avançam sobre a placa limitante e cercam hepatócitos periportais."
+  },
+  {
+   "id": "agregado-2",
+   "estrutura": "inflamacao-portal-linfoide",
+   "categoria": "patologica",
+   "rotulo": "Outro espaço-porta com agregado linfoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6485,
+      0.3505
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.63,
+    0.33,
+    0.67,
+    0.37
+   ]
+  },
+  {
+   "id": "esteatose",
+   "estrutura": "esteatose-macrovesicular",
+   "categoria": "patologica",
+   "rotulo": "Gota de gordura em hepatócito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6603,
+      0.3551
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.65,
+    0.345,
+    0.67,
+    0.365
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.235,
+      0.523
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.19,
+    0.5,
+    0.24,
+    0.54
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "inflamacao-portal-linfoide",
+   "status": "presente",
+   "marcacoes": [
+    "portal",
+    "ducto",
+    "agregado-2"
+   ],
+   "nota": "Espaços-porta expandidos por agregados linfoides, com lesão de ducto biliar."
+  },
+  {
+   "achado": "hepatite-de-interface",
+   "status": "presente",
+   "marcacoes": [
+    "interface"
+   ],
+   "nota": "Hepatite de interface leve a moderada."
+  },
+  {
+   "achado": "esteatose-macrovesicular",
+   "status": "presente",
+   "marcacoes": [
+    "esteatose"
+   ],
+   "nota": "Esteatose leve, dispersa pelos fragmentos."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "nao-avaliavel",
+   "nota": "O caso de origem descreve expansão portal fibrosa com septos sem pontes (na coloração de reticulina); em H&E a fibrose não é estadiável com segurança."
+  }
+ ]
+}

@@ -153,4 +153,49 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Rim de hipertensos e diabéticos', 'Envelhecimento', 'Nefropatias crônicas'],
     armadilhas: ['Artérias cortadas obliquamente parecem mais espessas.'],
   },
+  {
+    id: 'nodulos-regenerativos',
+    nome: 'Nódulos de regeneração hepatocitária',
+    sinonimos: ['nódulos regenerativos', 'nódulos cirróticos', 'micronódulos', 'macronódulos'],
+    categoria: 'arquitetura',
+    resumo:
+      'Ilhas arredondadas de hepatócitos, sem a organização em lóbulo (sem veia centrolobular no centro nem espaços-porta regulares), cercadas por septos fibrosos — a unidade da cirrose.',
+    comoReconhecer: [
+      'No pequeno aumento: o fígado vira um "calçamento" de bolas rosadas separadas por faixas pálidas de colágeno.',
+      'Micronodular: nódulos < 3 mm, de tamanho uniforme (álcool, hemocromatose); macronodular: nódulos maiores e variados (hepatites virais).',
+      'Dentro do nódulo, trabéculas de hepatócitos às vezes com duas células de espessura (regeneração) e sem veia central.',
+    ],
+    mecanismo: [
+      'Necrose hepatocitária repetida ativa as células estreladas, que depositam colágeno e formam septos ligando espaços-porta e veias centrais.',
+      'Os hepatócitos sobreviventes proliferam dentro dos compartimentos isolados pelos septos, formando nódulos sem a arquitetura vascular normal.',
+    ],
+    significado: [
+      'Nódulos regenerativos + fibrose em septos que envolvem todo o fígado = cirrose, estágio final comum de doenças hepáticas crônicas.',
+      'A arquitetura desorganizada desvia o sangue dos sinusoides: hipertensão portal e insuficiência hepática; é terreno para carcinoma hepatocelular.',
+    ],
+    ondeOcorre: ['Cirrose de qualquer causa (álcool, hepatites B e C, MASLD, hemocromatose, doenças biliares)'],
+    armadilhas: [
+      'Hiperplasia nodular focal e hiperplasia nodular regenerativa formam nódulos sem fibrose em septos completos.',
+      'Em biópsia por agulha, fragmentos arredondados de parênquima podem ser o único sinal: o tricrômio e a reticulina ajudam.',
+    ],
+  },
+  {
+    id: 'reacao-ductular',
+    nome: 'Reação ductular',
+    sinonimos: ['proliferação ductular', 'dúctulos proliferados'],
+    categoria: 'reparo',
+    resumo:
+      'Dúctulos biliares pequenos, curvos, de luz estreita e epitélio cúbico, multiplicados na borda dos espaços-porta e dentro dos septos fibrosos, geralmente com neutrófilos e edema ao redor.',
+    comoReconhecer: [
+      'Estruturas tubulares pequenas e irregulares, sem luz evidente ou com luz fina, espalhadas no estroma fibroso da interface.',
+      'Diferente do ducto biliar interlobular normal: um ducto único, redondo, acompanhando a artéria no espaço-porta.',
+    ],
+    mecanismo: [
+      'Quando os hepatócitos não conseguem se regenerar ou há obstrução biliar, as células progenitoras (canais de Hering) proliferam, formando dúctulos.',
+      'Os dúctulos secretam citocinas que estimulam a fibrose.',
+    ],
+    significado: ['Acompanha lesão hepática crônica e obstrução biliar; sua intensidade se correlaciona com a progressão da fibrose.'],
+    ondeOcorre: ['Cirrose', 'Obstrução biliar extra-hepática', 'Hepatites crônicas avançadas', 'Colangite biliar primária'],
+    armadilhas: ['Não confundir com adenocarcinoma (colangiocarcinoma): os dúctulos reativos são pequenos, uniformes, sem atipia e sem invasão.'],
+  },
 ]

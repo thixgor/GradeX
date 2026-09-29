@@ -53,7 +53,7 @@ UA = {'User-Agent': 'DomineAqui-curadoria/1.0 (autorizado)'}
 CACHE.mkdir(parents=True, exist_ok=True)
 
 
-def _baixar(url: str, tentativas: int = 4) -> bytes:
+def _baixar(url: str, tentativas: int = 6) -> bytes:
     for t in range(tentativas):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120) as r:

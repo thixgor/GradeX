@@ -327,4 +327,78 @@ export const DOENCAS_CARDIOVASCULAR: DoencaZoom[] = [
       'Na trombose, a luz é ocupada por uma massa em camadas aderida à parede, e a íntima costuma estar espessada.',
     ],
   },
+  {
+    id: 'cardiopatia-reumatica',
+    nome: 'Febre reumática — cardiopatia reumática crônica',
+    sinonimos: ['febre reumática', 'doença reumática do coração', 'valvopatia reumática', 'estenose mitral reumática'],
+    nomesEmIngles: ['rheumatic heart disease', 'rheumatic fever', 'chronic rheumatic valvulitis'],
+    sistema: 'cardiovascular',
+    orgao: 'coracao',
+    prioridade: 5,
+    resumo:
+      'Sequela cardíaca da febre reumática: surtos de valvulite imunológica após faringites estreptocócicas deixam os folhetos valvares (sobretudo mitral) espessados, fibrosos, vascularizados e fundidos — estenose e insuficiência valvar.',
+    epidemiologia:
+      'Ainda frequente no Brasil e em países de baixa renda, em crianças e adolescentes de 5 a 15 anos com faringite estreptocócica não tratada; a valvopatia se manifesta décadas depois. É a principal causa de estenose mitral no mundo.',
+    patogenese: [
+      'Faringite por estreptococo β-hemolítico do grupo A; em indivíduos predispostos, 2–3 semanas depois surge a resposta imune cruzada.',
+      'Anticorpos e linfócitos T contra a proteína M reconhecem proteínas do coração (miosina, proteínas valvares): pancardite aguda com nódulos de Aschoff e verrugas pequenas na linha de fechamento das valvas.',
+      'Cada surto inflama o folheto; a cicatrização o espessa com colágeno e faz crescer vasos dentro dele.',
+      'Após anos, os folhetos ficam espessos, rígidos e às vezes calcificados; as comissuras se fundem (valva em "boca de peixe") e as cordas tendíneas encurtam.',
+      'Resultado: estenose (mitral principalmente) e insuficiência, com dilatação do átrio esquerdo, fibrilação atrial, trombos e hipertensão pulmonar.',
+    ],
+    roteiro: [
+      'Panorâmico: reconheça o folheto valvar — uma lâmina de tecido conjuntivo — e compare sua espessura em toda a extensão: a porção doente fica muito espessa.',
+      'Médio aumento: procure vasos dentro do folheto (a valva normal não tem vasos) e colágeno denso desorganizado.',
+      'Grande aumento: linfócitos e plasmócitos ao redor dos vasos; procure calcificação (grumos roxos) e, se houver atividade, nódulos de Aschoff.',
+    ],
+    achados: [
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'geral',
+        comoAparece: 'Folheto muito espessado por colágeno denso e desorganizado.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'neovascularizacao-valvar',
+        tipo: 'especifico',
+        comoAparece: 'Vasos de parede espessa espalhados no folheto, que normalmente é avascular.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos e plasmócitos perivasculares no folheto.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'corpusculo-de-aschoff',
+        tipo: 'especifico',
+        comoAparece: 'Só na fase ativa (cardite aguda); raro na valvopatia crônica.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Valvopatia degenerativa calcificada (aórtica senil)',
+        comoSeparar: 'Calcificação nodular na face aórtica dos folhetos, sem fusão de comissuras nem neovascularização inflamatória.',
+      },
+      {
+        nome: 'Degeneração mixomatosa (prolapso mitral)',
+        comoSeparar: 'Folheto espessado por matriz mixoide frouxa (azulada), não por colágeno denso com vasos.',
+      },
+      {
+        nome: 'Endocardite infecciosa',
+        comoSeparar: 'Vegetações friáveis de fibrina, neutrófilos e colônias bacterianas, com destruição do folheto.',
+      },
+    ],
+    correlacaoClinica: [
+      'Febre reumática aguda: critérios de Jones (cardite, poliartrite migratória, coreia de Sydenham, eritema marginado, nódulos subcutâneos) + evidência de estreptococo.',
+      'Crônica: estenose mitral — dispneia, hemoptise, fibrilação atrial, AVC embólico; sopro diastólico em ruflar com estalido de abertura.',
+      'Prevenção: tratar a faringite estreptocócica (penicilina) e profilaxia secundária com penicilina benzatina após o primeiro surto.',
+    ],
+    comparacaoComNormal: [
+      'O folheto valvar normal é fino, com camadas de colágeno e matriz frouxa, recoberto por endotélio e sem vasos.',
+      'Na valvopatia reumática, o folheto fica muitas vezes mais espesso, com colágeno denso, vasos e linfócitos.',
+    ],
+  },
 ]

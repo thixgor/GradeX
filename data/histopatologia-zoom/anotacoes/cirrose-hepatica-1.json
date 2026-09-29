@@ -1,0 +1,228 @@
+{
+ "slug": "cirrose-hepatica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Fígado de explante com cirrose micronodular inativa de causa alcoólica: nódulos pequenos e uniformes de hepatócitos, separados por septos fibrosos completos com reação ductular e inflamação leve; sem esteatose (abstinência).",
+ "marcacoes": [
+  {
+   "id": "nodulo",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Nódulo de regeneração (sem veia central)",
+   "marcas": [
+    {
+     "tipo": "contorno",
+     "pontos": [
+      [
+       0.405,
+       0.258
+      ],
+      [
+       0.425,
+       0.253
+      ],
+      [
+       0.44,
+       0.262
+      ],
+      [
+       0.443,
+       0.278
+      ],
+      [
+       0.432,
+       0.29
+      ],
+      [
+       0.412,
+       0.291
+      ],
+      [
+       0.401,
+       0.278
+      ]
+     ]
+    }
+   ],
+   "vista": [
+    0.38,
+    0.24,
+    0.47,
+    0.31
+   ]
+  },
+  {
+   "id": "mosaico",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Todo o fígado dividido em nódulos pequenos (micronodular)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.52
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.0,
+    0.0,
+    1.0,
+    0.82
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Septo fibroso envolvendo os nódulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4425,
+      0.3595
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.33,
+    0.48,
+    0.39
+   ]
+  },
+  {
+   "id": "ductulos",
+   "estrutura": "reacao-ductular",
+   "categoria": "patologica",
+   "rotulo": "Reação ductular no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.331,
+      0.383
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.365,
+    0.365,
+    0.4
+   ]
+  },
+  {
+   "id": "inflamacao",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos e plasmócitos no septo (atividade leve)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4245,
+      0.3375
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.42,
+    0.33,
+    0.43,
+    0.34
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos do nódulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4297,
+      0.333
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.42,
+    0.33,
+    0.43,
+    0.34
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Ducto biliar do septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3435,
+      0.3775
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.365,
+    0.365,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "nodulos-regenerativos",
+   "status": "presente",
+   "marcacoes": [
+    "nodulo",
+    "mosaico"
+   ],
+   "nota": "Nódulos pequenos, de tamanho relativamente uniforme, em todo o fragmento: cirrose micronodular."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "septo"
+   ],
+   "nota": "Septos fibrosos largos e completos envolvendo cada nódulo."
+  },
+  {
+   "achado": "reacao-ductular",
+   "status": "presente",
+   "marcacoes": [
+    "ductulos"
+   ],
+   "nota": "Dúctulos proliferados nos septos."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "inflamacao"
+   ],
+   "nota": "Inflamação leve nos septos — cirrose inativa, como no diagnóstico de origem."
+  },
+  {
+   "achado": "esteatose-macrovesicular",
+   "status": "ausente",
+   "nota": "Sem esteatose: o paciente estava abstinente, e não há lesão alcoólica recente."
+  }
+ ]
+}

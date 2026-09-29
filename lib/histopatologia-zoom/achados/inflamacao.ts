@@ -499,4 +499,76 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Linfoma de Hodgkin', 'Parasitoses (esquistossomose)', 'Alergias e asma', 'Esofagite eosinofílica', 'Reações a drogas'],
     armadilhas: ['Neutrófilos têm grânulos finos e pálidos e núcleo com 3–5 lóbulos.'],
   },
+  {
+    id: 'corpusculo-de-aschoff',
+    nome: 'Corpúsculo (nódulo) de Aschoff',
+    sinonimos: ['nódulo de Aschoff', 'células de Anitschkow', 'células em lagarta'],
+    categoria: 'inflamacao',
+    resumo:
+      'Lesão patognomônica da cardite reumática aguda: foco de necrose fibrinoide do colágeno cercado por linfócitos, plasmócitos e macrófagos ativados (células de Anitschkow, de cromatina "em lagarta", e células de Aschoff multinucleadas).',
+    comoReconhecer: [
+      'Nódulos pequenos no interstício do miocárdio, geralmente perivasculares, ou no endocárdio e no pericárdio.',
+      'Células de Anitschkow: núcleo com a cromatina condensada numa faixa central ondulada ("lagarta" em corte longitudinal, "olho de coruja" em corte transversal).',
+    ],
+    mecanismo: [
+      'Mimetismo molecular: anticorpos e linfócitos T dirigidos contra a proteína M do estreptococo β-hemolítico do grupo A reagem com a miosina e proteínas da válvula (2–3 semanas após faringite).',
+    ],
+    significado: [
+      'Diagnóstico de cardite reumática ATIVA (pancardite: endocardite, miocardite, pericardite).',
+      'Some com o tempo, substituído por fibrose: na doença crônica raramente é encontrado.',
+    ],
+    ondeOcorre: ['Febre reumática aguda'],
+    armadilhas: ['Células de Anitschkow isoladas aparecem em outras miocardites e até em corações normais; o diagnóstico exige o nódulo com necrose fibrinoide.'],
+  },
+  {
+    id: 'neovascularizacao-valvar',
+    nome: 'Neovascularização da válvula',
+    sinonimos: ['vasos no folheto valvar', 'vascularização valvar'],
+    categoria: 'reparo',
+    resumo:
+      'Vasos sanguíneos, muitas vezes de parede espessa, dentro do folheto de uma valva cardíaca — que normalmente é avascular e nutrida por difusão.',
+    comoReconhecer: ['Arteríolas e capilares, com parede muscular ou hialina, espalhados no colágeno do folheto, acompanhados de linfócitos.'],
+    mecanismo: ['A inflamação repetida (cardite reumática) e a fibrose espessam o folheto além do alcance da difusão; vasos crescem a partir da base do anel valvar.'],
+    significado: ['Marca de valvulite crônica, especialmente reumática; os vasos de parede espessa são típicos da valvopatia reumática antiga.'],
+    ondeOcorre: ['Cardiopatia reumática crônica', 'Endocardite infecciosa cicatrizada', 'Valvopatias degenerativas avançadas (menos)'],
+    armadilhas: ['Vasos na base do folheto, junto ao anel, podem ser normais; o significativo é encontrá-los ao longo do folheto.'],
+  },
+  {
+    id: 'inflamacao-portal-linfoide',
+    nome: 'Inflamação portal linfocitária (com agregados)',
+    sinonimos: ['hepatite portal', 'agregados linfoides portais', 'triadite'],
+    categoria: 'inflamacao',
+    resumo:
+      'Espaços-porta alargados por linfócitos (e alguns plasmócitos), às vezes formando agregados ou folículos linfoides — o componente portal da hepatite crônica.',
+    comoReconhecer: [
+      'No pequeno aumento: espaços-porta que viraram manchas azul-escuras, maiores que os vizinhos.',
+      'No médio aumento: linfócitos densos ao redor do ducto biliar, da artéria e da veia porta; na hepatite C, agregados nodulares e ducto biliar lesado são típicos.',
+    ],
+    mecanismo: ['Linfócitos T específicos contra antígenos virais (ou autoantígenos) se acumulam no espaço-porta e atacam os hepatócitos vizinhos.'],
+    significado: [
+      'Característica da hepatite crônica viral (sobretudo C) e autoimune; também de doenças biliares.',
+      'Agregados linfoides portais com lesão do ducto biliar, esteatose e atividade lobular leve formam a tríade clássica da hepatite C.',
+    ],
+    ondeOcorre: ['Hepatite C e B crônicas', 'Hepatite autoimune', 'Colangite biliar primária', 'Hepatite por drogas'],
+    armadilhas: ['Alguns linfócitos portais são normais no adulto; o anormal é a expansão do espaço-porta.'],
+  },
+  {
+    id: 'hepatite-de-interface',
+    nome: 'Hepatite de interface (necrose em saca-bocado)',
+    sinonimos: ['piecemeal necrosis', 'necrose em saca-bocado', 'atividade periportal'],
+    categoria: 'inflamacao',
+    resumo:
+      'Linfócitos que ultrapassam a placa limitante do espaço-porta e invadem o parênquima, cercando e destruindo hepatócitos da periferia do lóbulo.',
+    comoReconhecer: [
+      'A borda nítida entre o espaço-porta e os hepatócitos se torna irregular e "mordida".',
+      'Hepatócitos isolados ou em pequenos grupos, envoltos por linfócitos, na interface porta-parênquima.',
+    ],
+    mecanismo: ['Linfócitos T citotóxicos matam hepatócitos periportais por apoptose; a destruição repetida da interface estimula fibrose que parte do espaço-porta.'],
+    significado: [
+      'Mede a atividade (grau) da hepatite crônica; quanto mais intensa, maior a chance de progressão para fibrose e cirrose.',
+      'Muito intensa e com plasmócitos: sugere hepatite autoimune.',
+    ],
+    ondeOcorre: ['Hepatites crônicas virais e autoimunes', 'Hepatite por drogas'],
+    armadilhas: ['Cortes tangenciais do espaço-porta podem imitar interface irregular.'],
+  },
 ]

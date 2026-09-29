@@ -740,4 +740,161 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'Na esteatose, o citoplasma é ocupado por vacúolos claros; nas gotas grandes, o núcleo é empurrado para a borda, como num adipócito.',
     ],
   },
+  {
+    id: 'cirrose-hepatica',
+    nome: 'Cirrose hepática',
+    sinonimos: ['cirrose', 'cirrose micronodular', 'cirrose macronodular', 'cirrose alcoólica'],
+    nomesEmIngles: ['liver cirrhosis', 'micronodular cirrhosis'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 8,
+    resumo:
+      'Estágio final de doenças hepáticas crônicas: todo o fígado é transformado em nódulos de hepatócitos regenerados, separados por septos fibrosos que ligam espaços-porta e veias centrais, com perda da arquitetura lobular e da circulação normal.',
+    epidemiologia:
+      'Entre as principais causas de morte em adultos jovens e de meia-idade. Causas mais comuns no Brasil: álcool, hepatites B e C e doença hepática gordurosa metabólica; também hemocromatose, doença de Wilson, deficiência de α1-antitripsina, doenças autoimunes e biliares.',
+    patogenese: [
+      'Uma agressão crônica (álcool, vírus, gordura, ferro, bile retida) mata hepatócitos continuamente.',
+      'As células estreladas do espaço de Disse, ativadas por citocinas (TGF-β, PDGF), viram miofibroblastos e depositam colágeno.',
+      'A fibrose começa nos espaços-porta ou ao redor das veias centrais e forma pontes entre eles (fibrose em ponte).',
+      'Os septos isolam grupos de hepatócitos que se regeneram em nódulos, sem veia central nem drenagem normal.',
+      'A capilarização dos sinusoides e a compressão pelos nódulos aumentam a resistência ao fluxo portal: hipertensão portal. A perda de massa funcional causa insuficiência hepática.',
+    ],
+    roteiro: [
+      'Panorâmico: a arquitetura lobular desapareceu — o parênquima é um mosaico de nódulos arredondados separados por faixas de colágeno em todo o fragmento.',
+      'Meça os nódulos: pequenos e uniformes (micronodular) ou grandes e variados (macronodular).',
+      'Nos septos: reação ductular, ductos biliares, vasos e infiltrado inflamatório; veja se a inflamação é leve (inativa) ou intensa (ativa).',
+      'Dentro dos nódulos: procure pistas da causa — gordura e balonização (álcool, MASLD), ferro (hemocromatose), glóbulos (α1-antitripsina), atipia (displasia, carcinoma).',
+    ],
+    achados: [
+      {
+        achado: 'nodulos-regenerativos',
+        tipo: 'especifico',
+        comoAparece: 'Ilhas de hepatócitos sem veia central, cercadas por fibrose, em todo o órgão.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'especifico',
+        comoAparece: 'Septos fibrosos ligando espaços-porta e veias centrais e envolvendo os nódulos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'reacao-ductular',
+        tipo: 'geral',
+        comoAparece: 'Dúctulos proliferados na periferia dos septos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos e plasmócitos nos septos; intensos na cirrose ativa, discretos na inativa.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'esteatose-macrovesicular',
+        tipo: 'geral',
+        comoAparece: 'Gordura nos nódulos quando a causa (álcool, MASLD) ainda está ativa.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Fibrose em ponte sem nódulos (pré-cirrose)',
+        comoSeparar: 'Septos ligam espaços-porta, mas a arquitetura lobular persiste e não há nódulos completamente envolvidos.',
+      },
+      {
+        nome: 'Hiperplasia nodular regenerativa',
+        comoSeparar: 'Nódulos hepatocitários difusos SEM septos fibrosos; causa hipertensão portal não cirrótica.',
+      },
+      {
+        nome: 'Carcinoma hepatocelular sobre cirrose',
+        comoSeparar: 'Nódulo com trabéculas espessas (mais de três células), perda da reticulina, atipia e artérias isoladas.',
+      },
+    ],
+    correlacaoClinica: [
+      'Compensada: pode ser assintomática. Descompensada: ascite, varizes esofágicas com hemorragia, encefalopatia hepática, icterícia, coagulopatia.',
+      'Sinais: aranhas vasculares, eritema palmar, ginecomastia, esplenomegalia, circulação colateral ("cabeça de medusa").',
+      'Rastreamento de carcinoma hepatocelular com ultrassom a cada 6 meses; tratamento da causa; transplante nos casos avançados.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, trabéculas de hepatócitos irradiam da veia centrolobular até os espaços-porta, com pouco colágeno além dos espaços-porta.',
+      'Na cirrose, não há mais lóbulos: o parênquima é dividido em nódulos por faixas largas de colágeno, e as veias centrais desaparecem dentro deles.',
+    ],
+  },
+  {
+    id: 'hepatite-cronica-viral',
+    nome: 'Hepatite crônica viral (hepatite C)',
+    sinonimos: ['hepatite C crônica', 'hepatite viral crônica', 'HCV', 'hepatite B crônica'],
+    nomesEmIngles: ['chronic viral hepatitis', 'chronic hepatitis C'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 9,
+    resumo:
+      'Inflamação do fígado por mais de 6 meses causada pelos vírus B ou C: infiltrado linfocitário nos espaços-porta, hepatite de interface, atividade lobular e fibrose progressiva; na hepatite C, agregados linfoides portais, lesão de ductos biliares e esteatose são típicos.',
+    epidemiologia:
+      'Hepatite C: 50–80 % dos infectados cronificam; transmissão parenteral (transfusões antes de 1993, drogas injetáveis, procedimentos sem esterilização). Hepatite B: cronifica em 90 % dos infectados ao nascer e em menos de 5 % dos adultos; transmissão sexual, vertical e parenteral. Ambas levam a cirrose e carcinoma hepatocelular.',
+    patogenese: [
+      'O vírus infecta os hepatócitos; ele próprio mata pouco (HBV e HCV são pouco citopáticos).',
+      'Linfócitos T citotóxicos reconhecem os hepatócitos infectados e os destroem: o dano é imunomediado.',
+      'A inflamação se concentra nos espaços-porta e transborda para o parênquima periportal (hepatite de interface); focos lobulares de necrose aparecem salpicados.',
+      'A lesão contínua ativa as células estreladas: fibrose portal → septos → pontes → cirrose, ao longo de décadas.',
+      'No HCV, o vírus interfere no metabolismo de lipídios (esteatose, sobretudo genótipo 3); no HBV crônico, hepatócitos em "vidro fosco" acumulam HBsAg.',
+    ],
+    roteiro: [
+      'Panorâmico: procure espaços-porta escuros, expandidos por linfócitos; na hepatite C, costumam formar agregados nodulares.',
+      'Médio aumento: avalie a interface — a borda do espaço-porta está nítida ou "mordida" por linfócitos (hepatite de interface)?',
+      'Lóbulo: procure focos de linfócitos com hepatócitos apoptóticos (corpos acidófilos) e esteatose.',
+      'Dentro do espaço-porta: o ducto biliar pode estar infiltrado por linfócitos (lesão ductal).',
+      'Estadie a fibrose (idealmente com tricrômio/reticulina): portal, septal, em ponte, cirrose.',
+    ],
+    achados: [
+      {
+        achado: 'inflamacao-portal-linfoide',
+        tipo: 'especifico',
+        comoAparece: 'Espaços-porta expandidos por linfócitos, com agregados nodulares.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'hepatite-de-interface',
+        tipo: 'especifico',
+        comoAparece: 'Linfócitos invadindo o parênquima periportal e cercando hepatócitos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'esteatose-macrovesicular',
+        tipo: 'geral',
+        comoAparece: 'Esteatose leve a moderada, frequente na hepatite C.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose portal e septal nos casos com anos de evolução.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Hepatite autoimune',
+        comoSeparar: 'Hepatite de interface intensa rica em plasmócitos, rosetas de hepatócitos, emperipolese; autoanticorpos e IgG elevados.',
+      },
+      {
+        nome: 'Colangite biliar primária',
+        comoSeparar: 'Lesão florida dos ductos biliares com granulomas e perda de ductos (ductopenia); anticorpo antimitocondrial positivo.',
+      },
+      {
+        nome: 'Esteato-hepatite',
+        comoSeparar: 'Inflamação predominantemente lobular, com balonização e fibrose pericelular; espaços-porta pouco inflamados.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitas vezes assintomática por décadas; transaminases elevadas de forma persistente ou flutuante.',
+      'Diagnóstico por sorologia e carga viral; a biópsia (ou elastografia) define grau de atividade e estádio de fibrose.',
+      'Hepatite C: antivirais de ação direta curam mais de 95 %. Hepatite B: análogos de nucleos(t)ídeos controlam a replicação; vacina previne.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, o espaço-porta é pequeno, com ducto, artéria e veia envoltos por pouco conjuntivo e quase nenhum linfócito, e a placa limitante de hepatócitos é nítida.',
+      'Na hepatite crônica, o espaço-porta fica cheio de linfócitos, e eles transbordam para os hepatócitos vizinhos; os hepatócitos podem conter gordura.',
+    ],
+  },
 ]
