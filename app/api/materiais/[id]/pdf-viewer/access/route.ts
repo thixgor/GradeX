@@ -7,6 +7,7 @@ import {
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
 import { resolvePdfDownloadPermission } from '@/lib/material-download-permission'
+import { chaveDeLeitura, identidadeDoLeitor, versaoDoPdf } from '@/lib/material-pdf-leitura'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -170,6 +171,16 @@ export async function GET(
         timedAccess: access.timedAccess,
         audit: {
           openedAt: now.toISOString(),
+        },
+        // Vai em cada pedido de página (`&c=`). Sem ela o servidor entrega a
+        // página sem permitir cache; com ela, o navegador guarda a página
+        // marcada até o fim do dia. Ver lib/material-pdf-leitura.ts.
+        leitura: {
+          chave: chaveDeLeitura(
+            identidadeDoLeitor(session, ip, request.headers.get('user-agent') || 'unknown'),
+            access.materialId,
+            versaoDoPdf(access.material.pdfFile)
+          ),
         },
         viewer: {
           // Rolagem contínua é o padrão: é o gesto que o leitor já conhece de

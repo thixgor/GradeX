@@ -2,19 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { checkRateLimitSync } from '@/lib/api-security'
 import {
-  createWatermarkedSinglePagePdf,
-  fetchMaterialPdfBytes,
   getClientIp,
-  guestFingerprint,
   isPreviewPageAllowed,
   validateMaterialPdfAccess,
 } from '@/lib/material-pdf-viewer'
-import {
-  buscarPaginaDerivada,
-  fonteDoPdf,
-  gravarPaginaDerivada,
-} from '@/lib/material-pdf-pages'
-import { ObjectId } from 'mongodb'
+import { responderPaginaMarcada } from '@/lib/material-pdf-leitura'
 
 export const dynamic = 'force-dynamic'
 // Materiais grandes (escaneados, dezenas/centenas de MB — acima do teto de
@@ -100,89 +92,15 @@ export async function GET(
       return NextResponse.json({ error: 'Pagina fora do intervalo' }, { status: 400 })
     }
 
-    const viewedAt = new Date()
-    // Visitante (sem login) não tem userId — usa um fingerprint estável de
-    // IP+User-Agent no lugar, tanto para o token/cache quanto pro watermark.
-    const identityId = session ? session.userId.slice(-8) : guestFingerprint(ip, request.headers.get('user-agent') || 'unknown')
-    // Token determinístico por (user, material, page, janela de 5min).
-    // Antes era randomUUID() em cada call — isso impedia qualquer cache,
-    // mesmo quando o mesmo usuário virava página pra trás e voltava.
-    // Agora a resposta é estável dentro da janela e o browser/CDN
-    // consegue reutilizar via Cache-Control abaixo (private, max-age=300).
-    const cacheWindow = Math.floor(viewedAt.getTime() / (5 * 60 * 1000))
-    const auditToken = `${identityId}-${access.materialId.slice(-8)}-${requestedPage}-${cacheWindow}`
-    // Identidade do PDF-fonte. Serve de chave tanto para as derivadas de
-    // página no Blob quanto para os caches em memória do render — e, por
-    // incluir tamanho e data do upload, um reenvio com o mesmo nome de arquivo
-    // (que produz a MESMA blobUrl) invalida os dois de uma vez.
-    const fonte = fonteDoPdf(access.material.pdfFile)
-
-    // O documento inteiro deixou de ser baixado aqui. Quando a página já tem
-    // derivada gravada, `loadFull` nunca chega a ser chamado: a requisição lê
-    // algumas centenas de KB em vez das dezenas ou centenas de MB do material.
-    // Quando não tem, o caminho é exatamente o de antes — e a página extraída
-    // fica guardada para as próximas leituras.
-    const pagePdf = await createWatermarkedSinglePagePdf({
-      knownTotalPages: cachedPageCount,
-      loadSlice: fonte ? () => buscarPaginaDerivada(fonte, requestedPage) : undefined,
-      loadFull: () => fetchMaterialPdfBytes(access.material.pdfFile.blobUrl),
-      onSliceReady: fonte
-        ? (pagina, bytes) => gravarPaginaDerivada(fonte, pagina, bytes)
-        : undefined,
-    }, {
-      pageNumber: requestedPage,
-      userName: session ? (access.user?.name || session.name || 'Usuario DomineAqui') : 'Visitante (previa gratuita)',
-      userEmail: session ? (access.user?.email || session.email || 'email nao informado') : `previa-${identityId}`,
-      userId: session ? session.userId : identityId,
-      materialId: access.materialId,
-      materialTitle: access.material.title || 'Material DomineAqui',
-      viewedAt,
-      auditToken,
-      sourceCacheKey: fonte?.chave || access.material.pdfFile.blobUrl,
-    })
-
-    if (requestedPage > pagePdf.totalPages) {
-      return NextResponse.json({ error: 'Pagina fora do intervalo' }, { status: 400 })
-    }
-
-    if (!cachedPageCount && pagePdf.totalPages > 0) {
-      access.db.collection('materials').updateOne(
-        { _id: new ObjectId(access.materialId) },
-        { $set: { 'pdfFile.pageCount': pagePdf.totalPages, updatedAt: new Date() } }
-      ).catch((error) => console.error('[pdf-viewer/page] Falha ao salvar pageCount:', error))
-    }
-
-    access.db.collection('material_pdf_viewer_logs').insertOne({
-      userId: session?.userId || null,
-      userName: session?.name || 'Visitante (sem login)',
-      userEmail: session?.email || null,
-      isGuest: !session,
-      materialId: access.materialId,
-      materialTitle: access.material.title,
-      action: 'page_render',
-      pageNumber: requestedPage,
-      auditToken,
+    // Token, marca d'água, log e cache: ver lib/material-pdf-leitura.ts. A
+    // miniatura (`../thumb`) passa pelo mesmo caminho e recebe a mesma página.
+    return await responderPaginaMarcada({
+      request,
+      session,
+      access,
       ip,
-      userAgent: request.headers.get('user-agent') || 'unknown',
-      createdAt: viewedAt,
-    }).catch((error) => console.error('[pdf-viewer/page] Falha ao logar pagina:', error))
-
-    return new NextResponse(Buffer.from(pagePdf.bytes), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="domineaqui-page-${requestedPage}.pdf"`,
-        'Content-Length': String(pagePdf.bytes.byteLength),
-        // Cache privado de 5min — uma sessão de leitura de PDF acessa
-        // a mesma página várias vezes (zoom/scroll/page-flip). Antes:
-        // cada interação chamava a função. Agora: 1 render por janela.
-        // O auditToken acima é alinhado à mesma janela, então o conteúdo
-        // permanece consistente dentro do TTL.
-        'Cache-Control': 'private, max-age=300, stale-while-revalidate=60',
-        'X-Frame-Options': 'SAMEORIGIN',
-        'X-Content-Type-Options': 'nosniff',
-        'X-DomineAqui-Page-Count': String(pagePdf.totalPages),
-      },
+      pagina: requestedPage,
+      origem: 'leitura',
     })
   } catch (error) {
     console.error('[pdf-viewer/page] Erro:', error)

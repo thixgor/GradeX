@@ -1,6 +1,16 @@
 import { NextRequest } from 'next/server'
 import { Db, ObjectId } from 'mongodb'
-import { PDFDocument, PDFPage, PDFName, StandardFonts, degrees, rgb } from 'pdf-lib'
+import {
+  PDFDocument,
+  PDFPage,
+  PDFName,
+  StandardFonts,
+  degrees,
+  popGraphicsState,
+  pushGraphicsState,
+  rgb,
+  setGraphicsState,
+} from 'pdf-lib'
 import QRCode from 'qrcode'
 import { TokenPayload } from './auth'
 import { getDb } from './mongodb'
@@ -552,6 +562,32 @@ export async function getPdfPageCount(pdfBytes: ArrayBuffer): Promise<number> {
   return doc.getPageCount()
 }
 
+/**
+ * Desenha com uma opacidade só, declarada uma vez.
+ *
+ * O `drawText` do pdf-lib, quando recebe `opacity`, cria um `ExtGState` NOVO a
+ * cada chamada e o pendura nos recursos da página. A grade da marca d'água faz
+ * centenas de chamadas com a mesma opacidade: eram 821 dicionários idênticos e
+ * ~82 KB a mais em CADA página servida pelo leitor, a rota que responde pela
+ * maior parte do Fast Origin Transfer do projeto.
+ *
+ * Aqui o estado de transparência é declarado uma vez e envolve o bloco inteiro
+ * (`q /GS gs ... Q`). Os `drawText` de dentro vão sem `opacity` e herdam o `ca`
+ * do estado externo, porque o estado gráfico de um `q` aninhado começa como
+ * cópia do de fora. O resultado na tela é o mesmo, byte de pixel por byte de
+ * pixel. Muda só o tamanho do arquivo.
+ */
+function comOpacidade(page: PDFPage, opacity: number, desenhar: () => void) {
+  const estado = page.doc.context.obj({ Type: 'ExtGState', ca: opacity })
+  const chave = page.node.newExtGState('GS', estado)
+  page.pushOperators(pushGraphicsState(), setGraphicsState(chave))
+  try {
+    desenhar()
+  } finally {
+    page.pushOperators(popGraphicsState())
+  }
+}
+
 function drawRepeatedWatermark(
   page: PDFPage,
   lines: string[],
@@ -564,6 +600,13 @@ function drawRepeatedWatermark(
   }
 ) {
   if (!options.config.enabled) return
+
+  // A fonte também é declarada uma vez. Com `font` em cada `drawText`, o
+  // pdf-lib registra uma chave nova no dicionário de fontes da página a cada
+  // chamada (e outra ao restaurar a anterior): eram centenas de entradas
+  // apontando para a mesma Helvetica, ~29 KB por página. Sem `font`, o
+  // `drawText` usa a fonte corrente da página e a chave que já existe.
+  page.setFont(font)
 
   const { width, height } = page.getSize()
   const fontSize = Math.max(options.config.minFontSize, Math.min(options.config.maxFontSize, width / 72))
@@ -581,39 +624,39 @@ function drawRepeatedWatermark(
     const cx = width / 2
     const cy = height / 2
 
-    for (let row = -rows; row <= rows; row++) {
-      for (let col = -cols; col <= cols; col++) {
-        const x = cx + col * xGap - maxLineWidth / 2
-        const y = cy + row * yGap
+    comOpacidade(page, options.config.opacity, () => {
+      for (let row = -rows; row <= rows; row++) {
+        for (let col = -cols; col <= cols; col++) {
+          const x = cx + col * xGap - maxLineWidth / 2
+          const y = cy + row * yGap
 
-        lines.forEach((line, index) => {
-          page.drawText(line, {
-            x,
-            y: y - index * (fontSize + options.config.lineGap),
-            size: fontSize,
-            font,
-            color: index % 2 === 0 ? color : gold,
-            opacity: options.config.opacity,
-            rotate: angle,
+          lines.forEach((line, index) => {
+            page.drawText(line, {
+              x,
+              y: y - index * (fontSize + options.config.lineGap),
+              size: fontSize,
+              color: index % 2 === 0 ? color : gold,
+              rotate: angle,
+            })
           })
-        })
+        }
       }
-    }
+    })
   } else {
     const centerFontSize = Math.max(10, Math.min(15, width / 48))
     const centerOpacity = Math.min(0.18, options.config.opacity * 1.9)
     const blockWidth = Math.max(...lines.map((line) => font.widthOfTextAtSize(line, centerFontSize)))
     const startY = height / 2 + centerFontSize
 
-    lines.forEach((line, index) => {
-      page.drawText(line, {
-        x: width / 2 - blockWidth / 2,
-        y: startY - index * (centerFontSize + options.config.lineGap + 2),
-        size: centerFontSize,
-        font,
-        color: index % 2 === 0 ? color : gold,
-        opacity: centerOpacity,
-        rotate: angle,
+    comOpacidade(page, centerOpacity, () => {
+      lines.forEach((line, index) => {
+        page.drawText(line, {
+          x: width / 2 - blockWidth / 2,
+          y: startY - index * (centerFontSize + options.config.lineGap + 2),
+          size: centerFontSize,
+          color: index % 2 === 0 ? color : gold,
+          rotate: angle,
+        })
       })
     })
   }
@@ -626,7 +669,6 @@ function drawRepeatedWatermark(
     x: 22,
     y: 20,
     size: footerFontSize,
-    font,
     color,
     opacity: options.config.footerOpacity,
   })
@@ -636,7 +678,6 @@ function drawRepeatedWatermark(
     x: Math.max(22 + footerWidth + 18, pageWidth - auditWidth - 22),
     y: 20,
     size: 6.5,
-    font,
     color,
     opacity: Math.max(0.18, options.config.footerOpacity - 0.12),
   })
@@ -749,56 +790,6 @@ async function resolverPaginaNua(
   }
 
   return { paginaNua, totalPages, safePageNumber }
-}
-
-/**
- * A página pedida, nua: sem marca d'água, sem QR de auditoria, sem fonte
- * embutida — só o recorte de uma página do documento.
- *
- * ## Para que serve
- *
- * O painel lateral do leitor desenha miniaturas de **150 px de largura**. Até
- * aqui elas pediam a mesma coisa que a página de leitura: o PDF marcado, com
- * nome, e-mail, horário e QR de quem pediu. Nada disso é legível a 150 px — e
- * cada miniatura pagava o parse do pdf-lib, a composição da marca, a geração
- * do QR e um registro no Mongo, além de sair da função como uma resposta
- * única por usuário, que nenhum cache consegue reaproveitar entre pessoas.
- *
- * A página nua é idêntica para todo mundo. Isso é o ponto: ela é imutável
- * dentro de uma versão do material, então pode ficar guardada no navegador por
- * muito tempo e reaproveitada à vontade.
- *
- * ## O que ela NÃO muda
- *
- * O caminho de leitura continua exatamente como era: quem abre a página para
- * ler recebe `createWatermarkedSinglePagePdf`, com a marca d'água completa e o
- * log de auditoria. A autorização também não se move — quem chama esta função
- * já passou pelas mesmas checagens de acesso e de faixa liberada na prévia.
- * O que sai daqui é o mesmo insumo que a marca d'água receberia; só não leva
- * a marca, porque a miniatura não tem onde mostrá-la.
- */
-export async function extractRawSinglePagePdf(
-  fonte: ArrayBuffer | FontePdfDaPagina,
-  input: Pick<WatermarkPageInput, 'pageNumber' | 'sourceCacheKey'>
-): Promise<{ bytes: Uint8Array; totalPages: number }> {
-  const { paginaNua, totalPages } = await resolverPaginaNua(normalizarFonte(fonte), {
-    pageNumber: input.pageNumber,
-    sourceCacheKey: input.sourceCacheKey,
-    // `resolverPaginaNua` só lê `pageNumber` e `sourceCacheKey`; o resto do
-    // contrato existe para a marca d'água, que aqui não acontece.
-    userName: '',
-    userEmail: '',
-    userId: '',
-    materialId: '',
-    materialTitle: '',
-    viewedAt: new Date(),
-    auditToken: '',
-  })
-
-  const bytes =
-    paginaNua instanceof Uint8Array ? paginaNua : new Uint8Array(paginaNua)
-
-  return { bytes, totalPages }
 }
 
 export async function createWatermarkedSinglePagePdf(

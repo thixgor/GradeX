@@ -271,6 +271,8 @@ interface ViewerAccess {
    * `null` = acesso vitalício. Presente ⇒ leitura só aqui, sem download.
    */
   timedAccess?: TimedAccessView | null
+  /** Chave `c` dos pedidos de página. Ver `chavesDeLeitura`. */
+  leitura?: { chave: string }
 }
 
 interface PdfAnnotation {
@@ -510,6 +512,11 @@ function eraserCursor(radius: number) {
 }
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
 const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
+// Chave de leitura de cada material (`leitura.chave` da rota de acesso). Vai em
+// cada pedido de página como `&c=`: é o que deixa o navegador guardar a página
+// marcada até o fim do dia sem misturar pessoas que usam o mesmo aparelho.
+// Ver lib/material-pdf-leitura.ts.
+const chavesDeLeitura = new Map<string, string>()
 
 let pdfWorkerConfigured = false
 
@@ -730,19 +737,18 @@ async function fetchPdfPageBytesOnce(
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), PAGE_FETCH_TIMEOUT_MS)
   try {
-    // Sem `cache: 'no-store'`: a rota já responde com
-    // `private, max-age=300` e um auditToken alinhado à mesma janela de 5
-    // minutos, então a resposta É reaproveitável — e o no-store proibia o
-    // navegador de usar exatamente o cache que o servidor oferecia. Voltar a
-    // uma página já lida, ou recarregar a aba, disparava um render novo.
-    // O cache do HTTP cobre o que `pageBytesCache` (em memória) perde num F5.
-    // A miniatura tem rota própria: devolve a página NUA, sem marca d'água e
-    // sem registro de auditoria, porque nada disso é legível a 150 px. A
-    // leitura continua na rota marcada. Ver o cabeçalho de
-    // `app/api/materiais/[id]/pdf-viewer/thumb/route.ts`.
+    // Sem `cache: 'no-store'`: com a chave de leitura (`c`), a rota responde
+    // `private` com validade até o fim do dia de Brasília, e o token de
+    // auditoria vale o mesmo dia. Voltar a uma página já lida, reabrir o
+    // material mais tarde ou recarregar a aba reaproveita o que o navegador já
+    // tem. O cache do HTTP cobre o que `pageBytesCache` (em memória) perde num F5.
+    // A miniatura tem rota própria só pelo limite de requisições, mais folgado;
+    // o que ela devolve é a mesma página marcada da leitura.
     const rota = priority === 'thumb' ? 'thumb' : 'page'
+    const chave = chavesDeLeitura.get(materialId)
     const response = await fetch(
-      `/api/materiais/${materialId}/pdf-viewer/${rota}?page=${pageNumber}`,
+      `/api/materiais/${materialId}/pdf-viewer/${rota}?page=${pageNumber}` +
+        (chave ? `&c=${encodeURIComponent(chave)}` : ''),
       { signal: controller.signal }
     )
     if (!response.ok) {
@@ -779,12 +785,17 @@ async function fetchPdfPageBytes(
   pageNumber: number,
   priority: FetchPriority = 'reader'
 ) {
-  // Duas famílias de bytes para a mesma página: a da leitura vem marcada com
-  // os dados de quem pediu, a da miniatura vem nua. A miniatura pode aproveitar
-  // a da leitura (a marca só não aparece em 150 px); a leitura NUNCA pode
-  // aproveitar a da miniatura, ou a página abriria sem marca d'água. Por isso
-  // os espaços são separados e a carona só corre num sentido.
-  const key = `${priority === 'thumb' ? 'thumb' : 'page'}:${materialId}:${pageNumber}`
+  // Leitura e miniatura recebem a MESMA página marcada, então os bytes de uma
+  // servem à outra nos dois sentidos: uma página vista no leitor e no painel é
+  // baixada uma vez. A chave de leitura entra na chave do cache, e trocar de
+  // conta ou de versão do PDF nunca reaproveita a página de antes.
+  //
+  // O que está EM ANDAMENTO só é compartilhado num sentido: a miniatura pode
+  // esperar o pedido da leitura (prioridade alta, sai na frente), mas a
+  // leitura nunca espera uma miniatura, que pode estar parada na fila de baixa
+  // prioridade enquanto o aluno olha para a página em branco.
+  const key = `pagina:${materialId}:${chavesDeLeitura.get(materialId) || ''}:${pageNumber}`
+  const inflightKey = `${priority === 'thumb' ? 'thumb' : 'page'}:${key}`
   const now = Date.now()
   const cached = pageBytesCache.get(key)
   if (cached && cached.expiresAt > now) {
@@ -792,14 +803,9 @@ async function fetchPdfPageBytes(
   }
   if (cached) pageBytesCache.delete(key)
 
-  if (priority === 'thumb') {
-    const daLeitura = pageBytesCache.get(`page:${materialId}:${pageNumber}`)
-    if (daLeitura && daLeitura.expiresAt > now) {
-      return { bytes: daLeitura.bytes, pageCount: daLeitura.pageCount }
-    }
-  }
-
-  const pending = pageBytesInflight.get(key)
+  const pending =
+    pageBytesInflight.get(inflightKey) ??
+    (priority === 'thumb' ? pageBytesInflight.get(`page:${key}`) : undefined)
   if (pending) return pending
 
   const request = (async () => {
@@ -846,11 +852,11 @@ async function fetchPdfPageBytes(
     }
   })()
 
-  pageBytesInflight.set(key, request)
+  pageBytesInflight.set(inflightKey, request)
   try {
     return await request
   } finally {
-    pageBytesInflight.delete(key)
+    pageBytesInflight.delete(inflightKey)
   }
 }
 
@@ -2832,6 +2838,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           return
         }
         if (!mounted) return
+        // Antes do `setAccess`: nenhuma página pode ser pedida sem a chave.
+        if (typeof json.leitura?.chave === 'string') {
+          chavesDeLeitura.set(materialId, json.leitura.chave)
+        }
         setAccess(json)
         // Retoma de onde o usuário parou (última página/modo salvos). Se não
         // houver posição salva, abre na capa designada pelo admin ou na pág. 1.

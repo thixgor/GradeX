@@ -1,24 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { PDFDocument, StandardFonts } from 'pdf-lib'
+import { PDFDict, PDFDocument, PDFName, StandardFonts } from 'pdf-lib'
 
-import {
-  createWatermarkedSinglePagePdf,
-  extractRawSinglePagePdf,
-} from '@/lib/material-pdf-viewer'
+import * as leitor from '@/lib/material-pdf-viewer'
+import { createWatermarkedSinglePagePdf } from '@/lib/material-pdf-viewer'
 
 /**
- * As miniaturas do painel lateral são desenhadas com 150 px de largura e, até
- * aqui, pediam a MESMA coisa que a página de leitura: o PDF marcado com nome,
- * e-mail, horário e QR de auditoria de quem pediu. A 150 px nada disso é
- * legível — mas cada quadradinho pagava o parse, a composição da marca, a
- * geração do QR e uma resposta única por pessoa, que nenhum cache reaproveita.
- * Foi o que colocou a transferência de Blob em 72,8 GB para 1,46 GB guardados.
+ * O leitor de materiais entrega cada página como um PDF de uma página, marcado
+ * com nome, e-mail, UID e horário de quem pediu. É o que torna rastreável uma
+ * página vazada.
  *
- * Estes testes fixam as três propriedades de que o conserto depende:
- *   1. a miniatura mostra a MESMA página que a leitura mostraria;
- *   2. ela não leva marca d'água — é idêntica para todo mundo, e é isso que
- *      a torna guardável;
- *   3. ela usa o caminho barato (derivada) e não toca no documento completo.
+ * As miniaturas do painel lateral já tiveram caminho próprio, que devolvia a
+ * página NUA: o PDF inteiro da página, em resolução total, sem marca e sem
+ * log. Quem tinha acesso podia pedir `/thumb?page=1…N` e baixar o livro limpo.
+ * Hoje a miniatura recebe a mesma página marcada da leitura (ver
+ * `lib/material-pdf-leitura.ts`).
+ *
+ * Estes testes fixam o que não pode voltar atrás:
+ *   1. não existe mais caminho que entregue a página sem marca;
+ *   2. a página marcada identifica quem pediu;
+ *   3. a derivada continua evitando o download do documento completo;
+ *   4. a marca continua enxuta (ela chegou a somar ~82 KB por página).
  */
 
 async function pdfDeTeste(paginas: number) {
@@ -60,7 +61,13 @@ function entradaDeLeitura(pageNumber: number, userEmail = 'aluno@exemplo.com') {
   }
 }
 
-describe('miniaturas do visualizador de materiais', () => {
+function recursos(doc: PDFDocument, tipo: 'Font' | 'ExtGState') {
+  const res = doc.getPage(0).node.Resources()
+  const dict = res?.lookup(PDFName.of(tipo)) as PDFDict | undefined
+  return dict ? dict.keys().length : 0
+}
+
+describe('páginas do visualizador de materiais', () => {
   beforeEach(() => {
     // Os caches em memória atravessam testes dentro do mesmo processo.
     process.env.PDF_VIEWER_SOURCEDOC_CACHE_ENABLED = '0'
@@ -72,63 +79,47 @@ describe('miniaturas do visualizador de materiais', () => {
     delete process.env.PDF_VIEWER_PAGE_CACHE_ENABLED
   })
 
-  it('a miniatura mostra a mesma página que a leitura mostraria', async () => {
-    const original = await pdfDeTeste(12)
+  it('não existe mais caminho que entregue a página sem marca d\'água', () => {
+    expect((leitor as Record<string, unknown>).extractRawSinglePagePdf).toBeUndefined()
+  })
 
-    const leitura = await createWatermarkedSinglePagePdf(
+  it('entrega a página pedida', async () => {
+    const original = await pdfDeTeste(12)
+    const pagina = await createWatermarkedSinglePagePdf(
       { knownTotalPages: 12, loadFull: async () => original },
       entradaDeLeitura(7)
     )
-    const miniatura = await extractRawSinglePagePdf(
-      { knownTotalPages: 12, loadFull: async () => original },
-      { pageNumber: 7 }
-    )
-
-    expect(await paginaDe(leitura.bytes)).toBe(7)
-    expect(await paginaDe(miniatura.bytes)).toBe(7)
-    expect(miniatura.totalPages).toBe(12)
+    expect(await paginaDe(pagina.bytes)).toBe(7)
+    expect(pagina.totalPages).toBe(12)
   })
 
-  it('a miniatura não leva marca d\'água: é igual para pessoas diferentes', async () => {
+  it('a página marcada identifica quem pediu', async () => {
     const original = await pdfDeTeste(5)
-
-    // Duas pessoas distintas pedindo a MESMA página.
-    const leituraA = await createWatermarkedSinglePagePdf(
+    const ana = await createWatermarkedSinglePagePdf(
       { knownTotalPages: 5, loadFull: async () => original },
-      entradaDeLeitura(3, 'ana@exemplo.com')
+      { ...entradaDeLeitura(3, 'ana@exemplo.com'), userId: '64b7f1c2a9d4e5f6071829aa' }
     )
-    const leituraB = await createWatermarkedSinglePagePdf(
+    const bruno = await createWatermarkedSinglePagePdf(
       { knownTotalPages: 5, loadFull: async () => original },
-      entradaDeLeitura(3, 'bruno@exemplo.com')
-    )
-    const miniaturaA = await extractRawSinglePagePdf(
-      { knownTotalPages: 5, loadFull: async () => original },
-      { pageNumber: 3 }
-    )
-    const miniaturaB = await extractRawSinglePagePdf(
-      { knownTotalPages: 5, loadFull: async () => original },
-      { pageNumber: 3 }
+      { ...entradaDeLeitura(3, 'bruno@exemplo.com'), userId: '64b7f1c2a9d4e5f6071829bb' }
     )
 
-    // A leitura CONTINUA carimbada por pessoa — é o que segura a antipirataria.
-    expect(Buffer.from(leituraA.bytes).equals(Buffer.from(leituraB.bytes))).toBe(false)
-
-    // A miniatura não depende de quem pediu. É exatamente essa propriedade que
-    // permite guardá-la no navegador por um dia em vez de refazer a rodada.
-    expect(Buffer.from(miniaturaA.bytes).equals(Buffer.from(miniaturaB.bytes))).toBe(true)
-
-    // E, sem a marca, o e-mail de quem pediu não sai na resposta.
-    const cru = Buffer.from(miniaturaA.bytes).toString('latin1')
-    expect(cru).not.toContain('ana@exemplo.com')
-    expect(cru).not.toContain('bruno@exemplo.com')
+    expect(Buffer.from(ana.bytes).equals(Buffer.from(bruno.bytes))).toBe(false)
+    const docAna = await PDFDocument.load(ana.bytes)
+    const docBruno = await PDFDocument.load(bruno.bytes)
+    expect(docAna.getKeywords()).toContain('64b7f1c2a9d4e5f6071829aa')
+    expect(docBruno.getKeywords()).toContain('64b7f1c2a9d4e5f6071829bb')
+    // A marca é desenhada: há texto e transparência na página.
+    expect(recursos(docAna, 'Font')).toBeGreaterThan(0)
+    expect(recursos(docAna, 'ExtGState')).toBeGreaterThan(0)
   })
 
-  it('a miniatura usa a derivada e não baixa o documento completo', async () => {
+  it('usa a derivada e não baixa o documento completo', async () => {
     const original = await pdfDeTeste(30)
 
     // Primeiro, produz a derivada da página 9 pelo caminho caro.
     let derivada: Uint8Array | null = null
-    await extractRawSinglePagePdf(
+    await createWatermarkedSinglePagePdf(
       {
         knownTotalPages: 30,
         loadSlice: async () => null,
@@ -137,13 +128,14 @@ describe('miniaturas do visualizador de materiais', () => {
           derivada = bytes
         },
       },
-      { pageNumber: 9 }
+      entradaDeLeitura(9)
     )
     expect(derivada).not.toBeNull()
 
-    // Agora, com a derivada em mãos, o documento completo não pode ser tocado.
+    // A derivada é a página nua; ela fica no servidor e nunca é a resposta.
+    // Com ela em mãos, o documento completo não pode ser tocado.
     let baixouDocumentoCompleto = false
-    const barata = await extractRawSinglePagePdf(
+    const barata = await createWatermarkedSinglePagePdf(
       {
         knownTotalPages: 30,
         loadSlice: async () => {
@@ -158,27 +150,39 @@ describe('miniaturas do visualizador de materiais', () => {
           return original
         },
       },
-      { pageNumber: 9 }
+      entradaDeLeitura(9)
     )
 
     expect(baixouDocumentoCompleto).toBe(false)
     expect(await paginaDe(barata.bytes)).toBe(9)
+    expect(Buffer.from(barata.bytes).equals(Buffer.from(derivada!))).toBe(false)
   })
 
-  it('a miniatura é mais leve que a página de leitura', async () => {
+  it('a marca continua enxuta', async () => {
     const original = await pdfDeTeste(4)
-
-    const leitura = await createWatermarkedSinglePagePdf(
+    const pagina = await createWatermarkedSinglePagePdf(
       { knownTotalPages: 4, loadFull: async () => original },
       entradaDeLeitura(2)
     )
-    const miniatura = await extractRawSinglePagePdf(
-      { knownTotalPages: 4, loadFull: async () => original },
-      { pageNumber: 2 }
+    let nua: Uint8Array | null = null
+    await createWatermarkedSinglePagePdf(
+      {
+        knownTotalPages: 4,
+        loadSlice: async () => null,
+        loadFull: async () => original,
+        onSliceReady: (_p, bytes) => {
+          nua = bytes
+        },
+      },
+      entradaDeLeitura(2)
     )
 
-    // A marca d'água acrescenta fonte embutida, texto e o QR de auditoria.
-    // Nada disso é visível a 150 px, e tudo isso era transferido por miniatura.
-    expect(miniatura.bytes.byteLength).toBeLessThan(leitura.bytes.byteLength)
+    // O pdf-lib cria um ExtGState e uma chave de fonte novos a cada
+    // `drawText` que recebe `opacity`/`font`. A grade da marca faz centenas
+    // de chamadas: eram 821 ExtGState e ~82 KB a mais por página.
+    const doc = await PDFDocument.load(pagina.bytes)
+    expect(recursos(doc, 'ExtGState')).toBeLessThanOrEqual(4)
+    expect(recursos(doc, 'Font')).toBeLessThanOrEqual(4)
+    expect(pagina.bytes.byteLength - nua!.byteLength).toBeLessThan(15 * 1024)
   })
 })

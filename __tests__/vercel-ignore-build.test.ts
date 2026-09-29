@@ -74,6 +74,8 @@ function rodar(
   const r = spawnSync('sh', [SCRIPT], {
     cwd: repo,
     encoding: 'utf8',
+    // Ambiente mínimo, de propósito: nada da Vercel vaza do processo do teste.
+    // O cast existe porque o Next declara `NODE_ENV` obrigatório em ProcessEnv.
     env: {
       PATH: `${shims}:${process.env.PATH}`,
       HOME: process.env.HOME ?? raiz,
@@ -81,7 +83,7 @@ function rodar(
       LS_REMOTE_SAIDA: lsRemote.saida ?? '',
       LS_REMOTE_CODIGO: String(lsRemote.codigo ?? 0),
       ...env,
-    },
+    } as unknown as NodeJS.ProcessEnv,
   })
   return { codigo: r.status, saida: `${r.stdout}${r.stderr}` }
 }
