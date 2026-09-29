@@ -414,4 +414,50 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
       'Cancerização lobular (CDIS estendido a lóbulos) pode imitar invasão.',
     ],
   },
+  {
+    id: 'displasia-escamosa-espessura-total',
+    nome: 'Displasia escamosa de espessura total (NIC 3 / HSIL)',
+    sinonimos: ['NIC 3', 'CIN 3', 'lesão intraepitelial escamosa de alto grau', 'HSIL', 'carcinoma in situ escamoso'],
+    categoria: 'neoplasia',
+    resumo:
+      'Epitélio escamoso em que células imaturas, de núcleo grande e hipercromático, ocupam toda a espessura, sem maturação para a superfície — mas com a membrana basal intacta.',
+    comoReconhecer: [
+      'No pequeno aumento: o epitélio fica escuro (roxo) de baixo a cima, contrastando com o epitélio normal, que clareia na superfície.',
+      'No grande aumento: núcleos aumentados, hipercromáticos e desorganizados até a camada superficial; relação núcleo/citoplasma alta; mitoses acima da camada basal.',
+      'Graduação: NIC 1 — atipia no terço inferior; NIC 2 — até dois terços; NIC 3 — toda a espessura.',
+      'A borda inferior é lisa: sem ninhos nem células soltas no estroma.',
+    ],
+    mecanismo: [
+      'Infecção persistente por HPV de alto risco (16, 18) na zona de transformação.',
+      'As oncoproteínas E6 e E7 inativam p53 e Rb: as células não param o ciclo celular nem amadurecem.',
+      'Com o tempo, a integração do DNA viral e mutações adicionais permitem romper a membrana basal (carcinoma invasivo).',
+    ],
+    significado: [
+      'Lesão precursora do carcinoma escamoso do colo uterino — detectada pelo rastreamento (Papanicolau, teste de HPV) e tratada por excisão (cirurgia de alta frequência/conização).',
+      'A imuno-histoquímica p16 difusa ("em bloco") confirma a lesão associada ao HPV de alto risco.',
+    ],
+    ondeOcorre: ['Colo uterino', 'Vulva (NIV), vagina (NIVA), ânus (NIA), orofaringe'],
+    armadilhas: [
+      'Metaplasia escamosa imatura e atrofia pós-menopausa também parecem "escuras", mas têm núcleos uniformes, sem pleomorfismo, e p16 negativo ou em mosaico.',
+      'Extensão da NIC para dentro das glândulas endocervicais NÃO é invasão: os ninhos mantêm contorno liso e arredondado.',
+    ],
+  },
+  {
+    id: 'extensao-glandular-da-nic',
+    nome: 'Extensão da displasia às glândulas endocervicais',
+    sinonimos: ['envolvimento glandular', 'NIC com extensão glandular'],
+    categoria: 'arquitetura',
+    resumo:
+      'Epitélio displásico que substitui o revestimento das criptas endocervicais, formando ilhas arredondadas de contorno liso sob a superfície — imita invasão, mas não é.',
+    comoReconhecer: [
+      'Blocos arredondados de epitélio escamoso displásico no estroma, com borda lisa e às vezes restos de epitélio colunar mucinoso na periferia ou na luz.',
+      'Estão na mesma profundidade das glândulas endocervicais vizinhas.',
+    ],
+    mecanismo: ['A displasia avança pela superfície e desce pelas criptas, que fazem parte da zona de transformação.'],
+    significado: [
+      'Não muda o grau nem significa invasão, mas exige que a excisão tenha profundidade suficiente para incluir as criptas.',
+    ],
+    ondeOcorre: ['NIC 2 e 3 do colo uterino'],
+    armadilhas: ['A invasão verdadeira forma línguas irregulares, com células de citoplasma eosinofílico ("maturação paradoxal") e reação estromal.'],
+  },
 ]

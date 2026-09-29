@@ -6,10 +6,11 @@ import { DOENCAS_ENDOCRINO } from './endocrino'
 import { DOENCAS_INFECCOES } from './infeccoes'
 import { DOENCAS_MAMA } from './mama'
 import { DOENCAS_PELE } from './pele'
+import { DOENCAS_REPRODUTOR_FEMININO } from './reprodutor-feminino'
 import { DOENCAS_REPRODUTOR_MASCULINO } from './reprodutor-masculino'
 
 /** Doenças da Histopatologia com Zoom, em ordem de prioridade (mais comuns primeiro). */
-export const DOENCAS: DoencaZoom[] = [...DOENCAS_DIGESTORIO, ...DOENCAS_CARDIOVASCULAR, ...DOENCAS_INFECCOES, ...DOENCAS_PELE, ...DOENCAS_MAMA, ...DOENCAS_ENDOCRINO, ...DOENCAS_REPRODUTOR_MASCULINO].sort((a, b) => a.prioridade - b.prioridade)
+export const DOENCAS: DoencaZoom[] = [...DOENCAS_DIGESTORIO, ...DOENCAS_CARDIOVASCULAR, ...DOENCAS_INFECCOES, ...DOENCAS_PELE, ...DOENCAS_MAMA, ...DOENCAS_ENDOCRINO, ...DOENCAS_REPRODUTOR_MASCULINO, ...DOENCAS_REPRODUTOR_FEMININO].sort((a, b) => a.prioridade - b.prioridade)
 
 const POR_ID = new Map(DOENCAS.map((d) => [d.id, d]))
 

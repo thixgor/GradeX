@@ -237,4 +237,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Benign prostatic hyperplasia',
     },
   },
+  {
+    doenca: 'neoplasia-intraepitelial-cervical',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1078.svs',
+    largura: 46023,
+    altura: 20645,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'NIC 3 com extensão às criptas',
+    caso: {
+      sexo: 'F',
+      idade: 35,
+      historia: 'Citologia cervical alterada.',
+      diagnosticoOriginal: 'Cervical intra-epithelial neoplasia III (CIN 3)',
+    },
+  },
 ]

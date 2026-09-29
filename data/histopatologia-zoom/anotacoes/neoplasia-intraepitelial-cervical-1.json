@@ -1,0 +1,235 @@
+{
+ "slug": "neoplasia-intraepitelial-cervical-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Colo uterino com NIC 3 na zona de transformação: epitélio escamoso displásico em toda a espessura, estendendo-se às criptas endocervicais em blocos de contorno liso, ao lado de ectocérvice normal e glândulas endocervicais. Sem invasão.",
+ "marcacoes": [
+  {
+   "id": "nic3",
+   "estrutura": "displasia-escamosa-espessura-total",
+   "categoria": "patologica",
+   "rotulo": "NIC 3: células atípicas em toda a espessura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3735,
+      0.0585
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.365,
+    0.055,
+    0.377,
+    0.067
+   ],
+   "nota": "Núcleos grandes, hipercromáticos e desorganizados de baixo a cima; não há células superficiais maduras."
+  },
+  {
+   "id": "extensao",
+   "estrutura": "extensao-glandular-da-nic",
+   "categoria": "patologica",
+   "rotulo": "Displasia descendo pelas criptas (contorno liso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3745,
+      0.0745
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.02,
+    0.4,
+    0.1
+   ],
+   "nota": "Bloco arredondado de epitélio displásico sob a superfície, com borda lisa: é extensão às criptas, não invasão."
+  },
+  {
+   "id": "superficie",
+   "estrutura": "displasia-escamosa-espessura-total",
+   "categoria": "patologica",
+   "rotulo": "Superfície da zona de transformação tomada pela NIC",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.232,
+      0.16
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.1,
+    0.3,
+    0.25
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes e hipercromáticos, relação N/C alta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3695,
+      0.0575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.365,
+    0.055,
+    0.373,
+    0.063
+   ]
+  },
+  {
+   "id": "transicao",
+   "estrutura": "transicao-abrupta-para-mucosa-normal",
+   "categoria": "patologica",
+   "rotulo": "Transição: epitélio normal à esquerda, NIC à direita",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.199,
+      0.2015
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.18,
+    0.22,
+    0.22
+   ]
+  },
+  {
+   "id": "cervicite",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Cervicite crônica sob a lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3355,
+      0.0625
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.05,
+    0.35,
+    0.08
+   ]
+  },
+  {
+   "id": "ectocervice",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Ectocérvice normal: células superficiais maduras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1975,
+      0.1885
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.19,
+    0.182,
+    0.205,
+    0.197
+   ]
+  },
+  {
+   "id": "glandula-endocervical",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Glândula endocervical (epitélio mucinoso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2635,
+      0.1935
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.24,
+    0.17,
+    0.29,
+    0.22
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "displasia-escamosa-espessura-total",
+   "status": "presente",
+   "marcacoes": [
+    "nic3",
+    "superficie"
+   ],
+   "nota": "Displasia de espessura total ao longo da zona de transformação."
+  },
+  {
+   "achado": "extensao-glandular-da-nic",
+   "status": "presente",
+   "marcacoes": [
+    "extensao"
+   ],
+   "nota": "Vários blocos arredondados de NIC nas criptas."
+  },
+  {
+   "achado": "transicao-abrupta-para-mucosa-normal",
+   "status": "presente",
+   "marcacoes": [
+    "transicao"
+   ],
+   "nota": "Limite nítido com a ectocérvice normal."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Atipia nuclear acentuada."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "cervicite"
+   ],
+   "nota": "Infiltrado linfoplasmocitário no estroma superficial."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "ausente",
+   "nota": "Os contornos dos blocos displásicos são lisos, sem células soltas no estroma: não há invasão neste corte."
+  }
+ ]
+}
