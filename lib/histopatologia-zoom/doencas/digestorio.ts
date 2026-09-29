@@ -664,4 +664,80 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'O epitélio foveolar normal tem muco em "capuz" uniforme em todas as células; na metaplasia, aparecem células caliciformes isoladas, como no intestino.',
     ],
   },
+  {
+    id: 'esteatose-hepatica',
+    nome: 'Esteatose hepática',
+    sinonimos: ['fígado gorduroso', 'doença hepática gordurosa', 'DHGNA', 'MASLD', 'degeneração gordurosa'],
+    nomesEmIngles: ['hepatic steatosis', 'fatty liver', 'fatty change'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 7,
+    resumo:
+      'Acúmulo de triglicerídeos em mais de 5 % dos hepatócitos, visto como vacúolos claros no citoplasma; isolada é reversível, mas pode evoluir para esteato-hepatite, fibrose e cirrose.',
+    epidemiologia:
+      'A doença hepática mais comum do mundo: cerca de 25–30 % dos adultos, e mais de 70 % dos obesos e diabéticos. Causas principais: disfunção metabólica (obesidade, diabetes tipo 2, dislipidemia) e álcool.',
+    patogenese: [
+      'Resistência à insulina aumenta a lipólise no tecido adiposo: chegam mais ácidos graxos ao fígado.',
+      'A hiperinsulinemia estimula a síntese de novo de lipídios no próprio hepatócito.',
+      'A exportação como VLDL e a β-oxidação mitocondrial não dão conta: os triglicerídeos se acumulam em gotas.',
+      'No álcool, o excesso de NADH desvia o metabolismo para a síntese de gordura e bloqueia a oxidação.',
+      'Em parte dos pacientes, estresse oxidativo e lipotoxicidade lesam os hepatócitos (balonização), atraem inflamação e ativam as células estreladas: esteato-hepatite → fibrose → cirrose.',
+    ],
+    roteiro: [
+      'Panorâmico: o parênquima está pálido e salpicado de buracos brancos redondos?',
+      'Estime a extensão: menos de 1/3, 1/3 a 2/3, ou mais de 2/3 dos hepatócitos (graus 1, 2, 3).',
+      'Grande aumento: gotas grandes com núcleo deslocado (macrovesicular) ou várias gotas pequenas com núcleo central.',
+      'Procure o que muda o prognóstico: hepatócitos balonizados, corpúsculos de Mallory, inflamação lobular e fibrose (que exige tricrômio).',
+    ],
+    achados: [
+      {
+        achado: 'esteatose-macrovesicular',
+        tipo: 'especifico',
+        comoAparece: 'Vacúolos grandes, únicos, com o núcleo deslocado para a periferia.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'esteatose-microvesicular',
+        tipo: 'especifico',
+        comoAparece: 'Várias gotas pequenas por hepatócito, núcleo central — frequentemente misturadas às gotas grandes.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'balonizacao-hepatocitaria',
+        tipo: 'especifico',
+        comoAparece: 'Se presente, indica esteato-hepatite, não mais esteatose simples.',
+        peso: 'ocasional',
+      },
+      {
+        achado: 'infiltrado-neutrofilico',
+        tipo: 'geral',
+        comoAparece: 'Inflamação lobular (neutrófilos em torno de hepatócitos lesados) na esteato-hepatite, sobretudo alcoólica.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Esteato-hepatite (MASH/NASH ou alcoólica)',
+        comoSeparar: 'Além da gordura: balonização, inflamação lobular, corpúsculos de Mallory e fibrose pericelular "em tela de galinheiro".',
+      },
+      {
+        nome: 'Esteatose microvesicular aguda (gravidez, Reye, fármacos)',
+        comoSeparar: 'Citoplasma espumoso difuso com núcleo central, sem gotas grandes; quadro clínico de insuficiência hepática aguda.',
+      },
+      {
+        nome: 'Hepatite C (genótipo 3) e doença de Wilson',
+        comoSeparar: 'Também causam esteatose; procure inflamação portal com folículos (HCV) ou alterações de cobre (Wilson).',
+      },
+    ],
+    correlacaoClinica: [
+      'Geralmente assintomática; descoberta por elevação discreta de transaminases (ALT > AST no metabólico; AST/ALT > 2 no álcool) ou fígado "brilhante" no ultrassom.',
+      'Hepatomegalia e fígado amarelo e amolecido na macroscopia.',
+      'Tratamento: perda de 7–10 % do peso, atividade física, controle do diabetes e abstinência de álcool — a esteatose regride.',
+      'Rastreie fibrose (FIB-4, elastografia): é a fibrose, não a gordura, que prediz a mortalidade.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, os hepatócitos têm citoplasma rosa, granular e homogêneo, com núcleo central, em trabéculas separadas pelos sinusoides.',
+      'Na esteatose, o citoplasma é ocupado por vacúolos claros; nas gotas grandes, o núcleo é empurrado para a borda, como num adipócito.',
+    ],
+  },
 ]

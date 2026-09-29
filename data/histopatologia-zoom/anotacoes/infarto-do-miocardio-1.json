@@ -1,0 +1,159 @@
+{
+ "slug": "infarto-do-miocardio-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Miocárdio com infarto agudo recente (cerca de 1 a 3 dias): necrose coagulativa das fibras, faixas de neutrófilos na borda e focos de hemorragia intersticial, ao lado de miocárdio viável.",
+ "marcacoes": [
+  {
+   "id": "necrose",
+   "estrutura": "necrose-coagulativa",
+   "categoria": "patologica",
+   "rotulo": "Fibras necróticas: hipereosinofílicas, sem núcleos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3505,
+      0.5845
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.345,
+    0.579,
+    0.357,
+    0.591
+   ],
+   "nota": "As fibras mantêm o contorno, mas perderam os núcleos e ficaram mais vermelhas e homogêneas; ao redor, restos nucleares."
+  },
+  {
+   "id": "neutrofilos",
+   "estrutura": "infiltrado-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Neutrófilos entre as fibras (1–3 dias)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2975,
+      0.5695
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.29,
+    0.56,
+    0.305,
+    0.575
+   ],
+   "nota": "Neutrófilos e restos nucleares ocupam o interstício entre fibras necróticas: é a borda do infarto recente."
+  },
+  {
+   "id": "faixa",
+   "estrutura": "infiltrado-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Faixa de infiltrado na borda do infarto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.335,
+      0.552
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.26,
+    0.52,
+    0.42,
+    0.68
+   ]
+  },
+  {
+   "id": "hemorragia",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Hemorragia intersticial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3095,
+      0.608
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.595,
+    0.325,
+    0.62
+   ]
+  },
+  {
+   "id": "miocito",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Cardiomiócito com núcleo central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3404,
+      0.5321
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.335,
+    0.525,
+    0.345,
+    0.535
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "necrose-coagulativa",
+   "status": "presente",
+   "marcacoes": [
+    "necrose"
+   ],
+   "nota": "Fibras sem núcleos e hipereosinofílicas na área do infarto."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "presente",
+   "marcacoes": [
+    "neutrofilos",
+    "faixa"
+   ],
+   "nota": "Neutrófilos entre as fibras, formando faixas na borda — padrão de infarto com cerca de 1 a 3 dias."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "hemorragia"
+   ],
+   "nota": "Focos de hemorragia dissecando o interstício."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "ausente",
+   "nota": "Ainda não há tecido de granulação: a lesão é recente (dias)."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "ausente",
+   "nota": "Sem cicatriz colágena: não é um infarto antigo."
+  }
+ ]
+}

@@ -1,0 +1,153 @@
+{
+ "slug": "infarto-do-miocardio-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Miocárdio com infarto antigo cicatrizado: zonas extensas de colágeno denso e pobre em células substituindo o músculo, com miocárdio viável na borda.",
+ "marcacoes": [
+  {
+   "id": "cicatriz",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Cicatriz: colágeno denso no lugar do miocárdio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3375,
+      0.3375
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.33,
+    0.345,
+    0.345
+   ],
+   "nota": "Colágeno em feixes ondulados, rosa-pálido, com poucos fibroblastos de núcleo fino — sem nenhuma fibra muscular."
+  },
+  {
+   "id": "cicatriz-panoramica",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Área extensa de cicatriz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.35
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.26,
+    0.26,
+    0.44,
+    0.44
+   ]
+  },
+  {
+   "id": "fibrose-borda",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Fibrose separando grupos de miócitos sobreviventes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2885,
+      0.3539
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.278,
+    0.349,
+    0.296,
+    0.367
+   ],
+   "nota": "Na borda da cicatriz, septos de colágeno isolam ilhas de cardiomiócitos que sobreviveram à isquemia."
+  },
+  {
+   "id": "miocardio-viavel",
+   "estrutura": "fibra-muscular-cardiaca",
+   "rotulo": "Miocárdio viável na borda da cicatriz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.28,
+      0.365
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.275,
+    0.35,
+    0.3,
+    0.375
+   ]
+  },
+  {
+   "id": "arteriola",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Arteríola intramiocárdica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2925,
+      0.3565
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.283,
+    0.35,
+    0.3,
+    0.367
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há fibras necróticas recentes: o músculo morto já foi removido e substituído."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "ausente",
+   "nota": "Sem neutrófilos — a fase aguda terminou há semanas ou meses."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "ausente",
+   "nota": "Sem hemorragia recente."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "ausente",
+   "nota": "O tecido de granulação já amadureceu em colágeno."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "cicatriz",
+    "cicatriz-panoramica",
+    "fibrose-borda"
+   ],
+   "nota": "Áreas extensas de colágeno denso e pobre em células, com ilhas de miocárdio viável na periferia: infarto cicatrizado (mais de 2 meses)."
+  }
+ ]
+}

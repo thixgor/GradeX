@@ -75,4 +75,65 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Apendicite perfurada', 'Diverticulite', 'Úlcera péptica perfurada', 'Colite fulminante'],
     armadilhas: ['Rasgo pela manipulação cirúrgica tem bordas limpas, sem necrose nem inflamação.'],
   },
+  {
+    id: 'esteatose-macrovesicular',
+    nome: 'Esteatose macrovesicular',
+    sinonimos: ['gota grande', 'degeneração gordurosa', 'esteatose'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Hepatócito ocupado por um único vacúolo grande e redondo de gordura, que empurra o núcleo para a periferia — em H&E o vacúolo é "vazio" porque a gordura se dissolve no processamento.',
+    comoReconhecer: [
+      'No pequeno aumento: o parênquima fica pálido e "rendado", salpicado de buracos brancos redondos.',
+      'No grande aumento: vacúolos claros, nítidos, do tamanho do próprio hepatócito, com o núcleo achatado na borda (como um adipócito).',
+      'Na esteatose de gotas pequenas a médias, várias gotas convivem na mesma célula; na microvesicular verdadeira, o citoplasma fica espumoso e o núcleo continua central.',
+    ],
+    mecanismo: [
+      'Entra mais ácido graxo no fígado (obesidade, resistência à insulina, álcool) ou sai menos (menos β-oxidação, menos exportação como VLDL).',
+      'Os triglicerídeos se acumulam em gotas que se fundem numa gota única e grande.',
+    ],
+    significado: [
+      'É reversível e, isolada, benigna (esteatose simples). Mais de 5 % dos hepatócitos acometidos define esteatose.',
+      'O que faz ela progredir para cirrose é a esteato-hepatite: balonização, inflamação e fibrose.',
+    ],
+    ondeOcorre: ['Doença hepática esteatótica associada à disfunção metabólica (DHGNA/MASLD)', 'Álcool', 'Corticoides, metotrexato', 'Desnutrição (kwashiorkor)'],
+    armadilhas: ['Espaços sinusoidais dilatados e artefato de congelamento também deixam buracos; o vacúolo de gordura é redondo, de borda lisa e dentro da célula.'],
+  },
+  {
+    id: 'esteatose-microvesicular',
+    nome: 'Esteatose de gotas pequenas / microvesicular',
+    sinonimos: ['microesteatose', 'esteatose de pequenas gotas'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Múltiplas gotas pequenas de gordura no citoplasma do hepatócito, com o núcleo ainda central; na forma microvesicular verdadeira, o citoplasma fica espumoso.',
+    comoReconhecer: [
+      'Vários vacúolos pequenos por célula, de tamanhos iguais ou variados; o núcleo continua no centro.',
+      'Na microvesicular verdadeira, as gotas são tão pequenas que o citoplasma parece "espumoso", sem vacúolos individualizados.',
+    ],
+    mecanismo: [
+      'Gotas pequenas podem ser só uma fase de formação da gota grande.',
+      'A microvesicular verdadeira reflete falência mitocondrial (β-oxidação bloqueada) e é mais grave.',
+    ],
+    significado: [
+      'Gotas pequenas misturadas a gotas grandes são comuns na esteatose metabólica e alcoólica.',
+      'A microvesicular verdadeira difusa é marca de doenças graves: esteatose aguda da gravidez, síndrome de Reye, toxicidade por valproato ou tetraciclina.',
+    ],
+    ondeOcorre: ['Esteatose metabólica e alcoólica (mista)', 'Esteatose aguda da gravidez', 'Síndrome de Reye', 'Toxicidade mitocondrial por fármacos'],
+    armadilhas: ['Hepatócitos com glicogênio abundante também ficam claros, mas sem vacúolos redondos.'],
+  },
+  {
+    id: 'balonizacao-hepatocitaria',
+    nome: 'Balonização hepatocitária',
+    sinonimos: ['degeneração balonizante', 'hepatócito balonizado'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Hepatócito aumentado, arredondado, de citoplasma claro e rarefeito (em "teia"), às vezes com corpúsculo de Mallory — a lesão celular que distingue a esteato-hepatite da esteatose simples.',
+    comoReconhecer: [
+      'Célula 1,5–2 vezes maior que as vizinhas, redonda, com citoplasma pálido e floculado, sem o vacúolo nítido da gordura.',
+      'Muitas vezes na zona 3 (perto da veia centrolobular), com inflamação e fibrose pericelular ao redor.',
+    ],
+    mecanismo: ['Lesão do citoesqueleto (queratinas 8/18 degradadas pelo estresse oxidativo) e retenção de líquido.'],
+    significado: ['Critério de esteato-hepatite (MASH/NASH ou alcoólica): indica lesão ativa com risco de fibrose.'],
+    ondeOcorre: ['Esteato-hepatite metabólica e alcoólica'],
+    armadilhas: ['Hepatócitos claros por glicogênio ou edema de artefato não são balonizados.'],
+  },
 ]

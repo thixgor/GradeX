@@ -420,4 +420,48 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
       'Após uso de inibidor de bomba de prótons, a bactéria migra para o corpo e diminui no antro: biópsias de ambos os lugares.',
     ],
   },
+  {
+    id: 'hemorragia-intersticial',
+    nome: 'Hemorragia intersticial',
+    sinonimos: ['hemorragia', 'extravasamento de hemácias', 'infarto hemorrágico'],
+    categoria: 'circulatorio',
+    resumo:
+      'Hemácias fora dos vasos, espalhadas entre as células e fibras do tecido — sem parede vascular ao redor.',
+    comoReconhecer: [
+      'No pequeno aumento: manchas vermelho-vivas de contorno irregular, que não seguem o trajeto de um vaso.',
+      'No grande aumento: lagos de hemácias dissecando o interstício, sem endotélio nem parede em volta.',
+      'Hemorragias antigas deixam macrófagos com hemossiderina (pigmento marrom-dourado).',
+    ],
+    mecanismo: [
+      'A isquemia e a inflamação lesam a parede dos capilares; quando o fluxo retorna (reperfusão) ou a pressão persiste, o sangue sai para o interstício.',
+    ],
+    significado: [
+      'No infarto do miocárdio, a hemorragia é mais intensa quando houve reperfusão (trombólise, angioplastia).',
+      'Em órgãos de circulação dupla ou venosa frouxa (pulmão, intestino), o infarto é tipicamente hemorrágico.',
+    ],
+    ondeOcorre: ['Infartos reperfundidos', 'Infarto pulmonar e intestinal', 'Traumatismos', 'Vasculites'],
+    armadilhas: ['Vaso congesto cortado obliquamente também parece um lago de hemácias — procure a parede endotelial.'],
+  },
+  {
+    id: 'fibrose-cicatricial',
+    nome: 'Fibrose cicatricial (cicatriz)',
+    sinonimos: ['cicatriz', 'fibrose de substituição', 'colagenização'],
+    categoria: 'reparo',
+    resumo:
+      'Tecido destruído substituído por colágeno denso, rosa e pobre em células — o fim do reparo quando o tecido não se regenera.',
+    comoReconhecer: [
+      'No pequeno aumento: áreas homogêneas, rosa-pálidas, sem a textura do tecido original.',
+      'No grande aumento: feixes de colágeno ondulados com poucos fibroblastos de núcleo fino e alongado; poucos vasos.',
+      'Na borda, ilhas do tecido original presas na fibrose.',
+    ],
+    mecanismo: [
+      'Quando as células do tecido não se dividem (cardiomiócito, neurônio) ou a arquitetura de suporte foi destruída, o tecido de granulação amadurece em colágeno: vasos e células regridem, fica a matriz.',
+      'Leva semanas a meses: no miocárdio, a cicatriz está formada por volta de 6–8 semanas.',
+    ],
+    significado: [
+      'Registro permanente de uma lesão antiga. No coração, a cicatriz não contrai (hipocinesia), pode se dilatar (aneurisma ventricular) e é substrato de arritmias.',
+    ],
+    ondeOcorre: ['Infarto do miocárdio antigo', 'Cicatrizes cutâneas', 'Fibrose de órgãos após inflamação crônica'],
+    armadilhas: ['Fibrose intersticial difusa (hipertensão, cardiomiopatias) é diferente da cicatriz em bloco do infarto.'],
+  },
 ]
