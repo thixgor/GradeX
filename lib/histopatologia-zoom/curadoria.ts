@@ -447,4 +447,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Hypersensitivity pneumonitis',
     },
   },
+  {
+    doenca: 'pneumonia-bacteriana',
+    caminho: '/Research_4/Teaching/Education/Postgraduate/Carling_collection/Set_02/103324.svs',
+    largura: 51948,
+    altura: 37941,
+    objetiva: 20,
+    mpp: 0.499,
+    subtitulo: 'Broncopneumonia com abscesso e bronquiectasia',
+    caso: {
+      sexo: 'M',
+      idade: 65,
+      historia: 'Massa no lobo superior direito; lobectomia.',
+      diagnosticoOriginal: 'Bronchiectasis / abscess',
+    },
+  },
 ]

@@ -30,3 +30,29 @@ salvar('pneumonia-bacteriana-1', [
     achado('antracose', 'presente', ['antracose'], 'Antracose perivascular e subpleural, incidental.'),
 ], conferencias=3, resumo='Pulmão com pneumonia bacteriana do padrão lobar: consolidação uniforme de todo o corte, com alvéolos cheios de neutrófilos, fibrina e hemácias (hepatização), septos preservados e pleurite fibrinosa. Lâmina da coleção de graduação de Leeds sem diagnóstico registrado; a classificação foi feita pelo exame microscópico.')
 print('ok')
+
+salvar('pneumonia-bacteriana-2', [
+    pat('pus', 'abscesso', seta(0.7115, 0.2530, 45),
+        rotulo='Pus: neutrófilos compactados na cavidade',
+        nota='Grumos densos formados quase só por neutrófilos e restos celulares, dentro de uma cavidade: conteúdo do abscesso e do brônquio cheio de pus.',
+        vista=(0.700, 0.240, 0.740, 0.280)),
+    pat('cavidade', 'abscesso', seta(0.75, 0.30, 45),
+        rotulo='Cavidade de abscesso com conteúdo purulento',
+        vista=(0.60, 0.10, 0.90, 0.40)),
+    pat('parede', 'tecido-de-granulacao', seta(0.6550, 0.3920, 45),
+        rotulo='Parede do abscesso: granulação sob o pus',
+        nota='O pus se apoia sobre tecido de granulação e fibrose, que tentam isolar a coleção.',
+        vista=(0.640, 0.370, 0.680, 0.400)),
+    pat('broncopneumonia', 'exsudato-alveolar-neutrofilico', seta(0.8230, 0.5975, 45),
+        rotulo='Alvéolos com exsudato, macrófagos e neutrófilos',
+        nota='No parênquima em volta, os alvéolos contêm exsudato proteináceo com macrófagos e neutrófilos: broncopneumonia e edema ao redor do abscesso.',
+        vista=(0.815, 0.590, 0.830, 0.605)),
+], achados=[
+    achado('exsudato-alveolar-neutrofilico', 'presente', ['broncopneumonia'], 'Broncopneumonia em focos no parênquima em volta do abscesso, com exsudato proteináceo e macrófagos.'),
+    achado('hiperemia-e-congestao', 'nao-avaliavel', [], 'Congestão não é proeminente nos campos examinados.'),
+    achado('exsudato-fibrinopurulento', 'nao-avaliavel', [], 'A pleura não está incluída de forma avaliável neste corte.'),
+    achado('abscesso', 'presente', ['pus', 'cavidade'], 'Abscesso pulmonar com cavidade cheia de pus, associado a brônquio purulento (bronquiectasia).'),
+    achado('tecido-de-granulacao', 'presente', ['parede'], 'Parede de granulação e fibrose envolvendo a cavidade.'),
+    achado('antracose', 'nao-avaliavel', [], 'Pigmento escasso; não é relevante neste caso.'),
+], conferencias=3, resumo='Lobo superior ressecado com abscesso pulmonar e bronquiectasia: cavidade preenchida por pus (neutrófilos compactados), parede de tecido de granulação e fibrose, e broncopneumonia com edema no parênquima ao redor.')
+print('ok2')
