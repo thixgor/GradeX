@@ -267,4 +267,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Classic Hodgkin lymphoma, nodular sclerosis',
     },
   },
+  {
+    doenca: 'pielonefrite-cronica',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1101.svs',
+    largura: 50025,
+    altura: 32060,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'Com tireoidização tubular',
+    caso: {
+      sexo: 'F',
+      idade: 20,
+      historia: 'Febre, vômitos e dor lombar.',
+      diagnosticoOriginal: 'Chronic pyelonephritis',
+    },
+  },
 ]

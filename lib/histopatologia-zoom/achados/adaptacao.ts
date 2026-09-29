@@ -103,4 +103,54 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Hiperplasia prostática benigna', 'Hiperplasia endometrial simples', 'Doença fibrocística da mama'],
     armadilhas: ['Não confundir com neoplasia cística: o epitélio não tem atipia.'],
   },
+  {
+    id: 'tireoidizacao-tubular',
+    nome: 'Atrofia tubular com tireoidização',
+    sinonimos: ['tireoidização', 'túbulos com cilindros coloides', 'atrofia tubular'],
+    categoria: 'adaptacao',
+    resumo:
+      'Túbulos renais atróficos e dilatados, revestidos por epitélio achatado e cheios de cilindros eosinofílicos homogêneos — o conjunto lembra folículos tireoidianos com coloide.',
+    comoReconhecer: [
+      'No pequeno aumento: grupos de estruturas redondas cheias de material rosa, espalhadas no interstício inflamado e fibroso.',
+      'No grande aumento: epitélio tubular baixo e achatado; cilindro hialino (proteína de Tamm-Horsfall) homogêneo na luz.',
+    ],
+    mecanismo: [
+      'Inflamação e fibrose do interstício destroem néfrons de modo irregular; os túbulos obstruídos perdem epitélio e acumulam proteína, que se condensa em cilindros.',
+    ],
+    significado: [
+      'Sinal de doença tubulointersticial crônica — muito típico da pielonefrite crônica e da nefropatia de refluxo.',
+    ],
+    ondeOcorre: ['Pielonefrite crônica', 'Nefropatia obstrutiva e de refluxo', 'Estágio final de várias nefropatias'],
+    armadilhas: ['Não confundir com tecido tireoidiano ectópico nem com cilindros de mieloma (fraturados, com reação de células gigantes).'],
+  },
+  {
+    id: 'fibrose-intersticial',
+    nome: 'Fibrose intersticial',
+    sinonimos: ['fibrose tubulointersticial'],
+    categoria: 'reparo',
+    resumo:
+      'Colágeno depositado entre os túbulos (ou entre as células de qualquer parênquima), afastando-os e substituindo néfrons perdidos.',
+    comoReconhecer: [
+      'Espaços amplos entre túbulos, preenchidos por tecido conjuntivo rosa-pálido com fibroblastos e células inflamatórias crônicas.',
+      'O tricrômio de Masson cora o colágeno em azul/verde e permite quantificá-la.',
+    ],
+    mecanismo: ['Lesão tubular e inflamação crônica ativam fibroblastos e miofibroblastos intersticiais (TGF-β).'],
+    significado: ['É o melhor preditor histológico da perda de função renal, qualquer que seja a doença de base.'],
+    ondeOcorre: ['Pielonefrite crônica', 'Nefropatia diabética e hipertensiva avançada', 'Rejeição crônica de transplante', 'Toxicidade por inibidores de calcineurina'],
+    armadilhas: ['Edema intersticial também afasta os túbulos, mas sem colágeno.'],
+  },
+  {
+    id: 'espessamento-arterial',
+    nome: 'Espessamento da parede arterial (arteriosclerose)',
+    sinonimos: ['arteriosclerose', 'fibrose intimal', 'arteriolosclerose hialina', 'esclerose arterial'],
+    categoria: 'circulatorio',
+    resumo: 'Artérias e arteríolas com parede espessada por fibrose da íntima, hialinização ou hiperplasia muscular, e luz estreitada.',
+    comoReconhecer: [
+      'Parede desproporcionalmente espessa em relação à luz, com íntima fibrosa em camadas ("em casca de cebola" na hipertensão maligna) ou material hialino rosa homogêneo (arteriolosclerose hialina).',
+    ],
+    mecanismo: ['Hipertensão, diabetes e envelhecimento lesam o endotélio; plasma extravasa na parede (hialinose) e células musculares proliferam e produzem matriz.'],
+    significado: ['Reduz o fluxo ao parênquima: isquemia crônica, atrofia e fibrose — contribui para a perda de néfrons.'],
+    ondeOcorre: ['Rim de hipertensos e diabéticos', 'Envelhecimento', 'Nefropatias crônicas'],
+    armadilhas: ['Artérias cortadas obliquamente parecem mais espessas.'],
+  },
 ]

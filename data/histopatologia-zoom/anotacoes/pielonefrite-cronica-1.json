@@ -1,0 +1,203 @@
+{
+ "slug": "pielonefrite-cronica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Rim com pielonefrite crônica: interstício intensamente inflamado (linfócitos e plasmócitos) e fibroso, túbulos atróficos com cilindros eosinofílicos (tireoidização), artérias de parede espessada e glomérulos relativamente preservados em áreas menos acometidas. Pelve e cálice com a mucosa urotelial na parte superior do corte.",
+ "marcacoes": [
+  {
+   "id": "tireoidizacao",
+   "estrutura": "tireoidizacao-tubular",
+   "categoria": "patologica",
+   "rotulo": "Túbulo atrófico com cilindro eosinofílico (\"tireoidização\")",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.389
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.38,
+    0.38,
+    0.4,
+    0.4
+   ]
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Interstício tomado por linfócitos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3715,
+      0.3485
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.34,
+    0.375,
+    0.355
+   ]
+  },
+  {
+   "id": "faixa-inflamatoria",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Faixa de inflamação crônica e fibrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.785,
+      0.375
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.75,
+    0.35,
+    0.85,
+    0.45
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Túbulos afastados por fibrose e células inflamatórias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3635,
+      0.3445
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.355,
+    0.335,
+    0.375,
+    0.355
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "espessamento-arterial",
+   "categoria": "patologica",
+   "rotulo": "Artéria com parede espessada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8015,
+      0.374
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.78,
+    0.35,
+    0.83,
+    0.4
+   ]
+  },
+  {
+   "id": "glomerulo",
+   "estrutura": "corpusculo-renal",
+   "rotulo": "Glomérulo relativamente preservado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7762,
+      0.4025
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.76,
+    0.39,
+    0.8,
+    0.42
+   ]
+  },
+  {
+   "id": "tubulo",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos preservados em área menos acometida",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8285,
+      0.4035
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.8,
+    0.38,
+    0.85,
+    0.43
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado",
+    "faixa-inflamatoria"
+   ],
+   "nota": "Infiltrado intersticial intenso e difuso, com faixas mais densas."
+  },
+  {
+   "achado": "tireoidizacao-tubular",
+   "status": "presente",
+   "marcacoes": [
+    "tireoidizacao"
+   ],
+   "nota": "Túbulos atróficos com cilindros hialinos homogêneos no meio do infiltrado."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Interstício alargado por fibrose e inflamação."
+  },
+  {
+   "achado": "espessamento-arterial",
+   "status": "presente",
+   "marcacoes": [
+    "arteria"
+   ],
+   "nota": "Artérias interlobulares de parede espessada."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "nao-avaliavel",
+   "nota": "A história (febre, vômitos, dor lombar) sugere surto agudo, mas nos campos examinados predominam linfócitos e plasmócitos; não se identificaram cilindros de neutrófilos inequívocos."
+  }
+ ]
+}
