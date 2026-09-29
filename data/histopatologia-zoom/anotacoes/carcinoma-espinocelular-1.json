@@ -1,0 +1,213 @@
+{
+ "slug": "carcinoma-espinocelular-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Pele da face com carcinoma espinocelular invasivo: ninhos de queratinócitos atípicos na derme, com pérolas córneas e infiltrado linfocitário. A lâmina tem rachaduras e coloração intensa de montagem antiga, que não comprometem os achados.",
+ "marcacoes": [
+  {
+   "id": "perola",
+   "estrutura": "perola-cornea",
+   "categoria": "patologica",
+   "rotulo": "Pérola córnea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.668,
+      0.1575
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.655,
+    0.14,
+    0.68,
+    0.165
+   ],
+   "nota": "Lamelas de queratina concêntricas, em casca de cebola, no centro de um ninho de células escamosas."
+  },
+  {
+   "id": "perola-2",
+   "estrutura": "perola-cornea",
+   "categoria": "patologica",
+   "rotulo": "Queratinização no centro dos ninhos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6487,
+      0.221
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.63,
+    0.205,
+    0.665,
+    0.24
+   ]
+  },
+  {
+   "id": "ninhos",
+   "estrutura": "ninhos-escamosos-infiltrativos",
+   "categoria": "patologica",
+   "rotulo": "Ninhos de células escamosas atípicas na derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.668,
+      0.147
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.655,
+    0.135,
+    0.68,
+    0.16
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Células grandes, citoplasma eosinofílico, núcleos atípicos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6665,
+      0.1475
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.662,
+    0.143,
+    0.672,
+    0.153
+   ]
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Ninhos infiltrando a derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.63,
+      0.23
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.59,
+    0.19,
+    0.68,
+    0.28
+   ]
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos no estroma entre os ninhos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6655,
+      0.1372
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.657,
+    0.132,
+    0.673,
+    0.148
+   ]
+  },
+  {
+   "id": "glandulas-ecrinas",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "rotulo": "Glândulas sudoríparas écrinas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.612,
+      0.33
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.58,
+    0.3,
+    0.62,
+    0.34
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-escamosos-infiltrativos",
+   "status": "presente",
+   "marcacoes": [
+    "ninhos"
+   ],
+   "nota": "Ninhos irregulares de queratinócitos atípicos ocupam a derme."
+  },
+  {
+   "achado": "perola-cornea",
+   "status": "presente",
+   "marcacoes": [
+    "perola",
+    "perola-2"
+   ],
+   "nota": "Pérolas córneas frequentes: carcinoma bem a moderadamente diferenciado."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos pleomórficos e hipercromáticos, com nucléolos."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Invasão da derme por ninhos e cordões."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Infiltrado linfocitário no estroma."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "nao-avaliavel",
+   "nota": "A superfície do tumor tem artefatos de corte (rachaduras e dobras) que impedem afirmar se há ulceração."
+  }
+ ]
+}

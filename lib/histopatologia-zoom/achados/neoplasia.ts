@@ -347,4 +347,46 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Carcinoma basocelular'],
     armadilhas: ['Não confundir com invasão vascular: a fenda não tem endotélio.'],
   },
+  {
+    id: 'perola-cornea',
+    nome: 'Pérola córnea',
+    sinonimos: ['pérola de queratina', 'globo córneo'],
+    categoria: 'neoplasia',
+    resumo:
+      'Redemoinho concêntrico de queratina eosinofílica, lamelada, no centro de um ninho de células escamosas — a assinatura do carcinoma espinocelular bem diferenciado.',
+    comoReconhecer: [
+      'No pequeno aumento: círculos rosa-vivos, em "casca de cebola", dentro dos ninhos tumorais.',
+      'No grande aumento: lamelas de queratina concêntricas, às vezes com núcleos residuais (paraqueratose), cercadas por células escamosas que se achatam em direção ao centro.',
+    ],
+    mecanismo: [
+      'As células escamosas neoplásicas conservam o programa de diferenciação da epiderme: amadurecem do centro para dentro do ninho e produzem queratina, que se acumula em camadas.',
+    ],
+    significado: [
+      'Prova a diferenciação escamosa do tumor. Quanto mais pérolas, mais bem diferenciado (e menos agressivo) o carcinoma.',
+    ],
+    ondeOcorre: ['Carcinoma espinocelular de pele, boca, esôfago, pulmão e colo uterino', 'Ceratoacantoma'],
+    armadilhas: ['Cistos epidérmicos e folículos pilosos cortados transversalmente também têm queratina lamelada, mas sem células atípicas infiltrando o estroma.'],
+  },
+  {
+    id: 'ninhos-escamosos-infiltrativos',
+    nome: 'Ninhos escamosos infiltrativos',
+    sinonimos: ['carcinoma escamoso invasivo', 'ilhas de células escamosas'],
+    categoria: 'neoplasia',
+    resumo:
+      'Ilhas e cordões irregulares de células escamosas atípicas — grandes, de citoplasma eosinofílico abundante, núcleos pleomórficos e nucléolos — que se desprendem da epiderme e invadem a derme.',
+    comoReconhecer: [
+      'No pequeno aumento: massas róseas irregulares descendo da epiderme para a derme, com contornos angulosos.',
+      'No grande aumento: células poligonais de citoplasma rosa, limites nítidos e pontes intercelulares; núcleos grandes, hipercromáticos ou vesiculosos, com nucléolos; mitoses, inclusive atípicas.',
+      'Estroma em volta com linfócitos e reação desmoplásica.',
+    ],
+    mecanismo: [
+      'Mutações de TP53 e outras, induzidas pela radiação UV (ou por HPV, tabaco e álcool em outras localizações), acumuladas nos queratinócitos.',
+      'A displasia (ceratose actínica, doença de Bowen) progride até romper a membrana basal e invadir.',
+    ],
+    significado: [
+      'Define o carcinoma espinocelular invasivo. A profundidade, a invasão perineural e o grau de diferenciação definem o risco de metástase.',
+    ],
+    ondeOcorre: ['Carcinoma espinocelular de pele, mucosas, esôfago, pulmão, colo uterino'],
+    armadilhas: ['Hiperplasia pseudoepiteliomatosa (em volta de úlceras, infecções fúngicas, tumor de células granulares) imita invasão, mas sem atipia significativa.'],
+  },
 ]

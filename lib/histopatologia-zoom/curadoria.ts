@@ -177,4 +177,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Basal cell carcinoma',
     },
   },
+  {
+    doenca: 'carcinoma-espinocelular',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1108.svs',
+    largura: 82041,
+    altura: 45536,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'Invasivo, bem diferenciado (face)',
+    caso: {
+      sexo: 'M',
+      idade: 65,
+      historia: 'Lesão verrucosa na face.',
+      diagnosticoOriginal: 'Squamous carcinoma',
+    },
+  },
 ]
