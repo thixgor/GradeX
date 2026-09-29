@@ -729,6 +729,32 @@ const pageFetchSleep = (ms: number) => new Promise((resolve) => setTimeout(resol
 // até a UI, que mostra uma contagem regressiva em vez de um erro vermelho.
 type PageFetchError = Error & { status?: number; retryAfterMs?: number }
 
+/**
+ * A resposta que o navegador já tem guardada para `url`, sem ir à rede.
+ *
+ * `only-if-cached` devolve o que estiver no cache, mesmo vencido, ou falha na
+ * hora se não houver nada. Vencido não serve: a validade é o fim do dia do
+ * token de auditoria. Por isso a idade da resposta (`Date`) é conferida contra
+ * o `max-age` com que ela foi guardada. Uma resposta sem esses cabeçalhos, ou
+ * que não é um PDF, é tratada como ausente.
+ */
+async function respostaGuardadaNoNavegador(url: string, signal: AbortSignal): Promise<Response | null> {
+  try {
+    const guardada = await fetch(url, { cache: 'only-if-cached', mode: 'same-origin', signal })
+    if (!guardada.ok) return null
+    if (!(guardada.headers.get('content-type') || '').includes('application/pdf')) return null
+    const geradaEm = Date.parse(guardada.headers.get('date') || '')
+    const maxAge = Number(/max-age=(\d+)/.exec(guardada.headers.get('cache-control') || '')?.[1])
+    if (!Number.isFinite(geradaEm) || !Number.isFinite(maxAge)) return null
+    return Date.now() - geradaEm < maxAge * 1000 ? guardada : null
+  } catch {
+    // Sem nada no cache, o navegador rejeita o `only-if-cached` na hora. O
+    // chamador segue para a rede. Um abort de verdade também cai aqui, e o
+    // `fetch` da rede, com o mesmo sinal, o repete.
+    return null
+  }
+}
+
 async function fetchPdfPageBytesOnce(
   materialId: string,
   pageNumber: number,
@@ -746,11 +772,16 @@ async function fetchPdfPageBytesOnce(
     // o que ela devolve é a mesma página marcada da leitura.
     const rota = priority === 'thumb' ? 'thumb' : 'page'
     const chave = chavesDeLeitura.get(materialId)
-    const response = await fetch(
-      `/api/materiais/${materialId}/pdf-viewer/${rota}?page=${pageNumber}` +
-        (chave ? `&c=${encodeURIComponent(chave)}` : ''),
-      { signal: controller.signal }
-    )
+    const urlDa = (qual: 'page' | 'thumb') =>
+      `/api/materiais/${materialId}/pdf-viewer/${qual}?page=${pageNumber}` +
+      (chave ? `&c=${encodeURIComponent(chave)}` : '')
+    // A mesma página pode já estar no cache do navegador pela OUTRA rota: lida
+    // no leitor e agora pedida pelo painel, ou o contrário, numa visita
+    // anterior do mesmo dia. São os mesmos bytes marcados; só a URL difere.
+    const response =
+      (chave
+        ? await respostaGuardadaNoNavegador(urlDa(rota === 'page' ? 'thumb' : 'page'), controller.signal)
+        : null) ?? (await fetch(urlDa(rota), { signal: controller.signal }))
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
       // `adminDetail` só vem preenchido quando quem chamou é admin (ver
