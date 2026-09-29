@@ -460,4 +460,51 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['NIC 2 e 3 do colo uterino'],
     armadilhas: ['A invasão verdadeira forma línguas irregulares, com células de citoplasma eosinofílico ("maturação paradoxal") e reação estromal.'],
   },
+  {
+    id: 'celula-de-reed-sternberg',
+    nome: 'Célula de Reed-Sternberg e suas variantes (lacunar, mononuclear)',
+    sinonimos: ['célula de Reed-Sternberg', 'célula RS', 'célula de Hodgkin', 'célula lacunar', 'célula HRS'],
+    categoria: 'neoplasia',
+    resumo:
+      'A célula tumoral do linfoma de Hodgkin clássico: grande, com núcleo bilobado ou multilobado e nucléolos eosinofílicos enormes ("olhos de coruja"); na esclerose nodular aparece como célula lacunar, com o citoplasma retraído deixando um halo claro.',
+    comoReconhecer: [
+      'Reed-Sternberg clássica: célula de 20–50 µm, dois núcleos (ou lobos) em espelho, cada um com um nucléolo grande, eosinofílico, do tamanho de um linfócito.',
+      'Célula de Hodgkin (mononuclear): um núcleo grande com nucléolo proeminente.',
+      'Célula lacunar (esclerose nodular): núcleo lobulado com nucléolos menores, dentro de um espaço claro — o citoplasma se retrai com a fixação em formol.',
+      'Minoria (1–10 %) das células: o resto é o fundo reativo de linfócitos, eosinófilos, histiócitos e plasmócitos.',
+      'Imuno-histoquímica: CD30+ e CD15+ (membrana e Golgi), CD45− e CD20 fraco ou negativo; PAX5 fraco.',
+    ],
+    mecanismo: [
+      'Origina-se de células B do centro germinativo que perderam o programa de célula B e deveriam ter morrido por apoptose.',
+      'Ativação constitutiva de NF-κB (às vezes pelo vírus Epstein-Barr, LMP1) e amplificação de 9p24 (PD-L1) mantêm a célula viva e escondida do sistema imune.',
+      'As células RS secretam citocinas (IL-5, IL-13, CCL17) que atraem o fundo reativo e fibroblastos — daí a pouca proporção de células tumorais e a fibrose.',
+    ],
+    significado: [
+      'Encontrar células RS no fundo inflamatório adequado define o linfoma de Hodgkin clássico.',
+      'A expressão de PD-L1 explica a resposta excepcional aos anti-PD-1 nos casos refratários.',
+    ],
+    ondeOcorre: ['Linfoma de Hodgkin clássico (esclerose nodular, celularidade mista, rico em linfócitos, depleção linfocitária)'],
+    armadilhas: [
+      'Células semelhantes a RS aparecem em mononucleose infecciosa, linfomas não Hodgkin (anaplásico de grandes células, DLBCL) e alguns carcinomas: sempre confirmar com imuno-histoquímica.',
+      'Imunoblastos reativos são grandes, mas têm um nucléolo único e central e são CD15−.',
+    ],
+  },
+  {
+    id: 'faixas-de-esclerose-colagena',
+    nome: 'Faixas de colágeno que dividem o linfonodo em nódulos',
+    sinonimos: ['esclerose nodular', 'bandas fibrosas', 'septos colágenos'],
+    categoria: 'reparo',
+    resumo:
+      'Faixas largas de colágeno birrefringente, pouco celular, que partem da cápsula espessada e dividem o linfonodo em nódulos arredondados — marca do subtipo esclerose nodular.',
+    comoReconhecer: [
+      'No pequeno aumento: o linfonodo parece "gomos" roxos separados por faixas rosa-pálidas, e a cápsula está espessa.',
+      'No médio aumento: colágeno denso e acelular, diferente das trabéculas finas do linfonodo normal.',
+    ],
+    mecanismo: ['Citocinas das células de Reed-Sternberg (TGF-β, FGF) ativam fibroblastos, que depositam colágeno em faixas.'],
+    significado: [
+      'Define o subtipo esclerose nodular, o mais comum (60–80 %), típico de adolescentes e adultos jovens, muitas vezes com massa mediastinal.',
+    ],
+    ondeOcorre: ['Linfoma de Hodgkin clássico, esclerose nodular'],
+    armadilhas: ['Linfonodos com fibrose por outras causas (pós-tratamento, fibrose de hilo) não têm os nódulos com células lacunares.'],
+  },
 ]

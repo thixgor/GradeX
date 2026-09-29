@@ -252,4 +252,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Cervical intra-epithelial neoplasia III (CIN 3)',
     },
   },
+  {
+    doenca: 'linfoma-de-hodgkin',
+    caminho: '/Research_4/Teaching/Education/Postgraduate/Dr_H_A_Haematopathology_Atlas/Hodgkin_Lymphomas/Case_010/507473.svs',
+    largura: 164696,
+    altura: 65283,
+    objetiva: 40,
+    mpp: 0.2531,
+    subtitulo: 'Esclerose nodular (40×)',
+    caso: {
+      sexo: 'F',
+      idade: 30,
+      historia: 'Linfonodos mediastinais anteriores e cervicais.',
+      diagnosticoOriginal: 'Classic Hodgkin lymphoma, nodular sclerosis',
+    },
+  },
 ]

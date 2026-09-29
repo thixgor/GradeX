@@ -484,4 +484,19 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Tuberculose', 'Sarcoidose', 'Hanseníase tuberculoide', 'Infecções fúngicas'],
     armadilhas: ['Megacariócitos da medula e sinciciotrofoblasto também são multinucleados, em outros contextos.'],
   },
+  {
+    id: 'eosinofilos-teciduais',
+    nome: 'Eosinófilos no tecido',
+    sinonimos: ['eosinofilia tecidual', 'infiltrado eosinofílico'],
+    categoria: 'inflamacao',
+    resumo:
+      'Eosinófilos fora do sangue, no tecido: células com núcleo bilobado e citoplasma cheio de grânulos vermelho-alaranjados intensos.',
+    comoReconhecer: ['No grande aumento: grânulos eosinofílicos grosseiros e brilhantes que "acendem" em vermelho; núcleo com dois lóbulos em óculos.'],
+    mecanismo: ['Recrutados por IL-5, eotaxina e outras citocinas — em alergias, parasitoses e em alguns tumores (as células de Reed-Sternberg secretam IL-5).'],
+    significado: [
+      'Sugere alergia, parasitose, reação a drogas ou esofagite eosinofílica; no linfonodo, fundo misto com eosinófilos é típico do linfoma de Hodgkin.',
+    ],
+    ondeOcorre: ['Linfoma de Hodgkin', 'Parasitoses (esquistossomose)', 'Alergias e asma', 'Esofagite eosinofílica', 'Reações a drogas'],
+    armadilhas: ['Neutrófilos têm grânulos finos e pálidos e núcleo com 3–5 lóbulos.'],
+  },
 ]

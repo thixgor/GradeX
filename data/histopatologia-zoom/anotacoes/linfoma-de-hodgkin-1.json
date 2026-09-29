@@ -1,0 +1,158 @@
+{
+ "slug": "linfoma-de-hodgkin-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Linfonodo mediastinal/cervical com linfoma de Hodgkin clássico, subtipo esclerose nodular: faixas de colágeno dividem o órgão em nódulos que contêm células lacunares e células de Hodgkin num fundo de linfócitos pequenos. Duas secções do mesmo linfonodo na lâmina.",
+ "marcacoes": [
+  {
+   "id": "lacunar",
+   "estrutura": "celula-de-reed-sternberg",
+   "categoria": "patologica",
+   "rotulo": "Célula lacunar: núcleo lobulado com nucléolos, em halo claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1823,
+      0.2592
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1805,
+    0.2575,
+    0.1845,
+    0.2615
+   ],
+   "nota": "Variante da célula de Reed-Sternberg típica da esclerose nodular: o citoplasma retraído deixa um espaço claro (\"lacuna\") em volta do núcleo lobulado."
+  },
+  {
+   "id": "lacunar-2",
+   "estrutura": "celula-de-reed-sternberg",
+   "categoria": "patologica",
+   "rotulo": "Outra célula lacunar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1877,
+      0.2528
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1872,
+    0.2512,
+    0.1912,
+    0.2552
+   ]
+  },
+  {
+   "id": "faixa",
+   "estrutura": "faixas-de-esclerose-colagena",
+   "categoria": "patologica",
+   "rotulo": "Faixa de colágeno separando nódulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1735,
+      0.24
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.13,
+    0.2,
+    0.23,
+    0.3
+   ]
+  },
+  {
+   "id": "fundo",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Fundo reativo de linfócitos pequenos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1868,
+      0.261
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.184,
+    0.255,
+    0.192,
+    0.263
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "capsula-do-linfonodo",
+   "rotulo": "Cápsula do linfonodo, espessada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2105,
+      0.215
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.19,
+    0.19,
+    0.23,
+    0.24
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celula-de-reed-sternberg",
+   "status": "presente",
+   "marcacoes": [
+    "lacunar",
+    "lacunar-2"
+   ],
+   "nota": "Células lacunares frequentes nos nódulos. O caso de origem traz imuno-histoquímica (CD30 e CD15) que confirma o diagnóstico."
+  },
+  {
+   "achado": "faixas-de-esclerose-colagena",
+   "status": "presente",
+   "marcacoes": [
+    "faixa"
+   ],
+   "nota": "Faixas de colágeno dividem o linfonodo em nódulos, com cápsula espessada."
+  },
+  {
+   "achado": "eosinofilos-teciduais",
+   "status": "nao-avaliavel",
+   "nota": "Eosinófilos não são evidentes nos campos examinados; a coloração pálida dificulta reconhecer os grânulos."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "fundo"
+   ],
+   "nota": "Linfócitos pequenos formam a maioria das células."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Sem focos de necrose nos nódulos examinados."
+  }
+ ]
+}
