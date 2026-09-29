@@ -21,6 +21,25 @@ const COR = '#22d3ee'
 const SETA = { preenchimento: '#facc15', contorno: '#0b0b0b' }
 const COMPRIMENTO_DA_SETA = 58
 
+/**
+ * Achados histopatológicos: outra cor (rosa-carmim) e outro traço (contorno
+ * tracejado), mais o **sinal de patologia** — triângulo de alerta com "!" —
+ * na cauda da seta e no topo do contorno. Quem olha a lâmina distingue, sem
+ * ler o rótulo, o que é histologia normal (amarelo/ciano) do que é doença.
+ */
+export const COR_PATOLOGICA = '#f43f5e'
+
+/** Sinal de patologia centrado em (0,0), com `r` de "raio"; o mesmo desenho do ícone da interface. */
+export function sinalDePatologiaSvg(r = 11): string {
+  const h = r * 1.8
+  const pontos = `0 ${(-h * 0.62).toFixed(1)} ${(r * 1.08).toFixed(1)} ${(h * 0.38).toFixed(1)} ${(-r * 1.08).toFixed(1)} ${(h * 0.38).toFixed(1)}`
+  return (
+    `<polygon points="${pontos}" fill="${COR_PATOLOGICA}" stroke="#0b0b0b" stroke-width="2.2" stroke-linejoin="round" paint-order="stroke"/>` +
+    `<rect x="${(-r * 0.13).toFixed(1)}" y="${(-h * 0.3).toFixed(1)}" width="${(r * 0.26).toFixed(1)}" height="${(h * 0.38).toFixed(1)}" rx="1" fill="#fff"/>` +
+    `<circle cx="0" cy="${(h * 0.2).toFixed(1)}" r="${(r * 0.15).toFixed(1)}" fill="#fff"/>`
+  )
+}
+
 type Viewer = OpenSeadragon.Viewer
 
 function paraTela(viewer: Viewer, OSD: typeof OpenSeadragon, p: Ponto, espelhado: boolean, largura: number): [number, number] {
@@ -91,7 +110,9 @@ export function desenharMarcacao(
   const largura = svg.clientWidth
   const espelhado = viewer.viewport.getFlip()
   const rotacao = viewer.viewport.getRotation(true)
+  const patologica = marcacao.categoria === 'patologica'
   const partes: string[] = []
+  const sinais: string[] = []
   let ancora: [number, number] | null = null
 
   for (const m of marcacao.marcas) {
@@ -99,10 +120,15 @@ export function desenharMarcacao(
       const [x, y] = paraTela(viewer, OSD, m.ponta, espelhado, largura)
       const a = anguloNaTela(m.angulo, rotacao, espelhado)
       partes.push(
-        `<path d="${caminhoDaSeta(COMPRIMENTO_DA_SETA)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${a.toFixed(1)})" fill="${SETA.preenchimento}" stroke="${SETA.contorno}" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"/>`,
+        `<path d="${caminhoDaSeta(COMPRIMENTO_DA_SETA)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${a.toFixed(1)})" fill="${patologica ? COR_PATOLOGICA : SETA.preenchimento}" stroke="${SETA.contorno}" stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"/>`,
       )
       const rad = (a * Math.PI) / 180
       const cauda: [number, number] = [x - Math.cos(rad) * COMPRIMENTO_DA_SETA, y - Math.sin(rad) * COMPRIMENTO_DA_SETA]
+      if (patologica) {
+        const sx = x - Math.cos(rad) * (COMPRIMENTO_DA_SETA + 12)
+        const sy = y - Math.sin(rad) * (COMPRIMENTO_DA_SETA + 12)
+        sinais.push(`<g transform="translate(${sx.toFixed(1)} ${sy.toFixed(1)})">${sinalDePatologiaSvg()}</g>`)
+      }
       if (!ancora || cauda[1] < ancora[1]) ancora = cauda
       continue
     }
@@ -110,13 +136,21 @@ export function desenharMarcacao(
     const tela = pontos.map((p) => paraTela(viewer, OSD, p, espelhado, largura))
     const d = `M ${tela.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(' L ')} Z`
     partes.push(`<path d="${d}" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="5" stroke-linejoin="round"/>`)
-    partes.push(`<path d="${d}" fill="rgba(34,211,238,0.08)" stroke="${COR}" stroke-width="2.2" stroke-linejoin="round"/>`)
+    partes.push(
+      patologica
+        ? `<path d="${d}" fill="rgba(244,63,94,0.08)" stroke="${COR_PATOLOGICA}" stroke-width="2.4" stroke-dasharray="9 5" stroke-linejoin="round"/>`
+        : `<path d="${d}" fill="rgba(34,211,238,0.08)" stroke="${COR}" stroke-width="2.2" stroke-linejoin="round"/>`,
+    )
     const topo = tela.reduce((a, b) => (b[1] < a[1] ? b : a))
+    if (patologica) sinais.push(`<g transform="translate(${topo[0].toFixed(1)} ${topo[1].toFixed(1)})">${sinalDePatologiaSvg()}</g>`)
     if (!ancora || topo[1] < ancora[1]) ancora = topo
   }
+  partes.push(...sinais)
 
   // Sem nome, sem rótulo: no quiz a seta não pode entregar a resposta.
   if (ancora && marcacao.nome) {
+    // O sinal de patologia fica entre a marca e o rótulo.
+    if (patologica) ancora = [ancora[0], ancora[1] - 14]
     // Rótulo com quebra de linha: mede o texto real e nunca deixa as letras
     // saírem da caixa, nem a caixa sair da tela (celular incluído).
     const maximo = Math.max(120, Math.min(280, largura - 8)) - 2 * FOLGA_DO_ROTULO
@@ -129,7 +163,7 @@ export function desenharMarcacao(
       .map((l, i) => `<tspan x="${w / 2}" y="${(4 + ALTURA_DA_LINHA * (i + 1) - 4).toFixed(1)}">${escaparXml(l)}</tspan>`)
       .join('')
     partes.push(
-      `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect width="${w}" height="${h}" rx="6" fill="rgba(0,0,0,0.8)"/><text text-anchor="middle" font-family="${FONTE_DO_ROTULO}" font-size="12" font-weight="600" fill="#fff">${tspans}</text></g>`,
+      `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><rect width="${w}" height="${h}" rx="6" fill="${patologica ? 'rgba(76,5,25,0.9)' : 'rgba(0,0,0,0.8)'}"${patologica ? ` stroke="${COR_PATOLOGICA}" stroke-width="1.5"` : ''}/><text text-anchor="middle" font-family="${FONTE_DO_ROTULO}" font-size="12" font-weight="600" fill="#fff">${tspans}</text></g>`,
     )
   }
   svg.innerHTML = partes.join('')

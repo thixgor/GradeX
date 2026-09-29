@@ -84,6 +84,14 @@ export default async function HomeDaHistopatologia({ searchParams }: Props) {
               microscópio e por que isso vira sintoma.
             </p>
 
+            <Link
+              href="/manual-clinico/histologia/histopatologia/zoom"
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-rose-700 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-rose-800"
+            >
+              <Microscope className="h-4 w-4" aria-hidden /> Histopatologia com Zoom — lâminas inteiras com achados marcados
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+
             <div className="mt-6 max-w-2xl">
               {/* Recorte defensivo: o termo vem da URL, é entrada não confiável
                   e só alimenta o campo de busca — nunca uma rota. */}

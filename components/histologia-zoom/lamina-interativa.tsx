@@ -3,7 +3,9 @@
 import { useRef, useState } from 'react'
 import { PanelRightClose, PanelRightOpen, Tags } from 'lucide-react'
 
-import type { EstruturaMarcada } from '@/lib/histologia-zoom/estruturas/tipos'
+import type { MarcacaoExibida } from '@/lib/histopatologia-zoom/tipos'
+
+import { SinalDePatologia } from './sinal-de-patologia'
 
 import { CatalogoDeEstruturas } from './estruturas'
 import { Visualizador, type LaminaDoVisualizador, type Vizinha } from './visualizador'
@@ -22,22 +24,34 @@ export function LaminaInterativa({
   anterior,
   proxima,
   estruturas,
+  selecionada: selecionadaExterna,
+  onSelecionar,
+  visualizadorRef: refExterna,
 }: {
   lamina: LaminaDoVisualizador
   caracteristicas: React.ReactNode
   urlDaLamina: string
   anterior: Vizinha | null
   proxima: Vizinha | null
-  estruturas: EstruturaMarcada[]
+  estruturas: MarcacaoExibida[]
+  /** Seleção controlada por fora (Histopatologia: a lista de achados abaixo também seleciona). */
+  selecionada?: string | null
+  onSelecionar?: (id: string | null) => void
+  visualizadorRef?: React.MutableRefObject<HTMLDivElement | null>
 }) {
-  const [selecionada, setSelecionada] = useState<string | null>(null)
+  const [selecaoInterna, setSelecaoInterna] = useState<string | null>(null)
+  const selecionada = selecionadaExterna !== undefined ? selecionadaExterna : selecaoInterna
   const [lateralAberta, setLateralAberta] = useState(true)
-  const visualizadorRef = useRef<HTMLDivElement | null>(null)
+  const refInterna = useRef<HTMLDivElement | null>(null)
+  const visualizadorRef = refExterna ?? refInterna
   const temEstruturas = estruturas.length > 0
-  const total = new Set(estruturas.map((e) => e.estrutura)).size
+  const patologica = estruturas.some((e) => e.categoria === 'patologica')
+  const total = new Set(estruturas.map((e) => `${e.categoria ?? ''}:${e.estrutura}`)).size
+  const achados = new Set(estruturas.filter((e) => e.categoria === 'patologica').map((e) => e.estrutura)).size
 
   const selecionar = (id: string | null) => {
-    setSelecionada(id)
+    if (onSelecionar) onSelecionar(id)
+    else setSelecaoInterna(id)
     // No celular o catálogo fica abaixo da lâmina: rola até ela para mostrar a marcação.
     if (id && visualizadorRef.current && window.matchMedia('(max-width: 1023px)').matches) {
       visualizadorRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -69,7 +83,7 @@ export function LaminaInterativa({
             onClick={() => setLateralAberta(true)}
             className="absolute -top-11 right-0 hidden items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-xs font-semibold shadow-sm hover:border-cyan-500/50 lg:inline-flex"
           >
-            <PanelRightOpen className="h-4 w-4" aria-hidden /> Estruturas ({total})
+            <PanelRightOpen className="h-4 w-4" aria-hidden /> {patologica ? 'Achados' : 'Estruturas'} ({total})
           </button>
         )}
       </div>
@@ -82,11 +96,17 @@ export function LaminaInterativa({
           <header className="flex items-center justify-between gap-2 border-b border-border px-3.5 py-3">
             <div className="min-w-0">
               <h2 id="titulo-estruturas" className="flex items-center gap-2 font-heading text-base font-semibold">
-                <Tags className="h-4 w-4 text-cyan-600 dark:text-cyan-300" aria-hidden />
-                Estruturas desta lâmina
+                {patologica ? (
+                  <SinalDePatologia className="h-4 w-4" />
+                ) : (
+                  <Tags className="h-4 w-4 text-cyan-600 dark:text-cyan-300" aria-hidden />
+                )}
+                {patologica ? 'Marcações desta lâmina' : 'Estruturas desta lâmina'}
               </h2>
               <p className="mt-0.5 text-xs text-muted-foreground">
-                {total} {total === 1 ? 'estrutura marcada' : 'estruturas marcadas'} · toque para ver na lâmina
+                {patologica
+                  ? `${achados} ${achados === 1 ? 'achado patológico' : 'achados patológicos'} e ${total - achados} ${total - achados === 1 ? 'estrutura normal' : 'estruturas normais'} · toque para ver na lâmina`
+                  : `${total} ${total === 1 ? 'estrutura marcada' : 'estruturas marcadas'} · toque para ver na lâmina`}
               </p>
             </div>
             <button

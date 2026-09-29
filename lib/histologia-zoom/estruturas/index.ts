@@ -79,7 +79,8 @@ export function estruturasDaLamina(slug: string): EstruturaMarcada[] {
   return a.estruturas
     .map((m) => {
       const verbete = POR_ID.get(m.estrutura)
-      return verbete ? { ...m, verbete } : null
+      const marcada: EstruturaMarcada | null = verbete ? { ...m, categoria: undefined, verbete } : null
+      return marcada
     })
     .filter((x): x is EstruturaMarcada => x !== null)
 }

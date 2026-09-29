@@ -34,7 +34,13 @@ function arquivosDoModulo(): string[] {
     'lib/histopatologia',
   ]
   const saida: string[] = []
+  // A Histopatologia com Zoom (`…/histopatologia/zoom`) é outro módulo, com
+  // outra fonte e outra autorização escrita (Leeds, `FONTES_LICENCIADAS.leeds`):
+  // exibe tiles e miniaturas autorizados pelo visualizador de lâminas. Suas
+  // regras de direitos são verificadas em `__tests__/histopatologia-zoom`.
+  const foraDoModulo = path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/zoom')
   const varrer = (dir: string) => {
+    if (dir === foraDoModulo) return
     for (const nome of readdirSync(dir)) {
       const completo = path.join(dir, nome)
       if (statSync(completo).isDirectory()) varrer(completo)
@@ -440,7 +446,7 @@ describe('integração com a Histologia normal', () => {
     // Some na raiz: lá a mesma URL pode estar servindo a vitrine de vendas.
     expect(nav).toContain('caminho === BASE')
     // Aba escondida quando a área está fechada no ambiente.
-    expect(nav).toContain('histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA] : DESTINOS')
+    expect(nav).toContain('histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA, HISTOPATOLOGIA_ZOOM] : DESTINOS')
   })
 
   /**
@@ -464,7 +470,7 @@ describe('integração com a Histologia normal', () => {
 
     for (const arquivo of paginas) {
       const fonte = readFileSync(arquivo, 'utf8')
-      const relativo = path.relative(RAIZ, arquivo)
+      const relativo = path.relative(RAIZ, arquivo).split(path.sep).join('/')
 
       // A home é a exceção declarada: a mesma URL serve a vitrine de vendas, e
       // ela já oferece destinos maiores e ilustrados.

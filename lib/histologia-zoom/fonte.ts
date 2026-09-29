@@ -23,6 +23,8 @@
 
 import { FONTES_LICENCIADAS } from '@/lib/acervos-licenciados'
 
+import type { FonteDaLamina } from './tipos'
+
 export const HOST_DO_ACERVO = 'https://histoviewer.biomed.au.dk'
 export const BASE_DE_IMAGENS = `${HOST_DO_ACERVO}/imgsets/`
 
@@ -76,7 +78,7 @@ export function linhaDeCredito(c: { autor: string; licenca: string; acervo: stri
 
 /** Crédito curto sobre a lâmina: o da imagem, quando a licença exige; senão o do acervo. */
 export function creditoDaLamina(l: {
-  fonte: 'histoviewer' | 'gtex' | 'commons' | 'hpa'
+  fonte: FonteDaLamina
   credito: { autor: string; licenca: string; acervo: string } | null
 }): string {
   if (l.credito) return `${MARCA_DO_ACERVO} · ${linhaDeCredito(l.credito)}`

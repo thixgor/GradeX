@@ -77,6 +77,8 @@ export type FonteLicenciadaId =
   | 'neurosigns'
   // Autorização própria (26/09/2026) — lâminas da Histologia com Zoom.
   | 'histoviewer'
+  // Autorização própria (29/09/2026) — lâminas da Histopatologia com Zoom.
+  | 'leeds'
 
 export interface FonteLicenciada {
   id: FonteLicenciadaId
@@ -537,6 +539,48 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
       data: '2026-09-26',
       sha256: '46a609037a0b21f3784805b790fa253d636d5f4a2d3ad6ccbd4f818fae02ec2f',
       hashDeclarado: '7ebf13c572b1296a56d7d8a0729e185a94fb2fc8e58afe04b465a27010b61657',
+    },
+  },
+  /**
+   * Leeds Virtual Pathology — lâminas pré-diagnosticadas da Histopatologia com
+   * Zoom. Termo DOMAQ-LEEDS-VP-2026-001, de 29/09/2026. A cláusula 4 dispensa
+   * o crédito, mas sugere mantê-lo no rodapé da seção, com referência em ABNT
+   * — seguimos a sugestão (ver `lib/histopatologia-zoom/fonte.ts`).
+   */
+  leeds: {
+    id: 'leeds',
+    nome: 'Leeds Virtual Pathology — Virtual Pathology Slide Library',
+    url: 'https://www.virtualpathology.leeds.ac.uk/slides/library/',
+    titular: 'University of Leeds — Leeds Virtual Pathology (Reino Unido)',
+    signatarios: [
+      'Prof. Darren Treanor — Patologista consultor, líder do projeto',
+      'Prof. Roy Ruddle — Cientista da computação, investigador principal',
+      'Prof. Philip Quirke / Dr. Derek Magee — Patologia gastrointestinal / Visão computacional',
+    ],
+    licencaBase: 'Conteúdo da University of Leeds (todos os direitos reservados)',
+    excecao:
+      'Autorização por prazo indeterminado para indexar, organizar, catalogar, traduzir, aprofundar e disponibilizar (inclusive de forma paga) imagens, lâminas digitais, textos, vídeos e áudios do Leeds Virtual Pathology e do Leeds Virtual Microscope.',
+    credito:
+      'Conteúdos originários do projeto Leeds Virtual Pathology (University of Leeds). Crédito dispensado pela cláusula 4; mantido no rodapé da seção, com referência ABNT, como o termo sugere.',
+    creditoCurto: 'Leeds Virtual Pathology (University of Leeds)',
+    permissoes: [
+      'Indexar, organizar e catalogar o acervo em português brasileiro.',
+      'Traduzir integral ou parcialmente para o português brasileiro.',
+      'Aprofundar, contextualizar e complementar com material didático próprio, mantendo a fidelidade à fonte.',
+      'Disponibilizar de forma gratuita ou paga na plataforma DomineAqui e subdomínios.',
+      'Dispensar os créditos (cláusula 4).',
+    ],
+    restricoes: [
+      'Vale para a DomineAqui e seus subdomínios (domineaqui.com.br).',
+      'Revogável mediante comunicação escrita com antecedência razoável, sem prejuízo do conteúdo já publicado e creditado (cláusula 5).',
+    ],
+    dominiosDeMidia: ['images.virtualpathology.leeds.ac.uk'],
+    comprovante: {
+      arquivo: 'Termo_Autorizacao_DomineAqui_Leeds_VirtualPathology.pdf',
+      versao: 'DOMAQ-LEEDS-VP-2026-001',
+      data: '2026-09-29',
+      sha256: 'd62bcfe8d63c1545c4b3833ed4a3b7100f065761719f8f2e9343c65e3f35fe5e',
+      hashDeclarado: '029232ea620a4345db6a303490d1d6f88d9d0fd2d08a07d57f8fcd59342b7d23',
     },
   },
 }

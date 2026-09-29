@@ -50,9 +50,11 @@ export function niveisResolvidos(p: PiramideDaLamina): NivelResolvido[] {
   const menor = p.niveis[0]
   const dzi = p.formato === 'dzi'
   const imagem = p.formato === 'imagem'
+  const aperio = p.formato === 'aperio'
   const proporcaoOk =
     !dzi &&
     !imagem &&
+    !aperio &&
     m.largura > 0 &&
     m.altura > 0 &&
     Math.abs(m.largura / m.altura / (topo.largura / topo.altura) - 1) < TOLERANCIA_DE_PROPORCAO
@@ -78,6 +80,11 @@ export function niveisResolvidos(p: PiramideDaLamina): NivelResolvido[] {
       ny: n.ny,
       url: imagem
         ? () => n.pasta
+        : aperio
+        ? // ImageServer da Aperio: <svs>?<esq>+<topo>+<larg>+<alt>+<redução>+<qualidade>, com
+          // esquerda/topo em pixels do nível. O tile de borda volta com fundo branco
+          // até o tamanho pedido; o getTileBounds do OpenSeadragon usa só a parte útil.
+          (x, y) => `${p.base}?${x * n.tileL}+${y * n.tileA}+${n.tileL}+${n.tileA}+${n.reducao ?? 1}+90`
         : dzi
         ? (x, y) => `${p.base}${n.pasta}${x}_${y}.${p.extensao ?? 'jpeg'}`
         : (x, y) => `${p.base}${n.pasta}${y * n.nx + x}.jpg`,

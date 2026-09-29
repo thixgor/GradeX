@@ -23,10 +23,12 @@ export interface NivelDaPiramide {
   ny: number
   /** Nível existente no servidor mas ausente do XML de origem; dimensões derivadas por escala. */
   inferido?: boolean
+  /** Formato `aperio`: redução do nível em relação ao topo (1, 2, 4…), pedida ao servidor na URL. */
+  reducao?: number
 }
 
 /** De onde vem a lâmina. */
-export type FonteDaLamina = 'histoviewer' | 'gtex' | 'commons' | 'hpa'
+export type FonteDaLamina = 'histoviewer' | 'gtex' | 'commons' | 'hpa' | 'leeds'
 
 /** Crédito exigido por licenças abertas (Commons, HPA): autor, licença e origem. */
 export interface CreditoDaImagem {
@@ -80,9 +82,12 @@ export interface EspecimeColetado {
  * Serializável: atravessa a fronteira servidor → cliente como prop.
  */
 export interface PiramideDaLamina {
-  /** URL-base do espécime, com barra no fim. */
+  /**
+   * URL-base do espécime, com barra no fim. No formato `aperio` é a URL do
+   * arquivo `.svs`, e cada tile é uma região pedida por query string.
+   */
   base: string
-  formato?: 'histoviewer' | 'dzi' | 'imagem'
+  formato?: 'histoviewer' | 'dzi' | 'imagem' | 'aperio'
   /** Extensão dos tiles DZI (jpeg, png). */
   extensao?: string
   /** Pixels de sobreposição entre tiles (DZI). */

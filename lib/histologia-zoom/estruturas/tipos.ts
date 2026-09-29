@@ -60,8 +60,16 @@ export type Marca =
 export interface MarcacaoNaLamina {
   /** Único dentro da lâmina (ex.: `purkinje`, `purkinje-2`). */
   id: string
-  /** Chave do glossário. */
+  /**
+   * Chave do glossário. Nas marcações `patologica`, é a chave do glossário de
+   * achados histopatológicos (`lib/histopatologia-zoom/achados`).
+   */
   estrutura: string
+  /**
+   * `patologica`: achado de doença (Histopatologia com Zoom), desenhado com o
+   * sinal de patologia. Ausente: estrutura histológica normal.
+   */
+  categoria?: 'patologica'
   /** Rótulo específico desta marcação, quando difere do nome do glossário. */
   rotulo?: string
   marcas: Marca[]
@@ -79,6 +87,8 @@ export interface AnotacaoDaLamina {
 }
 
 /** Marcação com o verbete do glossário já resolvido, pronta para a interface. */
-export interface EstruturaMarcada extends MarcacaoNaLamina {
+export interface EstruturaMarcada extends Omit<MarcacaoNaLamina, 'categoria'> {
+  /** Estrutura normal: nunca é um achado patológico. */
+  categoria?: undefined
   verbete: Estrutura
 }

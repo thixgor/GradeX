@@ -77,7 +77,7 @@ import {
   type Preferencias,
 } from '@/lib/histologia-zoom/preferencias'
 import type { CreditoDaImagem, FonteDaLamina, PiramideDaLamina } from '@/lib/histologia-zoom/tipos'
-import type { EstruturaMarcada } from '@/lib/histologia-zoom/estruturas/tipos'
+import type { MarcacaoExibida } from '@/lib/histopatologia-zoom/tipos'
 import { desenharMarcacao, paradasDaMarcacao, vistaDaMarcacao } from '@/lib/histologia-zoom/desenho-de-marcacoes'
 
 import { Alternador, BotaoDeFerramenta, Deslizador, Folha, Separador } from './controles'
@@ -163,8 +163,8 @@ export function Visualizador({
   urlDaLamina: string
   anterior: Vizinha | null
   proxima: Vizinha | null
-  /** Estruturas marcadas nesta lâmina (catálogo). */
-  estruturas?: EstruturaMarcada[]
+  /** Estruturas (e, na Histopatologia, achados) marcadas nesta lâmina. */
+  estruturas?: MarcacaoExibida[]
   /** Controlado pelo pai (catálogo lateral da página); sem ele, o visualizador guarda o estado. */
   estruturaSelecionada?: string | null
   onSelecionarEstrutura?: (id: string | null) => void
@@ -192,7 +192,7 @@ export function Visualizador({
   const adicionarSetaRef = useRef<(x: number, y: number) => void>(() => {})
   const atualizarNitidezRef = useRef<() => void>(() => {})
   const camadaRef = useRef<SVGSVGElement | null>(null)
-  const marcacaoAtivaRef = useRef<(EstruturaMarcada & { nome: string }) | null>(null)
+  const marcacaoAtivaRef = useRef<(MarcacaoExibida & { nome: string }) | null>(null)
   const desenharRef = useRef<() => void>(() => {})
 
   const [prefs, setPrefs] = useState<Preferencias>(PADRAO)
@@ -1364,7 +1364,7 @@ export function Visualizador({
             <Separador />
             {estruturas.length > 0 && (
               <BotaoDeFerramenta
-                rotulo="Estruturas desta lâmina"
+                rotulo={estruturas.some((e) => e.categoria === 'patologica') ? 'Achados e estruturas desta lâmina' : 'Estruturas desta lâmina'}
                 atalho="E"
                 ativo={painel === 'estruturas' || !!selecao}
                 onClick={() => setPainel((p) => (p === 'estruturas' ? null : 'estruturas'))}
@@ -1436,8 +1436,8 @@ export function Visualizador({
         </Folha>
 
         <Folha
-          titulo="Estruturas desta lâmina"
-          subtitulo="Toque numa estrutura para vê-la marcada"
+          titulo={estruturas.some((e) => e.categoria === 'patologica') ? 'Achados e estruturas desta lâmina' : 'Estruturas desta lâmina'}
+          subtitulo="Toque num item para vê-lo marcado"
           aberta={painel === 'estruturas'}
           onFechar={() => setPainel(null)}
           largura="larga"

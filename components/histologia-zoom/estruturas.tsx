@@ -4,6 +4,9 @@ import { useMemo, useState } from 'react'
 import { ChevronDown, Crosshair, Search } from 'lucide-react'
 
 import type { EstruturaMarcada, NivelDeRegeneracao, TipoDeEstrutura } from '@/lib/histologia-zoom/estruturas/tipos'
+import type { AchadoMarcado, CategoriaDeAchado, MarcacaoExibida } from '@/lib/histopatologia-zoom/tipos'
+
+import { SinalDePatologia } from './sinal-de-patologia'
 
 /**
  * Catálogo de estruturas marcadas na lâmina.
@@ -36,9 +39,24 @@ const REGENERACAO: Record<NivelDeRegeneracao, { rotulo: string; classe: string }
   'nao-se-aplica': { rotulo: 'Não se aplica', classe: 'bg-muted text-muted-foreground' },
 }
 
+const ROTULO_DA_CATEGORIA: Record<CategoriaDeAchado, string> = {
+  'lesao-celular': 'Lesão celular',
+  inflamacao: 'Inflamação',
+  reparo: 'Reparo',
+  circulatorio: 'Circulatório',
+  deposito: 'Depósito',
+  adaptacao: 'Adaptação',
+  neoplasia: 'Neoplasia',
+  agente: 'Agente',
+  arquitetura: 'Arquitetura',
+}
+
 interface Grupo {
+  /** Chave do grupo: categoria + verbete (um achado e uma estrutura podem ter o mesmo id). */
+  chave: string
   estrutura: string
-  marcacoes: EstruturaMarcada[]
+  patologico: boolean
+  marcacoes: MarcacaoExibida[]
 }
 
 export function CatalogoDeEstruturas({
@@ -47,7 +65,7 @@ export function CatalogoDeEstruturas({
   onSelecionar,
   compacto = false,
 }: {
-  estruturas: EstruturaMarcada[]
+  estruturas: MarcacaoExibida[]
   /** Id da marcação selecionada. */
   selecionada: string | null
   onSelecionar: (id: string | null) => void
@@ -59,9 +77,11 @@ export function CatalogoDeEstruturas({
   const grupos = useMemo(() => {
     const mapa = new Map<string, Grupo>()
     for (const e of estruturas) {
-      const g = mapa.get(e.estrutura) ?? { estrutura: e.estrutura, marcacoes: [] }
+      const patologico = e.categoria === 'patologica'
+      const chave = `${patologico ? 'p' : 'h'}:${e.estrutura}`
+      const g = mapa.get(chave) ?? { chave, estrutura: e.estrutura, patologico, marcacoes: [] }
       g.marcacoes.push(e)
-      mapa.set(e.estrutura, g)
+      mapa.set(chave, g)
     }
     const termo = normalizar(filtro)
     return [...mapa.values()].filter((g) => {
@@ -71,7 +91,15 @@ export function CatalogoDeEstruturas({
     })
   }, [estruturas, filtro])
 
-  const grupoSelecionado = estruturas.find((e) => e.id === selecionada)?.estrutura ?? null
+  const marcada = estruturas.find((e) => e.id === selecionada)
+  const grupoSelecionado = marcada ? `${marcada.categoria === 'patologica' ? 'p' : 'h'}:${marcada.estrutura}` : null
+  const temAchados = grupos.some((g) => g.patologico)
+  const secoes: Array<{ titulo: string | null; patologica: boolean; itens: Grupo[] }> = temAchados
+    ? [
+        { titulo: 'Achados histopatológicos', patologica: true, itens: grupos.filter((g) => g.patologico) },
+        { titulo: 'Histologia de referência', patologica: false, itens: grupos.filter((g) => !g.patologico) },
+      ]
+    : [{ titulo: null, patologica: false, itens: grupos }]
 
   const alternar = (id: string) =>
     setAbertos((a) => {
@@ -98,18 +126,31 @@ export function CatalogoDeEstruturas({
           />
         </div>
       )}
+      {secoes.map((secao) =>
+        secao.itens.length === 0 ? null : (
+          <section key={secao.titulo ?? 'todas'} className={secao.titulo ? 'mb-4 last:mb-0' : ''}>
+            {secao.titulo && (
+              <h3 className="mb-2 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                {secao.patologica ? (
+                  <SinalDePatologia className="h-3.5 w-3.5" />
+                ) : (
+                  <Crosshair className="h-3.5 w-3.5 text-cyan-600 dark:text-cyan-300" aria-hidden />
+                )}
+                {secao.titulo} ({secao.itens.length})
+              </h3>
+            )}
       <ul className="space-y-1.5">
-        {grupos.map((g) => {
+        {secao.itens.map((g) => {
           const v = g.marcacoes[0].verbete
-          const ativo = grupoSelecionado === g.estrutura
-          const aberto = abertos.has(g.estrutura) || ativo
+          const ativo = grupoSelecionado === g.chave
+          const aberto = abertos.has(g.chave) || ativo
+          const moldura = ativo
+            ? g.patologico
+              ? 'border-rose-500/60 bg-rose-500/[0.06]'
+              : 'border-cyan-500/60 bg-cyan-500/[0.06]'
+            : 'border-border bg-card'
           return (
-            <li
-              key={g.estrutura}
-              className={`rounded-xl border transition-colors ${
-                ativo ? 'border-cyan-500/60 bg-cyan-500/[0.06]' : 'border-border bg-card'
-              }`}
-            >
+            <li key={g.chave} className={`rounded-xl border transition-colors ${moldura}`}>
               <div className="flex items-start gap-2 p-2.5">
                 <button
                   type="button"
@@ -117,10 +158,14 @@ export function CatalogoDeEstruturas({
                   aria-pressed={ativo}
                   className="flex min-w-0 flex-1 items-start gap-2 text-left"
                 >
-                  <Crosshair
-                    className={`mt-0.5 h-4 w-4 shrink-0 ${ativo ? 'text-cyan-600 dark:text-cyan-300' : 'text-muted-foreground'}`}
-                    aria-hidden
-                  />
+                  {g.patologico ? (
+                    <SinalDePatologia className={`mt-0.5 h-4 w-4 shrink-0 ${ativo ? '' : 'opacity-70'}`} />
+                  ) : (
+                    <Crosshair
+                      className={`mt-0.5 h-4 w-4 shrink-0 ${ativo ? 'text-cyan-600 dark:text-cyan-300' : 'text-muted-foreground'}`}
+                      aria-hidden
+                    />
+                  )}
                   <span className="min-w-0">
                     <span className="block text-sm font-semibold leading-snug">{v.nome}</span>
                     <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">{v.resumo}</span>
@@ -128,11 +173,13 @@ export function CatalogoDeEstruturas({
                 </button>
                 <span className="flex shrink-0 flex-col items-end gap-1">
                   <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    {ROTULO_DO_TIPO[v.tipo]}
+                    {g.patologico
+                      ? ROTULO_DA_CATEGORIA[(v as AchadoMarcado['verbete']).categoria]
+                      : ROTULO_DO_TIPO[(v as EstruturaMarcada['verbete']).tipo]}
                   </span>
                   <button
                     type="button"
-                    onClick={() => alternar(g.estrutura)}
+                    onClick={() => alternar(g.chave)}
                     aria-expanded={aberto}
                     aria-label={aberto ? `Recolher ${v.nome}` : `Detalhes de ${v.nome}`}
                     className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -153,7 +200,9 @@ export function CatalogoDeEstruturas({
                       title={m.rotulo ?? `Local ${i + 1}`}
                       className={`max-w-full truncate rounded-md border px-2 py-1 text-[11px] font-semibold transition-colors ${
                         selecionada === m.id
-                          ? 'border-cyan-600 bg-cyan-600 text-white'
+                          ? g.patologico
+                            ? 'border-rose-600 bg-rose-600 text-white'
+                            : 'border-cyan-600 bg-cyan-600 text-white'
                           : 'border-border text-muted-foreground hover:border-cyan-500/50 hover:text-foreground'
                       }`}
                     >
@@ -163,18 +212,46 @@ export function CatalogoDeEstruturas({
                 </div>
               )}
 
-              {aberto && <DetalheDoVerbete grupo={g} selecionada={selecionada} />}
+              {aberto &&
+                (g.patologico ? (
+                  <DetalheDoAchado grupo={g} selecionada={selecionada} />
+                ) : (
+                  <DetalheDoVerbete grupo={g} selecionada={selecionada} />
+                ))}
             </li>
           )
         })}
       </ul>
+          </section>
+        ),
+      )}
       {grupos.length === 0 && <p className="py-6 text-center text-sm text-muted-foreground">Nada encontrado.</p>}
     </div>
   )
 }
 
+function DetalheDoAchado({ grupo, selecionada }: { grupo: Grupo; selecionada: string | null }) {
+  const v = (grupo.marcacoes[0] as AchadoMarcado).verbete
+  const nota = (grupo.marcacoes.find((m) => m.id === selecionada) ?? grupo.marcacoes[0]).nota
+  return (
+    <div className="space-y-1 border-t border-border/70 px-2.5 pb-2.5 pt-2 text-sm">
+      {nota && (
+        <p className="mb-2 rounded-lg bg-rose-500/[0.08] px-2.5 py-2 text-xs leading-relaxed">
+          <span className="font-semibold">Nesta lâmina: </span>
+          {nota}
+        </p>
+      )}
+      <Secao titulo="Como reconhecer" itens={v.comoReconhecer} aberta />
+      <Secao titulo="Por que se forma" itens={v.mecanismo} />
+      <Secao titulo="O que significa" itens={v.significado} />
+      <Secao titulo="Onde ocorre" itens={v.ondeOcorre} />
+      <Secao titulo="Armadilhas" itens={v.armadilhas} />
+    </div>
+  )
+}
+
 function DetalheDoVerbete({ grupo, selecionada }: { grupo: Grupo; selecionada: string | null }) {
-  const v = grupo.marcacoes[0].verbete
+  const v = (grupo.marcacoes[0] as EstruturaMarcada).verbete
   const nota = (grupo.marcacoes.find((m) => m.id === selecionada) ?? grupo.marcacoes[0]).nota
   const r = REGENERACAO[v.regeneracao.nivel]
   return (

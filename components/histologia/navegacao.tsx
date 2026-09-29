@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookMarked, FlaskConical, Layers, ListChecks, ScanSearch, Search, Stethoscope } from 'lucide-react'
+import { BookMarked, FlaskConical, Layers, ListChecks, Microscope, ScanSearch, Search, Stethoscope } from 'lucide-react'
 
 import { BASE } from '@/lib/histologia/rotas'
 
@@ -112,6 +112,15 @@ const HISTOPATOLOGIA: Destino = {
   patologica: true,
 }
 
+/** Lâminas inteiras de doença, com zoom e achados marcados — dentro da Histopatologia, mas com aba própria. */
+const HISTOPATOLOGIA_ZOOM: Destino = {
+  href: `${BASE}/histopatologia/zoom`,
+  rotulo: 'Patologia com Zoom',
+  icone: <Microscope className="h-3.5 w-3.5" aria-hidden />,
+  prefixo: `${BASE}/histopatologia/zoom`,
+  patologica: true,
+}
+
 export function NavegacaoDoModulo({
   histopatologiaHabilitada,
 }: {
@@ -126,8 +135,9 @@ export function NavegacaoDoModulo({
   // A raiz do módulo pode ser a vitrine de vendas. Ver o cabeçalho do arquivo.
   if (!caminho || caminho === BASE || caminho === `${BASE}/`) return null
 
-  const destinos = histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA] : DESTINOS
+  const destinos = histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA, HISTOPATOLOGIA_ZOOM] : DESTINOS
   const naPatologia = caminho.startsWith(`${HISTOPATOLOGIA.prefixo}`)
+  const noZoomPatologico = caminho.startsWith(`${HISTOPATOLOGIA_ZOOM.prefixo}`)
   // Nenhuma aba com prefixo reivindicou o caminho: é uma página do currículo.
   const noCurriculo =
     !naPatologia && !DESTINOS.some((d) => d.prefixo && caminho.startsWith(d.prefixo))
@@ -152,7 +162,9 @@ export function NavegacaoDoModulo({
             // toda rota dela também casa com os prefixos das outras abas. Sem
             // esta linha, "Assuntos" apareceria como atual dentro da patologia.
             const atual = destino.patologica
-              ? naPatologia
+              ? destino === HISTOPATOLOGIA_ZOOM
+                ? noZoomPatologico
+                : naPatologia && !noZoomPatologico
               : destino.prefixo === null
                 ? noCurriculo
                 : !naPatologia && caminho.startsWith(destino.prefixo)
