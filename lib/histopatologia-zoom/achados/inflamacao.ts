@@ -650,4 +650,23 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Dano alveolar difuso organizante', 'Pneumonias virais e por Pneumocystis', 'Fibrose pulmonar'],
     armadilhas: ['Não confundir com adenocarcinoma in situ, que tem atipia monótona e transição abrupta com alvéolos normais.'],
   },
+  {
+    id: 'pneumonite-intersticial-cronica',
+    nome: 'Inflamação intersticial crônica (septos alveolares alargados)',
+    sinonimos: ['pneumonite intersticial', 'infiltrado intersticial linfocitário', 'septos espessados'],
+    categoria: 'inflamacao',
+    resumo:
+      'Septos alveolares alargados por linfócitos e plasmócitos, com os alvéolos relativamente vazios — a inflamação está NA PAREDE, não dentro do espaço aéreo.',
+    comoReconhecer: [
+      'No pequeno aumento: a "renda" pulmonar fica mais grossa e mais roxa, mas os alvéolos continuam abertos.',
+      'No grande aumento: cada septo tem várias camadas de linfócitos e plasmócitos entre os capilares.',
+    ],
+    mecanismo: ['Resposta imune (antígenos inalados, vírus, autoimunidade, drogas) dirigida ao interstício, com recrutamento de linfócitos T.'],
+    significado: [
+      'Padrão das pneumonias "atípicas" (virais, Mycoplasma) e das doenças intersticiais: pneumonite de hipersensibilidade, pneumonia intersticial não específica, doenças do colágeno.',
+      'Contrasta com a pneumonia bacteriana, em que o exsudato ocupa os alvéolos.',
+    ],
+    ondeOcorre: ['Pneumonite de hipersensibilidade', 'Pneumonias virais e atípicas', 'Pneumonia intersticial não específica', 'Colagenoses'],
+    armadilhas: ['Septos colapsados (atelectasia) parecem grossos e celulares; o infiltrado verdadeiro é de células inflamatórias, não capilares justapostos.'],
+  },
 ]

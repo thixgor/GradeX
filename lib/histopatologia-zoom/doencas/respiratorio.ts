@@ -244,4 +244,72 @@ export const DOENCAS_RESPIRATORIO: DoencaZoom[] = [
       'No dano alveolar difuso, os septos engrossam com edema e fibroblastos, os alvéolos ganham um revestimento de membranas rosa e, depois, de pneumócitos cúbicos.',
     ],
   },
+  {
+    id: 'pneumonite-de-hipersensibilidade',
+    nome: 'Pneumonite de hipersensibilidade',
+    sinonimos: ['alveolite alérgica extrínseca', 'pulmão do fazendeiro', 'pulmão do criador de pássaros', 'pneumonia de hipersensibilidade'],
+    nomesEmIngles: ['hypersensitivity pneumonitis', 'extrinsic allergic alveolitis'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 4,
+    resumo:
+      'Doença pulmonar intersticial imunomediada por inalação repetida de antígenos orgânicos (fungos, proteínas de aves, mofo): inflamação linfocitária do interstício centrada nos bronquíolos, granulomas pequenos mal formados e, na forma crônica, fibrose.',
+    epidemiologia:
+      'Exposições típicas: feno mofado (pulmão do fazendeiro), aves e penas (criadores de pássaros, travesseiros de pena), mofo doméstico, ar-condicionado e umidificadores contaminados. Pode ocorrer em não fumantes — o tabagismo é, curiosamente, protetor.',
+    patogenese: [
+      'Partículas orgânicas pequenas (< 5 µm) chegam aos bronquíolos e alvéolos.',
+      'Em indivíduos sensibilizados, imunocomplexos (reação tipo III) e principalmente linfócitos T (tipo IV) respondem ao antígeno.',
+      'Linfócitos e plasmócitos infiltram as paredes bronquiolares e os septos vizinhos; macrófagos formam granulomas pequenos, frouxos, e células gigantes.',
+      'Com exposição contínua, a inflamação crônica leva a fibrose — às vezes difícil de distinguir da fibrose pulmonar idiopática.',
+    ],
+    roteiro: [
+      'Panorâmico: arquitetura geral preservada, com septos alargados e mais roxos; o acometimento é mais intenso em volta dos bronquíolos.',
+      'Médio aumento: infiltrado linfoplasmocitário intersticial, com alvéolos relativamente vazios (diferente da pneumonia bacteriana).',
+      'Procure granulomas pequenos e mal formados e células gigantes isoladas no interstício peribronquiolar.',
+      'Avalie fibrose (forma crônica) e bronquiolite.',
+    ],
+    achados: [
+      {
+        achado: 'pneumonite-intersticial-cronica',
+        tipo: 'especifico',
+        comoAparece: 'Septos alargados por linfócitos e plasmócitos, mais intensos ao redor dos bronquíolos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'granuloma-epitelioide',
+        tipo: 'especifico',
+        comoAparece: 'Granulomas pequenos, frouxos e mal formados, não caseosos, no interstício peribronquiolar.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose septal e peribronquiolar na forma crônica.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Sarcoidose',
+        comoSeparar: 'Granulomas compactos, bem formados, ao longo dos linfáticos (pleura, septos, feixes broncovasculares), com pouca inflamação intersticial entre eles.',
+      },
+      {
+        nome: 'Pneumonia intersticial não específica',
+        comoSeparar: 'Inflamação intersticial uniforme e difusa, sem centralização bronquiolar nem granulomas.',
+      },
+      {
+        nome: 'Fibrose pulmonar idiopática (PIU)',
+        comoSeparar: 'Fibrose subpleural heterogênea, focos fibroblásticos e faveolamento, com pouca inflamação.',
+      },
+    ],
+    correlacaoClinica: [
+      'Aguda: febre, calafrios, tosse e dispneia 4–8 horas após exposição intensa. Crônica: dispneia progressiva e tosse seca, como neste caso de não fumante.',
+      'TC: vidro fosco, nódulos centrolobulares e aprisionamento aéreo; lavado broncoalveolar com linfocitose.',
+      'Tratamento: afastar-se do antígeno é essencial; corticoides nas formas persistentes.',
+    ],
+    comparacaoComNormal: [
+      'No pulmão normal, os septos alveolares são finos, com uma fileira de capilares e raríssimas células inflamatórias.',
+      'Na pneumonite de hipersensibilidade, os septos ficam grossos, cheios de linfócitos, sobretudo perto dos bronquíolos, mas os alvéolos continuam com ar.',
+    ],
+  },
 ]

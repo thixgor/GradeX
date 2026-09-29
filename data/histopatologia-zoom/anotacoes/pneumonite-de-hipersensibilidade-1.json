@@ -1,0 +1,156 @@
+{
+ "slug": "pneumonite-de-hipersensibilidade-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia pulmonar com pneumonite de hipersensibilidade crônica: arquitetura preservada, septos alveolares difusamente alargados por linfócitos e plasmócitos, com acentuação ao redor dos bronquíolos e fibrose leve nas áreas mais densas.",
+ "marcacoes": [
+  {
+   "id": "septos",
+   "estrutura": "pneumonite-intersticial-cronica",
+   "categoria": "patologica",
+   "rotulo": "Septos alargados por linfócitos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4905,
+      0.1175
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.48,
+    0.11,
+    0.495,
+    0.125
+   ],
+   "nota": "Os alvéolos continuam abertos; o que mudou é a parede, grossa e cheia de células inflamatórias crônicas."
+  },
+  {
+   "id": "peribronquiolar",
+   "estrutura": "pneumonite-intersticial-cronica",
+   "categoria": "patologica",
+   "rotulo": "Agregado linfoide peribronquiolar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2815,
+      0.2065
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.27,
+    0.195,
+    0.29,
+    0.215
+   ],
+   "nota": "Agregado de linfócitos junto a uma via aérea pequena e a um ramo arterial: a doença se concentra em volta dos bronquíolos, por onde o antígeno inalado chega."
+  },
+  {
+   "id": "area-densa",
+   "estrutura": "pneumonite-intersticial-cronica",
+   "categoria": "patologica",
+   "rotulo": "Área de interstício densamente infiltrado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.1
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.46,
+    0.06,
+    0.56,
+    0.16
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Fibrose intersticial com inflamação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.525,
+      0.1025
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.515,
+    0.1,
+    0.53,
+    0.115
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Pigmento antracótico (incidental)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2815,
+      0.21
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.27,
+    0.195,
+    0.29,
+    0.215
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "pneumonite-intersticial-cronica",
+   "status": "presente",
+   "marcacoes": [
+    "septos",
+    "peribronquiolar",
+    "area-densa"
+   ],
+   "nota": "Inflamação intersticial crônica difusa, mais intensa em volta dos bronquíolos, com arquitetura pulmonar preservada."
+  },
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificaram granulomas inequívocos nos campos examinados; na pneumonite de hipersensibilidade eles são pequenos e esparsos e podem faltar em parte dos fragmentos."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Pigmento antracótico peribronquiolar, incidental."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Fibrose leve a moderada nas áreas mais infiltradas (componente crônico)."
+  }
+ ]
+}

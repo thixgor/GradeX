@@ -432,4 +432,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Organising diffuse alveolar damage',
     },
   },
+  {
+    doenca: 'pneumonite-de-hipersensibilidade',
+    caminho: '/Research_4/Teaching/Education/Postgraduate/Carling_collection/Set_07/104372.svs',
+    largura: 73926,
+    altura: 35197,
+    objetiva: 20,
+    mpp: 0.499,
+    subtitulo: 'Crônica, com inflamação intersticial',
+    caso: {
+      sexo: 'M',
+      idade: 55,
+      historia: 'Não fumante com tosse crônica.',
+      diagnosticoOriginal: 'Hypersensitivity pneumonitis',
+    },
+  },
 ]
