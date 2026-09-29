@@ -192,4 +192,19 @@ export const CURADORIA: CuradoriaDaLamina[] = [
       diagnosticoOriginal: 'Squamous carcinoma',
     },
   },
+  {
+    doenca: 'carcinoma-ductal-invasivo-da-mama',
+    caminho: '/Research_4/Teaching/Education/Undergraduate/1082.svs',
+    largura: 52026,
+    altura: 37091,
+    objetiva: 20,
+    mpp: 0.4667,
+    subtitulo: 'Tipo não especial, alto grau nuclear',
+    caso: {
+      sexo: 'F',
+      idade: 59,
+      historia: 'Nódulo mamário de 3 cm.',
+      diagnosticoOriginal: 'Invasive ductal carcinoma',
+    },
+  },
 ]

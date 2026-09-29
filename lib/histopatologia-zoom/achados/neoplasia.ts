@@ -389,4 +389,29 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Carcinoma espinocelular de pele, mucosas, esôfago, pulmão, colo uterino'],
     armadilhas: ['Hiperplasia pseudoepiteliomatosa (em volta de úlceras, infecções fúngicas, tumor de células granulares) imita invasão, mas sem atipia significativa.'],
   },
+  {
+    id: 'carcinoma-in-situ-comedo',
+    nome: 'Carcinoma ductal in situ com comedonecrose',
+    sinonimos: ['CDIS', 'carcinoma intraductal', 'comedocarcinoma', 'comedonecrose'],
+    categoria: 'neoplasia',
+    resumo:
+      'Ducto mamário distendido e preenchido por células malignas, ainda contidas pela membrana basal e pela camada de células mioepiteliais, com necrose no centro (comedonecrose).',
+    comoReconhecer: [
+      'No médio aumento: estruturas redondas e bem delimitadas (o contorno do ducto preservado), cheias de células atípicas, com um tampão central de necrose eosinofílica.',
+      'Ao redor, contorno liso e ininterrupto — diferente dos ninhos invasivos, irregulares e angulosos.',
+      'A imuno-histoquímica (p63, calponina) mostra as células mioepiteliais em volta: prova de que é in situ.',
+    ],
+    mecanismo: [
+      'Células ductais neoplásicas proliferam dentro do ducto; as do centro ficam longe dos vasos do estroma e morrem por hipóxia — necrose central, que pode calcificar.',
+    ],
+    significado: [
+      'Precursor do carcinoma invasivo; as microcalcificações da comedonecrose são o que a mamografia detecta.',
+      'Não dá metástase enquanto for puramente in situ; o grau nuclear alto e a comedonecrose indicam maior risco de progressão e recidiva.',
+    ],
+    ondeOcorre: ['Mama (junto a carcinoma invasivo ou isolado)'],
+    armadilhas: [
+      'Hiperplasia ductal usual também preenche ductos, mas com células heterogêneas, núcleos sobrepostos e luzes periféricas em fenda, sem necrose.',
+      'Cancerização lobular (CDIS estendido a lóbulos) pode imitar invasão.',
+    ],
+  },
 ]

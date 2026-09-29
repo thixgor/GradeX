@@ -1,0 +1,184 @@
+{
+ "slug": "carcinoma-ductal-invasivo-da-mama-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Mama com carcinoma invasivo de tipo não especial (ductal): ninhos, cordões e células isoladas infiltrando um estroma desmoplásico, com pleomorfismo nuclear acentuado e poucos túbulos. Na periferia, tecido adiposo e lóbulos normais.",
+ "marcacoes": [
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Células tumorais isoladas e em cordões no estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4378,
+      0.1112
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.435,
+    0.108,
+    0.445,
+    0.118
+   ],
+   "nota": "Células atípicas soltas e em pequenos grupos, sem contorno de ducto nem camada mioepitelial, infiltrando o colágeno."
+  },
+  {
+   "id": "ninhos",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Pequenos ninhos e glândulas angulosas infiltrando o estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2805,
+      0.1965
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.275,
+    0.19,
+    0.295,
+    0.21
+   ]
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma desmoplásico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.418,
+      0.108
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.1,
+    0.45,
+    0.15
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes e pleomórficos, com nucléolos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2785,
+      0.203
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.277,
+    0.196,
+    0.289,
+    0.208
+   ]
+  },
+  {
+   "id": "tecido-adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo da mama",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.655,
+      0.29
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.62,
+    0.25,
+    0.7,
+    0.35
+   ]
+  },
+  {
+   "id": "lobulo",
+   "estrutura": "lobulo-mamario",
+   "rotulo": "Lóbulo mamário normal na periferia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7475,
+      0.3615
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.72,
+    0.34,
+    0.78,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao",
+    "ninhos"
+   ],
+   "nota": "Invasão extensa do estroma por ninhos, cordões e células isoladas."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma denso e ativado em toda a área do tumor."
+  },
+  {
+   "achado": "carcinoma-in-situ-comedo",
+   "status": "nao-avaliavel",
+   "nota": "Há ninhos de contorno arredondado que podem corresponder a carcinoma in situ, mas o conteúdo das luzes examinadas é sangue, não necrose; distinguir in situ de invasivo exigiria imuno-histoquímica para células mioepiteliais (p63, calponina)."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Pleomorfismo nuclear acentuado."
+  },
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "ausente",
+   "nota": "O tumor forma poucos túbulos: cresce sobretudo em ninhos e cordões (pontuação alta de formação tubular no grau de Nottingham)."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificou êmbolo inequívoco nos campos examinados; a avaliação exige exame sistemático da periferia do tumor."
+  }
+ ]
+}
