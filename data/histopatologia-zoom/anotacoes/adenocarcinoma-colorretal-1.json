@@ -1,0 +1,317 @@
+{
+ "slug": "adenocarcinoma-colorretal-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Parede de cólon com adenocarcinoma moderadamente diferenciado (metade esquerda) ao lado de mucosa colônica normal (direita). O tumor forma glândulas complexas com \"necrose suja\", infiltra a muscular própria e forma uma frente de invasão profunda em estroma desmoplásico.",
+ "marcacoes": [
+  {
+   "id": "glandulas-tumorais",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas neoplásicas irregulares e ramificadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.539,
+      0.241
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.2,
+    0.58,
+    0.28
+   ]
+  },
+  {
+   "id": "transicao",
+   "estrutura": "transicao-abrupta-para-mucosa-normal",
+   "categoria": "patologica",
+   "rotulo": "Transição: tumor à esquerda, criptas normais à direita",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.598,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.55,
+    0.16,
+    0.66,
+    0.26
+   ],
+   "nota": "À esquerda da seta, glândulas neoplásicas escuras e desorganizadas; à direita, criptas normais cortadas transversalmente, redondas e cheias de células caliciformes."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes, alongados e estratificados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5299,
+      0.2285
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.524,
+    0.2235,
+    0.536,
+    0.2355
+   ],
+   "nota": "Os núcleos ocupam toda a altura do epitélio (estratificação), são alongados ou vesiculosos, com nucléolos. Compare com os núcleos pequenos e basais das criptas normais."
+  },
+  {
+   "id": "necrose-suja",
+   "estrutura": "necrose-suja",
+   "categoria": "patologica",
+   "rotulo": "\"Necrose suja\" na luz glandular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4051,
+      0.2075
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.398,
+    0.199,
+    0.413,
+    0.214
+   ],
+   "nota": "Restos necróticos eosinofílicos com fragmentos nucleares dentro da luz de uma glândula tumoral."
+  },
+  {
+   "id": "invasao-muscular",
+   "estrutura": "infiltracao-da-muscular-propria",
+   "categoria": "patologica",
+   "rotulo": "Glândulas tumorais entre os feixes da muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3149,
+      0.1453
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.295,
+    0.12,
+    0.345,
+    0.17
+   ],
+   "nota": "Glândulas atípicas dissecando os feixes de músculo liso da muscular própria: a invasão ultrapassou a submucosa."
+  },
+  {
+   "id": "frente-invasiva",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Frente de invasão profunda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1335,
+      0.036
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.095,
+    0.01,
+    0.165,
+    0.08
+   ],
+   "nota": "Na parte mais profunda do tumor, glândulas pequenas, cordões e ninhos infiltram um estroma fibroso, longe da mucosa de origem, e chegam a encostar em adipócitos."
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma desmoplásico entre os ninhos tumorais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1385,
+      0.0215
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.128,
+    0.01,
+    0.162,
+    0.044
+   ],
+   "nota": "Estroma pálido e fibroso, com fibroblastos fusiformes ativados, envolvendo os ninhos de carcinoma."
+  },
+  {
+   "id": "criptas-normais",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Criptas normais do cólon",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.641,
+      0.176
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.625,
+    0.16,
+    0.665,
+    0.2
+   ]
+  },
+  {
+   "id": "caliciformes",
+   "estrutura": "celula-caliciforme",
+   "rotulo": "Células caliciformes na mucosa normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6505,
+      0.1865
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.638,
+    0.178,
+    0.658,
+    0.198
+   ]
+  },
+  {
+   "id": "muscular-propria",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria (sem tumor neste setor)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.78,
+      0.125
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.7,
+    0.05,
+    0.86,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas-tumorais"
+   ],
+   "nota": "Toda a metade esquerda do corte é tumor: glândulas alongadas, ramificadas e fundidas, sem células caliciformes."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "frente-invasiva"
+   ],
+   "nota": "O tumor atravessa a submucosa e infiltra as camadas profundas da parede em estroma desmoplásico."
+  },
+  {
+   "achado": "infiltracao-da-muscular-propria",
+   "status": "presente",
+   "marcacoes": [
+    "invasao-muscular"
+   ],
+   "nota": "Glândulas neoplásicas entre os feixes da muscular própria."
+  },
+  {
+   "achado": "necrose-suja",
+   "status": "presente",
+   "marcacoes": [
+    "necrose-suja"
+   ],
+   "nota": "Frequente na luz das glândulas maiores."
+  },
+  {
+   "achado": "transicao-abrupta-para-mucosa-normal",
+   "status": "presente",
+   "marcacoes": [
+    "transicao"
+   ],
+   "nota": "Transição nítida entre tumor e mucosa colônica normal no meio do corte."
+  },
+  {
+   "achado": "mucina-extracelular",
+   "status": "ausente",
+   "nota": "Não há lagos de muco neste corte: é um adenocarcinoma usual (não mucinoso)."
+  },
+  {
+   "achado": "celulas-em-anel-de-sinete",
+   "status": "ausente",
+   "nota": "O tumor forma glândulas; não há células isoladas em anel de sinete."
+  },
+  {
+   "achado": "adenoma-residual",
+   "status": "nao-avaliavel",
+   "nota": "Não se reconhece com segurança um componente adenomatoso residual: o tumor ocupa toda a espessura da mucosa neste setor."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Atipia acentuada, com estratificação nuclear e nucléolos evidentes."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma fibroso ativado em torno das glândulas invasivas, mais evidente na frente profunda."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Nenhum êmbolo tumoral inequívoco foi identificado neste corte; a pesquisa de invasão vascular exige exame sistemático e, às vezes, colorações especiais."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "ausente",
+   "nota": "Nos setores examinados, as próprias glândulas neoplásicas formam a superfície voltada para a luz, sem úlcera recoberta por fibrina e neutrófilos."
+  }
+ ]
+}

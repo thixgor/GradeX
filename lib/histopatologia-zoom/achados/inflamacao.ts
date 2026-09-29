@@ -244,4 +244,86 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
       'Não é "granuloma": o nome confunde, mas granuloma é agregado de macrófagos epitelioides, algo completamente diferente.',
     ],
   },
+  {
+    id: 'abscesso-de-cripta',
+    nome: 'Abscesso de cripta (criptite)',
+    sinonimos: ['criptite', 'abscesso críptico'],
+    categoria: 'inflamacao',
+    resumo:
+      'Neutrófilos dentro da luz de uma cripta intestinal (abscesso de cripta) ou infiltrando seu epitélio (criptite) — marca de atividade na colite.',
+    comoReconhecer: [
+      'No médio aumento: uma cripta com a luz "suja", cheia de pontos escuros, em vez de muco claro.',
+      'No grande aumento: neutrófilos (núcleos segmentados) e restos celulares na luz; o epitélio da cripta pode estar achatado ou destruído.',
+    ],
+    mecanismo: [
+      'Na colite ativa, o epitélio e os macrófagos liberam IL-8 e outros quimioatraentes; os neutrófilos atravessam o epitélio da cripta e se acumulam na luz.',
+      'As proteases dos neutrófilos destroem a cripta; várias criptas destruídas confluem em úlceras.',
+    ],
+    significado: [
+      'Indica colite ATIVA — mas não é específico: ocorre na colite ulcerativa, na doença de Crohn e nas colites infecciosas.',
+      'O que aponta para doença inflamatória intestinal crônica é a combinação com distorção das criptas e plasmocitose basal.',
+    ],
+    ondeOcorre: ['Colite ulcerativa ativa', 'Doença de Crohn', 'Colites infecciosas (Salmonella, Shigella, Campylobacter)', 'Diverticulite'],
+    armadilhas: ['Muco com células descamadas na luz não é abscesso: procure núcleos segmentados de neutrófilos.'],
+  },
+  {
+    id: 'distorcao-arquitetural-das-criptas',
+    nome: 'Distorção arquitetural das criptas',
+    sinonimos: ['criptas ramificadas', 'atrofia de criptas', 'distorção de criptas'],
+    categoria: 'arquitetura',
+    resumo:
+      'Criptas ramificadas, encurtadas, de tamanhos e orientações variados e mais espaçadas — cicatriz de episódios repetidos de destruição e regeneração.',
+    comoReconhecer: [
+      'No pequeno aumento: a mucosa perde o aspecto de "fileira de tubos de ensaio" paralelos e iguais.',
+      'Criptas ramificadas (em "Y"), dilatadas, tortuosas ou que não alcançam a muscular da mucosa (encurtamento), com lâmina própria mais ampla entre elas.',
+    ],
+    mecanismo: [
+      'Cada surto de colite destrói criptas; na regeneração, as criptas se refazem de forma desordenada — ramificam e se encurtam.',
+      'Por isso a distorção só aparece com semanas a meses de doença: é marca de CRONICIDADE.',
+    ],
+    significado: [
+      'É o que separa a doença inflamatória intestinal crônica (colite ulcerativa, Crohn) de uma colite infecciosa aguda, que preserva a arquitetura.',
+    ],
+    ondeOcorre: ['Colite ulcerativa', 'Doença de Crohn', 'Colite crônica por radiação ou isquemia (menos intensa)'],
+    armadilhas: [
+      'Criptas cortadas obliquamente parecem ramificadas; perto de folículos linfoides e no reto distal a arquitetura é normalmente menos regular.',
+    ],
+  },
+  {
+    id: 'infiltrado-linfoplasmocitario',
+    nome: 'Infiltrado linfoplasmocitário da lâmina própria (plasmocitose basal)',
+    sinonimos: ['plasmocitose basal', 'inflamação crônica', 'infiltrado mononuclear'],
+    categoria: 'inflamacao',
+    resumo:
+      'Lâmina própria expandida por linfócitos e plasmócitos, que ocupam inclusive o espaço entre a base das criptas e a muscular da mucosa (plasmocitose basal).',
+    comoReconhecer: [
+      'A lâmina própria, normalmente frouxa e com poucas células, fica "cheia" de núcleos redondos e escuros.',
+      'Plasmócitos: núcleo excêntrico com cromatina "em roda de carroça" e halo claro perinuclear (Golgi); linfócitos: núcleo redondo, pequeno, sem citoplasma visível.',
+      'Plasmocitose basal: essas células se acumulam logo acima da muscular da mucosa, afastando as criptas dela.',
+    ],
+    mecanismo: [
+      'A resposta imune crônica contra antígenos luminais (microbiota) em hospedeiro geneticamente predisposto mantém linfócitos T e plasmócitos na mucosa.',
+    ],
+    significado: [
+      'Sinal de inflamação CRÔNICA; a plasmocitose basal é um dos achados mais precoces e úteis para diagnosticar doença inflamatória intestinal.',
+    ],
+    ondeOcorre: ['Colite ulcerativa e doença de Crohn', 'Gastrite crônica', 'Endometrite crônica (plasmócitos no estroma)'],
+    armadilhas: ['A lâmina própria do cólon normal tem alguns plasmócitos na metade superior: o anormal é a expansão e a posição basal.'],
+  },
+  {
+    id: 'pseudopolipo-inflamatorio',
+    nome: 'Pseudopólipo inflamatório',
+    sinonimos: ['pólipo inflamatório', 'pseudopólipo'],
+    categoria: 'arquitetura',
+    resumo:
+      'Ilha de mucosa preservada ou regenerada que fica em relevo entre áreas ulceradas — parece um pólipo, mas não é neoplasia.',
+    comoReconhecer: [
+      'No pequeno aumento: uma projeção de mucosa com criptas, cercada de ambos os lados por áreas sem mucosa (úlceras).',
+      'As criptas da ilha são inflamadas e distorcidas, sem displasia.',
+    ],
+    mecanismo: ['Úlceras extensas destroem a mucosa em volta; o que sobra (ou regenera) fica mais alto que o fundo das úlceras vizinhas.'],
+    significado: ['Marca de colite grave, atual ou passada; comum na colite ulcerativa extensa. Não tem potencial maligno próprio.'],
+    ondeOcorre: ['Colite ulcerativa', 'Doença de Crohn', 'Outras colites ulceradas graves'],
+    armadilhas: ['Precisa ser diferenciado de adenoma e de displasia associada à colite: não há núcleos displásicos.'],
+  },
 ]

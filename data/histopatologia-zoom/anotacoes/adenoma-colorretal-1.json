@@ -1,0 +1,239 @@
+{
+ "slug": "adenoma-colorretal-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Pólipo colônico com adenoma viloso: frondes longas revestidas por epitélio displásico sobre um eixo de submucosa, ligado à mucosa colônica normal (à esquerda). Não há invasão do eixo neste corte.",
+ "marcacoes": [
+  {
+   "id": "displasia",
+   "estrutura": "displasia-epitelial",
+   "categoria": "patologica",
+   "rotulo": "Epitélio adenomatoso (displasia)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.26
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.24,
+    0.47,
+    0.35
+   ],
+   "nota": "Frondes revestidas por epitélio escuro, com núcleos alongados e empilhados e poucas células caliciformes — compare com as criptas claras logo abaixo."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos alongados, hipercromáticos e estratificados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4126,
+      0.2976
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.285,
+    0.43,
+    0.315
+   ]
+  },
+  {
+   "id": "transicao",
+   "estrutura": "transicao-abrupta-para-mucosa-normal",
+   "categoria": "patologica",
+   "rotulo": "Transição: adenoma acima, cripta normal abaixo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4155,
+      0.3025
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.398,
+    0.286,
+    0.432,
+    0.32
+   ],
+   "nota": "No mesmo campo, o epitélio adenomatoso (acima e à esquerda) encosta numa cripta normal cheia de células caliciformes (abaixo e à direita)."
+  },
+  {
+   "id": "frondes",
+   "estrutura": "arquitetura-vilosa",
+   "categoria": "patologica",
+   "rotulo": "Frondes vilosas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3065,
+      0.556
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.26,
+    0.47,
+    0.42,
+    0.63
+   ],
+   "nota": "Projeções longas e paralelas, com eixo fino de lâmina própria, revestidas por epitélio displásico: é o que define o adenoma viloso."
+  },
+  {
+   "id": "congestao",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Eixos das frondes congestos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.611,
+      0.331
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.57,
+    0.29,
+    0.65,
+    0.37
+   ]
+  },
+  {
+   "id": "criptas-normais",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Criptas normais na base do pólipo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.385,
+      0.316
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.28,
+    0.44,
+    0.35
+   ]
+  },
+  {
+   "id": "caliciformes",
+   "estrutura": "celula-caliciforme",
+   "rotulo": "Células caliciformes da mucosa normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.3054
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.405,
+    0.292,
+    0.435,
+    0.322
+   ]
+  },
+  {
+   "id": "vasos-eixo",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos do eixo do pólipo (submucosa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.252
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.22,
+    0.52,
+    0.32
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "displasia-epitelial",
+   "status": "presente",
+   "marcacoes": [
+    "displasia"
+   ],
+   "nota": "Displasia em toda a superfície do pólipo; o eixo de submucosa está livre."
+  },
+  {
+   "achado": "arquitetura-vilosa",
+   "status": "presente",
+   "marcacoes": [
+    "frondes"
+   ],
+   "nota": "Predomínio de frondes vilosas longas: adenoma viloso, como no diagnóstico de origem."
+  },
+  {
+   "achado": "transicao-abrupta-para-mucosa-normal",
+   "status": "presente",
+   "marcacoes": [
+    "transicao"
+   ],
+   "nota": "Na base do pólipo, de ambos os lados do pedículo."
+  },
+  {
+   "achado": "displasia-de-alto-grau",
+   "status": "nao-avaliavel",
+   "nota": "O diagnóstico de origem não gradua a displasia, e a graduação exige percorrer todo o pólipo; nos campos examinados predominam núcleos alongados, de aspecto de baixo grau."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "ausente",
+   "nota": "O eixo de submucosa contém vasos e conjuntivo, sem glândulas atípicas infiltrando-o nem desmoplasia: as \"ilhas\" glandulares no eixo são dobras de frondes cortadas tangencialmente, com lâmina própria própria."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos maiores e mais escuros que os das criptas normais vizinhas."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "congestao"
+   ],
+   "nota": "Eixos das frondes e vasos do pedículo congestos."
+  }
+ ]
+}

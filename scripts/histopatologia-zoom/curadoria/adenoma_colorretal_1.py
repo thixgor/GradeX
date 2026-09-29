@@ -1,0 +1,40 @@
+import sys; sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]))
+from leeds import *
+
+salvar('adenoma-colorretal-1', [
+    pat('displasia', 'displasia-epitelial', seta(0.39, 0.26, 45),
+        rotulo='Epitélio adenomatoso (displasia)',
+        nota='Frondes revestidas por epitélio escuro, com núcleos alongados e empilhados e poucas células caliciformes — compare com as criptas claras logo abaixo.',
+        vista=(0.36, 0.24, 0.47, 0.35)),
+    pat('atipia', 'atipia-citologica', seta(0.4126, 0.2976, 45),
+        rotulo='Núcleos alongados, hipercromáticos e estratificados',
+        vista=(0.400, 0.285, 0.430, 0.315)),
+    pat('transicao', 'transicao-abrupta-para-mucosa-normal', seta(0.4155, 0.3025, 45),
+        rotulo='Transição: adenoma acima, cripta normal abaixo',
+        nota='No mesmo campo, o epitélio adenomatoso (acima e à esquerda) encosta numa cripta normal cheia de células caliciformes (abaixo e à direita).',
+        vista=(0.398, 0.286, 0.432, 0.320)),
+    pat('frondes', 'arquitetura-vilosa', seta(0.3065, 0.556, 45),
+        rotulo='Frondes vilosas',
+        nota='Projeções longas e paralelas, com eixo fino de lâmina própria, revestidas por epitélio displásico: é o que define o adenoma viloso.',
+        vista=(0.26, 0.47, 0.42, 0.63)),
+    pat('congestao', 'hiperemia-e-congestao', seta(0.611, 0.331, 45),
+        rotulo='Eixos das frondes congestos',
+        vista=(0.57, 0.29, 0.65, 0.37)),
+    est('criptas-normais', 'cripta-de-lieberkuhn', seta(0.385, 0.316, 45), rotulo='Criptas normais na base do pólipo',
+        vista=(0.36, 0.28, 0.44, 0.35)),
+    est('caliciformes', 'celula-caliciforme', seta(0.421, 0.3054, 225), rotulo='Células caliciformes da mucosa normal',
+        vista=(0.405, 0.292, 0.435, 0.322)),
+    est('vasos-eixo', 'vaso-sanguineo', seta(0.46, 0.252, 180), rotulo='Vasos do eixo do pólipo (submucosa)',
+        vista=(0.42, 0.22, 0.52, 0.32)),
+], achados=[
+    achado('displasia-epitelial', 'presente', ['displasia'], 'Displasia em toda a superfície do pólipo; o eixo de submucosa está livre.'),
+    achado('arquitetura-vilosa', 'presente', ['frondes'], 'Predomínio de frondes vilosas longas: adenoma viloso, como no diagnóstico de origem.'),
+    achado('transicao-abrupta-para-mucosa-normal', 'presente', ['transicao'], 'Na base do pólipo, de ambos os lados do pedículo.'),
+    achado('displasia-de-alto-grau', 'nao-avaliavel', [],
+           'O diagnóstico de origem não gradua a displasia, e a graduação exige percorrer todo o pólipo; nos campos examinados predominam núcleos alongados, de aspecto de baixo grau.'),
+    achado('invasao-estromal', 'ausente', [],
+           'O eixo de submucosa contém vasos e conjuntivo, sem glândulas atípicas infiltrando-o nem desmoplasia: as "ilhas" glandulares no eixo são dobras de frondes cortadas tangencialmente, com lâmina própria própria.'),
+    achado('atipia-citologica', 'presente', ['atipia'], 'Núcleos maiores e mais escuros que os das criptas normais vizinhas.'),
+    achado('hiperemia-e-congestao', 'presente', ['congestao'], 'Eixos das frondes e vasos do pedículo congestos.'),
+], conferencias=3, resumo='Pólipo colônico com adenoma viloso: frondes longas revestidas por epitélio displásico sobre um eixo de submucosa, ligado à mucosa colônica normal (à esquerda). Não há invasão do eixo neste corte.')
+print('ok')
