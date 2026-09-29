@@ -477,4 +477,191 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'A lâmina própria normal é frouxa e pouco celular; na colite, está abarrotada de linfócitos e plasmócitos.',
     ],
   },
+  {
+    id: 'doenca-de-crohn',
+    nome: 'Doença de Crohn',
+    sinonimos: ['enterite regional', 'ileíte terminal', 'DII'],
+    nomesEmIngles: ["Crohn's disease", 'regional enteritis'],
+    sistema: 'digestorio',
+    orgao: 'ileo',
+    prioridade: 5,
+    resumo:
+      'Doença inflamatória intestinal crônica, segmentar e transmural, que pode acometer qualquer ponto do trato digestivo (mais o íleo terminal), com granulomas não caseosos, agregados linfoides em toda a parede, úlceras em fissura e fibrose que leva a estenoses e fístulas.',
+    epidemiologia:
+      'Pico entre 15 e 35 anos. Incidência crescente no Brasil. O tabagismo aumenta o risco e a gravidade (ao contrário da colite ulcerativa). Associação com variantes de NOD2, ATG16L1 e IRGM.',
+    patogenese: [
+      'Em hospedeiros com defeito na detecção e eliminação de bactérias intracelulares (NOD2, autofagia), a microbiota atravessa uma barreira epitelial defeituosa.',
+      'A resposta imune Th1/Th17 exagerada (IFN-γ, TNF, IL-12/23) recruta e ativa macrófagos — que formam granulomas.',
+      'A inflamação se espalha por toda a parede ao longo de linfáticos: agregados linfoides na submucosa, na muscular e na subserosa.',
+      'Úlceras aftoides sobre folículos linfoides se aprofundam em fissuras, que podem atravessar a parede e formar fístulas e abscessos.',
+      'A cronicidade ativa fibroblastos: a parede se espessa e o lúmen estreita (estenose), causando obstrução.',
+      'O processo é segmentar: trechos doentes intercalados com mucosa normal ("lesões salteadas").',
+    ],
+    roteiro: [
+      'Panorâmico: veja a parede inteira — espessada? Procure pontos azuis (agregados linfoides) na muscular própria e na subserosa, longe da mucosa: é a inflamação transmural.',
+      'Avalie a submucosa: alargada por fibrose e edema (base da estenose)?',
+      'Mucosa: procure úlceras (áreas sem epitélio) e, no íleo, alteração das vilosidades e das criptas.',
+      'Médio e grande aumento: dentro ou perto dos agregados linfoides, procure nódulos pálidos de macrófagos epitelioides — granulomas não caseosos.',
+      'Por fim, busque fissuras (úlceras estreitas e profundas) e trajetos fistulosos.',
+    ],
+    achados: [
+      {
+        achado: 'granuloma-epitelioide',
+        tipo: 'especifico',
+        comoAparece: 'Granulomas pequenos, não caseosos, em qualquer camada da parede — presentes em cerca de metade dos casos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'agregados-linfoides-transmurais',
+        tipo: 'especifico',
+        comoAparece: 'Agregados linfoides na submucosa, entre os feixes da muscular própria e na subserosa ("rosário de Crohn").',
+        peso: 'criterio',
+      },
+      {
+        achado: 'fibrose-da-submucosa',
+        tipo: 'especifico',
+        comoAparece: 'Submucosa espessada por fibrose e edema — causa das estenoses.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'ulceracao-da-mucosa',
+        tipo: 'geral',
+        comoAparece: 'Úlceras aftoides iniciais que se aprofundam em fissuras.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'distorcao-arquitetural-das-criptas',
+        tipo: 'geral',
+        comoAparece: 'Criptas distorcidas e, no íleo, atrofia vilositária e metaplasia pilórica — sinais de cronicidade.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Inflamação crônica da lâmina própria, irregular e segmentar.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'abscesso-de-cripta',
+        tipo: 'geral',
+        comoAparece: 'Atividade focal, geralmente menos difusa que na colite ulcerativa.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Colite ulcerativa',
+        comoSeparar:
+          'Contínua a partir do reto, limitada à mucosa, sem granulomas nem fissuras; não acomete o íleo (exceto ileíte de refluxo discreta).',
+      },
+      {
+        nome: 'Tuberculose intestinal',
+        comoSeparar:
+          'Granulomas grandes, confluentes, com necrose caseosa e células de Langhans; úlceras transversais; BAAR/cultura/PCR positivos. Crucial antes de iniciar anti-TNF.',
+      },
+      {
+        nome: 'Yersiniose',
+        comoSeparar: 'Ileíte aguda com granulomas supurativos (centro com neutrófilos) e linfadenite mesentérica; curso autolimitado.',
+      },
+      {
+        nome: 'Enterite isquêmica ou actínica',
+        comoSeparar: 'Fibrose e úlceras, mas sem granulomas nem agregados linfoides transmurais; vasos alterados.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dor abdominal em fossa ilíaca direita, diarreia (geralmente sem sangue), perda de peso e febre; pode simular apendicite.',
+      'Estenoses causam obstrução; fissuras transmurais causam fístulas (enteroentéricas, enterovesicais, perianais) e abscessos.',
+      'O íleo terminal doente absorve mal vitamina B12 e sais biliares: anemia megaloblástica, diarreia colerética e cálculos.',
+      'Tratamento: corticoides, imunomoduladores e biológicos (anti-TNF, anti-integrina, anti-IL-12/23); cirurgia para estenoses e fístulas, poupando intestino porque a doença recorre.',
+    ],
+    comparacaoComNormal: [
+      'No íleo normal, a mucosa tem vilosidades altas e finas; a submucosa é fina e a muscular própria e a serosa não têm inflamação.',
+      'No Crohn, a submucosa fica larga e fibrosa, e aparecem agregados linfoides até a face externa da parede.',
+      'Os nódulos pálidos de macrófagos epitelioides (granulomas) não existem no íleo normal — os nódulos normais são folículos linfoides das placas de Peyer, na mucosa e submucosa.',
+    ],
+  },
+  {
+    id: 'gastrite-cronica-h-pylori',
+    nome: 'Gastrite crônica por Helicobacter pylori',
+    sinonimos: ['gastrite do tipo B', 'gastrite crônica ativa', 'pangastrite'],
+    nomesEmIngles: ['Helicobacter pylori gastritis', 'chronic active gastritis'],
+    sistema: 'digestorio',
+    orgao: 'estomago-piloro',
+    prioridade: 6,
+    resumo:
+      'Inflamação crônica da mucosa gástrica causada pelo H. pylori: infiltrado linfoplasmocitário na lâmina própria, folículos linfoides e, na fase ativa, neutrófilos; com os anos, atrofia e metaplasia intestinal.',
+    epidemiologia:
+      'Infecta cerca de metade da população mundial, adquirida na infância; no Brasil a prevalência em adultos passa de 60 % em muitas regiões. A maioria é assintomática, mas 10–15 % desenvolvem úlcera péptica e 1–3 %, câncer gástrico.',
+    patogenese: [
+      'A bactéria coloniza o muco do antro, protegida pela urease que neutraliza o ácido à sua volta.',
+      'CagA e VacA lesam o epitélio e induzem IL-8: neutrófilos migram para as fovéolas (gastrite ATIVA).',
+      'A persistência da infecção recruta linfócitos e plasmócitos e forma folículos linfoides com centros germinativos (gastrite CRÔNICA) — folículos não existem na mucosa gástrica normal.',
+      'A inflamação de anos destrói glândulas (atrofia) e as células-tronco passam a produzir epitélio intestinal (metaplasia intestinal).',
+      'Sobre a metaplasia podem surgir displasia e adenocarcinoma do tipo intestinal; o estímulo linfoide crônico pode originar linfoma MALT.',
+    ],
+    roteiro: [
+      'Panorâmico: identifique fragmentos de mucosa gástrica — fovéolas na superfície, glândulas na profundidade.',
+      'Lâmina própria: está expandida por linfócitos e plasmócitos? Há folículos linfoides?',
+      'Procure neutrófilos no epitélio das fovéolas (atividade).',
+      'Procure metaplasia intestinal: glândulas com células caliciformes em cálice e, às vezes, células de Paneth.',
+      'Examine o muco da superfície no maior aumento (ou peça Giemsa/imuno-histoquímica) à procura dos bacilos.',
+    ],
+    achados: [
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Lâmina própria superficial e profunda expandida por linfócitos e plasmócitos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'helicobacter-pylori',
+        tipo: 'especifico',
+        comoAparece: 'Bacilos curvos no muco sobre o epitélio foveolar (melhor vistos em Giemsa/imuno-histoquímica).',
+        peso: 'criterio',
+      },
+      {
+        achado: 'hiperplasia-linfoide-reativa',
+        tipo: 'especifico',
+        comoAparece: 'Folículos linfoides com centros germinativos na mucosa — muito sugestivos de H. pylori.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-neutrofilico',
+        tipo: 'geral',
+        comoAparece: 'Neutrófilos no epitélio das fovéolas e das glândulas: gastrite ativa.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'metaplasia-intestinal',
+        tipo: 'especifico',
+        comoAparece: 'Glândulas com células caliciformes e de Paneth substituindo glândulas gástricas, nas infecções de longa data.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Gastrite autoimune',
+        comoSeparar:
+          'Atrofia restrita ao corpo e fundo (antro poupado), perda das células parietais, hiperplasia de células endócrinas; anti-célula parietal e anti-fator intrínseco; anemia perniciosa. Sem H. pylori.',
+      },
+      {
+        nome: 'Gastropatia reativa (química)',
+        comoSeparar: 'Hiperplasia foveolar em saca-rolhas, edema e fibras musculares na lâmina própria, POUCA inflamação — por AINE ou refluxo biliar.',
+      },
+      {
+        nome: 'Linfoma MALT',
+        comoSeparar: 'Infiltrado linfoide denso e monótono de células B marginais que destrói glândulas (lesões linfoepiteliais); clonalidade.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitas vezes assintomática; pode causar dispepsia. Associada a úlcera duodenal (antro inflamado → mais gastrina → mais ácido) e gástrica.',
+      'Diagnóstico: teste da urease em biópsia, histologia, teste respiratório com ureia marcada, antígeno fecal.',
+      'Tratamento: inibidor de bomba de prótons + dois antibióticos (terapia tríplice) ou quádrupla com bismuto; confirmar erradicação.',
+      'Erradicar reduz o risco de câncer gástrico, sobretudo antes que a atrofia e a metaplasia se instalem.',
+    ],
+    comparacaoComNormal: [
+      'Na mucosa antral normal, a lâmina própria entre as glândulas é frouxa, com poucas células, e não há folículos linfoides.',
+      'O epitélio foveolar normal tem muco em "capuz" uniforme em todas as células; na metaplasia, aparecem células caliciformes isoladas, como no intestino.',
+    ],
+  },
 ]

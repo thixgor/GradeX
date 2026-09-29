@@ -1,0 +1,217 @@
+{
+ "slug": "doenca-de-crohn-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Segmento de íleo ressecado por obstrução, com o quadro clássico da doença de Crohn: parede espessada, submucosa fibrosa, agregados linfoides em toda a espessura da parede (\"rosário\") e granulomas epitelioides não caseosos; úlcera em um dos bordos.",
+ "marcacoes": [
+  {
+   "id": "granuloma",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granuloma epitelioide não caseoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6735,
+      0.4365
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.664,
+    0.427,
+    0.688,
+    0.451
+   ],
+   "nota": "Nódulo de macrófagos epitelioides em redemoinho, de citoplasma pálido e núcleos ovais, cercado por linfócitos, sem necrose central — dentro de um agregado linfoide da submucosa."
+  },
+  {
+   "id": "agregado-muscular",
+   "estrutura": "agregados-linfoides-transmurais",
+   "categoria": "patologica",
+   "rotulo": "Agregado linfoide dentro da muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6395,
+      0.4905
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.47,
+    0.7,
+    0.54
+   ]
+  },
+  {
+   "id": "agregado-subseroso",
+   "estrutura": "agregados-linfoides-transmurais",
+   "categoria": "patologica",
+   "rotulo": "Agregado linfoide na face externa da parede (subserosa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6905,
+      0.5105
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.6,
+    0.47,
+    0.7,
+    0.54
+   ]
+  },
+  {
+   "id": "fibrose-submucosa",
+   "estrutura": "fibrose-da-submucosa",
+   "categoria": "patologica",
+   "rotulo": "Submucosa espessada: fibrose, edema e inflamação crônica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.755,
+      0.418
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.38,
+    0.8,
+    0.46
+   ]
+  },
+  {
+   "id": "ulcera",
+   "estrutura": "ulceracao-da-mucosa",
+   "categoria": "patologica",
+   "rotulo": "Úlcera: a mucosa desapareceu, a submucosa inflamada forma a superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.826,
+      0.362
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.77,
+    0.33,
+    0.87,
+    0.43
+   ]
+  },
+  {
+   "id": "muscular-propria",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.72,
+      0.485
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.62,
+    0.44,
+    0.82,
+    0.54
+   ]
+  },
+  {
+   "id": "vilosidades",
+   "estrutura": "vilosidade-intestinal",
+   "rotulo": "Vilosidades do íleo (lúmen estreitado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.388,
+      0.17
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.35,
+    0.1,
+    0.45,
+    0.3
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "presente",
+   "marcacoes": [
+    "granuloma"
+   ],
+   "nota": "Granulomas pequenos e bem formados, sem necrose, dentro dos agregados linfoides da submucosa."
+  },
+  {
+   "achado": "agregados-linfoides-transmurais",
+   "status": "presente",
+   "marcacoes": [
+    "agregado-muscular",
+    "agregado-subseroso"
+   ],
+   "nota": "Agregados linfoides em toda a espessura da parede, enfileirados na face externa da muscular própria."
+  },
+  {
+   "achado": "fibrose-da-submucosa",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose-submucosa"
+   ],
+   "nota": "Submucosa muito alargada — correlaciona com a obstrução que motivou a ressecção."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "presente",
+   "marcacoes": [
+    "ulcera"
+   ],
+   "nota": "Úlcera com perda da mucosa em um dos bordos do corte."
+  },
+  {
+   "achado": "distorcao-arquitetural-das-criptas",
+   "status": "nao-avaliavel",
+   "nota": "A mucosa ileal conserva vilosidades em boa parte do corte; não se avaliou sistematicamente a arquitetura das criptas nem a metaplasia pilórica."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose-submucosa"
+   ],
+   "nota": "Linfócitos e plasmócitos na lâmina própria e, sobretudo, na submucosa fibrosa."
+  },
+  {
+   "achado": "abscesso-de-cripta",
+   "status": "nao-avaliavel",
+   "nota": "Não foram identificados abscessos de cripta nos campos examinados; a atividade é focal no Crohn."
+  }
+ ]
+}

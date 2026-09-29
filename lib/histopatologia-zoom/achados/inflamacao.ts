@@ -326,4 +326,98 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Colite ulcerativa', 'Doença de Crohn', 'Outras colites ulceradas graves'],
     armadilhas: ['Precisa ser diferenciado de adenoma e de displasia associada à colite: não há núcleos displásicos.'],
   },
+  {
+    id: 'granuloma-epitelioide',
+    nome: 'Granuloma epitelioide não caseoso',
+    sinonimos: ['granuloma', 'granuloma não necrotizante', 'granuloma sarcoídico'],
+    categoria: 'inflamacao',
+    resumo:
+      'Agregado compacto e arredondado de macrófagos epitelioides — células de citoplasma rosa-pálido, bordas indistintas e núcleo alongado "em sola de sapato" —, às vezes com células gigantes, cercado por uma coroa de linfócitos, sem necrose central.',
+    comoReconhecer: [
+      'No pequeno aumento: nódulo pálido, arredondado, bem delimitado, geralmente dentro ou ao lado de um infiltrado linfoide mais escuro.',
+      'No grande aumento: células grandes, de citoplasma eosinofílico pálido e limites mal definidos, com núcleos ovais ou alongados e cromatina fina, dispostas em redemoinho.',
+      'Pode haver células gigantes multinucleadas (tipo Langhans, com núcleos em ferradura na periferia, ou tipo corpo estranho).',
+      'Não caseoso: o centro não tem necrose granular eosinofílica — isso separa Crohn e sarcoidose da tuberculose.',
+    ],
+    mecanismo: [
+      'Um antígeno que o macrófago não consegue eliminar (micobactéria, fungo, corpo estranho ou, no Crohn, antígeno ainda indefinido) mantém a resposta Th1.',
+      'Linfócitos T CD4 secretam IFN-γ, que transforma macrófagos em células epitelioides; TNF mantém o agregado organizado.',
+      'Macrófagos se fundem em células gigantes multinucleadas; linfócitos formam o manto ao redor.',
+    ],
+    significado: [
+      'Define a inflamação granulomatosa. No intestino, granulomas não caseosos sem agente identificável são o achado mais específico da doença de Crohn (presentes em cerca de metade dos casos).',
+      'Com necrose caseosa central, pense primeiro em tuberculose; sempre descarte infecção (colorações para micobactérias e fungos).',
+      'Explica por que bloqueadores de TNF funcionam no Crohn — e por que reativam tuberculose latente.',
+    ],
+    ondeOcorre: ['Doença de Crohn', 'Sarcoidose', 'Tuberculose (com caseose)', 'Infecções fúngicas', 'Reação a corpo estranho', 'Yersinia, esquistossomose'],
+    armadilhas: [
+      'Centro germinativo de folículo linfoide também é um nódulo pálido dentro de linfócitos, mas tem centroblastos, mitoses e macrófagos de corpos tingíveis, e é polarizado.',
+      'Granuloma em torno de uma cripta rota (reação ao muco extravasado) não tem o mesmo valor diagnóstico — ocorre também na colite ulcerativa.',
+    ],
+  },
+  {
+    id: 'agregados-linfoides-transmurais',
+    nome: 'Agregados linfoides transmurais',
+    sinonimos: ['inflamação transmural', 'rosário de Crohn', 'agregados linfoides na subserosa'],
+    categoria: 'inflamacao',
+    resumo:
+      'Nódulos de linfócitos espalhados por toda a espessura da parede — submucosa, entre os feixes da muscular própria e na subserosa —, como contas de um rosário.',
+    comoReconhecer: [
+      'No pequeno aumento: pontos azul-escuros enfileirados ao longo da face externa da muscular própria e na subserosa, longe da mucosa.',
+      'No médio aumento: agregados de linfócitos pequenos, às vezes com centro germinativo, entre fibras musculares lisas ou no tecido adiposo subseroso.',
+    ],
+    mecanismo: [
+      'A inflamação do Crohn não respeita a mucosa: linfócitos se acumulam ao longo de linfáticos e vasos que atravessam toda a parede.',
+      'Essa transmuralidade é o que leva a fibrose de toda a parede (estenoses), fissuras, fístulas e aderências.',
+    ],
+    significado: [
+      'Um dos critérios mais úteis para separar Crohn (transmural) de colite ulcerativa (restrita à mucosa, exceto na colite fulminante).',
+    ],
+    ondeOcorre: ['Doença de Crohn', 'Diverticulite crônica (localizada)'],
+    armadilhas: ['Linfonodos pequenos e folículos normais da submucosa do íleo (placas de Peyer) não são inflamação transmural.'],
+  },
+  {
+    id: 'fibrose-da-submucosa',
+    nome: 'Espessamento fibroso da submucosa',
+    sinonimos: ['fibrose submucosa', 'estenose fibrosa'],
+    categoria: 'reparo',
+    resumo:
+      'Submucosa alargada por tecido conjuntivo frouxo a denso, fibroblastos, edema e células inflamatórias crônicas — a base da estenose intestinal.',
+    comoReconhecer: [
+      'No pequeno aumento: a faixa pálida entre a mucosa e a muscular própria está muito mais larga que o habitual.',
+      'No médio e grande aumento: colágeno desorganizado, fibroblastos, pequenos vasos, linfócitos e plasmócitos; às vezes hiperplasia de nervos e da muscular da mucosa.',
+    ],
+    mecanismo: [
+      'A inflamação crônica ativa fibroblastos e miofibroblastos (TGF-β, IL-13), que depositam colágeno; a parede endurece e o lúmen estreita.',
+    ],
+    significado: ['Explica a obstrução intestinal do Crohn ileal: a estenose é fibrosa e não responde ao anti-inflamatório — muitas vezes exige ressecção.'],
+    ondeOcorre: ['Doença de Crohn', 'Enterite actínica', 'Isquemia crônica'],
+    armadilhas: ['Edema puro (sem colágeno novo) também alarga a submucosa, sobretudo em peças fixadas tardiamente.'],
+  },
+  {
+    id: 'helicobacter-pylori',
+    nome: 'Helicobacter pylori',
+    sinonimos: ['H. pylori', 'bacilos curvos', 'espirilos'],
+    categoria: 'agente',
+    resumo:
+      'Bacilos curvos ou em forma de S, de 2–4 µm, no muco sobre o epitélio foveolar e dentro das fovéolas — pequenos demais para o H&E em aumento de varredura; confirmados com Giemsa ou imuno-histoquímica.',
+    comoReconhecer: [
+      'Em H&E, só na objetiva de imersão e com boa fixação: bastonetes finos e levemente azulados no muco da superfície, "em cardume".',
+      'No Giemsa (azul) ou na imuno-histoquímica (marrom) ficam evidentes sobre o epitélio.',
+      'Estão no muco, junto à superfície — não invadem a mucosa.',
+    ],
+    mecanismo: [
+      'A urease converte ureia em amônia e cria um microambiente neutro; os flagelos e a forma espiral permitem atravessar o muco.',
+      'Adesinas (BabA) fixam a bactéria ao epitélio; CagA e VacA lesam as células e disparam IL-8 — daí os neutrófilos (atividade).',
+    ],
+    significado: [
+      'Causa mais comum de gastrite crônica no mundo e fator etiológico da úlcera péptica, do adenocarcinoma gástrico e do linfoma MALT.',
+      'Erradicar a bactéria cura a gastrite ativa, previne recidiva da úlcera e pode regredir o linfoma MALT de baixo grau.',
+    ],
+    ondeOcorre: ['Antro e corpo gástrico', 'Metaplasia gástrica no bulbo duodenal'],
+    armadilhas: [
+      'Bactérias contaminantes da superfície e restos de muco podem imitar H. pylori em H&E.',
+      'Após uso de inibidor de bomba de prótons, a bactéria migra para o corpo e diminui no antro: biópsias de ambos os lugares.',
+    ],
+  },
 ]

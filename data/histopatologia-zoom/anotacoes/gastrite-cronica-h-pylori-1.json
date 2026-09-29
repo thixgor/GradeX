@@ -1,0 +1,181 @@
+{
+ "slug": "gastrite-cronica-h-pylori-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsias gástricas da incisura angular com gastrite crônica associada ao H. pylori em fase avançada: lâmina própria inflamada, agregado linfoide e metaplasia intestinal completa (caliciformes e células de Paneth). As glândulas profundas são mucosas, do tipo antral.",
+ "marcacoes": [
+  {
+   "id": "metaplasia",
+   "estrutura": "metaplasia-intestinal",
+   "categoria": "patologica",
+   "rotulo": "Metaplasia intestinal: células caliciformes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0485,
+      0.1475
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.038,
+    0.135,
+    0.054,
+    0.155
+   ],
+   "nota": "Glândulas com células caliciformes em cálice espaçadas no epitélio — epitélio do tipo intestinal dentro do estômago."
+  },
+  {
+   "id": "paneth",
+   "estrutura": "metaplasia-intestinal",
+   "categoria": "patologica",
+   "rotulo": "Células de Paneth (grânulos vermelhos): metaplasia completa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0419,
+      0.1437
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.036,
+    0.138,
+    0.05,
+    0.152
+   ],
+   "nota": "Células com grânulos eosinofílicos vivos na base da glândula: células de Paneth, que não existem no estômago normal."
+  },
+  {
+   "id": "linfoplasmocitario",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Lâmina própria com linfócitos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0455,
+      0.1515
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.038,
+    0.143,
+    0.054,
+    0.159
+   ]
+  },
+  {
+   "id": "agregado-linfoide",
+   "estrutura": "hiperplasia-linfoide-reativa",
+   "categoria": "patologica",
+   "rotulo": "Agregado linfoide denso na mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0395,
+      0.1435
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.03,
+    0.13,
+    0.046,
+    0.146
+   ],
+   "nota": "Agregado linfoide na mucosa gástrica — ausente no estômago normal e muito associado à infecção por H. pylori."
+  },
+  {
+   "id": "fovea",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Epitélio foveolar gástrico (muco em capuz)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.099,
+      0.1219
+     ],
+     "angulo": 60
+    }
+   ],
+   "vista": [
+    0.088,
+    0.108,
+    0.104,
+    0.124
+   ]
+  },
+  {
+   "id": "glandulas-antrais",
+   "estrutura": "glandula-pilorica",
+   "rotulo": "Glândulas mucosas do tipo antral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0845,
+      0.152
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.074,
+    0.14,
+    0.094,
+    0.16
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "linfoplasmocitario"
+   ],
+   "nota": "Inflamação crônica difusa da lâmina própria."
+  },
+  {
+   "achado": "helicobacter-pylori",
+   "status": "nao-avaliavel",
+   "nota": "O diagnóstico de origem é de gastrite associada ao Helicobacter, mas o bacilo (2–4 µm) não é identificável com segurança nesta digitalização em H&E; a confirmação exige Giemsa ou imuno-histoquímica."
+  },
+  {
+   "achado": "hiperplasia-linfoide-reativa",
+   "status": "presente",
+   "marcacoes": [
+    "agregado-linfoide"
+   ],
+   "nota": "Agregado linfoide denso na mucosa."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificaram neutrófilos intraepiteliais inequívocos nos campos examinados; a atividade não foi graduada."
+  },
+  {
+   "achado": "metaplasia-intestinal",
+   "status": "presente",
+   "marcacoes": [
+    "metaplasia",
+    "paneth"
+   ],
+   "nota": "Metaplasia intestinal com células caliciformes e de Paneth, como consta no diagnóstico de origem (com atrofia)."
+  }
+ ]
+}
