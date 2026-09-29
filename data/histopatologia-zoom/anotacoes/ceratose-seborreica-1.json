@@ -1,0 +1,145 @@
+{
+ "slug": "ceratose-seborreica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Ceratose seborreica acantótica do dorso: placa exofítica de células basaloides uniformes com muitos pseudocistos córneos e base plana; derme sem invasão.",
+ "marcacoes": [
+  {
+   "id": "lesao",
+   "estrutura": "acantose-basaloide-exofitica",
+   "categoria": "patologica",
+   "rotulo": "Lesão exofítica, com a base em linha reta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.82,
+      0.21
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.1,
+    0.98,
+    0.4
+   ]
+  },
+  {
+   "id": "basaloides",
+   "estrutura": "acantose-basaloide-exofitica",
+   "categoria": "patologica",
+   "rotulo": "Células basaloides uniformes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.72,
+      0.16
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.13,
+    0.76,
+    0.19
+   ]
+  },
+  {
+   "id": "pseudocisto",
+   "estrutura": "pseudocistos-corneos",
+   "categoria": "patologica",
+   "rotulo": "Pseudocisto córneo (queratina lamelar)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.742,
+      0.1768
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.13,
+    0.76,
+    0.19
+   ]
+  },
+  {
+   "id": "pseudocistos",
+   "estrutura": "pseudocistos-corneos",
+   "categoria": "patologica",
+   "rotulo": "Vários pseudocistos pela lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.865,
+      0.25
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.1,
+    0.98,
+    0.4
+   ]
+  },
+  {
+   "id": "derme",
+   "estrutura": "derme-reticular",
+   "rotulo": "Derme sem invasão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.65,
+      0.28
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.1,
+    0.98,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "acantose-basaloide-exofitica",
+   "status": "presente",
+   "marcacoes": [
+    "lesao",
+    "basaloides"
+   ],
+   "nota": "Epiderme muito espessada por células basaloides pequenas e uniformes, sem atipia, formando uma placa elevada de base plana."
+  },
+  {
+   "achado": "pseudocistos-corneos",
+   "status": "presente",
+   "marcacoes": [
+    "pseudocisto",
+    "pseudocistos"
+   ],
+   "nota": "Muitos pseudocistos de queratina lamelar espalhados pela lesão."
+  },
+  {
+   "achado": "pigmento-melanico",
+   "status": "ausente",
+   "nota": "Não há pigmento apreciável: forma não pigmentada."
+  }
+ ]
+}

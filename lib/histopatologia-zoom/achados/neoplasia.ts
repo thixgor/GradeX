@@ -750,4 +750,117 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Carcinoide pulmonar típico e atípico', 'Tumores neuroendócrinos do trato gastrointestinal e do pâncreas', 'Paraganglioma'],
     armadilhas: ['Carcinoide fusocelular periférico pode lembrar tumor mesenquimal; carcinoide com esmagamento na biópsia pode imitar pequenas células — o Ki-67 separa.'],
   },
+  {
+    id: 'ninhos-melanociticos-juncionais-atipicos',
+    nome: 'Ninhos melanocíticos juncionais atípicos',
+    sinonimos: ['componente juncional', 'ninhos na junção dermoepidérmica', 'disseminação pagetoide'],
+    categoria: 'neoplasia',
+    resumo:
+      'Grupos de melanócitos grandes e atípicos na junção entre epiderme e derme, de tamanhos e formas irregulares, que se fundem e sobem para as camadas altas da epiderme (disseminação pagetoide).',
+    comoReconhecer: [
+      'No médio aumento: ninhos de células claras ou pigmentadas encostados na base da epiderme, desiguais e confluentes.',
+      'No grande aumento: melanócitos com núcleos grandes, nucléolos evidentes e citoplasma com pigmento fino; células isoladas acima da camada basal.',
+    ],
+    mecanismo: ['Mutações (BRAF V600E, NRAS, NF1) e perda de supressores (CDKN2A) permitem que os melanócitos proliferem e migrem pela epiderme sem o controle dos queratinócitos.'],
+    significado: [
+      'Componente in situ (fase de crescimento radial) do melanoma. A disseminação pagetoide e a assimetria dos ninhos separam o melanoma do nevo.',
+      'A partir daí o tumor invade a derme (crescimento vertical); a espessura de Breslow mede essa invasão.',
+    ],
+    ondeOcorre: ['Melanoma extensivo superficial, lentigo maligno, melanoma acral', 'Nevo displásico (atipia leve, sem pagetoide extenso)'],
+    armadilhas: ['Nevos de crianças, de pele acral e de Spitz podem ter ninhos grandes e algumas células pagetoides; a avaliação é do conjunto (simetria, maturação, mitoses).'],
+  },
+  {
+    id: 'ausencia-de-maturacao',
+    nome: 'Ausência de maturação com mitoses dérmicas',
+    sinonimos: ['falta de maturação', 'lençóis dérmicos de melanócitos atípicos', 'mitoses dérmicas'],
+    categoria: 'neoplasia',
+    resumo:
+      'Na derme, as células do melanoma continuam grandes e atípicas até a base da lesão, formam lençóis e expansões e se dividem — ao contrário do nevo, cujas células ficam menores e mais dispersas quanto mais profundas.',
+    comoReconhecer: [
+      'Compare as células superficiais e profundas: no melanoma são iguais (ou maiores na base); no nevo encolhem e parecem linfócitos ou células de Schwann no fundo.',
+      'Procure figuras de mitose na derme, especialmente na metade profunda.',
+    ],
+    mecanismo: ['A célula maligna não responde aos sinais do estroma que induzem a senescência e a "neurotização" das células névicas.'],
+    significado: [
+      'Um dos critérios mais confiáveis para diagnosticar melanoma invasivo.',
+      'O índice mitótico dérmico entra no laudo e no estadiamento; a espessura de Breslow e a ulceração definem o T.',
+    ],
+    ondeOcorre: ['Melanoma invasivo (fase de crescimento vertical e nodular)', 'Metástases de melanoma'],
+    armadilhas: ['Nevos congênitos e nevos em gestantes podem ter mitoses raras e superficiais; o conjunto dos critérios decide.'],
+  },
+  {
+    id: 'pigmento-melanico',
+    nome: 'Pigmento melânico',
+    sinonimos: ['melanina', 'melanófagos'],
+    categoria: 'deposito',
+    resumo:
+      'Grânulos marrons finos dentro de melanócitos ou em grânulos grosseiros dentro de macrófagos (melanófagos) na derme.',
+    comoReconhecer: ['Pigmento castanho a preto, não refringente, fino e poeirento nas células tumorais ou grosseiro em macrófagos.'],
+    mecanismo: ['Os melanócitos sintetizam melanina nos melanossomos; quando células morrem, a melanina é fagocitada por macrófagos.'],
+    significado: [
+      'Ajuda a reconhecer a origem melanocítica, mas não é obrigatório: há melanomas amelanóticos.',
+      'Melanófagos abundantes na derme superficial sugerem regressão.',
+    ],
+    ondeOcorre: ['Melanoma', 'Nevos', 'Ceratose seborreica pigmentada', 'Carcinoma basocelular pigmentado', 'Incontinência pigmentar pós-inflamatória'],
+    armadilhas: ['Hemossiderina é mais dourada e refringente (cora pelo Perls); pigmento de formalina é preto e fora das células.'],
+  },
+  {
+    id: 'pseudocistos-corneos',
+    nome: 'Pseudocistos córneos',
+    sinonimos: ['cistos córneos', 'horn cysts', 'pseudocistos de queratina'],
+    categoria: 'arquitetura',
+    resumo:
+      'Espaços redondos cheios de queratina lamelar, dentro de uma proliferação epidérmica, que são na verdade invaginações da superfície cortadas transversalmente.',
+    comoReconhecer: ['Círculos de queratina em camadas concêntricas ("casca de cebola"), sem atipia nas células ao redor, espalhados pela lesão.'],
+    mecanismo: ['A epiderme hiperplásica se dobra; a queratina produzida nas invaginações fica aprisionada e, no corte, parece um cisto.'],
+    significado: ['Marca da ceratose seborreica; diferente das pérolas córneas do carcinoma espinocelular, que são queratinização de células atípicas dentro de ninhos invasivos.'],
+    ondeOcorre: ['Ceratose seborreica', 'Nevo dérmico papilomatoso', 'Tricoepitelioma'],
+    armadilhas: ['Não confunda com pérola córnea: veja se há atipia e invasão ao redor.'],
+  },
+  {
+    id: 'acantose-basaloide-exofitica',
+    nome: 'Acantose basaloide exofítica',
+    sinonimos: ['proliferação de células basaloides', 'lesão "colada" na pele', 'sinal da linha reta'],
+    categoria: 'adaptacao',
+    resumo:
+      'Espessamento da epiderme por células basaloides pequenas e uniformes que crescem para cima, acima do nível da pele vizinha; a base da lesão fica numa linha reta.',
+    comoReconhecer: [
+      'No pequeno aumento: lesão elevada, com a base alinhada à epiderme normal vizinha, como se estivesse colada sobre a pele.',
+      'No grande aumento: células pequenas, parecidas com as da camada basal, sem atipia, mitoses raras.',
+    ],
+    mecanismo: ['Mutações ativadoras em FGFR3 e PIK3CA nos queratinócitos: proliferação benigna e clonal.'],
+    significado: ['Define a ceratose seborreica, a lesão epidérmica benigna mais comum do idoso. Sinal de Leser-Trélat: surgimento súbito de muitas ceratoses associado a neoplasia interna.'],
+    ondeOcorre: ['Ceratose seborreica', 'Acantose nigricans (sem pseudocistos)'],
+    armadilhas: ['Carcinoma basocelular também é basaloide, mas invade a derme, tem paliçada periférica, fendas e estroma próprio.'],
+  },
+  {
+    id: 'proliferacao-fusocelular-com-colageno-aprisionado',
+    nome: 'Proliferação fusocelular com colágeno aprisionado',
+    sinonimos: ['colágeno aprisionado', 'collagen trapping', 'padrão estoriforme'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células fusiformes (fibro-histiocíticas) na derme, em arranjo desordenado, que envolvem feixes de colágeno pré-existente, dando na periferia a imagem de "bolas" de colágeno cercadas por células.',
+    comoReconhecer: [
+      'No pequeno aumento: área mal delimitada da derme mais celular e rosada, geralmente com a epiderme espessada por cima.',
+      'Na periferia: células que se infiltram entre as fibras de colágeno e as isolam.',
+      'No grande aumento: núcleos fusiformes, sem atipia importante; às vezes macrófagos espumosos, células gigantes e hemossiderina.',
+    ],
+    mecanismo: ['Proliferação clonal de fibroblastos/histiócitos da derme, frequentemente após trauma mínimo (picada de inseto, foliculite).'],
+    significado: ['Aspecto do dermatofibroma (histiocitoma fibroso benigno). Diferencial principal: dermatofibrossarcoma protuberans.'],
+    ondeOcorre: ['Dermatofibroma', 'Dermatofibrossarcoma protuberans (infiltra a gordura em "favo de mel")'],
+    armadilhas: ['O dermatofibrossarcoma é mais celular, estoriforme, CD34+ e infiltra o subcutâneo; o dermatofibroma é fator XIIIa+ e CD34−.'],
+  },
+  {
+    id: 'hiperplasia-epidermica-sobrejacente',
+    nome: 'Hiperplasia epidérmica sobre lesão dérmica',
+    sinonimos: ['indução epidérmica', 'hiperplasia da epiderme sobrejacente'],
+    categoria: 'adaptacao',
+    resumo:
+      'A epiderme acima de uma lesão da derme fica mais grossa, com cristas alongadas e a camada basal mais pigmentada.',
+    comoReconhecer: ['Cristas epidérmicas alongadas e de base achatada logo acima da lesão, comparadas com a epiderme nas bordas.'],
+    mecanismo: ['Fatores de crescimento produzidos pelas células da lesão dérmica estimulam os queratinócitos e melanócitos.'],
+    significado: ['Pista a favor de dermatofibroma; explica por que a lesão é escura na clínica e forma uma "covinha" ao ser pinçada.'],
+    ondeOcorre: ['Dermatofibroma', 'Outras lesões dérmicas benignas'],
+    armadilhas: ['Às vezes a epiderme induzida lembra carcinoma basocelular superficial; ela não tem atipia nem fendas.'],
+  },
 ]

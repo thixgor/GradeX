@@ -1,0 +1,182 @@
+{
+ "slug": "melanoma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Melanoma nodular da região lombar (excisão em elipse): ninhos juncionais atípicos e confluentes e invasão da derme por lençóis de células epitelioides atípicas, sem maturação e com mitoses; pigmento focal.",
+ "marcacoes": [
+  {
+   "id": "juncional",
+   "estrutura": "ninhos-melanociticos-juncionais-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Ninhos juncionais grandes e confluentes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3268,
+      0.4548
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.42,
+    0.34,
+    0.48
+   ]
+  },
+  {
+   "id": "derme",
+   "estrutura": "ausencia-de-maturacao",
+   "categoria": "patologica",
+   "rotulo": "Lençóis de células atípicas ocupando a derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.63,
+      0.33
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.2,
+    0.8,
+    0.4
+   ]
+  },
+  {
+   "id": "mitose",
+   "estrutura": "ausencia-de-maturacao",
+   "categoria": "patologica",
+   "rotulo": "Figura de mitose na derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5871,
+      0.312
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.58,
+    0.305,
+    0.59,
+    0.315
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes com nucléolo evidente",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6246,
+      0.3033
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.62,
+    0.3,
+    0.628,
+    0.308
+   ]
+  },
+  {
+   "id": "pigmento",
+   "estrutura": "pigmento-melanico",
+   "categoria": "patologica",
+   "rotulo": "Melanina nas células tumorais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3072,
+      0.447
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.445,
+    0.315,
+    0.46
+   ]
+  },
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5574,
+      0.314
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.555,
+    0.28,
+    0.595,
+    0.32
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-melanociticos-juncionais-atipicos",
+   "status": "presente",
+   "marcacoes": [
+    "juncional"
+   ],
+   "nota": "Ninhos grandes, desiguais e confluentes na junção dermoepidérmica, com células atípicas isoladas acima da camada basal."
+  },
+  {
+   "achado": "ausencia-de-maturacao",
+   "status": "presente",
+   "marcacoes": [
+    "derme",
+    "mitose"
+   ],
+   "nota": "Lençóis e ninhos de células epitelioides atípicas ocupam a derme sem ficar menores na profundidade; mitoses dérmicas."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos grandes, vesiculosos, com nucléolos evidentes e citoplasma amplo."
+  },
+  {
+   "achado": "pigmento-melanico",
+   "status": "presente",
+   "marcacoes": [
+    "pigmento"
+   ],
+   "nota": "Pigmento melânico fino e grosseiro em células tumorais e melanófagos, focal."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "ausente",
+   "nota": "A epiderme sobre o tumor está íntegra nos cortes examinados."
+  }
+ ]
+}
