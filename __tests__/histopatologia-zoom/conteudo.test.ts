@@ -15,6 +15,7 @@ import {
   LAMINAS_PATOLOGICAS,
   achadosDaLamina,
   anotacaoPatologica,
+  laminaNormalPara,
   marcacoesDaLamina,
   piramideAperio,
 } from '@/lib/histopatologia-zoom/repositorio'
@@ -130,6 +131,18 @@ describe('Histopatologia com Zoom — lâminas e marcações', () => {
         `${l.slug}: nenhum critério diagnóstico presente`,
       ).toBe(true)
       expect(a.marcacoes.filter((m) => m.categoria === 'patologica').length, l.slug).toBeGreaterThanOrEqual(3)
+    }
+  })
+})
+
+describe('Histopatologia com Zoom — comparação com o normal', () => {
+  it('toda lâmina tem uma normal do mesmo órgão, em H&E sempre que o órgão tiver uma', () => {
+    for (const l of LAMINAS_PATOLOGICAS) {
+      const d = DOENCAS.find((x) => x.id === l.doenca)!
+      const n = laminaNormalPara(l, d)
+      expect(n, l.slug).toBeTruthy()
+      expect(n!.orgao, l.slug).toBe(d.orgao)
+      if (laminasDoOrgao(d.orgao).some((x) => x.coloracaoId === 'he')) expect(n!.coloracaoId, l.slug).toBe('he')
     }
   })
 })

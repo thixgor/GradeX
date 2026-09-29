@@ -140,12 +140,15 @@ export function achadosDaLamina(slug: string, doenca: DoencaZoom): AchadoNaLamin
 
 /**
  * Lâmina normal para comparar: a indicada na curadoria ou, no órgão da
- * doença, a primeira humana (a comparação mais honesta); na falta, a primeira.
+ * doença, a que mais se parece com a lâmina de patologia — mesma coloração
+ * (H&E) e, entre elas, a humana. Comparar H&E com uma impregnação argêntica
+ * ensinaria a diferença de coloração, não a da doença.
  */
 export function laminaNormalPara(l: LaminaPatologica, doenca: DoencaZoom): LaminaZoom | null {
   if (l.laminaNormal) return laminaNormalPorSlug(l.laminaNormal) ?? null
   const doOrgao = laminasDoOrgao(doenca.orgao)
-  return doOrgao.find((x) => x.origem.categoria === 'humana') ?? doOrgao[0] ?? null
+  const pontos = (x: LaminaZoom) => (x.coloracaoId === 'he' ? 2 : 0) + (x.origem.categoria === 'humana' ? 1 : 0)
+  return [...doOrgao].sort((a, b) => pontos(b) - pontos(a))[0] ?? null
 }
 
 /** Opções de lâmina normal (mesmo órgão), para trocar na comparação. */
