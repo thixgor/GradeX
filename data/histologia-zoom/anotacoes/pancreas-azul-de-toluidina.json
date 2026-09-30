@@ -2,8 +2,8 @@
  "slug": "pancreas-azul-de-toluidina",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.25,
     0.45,
     0.4
+   ]
+  },
+  {
+   "id": "nucleo",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Núcleo redondo e claro na base da célula acinar (a base basofílica é rica em retículo rugoso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.423,
+      0.389
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.41,
+    0.37,
+    0.44,
+    0.4
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar entre os ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.471,
+      0.383
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.45,
+    0.37,
+    0.49,
+    0.4
+   ]
+  },
+  {
+   "id": "luz",
+   "estrutura": "graos-de-zimogenio",
+   "rotulo": "Grânulos de zimogênio concentrados no ápice, em volta da luz do ácino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4485,
+      0.344
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.43,
+    0.33,
+    0.47,
+    0.36
    ]
   }
  ]

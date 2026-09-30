@@ -2,7 +2,7 @@
  "slug": "submandibular-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -65,6 +65,111 @@
     0.34,
     0.47,
     0.37
+   ]
+  },
+  {
+   "id": "excretor-2",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular: epitélio estratificado, no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.332,
+      0.358
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.31,
+    0.33,
+    0.36,
+    0.38
+   ]
+  },
+  {
+   "id": "estriado",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado: células colunares eosinofílicas (abundante na submandibular)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.398,
+      0.326
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.38,
+    0.31,
+    0.42,
+    0.34
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria do septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.3833
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.37,
+    0.37,
+    0.4
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo interlobular com ductos e vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.362,
+      0.378
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.35,
+    0.4,
+    0.41
+   ]
+  },
+  {
+   "id": "meia-lua",
+   "estrutura": "meia-lua-serosa",
+   "rotulo": "Células serosas escuras em volta de ácinos mucosos claros (meias-luas)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.31
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.29,
+    0.32,
+    0.33
    ]
   }
  ]

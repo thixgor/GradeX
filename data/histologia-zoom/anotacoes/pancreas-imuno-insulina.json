@@ -2,7 +2,7 @@
  "slug": "pancreas-imuno-insulina",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -69,6 +69,56 @@
     0.565,
     0.45,
     0.595
+   ]
+  },
+  {
+   "id": "ilhota-grande",
+   "estrutura": "ilhota-de-langerhans",
+   "rotulo": "Outras ilhotas: marrons porque as células beta contêm insulina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5445,
+      0.642
+     ],
+     "angulo": 225
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5055,
+      0.507
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.48,
+    0.48,
+    0.58,
+    0.68
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo conjuntivo com ductos e vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.54,
+      0.564
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.51,
+    0.54,
+    0.57,
+    0.59
    ]
   }
  ]

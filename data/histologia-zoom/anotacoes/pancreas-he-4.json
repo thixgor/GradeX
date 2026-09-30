@@ -68,6 +68,48 @@
     0.315,
     0.235
    ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Veia de parede fina no septo interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.165,
+      0.1475
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.14,
+    0.12,
+    0.19,
+    0.18
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septos interlobulares largos (tecido frouxo, retraído no preparo)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.125,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.17,
+    0.16,
+    0.23
+   ]
   }
  ]
 }

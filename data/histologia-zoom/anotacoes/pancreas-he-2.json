@@ -68,6 +68,98 @@
     0.7,
     0.4
    ]
+  },
+  {
+   "id": "ilhota",
+   "estrutura": "ilhota-de-langerhans",
+   "rotulo": "Ilhotas de Langerhans: grupos de células mais claras entre os ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.558,
+      0.348
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.598,
+      0.358
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.33,
+    0.62,
+    0.38
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Veia do septo interlobular, cheia de sangue",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.642,
+      0.428
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.62,
+    0.4,
+    0.67,
+    0.45
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria do septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.676,
+      0.418
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.66,
+    0.4,
+    0.7,
+    0.44
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos no septo interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7,
+      0.416
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.68,
+    0.4,
+    0.72,
+    0.43
+   ]
   }
  ]
 }
