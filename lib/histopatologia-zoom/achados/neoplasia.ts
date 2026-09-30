@@ -946,4 +946,46 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Seminoma testicular', 'Disgerminoma do ovário', 'Germinoma do SNC e do mediastino'],
     armadilhas: ['Linfoma testicular (idosos) também forma lençóis, mas infiltra entre túbulos e é CD45+; o seminoma é OCT3/4 e SALL4 positivo.'],
   },
+  {
+    id: 'glandulas-pequenas-infiltrativas',
+    nome: 'Glândulas pequenas infiltrativas de camada única',
+    sinonimos: ['microácinos', 'glândulas sem células basais', 'padrão acinar infiltrativo', 'Gleason 3'],
+    categoria: 'arquitetura',
+    resumo:
+      'Glândulas pequenas, redondas e de contorno rígido, com uma única camada de células (sem células basais), espalhadas entre as fibras do estroma e entre glândulas benignas.',
+    comoReconhecer: [
+      'No pequeno aumento: área de glândulas menores, mais apinhadas e mais escuras que as glândulas benignas grandes e onduladas.',
+      'No médio aumento: glândulas "perfuradas" no estroma, sem dobras papilares, às vezes com secreção rosa densa, cristaloides ou mucina azulada na luz.',
+      'No grande aumento: uma só fileira de células; núcleos aumentados com nucléolo evidente; ausência de células basais (confirmar com p63/34βE12 e AMACR positivo).',
+    ],
+    mecanismo: ['As células luminais transformadas (fusão TMPRSS2-ERG, perda de PTEN, mutações de SPOP) proliferam sem a camada basal e invadem o estroma formando ácinos pequenos.'],
+    significado: [
+      'Base do diagnóstico de adenocarcinoma acinar da próstata. A arquitetura das glândulas define o padrão de Gleason (3: glândulas individuais bem formadas; 4: fundidas, cribriformes ou mal formadas; 5: sem glândulas).',
+      'A soma dos dois padrões mais frequentes dá o escore de Gleason e o grupo de grau ISUP (1 a 5), principal fator prognóstico.',
+    ],
+    ondeOcorre: ['Adenocarcinoma acinar da próstata'],
+    armadilhas: [
+      'Atrofia, adenose e hiperplasia de células basais formam glândulas pequenas, mas mantêm as células basais (imuno p63 positivo).',
+      'Invasão perineural e extensão extraprostática são critérios de malignidade e estadiamento, não precisam de imuno.',
+    ],
+  },
+  {
+    id: 'condrocitos-atipicos',
+    nome: 'Condrócitos atípicos em matriz cartilaginosa',
+    sinonimos: ['cartilagem neoplásica', 'condrócitos binucleados', 'lóbulos condroides hipercelulares'],
+    categoria: 'neoplasia',
+    resumo:
+      'Lóbulos de matriz cartilaginosa hialina ou mixoide com mais células do que a cartilagem normal, condrócitos de núcleos aumentados, hipercromáticos e irregulares, células binucleadas nas lacunas.',
+    comoReconhecer: [
+      'No pequeno aumento: lóbulos azul-acinzentados ou rosados de matriz, separados por septos, às vezes infiltrando entre trabéculas ósseas.',
+      'No grande aumento: condrócitos agrupados, pleomórficos, com dois núcleos em uma lacuna; mais celularidade na periferia dos lóbulos.',
+    ],
+    mecanismo: ['Mutações de IDH1/IDH2 e COL2A1 transformam células condrogênicas; o tumor produz matriz de cartilagem, mas sem a organização em colunas e sem ossificação.'],
+    significado: [
+      'Define o condrossarcoma, sarcoma ósseo produtor de cartilagem de adultos. O grau (1 a 3) depende da celularidade e da atipia.',
+      'Permeação do osso trabecular (o tumor envolve trabéculas pré-existentes) separa o condrossarcoma grau 1 do encondroma.',
+    ],
+    ondeOcorre: ['Condrossarcoma (pelve, fêmur, úmero, costelas)', 'Encondroma (atipia mínima)', 'Condrossarcoma desdiferenciado'],
+    armadilhas: ['Encondromas de mãos e pés e de pacientes com encondromatose são mais celulares sem ser malignos; a radiologia é essencial.'],
+  },
 ]

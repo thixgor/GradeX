@@ -139,4 +139,78 @@ export const DOENCAS_REPRODUTOR_MASCULINO: DoencaZoom[] = [
       'No seminoma, os túbulos desaparecem e são substituídos por lençóis de células grandes e claras.',
     ],
   },
+  {
+    id: 'adenocarcinoma-de-prostata',
+    nome: 'Adenocarcinoma de próstata',
+    sinonimos: ['câncer de próstata', 'adenocarcinoma acinar da próstata', 'carcinoma prostático'],
+    nomesEmIngles: ['prostatic adenocarcinoma', 'acinar adenocarcinoma of the prostate'],
+    sistema: 'reprodutor-masculino',
+    orgao: 'prostata',
+    prioridade: 3,
+    resumo:
+      'Neoplasia maligna das células luminais das glândulas prostáticas, que forma glândulas pequenas de camada única, sem células basais, infiltrando o estroma; graduada pelo sistema de Gleason.',
+    epidemiologia:
+      'Câncer mais comum no homem (excluindo pele não melanoma) e segunda causa de morte por câncer masculino. Fatores: idade (raro antes dos 50), ascendência africana, história familiar, mutações de BRCA2 e síndrome de Lynch. Surge sobretudo na zona periférica (palpável ao toque retal).',
+    patogenese: [
+      'Os andrógenos (via receptor de androgênio) estimulam o crescimento das células luminais; a proliferação crônica favorece alterações genéticas.',
+      'Lesão precursora: neoplasia intraepitelial prostática de alto grau (PIN), com células atípicas dentro de glândulas que ainda têm células basais.',
+      'Fusão TMPRSS2-ERG, perda de PTEN e NKX3.1: as células atípicas perdem a camada basal e invadem o estroma formando glândulas pequenas.',
+      'Progressão: fusão das glândulas, padrão cribriforme e sólido (Gleason 4 e 5), invasão perineural, extensão extraprostática e metástases ósseas osteoblásticas. Os tumores avançados escapam da dependência de andrógenos (resistência à castração).',
+    ],
+    roteiro: [
+      'Panorâmico: compare áreas de glândulas grandes, pálidas e onduladas (benignas) com áreas de glândulas pequenas, apinhadas e escuras (carcinoma).',
+      'Médio aumento: glândulas pequenas infiltrando entre feixes musculares; defina o padrão de Gleason predominante e o secundário.',
+      'Grande aumento: camada única de células, núcleos grandes com nucléolo, luzes com secreção rosa ou cristaloides; procure invasão perineural.',
+      'Nas glândulas benignas vizinhas, identifique a camada basal — a comparação ensina o critério principal.',
+    ],
+    achados: [
+      {
+        achado: 'glandulas-pequenas-infiltrativas',
+        tipo: 'especifico',
+        comoAparece: 'Glândulas pequenas e rígidas, de camada única, entre as fibras do estroma.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos aumentados com nucléolos evidentes (visíveis em pequeno aumento nos tumores de maior grau).',
+        peso: 'criterio',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Glândulas neoplásicas dissecando os feixes de músculo liso do estroma prostático.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'glandulas-com-dupla-camada',
+        tipo: 'geral',
+        comoAparece: 'Glândulas benignas vizinhas, com células basais — o contraste com o carcinoma.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Hiperplasia prostática benigna / adenose',
+        comoSeparar: 'Glândulas maiores, com dobras papilares e duas camadas (células basais p63 positivas); sem nucléolos proeminentes.',
+      },
+      {
+        nome: 'Atrofia prostática',
+        comoSeparar: 'Glândulas pequenas de citoplasma escasso e basofílico, mas com células basais e sem nucléolos; frequentemente com fibrose e inflamação.',
+      },
+      {
+        nome: 'Carcinoma urotelial invadindo a próstata',
+        comoSeparar: 'Ninhos sólidos de células pleomórficas, GATA3 positivo, PSA e NKX3.1 negativos.',
+      },
+    ],
+    correlacaoClinica: [
+      'Geralmente assintomático no início; detectado por PSA elevado ou toque retal alterado. Sintomas urinários e dor óssea aparecem na doença avançada.',
+      'Diagnóstico por biópsia guiada por ressonância multiparamétrica. Estadiamento por PSA, Gleason/ISUP e imagem (PET-PSMA).',
+      'Conduta: vigilância ativa (baixo risco), prostatectomia radical ou radioterapia; na doença avançada, privação androgênica, antiandrogênicos de nova geração, quimioterapia e radioligantes (PSMA).',
+    ],
+    comparacaoComNormal: [
+      'Na próstata normal, glândulas grandes de contorno ondulado, com dobras papilares, revestidas por duas camadas — células luminais pálidas e basais achatadas — em estroma fibromuscular.',
+      'No adenocarcinoma, aparecem muitas glândulas pequenas, redondas, com uma só camada de células de nucléolo evidente, infiltrando o músculo entre as glândulas benignas.',
+    ],
+  },
 ]

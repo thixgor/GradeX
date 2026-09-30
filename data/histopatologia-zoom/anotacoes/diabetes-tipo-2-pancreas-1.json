@@ -1,0 +1,115 @@
+{
+ "slug": "diabetes-tipo-2-pancreas-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Pâncreas de necropsia de paciente com diabetes tipo 2 de longa data: ácinos preservados e ilhotas com amiloidose (amilina), confirmada por vermelho Congo.",
+ "marcacoes": [
+  {
+   "id": "ilhota-medio",
+   "estrutura": "amiloide-insular",
+   "categoria": "patologica",
+   "rotulo": "Ilhota pálida entre os ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.617,
+      0.219
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.2,
+    0.66,
+    0.26
+   ]
+  },
+  {
+   "id": "amiloide",
+   "estrutura": "amiloide-insular",
+   "categoria": "patologica",
+   "rotulo": "Amiloide acelular substituindo células da ilhota",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6167,
+      0.22
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.613,
+    0.215,
+    0.621,
+    0.223
+   ]
+  },
+  {
+   "id": "amiloide-2",
+   "estrutura": "amiloide-insular",
+   "categoria": "patologica",
+   "rotulo": "Outra ilhota com depósito de amiloide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3283,
+      0.288
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.324,
+    0.284,
+    0.332,
+    0.292
+   ]
+  },
+  {
+   "id": "acinos",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Ácinos pancreáticos normais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3255,
+      0.2855
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.324,
+    0.284,
+    0.332,
+    0.292
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "amiloide-insular",
+   "status": "presente",
+   "marcacoes": [
+    "ilhota-medio",
+    "amiloide",
+    "amiloide-2"
+   ],
+   "nota": "Ilhotas com material eosinofílico acelular e homogêneo entre poucas células endócrinas; o vermelho Congo do caso mostrou birrefringência verde-maçã."
+  },
+  {
+   "achado": "espessamento-arterial",
+   "status": "nao-avaliavel",
+   "nota": "Há artérias de parede espessa nos septos, mas sem comparação segura com artérias normais do mesmo calibre; não se afirma hialinose."
+  }
+ ]
+}

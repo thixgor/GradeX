@@ -148,4 +148,63 @@ export const DOENCAS_ENDOCRINO: DoencaZoom[] = [
       'No carcinoma papilífero, as células ficam altas e apinhadas, os núcleos clareiam e se sobrepõem, e o epitélio forma papilas.',
     ],
   },
+  {
+    id: 'diabetes-tipo-2-pancreas',
+    nome: 'Diabetes mellitus tipo 2 (pâncreas)',
+    sinonimos: ['diabetes tipo 2', 'DM2', 'amiloidose insular'],
+    nomesEmIngles: ['type 2 diabetes mellitus', 'islet amyloidosis'],
+    sistema: 'endocrino',
+    orgao: 'pancreas',
+    prioridade: 3,
+    resumo:
+      'No diabetes tipo 2, o pâncreas exócrino é normal, mas as ilhotas de Langerhans perdem células beta e acumulam amiloide (amilina), refletindo a falência progressiva da secreção de insulina somada à resistência insulínica.',
+    epidemiologia:
+      'Cerca de 90 % dos casos de diabetes; adultos, fortemente associado a obesidade, sedentarismo, história familiar e idade. Prevalência crescente no mundo e no Brasil.',
+    patogenese: [
+      'Resistência à insulina no músculo, fígado e tecido adiposo (obesidade visceral, ácidos graxos, inflamação).',
+      'As células beta compensam produzindo mais insulina e amilina.',
+      'A glicotoxicidade, a lipotoxicidade e os agregados de amilina (amiloide) lesam as células beta, que diminuem em número e função.',
+      'Quando a secreção não compensa mais a resistência, surge a hiperglicemia; com anos de doença, o paciente pode precisar de insulina.',
+      'No diabetes tipo 1, ao contrário, há insulite (linfócitos T destruindo as ilhotas) e perda quase total das células beta, sem amiloide.',
+    ],
+    roteiro: [
+      'Panorâmico: pâncreas com ácinos normais — a doença não está no exócrino.',
+      'Médio aumento: localize as ilhotas pálidas entre os ácinos e compare o tamanho e a celularidade.',
+      'Grande aumento: material rosa, acelular e vítreo dentro das ilhotas (amiloide), com poucas células endócrinas; confirme com Congo.',
+      'Procure hialinose arteriolar e aterosclerose, a doença vascular do diabetes.',
+    ],
+    achados: [
+      {
+        achado: 'amiloide-insular',
+        tipo: 'especifico',
+        comoAparece: 'Depósitos eosinofílicos acelulares dentro das ilhotas, substituindo células endócrinas.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'espessamento-arterial',
+        tipo: 'geral',
+        comoAparece: 'Hialinose de arteríolas e aterosclerose das artérias.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Diabetes tipo 1',
+        comoSeparar: 'Ilhotas pequenas, sem células beta, com insulite linfocitária no início; sem amiloide.',
+      },
+      {
+        nome: 'Pancreatite crônica (diabetes pancreatogênico)',
+        comoSeparar: 'Fibrose extensa com perda de ácinos; as ilhotas ficam agregadas e depois também se perdem.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitas vezes assintomático por anos; poliúria, polidipsia e perda de peso nos casos descompensados. Diagnóstico por glicemia de jejum ≥ 126 mg/dL, HbA1c ≥ 6,5 % ou TOTG.',
+      'Complicações: nefropatia, retinopatia, neuropatia e doença cardiovascular aterosclerótica.',
+      'Tratamento: dieta, exercício e perda de peso; metformina, inibidores de SGLT2, agonistas de GLP-1, outros hipoglicemiantes e insulina.',
+    ],
+    comparacaoComNormal: [
+      'No pâncreas normal, as ilhotas são grupos redondos de células endócrinas pálidas, cheias de capilares, entre ácinos serosos.',
+      'No diabetes tipo 2, essas ilhotas ficam com massas rosadas de amiloide no lugar de parte das células.',
+    ],
+  },
 ]

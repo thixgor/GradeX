@@ -1,0 +1,198 @@
+{
+ "slug": "adenocarcinoma-de-prostata-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Prostatectomia radical de homem de 71 anos (PSA 10,5; Gleason 3+4 na biópsia): adenocarcinoma acinar com glândulas pequenas de camada única e nucléolos, infiltrando o estroma, ao lado de glândulas benignas com células basais.",
+ "marcacoes": [
+  {
+   "id": "area-tumoral",
+   "estrutura": "glandulas-pequenas-infiltrativas",
+   "categoria": "patologica",
+   "rotulo": "Área de glândulas pequenas, apinhadas e escuras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.225
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.24,
+    0.16,
+    0.34,
+    0.26
+   ]
+  },
+  {
+   "id": "glandula-pequena",
+   "estrutura": "glandulas-pequenas-infiltrativas",
+   "categoria": "patologica",
+   "rotulo": "Glândula pequena de camada única",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2908,
+      0.2026
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.288,
+    0.202,
+    0.294,
+    0.208
+   ]
+  },
+  {
+   "id": "nucleolos",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes com nucléolo evidente",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2892,
+      0.2041
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.288,
+    0.202,
+    0.294,
+    0.208
+   ]
+  },
+  {
+   "id": "entre-musculo",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Glândulas infiltrando entre feixes musculares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2945,
+      0.2098
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.2,
+    0.3,
+    0.22
+   ]
+  },
+  {
+   "id": "benigna",
+   "estrutura": "glandulas-com-dupla-camada",
+   "categoria": "patologica",
+   "rotulo": "Glândula benigna com duas camadas de células",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7438,
+      0.1462
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.74,
+    0.145,
+    0.746,
+    0.151
+   ]
+  },
+  {
+   "id": "glandula-normal",
+   "estrutura": "glandula-prostatica",
+   "rotulo": "Glândulas benignas grandes e onduladas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.725,
+      0.126
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.1,
+    0.8,
+    0.2
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-fibromuscular",
+   "rotulo": "Estroma fibromuscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.296,
+      0.206
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.288,
+    0.202,
+    0.294,
+    0.208
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-pequenas-infiltrativas",
+   "status": "presente",
+   "marcacoes": [
+    "area-tumoral",
+    "glandula-pequena"
+   ],
+   "nota": "Numerosas glândulas pequenas, redondas e rígidas, de camada única, algumas fundidas (padrões 3 e 4 de Gleason), com secreção rosa na luz."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "nucleolos"
+   ],
+   "nota": "Núcleos aumentados, vesiculosos, com nucléolos evidentes."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "entre-musculo"
+   ],
+   "nota": "Glândulas neoplásicas dissecando os feixes de músculo liso."
+  },
+  {
+   "achado": "glandulas-com-dupla-camada",
+   "status": "presente",
+   "marcacoes": [
+    "benigna"
+   ],
+   "nota": "Glândulas benignas grandes, com dobras e duas camadas, na mesma lâmina — para comparação."
+  }
+ ]
+}

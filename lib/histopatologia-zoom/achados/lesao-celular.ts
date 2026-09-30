@@ -375,4 +375,60 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Insuficiência cardíaca direita e global', 'Pericardite constritiva', 'Síndrome de Budd-Chiari'],
     armadilhas: ['Choque e hipotensão também causam necrose centrolobular, mas com menos congestão; artefato de coleta dilata sinusoides sem hemorragia nas placas.'],
   },
+  {
+    id: 'infarto-cerebral-agudo',
+    nome: 'Infarto cerebral agudo (necrose isquêmica do tecido nervoso)',
+    sinonimos: ['amolecimento cerebral', 'encefalomalácia', 'necrose liquefativa cerebral', 'infarto isquêmico'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Área do sistema nervoso em que o neurópilo fica pálido, esponjoso e vacuolado, com neurônios vermelhos, edema e hemorragias petequiais; depois de dias, macrófagos espumosos removem o tecido e sobra uma cavidade.',
+    comoReconhecer: [
+      'No pequeno aumento: região mais pálida e frouxa que o tecido vizinho, muitas vezes salpicada de pequenas hemorragias.',
+      'No médio aumento: neurópilo rarefeito, vacuolado, que se desfaz na borda do corte; vasos congestos.',
+      'Evolução: 12–24 h neurônios vermelhos; 1–3 dias neutrófilos; 3–10 dias macrófagos espumosos (liquefação); semanas a meses, cavidade com gliose na parede.',
+    ],
+    mecanismo: [
+      'A oclusão de uma artéria (trombo, êmbolo, dissecção) interrompe o fluxo; neurônios toleram poucos minutos sem oxigênio e glicose.',
+      'Falta ATP, a bomba de sódio falha, entra cálcio e o glutamato liberado amplia a lesão (excitotoxicidade).',
+      'O cérebro tem pouco tecido conjuntivo e muitas enzimas: a necrose é liquefativa. Se o fluxo retorna sobre vasos lesados, há infarto hemorrágico.',
+    ],
+    significado: [
+      'Base anatômica do AVC isquêmico (cerca de 85 % dos AVCs). A idade da lesão é estimada pela sequência de células.',
+      'Em torno do núcleo necrótico, a penumbra isquêmica ainda é recuperável — por isso "tempo é cérebro" (trombólise e trombectomia).',
+    ],
+    ondeOcorre: ['AVC isquêmico (territórios da cerebral média, vertebrobasilar)', 'Infarto de zona de fronteira na hipotensão', 'Vasculites e embolia séptica'],
+    armadilhas: [
+      'Artefato de fixação tardia ou de manipulação deixa o tecido vacuolado sem hemorragias nem células reativas.',
+      '"Neurônios escuros" por manipulação do cérebro fresco imitam neurônios isquêmicos.',
+    ],
+  },
+  {
+    id: 'neuronios-vermelhos',
+    nome: 'Neurônios vermelhos (necrose neuronal isquêmica)',
+    sinonimos: ['red neurons', 'neurônios eosinofílicos', 'lesão neuronal isquêmica aguda'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Neurônios encolhidos, angulosos, com citoplasma intensamente eosinofílico (sem substância de Nissl) e núcleo pequeno e escuro, sem nucléolo — a marca da morte neuronal por hipóxia.',
+    comoReconhecer: ['Corpos neuronais triangulares de um vermelho vivo destacando-se no neurópilo, com núcleo picnótico.'],
+    mecanismo: ['A lesão isquêmica desagrega os ribossomos (perda de Nissl) e condensa as proteínas; o núcleo sofre picnose.'],
+    significado: ['Aparecem 12–24 horas após a isquemia ou hipóxia: indicam lesão aguda (AVC, parada cardíaca, hipoglicemia).'],
+    ondeOcorre: ['Infarto cerebral agudo', 'Encefalopatia hipóxico-isquêmica global (hipocampo CA1, Purkinje, camadas 3 e 5 do córtex)'],
+    armadilhas: ['Neurônios "escuros" artefatuais são basofílicos e aparecem em cérebros manipulados frescos.'],
+  },
+  {
+    id: 'amiloide-insular',
+    nome: 'Amiloidose das ilhotas pancreáticas',
+    sinonimos: ['amiloide de amilina', 'hialinização das ilhotas', 'IAPP'],
+    categoria: 'deposito',
+    resumo:
+      'Material eosinofílico acelular, homogêneo e amorfo depositado entre as células endócrinas das ilhotas de Langerhans, substituindo parte delas.',
+    comoReconhecer: [
+      'No médio aumento: ilhotas pálidas, com massas rosadas vítreas entre as poucas células remanescentes.',
+      'Confirma-se pelo vermelho Congo com birrefringência verde-maçã na luz polarizada.',
+    ],
+    mecanismo: ['As células beta secretam amilina (IAPP) junto com a insulina; na resistência insulínica, a hipersecreção faz a amilina agregar em fibrilas tóxicas que matam as células beta.'],
+    significado: ['Achado característico do diabetes tipo 2 (presente em até 90 % dos pacientes na necropsia); ajuda a explicar a falência progressiva das células beta.'],
+    ondeOcorre: ['Diabetes tipo 2', 'Insulinoma', 'Envelhecimento (pouca quantidade)'],
+    armadilhas: ['Fibrose e hialinose das ilhotas na pancreatite crônica podem parecer amiloide; o Congo resolve.'],
+  },
 ]

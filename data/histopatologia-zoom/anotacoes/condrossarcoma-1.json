@@ -1,0 +1,122 @@
+{
+ "slug": "condrossarcoma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Condrossarcoma do fêmur de mulher de 45 anos com dor: tumor lobulado de cartilagem hipercelular com condrócitos atípicos.",
+ "marcacoes": [
+  {
+   "id": "lobulos",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Tumor lobulado de matriz cartilaginosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.6
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.0,
+    0.0,
+    1.0,
+    1.07
+   ]
+  },
+  {
+   "id": "hipercelular",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Cartilagem hipercelular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.545
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.5,
+    0.4,
+    0.6
+   ]
+  },
+  {
+   "id": "atipicos",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Condrócitos grandes e hipercromáticos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.5455
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.54,
+    0.36,
+    0.56
+   ]
+  },
+  {
+   "id": "periferia",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Periferia do lóbulo mais celular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.335,
+      0.575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.5,
+    0.4,
+    0.6
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "condrocitos-atipicos",
+   "status": "presente",
+   "marcacoes": [
+    "lobulos",
+    "hipercelular",
+    "atipicos",
+    "periferia"
+   ],
+   "nota": "Lóbulos de cartilagem com celularidade aumentada, condrócitos de núcleos grandes, hipercromáticos e irregulares, mais densos na periferia dos lóbulos."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "nao-avaliavel",
+   "nota": "Não há osso trabecular incluído nesta secção, então a permeação do osso não pode ser avaliada."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Sem necrose nos campos examinados."
+  }
+ ]
+}

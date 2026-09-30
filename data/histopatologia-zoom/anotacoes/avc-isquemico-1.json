@@ -1,0 +1,177 @@
+{
+ "slug": "avc-isquemico-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Tronco encefálico de homem de 63 anos com AVC após dissecção de artéria vertebral e trombose da basilar: infarto isquêmico agudo com neurópilo pálido e vacuolado e extensas hemorragias petequiais.",
+ "marcacoes": [
+  {
+   "id": "panorama",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Tronco encefálico salpicado de hemorragias petequiais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.4
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.0,
+    0.0,
+    1.0,
+    0.7
+   ]
+  },
+  {
+   "id": "petequias",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Hemácias extravasadas no neurópilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.676,
+      0.264
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.67,
+    0.258,
+    0.68,
+    0.268
+   ]
+  },
+  {
+   "id": "perivascular",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Hemorragia em volta de um vaso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4015,
+      0.401
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.395,
+    0.395,
+    0.405,
+    0.405
+   ]
+  },
+  {
+   "id": "neuropilo",
+   "estrutura": "infarto-cerebral-agudo",
+   "categoria": "patologica",
+   "rotulo": "Neurópilo pálido, vacuolado, desintegrando-se",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6245,
+      0.3075
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.62,
+    0.3,
+    0.64,
+    0.32
+   ]
+  },
+  {
+   "id": "area-infarto",
+   "estrutura": "infarto-cerebral-agudo",
+   "categoria": "patologica",
+   "rotulo": "Área infartada com edema e hemorragia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.305
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.25,
+    0.7,
+    0.35
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Capilares congestos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.527,
+      0.202
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.52,
+    0.2,
+    0.53,
+    0.21
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infarto-cerebral-agudo",
+   "status": "presente",
+   "marcacoes": [
+    "neuropilo",
+    "area-infarto"
+   ],
+   "nota": "Neurópilo rarefeito, vacuolado e fragmentado no território infartado do tronco, sem macrófagos espumosos — infarto recente."
+  },
+  {
+   "achado": "neuronios-vermelhos",
+   "status": "nao-avaliavel",
+   "nota": "Há neurônios com citoplasma mais eosinofílico, mas nenhum com a retração angulosa e o núcleo picnótico típicos nos campos examinados; não se afirma."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "panorama",
+    "petequias",
+    "perivascular"
+   ],
+   "nota": "Numerosas hemorragias petequiais e perivasculares por todo o corte (transformação hemorrágica)."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "vasos"
+   ],
+   "nota": "Capilares e vênulas dilatados e cheios de hemácias."
+  }
+ ]
+}

@@ -276,4 +276,23 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Enfisema centroacinar e panacinar', 'Enfisema parasseptal e bolhas'],
     armadilhas: ['Pulmão mal insuflado ou hiperinsuflado artificialmente e cortes espessos alteram o tamanho dos alvéolos; procure os septos rompidos.'],
   },
+  {
+    id: 'trabeculas-osseas-afinadas',
+    nome: 'Trabéculas ósseas afinadas e desconectadas',
+    sinonimos: ['perda de massa óssea trabecular', 'osteopenia', 'rarefação trabecular'],
+    categoria: 'adaptacao',
+    resumo:
+      'Osso esponjoso com trabéculas finas, curtas e interrompidas, muito espaçadas, entre grandes espaços medulares cheios de gordura; o osso restante tem mineralização normal.',
+    comoReconhecer: [
+      'No pequeno aumento: poucas trabéculas finas "boiando" na medula, sem a rede interconectada normal.',
+      'Cortical fina e porosa; medula com muitos adipócitos.',
+    ],
+    mecanismo: [
+      'A reabsorção pelos osteoclastos supera a formação pelos osteoblastos: queda de estrogênio (pós-menopausa), idade, corticoides, imobilização.',
+      'As trabéculas horizontais são perfuradas e desaparecem primeiro; as que restam não sustentam a carga.',
+    ],
+    significado: ['Base da osteoporose: menos osso, de qualidade normal, com fragilidade e fraturas por baixo impacto (vértebras, quadril, punho, costelas).'],
+    ondeOcorre: ['Osteoporose pós-menopausa e senil', 'Osteoporose por corticoide', 'Desuso'],
+    armadilhas: ['Na osteomalácia, a quantidade de osso pode ser normal, mas há bordas largas de osteoide não mineralizado; biópsias pequenas e fragmentadas parecem rarefeitas.'],
+  },
 ]

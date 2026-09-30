@@ -856,4 +856,26 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Doença celíaca', 'Giardíase', 'Drogas (AINEs, olmesartana)', 'Infecção por H. pylori', 'Doenças autoimunes'],
     armadilhas: ['Não é específica: deve ser interpretada com sorologia e histórico de glúten.'],
   },
+  {
+    id: 'exsudato-leptomeningeo',
+    nome: 'Exsudato inflamatório no espaço subaracnóideo',
+    sinonimos: ['leptomeningite', 'exsudato meníngeo', 'pus nas meninges'],
+    categoria: 'inflamacao',
+    resumo:
+      'O espaço entre a pia-máter e a aracnoide, normalmente frouxo e quase vazio, fica tomado por células inflamatórias, fibrina e restos, sobretudo nos sulcos e em torno dos vasos.',
+    comoReconhecer: [
+      'No pequeno aumento: faixas azuladas e densas de células preenchendo os sulcos, sobre a superfície do córtex.',
+      'No grande aumento: neutrófilos na fase aguda; depois macrófagos, linfócitos e plasmócitos; vasos congestos; bactérias às vezes visíveis.',
+    ],
+    mecanismo: [
+      'Bactérias chegam ao espaço subaracnóideo pelo sangue (ou por contiguidade: otite, sinusite, fratura), multiplicam-se no líquor, que tem pouca defesa, e liberam componentes da parede.',
+      'Citocinas atraem leucócitos; a inflamação aumenta a permeabilidade da barreira hematoencefálica (edema) e lesa vasos (vasculite, infartos).',
+    ],
+    significado: [
+      'Define a meningite. O tipo celular sugere a causa: neutrófilos (bacteriana), linfócitos (viral, tuberculosa com granulomas).',
+      'Complicações: edema cerebral, hidrocefalia, infartos por vasculite e perda auditiva.',
+    ],
+    ondeOcorre: ['Meningite bacteriana (pneumococo, meningococo, Haemophilus, Listeria)', 'Meningite tuberculosa e fúngica', 'Meningite viral (infiltrado linfocitário discreto)'],
+    armadilhas: ['Hemorragia subaracnóidea e infiltração meníngea por linfoma ou carcinoma também preenchem o espaço; observe o tipo de célula.'],
+  },
 ]
