@@ -89,6 +89,69 @@
     0.35,
     0.4
    ]
+  },
+  {
+   "id": "papila",
+   "estrutura": "derme-papilar",
+   "rotulo": "Papilas conjuntivas altas encaixadas no epitélio estratificado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.365
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.19,
+    0.33,
+    0.25,
+    0.39
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículo piloso: a zona cutânea do canal anal tem pele com anexos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.215
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.18,
+    0.35,
+    0.25
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandula-sudoripara-apocrina",
+   "rotulo": "Glândulas perianais (apócrinas) na derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.29
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.35,
+    0.27,
+    0.4,
+    0.31
+   ]
   }
  ]
 }

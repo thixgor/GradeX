@@ -67,6 +67,90 @@
     0.34,
     0.52
    ]
+  },
+  {
+   "id": "muscular-externa",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa (camadas de músculo liso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.46
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.42,
+    0.18,
+    0.5
+   ]
+  },
+  {
+   "id": "foliculo-2",
+   "estrutura": "foliculo-linfoide",
+   "rotulo": "Folículo linfoide na base da mucosa: o apêndice é rico em tecido linfoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.69
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.32,
+    0.65,
+    0.4,
+    0.73
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria cheia de linfócitos entre as criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.332,
+      0.545
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.52,
+    0.36,
+    0.58
+   ]
+  },
+  {
+   "id": "caliciformes",
+   "estrutura": "celula-caliciforme",
+   "rotulo": "Criptas com muitas células caliciformes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.44
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.29,
+    0.42,
+    0.33,
+    0.46
+   ]
   }
  ]
 }

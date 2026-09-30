@@ -109,6 +109,27 @@
     0.34,
     0.54
    ]
+  },
+  {
+   "id": "adventicia",
+   "estrutura": "tunica-adventicia",
+   "rotulo": "Adventícia: o esôfago torácico não tem serosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.11,
+      0.45
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.06,
+    0.4,
+    0.16,
+    0.5
+   ]
   }
  ]
 }

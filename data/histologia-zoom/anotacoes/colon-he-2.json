@@ -68,6 +68,69 @@
     0.36,
     0.345
    ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa frouxa com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.42
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.38,
+    0.4,
+    0.48,
+    0.52
+   ]
+  },
+  {
+   "id": "muscular-mucosa",
+   "estrutura": "muscular-da-mucosa",
+   "rotulo": "Muscular da mucosa na base das criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.347,
+      0.383
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.36,
+    0.4,
+    0.42
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos da submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4265,
+      0.459
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.37,
+    0.45,
+    0.42
+   ]
   }
  ]
 }

@@ -2,8 +2,8 @@
  "slug": "estomago-corpo-fundo-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -74,6 +74,153 @@
     0.45,
     0.55,
     0.65
+   ]
+  },
+  {
+   "id": "principal",
+   "estrutura": "celula-principal-gastrica",
+   "rotulo": "Células principais: basofílicas (roxas), na base das glândulas fúndicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3185,
+      0.48
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.305,
+    0.47,
+    0.335,
+    0.495
+   ]
+  },
+  {
+   "id": "parietal-2",
+   "estrutura": "celula-parietal",
+   "rotulo": "Células parietais: grandes, eosinofílicas (rosadas), no colo e no corpo das glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.329,
+      0.5
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.315,
+    0.49,
+    0.34,
+    0.51
+   ]
+  },
+  {
+   "id": "muscular-mucosa",
+   "estrutura": "muscular-da-mucosa",
+   "rotulo": "Muscular da mucosa: faixa fina de músculo liso sob as glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.4785
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.468,
+    0.325,
+    0.488
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa frouxa, com vasos grandes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.25,
+      0.42
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.38,
+    0.33,
+    0.5
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria da submucosa: média muscular espessa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.285,
+      0.462
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.24,
+    0.43,
+    0.33,
+    0.51
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Veia da submucosa: parede fina e luz ampla com sangue",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.438
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.34,
+    0.42,
+    0.4,
+    0.46
+   ]
+  },
+  {
+   "id": "muscular-externa",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa (camadas de músculo liso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.195,
+      0.415
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.16,
+    0.37,
+    0.24,
+    0.45
    ]
   }
  ]

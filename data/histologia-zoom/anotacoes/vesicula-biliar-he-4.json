@@ -2,8 +2,8 @@
  "slug": "vesicula-biliar-he-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -47,6 +47,69 @@
     0.75,
     0.55,
     0.95
+   ]
+  },
+  {
+   "id": "parede",
+   "estrutura": "muscular-externa",
+   "rotulo": "Parede fina da vesícula: mucosa, camada muscular e conjuntivo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.795
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.43,
+    0.76,
+    0.52,
+    0.82
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Epitélio simples colunar da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.63,
+      0.783
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.6,
+    0.76,
+    0.66,
+    0.81
+   ]
+  },
+  {
+   "id": "veia-hepatica",
+   "estrutura": "veia-centrolobular",
+   "rotulo": "Ramo de veia hepática / veia centrolobular do fígado vizinho",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.54,
+      0.875
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.49,
+    0.83,
+    0.6,
+    0.91
    ]
   }
  ]
