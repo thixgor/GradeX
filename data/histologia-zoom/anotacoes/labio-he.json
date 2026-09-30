@@ -2,7 +2,7 @@
  "slug": "labio-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -81,6 +81,119 @@
     0.1,
     0.15,
     0.3
+   ]
+  },
+  {
+   "id": "orbicular",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo orbicular da boca (esquelético), no centro do lábio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.448,
+      0.64
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.6,
+    0.5,
+    0.68
+   ]
+  },
+  {
+   "id": "glandulas-2",
+   "estrutura": "glandula-salivar-labial",
+   "rotulo": "Glândulas salivares labiais (mucosas) na submucosa, do lado da mucosa oral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.572,
+      0.632
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.52,
+    0.44,
+    0.7,
+    0.76
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículos pilosos na derme da face cutânea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.344,
+      0.532
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.9
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.25,
+    0.5,
+    0.4,
+    0.94
+   ]
+  },
+  {
+   "id": "epiderme-2",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme queratinizada da face cutânea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.192,
+      0.76
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.14,
+    0.72,
+    0.24,
+    0.8
+   ]
+  },
+  {
+   "id": "mucosa-2",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio espesso não queratinizado da mucosa labial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.752,
+      0.56
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.52,
+    0.8,
+    0.6
    ]
   }
  ]

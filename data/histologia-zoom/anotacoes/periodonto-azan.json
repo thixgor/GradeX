@@ -2,7 +2,7 @@
  "slug": "periodonto-azan",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -66,6 +66,90 @@
     0.45,
     0.35,
     0.6
+   ]
+  },
+  {
+   "id": "dentina",
+   "estrutura": "dentina",
+   "rotulo": "Dentina: tecido mineralizado que forma o corpo do dente (azul no Azan)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.364,
+      0.277
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    0.18,
+    0.48,
+    0.38
+   ]
+  },
+  {
+   "id": "polpa",
+   "estrutura": "polpa-dentaria",
+   "rotulo": "Polpa dentária no centro do dente, com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.545,
+      0.2225
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.47,
+    0.18,
+    0.62,
+    0.27
+   ]
+  },
+  {
+   "id": "gengiva",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Gengiva: epitélio estratificado pavimentoso queratinizado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.236,
+      0.127
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.18,
+    0.08,
+    0.3,
+    0.17
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo esquelético (vermelho no Azan) fora do alvéolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.818,
+      0.477
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.72,
+    0.43,
+    0.94,
+    0.53
    ]
   }
  ]

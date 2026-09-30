@@ -48,6 +48,90 @@
     0.5,
     0.34
    ]
+  },
+  {
+   "id": "odontoblastos",
+   "estrutura": "odontoblasto",
+   "rotulo": "Odontoblastos em paliçada na borda da papila",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.447,
+      0.3148
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.42,
+    0.28,
+    0.48,
+    0.34
+   ]
+  },
+  {
+   "id": "dentina",
+   "estrutura": "dentina",
+   "rotulo": "Pré-dentina e dentina: faixa homogênea clara",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4536,
+      0.3238
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.42,
+    0.28,
+    0.48,
+    0.34
+   ]
+  },
+  {
+   "id": "esmalte",
+   "estrutura": "esmalte",
+   "rotulo": "Esmalte recém-secretado: linha fina e escura entre a dentina e os ameloblastos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.444,
+      0.3229
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.42,
+    0.28,
+    0.48,
+    0.34
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Capilares da papila dentária",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.458,
+      0.2944
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.43,
+    0.28,
+    0.48,
+    0.31
+   ]
   }
  ]
 }

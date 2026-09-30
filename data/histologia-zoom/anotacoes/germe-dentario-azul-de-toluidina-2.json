@@ -29,8 +29,8 @@
   },
   {
    "id": "reticulo",
-   "estrutura": "reticulo-estrelado",
-   "rotulo": "Retículo estrelado: células estreladas com grandes espaços",
+   "estrutura": "epitelio-externo-do-esmalte",
+   "rotulo": "Camada papilar (estrato intermediário fundido ao epitélio externo) com capilares invaginados: típica da fase de maturação do esmalte — não é retículo estrelado",
    "marcas": [
     {
      "tipo": "seta",
@@ -40,12 +40,69 @@
      ],
      "angulo": 45
     }
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar dentro da camada papilar, que supre os ameloblastos na maturação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.229,
+      0.516
+     ],
+     "angulo": 0
+    }
    ],
    "vista": [
-    0.2,
-    0.46,
-    0.34,
-    0.6
+    0.21,
+    0.5,
+    0.25,
+    0.53
+   ]
+  },
+  {
+   "id": "saco",
+   "estrutura": "saco-dentario",
+   "rotulo": "Saco (folículo) dentário: conjuntivo com vasos entre o órgão do esmalte e o osso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.54
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.21,
+    0.53,
+    0.3,
+    0.56
+   ]
+  },
+  {
+   "id": "osso",
+   "estrutura": "osso-alveolar",
+   "rotulo": "Osso alveolar em formação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.568
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.21,
+    0.56,
+    0.3,
+    0.58
    ]
   }
  ]
