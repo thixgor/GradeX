@@ -2,7 +2,7 @@
  "slug": "sangue-periferico-may-grunwald-giemsa-7",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -66,6 +66,56 @@
     0.3995,
     0.5045,
     0.4035
+   ]
+  },
+  {
+   "id": "linfocito",
+   "estrutura": "linfocito",
+   "rotulo": "Linfócitos: núcleo redondo ocupando quase toda a célula, anel fino de citoplasma azul",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5171,
+      0.4138
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4908,
+      0.3764
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5159,
+    0.4126,
+    0.5183,
+    0.415
+   ]
+  },
+  {
+   "id": "neutrofilo",
+   "estrutura": "neutrofilo",
+   "rotulo": "Neutrófilo (núcleo em bastão/segmentando) com citoplasma rosado granular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5332,
+      0.3731
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.532,
+    0.3719,
+    0.5344,
+    0.3743
    ]
   }
  ]

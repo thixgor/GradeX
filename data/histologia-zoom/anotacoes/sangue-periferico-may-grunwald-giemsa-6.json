@@ -2,7 +2,7 @@
  "slug": "sangue-periferico-may-grunwald-giemsa-6",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -64,6 +64,93 @@
     0.3995,
     0.5045,
     0.4035
+   ]
+  },
+  {
+   "id": "monocito",
+   "estrutura": "monocito",
+   "rotulo": "Monócitos: células grandes, núcleo dobrado ou reniforme, citoplasma azul-acinzentado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5394,
+      0.4047
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4791,
+      0.3843
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5382,
+    0.4035,
+    0.5406,
+    0.4058
+   ]
+  },
+  {
+   "id": "linfocito",
+   "estrutura": "linfocito",
+   "rotulo": "Linfócitos pequenos: núcleo redondo e escuro, citoplasma escasso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4916,
+      0.3771
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4974,
+      0.3926
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4904,
+    0.3759,
+    0.4928,
+    0.3783
+   ]
+  },
+  {
+   "id": "neutrofilo-2",
+   "estrutura": "neutrofilo",
+   "rotulo": "Neutrófilos: núcleo com 3–5 lobos e citoplasma rosado claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5358,
+      0.4223
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4992,
+      0.3719
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5346,
+    0.4211,
+    0.537,
+    0.4235
    ]
   }
  ]
