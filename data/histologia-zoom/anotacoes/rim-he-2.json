@@ -2,8 +2,8 @@
  "slug": "rim-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -48,6 +48,69 @@
     0.5,
     0.37,
     0.54
+   ]
+  },
+  {
+   "id": "glomerulo",
+   "estrutura": "corpusculo-renal",
+   "rotulo": "Corpúsculo renal: glomérulo dentro da cápsula de Bowman",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3354,
+      0.8644
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.8,
+    0.4,
+    0.9
+   ]
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos contorcidos do córtex",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.335,
+      0.845
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.8,
+    0.4,
+    0.9
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Vaso arqueado na junção corticomedular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.385,
+      0.832
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.8,
+    0.4,
+    0.9
    ]
   }
  ]

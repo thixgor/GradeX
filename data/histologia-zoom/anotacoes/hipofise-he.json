@@ -2,8 +2,8 @@
  "slug": "hipofise-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,48 @@
     0.4,
     0.43,
     0.43
+   ]
+  },
+  {
+   "id": "adeno",
+   "estrutura": "adeno-hipofise",
+   "rotulo": "Adeno-hipófise: cordões de células acidófilas, basófilas e cromófobas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.44
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.46,
+    0.46
+   ]
+  },
+  {
+   "id": "sinusoide",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar sinusoide entre os cordões",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4513,
+      0.4427
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.46,
+    0.46
    ]
   }
  ]

@@ -2,8 +2,8 @@
  "slug": "bexiga-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.4,
     0.45,
     0.5
+   ]
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria com vasos, no eixo das pregas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3356,
+      0.4667
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.4,
+    0.4,
+    0.5
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Detrusor: feixes de músculo liso em várias direções",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7556,
+      0.6167
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.55,
+    0.8,
+    0.65
    ]
   }
  ]

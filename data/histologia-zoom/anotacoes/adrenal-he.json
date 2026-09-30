@@ -2,8 +2,8 @@
  "slug": "adrenal-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -65,6 +65,69 @@
     0.29,
     0.43,
     0.33
+   ]
+  },
+  {
+   "id": "sinusoides",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilares sinusoides entre os cordões da fasciculada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4135,
+      0.4105
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.44,
+    0.44
+   ]
+  },
+  {
+   "id": "cordoes",
+   "estrutura": "zona-fasciculada",
+   "rotulo": "Cordões retos de espongiócitos (citoplasma vacuolado, lipídico)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4225,
+      0.419
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.44,
+    0.44
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Vênula do córtex",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.51,
+      0.4236
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.34,
+    0.56,
+    0.6
    ]
   }
  ]

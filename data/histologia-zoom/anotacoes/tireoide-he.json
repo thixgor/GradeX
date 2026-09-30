@@ -2,8 +2,8 @@
  "slug": "tireoide-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -48,6 +48,69 @@
     0.2,
     0.43,
     0.23
+   ]
+  },
+  {
+   "id": "celulas-foliculares",
+   "estrutura": "celula-folicular-tireoide",
+   "rotulo": "Células foliculares cúbicas revestindo o folículo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3013,
+      0.1438
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.12,
+    0.34,
+    0.18
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo conjuntivo entre os lóbulos, com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3856,
+      0.2895
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.26,
+    0.42,
+    0.32
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "veia",
+   "rotulo": "Vaso com hemácias no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.405,
+      0.3
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.26,
+    0.42,
+    0.32
    ]
   }
  ]

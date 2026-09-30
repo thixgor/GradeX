@@ -2,8 +2,8 @@
  "slug": "uretra-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,48 @@
     0.45,
     0.5,
     0.55
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Feixes de músculo liso da parede da uretra",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.362,
+      0.29
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.45,
+    0.4
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso do tecido conjuntivo (corpo esponjoso)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3585,
+      0.3572
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.45,
+    0.4
    ]
   }
  ]

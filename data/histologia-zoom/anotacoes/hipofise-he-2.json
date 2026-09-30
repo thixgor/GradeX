@@ -2,8 +2,8 @@
  "slug": "hipofise-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.25,
     0.465,
     0.265
+   ]
+  },
+  {
+   "id": "neuro",
+   "estrutura": "neuro-hipofise",
+   "rotulo": "Neuro-hipófise: tecido fibrilar (axônios) com pituícitos de núcleo alongado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.333
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.32,
+    0.23,
+    0.35
+   ]
+  },
+  {
+   "id": "limite",
+   "estrutura": "adeno-hipofise",
+   "rotulo": "Adeno-hipófise: cordões celulares, vizinha à neuro-hipófise",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.275,
+      0.34
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.28,
+    0.3,
+    0.4
    ]
   }
  ]
