@@ -270,7 +270,7 @@ export const ESTRUTURAS_EMBRIOLOGIA_SENTIDOS: Estrutura[] = [
     resumo: 'Grupo de células maiores e arredondadas em um polo do blastocisto, que dará origem ao embrião propriamente dito.',
     caracteristicas: ['Aglomerado de células com núcleo grande e claro, preso à face interna do trofoblasto, no polo embrionário.', 'Do outro lado fica a cavidade (blastocele).'],
     aprofundado: ['Células pluripotentes: são a fonte das células-tronco embrionárias.', 'Na 2ª semana forma o disco bilaminar (epiblasto e hipoblasto); o epiblasto dá origem às três camadas germinativas na gastrulação.'],
-    funcoes: ['Formar todos os tecidos do embrião (e o âmnio, o saco vitelino e o mesoderma extraembrionário).'],
+    funcoes: ['Formar todos os tecidos do embrião (e o âmnio, o saco vitelino e o mesoderma extraembrionário).', 'Gerar o epiblasto, que na gastrulação forma ectoderma, mesoderma e endoderma — todos os tecidos do corpo.'],
     regeneracao: { nivel: 'alta', texto: 'Células em divisão rápida e pluripotentes.' },
     ondeEncontrar: ['Blastocisto (5º a 7º dia após a fecundação).'],
     alteracoes: ['Divisão da massa celular interna origina gêmeos monozigóticos que compartilham a placenta.', 'Falhas no desenvolvimento podem resultar em gestação anembrionada (ovo cego).'],
