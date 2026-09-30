@@ -2,6 +2,7 @@ import { Db, ObjectId } from 'mongodb'
 import type { ManualClinicoPlanKey, ManualClinicoPurchase, MaterialPurchase, User } from '@/lib/types'
 import { MANUAL_CLINICO_PURCHASES_COLLECTION } from '@/lib/manual-clinico-product'
 import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
+import { normalizeInstitutionLabel, normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
 export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
@@ -398,8 +399,8 @@ async function validateUserCouponRules(
   const userEmail = identity.userEmail || user?.email
 
   if (coupon.allowedAfyaUnits?.length) {
-    const allowedUnits = new Set(coupon.allowedAfyaUnits)
-    if (!user?.isAfyaMedicineStudent || !user.afyaUnit || !allowedUnits.has(user.afyaUnit)) {
+    const allowedUnits = new Set(normalizeInstitutionLabels(coupon.allowedAfyaUnits))
+    if (!user?.isAfyaMedicineStudent || !user.afyaUnit || !allowedUnits.has(normalizeInstitutionLabel(user.afyaUnit))) {
       throw new CouponError('Este cupom é exclusivo para unidades selecionadas.')
     }
   }

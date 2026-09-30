@@ -10,6 +10,7 @@ import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { maskCpf } from '@/lib/cpf'
 import { isValidCrmNumber, onlyCrmDigits } from '@/lib/crm'
 import { User } from '@/lib/types'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 
@@ -67,7 +68,7 @@ export async function GET() {
       residencySpecialty: user.residencySpecialty || '',
       residencyHospital: user.residencyHospital || '',
       residencyYear: user.residencyYear || '',
-      afyaUnit: user.afyaUnit || '',
+      afyaUnit: normalizeInstitutionLabel(user.afyaUnit) || '',
       // Faculdade em texto livre (ver `User.institution`). A tela do desconto
       // PROUNI/FIES a usa para não fazer a pessoa redigitar a instituição.
       institution: user.institution || '',
@@ -183,7 +184,7 @@ export async function PUT(request: NextRequest) {
     const finalResidencySpecialty = residencySpecialty !== undefined ? residencySpecialty : currentUser.residencySpecialty
     const finalResidencyHospital = residencyHospital !== undefined ? residencyHospital : currentUser.residencyHospital
     const finalResidencyYear = residencyYear !== undefined ? residencyYear : currentUser.residencyYear
-    const finalAfyaUnit = afyaUnit !== undefined ? afyaUnit : currentUser.afyaUnit
+    const finalAfyaUnit = normalizeInstitutionLabel(afyaUnit !== undefined ? afyaUnit : currentUser.afyaUnit)
 
     assign('specialty', resolvedProfession === 'medico' ? (finalSpecialty || undefined) : undefined)
     assign('residencySpecialty', resolvedProfession === 'residente' ? (finalResidencySpecialty || undefined) : undefined)

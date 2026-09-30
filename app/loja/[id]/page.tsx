@@ -285,7 +285,7 @@ export default function ProductPage() {
 
               <div className="mt-6 flex items-center gap-2 rounded-xl bg-muted/40 px-4 py-3 text-xs text-muted-foreground">
                 <ShieldCheck className="h-4 w-4 text-primary" />
-                Entrega por retirada na Afya Unigranrio Barra ou no seu endereço. Pagamento seguro via Pix, cartão ou boleto.
+                Entrega por retirada na Unigranrio Barra ou no seu endereço. Pagamento seguro via Pix, cartão ou boleto.
               </div>
               <p className="mt-3 text-center text-[11px] text-muted-foreground/70">Entregue por DomineAqui LTDA — Rio de Janeiro</p>
             </motion.div>

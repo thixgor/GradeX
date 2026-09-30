@@ -13,6 +13,7 @@ import {
   type CouponProductRef,
 } from '@/lib/coupons'
 import { INSTITUTION_UNITS } from '@/lib/institution-units'
+import { normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -27,7 +28,7 @@ const ProductRefSchema = z.object({
 const AllowedAfyaUnitsSchema = z.array(z.string())
   .max(INSTITUTION_UNITS.length)
   .default([])
-  .transform((units) => Array.from(new Set(units.filter((unit) => INSTITUTION_UNITS.includes(unit)))))
+  .transform((units) => Array.from(new Set(normalizeInstitutionLabels(units).filter((unit) => INSTITUTION_UNITS.includes(unit)))))
 
 const PromoSchema = z.object({
   enabled: z.boolean().default(false),
@@ -92,7 +93,7 @@ function serializeCoupon(coupon: Coupon, stats?: any) {
     perUserLimit: coupon.perUserLimit ?? null,
     minimumCartAmount: coupon.minimumCartAmount ?? null,
     firstPurchaseOnly: coupon.firstPurchaseOnly === true,
-    allowedAfyaUnits: coupon.allowedAfyaUnits || [],
+    allowedAfyaUnits: normalizeInstitutionLabels(coupon.allowedAfyaUnits),
     allowedManualPlans: coupon.allowedManualPlans || [],
     stackWithTier: coupon.stackWithTier === true,
     promo: coupon.promo || null,

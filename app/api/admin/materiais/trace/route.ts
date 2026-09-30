@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { emailFingerprint } from '@/lib/watermark-fingerprint'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 
@@ -118,7 +119,7 @@ async function findUsers(db: any, parsed: ReturnType<typeof parseTraceQuery>) {
       cpf: user.cpf || '',
       dateOfBirth: serializeDate(user.dateOfBirth),
       isAfyaMedicineStudent: !!user.isAfyaMedicineStudent,
-      afyaUnit: user.afyaUnit || '',
+      afyaUnit: normalizeInstitutionLabel(user.afyaUnit) || '',
       createdAt: serializeDate(user.createdAt),
       lastLoginAt: serializeDate(user.lastLoginAt),
     }))

@@ -6,7 +6,7 @@
 // ganha, na hora de exibir, uma opção de fallback (`OTHER_SCHOOL_OPTION`) para
 // quem cursa numa escola recém-aberta ou fora do país: a UI troca o select por
 // um campo de texto livre, então nunca perdemos o dado.
-import { getAfyaUnitsByState } from '@/lib/institution-units'
+import { getNetworkUnitsByState } from '@/lib/institution-units'
 
 export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
   AC: [
@@ -26,8 +26,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Federal do Amapá (UNIFAP) - Macapá',
   ],
   AM: [
-    'Afya Faculdade de Ciências Médicas de Itacoatiara (AFYA ITACOATIARA)',
-    'Afya Faculdade de Ciências Médicas de Manacapuru (AFYA MANACAPURU)',
     'Centro Universitário CEUNI-FAMETRO - Manaus',
     'Universidade do Estado do Amazonas (UEA) - Manaus',
     'Universidade Federal do Amazonas (UFAM) - Manaus',
@@ -35,7 +33,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Nilton Lins (UNINILTONLINS) - Manaus',
   ],
   BA: [
-    'AFYA FACULDADE DE CIÊNCIAS MÉDICAS DE ITABUNA (AFYA ITABUNA)',
     'Centro Universitário AGES (UniAGES) - Paripiranga',
     'Centro Universitário Dom Pedro II (UNIDOMPEDRO) - Salvador',
     'Centro Universitário Nobre de Feira de Santana (UNIFAN)',
@@ -140,8 +137,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Federal do Mato Grosso do Sul (UFMS/Três lagoas) - Três Lagoas',
   ],
   MG: [
-    'AFYA Faculdade de Ciências Médicas de Contagem (Afya Contagem)',
-    'Afya Faculdade de Ciências Médicas de Ipatinga (AFYA IPATINGA)',
     'Centro Universitário Atenas (UNIATENAS) - Paracatu',
     'Centro Universitário de Belo Horizonte (UNI/BH)',
     'Centro Universitário de Caratinga (UNEC)',
@@ -191,8 +186,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Vale do Rio Doce (UNIVALE MG) - Governador Valadares',
   ],
   PA: [
-    'Afya Faculdade de Ciências Médicas de Abaetetuba (AFYA ABAETETUBA)',
-    'AFYA Faculdade de Ciências Médicas de Bragança (AFYA Bragança)',
     'Centro Universitário da Amazônia (UNAMA) - Santarém',
     'Centro Universitário do Estado do Pará (CESUPA) - Belem',
     'Centro Universitário Fibra (Unifibra) - Belém',
@@ -204,7 +197,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Federal do Pará (UFPA) - Belem',
   ],
   PB: [
-    'AFYA FACULDADE DE CIÊNCIAS MÉDICAS DA PARAÍBA (AFYA PARAÍBA) - Cabedelo',
     'Centro Universitário de João Pessoa (UNIPÊ)',
     'Centro Universitário de Patos (UNIFIP)',
     'Centro Universitário Santa Maria (UNIFSM) - Cajazeiras',
@@ -240,8 +232,6 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
     'Universidade Positivo (UP) - Curitiba',
   ],
   PE: [
-    'Afya Faculdade de Ciências Médicas de Garanhuns (FAMEG)',
-    'AFYA FACULDADE DE CIÊNCIAS MÉDICAS DE JABOATÃO DOS GUARARAPES (AFYA JABOATAO)',
     'Centro Universitário Mauricio de Nassau (UNINASSAU) - Recife',
     'Centro Universitário Universo Recife',
     'Faculdade de Ciências Aplicadas e Sociais de Petrolina (FACAPE)',
@@ -454,17 +444,15 @@ export const MEDICAL_SCHOOLS_BY_STATE: Record<string, string[]> = {
 export const OTHER_SCHOOL_OPTION = 'Não encontro minha instituição na lista'
 
 /**
- * Lista de um estado, com as unidades Afya no topo (é como o aluno chama a
- * própria faculdade) e a opção de escape no fim. As entradas do e-MEC que já
- * são Afya saem da lista nacional para não aparecer o mesmo curso duas vezes
- * com nomes diferentes — o rótulo Afya vira o valor canônico.
+ * Lista de um estado, com as unidades da rede no topo e a opção de escape no
+ * fim. As entradas do e-MEC dessas unidades foram tiradas da lista nacional
+ * para não aparecer o mesmo curso duas vezes com nomes diferentes — o rótulo
+ * de `lib/institution-units.ts` é o valor canônico.
  */
 export function getMedicalSchoolsByState(uf?: string | null): string[] {
   if (!uf) return []
-  const national = (MEDICAL_SCHOOLS_BY_STATE[uf] || []).filter(
-    (school) => !/afya/i.test(school)
-  )
-  return [...getAfyaUnitsByState(uf), ...national, OTHER_SCHOOL_OPTION]
+  const national = MEDICAL_SCHOOLS_BY_STATE[uf] || []
+  return [...getNetworkUnitsByState(uf), ...national, OTHER_SCHOOL_OPTION]
 }
 
 /** Todas as escolas do país, com a UF no rótulo — para busca sem filtrar estado. */

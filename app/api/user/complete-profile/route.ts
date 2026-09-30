@@ -9,6 +9,7 @@ import { isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import { isValidCrmNumber, onlyCrmDigits } from '@/lib/crm'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { verifyCpfWithReceita, isCpfVerificationRequired } from '@/lib/receita-cpf'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
   if (residencySpecialty) set.residencySpecialty = String(residencySpecialty).trim()
   if (residencyHospital) set.residencyHospital = String(residencyHospital).trim()
   if (residencyYear) set.residencyYear = String(residencyYear).trim()
-  if (afyaUnit) set.afyaUnit = String(afyaUnit).trim()
+  if (afyaUnit) set.afyaUnit = normalizeInstitutionLabel(String(afyaUnit).trim())
 
   if (crm) {
     if (!isValidCrmNumber(crm)) {
