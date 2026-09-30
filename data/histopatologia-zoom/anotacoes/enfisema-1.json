@@ -5,19 +5,178 @@
   "data": "2026-09-30",
   "conferencias": 3
  },
- "resumo": "Pulmão de homem de 65 anos com tosse produtiva: enfisema com destruição de septos e antracose; brônquio com cartilagem na mesma lâmina.",
- "marcacoes": [],
+ "resumo": "Pulmão de homem de 65 anos com tosse produtiva: enfisema com destruição dos septos alveolares e antracose; brônquio com cartilagem, glândulas seromucosas e epitélio respiratório na mesma lâmina.",
+ "marcacoes": [
+  {
+   "id": "espacos",
+   "estrutura": "destruicao-de-septos-alveolares",
+   "categoria": "patologica",
+   "rotulo": "Espaços aéreos muito alargados e irregulares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.32
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.56,
+    0.24,
+    0.72,
+    0.4
+   ]
+  },
+  {
+   "id": "septos-rotos",
+   "estrutura": "destruicao-de-septos-alveolares",
+   "categoria": "patologica",
+   "rotulo": "Septo alveolar rompido, com a ponta solta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6085,
+      0.312
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.3,
+    0.63,
+    0.33
+   ]
+  },
+  {
+   "id": "septo-fino",
+   "estrutura": "destruicao-de-septos-alveolares",
+   "categoria": "patologica",
+   "rotulo": "Septos finos e poucos, com perda da renda alveolar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.618,
+      0.304
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.3,
+    0.63,
+    0.33
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Antracose densa em macrófagos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6745,
+      0.299
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.662,
+    0.285,
+    0.682,
+    0.305
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.142
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.11,
+    0.46,
+    0.23
+   ]
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas da parede brônquica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.383,
+      0.181
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.37,
+    0.175,
+    0.4,
+    0.205
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.393,
+      0.192
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.37,
+    0.175,
+    0.4,
+    0.205
+   ]
+  }
+ ],
  "achados": [
   {
    "achado": "destruicao-de-septos-alveolares",
    "status": "presente",
-   "nota": "Espaços aéreos muito alargados e irregulares, com septos finos, rompidos e pontas soltas."
+   "marcacoes": [
+    "espacos",
+    "septos-rotos",
+    "septo-fino"
+   ],
+   "nota": "Espaços aéreos muito alargados e irregulares, com septos finos, rompidos e de pontas soltas."
   },
   {
    "achado": "antracose",
    "status": "presente",
-   "nota": "Pigmento antracótico abundante em macrófagos junto a septos e vasos."
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Pigmento antracótico abundante em macrófagos junto a septos, vasos e bronquíolos."
   }
- ],
- "semMarcacoes": true
+ ]
 }

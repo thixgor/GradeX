@@ -6,16 +6,134 @@
   "conferencias": 3
  },
  "resumo": "Biópsias de esôfago de homem de 60 anos com esofagite: mucosa colunar com metaplasia intestinal (células caliciformes) — esôfago de Barrett — ao lado de epitélio escamoso.",
- "marcacoes": [],
+ "marcacoes": [
+  {
+   "id": "mucosa-colunar",
+   "estrutura": "metaplasia-intestinal",
+   "categoria": "patologica",
+   "rotulo": "Mucosa colunar glandular no esôfago",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.475,
+      0.152
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.13,
+    0.52,
+    0.21
+   ]
+  },
+  {
+   "id": "caliciformes",
+   "estrutura": "metaplasia-intestinal",
+   "categoria": "patologica",
+   "rotulo": "Células caliciformes (metaplasia intestinal)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4613,
+      0.1481
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.459,
+    0.146,
+    0.467,
+    0.154
+   ]
+  },
+  {
+   "id": "caliciforme-2",
+   "estrutura": "metaplasia-intestinal",
+   "categoria": "patologica",
+   "rotulo": "Outra célula caliciforme em \"cálice\"",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4631,
+      0.1478
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.459,
+    0.146,
+    0.467,
+    0.154
+   ]
+  },
+  {
+   "id": "inflamacao",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Inflamação crônica da lâmina própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.488,
+      0.162
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.13,
+    0.52,
+    0.21
+   ]
+  },
+  {
+   "id": "escamoso",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio escamoso esofágico original",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.51,
+      0.185
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.13,
+    0.52,
+    0.21
+   ]
+  }
+ ],
  "achados": [
   {
    "achado": "metaplasia-intestinal",
    "status": "presente",
+   "marcacoes": [
+    "mucosa-colunar",
+    "caliciformes",
+    "caliciforme-2"
+   ],
    "nota": "Mucosa colunar com numerosas células caliciformes, ao lado de fragmentos de epitélio escamoso esofágico."
   },
   {
    "achado": "infiltrado-linfoplasmocitario",
    "status": "presente",
+   "marcacoes": [
+    "inflamacao"
+   ],
    "nota": "Inflamação crônica da lâmina própria."
   },
   {
@@ -23,6 +141,5 @@
    "status": "nao-avaliavel",
    "nota": "Há núcleos alongados e algo apinhados nas glândulas, mas com inflamação ao lado; sem imuno e níveis adicionais, não se afirma nem se exclui displasia."
   }
- ],
- "semMarcacoes": true
+ ]
 }

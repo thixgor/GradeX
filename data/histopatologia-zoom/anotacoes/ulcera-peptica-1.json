@@ -5,29 +5,194 @@
   "data": "2026-09-30",
   "conferencias": 3
  },
- "resumo": "Úlcera péptica crônica em homem de 50 anos com dispepsia: cratera que atravessa a parede, com cicatriz fibrosa na base interrompendo a muscular própria.",
- "marcacoes": [],
+ "resumo": "Úlcera péptica gástrica crônica em homem de 50 anos com dispepsia: cratera com exsudato, tecido de granulação e cicatriz fibrosa que substitui a muscular própria; mucosa gástrica preservada nas bordas.",
+ "marcacoes": [
+  {
+   "id": "cratera",
+   "estrutura": "ulceracao-da-mucosa",
+   "categoria": "patologica",
+   "rotulo": "Cratera da úlcera: mucosa ausente",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.29
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.0,
+    0.95,
+    0.56
+   ]
+  },
+  {
+   "id": "borda",
+   "estrutura": "ulceracao-da-mucosa",
+   "categoria": "patologica",
+   "rotulo": "Borda: a mucosa gástrica termina abruptamente",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.59,
+      0.205
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.56,
+    0.16,
+    0.66,
+    0.26
+   ]
+  },
+  {
+   "id": "exsudato",
+   "estrutura": "exsudato-fibrinopurulento",
+   "categoria": "patologica",
+   "rotulo": "Exsudato fibrinoso com neutrófilos na superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.454,
+      0.3035
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.445,
+    0.298,
+    0.461,
+    0.314
+   ]
+  },
+  {
+   "id": "granulacao",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Tecido de granulação: capilares e fibroblastos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4525,
+      0.3085
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.445,
+    0.298,
+    0.461,
+    0.314
+   ]
+  },
+  {
+   "id": "cicatriz",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Cicatriz fibrosa substituindo a muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.37
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.0,
+    0.95,
+    0.56
+   ]
+  },
+  {
+   "id": "mucosa",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Mucosa gástrica ao lado da úlcera",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.73,
+      0.11
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.7,
+    0.08,
+    0.78,
+    0.16
+   ]
+  },
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria interrompida na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.24
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.56,
+    0.16,
+    0.66,
+    0.26
+   ]
+  }
+ ],
  "achados": [
   {
    "achado": "ulceracao-da-mucosa",
    "status": "presente",
-   "nota": "Cratera que interrompe a mucosa e a muscular da mucosa e aprofunda-se na parede."
+   "marcacoes": [
+    "cratera",
+    "borda"
+   ],
+   "nota": "Cratera que interrompe a mucosa e a muscular da mucosa e aprofunda-se na parede; bordas abruptas."
   },
   {
    "achado": "fibrose-cicatricial",
    "status": "presente",
-   "nota": "Cicatriz fibrosa extensa na base, substituindo a muscular própria, com feixes musculares interrompidos."
+   "marcacoes": [
+    "cicatriz"
+   ],
+   "nota": "Cicatriz fibrosa extensa na base, substituindo a muscular própria."
   },
   {
    "achado": "tecido-de-granulacao",
-   "status": "nao-avaliavel",
-   "nota": "A base mostra tecido fibroso vascularizado, mas as camadas de granulação e necrose fibrinoide não se separam com nitidez nesta lâmina."
+   "status": "presente",
+   "marcacoes": [
+    "granulacao"
+   ],
+   "nota": "Sob o exsudato, faixa de tecido de granulação com capilares, fibroblastos e células inflamatórias."
   },
   {
    "achado": "exsudato-fibrinopurulento",
-   "status": "nao-avaliavel",
-   "nota": "Há uma faixa superficial basofílica na base da úlcera, mas o exsudato não é inequívoco neste scan."
+   "status": "presente",
+   "marcacoes": [
+    "exsudato"
+   ],
+   "nota": "Camada superficial de fibrina com neutrófilos e restos celulares."
   }
- ],
- "semMarcacoes": true
+ ]
 }

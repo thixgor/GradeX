@@ -5,24 +5,143 @@
   "data": "2026-09-30",
   "conferencias": 3
  },
- "resumo": "Fígado de mulher de 50 anos com insuficiência cardíaca: congestão passiva crônica (\"noz-moscada\"), com sinusoides centrolobulares dilatados, atrofia das placas e hemossiderina.",
- "marcacoes": [],
+ "resumo": "Fígado de mulher de 50 anos com insuficiência cardíaca: congestão passiva crônica (\"noz-moscada\"), com sinusoides dilatados, atrofia das placas e hemossiderina.",
+ "marcacoes": [
+  {
+   "id": "faixas",
+   "estrutura": "congestao-centrolobular",
+   "categoria": "patologica",
+   "rotulo": "Faixa congesta: sinusoides dilatados com hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.466,
+      0.343
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.32,
+    0.48,
+    0.36
+   ]
+  },
+  {
+   "id": "hemossiderina",
+   "estrutura": "congestao-centrolobular",
+   "categoria": "patologica",
+   "rotulo": "Hemossiderina em macrófago e hepatócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4592,
+      0.3322
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.325,
+    0.462,
+    0.337
+   ]
+  },
+  {
+   "id": "sinusoide",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Sinusoide com hemácias acumuladas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4668,
+      0.3405
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.46,
+    0.336,
+    0.472,
+    0.348
+   ]
+  },
+  {
+   "id": "esteatose",
+   "estrutura": "esteatose-macrovesicular",
+   "categoria": "patologica",
+   "rotulo": "Gotas de gordura em hepatócitos hipóxicos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.445,
+      0.3536
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.346,
+    0.452,
+    0.358
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4547,
+      0.3305
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.325,
+    0.462,
+    0.337
+   ]
+  }
+ ],
  "achados": [
   {
    "achado": "congestao-centrolobular",
    "status": "presente",
-   "nota": "Sinusoides centrolobulares dilatados e cheios de hemácias, com trabéculas atróficas e macrófagos com hemossiderina; zona periportal preservada."
+   "marcacoes": [
+    "faixas",
+    "hemossiderina"
+   ],
+   "nota": "Sinusoides dilatados e cheios de hemácias, com trabéculas atróficas, em faixas que ligam as veias centrais."
   },
   {
    "achado": "hiperemia-e-congestao",
    "status": "presente",
-   "nota": "Congestão vascular difusa, formando faixas vermelhas que ligam as veias centrais."
+   "marcacoes": [
+    "sinusoide"
+   ],
+   "nota": "Congestão vascular difusa, com hemácias acumuladas nos sinusoides."
   },
   {
    "achado": "esteatose-macrovesicular",
    "status": "presente",
+   "marcacoes": [
+    "esteatose"
+   ],
    "nota": "Gotas isoladas de gordura em hepatócitos na transição entre áreas congestas e preservadas."
   }
- ],
- "semMarcacoes": true
+ ]
 }
