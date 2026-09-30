@@ -2,8 +2,8 @@
  "slug": "medula-ossea-may-grunwald-giemsa",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -75,6 +75,119 @@
     0.399,
     0.411,
     0.411
+   ]
+  },
+  {
+   "id": "megacariocito",
+   "estrutura": "megacariocito",
+   "rotulo": "Megacariócito: célula gigante, núcleo lobulado e citoplasma granular — origem das plaquetas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3955,
+      0.424
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.387,
+    0.417,
+    0.401,
+    0.431
+   ]
+  },
+  {
+   "id": "eritroblastos",
+   "estrutura": "eritroblasto",
+   "rotulo": "Eritroblastos ortocromáticos: núcleo pequeno, redondo e muito escuro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3884,
+      0.4197
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3916,
+      0.4282
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.386,
+    0.417,
+    0.394,
+    0.431
+   ]
+  },
+  {
+   "id": "segmentado",
+   "estrutura": "neutrofilo",
+   "rotulo": "Neutrófilo segmentado maduro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4004,
+      0.4093
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.398,
+    0.407,
+    0.403,
+    0.412
+   ]
+  },
+  {
+   "id": "bastonete",
+   "estrutura": "metamielocito",
+   "rotulo": "Bastonete / metamielócito: núcleo em ferradura ou rim, sem segmentos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.416,
+      0.411
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.413,
+    0.408,
+    0.42,
+    0.414
+   ]
+  },
+  {
+   "id": "mielocito",
+   "estrutura": "mielocito",
+   "rotulo": "Mielócito: núcleo redondo excêntrico, citoplasma com grânulos finos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4208,
+      0.4043
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.418,
+    0.401,
+    0.424,
+    0.407
    ]
   }
  ]
