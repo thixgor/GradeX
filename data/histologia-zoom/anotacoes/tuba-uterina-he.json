@@ -2,8 +2,8 @@
  "slug": "tuba-uterina-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.4,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "rotulo": "Eixo de lâmina própria nas pregas longas e ramificadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.405,
+      0.69
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.6,
+    0.5,
+    0.8
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria na mesossalpinge, de parede muscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.125,
+      0.455
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.4,
+    0.25,
+    0.6
+   ]
+  },
+  {
+   "id": "veias",
+   "estrutura": "veia",
+   "rotulo": "Veias da mesossalpinge",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.087,
+      0.5
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.4,
+    0.25,
+    0.6
    ]
   }
  ]
