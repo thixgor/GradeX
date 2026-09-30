@@ -2,8 +2,8 @@
  "slug": "pele-fina-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -65,6 +65,119 @@
     0.11,
     0.39,
     0.17
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículo piloso com a haste do pelo (vermelha) no centro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.424,
+      0.144
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.415,
+    0.13,
+    0.44,
+    0.15
+   ]
+  },
+  {
+   "id": "eretor-2",
+   "estrutura": "musculo-eretor-do-pelo",
+   "rotulo": "Músculo eretor do pelo: feixe de músculo liso oblíquo, preso ao folículo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.125
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.115,
+    0.44,
+    0.14
+   ]
+  },
+  {
+   "id": "cornea",
+   "estrutura": "camada-cornea",
+   "rotulo": "Camada córnea compacta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.404,
+      0.106
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.1,
+    0.415,
+    0.115
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "camada-basal",
+   "rotulo": "Camada basal, com melanina (pele exposta ao sol)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.408,
+      0.114
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.105,
+    0.415,
+    0.12
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos pequenos da derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4155,
+      0.1135
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.438,
+      0.1395
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.405,
+    0.105,
+    0.445,
+    0.145
    ]
   }
  ]

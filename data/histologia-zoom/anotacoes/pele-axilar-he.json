@@ -2,7 +2,7 @@
  "slug": "pele-axilar-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -89,6 +89,119 @@
     1.4,
     0.5,
     1.9
+   ]
+  },
+  {
+   "id": "ecrina",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "rotulo": "Porção secretora de glândula écrina: luz pequena, células claras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2984,
+      0.2755
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.29,
+    0.25,
+    0.35,
+    0.3
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-sudoriparo",
+   "rotulo": "Ducto sudoríparo: duas camadas de células cúbicas escuras, luz estreita",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.2701
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3443,
+      0.2722
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.29,
+    0.25,
+    0.35,
+    0.3
+   ]
+  },
+  {
+   "id": "apocrina-alta",
+   "estrutura": "glandula-sudoripara-apocrina",
+   "rotulo": "Glândula apócrina: luz ampla e células colunares eosinofílicas com secreção por decapitação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.348,
+      0.353
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.34,
+    0.39,
+    0.39
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos da hipoderme em volta das glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.305,
+      0.262
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.29,
+    0.25,
+    0.32,
+    0.28
+   ]
+  },
+  {
+   "id": "nervo",
+   "estrutura": "fasciculo-nervoso",
+   "rotulo": "Pequeno fascículo nervoso da hipoderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3209,
+      0.2665
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.305,
+    0.255,
+    0.325,
+    0.275
    ]
   }
  ]

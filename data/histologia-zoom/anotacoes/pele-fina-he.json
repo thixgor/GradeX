@@ -2,8 +2,8 @@
  "slug": "pele-fina-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -87,6 +87,132 @@
     0.4,
     0.28,
     0.55
+   ]
+  },
+  {
+   "id": "cornea",
+   "estrutura": "camada-cornea",
+   "rotulo": "Camada córnea fina e frouxa (\"em cesta\") da pele fina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1045,
+      0.536
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.095,
+    0.51,
+    0.125,
+    0.55
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "camada-basal",
+   "rotulo": "Camada basal: uma fileira de células cúbicas sobre a membrana basal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.116,
+      0.539
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.1,
+    0.525,
+    0.13,
+    0.555
+   ]
+  },
+  {
+   "id": "espinhosa",
+   "estrutura": "camada-espinhosa",
+   "rotulo": "Camada espinhosa: células poligonais com núcleo claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.111,
+      0.542
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.525,
+    0.13,
+    0.555
+   ]
+  },
+  {
+   "id": "papilar",
+   "estrutura": "derme-papilar",
+   "rotulo": "Derme papilar: conjuntivo frouxo logo abaixo da epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.125,
+      0.53
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.105,
+    0.515,
+    0.135,
+    0.545
+   ]
+  },
+  {
+   "id": "sebacea-2",
+   "estrutura": "glandula-sebacea",
+   "rotulo": "Glândula sebácea desembocando no folículo: células claras e espumosas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      0.585
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.19,
+    0.55,
+    0.27,
+    0.62
+   ]
+  },
+  {
+   "id": "bainha",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Bainha radicular externa do folículo: epitélio estratificado contínuo com a epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.53
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.51,
+    0.25,
+    0.56
    ]
   }
  ]

@@ -2,7 +2,7 @@
  "slug": "tendao-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -97,6 +97,48 @@
     1.31
    ],
    "nota": "Mais eosinófilas que o colágeno, onduladas pela contração, com núcleos na periferia e estriação transversal fina em grande aumento."
+  },
+  {
+   "id": "denso",
+   "estrutura": "conjuntivo-denso-modelado",
+   "rotulo": "Conjuntivo denso modelado: feixes de colágeno paralelos, no sentido da tração",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      0.42
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.36,
+    0.3,
+    0.48
+   ]
+  },
+  {
+   "id": "ondulacao",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Ondulação (crimp) dos feixes: faixas claras e escuras regulares; se desfaz quando o tendão é tracionado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.256,
+      0.395
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.22,
+    0.35,
+    0.3,
+    0.45
+   ]
   }
  ]
 }

@@ -2,7 +2,7 @@
  "slug": "musculo-esqueletico-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -85,6 +85,48 @@
     0.25,
     0.61,
     0.26
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos no perimísio, entre os fascículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.586,
+      0.321
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.57,
+    0.3,
+    0.6,
+    0.34
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos e nervos que correm no perimísio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.572,
+      0.218
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.56,
+    0.2,
+    0.6,
+    0.24
    ]
   }
  ]

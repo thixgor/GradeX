@@ -2,8 +2,8 @@
  "slug": "ossificacao-intramembranosa-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -68,6 +68,140 @@
     0.6,
     0.41,
     0.68
+   ]
+  },
+  {
+   "id": "osso-calvaria",
+   "estrutura": "trabecula-ossea",
+   "rotulo": "Lâmina de osso da calvária formada diretamente no mesênquima (ossificação intramembranosa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8542,
+      0.5285
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.84,
+    0.515,
+    0.868,
+    0.545
+   ]
+  },
+  {
+   "id": "osteoblastos",
+   "estrutura": "osteoblasto",
+   "rotulo": "Osteoblastos cúbicos enfileirados nas duas superfícies da lâmina óssea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8524,
+      0.5276
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8572,
+      0.533
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.845,
+    0.52,
+    0.863,
+    0.54
+   ]
+  },
+  {
+   "id": "osteocito",
+   "estrutura": "osteocito",
+   "rotulo": "Osteócito aprisionado na matriz recém-formada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8544,
+      0.5318
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.848,
+    0.525,
+    0.86,
+    0.538
+   ]
+  },
+  {
+   "id": "condrocranio",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem do condrocrânio (base do crânio): estes ossos se formam por ossificação endocondral, ao contrário da calvária",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.193
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.39,
+    0.17,
+    0.48,
+    0.23
+   ]
+  },
+  {
+   "id": "pericondrio",
+   "estrutura": "pericondrio",
+   "rotulo": "Pericôndrio sobre a cartilagem do condrocrânio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      0.197
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.39,
+    0.17,
+    0.46,
+    0.22
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculos da nuca sobre o crânio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.185
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.37,
+    0.16,
+    0.45,
+    0.21
    ]
   }
  ]

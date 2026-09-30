@@ -2,7 +2,7 @@
  "slug": "pele-espessa-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -127,6 +127,140 @@
     0.57,
     0.16,
     0.6
+   ]
+  },
+  {
+   "id": "acrossiringio",
+   "estrutura": "ducto-sudoriparo",
+   "rotulo": "Ducto sudoríparo em espiral atravessando a camada córnea (acrossiríngio)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1178,
+      0.564
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1135,
+      0.5818
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.1,
+    0.555,
+    0.14,
+    0.59
+   ]
+  },
+  {
+   "id": "ecrina",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "rotulo": "Porção secretora da glândula écrina: células claras em volta de luz pequena",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.572
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.205,
+    0.565,
+    0.235,
+    0.59
+   ]
+  },
+  {
+   "id": "ducto-dermico",
+   "estrutura": "ducto-sudoriparo",
+   "rotulo": "Ducto sudoríparo na derme: duas camadas de células cúbicas escuras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.206,
+      0.5703
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.205,
+    0.565,
+    0.235,
+    0.59
+   ]
+  },
+  {
+   "id": "hipoderme",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos da hipoderme logo abaixo das glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.225,
+      0.581
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.205,
+    0.565,
+    0.235,
+    0.59
+   ]
+  },
+  {
+   "id": "crista",
+   "estrutura": "derme-papilar",
+   "rotulo": "Papila dérmica alta, encaixada entre as cristas epidérmicas (base das impressões digitais)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.133,
+      0.581
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.12,
+    0.57,
+    0.14,
+    0.59
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso da derme reticular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.188,
+      0.631
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.17,
+    0.62,
+    0.2,
+    0.64
    ]
   }
  ]

@@ -2,8 +2,8 @@
  "slug": "osso-compacto-sem-coloracao-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -53,6 +53,74 @@
     0.15,
     0.75,
     0.33
+   ]
+  },
+  {
+   "id": "osteon",
+   "estrutura": "osteon",
+   "rotulo": "Ósteon (sistema de Havers): lamelas concêntricas em volta do canal central",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.593,
+      0.215
+     ],
+     "raios": [
+      0.155,
+      0.105
+     ]
+    }
+   ]
+  },
+  {
+   "id": "lacuna",
+   "estrutura": "osteocito",
+   "rotulo": "Lacunas de osteócitos (escuras no osso desgastado): cada uma abrigava um osteócito",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.389,
+      0.138
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7545,
+      0.2927
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.1,
+    0.8,
+    0.33
+   ]
+  },
+  {
+   "id": "intersticial",
+   "estrutura": "linha-cimentante",
+   "rotulo": "Lamelas intersticiais: restos de ósteons antigos entre os ósteons atuais, separados por linhas cimentantes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.273,
+      0.427
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.36,
+    0.36,
+    0.5
    ]
   }
  ]
