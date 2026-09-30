@@ -1,0 +1,147 @@
+{
+ "slug": "dermatite-de-contato-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Dermatite de contato alérgica: espongiose da epiderme, edema intenso da derme papilar com vesículas subepidérmicas e infiltrado linfocitário perivascular.",
+ "marcacoes": [
+  {
+   "id": "espongiose",
+   "estrutura": "espongiose",
+   "categoria": "patologica",
+   "rotulo": "Espongiose: fendas claras entre os queratinócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.664,
+      0.0985
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.655,
+    0.09,
+    0.675,
+    0.11
+   ]
+  },
+  {
+   "id": "edema",
+   "estrutura": "edema-inflamatorio",
+   "categoria": "patologica",
+   "rotulo": "Edema intenso da derme papilar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6125,
+      0.13
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.05,
+    0.75,
+    0.25
+   ]
+  },
+  {
+   "id": "vesicula-subepidermica",
+   "estrutura": "edema-inflamatorio",
+   "categoria": "patologica",
+   "rotulo": "Edema levantando a epiderme (vesícula subepidérmica)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.095
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.05,
+    0.75,
+    0.25
+   ]
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfocitario-perivascular",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos em volta dos vasos da derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6262,
+      0.2058
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.61,
+    0.195,
+    0.63,
+    0.215
+   ]
+  },
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7,
+      0.11
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.05,
+    0.75,
+    0.25
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "espongiose",
+   "status": "presente",
+   "marcacoes": [
+    "espongiose"
+   ],
+   "nota": "Fendas claras entre os queratinócitos, com pontes intercelulares evidentes, na epiderme sobre a área edemaciada."
+  },
+  {
+   "achado": "edema-inflamatorio",
+   "status": "presente",
+   "marcacoes": [
+    "edema",
+    "vesicula-subepidermica"
+   ],
+   "nota": "Edema acentuado da derme papilar, que chega a descolar a epiderme em vesículas subepidérmicas."
+  },
+  {
+   "achado": "infiltrado-linfocitario-perivascular",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Linfócitos e histiócitos em volta dos vasos da derme superficial e média."
+  }
+ ]
+}

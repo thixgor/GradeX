@@ -435,4 +435,135 @@ export const DOENCAS_PELE: DoencaZoom[] = [
       'No nevo, eles se agrupam em ninhos na junção e na derme, com as células mais profundas ficando menores.',
     ],
   },
+  {
+    id: 'dermatite-de-contato',
+    nome: 'Dermatite de contato (eczema agudo)',
+    sinonimos: ['dermatite de contato alérgica', 'eczema de contato', 'dermatite espongiótica'],
+    nomesEmIngles: ['allergic contact dermatitis', 'spongiotic dermatitis'],
+    sistema: 'tegumentar',
+    orgao: 'pele-fina',
+    prioridade: 7,
+    resumo:
+      'Reação de hipersensibilidade tardia (tipo IV) a uma substância em contato com a pele: espongiose da epiderme, edema da derme papilar e infiltrado linfocitário perivascular — o protótipo das dermatites eczematosas.',
+    epidemiologia:
+      'Muito comum. Alérgenos frequentes: níquel (bijuterias), cromo (cimento), fragrâncias, conservantes de cosméticos, borracha, tinturas de cabelo e plantas. A dermatite irritativa (sabões, detergentes, umidade) é ainda mais comum e não depende de alergia. Compartilha o padrão histológico com as dermatites atópica, seborreica, de estase e disidrótica.',
+    patogenese: [
+      'Sensibilização: o hapteno atravessa a pele, liga-se a proteínas e é apresentado por células de Langerhans aos linfócitos T nos linfonodos.',
+      'Reexposição: linfócitos T de memória migram para a pele em 24–72 horas e liberam interferon-γ e outras citocinas.',
+      'Os queratinócitos perdem adesão e o líquido entra entre eles (espongiose, vesículas); os vasos da derme vazam (edema).',
+      'Na exposição crônica, a epiderme engrossa (acantose, liquenificação) e a coceira mantém a lesão.',
+    ],
+    roteiro: [
+      'Panorâmico: epiderme íntegra ou com vesículas; derme papilar pálida e edemaciada.',
+      'Médio aumento: espongiose e infiltrado linfocitário ao redor dos vasos superficiais.',
+      'Grande aumento: fendas entre queratinócitos com pontes evidentes, linfócitos na epiderme, eosinófilos na derme (sugerem alergia).',
+      'Exclua fungos (PAS) e linfoma; a causa exata depende de teste de contato (patch test).',
+    ],
+    achados: [
+      {
+        achado: 'espongiose',
+        tipo: 'especifico',
+        comoAparece: 'Edema entre os queratinócitos, com pontes intercelulares evidentes.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'edema-inflamatorio',
+        tipo: 'geral',
+        comoAparece: 'Derme papilar pálida e muito edemaciada, que pode formar vesículas subepidérmicas.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'infiltrado-linfocitario-perivascular',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos em volta dos vasos superficiais, às vezes com eosinófilos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Dermatite atópica e outros eczemas',
+        comoSeparar: 'Mesmo padrão histológico; separam-se pela clínica (idade, distribuição, história de atopia) e pelo teste de contato.',
+      },
+      {
+        nome: 'Dermatofitose',
+        comoSeparar: 'Hifas na camada córnea (PAS, Grocott).',
+      },
+      {
+        nome: 'Psoríase',
+        comoSeparar: 'Acantose regular, placa suprapapilar fina, neutrófilos na camada córnea (Munro), pouca espongiose.',
+      },
+    ],
+    correlacaoClinica: [
+      'Placas eritematosas, edematosas e vesiculosas, muito pruriginosas, limitadas à área de contato (lóbulo da orelha, punho, mãos, pálpebras).',
+      'Diagnóstico da causa por teste de contato; tratamento: afastar o agente, corticoide tópico, emolientes; corticoide sistêmico nos casos extensos.',
+    ],
+    comparacaoComNormal: [
+      'Na pele normal, os queratinócitos ficam colados uns aos outros e a derme papilar é densa, com poucos linfócitos em volta dos vasos.',
+      'Na dermatite eczematosa, entra líquido entre os queratinócitos, a derme papilar incha e os linfócitos se acumulam ao redor dos vasos.',
+    ],
+  },
+  {
+    id: 'eczema-disidrotico',
+    nome: 'Eczema disidrótico (pompholyx)',
+    sinonimos: ['disidrose', 'pompholyx', 'eczema vesicular palmoplantar'],
+    nomesEmIngles: ['dyshidrotic eczema', 'pompholyx'],
+    sistema: 'tegumentar',
+    orgao: 'pele-espessa',
+    prioridade: 8,
+    resumo:
+      'Eczema das palmas e plantas com vesículas profundas e pruriginosas; histologicamente, espongiose com vesículas intraepidérmicas grandes sob a camada córnea espessa da pele acral.',
+    epidemiologia: 'Adultos jovens; associado a atopia, sudorese excessiva, estresse, contato com níquel e cobalto e reação a dermatofitose à distância (reação ide). Recorrente, pior no calor.',
+    patogenese: [
+      'Mesmo mecanismo das dermatites espongióticas: linfócitos T e citocinas fazem os queratinócitos perderem adesão.',
+      'Na pele acral, a camada córnea espessa e resistente não deixa as vesículas romperem: elas crescem e se fundem dentro da epiderme.',
+      'O nome "disidrose" é histórico — as vesículas não nascem das glândulas sudoríparas.',
+    ],
+    roteiro: [
+      'Panorâmico: pele espessa (acral), com camada córnea compacta e grandes cavidades dentro da epiderme.',
+      'Médio aumento: vesículas intraepidérmicas com fibrina e células; espongiose na epiderme vizinha.',
+      'Grande aumento: linfócitos na epiderme e infiltrado perivascular na derme; exclua fungos com PAS.',
+    ],
+    achados: [
+      {
+        achado: 'vesicula-intraepidermica',
+        tipo: 'especifico',
+        comoAparece: 'Vesículas grandes dentro da epiderme espessa da palma ou planta.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'espongiose',
+        tipo: 'especifico',
+        comoAparece: 'Edema intercelular nas bordas das vesículas.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-linfocitario-perivascular',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos em volta dos vasos superficiais.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Dermatofitose (tinha das mãos e pés)',
+        comoSeparar: 'Hifas na camada córnea ao PAS.',
+      },
+      {
+        nome: 'Psoríase pustulosa palmoplantar',
+        comoSeparar: 'Pústulas de neutrófilos (não vesículas de linfócitos), acantose psoriasiforme.',
+      },
+      {
+        nome: 'Penfigoide bolhoso',
+        comoSeparar: 'Bolha subepidérmica com eosinófilos; imunofluorescência linear na membrana basal.',
+      },
+    ],
+    correlacaoClinica: [
+      'Crises de vesículas "em sagu" nas laterais dos dedos, palmas e plantas, com prurido intenso; descamação depois.',
+      'Tratamento: evitar gatilhos, emolientes, corticoide tópico potente; em casos refratários, fototerapia ou imunossupressores.',
+    ],
+    comparacaoComNormal: [
+      'Na pele espessa normal, a epiderme é compacta, com camada córnea grossa e sem espaços entre as células.',
+      'No eczema disidrótico, abrem-se grandes cavidades cheias de líquido dentro dessa epiderme, com edema ao redor.',
+    ],
+  },
 ]

@@ -878,4 +878,55 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Meningite bacteriana (pneumococo, meningococo, Haemophilus, Listeria)', 'Meningite tuberculosa e fúngica', 'Meningite viral (infiltrado linfocitário discreto)'],
     armadilhas: ['Hemorragia subaracnóidea e infiltração meníngea por linfoma ou carcinoma também preenchem o espaço; observe o tipo de célula.'],
   },
+  {
+    id: 'espongiose',
+    nome: 'Espongiose',
+    sinonimos: ['edema intercelular da epiderme', 'dermatite espongiótica', 'eczema'],
+    categoria: 'inflamacao',
+    resumo:
+      'Edema entre os queratinócitos da epiderme: os espaços intercelulares se alargam e as pontes de desmossomos ficam evidentes como "degraus de escada", como uma esponja.',
+    comoReconhecer: [
+      'No médio aumento: epiderme mais pálida, com espaços claros entre as células.',
+      'No grande aumento: queratinócitos separados por fendas claras atravessadas por pontes finas; linfócitos entrando na epiderme (exocitose). Nos casos intensos, formam-se vesículas.',
+    ],
+    mecanismo: ['Linfócitos T ativados por um antígeno (alérgeno de contato, autoantígenos na dermatite atópica) liberam citocinas que fazem os queratinócitos perderem adesão e o líquido entrar entre eles.'],
+    significado: [
+      'Padrão histológico comum a todos os "eczemas": dermatite de contato alérgica e irritativa, atópica, seborreica, de estase, disidrótica, numular e reações a drogas — a distinção é clínica.',
+      'Aguda: espongiose e vesículas; subaguda: espongiose com acantose e paraceratose; crônica: acantose psoriasiforme e hiperceratose (liquenificação).',
+    ],
+    ondeOcorre: ['Dermatite de contato', 'Dermatite atópica', 'Dermatite seborreica', 'Dermatite de estase', 'Eczema disidrótico', 'Reações a drogas e fungos (dermatofitose)'],
+    armadilhas: [
+      'Dermatofitose dá espongiose idêntica: faça PAS para hifas na camada córnea.',
+      'Micose fungoide inicial tem linfócitos atípicos na epiderme com pouca espongiose.',
+    ],
+  },
+  {
+    id: 'vesicula-intraepidermica',
+    nome: 'Vesícula espongiótica intraepidérmica',
+    sinonimos: ['vesícula eczematosa', 'bolha espongiótica'],
+    categoria: 'inflamacao',
+    resumo:
+      'Cavidade dentro da epiderme cheia de líquido, fibrina e células inflamatórias, formada quando a espongiose rompe as ligações entre os queratinócitos.',
+    comoReconhecer: ['Espaços redondos dentro da epiderme, com paredes de queratinócitos esticados e espongiose ao redor; conteúdo com linfócitos e às vezes eosinófilos.'],
+    mecanismo: ['O edema intercelular progride até separar grupos de queratinócitos; as cavidades se fundem.'],
+    significado: [
+      'Correspondem às vesículas e ao exsudato do eczema agudo.',
+      'Na pele acral (palmas e plantas), a camada córnea espessa impede a ruptura: vesículas profundas e pruriginosas do eczema disidrótico (pompholyx).',
+    ],
+    ondeOcorre: ['Eczema disidrótico', 'Dermatite de contato aguda', 'Reações a picada de inseto', 'Dermatofitose'],
+    armadilhas: ['Bolhas de doenças autoimunes (pênfigo, penfigoide) têm outro nível e mecanismo: acantólise ou separação subepidérmica, sem espongiose ao redor.'],
+  },
+  {
+    id: 'infiltrado-linfocitario-perivascular',
+    nome: 'Infiltrado linfocitário perivascular superficial',
+    sinonimos: ['dermatite perivascular superficial', 'infiltrado linfo-histiocitário perivascular'],
+    categoria: 'inflamacao',
+    resumo:
+      'Linfócitos (com histiócitos e às vezes eosinófilos) agrupados em volta dos vasos do plexo superficial da derme.',
+    comoReconhecer: ['Manguitos de células pequenas e escuras ao redor de capilares e vênulas logo abaixo da epiderme.'],
+    mecanismo: ['Os linfócitos T saem das vênulas pós-capilares em direção ao antígeno na epiderme.'],
+    significado: ['Acompanha as dermatites espongióticas; eosinófilos numerosos sugerem causa alérgica (contato, drogas, picadas).'],
+    ondeOcorre: ['Dermatites espongióticas', 'Reações a drogas', 'Urticária', 'Picada de inseto'],
+    armadilhas: ['Infiltrado também profundo e perianexial sugere lúpus, reação a picada ou linfoma.'],
+  },
 ]
