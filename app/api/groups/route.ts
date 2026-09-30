@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { normalizeImageUrl, decodeHtmlEntities } from '@/lib/api-security'
+import { idsDeGruposOcultos } from '@/lib/provas/grupos-ocultos'
 
 export const dynamic = 'force-dynamic'
 
@@ -29,8 +30,20 @@ export async function GET(req: NextRequest) {
       .sort({ order: 1, createdAt: 1 })
       .toArray()
 
+    /*
+     * Grupo oculto (e tudo abaixo dele) só existe para o admin — ver
+     * `lib/provas/grupos-ocultos.ts`. O admin recebe todos, com o `isHidden`
+     * de cada um, e a tela desenha o selo.
+     *
+     * A árvore é calculada sobre a lista inteira que veio do banco: um
+     * subgrupo sem marcação própria está oculto se o pai estiver, e só dá
+     * para saber isso olhando o pai.
+     */
+    const ocultos = session.role === 'admin' ? new Set<string>() : idsDeGruposOcultos(groups as any)
+    const visiveis = ocultos.size > 0 ? groups.filter(g => !ocultos.has(String(g._id))) : groups
+
     // Corrige capas salvas antes da correção do bug de sanitização (URLs com "&#x2F;" no lugar de "/")
-    const fixedGroups = groups.map(g =>
+    const fixedGroups = visiveis.map(g =>
       g.imageUrl ? { ...g, imageUrl: decodeHtmlEntities(g.imageUrl) } : g
     )
 

@@ -7,6 +7,7 @@ import { totalStudents } from '@/lib/comms/persuasion'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { notaLiberadaParaOAluno } from '@/lib/provas/nota-da-prova'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
+import { provaEstaEmGrupoOculto } from '@/lib/provas/grupos-ocultos-servidor'
 import {
   arredondarProvaSocial,
   montarPitch,
@@ -140,7 +141,7 @@ export async function GET(
     const isAdmin = session.role === 'admin'
     if (!isAdmin) {
       const periodo = await lerPeriodoDoAluno(db, session.userId)
-      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }

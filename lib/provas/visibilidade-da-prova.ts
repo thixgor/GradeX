@@ -102,6 +102,12 @@ export interface ContextoDeVisibilidade {
   isAdmin?: boolean
   /** Período atual de quem está pedindo, já calculado. `null` = sem período. */
   periodo?: number | null
+  /**
+   * A prova mora num grupo (ou subgrupo) que o admin ocultou — ver
+   * `lib/provas/grupos-ocultos.ts`. Calculado pela rota, porque depende da
+   * árvore de grupos e este arquivo só olha para a prova.
+   */
+  grupoOculto?: boolean
 }
 
 /**
@@ -122,6 +128,11 @@ export function provaExisteParaPessoa(
   if (prova.createdBy && prova.createdBy === contexto.userId) return true
 
   const isAdmin = !!contexto.isAdmin
+
+  // Grupo oculto leva junto tudo o que está dentro dele, para todos menos o
+  // admin. Vem antes da exceção de convidado: o convite é para a PROVA, e quem
+  // tirou o grupo inteiro do ar decidiu sobre o que mora nele.
+  if (contexto.grupoOculto && !isAdmin) return false
 
   // Prova pessoal é do dono; o admin alcança para dar suporte.
   if (prova.isPersonalExam) return isAdmin

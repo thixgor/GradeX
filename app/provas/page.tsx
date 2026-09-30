@@ -76,6 +76,7 @@ import { cn } from '@/lib/utils'
 import { BarraDeSelecao, MoverParaDialog, type AlvoDaMovimentacao } from '@/components/provas/mover-para'
 import { contarProvas, contarQuestoes } from '@/lib/provas/arvore-grupos'
 import { resumirMovimentacao } from '@/lib/provas/mover-provas'
+import { idsDeGruposOcultos, ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
 
 interface Group {
   _id: string
@@ -89,6 +90,7 @@ interface Group {
   course?: string
   createdBy: string
   parentGroupId?: string | null
+  isHidden?: boolean
 }
 
 const COURSE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
@@ -342,6 +344,14 @@ function ProvasContent() {
     }
     return posicoes
   }, [exams, user?.role])
+
+  /*
+   * Os grupos fora do ar, contando os que só estão ocultos porque um ancestral
+   * está. Só o admin recebe grupo oculto do servidor, então para o aluno este
+   * conjunto é sempre vazio — serve para o selo e para o botão do admin.
+   */
+  const gruposOcultos = useMemo(() => idsDeGruposOcultos(groups), [groups])
+  const ehAdmin = user?.role === 'admin'
 
   /** Quando a lista veio do servidor pela última vez — o piso da revalidação. */
   const ultimaCarga = useRef(0)
@@ -617,6 +627,75 @@ function ProvasContent() {
     e.preventDefault()
     setSelectedExam(exam)
     setContextMenu({ x: e.clientX, y: e.clientY })
+  }
+
+  /*
+   * Ocultar e reexibir direto do catálogo — só admin.
+   *
+   * Antes, ocultar uma prova era abrir o painel de edição, achar o interruptor
+   * e salvar o formulário inteiro; ocultar um grupo não existia. Agora o admin
+   * faz as duas coisas de onde está olhando. O item continua na tela DELE, com
+   * o selo "Oculta", porque é assim que ele sabe que o aluno não o vê — e é por
+   * ali que ele o traz de volta.
+   *
+   * A troca entra na tela na hora e o servidor confirma depois; se recusar, a
+   * tela volta ao que era e diz por quê.
+   */
+  async function handleToggleExamHidden(exam: Exam) {
+    const id = exam._id?.toString() || ''
+    if (!id) return
+    const ocultar = !exam.isHidden
+    const aplicar = (valor: boolean) =>
+      setExams(prev => prev.map(e => (e._id?.toString() === id ? { ...e, isHidden: valor } : e)))
+
+    aplicar(ocultar)
+    try {
+      const res = await fetch(`/api/exams/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isHidden: ocultar }),
+      })
+      if (!res.ok) {
+        const dados = await res.json().catch(() => ({}))
+        throw new Error(dados.error || 'Erro ao alterar a visibilidade da prova')
+      }
+      setAvisoDeMovimentacao(
+        ocultar
+          ? `“${exam.title}” oculta — só os admins a veem.`
+          : `“${exam.title}” visível para todos de novo.`,
+      )
+    } catch (error: any) {
+      aplicar(!ocultar)
+      setAvisoDeMovimentacao(error.message || 'Erro ao alterar a visibilidade da prova')
+    }
+  }
+
+  /** Ocultar um grupo leva junto os subgrupos e as provas dele — ver `lib/provas/grupos-ocultos.ts`. */
+  async function handleToggleGroupHidden(group: Group) {
+    const ocultar = !groups.find(g => g._id === group._id)?.isHidden
+    const aplicar = (valor: boolean) =>
+      setGroups(prev => prev.map(g => (g._id === group._id ? { ...g, isHidden: valor } : g)))
+
+    aplicar(ocultar)
+    try {
+      const res = await fetch(`/api/groups/${group._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isHidden: ocultar }),
+      })
+      if (!res.ok) {
+        const dados = await res.json().catch(() => ({}))
+        throw new Error(dados.error || 'Erro ao alterar a visibilidade do grupo')
+      }
+      setAvisoDeMovimentacao(
+        ocultar
+          ? `“${group.name}” oculto — com os subgrupos e as provas, só os admins o veem.`
+          : `“${group.name}” visível para todos de novo.`,
+      )
+    } catch (error: any) {
+      aplicar(!ocultar)
+      setAvisoDeMovimentacao(error.message || 'Erro ao alterar a visibilidade do grupo')
+    }
   }
 
   async function handleCreateGroup(name: string, type: 'personal' | 'general', parentGroupId?: string | null, category?: string, course?: string) {
@@ -1281,6 +1360,8 @@ function ProvasContent() {
     const ordem = podeReordenarAgora && !modoSelecao ? posicoesDeOrdem.get(examId) : undefined
     // Ver `jaEntraramEmCena`: anima na estreia, e só nela.
     const estreia = !!examId && !jaEntraramEmCena.current.has(examId)
+    // Só chega a ser verdadeiro para admin: o aluno não recebe grupo oculto.
+    const emGrupoOculto = !!exam.groupId && gruposOcultos.has(String(exam.groupId))
     useEffect(() => {
       if (examId) jaEntraramEmCena.current.add(examId)
     }, [examId])
@@ -1294,7 +1375,10 @@ function ProvasContent() {
           "hover-glow-green hover-lift transition-all duration-300",
           "border-l-[3px]",
           exam.isPersonalExam ? 'border-l-violet-500' : 'border-l-[#468152]',
-          marcada && 'ring-2 ring-primary'
+          marcada && 'ring-2 ring-primary',
+          // Oculta segue na tela do admin, mas não pode parecer igual às
+          // outras: é a diferença entre "o aluno vê" e "só eu vejo".
+          (exam.isHidden || emGrupoOculto) && 'opacity-70 border-dashed'
         )}
         onContextMenu={(e) => handleExamContextMenu(exam, e)}
         onClick={() => {
@@ -1359,8 +1443,18 @@ function ProvasContent() {
               seguinte.
             */}
             {exam.isHidden && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400">
                 <EyeOff className="h-2.5 w-2.5" /> Oculta
+              </span>
+            )}
+            {/* A prova em si está visível, mas mora num grupo oculto: o selo
+                diz onde está o interruptor que importa. */}
+            {!exam.isHidden && emGrupoOculto && (
+              <span
+                className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                title="Esta prova está num grupo oculto — só os admins a veem"
+              >
+                <EyeOff className="h-2.5 w-2.5" /> Grupo oculto
               </span>
             )}
 
@@ -1407,6 +1501,25 @@ function ProvasContent() {
                   <ArrowRight className="h-3 w-3" />
                 </button>
               </span>
+            )}
+
+            {/* Ocultar/reexibir — só admin, e fora do modo de seleção pelo
+                mesmo motivo das setas de ordem. Prova pessoal é do dono e não
+                entra no catálogo de ninguém: não há o que ocultar. */}
+            {ehAdmin && !modoSelecao && !exam.isPersonalExam && (
+              <button
+                type="button"
+                title={exam.isHidden ? 'Reexibir para todos' : 'Ocultar para todos (menos admins)'}
+                aria-label={exam.isHidden ? `Reexibir "${exam.title}"` : `Ocultar "${exam.title}"`}
+                onClick={(e) => { e.stopPropagation(); handleToggleExamHidden(exam) }}
+                className={cn(
+                  'inline-flex items-center gap-1 rounded-lg border border-border/60 bg-background/80 px-1.5 py-1 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors',
+                  !ordem && 'ml-auto'
+                )}
+              >
+                {exam.isHidden ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                <span className="hidden sm:inline">{exam.isHidden ? 'Reexibir' : 'Ocultar'}</span>
+              </button>
             )}
           </div>
 
@@ -1904,6 +2017,9 @@ function ProvasContent() {
                               onExamContextMenu={handleExamContextMenu}
                               onDeleteGroup={handleDeleteGroup}
                               onEditGroup={handleEditGroup}
+                              gruposOcultos={gruposOcultos}
+                              onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
+                              onToggleExamHidden={ehAdmin ? handleToggleExamHidden : undefined}
                               onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                               onSortGroup={handleSortGroup}
                               onMoveGroup={(g) => setAlvoParaMover({ tipo: 'grupo', grupo: g as any })}
@@ -1934,6 +2050,8 @@ function ProvasContent() {
                             index={gIdx}
                             onOpen={() => setFacDrillPath([group])}
                             onEditGroup={handleEditGroup}
+                            gruposOcultos={gruposOcultos}
+                            onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
                             onDeleteGroup={handleDeleteGroup}
                             onCreateSubgroup={(parentGroupId) => {
                               const name = prompt('Nome do subgrupo:')
@@ -1984,6 +2102,9 @@ function ProvasContent() {
                             onExamContextMenu={handleExamContextMenu}
                             onDeleteGroup={handleDeleteGroup}
                             onEditGroup={handleEditGroup}
+                            gruposOcultos={gruposOcultos}
+                            onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
+                            onToggleExamHidden={ehAdmin ? handleToggleExamHidden : undefined}
                             onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                             onDownloadPDF={setPdfModalExam}
                             onGroupDownloadPDF={handleGroupDownloadPDF}
@@ -2012,6 +2133,8 @@ function ProvasContent() {
                           index={gIdx}
                           onOpen={() => setFacDrillPath([group])}
                           onEditGroup={handleEditGroup}
+                          gruposOcultos={gruposOcultos}
+                          onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
                           onDeleteGroup={handleDeleteGroup}
                           onCreateSubgroup={(parentGroupId) => {
                             const name = prompt('Nome do subgrupo:')
@@ -2283,6 +2406,9 @@ function ProvasContent() {
                     onExamContextMenu={handleExamContextMenu}
                     onDeleteGroup={handleDeleteGroup}
                     onEditGroup={handleEditGroup}
+                    gruposOcultos={gruposOcultos}
+                    onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
+                    onToggleExamHidden={ehAdmin ? handleToggleExamHidden : undefined}
                     onReorderExam={podeReordenarAgora ? handleReorderExam : undefined}
                     onDownloadPDF={setPdfModalExam}
                     onGroupDownloadPDF={handleGroupDownloadPDF}
@@ -2436,6 +2562,11 @@ function ProvasContent() {
     const canManageGroup = isAdmin || (isCreator && currentGroup.type === 'personal')
     const accentColor = currentGroup.color || '#3B82F6'
     const isHighlighted = highlightGroupId === currentGroup._id
+    // A trilha guarda uma cópia do grupo de quando ele foi aberto; ocultar muda
+    // a lista viva, e é dela que o estado tem de vir.
+    const grupoVivo = groups.find(g => g._id === currentGroup._id) || currentGroup
+    const grupoOculto = gruposOcultos.has(currentGroup._id)
+    const ocultoPeloPai = grupoOculto && ocultoPorHeranca(grupoVivo, gruposOcultos)
 
     return (
       <div className="space-y-6">
@@ -2474,7 +2605,19 @@ function ProvasContent() {
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <h2 className="text-lg font-bold leading-snug break-words">{currentGroup.name}</h2>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-lg font-bold leading-snug break-words">{currentGroup.name}</h2>
+                {grupoOculto && (
+                  <span
+                    className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                    title={ocultoPeloPai
+                      ? 'Oculto porque um grupo acima está oculto — reexiba o de cima'
+                      : 'Oculto para todos, menos para os admins'}
+                  >
+                    <EyeOff className="h-2.5 w-2.5" /> {ocultoPeloPai ? 'Oculto pelo grupo acima' : 'Oculto'}
+                  </span>
+                )}
+              </div>
               {currentGroup.description && (
                 <p className="text-sm text-muted-foreground mt-0.5">{currentGroup.description}</p>
               )}
@@ -2577,6 +2720,16 @@ function ProvasContent() {
                         >
                           <FolderInput className="h-3.5 w-3.5" /> Mover para…
                         </button>
+                        {isAdmin && grupoVivo.type === 'general' && (
+                          <button
+                            onClick={() => { setDrillActionsOpen(false); handleToggleGroupHidden(grupoVivo) }}
+                            className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
+                          >
+                            {grupoVivo.isHidden
+                              ? <><Eye className="h-3.5 w-3.5" /> Reexibir grupo</>
+                              : <><EyeOff className="h-3.5 w-3.5" /> Ocultar grupo</>}
+                          </button>
+                        )}
                         <button
                           onClick={() => { handleEditGroup(currentGroup); setDrillActionsOpen(false) }}
                           className="w-full flex items-center gap-2 px-3.5 py-2.5 text-xs hover:bg-muted/60 text-left"
@@ -2638,6 +2791,8 @@ function ProvasContent() {
                   index={idx}
                   onOpen={() => setFacDrillPath(p => [...p, cg])}
                   onEditGroup={handleEditGroup}
+                  gruposOcultos={gruposOcultos}
+                  onToggleHidden={ehAdmin ? handleToggleGroupHidden : undefined}
                   onDeleteGroup={handleDeleteGroup}
                   onCreateSubgroup={(parentGroupId) => {
                     const name = prompt('Nome do subgrupo:')

@@ -5,6 +5,7 @@ import { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
+import { provaEstaEmGrupoOculto } from '@/lib/provas/grupos-ocultos-servidor'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { avaliarEntrega } from '@/lib/provas/entrega-da-prova'
@@ -125,6 +126,7 @@ export async function POST(
         userId: session.userId,
         isAdmin: false,
         periodo: await lerPeriodoDoAluno(db, session.userId),
+        grupoOculto: await provaEstaEmGrupoOculto(exam.groupId),
       })
       if (!existe) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })

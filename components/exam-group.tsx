@@ -5,12 +5,13 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { TiltCard } from '@/components/tilt-card'
 import { CoverImage } from '@/components/cover-image'
-import { ChevronDown, Trash2, Edit2, FolderPlus, FolderInput, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight } from 'lucide-react'
+import { ChevronDown, Trash2, Edit2, FolderPlus, FolderInput, MoreHorizontal, ArrowUp, ArrowDown, Share2, Download, FileDown, ArrowDownAZ, BookOpen, ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { Exam } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { contarQuestoes } from '@/lib/provas/arvore-grupos'
 import { ordenarProvas, participaDaOrdem } from '@/lib/provas/ordem-das-provas'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
+import { ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
 
 interface GroupData {
   _id: string
@@ -24,6 +25,7 @@ interface GroupData {
   course?: string
   createdBy: string
   parentGroupId?: string | null
+  isHidden?: boolean
 }
 
 interface ExamGroupProps {
@@ -47,6 +49,12 @@ interface ExamGroupProps {
   depth?: number
   highlightGroupId?: string | null
   filterQuery?: string
+  /** Grupos fora do ar, herança incluída (ver `lib/provas/grupos-ocultos.ts`). Vazio para o aluno. */
+  gruposOcultos?: Set<string>
+  /** Ocultar/reexibir o grupo. Ausente = quem vê não é admin. */
+  onToggleHidden?: (group: GroupData) => void
+  /** Ocultar/reexibir uma prova. Ausente = quem vê não é admin. */
+  onToggleExamHidden?: (exam: Exam) => void
 }
 
 function isInSubtree(groupId: string, targetId: string, allGroups: GroupData[]): boolean {
@@ -100,6 +108,9 @@ export function ExamGroup({
   depth = 0,
   highlightGroupId,
   filterQuery = '',
+  gruposOcultos,
+  onToggleHidden,
+  onToggleExamHidden,
 }: ExamGroupProps) {
   const isTarget = highlightGroupId === group._id
   const isAncestorOfTarget = !!highlightGroupId && !isTarget && isInSubtree(group._id, highlightGroupId, allGroups)
@@ -203,6 +214,8 @@ export function ExamGroup({
   }
 
   const accentColor = group.color || '#3B82F6'
+  const oculto = !!gruposOcultos?.has(group._id)
+  const ocultoPeloPai = oculto && ocultoPorHeranca(group, gruposOcultos!)
   const ancestors = highlighted ? ancestorChain(group, allGroups) : []
 
   /*
@@ -243,7 +256,8 @@ export function ExamGroup({
           ? 'bg-primary/10 ring-2 ring-primary/25 shadow-sm'
           : depth === 0
             ? 'glass-page-card glass-rim hover:shadow-md active:scale-[0.995]'
-            : 'hover:bg-muted/50 active:bg-muted/70'
+            : 'hover:bg-muted/50 active:bg-muted/70',
+        oculto && 'opacity-70'
       )}
       onClick={() => setIsExpanded(!isExpanded)}
     >
@@ -308,6 +322,16 @@ export function ExamGroup({
           )}
           {!highlighted && group.category === 'faculdade' && (
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-red-500/10 text-red-600 dark:text-red-400 font-medium flex-shrink-0 mt-0.5">Faculdade</span>
+          )}
+          {oculto && (
+            <span
+              className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold flex-shrink-0 mt-0.5"
+              title={ocultoPeloPai
+                ? 'Oculto porque um grupo acima está oculto — reexiba o de cima'
+                : 'Oculto para todos, menos para os admins'}
+            >
+              <EyeOff className="h-2.5 w-2.5" /> {ocultoPeloPai ? 'Oculto (grupo acima)' : 'Oculto'}
+            </span>
           )}
         </div>
         {group.description && (
@@ -422,6 +446,14 @@ export function ExamGroup({
               {isSorting ? 'Ordenando…' : 'A→Z reverso'}
             </Button>
           )}
+          {onToggleHidden && group.type === 'general' && (
+            <Button variant="ghost" size="sm" onClick={() => { onToggleHidden(group); setShowActions(false) }}
+              disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
+              {group.isHidden
+                ? <><Eye className="h-3.5 w-3.5" /> Reexibir</>
+                : <><EyeOff className="h-3.5 w-3.5" /> Ocultar</>}
+            </Button>
+          )}
           {onEditGroup && (
             <Button variant="ghost" size="sm" onClick={() => { onEditGroup(group); setShowActions(false) }}
               disabled={isDeleting} className="h-8 text-xs gap-1.5 text-muted-foreground hover:text-foreground rounded-xl">
@@ -461,7 +493,10 @@ export function ExamGroup({
               return (
                 <div
                   key={examId}
-                  className="group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 hover:translate-x-0.5 active:bg-muted/70 cursor-pointer transition-all duration-200"
+                  className={cn(
+                    'group/exam relative flex items-start gap-3 py-3 px-3 rounded-xl hover:bg-muted/50 hover:translate-x-0.5 active:bg-muted/70 cursor-pointer transition-all duration-200',
+                    exam.isHidden && 'opacity-70'
+                  )}
                   onContextMenu={(e) => onExamContextMenu(exam, e)}
                   onClick={() => onExamClick(exam)}
                 >
@@ -501,6 +536,11 @@ export function ExamGroup({
                       {exam.isPracticeExam && (
                         <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">Treino</span>
                       )}
+                      {exam.isHidden && (
+                        <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 font-semibold">
+                          <EyeOff className="h-2.5 w-2.5" /> Oculta
+                        </span>
+                      )}
                       <span className="text-[10px] text-muted-foreground/50 tabular-nums">{exam.numberOfQuestions} questões</span>
                       {/* Na linha só cabe o próximo marco — portão que abre,
                           prova que começa, portão que fecha. Prova de treino
@@ -508,6 +548,18 @@ export function ExamGroup({
                       <HorariosDaProva prova={exam} jaEntrou={!!(exam as any).jaEntrou} variante="linha" />
                     </div>
                   </div>
+
+                  {/* Ocultar/reexibir — só admin; prova pessoal não está no catálogo de ninguém */}
+                  {onToggleExamHidden && !exam.isPersonalExam && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onToggleExamHidden(exam) }}
+                      className="flex-shrink-0 mt-0.5 p-2 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                      title={exam.isHidden ? 'Reexibir para todos' : 'Ocultar para todos (menos admins)'}
+                      aria-label={exam.isHidden ? `Reexibir "${exam.title}"` : `Ocultar "${exam.title}"`}
+                    >
+                      {exam.isHidden ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+                    </button>
+                  )}
 
                   {/* Download icon */}
                   {exam.isPracticeExam && onDownloadPDF && (
@@ -550,6 +602,9 @@ export function ExamGroup({
                     depth={depth + 1}
                     highlightGroupId={highlightGroupId}
                     filterQuery={filterQuery}
+                    gruposOcultos={gruposOcultos}
+                    onToggleHidden={onToggleHidden}
+                    onToggleExamHidden={onToggleExamHidden}
                   />
                 </div>
               )

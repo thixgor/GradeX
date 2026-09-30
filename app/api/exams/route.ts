@@ -19,6 +19,7 @@ import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { normalizarTravas } from '@/lib/provas/anti-cola'
 import { normalizarPitch } from '@/lib/provas/pitch-de-vendas'
 import { normalizarExcecoes, provaApareceNoCatalogo, ramoDeConvidadoParaMongo } from '@/lib/provas/visibilidade-da-prova'
+import { carregarIdsDeGruposOcultos } from '@/lib/provas/grupos-ocultos-servidor'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarLiberacoes } from '@/lib/provas/downloads-da-prova'
 import { COLECAO_DE_ENTRADAS, type EntradaNaProva } from '@/lib/provas/entrada-na-prova'
@@ -115,11 +116,24 @@ export async function GET(request: NextRequest) {
      * também passa, pelo ramo `createdBy` do `$or` de cima.
      */
     if (!ehAdmin) {
-      const periodo = await lerPeriodoDoAluno(db, session.userId)
+      const [periodo, gruposOcultos] = await Promise.all([
+        lerPeriodoDoAluno(db, session.userId),
+        carregarIdsDeGruposOcultos(),
+      ])
+
+      /*
+       * Prova dentro de grupo oculto some junto com o grupo — ver
+       * `lib/provas/grupos-ocultos.ts`. O criador passa, pela mesma regra de
+       * `provaExisteParaPessoa`: ninguém se tranca fora da própria prova.
+       */
+      const foraDeGrupoOculto: Record<string, any>[] = gruposOcultos.size > 0
+        ? [{ $or: [{ createdBy: session.userId }, { groupId: { $nin: Array.from(gruposOcultos) } }] }]
+        : []
 
       query = {
         $and: [
           query,
+          ...foraDeGrupoOculto,
           // Os ramos entram achatados num `$or` só: um `$or` aninhado dentro de
           // outro é válido, mas o planner não usa índice nele.
           {

@@ -6,6 +6,7 @@ import type { Exam, ExamSubmission, UserAnswer } from '@/lib/types'
 import { resolverJanelaDaProva } from '@/lib/provas/janela-da-prova'
 import { jaEntrouNaProva } from '@/lib/provas/entrada-na-prova'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
+import { provaEstaEmGrupoOculto } from '@/lib/provas/grupos-ocultos-servidor'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import {
   COLECAO_DE_PROGRESSO,
@@ -95,7 +96,7 @@ async function contextoDaProva(id: string, userId: string, isAdmin: boolean) {
   // regras de uma vez (pessoal, oculta, público).
   if (!isAdmin) {
     const periodo = await lerPeriodoDoAluno(db, userId)
-    if (!provaExisteParaPessoa(exam, { userId, isAdmin, periodo })) {
+    if (!provaExisteParaPessoa(exam, { userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
       return { erro: NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 }) }
     }
   }

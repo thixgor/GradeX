@@ -15,9 +15,12 @@ import {
   ArrowDownAZ,
   FileDown,
   ChevronRight,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Exam } from '@/lib/types'
+import { ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
 
 interface GroupCardData {
   _id: string
@@ -31,6 +34,7 @@ interface GroupCardData {
   course?: string
   createdBy: string
   parentGroupId?: string | null
+  isHidden?: boolean
 }
 
 interface GroupCardProps {
@@ -52,6 +56,10 @@ interface GroupCardProps {
   onMoveGroup?: (group: GroupCardData) => void
   onSortGroup?: (groupId: string) => void
   onGroupDownloadPDF?: (exams: Exam[], type: 'exam' | 'with-answers' | 'gabarito', groupName: string) => void
+  /** Grupos fora do ar, herança incluída (ver `lib/provas/grupos-ocultos.ts`). Vazio para o aluno. */
+  gruposOcultos?: Set<string>
+  /** Ocultar/reexibir. Ausente = quem vê este cartão não é admin. */
+  onToggleHidden?: (group: GroupCardData) => void
 }
 
 /** Folder-style card for a group/subgroup — used for the grid/drill-down presentation of /provas. */
@@ -72,6 +80,8 @@ export function GroupCard({
   onMoveGroup,
   onSortGroup,
   onGroupDownloadPDF,
+  gruposOcultos,
+  onToggleHidden,
 }: GroupCardProps) {
   const [showActions, setShowActions] = useState(false)
   const [showDownload, setShowDownload] = useState(false)
@@ -82,6 +92,8 @@ export function GroupCard({
   const downloadButtonRef = useRef<HTMLButtonElement>(null)
 
   const accentColor = group.color || '#3B82F6'
+  const oculto = !!gruposOcultos?.has(group._id)
+  const ocultoPeloPai = oculto && ocultoPorHeranca(group, gruposOcultos!)
 
   const handleShareLink = () => {
     const url = `${window.location.origin}/provas?grupo=${group._id}`
@@ -131,7 +143,10 @@ export function GroupCard({
             'group/card relative isolate flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 cursor-pointer',
             highlighted
               ? 'border-primary/50 ring-2 ring-primary/25 shadow-lg shadow-primary/10'
-              : 'border-border/50 hover:border-border hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20'
+              : 'border-border/50 hover:border-border hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/20',
+            // Só o admin chega a ver um grupo oculto: esmaecido e tracejado para
+            // não parecer igual ao que o aluno vê.
+            oculto && 'opacity-70 border-dashed border-amber-500/50'
           )}
         >
           {/* Cover */}
@@ -163,6 +178,17 @@ export function GroupCard({
             {group.category === 'faculdade' && !highlighted && (
               <span className="absolute left-2 top-2 rounded-full bg-red-500/90 px-1.5 py-0.5 text-[9px] font-medium text-white">
                 Faculdade
+              </span>
+            )}
+
+            {oculto && (
+              <span
+                className="absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-1.5 py-0.5 text-[9px] font-semibold text-white"
+                title={ocultoPeloPai
+                  ? 'Oculto porque um grupo acima está oculto — reexiba o de cima'
+                  : 'Oculto para todos, menos para os admins'}
+              >
+                <EyeOff className="h-2.5 w-2.5" /> {ocultoPeloPai ? 'Oculto (grupo acima)' : 'Oculto'}
               </span>
             )}
 
@@ -200,6 +226,16 @@ export function GroupCard({
                       className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60 disabled:opacity-50"
                     >
                       <ArrowDownAZ className="h-3.5 w-3.5" /> {isSorting ? 'Ordenando…' : 'A→Z reverso'}
+                    </button>
+                  )}
+                  {onToggleHidden && group.type === 'general' && (
+                    <button
+                      onClick={() => { onToggleHidden(group); setShowActions(false) }}
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs hover:bg-muted/60"
+                    >
+                      {group.isHidden
+                        ? <><Eye className="h-3.5 w-3.5" /> Reexibir</>
+                        : <><EyeOff className="h-3.5 w-3.5" /> Ocultar</>}
                     </button>
                   )}
                   {onEditGroup && (

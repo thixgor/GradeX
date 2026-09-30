@@ -286,6 +286,7 @@ export interface ExamGroup {
   createdByName: string // Nome de quem criou
   isPublic: boolean // Se false, só o criador vê (para grupos pessoais); se true, todos veem (grupos gerais)
   parentGroupId?: string | null // ID do grupo pai para subgrupos (null = grupo raiz)
+  isHidden?: boolean // Oculto pelo admin: some (com tudo abaixo) para quem não é admin — ver lib/provas/grupos-ocultos.ts
   order?: number // Ordem de exibição
   createdAt: Date
   updatedAt: Date

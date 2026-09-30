@@ -3,6 +3,7 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
+import { provaEstaEmGrupoOculto } from '@/lib/provas/grupos-ocultos-servidor'
 import { Exam, ExamSubmission } from '@/lib/types'
 import { ObjectId } from 'mongodb'
 import { calculateTRIScores } from '@/lib/tri-calculator'
@@ -56,7 +57,7 @@ export async function GET(
      */
     if (!isAdmin) {
       const periodo = await lerPeriodoDoAluno(db, session.userId)
-      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }

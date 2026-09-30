@@ -7,6 +7,7 @@ import { prepararProvaParaEntrega, podeVerGabarito } from '@/lib/provas/sanitiza
 import { montarProvaParaAluno, sementeDaProva } from '@/lib/provas/embaralhar'
 import { lerPeriodoDoAluno } from '@/lib/provas/periodo-do-aluno'
 import { normalizarExcecoes, provaExisteParaPessoa } from '@/lib/provas/visibilidade-da-prova'
+import { provaEstaEmGrupoOculto } from '@/lib/provas/grupos-ocultos-servidor'
 import { resolverJanelaDaProva, validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 import { interpretarInstante } from '@/lib/provas/horario-local'
 import { jaEntrouNaProva, janelaMudou, limparEntradasDaProva } from '@/lib/provas/entrada-na-prova'
@@ -59,7 +60,7 @@ export async function GET(
     if (!isAdmin) {
       const periodoDoAluno = await lerPeriodoDoAluno(db, session.userId)
 
-      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo: periodoDoAluno })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo: periodoDoAluno, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }

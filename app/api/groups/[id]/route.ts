@@ -9,6 +9,7 @@ import {
 } from '@/lib/api-security'
 import { podeMoverGrupo, type GrupoNaArvore } from '@/lib/provas/arvore-grupos'
 import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
+import { esquecerGruposOcultos } from '@/lib/provas/grupos-ocultos-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -79,6 +80,23 @@ export async function PUT(
     if (body.course !== undefined && session.role === 'admin') updateData.course = body.course
 
     /*
+     * Ocultar/reexibir o grupo — ver `lib/provas/grupos-ocultos.ts`.
+     *
+     * Só admin, e só em grupo geral: é uma decisão sobre o que a plataforma
+     * inteira vê. Booleano de verdade, pelo mesmo motivo do `practiceAfterEnd`
+     * das provas — um "false" em texto é verdadeiro em JavaScript.
+     */
+    if (body.isHidden !== undefined) {
+      if (session.role !== 'admin') {
+        return NextResponse.json({ error: 'Apenas administradores podem ocultar grupos' }, { status: 403 })
+      }
+      if (group.type === 'personal') {
+        return NextResponse.json({ error: 'Grupos pessoais não podem ser ocultados' }, { status: 400 })
+      }
+      updateData.isHidden = body.isHidden === true
+    }
+
+    /*
      * Mover o grupo para dentro de outro (ou para a raiz).
      *
      * Trocar `parentGroupId` move o ramo inteiro de uma vez: as provas apontam
@@ -121,6 +139,10 @@ export async function PUT(
       { _id: new ObjectId(id) },
       { $set: updateData }
     )
+
+    // Ocultar muda quem vê o ramo; mover muda QUAL ramo fica embaixo de um
+    // grupo oculto. Nos dois casos a memória da árvore envelheceu.
+    if ('isHidden' in updateData || 'parentGroupId' in updateData) esquecerGruposOcultos()
 
     return NextResponse.json({ message: 'Grupo atualizado com sucesso' })
   } catch (error) {
@@ -189,6 +211,7 @@ export async function DELETE(
 
     // Deletar grupo
     await groupsCollection.deleteOne({ _id: new ObjectId(id) })
+    esquecerGruposOcultos()
 
     return NextResponse.json({ message: 'Grupo deletado com sucesso' })
   } catch (error) {
