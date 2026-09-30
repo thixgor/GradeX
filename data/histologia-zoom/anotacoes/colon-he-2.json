@@ -2,8 +2,8 @@
  "slug": "colon-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.4,
     0.35,
     0.55
+   ]
+  },
+  {
+   "id": "caliciformes",
+   "estrutura": "celula-caliciforme",
+   "rotulo": "Células caliciformes abundantes nas criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.353,
+      0.3345
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.325,
+    0.36,
+    0.345
+   ]
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria entre as criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3445,
+      0.329
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.33,
+    0.325,
+    0.36,
+    0.345
    ]
   }
  ]

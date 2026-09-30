@@ -2,8 +2,8 @@
  "slug": "pulmao-he-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -26,6 +26,69 @@
     0.272
    ],
    "nota": "Parênquima pulmonar: a maior parte do corte são alvéolos — espaços vazios separados por septos finíssimos com capilares."
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.411
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.36,
+    0.4,
+    0.44,
+    0.48
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Placa de cartilagem hialina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.38,
+      0.425
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.36,
+    0.4,
+    0.44,
+    0.48
+   ]
+  },
+  {
+   "id": "bronquio",
+   "estrutura": "bronquio",
+   "rotulo": "Brônquio de luz pregueada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.33
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.24,
+    0.4,
+    0.36
+   ]
   }
  ]
 }

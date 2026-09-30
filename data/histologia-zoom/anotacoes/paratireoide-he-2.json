@@ -2,8 +2,8 @@
  "slug": "paratireoide-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.55,
     0.2,
     0.6
+   ]
+  },
+  {
+   "id": "tireoide",
+   "estrutura": "foliculo-tireoidiano",
+   "rotulo": "Folículos da tireoide vizinha, com coloide denso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.272,
+      1.07
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    1.0,
+    0.3,
+    1.1
+   ]
+  },
+  {
+   "id": "principais-2",
+   "estrutura": "celula-principal-paratireoide",
+   "rotulo": "Cordões de células principais da paratireoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      1.015
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    1.0,
+    0.3,
+    1.1
    ]
   }
  ]
