@@ -2,8 +2,8 @@
  "slug": "traqueia-azul-de-toluidina-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -66,6 +66,48 @@
     0.8,
     0.3,
     1.1
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândula da submucosa: ácinos mucosos claros (a cartilagem é a região roxa metacromática ao lado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5075,
+      0.7575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.7,
+    0.57,
+    0.82
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria com fibras elásticas longitudinais sob o epitélio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.59,
+      0.565
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.55,
+    0.53,
+    0.63,
+    0.6
    ]
   }
  ]

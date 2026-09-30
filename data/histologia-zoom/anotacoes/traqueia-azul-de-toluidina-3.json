@@ -2,8 +2,8 @@
  "slug": "traqueia-azul-de-toluidina-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -48,6 +48,98 @@
     0.24,
     0.64,
     0.33
+   ]
+  },
+  {
+   "id": "cilios",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Cílios na superfície apical das células colunares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.63,
+      0.161
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.61,
+    0.14,
+    0.65,
+    0.18
+   ]
+  },
+  {
+   "id": "elasticas",
+   "estrutura": "fibra-elastica",
+   "rotulo": "Fibras elásticas onduladas da lâmina própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.66,
+      0.2
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.64,
+    0.18,
+    0.68,
+    0.22
+   ]
+  },
+  {
+   "id": "mastocito",
+   "estrutura": "mastocito",
+   "rotulo": "Mastócitos: grânulos metacromáticos (vermelho-arroxeados) no azul de toluidina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6615,
+      0.23
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.681,
+      0.2255
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.65,
+    0.215,
+    0.69,
+    0.24
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar da lâmina própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6765,
+      0.1805
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.665,
+    0.17,
+    0.69,
+    0.19
    ]
   }
  ]
