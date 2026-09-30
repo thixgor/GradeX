@@ -2,7 +2,7 @@
  "slug": "lingua-azul-de-toluidina",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -94,6 +94,48 @@
     0.378,
     0.386,
     0.396
+   ]
+  },
+  {
+   "id": "dorso",
+   "estrutura": "dorso-da-lingua",
+   "rotulo": "Dorso: epitélio espesso e queratinizado, com papilas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.66,
+      0.46
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.56,
+    0.4,
+    0.7,
+    0.54
+   ]
+  },
+  {
+   "id": "filiforme",
+   "estrutura": "papila-filiforme",
+   "rotulo": "Papila filiforme com ponta de queratina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.672,
+      0.503
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.62,
+    0.47,
+    0.7,
+    0.54
    ]
   }
  ]

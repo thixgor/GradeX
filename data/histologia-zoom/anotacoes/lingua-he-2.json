@@ -2,50 +2,113 @@
  "slug": "lingua-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
-   "id": "papila",
-   "estrutura": "papila-filiforme",
-   "rotulo": "Papila filiforme em corte transversal",
+   "id": "dorso",
+   "estrutura": "dorso-da-lingua",
+   "rotulo": "Dorso: mucosa com papilas altas e largas",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.0905,
-      0.339
+      0.1165,
+      0.34
      ],
-     "angulo": 90
+     "angulo": 0
     }
    ],
    "vista": [
-    0.05,
-    0.3,
-    0.13,
-    0.38
+    0.04,
+    0.25,
+    0.24,
+    0.45
+   ]
+  },
+  {
+   "id": "ventre",
+   "estrutura": "ventre-da-lingua",
+   "rotulo": "Ventre: epitélio fino e liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      1.246
+     ],
+     "angulo": 270
+    }
    ],
-   "nota": "Coloração pálida; as papilas filiformes aparecem como anéis de epitélio cortados em várias alturas."
+   "vista": [
+    0.15,
+    1.05,
+    0.65,
+    1.28
+   ]
   },
   {
    "id": "epitelio",
    "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.1195,
-      0.342
+      0.128,
+      0.6925
      ],
-     "angulo": 180
+     "angulo": 270
     }
    ],
    "vista": [
-    0.05,
-    0.3,
-    0.13,
-    0.38
+    0.11,
+    0.66,
+    0.15,
+    0.7
+   ]
+  },
+  {
+   "id": "serosos",
+   "estrutura": "acino-seroso",
+   "rotulo": "Ácinos serosos entre os feixes musculares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1935,
+      0.623
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.17,
+    0.6,
+    0.21,
+    0.64
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo estriado da língua",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.179,
+      0.6205
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.17,
+    0.6,
+    0.21,
+    0.64
    ]
   }
  ]

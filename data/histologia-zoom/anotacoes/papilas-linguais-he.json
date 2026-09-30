@@ -2,29 +2,92 @@
  "slug": "papilas-linguais-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "foliada",
    "estrutura": "papila-foliada",
-   "rotulo": "Pregas da papila foliada, separadas por fendas",
+   "rotulo": "Papilas foliadas: pregas paralelas separadas por fendas",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
       0.1,
-      0.77
+      1.005
      ],
      "angulo": 0
     }
    ],
    "vista": [
-    0.0,
-    0.7,
-    0.2,
-    0.9
+    0.07,
+    0.95,
+    0.27,
+    1.15
+   ]
+  },
+  {
+   "id": "botao",
+   "estrutura": "botao-gustativo",
+   "rotulo": "Botão gustativo na parede da fenda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1565,
+      1.046
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.14,
+    1.03,
+    0.175,
+    1.065
+   ]
+  },
+  {
+   "id": "botao-2",
+   "estrutura": "botao-gustativo",
+   "rotulo": "Botão gustativo: células fusiformes em barril",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1545,
+      1.0575
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.14,
+    1.03,
+    0.175,
+    1.065
+   ]
+  },
+  {
+   "id": "ebner",
+   "estrutura": "glandula-de-von-ebner",
+   "rotulo": "Glândulas serosas de von Ebner junto às papilas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.204,
+      1.01
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.17,
+    0.995,
+    0.22,
+    1.02
    ]
   },
   {
@@ -35,36 +98,37 @@
     {
      "tipo": "seta",
      "ponta": [
-      0.278,
+      0.28,
       0.44
      ],
      "angulo": 180
     }
    ],
    "vista": [
-    0.2,
-    0.3,
+    0.26,
     0.4,
+    0.36,
     0.5
    ]
   },
   {
    "id": "musculo",
    "estrutura": "fibra-muscular-esqueletica",
+   "rotulo": "Músculo estriado cortado em várias direções",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
       0.33,
-      0.36
+      0.46
      ],
-     "angulo": 180
+     "angulo": 45
     }
    ],
    "vista": [
-    0.2,
-    0.3,
+    0.26,
     0.4,
+    0.36,
     0.5
    ]
   }
