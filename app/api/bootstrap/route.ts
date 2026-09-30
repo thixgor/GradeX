@@ -32,6 +32,7 @@ import {
 } from '@/lib/sidebar-groups'
 import { normalizeAccountType } from '@/lib/account-tier'
 import { getMissingProfileFields } from '@/lib/profile-completeness'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 
@@ -296,7 +297,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         residencySpecialty: userDoc.residencySpecialty,
         residencyHospital: userDoc.residencyHospital,
         residencyYear: userDoc.residencyYear,
-        afyaUnit: userDoc.afyaUnit,
+        afyaUnit: normalizeInstitutionLabel(userDoc.afyaUnit),
         periodo: userDoc.periodoBase,
       },
       tierLimits,

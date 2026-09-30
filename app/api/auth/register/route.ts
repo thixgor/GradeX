@@ -13,6 +13,7 @@ import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { isValidStateUf } from '@/lib/brazil-states'
 import { isValidBrazilPhone } from '@/lib/phone'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
         ? { residencySpecialty, residencyHospital, residencyYear }
         : {}),
       ...(profession === 'academico'
-        ? { isAfyaMedicineStudent: true, ...(afyaUnit ? { afyaUnit } : {}) }
+        ? { isAfyaMedicineStudent: true, ...(afyaUnit ? { afyaUnit: normalizeInstitutionLabel(String(afyaUnit)) } : {}) }
         : {}),
       ...(periodoBase !== null
         ? { periodoBase, periodoBaseRef: getCurrentSemesterRef() }

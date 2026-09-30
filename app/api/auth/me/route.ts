@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
+import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
 
 // Mantém SSR (não rota estática) mas permite cache de browser curto
 // para deduplicar polls feitos pelo mesmo usuário em rajada.
@@ -92,7 +93,7 @@ export async function GET() {
         cpf: user.cpf,
         dateOfBirth: user.dateOfBirth,
         isAfyaMedicineStudent: user.isAfyaMedicineStudent,
-        afyaUnit: user.afyaUnit,
+        afyaUnit: normalizeInstitutionLabel(user.afyaUnit),
         accountType: user.accountType,
         trialExpiresAt: user.trialExpiresAt,
         trialDuration: user.trialDuration,

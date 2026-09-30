@@ -1377,7 +1377,7 @@ function MateriaisContent() {
               <div>
                 <h2 className="font-heading text-sm font-bold tracking-[-0.01em]">Materiais impressos &amp; produtos físicos</h2>
                 <p className="text-xs text-muted-foreground">
-                  Receba em casa ou retire na Afya Unigranrio Barra. Entregue por DomineAqui LTDA.
+                  Receba em casa ou retire na Unigranrio Barra. Entregue por DomineAqui LTDA.
                 </p>
               </div>
             </div>

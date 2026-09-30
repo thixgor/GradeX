@@ -2163,7 +2163,7 @@ export interface DeliveryMethod {
   details?: string
 }
 
-/** Ponto de retirada configurado pelo admin (ex.: Afya Unigranrio Barra). */
+/** Ponto de retirada configurado pelo admin (ex.: Unigranrio Barra). */
 export interface PickupPoint {
   id: string
   name: string

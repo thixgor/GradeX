@@ -147,7 +147,7 @@ export function statusStepIndex(status: ShopOrderStatus, deliveryType: 'pickup' 
   return steps.length - 1
 }
 
-/** Settings padrão criados na primeira leitura (inclui o ponto Afya Unigranrio Barra). */
+/** Settings padrão criados na primeira leitura (inclui o ponto Unigranrio Barra). */
 export function defaultShopSettings(): Omit<ShopSettings, '_id'> {
   return {
     settingsId: 'shop',
@@ -155,8 +155,8 @@ export function defaultShopSettings(): Omit<ShopSettings, '_id'> {
     pickupPoints: [
       {
         id: 'afya-unigranrio-barra',
-        name: 'Afya Unigranrio Barra',
-        address: 'Afya Unigranrio — Campus Barra, Rio de Janeiro/RJ',
+        name: 'Unigranrio Barra',
+        address: 'Unigranrio — Campus Barra, Rio de Janeiro/RJ',
         enabled: true,
       },
     ],

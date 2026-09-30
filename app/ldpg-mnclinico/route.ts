@@ -106,7 +106,7 @@ async function resolvePlanPrice(
   // ── Cupom padrão do plano ──
   // Só entra o cupom que o checkout aplicaria sozinho, sem o usuário digitar
   // nada. Validamos sem sessão: cupons que dependem de quem está comprando
-  // (primeira compra, unidade Afya, limite por usuário) falham aqui e são
+  // (primeira compra, unidade da faculdade, limite por usuário) falham aqui e são
   // ignorados de propósito — anunciar um preço que parte do público não
   // consegue no carrinho é pior do que anunciar o preço cheio.
   let coupon: CouponValidationResult | null = null

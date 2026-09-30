@@ -12,6 +12,7 @@ import {
   type CouponProductType,
 } from '@/lib/coupons'
 import type { ManualClinicoPlanKey, User } from '@/lib/types'
+import { normalizeInstitutionLabel, normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -97,7 +98,7 @@ export async function GET(request: NextRequest) {
           { _id: new ObjectId(session.userId) as any },
           { projection: { isAfyaMedicineStudent: 1, afyaUnit: 1 } }
         )
-        if (user?.isAfyaMedicineStudent && user.afyaUnit) unidadeDoUsuario = user.afyaUnit
+        if (user?.isAfyaMedicineStudent && user.afyaUnit) unidadeDoUsuario = normalizeInstitutionLabel(user.afyaUnit)
       }
     }
 
@@ -107,7 +108,7 @@ export async function GET(request: NextRequest) {
         // unidade (visitante incluído) nem fica sabendo que o código existe.
         if (cupom.allowedAfyaUnits?.length) {
           if (!unidadeDoUsuario) return false
-          if (!cupom.allowedAfyaUnits.includes(unidadeDoUsuario)) return false
+          if (!normalizeInstitutionLabels(cupom.allowedAfyaUnits).includes(unidadeDoUsuario)) return false
         }
         // Cupom preso a planos do Manual Clínico só se anuncia no plano certo.
         if (cupom.allowedManualPlans?.length && planKey && !cupom.allowedManualPlans.includes(planKey)) {
