@@ -2,8 +2,8 @@
  "slug": "glandula-mamaria-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.3,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto intralobular: os lóbulos crescem muito na gestação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.309,
+      0.3525
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.29,
+    0.33,
+    0.33,
+    0.37
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo da mama",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4125,
+      0.265
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.39,
+    0.25,
+    0.44,
+    0.29
+   ]
+  },
+  {
+   "id": "interlobular",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Conjuntivo denso interlobular, reduzido pela expansão dos lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.425
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.4,
+    0.38,
+    0.45
    ]
   }
  ]

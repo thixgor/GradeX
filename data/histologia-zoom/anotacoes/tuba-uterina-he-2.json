@@ -2,8 +2,8 @@
  "slug": "tuba-uterina-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -50,22 +50,64 @@
   {
    "id": "muscular",
    "estrutura": "muscular-externa",
-   "rotulo": "Camada muscular lisa",
+   "rotulo": "Camada muscular espessa do istmo (circular interna e longitudinal externa)",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.4895,
-      1.029
+      0.5145,
+      1.0625
      ],
      "angulo": 0
     }
    ],
    "vista": [
-    0.45,
-    0.95,
-    0.6,
-    1.1
+    0.48,
+    1.0,
+    0.57,
+    1.12
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria da mesossalpinge",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7258,
+      0.93
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.9,
+    0.76,
+    0.96
+   ]
+  },
+  {
+   "id": "mesossalpinge",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Mesossalpinge/serosa: conjuntivo com vasos que liga a tuba ao ligamento largo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.807,
+      1.16
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.75,
+    1.08,
+    0.88,
+    1.24
    ]
   }
  ]

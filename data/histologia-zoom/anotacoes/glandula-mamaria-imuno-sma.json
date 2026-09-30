@@ -2,8 +2,8 @@
  "slug": "glandula-mamaria-imuno-sma",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,69 @@
     0.3,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "lobulo",
+   "estrutura": "lobulo-mamario",
+   "rotulo": "Lóbulo (unidade ductolobular terminal): cada ácino é contornado por mioepiteliais marrons",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.395,
+      0.315
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.37,
+    0.3,
+    0.45,
+    0.33
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos também são marrons: o músculo liso da parede expressa actina de músculo liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2738,
+      0.3655
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.26,
+    0.35,
+    0.29,
+    0.38
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Estroma denso interlobular da mama inativa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.275,
+      0.4
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    0.37,
+    0.31,
+    0.43
    ]
   }
  ]

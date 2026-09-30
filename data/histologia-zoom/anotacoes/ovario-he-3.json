@@ -2,8 +2,8 @@
  "slug": "ovario-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -66,6 +66,98 @@
     0.14,
     0.68,
     0.22
+   ]
+  },
+  {
+   "id": "cumulus",
+   "estrutura": "foliculo-antral",
+   "rotulo": "Cumulus oophorus: montículo de granulosa que sustenta o ovócito dentro do antro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.716,
+      0.252
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.69,
+    0.23,
+    0.75,
+    0.28
+   ]
+  },
+  {
+   "id": "antrais",
+   "estrutura": "foliculo-antral",
+   "rotulo": "Vários folículos antrais em crescimento (ovário de animal jovem)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.49
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.72,
+      0.54
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.4,
+    0.85,
+    0.62
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-ovariano",
+   "rotulo": "Estroma celular entre os folículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.608,
+      0.402
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.58,
+    0.38,
+    0.64,
+    0.43
+   ]
+  },
+  {
+   "id": "hilo",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos do hilo/mesovário",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.494,
+      0.228
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.47,
+    0.2,
+    0.52,
+    0.25
    ]
   }
  ]

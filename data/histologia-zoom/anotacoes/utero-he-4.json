@@ -67,6 +67,69 @@
     0.55,
     1.95
    ]
+  },
+  {
+   "id": "interviloso",
+   "estrutura": "espaco-interviloso",
+   "rotulo": "Espaço interviloso, onde flutuam as vilosidades coriônicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.366,
+      1.894
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.15,
+    1.8,
+    0.33,
+    1.95
+   ]
+  },
+  {
+   "id": "deciduais",
+   "estrutura": "decidua",
+   "rotulo": "Células deciduais: grandes, poligonais, citoplasma claro e abundante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.59,
+      1.74
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    1.7,
+    0.63,
+    1.78
+   ]
+  },
+  {
+   "id": "vilosidades",
+   "estrutura": "vilosidade-corial",
+   "rotulo": "Vilosidades coriônicas com eixo de conjuntivo e capilares fetais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      2.034
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    1.98,
+    0.37,
+    2.08
+   ]
   }
  ]
 }
