@@ -2,7 +2,7 @@
  "slug": "pulmao-he-7",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -45,6 +45,64 @@
     0.588,
     0.412,
     0.612
+   ]
+  },
+  {
+   "id": "pleura",
+   "estrutura": "pleura-visceral",
+   "rotulo": "Pleura visceral: conjuntivo com fibras elásticas coberto por mesotélio, na superfície do pulmão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.14,
+      0.26
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.075,
+      0.35
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.06,
+    0.2,
+    0.18,
+    0.4
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Ramos da artéria pulmonar e vasos nos septos, com sangue",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.452,
+      0.5175
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5125,
+      0.456
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.33,
+    0.4,
+    0.6,
+    0.55
    ]
   }
  ]

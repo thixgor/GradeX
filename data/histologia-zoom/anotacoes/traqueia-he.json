@@ -2,7 +2,7 @@
  "slug": "traqueia-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -65,6 +65,119 @@
     0.44,
     0.78,
     0.5
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas (ácinos serosos) na submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.727,
+      0.412
+     ],
+     "angulo": 135
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.748,
+      0.477
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.4,
+    0.76,
+    0.49
+   ]
+  },
+  {
+   "id": "caliciforme",
+   "estrutura": "celula-caliciforme",
+   "rotulo": "Células caliciformes claras entre as células ciliadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.712,
+      0.4095
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.4,
+    0.725,
+    0.425
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa: conjuntivo frouxo com glândulas e vasos, entre a mucosa e a cartilagem",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.745,
+      0.44
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.4,
+    0.8,
+    0.5
+   ]
+  },
+  {
+   "id": "pericondrio",
+   "estrutura": "pericondrio",
+   "rotulo": "Pericôndrio: conjuntivo denso que reveste o anel de cartilagem",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7895,
+      0.42
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.76,
+    0.39,
+    0.8,
+    0.45
+   ]
+  },
+  {
+   "id": "condrocito",
+   "estrutura": "condrocito",
+   "rotulo": "Condrócitos em lacunas, isolados e em grupos isógenos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8,
+      0.37
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.78,
+    0.35,
+    0.82,
+    0.39
    ]
   }
  ]
