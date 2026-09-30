@@ -2,8 +2,8 @@
  "slug": "blastocisto-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -66,6 +66,90 @@
     0.35,
     0.49,
     0.45
+   ]
+  },
+  {
+   "id": "embrioblasto",
+   "estrutura": "embrioblasto",
+   "rotulo": "Blastocisto na luz do útero: embrioblasto (massa celular interna) em um polo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3125,
+      0.2307
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.305,
+    0.222,
+    0.332,
+    0.24
+   ]
+  },
+  {
+   "id": "trofoblasto",
+   "estrutura": "trofoblasto",
+   "rotulo": "Trofoblasto: parede fina de células achatadas em volta da blastocele",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.323,
+      0.2346
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.305,
+    0.222,
+    0.332,
+    0.24
+   ]
+  },
+  {
+   "id": "luz",
+   "estrutura": "epitelio-simples-colunar",
+   "rotulo": "Epitélio simples colunar da luz uterina, onde o blastocisto vai se implantar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.2
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.17,
+    0.4,
+    0.25
+   ]
+  },
+  {
+   "id": "miometrio",
+   "estrutura": "miometrio",
+   "rotulo": "Miométrio em volta do endométrio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.3
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.08,
+    0.2,
+    0.25,
+    0.4
    ]
   }
  ]

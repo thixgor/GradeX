@@ -2,8 +2,8 @@
  "slug": "nervo-optico-osmio-sirius",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,90 @@
     0.35,
     0.35,
     0.5,
+    0.5
+   ]
+  },
+  {
+   "id": "arteria-central",
+   "estrutura": "arteria",
+   "rotulo": "Artéria central da retina, no centro do nervo óptico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.536
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.43,
+    0.51,
+    0.49,
+    0.56
+   ]
+  },
+  {
+   "id": "veia-central",
+   "estrutura": "veia",
+   "rotulo": "Veia central da retina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.532,
+      0.538
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.5,
+    0.51,
+    0.56,
+    0.56
+   ]
+  },
+  {
+   "id": "bainha",
+   "estrutura": "dura-mater",
+   "rotulo": "Bainha meníngea (dura, aracnoide e pia): o nervo óptico é um trato do SNC",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.74,
+      0.45
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.66,
+    0.38,
+    0.8,
+    0.52
+   ]
+  },
+  {
+   "id": "pia",
+   "estrutura": "pia-mater",
+   "rotulo": "Pia-máter aderida ao nervo, da qual saem os septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.672,
+      0.47
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.64,
+    0.44,
+    0.7,
     0.5
    ]
   }

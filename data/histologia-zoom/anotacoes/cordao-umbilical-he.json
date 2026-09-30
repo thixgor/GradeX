@@ -2,8 +2,8 @@
  "slug": "cordao-umbilical-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -67,6 +67,69 @@
     0.5,
     0.7,
     0.6
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "veia-umbilical",
+   "rotulo": "Artéria umbilical: parede muscular espessa (o cordão tem duas artérias e uma veia)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.71,
+      0.55
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.6,
+    0.42,
+    0.82,
+    0.68
+   ]
+  },
+  {
+   "id": "endotelio",
+   "estrutura": "endotelio",
+   "rotulo": "Endotélio revestindo a luz da artéria umbilical",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.636,
+      0.5
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.62,
+    0.48,
+    0.66,
+    0.52
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "celula-muscular-lisa",
+   "rotulo": "Camadas de músculo liso da média, sem lâmina elástica interna nítida",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.57
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.57,
+    0.53,
+    0.64,
+    0.61
    ]
   }
  ]
