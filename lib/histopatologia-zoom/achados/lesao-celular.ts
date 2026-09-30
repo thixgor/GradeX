@@ -257,4 +257,90 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Pulmões e linfonodos hilares de adultos urbanos', 'Pneumoconiose (antracossilicose)'],
     armadilhas: ['Hemossiderina é marrom-dourada e refringente; pigmento de formalina é marrom e fora das células.'],
   },
+  {
+    id: 'emaranhados-neurofibrilares',
+    nome: 'Emaranhados neurofibrilares',
+    sinonimos: ['novelos neurofibrilares', 'neurofibrillary tangles', 'NFT', 'emaranhados de tau'],
+    categoria: 'deposito',
+    resumo:
+      'Feixes de filamentos de proteína tau hiperfosforilada dentro do corpo do neurônio, que ocupam o citoplasma e assumem a forma da célula: em "chama de vela" nos neurônios piramidais e globosos nos do tronco.',
+    comoReconhecer: [
+      'No H&E: difíceis — fibrilas levemente basofílicas no citoplasma de neurônios piramidais; ficam evidentes com prata (Bielschowsky, Gallyas) ou imuno para tau.',
+      'Na imuno para tau: neurônios inteiros escuros, triangulares, com a cauda do dendrito apical ("chama"); emaranhados "fantasmas" extracelulares quando o neurônio morre.',
+    ],
+    mecanismo: [
+      'A tau normalmente estabiliza os microtúbulos do axônio. Hiperfosforilada, ela se solta, forma filamentos helicoidais pareados e se agrega no corpo celular.',
+      'O transporte axonal falha e o neurônio morre; a tau anômala se propaga de neurônio a neurônio por conexões sinápticas — da região entorrinal ao hipocampo e depois ao neocórtex (estágios de Braak I–VI).',
+    ],
+    significado: [
+      'Com as placas neuríticas, define a doença de Alzheimer. O número e a extensão dos emaranhados correlacionam-se melhor com a demência do que as placas.',
+      'Também aparecem em outras taupatias: paralisia supranuclear progressiva, degeneração corticobasal, encefalopatia traumática crônica.',
+    ],
+    ondeOcorre: ['Doença de Alzheimer', 'Envelhecimento (poucos, na região entorrinal)', 'Encefalopatia traumática crônica', 'Paralisia supranuclear progressiva'],
+    armadilhas: ['Neurônios "escuros" por artefato de manipulação do cérebro fresco são hipercromáticos, mas sem fibrilas; a imuno para tau resolve.'],
+  },
+  {
+    id: 'placas-neuriticas',
+    nome: 'Placas neuríticas (senis)',
+    sinonimos: ['placas senis', 'placas amiloides', 'neuritic plaques'],
+    categoria: 'deposito',
+    resumo:
+      'Lesões esféricas de 20–200 µm no neurópilo, com um núcleo de β-amiloide extracelular cercado por neuritos distróficos (prolongamentos neuronais dilatados e cheios de tau), micróglia e astrócitos.',
+    comoReconhecer: [
+      'No H&E: área arredondada do neurópilo levemente eosinofílica e granular, às vezes com núcleo amiloide central; pouco visível.',
+      'Na imuno para tau: aglomerado arredondado de neuritos escuros e grossos (a coroa da placa); o núcleo amiloide é demonstrado por imuno para β-amiloide, Congo ou prata.',
+    ],
+    mecanismo: [
+      'A proteína precursora do amiloide (APP) é clivada pelas β e γ-secretases, formando o peptídeo Aβ42, que se agrega em oligômeros tóxicos e fibrilas.',
+      'O amiloide lesa sinapses e neuritos vizinhos, ativa micróglia e desencadeia a propagação da patologia tau (hipótese da cascata amiloide).',
+    ],
+    significado: [
+      'Critério neuropatológico da doença de Alzheimer (escore CERAD de placas neuríticas; fases de Thal do amiloide).',
+      'O mesmo Aβ se deposita na parede dos vasos (angiopatia amiloide cerebral), causando hemorragias lobares em idosos.',
+    ],
+    ondeOcorre: ['Doença de Alzheimer', 'Síndrome de Down (após os 40 anos — gene da APP no cromossomo 21)', 'Idosos sem demência (placas difusas)'],
+    armadilhas: ['Placas difusas, sem neuritos distróficos, são comuns no envelhecimento normal e não bastam para o diagnóstico.'],
+  },
+  {
+    id: 'fios-do-neuropilo',
+    nome: 'Fios do neurópilo (neuropil threads)',
+    sinonimos: ['neuropil threads', 'neuritos com tau'],
+    categoria: 'deposito',
+    resumo:
+      'Pequenos fragmentos curtos e retorcidos de tau em dendritos e axônios, espalhados por todo o neurópilo como "pelos" ou "vírgulas".',
+    comoReconhecer: ['Só na imuno para tau (ou prata): inúmeros traços finos e escuros no fundo, entre os neurônios.'],
+    mecanismo: ['A mesma tau hiperfosforilada dos emaranhados se acumula nos prolongamentos dos neurônios doentes.'],
+    significado: ['Acompanham os emaranhados e indicam a extensão da patologia tau no córtex; densos no Alzheimer avançado.'],
+    ondeOcorre: ['Doença de Alzheimer', 'Outras taupatias'],
+    armadilhas: ['Precisam de coloração especial; no H&E não se veem.'],
+  },
+  {
+    id: 'necrose-fibrinoide',
+    nome: 'Necrose fibrinoide',
+    sinonimos: ['necrose fibrinoide segmentar', 'fibrinoide'],
+    categoria: 'lesao-celular',
+    resumo:
+      'Material eosinofílico vivo, amorfo e "sujo" de restos nucleares na parede de vasos ou no tufo glomerular — plasma e fibrina extravasados sobre uma parede destruída.',
+    comoReconhecer: ['Rosa-intenso, parecido com fibrina, borrando a estrutura da parede; restos nucleares (cariorrexe) e neutrófilos em volta.'],
+    mecanismo: ['Imunocomplexos, anticorpos anti-MBG, neutrófilos ativados por ANCA ou hipertensão maligna rompem a parede; a fibrina do plasma infiltra e as células morrem.'],
+    significado: ['Marca de lesão vascular ativa e grave: vasculites, glomerulonefrite crescêntica, hipertensão maligna, microangiopatia trombótica. Quase sempre precede o crescente no glomérulo.'],
+    ondeOcorre: ['Glomerulonefrites necrosantes e crescênticas', 'Vasculites (poliarterite, ANCA)', 'Hipertensão maligna', 'Lúpus'],
+    armadilhas: ['Hialinose (no diabetes e na hipertensão benigna) também é rosa, mas é homogênea, lisa e sem restos nucleares.'],
+  },
+  {
+    id: 'esclerose-glomerular-global',
+    nome: 'Esclerose glomerular global',
+    sinonimos: ['glomérulo obsoleto', 'glomérulo hialinizado', 'glomeruloesclerose global'],
+    categoria: 'reparo',
+    resumo:
+      'Glomérulo inteiramente substituído por matriz hialina acelular e colapsada dentro da cápsula de Bowman — um néfron perdido de forma definitiva.',
+    comoReconhecer: ['Bola rosada e homogênea, sem capilares abertos nem núcleos, às vezes com a cápsula espessada e retraída.'],
+    mecanismo: ['Fim comum de qualquer lesão glomerular persistente (diabetes, hipertensão, glomerulonefrites, isquemia): o tufo colapsa e é preenchido por colágeno.'],
+    significado: [
+      'A proporção de glomérulos globalmente esclerosados, junto com atrofia tubular e fibrose intersticial, mede a cronicidade e o prognóstico renal.',
+      'Alguns glomérulos obsoletos são normais no envelhecimento (até cerca de idade/2 − 10 %).',
+    ],
+    ondeOcorre: ['Nefropatia diabética e hipertensiva', 'Glomerulonefrites crônicas', 'Envelhecimento'],
+    armadilhas: ['Não confundir com esclerose segmentar (só parte do tufo), que tem outro significado (GESF).'],
+  },
 ]

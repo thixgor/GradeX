@@ -800,4 +800,47 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Apêndice cecal', 'Ceco e cólon', 'Região perianal e trato genital feminino (raro, com granulomas)'],
     armadilhas: ['Larvas de outros nematódeos (Strongyloides, Ascaris) têm tamanhos e estruturas diferentes; as asas laterais pontiagudas e a localização apontam oxiúro.'],
   },
+  {
+    id: 'proliferacao-endocapilar',
+    nome: 'Proliferação endocapilar difusa',
+    sinonimos: ['glomérulo hipercelular', 'glomerulonefrite proliferativa endocapilar', 'glomérulos "exsudativos"'],
+    categoria: 'inflamacao',
+    resumo:
+      'Glomérulos aumentados e cheios de células — células mesangiais e endoteliais proliferadas e leucócitos (neutrófilos, monócitos) dentro das alças — que ocluem a luz dos capilares e enchem o espaço de Bowman.',
+    comoReconhecer: [
+      'No pequeno aumento: glomérulos grandes, azulados, "sólidos", ocupando todo o espaço de Bowman.',
+      'No grande aumento: luzes capilares apagadas por núcleos; neutrófilos com núcleo segmentado dentro das alças; em todos os glomérulos (difuso).',
+    ],
+    mecanismo: [
+      'Imunocomplexos (na pós-infecciosa, antígenos estreptocócicos ou estafilocócicos) se depositam nas alças, ativam complemento e atraem leucócitos.',
+      'As células glomerulares proliferam, as alças se fecham e a filtração cai: oligúria, retenção de sódio, edema e hipertensão; eritrócitos atravessam as paredes lesadas (hematúria).',
+    ],
+    significado: [
+      'Padrão da glomerulonefrite pós-infecciosa, a síndrome nefrítica clássica. "Corcovas" (humps) subepiteliais na microscopia eletrônica e C3 granular grosseiro na imunofluorescência.',
+    ],
+    ondeOcorre: ['Glomerulonefrite pós-infecciosa (pós-estreptocócica, associada a estafilococo)', 'Nefrite lúpica classe IV', 'Glomerulonefrite membranoproliferativa', 'Crioglobulinemia'],
+    armadilhas: ['Glomérulos colapsados ou cortados perto do polo vascular parecem mais celulares; avalie vários glomérulos.'],
+  },
+  {
+    id: 'crescente-glomerular',
+    nome: 'Crescente glomerular',
+    sinonimos: ['crescente celular', 'crescente fibrocelular', 'crescente fibroso', 'semilua'],
+    categoria: 'inflamacao',
+    resumo:
+      'Proliferação de células epiteliais parietais e entrada de macrófagos no espaço de Bowman, formando uma meia-lua de camadas de células que comprime o tufo glomerular; com o tempo, vira fibrose.',
+    comoReconhecer: [
+      'No médio aumento: faixa curva de células entre a cápsula de Bowman e o tufo, que fica empurrado e colapsado para um lado.',
+      'Celular (ativo): células epitelioides em camadas, fibrina; fibrocelular: células com colágeno; fibroso: cicatriz acelular. Procure necrose fibrinoide no tufo.',
+    ],
+    mecanismo: [
+      'Lesão grave da parede capilar (necrose) deixa sair fibrina para o espaço de Bowman; a fibrina e as citocinas estimulam as células parietais e atraem macrófagos.',
+      'Três mecanismos: anticorpos antimembrana basal (Goodpasture), imunocomplexos (lúpus, IgA, pós-infecciosa) e pauci-imune (vasculites ANCA).',
+    ],
+    significado: [
+      'Crescentes em mais de 50 % dos glomérulos definem a glomerulonefrite crescêntica ("rapidamente progressiva") — emergência nefrológica: sem tratamento, perda do rim em semanas.',
+      'Crescentes celulares são potencialmente reversíveis; fibrosos, não.',
+    ],
+    ondeOcorre: ['Vasculites ANCA (poliangiite microscópica, granulomatose com poliangiite)', 'Doença antimembrana basal glomerular', 'Nefrite lúpica', 'Nefropatia por IgA grave'],
+    armadilhas: ['Cortes tangenciais do polo tubular e hiperplasia de podócitos (GESF colapsante) podem imitar crescentes.'],
+  },
 ]

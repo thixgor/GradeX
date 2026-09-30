@@ -74,7 +74,7 @@ function montar(): LaminaPatologica[] {
       doenca: c.doenca,
       titulo: doenca.nome,
       subtitulo: c.subtitulo,
-      coloracao: 'Hematoxilina-eosina (H&E)',
+      coloracao: c.coloracao ?? 'Hematoxilina-eosina (H&E)',
       objetiva: c.objetiva,
       mpp: c.mpp,
       caso: c.caso,

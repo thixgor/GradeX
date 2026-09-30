@@ -1,0 +1,103 @@
+{
+ "slug": "glomerulonefrite-crescentica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia renal de homem de 78 anos em insuficiência renal aguda dependente de diálise, com sedimento urinário ativo: glomerulonefrite crescêntica com crescentes, necrose fibrinoide e fibrose intersticial.",
+ "marcacoes": [
+  {
+   "id": "crescente-fibrocelular",
+   "estrutura": "crescente-glomerular",
+   "categoria": "patologica",
+   "rotulo": "Crescente fibrocelular obliterando o glomérulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.385,
+      2.28
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    2.22,
+    0.44,
+    2.32
+   ]
+  },
+  {
+   "id": "necrose",
+   "estrutura": "necrose-fibrinoide",
+   "categoria": "patologica",
+   "rotulo": "Necrose fibrinoide segmentar do tufo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.331,
+      2.012
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.29,
+    1.98,
+    0.39,
+    2.08
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Fibrose e inflamação intersticial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.65,
+      0.68
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.58,
+    0.6,
+    0.74,
+    0.76
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "crescente-glomerular",
+   "status": "presente",
+   "marcacoes": [
+    "crescente-fibrocelular"
+   ],
+   "nota": "Crescentes em vários glomérulos; o marcado é fibrocelular e quase oblitera o tufo. Em outros glomérulos o aspecto é menos nítido nesta digitalização."
+  },
+  {
+   "achado": "necrose-fibrinoide",
+   "status": "presente",
+   "marcacoes": [
+    "necrose"
+   ],
+   "nota": "Material fibrinoide eosinofílico com restos nucleares no tufo de um glomérulo com crescente."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Interstício expandido por fibrose e células inflamatórias, com túbulos atróficos."
+  }
+ ]
+}

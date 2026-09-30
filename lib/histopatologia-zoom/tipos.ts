@@ -161,6 +161,8 @@ export interface CuradoriaDaLamina {
   caso: CasoDaLamina
   /** Lâmina normal preferida para comparação (slug da Histologia com Zoom). */
   laminaNormal?: string
+  /** Coloração, quando não é H&E (ex.: imuno-histoquímica que mostra o achado que o H&E não mostra). */
+  coloracao?: string
 }
 
 export interface LaminaPatologica {

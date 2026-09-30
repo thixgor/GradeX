@@ -1,0 +1,120 @@
+{
+ "slug": "glomerulonefrite-pos-infecciosa-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia renal de homem de 54 anos com edema importante dias após tosse e expectoração: glomerulonefrite proliferativa endocapilar difusa (pós-infecciosa), com glomérulos hipercelulares e alças ocluídas.",
+ "marcacoes": [
+  {
+   "id": "glomerulo",
+   "estrutura": "proliferacao-endocapilar",
+   "categoria": "patologica",
+   "rotulo": "Glomérulo aumentado e hipercelular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.395,
+      0.525
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.49,
+    0.43,
+    0.56
+   ]
+  },
+  {
+   "id": "alcas-ocluidas",
+   "estrutura": "proliferacao-endocapilar",
+   "categoria": "patologica",
+   "rotulo": "Alças ocluídas por células",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3965,
+      0.5145
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.38,
+    0.5,
+    0.41,
+    0.53
+   ]
+  },
+  {
+   "id": "glomerulo-2",
+   "estrutura": "proliferacao-endocapilar",
+   "categoria": "patologica",
+   "rotulo": "Todos os glomérulos igualmente acometidos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.68,
+      0.315
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.645,
+    0.28,
+    0.715,
+    0.35
+   ]
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos proximais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.656,
+      0.305
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.645,
+    0.28,
+    0.715,
+    0.35
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "proliferacao-endocapilar",
+   "status": "presente",
+   "marcacoes": [
+    "glomerulo",
+    "alcas-ocluidas",
+    "glomerulo-2"
+   ],
+   "nota": "Glomérulos difusamente aumentados, com proliferação endocapilar que oclui as alças e enche o espaço de Bowman."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "nao-avaliavel",
+   "nota": "Há núcleos escuros compatíveis com leucócitos dentro dos tufos, mas nesta digitalização não se distinguem com segurança neutrófilos de células endoteliais."
+  },
+  {
+   "achado": "crescente-glomerular",
+   "status": "ausente",
+   "nota": "Não há crescentes nos glomérulos examinados."
+  }
+ ]
+}

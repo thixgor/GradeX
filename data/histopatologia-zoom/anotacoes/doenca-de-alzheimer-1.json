@@ -1,0 +1,176 @@
+{
+ "slug": "doenca-de-alzheimer-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Lobo temporal medial (hipocampo e córtex) de homem de 72 anos com doença de Alzheimer, imuno-histoquímica para tau: emaranhados neurofibrilares abundantes, placas neuríticas e fios do neurópilo — estágio VI de Braak. A lâmina H&E do mesmo caso quase não mostra estas lesões.",
+ "marcacoes": [
+  {
+   "id": "emaranhados-ca1",
+   "estrutura": "emaranhados-neurofibrilares",
+   "categoria": "patologica",
+   "rotulo": "Muitos neurônios com emaranhados no hipocampo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.656,
+      0.425
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.64,
+    0.4,
+    0.68,
+    0.44
+   ]
+  },
+  {
+   "id": "chama",
+   "estrutura": "emaranhados-neurofibrilares",
+   "categoria": "patologica",
+   "rotulo": "Emaranhado em \"chama de vela\"",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6042,
+      0.4247
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.603,
+    0.4235,
+    0.607,
+    0.4275
+   ]
+  },
+  {
+   "id": "placa",
+   "estrutura": "placas-neuriticas",
+   "categoria": "patologica",
+   "rotulo": "Placa neurítica: coroa de neuritos distróficos",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.6053,
+      0.4265
+     ],
+     "raios": [
+      0.0009,
+      0.0009
+     ]
+    }
+   ],
+   "vista": [
+    0.603,
+    0.4235,
+    0.607,
+    0.4275
+   ]
+  },
+  {
+   "id": "placa-medio",
+   "estrutura": "placas-neuriticas",
+   "categoria": "patologica",
+   "rotulo": "Placa neurítica",
+   "marcas": [
+    {
+     "tipo": "elipse",
+     "centro": [
+      0.6724,
+      0.4244
+     ],
+     "raios": [
+      0.001,
+      0.001
+     ]
+    }
+   ],
+   "vista": [
+    0.64,
+    0.4,
+    0.68,
+    0.44
+   ]
+  },
+  {
+   "id": "fios",
+   "estrutura": "fios-do-neuropilo",
+   "categoria": "patologica",
+   "rotulo": "Fios do neurópilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6058,
+      0.4245
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.603,
+    0.4235,
+    0.607,
+    0.4275
+   ]
+  },
+  {
+   "id": "neuronio",
+   "estrutura": "neuronio-piramidal",
+   "rotulo": "Neurônio piramidal sem tau, para comparar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6014,
+      0.4213
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.42,
+    0.612,
+    0.432
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "emaranhados-neurofibrilares",
+   "status": "presente",
+   "marcacoes": [
+    "emaranhados-ca1",
+    "chama"
+   ],
+   "nota": "Emaranhados em grande número nos neurônios piramidais do hipocampo e do córtex temporal vizinho, em chama de vela e globosos, além de emaranhados extracelulares."
+  },
+  {
+   "achado": "placas-neuriticas",
+   "status": "presente",
+   "marcacoes": [
+    "placa",
+    "placa-medio"
+   ],
+   "nota": "Placas arredondadas formadas por neuritos distróficos marcados pela tau, espalhadas pelo córtex."
+  },
+  {
+   "achado": "fios-do-neuropilo",
+   "status": "presente",
+   "marcacoes": [
+    "fios"
+   ],
+   "nota": "Neurópilo tomado por fios de tau em todo o córtex — patologia avançada (Braak VI)."
+  }
+ ]
+}

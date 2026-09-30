@@ -1,0 +1,120 @@
+{
+ "slug": "nefropatia-membranosa-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-29",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia renal de homem de 35 anos com síndrome nefrótica: nefropatia membranosa — glomérulos de celularidade normal com paredes capilares difusamente espessas e rígidas; túbulos e interstício preservados.",
+ "marcacoes": [
+  {
+   "id": "alcas",
+   "estrutura": "espessamento-da-parede-capilar-glomerular",
+   "categoria": "patologica",
+   "rotulo": "Alças capilares abertas, de paredes grossas e rígidas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5095,
+      0.085
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.079,
+    0.512,
+    0.091
+   ]
+  },
+  {
+   "id": "alcas-2",
+   "estrutura": "espessamento-da-parede-capilar-glomerular",
+   "categoria": "patologica",
+   "rotulo": "O mesmo padrão em outro glomérulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.503,
+      0.0858
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.079,
+    0.512,
+    0.091
+   ]
+  },
+  {
+   "id": "celularidade",
+   "estrutura": "espessamento-da-parede-capilar-glomerular",
+   "categoria": "patologica",
+   "rotulo": "Sem aumento de células no tufo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5088,
+      0.0868
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.079,
+    0.512,
+    0.091
+   ]
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos proximais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5055,
+      0.0815
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.079,
+    0.512,
+    0.091
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "espessamento-da-parede-capilar-glomerular",
+   "status": "presente",
+   "marcacoes": [
+    "alcas",
+    "alcas-2",
+    "celularidade"
+   ],
+   "nota": "Alças capilares difusamente espessas e rígidas, com celularidade normal, em todos os glomérulos. As espículas e os depósitos são confirmados pela prata e pela imunofluorescência, não pelo H&E."
+  },
+  {
+   "achado": "esclerose-glomerular-global",
+   "status": "ausente",
+   "nota": "Os glomérulos examinados não estão esclerosados."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "ausente",
+   "nota": "Túbulos preservados e interstício sem fibrose significativa."
+  }
+ ]
+}

@@ -217,4 +217,44 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Pancreatite crônica', 'Fibrose pancreática a montante de obstrução tumoral', 'Fibrose cística'],
     armadilhas: ['Agregados de ilhotas podem ser confundidos com tumor neuroendócrino; na pancreatite estão dentro de lóbulos residuais, com ácinos em volta.'],
   },
+  {
+    id: 'glomeruloesclerose-nodular',
+    nome: 'Glomeruloesclerose nodular (nódulos de Kimmelstiel-Wilson)',
+    sinonimos: ['nódulos de Kimmelstiel-Wilson', 'esclerose mesangial nodular', 'glomeruloesclerose diabética'],
+    categoria: 'deposito',
+    resumo:
+      'Nódulos redondos, acelulares e eosinofílicos de matriz mesangial na periferia dos lóbulos glomerulares, com núcleos empurrados para a borda e capilares comprimidos ao redor.',
+    comoReconhecer: [
+      'No médio aumento: glomérulo grande e mais rosado, com massas arredondadas pálidas dentro dos lóbulos.',
+      'No grande aumento: nódulo de matriz lamelar e pouco celular (PAS positivo), com capilares em "coroa" na periferia; às vezes microaneurismas.',
+    ],
+    mecanismo: [
+      'A hiperglicemia crônica glica proteínas da matriz (produtos finais de glicação avançada) e estimula TGF-β: as células mesangiais produzem colágeno IV e fibronectina em excesso.',
+      'A matriz se acumula primeiro de forma difusa (expansão mesangial) e depois em nódulos, reduzindo a superfície de filtração.',
+    ],
+    significado: [
+      'Lesão característica da nefropatia diabética avançada (classe III da classificação de Tervaert). É a principal causa de doença renal terminal no mundo.',
+    ],
+    ondeOcorre: ['Nefropatia diabética', 'Doença de depósito de cadeias leves', 'Amiloidose', 'Glomerulonefrite membranoproliferativa (fase crônica)', 'Glomerulopatia nodular idiopática (tabagismo, hipertensão)'],
+    armadilhas: ['Amiloide também forma nódulos, mas é mais homogêneo, PAS fraco e Congo positivo; depósito de cadeias leves exige imunofluorescência.'],
+  },
+  {
+    id: 'espessamento-da-parede-capilar-glomerular',
+    nome: 'Espessamento difuso da parede capilar glomerular',
+    sinonimos: ['espessamento da membrana basal glomerular', 'alças capilares rígidas', 'alças em "arame"'],
+    categoria: 'deposito',
+    resumo:
+      'As alças capilares do glomérulo ficam uniformemente grossas, rosadas e rígidas ("abertas demais"), sem aumento de células — o glomérulo parece normal no pequeno aumento, mas as paredes parecem desenhadas com traço grosso.',
+    comoReconhecer: [
+      'No H&E: alças capilares abertas, com paredes eosinofílicas espessas e contorno regular; celularidade normal.',
+      'Na prata (metenamina): "espículas" da membrana basal entre os depósitos, na nefropatia membranosa; a imunofluorescência mostra IgG granular nas alças.',
+    ],
+    mecanismo: [
+      'Na nefropatia membranosa, anticorpos (anti-PLA2R na maioria) se ligam aos podócitos e formam depósitos subepiteliais; a membrana basal cresce entre e sobre os depósitos.',
+      'O complemento ativado (C5b-9) lesa o podócito sem atrair neutrófilos: proteinúria maciça sem inflamação.',
+    ],
+    significado: ['Padrão da nefropatia membranosa — principal causa de síndrome nefrótica primária no adulto. Também no diabetes (membrana basal espessada) e no lúpus classe V.'],
+    ondeOcorre: ['Nefropatia membranosa', 'Nefropatia diabética', 'Nefrite lúpica classe V'],
+    armadilhas: ['Cortes espessos e glomérulos cortados tangencialmente parecem ter paredes grossas; a prata e a imunofluorescência confirmam.'],
+  },
 ]

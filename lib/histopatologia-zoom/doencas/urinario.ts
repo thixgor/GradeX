@@ -359,4 +359,277 @@ export const DOENCAS_URINARIO: DoencaZoom[] = [
       'No angiomiolipoma, no lugar do parênquima há gordura, músculo e vasos grossos — tecidos que normalmente só existem no seio renal e na gordura perirrenal.',
     ],
   },
+  {
+    id: 'nefropatia-diabetica',
+    nome: 'Nefropatia diabética',
+    sinonimos: ['doença renal do diabetes', 'glomeruloesclerose diabética', 'síndrome de Kimmelstiel-Wilson'],
+    nomesEmIngles: ['diabetic nephropathy', 'diabetic kidney disease'],
+    sistema: 'urinario',
+    orgao: 'rim',
+    prioridade: 16,
+    resumo:
+      'Lesão renal do diabetes: espessamento da membrana basal, expansão mesangial difusa e depois nodular (Kimmelstiel-Wilson), hialinose arteriolar e esclerose glomerular — causa de proteinúria, síndrome nefrótica e doença renal crônica.',
+    epidemiologia:
+      'Principal causa de doença renal crônica terminal e de diálise no mundo, inclusive no Brasil. Afeta 30–40 % dos diabéticos após 10–20 anos de doença; piora com hipertensão, mau controle glicêmico e tabagismo.',
+    patogenese: [
+      'Hiperglicemia → glicação de proteínas (AGEs), via dos polióis e ativação da PKC: células mesangiais produzem matriz em excesso e a membrana basal engrossa.',
+      'Hiperfiltração: a arteríola eferente contrai (angiotensina II) e a pressão intraglomerular sobe, lesando podócitos — microalbuminúria.',
+      'A matriz mesangial se expande de forma difusa e depois forma nódulos (Kimmelstiel-Wilson); as arteríolas aferente e eferente sofrem hialinose.',
+      'Glomérulos esclerosam, túbulos atrofiam e o interstício fibrosa: proteinúria nefrótica e queda progressiva da filtração.',
+    ],
+    roteiro: [
+      'Panorâmico: proporção de glomérulos globalmente esclerosados, atrofia tubular e fibrose intersticial.',
+      'Médio aumento: glomérulos grandes, com mesângio expandido e nódulos acelulares; cápsula de Bowman espessada.',
+      'Grande aumento: nódulos de Kimmelstiel-Wilson com capilares periféricos; arteríolas com parede hialina (aferente e eferente).',
+      'Classifique (Tervaert I–IV) e procure outra doença sobreposta (hematúria, piora rápida).',
+    ],
+    achados: [
+      {
+        achado: 'glomeruloesclerose-nodular',
+        tipo: 'especifico',
+        comoAparece: 'Nódulos acelulares de matriz mesangial nos lóbulos glomerulares.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'esclerose-glomerular-global',
+        tipo: 'geral',
+        comoAparece: 'Glomérulos obsoletos, hialinizados.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose do interstício com atrofia tubular.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'espessamento-arterial',
+        tipo: 'geral',
+        comoAparece: 'Hialinose de arteríolas e espessamento intimal de artérias.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Amiloidose renal',
+        comoSeparar: 'Depósitos homogêneos, pálidos e acelulares no mesângio, alças e vasos; Congo vermelho com birrefringência verde-maçã.',
+      },
+      {
+        nome: 'Doença de depósito de cadeias leves',
+        comoSeparar: 'Nódulos idênticos; imunofluorescência com uma única cadeia leve (kappa) linear nas membranas; paciente com gamopatia.',
+      },
+      {
+        nome: 'Glomerulonefrite membranoproliferativa crônica',
+        comoSeparar: 'Duplo contorno das alças, hipercelularidade e depósitos imunes.',
+      },
+    ],
+    correlacaoClinica: [
+      'Microalbuminúria (30–300 mg/g) é o primeiro sinal; depois proteinúria franca, hipertensão e queda da TFG. Retinopatia costuma acompanhar.',
+      'Rastreamento anual de albuminúria e creatinina em todo diabético.',
+      'Tratamento: controle glicêmico e pressórico, IECA/BRA, inibidores de SGLT2, finerenona e agonistas de GLP-1 retardam a progressão.',
+    ],
+    comparacaoComNormal: [
+      'No glomérulo normal, as alças capilares são finas e abertas e o mesângio é discreto, só no centro dos lóbulos.',
+      'Na nefropatia diabética, o mesângio incha em nódulos rosados que empurram os capilares para a periferia, e muitos glomérulos viram cicatrizes.',
+    ],
+  },
+  {
+    id: 'nefropatia-membranosa',
+    nome: 'Nefropatia membranosa',
+    sinonimos: ['glomerulonefrite membranosa', 'glomerulopatia membranosa', 'GNM'],
+    nomesEmIngles: ['membranous nephropathy', 'membranous glomerulonephritis'],
+    sistema: 'urinario',
+    orgao: 'rim',
+    prioridade: 17,
+    resumo:
+      'Principal causa de síndrome nefrótica primária no adulto: depósitos imunes subepiteliais espessam de modo difuso as paredes dos capilares glomerulares, sem proliferação celular nem inflamação.',
+    epidemiologia:
+      'Adultos de 40–60 anos, mais homens. 75–80 % primária (autoanticorpos anti-PLA2R, anti-THSD7A); secundária a lúpus, hepatite B e C, tumores sólidos (pulmão, cólon), drogas (AINEs, sais de ouro).',
+    patogenese: [
+      'Autoanticorpos IgG4 se ligam a antígenos da membrana do podócito (receptor de fosfolipase A2 — PLA2R).',
+      'Os imunocomplexos formam-se no lado externo (subepitelial) da membrana basal, longe do sangue: não atraem neutrófilos.',
+      'O complemento (C5b-9) lesa os podócitos: apagamento dos pedicelos e perda maciça de proteína.',
+      'A membrana basal cresce entre os depósitos (espículas) e depois os envolve: parede capilar difusamente espessa.',
+    ],
+    roteiro: [
+      'Panorâmico: glomérulos de tamanho e celularidade normais — o erro é achar que a biópsia é normal.',
+      'Grande aumento: alças capilares abertas, rígidas, de paredes grossas e uniformes em todos os glomérulos.',
+      'Prata: espículas na face externa da membrana basal. Imunofluorescência: IgG e C3 granulares finos nas alças; PLA2R positivo.',
+      'Avalie cronicidade (glomérulos esclerosados, fibrose) e procure pistas de causa secundária (depósitos mesangiais sugerem lúpus).',
+    ],
+    achados: [
+      {
+        achado: 'espessamento-da-parede-capilar-glomerular',
+        tipo: 'especifico',
+        comoAparece: 'Alças capilares difusamente espessas e rígidas, com celularidade normal.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'esclerose-glomerular-global',
+        tipo: 'geral',
+        comoAparece: 'Glomérulos esclerosados nos casos de longa duração.',
+        peso: 'ocasional',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose intersticial e atrofia tubular — marcadores de pior prognóstico.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Doença de lesões mínimas',
+        comoSeparar: 'Glomérulos realmente normais na microscopia óptica e na imunofluorescência; só a microscopia eletrônica mostra o apagamento dos pedicelos.',
+      },
+      {
+        nome: 'Nefrite lúpica classe V',
+        comoSeparar: 'Depósitos também mesangiais e subendoteliais, imunofluorescência "full house" (IgG, IgA, IgM, C1q).',
+      },
+      {
+        nome: 'Glomeruloesclerose segmentar e focal',
+        comoSeparar: 'Esclerose de parte de alguns glomérulos, com as outras alças finas.',
+      },
+    ],
+    correlacaoClinica: [
+      'Síndrome nefrótica: proteinúria > 3,5 g/dia, hipoalbuminemia, edema, hiperlipidemia; risco alto de trombose (veia renal).',
+      'Anti-PLA2R sérico positivo permite o diagnóstico e o acompanhamento.',
+      'Um terço remite sozinho; nos demais, bloqueio do SRAA, anticoagulação e imunossupressão (rituximabe, ciclofosfamida com corticoide, inibidores de calcineurina).',
+    ],
+    comparacaoComNormal: [
+      'No glomérulo normal, as alças capilares são finas como linhas delicadas.',
+      'Na nefropatia membranosa, as mesmas alças ficam grossas e rígidas — as células não aumentam, só a parede engrossa.',
+    ],
+  },
+  {
+    id: 'glomerulonefrite-pos-infecciosa',
+    nome: 'Glomerulonefrite pós-infecciosa',
+    sinonimos: ['glomerulonefrite difusa aguda', 'GNPE', 'glomerulonefrite pós-estreptocócica', 'glomerulonefrite proliferativa endocapilar'],
+    nomesEmIngles: ['post-infectious glomerulonephritis', 'acute diffuse proliferative glomerulonephritis'],
+    sistema: 'urinario',
+    orgao: 'rim',
+    prioridade: 18,
+    resumo:
+      'Glomerulonefrite por imunocomplexos após infecção (clássica: estreptococo do grupo A), com proliferação endocapilar difusa e neutrófilos nos glomérulos; protótipo da síndrome nefrítica.',
+    epidemiologia:
+      'Clássica em crianças de 5–12 anos, 1–3 semanas após faringite ou 3–6 semanas após impetigo por cepas nefritogênicas. Em adultos e idosos (diabéticos, etilistas), cada vez mais associada a estafilococo, com infecção ainda ativa e pior prognóstico.',
+    patogenese: [
+      'Antígenos bacterianos (SpeB, receptor de plasmina) depositam-se nos glomérulos e formam imunocomplexos com anticorpos.',
+      'O complemento é ativado pela via alternativa (C3 baixo) e atrai neutrófilos e monócitos.',
+      'Células endoteliais e mesangiais proliferam e os leucócitos enchem as alças: o glomérulo "fecha", a filtração cai e sódio e água ficam retidos.',
+      'A parede lesada deixa passar hemácias (hematúria, cilindros hemáticos). Nas crianças, o quadro regride em semanas.',
+    ],
+    roteiro: [
+      'Panorâmico: todos os glomérulos aumentados e hipercelulares (difuso).',
+      'Grande aumento: luzes capilares ocluídas por células; neutrófilos dentro das alças; às vezes crescentes nos casos graves.',
+      'Túbulos com hemácias e cilindros; interstício com edema e inflamação.',
+      'Imunofluorescência: C3 granular grosseiro ("céu estrelado"). Microscopia eletrônica: corcovas subepiteliais.',
+    ],
+    achados: [
+      {
+        achado: 'proliferacao-endocapilar',
+        tipo: 'especifico',
+        comoAparece: 'Glomérulos aumentados, hipercelulares, com alças ocluídas, em todos os glomérulos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-neutrofilico',
+        tipo: 'geral',
+        comoAparece: 'Neutrófilos dentro das alças capilares (glomerulonefrite "exsudativa").',
+        peso: 'frequente',
+      },
+      {
+        achado: 'crescente-glomerular',
+        tipo: 'geral',
+        comoAparece: 'Crescentes em poucos glomérulos nos casos graves.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Nefrite lúpica classe IV',
+        comoSeparar: 'Alças em "arame", trombos hialinos, imunofluorescência "full house" com C1q; clínica e sorologia de lúpus.',
+      },
+      {
+        nome: 'Glomerulonefrite membranoproliferativa / glomerulopatia C3',
+        comoSeparar: 'Duplo contorno das membranas e acentuação lobular; hipocomplementemia que persiste além de 8 semanas.',
+      },
+      {
+        nome: 'Nefropatia por IgA',
+        comoSeparar: 'Proliferação mesangial, IgA dominante na imunofluorescência; hematúria sincrônica à infecção (sem latência).',
+      },
+    ],
+    correlacaoClinica: [
+      'Síndrome nefrítica: hematúria (urina "cor de Coca-Cola"), edema periorbital, hipertensão, oligúria; C3 baixo, ASLO elevada.',
+      'Tratamento de suporte (restrição de sal, diuréticos, anti-hipertensivos) e da infecção; biópsia só se o quadro for atípico ou não melhorar.',
+      'Excelente prognóstico nas crianças; adultos podem evoluir para doença renal crônica.',
+    ],
+    comparacaoComNormal: [
+      'No glomérulo normal, as alças são abertas, com hemácias na luz, e o espaço de Bowman é visível.',
+      'Na pós-infecciosa, o glomérulo incha e fica maciço de células, as alças fecham e o espaço de Bowman quase some.',
+    ],
+  },
+  {
+    id: 'glomerulonefrite-crescentica',
+    nome: 'Glomerulonefrite crescêntica (rapidamente progressiva)',
+    sinonimos: ['GNRP', 'glomerulonefrite rapidamente progressiva', 'glomerulonefrite necrosante e crescêntica'],
+    nomesEmIngles: ['crescentic glomerulonephritis', 'rapidly progressive glomerulonephritis'],
+    sistema: 'urinario',
+    orgao: 'rim',
+    prioridade: 19,
+    resumo:
+      'Síndrome nefrítica grave com perda rápida da função renal, cuja base é a formação de crescentes na maioria dos glomérulos, geralmente com necrose fibrinoide do tufo.',
+    epidemiologia:
+      'Rara, mas emergência nefrológica. Tipo I (anti-MBG, Goodpasture): jovens e idosos, com hemorragia pulmonar. Tipo II (imunocomplexos): lúpus, IgA, pós-infecciosa. Tipo III (pauci-imune, ANCA): o mais comum, sobretudo em idosos.',
+    patogenese: [
+      'Lesão grave da parede capilar — por anticorpos anti-MBG, imunocomplexos ou neutrófilos ativados por ANCA — causa necrose fibrinoide do tufo.',
+      'Fibrina e mediadores extravasam para o espaço de Bowman e estimulam a proliferação das células parietais e a entrada de macrófagos: forma-se o crescente.',
+      'O crescente comprime o tufo e a filtração cessa; sem tratamento, evolui para crescente fibroso e esclerose glomerular em semanas.',
+    ],
+    roteiro: [
+      'Panorâmico: conte os glomérulos e a proporção com crescentes (> 50 % define a forma crescêntica).',
+      'Médio aumento: meias-luas celulares, fibrocelulares ou fibrosas; tufos comprimidos.',
+      'Grande aumento: necrose fibrinoide (material rosa-vivo com restos nucleares) e ruptura da cápsula de Bowman.',
+      'Imunofluorescência define o tipo: linear (anti-MBG), granular (imunocomplexos) ou negativa (pauci-imune, ANCA).',
+    ],
+    achados: [
+      {
+        achado: 'crescente-glomerular',
+        tipo: 'especifico',
+        comoAparece: 'Crescentes celulares e fibrocelulares comprimindo os tufos na maioria dos glomérulos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'necrose-fibrinoide',
+        tipo: 'especifico',
+        comoAparece: 'Necrose fibrinoide segmentar do tufo glomerular.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-intersticial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose e inflamação intersticial com atrofia tubular.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Glomerulonefrite pós-infecciosa',
+        comoSeparar: 'Proliferação endocapilar difusa é a lesão dominante; crescentes, quando há, são poucos.',
+      },
+      {
+        nome: 'Necrose tubular aguda',
+        comoSeparar: 'Insuficiência renal aguda com glomérulos normais e túbulos lesados.',
+      },
+    ],
+    correlacaoClinica: [
+      'Insuficiência renal que se instala em dias a semanas, com hematúria dismórfica, cilindros hemáticos e proteinúria; hemoptise sugere anti-MBG ou vasculite.',
+      'Solicitar com urgência ANCA (MPO, PR3), anti-MBG, complemento e FAN; biópsia sem atrasar o tratamento.',
+      'Tratamento: pulsos de metilprednisolona, ciclofosfamida ou rituximabe; plasmaférese na doença anti-MBG.',
+    ],
+    comparacaoComNormal: [
+      'No glomérulo normal, o espaço de Bowman é uma fenda vazia entre o tufo e a cápsula.',
+      'Na glomerulonefrite crescêntica, esse espaço é preenchido por uma meia-lua de células que esmaga o tufo.',
+    ],
+  },
 ]

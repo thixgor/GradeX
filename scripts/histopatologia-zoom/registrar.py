@@ -2,7 +2,7 @@
 Acrescenta uma lâmina ao fim de `lib/histopatologia-zoom/curadoria.ts`, com
 largura, altura, objetiva e µm/pixel medidos no servidor de Leeds.
 
-    python registrar.py <doenca> <caminho> "<subtítulo>" <F|M|-> <idade|-> "<história em PT>" "<diagnóstico original>"
+    python registrar.py <doenca> <caminho> "<subtítulo>" <F|M|-> <idade|-> "<história em PT>" "<diagnóstico original>" ["<coloração, se não for H&E>"]
 """
 
 import json
@@ -16,6 +16,7 @@ CURADORIA = RAIZ / 'lib' / 'histopatologia-zoom' / 'curadoria.ts'
 
 def main():
     doenca, caminho, subtitulo, sexo, idade, historia, diag = sys.argv[1:8]
+    coloracao = sys.argv[8] if len(sys.argv) > 8 else None
     s = CURADORIA.read_text(encoding='utf-8').rstrip()
     if f"caminho: '{caminho}'" in s:
         sys.exit('já registrada')
@@ -37,7 +38,7 @@ def main():
       idade: {idade if idade != '-' else 'null'},
       historia: {j(historia) if historia != '-' else 'null'},
       diagnosticoOriginal: {j(diag)},
-    }},
+    }},{chr(10) + '    coloracao: ' + j(coloracao) + ',' if coloracao else ''}
   }},
 ]
 """
