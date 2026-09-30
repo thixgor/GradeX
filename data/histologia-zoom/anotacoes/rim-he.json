@@ -2,7 +2,7 @@
  "slug": "rim-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -88,6 +88,111 @@
     0.44,
     0.47,
     0.47
+   ]
+  },
+  {
+   "id": "alca",
+   "estrutura": "alca-de-henle",
+   "rotulo": "Túbulos retos finos da medula externa (alças de Henle e ductos coletores cortados no comprimento)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.296
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.41,
+    0.28,
+    0.44,
+    0.31
+   ]
+  },
+  {
+   "id": "proximal-2",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulo proximal: borda em escova e citoplasma eosinofílico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.279
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.4,
+    0.27,
+    0.44,
+    0.3
+   ]
+  },
+  {
+   "id": "coletores",
+   "estrutura": "tubulo-coletor",
+   "rotulo": "Ductos coletores na papila renal: células cúbicas claras, limites nítidos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.59
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.28,
+    0.56,
+    0.32,
+    0.62
+   ]
+  },
+  {
+   "id": "pelve",
+   "estrutura": "urotelio",
+   "rotulo": "Superfície da papila voltada para o cálice (pelve), revestida por urotélio fino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2785,
+      0.6
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.24,
+    0.52,
+    0.3,
+    0.62
+   ]
+  },
+  {
+   "id": "raio",
+   "estrutura": "medula-renal",
+   "rotulo": "Medula: túbulos paralelos que descem para a papila",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.415,
+      0.43
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.37,
+    0.39,
+    0.46,
+    0.46
    ]
   }
  ]

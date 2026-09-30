@@ -2,34 +2,169 @@
  "slug": "paratireoide-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "principais",
    "estrutura": "celula-principal-paratireoide",
-   "rotulo": "Células principais em cordões densos",
+   "rotulo": "Células principais: núcleo redondo central e citoplasma claro a levemente eosinofílico, em cordões",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.4618,
-      0.3366
+      0.318,
+      0.617
      ],
-     "angulo": 225
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.329,
+      0.609
+     ],
+     "angulo": 135
     }
    ],
    "vista": [
-    0.4,
-    0.28,
-    0.5,
-    0.38
+    0.305,
+    0.6,
+    0.34,
+    0.63
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilares fenestrados entre os cordões: o PTH sai direto para o sangue",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.318,
+      0.629
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.305,
+    0.615,
+    0.335,
+    0.64
    ]
   },
   {
    "id": "adiposo",
    "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos dentro da paratireoide (aumentam com a idade)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.513
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.32,
+    0.49,
+    0.37,
+    0.53
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso do estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.357,
+      0.515
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.34,
+    0.5,
+    0.37,
+    0.53
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Cápsula conjuntiva fina com gordura em volta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.295,
+      0.48
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.27,
+    0.46,
+    0.32,
+    0.5
+   ]
+  },
+  {
+   "id": "linfonodo",
+   "estrutura": "foliculo-linfoide",
+   "rotulo": "Linfonodo vizinho (não é paratireoide): folículos de linfócitos pequenos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.375
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.42,
+    0.3,
+    0.54,
+    0.42
+   ]
+  },
+  {
+   "id": "linfonodo-paracortex",
+   "estrutura": "paracortex",
+   "rotulo": "Paracórtex do linfonodo, com vênulas de endotélio alto",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.33
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.3,
+    0.54,
+    0.38
+   ]
+  },
+  {
+   "id": "gordura-perinodal",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo cervical em volta do linfonodo",
    "marcas": [
     {
      "tipo": "seta",
@@ -43,8 +178,8 @@
    "vista": [
     0.4,
     0.28,
-    0.5,
-    0.38
+    0.46,
+    0.34
    ]
   }
  ]

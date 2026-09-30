@@ -210,4 +210,17 @@ export const ESTRUTURAS_ENDOCRINO: Estrutura[] = [
     ondeEncontrar: ['Sela túrcica.'],
     alteracoes: ['Adenoma hipofisário (prolactinoma, acromegalia, Cushing).', 'Síndrome de Sheehan.', 'Adenoma hipofisário (prolactinoma, acromegalia, doença de Cushing).', 'Necrose pós-parto (síndrome de Sheehan).'],
   },
+  {
+    id: 'corpo-arenaceo',
+    nome: 'Corpo arenáceo (areia cerebral)',
+    sinonimos: ['acervulus cerebri', 'corpora arenacea', 'areia cerebral', 'concreção pineal'],
+    tipo: 'matriz',
+    resumo: 'Concreção calcificada, basofílica e em camadas concêntricas, no estroma da pineal; aumenta com a idade.',
+    caracteristicas: ['Esfera ou massa irregular roxo-escura (basofílica) no HE, às vezes com lamelas concêntricas.', 'Tamanho variável, de poucos micrômetros a mais de um milímetro; fica entre os pinealócitos ou nos septos.'],
+    aprofundado: ['Formado por fosfato e carbonato de cálcio depositados sobre uma matriz orgânica; começa na infância e aumenta com a idade.', 'Não indica doença nem perda de função da pineal.', 'Por ser radiopaco, serviu de marco na radiografia de crânio: o desvio da pineal calcificada da linha média sugeria massa intracraniana.'],
+    funcoes: ['Não tem função conhecida — é marco diagnóstico da pineal na histologia e na imagem.', 'Ajuda a reconhecer a pineal em lâminas e na tomografia (calcificação na linha média).'],
+    regeneracao: { nivel: 'nao-se-aplica', texto: 'Depósito mineral: não regride.' },
+    ondeEncontrar: ['Glândula pineal; concreções semelhantes nos plexos coroides e nas meninges (corpos psamomatosos).'],
+    alteracoes: ['Calcificação pineal maior que 1 cm ou em criança pequena levanta suspeita de tumor pineal.', 'Corpos psamomatosos semelhantes aparecem no meningioma e no carcinoma papilífero da tireoide.'],
+  },
 ]
