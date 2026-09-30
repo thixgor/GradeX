@@ -63,7 +63,7 @@ export const ESTRUTURAS_TECIDOS: Estrutura[] = [
       'Contração lenta e sustentada, controlada pelo sistema autônomo, por hormônios e pelo estiramento.',
       'Junções comunicantes acoplam as células (músculo unitário das vísceras).',
     ],
-    funcoes: ['Contração das vísceras ocas, dos vasos, das vias aéreas e dos ductos.'],
+    funcoes: ['Contração das vísceras ocas, dos vasos, das vias aéreas e dos ductos.', 'Manter tônus prolongado com pouco gasto de energia (mecanismo de trava, "latch").', 'Produzir matriz extracelular (colágeno, elastina) nas paredes dos vasos e vísceras.', 'Contração controlada pelo sistema autônomo, hormônios e estímulos locais, via cálcio–calmodulina e cinase da cadeia leve da miosina.'],
     regeneracao: { nivel: 'moderada', texto: 'Pode se dividir (hiperplasia) e crescer (hipertrofia), como no útero gravídico e na bexiga obstruída.' },
     ondeEncontrar: ['Parede do tubo digestivo, bexiga, útero, vasos sanguíneos, brônquios, ductos, músculo eretor do pelo, íris.'],
     alteracoes: [
@@ -89,7 +89,7 @@ export const ESTRUTURAS_TECIDOS: Estrutura[] = [
       'Tipos: I (lenta, oxidativa, rica em mioglobina) e II (rápida, glicolítica).',
       'Organização: endomísio (em volta da fibra), perimísio (feixe) e epimísio (músculo).',
     ],
-    funcoes: ['Contração voluntária, rápida e forte: movimento, postura e produção de calor.'],
+    funcoes: ['Contração voluntária, rápida e forte: movimento, postura e produção de calor.', 'Manter a postura e estabilizar articulações (tônus).', 'Produzir calor (tremor) e ser o maior reservatório de proteína e de captação de glicose do corpo (sensível à insulina).', 'Secretar miocinas (como a irisina e a IL-6) durante o exercício.'],
     regeneracao: { nivel: 'moderada', texto: 'Regenera a partir das células satélites (células-tronco sob a lâmina basal); perdas grandes cicatrizam com fibrose.' },
     ondeEncontrar: ['Músculos esqueléticos, língua, terço superior do esôfago, diafragma, músculos da face e dos olhos.'],
     alteracoes: [

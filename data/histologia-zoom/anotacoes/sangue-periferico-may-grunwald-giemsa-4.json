@@ -2,8 +2,8 @@
  "slug": "sangue-periferico-may-grunwald-giemsa-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,27 @@
     0.1654,
     0.517,
     0.167
+   ]
+  },
+  {
+   "id": "eosinofilo",
+   "estrutura": "eosinofilo",
+   "rotulo": "Eosinófilo: núcleo bilobado \"em óculos\" e grânulos grossos rosados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5164,
+      0.1446
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.515,
+    0.1435,
+    0.5178,
+    0.1458
    ]
   }
  ]

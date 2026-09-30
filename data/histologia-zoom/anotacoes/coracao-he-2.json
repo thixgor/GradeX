@@ -2,8 +2,8 @@
  "slug": "coracao-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,92 @@
     0.96,
     0.73,
     0.97
+   ]
+  },
+  {
+   "id": "epicardio",
+   "estrutura": "epicardio",
+   "rotulo": "Epicárdio (face externa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.895,
+      0.9
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.8,
+    0.82,
+    0.95,
+    0.98
+   ]
+  },
+  {
+   "id": "coronario",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos coronários no epicárdio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.85,
+      0.714
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.9,
+      1.114
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.78,
+    0.64,
+    0.95,
+    1.18
+   ]
+  },
+  {
+   "id": "endocardio",
+   "estrutura": "endocardio",
+   "rotulo": "Endocárdio e trabéculas cárneas, na face voltada para a cavidade",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.047,
+      0.86
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.7,
+    0.3,
+    1.0
+   ]
+  },
+  {
+   "id": "miocardio",
+   "estrutura": "miocardio",
+   "rotulo": "Miocárdio: a camada mais espessa, entre endocárdio e epicárdio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      1.0
+     ],
+     "angulo": 45
+    }
    ]
   }
  ]

@@ -2,7 +2,7 @@
  "slug": "linfonodo-prata-gomori",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -66,6 +66,90 @@
     0.24,
     0.085,
     0.27
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-linfoide",
+   "rotulo": "Folículo do córtex: rede reticular mais frouxa e densa em linfócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.135,
+      0.164
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.09,
+    0.12,
+    0.19,
+    0.22
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-do-linfonodo",
+   "rotulo": "Medula: cordões e seios com rede reticular frouxa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.2
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.19,
+    0.15,
+    0.29,
+    0.25
+   ]
+  },
+  {
+   "id": "trabecula",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Trabécula que sai da cápsula e penetra no córtex",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.135,
+      0.176
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.09,
+    0.14,
+    0.19,
+    0.21
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso da medula, a caminho do hilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.255,
+      0.269
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.22,
+    0.24,
+    0.29,
+    0.3
    ]
   }
  ]

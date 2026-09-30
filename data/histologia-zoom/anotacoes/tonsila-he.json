@@ -2,8 +2,8 @@
  "slug": "tonsila-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -66,6 +66,77 @@
     0.55,
     0.45,
     0.65
+   ]
+  },
+  {
+   "id": "centro-germinativo",
+   "estrutura": "centro-germinativo",
+   "rotulo": "Centros germinativos claros dos folículos secundários",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.406,
+      0.45
+     ],
+     "angulo": 225
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.632
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.33,
+    0.4,
+    0.45,
+    0.68
+   ]
+  },
+  {
+   "id": "epitelio-superficie",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso da superfície da tonsila",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.094,
+      0.46
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.05,
+    0.4,
+    0.16,
+    0.52
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Cápsula conjuntiva na base da tonsila, separando-a da musculatura da faringe",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.25,
+      0.368
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.15,
+    0.32,
+    0.4,
+    0.4
    ]
   }
  ]

@@ -2,7 +2,7 @@
  "slug": "aorta-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -44,6 +44,106 @@
     0.45,
     0.58,
     0.55
+   ]
+  },
+  {
+   "id": "intima",
+   "estrutura": "tunica-intima",
+   "rotulo": "Íntima: endotélio achatado sobre fina camada subendotelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.506,
+      0.4835
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.495,
+    0.475,
+    0.52,
+    0.495
+   ]
+  },
+  {
+   "id": "lamelas",
+   "estrutura": "lamina-elastica",
+   "rotulo": "Lâminas elásticas onduladas (rosa-claro) da média",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.51,
+      0.4924
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.485,
+    0.525,
+    0.505
+   ]
+  },
+  {
+   "id": "musculo-liso",
+   "estrutura": "celula-muscular-lisa",
+   "rotulo": "Núcleos alongados de células musculares lisas entre as lâminas elásticas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5226,
+      0.4932
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.512,
+    0.486,
+    0.53,
+    0.502
+   ]
+  },
+  {
+   "id": "linfonodo",
+   "estrutura": "foliculo-linfoide",
+   "rotulo": "Folículos linfoides do linfonodo para-aórtico, junto à adventícia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5595,
+      0.6192
+     ],
+     "angulo": 225
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5338,
+      0.6266
+     ],
+     "angulo": 225
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4343,
+      0.6953
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.58,
+    0.6,
+    0.74
    ]
   }
  ]

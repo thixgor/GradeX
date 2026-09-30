@@ -2,8 +2,8 @@
  "slug": "arteria-muscular-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -107,6 +107,48 @@
     0.4,
     0.3,
     0.5
+   ]
+  },
+  {
+   "id": "arteria-2",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Outra artéria muscular contraída: média espessa de músculo liso circular e luz estrelada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.855,
+      0.201
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.12,
+    0.87,
+    0.28
+   ]
+  },
+  {
+   "id": "lei-2",
+   "estrutura": "lamina-elastica-interna",
+   "rotulo": "Íntima pregueada pela contração, com a lâmina elástica interna ondulada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.78,
+      0.165
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.74,
+    0.15,
+    0.82,
+    0.24
    ]
   }
  ]

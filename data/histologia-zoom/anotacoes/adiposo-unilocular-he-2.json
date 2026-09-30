@@ -2,8 +2,8 @@
  "slug": "adiposo-unilocular-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,48 @@
     0.25,
     0.34,
     0.34
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso com hemácias no septo entre os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3227,
+      0.156
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.14,
+    0.35,
+    0.18
+   ]
+  },
+  {
+   "id": "colageno",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Conjuntivo denso dos septos (colágeno rosado) com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.208,
+      0.36
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.33,
+    0.26,
+    0.39
    ]
   }
  ]

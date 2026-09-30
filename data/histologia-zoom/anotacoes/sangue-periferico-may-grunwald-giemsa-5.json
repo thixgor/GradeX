@@ -2,7 +2,7 @@
  "slug": "sangue-periferico-may-grunwald-giemsa-5",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -61,6 +61,56 @@
     0.2388,
     0.389,
     0.2408
+   ]
+  },
+  {
+   "id": "plaqueta",
+   "estrutura": "plaqueta",
+   "rotulo": "Plaquetas: fragmentos pequenos, roxos e granulosos, sem núcleo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4617,
+      0.2889
+     ],
+     "angulo": 0
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4596,
+      0.2903
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4588,
+    0.2885,
+    0.4622,
+    0.2912
+   ]
+  },
+  {
+   "id": "hemacia",
+   "estrutura": "hemacia",
+   "rotulo": "Hemácias: discos anucleados com palidez central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4621,
+      0.2904
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4588,
+    0.2885,
+    0.4624,
+    0.2915
    ]
   }
  ]

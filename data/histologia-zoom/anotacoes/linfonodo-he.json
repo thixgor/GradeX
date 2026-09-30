@@ -2,7 +2,7 @@
  "slug": "linfonodo-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -80,6 +80,119 @@
     0.25
    ],
    "nota": "Linfonodo em HE pálido: os folículos do córtex se reconhecem pela borda escura (manto) em volta do centro germinativo claro."
+  },
+  {
+   "id": "centro-germinativo",
+   "estrutura": "centro-germinativo",
+   "rotulo": "Centro germinativo: área clara no centro do folículo secundário",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.69,
+      0.325
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.64,
+    0.28,
+    0.74,
+    0.37
+   ]
+  },
+  {
+   "id": "manto",
+   "estrutura": "zona-do-manto",
+   "rotulo": "Zona do manto: coroa escura de linfócitos B pequenos em volta do centro germinativo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.716,
+      0.324
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.64,
+    0.28,
+    0.74,
+    0.37
+   ]
+  },
+  {
+   "id": "paracortex",
+   "estrutura": "paracortex",
+   "rotulo": "Paracórtex (zona T): linfócitos entre e abaixo dos folículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.35
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.55,
+    0.3,
+    0.65,
+    0.4
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-do-linfonodo",
+   "rotulo": "Medula: cordões medulares de linfócitos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5151,
+      0.2084
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5406,
+      0.2567
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.16,
+    0.58,
+    0.28
+   ]
+  },
+  {
+   "id": "seio-medular",
+   "estrutura": "seio-medular",
+   "rotulo": "Seios medulares: espaços claros entre os cordões, levando a linfa ao hilo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5062,
+      0.2249
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.48,
+    0.19,
+    0.57,
+    0.26
+   ]
   }
  ]
 }

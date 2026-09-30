@@ -2,8 +2,8 @@
  "slug": "baco-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -93,6 +93,35 @@
     0.2,
     0.5,
     0.3
+   ]
+  },
+  {
+   "id": "arteriola-central",
+   "estrutura": "arteriola-central",
+   "rotulo": "Arteríola central dentro da polpa branca (bainha de linfócitos T em volta)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.311,
+      0.1232
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.292,
+      0.2273
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.27,
+    0.1,
+    0.34,
+    0.25
    ]
   }
  ]

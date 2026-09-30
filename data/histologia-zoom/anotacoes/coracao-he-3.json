@@ -2,7 +2,7 @@
  "slug": "coracao-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -67,6 +67,27 @@
     0.25,
     0.62,
     0.27
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo entre os feixes de miocárdio, acompanhando os vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.543,
+      0.2686
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.51,
+    0.24,
+    0.58,
+    0.29
    ]
   }
  ]
