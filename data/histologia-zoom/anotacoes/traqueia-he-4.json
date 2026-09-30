@@ -26,6 +26,111 @@
     0.16,
     0.46
    ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.155,
+      0.34
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.14,
+    0.32,
+    0.17,
+    0.36
+   ]
+  },
+  {
+   "id": "grupos",
+   "estrutura": "condrocito",
+   "rotulo": "Grupos isógenos: condrócitos que se dividiram na mesma lacuna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.112,
+      0.33
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.1,
+    0.31,
+    0.12,
+    0.35
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa frouxa entre a mucosa e a cartilagem",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.135,
+      0.37
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.12,
+    0.34,
+    0.16,
+    0.4
+   ]
+  },
+  {
+   "id": "adventicia",
+   "estrutura": "tunica-adventicia",
+   "rotulo": "Adventícia: conjuntivo que liga a traqueia às estruturas vizinhas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.08,
+      0.44
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.05,
+    0.4,
+    0.11,
+    0.48
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo em volta da traqueia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.045,
+      0.4
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.02,
+    0.36,
+    0.08,
+    0.44
+   ]
   }
  ]
 }

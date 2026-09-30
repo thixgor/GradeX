@@ -2,31 +2,10 @@
  "slug": "pulmao-he-5",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
-  {
-   "id": "bronquiolo",
-   "estrutura": "bronquiolo",
-   "rotulo": "Epitélio do bronquíolo (cúbico/colunar simples)",
-   "marcas": [
-    {
-     "tipo": "seta",
-     "ponta": [
-      0.333,
-      0.3476
-     ],
-     "angulo": 270
-    }
-   ],
-   "vista": [
-    0.321,
-    0.338,
-    0.345,
-    0.362
-   ]
-  },
   {
    "id": "alveolo",
    "estrutura": "alveolo-pulmonar",
@@ -45,6 +24,98 @@
     0.38,
     0.34,
     0.46
+   ]
+  },
+  {
+   "id": "bronquiolo",
+   "estrutura": "bronquio",
+   "rotulo": "Brônquio intrapulmonar: epitélio respiratório e placas de cartilagem na parede (não é bronquíolo)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.333,
+      0.3476
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.26,
+    0.25,
+    0.4,
+    0.37
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Placas de cartilagem hialina do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.287,
+      0.295
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.345
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.26,
+    0.26,
+    0.45,
+    0.4
+   ]
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas da parede do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.422,
+      0.315
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.3,
+    0.44,
+    0.33
+   ]
+  },
+  {
+   "id": "capilares",
+   "estrutura": "septo-alveolar",
+   "rotulo": "Septos alveolares com capilares cheios de hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.272,
+      0.296
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.26,
+    0.28,
+    0.29,
+    0.31
    ]
   }
  ]

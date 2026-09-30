@@ -2,8 +2,8 @@
  "slug": "epiglote-resorcina-fucsina",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -67,6 +67,69 @@
     0.95,
     0.33,
     0.98
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso da face lingual da epiglote (protege contra o atrito do alimento)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.323,
+      0.425
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.29,
+    0.38,
+    0.37,
+    0.46
+   ]
+  },
+  {
+   "id": "lamina",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria sob o epitélio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.4
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.32,
+    0.37,
+    0.37,
+    0.43
+   ]
+  },
+  {
+   "id": "adiposo",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo entre as glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.262,
+      0.545
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.24,
+    0.52,
+    0.29,
+    0.57
    ]
   }
  ]
