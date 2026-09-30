@@ -2,8 +2,8 @@
  "slug": "ovario-he-6",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.35,
     0.38,
     0.38
+   ]
+  },
+  {
+   "id": "cortex",
+   "estrutura": "estroma-ovariano",
+   "rotulo": "Córtex: estroma de células fusiformes densas em redemoinhos (aspecto estoriforme)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.07
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.04,
+    0.46,
+    0.1
+   ]
+  },
+  {
+   "id": "superficie",
+   "estrutura": "epitelio-superficial-ovario",
+   "rotulo": "Superfície do ovário (epitélio simples, geralmente descamado)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.362,
+      0.047
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.35,
+    0.04,
+    0.39,
+    0.07
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-ovariana",
+   "rotulo": "Medula com vasos grandes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.38
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.3,
+    0.6,
+    0.48
    ]
   }
  ]

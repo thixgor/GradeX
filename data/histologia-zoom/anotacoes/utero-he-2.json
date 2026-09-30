@@ -2,8 +2,8 @@
  "slug": "utero-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.4,
     0.3,
     0.55
+   ]
+  },
+  {
+   "id": "miometrio",
+   "estrutura": "miometrio",
+   "rotulo": "Miométrio: feixes de músculo liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.43
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.4,
+    0.38,
+    0.48
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "endometrio",
+   "rotulo": "Camada basal do endométrio, junto ao miométrio (não descama na menstruação)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.52
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.48,
+    0.36,
+    0.56
+   ]
+  },
+  {
+   "id": "funcional",
+   "estrutura": "endometrio",
+   "rotulo": "Camada funcional: glândulas tubulares retas em estroma denso (fase proliferativa)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.19,
+      0.62
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.14,
+    0.56,
+    0.26,
+    0.68
    ]
   }
  ]

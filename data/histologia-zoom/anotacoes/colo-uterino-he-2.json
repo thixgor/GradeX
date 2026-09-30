@@ -2,8 +2,8 @@
  "slug": "colo-uterino-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,90 @@
     0.4,
     0.2,
     0.55
+   ]
+  },
+  {
+   "id": "glicogenio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Ectocérvice: epitélio estratificado pavimentoso com células claras cheias de glicogênio (base do teste de Schiller)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.078,
+      0.385
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.36,
+    0.11,
+    0.42
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "camada-basal",
+   "rotulo": "Camada basal do epitélio, sobre o estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.123,
+      0.4
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.11,
+    0.38,
+    0.14,
+    0.42
+   ]
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "linfocito",
+   "rotulo": "Linfócitos no estroma logo abaixo do epitélio (comum no colo)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.068,
+      0.47
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.45,
+    0.1,
+    0.49
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos do estroma cervical",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.495
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.11,
+    0.48,
+    0.15,
+    0.52
    ]
   }
  ]

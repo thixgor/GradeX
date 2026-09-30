@@ -2,8 +2,8 @@
  "slug": "glandula-mamaria-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -47,6 +47,48 @@
     0.3,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "interlobular",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Estroma interlobular: conjuntivo denso, pouco celular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.3
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.31,
+    0.27,
+    0.4,
+    0.33
+   ]
+  },
+  {
+   "id": "intralobular",
+   "estrutura": "lobulo-mamario",
+   "rotulo": "Estroma intralobular: conjuntivo frouxo e mais celular em volta dos ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.413,
+      0.4
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.38,
+    0.44,
+    0.42
    ]
   }
  ]

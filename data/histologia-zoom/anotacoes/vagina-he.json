@@ -2,8 +2,8 @@
  "slug": "vagina-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,77 @@
     0.52,
     0.4,
     0.62,
+    0.5
+   ]
+  },
+  {
+   "id": "epitelio-2",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso não queratinizado, rico em glicogênio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.731,
+      0.42
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.7,
+    0.4,
+    0.75,
+    0.45
+   ]
+  },
+  {
+   "id": "papila",
+   "estrutura": "derme-papilar",
+   "rotulo": "Papilas de conjuntivo encaixadas no epitélio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.712,
+      0.465
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.69,
+    0.45,
+    0.73,
+    0.48
+   ]
+  },
+  {
+   "id": "plexo",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos numerosos da lâmina própria (plexo vascular: a vagina não tem glândulas — é lubrificada por transudato)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.654,
+      0.488
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.68,
+      0.44
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.63,
+    0.43,
+    0.69,
     0.5
    ]
   }

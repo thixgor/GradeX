@@ -2,7 +2,7 @@
  "slug": "prostata-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -44,6 +44,69 @@
     0.42,
     0.47,
     0.45
+   ]
+  },
+  {
+   "id": "pregas",
+   "estrutura": "glandula-prostatica",
+   "rotulo": "Glândula com dobras papilares da mucosa projetando-se na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.525
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.5,
+    0.4,
+    0.56
+   ]
+  },
+  {
+   "id": "concrecao",
+   "estrutura": "concrecao-prostatica",
+   "rotulo": "Pequena concreção (corpo amiláceo) na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.381,
+      0.546
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.37,
+    0.535,
+    0.39,
+    0.555
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vasos no estroma fibromuscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.311,
+      0.541
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.53,
+    0.33,
+    0.56
    ]
   }
  ]

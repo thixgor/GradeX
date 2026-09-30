@@ -2,7 +2,7 @@
  "slug": "testiculo-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -66,6 +66,119 @@
     0.41,
     0.418,
     0.42
+   ]
+  },
+  {
+   "id": "leydig",
+   "estrutura": "celula-de-leydig",
+   "rotulo": "Células de Leydig: grupo de células eosinofílicas com núcleo redondo no interstício (produzem testosterona)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.4063
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.418,
+    0.403,
+    0.424,
+    0.409
+   ]
+  },
+  {
+   "id": "intersticio",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso do interstício entre os túbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.424,
+      0.4015
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.418,
+    0.398,
+    0.428,
+    0.406
+   ]
+  },
+  {
+   "id": "albuginea",
+   "estrutura": "tunica-albuginea-testicular",
+   "rotulo": "Túnica albugínea: cápsula de conjuntivo denso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.108,
+      0.106
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.09,
+    0.08,
+    0.13,
+    0.12
+   ]
+  },
+  {
+   "id": "rede",
+   "estrutura": "rede-testicular",
+   "rotulo": "Rede testicular: canais anastomosados no mediastino do testículo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.78
+     ],
+     "angulo": 90
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.8
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.26,
+    0.74,
+    0.45,
+    0.86
+   ]
+  },
+  {
+   "id": "mediastino",
+   "estrutura": "conjuntivo-denso-modelado",
+   "rotulo": "Mediastino do testículo: conjuntivo denso com vasos, onde fica a rede testicular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.25,
+      0.77
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.74,
+    0.3,
+    0.82
    ]
   }
  ]
