@@ -2,14 +2,35 @@
  "slug": "traqueia-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
-   "id": "glandula",
-   "estrutura": "glandula-seromucosa",
-   "rotulo": "Glândulas seromucosas da submucosa",
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Anel de cartilagem hialina: condrócitos em lacunas, matriz basofílica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.275,
+      0.08
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.265,
+    0.075,
+    0.285,
+    0.095
+   ]
+  },
+  {
+   "id": "cartilagem-panorama",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Anéis de cartilagem em volta de toda a traqueia",
    "marcas": [
     {
      "tipo": "seta",
@@ -22,9 +43,51 @@
    ],
    "vista": [
     0.5,
-    0.08,
+    0.06,
     0.62,
-    0.2
+    0.18
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa frouxa entre cartilagem e mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.27,
+      0.0915
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.265,
+    0.075,
+    0.285,
+    0.095
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório revestindo a luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2925,
+      0.0988
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.28,
+    0.095,
+    0.3,
+    0.115
    ]
   }
  ]

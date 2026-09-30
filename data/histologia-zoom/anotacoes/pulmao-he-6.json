@@ -2,29 +2,92 @@
  "slug": "pulmao-he-6",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
-   "id": "bronquiolo",
-   "estrutura": "bronquiolo",
-   "rotulo": "Epitélio do bronquíolo",
+   "id": "bronquio",
+   "estrutura": "bronquio",
+   "rotulo": "Brônquio: epitélio respiratório e placa de cartilagem (não é bronquíolo)",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.3606,
-      0.3476
+      0.357,
+      0.347
      ],
      "angulo": 180
     }
    ],
    "vista": [
-    0.341,
-    0.338,
-    0.365,
-    0.362
+    0.28,
+    0.28,
+    0.4,
+    0.4
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Placa de cartilagem hialina na parede do brônquio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.38
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.35,
+    0.6,
+    0.45
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório pregueado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.575,
+      0.396
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.5,
+    0.35,
+    0.6,
+    0.45
+   ]
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Alvéolos pulmonares em volta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.33
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.28,
+    0.4,
+    0.4
    ]
   }
  ]

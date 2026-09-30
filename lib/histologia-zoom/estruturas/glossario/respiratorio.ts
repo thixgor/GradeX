@@ -111,4 +111,17 @@ export const ESTRUTURAS_RESPIRATORIO: Estrutura[] = [
     ondeEncontrar: ['Epiglote, pavilhão da orelha, conduto auditivo externo, tuba auditiva, cartilagens cuneiformes e corniculadas da laringe.'],
     alteracoes: ['Policondrite recidivante.', 'Pericondrite e "orelha em couve-flor".'],
   },
+  {
+    id: 'bronquio',
+    nome: 'Brônquio intrapulmonar',
+    sinonimos: ['brônquio', 'bronchus'],
+    tipo: 'orgao-parte',
+    resumo: 'Via aérea de maior calibre dentro do pulmão: epitélio respiratório, músculo liso, glândulas seromucosas e placas de cartilagem hialina na parede.',
+    caracteristicas: ['Luz ampla e pregueada revestida por epitélio pseudoestratificado ciliado.', 'Placas de cartilagem hialina e glândulas na parede — o que falta nos bronquíolos.'],
+    aprofundado: ['Divide-se até os bronquíolos, em que cartilagem e glândulas desaparecem e o epitélio fica simples.'],
+    funcoes: ['Conduzir, aquecer e umidificar o ar; depurar partículas (escada mucociliar).'],
+    regeneracao: { nivel: 'moderada', texto: 'Epitélio se renova a partir das células basais.' },
+    ondeEncontrar: ['Pulmão, junto a ramos da artéria pulmonar.'],
+    alteracoes: ['Asma (hipertrofia do músculo e das glândulas).', 'Bronquiectasia.', 'Carcinoma escamoso central.'],
+  },
 ]

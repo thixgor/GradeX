@@ -2,8 +2,8 @@
  "slug": "traqueia-he-6",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -47,6 +47,48 @@
     0.7,
     0.6,
     1.2
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-respiratorio",
+   "rotulo": "Epitélio respiratório pseudoestratificado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.0425,
+      0.259
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.2,
+    0.1,
+    0.3
+   ]
+  },
+  {
+   "id": "glandulas-sub",
+   "estrutura": "glandula-seromucosa",
+   "rotulo": "Glândulas seromucosas da submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.087,
+      0.22
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.0,
+    0.2,
+    0.1,
+    0.3
    ]
   }
  ]

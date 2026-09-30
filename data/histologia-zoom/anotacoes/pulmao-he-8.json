@@ -2,8 +2,8 @@
  "slug": "pulmao-he-8",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,69 @@
     0.303,
     0.147,
     0.327
+   ]
+  },
+  {
+   "id": "bronquio",
+   "estrutura": "bronquio",
+   "rotulo": "Brônquio de luz pregueada com cartilagem",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.205
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.12,
+    0.38,
+    0.22
+   ]
+  },
+  {
+   "id": "cartilagem",
+   "estrutura": "cartilagem-hialina",
+   "rotulo": "Cartilagem hialina da parede brônquica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.18
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.12,
+    0.38,
+    0.22
+   ]
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Alvéolos pulmonares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.14
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.12,
+    0.38,
+    0.22
    ]
   }
  ]
