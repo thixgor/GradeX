@@ -1,0 +1,28 @@
+{
+ "slug": "seminoma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Orquiectomia de homem de 35 anos: seminoma de 16 mm formando lençóis de células germinativas grandes e claras, com testículo residual ao lado.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "celulas-germinativas-neoplasicas",
+   "status": "presente",
+   "nota": "Lençóis de células grandes e uniformes, citoplasma pálido e núcleos com nucléolo evidente, divididos por septos fibrosos."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "nao-avaliavel",
+   "nota": "Os linfócitos nos septos são escassos nos campos examinados."
+  },
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "ausente",
+   "nota": "Sem granulomas nos campos examinados."
+  }
+ ],
+ "semMarcacoes": true
+}

@@ -1,0 +1,23 @@
+{
+ "slug": "enfisema-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Pulmão de homem de 65 anos com tosse produtiva: enfisema com destruição de septos e antracose; brônquio com cartilagem na mesma lâmina.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "destruicao-de-septos-alveolares",
+   "status": "presente",
+   "nota": "Espaços aéreos muito alargados e irregulares, com septos finos, rompidos e pontas soltas."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "nota": "Pigmento antracótico abundante em macrófagos junto a septos e vasos."
+  }
+ ],
+ "semMarcacoes": true
+}

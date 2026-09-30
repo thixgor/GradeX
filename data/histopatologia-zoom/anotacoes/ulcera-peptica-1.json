@@ -1,0 +1,33 @@
+{
+ "slug": "ulcera-peptica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Úlcera péptica crônica em homem de 50 anos com dispepsia: cratera que atravessa a parede, com cicatriz fibrosa na base interrompendo a muscular própria.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "presente",
+   "nota": "Cratera que interrompe a mucosa e a muscular da mucosa e aprofunda-se na parede."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "nota": "Cicatriz fibrosa extensa na base, substituindo a muscular própria, com feixes musculares interrompidos."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "nao-avaliavel",
+   "nota": "A base mostra tecido fibroso vascularizado, mas as camadas de granulação e necrose fibrinoide não se separam com nitidez nesta lâmina."
+  },
+  {
+   "achado": "exsudato-fibrinopurulento",
+   "status": "nao-avaliavel",
+   "nota": "Há uma faixa superficial basofílica na base da úlcera, mas o exsudato não é inequívoco neste scan."
+  }
+ ],
+ "semMarcacoes": true
+}

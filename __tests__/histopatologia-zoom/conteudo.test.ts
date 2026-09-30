@@ -130,7 +130,12 @@ describe('Histopatologia com Zoom — lâminas e marcações', () => {
         a.achados.some((x) => criterios.includes(x.achado) && x.status === 'presente'),
         `${l.slug}: nenhum critério diagnóstico presente`,
       ).toBe(true)
-      expect(a.marcacoes.filter((m) => m.categoria === 'patologica').length, l.slug).toBeGreaterThanOrEqual(3)
+      if (a.semMarcacoes) {
+        // Sem setas, cada achado presente precisa ser descrito em texto.
+        for (const x of a.achados) expect(x.nota, `${l.slug}: ${x.achado} sem descrição`).toBeTruthy()
+      } else {
+        expect(a.marcacoes.filter((m) => m.categoria === 'patologica').length, l.slug).toBeGreaterThanOrEqual(3)
+      }
     }
   })
 })

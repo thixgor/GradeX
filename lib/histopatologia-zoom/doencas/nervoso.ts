@@ -70,4 +70,58 @@ export const DOENCAS_NERVOSO: DoencaZoom[] = [
       'No Alzheimer, muitos neurônios ficam pretos de tau (emaranhados), o neurópilo se enche de fios e surgem placas arredondadas de neuritos.',
     ],
   },
+  {
+    id: 'meningioma',
+    nome: 'Meningioma',
+    sinonimos: ['meningioma meningotelial', 'meningioma transicional'],
+    nomesEmIngles: ['meningioma'],
+    sistema: 'nervoso',
+    orgao: 'cortex-cerebral',
+    prioridade: 2,
+    resumo:
+      'Tumor das células aracnoides das meninges, extra-axial e geralmente benigno (grau 1 da OMS), formado por lóbulos de células meningoteliais com redemoinhos e corpos psamomatosos.',
+    epidemiologia: 'Tumor intracraniano primário mais comum do adulto (cerca de 35 %); mulheres de meia-idade (2:1), relação com receptores de progesterona. Fatores: radiação craniana, neurofibromatose tipo 2.',
+    patogenese: [
+      'Perda do gene NF2 (cromossomo 22q) na maioria; outros com mutações de TRAF7, AKT1, KLF4, SMO.',
+      'As células aracnoides proliferam aderidas à dura-máter, formando massa que comprime (sem invadir) o cérebro.',
+      'Graus 2 e 3 (atípico, anaplásico) têm mais mitoses, invasão cerebral e recidivam.',
+    ],
+    roteiro: [
+      'Panorâmico: tumor lobulado, bem delimitado, aderido à dura.',
+      'Médio aumento: lóbulos de células sinciciais com redemoinhos; corpos psamomatosos.',
+      'Grande aumento: núcleos ovais uniformes, pseudoinclusões; conte mitoses e procure invasão cerebral (graduação).',
+    ],
+    achados: [
+      {
+        achado: 'espirais-meningoteliais',
+        tipo: 'especifico',
+        comoAparece: 'Lóbulos e redemoinhos de células meningoteliais.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'corpos-psamomatosos',
+        tipo: 'geral',
+        comoAparece: 'Calcificações lamelares, muitas vezes no centro dos redemoinhos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Schwannoma',
+        comoSeparar: 'Áreas Antoni A e B, corpos de Verocay; S100 e SOX10 difusos.',
+      },
+      {
+        nome: 'Tumor fibroso solitário',
+        comoSeparar: 'Células fusiformes em padrão aleatório com vasos "em chifre de veado"; STAT6 nuclear.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitas vezes assintomático; sintomas por compressão: cefaleia, crises convulsivas, déficits focais, alterações visuais (tumores selares).',
+      'RM: massa extra-axial com realce homogêneo e "cauda dural". Tratamento: observação, cirurgia ou radiocirurgia.',
+    ],
+    comparacaoComNormal: [
+      'Nas meninges normais, a aracnoide tem poucas camadas de células achatadas; no córtex, neurônios e glia em neurópilo.',
+      'O meningioma forma uma massa de células meningoteliais em redemoinhos que empurra o córtex, sem se misturar ao tecido nervoso.',
+    ],
+  },
 ]

@@ -1,0 +1,28 @@
+{
+ "slug": "esofago-de-barrett-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Biópsias de esôfago de homem de 60 anos com esofagite: mucosa colunar com metaplasia intestinal (células caliciformes) — esôfago de Barrett — ao lado de epitélio escamoso.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "metaplasia-intestinal",
+   "status": "presente",
+   "nota": "Mucosa colunar com numerosas células caliciformes, ao lado de fragmentos de epitélio escamoso esofágico."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "nota": "Inflamação crônica da lâmina própria."
+  },
+  {
+   "achado": "displasia-epitelial",
+   "status": "nao-avaliavel",
+   "nota": "Há núcleos alongados e algo apinhados nas glândulas, mas com inflamação ao lado; sem imuno e níveis adicionais, não se afirma nem se exclui displasia."
+  }
+ ],
+ "semMarcacoes": true
+}

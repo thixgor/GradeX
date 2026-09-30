@@ -381,4 +381,58 @@ export const DOENCAS_PELE: DoencaZoom[] = [
       'No dermatofibroma, há muitas células fusiformes entre esses feixes, que ficam isolados como ilhas; a epiderme por cima engrossa.',
     ],
   },
+  {
+    id: 'nevo-melanocitico',
+    nome: 'Nevo melanocítico',
+    sinonimos: ['nevo', 'pinta', 'sinal', 'nevo composto', 'nevo intradérmico'],
+    nomesEmIngles: ['melanocytic naevus'],
+    sistema: 'tegumentar',
+    orgao: 'pele-fina',
+    prioridade: 6,
+    resumo:
+      'Proliferação benigna de melanócitos em ninhos — na junção (juncional), na junção e na derme (composto) ou só na derme (intradérmico) —, simétrica e com maturação em profundidade.',
+    epidemiologia: 'Todas as pessoas têm nevos; o número aumenta até a quarta década e depois diminui. Muitos nevos e nevos atípicos aumentam o risco de melanoma.',
+    patogenese: [
+      'Mutação ativadora de BRAF V600E (ou NRAS nos congênitos) faz os melanócitos proliferarem.',
+      'A proliferação é freada por senescência induzida pelo oncogene (p16): o nevo cresce e depois estabiliza.',
+      'Com o tempo, os ninhos "descem" da junção para a derme (juncional → composto → intradérmico) e maturam.',
+    ],
+    roteiro: [
+      'Panorâmico: lesão pequena, simétrica e bem delimitada.',
+      'Médio aumento: ninhos regulares; na derme, células que ficam menores e mais esparsas em profundidade (maturação).',
+      'Grande aumento: células pequenas, sem atipia importante, sem mitoses profundas; pigmento na parte superficial.',
+    ],
+    achados: [
+      {
+        achado: 'ninhos-nevicos-com-maturacao',
+        tipo: 'especifico',
+        comoAparece: 'Ninhos regulares de células névicas que maturam na profundidade.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'pigmento-melanico',
+        tipo: 'geral',
+        comoAparece: 'Melanina nas células névicas superficiais e em melanófagos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Melanoma',
+        comoSeparar: 'Assimetria, ninhos irregulares e confluentes, disseminação pagetoide, falta de maturação e mitoses dérmicas.',
+      },
+      {
+        nome: 'Nevo displásico',
+        comoSeparar: 'Ninhos juncionais em pontes entre cristas, fibrose lamelar e atipia citológica leve a moderada.',
+      },
+    ],
+    correlacaoClinica: [
+      'Máculas ou pápulas marrons, simétricas, de bordas regulares e cor uniforme, geralmente < 6 mm.',
+      'Excisão se houver mudança (ABCDE), trauma ou dúvida clínica/dermatoscópica.',
+    ],
+    comparacaoComNormal: [
+      'Na pele normal, os melanócitos são células isoladas na camada basal, sem formar grupos.',
+      'No nevo, eles se agrupam em ninhos na junção e na derme, com as células mais profundas ficando menores.',
+    ],
+  },
 ]

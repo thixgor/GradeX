@@ -257,4 +257,23 @@ export const ACHADOS_ADAPTACAO: AchadoPatologico[] = [
     ondeOcorre: ['Nefropatia membranosa', 'Nefropatia diabética', 'Nefrite lúpica classe V'],
     armadilhas: ['Cortes espessos e glomérulos cortados tangencialmente parecem ter paredes grossas; a prata e a imunofluorescência confirmam.'],
   },
+  {
+    id: 'destruicao-de-septos-alveolares',
+    nome: 'Destruição de septos alveolares (espaços aéreos alargados)',
+    sinonimos: ['enfisema', 'alargamento dos espaços aéreos', 'septos rotos'],
+    categoria: 'arquitetura',
+    resumo:
+      'Espaços aéreos distais anormalmente grandes, por destruição das paredes alveolares, com pontas de septos soltas ("septos flutuantes") e sem fibrose importante.',
+    comoReconhecer: [
+      'No pequeno aumento: o pulmão parece uma renda rasgada, com espaços grandes e irregulares em vez de alvéolos pequenos e iguais.',
+      'No médio aumento: septos terminando em pontas livres e com vasos pobres; antracose frequente.',
+    ],
+    mecanismo: [
+      'O tabagismo atrai neutrófilos e macrófagos que liberam elastase e metaloproteinases; o fumo inativa a α1-antitripsina.',
+      'A elastina dos septos é destruída e os alvéolos se fundem; perde-se a tração elástica que mantém os bronquíolos abertos (aprisionamento aéreo).',
+    ],
+    significado: ['Define o enfisema (DPOC). Centroacinar no fumante (lobos superiores), panacinar na deficiência de α1-antitripsina (lobos inferiores).'],
+    ondeOcorre: ['Enfisema centroacinar e panacinar', 'Enfisema parasseptal e bolhas'],
+    armadilhas: ['Pulmão mal insuflado ou hiperinsuflado artificialmente e cortes espessos alteram o tamanho dos alvéolos; procure os septos rompidos.'],
+  },
 ]

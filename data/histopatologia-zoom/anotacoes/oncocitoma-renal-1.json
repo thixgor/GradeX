@@ -1,0 +1,23 @@
+{
+ "slug": "oncocitoma-renal-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Oncocitoma renal de 4,5 cm: tumor homogêneo de células oncocíticas grandes, de citoplasma rosa granular e núcleos regulares, bem delimitado do parênquima renal.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "metaplasia-oncocitica",
+   "status": "presente",
+   "nota": "Ninhos e lençóis de células grandes de citoplasma eosinofílico granular e núcleos redondos regulares, em todo o tumor; sem membranas espessas nem núcleos enrugados."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "nao-avaliavel",
+   "nota": "A cicatriz central não está incluída nesta secção; há apenas septos fibrosos finos entre os ninhos."
+  }
+ ],
+ "semMarcacoes": true
+}

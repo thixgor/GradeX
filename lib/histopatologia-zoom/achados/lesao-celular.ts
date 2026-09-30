@@ -343,4 +343,36 @@ export const ACHADOS_LESAO_CELULAR: AchadoPatologico[] = [
     ondeOcorre: ['Nefropatia diabética e hipertensiva', 'Glomerulonefrites crônicas', 'Envelhecimento'],
     armadilhas: ['Não confundir com esclerose segmentar (só parte do tufo), que tem outro significado (GESF).'],
   },
+  {
+    id: 'corpos-psamomatosos',
+    nome: 'Corpos psamomatosos',
+    sinonimos: ['psamomas', 'calcificações lamelares'],
+    categoria: 'deposito',
+    resumo:
+      'Pequenas esferas de cálcio em lamelas concêntricas, basofílicas (roxas), dentro de tumores — calcificação distrófica de células que morreram em espiral.',
+    comoReconhecer: ['Círculos roxos, com anéis concêntricos como cebola cortada, de 20–100 µm.'],
+    mecanismo: ['Células isoladas degeneram e servem de núcleo para deposição de fosfato de cálcio em camadas sucessivas.'],
+    significado: ['Pista para tumores papilíferos e meningiomas: carcinoma papilífero da tireoide, carcinoma seroso do ovário, meningioma, mesotelioma.'],
+    ondeOcorre: ['Meningioma', 'Carcinoma papilífero da tireoide', 'Tumores serosos do ovário', 'Carcinoma papilífero renal'],
+    armadilhas: ['Calcificações grosseiras e irregulares (distróficas comuns) não têm lamelas.'],
+  },
+  {
+    id: 'congestao-centrolobular',
+    nome: 'Congestão e necrose centrolobular',
+    sinonimos: ['fígado em noz-moscada', 'congestão passiva crônica', 'necrose hemorrágica centrolobular'],
+    categoria: 'circulatorio',
+    resumo:
+      'Sinusoides dilatados e cheios de sangue em volta das veias centrais (zona 3), com hepatócitos atróficos ou necróticos ali e preservados em volta dos espaços-porta; com o tempo, fibrose.',
+    comoReconhecer: [
+      'No pequeno aumento: áreas vermelhas ao redor das veias centrais que se ligam umas às outras, alternando com parênquima claro periportal.',
+      'No grande aumento: trabéculas finas e atróficas, hemácias ocupando os sinusoides e o espaço entre as placas, macrófagos com hemossiderina.',
+    ],
+    mecanismo: [
+      'A insuficiência cardíaca direita aumenta a pressão venosa central; o sangue se acumula no fígado a partir da veia hepática.',
+      'A zona 3 é a última a receber oxigênio: com a estase, os hepatócitos centrolobulares sofrem hipóxia e morrem.',
+    ],
+    significado: ['Explica o fígado aumentado e doloroso, as transaminases elevadas e, a longo prazo, a "cirrose cardíaca" da insuficiência cardíaca.'],
+    ondeOcorre: ['Insuficiência cardíaca direita e global', 'Pericardite constritiva', 'Síndrome de Budd-Chiari'],
+    armadilhas: ['Choque e hipotensão também causam necrose centrolobular, mas com menos congestão; artefato de coleta dilata sinusoides sem hemorragia nas placas.'],
+  },
 ]

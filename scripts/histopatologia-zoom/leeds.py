@@ -265,7 +265,7 @@ def achado(id, status, marcacoes=(), nota=''):
     return d
 
 
-def salvar(slug: str, marcacoes: list, achados: list, conferencias: int = 3, resumo: str = '') -> Path:
+def salvar(slug: str, marcacoes: list, achados: list, conferencias: int = 3, resumo: str = '', sem_marcacoes: bool = False) -> Path:
     ids = [e['id'] for e in marcacoes]
     if len(ids) != len(set(ids)):
         sys.exit(f'ids repetidos em {slug}')
@@ -284,6 +284,8 @@ def salvar(slug: str, marcacoes: list, achados: list, conferencias: int = 3, res
         'marcacoes': marcacoes,
         'achados': achados,
     }
+    if sem_marcacoes:
+        doc['semMarcacoes'] = True
     ANOTACOES.mkdir(parents=True, exist_ok=True)
     arq = ANOTACOES / f'{slug}.json'
     arq.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')

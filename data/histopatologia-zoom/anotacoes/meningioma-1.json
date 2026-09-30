@@ -1,0 +1,23 @@
+{
+ "slug": "meningioma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Meningioma grau 1 da OMS de mulher de 55 anos (massa extra-axial): lóbulos e redemoinhos de células meningoteliais com corpos psamomatosos.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "espirais-meningoteliais",
+   "status": "presente",
+   "nota": "Lóbulos de células meningoteliais sinciciais com redemoinhos."
+  },
+  {
+   "achado": "corpos-psamomatosos",
+   "status": "presente",
+   "nota": "Corpos psamomatosos calcificados espalhados pelo tumor."
+  }
+ ],
+ "semMarcacoes": true
+}

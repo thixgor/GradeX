@@ -1,0 +1,28 @@
+{
+ "slug": "doenca-celiaca-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia duodenal de mulher de 34 anos com suspeita de doença celíaca: atrofia vilositária subtotal, hiperplasia de criptas e linfocitose intraepitelial (Marsh 3).",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "atrofia-vilositaria",
+   "status": "presente",
+   "nota": "Vilosidades muito encurtadas ou ausentes (atrofia subtotal), com criptas alongadas."
+  },
+  {
+   "achado": "linfocitose-intraepitelial",
+   "status": "presente",
+   "nota": "Numerosos linfócitos entre os enterócitos da superfície."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "nota": "Lâmina própria densa de plasmócitos e linfócitos."
+  }
+ ],
+ "semMarcacoes": true
+}

@@ -863,4 +863,87 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Dermatofibroma', 'Outras lesões dérmicas benignas'],
     armadilhas: ['Às vezes a epiderme induzida lembra carcinoma basocelular superficial; ela não tem atipia nem fendas.'],
   },
+  {
+    id: 'proliferacao-mesotelial-invasiva',
+    nome: 'Proliferação mesotelial maligna invasiva',
+    sinonimos: ['mesotelioma epitelioide', 'invasão da gordura pela pleura', 'células mesoteliais atípicas'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células mesoteliais poligonais, de citoplasma eosinofílico e núcleo redondo com nucléolo, formando túbulos, papilas e lençóis que atravessam a pleura e invadem a gordura da parede torácica.',
+    comoReconhecer: [
+      'No pequeno aumento: pleura espessada por tecido celular que ultrapassa a sua camada e entra na gordura subpleural ou no músculo.',
+      'No grande aumento: células cúbicas uniformes, com citoplasma denso, "janelas" entre células vizinhas e atipia muitas vezes discreta.',
+    ],
+    mecanismo: ['Fibras de asbesto inaladas chegam à pleura, causam inflamação crônica e dano ao DNA; perda de BAP1 e CDKN2A transforma o mesotélio.'],
+    significado: [
+      'A invasão (da gordura, do músculo ou do pulmão) é o que separa mesotelioma de hiperplasia mesotelial reativa, que pode ser igualmente atípica.',
+      'Imuno: calretinina, WT1 e D2-40 positivos; perda de BAP1 ou deleção de CDKN2A confirma malignidade.',
+    ],
+    ondeOcorre: ['Mesotelioma pleural e peritoneal'],
+    armadilhas: ['Hiperplasia mesotelial em pleurites e derrames forma papilas e células atípicas, mas fica na superfície, sem invadir a gordura.'],
+  },
+  {
+    id: 'ninhos-nevicos-com-maturacao',
+    nome: 'Ninhos névicos com maturação',
+    sinonimos: ['células névicas', 'maturação em profundidade', 'nevo dérmico', 'nevo composto'],
+    categoria: 'neoplasia',
+    resumo:
+      'Ninhos regulares de melanócitos névicos na junção e na derme; quanto mais profundos, menores, mais dispersos e com menos pigmento ficam — lembrando linfócitos e, no fundo, células de Schwann.',
+    comoReconhecer: [
+      'No pequeno aumento: lesão simétrica, bem delimitada, com ninhos de tamanho semelhante.',
+      'No grande aumento: células pequenas e redondas, sem nucléolo evidente, sem mitoses na derme profunda.',
+    ],
+    mecanismo: ['Mutação ativadora de BRAF (ou NRAS) faz o melanócito proliferar, mas ele entra em senescência (via p16): a lesão para de crescer.'],
+    significado: ['Define o nevo melanocítico benigno. A maturação, a simetria e a ausência de mitoses profundas são os principais argumentos contra melanoma.'],
+    ondeOcorre: ['Nevo juncional, composto e intradérmico', 'Nevo congênito'],
+    armadilhas: ['Nevos traumatizados, de gestantes e de pele acral podem ter atipia e raras mitoses superficiais sem ser melanoma.'],
+  },
+  {
+    id: 'nucleos-de-carcinoma-papilifero',
+    nome: 'Núcleos do carcinoma papilífero da tireoide',
+    sinonimos: ['núcleos em vidro fosco', 'núcleos de "Orphan Annie"', 'fendas nucleares', 'pseudoinclusões nucleares'],
+    categoria: 'neoplasia',
+    resumo:
+      'Núcleos aumentados, alongados e sobrepostos, com cromatina clara ("vidro fosco"), contorno irregular, fendas longitudinais ("grãos de café") e pseudoinclusões de citoplasma.',
+    comoReconhecer: [
+      'No médio aumento: epitélio mais escuro e "apinhado" que o dos folículos normais, com núcleos que se sobrepõem.',
+      'No grande aumento: núcleos pálidos, vazios no centro, com sulcos e membranas espessas; o nucléolo é pequeno.',
+    ],
+    mecanismo: ['Mutação BRAF V600E ou rearranjos RET/PTC ativam a via MAPK; a arquitetura nuclear se altera (proteínas da lâmina nuclear).'],
+    significado: [
+      'O diagnóstico do carcinoma papilífero é feito pelos núcleos, mesmo sem papilas (variante folicular). É o câncer de tireoide mais comum, com ótimo prognóstico.',
+      'Os mesmos núcleos são vistos na punção aspirativa (Bethesda VI).',
+    ],
+    ondeOcorre: ['Carcinoma papilífero da tireoide e suas metástases linfonodais'],
+    armadilhas: ['A fixação lenta clareia núcleos da tireoide normal; tireoidite de Hashimoto dá alterações nucleares focais — avalie a lesão como um todo.'],
+  },
+  {
+    id: 'espirais-meningoteliais',
+    nome: 'Espirais e lóbulos meningoteliais',
+    sinonimos: ['células meningoteliais', 'arranjo em redemoinho', 'whorls'],
+    categoria: 'neoplasia',
+    resumo:
+      'Células com núcleos ovais e uniformes, citoplasma rosado de limites pouco nítidos (sincicial), organizadas em lóbulos e em pequenos redemoinhos concêntricos; às vezes com pseudoinclusões nucleares.',
+    comoReconhecer: ['Lóbulos separados por septos finos; no centro de alguns, células enroladas em espiral, que podem calcificar (corpos psamomatosos).'],
+    mecanismo: ['Tumor das células aracnoides (capa meningotelial); perda de NF2 (cromossomo 22) na maioria.'],
+    significado: ['Aspecto do meningioma meningotelial/transicional, o tumor intracraniano primário mais comum do adulto, geralmente benigno (grau 1 da OMS).'],
+    ondeOcorre: ['Meningioma', 'Hiperplasia meningotelial'],
+    armadilhas: ['Schwannoma e tumor fibroso solitário podem imitar meningioma fibroso; imuno (EMA, SSTR2) ajuda.'],
+  },
+  {
+    id: 'celulas-germinativas-neoplasicas',
+    nome: 'Células germinativas neoplásicas (tipo seminoma)',
+    sinonimos: ['células de seminoma', 'células claras grandes com nucléolo'],
+    categoria: 'neoplasia',
+    resumo:
+      'Lençóis de células grandes e uniformes, de citoplasma claro ou pálido (glicogênio), membranas nítidas e núcleo central grande com nucléolo proeminente, separadas por septos finos com linfócitos.',
+    comoReconhecer: [
+      'No pequeno aumento: tumor homogêneo, que substitui os túbulos seminíferos, dividido em lóbulos por septos fibrosos.',
+      'No grande aumento: células "em ovo frito", núcleo com nucléolo evidente; linfócitos e às vezes granulomas nos septos.',
+    ],
+    mecanismo: ['Originam-se da neoplasia de células germinativas in situ, que por sua vez vem de gonócitos fetais que não amadureceram (isocromossomo 12p).'],
+    significado: ['Define o seminoma, o tumor testicular mais comum (homens de 25–45 anos), muito sensível a radioterapia e quimioterapia, com cura acima de 95 %.'],
+    ondeOcorre: ['Seminoma testicular', 'Disgerminoma do ovário', 'Germinoma do SNC e do mediastino'],
+    armadilhas: ['Linfoma testicular (idosos) também forma lençóis, mas infiltra entre túbulos e é CD45+; o seminoma é OCT3/4 e SALL4 positivo.'],
+  },
 ]

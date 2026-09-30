@@ -134,6 +134,11 @@ export interface AnotacaoPatologica {
   resumo: string
   marcacoes: MarcacaoNaLamina[]
   achados: AchadoNaLamina[]
+  /**
+   * Lâmina publicada só com a descrição dos achados, sem setas: o diagnóstico
+   * e cada veredito foram conferidos, mas as marcações ainda serão feitas.
+   */
+  semMarcacoes?: boolean
 }
 
 /** Caso clínico de origem, traduzido. */

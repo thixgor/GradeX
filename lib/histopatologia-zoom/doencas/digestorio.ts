@@ -1197,4 +1197,252 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'Na metástase, um nódulo de glândulas do intestino ocupa o fígado e empurra os hepatócitos, que ficam achatados na borda.',
     ],
   },
+  {
+    id: 'ulcera-peptica',
+    nome: 'Úlcera péptica crônica',
+    sinonimos: ['úlcera gástrica', 'úlcera duodenal', 'doença ulcerosa péptica'],
+    nomesEmIngles: ['chronic peptic ulcer'],
+    sistema: 'digestorio',
+    orgao: 'estomago-piloro',
+    prioridade: 16,
+    resumo:
+      'Perda de toda a mucosa que atravessa a muscular da mucosa, com base em quatro camadas (exsudato fibrinopurulento, necrose fibrinoide, tecido de granulação e cicatriz fibrosa), no estômago ou no duodeno.',
+    epidemiologia: 'Associada principalmente ao Helicobacter pylori e aos anti-inflamatórios não esteroides (AINEs); também tabagismo e estados hipersecretores (Zollinger-Ellison). Duodenal mais comum que a gástrica.',
+    patogenese: [
+      'O equilíbrio entre agressão (ácido, pepsina) e defesa (muco, bicarbonato, prostaglandinas, fluxo sanguíneo) se rompe.',
+      'H. pylori inflama a mucosa e aumenta a secreção ácida (úlcera duodenal); AINEs bloqueiam a COX e reduzem as prostaglandinas protetoras.',
+      'A lesão aprofunda-se além da muscular da mucosa; o fundo é continuamente digerido e reparado, formando camadas: exsudato, necrose fibrinoide, granulação e fibrose.',
+      'Complicações: hemorragia (erosão de artéria na base), perfuração, penetração e estenose cicatricial.',
+    ],
+    roteiro: [
+      'Panorâmico: cratera com bordas bem definidas e mucosa vizinha interrompida abruptamente; a muscular própria é substituída por fibrose na base.',
+      'Médio aumento: identifique as camadas da base — exsudato, necrose fibrinoide, granulação, fibrose.',
+      'Na borda: mucosa regenerativa e gastrite; procure H. pylori e exclua malignidade (sempre biopsiar úlceras gástricas).',
+    ],
+    achados: [
+      {
+        achado: 'ulceracao-da-mucosa',
+        tipo: 'especifico',
+        comoAparece: 'Defeito que atravessa a mucosa e a muscular da mucosa, atingindo a parede profunda.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'especifico',
+        comoAparece: 'Cicatriz fibrosa na base, interrompendo a muscular própria — marca a cronicidade.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'tecido-de-granulacao',
+        tipo: 'geral',
+        comoAparece: 'Camada de capilares e fibroblastos sob o exsudato.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'exsudato-fibrinopurulento',
+        tipo: 'geral',
+        comoAparece: 'Fibrina e neutrófilos na superfície da cratera.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Adenocarcinoma gástrico ulcerado',
+        comoSeparar: 'Glândulas ou células atípicas (inclusive em anel de sinete) na borda e na base; por isso toda úlcera gástrica deve ser biopsiada.',
+      },
+      {
+        nome: 'Erosão / úlcera aguda de estresse',
+        comoSeparar: 'Rasa, sem atravessar a muscular da mucosa, sem cicatriz fibrosa na base.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dor epigástrica em queimação relacionada às refeições; hemorragia digestiva (hematêmese, melena) é a complicação mais comum; perfuração causa abdome agudo.',
+      'Tratamento: inibidor de bomba de prótons, erradicação do H. pylori e suspensão dos AINEs; endoscopia para hemostasia.',
+    ],
+    comparacaoComNormal: [
+      'No estômago normal, a mucosa glandular repousa sobre a muscular da mucosa, a submucosa e a muscular própria contínua.',
+      'Na úlcera crônica, todas essas camadas somem na cratera e são substituídas por exsudato, granulação e cicatriz.',
+    ],
+  },
+  {
+    id: 'congestao-hepatica-cronica',
+    nome: 'Congestão hepática crônica (fígado em noz-moscada)',
+    sinonimos: ['fígado em noz-moscada', 'congestão passiva crônica do fígado', 'hepatopatia congestiva'],
+    nomesEmIngles: ['chronic passive congestion of the liver', 'nutmeg liver'],
+    sistema: 'glandulas-digestivas',
+    orgao: 'figado',
+    prioridade: 14,
+    resumo:
+      'Alteração do fígado na insuficiência cardíaca: sinusoides centrolobulares dilatados e cheios de sangue, hepatócitos da zona 3 atróficos ou necróticos, zona periportal preservada.',
+    epidemiologia: 'Frequente em pacientes com insuficiência cardíaca direita ou global, pericardite constritiva e cor pulmonale.',
+    patogenese: [
+      'A pressão venosa central elevada se transmite às veias hepáticas e às veias centrais.',
+      'Os sinusoides da zona 3 dilatam e se enchem de sangue; o fluxo lento reduz a oferta de oxigênio.',
+      'Os hepatócitos centrolobulares atrofiam e morrem; a persistência leva a fibrose centrolobular que pode ligar veias centrais ("cirrose cardíaca").',
+    ],
+    roteiro: [
+      'Panorâmico: faixas vermelhas centradas nas veias centrais, alternando com parênquima claro (aspecto de noz-moscada na peça).',
+      'Médio aumento: sinusoides dilatados e trabéculas atróficas na zona 3; zona 1 (periportal) preservada.',
+      'Grande aumento: hemácias entre as placas, macrófagos com hemossiderina, fibrose perivenular.',
+    ],
+    achados: [
+      {
+        achado: 'congestao-centrolobular',
+        tipo: 'especifico',
+        comoAparece: 'Sinusoides centrolobulares dilatados e cheios de sangue, com atrofia das placas.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'hiperemia-e-congestao',
+        tipo: 'geral',
+        comoAparece: 'Congestão vascular difusa.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'esteatose-macrovesicular',
+        tipo: 'geral',
+        comoAparece: 'Gotas de gordura em hepatócitos hipóxicos, periféricas às áreas congestas.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Síndrome de Budd-Chiari / obstrução sinusoidal',
+        comoSeparar: 'Mesmo padrão, mas com trombose das veias hepáticas ou lesão endotelial sinusoidal (quimioterapia, transplante de medula).',
+      },
+      {
+        nome: 'Hepatite isquêmica (choque)',
+        comoSeparar: 'Necrose centrolobular com pouca congestão, em contexto de hipotensão aguda.',
+      },
+    ],
+    correlacaoClinica: [
+      'Hepatomegalia dolorosa, refluxo hepatojugular, ascite; elevação leve de bilirrubina e transaminases.',
+      'Trata-se a causa cardíaca; o dano reverte se a congestão for aliviada antes da fibrose.',
+    ],
+    comparacaoComNormal: [
+      'No fígado normal, os sinusoides são fendas estreitas entre placas de hepatócitos que irradiam da veia central.',
+      'Na congestão, em volta das veias centrais os sinusoides viram lagos de sangue e as placas de hepatócitos afinam.',
+    ],
+  },
+  {
+    id: 'doenca-celiaca',
+    nome: 'Doença celíaca',
+    sinonimos: ['enteropatia sensível ao glúten', 'espru celíaco'],
+    nomesEmIngles: ['coeliac disease', 'celiac disease'],
+    sistema: 'digestorio',
+    orgao: 'duodeno',
+    prioridade: 17,
+    resumo:
+      'Enteropatia imunomediada desencadeada pelo glúten em pessoas geneticamente predispostas (HLA-DQ2/DQ8): linfocitose intraepitelial, hiperplasia de criptas e atrofia vilositária no duodeno.',
+    epidemiologia: 'Cerca de 1 % da população; qualquer idade, mais em mulheres. Associada a diabetes tipo 1, tireoidite autoimune, síndrome de Down e deficiência de IgA.',
+    patogenese: [
+      'A gliadina resiste à digestão e atravessa o epitélio; a transglutaminase tecidual a desamida.',
+      'Células apresentadoras com HLA-DQ2/DQ8 apresentam a gliadina a linfócitos T CD4+, que produzem interferon-γ; surgem anticorpos antitransglutaminase.',
+      'Linfócitos T CD8+ intraepiteliais matam enterócitos; as criptas proliferam para repor, mas as vilosidades encurtam (classificação de Marsh).',
+    ],
+    roteiro: [
+      'Panorâmico: vilosidades curtas, largas ou ausentes; criptas alongadas.',
+      'Grande aumento: conte linfócitos intraepiteliais na ponta dos vilos (> 25/100 enterócitos).',
+      'Lâmina própria com mais plasmócitos e linfócitos; enterócitos de superfície achatados.',
+    ],
+    achados: [
+      {
+        achado: 'atrofia-vilositaria',
+        tipo: 'especifico',
+        comoAparece: 'Vilosidades encurtadas ou ausentes, com criptas hiperplásicas.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'linfocitose-intraepitelial',
+        tipo: 'especifico',
+        comoAparece: 'Linfócitos em excesso no epitélio da superfície.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Lâmina própria com aumento de plasmócitos e linfócitos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Giardíase',
+        comoSeparar: 'Trofozoítos na luz; atrofia leve ou ausente.',
+      },
+      {
+        nome: 'Enteropatia por drogas (olmesartana) e imunodeficiência comum variável',
+        comoSeparar: 'Mesma atrofia, sem resposta ao glúten; falta de plasmócitos na imunodeficiência.',
+      },
+    ],
+    correlacaoClinica: [
+      'Diarreia crônica, distensão, perda de peso e déficit de crescimento nas crianças; nos adultos, muitas vezes anemia ferropriva, osteoporose ou dermatite herpetiforme.',
+      'Diagnóstico: antitransglutaminase IgA (com IgA total) e biópsia duodenal em dieta com glúten.',
+      'Tratamento: dieta sem glúten por toda a vida; a mucosa se recupera em meses. Risco de linfoma T associado à enteropatia se não tratada.',
+    ],
+    comparacaoComNormal: [
+      'No duodeno normal, as vilosidades são altas e finas (3–5 vezes a altura das criptas), revestidas por enterócitos com poucos linfócitos.',
+      'Na doença celíaca, as vilosidades encurtam ou somem, as criptas se alongam e o epitélio fica cheio de linfócitos.',
+    ],
+  },
+  {
+    id: 'esofago-de-barrett',
+    nome: 'Esôfago de Barrett',
+    sinonimos: ['Barrett', 'metaplasia intestinal do esôfago', 'epitélio colunar do esôfago'],
+    nomesEmIngles: ["Barrett's oesophagus"],
+    sistema: 'digestorio',
+    orgao: 'esofago',
+    prioridade: 18,
+    resumo:
+      'Substituição do epitélio escamoso do esôfago distal por epitélio colunar com metaplasia intestinal (células caliciformes), consequência do refluxo crônico e precursora do adenocarcinoma de esôfago.',
+    epidemiologia: 'Presente em cerca de 10 % das pessoas com doença do refluxo gastroesofágico sintomática; homens brancos de meia-idade, obesos e fumantes. Risco de adenocarcinoma de 0,1–0,5 % ao ano.',
+    patogenese: [
+      'O refluxo crônico de ácido e bile lesa repetidamente o epitélio escamoso.',
+      'Células-tronco da junção ou das glândulas passam a formar epitélio colunar, mais resistente ao ácido (metaplasia).',
+      'Aparecem células caliciformes (metaplasia intestinal); mutações sucessivas (TP53, CDKN2A) levam a displasia de baixo e alto grau e ao adenocarcinoma.',
+    ],
+    roteiro: [
+      'Panorâmico: fragmentos de mucosa colunar glandular e, ao lado, epitélio escamoso esofágico.',
+      'Médio aumento: glândulas de tipo gástrico/intestinal com células caliciformes em "cálice", de muco azulado.',
+      'Grande aumento: avalie displasia — núcleos estratificados e hipercromáticos que chegam à superfície sem maturar.',
+    ],
+    achados: [
+      {
+        achado: 'metaplasia-intestinal',
+        tipo: 'especifico',
+        comoAparece: 'Células caliciformes no epitélio colunar do esôfago.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Inflamação crônica da lâmina própria pelo refluxo.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'displasia-epitelial',
+        tipo: 'geral',
+        comoAparece: 'Atipia sem maturação para a superfície — determina a vigilância e a conduta.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Mucosa gástrica da cárdia ou hérnia hiatal',
+        comoSeparar: 'Epitélio colunar sem células caliciformes, em biópsia da junção e não do esôfago acima dela.',
+      },
+      {
+        nome: 'Pseudocaliciformes',
+        comoSeparar: 'Células foveolares distendidas de muco claro, sem o formato de cálice nem muco azul (Alcian blue).',
+      },
+    ],
+    correlacaoClinica: [
+      'Endoscopia: mucosa salmão acima da junção gastroesofágica (classificação de Praga); biópsias em quatro quadrantes a cada 1–2 cm.',
+      'Conduta: inibidor de bomba de prótons, vigilância endoscópica; ablação ou ressecção endoscópica se houver displasia.',
+    ],
+    comparacaoComNormal: [
+      'O esôfago normal é revestido por epitélio estratificado pavimentoso não queratinizado.',
+      'No Barrett, esse epitélio dá lugar a glândulas colunares com células caliciformes, como no intestino.',
+    ],
+  },
 ]

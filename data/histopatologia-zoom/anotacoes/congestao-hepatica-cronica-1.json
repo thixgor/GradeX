@@ -1,0 +1,28 @@
+{
+ "slug": "congestao-hepatica-cronica-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Fígado de mulher de 50 anos com insuficiência cardíaca: congestão passiva crônica (\"noz-moscada\"), com sinusoides centrolobulares dilatados, atrofia das placas e hemossiderina.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "congestao-centrolobular",
+   "status": "presente",
+   "nota": "Sinusoides centrolobulares dilatados e cheios de hemácias, com trabéculas atróficas e macrófagos com hemossiderina; zona periportal preservada."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "nota": "Congestão vascular difusa, formando faixas vermelhas que ligam as veias centrais."
+  },
+  {
+   "achado": "esteatose-macrovesicular",
+   "status": "presente",
+   "nota": "Gotas isoladas de gordura em hepatócitos na transição entre áreas congestas e preservadas."
+  }
+ ],
+ "semMarcacoes": true
+}

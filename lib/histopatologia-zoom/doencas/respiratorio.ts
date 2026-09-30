@@ -681,4 +681,119 @@ export const DOENCAS_RESPIRATORIO: DoencaZoom[] = [
       'No carcinoide, elas formam uma massa de ninhos de células iguais, com cromatina pontilhada, que empurra ou atravessa a parede brônquica.',
     ],
   },
+  {
+    id: 'mesotelioma',
+    nome: 'Mesotelioma maligno da pleura',
+    sinonimos: ['mesotelioma pleural', 'mesotelioma epitelioide'],
+    nomesEmIngles: ['malignant pleural mesothelioma'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 10,
+    resumo:
+      'Tumor maligno do mesotélio pleural, fortemente ligado ao asbesto, que reveste e encarcera o pulmão; histologicamente epitelioide, sarcomatoide ou bifásico.',
+    epidemiologia: 'Homens acima de 60 anos com exposição ocupacional ao asbesto (amianto), com latência de 30–40 anos. Raro, mas de prognóstico muito ruim (sobrevida mediana de cerca de 1 ano).',
+    patogenese: [
+      'Fibras de asbesto (anfibólios) chegam à pleura, não são eliminadas e causam inflamação crônica e estresse oxidativo.',
+      'Mutações se acumulam no mesotélio: perda de BAP1, CDKN2A e NF2.',
+      'O tumor cresce em placas e nódulos ao longo da pleura, forma derrames e invade a parede torácica, o pulmão e o mediastino.',
+    ],
+    roteiro: [
+      'Panorâmico: pleura espessada por tumor; procure a gordura subpleural e o músculo da parede.',
+      'Médio aumento: túbulos, papilas e lençóis de células epitelioides; invasão da gordura é o critério de malignidade.',
+      'Grande aumento: células cúbicas com citoplasma eosinofílico e núcleo redondo com nucléolo; confirme com imuno (calretinina, WT1, D2-40; perda de BAP1).',
+    ],
+    achados: [
+      {
+        achado: 'proliferacao-mesotelial-invasiva',
+        tipo: 'especifico',
+        comoAparece: 'Células mesoteliais atípicas em túbulos, papilas e lençóis, invadindo a gordura subpleural.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Tumor infiltrando tecido adiposo e fibroso da parede.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'geral',
+        comoAparece: 'Espessamento fibroso da pleura; placas pleurais hialinas indicam exposição ao asbesto.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Hiperplasia mesotelial reativa',
+        comoSeparar: 'Fica na superfície, sem invasão da gordura; BAP1 preservado.',
+      },
+      {
+        nome: 'Adenocarcinoma metastático à pleura (pulmão, mama)',
+        comoSeparar: 'Imuno: TTF-1, CEA, Ber-EP4, claudina-4 positivos; calretinina e WT1 negativos.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dispneia, dor torácica e derrame pleural recorrente, muitas vezes hemorrágico; TC com espessamento pleural nodular circunferencial.',
+      'Diagnóstico por biópsia pleural (toracoscopia). Tratamento: imunoterapia (nivolumabe + ipilimumabe), quimioterapia; cirurgia em casos selecionados.',
+    ],
+    comparacaoComNormal: [
+      'A pleura normal é uma camada única de células mesoteliais achatadas sobre tecido conjuntivo fino.',
+      'No mesotelioma, essa camada vira um tumor espesso de células mesoteliais que penetra na gordura e no músculo abaixo.',
+    ],
+  },
+  {
+    id: 'enfisema',
+    nome: 'Enfisema pulmonar (DPOC)',
+    sinonimos: ['DPOC', 'doença pulmonar obstrutiva crônica', 'enfisema centroacinar', 'bronquite crônica'],
+    nomesEmIngles: ['emphysema', 'COPD'],
+    sistema: 'respiratorio',
+    orgao: 'pulmao',
+    prioridade: 11,
+    resumo:
+      'Aumento permanente dos espaços aéreos distais aos bronquíolos terminais por destruição das paredes alveolares, sem fibrose importante; com a bronquite crônica, compõe a DPOC.',
+    epidemiologia: 'Uma das principais causas de morte no mundo; o tabagismo responde pela maioria dos casos. Deficiência de α1-antitripsina em jovens e não fumantes. Exposição à fumaça de lenha e poluição.',
+    patogenese: [
+      'A fumaça recruta neutrófilos e macrófagos para os bronquíolos e alvéolos.',
+      'Elastases e metaloproteinases destroem a elastina dos septos; o fumo oxida e inativa a α1-antitripsina.',
+      'Os alvéolos se fundem em espaços grandes; perde-se a tração elástica que mantém as pequenas vias abertas: obstrução expiratória e aprisionamento aéreo.',
+      'Na bronquite crônica associada, as glândulas brônquicas se hipertrofiam e as células caliciformes aumentam: tosse produtiva.',
+    ],
+    roteiro: [
+      'Panorâmico: espaços aéreos grandes e irregulares; compare com o tamanho dos alvéolos normais.',
+      'Médio aumento: septos rotos, com pontas soltas; antracose e macrófagos pigmentados perto dos bronquíolos.',
+      'Brônquios: aumento das glândulas mucosas (índice de Reid) e metaplasia caliciforme na bronquite crônica.',
+    ],
+    achados: [
+      {
+        achado: 'destruicao-de-septos-alveolares',
+        tipo: 'especifico',
+        comoAparece: 'Espaços aéreos alargados com septos rompidos.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'antracose',
+        tipo: 'geral',
+        comoAparece: 'Pigmento de carvão em macrófagos perto de bronquíolos e vasos.',
+        peso: 'frequente',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Hiperinsuflação sem destruição (pulmão senil, compensatória)',
+        comoSeparar: 'Alvéolos grandes, mas septos íntegros.',
+      },
+      {
+        nome: 'Faveolamento da fibrose pulmonar',
+        comoSeparar: 'Espaços císticos revestidos por epitélio bronquiolar e cercados por fibrose densa.',
+      },
+    ],
+    correlacaoClinica: [
+      'Dispneia progressiva, tórax em tonel, "soprador rosado"; espirometria com VEF1/CVF < 0,7 após broncodilatador.',
+      'Tratamento: cessar o tabagismo (principal medida), broncodilatadores de longa ação, reabilitação, oxigênio domiciliar, vacinação.',
+    ],
+    comparacaoComNormal: [
+      'No pulmão normal, os alvéolos são pequenos e de tamanho parecido, separados por septos finos e contínuos.',
+      'No enfisema, os septos se rompem e os alvéolos se fundem em buracos grandes e irregulares.',
+    ],
+  },
 ]

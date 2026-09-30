@@ -79,4 +79,64 @@ export const DOENCAS_REPRODUTOR_MASCULINO: DoencaZoom[] = [
       'Na HPB, as mesmas glândulas e o mesmo estroma formam nódulos, e muitas glândulas se dilatam — o tecido é o mesmo, só que em excesso e organizado em bolas.',
     ],
   },
+  {
+    id: 'seminoma',
+    nome: 'Seminoma',
+    sinonimos: ['seminoma clássico', 'tumor de células germinativas seminomatoso'],
+    nomesEmIngles: ['seminoma'],
+    sistema: 'reprodutor-masculino',
+    orgao: 'testiculo',
+    prioridade: 2,
+    resumo:
+      'Tumor de células germinativas mais comum do testículo: lençóis de células grandes e claras com nucléolo evidente, divididos por septos fibrosos com linfócitos.',
+    epidemiologia: 'Homens de 25–45 anos; fatores de risco: criptorquidia (inclusive o testículo abdominal), tumor prévio no outro testículo, disgenesia gonadal, história familiar. Marcadores séricos em geral normais (hCG levemente elevado em alguns).',
+    patogenese: [
+      'Gonócitos fetais que não amadurecem permanecem nos túbulos como neoplasia de células germinativas in situ.',
+      'Após a puberdade, essas células proliferam e invadem, formando o seminoma; o isocromossomo 12p (ganho de 12p) é característico.',
+      'O tumor é muito imunogênico (linfócitos, granulomas) e muito sensível a radiação e platina.',
+    ],
+    roteiro: [
+      'Panorâmico: massa homogênea que substitui os túbulos seminíferos; ao redor, testículo residual.',
+      'Médio aumento: lençóis e lóbulos de células uniformes, septos com linfócitos, às vezes granulomas.',
+      'Grande aumento: células grandes, citoplasma claro, membranas nítidas e núcleo com nucléolo; procure neoplasia in situ nos túbulos vizinhos.',
+    ],
+    achados: [
+      {
+        achado: 'celulas-germinativas-neoplasicas',
+        tipo: 'especifico',
+        comoAparece: 'Lençóis de células grandes, claras, com nucléolo proeminente.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos nos septos fibrosos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'granuloma-epitelioide',
+        tipo: 'geral',
+        comoAparece: 'Reação granulomatosa no tumor.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Carcinoma embrionário',
+        comoSeparar: 'Células mais pleomórficas, sobrepostas, em glândulas e papilas, com necrose; CD30+ e OCT3/4+.',
+      },
+      {
+        nome: 'Linfoma testicular',
+        comoSeparar: 'Homens idosos, infiltração entre túbulos preservados, CD45+.',
+      },
+    ],
+    correlacaoClinica: [
+      'Aumento indolor do testículo; ultrassom com nódulo hipoecoico homogêneo. Marcadores (AFP, hCG, LDH) antes da cirurgia.',
+      'Orquiectomia radical por via inguinal; vigilância, radioterapia ou quimioterapia (carboplatina) conforme o estádio. Cura > 95 %.',
+    ],
+    comparacaoComNormal: [
+      'No testículo normal, túbulos seminíferos com espermatogênese em camadas, separados por interstício com células de Leydig.',
+      'No seminoma, os túbulos desaparecem e são substituídos por lençóis de células grandes e claras.',
+    ],
+  },
 ]

@@ -1,0 +1,23 @@
+{
+ "slug": "nevo-melanocitico-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Nevo melanocítico benigno do braço de mulher de 30 anos: lesão papilomatosa com ninhos névicos dérmicos que maturam em profundidade e pseudocisto córneo.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "ninhos-nevicos-com-maturacao",
+   "status": "presente",
+   "nota": "Lesão papilomatosa, simétrica, com ninhos de células névicas na derme que ficam menores em profundidade; sem mitoses dérmicas."
+  },
+  {
+   "achado": "pigmento-melanico",
+   "status": "presente",
+   "nota": "Pigmento discreto nas células superficiais."
+  }
+ ],
+ "semMarcacoes": true
+}

@@ -843,4 +843,17 @@ export const ACHADOS_INFLAMACAO: AchadoPatologico[] = [
     ondeOcorre: ['Vasculites ANCA (poliangiite microscópica, granulomatose com poliangiite)', 'Doença antimembrana basal glomerular', 'Nefrite lúpica', 'Nefropatia por IgA grave'],
     armadilhas: ['Cortes tangenciais do polo tubular e hiperplasia de podócitos (GESF colapsante) podem imitar crescentes.'],
   },
+  {
+    id: 'linfocitose-intraepitelial',
+    nome: 'Linfocitose intraepitelial',
+    sinonimos: ['linfócitos intraepiteliais aumentados', 'LIE', 'IEL'],
+    categoria: 'inflamacao',
+    resumo:
+      'Linfócitos pequenos em excesso entre os enterócitos da superfície das vilosidades (mais de 25 para cada 100 células epiteliais), inclusive na ponta dos vilos.',
+    comoReconhecer: ['Núcleos pequenos, redondos e escuros, com halo claro, espalhados no epitélio de revestimento, acima da membrana basal.'],
+    mecanismo: ['Na doença celíaca, a gliadina ativa linfócitos T CD8+ intraepiteliais (via IL-15 e NKG2D), que matam os enterócitos.'],
+    significado: ['Primeira alteração da doença celíaca (Marsh 1); com hiperplasia de criptas e atrofia vilositária, compõe Marsh 3.'],
+    ondeOcorre: ['Doença celíaca', 'Giardíase', 'Drogas (AINEs, olmesartana)', 'Infecção por H. pylori', 'Doenças autoimunes'],
+    armadilhas: ['Não é específica: deve ser interpretada com sorologia e histórico de glúten.'],
+  },
 ]

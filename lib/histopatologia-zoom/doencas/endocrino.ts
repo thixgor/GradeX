@@ -88,4 +88,64 @@ export const DOENCAS_ENDOCRINO: DoencaZoom[] = [
       'No Hashimoto, o espaço entre os folículos é tomado por linfócitos (até com centros germinativos), os folículos encolhem e as células viram oncócitos rosa-granulares.',
     ],
   },
+  {
+    id: 'carcinoma-papilifero-da-tireoide',
+    nome: 'Carcinoma papilífero da tireoide',
+    sinonimos: ['carcinoma papilar da tireoide', 'CPT'],
+    nomesEmIngles: ['papillary thyroid carcinoma'],
+    sistema: 'endocrino',
+    orgao: 'tireoide',
+    prioridade: 2,
+    resumo:
+      'Câncer de tireoide mais comum (cerca de 85 %), definido pelas alterações nucleares características — núcleos claros, sobrepostos, com fendas e pseudoinclusões —, geralmente com papilas e corpos psamomatosos.',
+    epidemiologia: 'Mulheres de 20–50 anos (3:1). Fatores: radiação ionizante na infância (Chernobyl), história familiar. Prognóstico excelente (sobrevida em 10 anos > 90 %).',
+    patogenese: [
+      'Ativação da via MAPK: mutação BRAF V600E (mais comum) ou rearranjos RET/PTC (relacionados à radiação), ou RAS na variante folicular.',
+      'As células foliculares proliferam formando papilas com eixos fibrovasculares e alteram a arquitetura nuclear.',
+      'Dissemina-se por linfáticos para os linfonodos cervicais (frequente e precoce); metástases a distância são raras.',
+    ],
+    roteiro: [
+      'Panorâmico: nódulo infiltrativo ou encapsulado, diferente dos folículos cheios de coloide ao redor; às vezes fibrose e calcificação.',
+      'Médio aumento: papilas com eixo fibrovascular e folículos com coloide escuro; procure corpos psamomatosos.',
+      'Grande aumento: núcleos em vidro fosco, sobrepostos, com fendas e pseudoinclusões — o critério diagnóstico.',
+    ],
+    achados: [
+      {
+        achado: 'nucleos-de-carcinoma-papilifero',
+        tipo: 'especifico',
+        comoAparece: 'Núcleos claros, alongados e sobrepostos, com fendas e pseudoinclusões.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'papilas-com-eixo-fibrovascular',
+        tipo: 'especifico',
+        comoAparece: 'Papilas ramificadas revestidas pelas células tumorais.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'corpos-psamomatosos',
+        tipo: 'geral',
+        comoAparece: 'Calcificações lamelares nos eixos das papilas ou no estroma.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Nódulo hiperplásico (bócio) com papilas',
+        comoSeparar: 'Papilas com núcleos redondos, escuros e regulares, sem vidro fosco nem fendas.',
+      },
+      {
+        nome: 'Neoplasia folicular',
+        comoSeparar: 'Padrão folicular sem as alterações nucleares do carcinoma papilífero.',
+      },
+    ],
+    correlacaoClinica: [
+      'Nódulo tireoidiano indolor ou linfonodo cervical aumentado; ultrassom com nódulo hipoecoico, microcalcificações e margens irregulares.',
+      'Punção aspirativa por agulha fina (Bethesda). Tratamento: tireoidectomia (ou lobectomia nos pequenos), iodo radioativo nos de maior risco e supressão de TSH.',
+    ],
+    comparacaoComNormal: [
+      'Na tireoide normal, folículos redondos cheios de coloide são revestidos por células cúbicas baixas, de núcleo redondo e escuro.',
+      'No carcinoma papilífero, as células ficam altas e apinhadas, os núcleos clareiam e se sobrepõem, e o epitélio forma papilas.',
+    ],
+  },
 ]

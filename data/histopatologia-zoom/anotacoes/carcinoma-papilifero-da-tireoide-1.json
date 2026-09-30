@@ -1,0 +1,28 @@
+{
+ "slug": "carcinoma-papilifero-da-tireoide-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Lobectomia tireoidiana de mulher de 53 anos com nódulo único: carcinoma papilífero com núcleos típicos, em meio a tireoide com folículos cheios de coloide.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "nucleos-de-carcinoma-papilifero",
+   "status": "presente",
+   "nota": "No nódulo, núcleos alongados, claros (\"vidro fosco\"), sobrepostos, com fendas longitudinais."
+  },
+  {
+   "achado": "papilas-com-eixo-fibrovascular",
+   "status": "presente",
+   "nota": "Estruturas papilares e folículos alongados revestidos pelas células tumorais."
+  },
+  {
+   "achado": "corpos-psamomatosos",
+   "status": "nao-avaliavel",
+   "nota": "Não foram encontrados corpos psamomatosos inequívocos nos campos examinados."
+  }
+ ],
+ "semMarcacoes": true
+}

@@ -632,4 +632,58 @@ export const DOENCAS_URINARIO: DoencaZoom[] = [
       'Na glomerulonefrite crescêntica, esse espaço é preenchido por uma meia-lua de células que esmaga o tufo.',
     ],
   },
+  {
+    id: 'oncocitoma-renal',
+    nome: 'Oncocitoma renal',
+    sinonimos: ['oncocitoma'],
+    nomesEmIngles: ['renal oncocytoma'],
+    sistema: 'urinario',
+    orgao: 'rim',
+    prioridade: 20,
+    resumo:
+      'Tumor renal benigno de células grandes e poligonais com citoplasma rosa-granular (cheio de mitocôndrias), em ninhos sobre estroma frouxo, muitas vezes com cicatriz central.',
+    epidemiologia: 'Cerca de 5–7 % dos tumores renais; adultos de 60–70 anos, mais homens. Geralmente achado incidental. Múltiplos na síndrome de Birt-Hogg-Dubé.',
+    patogenese: [
+      'Derivado das células intercaladas do ducto coletor, como o carcinoma cromófobo.',
+      'Mutações do DNA mitocondrial e perdas dos cromossomos 1 e 14 levam ao acúmulo de mitocôndrias defeituosas: citoplasma eosinofílico e granular.',
+      'Cresce devagar, sem invadir; a cicatriz central é resultado de isquemia no centro do tumor.',
+    ],
+    roteiro: [
+      'Panorâmico: tumor bem delimitado, homogêneo, castanho na peça; procure cicatriz central e limite com o rim.',
+      'Médio aumento: ninhos e ácinos de células eosinofílicas em estroma edematoso ou hialino.',
+      'Grande aumento: núcleos redondos e regulares, citoplasma granular; ausência de membranas espessas, núcleos enrugados e mitoses.',
+    ],
+    achados: [
+      {
+        achado: 'metaplasia-oncocitica',
+        tipo: 'especifico',
+        comoAparece: 'Células grandes de citoplasma eosinofílico granular, núcleos redondos e regulares.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'geral',
+        comoAparece: 'Cicatriz central estrelada (típica, mas nem sempre presente).',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Carcinoma cromófobo, variante eosinofílica',
+        comoSeparar: 'Membranas espessas, núcleos enrugados e halos perinucleares; ferro coloidal difuso e CK7 difusa.',
+      },
+      {
+        nome: 'Carcinoma de células claras com áreas eosinofílicas',
+        comoSeparar: 'Rede capilar delicada, áreas de células claras típicas, CA-IX difuso.',
+      },
+    ],
+    correlacaoClinica: [
+      'Massa renal sólida descoberta em exame de imagem; a cicatriz central pode aparecer na TC, mas não permite distinguir de carcinoma com segurança.',
+      'Tratamento: nefrectomia parcial ou vigilância após biópsia; não metastatiza.',
+    ],
+    comparacaoComNormal: [
+      'No rim normal, as células intercaladas são poucas e espalhadas entre as principais do ducto coletor.',
+      'No oncocitoma, células semelhantes, carregadas de mitocôndrias, formam uma massa rosada que substitui o parênquima.',
+    ],
+  },
 ]

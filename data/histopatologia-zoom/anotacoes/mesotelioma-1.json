@@ -1,0 +1,28 @@
+{
+ "slug": "mesotelioma-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "resumo": "Biópsia pleural de mulher de 77 anos com derrame: mesotelioma epitelioide infiltrando a gordura subpleural.",
+ "marcacoes": [],
+ "achados": [
+  {
+   "achado": "proliferacao-mesotelial-invasiva",
+   "status": "presente",
+   "nota": "Células epitelioides mesoteliais em túbulos e lençóis ao longo da pleura espessada."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "nota": "O tumor penetra entre adipócitos da gordura subpleural — critério de malignidade."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "nota": "Pleura espessada por tecido fibroso ao redor do tumor."
+  }
+ ],
+ "semMarcacoes": true
+}

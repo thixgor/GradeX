@@ -139,6 +139,12 @@ export default async function PaginaDaLaminaPatologica({ params }: Parametros) {
           </header>
 
           {anotacao?.resumo && <p className="mb-3 max-w-4xl text-[15px] leading-relaxed">{anotacao.resumo}</p>}
+          {anotacao?.semMarcacoes && (
+            <p className="mb-3 max-w-4xl rounded-lg border border-amber-500/30 bg-amber-500/[0.06] px-3 py-2 text-sm leading-relaxed">
+              Esta lâmina ainda não tem setas. O diagnóstico e os achados foram conferidos e estão descritos no painel de
+              achados; use o roteiro da ficha para encontrá-los. As marcações serão acrescentadas.
+            </p>
+          )}
 
           <link rel="preload" as="image" href={lamina.piramide.miniatura.url} crossOrigin="anonymous" />
           <LaminaPatologicaInterativa
@@ -213,7 +219,10 @@ export default async function PaginaDaLaminaPatologica({ params }: Parametros) {
 
               <p className="text-[11px] leading-relaxed text-muted-foreground">
                 {RODAPE_LEEDS} {REFERENCIA_ABNT_LEEDS}
-                {anotacao && ` Marcações conferidas em ${anotacao.revisao.conferencias} passagens pela lâmina, em vários aumentos.`}{' '}
+                {anotacao &&
+                  (anotacao.semMarcacoes
+                    ? ` Achados conferidos em ${anotacao.revisao.conferencias} passagens pela lâmina, em vários aumentos.`
+                    : ` Marcações conferidas em ${anotacao.revisao.conferencias} passagens pela lâmina, em vários aumentos.`)}{' '}
                 O texto está em revisão por patologista.
               </p>
             </aside>
