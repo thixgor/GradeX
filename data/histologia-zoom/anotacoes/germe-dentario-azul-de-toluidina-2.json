@@ -1,0 +1,52 @@
+{
+ "slug": "germe-dentario-azul-de-toluidina-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
+  "data": "2026-09-30",
+  "conferencias": 3
+ },
+ "estruturas": [
+  {
+   "id": "ameloblastos",
+   "estrutura": "ameloblasto",
+   "rotulo": "Ameloblastos: células colunares altas em paliçada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.26,
+      0.49
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.24,
+    0.48,
+    0.28,
+    0.52
+   ]
+  },
+  {
+   "id": "reticulo",
+   "estrutura": "reticulo-estrelado",
+   "rotulo": "Retículo estrelado: células estreladas com grandes espaços",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.25,
+      0.515
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.46,
+    0.34,
+    0.6
+   ]
+  }
+ ]
+}

@@ -2,7 +2,7 @@
  "slug": "gengiva-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -47,6 +47,90 @@
     0.1,
     0.4,
     0.4
+   ]
+  },
+  {
+   "id": "basal",
+   "estrutura": "camada-basal",
+   "rotulo": "Camada basal na ponta da crista epitelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.438,
+      0.2455
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.46,
+    0.26
+   ]
+  },
+  {
+   "id": "espinhosa",
+   "estrutura": "camada-espinhosa",
+   "rotulo": "Camada espinhosa: células poligonais com pontes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.212
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.46,
+    0.26
+   ]
+  },
+  {
+   "id": "papila-conj",
+   "estrutura": "lamina-propria",
+   "rotulo": "Papila de conjuntivo entre as cristas epiteliais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4405,
+      0.2267
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.46,
+    0.26
+   ]
+  },
+  {
+   "id": "colageno",
+   "estrutura": "feixe-de-colageno",
+   "rotulo": "Lâmina própria densa, rica em colágeno, presa ao periósteo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.66,
+      0.452
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.4,
+    0.7,
+    0.5
    ]
   }
  ]

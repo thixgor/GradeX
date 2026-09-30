@@ -2,8 +2,8 @@
  "slug": "periodonto-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -27,6 +27,48 @@
     0.2
    ],
    "nota": "Coloração muito pálida: das estruturas do periodonto, só a gengiva se reconhece com segurança neste corte."
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria da gengiva",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.245,
+      0.152
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.08,
+    0.3,
+    0.18
+   ]
+  },
+  {
+   "id": "cristas",
+   "estrutura": "camada-basal",
+   "rotulo": "Cristas epiteliais longas penetrando o conjuntivo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.279,
+      0.1415
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.2,
+    0.08,
+    0.3,
+    0.18
+   ]
   }
  ]
 }

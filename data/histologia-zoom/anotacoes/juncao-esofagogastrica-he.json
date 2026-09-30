@@ -2,8 +2,8 @@
  "slug": "juncao-esofagogastrica-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.5,
     0.0,
     0.75,
+    0.2
+   ]
+  },
+  {
+   "id": "escamoso",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso do esôfago",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1089,
+      0.2604
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.08,
+    0.2,
+    0.18,
+    0.3
+   ]
+  },
+  {
+   "id": "glandulas-esofago",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Glândulas esofágicas na submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.17,
+      0.276
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.08,
+    0.2,
+    0.18,
+    0.3
+   ]
+  },
+  {
+   "id": "glandular",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Mucosa da cárdia, com glândulas mucosas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.57,
+      0.1
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.0,
+    0.7,
     0.2
    ]
   }

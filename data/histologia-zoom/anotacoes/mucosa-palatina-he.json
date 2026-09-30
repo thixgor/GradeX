@@ -2,8 +2,8 @@
  "slug": "mucosa-palatina-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.12,
     0.35,
     0.42
+   ]
+  },
+  {
+   "id": "cornea",
+   "estrutura": "camada-cornea",
+   "rotulo": "Camada córnea: o palato duro é mucosa mastigatória queratinizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      0.1715
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.2,
+    0.16,
+    0.26,
+    0.22
+   ]
+  },
+  {
+   "id": "espinhosa",
+   "estrutura": "camada-espinhosa",
+   "rotulo": "Camada espinhosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.195
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.16,
+    0.26,
+    0.22
+   ]
+  },
+  {
+   "id": "papila",
+   "estrutura": "lamina-propria",
+   "rotulo": "Papila de conjuntivo da lâmina própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.247,
+      0.203
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.16,
+    0.26,
+    0.22
    ]
   }
  ]
