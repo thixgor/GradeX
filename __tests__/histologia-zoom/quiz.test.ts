@@ -24,8 +24,11 @@ describe('quiz de identificação — banco', () => {
       'proteinatlas',
     ].map((t) => t.toLowerCase())
     for (const q of qs) {
-      const semOpcoes = JSON.stringify({ ...q, opcoes: null }).toLowerCase()
+      // A dica é o nome da coloração ("actina de músculo liso"), que pode conter
+      // palavras de um título de lâmina sem revelar o órgão: confere-se à parte.
+      const semOpcoes = JSON.stringify({ ...q, opcoes: null, dica: null }).toLowerCase()
       for (const p of proibidos) if (p.length > 4) expect(semOpcoes.includes(p), `${p} vazou`).toBe(false)
+      expect(q.dica.startsWith('Coloração: '), 'a dica só traz a coloração').toBe(true)
     }
   })
 

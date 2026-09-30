@@ -2,31 +2,10 @@
  "slug": "pancreas-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
-  {
-   "id": "septo",
-   "estrutura": "septo-conjuntivo",
-   "rotulo": "Septo interlobular com vasos",
-   "marcas": [
-    {
-     "tipo": "seta",
-     "ponta": [
-      0.33,
-      0.37
-     ],
-     "angulo": 0
-    }
-   ],
-   "vista": [
-    0.3,
-    0.3,
-    0.45,
-    0.45
-   ]
-  },
   {
    "id": "lobulo",
    "estrutura": "acino-pancreatico",
@@ -46,6 +25,132 @@
     0.3,
     0.45,
     0.45
+   ]
+  },
+  {
+   "id": "ilhota",
+   "estrutura": "ilhota-de-langerhans",
+   "rotulo": "Ilhota de Langerhans: grupo pálido de células endócrinas entre os ácinos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4412,
+      0.4722
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.436,
+    0.466,
+    0.448,
+    0.478
+   ]
+  },
+  {
+   "id": "acinos",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Ácinos: base basofílica e ápice com grânulos vermelhos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4455,
+      0.47
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.436,
+    0.466,
+    0.448,
+    0.478
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo interlobular com gordura e vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.392
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    0.35,
+    0.35,
+    0.45
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Adipócitos no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.314,
+      0.387
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    0.35,
+    0.35,
+    0.45
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular em conjuntivo denso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.462,
+      0.535
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.45,
+    0.5,
+    0.55
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Artéria de parede muscular espessa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.247,
+      0.516
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.5,
+    0.3,
+    0.6
    ]
   }
  ]

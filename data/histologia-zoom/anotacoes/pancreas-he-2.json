@@ -2,29 +2,71 @@
  "slug": "pancreas-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "acino",
    "estrutura": "acino-pancreatico",
-   "rotulo": "Ácino seroso: base basófila, ápice eosinófilo (zimogênio)",
+   "rotulo": "Ácino pancreático: grânulos de zimogênio no ápice",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.378,
-      0.2465
+      0.3685,
+      0.2485
      ],
      "angulo": 180
     }
    ],
    "vista": [
-    0.36,
+    0.366,
     0.24,
-    0.385,
-    0.265
+    0.378,
+    0.252
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular: epitélio colunar com pregas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.515,
+      0.14
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.1,
+    0.55,
+    0.2
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septos finos que dividem os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.644,
+      0.342
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.3,
+    0.7,
+    0.4
    ]
   }
  ]

@@ -2,29 +2,92 @@
  "slug": "submandibular-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "mucoso",
    "estrutura": "acino-mucoso",
-   "rotulo": "Ácinos mucosos claros misturados a serosos",
+   "rotulo": "Ácino mucoso claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3622,
+      0.3484
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.356,
+    0.346,
+    0.366,
+    0.356
+   ]
+  },
+  {
+   "id": "meia-lua",
+   "estrutura": "acino-seroso",
+   "rotulo": "Células serosas escuras entre os ácinos mucosos",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
       0.3615,
-      0.35
+      0.3502
      ],
-     "angulo": 180
+     "angulo": 0
     }
    ],
    "vista": [
-    0.35,
-    0.34,
-    0.38,
-    0.37
+    0.356,
+    0.346,
+    0.366,
+    0.356
+   ]
+  },
+  {
+   "id": "estriado",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado: epitélio colunar eosinofílico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3731,
+      0.3632
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.372,
+    0.356,
+    0.382,
+    0.366
+   ]
+  },
+  {
+   "id": "excretor",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2945,
+      0.6862
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.25,
+    0.66,
+    0.33,
+    0.74
    ]
   }
  ]

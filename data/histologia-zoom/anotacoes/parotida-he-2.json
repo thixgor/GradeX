@@ -2,8 +2,8 @@
  "slug": "parotida-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,111 @@
     0.4,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "acinos",
+   "estrutura": "acino-seroso",
+   "rotulo": "Ácinos serosos: células piramidais com grânulos apicais e núcleo basal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.425
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.4,
+    0.39,
+    0.45
+   ]
+  },
+  {
+   "id": "estriado",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado: células colunares rosadas em volta de luz redonda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5978,
+      0.206
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.585,
+    0.195,
+    0.605,
+    0.215
+   ]
+  },
+  {
+   "id": "estriado-2",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado de luz ampla no lóbulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8045,
+      0.46
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.78,
+    0.445,
+    0.815,
+    0.48
+   ]
+  },
+  {
+   "id": "interlobular",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.558,
+      0.86
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.8,
+    0.6,
+    0.95
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Vaso de parede fina com hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.88
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.8,
+    0.6,
+    0.95
    ]
   }
  ]

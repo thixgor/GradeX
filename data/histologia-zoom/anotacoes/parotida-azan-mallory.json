@@ -2,8 +2,8 @@
  "slug": "parotida-azan-mallory",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,111 @@
     0.54,
     0.54,
     0.56
+   ]
+  },
+  {
+   "id": "estriado",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado: células colunares em volta de luz central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5125,
+      0.5252
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.504,
+    0.519,
+    0.516,
+    0.531
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar com hemácias (vermelho no Azan)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5107,
+      0.5266
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.504,
+    0.519,
+    0.516,
+    0.531
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vênula cheia de hemácias entre os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5215,
+      0.544
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.515,
+    0.535,
+    0.527,
+    0.547
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo na periferia da glândula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.352,
+      0.318
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.42,
+    0.37
+   ]
+  },
+  {
+   "id": "septo-2",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septos interlobulares azuis (colágeno no Azan)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.14,
+      0.776
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1,
+    0.7,
+    0.22,
+    0.82
    ]
   }
  ]

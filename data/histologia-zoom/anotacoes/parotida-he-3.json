@@ -2,8 +2,8 @@
  "slug": "parotida-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -24,6 +24,111 @@
     0.54,
     0.5,
     0.57
+   ]
+  },
+  {
+   "id": "excretor",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular: epitélio biestratificado em conjuntivo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3085,
+      0.3985
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.304,
+    0.392,
+    0.32,
+    0.408
+   ]
+  },
+  {
+   "id": "intralobular",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto intralobular de luz ampla",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4985,
+      0.569
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.495,
+    0.563,
+    0.507,
+    0.575
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo conjuntivo com vasos e ductos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.342,
+      0.38
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.35,
+    0.4,
+    0.45
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso sanguíneo do septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.328,
+      0.396
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.3,
+    0.35,
+    0.4,
+    0.45
+   ]
+  },
+  {
+   "id": "lobulos",
+   "estrutura": "acino-seroso",
+   "rotulo": "Lóbulos de ácinos serosos, separados por septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.63
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.6,
+    0.5,
+    0.7
    ]
   }
  ]

@@ -2,8 +2,8 @@
  "slug": "pancreas-he-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.05,
     0.45,
     0.2
+   ]
+  },
+  {
+   "id": "acinos",
+   "estrutura": "acino-pancreatico",
+   "rotulo": "Célula acinar: núcleo basal e ápice granuloso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2985,
+      0.2194
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.295,
+    0.215,
+    0.315,
+    0.235
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Arteríola no septo interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3093,
+      0.2297
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.295,
+    0.215,
+    0.315,
+    0.235
    ]
   }
  ]

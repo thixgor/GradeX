@@ -2,8 +2,8 @@
  "slug": "glandula-salivar-menor-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,69 @@
     0.2,
     0.46,
     0.23
+   ]
+  },
+  {
+   "id": "epitelio",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epitélio estratificado pavimentoso da mucosa oral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.533,
+      0.3075
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.51,
+    0.28,
+    0.55,
+    0.32
+   ]
+  },
+  {
+   "id": "lobulo",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Lóbulo de ácinos mucosos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.145,
+      0.38
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.12,
+    0.35,
+    0.18,
+    0.41
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso sanguíneo na lâmina própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.531,
+      0.285
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.51,
+    0.28,
+    0.55,
+    0.32
    ]
   }
  ]

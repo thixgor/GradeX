@@ -2,29 +2,113 @@
  "slug": "submandibular-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
-   "id": "lobulo",
-   "estrutura": "acino-seroso",
-   "rotulo": "Lóbulo glandular com ácinos serosos e mucosos",
+   "id": "mucoso",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Ácino mucoso: citoplasma claro e espumoso, núcleo achatado na base",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.3621,
-      0.3621
+      0.3611,
+      0.3597
      ],
      "angulo": 180
     }
    ],
    "vista": [
+    0.356,
+    0.356,
+    0.366,
+    0.366
+   ]
+  },
+  {
+   "id": "seroso",
+   "estrutura": "acino-seroso",
+   "rotulo": "Ácino seroso: células escuras, granulosas, núcleo redondo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3668,
+      0.3685
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.364,
+    0.366,
+    0.374,
+    0.376
+   ]
+  },
+  {
+   "id": "excretor",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor: epitélio estratificado colunar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.476,
+      0.188
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.472,
+    0.182,
+    0.482,
+    0.192
+   ]
+  },
+  {
+   "id": "ducto-grande",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular de luz ampla",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.492,
+      0.181
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.46,
+    0.14,
+    0.54,
+    0.22
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.36
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
     0.34,
     0.34,
-    0.37,
-    0.37
+    0.38,
+    0.38
    ]
   }
  ]

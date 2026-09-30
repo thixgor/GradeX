@@ -2,8 +2,8 @@
  "slug": "sublingual-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,48 @@
     0.64,
     0.435,
     0.665
+   ]
+  },
+  {
+   "id": "mucosos",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Ácinos mucosos: citoplasma claro e espumoso — predominam na sublingual",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.456,
+      0.3045
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.3,
+    0.47,
+    0.32
+   ]
+  },
+  {
+   "id": "excretor",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor: epitélio cúbico a colunar biestratificado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.9925
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.43,
+    0.99,
+    0.45,
+    1.01
    ]
   }
  ]

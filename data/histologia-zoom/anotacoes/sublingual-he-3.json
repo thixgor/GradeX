@@ -2,20 +2,20 @@
  "slug": "sublingual-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "mucoso",
    "estrutura": "acino-mucoso",
-   "rotulo": "Ácino mucoso: citoplasma claro e espumoso, núcleo achatado na base",
+   "rotulo": "Ácino mucoso com núcleos achatados na base",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.4439,
-      0.4443
+      0.447,
+      0.444
      ],
      "angulo": 180
     }
@@ -25,8 +25,91 @@
     0.44,
     0.455,
     0.455
+   ]
+  },
+  {
+   "id": "excretor",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor interlobular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.193,
+      0.43
+     ],
+     "angulo": 45
+    }
    ],
-   "nota": "Sublingual: glândula mista predominantemente mucosa."
+   "vista": [
+    0.13,
+    0.4,
+    0.23,
+    0.5
+   ]
+  },
+  {
+   "id": "vaso",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso sanguíneo com hemácias no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.16,
+      0.42
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.13,
+    0.4,
+    0.23,
+    0.5
+   ]
+  },
+  {
+   "id": "excretor-2",
+   "estrutura": "ducto-excretor",
+   "rotulo": "Ducto excretor maior, com epitélio estratificado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.24
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.38,
+    0.18,
+    0.48,
+    0.28
+   ]
+  },
+  {
+   "id": "mucosos",
+   "estrutura": "acino-mucoso",
+   "rotulo": "Lóbulo de ácinos mucosos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.2
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.38,
+    0.18,
+    0.48,
+    0.28
+   ]
   }
  ]
 }

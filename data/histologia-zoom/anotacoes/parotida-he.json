@@ -2,8 +2,8 @@
  "slug": "parotida-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -26,6 +26,90 @@
     0.525
    ],
    "nota": "Parótida: glândula puramente serosa — ácinos de células piramidais com núcleo redondo basal e citoplasma apical granuloso."
+  },
+  {
+   "id": "estriado",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto estriado: células colunares eosinofílicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.598,
+      0.5322
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.594,
+    0.526,
+    0.608,
+    0.54
+   ]
+  },
+  {
+   "id": "intercalar",
+   "estrutura": "ducto-intercalar",
+   "rotulo": "Ducto intercalar: epitélio cúbico baixo, luz pequena",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4058,
+      0.5112
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.398,
+    0.506,
+    0.414,
+    0.522
+   ]
+  },
+  {
+   "id": "ducto-maior",
+   "estrutura": "ducto-estriado",
+   "rotulo": "Ducto de luz ampla junto ao septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4117,
+      0.5234
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.512,
+    0.42,
+    0.532
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Septo conjuntivo espesso entre os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.656,
+      0.455
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.62,
+    0.43,
+    0.67,
+    0.48
+   ]
   }
  ]
 }
