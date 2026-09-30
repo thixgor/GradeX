@@ -2,7 +2,7 @@
  "slug": "cortex-cerebral-prata",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -102,6 +102,92 @@
      ],
      "angulo": 270
     }
+   ]
+  },
+  {
+   "id": "piramidal-3",
+   "estrutura": "neuronio-piramidal",
+   "rotulo": "Outros neurônios piramidais impregnados: corpo triangular, dendrito apical voltado para a superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5693,
+      0.3772
+     ],
+     "angulo": 180
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5754,
+      0.5581
+     ],
+     "angulo": 180
+    }
+   ]
+  },
+  {
+   "id": "molecular",
+   "estrutura": "camada-molecular-cortical",
+   "rotulo": "Camada I (molecular): quase sem corpos celulares, cheia de dendritos e fibras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.505,
+      0.33
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.44,
+    0.28,
+    0.56,
+    0.4
+   ]
+  },
+  {
+   "id": "vaso-2",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Vaso cortical com sangue impregnado pela prata",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6546,
+      0.3634
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.63,
+    0.34,
+    0.69,
+    0.39
+   ]
+  },
+  {
+   "id": "glia",
+   "estrutura": "astrocito",
+   "rotulo": "Faixa negra na superfície: prolongamentos de astrócitos subpiais impregnados (glia limitante)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.41
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.43,
+    0.37,
+    0.53,
+    0.45
    ]
   }
  ]

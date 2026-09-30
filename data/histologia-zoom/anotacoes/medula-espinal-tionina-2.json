@@ -2,7 +2,7 @@
  "slug": "medula-espinal-tionina-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -367,6 +367,143 @@
     0.0,
     0.58,
     0.09
+   ]
+  },
+  {
+   "id": "sensitivo",
+   "estrutura": "neuronio-do-corno-posterior",
+   "rotulo": "Neurônios sensitivos de 2ª ordem do corno posterior: menores que os motoneurônios, Nissl mais fino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8808,
+      0.5778
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.8763,
+      0.5935
+     ],
+     "angulo": 135
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.9063,
+      0.682
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.84,
+    0.55,
+    0.96,
+    0.7
+   ]
+  },
+  {
+   "id": "intermedia",
+   "estrutura": "zona-intermedia",
+   "rotulo": "Zona intermédia (lâmina VII): interneurônios de tamanho médio entre os cornos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7244,
+      0.4175
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7455,
+      0.4734
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.66,
+    0.38,
+    0.8,
+    0.5
+   ]
+  },
+  {
+   "id": "comissura-cinzenta",
+   "estrutura": "comissura-cinzenta",
+   "rotulo": "Comissura cinzenta em volta do canal central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.66,
+      0.11
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.0,
+    0.8,
+    0.16
+   ]
+  },
+  {
+   "id": "oligodendrocito",
+   "estrutura": "oligodendrocito",
+   "rotulo": "Oligodendrócitos: núcleos redondos, pequenos e escuros entre os axônios do funículo lateral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2425,
+      0.6268
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2868,
+      0.6628
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.225,
+    0.61,
+    0.295,
+    0.67
+   ]
+  },
+  {
+   "id": "axonios",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Axônios mielinizados cortados transversalmente: anéis claros (a mielina não cora na tionina)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.262,
+      0.623
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.24,
+    0.605,
+    0.285,
+    0.64
    ]
   }
  ]

@@ -2,7 +2,7 @@
  "slug": "medula-espinal-tionina-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -429,6 +429,150 @@
      ],
      "angulo": 135
     }
+   ]
+  },
+  {
+   "id": "sensitivo",
+   "estrutura": "neuronio-do-corno-posterior",
+   "rotulo": "Neurônios sensitivos de 2ª ordem dos dois cornos posteriores: menores que os motoneurônios",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5757,
+      0.2131
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5506,
+      0.2137
+     ],
+     "angulo": 135
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4767,
+      0.7075
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4542,
+      0.6617
+     ],
+     "angulo": 135
+    }
+   ]
+  },
+  {
+   "id": "comissura-cinzenta",
+   "estrutura": "comissura-cinzenta",
+   "rotulo": "Comissura cinzenta, com o canal central no meio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.405
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.3,
+    0.34,
+    0.4,
+    0.44
+   ]
+  },
+  {
+   "id": "comissura-branca",
+   "estrutura": "comissura-branca-anterior",
+   "rotulo": "Comissura branca anterior: fibras que cruzam a linha média à frente do canal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3092,
+      0.379
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.28,
+    0.34,
+    0.37,
+    0.42
+   ]
+  },
+  {
+   "id": "oligodendrocito",
+   "estrutura": "oligodendrocito",
+   "rotulo": "Oligodendrócito: núcleo pequeno e escuro entre os axônios do funículo posterior",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4083,
+      0.3647
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.39,
+    0.35,
+    0.42,
+    0.38
+   ]
+  },
+  {
+   "id": "axonios",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Axônios mielinizados em corte transversal (anéis claros)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.405,
+      0.425
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.385,
+    0.405,
+    0.42,
+    0.44
+   ]
+  },
+  {
+   "id": "vasos-comissura",
+   "estrutura": "vaso-sanguineo",
+   "rotulo": "Pequenos vasos junto à comissura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.344,
+      0.3463
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.33,
+    0.36,
+    0.36
    ]
   }
  ]

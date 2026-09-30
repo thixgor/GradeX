@@ -2,7 +2,7 @@
  "slug": "cortex-cerebral-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -154,6 +154,121 @@
     0.118,
     0.4,
     0.133
+   ]
+  },
+  {
+   "id": "neuronio-2",
+   "estrutura": "neuronio-piramidal",
+   "rotulo": "Neurônios corticais: núcleo grande e claro com nucléolo e citoplasma anfofílico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4015,
+      0.1195
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3903,
+      0.1159
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.383,
+    0.11,
+    0.405,
+    0.126
+   ]
+  },
+  {
+   "id": "oligodendrocito",
+   "estrutura": "oligodendrocito",
+   "rotulo": "Oligodendrócitos: núcleo pequeno, redondo e escuro, às vezes com halo claro; em fileiras na substância branca",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3787,
+      0.118
+     ],
+     "angulo": 45
+    },
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.78,
+      0.5935
+     ],
+     "angulo": 135
+    }
+   ]
+  },
+  {
+   "id": "astrocito",
+   "estrutura": "astrocito",
+   "rotulo": "Astrócito: núcleo maior, oval e claro (o citoplasma estrelado só aparece com GFAP)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.781,
+      0.5884
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.772,
+    0.582,
+    0.79,
+    0.596
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar cerebral: endotélio contínuo da barreira hematoencefálica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3885,
+      0.1185
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.383,
+    0.113,
+    0.395,
+    0.124
+   ]
+  },
+  {
+   "id": "perivascular",
+   "estrutura": "glia-limitans",
+   "rotulo": "Espaço perivascular (de Virchow-Robin) em volta do vaso, limitado pela glia limitante (aumentado por retração)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.1248
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.383,
+    0.12,
+    0.396,
+    0.131
    ]
   }
  ]

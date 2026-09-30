@@ -2,7 +2,7 @@
  "slug": "medula-espinal-weigert-weil",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
+  "data": "2026-09-30",
   "conferencias": 3
  },
  "estruturas": [
@@ -225,6 +225,132 @@
      ],
      "angulo": 180
     }
+   ]
+  },
+  {
+   "id": "nucleolo",
+   "estrutura": "nucleolo",
+   "rotulo": "Núcleo claro com nucléolo evidente do neurônio pseudounipolar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2521,
+      0.3126
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.243,
+    0.303,
+    0.262,
+    0.322
+   ]
+  },
+  {
+   "id": "retracao",
+   "estrutura": "retracao-pericelular",
+   "rotulo": "Halo claro de retração em volta do corpo do neurônio (artefato de fixação)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.231,
+      0.28
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.225,
+    0.272,
+    0.245,
+    0.292
+   ]
+  },
+  {
+   "id": "fibra-ganglio",
+   "estrutura": "fibra-nervosa-mielinizada",
+   "rotulo": "Fibras mielinizadas entre os neurônios do gânglio: anéis escuros de mielina (Weil) com o axônio claro no centro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2627,
+      0.2994
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.255,
+    0.292,
+    0.275,
+    0.308
+   ]
+  },
+  {
+   "id": "capsula",
+   "estrutura": "epineuro",
+   "rotulo": "Cápsula conjuntiva do gânglio, contínua com o epineuro e a dura-máter",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2271,
+      0.2908
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.215,
+    0.275,
+    0.24,
+    0.305
+   ]
+  },
+  {
+   "id": "pia",
+   "estrutura": "pia-mater",
+   "rotulo": "Pia-máter aderida à superfície da medula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.5446
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.345,
+    0.53,
+    0.38,
+    0.56
+   ]
+  },
+  {
+   "id": "raiz-2",
+   "estrutura": "raiz-nervosa-espinal",
+   "rotulo": "Outra raiz da cauda equina, no espaço subaracnóideo em volta do cone",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3438,
+      0.4546
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.32,
+    0.43,
+    0.37,
+    0.48
    ]
   }
  ]

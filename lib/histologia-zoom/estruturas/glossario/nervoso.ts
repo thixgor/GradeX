@@ -48,7 +48,7 @@ export const ESTRUTURAS_NERVOSO: Estrutura[] = [
       'Não é uma "camada" espessa: tem a altura de um corpo celular. O que a define é a posição, não a densidade.',
       'Em material post-mortem é comum um halo claro de retração em volta de cada Purkinje — artefato, não edema.',
     ],
-    funcoes: ['Contém os únicos neurônios de projeção do córtex cerebelar — toda a saída do córtex passa por aqui.'],
+    funcoes: ['Contém os únicos neurônios de projeção do córtex cerebelar — toda a saída do córtex passa por aqui.', 'Abrigar a glia de Bergmann, cujos prolongamentos radiais guiam a migração das células granulares no desenvolvimento.', 'Ser a interface entre entrada (camada molecular) e saída (axônios para os núcleos profundos).'],
     regeneracao: { nivel: 'nula', texto: 'Purkinje perdidas não são repostas; restam espaços vazios na fileira ("empty baskets").' },
     ondeEncontrar: ['Exclusiva do córtex cerebelar.'],
     alteracoes: [
@@ -129,7 +129,7 @@ export const ESTRUTURAS_NERVOSO: Estrutura[] = [
       'Glutamatérgicas (excitatórias): o único neurônio excitatório do córtex cerebelar.',
       'Cada uma envia um axônio que sobe à camada molecular e se bifurca em T, formando as fibras paralelas.',
     ],
-    funcoes: ['Transformam a entrada das fibras musgosas em sinais das fibras paralelas sobre as Purkinje.'],
+    funcoes: ['Transformam a entrada das fibras musgosas em sinais das fibras paralelas sobre as Purkinje.', 'Codificar o contexto do movimento (entradas de muitas origens) para o aprendizado motor.', 'Cada célula granular recebe só 4–5 fibras musgosas: combina entradas de modo muito seletivo.'],
     regeneracao: { nivel: 'nula', texto: 'Pós-mitóticas no adulto.' },
     ondeEncontrar: ['Camada granular do córtex cerebelar.'],
     alteracoes: [
@@ -151,7 +151,7 @@ export const ESTRUTURAS_NERVOSO: Estrutura[] = [
       'Cada glomérulo reúne a roseta terminal de uma fibra musgosa, dezenas de dendritos de células granulares e terminais axonais de células de Golgi, envoltos por uma cápsula glial.',
       'É uma unidade de processamento: excitação (fibra musgosa) e inibição (Golgi) sobre as mesmas células granulares, no mesmo lugar.',
     ],
-    funcoes: ['Local de sinapse entre fibras musgosas, células granulares e células de Golgi.'],
+    funcoes: ['Local de sinapse entre fibras musgosas, células granulares e células de Golgi.', 'Ajustar o ganho da transmissão entre fibras musgosas e células granulares (inibição pelas células de Golgi).', 'Formar as "ilhas claras" da camada granular, pontos de convergência de sinapses.'],
     regeneracao: { nivel: 'nula', texto: 'Estrutura sináptica de neurônios pós-mitóticos; sem renovação celular.' },
     ondeEncontrar: ['Camada granular do cerebelo.'],
     alteracoes: ['Autólise post-mortem torna a camada granular rarefeita e os glomérulos pouco distinguíveis.'],
@@ -171,7 +171,7 @@ export const ESTRUTURAS_NERVOSO: Estrutura[] = [
       'Traz as fibras aferentes (musgosas e trepadeiras) e leva os axônios das Purkinje aos núcleos profundos (denteado, emboliforme, globoso, fastigial), que ficam mergulhados nela.',
       'Em HE a mielina é quase incolor ou levemente eosinófila; colorações para mielina (Luxol, Weil) a escurecem.',
     ],
-    funcoes: ['Condução: entradas para o córtex cerebelar e saída das Purkinje.'],
+    funcoes: ['Condução: entradas para o córtex cerebelar e saída das Purkinje.', 'Levar a saída das células de Purkinje aos núcleos profundos, que projetam ao tálamo, ao núcleo rubro e ao tronco.', 'Trazer as fibras trepadeiras (oliva inferior) e musgosas (ponte, medula, vestíbulo) ao córtex cerebelar.'],
     regeneracao: {
       nivel: 'baixa',
       texto: 'Oligodendrócitos podem remielinizar parcialmente a partir de precursores (células NG2), mas axônios centrais cortados não regeneram de forma útil.',
