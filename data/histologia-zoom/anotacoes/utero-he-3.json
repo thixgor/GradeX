@@ -2,8 +2,8 @@
  "slug": "utero-he-3",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.4,
     0.45,
     0.55
+   ]
+  },
+  {
+   "id": "secretora",
+   "estrutura": "glandula-endometrial-secretora",
+   "rotulo": "Glândulas secretoras tortuosas, em dente de serra",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.365,
+      1.26
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    1.2,
+    0.45,
+    1.35
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-endometrial",
+   "rotulo": "Estroma endometrial com vasos congestos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      1.24
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    1.2,
+    0.45,
+    1.35
    ]
   }
  ]

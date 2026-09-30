@@ -2,29 +2,50 @@
  "slug": "membranas-fetais-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
    "id": "membrana",
    "estrutura": "amnio-corio",
-   "rotulo": "Membranas fetais (âmnio e cório) com conjuntivo frouxo",
+   "rotulo": "Âmnio e cório: camadas finas de epitélio e conjuntivo avascular",
    "marcas": [
     {
      "tipo": "seta",
      "ponta": [
-      0.35,
-      0.25
+      0.3525,
+      0.249
      ],
-     "angulo": 180
+     "angulo": 0
     }
    ],
    "vista": [
-    0.3,
-    0.2,
-    0.4,
-    0.3
+    0.34,
+    0.24,
+    0.37,
+    0.27
+   ]
+  },
+  {
+   "id": "decidua",
+   "estrutura": "decidua",
+   "rotulo": "Células deciduais grandes e eosinofílicas na face materna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3625,
+      0.2445
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.24,
+    0.37,
+    0.27
    ]
   }
  ]

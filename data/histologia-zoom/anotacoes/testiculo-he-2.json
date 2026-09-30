@@ -2,30 +2,10 @@
  "slug": "testiculo-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
-  {
-   "id": "espermatocito",
-   "estrutura": "espermatocito",
-   "marcas": [
-    {
-     "tipo": "seta",
-     "ponta": [
-      0.4043,
-      0.4143
-     ],
-     "angulo": 180
-    }
-   ],
-   "vista": [
-    0.4,
-    0.41,
-    0.41,
-    0.42
-   ]
-  },
   {
    "id": "propria",
    "estrutura": "tunica-propria-seminifera",
@@ -44,6 +24,90 @@
     0.41,
     0.41,
     0.42
+   ]
+  },
+  {
+   "id": "espermatogonia",
+   "estrutura": "espermatogonia",
+   "rotulo": "Espermatogônias na base do túbulo, junto à membrana basal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4081,
+      0.4172
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.404,
+    0.41,
+    0.414,
+    0.42
+   ]
+  },
+  {
+   "id": "espermatides",
+   "estrutura": "espermatide",
+   "rotulo": "Espermátides de núcleo pequeno e denso, perto da luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4064,
+      0.4129
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.404,
+    0.41,
+    0.414,
+    0.42
+   ]
+  },
+  {
+   "id": "espermatocito",
+   "estrutura": "espermatocito",
+   "rotulo": "Espermatócitos primários: núcleos grandes de cromatina grumosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4112,
+      0.4174
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.404,
+    0.41,
+    0.414,
+    0.42
+   ]
+  },
+  {
+   "id": "tubulo",
+   "estrutura": "tubulo-seminifero",
+   "rotulo": "Túbulo seminífero em corte transversal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.456,
+      0.104
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.1,
+    0.462,
+    0.112
    ]
   }
  ]

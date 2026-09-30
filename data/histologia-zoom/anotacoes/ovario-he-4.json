@@ -2,8 +2,8 @@
  "slug": "ovario-he-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,48 @@
     0.52,
     0.29,
     0.56
+   ]
+  },
+  {
+   "id": "veia-medular",
+   "estrutura": "veia",
+   "rotulo": "Veia de parede fina da medula ovariana",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.502,
+      0.478
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.45,
+    0.44,
+    0.53,
+    0.52
+   ]
+  },
+  {
+   "id": "veia-2",
+   "estrutura": "veia",
+   "rotulo": "Vasos calibrosos e tortuosos da medula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.254
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.57,
+    0.21,
+    0.65,
+    0.29
    ]
   }
  ]

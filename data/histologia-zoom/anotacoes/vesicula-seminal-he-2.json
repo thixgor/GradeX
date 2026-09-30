@@ -2,8 +2,8 @@
  "slug": "vesicula-seminal-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -25,6 +25,48 @@
     0.1,
     0.5,
     0.3
+   ]
+  },
+  {
+   "id": "musculo",
+   "estrutura": "feixe-de-musculo-liso",
+   "rotulo": "Músculo liso da parede, sob a mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.585
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.5,
+    0.6,
+    0.62
+   ]
+  },
+  {
+   "id": "lamina-propria",
+   "estrutura": "lamina-propria",
+   "rotulo": "Lâmina própria fina sob o epitélio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.545
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.5,
+    0.6,
+    0.62
    ]
   }
  ]

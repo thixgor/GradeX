@@ -2,8 +2,8 @@
  "slug": "utero-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -26,6 +26,90 @@
     0.35
    ],
    "nota": "Miométrio: feixes de músculo liso entrelaçados em várias direções, com vasos calibrosos."
+  },
+  {
+   "id": "endometrio",
+   "estrutura": "endometrio",
+   "rotulo": "Endométrio: glândulas retas em estroma celular denso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.245,
+      0.48
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.35,
+    0.55
+   ]
+  },
+  {
+   "id": "glandula",
+   "estrutura": "glandula-endometrial",
+   "rotulo": "Glândula endometrial proliferativa (tubular, reta)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.285,
+      0.5083
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.35,
+    0.55
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-endometrial",
+   "rotulo": "Estroma endometrial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2667,
+      0.5233
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.35,
+    0.55
+   ]
+  },
+  {
+   "id": "limite",
+   "estrutura": "miometrio",
+   "rotulo": "Miométrio: feixes de músculo liso junto ao endométrio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.45
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.35,
+    0.55
+   ]
   }
  ]
 }

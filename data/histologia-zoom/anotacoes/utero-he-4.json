@@ -2,8 +2,8 @@
  "slug": "utero-he-4",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -24,6 +24,48 @@
     0.3,
     0.45,
     0.45
+   ]
+  },
+  {
+   "id": "decidua",
+   "estrutura": "decidua",
+   "rotulo": "Decídua: células grandes, poligonais e pálidas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.51,
+      1.86
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    1.8,
+    0.55,
+    1.95
+   ]
+  },
+  {
+   "id": "vilosidade",
+   "estrutura": "vilosidade-corial",
+   "rotulo": "Vilosidade corial junto à decídua",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.423,
+      1.86
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    1.8,
+    0.55,
+    1.95
    ]
   }
  ]
