@@ -2,8 +2,8 @@
  "slug": "jejuno-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,111 @@
     0.3,
     0.5,
     0.5
+   ]
+  },
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa: camada longitudinal (fibras em comprimento) e circular (em corte)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2822,
+      0.5333
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.26,
+    0.52,
+    0.3,
+    0.56
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa: conjuntivo frouxo com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.575
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.55,
+    0.38,
+    0.59
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "veia",
+   "rotulo": "Vasos da submucosa com hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3635,
+      0.567
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.55,
+    0.38,
+    0.59
+   ]
+  },
+  {
+   "id": "muscular-mucosa",
+   "estrutura": "muscular-da-mucosa",
+   "rotulo": "Muscular da mucosa: faixa fina de músculo liso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4274,
+      0.6186
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.6,
+    0.44,
+    0.64
+   ]
+  },
+  {
+   "id": "criptas",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Criptas com células caliciformes, na base das vilosidades",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.433,
+      0.63
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.4,
+    0.6,
+    0.44,
+    0.64
    ]
   }
  ]

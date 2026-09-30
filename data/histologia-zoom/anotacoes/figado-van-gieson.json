@@ -2,8 +2,8 @@
  "slug": "figado-van-gieson",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -49,6 +49,48 @@
     0.56,
     0.41,
     0.59
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "septo-conjuntivo",
+   "rotulo": "Colágeno interlobular corado em vermelho (van Gieson)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4758,
+      0.62
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.45,
+    0.6,
+    0.5,
+    0.65
+   ]
+  },
+  {
+   "id": "portal-2",
+   "estrutura": "espaco-porta",
+   "rotulo": "Espaço-porta onde três lóbulos se encontram",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4271,
+      0.1357
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.36,
+    0.1,
+    0.44,
+    0.18
    ]
   }
  ]

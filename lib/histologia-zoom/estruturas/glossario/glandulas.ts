@@ -262,4 +262,17 @@ export const ESTRUTURAS_GLANDULAS: Estrutura[] = [
     ondeEncontrar: ['Ácinos do pâncreas exócrino.'],
     alteracoes: ['Fibrose cística (falha na secreção de bicarbonato).'],
   },
+  {
+    id: 'capsula-de-glisson',
+    nome: 'Cápsula de Glisson',
+    sinonimos: ['cápsula hepática', 'Glisson capsule'],
+    tipo: 'camada',
+    resumo: 'Camada fina de conjuntivo denso que envolve o fígado, recoberta pelo mesotélio do peritônio visceral.',
+    caracteristicas: ['Faixa rosa de colágeno na superfície do fígado, com uma fileira de células achatadas por fora.', 'No hilo, continua para dentro com o conjuntivo dos espaços-porta.'],
+    aprofundado: ['É inervada: a distensão da cápsula (congestão, hepatite, tumor) causa dor no hipocôndrio direito.'],
+    funcoes: ['Revestir e sustentar o fígado.'],
+    regeneracao: { nivel: 'moderada', texto: 'Conjuntivo renovável.' },
+    ondeEncontrar: ['Superfície do fígado.'],
+    alteracoes: ['Hematoma subcapsular no trauma.', 'Peri-hepatite (Fitz-Hugh-Curtis).'],
+  },
 ]

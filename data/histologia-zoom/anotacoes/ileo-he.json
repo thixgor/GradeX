@@ -2,8 +2,8 @@
  "slug": "ileo-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -45,6 +45,69 @@
     0.55,
     0.25,
     0.7
+   ]
+  },
+  {
+   "id": "criptas",
+   "estrutura": "cripta-de-lieberkuhn",
+   "rotulo": "Criptas com muitas células caliciformes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7,
+      0.15
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.67,
+    0.12,
+    0.71,
+    0.16
+   ]
+  },
+  {
+   "id": "muscular-mucosa",
+   "estrutura": "muscular-da-mucosa",
+   "rotulo": "Muscular da mucosa sob as criptas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6936,
+      0.1414
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.67,
+    0.12,
+    0.71,
+    0.16
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa frouxa com vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.678,
+      0.13
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.67,
+    0.12,
+    0.71,
+    0.16
    ]
   }
  ]

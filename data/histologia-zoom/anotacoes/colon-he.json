@@ -2,8 +2,8 @@
  "slug": "colon-he",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -46,6 +46,48 @@
     0.3,
     0.4,
     0.34
+   ]
+  },
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular externa em feixes cortados em várias direções",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.26,
+      0.295
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.2,
+    0.34,
+    0.36
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa no eixo da prega, sob a mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4467,
+      0.2662
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.34,
+    0.26,
+    0.54,
+    0.46
    ]
   }
  ]

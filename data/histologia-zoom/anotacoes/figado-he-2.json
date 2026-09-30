@@ -2,8 +2,8 @@
  "slug": "figado-he-2",
  "revisao": {
   "por": "Curadoria assistida (Claude) — marcações conferidas sobre recortes da própria lâmina",
-  "data": "2026-09-27",
-  "conferencias": 2
+  "data": "2026-09-30",
+  "conferencias": 3
  },
  "estruturas": [
   {
@@ -44,6 +44,69 @@
     0.49,
     0.44,
     0.53
+   ]
+  },
+  {
+   "id": "ducto",
+   "estrutura": "ducto-biliar-interlobular",
+   "rotulo": "Ducto biliar interlobular: epitélio cúbico a colunar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4359,
+      0.4864
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.43,
+    0.478,
+    0.45,
+    0.498
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria",
+   "rotulo": "Ramo da artéria hepática, de parede muscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4452,
+      0.5011
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.44,
+    0.494,
+    0.46,
+    0.514
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Vênula de parede fina entre as placas de hepatócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.663,
+      0.426
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.655,
+    0.42,
+    0.667,
+    0.432
    ]
   }
  ]
