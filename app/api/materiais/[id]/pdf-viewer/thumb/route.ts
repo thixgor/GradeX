@@ -21,10 +21,12 @@ export const dynamic = 'force-dynamic'
  * registro de auditoria. Quem tinha acesso ao material podia pedir
  * `?page=1…N` e baixar o livro limpo, o que anulava a proteção da leitura.
  *
- * Agora ela entrega exatamente o que `../page` entrega (ver
- * `lib/material-pdf-leitura.ts`): a página marcada com os dados de quem pediu,
- * com log. Sendo a mesma página, o leitor reaproveita os bytes nos dois
- * sentidos, e a página que aparece no leitor e no painel é baixada uma vez só.
+ * Agora ela entrega a página marcada com os dados de quem pediu, com log,
+ * pelo mesmo caminho de `../page` (ver `lib/material-pdf-leitura.ts`) — só que,
+ * para o leitor atual (`m=1`), da derivada `miniatura`: imagens no tamanho do
+ * painel, dezenas de KB em vez de centenas. O leitor desenha a miniatura com a página de leitura quando já
+ * a tem em mãos; o contrário nunca, porque a miniatura não tem resolução de
+ * leitura.
  *
  * ## O que continua separado
  *

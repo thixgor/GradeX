@@ -12,6 +12,19 @@ export interface AmbienteDeAgendamento {
   ouvirVisibilidade: (ouvinte: () => void) => () => void
   agendar: (acao: () => void, intervaloMs: number) => number
   cancelar: (id: number) => void
+  /** Relógio, para `soSeVencido`. Padrão: `Date.now`. */
+  agora?: () => number
+}
+
+export interface OpcoesDeAgendamento {
+  /**
+   * Ao voltar para a aba, só roda na hora se o intervalo já tiver vencido
+   * desde a última execução. Serve ao polling do app inteiro (notificações,
+   * checagem de banimento): quem alterna de aba a cada minuto não pode virar
+   * uma requisição por minuto onde antes eram três por hora. A contagem
+   * começa no agendamento, que acontece logo depois da carga inicial.
+   */
+  soSeVencido?: boolean
 }
 
 /**
@@ -42,13 +55,21 @@ export interface AmbienteDeAgendamento {
 export function agendarEnquantoVisivel(
   acao: () => void,
   intervaloMs: number,
-  ambiente: AmbienteDeAgendamento
+  ambiente: AmbienteDeAgendamento,
+  opcoes: OpcoesDeAgendamento = {}
 ): () => void {
+  const agora = ambiente.agora ?? (() => Date.now())
   let relogio: number | undefined
+  let ultimaExecucao = agora()
+
+  const executar = () => {
+    ultimaExecucao = agora()
+    acao()
+  }
 
   const ligar = () => {
     if (relogio !== undefined) return
-    relogio = ambiente.agendar(acao, intervaloMs)
+    relogio = ambiente.agendar(executar, intervaloMs)
   }
 
   const desligar = () => {
@@ -60,7 +81,7 @@ export function agendarEnquantoVisivel(
   const aoMudarVisibilidade = () => {
     if (ambiente.visivel()) {
       // Voltar para a aba é o momento em que o dado importa de novo.
-      acao()
+      if (!opcoes.soSeVencido || agora() - ultimaExecucao >= intervaloMs) executar()
       ligar()
     } else {
       desligar()
@@ -76,7 +97,7 @@ export function agendarEnquantoVisivel(
   }
 }
 
-function ambienteDoNavegador(): AmbienteDeAgendamento {
+export function ambienteDoNavegador(): AmbienteDeAgendamento {
   return {
     visivel: () => document.visibilityState === 'visible',
     ouvirVisibilidade: (ouvinte) => {

@@ -24,6 +24,7 @@ import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { pdfBytesToStream } from '@/lib/pdf-response'
+import { corpoComprimido } from '@/lib/resposta-comprimida'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import {
   avaliarUsoDoPlano,
@@ -421,15 +422,21 @@ async function createMaterialPdfDownloadResponse(request: NextRequest, materialI
       `[pdf-download] entregando material=${materialId} bytes=${watermarkedPdf.byteLength} origem=${material.pdfFile?.sizeBytes ?? '?'}`
     )
 
-    return new NextResponse(pdfBytesToStream(watermarkedPdf), {
+    // Comprimido quando compensa: o PDF carimbado é regravado sem object
+    // streams (ver pdf-watermark) e os dicionários de objeto voltam a ser
+    // texto puro, que o gzip reduz bem. Escaneado quase não muda e sai cru.
+    const { corpo, cabecalhos } = corpoComprimido(request.headers, watermarkedPdf)
+
+    return new NextResponse(pdfBytesToStream(corpo), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
         // Mantido mesmo em streaming: é o que permite ao navegador mostrar
         // progresso real e ao cliente perceber um arquivo que chegou pela
-        // metade em vez de salvar um PDF truncado.
-        'Content-Length': String(watermarkedPdf.byteLength),
+        // metade em vez de salvar um PDF truncado. Comprimido, é o tamanho
+        // comprimido — e o cliente só acusa corte quando chega MENOS que isso.
+        ...cabecalhos,
         'Content-Transfer-Encoding': 'binary',
         'Accept-Ranges': 'none',
         // Nunca armazenar em cache — cada download é personalizado

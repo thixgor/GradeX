@@ -120,7 +120,7 @@ curl -X POST "https://SEU_APP/api/cron/comms-dispatcher" \
    |---|---|
    | **Title** | `DomineAqui — e-mails agendados` |
    | **URL** | `https://SEU_APP/api/cron/email-scheduler?token=SEU_SEGREDO` |
-   | **Schedule** | *Every 1 minute(s)* (ou a cada 5 minutos) |
+   | **Schedule** | *Every 5 minute(s)* |
    | **Request method** | `GET` (ou `POST`) |
    | **Enable job** | ligado |
 
@@ -154,8 +154,8 @@ exemplo), dá para dispensar o serviço externo:
 
 | Intervalo | Quando usar |
 |---|---|
-| **1 minuto** | Recomendado. O horário do agendamento é respeitado com precisão de ~1 min e campanhas grandes escoam rápido (cada tick manda o que couber em ~40s). |
-| **5 minutos** | Suficiente se os envios são pequenos e o horário exato não importa. Um agendamento das 9h pode sair às 9h04. |
+| **1 minuto** | Só durante uma campanha grande (milhares de destinatários), para ela escoar rápido. Fora disso, são 1.440 invocações pagas por dia para quase sempre não achar nada. |
+| **5 minutos** | **Recomendado.** 288 invocações por dia em vez de 1.440, e o tick vazio sai sem drenar (ver `app/api/cron/email-scheduler/route.ts`). Um agendamento das 9h sai até as 9h05. |
 | **> 15 minutos** | Não recomendado: uma campanha de milhares de destinatários levaria horas para escoar. |
 
 O agendamento **nunca é pulado** por atraso do cron: o horário vencido fica

@@ -21,6 +21,7 @@ import { isValidObjectId } from '@/lib/api-security'
 import { fetchMaterialPdfBytes } from '@/lib/material-pdf-viewer'
 import { applyWatermark } from '@/lib/pdf-watermark'
 import { pdfBytesToStream } from '@/lib/pdf-response'
+import { corpoComprimido } from '@/lib/resposta-comprimida'
 import { resolveMaterialsWithPdf, type WatermarkIdentity } from '@/lib/material-pdf-email'
 import { resolvePurchaseTarget } from '@/lib/admin-material-delivery'
 
@@ -207,12 +208,15 @@ export async function POST(request: NextRequest) {
 
     // Em pedaços, como no download do usuário: acima de ~4,5 MB a borda corta
     // uma resposta entregue de uma vez. Ver `lib/pdf-response.ts`.
-    return new NextResponse(pdfBytesToStream(watermarked), {
+    // Comprimido quando compensa (ver a rota de download do aluno).
+    const { corpo, cabecalhos } = corpoComprimido(request.headers, watermarked)
+
+    return new NextResponse(pdfBytesToStream(corpo), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Content-Length': String(watermarked.byteLength),
+        ...cabecalhos,
         'Content-Transfer-Encoding': 'binary',
         'Accept-Ranges': 'none',
         'Cache-Control': 'no-store, no-cache, must-revalidate, private',

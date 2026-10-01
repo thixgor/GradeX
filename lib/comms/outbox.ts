@@ -24,26 +24,56 @@ const BACKOFF_BASE_MS = 30_000        // 30s
 const BACKOFF_CAP_MS = 6 * 60 * 60_000 // 6h
 const LEASE_MS = 2 * 60_000           // uma mensagem reservada expira em 2min
 
-let indexesEnsured = false
+let indexesEnsured: Promise<unknown> | null = null
 
 async function collection(): Promise<Collection<OutboxMessage>> {
     const db = await getDb()
     const col = db.collection<OutboxMessage>(OUTBOX_COLLECTION)
     if (!indexesEnsured) {
-        // Índice do dispatcher: buscar pendentes elegíveis por data.
-        await col.createIndex({ status: 1, nextAttemptAt: 1 })
-        await col.createIndex({ 'to.userId': 1 })
-        await col.createIndex({ 'to.leadUuid': 1 })
-        await col.createIndex({ providerMessageId: 1 })
-        await col.createIndex({ campaignId: 1 })
-        // Idempotência: impede enfileirar duas vezes o mesmo conteúdo p/ o mesmo alvo.
-        await col.createIndex(
-            { idempotencyKey: 1 },
-            { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } },
-        )
-        indexesEnsured = true
+        // Os seis de uma vez, numa espera só: em fila eram seis idas ao Atlas
+        // no primeiro tick de cada instância — e o cron bate de minuto em
+        // minuto, o tempo de parede de cada tick é memória provisionada paga.
+        indexesEnsured = Promise.all([
+            // Índice do dispatcher: buscar pendentes elegíveis por data.
+            col.createIndex({ status: 1, nextAttemptAt: 1 }),
+            col.createIndex({ 'to.userId': 1 }),
+            col.createIndex({ 'to.leadUuid': 1 }),
+            col.createIndex({ providerMessageId: 1 }),
+            col.createIndex({ campaignId: 1 }),
+            // Idempotência: impede enfileirar duas vezes o mesmo conteúdo p/ o mesmo alvo.
+            col.createIndex(
+                { idempotencyKey: 1 },
+                { unique: true, partialFilterExpression: { idempotencyKey: { $type: 'string' } } },
+            ),
+        ]).catch((error) => {
+            indexesEnsured = null
+            throw error
+        })
     }
+    await indexesEnsured
     return col
+}
+
+/**
+ * Existe e-mail que um drain levaria agora? Uma consulta por índice, sem
+ * reservar nada. É o que deixa o tick vazio do cron sair sem drenar.
+ */
+export async function hasEligibleMessages(channel: CommChannel): Promise<boolean> {
+    const col = await collection()
+    const now = new Date()
+    const found = await col.findOne(
+        {
+            channel,
+            nextAttemptAt: { $lte: now },
+            $or: [
+                { status: 'pending' },
+                { status: 'failed' },
+                { status: 'processing', leaseUntil: { $lte: now } },
+            ],
+        },
+        { projection: { _id: 1 } },
+    )
+    return !!found
 }
 
 /** Calcula o próximo horário de tentativa com backoff exponencial + jitter. */

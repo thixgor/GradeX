@@ -168,3 +168,76 @@ describe('agendamento que respeita a visibilidade da aba', () => {
     expect(chamadas).toBe(0)
   })
 })
+
+describe('agendarEnquantoVisivel com soSeVencido', () => {
+  /** Aba de mentira com relógio de parede controlado. */
+  function abaComRelogio() {
+    let visivel = true
+    let agora = 0
+    const ouvintes = new Set<() => void>()
+    const relogios = new Map<number, () => void>()
+    let proximo = 1
+    const ambiente: AmbienteDeAgendamento = {
+      visivel: () => visivel,
+      ouvirVisibilidade: (ouvinte) => {
+        ouvintes.add(ouvinte)
+        return () => ouvintes.delete(ouvinte)
+      },
+      agendar: (acao) => {
+        relogios.set(proximo, acao)
+        return proximo++
+      },
+      cancelar: (id) => relogios.delete(id),
+      agora: () => agora,
+    }
+    return {
+      ambiente,
+      passar: (ms: number) => {
+        agora += ms
+      },
+      mudar: (estaVisivel: boolean) => {
+        visivel = estaVisivel
+        ouvintes.forEach((o) => o())
+      },
+      tique: () => relogios.forEach((acao) => acao()),
+      relogiosAtivos: () => relogios.size,
+    }
+  }
+
+  it('voltar à aba antes de vencer o intervalo não dispara nada', () => {
+    const aba = abaComRelogio()
+    let execucoes = 0
+    agendarEnquantoVisivel(() => (execucoes += 1), 180_000, aba.ambiente, { soSeVencido: true })
+    aba.passar(30_000)
+    aba.mudar(false)
+    expect(aba.relogiosAtivos()).toBe(0)
+    aba.passar(30_000)
+    aba.mudar(true)
+    expect(execucoes).toBe(0)
+    expect(aba.relogiosAtivos()).toBe(1)
+  })
+
+  it('voltar à aba depois de vencido atualiza na hora', () => {
+    const aba = abaComRelogio()
+    let execucoes = 0
+    agendarEnquantoVisivel(() => (execucoes += 1), 180_000, aba.ambiente, { soSeVencido: true })
+    aba.mudar(false)
+    aba.passar(10 * 60_000)
+    aba.mudar(true)
+    expect(execucoes).toBe(1)
+  })
+
+  it('o tique do relógio conta como execução', () => {
+    const aba = abaComRelogio()
+    let execucoes = 0
+    agendarEnquantoVisivel(() => (execucoes += 1), 180_000, aba.ambiente, { soSeVencido: true })
+    aba.passar(180_000)
+    aba.tique()
+    expect(execucoes).toBe(1)
+    aba.mudar(false)
+    aba.passar(60_000)
+    aba.mudar(true)
+    // Só um minuto desde o tique: nada de rodar de novo.
+    expect(execucoes).toBe(1)
+  })
+})

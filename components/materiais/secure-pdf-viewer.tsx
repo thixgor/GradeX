@@ -117,6 +117,7 @@ import {
   ZOOM_STEP,
 } from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
+import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
 import {
   clampZoomRatio,
   isLandscapePage,
@@ -511,10 +512,10 @@ function eraserCursor(radius: number) {
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}") ${center} ${center}, cell`
 }
 const pageBytesCache = new Map<string, { bytes: Uint8Array; pageCount?: number; expiresAt: number }>()
-const pageBytesInflight = new Map<string, Promise<{ bytes: Uint8Array; pageCount?: number }>>()
+const pageBytesInflight = new Map<string, PedidoDePagina>()
 // Chave de leitura de cada material (`leitura.chave` da rota de acesso). Vai em
 // cada pedido de página como `&c=`: é o que deixa o navegador guardar a página
-// marcada até o fim do dia sem misturar pessoas que usam o mesmo aparelho.
+// marcada até o fim da semana sem misturar pessoas que usam o mesmo aparelho.
 // Ver lib/material-pdf-leitura.ts.
 const chavesDeLeitura = new Map<string, string>()
 
@@ -700,9 +701,30 @@ function drainPageFetchQueue() {
   }
 }
 
-function acquirePageFetchSlot(priority: FetchPriority): Promise<() => void> {
-  return new Promise((resolve) => {
-    const grant = () => {
+/** Erro de um pedido cancelado antes de sair: ninguém mais queria a página. */
+function pedidoCancelado() {
+  return new DOMException('Pedido de pagina cancelado', 'AbortError')
+}
+
+// `signal`: quando aborta com o pedido ainda na fila, ele sai da fila sem ter
+// custado nada. Depois que o slot foi concedido, o pedido segue até o fim — os
+// bytes vão para o cache e servem se o aluno voltar àquela página.
+function acquirePageFetchSlot(priority: FetchPriority, signal?: AbortSignal): Promise<() => void> {
+  return new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(pedidoCancelado())
+      return
+    }
+    const onAbort = () => {
+      const fila = pageFetchQueues[priority]
+      const posicao = fila.indexOf(grant)
+      if (posicao >= 0) {
+        fila.splice(posicao, 1)
+        reject(pedidoCancelado())
+      }
+    }
+    function grant() {
+      signal?.removeEventListener('abort', onAbort)
       pageFetchActive += 1
       if (priority === 'reader') readerFetchActive += 1
       let released = false
@@ -718,7 +740,10 @@ function acquirePageFetchSlot(priority: FetchPriority): Promise<() => void> {
       ? pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
       : readerFetchActive === 0 && pageFetchQueues.reader.length === 0 && pageFetchActive < PAGE_FETCH_MAX_CONCURRENCY
     if (canRunNow) grant()
-    else pageFetchQueues[priority].push(grant)
+    else {
+      pageFetchQueues[priority].push(grant)
+      signal?.addEventListener('abort', onAbort, { once: true })
+    }
   })
 }
 
@@ -733,7 +758,7 @@ type PageFetchError = Error & { status?: number; retryAfterMs?: number }
  * A resposta que o navegador já tem guardada para `url`, sem ir à rede.
  *
  * `only-if-cached` devolve o que estiver no cache, mesmo vencido, ou falha na
- * hora se não houver nada. Vencido não serve: a validade é o fim do dia do
+ * hora se não houver nada. Vencido não serve: a validade é o fim da janela do
  * token de auditoria. Por isso a idade da resposta (`Date`) é conferida contra
  * o `max-age` com que ela foi guardada. Uma resposta sem esses cabeçalhos, ou
  * que não é um PDF, é tratada como ausente.
@@ -755,6 +780,15 @@ async function respostaGuardadaNoNavegador(url: string, signal: AbortSignal): Pr
   }
 }
 
+/** Bytes e total de páginas de uma resposta de página. */
+async function lerRespostaDePagina(response: Response) {
+  const pageCountHeader = Number(response.headers.get('X-DomineAqui-Page-Count') || 0)
+  return {
+    bytes: new Uint8Array(await response.arrayBuffer()),
+    pageCount: Number.isFinite(pageCountHeader) && pageCountHeader > 0 ? pageCountHeader : undefined,
+  }
+}
+
 async function fetchPdfPageBytesOnce(
   materialId: string,
   pageNumber: number,
@@ -764,24 +798,36 @@ async function fetchPdfPageBytesOnce(
   const timer = setTimeout(() => controller.abort(), PAGE_FETCH_TIMEOUT_MS)
   try {
     // Sem `cache: 'no-store'`: com a chave de leitura (`c`), a rota responde
-    // `private` com validade até o fim do dia de Brasília, e o token de
-    // auditoria vale o mesmo dia. Voltar a uma página já lida, reabrir o
-    // material mais tarde ou recarregar a aba reaproveita o que o navegador já
-    // tem. O cache do HTTP cobre o que `pageBytesCache` (em memória) perde num F5.
-    // A miniatura tem rota própria só pelo limite de requisições, mais folgado;
-    // o que ela devolve é a mesma página marcada da leitura.
-    const rota = priority === 'thumb' ? 'thumb' : 'page'
+    // `private` com validade até o fim da semana de Brasília (a janela do
+    // token de auditoria). Além do cache HTTP, a página vai para o Cache
+    // Storage (ver lib/paginas-guardadas.ts), que o navegador não descarta por
+    // conta própria: quem volta ao material em outro dia da semana não baixa
+    // de novo.
+    //
+    // A miniatura vem de rota própria e é OUTRA página: a mesma marca, com as
+    // imagens em resolução de painel (`m=1` diz ao servidor que este leitor
+    // sabe disso). A página de leitura serve para desenhar a miniatura; a
+    // miniatura nunca serve para leitura.
     const chave = chavesDeLeitura.get(materialId)
     const urlDa = (qual: 'page' | 'thumb') =>
       `/api/materiais/${materialId}/pdf-viewer/${qual}?page=${pageNumber}` +
-      (chave ? `&c=${encodeURIComponent(chave)}` : '')
-    // A mesma página pode já estar no cache do navegador pela OUTRA rota: lida
-    // no leitor e agora pedida pelo painel, ou o contrário, numa visita
-    // anterior do mesmo dia. São os mesmos bytes marcados; só a URL difere.
-    const response =
-      (chave
-        ? await respostaGuardadaNoNavegador(urlDa(rota === 'page' ? 'thumb' : 'page'), controller.signal)
-        : null) ?? (await fetch(urlDa(rota), { signal: controller.signal }))
+      (chave ? `&c=${encodeURIComponent(chave)}` : '') +
+      (qual === 'thumb' ? '&m=1' : '')
+    const urlDeLeitura = urlDa('page')
+
+    if (chave) {
+      const guardada = await lerPaginaGuardada(urlDeLeitura)
+      if (guardada) return guardada
+      if (priority === 'thumb') {
+        const doNavegador = await respostaGuardadaNoNavegador(urlDeLeitura, controller.signal)
+        if (doNavegador) return await lerRespostaDePagina(doNavegador)
+        const miniatura = await lerPaginaGuardada(urlDa('thumb'))
+        if (miniatura) return miniatura
+      }
+    }
+
+    const url = priority === 'thumb' ? urlDa('thumb') : urlDeLeitura
+    const response = await fetch(url, { signal: controller.signal })
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
       // `adminDetail` só vem preenchido quando quem chamou é admin (ver
@@ -801,46 +847,104 @@ async function fetchPdfPageBytesOnce(
       throw err
     }
 
-    const pageCountHeader = Number(response.headers.get('X-DomineAqui-Page-Count') || 0)
-    return {
-      bytes: new Uint8Array(await response.arrayBuffer()),
-      pageCount: Number.isFinite(pageCountHeader) && pageCountHeader > 0 ? pageCountHeader : undefined,
-    }
+    const resultado = await lerRespostaDePagina(response)
+    const expiraEm = chave ? validadeDaResposta(response) : null
+    if (expiraEm) void guardarPagina(url, resultado.bytes, expiraEm, resultado.pageCount)
+    return resultado
   } finally {
     clearTimeout(timer)
   }
 }
 
+/**
+ * Um download de página em andamento, compartilhado por quem o pediu.
+ *
+ * `interessados` conta quem ainda quer a página. Uma página que passou pela
+ * tela numa rolagem rápida enfileirava o download e saía de cena; o pedido
+ * continuava na fila e, minutos depois, baixava uma página que ninguém ia ver
+ * — da rota mais cara da fatura. Agora, quando o último interessado desiste
+ * com o pedido ainda na fila, ele sai da fila sem ter custado nada. Quem pede
+ * sem `signal` (não tem como desistir) segura o pedido até o fim.
+ */
+interface PedidoDePagina {
+  promessa: Promise<{ bytes: Uint8Array; pageCount?: number }>
+  cancelar: AbortController
+  interessados: number
+}
+
+function registrarInteresse(pedido: PedidoDePagina, signal?: AbortSignal) {
+  if (!signal) {
+    pedido.interessados = Number.POSITIVE_INFINITY
+    return
+  }
+  const desistir = () => {
+    pedido.interessados -= 1
+    if (pedido.interessados <= 0) pedido.cancelar.abort()
+  }
+  pedido.interessados += 1
+  if (signal.aborted) desistir()
+  else signal.addEventListener('abort', desistir, { once: true })
+}
+
+function ehCancelamento(erro: unknown) {
+  return (erro as { name?: string } | null)?.name === 'AbortError'
+}
+
 async function fetchPdfPageBytes(
   materialId: string,
   pageNumber: number,
-  priority: FetchPriority = 'reader'
+  priority: FetchPriority = 'reader',
+  signal?: AbortSignal
 ) {
-  // Leitura e miniatura recebem a MESMA página marcada, então os bytes de uma
-  // servem à outra nos dois sentidos: uma página vista no leitor e no painel é
-  // baixada uma vez. A chave de leitura entra na chave do cache, e trocar de
-  // conta ou de versão do PDF nunca reaproveita a página de antes.
+  // A chave de leitura entra na chave do cache: trocar de conta ou de versão
+  // do PDF nunca reaproveita a página de antes. Leitura e miniatura têm
+  // entradas separadas porque são conteúdos diferentes.
   //
-  // O que está EM ANDAMENTO só é compartilhado num sentido: a miniatura pode
-  // esperar o pedido da leitura (prioridade alta, sai na frente), mas a
-  // leitura nunca espera uma miniatura, que pode estar parada na fila de baixa
-  // prioridade enquanto o aluno olha para a página em branco.
-  const key = `pagina:${materialId}:${chavesDeLeitura.get(materialId) || ''}:${pageNumber}`
-  const inflightKey = `${priority === 'thumb' ? 'thumb' : 'page'}:${key}`
+  // A miniatura aceita a página de leitura (em cache ou a caminho); a leitura
+  // nunca espera uma miniatura, que pode estar parada na fila de baixa
+  // prioridade enquanto o aluno olha para a página em branco — e nem a
+  // aceitaria, por não ter resolução de leitura.
+  const chave = chavesDeLeitura.get(materialId) || ''
+  const chaveDeLeituraNoCache = `pagina:${materialId}:${chave}:${pageNumber}`
+  const key = priority === 'thumb' ? `mini:${materialId}:${chave}:${pageNumber}` : chaveDeLeituraNoCache
   const now = Date.now()
-  const cached = pageBytesCache.get(key)
-  if (cached && cached.expiresAt > now) {
-    return { bytes: cached.bytes, pageCount: cached.pageCount }
+  for (const candidata of priority === 'thumb' ? [chaveDeLeituraNoCache, key] : [key]) {
+    const cached = pageBytesCache.get(candidata)
+    if (cached && cached.expiresAt > now) {
+      return { bytes: cached.bytes, pageCount: cached.pageCount }
+    }
+    if (cached) pageBytesCache.delete(candidata)
   }
-  if (cached) pageBytesCache.delete(key)
 
-  const pending =
-    pageBytesInflight.get(inflightKey) ??
-    (priority === 'thumb' ? pageBytesInflight.get(`page:${key}`) : undefined)
-  if (pending) return pending
+  // A miniatura aproveita a página de leitura que já está a caminho, mas sem
+  // segurá-la: se o leitor desistir dela, a miniatura não pode ser o motivo de
+  // a página inteira continuar descendo só para virar um desenho de 150 px.
+  // Cancelada a leitura, a miniatura segue e pede a própria versão leve.
+  const leituraACaminho = priority === 'thumb' ? pageBytesInflight.get(chaveDeLeituraNoCache) : undefined
+  if (leituraACaminho && !leituraACaminho.cancelar.signal.aborted) {
+    try {
+      return await leituraACaminho.promessa
+    } catch (erro) {
+      if (!ehCancelamento(erro) || signal?.aborted) throw erro
+    }
+  }
 
-  const request = (async () => {
-    const release = await acquirePageFetchSlot(priority)
+  const emAndamento = pageBytesInflight.get(key)
+  if (emAndamento && !emAndamento.cancelar.signal.aborted) {
+    registrarInteresse(emAndamento, signal)
+    return emAndamento.promessa
+  }
+
+  const cancelar = new AbortController()
+  const pedido: PedidoDePagina = {
+    promessa: Promise.resolve({ bytes: new Uint8Array() }),
+    cancelar,
+    interessados: 0,
+  }
+  registrarInteresse(pedido, signal)
+
+  pedido.promessa = (async () => {
+    const release = await acquirePageFetchSlot(priority, cancelar.signal)
     try {
       let lastError: unknown
       for (let attempt = 1; attempt <= PAGE_FETCH_MAX_ATTEMPTS; attempt += 1) {
@@ -883,11 +987,11 @@ async function fetchPdfPageBytes(
     }
   })()
 
-  pageBytesInflight.set(inflightKey, request)
+  pageBytesInflight.set(key, pedido)
   try {
-    return await request
+    return await pedido.promessa
   } finally {
-    pageBytesInflight.delete(inflightKey)
+    if (pageBytesInflight.get(key) === pedido) pageBytesInflight.delete(key)
   }
 }
 
@@ -986,7 +1090,9 @@ function evictPageProxies() {
 async function acquirePageProxy(
   materialId: string,
   pageNumber: number,
-  priority: FetchPriority = 'reader'
+  priority: FetchPriority = 'reader',
+  // Desistência de quem pediu (a página saiu de cena). Ver PedidoDePagina.
+  signal?: AbortSignal
 ): Promise<PageProxyEntry> {
   const key = `${materialId}:${pageNumber}`
   const cached = pageProxyCache.get(key)
@@ -998,15 +1104,27 @@ async function acquirePageProxy(
 
   const pending = pageProxyInflight.get(key)
   if (pending) {
-    const entry = await pending
-    entry.refs += 1
-    entry.lastUsed = Date.now()
-    evictPageProxies()
-    return entry
+    // Quem chega depois também declara interesse nos bytes: se o primeiro
+    // desistir, o download segue por este.
+    fetchPdfPageBytes(materialId, pageNumber, priority, signal).catch(() => {})
+    try {
+      const entry = await pending
+      entry.refs += 1
+      entry.lastUsed = Date.now()
+      evictPageProxies()
+      return entry
+    } catch (erro) {
+      // O download foi cancelado por quem chegou antes, no instante exato em
+      // que este pedido entrou. Este ainda quer a página: pede de novo.
+      if (ehCancelamento(erro) && !signal?.aborted) {
+        return acquirePageProxy(materialId, pageNumber, priority, signal)
+      }
+      throw erro
+    }
   }
 
   const load = (async () => {
-    const { bytes, pageCount } = await fetchPdfPageBytes(materialId, pageNumber, priority)
+    const { bytes, pageCount } = await fetchPdfPageBytes(materialId, pageNumber, priority, signal)
     const pdfjs = await getPdfJs()
     // `slice()` porque o pdf.js assume a posse do buffer que recebe e os
     // mesmos bytes ficam no `pageBytesCache` para reuso.
@@ -3581,14 +3699,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     if (upcoming.length === 0) return
 
+    // Pré-carga que ainda estiver na fila quando o aluno já foi para outra
+    // página é cancelada: as próximas de antes deixaram de ser as próximas.
+    const interesse = new AbortController()
     const timer = window.setTimeout(() => {
       for (const page of upcoming) {
-        fetchPdfPageBytes(materialId, page)
+        fetchPdfPageBytes(materialId, page, 'reader', interesse.signal)
           .then((result) => updateKnownPageCount(result.pageCount))
           .catch(() => {})
       }
     }, 400)
-    return () => window.clearTimeout(timer)
+    return () => {
+      window.clearTimeout(timer)
+      // No próximo ciclo, pelo mesmo motivo do efeito de carga da página: a
+      // pré-carga seguinte declara interesse nas páginas que continuam na
+      // lista antes de esta desistir delas.
+      setTimeout(() => interesse.abort(), 0)
+    }
   }, [access, currentPage, materialId, pageCount, updateKnownPageCount, previewActive, allowedPages])
 
   useEffect(() => {
@@ -6152,13 +6279,15 @@ const PdfThumbnail = memo(function PdfThumbnail({
     let cancelled = false
     let doc: any
     let renderTask: any
+    const interesse = new AbortController()
 
     async function renderThumb() {
       setStatus('loading')
       try {
         // Prioridade baixa: a miniatura nunca pode atrasar a página que o
-        // usuário está de fato lendo (ver acquirePageFetchSlot).
-        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber, 'thumb')
+        // usuário está de fato lendo (ver acquirePageFetchSlot). Fechar o
+        // painel cancela as miniaturas que ainda estavam na fila.
+        const { bytes } = await fetchPdfPageBytes(materialId, pageNumber, 'thumb', interesse.signal)
         if (cancelled) return
         const pdfjs = await getPdfJs()
         doc = await pdfjs.getDocument({
@@ -6197,6 +6326,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
       cancelled = true
       renderTask?.cancel?.()
       doc?.destroy?.()
+      setTimeout(() => interesse.abort(), 0)
     }
   }, [shouldRender, materialId, pageNumber])
 
@@ -6669,13 +6799,16 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     // mesma referência que o efeito de posse também solta — release duplo, e o
     // documento seria destruído embaixo de uma página ainda montada.
     let owned = false
+    // Desistência deste efeito: se a página sair de cena com o download ainda
+    // na fila, ele é cancelado (ver PedidoDePagina).
+    const interesse = new AbortController()
 
     async function loadPage() {
       requestedRef.current = true
       setError('')
       setWaitSeconds(0)
       try {
-        const entry = await acquirePageProxy(materialId, pageNumber, 'reader')
+        const entry = await acquirePageProxy(materialId, pageNumber, 'reader', interesse.signal)
         owned = true
         settled = true
         if (cancelled) {
@@ -6714,6 +6847,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         owned = false
         releasePageProxy(materialId, pageNumber)
       }
+      // A desistência sai no próximo ciclo, não agora: quando a limpeza é só
+      // uma dependência mudando, o efeito roda de novo em seguida e declara
+      // interesse no MESMO pedido antes desta desistência contar — e o pedido
+      // não perde o lugar na fila.
+      setTimeout(() => interesse.abort(), 0)
     }
   }, [active, loadAttempt, materialId, onPageCount, pageProxy, pageNumber, visible])
 

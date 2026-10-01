@@ -23,8 +23,19 @@ import type { FlashcardSpacedRating } from './types'
  */
 
 const STORAGE_PREFIX = 'gdx:flashcard-reviews:'
-/** Espera curta para agrupar avaliações seguidas no mesmo lote. */
-const BATCH_DELAY_MS = 600
+/**
+ * Espera para agrupar avaliações seguidas no mesmo lote.
+ *
+ * Era 600 ms — menos que o tempo de ler um card —, então na prática saía uma
+ * requisição por avaliação, e essa rota era a terceira em memória provisionada
+ * na fatura. Com 20 s, uma sessão vira um punhado de lotes. Nada se perde na
+ * espera: a fila mora no localStorage, sai por `sendBeacon` quando a aba some
+ * e é despachada no fim da sessão (`flush`). O aluno não vê diferença — a
+ * avaliação já foi aplicada na tela, e o indicador só aparece em erro.
+ */
+const BATCH_DELAY_MS = 20_000
+/** Com tantas avaliações na fila, o lote sai na hora em vez de esperar. */
+const LOTE_CHEIO = 25
 /** Espera entre tentativas quando a rede falha. */
 const RETRY_DELAYS_MS = [1_000, 3_000, 8_000, 20_000, 45_000]
 const MAX_QUEUE = 500
@@ -204,7 +215,11 @@ export function createReviewSync({ slug, userKey, onStatus, onSynced }: ReviewSy
       queue = [...queue, review].slice(-MAX_QUEUE)
       persist()
       report('pending')
-      schedule(BATCH_DELAY_MS)
+      if (queue.length >= LOTE_CHEIO && timer) {
+        clearTimeout(timer)
+        timer = null
+      }
+      schedule(queue.length >= LOTE_CHEIO ? 0 : BATCH_DELAY_MS)
     },
     async flush() {
       if (timer) { clearTimeout(timer); timer = null }

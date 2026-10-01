@@ -157,8 +157,8 @@ interface RenderedPageCacheEntry {
 
 // Cache do PDF de página JÁ renderizado (com marca d'água), evitando rodar
 // PDFDocument.load + copyPages + o loop de watermark a cada request. A chave é
-// o auditToken, que já codifica (usuário + material + página + janela de 5min),
-// então o conteúdo é estável dentro do TTL. Esse é o maior ofensor de Active CPU
+// o auditToken (usuário + material + página + janela de leitura), mais a
+// variante quando ela existe, então o conteúdo é estável dentro do TTL. Esse é o maior ofensor de Active CPU
 // do viewer porque a leitura de um PDF dispara muitos renders da mesma página
 // (scroll/zoom/virar página) e o Cache-Control privado não cobre cache-misses
 // entre instâncias serverless.
@@ -695,6 +695,10 @@ type WatermarkPageInput = {
   // Chave de cache do documento-fonte parseado (use o blobUrl). Opcional:
   // sem ela, o PDF é parseado a cada render (comportamento antigo).
   sourceCacheKey?: string
+  // Chave do cache de páginas JÁ marcadas. Padrão: o auditToken. A leitura e a
+  // miniatura têm o mesmo token (mesma pessoa, mesma página) mas conteúdos
+  // diferentes, então cada uma precisa da sua.
+  renderCacheKey?: string
 }
 
 /**
@@ -710,7 +714,7 @@ export interface FontePdfDaPagina {
    * A página já extraída em algum lugar mais barato, se houver. `null` quando
    * ainda não existe — e aí o documento inteiro é carregado.
    */
-  loadSlice?: () => Promise<ArrayBuffer | null>
+  loadSlice?: () => Promise<ArrayBuffer | Uint8Array | null>
   /** O documento completo. Só é chamado quando não há derivada aproveitável. */
   loadFull: () => Promise<ArrayBuffer>
   /**
@@ -718,8 +722,15 @@ export interface FontePdfDaPagina {
    * leitura não precise do documento inteiro. É aguardado: a gravação é rápida
    * perto do download que acabou de acontecer, e deixá-la solta depois da
    * resposta arriscaria a função ser encerrada antes de ela terminar.
+   *
+   * Se devolver bytes, eles substituem a página extraída no render — é por
+   * onde a versão enxuta (ver `lib/material-pdf-enxugar.ts`) entra já na
+   * primeira leitura.
    */
-  onSliceReady?: (pagina: number, bytes: Uint8Array) => Promise<void> | void
+  onSliceReady?: (
+    pagina: number,
+    bytes: Uint8Array
+  ) => Promise<Uint8Array | void> | Uint8Array | void
   /**
    * Total de páginas já conhecido (vem de `pdfFile.pageCount` no Mongo). Sem
    * ele não dá para usar a derivada: o total é parte da resposta e só o
@@ -786,7 +797,8 @@ async function resolverPaginaNua(
   // Só guarda quando a página pedida existia de fato. Guardar uma página
   // ajustada gravaria o conteúdo de uma página sob a chave de outra.
   if (fonte.onSliceReady && safePageNumber === input.pageNumber) {
-    await fonte.onSliceReady(safePageNumber, paginaNua)
+    const preparada = await fonte.onSliceReady(safePageNumber, paginaNua)
+    if (preparada) return { paginaNua: preparada, totalPages, safePageNumber }
   }
 
   return { paginaNua, totalPages, safePageNumber }
@@ -797,26 +809,27 @@ export async function createWatermarkedSinglePagePdf(
   input: WatermarkPageInput
 ): Promise<{ bytes: Uint8Array; totalPages: number }> {
   const cacheEnabled = envBoolean('PDF_VIEWER_PAGE_CACHE_ENABLED', true)
+  const cacheKey = input.renderCacheKey || input.auditToken
 
-  if (cacheEnabled && input.auditToken) {
+  if (cacheEnabled && cacheKey) {
     const now = Date.now()
-    const cached = renderedPageCache.get(input.auditToken)
+    const cached = renderedPageCache.get(cacheKey)
     if (cached && cached.expiresAt > now) {
       return { bytes: cached.bytes, totalPages: cached.totalPages }
     }
-    if (cached) renderedPageCache.delete(input.auditToken)
+    if (cached) renderedPageCache.delete(cacheKey)
 
-    const pending = renderedPageInflight.get(input.auditToken)
+    const pending = renderedPageInflight.get(cacheKey)
     if (pending) return pending
   }
 
   const render = renderWatermarkedSinglePagePdf(normalizarFonte(fonte), input)
 
-  if (!cacheEnabled || !input.auditToken) {
+  if (!cacheEnabled || !cacheKey) {
     return render
   }
 
-  renderedPageInflight.set(input.auditToken, render)
+  renderedPageInflight.set(cacheKey, render)
   try {
     const result = await render
     const ttlMs = envNumber('PDF_VIEWER_PAGE_CACHE_TTL_MS', 5 * 60 * 1000, 0, 30 * 60 * 1000)
@@ -827,7 +840,7 @@ export async function createWatermarkedSinglePagePdf(
         if (!oldestKey) break
         renderedPageCache.delete(oldestKey)
       }
-      renderedPageCache.set(input.auditToken, {
+      renderedPageCache.set(cacheKey, {
         bytes: result.bytes,
         totalPages: result.totalPages,
         expiresAt: Date.now() + ttlMs,
@@ -835,7 +848,7 @@ export async function createWatermarkedSinglePagePdf(
     }
     return result
   } finally {
-    renderedPageInflight.delete(input.auditToken)
+    renderedPageInflight.delete(cacheKey)
   }
 }
 

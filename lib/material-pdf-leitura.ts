@@ -2,8 +2,13 @@ import { createHash } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import type { TokenPayload } from './auth'
-import { diaEmBrasilia, inicioDoDiaSeguinteEmBrasilia } from './fuso-brasilia'
-import { buscarPaginaDerivada, fonteDoPdf, gravarPaginaDerivada } from './material-pdf-pages'
+import {
+  diaEmBrasilia,
+  inicioDoDiaEmBrasilia,
+  inicioDoDiaSeguinteEmBrasilia,
+} from './fuso-brasilia'
+import { buscarPaginaEnxuta, fonteDoPdf, gravarDerivadasDaBruta } from './material-pdf-pages'
+import { corpoComprimido } from './resposta-comprimida'
 import {
   createWatermarkedSinglePagePdf,
   fetchMaterialPdfBytes,
@@ -23,22 +28,32 @@ import {
  * limpo, o que anulava a marca d'água da leitura. Agora as duas rotas entregam
  * a mesma coisa: a página marcada com os dados de quem pediu, e com log.
  *
- * Isso também deixou a conta mais barata: sendo iguais, os bytes da leitura
- * servem à miniatura e os da miniatura servem à leitura. Antes, uma página que
- * aparecia no leitor e no painel era baixada duas vezes.
+ * A miniatura passou, depois, a ter versão própria e mais leve (ver "Leitura e
+ * miniatura não são mais a mesma página", abaixo).
  *
- * ## Janela de um dia
+ * ## Janela de uma semana
  *
- * O token de auditoria era por janela de 5 minutos, e o navegador guardava a
- * página por 5 minutos. Quem voltava a um material mais tarde no mesmo dia
- * (o normal de quem estuda) baixava tudo de novo, e essa rota respondia por
- * ~67% do Fast Origin Transfer do projeto. Agora a janela é o dia de Brasília:
- * a mesma pessoa, na mesma página, na mesma versão do PDF, recebe a mesma
- * página marcada até a meia-noite, e o navegador a guarda até lá.
+ * O token de auditoria já foi por janela de 5 minutos, depois por dia. Quem
+ * estuda volta ao mesmo material vários dias seguidos, e a cada dia baixava de
+ * novo as mesmas páginas, marcadas com o mesmo nome: essa rota respondia por
+ * ~69% do Fast Origin Transfer do projeto. Agora a janela é a semana de
+ * Brasília (segunda 00:00 até a segunda seguinte): a mesma pessoa, na mesma
+ * página, na mesma versão do PDF, recebe a mesma página marcada a semana toda,
+ * e o navegador a guarda até lá. `PDF_VIEWER_JANELA=dia` volta à janela diária.
  *
  * A marca d'água não perde nada com isso: continua com nome, e-mail, UID e o
  * horário real em que aquela cópia foi gerada. O log registra cada página que o
- * servidor gera.
+ * servidor gera. Quem tem acesso por tempo limitado nunca recebe permissão de
+ * guardar a página além do fim do próprio acesso.
+ *
+ * ## Leitura e miniatura não são mais a mesma página
+ *
+ * A miniatura do painel lateral é desenhada com 150 px de largura, mas recebia
+ * a página inteira, com as imagens em resolução de leitura. Agora ela vem da
+ * derivada `miniatura` (ver `lib/material-pdf-pages.ts`): mesma marca, mesmo
+ * log, imagens do tamanho do painel — dezenas de KB em vez de centenas. O
+ * leitor ainda usa uma página de leitura que já tenha em mãos para desenhar a
+ * miniatura, mas nunca o contrário.
  *
  * ## Por que a URL leva uma chave (`c`)
  *
@@ -80,7 +95,7 @@ export function chaveDeLeitura(identidade: string, materialId: string, versao: s
 }
 
 /**
- * Token de auditoria da página: pessoa, material, página, dia e versão.
+ * Token de auditoria da página: pessoa, material, página, janela e versão.
  *
  * Leva o id COMPLETO de quem lê. Ele é também a chave do cache de páginas
  * renderizadas em memória (`createWatermarkedSinglePagePdf`); com só os
@@ -91,6 +106,7 @@ export function tokenDeAuditoria(input: {
   identidade: string
   materialId: string
   pagina: number
+  /** Identificador da janela de leitura (ver `janelaDeLeitura`). */
   dia: string
   versao: string
 }): string {
@@ -103,18 +119,64 @@ export function tokenDeAuditoria(input: {
   ].join('-')
 }
 
-/**
- * Por quanto tempo o navegador pode guardar a página: até a meia-noite de
- * Brasília, quando o token muda. Nunca menos de 1 minuto nem mais de 1 dia.
- */
-export function segundosAteVirarODia(agora: Date): number {
-  const fim = inicioDoDiaSeguinteEmBrasilia(agora).getTime()
-  const segundos = Math.floor((fim - agora.getTime()) / 1000)
-  return Math.min(86_400, Math.max(60, segundos))
+const MS_POR_DIA = 24 * 60 * 60 * 1000
+
+export interface JanelaDeLeitura {
+  /** Entra no token de auditoria: muda quando a janela vira. */
+  id: string
+  /** Instante em que a janela termina (exclusivo). */
+  fim: Date
 }
 
-export function cacheControlDaPagina(cacheavel: boolean, agora: Date): string {
-  return cacheavel ? `private, max-age=${segundosAteVirarODia(agora)}` : 'private, no-store'
+/**
+ * A janela em que a mesma página marcada vale para a mesma pessoa.
+ *
+ * Semana de Brasília, de segunda 00:00 até a segunda seguinte. Com
+ * `PDF_VIEWER_JANELA=dia`, o dia de Brasília (o comportamento anterior).
+ */
+export function janelaDeLeitura(agora: Date): JanelaDeLeitura {
+  const dia = diaEmBrasilia(agora)
+  if ((process.env.PDF_VIEWER_JANELA || '').toLowerCase() === 'dia') {
+    return { id: dia, fim: inicioDoDiaSeguinteEmBrasilia(agora) }
+  }
+  // Meio-dia UTC do dia de Brasília: longe da meia-noite, o dia da semana
+  // calculado em UTC é o mesmo de Brasília.
+  const meioDia = new Date(`${dia}T12:00:00Z`)
+  const desdeSegunda = (meioDia.getUTCDay() + 6) % 7
+  const segunda = new Date(meioDia.getTime() - desdeSegunda * MS_POR_DIA)
+  const proximaSegunda = new Date(segunda.getTime() + 7 * MS_POR_DIA)
+  return {
+    id: `sem${segunda.toISOString().slice(0, 10)}`,
+    fim: inicioDoDiaEmBrasilia(proximaSegunda),
+  }
+}
+
+/**
+ * Por quanto tempo o navegador pode guardar a página: até o fim da janela,
+ * quando o token muda — ou até o fim do acesso por tempo, se vier antes. Nunca
+ * menos de 1 minuto nem mais de 7 dias.
+ */
+export function segundosAteFimDaJanela(agora: Date, acessoAte?: Date | null): number {
+  let fim = janelaDeLeitura(agora).fim.getTime()
+  if (acessoAte && Number.isFinite(acessoAte.getTime())) fim = Math.min(fim, acessoAte.getTime())
+  const segundos = Math.floor((fim - agora.getTime()) / 1000)
+  return Math.min(7 * 86_400, Math.max(60, segundos))
+}
+
+export function cacheControlDaPagina(
+  cacheavel: boolean,
+  agora: Date,
+  acessoAte?: Date | null
+): string {
+  return cacheavel ? `private, max-age=${segundosAteFimDaJanela(agora, acessoAte)}` : 'private, no-store'
+}
+
+/** Fim do acesso por tempo, quando o acesso veio de uma versão com prazo. */
+function fimDoAcessoPorTempo(access: AcessoLiberado): Date | null {
+  const prazo = access.timedAccess
+  if (!prazo?.isTimed || !prazo.expiresAt) return null
+  const fim = new Date(prazo.expiresAt)
+  return Number.isFinite(fim.getTime()) ? fim : null
 }
 
 /**
@@ -139,9 +201,16 @@ export async function responderPaginaMarcada(params: {
     identidade,
     materialId: access.materialId,
     pagina,
-    dia: diaEmBrasilia(agora),
+    dia: janelaDeLeitura(agora).id,
     versao,
   })
+  // A versão leve da miniatura só vai para quem a pede com `m=1`, o leitor
+  // atual. O leitor de antes desta mudança (uma aba que continuou aberta
+  // durante o deploy) guarda miniatura e leitura sob a mesma chave na memória
+  // e mostraria a miniatura como página de leitura, borrada. Para ele, a
+  // miniatura continua sendo a página de leitura, como sempre foi.
+  const variante =
+    origem === 'miniatura' && request.nextUrl.searchParams.get('m') === '1' ? 'miniatura' : 'leitura'
   const cacheavel =
     request.nextUrl.searchParams.get('c') === chaveDeLeitura(identidade, access.materialId, versao)
 
@@ -157,10 +226,10 @@ export async function responderPaginaMarcada(params: {
   const pagePdf = await createWatermarkedSinglePagePdf(
     {
       knownTotalPages: cachedPageCount,
-      loadSlice: fonte ? () => buscarPaginaDerivada(fonte, pagina) : undefined,
+      loadSlice: fonte ? () => buscarPaginaEnxuta(fonte, pagina, variante) : undefined,
       loadFull: () => fetchMaterialPdfBytes(access.material.pdfFile.blobUrl),
       onSliceReady: fonte
-        ? (numero, bytes) => gravarPaginaDerivada(fonte, numero, bytes)
+        ? (numero, bytes) => gravarDerivadasDaBruta(fonte, numero, bytes, variante)
         : undefined,
     },
     {
@@ -176,6 +245,7 @@ export async function responderPaginaMarcada(params: {
       materialTitle: access.material.title || 'Material DomineAqui',
       viewedAt: agora,
       auditToken,
+      renderCacheKey: `${auditToken}|${variante}`,
       sourceCacheKey: fonte?.chave || access.material.pdfFile.blobUrl,
     }
   )
@@ -215,16 +285,21 @@ export async function responderPaginaMarcada(params: {
     })
     .catch((error) => console.error('[pdf-viewer] Falha ao logar pagina:', error))
 
-  return new NextResponse(Buffer.from(pagePdf.bytes), {
+  // Página de texto cai pela metade com gzip; escaneada quase não muda e sai
+  // como está (ver `lib/resposta-comprimida.ts`).
+  const { corpo, cabecalhos } = corpoComprimido(request.headers, pagePdf.bytes)
+
+  return new NextResponse(Buffer.from(corpo), {
     status: 200,
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="domineaqui-page-${pagina}.pdf"`,
-      'Content-Length': String(pagePdf.bytes.byteLength),
-      'Cache-Control': cacheControlDaPagina(cacheavel, agora),
+      ...cabecalhos,
+      'Cache-Control': cacheControlDaPagina(cacheavel, agora, fimDoAcessoPorTempo(access)),
       'X-Frame-Options': 'SAMEORIGIN',
       'X-Content-Type-Options': 'nosniff',
       'X-DomineAqui-Page-Count': String(pagePdf.totalPages),
+      'X-DomineAqui-Variante': variante,
     },
   })
 }

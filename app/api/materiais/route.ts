@@ -14,6 +14,7 @@ import {
   summarizeTimedAccess,
 } from '@/lib/material-timed-access'
 import { resolvePdfDownloadPermissionFrom } from '@/lib/material-download-permission'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -602,15 +603,21 @@ export async function GET(request: NextRequest) {
       }
     })
 
-    const res = NextResponse.json({
-      materials: secureMaterials,
-      purchasedIds,
-      userGroups, // groups the current user belongs to (for client-side access check)
-      isAuthenticated,
-    })
-    // Prevent any browser/CDN caching — access state must always be fresh
-    res.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate')
-    return res
+    // Comprimido na própria função: o catálogo inteiro (com sumários, itens
+    // complementares e, para o admin, os documentos completos) é o JSON mais
+    // pesado do site, e cada byte que sai da função é Fast Origin Transfer.
+    // Ver lib/resposta-comprimida.ts.
+    return jsonComprimido(
+      request,
+      {
+        materials: secureMaterials,
+        purchasedIds,
+        userGroups, // groups the current user belongs to (for client-side access check)
+        isAuthenticated,
+      },
+      // Prevent any browser/CDN caching — access state must always be fresh
+      { headers: { 'Cache-Control': 'no-store, max-age=0, must-revalidate' } }
+    )
   } catch (error) {
     console.error('Error fetching materials:', error)
     return NextResponse.json({ error: 'Erro ao buscar materiais' }, { status: 500 })

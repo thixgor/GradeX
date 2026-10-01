@@ -36,6 +36,31 @@ interface ParsedReview {
   retention: number
 }
 
+/**
+ * Índices da coleção de progresso, garantidos UMA vez por instância.
+ *
+ * Eram três `createIndex` a cada avaliação enviada: três idas ao Atlas no
+ * caminho de toda requisição, para confirmar algo que não muda. Como o tempo de
+ * parede é o que a Vercel cobra em memória provisionada, essas esperas somavam
+ * na fatura. A primeira requisição de cada instância cria (ou confirma); as
+ * seguintes nem esperam por isso.
+ */
+let indicesDoProgresso: Promise<unknown> | null = null
+function garantirIndicesDoProgresso(db: any) {
+  if (!indicesDoProgresso) {
+    const colecao = db.collection(FLASHCARD_SPACED_PROGRESS_COLLECTION)
+    indicesDoProgresso = Promise.all([
+      colecao.createIndex({ userId: 1, cardId: 1 }, { unique: true }),
+      colecao.createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
+      colecao.createIndex({ userId: 1, nextReviewAt: 1 }),
+    ]).catch(() => {
+      // Falhou: a próxima requisição tenta de novo.
+      indicesDoProgresso = null
+    })
+  }
+  return indicesDoProgresso
+}
+
 async function loadDeck(db: any, idOrSlug: string): Promise<(FlashcardManualDeck & { _id: ObjectId }) | null> {
   if (isValidObjectId(idOrSlug)) {
     const byId = await db.collection(FLASHCARD_MANUAL_COLLECTIONS.decks).findOne({ _id: new ObjectId(idOrSlug) })
@@ -78,13 +103,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
     const db = await getDb()
-    const deck = await loadDeck(db, params.id)
+    // Deck e conta não dependem um do outro: uma espera só.
+    const [deck, userDoc] = await Promise.all([
+      loadDeck(db, params.id),
+      db.collection('users').findOne(
+        { _id: new ObjectId(session.userId) },
+        { projection: { accountType: 1, secondaryRole: 1, email: 1 } }
+      ),
+    ])
     if (!deck) return NextResponse.json({ error: 'Deck não encontrado' }, { status: 404 })
 
-    const userDoc = await db.collection('users').findOne(
-      { _id: new ObjectId(session.userId) },
-      { projection: { accountType: 1, secondaryRole: 1, email: 1 } }
-    )
     const access = await resolveDeckAccess({
       db,
       deck,
@@ -115,20 +143,22 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
 
     const progressCollection = db.collection<FlashcardSpacedProgress>(FLASHCARD_SPACED_PROGRESS_COLLECTION)
-    // Índices idempotentes: garantem a unicidade por (usuário, card) e a busca
-    // por vencimento que alimenta a fila e os contadores de "revisar hoje".
-    await Promise.all([
-      progressCollection.createIndex({ userId: 1, cardId: 1 }, { unique: true }),
-      progressCollection.createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
-      progressCollection.createIndex({ userId: 1, nextReviewAt: 1 }),
-    ]).catch(() => {})
-
-    const previousDocs = await progressCollection
-      .find({ userId: session.userId, cardId: { $in: applicable.map(r => r.cardId) } })
-      .toArray()
+    // Índices: garantem a unicidade por (usuário, card) e a busca por
+    // vencimento que alimenta a fila e os contadores de "revisar hoje". A
+    // criação corre em paralelo com a leitura abaixo, uma vez por instância.
+    const [previousDocs] = await Promise.all([
+      progressCollection
+        .find({ userId: session.userId, cardId: { $in: applicable.map(r => r.cardId) } })
+        .toArray(),
+      garantirIndicesDoProgresso(db),
+    ])
     const previousByCardId = new Map(previousDocs.map(doc => [doc.cardId, doc]))
 
     const results: Array<{ cardId: string; result: SpacedReviewResult }> = []
+    // As gravações saem num `bulkWrite` só, na mesma ordem em que seriam
+    // feitas uma a uma — o estado final no banco é o mesmo, com uma ida em vez
+    // de uma por card.
+    const gravacoes: any[] = []
     let duplicates = 0
 
     for (const review of applicable) {
@@ -167,15 +197,21 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         updatedAt: now,
       }
 
-      await progressCollection.updateOne(
-        { userId: session.userId, cardId: review.cardId },
-        { $set: document, $setOnInsert: { createdAt: now } },
-        { upsert: true }
-      )
+      gravacoes.push({
+        updateOne: {
+          filter: { userId: session.userId, cardId: review.cardId },
+          update: { $set: document, $setOnInsert: { createdAt: now } },
+          upsert: true,
+        },
+      })
 
       // O próximo item do lote que tocar este card precisa enxergar o estado
       // recém-gravado — sem isso, duas avaliações seguidas partiriam da mesma base.
-      previousByCardId.set(review.cardId, { ...(previous || {}), ...document } as any)
+      previousByCardId.set(review.cardId, {
+        ...(previous || {}),
+        ...document,
+        createdAt: (previous as any)?.createdAt ?? now,
+      } as any)
       results.push({ cardId: review.cardId, result: next })
     }
 
@@ -187,23 +223,32 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
     // Uma sessão por requisição (e não uma por card): o lote da fila é uma
     // sessão de estudo só, e era isso que enchia a coleção de documentos soltos.
-    await db.collection(FLASHCARD_MANUAL_COLLECTIONS.sessions).insertOne({
-      deckId,
-      userId: session.userId,
-      startedAt: results[0].result.lastReviewedAt,
-      finishedAt: results[results.length - 1].result.lastReviewedAt,
-      entries: results.map(({ cardId, result }) => ({
-        cardId,
-        rating: toLegacyRating(result.rating),
-        completedAt: result.lastReviewedAt,
-      })),
-      mode: 'spaced_repetition',
-    })
+    // Sai junto com as gravações do progresso: uma não depende da outra.
+    await Promise.all([
+      progressCollection.bulkWrite(gravacoes, { ordered: true }),
+      db.collection(FLASHCARD_MANUAL_COLLECTIONS.sessions).insertOne({
+        deckId,
+        userId: session.userId,
+        startedAt: results[0].result.lastReviewedAt,
+        finishedAt: results[results.length - 1].result.lastReviewedAt,
+        entries: results.map(({ cardId, result }) => ({
+          cardId,
+          rating: toLegacyRating(result.rating),
+          completedAt: result.lastReviewedAt,
+        })),
+        mode: 'spaced_repetition',
+      }),
+    ])
 
-    const saved = await progressCollection
-      .find({ userId: session.userId, cardId: { $in: results.map(r => r.cardId) } })
-      .toArray()
-    const savedByCardId = new Map(saved.map(doc => [doc.cardId, normalizeSpacedProgressForResponse(doc)]))
+    // O progresso devolvido é o que acabou de ser gravado, montado em memória.
+    // Reler do banco era mais uma ida ao Atlas para ler de volta exatamente o
+    // que esta requisição escreveu.
+    const savedByCardId = new Map(
+      results.map(({ cardId }) => [
+        cardId,
+        normalizeSpacedProgressForResponse(previousByCardId.get(cardId) as any),
+      ])
+    )
     const last = results[results.length - 1]
 
     return NextResponse.json({

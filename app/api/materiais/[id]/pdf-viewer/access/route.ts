@@ -174,7 +174,8 @@ export async function GET(
         },
         // Vai em cada pedido de página (`&c=`). Sem ela o servidor entrega a
         // página sem permitir cache; com ela, o navegador guarda a página
-        // marcada até o fim do dia. Ver lib/material-pdf-leitura.ts.
+        // marcada até o fim da janela de leitura (a semana). Ver
+        // lib/material-pdf-leitura.ts.
         leitura: {
           chave: chaveDeLeitura(
             identidadeDoLeitor(session, ip, request.headers.get('user-agent') || 'unknown'),

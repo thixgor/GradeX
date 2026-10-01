@@ -64,6 +64,12 @@
 import { get, put } from '@vercel/blob'
 import { Buffer } from 'node:buffer'
 import { createHash } from 'node:crypto'
+import {
+  enxugarPaginaPdf,
+  perfilDeLeitura,
+  perfilDeMiniatura,
+  type PerfilDeEnxugamento,
+} from './material-pdf-enxugar'
 import { isPdfBuffer } from './pdf-watermark'
 
 /** Prefixo das derivadas no store. Separado dos originais de propósito. */
@@ -113,15 +119,51 @@ function habilitado(): boolean {
 }
 
 /**
+ * As três formas guardadas de uma página, todas ainda SEM marca d'água:
+ *
+ * - `bruta`: o que sai do `copyPages`, como sempre foi. É a matéria-prima das
+ *   outras duas e continua sendo gravada, para que mudar o perfil de
+ *   enxugamento não obrigue a baixar o documento inteiro de novo.
+ * - `leitura`: a bruta enxuta (ver `lib/material-pdf-enxugar.ts`). É o que o
+ *   leitor entrega.
+ * - `miniatura`: a de leitura com as imagens no tamanho do painel lateral.
+ */
+export type VarianteDaDerivada = 'bruta' | 'leitura' | 'miniatura'
+
+function perfilDaVariante(variante: Exclude<VarianteDaDerivada, 'bruta'>): PerfilDeEnxugamento {
+  return variante === 'miniatura' ? perfilDeMiniatura() : perfilDeLeitura()
+}
+
+/**
+ * O perfil entra no caminho: ajustar o DPI ou a qualidade por variável de
+ * ambiente gera derivadas novas, em vez de servir as antigas para sempre.
+ */
+function assinaturaDoPerfil(perfil: PerfilDeEnxugamento): string {
+  return `${perfil.nome}-d${perfil.dpi}-q${perfil.qualidadeJpeg}-e${perfil.economiaMinima}-v1`
+}
+
+/**
  * Caminho da derivada dentro do store.
  *
  * O nome é o hash de (versão da fonte + número da página): não vaza o id do
  * material nem a numeração, e as duas prateleiras hexadecimais evitam um
- * diretório único com dezenas de milhares de objetos.
+ * diretório único com dezenas de milhares de objetos. A bruta mantém o
+ * caminho de sempre, para as que já existem continuarem valendo.
  */
-export function caminhoDaDerivada(fonte: FonteDoPdf, pagina: number): string {
-  const digest = createHash('sha256').update(`${fonte.versao}#${pagina}`).digest('hex')
-  return `${PREFIXO}/${digest.slice(0, 2)}/${digest}.pdf`
+export function caminhoDaDerivada(
+  fonte: FonteDoPdf,
+  pagina: number,
+  variante: VarianteDaDerivada = 'bruta'
+): string {
+  if (variante === 'bruta') {
+    const digest = createHash('sha256').update(`${fonte.versao}#${pagina}`).digest('hex')
+    return `${PREFIXO}/${digest.slice(0, 2)}/${digest}.pdf`
+  }
+  const assinatura = assinaturaDoPerfil(perfilDaVariante(variante))
+  const digest = createHash('sha256')
+    .update(`${fonte.versao}#${pagina}#${assinatura}`)
+    .digest('hex')
+  return `${PREFIXO}-${variante}/${digest.slice(0, 2)}/${digest}.pdf`
 }
 
 /**
@@ -130,7 +172,8 @@ export function caminhoDaDerivada(fonte: FonteDoPdf, pagina: number): string {
  */
 export async function buscarPaginaDerivada(
   fonte: FonteDoPdf,
-  pagina: number
+  pagina: number,
+  variante: VarianteDaDerivada = 'bruta'
 ): Promise<ArrayBuffer | null> {
   if (!habilitado()) return null
 
@@ -140,7 +183,7 @@ export async function buscarPaginaDerivada(
     // endereço nem repassar o `BLOB_READ_WRITE_TOKEN` na mão. Devolve `null`
     // quando o objeto não existe, que é o caminho esperado enquanto a página
     // nunca foi lida por ninguém.
-    const resultado = await get(caminhoDaDerivada(fonte, pagina), { access: 'private' })
+    const resultado = await get(caminhoDaDerivada(fonte, pagina, variante), { access: 'private' })
     if (!resultado || resultado.statusCode !== 200 || !resultado.stream) return null
 
     const bytes = await new Response(resultado.stream).arrayBuffer()
@@ -185,12 +228,13 @@ export async function buscarPaginaDerivada(
 export async function gravarPaginaDerivada(
   fonte: FonteDoPdf,
   pagina: number,
-  bytes: Uint8Array
+  bytes: Uint8Array,
+  variante: VarianteDaDerivada = 'bruta'
 ): Promise<void> {
   if (!habilitado()) return
 
   try {
-    await put(caminhoDaDerivada(fonte, pagina), Buffer.from(bytes), {
+    await put(caminhoDaDerivada(fonte, pagina, variante), Buffer.from(bytes), {
       access: 'private',
       addRandomSuffix: false,
       allowOverwrite: true,
@@ -205,4 +249,64 @@ export async function gravarPaginaDerivada(
     // leitura desta página volta a pagar o documento inteiro.
     console.warn('[pdf-viewer] Falha ao gravar pagina derivada:', erro)
   }
+}
+
+type VarianteEnxuta = Exclude<VarianteDaDerivada, 'bruta'>
+
+async function enxugarEGravar(
+  fonte: FonteDoPdf,
+  pagina: number,
+  base: ArrayBuffer | Uint8Array,
+  variante: VarianteEnxuta
+): Promise<Uint8Array> {
+  const { bytes } = await enxugarPaginaPdf(base, perfilDaVariante(variante))
+  await gravarPaginaDerivada(fonte, pagina, bytes, variante)
+  return bytes
+}
+
+/**
+ * A página na forma em que vai ao aluno, sem tocar no documento completo.
+ *
+ * Procura a derivada enxuta pronta; se ela ainda não existe, monta a partir da
+ * derivada anterior na cadeia (bruta → leitura → miniatura), grava e devolve.
+ * É assim que as páginas lidas antes desta mudança migram sozinhas: a bruta já
+ * está no store, e enxugá-la custa algumas centenas de KB de leitura — não o
+ * documento inteiro.
+ *
+ * `null` quando nem a bruta existe: aí só o documento completo resolve.
+ */
+export async function buscarPaginaEnxuta(
+  fonte: FonteDoPdf,
+  pagina: number,
+  variante: VarianteEnxuta
+): Promise<ArrayBuffer | Uint8Array | null> {
+  const pronta = await buscarPaginaDerivada(fonte, pagina, variante)
+  if (pronta) return pronta
+
+  const base =
+    variante === 'miniatura'
+      ? await buscarPaginaEnxuta(fonte, pagina, 'leitura')
+      : await buscarPaginaDerivada(fonte, pagina, 'bruta')
+  if (!base) return null
+
+  return enxugarEGravar(fonte, pagina, base, variante)
+}
+
+/**
+ * A página acabou de sair do documento completo: grava a bruta e as enxutas
+ * que a variante pedida precisa, e devolve a pedida. A próxima leitura desta
+ * página, na mesma variante, cai direto em `buscarPaginaEnxuta`.
+ */
+export async function gravarDerivadasDaBruta(
+  fonte: FonteDoPdf,
+  pagina: number,
+  bruta: Uint8Array,
+  variante: VarianteEnxuta
+): Promise<Uint8Array> {
+  const [leitura] = await Promise.all([
+    enxugarEGravar(fonte, pagina, bruta, 'leitura'),
+    gravarPaginaDerivada(fonte, pagina, bruta, 'bruta'),
+  ])
+  if (variante === 'leitura') return leitura
+  return enxugarEGravar(fonte, pagina, leitura, 'miniatura')
 }

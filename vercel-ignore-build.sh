@@ -31,7 +31,24 @@ case "$VERCEL_GIT_COMMIT_REF" in
     ;;
 esac
 
-# ── 2. Commit que já não é a ponta da branch não constrói ─────────────────────
+# ── 2. Commit marcado `[sem deploy]` não constrói ─────────────────────────────
+#
+# Build CPU é cobrado por build, e o grosso dos builds de produção vinha de
+# rajadas de commits de conteúdo — 33 num dia só, um a cada 2–6 minutos, cada um
+# construindo o site inteiro para publicar uma legenda de lâmina. Quem vai fazer
+# vários pushes seguidos marca os intermediários com `[sem deploy]` (ou
+# `[skip deploy]`) na mensagem, e só o último constrói.
+#
+# Nada fica para trás: a regra 4 compara com o último deploy BEM-SUCEDIDO, então
+# o primeiro push sem a marca publica tudo o que os marcados trouxeram. Só a
+# mensagem do commit da ponta conta: um push sem a marca no topo constrói,
+# mesmo que commits anteriores dele a tenham.
+if git log -1 --format=%B HEAD 2>/dev/null | grep -qiE '\[(sem deploy|skip deploy)\]'; then
+  echo "ignorado: commit marcado [sem deploy]; o próximo push sem a marca publica tudo junto"
+  exit 0
+fi
+
+# ── 3. Commit que já não é a ponta da branch não constrói ─────────────────────
 #
 # O Pro constrói um deploy por vez, e os outros esperam na fila. Numa rajada de
 # pushes (em 19/09 foram 11 commits entre 12:56 e 14:08, cada um no seu push),
@@ -40,7 +57,7 @@ esac
 # aponta para outro mais novo, o deploy desse mais novo está atrás na fila e vai
 # publicar tudo isto junto.
 #
-# A regra 3 não esconde nada aqui: a base dela é o último deploy BEM-SUCEDIDO,
+# A regra 4 não esconde nada aqui: a base dela é o último deploy BEM-SUCEDIDO,
 # então o commit mais novo compara contra antes deste e enxerga as mudanças dele
 # também.
 #
@@ -67,7 +84,7 @@ if [ -n "$VERCEL_GIT_REPO_OWNER" ] && [ -n "$VERCEL_GIT_REPO_SLUG" ] \
   fi
 fi
 
-# ── 3. Push que só mexeu em documentação não constrói ─────────────────────────
+# ── 4. Push que só mexeu em documentação não constrói ─────────────────────────
 #
 # A base de comparação é `VERCEL_GIT_PREVIOUS_SHA`, o último deploy de fato — e
 # não `HEAD~1`. Comparar com `HEAD~1` olhava um commit só: num push com vários

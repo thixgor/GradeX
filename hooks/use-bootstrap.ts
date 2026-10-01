@@ -20,6 +20,8 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
 import { clearPageCache } from '@/lib/page-cache'
+import { apagarPaginasGuardadas } from '@/lib/paginas-guardadas'
+import { agendarEnquantoVisivel, ambienteDoNavegador } from '@/hooks/use-intervalo-visivel'
 import type { SidebarSectionOrder, SidebarSectionSettings } from '@/lib/sidebar-sections'
 import type { SidebarSectionIcons } from '@/lib/sidebar-icons'
 import type { SidebarGroupDefinition, SidebarSectionGroups } from '@/lib/sidebar-groups'
@@ -311,7 +313,6 @@ export function useBootstrap(options: {
   const router = useRouter()
   const [, forceUpdate] = useState({})
   const mountedRef = useRef(true)
-  const intervalRef = useRef<NodeJS.Timeout>()
 
   // Subscribe to global state changes
   useEffect(() => {
@@ -375,19 +376,20 @@ export function useBootstrap(options: {
     return () => window.removeEventListener('pageshow', handlePageShow)
   }, [skip, redirectOnUnauth, router])
 
-  // Auto-refetch interval
+  // Auto-refetch só com a aba à vista (ver hooks/use-intervalo-visivel): a
+  // checagem de banimento roda em toda página, e uma aba de fundo a fazia a
+  // cada 5 minutos o dia inteiro. Ao voltar, atualiza na hora se venceu.
   useEffect(() => {
     if (skip || refetchInterval <= 0) return
-
-    intervalRef.current = setInterval(() => {
-      fetchBootstrap(true).catch(() => {})
-    }, refetchInterval)
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
+    if (typeof document === 'undefined') return
+    return agendarEnquantoVisivel(
+      () => {
+        fetchBootstrap(true).catch(() => {})
+      },
+      refetchInterval,
+      ambienteDoNavegador(),
+      { soSeVencido: true }
+    )
   }, [skip, refetchInterval])
 
   // Cleanup
@@ -534,6 +536,8 @@ export function clearBootstrapCache() {
   // o conteúdo em cache do usuário anterior.
   clearPageCache()
   clearCache()
+  // E as páginas de material guardadas no aparelho (ver lib/paginas-guardadas).
+  void apagarPaginasGuardadas()
   invalidateCache('/api/bootstrap')
   invalidateCache('/api/auth/me')
   invalidateCache('/api/user/tier-limits')

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Notification } from '@/lib/types'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,12 +38,11 @@ export async function GET(request: NextRequest) {
     // antiga enquanto a fresh chega em background (sem CPU adicional
     // imediato para o usuário). Ainda assim revalida quando há um
     // POST de update (e o cliente invalida o cache manualmente).
-    const headers = new Headers({
-      'Cache-Control': 'private, max-age=120, stale-while-revalidate=300',
-      'Content-Type': 'application/json',
-    })
-
-    return NextResponse.json({ notifications }, { headers })
+    return jsonComprimido(
+      request,
+      { notifications },
+      { headers: { 'Cache-Control': 'private, max-age=120, stale-while-revalidate=300' } }
+    )
   } catch (error) {
     console.error('Get notifications error:', error)
     return NextResponse.json(

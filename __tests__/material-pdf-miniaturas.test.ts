@@ -12,8 +12,8 @@ import { createWatermarkedSinglePagePdf } from '@/lib/material-pdf-viewer'
  * As miniaturas do painel lateral já tiveram caminho próprio, que devolvia a
  * página NUA: o PDF inteiro da página, em resolução total, sem marca e sem
  * log. Quem tinha acesso podia pedir `/thumb?page=1…N` e baixar o livro limpo.
- * Hoje a miniatura recebe a mesma página marcada da leitura (ver
- * `lib/material-pdf-leitura.ts`).
+ * Hoje a miniatura sai marcada e com log pelo mesmo caminho da leitura, só que
+ * com as imagens em resolução de painel (ver `lib/material-pdf-leitura.ts`).
  *
  * Estes testes fixam o que não pode voltar atrás:
  *   1. não existe mais caminho que entregue a página sem marca;

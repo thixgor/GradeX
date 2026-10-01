@@ -12,16 +12,17 @@ vi.mock('@/lib/material-pdf-viewer', async (importOriginal) => ({
 }))
 vi.mock('@/lib/material-pdf-pages', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/material-pdf-pages')>()),
-  buscarPaginaDerivada: async () => null,
-  gravarPaginaDerivada: async () => {},
+  buscarPaginaEnxuta: async () => null,
+  gravarDerivadasDaBruta: async () => undefined,
 }))
 
 const {
   cacheControlDaPagina,
   chaveDeLeitura,
   identidadeDoLeitor,
+  janelaDeLeitura,
   responderPaginaMarcada,
-  segundosAteVirarODia,
+  segundosAteFimDaJanela,
   tokenDeAuditoria,
   versaoDoPdf,
 } = await import('@/lib/material-pdf-leitura')
@@ -32,7 +33,11 @@ const {
  *   - a página sai marcada com quem pediu, venha da leitura ou da miniatura,
  *     e com log;
  *   - o navegador só guarda a página quando a URL traz a chave de leitura
- *     certa para aquela pessoa, e até o fim do dia de Brasília;
+ *     certa para aquela pessoa, e até o fim da semana de Brasília (ou do
+ *     acesso por tempo, se acabar antes);
+ *   - a versão leve da miniatura só vai para quem a pede (`m=1`); o leitor
+ *     antigo, que confunde miniatura e leitura na memória, recebe a página de
+ *     leitura;
  *   - duas pessoas nunca recebem a página uma da outra, nem quando o id delas
  *     termina igual.
  */
@@ -87,11 +92,12 @@ function sessao(userId: string, email: string) {
   return { userId, email, name: `Pessoa ${email}`, role: 'user' } as any
 }
 
-function pedido(pagina: number, c?: string) {
+function pedido(pagina: number, c?: string, extra: Record<string, string> = {}, headers: Record<string, string> = {}) {
   const url = new URL(`http://localhost/api/materiais/${MATERIAL}/pdf-viewer/page`)
   url.searchParams.set('page', String(pagina))
   if (c !== undefined) url.searchParams.set('c', c)
-  return new NextRequest(url, { headers: { 'user-agent': 'Navegador de Teste' } })
+  for (const [nome, valor] of Object.entries(extra)) url.searchParams.set(nome, valor)
+  return new NextRequest(url, { headers: { 'user-agent': 'Navegador de Teste', ...headers } })
 }
 
 function chaveDe(userId: string, pdfFile: any = PDF_FILE) {
@@ -104,12 +110,15 @@ async function responder(opcoes: {
   pagina?: number
   c?: string
   origem?: 'leitura' | 'miniatura'
+  extra?: Record<string, string>
+  headers?: Record<string, string>
+  access?: any
 }) {
   const pagina = opcoes.pagina ?? 2
   return responderPaginaMarcada({
-    request: pedido(pagina, opcoes.c),
+    request: pedido(pagina, opcoes.c, opcoes.extra, opcoes.headers),
     session: sessao(opcoes.userId, opcoes.email),
-    access: acesso(),
+    access: opcoes.access ?? acesso(),
     ip: '203.0.113.7',
     pagina,
     origem: opcoes.origem ?? 'leitura',
@@ -140,25 +149,86 @@ describe('responderPaginaMarcada', () => {
     expect(await palavrasChave(resposta)).toContain(ANA)
   })
 
-  it('a miniatura recebe a mesma página marcada, com log', async () => {
+  it('a miniatura sai marcada, com log e o mesmo token da leitura', async () => {
     const leitura = await responder({ userId: ANA, email: 'ana@exemplo.com', origem: 'leitura' })
-    const miniatura = await responder({ userId: ANA, email: 'ana@exemplo.com', origem: 'miniatura' })
+    const miniatura = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      origem: 'miniatura',
+      extra: { m: '1' },
+    })
 
     expect(await palavrasChave(miniatura)).toContain(ANA)
     await palavrasChave(leitura)
+    expect(leitura.headers.get('x-domineaqui-variante')).toBe('leitura')
+    expect(miniatura.headers.get('x-domineaqui-variante')).toBe('miniatura')
     expect(logs.map((l) => l.origem)).toEqual(['leitura', 'miniatura'])
     expect(logs.every((l) => l.action === 'page_render' && l.userId === ANA)).toBe(true)
-    // Mesmo token: são a mesma página, reaproveitável entre leitura e painel.
+    // Mesmo token: a mesma pessoa, a mesma página, a mesma janela.
     expect(logs[0].auditToken).toBe(logs[1].auditToken)
   })
 
-  it('com a chave certa, o navegador guarda a página até o fim do dia', async () => {
+  it('leitor antigo (sem m=1) recebe a página de leitura também na miniatura', async () => {
+    const antiga = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      origem: 'miniatura',
+      c: chaveDe(ANA),
+    })
+    expect(antiga.headers.get('x-domineaqui-variante')).toBe('leitura')
+    expect(antiga.headers.get('cache-control')).toMatch(/^private, max-age=\d+$/)
+
+    const nova = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      origem: 'miniatura',
+      c: chaveDe(ANA),
+      extra: { m: '1' },
+    })
+    expect(nova.headers.get('x-domineaqui-variante')).toBe('miniatura')
+    expect(nova.headers.get('cache-control')).toMatch(/^private, max-age=\d+$/)
+  })
+
+  it('com a chave certa, o navegador guarda a página até o fim da semana', async () => {
     const resposta = await responder({ userId: ANA, email: 'ana@exemplo.com', c: chaveDe(ANA) })
     const cache = resposta.headers.get('cache-control')!
     expect(cache).toMatch(/^private, max-age=\d+$/)
     const segundos = Number(cache.split('=')[1])
     expect(segundos).toBeGreaterThanOrEqual(60)
-    expect(segundos).toBeLessThanOrEqual(86_400)
+    expect(segundos).toBeLessThanOrEqual(7 * 86_400)
+  })
+
+  it('acesso por tempo: o navegador não guarda a página além do fim do acesso', async () => {
+    const fim = new Date(Date.now() + 2 * 3600 * 1000)
+    const resposta = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      c: chaveDe(ANA),
+      access: { ...acesso(), timedAccess: { isTimed: true, expiresAt: fim.toISOString() } },
+    })
+    const segundos = Number(resposta.headers.get('cache-control')!.split('=')[1])
+    expect(segundos).toBeLessThanOrEqual(2 * 3600)
+    expect(segundos).toBeGreaterThan(2 * 3600 - 60)
+  })
+
+  it('comprime a página quando o navegador aceita e compensa', async () => {
+    const resposta = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      headers: { 'accept-encoding': 'gzip, deflate' },
+    })
+    expect(resposta.headers.get('content-encoding')).toBe('gzip')
+    expect(resposta.headers.get('vary')).toBe('Accept-Encoding')
+    const comprimido = Buffer.from(await resposta.arrayBuffer())
+    expect(Number(resposta.headers.get('content-length'))).toBe(comprimido.byteLength)
+    const { gunzipSync } = await import('node:zlib')
+    const doc = await PDFDocument.load(gunzipSync(comprimido))
+    expect(doc.getKeywords()).toContain(ANA)
+  })
+
+  it('sem Accept-Encoding, a página sai sem compressão', async () => {
+    const resposta = await responder({ userId: ANA, email: 'ana@exemplo.com' })
+    expect(resposta.headers.get('content-encoding')).toBeNull()
   })
 
   it.each([
@@ -224,17 +294,46 @@ describe('chave de leitura e token', () => {
 })
 
 describe('validade no navegador', () => {
+  afterEach(() => {
+    delete process.env.PDF_VIEWER_JANELA
+  })
+
+  // 29/09/2026 é uma terça. A semana de Brasília vira na segunda 05/10 às
+  // 00:00, que são 03:00 em UTC.
   it.each([
-    ['meio-dia em Brasília', '2026-09-29T15:00:00Z', 12 * 3600],
-    ['meia-noite em ponto', '2026-09-30T03:00:00Z', 86_400],
-    ['30 s antes da meia-noite', '2026-09-30T02:59:30Z', 60],
+    ['terça ao meio-dia', '2026-09-29T15:00:00Z', 5 * 86_400 + 12 * 3600],
+    ['domingo às 23h', '2026-10-05T02:00:00Z', 3600],
+    ['segunda à meia-noite em ponto', '2026-10-05T03:00:00Z', 7 * 86_400],
+    ['30 s antes de a semana virar', '2026-10-05T02:59:30Z', 60],
   ])('%s', (_nome, instante, esperado) => {
-    expect(segundosAteVirarODia(new Date(instante))).toBe(esperado)
+    expect(segundosAteFimDaJanela(new Date(instante))).toBe(esperado)
+  })
+
+  it('a janela é a mesma de segunda a domingo e muda na segunda', () => {
+    const terca = janelaDeLeitura(new Date('2026-09-29T15:00:00Z'))
+    const domingoTarde = janelaDeLeitura(new Date('2026-10-05T02:59:59Z'))
+    const segunda = janelaDeLeitura(new Date('2026-10-05T03:00:00Z'))
+    expect(terca.id).toBe(domingoTarde.id)
+    expect(segunda.id).not.toBe(terca.id)
+    expect(terca.fim.toISOString()).toBe('2026-10-05T03:00:00.000Z')
+  })
+
+  it('PDF_VIEWER_JANELA=dia volta à janela diária', () => {
+    process.env.PDF_VIEWER_JANELA = 'dia'
+    expect(segundosAteFimDaJanela(new Date('2026-09-29T15:00:00Z'))).toBe(12 * 3600)
+    expect(janelaDeLeitura(new Date('2026-09-29T15:00:00Z')).id).toBe('2026-09-29')
+  })
+
+  it('o fim do acesso por tempo encurta a validade', () => {
+    const agora = new Date('2026-09-29T15:00:00Z')
+    expect(segundosAteFimDaJanela(agora, new Date('2026-09-29T16:00:00Z'))).toBe(3600)
+    // Acesso que acaba depois da janela não muda nada.
+    expect(segundosAteFimDaJanela(agora, new Date('2026-12-01T00:00:00Z'))).toBe(5 * 86_400 + 12 * 3600)
   })
 
   it('só guarda quando pode', () => {
     const agora = new Date('2026-09-29T15:00:00Z')
-    expect(cacheControlDaPagina(true, agora)).toBe('private, max-age=43200')
+    expect(cacheControlDaPagina(true, agora)).toBe('private, max-age=475200')
     expect(cacheControlDaPagina(false, agora)).toBe('private, no-store')
   })
 })

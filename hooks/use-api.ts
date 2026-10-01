@@ -5,6 +5,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { fetchAPI, invalidateCache, CACHE_DURATIONS } from '@/lib/api-client'
+import { agendarEnquantoVisivel, ambienteDoNavegador } from '@/hooks/use-intervalo-visivel'
 
 interface UseApiOptions {
   skip?: boolean // Skip fetching (e.g., when not authenticated)
@@ -46,7 +47,6 @@ export function useApi<T = any>(
   const [error, setError] = useState<Error | null>(null)
 
   const mountedRef = useRef(true)
-  const intervalRef = useRef<NodeJS.Timeout>()
 
   const fetchData = useCallback(async () => {
     if (skip || !endpoint) return
@@ -83,16 +83,21 @@ export function useApi<T = any>(
     fetchData()
   }, [fetchData])
 
-  // Setup auto-refetch interval
+  // Auto-refetch só com a aba à vista. Uma aba esquecida aberta (o sino de
+  // notificações está em toda página) fazia uma requisição a cada intervalo
+  // o dia inteiro, cada uma uma invocação paga para atualizar uma tela que
+  // ninguém via. Ao voltar, atualiza na hora se o intervalo já venceu.
   useEffect(() => {
-    if (refetchInterval && refetchInterval > 0 && !skip) {
-      intervalRef.current = setInterval(fetchData, refetchInterval)
-      return () => {
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current)
-        }
-      }
-    }
+    if (!refetchInterval || refetchInterval <= 0 || skip) return
+    if (typeof document === 'undefined') return
+    return agendarEnquantoVisivel(
+      () => {
+        void fetchData()
+      },
+      refetchInterval,
+      ambienteDoNavegador(),
+      { soSeVencido: true }
+    )
   }, [refetchInterval, skip, fetchData])
 
   // Cleanup on unmount.

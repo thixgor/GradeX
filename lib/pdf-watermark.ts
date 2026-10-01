@@ -26,6 +26,7 @@ import {
   popGraphicsState,
   pushGraphicsState,
   scale,
+  setGraphicsState,
 } from 'pdf-lib'
 import { emailFingerprint } from './watermark-fingerprint'
 
@@ -207,6 +208,15 @@ function applyWatermarkToPage(
   const cx = width / 2
   const cy = height / 2
 
+  // A transparência também é declarada uma vez. Com `opacity` em cada
+  // `drawText`, o pdf-lib cria um `ExtGState` novo por chamada: eram centenas
+  // de dicionários idênticos (~80 KB) em cada overlay. Um estado só, aplicado
+  // ao bloco inteiro (`q /GS gs ... Q`), desenha exatamente o mesmo — o leitor
+  // de materiais faz igual (ver `comOpacidade` em material-pdf-viewer).
+  const estado = page.doc.context.obj({ Type: 'ExtGState', ca: config.opacity })
+  const chave = page.node.newExtGState('GS', estado)
+  page.pushOperators(pushGraphicsState(), setGraphicsState(chave))
+
   for (let row = -rows; row <= rows; row++) {
     for (let col = -cols; col <= cols; col++) {
       // Posição no espaço não-rotacionado
@@ -219,12 +229,13 @@ function applyWatermarkToPage(
           y: y - i * (config.fontSize + config.lineGap),
           size: config.fontSize,
           color,
-          opacity: config.opacity,
           rotate: angle,
         })
       })
     }
   }
+
+  page.pushOperators(popGraphicsState())
 }
 
 /**

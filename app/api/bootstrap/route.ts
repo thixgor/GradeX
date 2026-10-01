@@ -14,7 +14,8 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { inicioDoDiaEmBrasilia, offsetDeBrasilia, relogioBrasilia } from '@/lib/fuso-brasilia'
-import { secureApiEndpoint } from '@/lib/api-security'
+import { respostaDeLimiteExcedido, secureApiEndpoint } from '@/lib/api-security'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import {
@@ -136,9 +137,11 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // fall through to normal auth
   }
 
-  // Security: Require authentication
+  // Security: Require authentication. O limite de requisições sai daqui e
+  // corre em paralelo com as consultas abaixo (ver respostaDeLimiteExcedido):
+  // a sessão é só o JWT, verificado sem ir ao banco, e esperar a ida do limite
+  // antes de começar somava uma ida inteira ao tempo de cada bootstrap.
   const security = await secureApiEndpoint(request, {
-    rateLimit: 'READ',
     auth: { requireAuth: true },
   })
 
@@ -154,6 +157,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     return security.errorResponse!
   }
+
+  // `catch`: se as consultas falharem antes de o limite ser aguardado, a
+  // promessa não pode ficar rejeitada sem dono. O limitador já falha aberto.
+  const limite = respostaDeLimiteExcedido(request, security.ip, 'READ').catch(() => null)
 
   try {
     const db = await getDb()
@@ -235,6 +242,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         read: false,
       }),
     ])
+
+    const excedido = await limite
+    if (excedido) return excedido
 
     if (!userDoc) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
@@ -323,14 +333,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // User/session-specific data must never survive logout/account switches.
-    const headers = new Headers({
-      'Cache-Control': 'no-store, no-cache, must-revalidate, private',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-      'Content-Type': 'application/json',
+    // Comprimido na função: é a resposta mais pedida do app (toda página).
+    return jsonComprimido(request, response, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
     })
-
-    return NextResponse.json(response, { headers })
   } catch (error) {
     console.error('Bootstrap endpoint error:', error)
     return NextResponse.json(

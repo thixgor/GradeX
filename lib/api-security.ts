@@ -440,53 +440,65 @@ interface SecureApiResult {
   errorResponse?: NextResponse
 }
 
+/**
+ * O limite de requisições, sozinho: `null` se a requisição pode seguir, ou a
+ * resposta 429 pronta.
+ *
+ * Separado de `secureApiEndpoint` para quem quiser rodá-lo EM PARALELO com o
+ * próprio trabalho (ver `/api/bootstrap`): a camada durável é uma ida ao banco,
+ * e esperá-la antes de começar as consultas somava essa ida ao tempo de parede
+ * de toda requisição — que é o que a Vercel cobra em memória provisionada.
+ */
+export async function respostaDeLimiteExcedido(
+  request: NextRequest,
+  ip: string,
+  rateLimit: RateLimitType | RateLimitConfig
+): Promise<NextResponse | null> {
+  const endpoint = new URL(request.url).pathname
+  const rateLimitConfig = typeof rateLimit === 'string' ? RATE_LIMITS[rateLimit] : rateLimit
+  const chave = chaveDeLimite(request, ip)
+
+  // Duas camadas: a de memória rejeita de graça quem já estourou NESTA
+  // instância; a durável é a que realmente conta, porque é a única que
+  // enxerga as outras instâncias. Sem a segunda, a cota reinicia sozinha a
+  // cada invocação nova — ver o comentário em `rateLimitCache`.
+  const memoria = checkRateLimitSync(chave, endpoint, rateLimitConfig)
+  const rateLimitResult = memoria.success
+    ? await checkRateLimit(chave, endpoint, rateLimitConfig.limit, rateLimitConfig.windowMs)
+        .then((r) => ({
+          success: r.success,
+          remaining: r.remaining,
+          retryAfterMs: r.resetAt ? Math.max(0, r.resetAt.getTime() - Date.now()) : undefined,
+        }))
+    : memoria
+
+  if (rateLimitResult.success) return null
+  return NextResponse.json(
+    {
+      error: 'Muitas requisicoes. Tente novamente mais tarde.',
+      retryAfterSeconds: Math.ceil((rateLimitResult.retryAfterMs || 0) / 1000)
+    },
+    {
+      status: 429,
+      headers: {
+        'Retry-After': String(Math.ceil((rateLimitResult.retryAfterMs || 0) / 1000)),
+        'X-RateLimit-Remaining': '0'
+      }
+    }
+  )
+}
+
 export async function secureApiEndpoint(
   request: NextRequest,
   config: ApiSecurityConfig = {}
 ): Promise<SecureApiResult> {
   const ip = getClientIp(request)
-  const endpoint = new URL(request.url).pathname
 
   // 1. Verificar rate limit
   if (config.rateLimit) {
-    const rateLimitConfig = typeof config.rateLimit === 'string'
-      ? RATE_LIMITS[config.rateLimit]
-      : config.rateLimit
-
-    const chave = chaveDeLimite(request, ip)
-
-    // Duas camadas: a de memória rejeita de graça quem já estourou NESTA
-    // instância; a durável é a que realmente conta, porque é a única que
-    // enxerga as outras instâncias. Sem a segunda, a cota reinicia sozinha a
-    // cada invocação nova — ver o comentário em `rateLimitCache`.
-    const memoria = checkRateLimitSync(chave, endpoint, rateLimitConfig)
-    const rateLimitResult = memoria.success
-      ? await checkRateLimit(chave, endpoint, rateLimitConfig.limit, rateLimitConfig.windowMs)
-          .then((r) => ({
-            success: r.success,
-            remaining: r.remaining,
-            retryAfterMs: r.resetAt ? Math.max(0, r.resetAt.getTime() - Date.now()) : undefined,
-          }))
-      : memoria
-
-    if (!rateLimitResult.success) {
-      return {
-        success: false,
-        ip,
-        errorResponse: NextResponse.json(
-          {
-            error: 'Muitas requisicoes. Tente novamente mais tarde.',
-            retryAfterSeconds: Math.ceil((rateLimitResult.retryAfterMs || 0) / 1000)
-          },
-          {
-            status: 429,
-            headers: {
-              'Retry-After': String(Math.ceil((rateLimitResult.retryAfterMs || 0) / 1000)),
-              'X-RateLimit-Remaining': '0'
-            }
-          }
-        )
-      }
+    const excedido = await respostaDeLimiteExcedido(request, ip, config.rateLimit)
+    if (excedido) {
+      return { success: false, ip, errorResponse: excedido }
     }
   }
 
