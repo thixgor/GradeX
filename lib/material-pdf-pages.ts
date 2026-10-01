@@ -61,7 +61,7 @@
  * caso desta otimização é o custo que já existia, nunca uma página que não abre.
  */
 
-import { get, put } from '@vercel/blob'
+import { del, get, put } from '@vercel/blob'
 import { Buffer } from 'node:buffer'
 import { createHash } from 'node:crypto'
 import {
@@ -309,4 +309,52 @@ export async function gravarDerivadasDaBruta(
   ])
   if (variante === 'leitura') return leitura
   return enxugarEGravar(fonte, pagina, leitura, 'miniatura')
+}
+
+/**
+ * Quantas páginas a limpeza aceita apagar de uma vez. Cada caminho conta como
+ * uma operação no limite do Blob (~4.500/min no Pro), e são três variantes por
+ * página: 1.000 páginas já são 3.000 operações. Acima disso, a versão antiga
+ * fica no store como sempre ficou — apagar é otimização de espaço.
+ */
+const LIMPEZA_MAX_PAGINAS = 1000
+
+/**
+ * Apaga as derivadas (bruta, leitura e miniatura) de uma versão do PDF que
+ * deixou de valer — o admin reenviou o arquivo ou o removeu.
+ *
+ * Não é o que garante que o aluno veja a versão nova: isso vem da versão no
+ * caminho (ver `fonteDoPdf`), que faz a versão antiga nunca mais ser lida. Isto
+ * só devolve o espaço: sem a limpeza, cada página de cada versão substituída
+ * ficava para sempre no store, agora em até três cópias. `del` não é cobrado.
+ *
+ * Precisa do total de páginas da versão antiga para saber os caminhos (o nome
+ * é um hash, não dá para listar por material). Sem ele, não faz nada. Nunca
+ * lança.
+ */
+export async function apagarDerivadasDaVersao(pdfFile: any): Promise<number> {
+  if (!habilitado()) return 0
+  const fonte = fonteDoPdf(pdfFile)
+  const paginas = Math.floor(Number(pdfFile?.pageCount) || 0)
+  if (!fonte || paginas < 1 || paginas > LIMPEZA_MAX_PAGINAS) return 0
+
+  const caminhos: string[] = []
+  for (let pagina = 1; pagina <= paginas; pagina += 1) {
+    for (const variante of ['bruta', 'leitura', 'miniatura'] as const) {
+      caminhos.push(caminhoDaDerivada(fonte, pagina, variante))
+    }
+  }
+
+  let apagados = 0
+  for (let i = 0; i < caminhos.length; i += 500) {
+    const lote = caminhos.slice(i, i + 500)
+    try {
+      await del(lote)
+      apagados += lote.length
+    } catch (erro) {
+      console.warn('[pdf-viewer] Falha ao apagar derivadas da versão antiga:', erro)
+      break
+    }
+  }
+  return apagados
 }

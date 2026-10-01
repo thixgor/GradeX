@@ -27,9 +27,13 @@ vi.mock('@vercel/blob', () => ({
     store.set(caminho, new Uint8Array(corpo))
     return { pathname: caminho }
   },
+  del: async (caminhos: string | string[]) => {
+    for (const caminho of Array.isArray(caminhos) ? caminhos : [caminhos]) store.delete(caminho)
+  },
 }))
 
 const {
+  apagarDerivadasDaVersao,
   buscarPaginaEnxuta,
   caminhoDaDerivada,
   fonteDoPdf,
@@ -129,5 +133,47 @@ describe('derivadas enxutas', { timeout: 60_000 }, () => {
     process.env.PDF_VIEWER_IMAGEM_DPI = '200'
     expect(caminhoDaDerivada(fonte, 1, 'leitura')).not.toBe(leitura1)
     expect(caminhoDaDerivada(fonte, 1, 'bruta')).toBe(bruta1)
+  })
+
+  it('reenvio do PDF: a versão nova nunca lê derivada da antiga, e a antiga é apagada', async () => {
+    // Como o upload grava: caminho único por envio e `uploadedAt` novo.
+    const pdfA = {
+      blobUrl: 'https://blob.exemplo/material-originals/m1/1000-aaaa.pdf',
+      sizeBytes: 999,
+      uploadedAt: new Date('2026-09-01T12:00:00Z'),
+      pageCount: 2,
+    }
+    const pdfB = {
+      blobUrl: 'https://blob.exemplo/material-originals/m1/2000-bbbb.pdf',
+      sizeBytes: 1234,
+      uploadedAt: new Date('2026-09-20T12:00:00Z'),
+    }
+    const versaoA = fonteDoPdf(pdfA)!
+    const versaoB = fonteDoPdf(pdfB)!
+    expect(versaoB.versao).not.toBe(versaoA.versao)
+
+    // Versão A lida por alguém: as três derivadas das duas páginas no store.
+    for (const pagina of [1, 2]) await gravarDerivadasDaBruta(versaoA, pagina, bruta, 'miniatura')
+    expect(store.size).toBe(6)
+
+    // Versão B: nada da A serve — a primeira leitura vai ao documento novo.
+    expect(await buscarPaginaEnxuta(versaoB, 1, 'leitura')).toBeNull()
+    expect(await buscarPaginaEnxuta(versaoB, 1, 'miniatura')).toBeNull()
+
+    // A leitura da B grava as dela; a limpeza da A não encosta nelas.
+    await gravarDerivadasDaBruta(versaoB, 1, bruta, 'leitura')
+    expect(await apagarDerivadasDaVersao(pdfA)).toBe(6)
+    for (const pagina of [1, 2]) {
+      for (const variante of ['bruta', 'leitura', 'miniatura'] as const) {
+        expect(store.has(caminhoDaDerivada(versaoA, pagina, variante))).toBe(false)
+      }
+    }
+    expect(store.has(caminhoDaDerivada(versaoB, 1, 'leitura'))).toBe(true)
+    expect(store.has(caminhoDaDerivada(versaoB, 1, 'bruta'))).toBe(true)
+  })
+
+  it('sem total de páginas conhecido, a limpeza não arrisca nada', async () => {
+    expect(await apagarDerivadasDaVersao({ blobUrl: 'https://blob.exemplo/x.pdf', sizeBytes: 1 })).toBe(0)
+    expect(await apagarDerivadasDaVersao(null)).toBe(0)
   })
 })

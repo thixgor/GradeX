@@ -242,6 +242,29 @@ describe('responderPaginaMarcada', () => {
     expect(resposta.headers.get('cache-control')).toBe('private, no-store')
   })
 
+  it('PDF reenviado: quem ainda usa a chave da versão antiga recebe a nova, sem deixar guardar', async () => {
+    const reenviado = { ...PDF_FILE, uploadedAt: new Date('2026-09-20T12:00:00Z'), sizeBytes: 54321 }
+    const resposta = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      c: chaveDe(ANA, PDF_FILE),
+      access: acesso(reenviado),
+    })
+    expect(resposta.status).toBe(200)
+    expect(resposta.headers.get('cache-control')).toBe('private, no-store')
+    // Com a chave nova (a que a rota de acesso devolve ao reabrir), volta a guardar.
+    const nova = await responder({
+      userId: ANA,
+      email: 'ana@exemplo.com',
+      c: chaveDe(ANA, reenviado),
+      access: acesso(reenviado),
+    })
+    expect(nova.headers.get('cache-control')).toMatch(/^private, max-age=\d+$/)
+    // E o token de auditoria (chave do cache em memória do servidor) é o da versão nova.
+    expect(logs[0].auditToken.endsWith(versaoDoPdf(reenviado).slice(0, 8))).toBe(true)
+    expect(versaoDoPdf(reenviado).slice(0, 8)).not.toBe(versaoDoPdf(PDF_FILE).slice(0, 8))
+  })
+
   it('pessoas com o mesmo final de id não recebem a página uma da outra', async () => {
     // Com o cache de páginas renderizadas LIGADO: é ele que seria envenenado
     // se o token usasse só os 8 últimos caracteres do id.

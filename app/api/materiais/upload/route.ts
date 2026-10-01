@@ -27,6 +27,7 @@ import { handleUpload, type HandleUploadBody } from '@vercel/blob/client'
 import { PDFDocument } from 'pdf-lib'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { apagarDerivadasDaVersao } from '@/lib/material-pdf-pages'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 
@@ -227,13 +228,15 @@ export async function PUT(request: NextRequest): Promise<Response> {
 
     const pageCount = await countPdfPagesFromUrl(blobUrl, sizeBytes)
 
-    // Remove o blob anterior (se houver e for diferente do novo).
+    // Remove o blob anterior (se houver e for diferente do novo) e as páginas
+    // derivadas dele que o leitor guardou (ver lib/material-pdf-pages.ts).
     if (exists.pdfFile?.blobUrl && exists.pdfFile.blobUrl !== blobUrl) {
       try {
         await del(exists.pdfFile.blobUrl)
       } catch (e) {
         console.warn('[pdf-upload] Falha ao remover blob anterior:', e)
       }
+      await apagarDerivadasDaVersao(exists.pdfFile)
     }
 
     await db.collection('materials').updateOne(
@@ -308,6 +311,7 @@ export async function DELETE(request: NextRequest) {
     } catch (e) {
       console.warn('[pdf-upload] Falha ao deletar blob:', e)
     }
+    await apagarDerivadasDaVersao(material.pdfFile)
 
     await db.collection('materials').updateOne(
       { _id: new ObjectId(materialId) },
