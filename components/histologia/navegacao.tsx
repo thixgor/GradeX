@@ -1,198 +1,158 @@
 'use client'
 
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { BookMarked, FlaskConical, Layers, ListChecks, Microscope, ScanSearch, Search, Stethoscope } from 'lucide-react'
+import { Search } from 'lucide-react'
 
 import { BASE } from '@/lib/histologia/rotas'
+import { registrarVisto, type Visto } from '@/lib/histologia/vistos'
 
 /**
- * Barra de seções do Manual da Histologia — presente em toda página interna.
+ * Barra do Manual da Histologia — presente em toda página do módulo.
  *
- * ## O problema que ela resolve
+ * ## A arquitetura que ela declara
  *
- * O módulo não tem cabeçalho do aplicativo (`showHeader={false}` em todas as
- * páginas), e cada tela oferecia apenas um link de "voltar" para o nível
- * imediatamente acima. Quem estava numa lâmina só chegava à Histopatologia
- * subindo até a home e rolando até o fim da seção de assuntos — a área inteira
- * ficava a três telas de distância de onde o aluno realmente estuda.
+ * A barra antiga tinha oito abas irmãs: Assuntos, Atlas, Zoom, Laboratório,
+ * Quizzes, Caderno, Histopatologia e "Patologia com Zoom". O aluno tinha de
+ * escolher entre "Histopatologia", "Zoom" e "Patologia com Zoom" sem saber o
+ * que separava uma da outra — porque o que as separava não era o conteúdo, era
+ * a forma de ver a lâmina.
  *
- * A barra declara as seis superfícies do módulo o tempo todo. **Histopatologia
- * é uma delas**, no mesmo nível de Atlas e Quizzes, e não um apêndice do rodapé
- * de outra seção: o Manual tem duas metades — o tecido normal e o que dá errado
- * nele — e a navegação passa a dizer isso em toda página.
+ * Agora ela diz uma coisa só, sempre igual:
+ *
+ * - **Início** — o catálogo;
+ * - **Histologia** e **Histopatologia** — as duas áreas de conteúdo, o tecido
+ *   normal e a doença. Lâminas com zoom vivem *dentro* de cada área, marcadas
+ *   com um selo, e não numa aba concorrente;
+ * - **Sistemas** — o mesmo órgão nas duas áreas, lado a lado;
+ * - **Praticar** — quizzes e laboratório;
+ * - **Meu caderno** — favoritas, notas e revisões;
+ * - **Buscar** — à direita, como em qualquer catálogo.
  *
  * ## Por que ela é montada pelas páginas, e não pelo layout
  *
- * O layout do módulo seria o lugar óbvio — um só ponto para a árvore inteira.
- * Mas ele envolve o `AppShell` de cada página, e o `AppShell` mantém uma barra
- * lateral `fixed` de 280 px à esquerda e controles flutuantes (menu, tema, modo
- * leve) nos cantos superiores da janela. Uma barra montada no layout nasceria
- * por baixo de todos eles. Montada pela página, ela cai **dentro** da área de
- * conteúdo, que já é recuada da lateral.
+ * O layout do módulo envolve o `AppShell` de cada página, que tem barra lateral
+ * `fixed` e controles flutuantes nos cantos superiores. Uma barra montada no
+ * layout nasceria por baixo deles; montada pela página, cai dentro da área de
+ * conteúdo. Pelo mesmo motivo ela não é `sticky`, e o recuo superior no
+ * celular (`pt-14`) é a altura do botão de menu flutuante.
  *
- * Cada página que a monta chama `exigirAcessoAHistologia()` na primeira linha,
- * então onde a barra aparece o acesso já foi verificado. A home do módulo é a
- * única que **não** a monta, e por um motivo: ali a mesma URL serve a vitrine de
- * vendas para quem não assina (ADR 0003), e a home já oferece destinos maiores e
- * ilustrados. A guarda no início do componente sustenta essa regra em código.
- *
- * ## Por que ela não é `sticky`
- *
- * Os controles flutuantes do `AppShell` ficam presos ao topo da janela. Uma
- * barra grudada no topo passaria por baixo deles em toda rolagem; em fluxo
- * normal, ela some junto com o resto do cabeçalho e o conflito desaparece. O
- * recuo superior no celular (`pt-14`) é exatamente a altura que o botão de menu
- * flutuante ocupa.
- *
- * Componente de cliente porque depende de `usePathname` para marcar onde o aluno
- * está. Não importa nada do servidor: `lib/histologia/rotas` existe justamente
- * para que montar uma URL não arraste o driver do MongoDB para o navegador.
+ * Na raiz do módulo a mesma URL pode estar servindo a vitrine de vendas (ADR
+ * 0003): ali a barra só aparece quando a home a monta explicitamente, já
+ * dentro do ramo de quem tem acesso (`naHome`).
  */
 
+type Secao = 'inicio' | 'histologia' | 'histopatologia' | 'sistemas' | 'praticar' | 'caderno' | 'buscar'
+
 interface Destino {
+  secao: Secao
   href: string
   rotulo: string
-  icone: React.ReactNode
-  /**
-   * Prefixo de rota que marca esta aba como a atual. `null` na aba de assuntos:
-   * as 1.524 páginas do currículo ficam em `…/histologia/<setor>/…`, sem
-   * prefixo próprio, então ela é a aba de reserva — atual quando nenhuma outra
-   * reivindica o caminho.
-   */
-  prefixo: string | null
-  /** Realce próprio: a metade patológica do módulo não é mais uma aba igual. */
-  patologica?: boolean
 }
 
-const DESTINOS: Destino[] = [
-  {
-    href: `${BASE}#assunto`,
-    rotulo: 'Assuntos',
-    icone: <Layers className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: null,
-  },
-  {
-    href: `${BASE}/atlas`,
-    rotulo: 'Atlas',
-    icone: <Search className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: `${BASE}/atlas`,
-  },
-  {
-    href: `${BASE}/zoom`,
-    rotulo: 'Zoom',
-    icone: <ScanSearch className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: `${BASE}/zoom`,
-  },
-  {
-    href: `${BASE}/laboratorio`,
-    rotulo: 'Laboratório',
-    icone: <FlaskConical className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: `${BASE}/laboratorio`,
-  },
-  {
-    href: `${BASE}/quizzes`,
-    rotulo: 'Quizzes',
-    icone: <ListChecks className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: `${BASE}/quizzes`,
-  },
-  {
-    href: `${BASE}/caderno`,
-    rotulo: 'Caderno',
-    icone: <BookMarked className="h-3.5 w-3.5" aria-hidden />,
-    prefixo: `${BASE}/caderno`,
-  },
+const INICIO: Destino = { secao: 'inicio', href: BASE, rotulo: 'Início' }
+const HISTOLOGIA: Destino = { secao: 'histologia', href: `${BASE}/normal`, rotulo: 'Histologia' }
+const HISTOPATOLOGIA: Destino = { secao: 'histopatologia', href: `${BASE}/histopatologia`, rotulo: 'Histopatologia' }
+const DEMAIS: Destino[] = [
+  { secao: 'sistemas', href: `${BASE}/sistemas`, rotulo: 'Sistemas' },
+  { secao: 'praticar', href: `${BASE}/praticar`, rotulo: 'Praticar' },
+  { secao: 'caderno', href: `${BASE}/caderno`, rotulo: 'Meu caderno' },
 ]
 
-const HISTOPATOLOGIA: Destino = {
-  href: `${BASE}/histopatologia`,
-  rotulo: 'Histopatologia',
-  icone: <Stethoscope className="h-3.5 w-3.5" aria-hidden />,
-  prefixo: `${BASE}/histopatologia`,
-  patologica: true,
-}
-
-/** Lâminas inteiras de doença, com zoom e achados marcados — dentro da Histopatologia, mas com aba própria. */
-const HISTOPATOLOGIA_ZOOM: Destino = {
-  href: `${BASE}/histopatologia/zoom`,
-  rotulo: 'Patologia com Zoom',
-  icone: <Microscope className="h-3.5 w-3.5" aria-hidden />,
-  prefixo: `${BASE}/histopatologia/zoom`,
-  patologica: true,
+/** Em que seção o aluno está. Tudo que não é de outra seção é Histologia normal. */
+export function secaoDoCaminho(caminho: string): Secao {
+  const em = (prefixo: string) => caminho === prefixo || caminho.startsWith(`${prefixo}/`)
+  if (caminho === BASE || caminho === `${BASE}/`) return 'inicio'
+  if (em(`${BASE}/histopatologia`)) return 'histopatologia'
+  if (em(`${BASE}/sistemas`)) return 'sistemas'
+  if (em(`${BASE}/praticar`) || em(`${BASE}/quizzes`) || em(`${BASE}/laboratorio`) || em(`${BASE}/zoom/quiz`))
+    return 'praticar'
+  if (em(`${BASE}/caderno`)) return 'caderno'
+  if (em(`${BASE}/atlas`)) return 'buscar'
+  return 'histologia'
 }
 
 export function NavegacaoDoModulo({
   histopatologiaHabilitada,
+  naHome = false,
+  visto,
 }: {
   /**
    * Vem do servidor: a área pode estar fechada por ambiente, e uma aba que leva
    * a 404 é pior do que aba nenhuma. Ver `lib/histopatologia/direitos.ts`.
    */
   histopatologiaHabilitada: boolean
+  /** Só a home passa `true`, e só no ramo de quem tem acesso. */
+  naHome?: boolean
+  /** Lâmina ou doença aberta nesta página — entra no "Continue estudando". */
+  visto?: Omit<Visto, 'em'>
 }) {
   const caminho = usePathname()
 
-  // A raiz do módulo pode ser a vitrine de vendas. Ver o cabeçalho do arquivo.
-  if (!caminho || caminho === BASE || caminho === `${BASE}/`) return null
+  useEffect(() => {
+    if (visto) registrarVisto(visto)
+    // A chave é a URL: o mesmo item não precisa ser regravado a cada render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visto?.href])
 
-  const destinos = histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA, HISTOPATOLOGIA_ZOOM] : DESTINOS
-  const naPatologia = caminho.startsWith(`${HISTOPATOLOGIA.prefixo}`)
-  const noZoomPatologico = caminho.startsWith(`${HISTOPATOLOGIA_ZOOM.prefixo}`)
-  // Nenhuma aba com prefixo reivindicou o caminho: é uma página do currículo.
-  const noCurriculo =
-    !naPatologia && !DESTINOS.some((d) => d.prefixo && caminho.startsWith(d.prefixo))
+  // A raiz do módulo pode ser a vitrine de vendas. Ver o cabeçalho do arquivo.
+  if (!caminho || ((caminho === BASE || caminho === `${BASE}/`) && !naHome)) return null
+
+  const destinos = [INICIO, HISTOLOGIA, ...(histopatologiaHabilitada ? [HISTOPATOLOGIA] : []), ...DEMAIS]
+  const atual = secaoDoCaminho(caminho)
 
   return (
-    <nav
-      aria-label="Seções do Manual da Histologia"
-      className="border-b border-border pt-14 lg:pt-0"
-    >
-      <div className="container mx-auto flex max-w-6xl items-center gap-1.5 overflow-x-auto px-4 py-1.5">
+    <nav aria-label="Manual da Histologia" className="border-b border-border/70 pt-14 lg:pt-0">
+      <div className="mx-auto flex max-w-[1600px] items-center gap-2 px-4 md:px-10 lg:pr-36">
         <Link
           href={BASE}
-          className="inline-flex min-h-[36px] shrink-0 items-center rounded-md px-2.5 font-heading text-xs font-bold tracking-tight text-teal-800 transition-colors hover:bg-teal-500/10 dark:text-teal-300"
+          className="inline-flex min-h-[48px] shrink-0 items-center gap-2 pr-2 font-heading text-[15px] font-bold tracking-tight text-foreground"
         >
-          Histologia
+          <span className="h-2.5 w-2.5 rounded-full bg-[#E8763A] shadow-[0_0_12px_#E8763A]" aria-hidden />
+          <span className="hidden sm:inline">Manual da Histologia</span>
+          <span className="sm:hidden">Histologia</span>
         </Link>
-        <span className="h-4 w-px shrink-0 bg-border" aria-hidden />
 
-        <ul className="flex items-center gap-1">
+        <ul className="catalogo-fileira flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">
           {destinos.map((destino) => {
-            // A Histopatologia vive **dentro** da árvore da Histologia, então
-            // toda rota dela também casa com os prefixos das outras abas. Sem
-            // esta linha, "Assuntos" apareceria como atual dentro da patologia.
-            const atual = destino.patologica
-              ? destino === HISTOPATOLOGIA_ZOOM
-                ? noZoomPatologico
-                : naPatologia && !noZoomPatologico
-              : destino.prefixo === null
-                ? noCurriculo
-                : !naPatologia && caminho.startsWith(destino.prefixo)
-
+            const ativo = destino.secao === atual
             return (
-              <li key={destino.href}>
+              <li key={destino.secao} className="shrink-0">
                 <Link
                   href={destino.href}
-                  aria-current={atual ? 'page' : undefined}
-                  className={`inline-flex min-h-[36px] shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 text-xs font-semibold transition-colors ${
-                    atual
-                      ? destino.patologica
-                        ? 'border-rose-500/50 bg-rose-500/10 text-rose-800 dark:text-rose-300'
-                        : 'border-teal-500/50 bg-teal-500/10 text-teal-800 dark:text-teal-300'
-                      : destino.patologica
-                        ? 'border-rose-500/30 text-rose-700 hover:bg-rose-500/10 dark:text-rose-400'
-                        : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground'
+                  aria-current={ativo ? 'page' : undefined}
+                  className={`relative inline-flex min-h-[48px] items-center whitespace-nowrap px-2.5 text-[13px] transition-colors sm:px-3 ${
+                    ativo ? 'font-bold text-foreground' : 'font-medium text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  {destino.icone}
                   {destino.rotulo}
-                  {/* Estado nunca só por cor: a aba atual também é marcada em texto. */}
-                  {atual && <span className="sr-only">(seção atual)</span>}
+                  {/* Estado nunca só por cor: a aba atual ganha o traço e o texto. */}
+                  {ativo && (
+                    <>
+                      <span className="absolute inset-x-2.5 bottom-0 h-[3px] rounded-t bg-[#E8763A]" aria-hidden />
+                      <span className="sr-only">(seção atual)</span>
+                    </>
+                  )}
                 </Link>
               </li>
             )
           })}
         </ul>
+
+        <Link
+          href={`${BASE}/atlas`}
+          aria-current={atual === 'buscar' ? 'page' : undefined}
+          className={`inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border px-3 text-[13px] font-semibold transition-colors ${
+            atual === 'buscar'
+              ? 'border-[#E8763A] text-foreground'
+              : 'border-border text-muted-foreground hover:border-[#E8763A]/60 hover:text-foreground'
+          }`}
+        >
+          <Search className="h-4 w-4" aria-hidden />
+          <span className="hidden md:inline">Buscar</span>
+          <span className="sr-only md:hidden">Buscar no Manual</span>
+        </Link>
       </div>
     </nav>
   )

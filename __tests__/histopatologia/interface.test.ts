@@ -404,49 +404,53 @@ describe('integração com a Histologia normal', () => {
   const HOME_DA_HISTOLOGIA = () =>
     readFileSync(path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx'), 'utf8')
 
-  it('a home da Histologia oferece a escolha entre normal e patológico', () => {
-    const home = HOME_DA_HISTOLOGIA()
-    expect(home).toContain('Histopatologia')
-    expect(home).toContain(`${'${BASE}'}/histopatologia`)
-    expect(home).toContain('Comparar normal × patológico')
-  })
-
   /**
-   * O relato que originou estas três verificações foi "está muito escondido": a
-   * área existia como duas fichas no rodapé da seção de assuntos, **abaixo** da
-   * gaveta fechada do currículo. Uma home que só cite a Histopatologia satisfaz
-   * o teste acima e ainda assim a esconde — daí estes, que cobram os pontos de
-   * entrada altos, e não a mera presença da palavra.
+   * O relato que originou a reformulação foi "a pessoa não sabe onde clicar —
+   * Histopatologia, Zoom, Histopatologia com Zoom". Estas verificações cobram a
+   * arquitetura que respondeu a ele: duas áreas de conteúdo, e o zoom como
+   * selo, nunca como aba concorrente.
    */
-  it('a Histopatologia tem entrada no alto da home, e não só no rodapé de outra seção', () => {
+  it('a home oferece as duas áreas como portas, lado a lado', () => {
     const home = HOME_DA_HISTOLOGIA()
-
-    // 1. um dos botões do hero, ao lado de "ver uma lâmina" e "buscar estrutura"
-    expect(home).toContain('Ir para Histopatologia')
-
-    // 2. um passo numerado do fluxo, e não um apêndice sem lugar na sequência
-    expect(home).toContain('Abrir a Histopatologia')
-
-    // 3. seção de primeiro nível, irmã de "Escolher o assunto"
-    expect(home).toContain('id="titulo-patologia"')
-    expect(home).toContain('<Histopatologia />')
+    expect(home).toContain('<PortasDasAreas')
+    expect(home).toContain(`href: \`${'${BASE}'}/normal\``)
+    expect(home).toContain(`href: \`${'${BASE}'}/histopatologia\``)
   })
 
   it('a home não anuncia a área quando o ambiente a mantém fechada', () => {
     const home = HOME_DA_HISTOLOGIA()
-    // Sem isto, o hero e a seção levariam ao 404 seco do portão do módulo — que
-    // o aluno leria como defeito do produto, não como área indisponível.
+    // Sem isto, a porta e as fileiras levariam ao 404 seco do portão do módulo —
+    // que o aluno leria como defeito do produto, não como área indisponível.
     expect(home).toContain('const comPatologia = histopatologiaHabilitada()')
-    expect(home).toContain('{comPatologia && <Histopatologia />}')
+    expect(home).toContain('comPatologia\n              ? {')
+    expect(home.match(/\{comPatologia && \(/g)?.length).toBeGreaterThanOrEqual(2)
   })
 
-  it('a barra de seções do módulo leva à Histopatologia de qualquer página', () => {
+  it('a barra do módulo tem as duas áreas e nenhuma aba de zoom', () => {
     const nav = readFileSync(path.join(RAIZ, 'components/histologia/navegacao.tsx'), 'utf8')
-    expect(nav).toContain(`${'${BASE}'}/histopatologia`)
-    // Some na raiz: lá a mesma URL pode estar servindo a vitrine de vendas.
-    expect(nav).toContain('caminho === BASE')
+    expect(nav).toContain(`href: \`${'${BASE}'}/histopatologia\``)
+    expect(nav).toContain(`href: \`${'${BASE}'}/normal\``)
+    // Zoom é modalidade, não seção: nenhuma aba leva a um catálogo de zoom.
+    expect(nav).not.toMatch(/rotulo: '[^']*[Zz]oom/)
+    // Some na raiz, salvo quando a home a monta no ramo de quem tem acesso.
+    expect(nav).toContain("(caminho === BASE || caminho === `${BASE}/`) && !naHome")
     // Aba escondida quando a área está fechada no ambiente.
-    expect(nav).toContain('histopatologiaHabilitada ? [...DESTINOS, HISTOPATOLOGIA, HISTOPATOLOGIA_ZOOM] : DESTINOS')
+    expect(nav).toContain('...(histopatologiaHabilitada ? [HISTOPATOLOGIA] : [])')
+  })
+
+  it('a mesma doença é uma entrada só no catálogo, e capítulo e zoom se citam', () => {
+    const catalogo = readFileSync(path.join(RAIZ, 'lib/histologia/catalogo.ts'), 'utf8')
+    expect(catalogo).toContain('if (usados.has(c.slug)) continue')
+    const capitulo = readFileSync(
+      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/doencas/[slug]/page.tsx'),
+      'utf8',
+    )
+    expect(capitulo).toContain('<LaminasComZoomDaDoenca')
+    const zoom = readFileSync(
+      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/zoom/[doenca]/page.tsx'),
+      'utf8',
+    )
+    expect(zoom).toContain('Ler o capítulo aprofundado')
   })
 
   /**
@@ -472,10 +476,10 @@ describe('integração com a Histologia normal', () => {
       const fonte = readFileSync(arquivo, 'utf8')
       const relativo = path.relative(RAIZ, arquivo).split(path.sep).join('/')
 
-      // A home é a exceção declarada: a mesma URL serve a vitrine de vendas, e
-      // ela já oferece destinos maiores e ilustrados.
+      // A home serve a vitrine de vendas na mesma URL: ela monta a barra só no
+      // ramo de quem tem acesso, e diz isso com `naHome`.
       if (relativo === 'app/manual-clinico/histologia/page.tsx') {
-        expect(fonte).not.toContain('<NavegacaoDoModulo')
+        expect(fonte).toContain('<NavegacaoDoModulo histopatologiaHabilitada={comPatologia} naHome />')
         continue
       }
       // Rotas que só redirecionam não renderizam nada.

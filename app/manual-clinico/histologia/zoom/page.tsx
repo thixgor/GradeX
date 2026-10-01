@@ -51,15 +51,15 @@ export default async function CatalogoDoZoom() {
         <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <Link
-            href={BASE}
+            href={`${BASE}/normal`}
             className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden /> Manual da Histologia
+            <ArrowLeft className="h-4 w-4" aria-hidden /> Histologia
           </Link>
 
           <header className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-end">
             <div>
-              <p className="editorial-mark mb-2">Histologia com Zoom</p>
+              <p className="editorial-mark mb-2">Histologia · Lâminas com zoom</p>
               <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
                 A lâmina inteira, do panorama à célula
               </h1>

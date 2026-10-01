@@ -31,10 +31,10 @@ export default async function PaginaDoQuiz() {
         <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <Link
-            href={BASE_ZOOM}
+            href="/manual-clinico/histologia/praticar"
             className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden /> Histologia com Zoom
+            <ArrowLeft className="h-4 w-4" aria-hidden /> Praticar
           </Link>
           <header className="mb-6 max-w-2xl">
             <p className="editorial-mark mb-2">Quiz de identificação</p>

@@ -48,7 +48,7 @@ export default async function CatalogoDaPatologiaComZoom() {
 
           <header className="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-end">
             <div>
-              <p className="editorial-mark mb-2 text-rose-700 dark:text-rose-300">Histopatologia com Zoom</p>
+              <p className="editorial-mark mb-2 text-rose-700 dark:text-rose-300">Histopatologia · Lâminas com zoom</p>
               <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
                 A doença na lâmina inteira
               </h1>

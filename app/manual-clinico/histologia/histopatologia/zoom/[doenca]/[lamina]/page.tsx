@@ -78,13 +78,29 @@ export default async function PaginaDaLaminaPatologica({ params }: Parametros) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
+        <NavegacaoDoModulo
+          histopatologiaHabilitada={histopatologiaHabilitada()}
+          visto={{
+            href: rotaDaLaminaPatologica(lamina.doenca, lamina.slug),
+            titulo: rotulo(lamina),
+            categoria: 'Histopatologia · Lâmina com zoom',
+            area: 'histopatologia',
+            imagem: lamina.piramide.miniatura.url,
+            zoom: true,
+          }}
+        />
         <div className="container mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6">
           <nav aria-label="Trilha" className="mb-2 overflow-x-auto">
             <ol className="flex items-center gap-1 whitespace-nowrap text-xs text-muted-foreground sm:text-sm">
               <li>
+                <Link href="/manual-clinico/histologia/histopatologia" className="rounded px-1 py-1 hover:text-foreground">
+                  Histopatologia
+                </Link>
+              </li>
+              <li aria-hidden>›</li>
+              <li>
                 <Link href={BASE_PATOZOOM} className="rounded px-1 py-1 hover:text-foreground">
-                  Histopatologia com Zoom
+                  Lâminas com zoom
                 </Link>
               </li>
               <li aria-hidden>›</li>

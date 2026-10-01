@@ -21,7 +21,10 @@ import {
 } from '@/components/histopatologia/tabela-normal-patologico'
 import { MARCA_DE_NATUREZA, MARCA_DE_REVISAO } from '@/components/histopatologia/tema'
 import type { AplicacaoDeMecanismoResolvida } from '@/components/histopatologia/tipos'
+import { LaminasComZoomDaDoenca } from '@/components/histopatologia-zoom/laminas-da-doenca'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import { doencaZoomDoCapitulo } from '@/lib/histologia/catalogo'
+import { laminasDaDoenca, resumirPatologica } from '@/lib/histopatologia-zoom/repositorio'
 import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { LISTA_DE_FONTES } from '@/lib/histopatologia/direitos'
 import { referenciasVisuaisDaDoenca } from '@/lib/histopatologia/editorial/referencias-visuais'
@@ -130,6 +133,11 @@ export default async function PaginaDaDoenca({ params }: Props) {
   const restantes = midiasExibiveis.filter((m) => !selecionadas.has(m.id))
   const referenciasVisuaisExternas = referenciasVisuaisDaDoenca(doenca.slug)
 
+  // A mesma doença com lâmina de zoom: entra no alto do capítulo, e a capa
+  // dela é o que o "Continue estudando" mostra.
+  const doencaComZoom = doencaZoomDoCapitulo(doenca.slug)
+  const primeiraLamina = doencaComZoom ? laminasDaDoenca(doencaComZoom.id)[0] : undefined
+
   const trilha = [
     { titulo: 'Manual da Histologia', caminho: BASE_HISTOLOGIA },
     { titulo: 'Histopatologia', caminho: BASE },
@@ -140,7 +148,17 @@ export default async function PaginaDaDoenca({ params }: Props) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
+        <NavegacaoDoModulo
+          histopatologiaHabilitada={histopatologiaHabilitada()}
+          visto={{
+            href: rotaDaDoenca(doenca.slug),
+            titulo: doenca.nome,
+            categoria: `Histopatologia · ${sistema?.nome ?? 'Doença'}`,
+            area: 'histopatologia',
+            imagem: primeiraLamina ? resumirPatologica(primeiraLamina).miniatura : null,
+            zoom: Boolean(primeiraLamina),
+          }}
+        />
         <div className="container mx-auto max-w-4xl px-4 py-6">
           {/* ── Breadcrumb ── */}
           <nav aria-label="Trilha de navegação" className="mb-4">
@@ -187,6 +205,8 @@ export default async function PaginaDaDoenca({ params }: Props) {
           </header>
 
           <PainelDeRevisao revisao={doenca.revisao} />
+
+          {doencaComZoom && <LaminasComZoomDaDoenca doenca={doencaComZoom} />}
 
           <ProvedorDeProfundidade>
             <div className="mt-6 space-y-10">

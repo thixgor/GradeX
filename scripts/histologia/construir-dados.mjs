@@ -707,6 +707,22 @@ await escrever(path.join(dirSaida, 'fragmentos.json'), listaFragmentos)
 
 await escrever(path.join(dirSaida, 'curriculo.json'), curriculo)
 
+/**
+ * Capa de cada assunto (nível 2): a primeira lâmina com imagem, na ordem do
+ * catálogo. O catálogo da home mostra os 22 assuntos como cartões com imagem —
+ * ler os 22 fragmentos (8,5 MB) em cada instância só para achar uma foto por
+ * cartão seria pagar a coleção inteira por 22 linhas. Ver `lib/histologia/catalogo.ts`.
+ */
+const capas = {}
+for (const pagina of paginasConvertidas) {
+  if (pagina.caminho.length < 2 || !pagina.base) continue
+  const chave = pagina.caminho.slice(0, 2).join('/')
+  if (capas[chave]) continue
+  const { sha256, ext, urlOrigem } = pagina.base
+  capas[chave] = { sha256, ext, urlOrigem }
+}
+await escrever(path.join(dirSaida, 'capas.json'), capas)
+
 // Duas fatias do mesmo índice, por uma razão de peso:
 //  - `busca-cliente` só tem lâminas e seções (1.524 entradas, sem a descrição
 //    no campo de chave) e é buscado sob demanda no navegador: dá resposta

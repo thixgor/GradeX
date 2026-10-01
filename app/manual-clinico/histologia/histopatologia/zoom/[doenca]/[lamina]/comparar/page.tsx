@@ -58,7 +58,7 @@ export default async function PaginaDaComparacao({ params, searchParams }: Param
             <ol className="flex items-center gap-1 whitespace-nowrap text-xs text-muted-foreground sm:text-sm">
               <li>
                 <Link href={BASE_PATOZOOM} className="rounded px-1 py-1 hover:text-foreground">
-                  Histopatologia com Zoom
+                  Histopatologia · Lâminas com zoom
                 </Link>
               </li>
               <li aria-hidden>›</li>

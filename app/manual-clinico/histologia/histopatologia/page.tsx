@@ -1,46 +1,45 @@
 import Link from 'next/link'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Columns2,
-  Layers,
-  Library,
-  Microscope,
-  ScrollText,
-} from 'lucide-react'
+import { Library, ScanSearch } from 'lucide-react'
 
 import { AppShell } from '@/components/app-shell'
+import { AcaoPrincipal, AcaoSecundaria, BannerDoCatalogo, SuperficieDoCatalogo } from '@/components/histologia/catalogo/banner'
+import { CartoesDaFileira } from '@/components/histologia/catalogo/cartao'
+import { FileiraDoCatalogo } from '@/components/histologia/catalogo/fileira'
 import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
-import { CartaoDeDoenca } from '@/components/histopatologia/cartao-doenca'
-import {
-  BASE_HISTOLOGIA,
-  rotaDoAtlas,
-  rotaDosCreditos,
-  rotaDosMecanismos,
-  rotaDoSistema,
-} from '@/lib/histopatologia/rotas'
-import {
-  DOENCAS_RESUMIDAS,
-  MECANISMOS_PUBLICADOS,
-  SISTEMAS_COM_CONTAGEM,
-  TOTAIS,
-} from '@/lib/histopatologia/repositorio'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
+import {
+  doencasDoCatalogo,
+  doencasRecentes,
+  rotaDoSistemaUnificado,
+  type ItemDoCatalogo,
+} from '@/lib/histologia/catalogo'
+import { SISTEMAS } from '@/lib/histologia-zoom/sistemas'
 import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
+import { MECANISMOS_PUBLICADOS, SISTEMAS_COM_CONTAGEM, TOTAIS } from '@/lib/histopatologia/repositorio'
+import { rotaDoAtlas, rotaDosCreditos, rotaDosMecanismos, rotaDoSistema } from '@/lib/histopatologia/rotas'
 import { TOTAL_ENTRADAS_WEBPATH_UTAH } from '@/lib/histopatologia/webpath-utah/catalogo'
+import { RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
+import { BASE_PATOZOOM } from '@/lib/histopatologia-zoom/rotas'
+import { TOTAIS_PATOZOOM } from '@/lib/histopatologia-zoom/repositorio'
 
 /**
- * Home da Histopatologia.
+ * Área **Histopatologia** — a doença na lâmina.
  *
- * Componente de servidor: tudo aqui é composição sobre índices leves. Uma única
- * ilha de cliente — a busca — porque só ela tem estado. Os números vêm do
- * relatório de conciliação do pipeline, e não de constantes escritas à mão:
- * contadores decorativos numa home de estudo são a primeira coisa que o aluno
- * descobre serem falsos.
+ * ## Uma doença, uma entrada
  *
- * A home **não** carrega inventário. Os 738 KB do sistema "não classificado"
- * só são lidos quando alguém abre aquele sistema.
+ * A área tinha duas casas para a mesma doença: o capítulo escrito
+ * (`/doencas/…`) e a "Histopatologia com Zoom" (`/zoom/…`), anunciadas como
+ * abas diferentes. O aluno que procurava "apendicite" tinha de adivinhar em
+ * qual das duas olhar. Agora cada doença é um cartão só (ver
+ * `doencasDoCatalogo`): o selo **Zoom** diz que ela tem lâmina inteira, e a
+ * página de destino reúne capítulo e lâminas.
+ *
+ * ## O que continua aqui
+ *
+ * A busca da patologia (com a ponte `?q=` vinda da busca da Histologia), os
+ * mecanismos gerais, o atlas visual por sistema e os créditos. A home **não**
+ * carrega inventário nem índice de servidor — só os resumos leves.
  */
 
 export const dynamic = 'force-dynamic'
@@ -57,186 +56,139 @@ interface Props {
 export default async function HomeDaHistopatologia({ searchParams }: Props) {
   await exigirAcessoAHistologia()
 
-  const comDoencas = SISTEMAS_COM_CONTAGEM.filter((s) => s.doencas > 0)
-  const semDoencas = SISTEMAS_COM_CONTAGEM.filter((s) => s.doencas === 0)
+  const doencas = doencasDoCatalogo()
+  const comZoom = doencas.filter((d) => d.zoom)
+  const capitulos = doencas.filter((d) => d.temCapitulo)
+  const porSistema = SISTEMAS.map((s) => ({ sistema: s, itens: doencas.filter((d) => d.sistema === s.id) })).filter(
+    (s) => s.itens.length > 0,
+  )
+  const atlasPorSistema: ItemDoCatalogo[] = SISTEMAS_COM_CONTAGEM.filter((s) => s.entradas > 0).map((s) => ({
+    id: `atlas:${s.id}`,
+    href: rotaDoSistema(s.id),
+    titulo: s.nome,
+    categoria: 'Histopatologia · Atlas visual',
+    area: 'histopatologia',
+    imagem: null,
+    zoom: false,
+    detalhe: `${s.entradas.toLocaleString('pt-BR')} capítulos visuais · ${s.midias.toLocaleString('pt-BR')} imagens`,
+    icone: 'Microscope',
+    cor: '#B03A5B',
+  }))
 
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
-      <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
-        <header className="border-b border-border">
-          <div className="container mx-auto max-w-6xl px-4 pb-8 pt-6">
-            <Link
-              href={BASE_HISTOLOGIA}
-              className="-m-3 mb-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" aria-hidden /> Manual da Histologia
-            </Link>
-
-            <p className="editorial-mark mb-2">Manual da Histologia · Anatomia patológica</p>
-            <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-              Histopatologia
-            </h1>
-            <p className="mt-3 max-w-3xl text-base leading-relaxed text-muted-foreground">
-              Reconhecer doença na lâmina não é decorar adjetivos morfológicos — é entender qual
-              agressão produziu aquela forma. Cada capítulo aqui percorre o caminho inteiro: como o
-              tecido normal funciona, o que o agride, qual mecanismo entra em ação, o que aparece no
-              microscópio e por que isso vira sintoma.
-            </p>
-
-            <Link
-              href="/manual-clinico/histologia/histopatologia/zoom"
-              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-lg bg-rose-700 px-5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-rose-800"
-            >
-              <Microscope className="h-4 w-4" aria-hidden /> Histopatologia com Zoom — lâminas inteiras com achados marcados
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-
-            <div className="mt-6 max-w-2xl">
-              {/* Recorte defensivo: o termo vem da URL, é entrada não confiável
-                  e só alimenta o campo de busca — nunca uma rota. */}
-              <BuscaDaHistopatologia termoInicial={(searchParams.q ?? '').slice(0, 80)} />
-            </div>
-
-            <ul className="mt-6 flex flex-wrap items-center gap-2.5 text-xs">
-              <Indicador icone={<ScrollText className="h-3.5 w-3.5" aria-hidden />}>
-                {TOTAIS.doencas} aprofundados ·{' '}
-                {(TOTAIS.capitulosVisuais + TOTAL_ENTRADAS_WEBPATH_UTAH).toLocaleString('pt-BR')}{' '}
-                itens de atlas
-              </Indicador>
-              <Indicador icone={<Library className="h-3.5 w-3.5" aria-hidden />}>
-                FCM/Unicamp + Histopathology Atlas + WebPath/Utah
-              </Indicador>
-              <Indicador icone={<Layers className="h-3.5 w-3.5" aria-hidden />}>
-                {(TOTAIS.referenciasDeMidia + TOTAL_ENTRADAS_WEBPATH_UTAH).toLocaleString('pt-BR')}{' '}
-                referências de lâmina
-              </Indicador>
-              <Indicador icone={<Microscope className="h-3.5 w-3.5" aria-hidden />}>
-                {TOTAIS.mecanismos} mecanismos gerais
-              </Indicador>
-            </ul>
+      <SuperficieDoCatalogo navegacao={<NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />}>
+        <BannerDoCatalogo
+          compacto
+          sobretitulo="Área · tecido doente"
+          titulo="Histopatologia"
+          texto="Reconhecer doença na lâmina é entender qual agressão produziu aquela forma. Cada doença traz o achado, o mecanismo e o normal ao lado."
+          imagem={comZoom[0]?.imagem}
+          acoes={
+            <>
+              <AcaoPrincipal href="#doencas">
+                <ScanSearch className="h-4 w-4" aria-hidden /> Doenças com lâmina
+              </AcaoPrincipal>
+              <AcaoSecundaria href={rotaDoAtlas()}>
+                <Library className="h-4 w-4" aria-hidden /> Atlas de imagens
+              </AcaoSecundaria>
+            </>
+          }
+        >
+          <div className="mt-6 max-w-2xl">
+            {/* Recorte defensivo: o termo vem da URL, é entrada não confiável
+                e só alimenta o campo de busca — nunca uma rota. */}
+            <BuscaDaHistopatologia termoInicial={(searchParams.q ?? '').slice(0, 80)} />
           </div>
-        </header>
+          <ul className="mt-5 flex flex-wrap gap-1.5 text-[11px] font-semibold text-white/80">
+            <li className="rounded-full bg-black/35 px-2.5 py-1 ring-1 ring-white/10">{doencas.length} doenças</li>
+            <li className="rounded-full bg-black/35 px-2.5 py-1 ring-1 ring-white/10">
+              {TOTAIS_PATOZOOM.laminas} lâminas com zoom · {TOTAIS_PATOZOOM.marcacoes} marcações
+            </li>
+            <li className="rounded-full bg-black/35 px-2.5 py-1 ring-1 ring-white/10">
+              {(TOTAIS.capitulosVisuais + TOTAL_ENTRADAS_WEBPATH_UTAH).toLocaleString('pt-BR')} itens de atlas
+            </li>
+            <li className="rounded-full bg-black/35 px-2.5 py-1 ring-1 ring-white/10">
+              {TOTAIS.mecanismos} mecanismos gerais
+            </li>
+          </ul>
+        </BannerDoCatalogo>
 
-        <div className="container mx-auto max-w-6xl px-4 py-8">
-          {/* ══════════ Modos de navegação ══════════ */}
-          <section aria-labelledby="modos">
-            <h2 id="modos" className="sr-only">
-              Modos de navegação
-            </h2>
-            <ul className="grid gap-3 sm:grid-cols-3">
-              <li>
-                <Atalho
-                  href={rotaDosMecanismos()}
-                  titulo="Por mecanismo"
-                  descricao="Granuloma, trombose, displasia, invasão. O mesmo processo em órgãos diferentes — é assim que o raciocínio se transfere."
-                  icone={<Microscope className="h-5 w-5" aria-hidden />}
-                />
-              </li>
-              <li>
-                <Atalho
-                  href={rotaDoAtlas()}
-                  titulo="Atlas de lâminas"
-                  descricao={`${TOTAIS.capitulosVisuais.toLocaleString('pt-BR')} capítulos visuais com lâminas disponíveis, organizados por sistema e abertos dentro do Domine Aqui.`}
-                  icone={<Library className="h-5 w-5" aria-hidden />}
-                />
-              </li>
-              <li>
-                <Atalho
-                  href={BASE_HISTOLOGIA}
-                  titulo="Voltar ao normal"
-                  descricao="A histologia normal é o pré-requisito, não o capítulo anterior. Cada doença aponta para a lâmina saudável correspondente."
-                  icone={<Columns2 className="h-5 w-5" aria-hidden />}
-                />
-              </li>
-            </ul>
-          </section>
+        <div className="mx-auto max-w-[1600px]">
+          <div id="doencas" className="scroll-mt-4">
+            <FileiraDoCatalogo
+              id="doencas-zoom"
+              titulo="Doenças com lâmina de zoom"
+              subtitulo="Das mais comuns e cobradas para as mais raras."
+              verTudo={{ href: BASE_PATOZOOM }}
+            >
+              <CartoesDaFileira itens={comZoom} mostrarArea={false} prioridade />
+            </FileiraDoCatalogo>
+          </div>
 
-          {/* ══════════ Capítulos ══════════ */}
-          <section aria-labelledby="capitulos" className="mt-12">
-            <div className="mb-4">
-              <p className="editorial-mark mb-2">Conteúdo escrito</p>
-              <h2 id="capitulos" className="font-heading text-xl font-semibold tracking-tight">
-                {TOTAIS.doencas} capítulos aprofundados
-              </h2>
-              <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Conteúdo aprofundado com mecanismo, roteiro microscópico e correlação clínica. O
-                atlas visual complementa estes capítulos com toda a coleção de lâminas.
-              </p>
-            </div>
-            <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {DOENCAS_RESUMIDAS.map((doenca) => (
-                <li key={doenca.slug}>
-                  <CartaoDeDoenca doenca={doenca} />
-                </li>
-              ))}
-            </ul>
-          </section>
+          <div id="recentes" className="scroll-mt-4">
+            <FileiraDoCatalogo id="recentes-fileira" titulo="Adicionados recentemente">
+              <CartoesDaFileira itens={doencasRecentes()} mostrarArea={false} />
+            </FileiraDoCatalogo>
+          </div>
 
-          {/* ══════════ Sistemas ══════════ */}
-          <section aria-labelledby="sistemas" className="mt-12">
-            <div className="mb-4">
-              <p className="editorial-mark mb-2">Por sistema e órgão</p>
-              <h2 id="sistemas" className="font-heading text-xl font-semibold tracking-tight">
-                {TOTAIS.sistemas} sistemas
-              </h2>
-              <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                Entre por sistema para estudar os capítulos aprofundados e percorrer as coleções
-                visuais já organizadas por doenças, controles, técnicas, imagens e casos.
-              </p>
-            </div>
-            <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-              {[...comDoencas, ...semDoencas].map((sistema) => (
-                <li key={sistema.id}>
-                  <Link
-                    href={rotaDoSistema(sistema.id)}
-                    className="flex h-full min-h-[44px] flex-col rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-teal-600/50"
-                  >
-                    <span className="text-sm font-bold leading-snug">{sistema.nome}</span>
-                    <span className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">
-                      {sistema.descricao}
-                    </span>
-                    <span className="mt-2 text-[11px] text-muted-foreground">
-                      {sistema.entradas.toLocaleString('pt-BR')} capítulos visuais ·{' '}
-                      {sistema.midias.toLocaleString('pt-BR')} lâminas
-                      {sistema.doencas > 0 && (
-                        <span className="font-bold text-teal-700 dark:text-teal-400">
-                          {' '}
-                          · {sistema.doencas} {sistema.doencas === 1 ? 'capítulo' : 'capítulos'}
-                        </span>
-                      )}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <div id="capitulos" className="scroll-mt-4">
+            <FileiraDoCatalogo
+              id="capitulos-fileira"
+              titulo="Capítulos aprofundados"
+              subtitulo="Mecanismo, roteiro microscópico, correlação clínica e comparação com o normal."
+            >
+              <CartoesDaFileira itens={capitulos} mostrarArea={false} />
+            </FileiraDoCatalogo>
+          </div>
 
-          {/* ══════════ Mecanismos em destaque ══════════ */}
-          <section aria-labelledby="mecanismos-destaque" className="mt-12">
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
+          <h2 className="mt-14 px-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[#E8763A] md:px-10">
+            Doenças por sistema
+          </h2>
+          {porSistema.map(({ sistema, itens }) => (
+            <FileiraDoCatalogo
+              key={sistema.id}
+              id={`sistema-${sistema.id}`}
+              titulo={sistema.nome}
+              subtitulo={`${itens.length} ${itens.length === 1 ? 'doença' : 'doenças'}`}
+              verTudo={{ href: rotaDoSistemaUnificado(sistema.id), rotulo: 'Ver o sistema' }}
+            >
+              <CartoesDaFileira itens={itens} mostrarArea={false} />
+            </FileiraDoCatalogo>
+          ))}
+
+          <FileiraDoCatalogo
+            id="atlas"
+            titulo="Atlas visual por sistema"
+            subtitulo="Coleções de imagens por doença, controle, técnica e caso — FCM/Unicamp, Histopathology Atlas e WebPath/Utah."
+            verTudo={{ href: rotaDoAtlas() }}
+          >
+            <CartoesDaFileira itens={atlasPorSistema} mostrarArea={false} />
+          </FileiraDoCatalogo>
+
+          <section aria-labelledby="mecanismos" className="mt-12 px-4 md:px-10">
+            <div className="mb-3 flex items-end justify-between gap-3">
               <div>
-                <p className="editorial-mark mb-2">Por mecanismo geral</p>
-                <h2
-                  id="mecanismos-destaque"
-                  className="font-heading text-xl font-semibold tracking-tight"
-                >
-                  O vocabulário que atravessa os órgãos
+                <h2 id="mecanismos" className="font-heading text-lg font-semibold tracking-tight text-white sm:text-xl">
+                  Por mecanismo
                 </h2>
+                <p className="mt-0.5 text-xs text-white/55 sm:text-sm">
+                  O mesmo processo em órgãos diferentes — é assim que o raciocínio se transfere.
+                </p>
               </div>
               <Link
                 href={rotaDosMecanismos()}
-                className="inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-border bg-card px-3.5 text-xs font-bold transition-colors hover:border-violet-600/50"
+                className="inline-flex min-h-[36px] shrink-0 items-center rounded-md px-2 text-xs font-bold text-[#E8763A] hover:bg-white/5"
               >
-                Ver os {TOTAIS.mecanismos} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+                Ver os {TOTAIS.mecanismos}
               </Link>
             </div>
             <ul className="flex flex-wrap gap-2">
-              {MECANISMOS_PUBLICADOS.slice(0, 10).map((mecanismo) => (
+              {MECANISMOS_PUBLICADOS.slice(0, 14).map((mecanismo) => (
                 <li key={mecanismo.id}>
                   <Link
                     href={`${rotaDosMecanismos()}/${mecanismo.id}`}
-                    className="inline-flex min-h-[40px] items-center rounded-lg border border-border bg-card px-3.5 text-sm font-semibold transition-colors hover:border-violet-600/50"
+                    className="inline-flex min-h-[40px] items-center rounded-full bg-white/[0.06] px-4 text-sm font-semibold text-white/85 ring-1 ring-white/10 transition-colors hover:bg-white/10 hover:ring-[#E8763A]/60"
                   >
                     {mecanismo.nome}
                   </Link>
@@ -244,53 +196,15 @@ export default async function HomeDaHistopatologia({ searchParams }: Props) {
               ))}
             </ul>
           </section>
-
-          <footer className="mt-14 border-t border-border pt-6">
-            <Link
-              href={rotaDosCreditos()}
-              className="text-xs font-bold text-muted-foreground underline transition-colors hover:text-foreground"
-            >
-              Créditos e fontes das lâminas
-            </Link>
-          </footer>
         </div>
-      </div>
+
+        <footer className="mx-auto mt-14 max-w-[1600px] space-y-2 border-t border-white/10 px-4 pt-6 text-xs leading-relaxed text-white/50 md:px-10">
+          <p>{RODAPE_LEEDS}</p>
+          <Link href={rotaDosCreditos()} className="font-bold underline transition-colors hover:text-white">
+            Créditos e fontes das lâminas
+          </Link>
+        </footer>
+      </SuperficieDoCatalogo>
     </AppShell>
-  )
-}
-
-function Indicador({ icone, children }: { icone: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <li className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 font-bold text-muted-foreground">
-      <span className="text-teal-700 dark:text-teal-400">{icone}</span>
-      {children}
-    </li>
-  )
-}
-
-function Atalho({
-  href,
-  titulo,
-  descricao,
-  icone,
-}: {
-  href: string
-  titulo: string
-  descricao: string
-  icone: React.ReactNode
-}) {
-  return (
-    <Link
-      href={href}
-      className="group flex h-full min-h-[44px] flex-col rounded-xl border border-border bg-card p-4 transition-colors hover:border-teal-600/50"
-    >
-      <span className="mb-2 text-teal-700 dark:text-teal-400">{icone}</span>
-      <span className="text-sm font-bold leading-snug">{titulo}</span>
-      <span className="mt-1 flex-1 text-xs leading-relaxed text-muted-foreground">{descricao}</span>
-      <span className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 dark:text-teal-400">
-        Abrir
-        <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden />
-      </span>
-    </Link>
   )
 }

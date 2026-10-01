@@ -7288,3 +7288,212 @@ body.exam-sem-copia [contenteditable='true'],
 body.exam-sem-copia [data-permite-copia] {
   -webkit-touch-callout: default;
 }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Catálogo do Manual da Histologia
+   Superfície escura da marca (verde-escuro #0B1F1A, laranja #E8763A) para as
+   páginas de exploração — home, áreas, sistemas, praticar. As páginas de
+   estudo (lâmina, capítulo) continuam seguindo o tema do aluno.
+   ══════════════════════════════════════════════════════════════════════ */
+.catalogo-histo {
+  --cat-fundo: #0b1f1a;
+  --cat-fundo-2: #0f2a23;
+  --cat-laranja: #e8763a;
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% -10%, rgba(232, 118, 58, 0.10), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(46, 140, 110, 0.10), transparent 60%),
+    linear-gradient(180deg, #0b1f1a 0%, #08171300 40%),
+    #071411;
+  color: #f0ebe0;
+}
+
+/* Fileira horizontal: rola por toque/trackpad; setas no desktop. */
+.catalogo-fileira {
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1rem;
+  overscroll-behavior-x: contain;
+}
+.catalogo-fileira::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .catalogo-fileira {
+    scroll-padding-inline: 2.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalogo-histo * {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Cartão do catálogo. Em CSS, e não em utilitários, por peso: a página do
+   catálogo tem centenas de cartões e cada classe utilitária se repete no HTML
+   e no payload RSC de cada um — numa função que não comprime a resposta. */
+.cat-cartao {
+  display: block;
+  border-radius: 0.75rem;
+  outline: none;
+}
+.cat-cartao:focus-visible {
+  box-shadow: 0 0 0 2px #0b1f1a, 0 0 0 4px #e8763a;
+}
+.cat-capa {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #0f2a23;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), inset 0 0 0 1px rgb(255 255 255 / 0.1);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+.cat-retrato .cat-capa {
+  aspect-ratio: 3 / 4;
+}
+.cat-cartao:hover .cat-capa {
+  transform: scale(1.035);
+  box-shadow: 0 14px 24px -6px rgb(0 0 0 / 0.5), inset 0 0 0 1px rgb(232 118 58 / 0.75);
+}
+.cat-capa > img,
+.cat-capa > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+.cat-cartao:hover .cat-capa > img,
+.cat-cartao:hover .cat-capa > svg {
+  transform: scale(1.05);
+}
+.cat-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(0 0 0 / 0.9), rgb(0 0 0 / 0.25) 50%, transparent);
+}
+.cat-tipografica {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(255 255 255 / 0.35);
+}
+.cat-topo {
+  position: absolute;
+  z-index: 1;
+  inset: 0.5rem 0.5rem auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.cat-chip {
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+}
+.cat-histologia {
+  background: rgb(52 211 153 / 0.15);
+  color: #a7f3d0;
+  box-shadow: inset 0 0 0 1px rgb(110 231 183 / 0.3);
+}
+.cat-histopatologia {
+  background: rgb(251 113 133 / 0.15);
+  color: #fecdd3;
+  box-shadow: inset 0 0 0 1px rgb(253 164 175 / 0.3);
+}
+.cat-praticar {
+  background: rgb(251 191 36 / 0.15);
+  color: #fef3c7;
+  box-shadow: inset 0 0 0 1px rgb(252 211 77 / 0.3);
+}
+.cat-zoom {
+  margin-left: auto;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgb(232 118 58 / 0.6);
+}
+/* Ícone "scan-search" do lucide, desenhado uma vez aqui e não em cada cartão. */
+.cat-zoom::before {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: #e8763a;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='m16 16-1.9-1.9'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3Cpath d='m16 16-1.9-1.9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cat-titulo {
+  position: absolute;
+  z-index: 1;
+  inset: auto 0 0;
+  padding: 0.75rem;
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
+  font-size: 0.875rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.6);
+}
+.cat-retrato .cat-titulo {
+  font-size: 1rem;
+  -webkit-line-clamp: 3;
+}
+@media (min-width: 640px) {
+  .cat-titulo {
+    font-size: 15px;
+  }
+  .cat-retrato .cat-titulo {
+    font-size: 1.125rem;
+  }
+}
+.cat-meta {
+  display: block;
+  margin-top: 0.5rem;
+  padding: 0 0.125rem;
+  font-size: 11px;
+}
+.cat-meta > span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cat-meta > span:first-child {
+  font-weight: 500;
+  color: rgb(255 255 255 / 0.55);
+}
+.cat-detalhe {
+  color: rgb(255 255 255 / 0.45);
+  transition: color 0.3s;
+}
+@media (hover: hover) and (min-width: 768px) {
+  .cat-detalhe {
+    color: transparent;
+  }
+  .cat-cartao:hover .cat-detalhe,
+  .cat-cartao:focus-visible .cat-detalhe {
+    color: rgb(255 255 255 / 0.7);
+  }
+}

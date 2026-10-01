@@ -43,7 +43,7 @@ export default async function PaginaDoSistema({ params }: { params: { sistema: s
         <div className="container mx-auto max-w-6xl px-4 py-6">
           <nav aria-label="Trilha" className="mb-3 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
             <Link href={BASE_ZOOM} className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 hover:text-foreground">
-              <ArrowLeft className="h-4 w-4" aria-hidden /> Histologia com Zoom
+              <ArrowLeft className="h-4 w-4" aria-hidden /> Histologia · Lâminas com zoom
             </Link>
           </nav>
 

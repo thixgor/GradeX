@@ -9,7 +9,7 @@ import { OrigemDaPecaBloco, SeloDeOrigem } from '@/components/histologia-zoom/or
 import { LaminaInterativa } from '@/components/histologia-zoom/lamina-interativa'
 import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
-import { metadadosDoModulo } from '@/lib/histologia/seo'
+import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 import { coloracaoPorId } from '@/lib/histologia-zoom/coloracoes'
 import { estruturasDaLamina } from '@/lib/histologia-zoom/estruturas'
 import { FONTES_DO_ACERVO, RODAPE_DO_ACERVO } from '@/lib/histologia-zoom/fonte'
@@ -80,13 +80,29 @@ export default async function PaginaDaLamina({ params }: Parametros) {
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
       <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
+        <NavegacaoDoModulo
+          histopatologiaHabilitada={histopatologiaHabilitada()}
+          visto={{
+            href: rotaDaLaminaZoom(lamina.sistema, lamina.slug),
+            titulo: rotulo(lamina),
+            categoria: `Histologia · ${sistema.nome}`,
+            area: 'histologia',
+            imagem: lamina.piramide.miniatura.url,
+            zoom: true,
+          }}
+        />
         <div className="container mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6">
           <nav aria-label="Trilha" className="mb-2 overflow-x-auto">
             <ol className="flex items-center gap-1 whitespace-nowrap text-xs text-muted-foreground sm:text-sm">
               <li>
+                <Link href={`${BASE}/normal`} className="rounded px-1 py-1 hover:text-foreground">
+                  Histologia
+                </Link>
+              </li>
+              <li aria-hidden>›</li>
+              <li>
                 <Link href={BASE_ZOOM} className="rounded px-1 py-1 hover:text-foreground">
-                  Histologia com Zoom
+                  Lâminas com zoom
                 </Link>
               </li>
               <li aria-hidden>›</li>

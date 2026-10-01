@@ -42,17 +42,42 @@ describe('rotas declaradas na interface existem no currículo', () => {
    */
   it('a lâmina de abertura e as trilhas da home existem', () => {
     const home = FONTES.get('app/manual-clinico/histologia/page.tsx')!
-    const caminhos = [...home.matchAll(/destino: \[([^\]]+)\]|ROTA_HERO = \[([^\]]+)\]/g)].map((m) =>
-      (m[1] ?? m[2])
-        .split(',')
-        .map((s) => s.trim().replace(/^'|'$/g, ''))
-        .filter(Boolean)
-        .join('/'),
+    const hero = home.match(/ROTA_HERO = \[([^\]]+)\]/)
+    expect(hero, 'a home perdeu a lâmina de abertura').toBeTruthy()
+    const caminho = hero![1]
+      .split(',')
+      .map((s) => s.trim().replace(/^'|'$/g, ''))
+      .filter(Boolean)
+      .join('/')
+    expect(rotas.has(caminho), `rota inexistente referenciada na home: ${caminho}`).toBe(true)
+  })
+
+  /**
+   * O catálogo liga sistemas a assuntos do currículo por caminho literal
+   * (`ASSUNTOS_DO_SISTEMA`) e pede capas de banner pelo mesmo caminho. Um slug
+   * que some numa reingestão esvaziaria a fileira em silêncio.
+   */
+  it('os assuntos citados pelo catálogo existem no currículo', () => {
+    const fontes = [
+      FONTES.get('lib/histologia/catalogo.ts')!,
+      FONTES.get('app/manual-clinico/histologia/page.tsx')!,
+      FONTES.get('app/manual-clinico/histologia/normal/page.tsx')!,
+    ].join('\n')
+    const prefixos = new Set([...rotas].map((r) => r.split('/').slice(0, 2).join('/')))
+    const citados = [...fontes.matchAll(/'((?:histologia-basica|celulas|tecidos|orgaos-e-sistemas)\/[a-z0-9-]+)'/g)].map(
+      (m) => m[1],
     )
-    expect(caminhos.length).toBeGreaterThanOrEqual(4)
-    for (const caminho of caminhos) {
-      expect(rotas.has(caminho), `rota inexistente referenciada na home: ${caminho}`).toBe(true)
+    expect(citados.length).toBeGreaterThanOrEqual(10)
+    for (const assunto of citados) {
+      expect(prefixos.has(assunto), `assunto inexistente citado no catálogo: ${assunto}`).toBe(true)
     }
+  })
+
+  it('toda capa de assunto gerada pertence a um assunto do currículo', () => {
+    const capas = JSON.parse(readFileSync(path.join(DADOS, 'capas.json'), 'utf8')) as Record<string, unknown>
+    const prefixos = new Set([...rotas].map((r) => r.split('/').slice(0, 2).join('/')))
+    expect(Object.keys(capas).length).toBeGreaterThan(15)
+    for (const chave of Object.keys(capas)) expect(prefixos.has(chave), chave).toBe(true)
   })
 
   it('todo módulo de laboratório tem componente correspondente', () => {

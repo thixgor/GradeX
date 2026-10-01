@@ -149,7 +149,17 @@ export default async function PaginaDoCurriculo({ params, searchParams }: Props)
       {prePrevia && <link rel="preload" as="image" href={prePrevia} fetchPriority="high" />}
       {preLamina && <link rel="preload" as="image" href={preLamina} />}
       <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
+        <NavegacaoDoModulo
+          histopatologiaHabilitada={histopatologiaHabilitada()}
+          visto={{
+            href: rotaDaPagina(pagina.caminho),
+            titulo: pagina.titulo,
+            categoria: `Histologia · ${pagina.trilha[0]?.titulo ?? 'Atlas por assunto'}`,
+            area: 'histologia',
+            imagem: urlOtimizada(imagem, LARGURA_MINIATURA, 60),
+            zoom: false,
+          }}
+        />
         <Lamina
           pagina={pagina}
           // Resolvido aqui, e não dentro do componente cliente: a tabela
