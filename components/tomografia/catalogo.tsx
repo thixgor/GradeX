@@ -126,6 +126,20 @@ export function CatalogoTomografia({ catalogo }: { catalogo: CatalogoTC }) {
                 )}
               </div>
             </div>
+
+            <Link
+              href="/manual-clinico/radiologia/tomografia/casos"
+              className="group mt-4 flex max-w-xl items-center gap-3 rounded-xl border border-primary/25 bg-primary/[0.06] p-4 transition hover:border-primary/50 hover:bg-primary/10"
+            >
+              <Sparkles className="h-5 w-5 shrink-0 text-primary" />
+              <span className="flex-1">
+                <span className="block text-sm font-bold">Casos clínicos de TC</span>
+                <span className="block text-xs text-muted-foreground">
+                  Consulta completa, pilha real de cortes e apontamentos traduzidos depois da resposta.
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-primary transition group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </div>
       </div>

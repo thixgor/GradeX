@@ -72,3 +72,4 @@ __pycache__/
 # lib/semiologia/acervo.gerado.ts, que guarda URL de origem e SHA-256 — os
 # arquivos são reproduzíveis a partir dele e vão para o CDN, não para o repositório.
 .semiologia/
+.radiologia/

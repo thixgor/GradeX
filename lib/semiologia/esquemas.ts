@@ -71,6 +71,7 @@ export type SistemaSemiologico =
   | 'endocrino'
   | 'musculoesqueletico'
   | 'pediatrico'
+  | 'genetico'
 
 export const TITULOS_DE_SISTEMA: Record<SistemaSemiologico, string> = {
   geral: 'Sinais gerais',
@@ -83,6 +84,7 @@ export const TITULOS_DE_SISTEMA: Record<SistemaSemiologico, string> = {
   endocrino: 'Endócrino',
   musculoesqueletico: 'Musculoesquelético',
   pediatrico: 'Pediátrico',
+  genetico: 'Síndromes genéticas',
 }
 
 /** Um passo de manobra: o que fazer e por que fazer exatamente assim. */

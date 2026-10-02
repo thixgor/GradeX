@@ -1,0 +1,3764 @@
+{
+ "version": 1,
+ "generatedAt": "2026-09-26T03:56:59.414Z",
+ "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+ "casos": [
+  {
+   "slug": "avc-isquemico-acm",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/left-mca-territory-infarct-with-dense-mca-sign",
+   "autoria": "Habeeb Hamood Abdulwahab Ahmed",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 32,
+   "anotacoes": [
+    {
+     "rotulo": "hyperattenuating",
+     "pontos": [
+      [
+       12,
+       344,
+       220,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "hypoattenuation",
+     "pontos": [
+      [
+       17,
+       376,
+       248,
+       0
+      ],
+      [
+       17,
+       372,
+       359,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "gray-white matter",
+     "pontos": [
+      [
+       19,
+       377,
+       243,
+       0
+      ],
+      [
+       19,
+       365,
+       322,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hemorragia-intraparenquimatosa",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/high-grade-glioma-with-haemorrhage",
+   "autoria": "Lam Van Le",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 31,
+   "anotacoes": [
+    {
+     "rotulo": "Mild dilation",
+     "pontos": [
+      [
+       13,
+       354,
+       274,
+       -428
+      ],
+      [
+       13,
+       146,
+       278,
+       -300
+      ],
+      [
+       12,
+       354,
+       270,
+       -428
+      ]
+     ]
+    },
+    {
+     "rotulo": "compression",
+     "pontos": [
+      [
+       16,
+       275,
+       266,
+       -96
+      ]
+     ]
+    },
+    {
+     "rotulo": "hyperdense mass",
+     "pontos": [
+      [
+       16,
+       226,
+       300,
+       -318
+      ]
+     ]
+    },
+    {
+     "rotulo": "Intracerebral hemorrhage",
+     "pontos": [
+      [
+       18,
+       188,
+       259,
+       -282
+      ]
+     ]
+    },
+    {
+     "rotulo": "cerebral edema",
+     "pontos": [
+      [
+       18,
+       175,
+       281,
+       -293
+      ],
+      [
+       18,
+       197,
+       219,
+       -234
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hemorragia-pontina",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/brainstem-haemorrhage-1",
+   "autoria": "Himel Kumar Biswas",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 33,
+   "anotacoes": [
+    {
+     "rotulo": "Pontine haemorrhage",
+     "pontos": [
+      [
+       12,
+       244,
+       305,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "right thalamus extension",
+     "pontos": [
+      [
+       16,
+       232,
+       307,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "focal encephalomalacia",
+     "pontos": [
+      [
+       23,
+       215,
+       277,
+       0
+      ],
+      [
+       24,
+       215,
+       277,
+       0
+      ],
+      [
+       22,
+       218,
+       275,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hematoma-extradural",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/post-shunting-subacute-epidural-hematoma",
+   "autoria": "Mohammad Sattouf",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "colloid cyst",
+     "pontos": [
+      [
+       7,
+       280,
+       230,
+       -392
+      ]
+     ]
+    },
+    {
+     "rotulo": "hyperdensity",
+     "pontos": [
+      [
+       9,
+       209,
+       142,
+       -380
+      ]
+     ]
+    },
+    {
+     "rotulo": "isodense component",
+     "pontos": [
+      [
+       9,
+       254,
+       67,
+       -156
+      ]
+     ]
+    },
+    {
+     "rotulo": "air bubbles",
+     "pontos": [
+      [
+       12,
+       246,
+       62,
+       -178
+      ],
+      [
+       12,
+       366,
+       134,
+       -120
+      ],
+      [
+       12,
+       294,
+       201,
+       -166
+      ]
+     ]
+    },
+    {
+     "rotulo": "Y-shaped branched VP shunt",
+     "pontos": [
+      [
+       51,
+       253,
+       249,
+       -386
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hematoma-subdural-agudo-sobre-cronico",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/acute-on-chronic-subdural-hematoma-6",
+   "autoria": "Abdullahi Abdi Farah Horri",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 42,
+   "anotacoes": [
+    {
+     "rotulo": "infarcts",
+     "pontos": [
+      [
+       12,
+       225,
+       239,
+       -268
+      ],
+      [
+       12,
+       266,
+       254,
+       -417
+      ]
+     ]
+    },
+    {
+     "rotulo": "compression lateral ventricle",
+     "pontos": [
+      [
+       13,
+       254,
+       172,
+       -137
+      ]
+     ]
+    },
+    {
+     "rotulo": "trapping and dilatation",
+     "pontos": [
+      [
+       14,
+       194,
+       150,
+       -233
+      ],
+      [
+       14,
+       176,
+       354,
+       -317
+      ]
+     ]
+    },
+    {
+     "rotulo": "falcine subdural",
+     "pontos": [
+      [
+       16,
+       240,
+       384,
+       -267
+      ]
+     ]
+    },
+    {
+     "rotulo": "acute component",
+     "pontos": [
+      [
+       18,
+       329,
+       383,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "subfalcine herniation",
+     "pontos": [
+      [
+       19,
+       214,
+       228,
+       -273
+      ],
+      [
+       19,
+       226,
+       139,
+       -244
+      ]
+     ]
+    },
+    {
+     "rotulo": "two separate hematocrit levels",
+     "pontos": [
+      [
+       19,
+       329,
+       214,
+       -181
+      ],
+      [
+       19,
+       354,
+       345,
+       -181
+      ]
+     ]
+    },
+    {
+     "rotulo": "chronic component",
+     "pontos": [
+      [
+       19,
+       352,
+       329,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "acute subdural haematoma",
+     "pontos": [
+      [
+       20,
+       144,
+       198,
+       -428
+      ]
+     ]
+    },
+    {
+     "rotulo": "sulcal effacement",
+     "pontos": [
+      [
+       29,
+       270,
+       162,
+       -128
+      ],
+      [
+       29,
+       291,
+       251,
+       -451
+      ],
+      [
+       29,
+       274,
+       329,
+       -411
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hemorragia-subaracnoidea",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/high-velocity-non-penetrating-traumatic-brain-injury",
+   "autoria": "Ahmad Kanaan",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 572,
+   "totalFatias": 25,
+   "anotacoes": [
+    {
+     "rotulo": "subarachnoid hemorrhage",
+     "pontos": [
+      [
+       12,
+       320,
+       339,
+       -332
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "contusoes-cerebrais",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/multiple-traumatic-intracranial-haemorrhages",
+   "autoria": "Bridget Copson",
+   "perspectiva": "Axial",
+   "largura": 508,
+   "altura": 462,
+   "totalFatias": 36,
+   "anotacoes": [
+    {
+     "rotulo": "Contusion",
+     "pontos": [
+      [
+       10,
+       296,
+       239,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Subarachnoid haemorrhage",
+     "pontos": [
+      [
+       15,
+       246,
+       89,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Intraventricular haemorrhage",
+     "pontos": [
+      [
+       18,
+       187,
+       309,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Contusion",
+     "pontos": [
+      [
+       19,
+       205,
+       141,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "CSF/blood level",
+     "pontos": [
+      [
+       22,
+       207,
+       270,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Subdural haematoma",
+     "pontos": [
+      [
+       23,
+       162,
+       178,
+       -405
+      ]
+     ]
+    },
+    {
+     "rotulo": "Calvarial fracture",
+     "pontos": [
+      [
+       23,
+       166,
+       112,
+       -229
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hidrocefalia-cisto-coloide",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/colloid-cyst-64",
+   "autoria": "Farah Alyetama",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 32,
+   "anotacoes": [
+    {
+     "rotulo": "CSF permeation",
+     "pontos": [
+      [
+       12,
+       191,
+       142,
+       -234
+      ],
+      [
+       12,
+       301,
+       144,
+       -136
+      ]
+     ]
+    },
+    {
+     "rotulo": "leftward bowing",
+     "pontos": [
+      [
+       13,
+       267,
+       234,
+       -273
+      ]
+     ]
+    },
+    {
+     "rotulo": "dilatation",
+     "pontos": [
+      [
+       16,
+       201,
+       247,
+       -268
+      ]
+     ]
+    },
+    {
+     "rotulo": "cerebral edema",
+     "pontos": [
+      [
+       19,
+       139,
+       293,
+       -101
+      ],
+      [
+       19,
+       157,
+       337,
+       -101
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "abscesso-cerebral",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/cerebral-abscess-48",
+   "autoria": "Lam Van Le",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 27,
+   "anotacoes": [
+    {
+     "rotulo": "mass",
+     "pontos": [
+      [
+       12,
+       177,
+       331,
+       0
+      ],
+      [
+       12,
+       160,
+       282,
+       -294
+      ],
+      [
+       12,
+       195,
+       247,
+       -172
+      ],
+      [
+       12,
+       223,
+       286,
+       -103
+      ]
+     ]
+    },
+    {
+     "rotulo": "mass effect",
+     "pontos": [
+      [
+       12,
+       268,
+       296,
+       -429
+      ]
+     ]
+    },
+    {
+     "rotulo": "cerebral edema",
+     "pontos": [
+      [
+       14,
+       139,
+       364,
+       0
+      ],
+      [
+       14,
+       215,
+       216,
+       -426
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "glioblastoma",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/glioblastoma-idh-wildtype-17",
+   "autoria": "Giorgio Maria Agazzi",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 586,
+   "totalFatias": 28,
+   "anotacoes": [
+    {
+     "rotulo": "peripheral rim",
+     "pontos": [
+      [
+       12,
+       393,
+       284,
+       -398
+      ],
+      [
+       12,
+       304,
+       272,
+       -305
+      ]
+     ]
+    },
+    {
+     "rotulo": "cortico-subcortical mass",
+     "pontos": [
+      [
+       14,
+       307,
+       273,
+       -304
+      ]
+     ]
+    },
+    {
+     "rotulo": "hyperattenuating foci",
+     "pontos": [
+      [
+       14,
+       391,
+       280,
+       -393
+      ],
+      [
+       14,
+       394,
+       247,
+       -141
+      ]
+     ]
+    },
+    {
+     "rotulo": "white matter hypoattenuation",
+     "pontos": [
+      [
+       15,
+       332,
+       206,
+       -220
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "metastases-cerebrais",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/brain-metastases-22",
+   "autoria": "Tariq Walizai",
+   "perspectiva": "Axial",
+   "largura": 442,
+   "altura": 512,
+   "totalFatias": 55,
+   "anotacoes": [
+    {
+     "rotulo": "dural-based",
+     "pontos": [
+      [
+       12,
+       183,
+       252,
+       0
+      ],
+      [
+       12,
+       175,
+       200,
+       -190
+      ]
+     ]
+    },
+    {
+     "rotulo": "ring enhancement",
+     "pontos": [
+      [
+       24,
+       166,
+       315,
+       -379
+      ],
+      [
+       24,
+       148,
+       265,
+       -191
+      ]
+     ]
+    },
+    {
+     "rotulo": "vasogenic edema",
+     "pontos": [
+      [
+       42,
+       315,
+       312,
+       -393
+      ],
+      [
+       42,
+       304,
+       187,
+       -165
+      ],
+      [
+       42,
+       256,
+       238,
+       -245
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "pneumoencefalo",
+   "categoria": "neuro",
+   "urlDoCaso": "https://radiopaedia.org/cases/pneumocephalus-17",
+   "autoria": "Lam Van Le",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "A small hyperdense focus",
+     "pontos": [
+      [
+       9,
+       266,
+       176,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "gas",
+     "pontos": [
+      [
+       10,
+       256,
+       256,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "air in the subarachnoid spaces",
+     "pontos": [
+      [
+       49,
+       332,
+       212,
+       0
+      ],
+      [
+       49,
+       218,
+       145,
+       -379
+      ],
+      [
+       49,
+       265,
+       287,
+       -379
+      ],
+      [
+       49,
+       256,
+       349,
+       -370
+      ],
+      [
+       49,
+       133,
+       248,
+       -370
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "fratura-blowout-da-orbita",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/orbital-blow-out-fracture-26",
+   "autoria": "Stefan Tigges",
+   "perspectiva": "Coronal",
+   "largura": 1534,
+   "altura": 1702,
+   "totalFatias": 23,
+   "anotacoes": [
+    {
+     "rotulo": "Defect",
+     "pontos": [
+      [
+       8,
+       999,
+       799,
+       -440
+      ],
+      [
+       8,
+       895,
+       739,
+       -251
+      ]
+     ]
+    },
+    {
+     "rotulo": "Fracture fragment",
+     "pontos": [
+      [
+       8,
+       914,
+       812,
+       -298
+      ]
+     ]
+    },
+    {
+     "rotulo": "Left inferior rectus muscle",
+     "pontos": [
+      [
+       10,
+       939,
+       795,
+       -418
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "abscesso-subperiosteal-da-orbita",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/subperiosteal-abscess-of-the-orbit-4",
+   "autoria": "Mostafa Mohamed",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 57,
+   "anotacoes": [
+    {
+     "rotulo": "maxillary sinusitis",
+     "pontos": [
+      [
+       6,
+       168,
+       226,
+       -320
+      ]
+     ]
+    },
+    {
+     "rotulo": "the lamina papyracea",
+     "pontos": [
+      [
+       29,
+       209,
+       145,
+       -259
+      ],
+      [
+       29,
+       202,
+       164,
+       -264
+      ],
+      [
+       29,
+       197,
+       185,
+       -264
+      ]
+     ]
+    },
+    {
+     "rotulo": "inter-ethmoidal septae",
+     "pontos": [
+      [
+       33,
+       227,
+       186,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "ethmoidal sinusitis",
+     "pontos": [
+      [
+       35,
+       238,
+       177,
+       -422
+      ],
+      [
+       35,
+       225,
+       203,
+       -377
+      ],
+      [
+       35,
+       216,
+       128,
+       -194
+      ]
+     ]
+    },
+    {
+     "rotulo": "frontal sinusitis",
+     "pontos": [
+      [
+       51,
+       207,
+       99,
+       -189
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "tumor-de-pott",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/pott-puffy-tumor-16",
+   "autoria": "Senai Goitom Sereke",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "Mucosal enhancement",
+     "pontos": [
+      [
+       10,
+       181,
+       157,
+       0
+      ],
+      [
+       10,
+       163,
+       138,
+       -276
+      ],
+      [
+       10,
+       185,
+       119,
+       -234
+      ]
+     ]
+    },
+    {
+     "rotulo": "subgaleal soft tissue swelling",
+     "pontos": [
+      [
+       47,
+       186,
+       71,
+       -216
+      ],
+      [
+       47,
+       210,
+       53,
+       -216
+      ]
+     ]
+    },
+    {
+     "rotulo": "frontal sinuses",
+     "pontos": [
+      [
+       48,
+       199,
+       84,
+       -310
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "abscesso-peritonsilar",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/peritonsillar-abscess-21",
+   "autoria": "Yahya Baba",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 52,
+   "anotacoes": [
+    {
+     "rotulo": "Palatine tonsils",
+     "pontos": [
+      [
+       4,
+       198,
+       202,
+       -316
+      ],
+      [
+       4,
+       273,
+       203,
+       -402
+      ]
+     ]
+    },
+    {
+     "rotulo": "Peritonsillar abscess",
+     "pontos": [
+      [
+       7,
+       204,
+       218,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Hypopharyngeal",
+     "pontos": [
+      [
+       16,
+       226,
+       245,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Right vallecula",
+     "pontos": [
+      [
+       19,
+       226,
+       206,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "internal laryngocele",
+     "pontos": [
+      [
+       24,
+       209,
+       233,
+       -251
+      ],
+      [
+       25,
+       209,
+       235,
+       -251
+      ],
+      [
+       26,
+       209,
+       235,
+       -251
+      ],
+      [
+       27,
+       209,
+       235,
+       -251
+      ],
+      [
+       28,
+       212,
+       232,
+       -251
+      ],
+      [
+       29,
+       214,
+       230,
+       -251
+      ],
+      [
+       30,
+       209,
+       235,
+       -251
+      ],
+      [
+       31,
+       209,
+       235,
+       -251
+      ],
+      [
+       32,
+       217,
+       231,
+       -251
+      ],
+      [
+       33,
+       224,
+       230,
+       -251
+      ],
+      [
+       34,
+       227,
+       229,
+       -251
+      ],
+      [
+       35,
+       226,
+       229,
+       -251
+      ],
+      [
+       36,
+       224,
+       231,
+       -251
+      ],
+      [
+       37,
+       228,
+       231,
+       -258
+      ],
+      [
+       38,
+       229,
+       230,
+       -253
+      ],
+      [
+       39,
+       229,
+       229,
+       -249
+      ],
+      [
+       40,
+       230,
+       227,
+       -264
+      ],
+      [
+       41,
+       231,
+       229,
+       -255
+      ],
+      [
+       42,
+       229,
+       231,
+       -264
+      ],
+      [
+       43,
+       230,
+       230,
+       -259
+      ],
+      [
+       44,
+       227,
+       230,
+       -252
+      ],
+      [
+       45,
+       233,
+       229,
+       -251
+      ],
+      [
+       46,
+       235,
+       229,
+       -251
+      ],
+      [
+       47,
+       237,
+       232,
+       -230
+      ],
+      [
+       48,
+       238,
+       231,
+       -208
+      ],
+      [
+       23,
+       207,
+       237,
+       -251
+      ],
+      [
+       22,
+       209,
+       233,
+       -251
+      ],
+      [
+       21,
+       208,
+       238,
+       -251
+      ]
+     ]
+    },
+    {
+     "rotulo": "Right pyriform sinus",
+     "pontos": [
+      [
+       28,
+       215,
+       258,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "abscesso-retrofaringeo",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/peritonsillar-abscess-with-deep-neck-extension",
+   "autoria": "Derek Smith",
+   "perspectiva": "Axial",
+   "largura": 1336,
+   "altura": 1568,
+   "totalFatias": 38,
+   "anotacoes": [
+    {
+     "rotulo": "peritonsillar abscess",
+     "pontos": [
+      [
+       12,
+       812,
+       588,
+       -401
+      ]
+     ]
+    },
+    {
+     "rotulo": "retropharyngeal",
+     "pontos": [
+      [
+       18,
+       681,
+       735,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "visceral space",
+     "pontos": [
+      [
+       25,
+       874,
+       682,
+       -99
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "sindrome-de-lemierre",
+   "categoria": "cabeca-pescoco",
+   "urlDoCaso": "https://radiopaedia.org/cases/lemierre-syndrome-16",
+   "autoria": "Sebastian Alarcon",
+   "perspectiva": "Axial",
+   "largura": 1186,
+   "altura": 1354,
+   "totalFatias": 59,
+   "anotacoes": [
+    {
+     "rotulo": "septic pulmonary nodules",
+     "pontos": [
+      [
+       5,
+       954,
+       958,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "reactive lymph nodes",
+     "pontos": [
+      [
+       33,
+       350,
+       550,
+       -348
+      ]
+     ]
+    },
+    {
+     "rotulo": "thrombosis",
+     "pontos": [
+      [
+       38,
+       374,
+       626,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Post-procedural gas foci",
+     "pontos": [
+      [
+       39,
+       480,
+       416,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "peritonsillar abscess,",
+     "pontos": [
+      [
+       54,
+       463,
+       437,
+       -348
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "tep-a-cavaleiro",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/saddle-pulmonary-embolism-33",
+   "autoria": "Ali Al-Abdulsalam",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "right",
+     "pontos": [
+      [
+       7,
+       256,
+       256,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "left",
+     "pontos": [
+      [
+       7,
+       304,
+       254,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "left upper",
+     "pontos": [
+      [
+       11,
+       327,
+       236,
+       -205
+      ]
+     ]
+    },
+    {
+     "rotulo": "upper",
+     "pontos": [
+      [
+       17,
+       186,
+       244,
+       -260
+      ]
+     ]
+    },
+    {
+     "rotulo": "middle",
+     "pontos": [
+      [
+       31,
+       163,
+       270,
+       -188
+      ],
+      [
+       31,
+       180,
+       269,
+       -188
+      ]
+     ]
+    },
+    {
+     "rotulo": "flattening",
+     "pontos": [
+      [
+       39,
+       317,
+       157,
+       -227
+      ],
+      [
+       39,
+       297,
+       174,
+       -227
+      ],
+      [
+       39,
+       279,
+       189,
+       -227
+      ]
+     ]
+    },
+    {
+     "rotulo": "right ventricle",
+     "pontos": [
+      [
+       39,
+       273,
+       136,
+       -201
+      ]
+     ]
+    },
+    {
+     "rotulo": "subsegmental",
+     "pontos": [
+      [
+       47,
+       201,
+       302,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "left subsegmental",
+     "pontos": [
+      [
+       49,
+       324,
+       298,
+       0
+      ],
+      [
+       49,
+       351,
+       280,
+       -390
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "disseccao-de-aorta-tipo-a",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/stanford-type-a-aortic-dissection-7",
+   "autoria": "Saeed Haruna",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "intimal flap",
+     "pontos": [
+      [
+       9,
+       278,
+       255,
+       -330
+      ]
+     ]
+    },
+    {
+     "rotulo": "true lumen",
+     "pontos": [
+      [
+       17,
+       281,
+       305,
+       -288
+      ]
+     ]
+    },
+    {
+     "rotulo": "false lumen",
+     "pontos": [
+      [
+       17,
+       300,
+       316,
+       -417
+      ]
+     ]
+    },
+    {
+     "rotulo": "coeliac trunk",
+     "pontos": [
+      [
+       42,
+       278,
+       223,
+       -433
+      ]
+     ]
+    },
+    {
+     "rotulo": "SMA",
+     "pontos": [
+      [
+       44,
+       272,
+       210,
+       -276
+      ]
+     ]
+    },
+    {
+     "rotulo": "intraluminal filling defects",
+     "pontos": [
+      [
+       44,
+       277,
+       207,
+       -401
+      ]
+     ]
+    },
+    {
+     "rotulo": "left renal artery",
+     "pontos": [
+      [
+       47,
+       271,
+       238,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "aneurisma-de-aorta-toracica",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/thoracic-aortic-aneurysm-hilum-overlay-sign",
+   "autoria": "Mostafa Elfeky",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 29,
+   "anotacoes": [
+    {
+     "rotulo": "thoracic aortic aneurysm",
+     "pontos": [
+      [
+       12,
+       336,
+       380,
+       -103
+      ]
+     ]
+    },
+    {
+     "rotulo": "eccentric luminal thrombus",
+     "pontos": [
+      [
+       16,
+       320,
+       411,
+       -391
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "enfisema-centrolobular",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/emphysema-13",
+   "autoria": "Guillermo César Vélez Parra",
+   "perspectiva": "Axial",
+   "largura": 1024,
+   "altura": 1024,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "destructive emphysema",
+     "pontos": [
+      [
+       11,
+       244,
+       572,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "centrilobular",
+     "pontos": [
+      [
+       47,
+       764,
+       473,
+       -311
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "bronquiectasias-cisticas",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/varicose-and-cystic-bronchiectasis-1",
+   "autoria": "Filipa Isabel Bravo Moutinho",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "diffuse bronchial wall thicke",
+     "pontos": [
+      [
+       8,
+       149,
+       343,
+       -411
+      ]
+     ]
+    },
+    {
+     "rotulo": "string of pearls sign",
+     "pontos": [
+      [
+       25,
+       150,
+       213,
+       -298
+      ]
+     ]
+    },
+    {
+     "rotulo": "air–fluid levels",
+     "pontos": [
+      [
+       36,
+       366,
+       399,
+       -101
+      ]
+     ]
+    },
+    {
+     "rotulo": "bunch of grapes sign",
+     "pontos": [
+      [
+       37,
+       151,
+       228,
+       -309
+      ]
+     ]
+    },
+    {
+     "rotulo": "cystic bronchiectasis",
+     "pontos": [
+      [
+       38,
+       136,
+       215,
+       -279
+      ]
+     ]
+    },
+    {
+     "rotulo": "signet-ring sign",
+     "pontos": [
+      [
+       39,
+       112,
+       320,
+       -393
+      ]
+     ]
+    },
+    {
+     "rotulo": "varicose bronchiectasis",
+     "pontos": [
+      [
+       50,
+       166,
+       408,
+       -107
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "fibrose-pulmonar-uip",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-fibrosis-uip-pattern-5",
+   "autoria": "Sagar Patil",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "basal",
+     "pontos": [
+      [
+       7,
+       373,
+       336,
+       0
+      ],
+      [
+       7,
+       97,
+       353,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "honeycombing",
+     "pontos": [
+      [
+       18,
+       401,
+       220,
+       -94
+      ],
+      [
+       18,
+       85,
+       313,
+       -285
+      ]
+     ]
+    },
+    {
+     "rotulo": "subpleural",
+     "pontos": [
+      [
+       51,
+       408,
+       221,
+       -116
+      ],
+      [
+       51,
+       98,
+       161,
+       -236
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "tuberculose-cavitaria",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/cavitating-pulmonary-tuberculosis-6",
+   "autoria": "Sagar Patil",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 48,
+   "anotacoes": [
+    {
+     "rotulo": "tree in bud nodules",
+     "pontos": [
+      [
+       12,
+       381,
+       181,
+       -148
+      ],
+      [
+       12,
+       407,
+       192,
+       -148
+      ]
+     ]
+    },
+    {
+     "rotulo": "cavities",
+     "pontos": [
+      [
+       34,
+       403,
+       258,
+       -368
+      ],
+      [
+       34,
+       364,
+       174,
+       -188
+      ]
+     ]
+    },
+    {
+     "rotulo": "consolidation",
+     "pontos": [
+      [
+       35,
+       389,
+       161,
+       -107
+      ],
+      [
+       35,
+       419,
+       199,
+       -107
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "empiema-pleura-dividida",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/pleural-empyema-split-pleura-sign-2",
+   "autoria": "Gabriel Orlando González Herrera",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 39,
+   "anotacoes": [
+    {
+     "rotulo": "atelectasis",
+     "pontos": [
+      [
+       12,
+       361,
+       218,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "pleural fluid accumulation",
+     "pontos": [
+      [
+       26,
+       353,
+       300,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "piopneumotorax",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/pyopneumothorax-7",
+   "autoria": "Lam Van Le",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 32,
+   "anotacoes": [
+    {
+     "rotulo": "partial collapse",
+     "pontos": [
+      [
+       12,
+       186,
+       193,
+       -218
+      ],
+      [
+       12,
+       129,
+       231,
+       -236
+      ]
+     ]
+    },
+    {
+     "rotulo": "multilobed",
+     "pontos": [
+      [
+       16,
+       184,
+       142,
+       -101
+      ],
+      [
+       16,
+       267,
+       203,
+       -123
+      ],
+      [
+       16,
+       218,
+       180,
+       -157
+      ],
+      [
+       16,
+       130,
+       221,
+       -419
+      ]
+     ]
+    },
+    {
+     "rotulo": "air-fluid level",
+     "pontos": [
+      [
+       19,
+       183,
+       232,
+       0
+      ],
+      [
+       19,
+       239,
+       234,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "cancer-de-pulmao-espiculado",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/fdg-avid-pleural-deposits",
+   "autoria": "Catherine Adebiyi",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 46,
+   "anotacoes": [
+    {
+     "rotulo": "high attenuation",
+     "pontos": [
+      [
+       12,
+       200,
+       322,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Spiculated mass",
+     "pontos": [
+      [
+       12,
+       188,
+       349,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "nodule",
+     "pontos": [
+      [
+       18,
+       338,
+       254,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "emphysema",
+     "pontos": [
+      [
+       33,
+       182,
+       287,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "trauma-toracico-contuso",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/blunt-chest-trauma-empty-azygos-fissure",
+   "autoria": "Mateusz Wilczek",
+   "perspectiva": "Axial",
+   "largura": 924,
+   "altura": 557,
+   "totalFatias": 45,
+   "anotacoes": [
+    {
+     "rotulo": "receding pulmonary contusions",
+     "pontos": [
+      [
+       12,
+       223,
+       267,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "pulmonary laceration",
+     "pontos": [
+      [
+       12,
+       288,
+       442,
+       -338
+      ]
+     ]
+    },
+    {
+     "rotulo": "pneumothorax",
+     "pontos": [
+      [
+       32,
+       219,
+       125,
+       -219
+      ]
+     ]
+    },
+    {
+     "rotulo": "subcutaneous emphysema",
+     "pontos": [
+      [
+       32,
+       85,
+       267,
+       -361
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "pericardite-purulenta",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/purulent-pericarditis-3",
+   "autoria": "Augustus Rottenberg",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 25,
+   "anotacoes": [
+    {
+     "rotulo": "Rim-enhancing effusion",
+     "pontos": [
+      [
+       12,
+       185,
+       216,
+       -275
+      ],
+      [
+       12,
+       357,
+       220,
+       -123
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "fibrose-cistica",
+   "categoria": "torax",
+   "urlDoCaso": "https://radiopaedia.org/cases/cystic-fibrosis-47",
+   "autoria": "Guillermo César Vélez Parra",
+   "perspectiva": "Axial",
+   "largura": 1024,
+   "altura": 1024,
+   "totalFatias": 60,
+   "anotacoes": [
+    {
+     "rotulo": "bronchiectases",
+     "pontos": [
+      [
+       6,
+       656,
+       566,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "tree-in-bud",
+     "pontos": [
+      [
+       54,
+       833,
+       678,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "apendicite-complicada",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/complicated-appendicitis-8",
+   "autoria": "Diana Reyadh kadhem",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 58,
+   "anotacoes": [
+    {
+     "rotulo": "gallstone",
+     "pontos": [
+      [
+       4,
+       130,
+       199,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Several regional lymph nodes",
+     "pontos": [
+      [
+       52,
+       152,
+       224,
+       -349
+      ]
+     ]
+    },
+    {
+     "rotulo": "focal discontinuity of the enh",
+     "pontos": [
+      [
+       54,
+       112,
+       236,
+       -329
+      ]
+     ]
+    },
+    {
+     "rotulo": "gas",
+     "pontos": [
+      [
+       54,
+       100,
+       219,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "diverticulite-de-sigmoide",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/sigmoid-diverticulitis-20",
+   "autoria": "Dalia Ibrahim",
+   "perspectiva": "Axial",
+   "largura": 762,
+   "altura": 584,
+   "totalFatias": 59,
+   "anotacoes": [
+    {
+     "rotulo": "Fatty liver",
+     "pontos": [
+      [
+       12,
+       222,
+       441,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Cholecystectomy clips",
+     "pontos": [
+      [
+       12,
+       279,
+       273,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "colonic diverticulosis",
+     "pontos": [
+      [
+       26,
+       194,
+       282,
+       0
+      ],
+      [
+       26,
+       599,
+       338,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "inflammed diverticulum",
+     "pontos": [
+      [
+       47,
+       528,
+       226,
+       -266
+      ],
+      [
+       47,
+       546,
+       225,
+       -443
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "colecistite-gangrenosa",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/acute-calculous-gangrenous-cholecystitis",
+   "autoria": "Keshaw Kumar",
+   "perspectiva": "Axial",
+   "largura": 630,
+   "altura": 488,
+   "totalFatias": 39,
+   "anotacoes": [
+    {
+     "rotulo": "irregularly thickened wall",
+     "pontos": [
+      [
+       12,
+       221,
+       182,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "gallbladder distension",
+     "pontos": [
+      [
+       19,
+       185,
+       210,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "pericholecystic fat stranding",
+     "pontos": [
+      [
+       26,
+       234,
+       194,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "pancreatite-aguda-edematosa",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/acute-pancreatitis-82",
+   "autoria": "Bahman Rasuli",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 57,
+   "anotacoes": [
+    {
+     "rotulo": "Enlarged pancreas",
+     "pontos": [
+      [
+       10,
+       369,
+       204,
+       -139
+      ],
+      [
+       10,
+       324,
+       178,
+       -139
+      ],
+      [
+       10,
+       274,
+       190,
+       -210
+      ]
+     ]
+    },
+    {
+     "rotulo": "swelling of the pancreas",
+     "pontos": [
+      [
+       10,
+       328,
+       201,
+       -146
+      ],
+      [
+       10,
+       372,
+       240,
+       -146
+      ],
+      [
+       10,
+       282,
+       196,
+       -213
+      ]
+     ]
+    },
+    {
+     "rotulo": "peripancreatic edema",
+     "pontos": [
+      [
+       10,
+       331,
+       181,
+       -153
+      ],
+      [
+       10,
+       368,
+       214,
+       -153
+      ],
+      [
+       10,
+       283,
+       181,
+       -202
+      ]
+     ]
+    },
+    {
+     "rotulo": "peri-pancreatic fluid",
+     "pontos": [
+      [
+       11,
+       336,
+       182,
+       -156
+      ],
+      [
+       11,
+       373,
+       213,
+       -156
+      ],
+      [
+       11,
+       272,
+       193,
+       -224
+      ]
+     ]
+    },
+    {
+     "rotulo": "right paracolic gutter",
+     "pontos": [
+      [
+       47,
+       190,
+       218,
+       -258
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "ileo-biliar",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/gallstone-ileus-104",
+   "autoria": "Rand Jamal Hamarsheh",
+   "perspectiva": "Axial",
+   "largura": 914,
+   "altura": 686,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "Gas and edema",
+     "pontos": [
+      [
+       10,
+       305,
+       244,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "cholecystoduodenal fistula",
+     "pontos": [
+      [
+       12,
+       352,
+       241,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "collapsed distal small bowel.",
+     "pontos": [
+      [
+       45,
+       436,
+       183,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "dilated fluid filled proximal",
+     "pontos": [
+      [
+       45,
+       320,
+       204,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "gallstone",
+     "pontos": [
+      [
+       46,
+       382,
+       223,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "perfuracao-intestinal",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/sigmoid-colon-perforation-with-multiple-gas-containing-fluid-collections-and-peritonitis",
+   "autoria": "Pol Picart Royo",
+   "perspectiva": "Axial",
+   "largura": 1276,
+   "altura": 924,
+   "totalFatias": 54,
+   "anotacoes": [
+    {
+     "rotulo": "pelvic abscess",
+     "pontos": [
+      [
+       1,
+       613,
+       631,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Focal mural thickening",
+     "pontos": [
+      [
+       10,
+       658,
+       579,
+       -441
+      ]
+     ]
+    },
+    {
+     "rotulo": "intra-abdominal collection",
+     "pontos": [
+      [
+       38,
+       484,
+       374,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "focal wall defect",
+     "pontos": [
+      [
+       41,
+       991,
+       529,
+       -126
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "isquemia-mesenterica-gas-portal",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/mesenteric-ischaemia-with-portal-venous-gas",
+   "autoria": "Ben Stanley",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 47,
+   "anotacoes": [
+    {
+     "rotulo": "portal venous gas",
+     "pontos": [
+      [
+       12,
+       194,
+       230,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "hyperdense material",
+     "pontos": [
+      [
+       34,
+       142,
+       237,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "volvo-de-sigmoide",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/sigmoid-volvulus-131",
+   "autoria": "Sebastian Alarcon",
+   "perspectiva": "Coronal",
+   "largura": 1186,
+   "altura": 1330,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "sigmoid colonic dilatation",
+     "pontos": [
+      [
+       10,
+       951,
+       448,
+       -398
+      ]
+     ]
+    },
+    {
+     "rotulo": "transition points",
+     "pontos": [
+      [
+       34,
+       662,
+       783,
+       -267
+      ]
+     ]
+    },
+    {
+     "rotulo": "whirl sign",
+     "pontos": [
+      [
+       47,
+       608,
+       918,
+       -308
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "calculo-ureteral-distal",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/distal-right-ureteric-calculus-1",
+   "autoria": "Zeeshan Ghias Khan",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 60,
+   "anotacoes": [
+    {
+     "rotulo": "hydroureter",
+     "pontos": [
+      [
+       6,
+       206,
+       287,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "perinephric fat stranding",
+     "pontos": [
+      [
+       6,
+       151,
+       322,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "ureteric calculus",
+     "pontos": [
+      [
+       54,
+       208,
+       288,
+       -314
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "pielonefrite-enfisematosa",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/emphysematous-pyelonephritis-with-perinephric-extension-and-fistulous-communication-to-the-descending-colon",
+   "autoria": "Eshan Thotwe",
+   "perspectiva": "Axial",
+   "largura": 980,
+   "altura": 632,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "bilateral pleural effusions",
+     "pontos": [
+      [
+       2,
+       362,
+       471,
+       0
+      ],
+      [
+       2,
+       679,
+       492,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "abscesses",
+     "pontos": [
+      [
+       17,
+       604,
+       449,
+       0
+      ],
+      [
+       17,
+       745,
+       403,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Large air containing collectio",
+     "pontos": [
+      [
+       26,
+       490,
+       316,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "sludge",
+     "pontos": [
+      [
+       33,
+       303,
+       218,
+       0
+      ],
+      [
+       33,
+       363,
+       249,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "air-containing collection",
+     "pontos": [
+      [
+       44,
+       628,
+       383,
+       0
+      ],
+      [
+       44,
+       705,
+       388,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "air-containing collection",
+     "pontos": [
+      [
+       44,
+       597,
+       390,
+       0
+      ],
+      [
+       44,
+       734,
+       386,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "fistulous communication",
+     "pontos": [
+      [
+       46,
+       719,
+       308,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "colon defect",
+     "pontos": [
+      [
+       46,
+       724,
+       305,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "contrast material",
+     "pontos": [
+      [
+       49,
+       714,
+       345,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "pielonefrite-aguda",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/acute-pyelonephritis-23",
+   "autoria": "Dalia Ibrahim",
+   "perspectiva": "Coronal",
+   "largura": 517,
+   "altura": 630,
+   "totalFatias": 43,
+   "anotacoes": [
+    {
+     "rotulo": "UB mild mural thickening",
+     "pontos": [
+      [
+       12,
+       203,
+       502,
+       -248
+      ],
+      [
+       12,
+       291,
+       513,
+       -433
+      ]
+     ]
+    },
+    {
+     "rotulo": "enhancing ureteric wall",
+     "pontos": [
+      [
+       13,
+       216,
+       286,
+       -424
+      ]
+     ]
+    },
+    {
+     "rotulo": "renal pelves enhancing walls",
+     "pontos": [
+      [
+       18,
+       212,
+       250,
+       -445
+      ],
+      [
+       19,
+       319,
+       230,
+       -287
+      ],
+      [
+       19,
+       206,
+       249,
+       -430
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "carcinoma-hepatocelular",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/massive-hepatocellular-carcinoma-with-tumor-thrombus",
+   "autoria": "Michael P. Hartung",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 48,
+   "anotacoes": [
+    {
+     "rotulo": "pericardial effusion",
+     "pontos": [
+      [
+       12,
+       305,
+       120,
+       -178
+      ]
+     ]
+    },
+    {
+     "rotulo": "heterogeneous mass",
+     "pontos": [
+      [
+       24,
+       110,
+       299,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "Tumor thrombus",
+     "pontos": [
+      [
+       35,
+       168,
+       243,
+       -438
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "hemangioma-hepatico",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/hepatic-hemangiomas-on-ct-and-mri",
+   "autoria": "Michael P. Hartung",
+   "perspectiva": "Coronal",
+   "largura": 512,
+   "altura": 738,
+   "totalFatias": 25,
+   "anotacoes": [
+    {
+     "rotulo": "peripheral nodularity.",
+     "pontos": [
+      [
+       12,
+       273,
+       153,
+       -152
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "cirrose-hipertensao-portal",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/cholelithiasis-and-cirrhosis",
+   "autoria": "Guillermo César Vélez Parra",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 60,
+   "anotacoes": [
+    {
+     "rotulo": "esophageal varices",
+     "pontos": [
+      [
+       3,
+       269,
+       264,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "IVC compression",
+     "pontos": [
+      [
+       9,
+       214,
+       273,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "portal hypertension",
+     "pontos": [
+      [
+       18,
+       242,
+       226,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "diverticuli",
+     "pontos": [
+      [
+       57,
+       270,
+       225,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "abscessos-hepaticos",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/multifocal-liver-abscesses-streptococcus-gordonii-2",
+   "autoria": "Michael P. Hartung",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 46,
+   "anotacoes": [
+    {
+     "rotulo": "collections",
+     "pontos": [
+      [
+       12,
+       195,
+       281,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "edema",
+     "pontos": [
+      [
+       33,
+       66,
+       296,
+       -253
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "aneurisma-de-aorta-abdominal-roto",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/ruptured-abdominal-aortic-aneurysm-33",
+   "autoria": "Hin Huang",
+   "perspectiva": "Axial",
+   "largura": 684,
+   "altura": 512,
+   "totalFatias": 27,
+   "anotacoes": [
+    {
+     "rotulo": "intramural thrombus",
+     "pontos": [
+      [
+       12,
+       306,
+       247,
+       -130
+      ]
+     ]
+    },
+    {
+     "rotulo": "Retroperitoneal hematoma",
+     "pontos": [
+      [
+       14,
+       258,
+       126,
+       -309
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "carcinoma-de-celulas-renais",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/clear-cell-renal-cell-carcinoma-19",
+   "autoria": "Amir Bourtal",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 41,
+   "anotacoes": [
+    {
+     "rotulo": "claw sign",
+     "pontos": [
+      [
+       12,
+       381,
+       254,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "encapsulated",
+     "pontos": [
+      [
+       26,
+       205,
+       199,
+       -126
+      ],
+      [
+       26,
+       140,
+       228,
+       -243
+      ],
+      [
+       26,
+       188,
+       283,
+       -366
+      ]
+     ]
+    },
+    {
+     "rotulo": "necrosis",
+     "pontos": [
+      [
+       28,
+       174,
+       235,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "apendagite-epiploica",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/acute-epiploic-appendagitis-2",
+   "autoria": "Jairo Avella",
+   "perspectiva": "Axial",
+   "largura": 1194,
+   "altura": 1345,
+   "totalFatias": 28,
+   "anotacoes": [
+    {
+     "rotulo": "hyperattenuating ring",
+     "pontos": [
+      [
+       12,
+       755,
+       504,
+       -345
+      ]
+     ]
+    },
+    {
+     "rotulo": "fat stranding",
+     "pontos": [
+      [
+       15,
+       700,
+       467,
+       -337
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "cancer-colorretal-invasivo",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/colonic-adenocarcinoma-with-abdominal-wall-invasion",
+   "autoria": "Abenezer Kebede Bekele",
+   "perspectiva": "Axial",
+   "largura": 801,
+   "altura": 512,
+   "totalFatias": 59,
+   "anotacoes": [
+    {
+     "rotulo": "eccentric thrombus",
+     "pontos": [
+      [
+       8,
+       404,
+       292,
+       -282
+      ]
+     ]
+    },
+    {
+     "rotulo": "colon wall thickening",
+     "pontos": [
+      [
+       40,
+       542,
+       275,
+       -287
+      ],
+      [
+       40,
+       618,
+       225,
+       -132
+      ],
+      [
+       40,
+       558,
+       244,
+       -225
+      ],
+      [
+       40,
+       614,
+       335,
+       -378
+      ]
+     ]
+    },
+    {
+     "rotulo": "dermal involvement",
+     "pontos": [
+      [
+       51,
+       676,
+       395,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "intussuscepcao-colocolica",
+   "categoria": "abdome",
+   "urlDoCaso": "https://radiopaedia.org/cases/colocolic-intussusception-14",
+   "autoria": "Ammar Ashraf",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 443,
+   "totalFatias": 59,
+   "anotacoes": [
+    {
+     "rotulo": "lymph nodes",
+     "pontos": [
+      [
+       7,
+       359,
+       153,
+       -144
+      ]
+     ]
+    },
+    {
+     "rotulo": "colonic lesion",
+     "pontos": [
+      [
+       27,
+       375,
+       207,
+       -315
+      ]
+     ]
+    },
+    {
+     "rotulo": "skin lesion",
+     "pontos": [
+      [
+       52,
+       263,
+       82,
+       -145
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "trauma-hepatico-grau-v",
+   "categoria": "trauma",
+   "urlDoCaso": "https://radiopaedia.org/cases/high-grade-blunt-hepatic-injury-aast-grade-v",
+   "autoria": "Daniela Castro Roa",
+   "perspectiva": "Axial",
+   "largura": 691,
+   "altura": 522,
+   "totalFatias": 43,
+   "anotacoes": [
+    {
+     "rotulo": "active arterial extravasation",
+     "pontos": [
+      [
+       12,
+       157,
+       296,
+       -291
+      ]
+     ]
+    },
+    {
+     "rotulo": "right hepatic artery.",
+     "pontos": [
+      [
+       30,
+       203,
+       238,
+       -321
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "ruptura-esplenica-hemoperitonio",
+   "categoria": "trauma",
+   "urlDoCaso": "https://radiopaedia.org/cases/splenic-laceration-and-haemoperitoneum-post-colonoscopy",
+   "autoria": "Craig Hacking",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 59,
+   "anotacoes": [
+    {
+     "rotulo": "Free fluid surrounding the spl",
+     "pontos": [
+      [
+       11,
+       395,
+       266,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "left pericolic gutter",
+     "pontos": [
+      [
+       38,
+       398,
+       285,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "blood",
+     "pontos": [
+      [
+       48,
+       249,
+       297,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "politrauma-abdominal",
+   "categoria": "trauma",
+   "urlDoCaso": "https://radiopaedia.org/cases/multitrauma-6",
+   "autoria": "Hans Kristian Bø",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 56,
+   "anotacoes": [
+    {
+     "rotulo": "liver laceration",
+     "pontos": [
+      [
+       6,
+       133,
+       223,
+       -315
+      ]
+     ]
+    },
+    {
+     "rotulo": "free fluid",
+     "pontos": [
+      [
+       6,
+       72,
+       244,
+       0
+      ],
+      [
+       6,
+       413,
+       232,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "small bowel mural thickening",
+     "pontos": [
+      [
+       13,
+       257,
+       120,
+       -312
+      ],
+      [
+       13,
+       288,
+       142,
+       -312
+      ],
+      [
+       13,
+       160,
+       157,
+       -103
+      ]
+     ]
+    },
+    {
+     "rotulo": "transverse pocess fracture",
+     "pontos": [
+      [
+       31,
+       202,
+       309,
+       0
+      ]
+     ]
+    },
+    {
+     "rotulo": "arterial blush",
+     "pontos": [
+      [
+       35,
+       182,
+       287,
+       -151
+      ]
+     ]
+    },
+    {
+     "rotulo": "Active bleeding",
+     "pontos": [
+      [
+       46,
+       198,
+       202,
+       -332
+      ]
+     ]
+    },
+    {
+     "rotulo": "pelvic binder",
+     "pontos": [
+      [
+       51,
+       170,
+       100,
+       -198
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "fratura-de-plato-tibial-com-lesao-arterial",
+   "categoria": "trauma",
+   "urlDoCaso": "https://radiopaedia.org/cases/schatzker-type-vi-tibial-plateau-fracture-with-popliteal-artery-injury",
+   "autoria": "Timothy Hughes",
+   "perspectiva": "Axial",
+   "largura": 512,
+   "altura": 512,
+   "totalFatias": 51,
+   "anotacoes": [
+    {
+     "rotulo": "Popliteal artery occlusion",
+     "pontos": [
+      [
+       9,
+       249,
+       238,
+       -311
+      ]
+     ]
+    },
+    {
+     "rotulo": "Muscular arterial branches",
+     "pontos": [
+      [
+       15,
+       233,
+       273,
+       -335
+      ],
+      [
+       15,
+       257,
+       271,
+       -391
+      ],
+      [
+       16,
+       260,
+       274,
+       -391
+      ],
+      [
+       17,
+       258,
+       275,
+       -391
+      ],
+      [
+       18,
+       257,
+       278,
+       -391
+      ],
+      [
+       16,
+       233,
+       273,
+       -335
+      ],
+      [
+       17,
+       233,
+       273,
+       -335
+      ],
+      [
+       18,
+       233,
+       273,
+       -335
+      ]
+     ]
+    },
+    {
+     "rotulo": "Reconstituted arterial flow",
+     "pontos": [
+      [
+       43,
+       255,
+       287,
+       -329
+      ],
+      [
+       43,
+       284,
+       301,
+       -329
+      ],
+      [
+       42,
+       281,
+       297,
+       -329
+      ],
+      [
+       41,
+       283,
+       294,
+       -329
+      ],
+      [
+       40,
+       282,
+       291,
+       -329
+      ],
+      [
+       39,
+       282,
+       291,
+       -329
+      ],
+      [
+       39,
+       260,
+       284,
+       -329
+      ],
+      [
+       40,
+       260,
+       284,
+       -329
+      ],
+      [
+       41,
+       258,
+       285,
+       -329
+      ],
+      [
+       42,
+       257,
+       286,
+       -329
+      ],
+      [
+       39,
+       314,
+       258,
+       -106
+      ],
+      [
+       40,
+       312,
+       260,
+       -106
+      ],
+      [
+       41,
+       312,
+       260,
+       -106
+      ],
+      [
+       42,
+       312,
+       260,
+       -106
+      ],
+      [
+       43,
+       312,
+       260,
+       -106
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "slug": "fratura-vertebral-em-explosao",
+   "categoria": "trauma",
+   "urlDoCaso": "https://radiopaedia.org/cases/burst-fracture-9",
+   "autoria": "Tariq Walizai",
+   "perspectiva": "Sagittal",
+   "largura": 525,
+   "altura": 872,
+   "totalFatias": 26,
+   "anotacoes": [
+    {
+     "rotulo": "L2 vertebral body",
+     "pontos": [
+      [
+       13,
+       150,
+       283,
+       0
+      ],
+      [
+       12,
+       150,
+       283,
+       0
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

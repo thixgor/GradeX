@@ -17,6 +17,8 @@ import { SINAIS_LEVA_5_TRONCO } from './sinais-leva-5-tronco'
 import { SINAIS_LEVA_5_MSK } from './sinais-leva-5-msk'
 import { SINAIS_LEVA_5_NEURO_PEDIATRIA } from './sinais-leva-5-neuro-pediatria'
 import { SINAIS_LEVA_5_EXTRA } from './sinais-leva-5-extra'
+import { SINAIS_GENETICAS_1 } from './sinais-geneticas-1'
+import { SINAIS_GENETICAS_2 } from './sinais-geneticas-2'
 
 /**
  * O acervo de sinais do exame físico.
@@ -1192,6 +1194,8 @@ export const SINAIS: Sinal[] = [
   ...SINAIS_LEVA_5_MSK,
   ...SINAIS_LEVA_5_NEURO_PEDIATRIA,
   ...SINAIS_LEVA_5_EXTRA,
+  ...SINAIS_GENETICAS_1,
+  ...SINAIS_GENETICAS_2,
 ]
 
 export const TOTAL_DE_SINAIS = SINAIS.length

@@ -1,3 +1,4 @@
+import { CASOS_TC } from '@/lib/radiologia/casos-tc'
 import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { HomeRadiologia } from '@/components/radiologia/home'
 import {
@@ -80,6 +81,7 @@ export default function RadiologiaPage() {
             'Sete janelas para comparar, mais brilho, contraste e inversão',
             'Densidade em unidades Hounsfield, janela ideal e alterações de cada estrutura',
             'Quiz de raciocínio e modo treino: você recebe o nome e procura o corte',
+            `${CASOS_TC.length} casos clínicos de TC com consulta completa e apontamentos traduzidos`,
           ],
           cta: 'Abrir as tomografias',
         }}
@@ -100,14 +102,21 @@ export default function RadiologiaPage() {
           cores: prancha.amostras.map((amostra) => amostra.cor),
         }))}
         totalTerritoriosPranchas={TOTAL_TERRITORIOS_PRANCHAS}
-        atalhosTomografia={SECOES.map((secao) => ({
+        atalhosTomografia={[
+          {
+            href: '/manual-clinico/radiologia/tomografia/casos',
+            titulo: 'Casos clínicos',
+            detalhe: `${CASOS_TC.length} casos · ${CASOS_TC.reduce((total, caso) => total + caso.totalFatias, 0)} cortes`,
+          },
+          ...SECOES.map((secao) => ({
           href: `/manual-clinico/radiologia/tomografia#secao-${secao.id}`,
           titulo: secao.titulo,
           detalhe: `${secao.subsecoes.length} séries · ${secao.subsecoes.reduce(
             (total, sub) => total + sub.totalCortes,
             0,
           )} cortes`,
-        }))}
+          })),
+        ]}
       />
     </AreaRadiologia>
   )
