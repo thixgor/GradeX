@@ -6,6 +6,7 @@ import type { VizinhoCaso } from '@/components/radiologia/caso-raio-x'
 import { CASOS_POR_SLUG, CASOS_RAIO_X, GUIAS_CASOS_RAIO_X, casoVizinho } from '@/lib/radiologia/casos-raio-x'
 import type { AchadoMarcado } from '@/lib/radiologia/casos-raio-x-detalhes'
 import { detalheDoCaso, marcacoesDaImagem } from '@/lib/radiologia/casos-raio-x-detalhes'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export const dynamicParams = false
 
@@ -58,6 +59,7 @@ export default function CasoRaioXPage({ params }: { params: { slug: string } }) 
           total: CASOS_RAIO_X.length,
         }}
       />
+      <ConexoesDoManual refOrigem={`rx:${caso.slug}`} titulo={caso.titulo} />
     </AreaRadiologia>
   )
 }

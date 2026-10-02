@@ -4,6 +4,7 @@ import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { CasoImagemPagina } from '@/components/radiologia/caso-imagem'
 import { COLECAO_RX, LICENCA_CASOS_RX } from '@/lib/radiologia/casos-rx'
 import { urlsDasSeries, vizinhosDoCaso } from '@/lib/radiologia/casos-imagem-paginas'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export const dynamicParams = false
 
@@ -33,6 +34,7 @@ export default function CasoRXApontadoPage({ params }: { params: { slug: string 
         rotuloColecao="Casos de Raio-X com apontamentos"
         {...vizinhosDoCaso(COLECAO_RX, caso.slug)}
       />
+      <ConexoesDoManual refOrigem={`rxa:${caso.slug}`} titulo={caso.titulo} />
     </AreaRadiologia>
   )
 }

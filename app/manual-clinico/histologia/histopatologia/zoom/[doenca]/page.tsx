@@ -17,6 +17,7 @@ import { REFERENCIA_ABNT_LEEDS, RODAPE_LEEDS } from '@/lib/histopatologia-zoom/f
 import { laminaNormalPara, laminasDaDoenca, resumirPatologica } from '@/lib/histopatologia-zoom/repositorio'
 import { BASE_PATOZOOM, rotaDaComparacao, rotaDaLaminaPatologica } from '@/lib/histopatologia-zoom/rotas'
 import { textoDoCaso } from '@/lib/histopatologia-zoom/texto'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export const dynamic = 'force-dynamic'
 
@@ -140,6 +141,8 @@ export default async function PaginaDaDoenca({ params }: Parametros) {
           <article aria-label={`Ficha de ${doenca.nome}`}>
             <FichaDaDoenca doenca={doenca} />
           </article>
+
+          <ConexoesDoManual refOrigem={`patozoom:${doenca.id}`} titulo={doenca.nome} className="px-0 pb-0" />
 
           <footer className="mt-10 space-y-1.5 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
             <p>{RODAPE_LEEDS}</p>

@@ -7,6 +7,7 @@ import { TITULOS_DE_TRANSDUTOR } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { JANELAS_ULTRASSOM, janelaPorSlug } from '@/lib/semiologia/ultrassom'
 import { comAcervo } from '@/lib/semiologia/acervo'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export function generateStaticParams() {
   return JANELAS_ULTRASSOM.map((janela) => ({ slug: janela.slug }))
@@ -47,6 +48,7 @@ export default function JanelaPage({ params }: { params: { slug: string } }) {
               voltarRotulo="Ultrassom à beira do leito"
             />
           </Suspense>
+          <ConexoesDoManual refOrigem={`us:${janela.slug}`} titulo={janela.nome} className="px-0 pb-0" />
         </div>
       </div>
     </AreaSemiologia>

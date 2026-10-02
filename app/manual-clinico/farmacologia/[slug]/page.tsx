@@ -39,6 +39,7 @@ import {
   type DoseCalculo,
   EFEITOS_EXPLICACAO,
 } from '@/lib/types/farmacologia'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 interface ManualProduct {
   label: string
@@ -1035,6 +1036,8 @@ function FarmacoDetailContent() {
                 <RichTextRenderer text={data.referencias} className="text-sm leading-relaxed text-muted-foreground" />
               </Section>
             )}
+
+            <ConexoesDoManual refOrigem={`farmaco:${slug}`} titulo={data.nome ?? slug} className="px-0 pb-0" />
           </div>
         )}
       </div>

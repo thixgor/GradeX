@@ -195,6 +195,11 @@ const PAGINAS: ItemBusca[] = [
   pagina('game-caca-erro', 'Caça ao erro', '/games/error-hunt', 'Games', 'crosshair',
     ['caca ao erro', 'error hunt', 'achar erro', 'corrigir'], { secao: 'games' }),
 
+  // ── Estudo Integrado ──────────────────────────────────────────────────
+  pagina('estudo-integrado', 'Estudo Integrado', '/manual-clinico/estudo-integrado', 'Manual Clínico', 'network',
+    ['estudo integrado', 'integrar', 'integracao', 'trilha', 'conexoes', 'todos os manuais', 'meus estudos', 'roteiro de estudo'],
+    { subtitulo: 'Um tema em todos os manuais, na ordem em que se estuda.', secao: 'manualClinico', prioridade: 7 }),
+
   // ── Histologia ────────────────────────────────────────────────────────
   // As áreas em si (Ferramentas, Farmacologia, ECG, Histologia, Radiologia,
   // Anatomia) não são repetidas aqui: já entram por `SIDEBAR_SECTION_DEFINITIONS`

@@ -48,7 +48,8 @@ import {
   XCircle,
   CreditCard,
   GraduationCap,
-  FlaskConical
+  FlaskConical,
+  Route
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
@@ -1056,6 +1057,39 @@ function ManualClinicoContent() {
               )}
             </div>
           </div>
+        )}
+
+        {/* ══════════ ESTUDO INTEGRADO ENTRY ══════════ */}
+        {/* Primeiro da lista porque é o que costura os outros: um tema, e o que
+            cada manual tem sobre ele, na ordem em que se estuda. */}
+        {!busca && (
+          <button
+            onClick={() => router.push('/manual-clinico/estudo-integrado')}
+            data-tour="estudo-integrado"
+            className="group mb-3 w-full overflow-hidden rounded-lg border border-primary/25 bg-gradient-to-r from-primary/[0.07] to-card p-4 text-left transition-colors hover:border-primary/45"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="rounded-xl bg-primary/10 p-2.5">
+                  <Route className="h-5 w-5 text-primary" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-bold leading-snug">Estudo Integrado</p>
+                    <span className="inline-flex items-center gap-1 rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-primary">
+                      <Sparkles className="h-2.5 w-2.5" /> Novo
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Um tema, todos os manuais: estudando carcinoma renal na TC, veja a lâmina e os outros tumores do rim
+                    na Histopatologia, o ultrassom dos rins na Semiologia, a ficha do Manual Clínico e o tratamento — na
+                    ordem em que se estuda. Monte seus estudos e marque o que já viu.
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            </div>
+          </button>
         )}
 
         {/* ══════════ FERRAMENTAS CLÍNICAS ENTRY ══════════ */}

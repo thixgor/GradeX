@@ -19,6 +19,7 @@ import {
   padroesDaAlteracao,
 } from '@/lib/exames-laboratoriais'
 import type { FaixaReferencia } from '@/lib/exames-laboratoriais/tipos'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 /**
  * A página de uma alteração laboratorial.
@@ -267,6 +268,8 @@ export default function PaginaDaAlteracao({ params }: { params: { slug: string }
             ))}
           </div>
         </Secao>
+
+        <ConexoesDoManual refOrigem={`lab-alteracao:${alteracao.id}`} titulo={nome} className="px-0 pb-0" />
 
         <div className="mt-8">
           <AvisoDeContexto />

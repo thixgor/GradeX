@@ -18,7 +18,13 @@
  */
 export const MANUAL_CLINICO_SECOES = new Set([
   'checkout',
+  // Estudo Integrado: a página e as duas rotas que a alimentam. Sem estas
+  // entradas, `/manual-clinico/estudo-integrado` e `/api/manual-clinico/conexoes`
+  // casariam como slug de patologia e abririam sem sessão.
+  'conexoes',
   'eletrocardiograma',
+  'estudo-integrado',
+  'estudos',
   'exames-laboratoriais',
   'farmacologia',
   'ferramentas',

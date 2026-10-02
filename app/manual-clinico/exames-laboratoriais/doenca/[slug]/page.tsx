@@ -14,6 +14,7 @@ import {
   PADRAO_POR_ID,
   SISTEMA_POR_ID,
 } from '@/lib/exames-laboratoriais'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 /**
  * A página de uma doença.
@@ -209,6 +210,8 @@ export default function PaginaDaDoenca({ params }: { params: { slug: string } })
             </ul>
           </Secao>
         )}
+
+        <ConexoesDoManual refOrigem={`lab-doenca:${doenca.id}`} titulo={doenca.nome} className="px-0 pb-0" />
 
         <div className="mt-8">
           <AvisoDeContexto />

@@ -4,6 +4,7 @@ import { AreaSemiologia } from '@/components/semiologia/area'
 import { FichaDeSinal } from '@/components/semiologia/ficha-sinal'
 import { comAcervoSinal } from '@/lib/semiologia/acervo'
 import { SINAIS, sinalPorSlug } from '@/lib/semiologia/sinais'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 /** Catálogo estático em código: pré-renderizar tira o servidor do caminho. */
 export function generateStaticParams() {
@@ -29,6 +30,7 @@ export default function SinalPage({ params }: { params: { slug: string } }) {
       <div className="surface-page min-h-screen">
         <div className="container mx-auto max-w-5xl px-4 py-10">
           <FichaDeSinal sinal={sinal} />
+          <ConexoesDoManual refOrigem={`sinal:${sinal.slug}`} titulo={sinal.nome} className="px-0 pb-0" />
         </div>
       </div>
     </AreaSemiologia>

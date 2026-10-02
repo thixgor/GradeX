@@ -17,7 +17,10 @@ describe('isManualClinicoPatologia', () => {
   it('não abre as seções do Manual, que decidem o próprio acesso', () => {
     for (const secao of [
       'checkout',
+      'conexoes',
       'eletrocardiograma',
+      'estudo-integrado',
+      'estudos',
       'exames-laboratoriais',
       'farmacologia',
       'ferramentas',

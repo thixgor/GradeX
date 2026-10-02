@@ -4,6 +4,7 @@ import { AreaRadiologia } from '@/components/radiologia/area-radiologia'
 import { CasoImagemPagina } from '@/components/radiologia/caso-imagem'
 import { COLECAO_TC, LICENCA_CASOS_TC } from '@/lib/radiologia/casos-tc'
 import { urlsDasSeries, vizinhosDoCaso } from '@/lib/radiologia/casos-imagem-paginas'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export const dynamicParams = false
 
@@ -33,6 +34,7 @@ export default function CasoTCPage({ params }: { params: { slug: string } }) {
         rotuloColecao="Casos de TC"
         {...vizinhosDoCaso(COLECAO_TC, caso.slug)}
       />
+      <ConexoesDoManual refOrigem={`tc:${caso.slug}`} titulo={caso.titulo} />
     </AreaRadiologia>
   )
 }

@@ -7,6 +7,7 @@ import { TITULOS_DE_INSTRUMENTO } from '@/lib/semiologia/esquemas'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { VISTAS, vistaPorSlug } from '@/lib/semiologia/vistas'
 import { comAcervo } from '@/lib/semiologia/acervo'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 export function generateStaticParams() {
   return VISTAS.map((vista) => ({ slug: vista.slug }))
@@ -52,6 +53,7 @@ export default function VistaPage({ params }: { params: { slug: string } }) {
               voltarRotulo="Imagem à beira do leito"
             />
           </Suspense>
+          <ConexoesDoManual refOrigem={`vista:${vista.slug}`} titulo={vista.nome} className="px-0 pb-0" />
         </div>
       </div>
     </AreaSemiologia>

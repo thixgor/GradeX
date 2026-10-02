@@ -55,6 +55,7 @@ import {
   loadHighlights,
   saveHighlights,
 } from '@/lib/manual-clinico-highlights'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 interface ManualProduct {
   label: string
@@ -2129,6 +2130,8 @@ function PatologiaContent() {
             </Section>
           )}
         </div>
+
+        <ConexoesDoManual refOrigem={`patologia:${slug}`} titulo={patologia.nome} className="px-0" />
 
         <div className="h-12" />
       </div>

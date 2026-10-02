@@ -46,6 +46,7 @@ import {
 import { jsonLdDeDoenca, jsonLdDeTrilha, metadadosDoModulo } from '@/lib/histopatologia/seo'
 import { buildJsonLd } from '@/lib/seo'
 import type { MidiaExibivel } from '@/lib/histopatologia/esquemas'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 /**
  * Página canônica de doença.
@@ -671,6 +672,8 @@ export default async function PaginaDaDoenca({ params }: Props) {
               </Secao>
             </div>
           </ProvedorDeProfundidade>
+
+          <ConexoesDoManual refOrigem={`histopato:${doenca.slug}`} titulo={doenca.nome} className="mt-10 px-0 pb-0" />
 
           {/* ── Rodapé de navegação ── */}
           <nav className="mt-12 flex flex-wrap gap-2 border-t border-border pt-6">

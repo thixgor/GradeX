@@ -19,6 +19,7 @@ import {
   padroesDoMarcador,
 } from '@/lib/exames-laboratoriais'
 import type { Marcador } from '@/lib/exames-laboratoriais/tipos'
+import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
 /**
  * A ficha de um marcador — a peça central da seção.
@@ -419,6 +420,8 @@ export default function PaginaDoMarcador({ params }: { params: { slug: string } 
             </ul>
           </Secao>
         )}
+
+        <ConexoesDoManual refOrigem={`lab-marcador:${marcador.id}`} titulo={marcador.nome} className="px-0 pb-0" />
 
         <div className="mt-8">
           <AvisoDeContexto />
