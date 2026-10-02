@@ -4,11 +4,12 @@ import { CatalogoCasosRaioX } from '@/components/radiologia/catalogo-casos-raio-
 import type { ResumoDetalhes } from '@/components/radiologia/catalogo-casos-raio-x'
 import { CASOS_RAIO_X, GUIAS_CASOS_RAIO_X } from '@/lib/radiologia/casos-raio-x'
 import { DETALHES_CASOS_RAIO_X } from '@/lib/radiologia/casos-raio-x-detalhes'
+import { COLECAO_RX } from '@/lib/radiologia/casos-rx'
 
 export const metadata: Metadata = {
-  title: 'Casos e Alterações no Raio-X de Tórax | Manual de Radiologia',
+  title: 'Casos e Alterações no Raio-X | Manual de Radiologia',
   description:
-    'Galeria aprofundada de casos de tórax: radiografias limpas e marcadas, marcações comentadas uma a uma, dissecção de cada estrutura, sinais radiológicos e armadilhas diagnósticas.',
+    'Galeria aprofundada de casos de tórax, pediatria, abdome e osso, organizada por região e capítulo: radiografias limpas e marcadas, marcações comentadas uma a uma, dissecção de cada estrutura, sinais radiológicos e armadilhas diagnósticas.',
 }
 
 /**
@@ -27,11 +28,12 @@ const RESUMO_DETALHES: ResumoDetalhes = Object.fromEntries(
 
 export default function CasosRaioXPage() {
   return (
-    <AreaRadiologia alvo="Casos e alterações no Raio-X de tórax">
+    <AreaRadiologia alvo="Casos e alterações no Raio-X">
       <CatalogoCasosRaioX
         casos={CASOS_RAIO_X}
         categorias={Object.values(GUIAS_CASOS_RAIO_X)}
         detalhes={RESUMO_DETALHES}
+        apontados={{ href: '/manual-clinico/radiologia/raio-x/casos-com-apontamentos', total: COLECAO_RX.casos.length }}
       />
     </AreaRadiologia>
   )

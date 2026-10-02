@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -73,14 +73,36 @@ const ICONES: Record<CategoriaCasoRaioX, typeof HeartPulse> = {
   osteoarticular: Bone,
 }
 
+/**
+ * Os capítulos agrupados por região, na ordem do catálogo. O tórax concentra a
+ * maior parte do acervo; pediatria, abdome e osso ficam como regiões próprias
+ * para que ninguém procure fratura no meio dos capítulos de pulmão.
+ */
+const REGIOES: { titulo: string; ids: CategoriaCasoRaioX[] }[] = [
+  {
+    titulo: 'Tórax',
+    ids: ['cardiovascular', 'variantes', 'vias-aereas', 'dispositivos', 'pneumotorax', 'cancer-pulmao', 'mediastino', 'infeccoes', 'intersticial', 'pleura', 'trauma-uti'],
+  },
+  { titulo: 'Pediatria', ids: ['pediatrico'] },
+  { titulo: 'Abdome', ids: ['abdome'] },
+  { titulo: 'Osso e articulação', ids: ['osteoarticular'] },
+]
+
+function regiaoDe(id: CategoriaCasoRaioX): string {
+  return REGIOES.find((r) => r.ids.includes(id))?.titulo ?? 'Outros'
+}
+
 export function CatalogoCasosRaioX({
   casos,
   categorias,
   detalhes = {},
+  apontados,
 }: {
   casos: CasoRaioX[]
   categorias: GuiaCategoriaCasoRaioX[]
   detalhes?: ResumoDetalhes
+  /** A coleção de casos com as setas do autor, para o atalho do cabeçalho. */
+  apontados?: { href: string; total: number }
 }) {
   const [categoria, setCategoria] = useState<CategoriaCasoRaioX | null>(null)
   const [busca, setBusca] = useState('')
@@ -154,7 +176,7 @@ export function CatalogoCasosRaioX({
 
           <div className="mt-5 grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-end xl:gap-10">
             <div>
-              <p className="editorial-mark !text-sky-300/80 [&::before]:bg-sky-300/60">Raio-X de tórax · prática guiada</p>
+              <p className="editorial-mark !text-sky-300/80 [&::before]:bg-sky-300/60">Raio-X · prática guiada</p>
               <h1 className="mt-2 max-w-3xl font-heading text-3xl font-semibold tracking-tight sm:text-[2.6rem] sm:leading-[1.1]">
                 Casos e alterações
               </h1>
@@ -183,6 +205,17 @@ export function CatalogoCasosRaioX({
                 </span>
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </Link>
+              {apontados && apontados.total > 0 && (
+                <Link
+                  href={apontados.href}
+                  className="group mt-2 flex w-fit items-center gap-2.5 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-2.5 text-sm font-bold text-amber-50 backdrop-blur transition hover:border-amber-200/60 hover:bg-amber-300/20"
+                >
+                  <Crosshair className="h-4 w-4 text-amber-200" />
+                  {apontados.total} casos com apontamentos comentados
+                  <span className="hidden font-normal text-amber-100/60 sm:inline">setas do autor, uma a uma</span>
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                </Link>
+              )}
             </div>
 
             <div>
@@ -231,9 +264,16 @@ export function CatalogoCasosRaioX({
             <Filtro ativo={!categoria} onClick={() => setCategoria(null)} contagem={casos.length}>
               Todos
             </Filtro>
-            {categorias.map((item) => {
+            {categorias.map((item, i) => {
               const Icone = ICONES[item.id]
+              const novaRegiao = i === 0 || regiaoDe(categorias[i - 1].id) !== regiaoDe(item.id)
               return (
+                <Fragment key={item.id}>
+                {novaRegiao && (
+                  <span className="shrink-0 self-center pl-2 font-clinical text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
+                    {regiaoDe(item.id)}
+                  </span>
+                )}
                 <Filtro
                   key={item.id}
                   ativo={categoria === item.id}
@@ -244,6 +284,7 @@ export function CatalogoCasosRaioX({
                 >
                   {item.titulo}
                 </Filtro>
+                </Fragment>
               )
             })}
           </div>
@@ -260,10 +301,21 @@ export function CatalogoCasosRaioX({
           <section aria-label="Índice de capítulos" className="mb-9">
             <p className="editorial-mark">Por onde começar</p>
             <h2 className="mt-1.5 font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-              Sete capítulos, uma pergunta cada
+              {categorias.length} capítulos em {REGIOES.length} regiões, uma pergunta cada
             </h2>
-            <div className="mt-4 grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
-              {grupos.map(({ guia, itens }, indice) => {
+            {REGIOES.map((regiao) => {
+              const daRegiao = grupos.filter((g) => regiao.ids.includes(g.guia.id))
+              if (!daRegiao.length) return null
+              return (
+                <div key={regiao.titulo} className="mt-5">
+                  <h3 className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    {regiao.titulo}
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold normal-case tracking-normal">
+                      {daRegiao.reduce((n, g) => n + g.itens.length, 0)} temas
+                    </span>
+                  </h3>
+            <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+              {daRegiao.map(({ guia, itens }, indice) => {
                 const Icone = ICONES[guia.id]
                 const cor = PALETA[guia.id]
                 return (
@@ -290,6 +342,9 @@ export function CatalogoCasosRaioX({
                 )
               })}
             </div>
+                </div>
+              )
+            })}
           </section>
         )}
 
@@ -338,11 +393,19 @@ export function CatalogoCasosRaioX({
 
         {/* Acervo completo, capítulo a capítulo. */}
         {agrupado &&
-          grupos.map(({ guia, itens }) => {
+          grupos.map(({ guia, itens }, i) => {
             const Icone = ICONES[guia.id]
             const cor = PALETA[guia.id]
+            const novaRegiao = i === 0 || regiaoDe(grupos[i - 1].guia.id) !== regiaoDe(guia.id)
             return (
-              <section key={guia.id} id={`capitulo-${guia.id}`} className="rx-ancora pt-3">
+              <Fragment key={guia.id}>
+              {novaRegiao && (
+                <div className="mb-2 mt-6 border-b-2 border-foreground/10 pb-2">
+                  <p className="editorial-mark">Região</p>
+                  <h2 className="mt-1 font-heading text-2xl font-semibold tracking-tight">{regiaoDe(guia.id)}</h2>
+                </div>
+              )}
+              <section id={`capitulo-${guia.id}`} className="rx-ancora pt-3">
                 <div className="rx-fixo-abaixo sticky z-20 -mx-4 mb-4 border-b border-border bg-background/95 px-4 py-2.5 backdrop-blur-md">
                   <div className="flex items-center gap-2.5">
                     <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border ${cor.chip}`}>
@@ -360,6 +423,7 @@ export function CatalogoCasosRaioX({
                 <Colecao casos={itens} visao={visao} detalhes={detalhes} />
                 <div className="h-9" />
               </section>
+              </Fragment>
             )
           })}
       </main>
