@@ -117,7 +117,7 @@ describe('vinhetas clínicas dos casos de Raio-X', () => {
     it('não entrega distrator por advérbio absoluto nem por forma banal', () => {
       // Distrator com "exclusivamente", "sempre", "nunca" ou "somente" se
       // descarta pela palavra, sem olhar o filme. O aluno tem de pensar.
-      const absoluto = /\w+mente|sempre|nunca|jamais|todos?|nenhum/i
+      const absoluto = /\b\w+mente\b|\bsempre\b|\bnunca\b|\bjamais\b|\btodos?\b|\bnenhum|\bapenas\b/i
       for (const { slug, alternativas } of questoes) {
         for (const alternativa of alternativas) {
           expect(alternativa, `${slug}: "${alternativa}" tem termo absoluto`).not.toMatch(absoluto)

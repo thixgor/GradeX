@@ -352,7 +352,7 @@ export const CASOS_TC_ABDOME_2: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Hematúria macroscópica indolor com massa no flanco, emagrecimento e febre em tabagista: a pergunta é a natureza da lesão renal.',
       pergunta: 'TC de abdome com contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Carcinoma de células renais',
+      achado: 'Carcinoma renal de células claras',
       veredito: 'Carcinoma de células renais de células claras exofítico e encapsulado no polo inferior direito',
       correlacao: 'Tabagismo, obesidade, hipertensão e pai com câncer de rim. Hematúria, massa no flanco e dor — a tríade clássica, hoje rara — com febre, anemia e hipercalcemia paraneoplásicas. A varicocele direita que não reduz levanta suspeita de veia gonadal comprimida ou trombo na cava. A TC mostra a massa sólida que realça, encapsulada, abraçada pelo rim no sinal da garra.',
       distratores: [

@@ -49,7 +49,7 @@ export const CASOS_TC_TORAX: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Dispneia súbita com síncope, hipoxemia e sinais de trombose venosa após cirurgia ortopédica: a pergunta é se há embolia pulmonar e qual o impacto no ventrículo direito.',
       pergunta: 'Angiotomografia de artérias pulmonares. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Tromboembolismo pulmonar em sela',
+      achado: 'Tromboembolismo pulmonar maciço em sela',
       veredito: 'Tromboembolismo pulmonar a cavaleiro com trombos bilaterais e sobrecarga do ventrículo direito',
       correlacao: 'Pós-operatório ortopédico, imobilização, estrogênio, obesidade, trombose prévia e história familiar: a trombose da panturrilha embolizou. A síncope, a turgência jugular e a segunda bulha hiperfonética são o ventrículo direito sofrendo. A angiotomografia mostra o trombo em sela na bifurcação, ramos bilaterais ocluídos e o ventrículo direito maior que o esquerdo com septo retificado.',
       distratores: [
@@ -105,7 +105,7 @@ export const CASOS_TC_TORAX: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Dor torácica lancinante irradiada para o dorso com diferença de pressão entre os braços e sopro de insuficiência aórtica: a pergunta é se há dissecção e se ela envolve a ascendente.',
       pergunta: 'Angiotomografia de aorta. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Dissecção de aorta tipo A',
+      achado: 'Dissecção aguda de aorta Stanford A',
       veredito: 'Dissecção aguda da aorta Stanford A, da raiz às artérias viscerais e renal esquerda',
       correlacao: 'Hipertensão grave, valva bicúspide, cocaína e esforço: a íntima rasgou na aorta ascendente. A dor migrou do tórax ao dorso e ao abdome seguindo o flap; a diferença de pressão e os pulsos reduzidos vêm de ramos comprometidos, e o sopro diastólico é a raiz dilatada. A angiotomografia mostra o flap desde a raiz, o que a classifica como tipo A e cirúrgica.',
       distratores: [

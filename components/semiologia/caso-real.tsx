@@ -129,7 +129,7 @@ const ROTULO_DO_TIPO: Record<MidiaClinica['tipo'], string> = {
 }
 
 /** A mídia grande, por tipo. */
-function Palco({ midia, src }: { midia: MidiaClinica; src: string }) {
+export function Palco({ midia, src }: { midia: MidiaClinica; src: string }) {
   if (midia.tipo === 'clipe') {
     // Clipe de ultrassom: sem som, em laço, e com `playsInline` para o iOS não
     // abrir em tela cheia no meio do estudo. Deslizamento pleural e colapso de

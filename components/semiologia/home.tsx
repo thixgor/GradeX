@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Eye, GitCompareArrows, Stethoscope, Waves } from 'lucide-react'
+import { ArrowRight, Eye, GitCompareArrows, GraduationCap, Stethoscope, Waves } from 'lucide-react'
 import type { CatalogoSemiologia } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
 import { BuscaGlobal } from './busca-global'
@@ -18,7 +18,14 @@ import { Enfase } from './enfase'
  * chamada — nestas duas, a imagem *é* o produto, e um card de texto venderia
  * mal o que existe do outro lado.
  */
-export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
+export interface ResumoQuizHome {
+  id: string
+  titulo: string
+  descricao: string
+  total: number
+}
+
+export function HomeSemiologia({ catalogo, quizzes = [] }: { catalogo: CatalogoSemiologia; quizzes?: ResumoQuizHome[] }) {
   const { totais } = catalogo
 
   return (
@@ -153,6 +160,31 @@ export function HomeSemiologia({ catalogo }: { catalogo: CatalogoSemiologia }) {
           </p>
         )}
       </Secao>
+
+      {/* Quizzes de casos clínicos. */}
+      {quizzes.length > 0 && (
+        <Secao
+          icone={GraduationCap}
+          titulo="Quizzes de casos clínicos"
+          descricao="A consulta inteira — queixa, história, antecedentes pessoais, gestacionais e familiares, fatores de risco, vitais e exame — com a fotografia, o vídeo ou a ausculta real do caso. Depois da resposta, o apontamento do que olhar, o mecanismo, o porquê de cada alternativa e a conduta."
+          href={ROTAS.quizzes}
+          cta={`Abrir os ${quizzes.reduce((t, q) => t + q.total, 0)} casos`}
+        >
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {quizzes.map((quiz) => (
+              <Link
+                key={quiz.id}
+                href={ROTAS.quiz(quiz.id)}
+                className="group rounded-xl border border-border bg-card p-4 transition-colors hover:border-sky-500/50"
+              >
+                <p className="text-sm font-semibold">{quiz.titulo}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{quiz.descricao}</p>
+                <p className="mt-3 text-[11px] text-muted-foreground">{quiz.total} casos clínicos</p>
+              </Link>
+            ))}
+          </div>
+        </Secao>
+      )}
 
       {/* Comparadores. */}
       <Secao

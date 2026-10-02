@@ -516,7 +516,7 @@ const CARDIOVASCULAR: Record<string, VinhetaClinica> = {
       'Os fios medianos e os clipes ao longo do trajeto das artérias mamárias internas contam a história cirúrgica que o paciente não sabe relatar: houve esternotomia e houve revascularização. Mas reconhecer o material é o começo da leitura, não o fim — a terceira bulha e os estertores pedem que se continue olhando, e é aí que aparecem a cardiomegalia, a redistribuição vascular e as linhas septais que explicam a piora.',
     distratores: [
       d(
-        'Apenas fios de esternotomia',
+        'Pós-operatório habitual de esternotomia',
         'Fio de esternotomia diz que o esterno foi aberto, e nada além disso: vale para troca valvar, revascularização ou correção congênita. Os clipes metálicos alinhados fora da linha média acrescentam a informação que faltava — houve dissecção de mamária interna para enxerto.',
       ),
       d(
@@ -1039,7 +1039,7 @@ const VIAS_AEREAS: Record<string, VinhetaClinica> = {
         'Produz desvio ipsilateral idêntico e é o diferencial radiográfico legítimo. O que decide é a cicatriz de toracotomia e o coto brônquico terminando de forma abrupta, sem árvore brônquica distal — no colapso o pulmão continua lá, apenas sem ar.',
       ),
       d(
-        'Pneumonia de todo o pulmão esquerdo',
+        'Pneumonia lobar extensa à esquerda',
         'Consolidação mantém o volume do hemitórax e preserva broncogramas aéreos; não retrai o gradil nem puxa o mediastino. E não explicaria a ausência completa de murmúrio associada à redução do volume do hemitórax.',
       ),
     ],
@@ -1539,7 +1539,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
       'O stent é o achado mais chamativo e o menos importante hoje: ele explica a deglutição, não a dor. Ao seguir a leitura, a quinta costela direita mostra falha cortical com massa de partes moles adjacente — exatamente onde o dedo encontra dor exquisita e abaulamento —, e os seios costofrênicos estão velados. É o caso que demonstra por que identificar o dispositivo não substitui a varredura sistemática de ossos, pleura e parênquima.',
     distratores: [
       d(
-        'Apenas o stent esofágico',
+        'Stent esofágico bem posicionado',
         'É a armadilha do caso: o dispositivo chama a atenção e a leitura para nele. A dor localizada à palpação com abaulamento é justamente a pista de que existe algo na parede — e existe.',
       ),
       d(
@@ -1707,7 +1707,7 @@ const DISPOSITIVOS: Record<string, VinhetaClinica> = {
       'O gerador é o objeto mais denso e mais chamativo do filme, e é exatamente por isso que ele é perigoso: a atenção converge para ele, confirma que os três eletrodos estão íntegros e a leitura se encerra satisfeita. Na borda do gerador, porém, há uma opacidade pulmonar de contorno próprio, que não pertence ao dispositivo. Em ex-tabagista de 72 anos, essa opacidade precisa de tomografia — e o seguimento deste mesmo paciente mostra o que acontece quando ela é ignorada.',
     distratores: [
       d(
-        'Radiografia normal apenas com o marcapasso',
+        'Marcapasso bem posicionado sem lesão',
         'É a leitura que a satisfação de busca produz e o motivo de este caso existir. A regra prática é obrigatória: depois de identificar qualquer dispositivo, revise deliberadamente o parênquima e os ossos que ele encobre.',
       ),
       d(
@@ -2775,7 +2775,7 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
       'A faixa paratraqueal direita é uma linha fina de tecido mole entre o ar da traqueia e o ar do pulmão; qualquer coisa que se interponha ali a espessa ou a apaga. Aqui ela desapareceu e o mediastino superior está alargado, misturando-se ao topo do botão aórtico — massa de partes moles ocupando o compartimento. Somado a sintomas B, adenopatia periférica coalescente e derrames bilaterais, o quadro aponta para linfoma; a biópsia de linfonodo, e não a imagem, dá o diagnóstico e o subtipo.',
     distratores: [
       d(
-        'Alargamento apenas por técnica AP',
+        'Alargamento por técnica AP no leito',
         'A projeção AP realmente amplia o mediastino e essa checagem é obrigatória. Mas ampliação técnica não apaga a faixa paratraqueal nem produz contorno com borda própria — ela aumenta proporcionalmente o que já existe.',
       ),
       d(

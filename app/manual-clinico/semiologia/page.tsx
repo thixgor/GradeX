@@ -1,5 +1,6 @@
 import { AreaSemiologia } from '@/components/semiologia/area'
 import { HomeSemiologia } from '@/components/semiologia/home'
+import { QUIZZES_SEMIOLOGIA } from '@/lib/semiologia/quiz'
 import { montarCatalogo } from '@/lib/semiologia/catalogo'
 
 /**
@@ -18,7 +19,7 @@ export default function SemiologiaPage() {
             botões flutuantes do AppShell, e o H1 nascia debaixo do menu no
             celular. `abaixo-dos-flutuantes` é o mesmo recuo que a barra faz. */}
         <div className="abaixo-dos-flutuantes container mx-auto max-w-6xl px-4 py-10">
-          <HomeSemiologia catalogo={montarCatalogo()} />
+          <HomeSemiologia catalogo={montarCatalogo()} quizzes={QUIZZES_SEMIOLOGIA.map((q) => ({ id: q.id, titulo: q.titulo, descricao: q.descricao, total: q.questoes.length }))} />
         </div>
       </div>
     </AreaSemiologia>

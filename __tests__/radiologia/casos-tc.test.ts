@@ -119,7 +119,7 @@ describe('casos clínicos de TC', () => {
     })
 
     it('não entrega distrator por advérbio absoluto', () => {
-      const absoluto = /\b\w+mente\b|\bsempre\b|\bnunca\b|\bjamais\b|\btodos?\b|\bnenhum/i
+      const absoluto = /\b\w+mente\b|\bsempre\b|\bnunca\b|\bjamais\b|\btodos?\b|\bnenhum|\bapenas\b/i
       for (const { slug, alternativas } of questoes) {
         for (const alternativa of alternativas) expect(alternativa, `${slug}: "${alternativa}"`).not.toMatch(absoluto)
       }

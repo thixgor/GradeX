@@ -19,4 +19,6 @@ export const ROTAS = {
   comparadores: `${RAIZ}/comparar`,
   comparador: (slug: string) => `${RAIZ}/comparar/${slug}`,
   creditos: `${RAIZ}/creditos`,
+  quizzes: `${RAIZ}/quiz`,
+  quiz: (id: string) => `${RAIZ}/quiz/${id}`,
 } as const

@@ -149,7 +149,7 @@ export const CASOS_TC_ABDOME_1: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Colecistite com mais de três dias, sepse e Murphy pouco evidente em idoso diabético: a pergunta é se há complicação da vesícula.',
       pergunta: 'TC de abdome com contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Colecistite aguda gangrenosa',
+      achado: 'Colecistite aguda calculosa gangrenosa',
       veredito: 'Colecistite aguda calculosa gangrenosa com distensão, parede sem realce e inflamação pericolecística',
       correlacao: 'Cólica biliar recusada, crise prolongada e diabetes com doença vascular: o terreno da gangrena. A pressão na vesícula obstruída comprime os vasos da parede até ela necrosar; com a necrose, a dor localizada e o Murphy se apagam enquanto a sepse cresce. A TC mostra a vesícula enorme e a parede que já não capta contraste.',
       distratores: [
@@ -257,7 +257,7 @@ export const CASOS_TC_ABDOME_1: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Obstrução do delgado em idosa com colelitíase antiga e sem cirurgias ou hérnias: a pergunta é a causa da obstrução.',
       pergunta: 'TC de abdome com contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Íleo biliar com fístula',
+      achado: 'Íleo biliar com fístula colecistoduodenal',
       veredito: 'Íleo biliar: cálculo obstruindo o íleo médio com fístula colecistoduodenal e pneumobilia',
       correlacao: 'A colecistite do mês passado, numa vesícula com cálculo gigante, aderiu ao duodeno e erodiu as duas paredes. O cálculo passou para o intestino e desceu até o íleo, a parte mais estreita, onde entalou. A TC mostra a tríade de Rigler: alças dilatadas, ar na vesícula e na via biliar, e o cálculo no ponto de transição.',
       distratores: [
@@ -361,7 +361,7 @@ export const CASOS_TC_ABDOME_1: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Dor abdominal súbita desproporcional ao exame em idosa com fibrilação atrial sem anticoagulação, evoluindo com choque e acidose: a pergunta é se há isquemia intestinal avançada.',
       pergunta: 'TC de abdome com contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Gás venoso portal periférico',
+      achado: 'Gás venoso portal com isquemia intestinal',
       veredito: 'Gás venoso portal periférico em isquemia mesentérica, sinal de necrose intestinal',
       correlacao: 'A fibrilação atrial sem anticoagulação lançou um êmbolo na mesentérica: dor súbita e desproporcional ao exame. Horas depois a mucosa necrosou, o gás da luz entrou na parede e nas veias e foi levado ao fígado. A TC mostra ar ramificado até a periferia hepática — sinal de gravidade que, com o lactato alto e o choque, indica cirurgia imediata.',
       distratores: [
@@ -465,7 +465,7 @@ export const CASOS_TC_ABDOME_1: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Cólica lombar irradiada para a virilha com hematúria em homem com litíase prévia: a pergunta é a localização e o tamanho do cálculo e se há obstrução.',
       pergunta: 'TC de abdome sem contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Cálculo no ureter distal',
+      achado: 'Cálculo obstrutivo no ureter',
       veredito: 'Cálculo de 4 mm no ureter distal direito com hidroureteronefrose leve e densificação perirrenal',
       correlacao: 'Baixa ingestão hídrica, dieta rica em purinas, gota e pai com cálculos: o perfil do formador de cálculos. A cólica que irradia para o testículo acompanha a descida do cálculo pelo ureter. A TC mostra o cálculo no ureter distal, o ureter e o rim dilatados acima e a gordura perirrenal borrada pela obstrução aguda. Com 4 mm, a eliminação espontânea é provável.',
       distratores: [

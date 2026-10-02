@@ -2102,7 +2102,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Oral_thrush_Aphthae_Candida_albicans._PHIL_1217_lores.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Oral_thrush_Aphthae_Candida_albicans._PHIL_1217_lores.jpg",
       "legenda": "Candidíase pseudomembranosa: Placas brancas cremosas, em \"leite coalhado\", na mucosa jugal, palato e língua, que se destacam ao raspar deixando base eritematosa e às vezes sangrante.",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC · Public domain",
       "sha256": "43ece7b83ba8bc41031b02d732cd407706e61bb217a3f5687e2c5c9352a5b95b",
       "ext": "jpg"
     },
@@ -2113,7 +2113,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/26/CandidiasisFromCDCinJPEG03-18-06.JPG",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:CandidiasisFromCDCinJPEG03-18-06.JPG",
       "legenda": "Candidíase pseudomembranosa: Placas brancas cremosas, em \"leite coalhado\", na mucosa jugal, palato e língua, que se destacam ao raspar deixando base eritematosa e às vezes sangrante.",
-      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S.\nContent Providers: CDC/ Sol Silverman, Jr., DDS · Public domain",
+      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S. Content Providers: CDC/ Sol Silverman, Jr., DDS · Public domain",
       "sha256": "9f908a259e284261c9d90772ca9c235454e7f8512b32d9b9fea23c38b2143e6a",
       "ext": "jpg"
     },
@@ -2124,7 +2124,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg",
       "legenda": "Candidíase pseudomembranosa: Placas brancas cremosas, em \"leite coalhado\", na mucosa jugal, palato e língua, que se destacam ao raspar deixando base eritematosa e às vezes sangrante.",
-      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S.\nContent Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
+      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S. Content Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
       "sha256": "db86a72467bb10db1e5a7f3e1c71a3beac01ccd376a4edc0bb8434681deb3015",
       "ext": "jpg"
     }
@@ -2198,7 +2198,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c8/KaposisSarcomaFromCDC03-18-06.JPG",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:KaposisSarcomaFromCDC03-18-06.JPG",
       "legenda": "Sarcoma de Kaposi no palato: Máculas ou nódulos violáceos ou vermelho-escuros no palato duro e na gengiva, únicos ou múltiplos, indolores;",
-      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S.\nContent Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
+      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S. Content Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
       "sha256": "765b92058f912d698c2e5cca21b2cc09c311250240a03071c60f9ffc82102f6c",
       "ext": "jpg"
     },
@@ -2209,7 +2209,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg",
       "legenda": "Sarcoma de Kaposi no palato: Máculas ou nódulos violáceos ou vermelho-escuros no palato duro e na gengiva, únicos ou múltiplos, indolores;",
-      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S.\nContent Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
+      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S. Content Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
       "sha256": "db86a72467bb10db1e5a7f3e1c71a3beac01ccd376a4edc0bb8434681deb3015",
       "ext": "jpg"
     },
@@ -2580,7 +2580,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/27/Superficial_spreading_melanoma_in_situ_on_dermoscopy%2C_reflectance_confocal_microscopy_and_histopathology_1.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Superficial_spreading_melanoma_in_situ_on_dermoscopy,_reflectance_confocal_microscopy_and_histopathology_1.jpg",
       "legenda": "Melanoma — rede atípica e véu: Assimetria em estrutura e cor;",
-      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria\n\nDirlei Begnami, Giovanni P · CC BY 4.0",
+      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria Dirlei Begnami, Giovanni P · CC BY 4.0",
       "sha256": "f9a974b6e59e9e575c49475d3af5fcd5e126f147eb6edea43543efd48e621265",
       "ext": "jpg"
     },
@@ -2628,7 +2628,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a3/Melanocytic_nevi_on_dermoscopy%2C_reflectance_confocal_microscopy_and_histopathology.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Melanocytic_nevi_on_dermoscopy,_reflectance_confocal_microscopy_and_histopathology.jpg",
       "legenda": "Nevo melanocítico — rede pigmentar regular: Rede pigmentar regular, de malhas uniformes, que se afina e desaparece gradualmente na periferia;",
-      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria\n\nDirlei Begnami, Giovanni P · CC BY 4.0",
+      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria Dirlei Begnami, Giovanni P · CC BY 4.0",
       "sha256": "8e4ec01dd28148e9698d17f6ec17c4f537f096402a7e897ca46b31019dce4b52",
       "ext": "jpg"
     },
@@ -4074,7 +4074,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/17/Urine_crystals_comparison.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Urine_crystals_comparison.png",
       "legenda": "Cristalúria com valor diagnóstico. («Urine crystals comparison», Wikimedia Commons)",
-      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest:  None\nMikael Häggström, M.D.- using source i · CC BY 4.0",
+      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest: None Mikael Häggström, M.D.- using source i · CC BY 4.0",
       "sha256": "4870ebd67d752892d57a982bc131aa616baecaf6b0f6851461ac504721f7bb52",
       "ext": "png"
     },
@@ -4166,7 +4166,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Vaginal_wet_mount_with_clue_cell_-_annotated.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Vaginal_wet_mount_with_clue_cell_-_annotated.png",
       "legenda": "Vaginose bacteriana, tricomoníase ou candidíase. («Vaginal wet mount with clue cell - annotated», Wikimedia Commons)",
-      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest:  None\nMikael Häggström, M.D.Consent note: Co · CC0",
+      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest: None Mikael Häggström, M.D.Consent note: Co · CC0",
       "sha256": "e26656573e7012675ee1c4aeaaba88bcd07060e3e8a34e3101d013474bf50dbb",
       "ext": "png"
     },
@@ -4267,7 +4267,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fc/Plasmodium_falciparum_01.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Plasmodium_falciparum_01.png",
       "legenda": "Malária diagnosticada por microscopia. («Plasmodium falciparum 01», Wikimedia Commons)",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC/Dr. Mae Melvin\nTranswiki approved by: w:en:User:Dmcdevit · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC/Dr. Mae Melvin Transwiki approved by: w:en:User:Dmcdevit · Public domain",
       "sha256": "ac52297875e0c6a6e0f50d4c7d32d3fbca4f3f61dab890e30cff3cd09ef42e51",
       "ext": "png"
     }
@@ -4280,7 +4280,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/87/Neisseria_gonorrhoeae_PHIL_3693_lores.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Neisseria_gonorrhoeae_PHIL_3693_lores.jpg",
       "legenda": "Coloração de Gram de líquor, secreção ou urina com bactéria identificável. («Neisseria gonorrhoeae PHIL 3693 lores», Wikimedia Commons)",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC/ Dr. Norman Jacobs · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC/ Dr. Norman Jacobs · Public domain",
       "sha256": "65a1ba1d1a1862279067e9d12a47c870da97b8d14f1b98dbd4cb06afd71f65ef",
       "ext": "jpg"
     },
@@ -9272,6 +9272,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "miniatura": "https://i.ytimg.com/vi/3oef68YabD0/hqdefault.jpg"
     }
   ],
+  "sinais/albinismo-oculocutaneo": [
+    {
+      "id": "wc-albinismo-oculocutaneo-g2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/44/Albinismo_en_la_raza_negra.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Albinismo_en_la_raza_negra.jpg",
+      "legenda": "Criança com albinismo oculocutâneo ao lado da família: pele e cabelos sem melanina, em contraste nítido com os pais heterozigotos. («Albinismo en la raza negra», Wikimedia Commons)",
+      "autoria": "Amapola89 · Public domain",
+      "sha256": "9f85fd4885427c6077cbefc1abcf42845e8ddef29d3e50e4382982e594833c5f",
+      "ext": "jpg"
+    }
+  ],
   "sinais/alopecia-androgenetica": [
     {
       "id": "dn-18966",
@@ -9537,6 +9550,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/angioqueratomas-de-fabry": [
+    {
+      "id": "dn-gen-angiokeratoma-14",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/angiokeratoma-14.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/fabry-disease",
+      "legenda": "Angioqueratomas na doença de Fabry: pápulas vermelho-escuras puntiformes agrupadas na região do calção de banho. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "38979c02b5dcf7505f1995a9f1d85d804fea9266ba83eece32cac64592deb599",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-angiokeratoma-10",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/angiokeratoma-10.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/fabry-disease",
+      "legenda": "Angioqueratomas múltiplos que não desaparecem à vitropressão, em paciente com suspeita de doença de Fabry. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "206612f4daa9bb5687fb775d30f6a62f19aaf45e8449ec7d9e07b578fd08713c",
+      "ext": "jpg"
+    }
+  ],
   "sinais/anisocoria": [
     {
       "id": "wc-anisocoria-1",
@@ -9637,7 +9674,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Frenulum_linguae.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Frenulum_linguae.jpg",
       "legenda": "Freio lingual normal levantado para comparação. («Frenulum linguae», Wikimedia Commons)",
-      "autoria": "Klaus Peter-Kuttig, Wiehl, Germany\n\n\n\n\nDiese Datei aus meinem Archiv habe ich unter der „Creative-Commons-Lizenz“ veröff · CC BY 3.0 de",
+      "autoria": "Klaus Peter-Kuttig, Wiehl, Germany Diese Datei aus meinem Archiv habe ich unter der „Creative-Commons-Lizenz“ veröff · CC BY 3.0 de",
       "sha256": "68314b17a31585a4827fddd4157fb2feb2efe922d424b3fb70236f4480359b33",
       "ext": "jpg"
     },
@@ -10414,7 +10451,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Calcinosis_of_CREST_syndrome.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Calcinosis_of_CREST_syndrome.jpg",
       "legenda": "Calcinose cutânea: Depósitos de cálcio na pele e no subcutâneo: nódulos ou placas duros, brancos ou da cor da pele, em polpas digitais, superfícies extensoras, sobre proeminências ósseas;",
-      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest:  None\nMikael Häggström, M.D.Consent note: Wr · CC0",
+      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest: None Mikael Häggström, M.D.Consent note: Wr · CC0",
       "sha256": "390104288ed7cfd0bc82716ac765b80c95a44cd032a7227bcf4043f33a8840c9",
       "ext": "jpg"
     },
@@ -11393,7 +11430,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Coloboma-2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Coloboma-2.png",
       "legenda": "Coloboma de íris: pupila em \"buraco de fechadura\" por falha de fechamento da fissura óptica inferior. («Coloboma-2», Wikimedia Commons)",
-      "autoria": "Coloboma.gif: National Eye Institute\nderivative work: Redlinux (talk) · Public domain",
+      "autoria": "Coloboma.gif: National Eye Institute derivative work: Redlinux (talk) · Public domain",
       "sha256": "df89f6ead9ed26ac6a955d1698bae41d75d18daea14c282ff80e2565f18955ca",
       "ext": "png"
     },
@@ -11660,6 +11697,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Coto transtibial bem formado: forma cônica com cicatriz fora da zona de carga. («Pvt. Eben E. Smith (SP 29), National Museum of Health and Medicine (5298477752)», Wikimedia Commons)",
       "autoria": "National Museum of  Health and Medicine · CC BY 2.0",
       "sha256": "1ad7b6126e91daab1dc474b5d7b3953f8df73f52a20ccd74b9e4582985319571",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/craniossinostose-sindromica": [
+    {
+      "id": "wc-craniossinostose-sindromica-g0",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Baby_with_Crouzon_Syndrome.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Baby_with_Crouzon_Syndrome.jpg",
+      "legenda": "Bebê com síndrome de Crouzon: exoftalmia por órbitas rasas e hipoplasia do terço médio da face. («Baby with Crouzon Syndrome», Wikimedia Commons)",
+      "autoria": "KateVUk · CC BY-SA 4.0",
+      "sha256": "36378e134c9d66c70e834827bc4f582a61938d49fa65c6925cffe8c5505dc1c2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-craniossinostose-sindromica-g5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Crouzon_Syndrome_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Crouzon_Syndrome_1.jpg",
+      "legenda": "Síndrome de Crouzon: crânio deformado pela fusão precoce das suturas, proptose ocular e hipertelorismo. («Crouzon Syndrome 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "7015a803c9ed670c86d82489855628c89fe9ea06df3739d63776d1ba650a2b6d",
       "ext": "jpg"
     }
   ],
@@ -11960,7 +12021,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/08/Hands_post_uric_arthritis_treatment.png",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hands_post_uric_arthritis_treatment.png",
       "legenda": "Dactilite: Edema difuso e uniforme de todo um dedo (mão ou pé), envolvendo articulações, bainhas tendíneas e partes moles, com ou sem dor e eritema;",
-      "autoria": "Dr. Haralambos Gouvas.\nThe original uploader was Harrygouvas at Greek Wikipedia. · Attribution",
+      "autoria": "Dr. Haralambos Gouvas. The original uploader was Harrygouvas at Greek Wikipedia. · Attribution",
       "sha256": "711bac9158438371cd8a4530f95d7a8e499600e1086e057c2a656608cf492048",
       "ext": "png"
     }
@@ -12103,17 +12164,6 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal John Bielinski",
       "videoId": "BaM9CyaDdtQ",
       "miniatura": "https://i.ytimg.com/vi/BaM9CyaDdtQ/hqdefault.jpg"
-    },
-    {
-      "id": "yt-vmnpVM00RXY",
-      "tipo": "video",
-      "fonte": "youtube",
-      "urlOrigem": "https://www.youtube.com/watch?v=vmnpVM00RXY",
-      "urlDoCaso": "https://www.youtube.com/watch?v=vmnpVM00RXY",
-      "legenda": "Exame do paciente com peritonite: inspeção da respiração, palpação em quatro tempos e o abdome em tábua.",
-      "autoria": "Canal MBBS NAIJA",
-      "videoId": "vmnpVM00RXY",
-      "miniatura": "https://i.ytimg.com/vi/vmnpVM00RXY/hqdefault.jpg"
     }
   ],
   "sinais/deficit-de-campo-visual-por-confrontacao": [
@@ -12908,7 +12958,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/a8/Diphtheria_bull_neck.5325_lores.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Diphtheria_bull_neck.5325_lores.jpg",
       "legenda": "Membrana branco-acinzentada, aderente, que cobre amígdalas, palato e úvula e sangra quando se tenta removê-la, em criança não vacinada com pescoço edemaciado — a toxina começa aqui e vai ao coração. («Diphtheria bull neck.5325 lores», Wikimedia Commons)",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC · Public domain",
       "sha256": "bdb631736830287751485bd397c907d430dd6ae281514de67a297d3aafc3a1f5",
       "ext": "jpg"
     },
@@ -13191,6 +13241,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/ectopia-lentis-homocistinuria": [
+    {
+      "id": "wc-ectopia-lentis-homocistinuria-g0",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/80/%22MARFAN_ECLIPSE%22.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%22MARFAN_ECLIPSE%22.jpg",
+      "legenda": "Ectopia lentis: a borda do cristalino subluxado aparece na pupila como um eclipse, vista à retroiluminação. («\"MARFAN ECLIPSE\"», Wikimedia Commons)",
+      "autoria": "Anselmuccifederico · CC BY 4.0",
+      "sha256": "b7904d035bf3462cfd004dc890908234fe057cad4320ee9637bdac6dc029a272",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-ectopia-lentis-homocistinuria-g9",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Marchesani1.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Marchesani1.gif",
+      "legenda": "Cristalino deslocado em criança: a borda da lente cruza a pupila dilatada, com zônulas rompidas. («Marchesani1», Wikimedia Commons)",
+      "autoria": "National Eye Institute · Public domain",
+      "sha256": "8c51d5ab0819cfd672b6f037245f440fc35568f36ee058ce6b296c6a80239e28",
+      "ext": "gif"
+    }
+  ],
   "sinais/ectropio-e-entropio": [
     {
       "id": "wc-cycatricial-ectropion-eyes-closed-jpeg",
@@ -13293,7 +13367,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2b/Abscess_cheek.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Abscess_cheek.jpg",
       "legenda": "Edema periorbital: Edema bilateral e simétrico das pálpebras e da região periorbital, mais intenso pela manhã (após o decúbito), depressível, sem dor, calor ou eritema;",
-      "autoria": "Klaus D. Peter, Wiehl, Germany\n\n\n\n\nDiese Datei aus meinem Archiv habe ich unter der „Creative-Commons-Lizenz“ veröffentl · CC BY 3.0 de",
+      "autoria": "Klaus D. Peter, Wiehl, Germany Diese Datei aus meinem Archiv habe ich unter der „Creative-Commons-Lizenz“ veröffentl · CC BY 3.0 de",
       "sha256": "95d8144ce8a477439baf517ec8eb6bbbc8ffe0cb443a889b2504049aa10e8b02",
       "ext": "jpg"
     },
@@ -13398,6 +13472,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Perna gigantesca, dura, com pele espessada, verrucosa e com dobras profundas, em área endêmica de Wuchereria bancrofti — o linfedema de décadas transformado em pele de elefante. («'Elephantiasis' of the leg Wellcome L0062013», Wikimedia Commons)",
       "autoria": "autor não identificado · CC BY 4.0",
       "sha256": "a4a9e1a9e036c9f1f696dcab9aebab4ed5a26c5e7494f8053d7a4d3590277223",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/epidermolise-bolhosa": [
+    {
+      "id": "dn-gen-eb1",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/eb1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermolysis-bullosa",
+      "legenda": "Epidermólise bolhosa: bolhas e erosões nos pontos de atrito ao menor trauma. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "a7387c63c693ea01f407027adfc45411771e28516ff99de8d74e8e81044684d1",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-eb4",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/eb4.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/epidermolysis-bullosa",
+      "legenda": "Epidermólise bolhosa: erosões e cicatrizes atróficas com milia nas áreas de trauma repetido. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1782197d0e318b23e1bc1f5b4f287b970256cfb828ceb3889ca78bd448bae6b8",
       "ext": "jpg"
     }
   ],
@@ -13648,7 +13746,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/01/Erythema_migrans_-_erythematous_rash_in_Lyme_disease_-_PHIL_9875.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Erythema_migrans_-_erythematous_rash_in_Lyme_disease_-_PHIL_9875.jpg",
       "legenda": "Eritema migratório: Mácula ou placa eritematosa que se expande centrifugamente a partir do local da picada, atingindo > 5 cm (em geral 10 a 20 cm), com clareamento central em alvo em parte dos casos, pouco sintomática (calor, leve prurido), 3 a 30 dias após a picada.",
-      "autoria": "Photo Credit: James Gathany\nContent Providers(s): CDC/ James Gathany · Public domain",
+      "autoria": "Photo Credit: James Gathany Content Providers(s): CDC/ James Gathany · Public domain",
       "sha256": "fa06152d757db42f2b81b016af085b7bdbb4aa97318e150f9283669512aac3a9",
       "ext": "jpg"
     },
@@ -13786,7 +13884,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/19/Kawasaki_symptoms_D.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kawasaki_symptoms_D.jpg",
       "legenda": "Eritema palmar: Eritema simétrico das eminências tenar e hipotenar e das polpas digitais, poupando o centro da palma, que empalidece à pressão e retorna rápido;",
-      "autoria": "Kawasaki_symptoms.jpg: Dong Soo Kim\nderivative work: Natr (talk) · CC BY 2.0",
+      "autoria": "Kawasaki_symptoms.jpg: Dong Soo Kim derivative work: Natr (talk) · CC BY 2.0",
       "sha256": "8e614f117b661f49529a1536746662dbfdd4367b93747a6d05ffa3cfcbd35554",
       "ext": "jpg"
     },
@@ -14960,6 +15058,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/facies-de-hurler": [
+    {
+      "id": "wc-facies-de-hurler-g5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/5b/Mucopolysaccharidosis_%28Hurler%27s_Syndrome%29_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mucopolysaccharidosis_(Hurler%27s_Syndrome)_1.jpg",
+      "legenda": "Fácies de Hurler: traços grosseiros, fronte proeminente, ponte nasal baixa, lábios espessos e macroglossia — glicosaminoglicanos acumulados nos tecidos. («Mucopolysaccharidosis (Hurler's Syndrome) 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "0b1ef652631b636545110f4766c9065cd2c42123ce82e2d821a7fbaed6352af1",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-facies-de-hurler-g6",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/61/Mucopolysaccharidosis_%28Hurler%27s_Syndrome%29_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mucopolysaccharidosis_(Hurler%27s_Syndrome)_2.jpg",
+      "legenda": "Mucopolissacaridose tipo I: face grosseira com fronte ampla, nariz em sela e lábios grossos. («Mucopolysaccharidosis (Hurler's Syndrome) 2», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "b8371da8671337d915f5217fd85d0617512b786c89fe3cea9b38c991defeea8e",
+      "ext": "jpg"
+    }
+  ],
   "sinais/facies-de-turner": [
     {
       "id": "wc-girl-with-noonan-syndrome-jpg",
@@ -15003,6 +15125,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Sinais da síndrome de Turner: Baixa estatura, pescoço curto com pregas cutâneas laterais (pterygium colli), implantação capilar baixa na nuca, tórax em escudo com hipertelorismo mamilar, cúbito valgo, 4º metacarpo curto, linfedema de mãos e pés no recém-nascido, múltiplos nevos, unhas hiperconvexas;",
       "autoria": "Imen Mehri Turki · CC BY 4.0",
       "sha256": "a4704e872e4e8da9f9c7926e66d858f597a6c27bd92daf4e8ad98d9872681dec",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/facies-de-williams": [
+    {
+      "id": "wc-facies-de-williams-g10",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/84/Williams_syndromeCCBY.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Williams_syndromeCCBY.jpg",
+      "legenda": "Fácies de Williams em várias idades: fronte larga, preenchimento periorbitário, nariz curto e arrebitado, filtro longo, lábios cheios e boca larga — a fácies de elfo. («Williams syndromeCCBY», Wikimedia Commons)",
+      "autoria": "E. A. Nikitina, A. V. Medvedeva, G. A. Zakharov, and E. V. Savvateeva-Popova, 20 · CC BY 3.0",
+      "sha256": "65ba064b0ef9f5b2f42324be254916805f69c79bc2dbbcc502757cbea541d8d2",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-facies-de-williams-g0",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e6/An_adult_with_Williams_syndrome_making_Heart_Hands.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:An_adult_with_Williams_syndrome_making_Heart_Hands.jpg",
+      "legenda": "Adulto com síndrome de Williams: lábios cheios, boca larga e a sociabilidade calorosa típica da deleção 7q11.23. («An adult with Williams syndrome making Heart Hands», Wikimedia Commons)",
+      "autoria": "JoelLiestmanWSA · CC BY-SA 4.0",
+      "sha256": "f64f28fdc200934e46bf5a1642535854df8a0f8fe6cdc03168f722cace367141",
       "ext": "jpg"
     }
   ],
@@ -15168,6 +15314,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal JAMA Network",
       "videoId": "8XPSZmGmko8",
       "miniatura": "https://i.ytimg.com/vi/8XPSZmGmko8/hqdefault.jpg"
+    }
+  ],
+  "sinais/facies-talassemica": [
+    {
+      "id": "wc-facies-talassemica-g1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e5/DOMR-6-350-g001.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DOMR-6-350-g001.gif",
+      "legenda": "Fácies talassêmica: bossas frontais e malares proeminentes pela expansão da medula óssea na talassemia beta maior. («DOMR-6-350-g001», Wikimedia Commons)",
+      "autoria": "Mohamad Azhar Ibrahim Kharsa · CC BY 2.5",
+      "sha256": "69281fec82709c488a85bd5f7b92c91100c12e066df3361a4047f7cc86b44250",
+      "ext": "gif"
+    },
+    {
+      "id": "wc-facies-talassemica-g2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/2b/DOMR-6-350-g004.gif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DOMR-6-350-g004.gif",
+      "legenda": "Perfil de criança com talassemia beta: maxila projetada e protrusão dentária pela hiperplasia eritroide dos ossos da face. («DOMR-6-350-g004», Wikimedia Commons)",
+      "autoria": "Mohamad Azhar Ibrahim Kharsa · CC BY 2.5",
+      "sha256": "e39ce749990d109b67c508f9e0cd4c4b4ea8e8454eb5790ae7565c6801fd2df7",
+      "ext": "gif"
     }
   ],
   "sinais/fasciculacoes": [
@@ -16048,6 +16218,63 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/habito-marfanoide": [
+    {
+      "id": "wc-habito-marfanoide-g4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/68/Marfan_Patient.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Marfan_Patient.jpeg",
+      "legenda": "Hábito marfanoide: corpo alto e delgado, membros longos em relação ao tronco, envergadura maior que a altura e escoliose — o tecido conjuntivo frouxo da fibrilina defeituosa. («Marfan Patient», Wikimedia Commons)",
+      "autoria": "Mileny ES Colovati, Luciana RJ da Silva, Sylvia S Takeno, Tatiane I Man · CC BY 2.0",
+      "sha256": "13a3a21abbdffe3c174232ea98032c9b244a4f2fc5208df1dc28b0f918255057",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-habito-marfanoide-g3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7d/MarfanChest.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:MarfanChest.jpg",
+      "legenda": "Pectus excavatum na síndrome de Marfan: as costelas crescem demais e empurram o esterno para dentro. («MarfanChest», Wikimedia Commons)",
+      "autoria": "Aurora Bakalli, Tefik Bekteshi, Merita Basha, Afrim Gashi, Afërdita Bakalli and  · CC BY-SA 3.0",
+      "sha256": "7480bc02d9f0ed471711c323cb14c18b94951f3be97eb79471a49fbf35b3c8de",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-habito-marfanoide-g10",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/14/SAMSIGN.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:SAMSIGN.jpg",
+      "legenda": "Sinal do punho (Walker-Murdoch): polegar e mínimo se sobrepõem ao abraçar o punho oposto — aracnodactilia com punho fino. («SAMSIGN», Wikimedia Commons)",
+      "autoria": "MrQQ · CC BY-SA 3.0",
+      "sha256": "99169ea8738f6816b1fd5a9f41bec90c5504f3ccab54916054f9a19d16f1c9ad",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-habito-marfanoide-g11",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/61/Steinberg_and_Walker-Murdoch_tests.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Steinberg_and_Walker-Murdoch_tests.jpg",
+      "legenda": "Sinal do polegar (Steinberg) e sinal do punho: o polegar fechado ultrapassa a borda ulnar da mão. («Steinberg and Walker-Murdoch tests», Wikimedia Commons)",
+      "autoria": "Graziella F. B. Cipriano; Guilherme C. Brech; Paulo A. T. Peres; Cássia C. Mende · CC BY 4.0",
+      "sha256": "c949391a177023b63dfd66d2ecb5d652390b97c366c123c889cef8310a027e99",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-marfan1",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/marfan1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/marfan-syndrome",
+      "legenda": "Síndrome de Marfan: estrias atróficas sem ganho de peso e membros longos. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "52b820c9620d902732290860a9764feacc17e24d13f29611a54c168fa881dc1b",
+      "ext": "jpg"
+    }
+  ],
   "sinais/halux-valgo": [
     {
       "id": "wc-hallux-valgus-aspect-pre-op-decharge-jpg",
@@ -16425,6 +16652,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "autoria": "Canal neurosigns.org",
       "videoId": "RAATfknm1F4",
       "miniatura": "https://i.ytimg.com/vi/RAATfknm1F4/hqdefault.jpg"
+    }
+  ],
+  "sinais/hemocromatose-sinais": [
+    {
+      "id": "wc-hemocromatose-sinais-g0",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/0/0b/HemochromatosisSkin.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:HemochromatosisSkin.jpg",
+      "legenda": "Hiperpigmentação bronzeada da pele em homem diabético com hemocromatose: o bronze diabetes, ferro e melanina depositados na derme. («HemochromatosisSkin», Wikimedia Commons)",
+      "autoria": "Herbert L. Fred, MDHendrik A. van Dijk · CC BY 2.5",
+      "sha256": "c06b11e6b918e92f6d7f7ef53ecff483f989a9215bc3da97b468461850fe86d8",
+      "ext": "jpg"
     }
   ],
   "sinais/hemorragia-subconjuntival": [
@@ -16987,7 +17227,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/75/DGK_Guertelrose.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DGK_Guertelrose.jpg",
       "legenda": "Herpes zóster: Erupção unilateral de vesículas agrupadas em cachos sobre base eritematosa, distribuída ao longo de um ou dois dermátomos contíguos, sem cruzar a linha média, precedida de dor ou parestesia por 2 a 3 dias.",
-      "autoria": "The original uploader was Fixi at German Wikipedia.\n\n(Original text: Prof. Cremer) · CC BY-SA 3.0",
+      "autoria": "The original uploader was Fixi at German Wikipedia. (Original text: Prof. Cremer) · CC BY-SA 3.0",
       "sha256": "fd9281d7ac191d44b8e10c74ff19b96e6cda690ab2c661d071232b3bc2e281fd",
       "ext": "jpg"
     },
@@ -17044,7 +17284,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/21/Herpes_zoster_oftalmico.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Herpes_zoster_oftalmico.jpg",
       "legenda": "Herpes zóster oftálmico: Erupção vesicular unilateral no dermátomo do ramo oftálmico do trigêmeo (fronte, couro cabeludo anterior, pálpebra superior, dorso e ponta do nariz), respeitando a linha média, com dor precedente;",
-      "autoria": "Herpes_zoster_ophthalmicus.2.jpg: User:Milorad Dimic MD\nderivative work: DPC (talk) · CC BY-SA 3.0",
+      "autoria": "Herpes_zoster_ophthalmicus.2.jpg: User:Milorad Dimic MD derivative work: DPC (talk) · CC BY-SA 3.0",
       "sha256": "4df83ddd1595b954410c2629db2ec85f08d012f81923a702debda481ae324b87",
       "ext": "jpg"
     },
@@ -17991,6 +18231,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/incontinentia-pigmenti": [
+    {
+      "id": "dn-gen-incontinentia-pigmenti-5",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/incontinentia-pigmenti-5.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/incontinentia-pigmenti",
+      "legenda": "Incontinentia pigmenti, fase vesicular: vesículas lineares seguindo as linhas de Blaschko no recém-nascido. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "83a5b5869433de3b4c9833297c0860b4d485a63edc80c4b820aa54d080785cb4",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-incontinentia-pigmenti-7",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/incontinentia-pigmenti-7.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/incontinentia-pigmenti",
+      "legenda": "Incontinentia pigmenti, fase verrucosa: placas hiperceratósicas lineares nos membros. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d8458c89ecb3d5d676c61903f9249ffe9f3653f2e58675bd77ec4041bb1a43b0",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-incontinentia-pigmenti-8",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/incontinentia-pigmenti-8.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/incontinentia-pigmenti",
+      "legenda": "Incontinentia pigmenti, fase hiperpigmentada: faixas e espirais acastanhadas em mármore ao longo das linhas de Blaschko. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "e90711cee76e8096779ed87e6ee8df4edb60c4cfd3b10bbda8e6d84594782fd5",
+      "ext": "jpg"
+    }
+  ],
   "sinais/indice-tornozelo-braquial-reduzido": [
     {
       "id": "yt-KnJDrmfIXGw",
@@ -18516,7 +18791,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/52/Elephantiasis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Elephantiasis.jpg",
       "legenda": "Linfedema: Edema de membro por insuficiência linfática: inicialmente depressível e reversível com a elevação (estágio 1), depois firme, não depressível, com pele espessada, hiperqueratose, papilomatose e dobras profundas (estágios 2 e 3, elefantíase);",
-      "autoria": "Photo Credit:\nContent Providers: CDC/ · Public domain",
+      "autoria": "Photo Credit: Content Providers: CDC/ · Public domain",
       "sha256": "febffd84164b5cbc08e2fe377c4a32e311b4b8218e13210dcba3a39c09231602",
       "ext": "jpg"
     },
@@ -18630,7 +18905,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/96/Kawasaki_symptoms_B.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kawasaki_symptoms_B.jpg",
       "legenda": "Doença de Kawasaki: língua em framboesa e lábios fissurados. («Kawasaki symptoms B», Wikimedia Commons)",
-      "autoria": "Kawasaki_symptoms.jpg: Dong Soo Kim\nderivative work: Natr (talk) · CC BY 2.0",
+      "autoria": "Kawasaki_symptoms.jpg: Dong Soo Kim derivative work: Natr (talk) · CC BY 2.0",
       "sha256": "41bd84b98969d53bb3f39afdd3b3937d3f73eff00f6eb5d190848f501747f2e4",
       "ext": "jpg"
     }
@@ -18676,7 +18951,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Geographic_tongue_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Geographic_tongue_(cropped).jpg",
       "legenda": "Língua geográfica: Placas eritematosas lisas (despapiladas) no dorso e nas bordas da língua, de contorno irregular, delimitadas por borda esbranquiçada ou amarelada levemente elevada, que migram e mudam de forma em dias;",
-      "autoria": "Geographic_tongue.JPG: Martanopue\nderivative work: Jbarta · CC BY-SA 3.0",
+      "autoria": "Geographic_tongue.JPG: Martanopue derivative work: Jbarta · CC BY-SA 3.0",
       "sha256": "24067a92e0c13f13171abfc34db3e42acd185f30653b59c0a83e873f26872431",
       "ext": "jpg"
     },
@@ -19553,6 +19828,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "png"
     }
   ],
+  "sinais/maculas-de-peutz-jeghers": [
+    {
+      "id": "wc-maculas-de-peutz-jeghers-g7",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Peutz_jegher_syndrome_new_photo_for_diagnosis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Peutz_jegher_syndrome_new_photo_for_diagnosis.jpg",
+      "legenda": "Máculas melanóticas nos lábios e na mucosa oral: marca cutânea da síndrome de Peutz-Jeghers, que acompanha pólipos hamartomatosos do intestino. («Peutz jegher syndrome new photo for diagnosis», Wikimedia Commons)",
+      "autoria": "Masryyy · CC BY-SA 4.0",
+      "sha256": "dfacd5504ff51b7013875970c058781052e42b2d472133678fe53c1ecedb8f12",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-maculas-de-peutz-jeghers-g4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/93/Peutz-Jeghers-Syndrom.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Peutz-Jeghers-Syndrom.JPG",
+      "legenda": "Peutz-Jeghers: lentigos castanho-escuros agrupados nos lábios e na mucosa jugal, que ao contrário das efélides não somem no inverno. («Peutz-Jeghers-Syndrom», Wikimedia Commons)",
+      "autoria": "Abdullah Sarhan · CC BY-SA 4.0",
+      "sha256": "69f742ffc4292001b79477060c88d58f2bda633d422f2680eb20ba1e298446b9",
+      "ext": "jpg"
+    }
+  ],
   "sinais/mal-perfurante-plantar": [
     {
       "id": "dn-3879",
@@ -20298,7 +20597,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Superficial_spreading_melanoma_in_situ_on_dermoscopy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Superficial_spreading_melanoma_in_situ_on_dermoscopy.jpg",
       "legenda": "Melanoma: Lesão melanocítica com Assimetria, Bordas irregulares, Cores múltiplas (preto, marrom, vermelho, azul, branco), Diâmetro > 6 mm e Evolução (mudança de tamanho, forma, cor, ou sintoma).",
-      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria\n\nDirlei Begnami, Giovanni P · CC BY 4.0",
+      "autoria": "Juliana Casagrande Tavoloni Braga, Mariana Petaccia Macedo, Clovis Pinto, João Duprat, Maria Dirlei Begnami, Giovanni P · CC BY 4.0",
       "sha256": "4da872b4881f18a231288de779e7bce1fe0c5e688bd1fb76efcff949f6c72e19",
       "ext": "jpg"
     },
@@ -20607,7 +20906,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f1/Spina_bifida_lombare_sagittale.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Spina_bifida_lombare_sagittale.jpg",
       "legenda": "Ultrassom fetal: defeito espinhal aberto com saco meníngeo. («Spina bifida lombare sagittale», Wikimedia Commons)",
-      "autoria": "This Photo was taken by Wolfgang Moroder.  \n\nFeel free to use my photos, but please mention me as the author and send me · CC BY-SA 3.0",
+      "autoria": "This Photo was taken by Wolfgang Moroder. Feel free to use my photos, but please mention me as the author and send me · CC BY-SA 3.0",
       "sha256": "cb357f25e74f2de6d67070f049628b94aa5139332d9b94638eeaa779aa5b3633",
       "ext": "jpg"
     },
@@ -21282,6 +21581,19 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/ocronose-alcaptonuria": [
+    {
+      "id": "wc-ocronose-alcaptonuria-g1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/10/OCHRONOSIS.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:OCHRONOSIS.jpg",
+      "legenda": "Ocronose: pigmentação azul-acinzentada da pele por depósito de ácido homogentísico, na alcaptonúria. («OCHRONOSIS», Wikimedia Commons)",
+      "autoria": "Universidad CES · CC BY 3.0",
+      "sha256": "5cba9759a61a840146d1127137d209481babd317928afa493d9e487cf5171980",
+      "ext": "jpg"
+    }
+  ],
   "sinais/olho-vermelho-triade": [
     {
       "id": "wc-conjunctivitisredeye-jpg",
@@ -21656,7 +21968,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/4/4c/PHIL_tetanus.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PHIL_tetanus.jpg",
       "legenda": "Opistótono: Espasmo tônico dos músculos extensores do dorso e do pescoço com hiperextensão da coluna em arco, cabeça para trás, membros estendidos;",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC · Public domain",
       "sha256": "6f1cccb3235e30ffbe20ee8ce708d14862946edbbf8e9fd64e21a38cfc57e63f",
       "ext": "jpg"
     }
@@ -22140,7 +22452,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/80/Mumps_PHIL_130_lores.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Mumps_PHIL_130_lores.jpg",
       "legenda": "Parotidite: Aumento doloroso da parótida, uni ou bilateral, que preenche o espaço entre o ramo da mandíbula e o mastoide e desloca o lóbulo da orelha para cima e para fora;",
-      "autoria": "Photo Credit:\nContent Providers: CDC/NIP/Barbara Rice · Public domain",
+      "autoria": "Photo Credit: Content Providers: CDC/NIP/Barbara Rice · Public domain",
       "sha256": "870e5b6d0bd9f0c207661c3e69c55b6be4cdc9c116e5794fb99a13891f5f1d50",
       "ext": "jpg"
     },
@@ -22784,7 +23096,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/ba/Streptococcal_pharyngitis.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Streptococcal_pharyngitis.jpg",
       "legenda": "Faringite estreptocócica: petéquias no palato mole e úvula com amígdalas hiperemiadas. («Streptococcal pharyngitis», Wikimedia Commons)",
-      "autoria": "Photo Credit:\nContent Providers: CDC/Dr. Heinz F. Eichenwald · Public domain",
+      "autoria": "Photo Credit: Content Providers: CDC/Dr. Heinz F. Eichenwald · Public domain",
       "sha256": "ad5da4232ea0725c9d69201d8dad0fbde3a5f066e8cab63fb769ba44f55124f6",
       "ext": "jpg"
     },
@@ -24724,7 +25036,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Lock-jaw_2857.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Lock-jaw_2857.jpg",
       "legenda": "Riso sardônico: Contração tônica sustentada dos músculos faciais: elevação das sobrancelhas, fechamento parcial dos olhos, retração dos lábios com exposição dos dentes — expressão de sorriso rígido;",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC/Dr. Thomas F. Sellers/Emory University · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC/Dr. Thomas F. Sellers/Emory University · Public domain",
       "sha256": "7ba3ccc4531074a8d374de5e0357b61b36259b055cf90bac363fba9e7e41c059",
       "ext": "jpg"
     },
@@ -24873,7 +25185,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/12/Salmonella_typhi_typhoid_fever_PHIL_2215_lores.jpg",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Salmonella_typhi_typhoid_fever_PHIL_2215_lores.jpg",
       "legenda": "Roséola tifoide: Máculas ou pápulas róseas, de 2 a 4 mm, que branqueiam à pressão, em pequeno número (5 a 15), no tronco (abdome e tórax inferior), surgindo na segunda semana de febre e durando 2 a 5 dias, em surtos.",
-      "autoria": "Photo Credit:\nContent Providers(s): CDC/Armed Forces Institute of Pathology, Charles N. Farmer · Public domain",
+      "autoria": "Photo Credit: Content Providers(s): CDC/Armed Forces Institute of Pathology, Charles N. Farmer · Public domain",
       "sha256": "f06335b507bd4b77edf2ff6d1dd22c921de51c268156e49b269bf11ad8442521",
       "ext": "jpg"
     }
@@ -24978,7 +25290,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/26/Kaposi%27s_sarcoma_lesion.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kaposi%27s_sarcoma_lesion.jpg",
       "legenda": "Sarcoma de Kaposi: Lesões vasculares violáceas, vermelho-escuras ou acastanhadas (em pele escura, mais escuras e menos vermelhas), maculares, em placa ou nodulares, indolores, únicas ou múltiplas, no tronco, membros inferiores, face, palato e gengiva;",
-      "autoria": "Photo Credit:\nContent Providers: CDC/ Dr. Steve Kraus · Public domain",
+      "autoria": "Photo Credit: Content Providers: CDC/ Dr. Steve Kraus · Public domain",
       "sha256": "bf4eb34d6177bbb35a6886fc32f5367615f5434341102fe6ba62545f34c885eb",
       "ext": "jpg"
     },
@@ -24989,7 +25301,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/d5/Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Kaposi%E2%80%99s_sarcoma_intraoral_AIDS_072_lores.jpg",
       "legenda": "Sarcoma de Kaposi: Lesões vasculares violáceas, vermelho-escuras ou acastanhadas (em pele escura, mais escuras e menos vermelhas), maculares, em placa ou nodulares, indolores, únicas ou múltiplas, no tronco, membros inferiores, face, palato e gengiva;",
-      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S.\nContent Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
+      "autoria": "Photo Credit: Sol Silverman, Jr., D.D.S. Content Providers: CDC/ Sol Silverman, Jr., D.D.S., University of California, S · Public domain",
       "sha256": "db86a72467bb10db1e5a7f3e1c71a3beac01ccd376a4edc0bb8434681deb3015",
       "ext": "jpg"
     },
@@ -25858,6 +26170,137 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/sindrome-de-angelman": [
+    {
+      "id": "wc-sindrome-de-angelman-g1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/bb/5-year-old_Mexican_girl_with_Angelman_syndrome_%28cropped%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:5-year-old_Mexican_girl_with_Angelman_syndrome_(cropped).png",
+      "legenda": "Síndrome de Angelman: riso fácil e frequente, boca larga, protrusão de língua e mãos em flexão — a herança da deleção materna 15q11-q13. («5-year-old Mexican girl with Angelman syndrome (cropped)», Wikimedia Commons)",
+      "autoria": "Yokoyama-Rebollar E, Ruiz-Herrera A, Lieberman-Hernández E, Del Castillo-Ruiz V, · CC BY 4.0",
+      "sha256": "f6eb107f0c2b697872d6e4e823e3297580a5b747c5eff711a9e6e873c2068925",
+      "ext": "png"
+    },
+    {
+      "id": "wc-sindrome-de-angelman-g4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/cc/Happy_Puppet_Syndrome_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Happy_Puppet_Syndrome_2.jpg",
+      "legenda": "Riso imotivado e protrusão de língua, a imagem que deu à síndrome de Angelman o antigo nome de marionete feliz. («Happy Puppet Syndrome 2», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "b8ad21268b66251caca1f1eab8a38b4b1d686ef8015c5b7dd9c95a95b0b15ffe",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-beckwith-wiedemann": [
+    {
+      "id": "wc-sindrome-de-beckwith-wiedemann-g5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Hypoglycemia%2C_Neonatal_Macroglossia%2C_Visceromegaly_and_Omphalocele_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hypoglycemia,_Neonatal_Macroglossia,_Visceromegaly_and_Omphalocele_1.jpg",
+      "legenda": "Macroglossia neonatal na síndrome de Beckwith-Wiedemann: a língua não cabe na boca. («Hypoglycemia, Neonatal Macroglossia, Visceromegaly and Omphalocele 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "50a307d186d2c0c566177c020d9e5064f4eaa68fa1d298dbb577196e0dabbca6",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-beckwith-wiedemann-g7",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Hypoglycemia%2C_Neonatal_Macroglossia%2C_Visceromegaly_and_Omphalocele_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Hypoglycemia,_Neonatal_Macroglossia,_Visceromegaly_and_Omphalocele_3.jpg",
+      "legenda": "Beckwith-Wiedemann: macroglossia e onfalocele no mesmo recém-nascido. («Hypoglycemia, Neonatal Macroglossia, Visceromegaly and Omphalocele 3», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "91b9f2c96adc98e6d238bad354f0295f58abae5603c8aca819290cbfcbe14bdb",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-beckwith-wiedemann-g3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/6/62/Examples_of_findings_in_Beckwith%E2%80%93Wiedemann_syndrome%2C_original.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Examples_of_findings_in_Beckwith%E2%80%93Wiedemann_syndrome,_original.png",
+      "legenda": "Achados de Beckwith-Wiedemann: macroglossia, hemi-hipertrofia, nevo flâmeo na fronte, sulcos no lóbulo da orelha e defeito da parede abdominal. («Examples of findings in Beckwith–Wiedemann syndrome, original», Wikimedia Commons)",
+      "autoria": "Wang R, Xiao Y, Li D, Hu H, Li X, Ge T · CC BY 4.0",
+      "sha256": "967baeb50201e8ee86e773ef1a4555bfbf6c8478fe0b0d52801b9fe00deaec84",
+      "ext": "png"
+    }
+  ],
+  "sinais/sindrome-de-cornelia-de-lange": [
+    {
+      "id": "wc-sindrome-de-cornelia-de-lange-g3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fb/De_Lange_Syndrome_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:De_Lange_Syndrome_3.jpg",
+      "legenda": "Síndrome de Cornelia de Lange: sinofre, sobrancelhas arqueadas, cílios longos, filtro longo e lábio superior fino com comissuras para baixo. («De Lange Syndrome 3», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "98515f4e21200cef10d9363b3f71122ca22da4d87c41d7b4c6db9135a162fcdd",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-cornelia-de-lange-g10",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/fd/%D7%99%D7%93%D7%99%D7%99%D7%9D_%D7%95%D7%A8%D7%92%D7%9C%D7%99%D7%99%D7%9D_%D7%90%D7%95%D7%A4%D7%99%D7%99%D7%A0%D7%99%D7%95%D7%AA.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:%D7%99%D7%93%D7%99%D7%99%D7%9D_%D7%95%D7%A8%D7%92%D7%9C%D7%99%D7%99%D7%9D_%D7%90%D7%95%D7%A4%D7%99%D7%99%D7%A0%D7%99%D7%95%D7%AA.png",
+      "legenda": "Mãos e pés na síndrome de Cornelia de Lange: mãos pequenas, clinodactilia do quinto dedo, polegar de implantação proximal e sindactilia dos pés. («ידיים ורגליים אופייניות», Wikimedia Commons)",
+      "autoria": "האגודה הישראלית לקידום המודעות והטיפול · CC BY-SA 4.0",
+      "sha256": "783ee24aa4deeac109d1c877ac984685998b374ea24f27a8b8d8cbce78c967ab",
+      "ext": "png"
+    }
+  ],
+  "sinais/sindrome-de-digeorge": [
+    {
+      "id": "wc-sindrome-de-digeorge-g1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/cb/DiGeorge_syndrome1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DiGeorge_syndrome1.jpg",
+      "legenda": "Fácies da deleção 22q11.2: face alongada, fendas palpebrais estreitas, nariz bulboso com ponta larga e boca pequena. («DiGeorge syndrome1», Wikimedia Commons)",
+      "autoria": "Prof Victor Grech · CC BY-SA 3.0",
+      "sha256": "95384f02acf63b17039340480ce2511e4fc25af02853290507beb54f53294869",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-digeorge-g2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/2/27/DiGeorge_syndrome2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:DiGeorge_syndrome2.jpg",
+      "legenda": "Síndrome de DiGeorge: hipertelorismo discreto, nariz tubular e orelhas pequenas de implantação baixa. («DiGeorge syndrome2», Wikimedia Commons)",
+      "autoria": "Prof Victor Grech · CC BY-SA 3.0",
+      "sha256": "aefa41b7bb7081abde0cb30fb72122700f2d8d575c0c1db9bfa45d5d1799fa90",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-gorlin": [
+    {
+      "id": "dn-gen-gorlin2",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/gorlin2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/basal-cell-naevus-syndrome",
+      "legenda": "Pits palmares na síndrome de Gorlin: pequenas depressões puntiformes na palma, critério maior do diagnóstico. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "0ca3f0e9ccead6796e0517b4335cef832a0f0734f103c3618f2de2117498bc33",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-gorlin1",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/systemic/gorlin1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/basal-cell-naevus-syndrome",
+      "legenda": "Múltiplos carcinomas basocelulares e cicatrizes de exérese em paciente jovem com síndrome do nevo basocelular. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "1c0aa1cac09d266337121b961978ddbe8e4e9e9e977c7e24f949ef8fe5994a73",
+      "ext": "jpg"
+    }
+  ],
   "sinais/sindrome-de-horner": [
     {
       "id": "wc-miosis-jpg",
@@ -25879,6 +26322,65 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Síndrome de Horner: Ptose leve (1 a 2 mm) com elevação da pálpebra inferior (olho \"pequeno\"), miose com anisocoria maior no escuro (a pupila afetada dilata devagar — retardo de dilatação), anidrose facial ipsilateral e, se congênita, heterocromia de íris.",
       "autoria": "Davplast · CC BY-SA 4.0",
       "sha256": "e0b49b1919f2cc4fdc9835945bf803306eef4b1fdd1d80993781c8fb78ca8226",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-poland": [
+    {
+      "id": "wc-sindrome-de-poland-g6",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/f/f8/PolandSydromePec.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PolandSydromePec.jpg",
+      "legenda": "Síndrome de Poland: ausência da porção esternocostal do peitoral maior à direita, com perda da prega axilar anterior. («PolandSydromePec», Wikimedia Commons)",
+      "autoria": "Karlo J Lizarraga and Antonio AF De Salles · CC BY 2.5",
+      "sha256": "d87f95d2a2a51d4eeae08e6d6cf7c0175e7b50b3046cd7023cf77d1723f17c86",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-poland-g5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/8/8a/PolandSydromeHand.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:PolandSydromeHand.jpg",
+      "legenda": "Simbraquidactilia na síndrome de Poland: dedos curtos e unidos na mão do mesmo lado do defeito peitoral. («PolandSydromeHand», Wikimedia Commons)",
+      "autoria": "Karlo J Lizarraga and Antonio AF De Salles · CC BY 2.5",
+      "sha256": "5ba6a0d8c8922649607f711dbfff686012fc8995cdf9b4f86571994d8dcd3e31",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-poland-g9",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Showing_Poland_syndrome_clearly.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Showing_Poland_syndrome_clearly.jpg",
+      "legenda": "Poland: assimetria do tórax pela agenesia do peitoral maior esquerdo. («Showing Poland syndrome clearly», Wikimedia Commons)",
+      "autoria": "GJvandermeulen · CC BY-SA 3.0",
+      "sha256": "2f95c17ea6c43caeef935e617acfe2838d3a45a8b1811c913a816eb5e906c295",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-rett": [
+    {
+      "id": "wc-sindrome-de-rett-g11",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/b/b7/Rett_girl_with_stereotyped_hands_movements.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rett_girl_with_stereotyped_hands_movements.jpg",
+      "legenda": "Estereotipia manual da síndrome de Rett: movimentos de lavar e torcer as mãos na linha média, depois da perda do uso funcional delas. («Rett girl with stereotyped hands movements», Wikimedia Commons)",
+      "autoria": "Ingridplg · CC BY-SA 4.0",
+      "sha256": "6d413e4a4f27eff429d66e925379ac4efe60d90bf9f4bfdd93780c6c0d48f34f",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-rett-g9",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/7/75/Rett_Girl_Mouthing.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Rett_Girl_Mouthing.jpg",
+      "legenda": "Menina com síndrome de Rett levando a mão à boca: estereotipia de mouthing, com perda da preensão intencional. («Rett Girl Mouthing», Wikimedia Commons)",
+      "autoria": "Senorita666 · CC BY-SA 4.0",
+      "sha256": "8bd8d24af73ebc7c589a99de70bdd5ebc1449ca8a89d47b5b721b25e0b7ba93d",
       "ext": "jpg"
     }
   ],
@@ -25936,6 +26438,113 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Máculas escuras que viram bolhas e descolam a pele em lençol, com erosões na boca, olhos e genitais, dias após um remédio novo — a emergência dermatológica que exige suspender a droga e internar. (DermNet: Toxic epidermal necrolysis)",
       "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
       "sha256": "4e76351e5bd86d47b32ece3c64934167e35baa9514faa134adab3163aa3ddc9a",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-treacher-collins": [
+    {
+      "id": "wc-sindrome-de-treacher-collins-g1",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/5/59/TeacherCollinSide.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:TeacherCollinSide.jpg",
+      "legenda": "Treacher Collins de perfil: hipoplasia malar e mandibular, micrognatia e orelha malformada. («TeacherCollinSide», Wikimedia Commons)",
+      "autoria": "Leena Goel, Santosh Kumar Bennur, Shweta Jambhale · CC BY 2.0",
+      "sha256": "10a036fd55870e70c354632fa487ad2c96a7e4b79ad4fc5f80804e827b0ca792",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-treacher-collins-g2",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/32/TeacherCollinsFront.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:TeacherCollinsFront.jpg",
+      "legenda": "Treacher Collins de frente: fendas palpebrais oblíquas para baixo e para fora, hipoplasia dos zigomáticos e da mandíbula. («TeacherCollinsFront», Wikimedia Commons)",
+      "autoria": "Leena Goel, Santosh Kumar Bennur, Shweta Jambhale · CC BY 2.0",
+      "sha256": "147d0ea656551cef2777a940b86d4a3cea37a66dbfe9951ca9d0a28e396d009a",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-de-treacher-collins-g3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Treacher_Collins_Syndrome_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Treacher_Collins_Syndrome_1.jpg",
+      "legenda": "Treacher Collins: inclinação antimongoloide das fendas palpebrais, coloboma da pálpebra inferior e face estreita. («Treacher Collins Syndrome 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "99fb51e1ea691b376dbf3dfe9553c9edae9d2398f4c7700c6525d614648f6ae1",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-de-waardenburg": [
+    {
+      "id": "dn-gen-waardenburg-1",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/waardenburg-1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/waardenburg-syndrome",
+      "legenda": "Mecha branca frontal na síndrome de Waardenburg: área de cabelo sem melanócitos na linha média. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d3aef5c7a88b76249927483d0a0e70a027816ce0a38c2d80afd5c2407fa1dd6a",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-waardenburg-2",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/waardenburg-2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/waardenburg-syndrome",
+      "legenda": "Heterocromia de íris na síndrome de Waardenburg, que se associa a surdez neurossensorial congênita. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5589e231982b63da084fc66d1f555eca762580428a002d8d63b9678bd39e20e0",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-do-miado-do-gato": [
+    {
+      "id": "wc-sindrome-do-miado-do-gato-g9",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Criduchat.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Criduchat.jpg",
+      "legenda": "Síndrome do miado do gato em diferentes idades: microcefalia, face arredondada no lactente, hipertelorismo e pregas epicânticas. («Criduchat», Wikimedia Commons)",
+      "autoria": "see above · CC BY 2.0",
+      "sha256": "12582f3cd17d055fe009fa3b793fc13cddc1015f3c58cab9a53a71fcec980794",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-do-miado-do-gato-g3",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/3/36/Cri_du_Chat_1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Cri_du_Chat_1.jpg",
+      "legenda": "Deleção 5p: face redonda, hipertelorismo e micrognatia; o choro agudo de miado é o sinal que dá o nome. («Cri du Chat 1», Wikimedia Commons)",
+      "autoria": "Sydney S. Gellis and Murray Feingold · Public domain",
+      "sha256": "f08f085320a14aff0ffb533bce5ece1cf2cef4b3831b2fab769bbe8e50f2f5ac",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/sindrome-do-x-fragil": [
+    {
+      "id": "wc-sindrome-do-x-fragil-g4",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/a/ab/Fragx-1.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Fragx-1.jpg",
+      "legenda": "Menino com síndrome do X frágil: face alongada, fronte ampla e orelhas grandes e proeminentes. («Fragx-1», Wikimedia Commons)",
+      "autoria": "Peter Saxon · CC BY-SA 4.0",
+      "sha256": "04806aca19532522b49b2550a2003e42ac3e1704b82356974a28da51482e1e4b",
+      "ext": "jpg"
+    },
+    {
+      "id": "wc-sindrome-do-x-fragil-g5",
+      "tipo": "imagem",
+      "fonte": "wikimedia-commons",
+      "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Fragx-2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Fragx-2.jpg",
+      "legenda": "Síndrome do X frágil: orelhas grandes em abano e face alongada, traços que ficam mais nítidos depois da puberdade. («Fragx-2», Wikimedia Commons)",
+      "autoria": "Peter Saxon · CC BY-SA 4.0",
+      "sha256": "5b0cc59f7d242b2da20c732d9f8e87e39949c8a8a29264e6f786ba5cb71d9140",
       "ext": "jpg"
     }
   ],
@@ -26137,6 +26746,41 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "legenda": "Tórax raquítico com sulco de Harrison e rosário costal — fotografia histórica. («Before and after photographs for therapy for rickets Wellcome L0074524», Wikimedia Commons)",
       "autoria": "autor não informado · CC BY 4.0",
       "sha256": "cfeeee9c8bb2a6a0cf55060d0a5651bd9fda596b27c0e9ce2b7c2ef506869288",
+      "ext": "jpg"
+    }
+  ],
+  "sinais/telangiectasia-hemorragica-hereditaria": [
+    {
+      "id": "dn-gen-hht1",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/hht1.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hereditary-haemorrhagic-telangiectasia",
+      "legenda": "Telangiectasias puntiformes e maculares nos lábios e na língua: a pista à inspeção da telangiectasia hemorrágica hereditária. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "390b327d44cc5656114624eeadb54e6f9330540c9ad9c49c11598d9302264b09",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-hht2",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/hht2.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hereditary-haemorrhagic-telangiectasia",
+      "legenda": "Telangiectasias nas polpas digitais na doença de Rendu-Osler-Weber, que somem à digitopressão. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5826995196b62dafa44c3e61609cee043740256c7b424bc647021e9d122a84a6",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-hht3",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/vascular/hht3.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/hereditary-haemorrhagic-telangiectasia",
+      "legenda": "Telangiectasia hemorrágica hereditária: múltiplas telangiectasias na mucosa labial. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "efbcffa35dac693a99afb4405810214a283df9c24b93ffa31956114dfc067e42",
       "ext": "jpg"
     }
   ],
@@ -26599,7 +27243,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://www.youtube.com/watch?v=sHJYEAkWi9o",
       "urlDoCaso": "https://www.youtube.com/watch?v=sHJYEAkWi9o",
       "legenda": "Tremor de repouso em \"contar dinheiro\" (pill-rolling): 4 a 6 Hz, com a mão apoiada e relaxada, que some ao iniciar o movimento.",
-      "autoria": "Canal Clinical Snippets-By Dr. Sourya Acharya-DMIHER",
+      "autoria": "Canal Clinical Snippets-By Dr. Sourya Acharya-AIHER",
       "videoId": "sHJYEAkWi9o",
       "miniatura": "https://i.ytimg.com/vi/sHJYEAkWi9o/hqdefault.jpg"
     },
@@ -27888,6 +28532,30 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "ext": "jpg"
     }
   ],
+  "sinais/xeroderma-pigmentoso": [
+    {
+      "id": "dn-gen-xeroderma-pigmentosum-07",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/xeroderma-pigmentosum-07.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/xeroderma-pigmentosum",
+      "legenda": "Xeroderma pigmentoso: pele seca, descamativa e salpicada de lentigos nas áreas fotoexpostas, desde a infância. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "d962b00ec72c8dc26040cbfbf9ade2ae817eb8e4f09499e2b5d7e0f87808d516",
+      "ext": "jpg"
+    },
+    {
+      "id": "dn-gen-xeroderma-pigmentosum-11",
+      "tipo": "imagem",
+      "fonte": "dermnet",
+      "urlOrigem": "https://dermnetnz.org/assets/Uploads/xeroderma-pigmentosum-11.jpg",
+      "urlDoCaso": "https://dermnetnz.org/topics/xeroderma-pigmentosum",
+      "legenda": "Carcinoma espinocelular no lábio superior em paciente jovem com xeroderma pigmentoso: o reparo do DNA falha e o sol produz câncer décadas antes do esperado. (DermNet)",
+      "autoria": "© DermNet — Dr. Amanda Oakley e equipe editorial",
+      "sha256": "5430691f8afa6c672e5cba3dbb3e2eba94fc9ce2735fe7ddd2a0cc64605d30a5",
+      "ext": "jpg"
+    }
+  ],
   "subxifoide-pericardio/coracao-oscilante": [
     {
       "id": "tpa-cardiac-tamponade-with-swinging-heart",
@@ -28792,7 +29460,7 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
       "urlOrigem": "https://upload.wikimedia.org/wikipedia/commons/d/de/Ultrasonography_of_common_bile_duct_stone%2C_with_arrow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
       "urlDoCaso": "https://commons.wikimedia.org/wiki/File:Ultrasonography_of_common_bile_duct_stone,_with_arrow.jpg",
       "legenda": "Cálculo no colédoco com dilatação a montante. («Ultrasonography of common bile duct stone, with arrow», Wikimedia Commons)",
-      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest:  None\nMikael Häggström, M.D.Consent note: Wr · CC0",
+      "autoria": "Mikael Häggström, M.D. Author info - Reusing images- Conflicts of interest: None Mikael Häggström, M.D.Consent note: Wr · CC0",
       "sha256": "a045e7ff0a9eaece2b6c843ee1d35f83d9afc4bbc1d6e1baa73d7ddf3d18d1a8",
       "ext": "jpg"
     },
@@ -29084,4 +29752,4 @@ export const ACERVO_DE_MIDIA: Record<string, MidiaClinica[]> = {
 }
 
 /** Quando o acervo foi gerado pela última vez. */
-export const GERADO_EM: string | null = "2026-09-20"
+export const GERADO_EM: string | null = "2026-10-02"

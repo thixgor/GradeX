@@ -97,7 +97,7 @@ export const CASOS_TC_NEURO: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Déficit súbito com cefaleia e vômito sobre um quadro subagudo de semanas: a pergunta é se há sangramento e se ele tem aspecto de hemorragia primária.',
       pergunta: 'TC de crânio sem contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Hematoma talamocapsular direito',
+      achado: 'Hematoma intraparenquimatoso talamocapsular direito',
       veredito: 'Hematoma intraparenquimatoso talamocapsular direito com edema, efeito de massa e componente nodular suspeito',
       correlacao: 'O déficit sensitivo e motor proporcionado do lado esquerdo aponta para o tálamo e a cápsula interna direitos, e a TC mostra ali o sangue hiperdenso. O que não fecha é o contexto: paciente sem hipertensão, com semanas de cefaleia matinal e papiledema, e um hematoma com edema maior que o esperado para três horas. Sangramento em topografia típica com história atípica pede busca de lesão subjacente — aqui, um glioma de alto grau.',
       distratores: [
@@ -203,7 +203,7 @@ export const CASOS_TC_NEURO: Record<string, ConteudoCasoTC> = {
       ],
       pedido: 'Piora neurológica focal dias após uma derivação ventricular: a pergunta é se houve complicação hemorrágica ou falha da drenagem.',
       pergunta: 'TC de crânio sem contraste. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Hematoma extradural subagudo',
+      achado: 'Hematoma extradural subagudo pós-derivação',
       veredito: 'Hematoma extradural subagudo biconvexo de densidade mista após descompressão ventricular',
       correlacao: 'O paciente melhorou com a derivação e voltou a piorar dias depois, com sinais focais contralaterais e anisocoria discreta. A drenagem rápida de ventrículos dilatados deixa a dura sem apoio e favorece o descolamento com sangramento. A coleção é biconvexa, limitada pelas suturas, e mistura sangue hiperdenso com componente isodenso — hematoma extradural de alguns dias.',
       distratores: [
