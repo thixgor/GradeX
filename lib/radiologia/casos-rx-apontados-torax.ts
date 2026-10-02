@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — tórax. Pacientes fictícios. */
 export const CASOS_RX_TORAX: Record<string, ConteudoCaso> = {
@@ -133,6 +133,14 @@ export const CASOS_RX_TORAX: Record<string, ConteudoCaso> = {
         'A corcova de Hampton é um infarto pulmonar: um êmbolo fecha um ramo arterial periférico e o pulmão daquele território morre e sangra. Como o território de uma artéria tem forma de cone com base na pleura, a opacidade fica em cunha, com a ponta arredondada apontando para o hilo. Ela demora semanas a meses para sumir e encolhe da periferia para o centro, como um cubo de gelo derretendo.',
         'O sinal é específico, mas pouco sensível: a radiografia normal não exclui embolia.'),
     },
+    apontamentosProprios: [
+      p(0, 0.73, 0.31, 135, 'Cardiodesfibrilador implantável', 'Gerador do aparelho no subcutâneo do tórax esquerdo.',
+        'O cardiodesfibrilador implantável monitora o ritmo e dá um choque quando detecta taquicardia ou fibrilação ventricular. Ele é indicado em miocardiopatia com fração de ejeção muito baixa, como a desta paciente. Sua presença diz ao leitor que o coração é doente e que o paciente tem alto risco de morte súbita.'),
+      p(0, 0.64, 0.605, -90, 'Eletrodo de choque no ventrículo direito', 'Segmento grosso do eletrodo, a mola de choque, dentro do ventrículo direito.',
+        'O eletrodo do cardiodesfibrilador desce pela veia cava superior e se fixa no ápice do ventrículo direito. O trecho mais grosso é a mola por onde passa o choque. Na radiografia, confira se a ponta está no ápice do ventrículo e se o fio não está fraturado ou deslocado.'),
+      p(0, 0.82, 0.66, 0, 'Cardiomegalia', 'Contorno esquerdo do coração muito afastado da linha média.',
+        'O coração aumentado da miocardiopatia dilatada é a base de tudo neste caso: o débito baixo deixa o sangue parado nas veias das pernas, o que favorece a trombose, e enfraquece a circulação brônquica, o que transforma uma embolia em infarto pulmonar.'),
+    ],
     achados: [
       'Opacidade periférica em cunha no lobo superior direito, com base pleural — corcova de Hampton.',
       'Cardiomegalia.',
@@ -185,6 +193,13 @@ export const CASOS_RX_TORAX: Record<string, ConteudoCaso> = {
         'O tumor de Pancoast é um câncer de pulmão que nasce no sulco superior, o ápice, e invade a parede torácica, as primeiras costelas, o plexo braquial e a cadeia simpática. Por isso dá dor no ombro e no braço, fraqueza da mão e síndrome de Horner, muitas vezes antes de tosse. Na radiografia, o ápice fica escondido atrás da clavícula e das costelas, e uma massa pequena ou um espessamento apical assimétrico podem ser o único sinal.',
         'Espessamento pleural apical assimétrico maior que 5 mm em fumante com dor no ombro: peça TC.'),
     },
+    apontamentosProprios: [
+      p(0, 0.66, 0.17, -45, 'Ápice esquerdo normal', 'O ápice oposto, limpo, serve de comparação.',
+        'O ápice é a região mais difícil de ler na radiografia de tórax, porque clavícula, primeira costela e partes moles se sobrepõem. A melhor estratégia é comparar um lado com o outro: aqui o ápice esquerdo está transparente, o que torna evidente a opacidade do lado direito.',
+        'Leia sempre os ápices em conjunto, lado a lado.'),
+      p(0, 0.71, 0.60, 0, 'Coração e mediastino normais', 'Silhueta cardíaca de tamanho normal e mediastino sem alargamento.',
+        'Mediastino sem alargamento sugere que não há grandes linfonodos visíveis, mas a radiografia é pouco sensível para isso. O estadiamento do tumor de Pancoast depende da TC, da ressonância do ápice e do PET, que mostram linfonodos e invasão da parede.'),
+    ],
     achados: [
       'Massa de 3 cm no ápice do pulmão direito.',
       'Coração de tamanho normal e contornos mediastinais normais.',
@@ -198,13 +213,14 @@ export const CASOS_RX_TORAX: Record<string, ConteudoCaso> = {
     conduta: 'TC de tórax e ressonância do ápice para avaliar plexo braquial e vasos, biópsia, estadiamento com PET e tratamento com quimiorradioterapia seguida de cirurgia quando ressecável.',
     vinheta: {
       cenario: 'Ambulatório de clínica médica',
-      identificacao: 'Homem de 59 anos, mecânico.',
+      identificacao: 'Mulher de 59 anos, costureira.',
       queixa: 'Dor no ombro direito que desce pelo braço há quatro meses.',
-      historia: 'Há quatro meses tem dor no ombro direito que desce pela parte interna do braço até o dedo mínimo. Fez fisioterapia para bursite sem melhora. Há um mês nota fraqueza na mão direita para segurar ferramentas e a esposa percebeu a pálpebra direita mais caída.',
+      historia: 'Há quatro meses tem dor no ombro direito que desce pela parte interna do braço até o dedo mínimo. Fez fisioterapia para bursite sem melhora. Há um mês nota fraqueza na mão direita para segurar a tesoura e o marido percebeu a pálpebra direita mais caída.',
       antecedentes: [
         'Pessoais: hipertensão',
         'Pessoais: DPOC leve',
         'Familiares: irmão com câncer de pulmão',
+        'Gestacionais: três gestações, menopausa aos 50 anos',
         'Hábitos: tabagista de 50 maços-ano',
       ],
       vitais: { pa: '136 × 84 mmHg', fc: '80 bpm', fr: '16 irpm', satO2: '95% em ar ambiente', temp: '36,5 °C' },
@@ -255,29 +271,29 @@ export const CASOS_RX_TORAX: Record<string, ConteudoCaso> = {
     conduta: 'Sorologia para equinococo, ultrassom ou TC do fígado, albendazol perioperatório e ressecção cirúrgica conservadora do cisto com preservação do pulmão.',
     vinheta: {
       cenario: 'Ambulatório de cirurgia torácica',
-      identificacao: 'Mulher de 26 anos, pastora de cabras no interior.',
+      identificacao: 'Menino de 9 anos, filho de criadores de cabras no interior.',
       queixa: 'Tosse seca e dor no lado direito do peito há três meses.',
-      historia: 'Há três meses tem tosse seca e dor surda no lado direito do tórax. Uma radiografia mostrou uma bola no pulmão direito. Tratada com antibiótico, não melhorou e a imagem não mudou de tamanho. Nega febre alta, emagrecimento e escarro com sangue.',
+      historia: 'Há três meses tem tosse seca e reclama de dor surda no lado direito do peito. Uma radiografia mostrou uma bola no pulmão direito. Tratado com antibiótico, não melhorou e a imagem não mudou de tamanho. A mãe nega febre alta, emagrecimento e escarro com sangue.',
       antecedentes: [
-        'Pessoais: sem doenças crônicas',
-        'Pessoais: nunca fumou',
+        'Pessoais: sem doenças crônicas, vacinação em dia',
+        'Pessoais: brinca com os cães da fazenda e bebe água de poço',
         'Familiares: tio operado de cisto no fígado',
-        'Hábitos: cuida de cabras e ovelhas, convive com cães que comem vísceras',
+        'Hábitos: ajuda os pais com as cabras e ovelhas; os cães comem vísceras dos animais abatidos',
       ],
-      vitais: { pa: '112 × 70 mmHg', fc: '82 bpm', fr: '16 irpm', satO2: '97% em ar ambiente', temp: '36,8 °C' },
+      vitais: { pa: '100 × 62 mmHg', fc: '96 bpm', fr: '22 irpm', satO2: '97% em ar ambiente', temp: '36,8 °C' },
       exame: [
         'Murmúrio vesicular reduzido no terço médio direito',
         'Sem baqueteamento digital',
         'Eosinofilia leve',
         'Sorologia para equinococo positiva',
       ],
-      pedido: 'Nódulo pulmonar redondo que não muda com antibiótico em jovem não fumante que convive com cães e ovelhas: a pergunta é a natureza da lesão.',
+      pedido: 'Nódulo pulmonar redondo que não muda com antibiótico em criança que convive com cães e ovelhas: a pergunta é a natureza da lesão.',
       pergunta: 'Radiografias de tórax seriadas. Qual é o achado que responde à pergunta clínica?',
       achado: 'Cisto hidático pulmonar',
       veredito: 'Cisto hidático pulmonar direito tratado com ressecção',
       correlacao: 'O ciclo do Echinococcus passa pelo cão que come vísceras de ovelha e chega ao homem pelos ovos. Depois do fígado, o pulmão é o órgão mais acometido. O cisto cheio de líquido forma uma bola lisa e homogênea, que não muda com antibiótico. A sorologia e o tio com cisto no fígado reforçam o diagnóstico.',
       distratores: [
-        d('Adenocarcinoma pulmonar periférico', 'É a principal hipótese para nódulo em adulto fumante, mas tem contorno espiculado ou lobulado e cresce, em paciente mais velho.'),
+        d('Adenocarcinoma pulmonar periférico', 'É a principal hipótese para nódulo em adulto fumante, com contorno espiculado ou lobulado e crescimento progressivo, e é excepcional numa criança de 9 anos.'),
         d('Abscesso pulmonar com nível líquido', 'Tem parede espessa e nível hidroaéreo, com febre alta e escarro fétido, e melhora com antibiótico prolongado. O contorno liso e homogêneo não combina.'),
         d('Hamartoma pulmonar com calcificação', 'É nódulo benigno liso, mas costuma ter gordura e calcificação em pipoca e não causa eosinofilia nem sorologia positiva. Também não cresce em área endêmica com cães.'),
       ],

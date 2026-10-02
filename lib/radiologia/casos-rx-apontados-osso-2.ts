@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — fraturas do membro inferior e da bacia. Pacientes fictícios. */
 export const CASOS_RX_OSSO_2: Record<string, ConteudoCaso> = {
@@ -70,6 +70,12 @@ export const CASOS_RX_OSSO_2: Record<string, ConteudoCaso> = {
       'fracture line': r('Traço na incidência axial', 'Traço atravessando o calcâneo na incidência de Harris.',
         'A incidência axial, ou de Harris, mostra o calcâneo de baixo para cima e revela traços que no perfil se sobrepõem. Ela mostra também o alargamento do calcâneo e o desvio em varo ou valgo. A TC completa a avaliação da articulação subtalar.'),
     },
+    apontamentosProprios: [
+      p(0, 0.55, 0.38, -60, 'Faceta posterior do calcâneo', 'Superfície que articula com o tálus, referência do ângulo de Böhler.',
+        'O ângulo de Böhler é formado por duas linhas no perfil: uma do ponto mais alto da tuberosidade ao ponto mais alto da faceta posterior, e outra deste ponto ao processo anterior. O normal fica entre 20 e 40 graus. Quando a faceta posterior afunda, o ângulo diminui, sinal de fratura articular.'),
+      p(0, 0.78, 0.45, -30, 'Tuberosidade do calcâneo', 'Parte posterior do calcâneo, onde se insere o tendão de Aquiles.',
+        'A tuberosidade é o ponto de apoio do calcanhar e de inserção do Aquiles. Fraturas que a separam do corpo do calcâneo podem ser puxadas pelo tendão e ameaçar a pele de trás do calcanhar, uma urgência ortopédica.'),
+    ],
     achados: [
       'Fratura fragmentada do calcâneo direito com desvio mínimo dos fragmentos.',
       'Traço de fratura evidente na incidência axial.',

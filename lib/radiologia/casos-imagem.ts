@@ -25,6 +25,8 @@ export interface ApontamentoCaso {
   explicacao: string
   dica?: string
   rotuloOriginal: string
+  /** Seta acrescentada pela equipe, sem rótulo do autor. */
+  proprio?: boolean
   pontos: { corte: number; x: number; y: number; rotacao: number }[]
 }
 
@@ -109,6 +111,22 @@ export function montarCaso(m: CasoManifesto, c: ConteudoCaso, extras?: Explicaco
       const pontos = anotacao.pontos.map(([corte, x, y, rotacao]) => ({ corte, x, y, rotacao }))
       for (const p of pontos) contagem.set(p.corte, (contagem.get(p.corte) ?? 0) + 1)
       apontamentos.push({ id: `s${k}a${i}`, serie: k, ...detalhe, rotuloOriginal: anotacao.rotulo, pontos })
+    })
+    ;(c.apontamentosProprios ?? []).forEach((a, i) => {
+      if (a.serie !== k) return
+      const corte = a.corte ?? 0
+      contagem.set(corte, (contagem.get(corte) ?? 0) + 1)
+      apontamentos.push({
+        id: `s${k}p${i}`,
+        serie: k,
+        nome: a.nome,
+        resumo: a.resumo,
+        explicacao: a.explicacao,
+        dica: a.dica,
+        rotuloOriginal: '',
+        proprio: true,
+        pontos: [{ corte, x: Math.round(a.x * s.largura), y: Math.round(a.y * s.altura), rotacao: a.rotacao ?? 0 }],
+      })
     })
     const corteInicial =
       [...contagem.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0])[0]?.[0] ?? Math.floor(s.totalFatias / 2)

@@ -8,7 +8,7 @@ import { resumosDaColecao } from '@/lib/radiologia/casos-imagem-paginas'
 export const metadata: Metadata = {
   title: 'Casos clínicos de Raio-X com apontamentos | Manual de Radiologia',
   description:
-    'Radiografias reais de tórax, abdome, pediatria e osso com as setas do autor traduzidas e comentadas uma a uma, organizadas por região e tema, com consulta completa, quiz, leitura do exame, armadilhas e conduta.',
+    'Radiografias reais de tórax, coração, abdome, pediatria e osso com as setas do autor traduzidas e comentadas uma a uma, mais as alterações que o autor não marcou, organizadas por região e tema, com consulta completa, quiz, leitura do exame, armadilhas e conduta.',
 }
 
 export default function CasosRXApontadosPage() {
@@ -16,7 +16,7 @@ export default function CasosRXApontadosPage() {
     <AreaRadiologia alvo="Casos clínicos de Raio-X com apontamentos">
       <CatalogoCasosImagem
         titulo="Casos de Raio-X com apontamentos"
-        descricao="Radiografias reais com as setas do autor do caso, cada uma traduzida e comentada: o que é, por que a imagem fica assim, como reconhecer sem a seta e onde engana. Organizados por região e tema, cada caso começa pela consulta inteira."
+        descricao="Radiografias reais com as setas do autor do caso, cada uma traduzida e comentada, e setas nossas nas alterações que ficaram sem marcação: o que é, por que a imagem fica assim, como reconhecer sem a seta e onde engana. Organizados por região e tema, cada caso começa pela consulta inteira."
         voltar={{ href: '/manual-clinico/radiologia/raio-x/casos', rotulo: 'Casos e alterações no Raio-X' }}
         modalidade="rx"
         rotaCatalogo="/manual-clinico/radiologia/raio-x/casos-com-apontamentos"

@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — coração, aorta e abdome. Pacientes fictícios. */
 export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
@@ -73,6 +73,13 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
         'Normalmente o arco aórtico passa por cima do brônquio esquerdo e o botão aparece à esquerda da traqueia. No arco à direita, ele fica à direita e empurra a traqueia para a esquerda. Com ramificação em espelho, o arco à direita está fortemente associado a cardiopatias congênitas: cerca de um quarto dos pacientes com tetralogia de Fallot o tem. Se há arco à direita sem cardiopatia, o tipo mais comum é com subclávia esquerda aberrante.',
         'Procure o botão aórtico em toda radiografia: se não está à esquerda, olhe à direita da traqueia.'),
     },
+    apontamentosProprios: [
+      p(0, 0.58, 0.27, -30, 'Sem botão aórtico à esquerda', 'Onde o arco aórtico deveria aparecer, não há o botão habitual.',
+        'Na radiografia normal, o botão aórtico forma uma saliência arredondada à esquerda da traqueia, na altura da primeira e da segunda costelas. A ausência dele à esquerda, junto com uma saliência à direita, é a forma mais rápida de perceber o arco aórtico à direita.',
+        'Arco à direita com ramificação em espelho: procure cardiopatia congênita.'),
+      p(0, 0.48, 0.50, 180, 'Fios de esternotomia', 'Laços metálicos no esterno da cirurgia corretiva.',
+        'A correção total da tetralogia de Fallot é feita por esternotomia, com fechamento da comunicação interventricular e alargamento da via de saída do ventrículo direito. Os fios confirmam a cirurgia prévia e ajudam a interpretar o coração operado.'),
+    ],
     achados: [
       'Arco aórtico à direita da traqueia, com ramificação em espelho.',
       'Alterações pós-cirúrgicas de correção de tetralogia de Fallot.',
@@ -190,6 +197,12 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
         'A dissecção da aorta ascendente, tipo A de Stanford, é emergência cirúrgica porque pode romper para o pericárdio e causar tamponamento. O tratamento substitui ou reforça o segmento doente com um tubo ou uma prótese. Na radiografia de controle, o médico precisa reconhecer o dispositivo, ver se está na posição esperada e procurar complicações como derrame pleural, alargamento novo do mediastino e derrame pericárdico.',
         'Mediastino que alarga em radiografias seriadas após cirurgia aórtica pede TC urgente.'),
     },
+    apontamentosProprios: [
+      p(0, 0.72, 0.72, 0, 'Derrame pleural esquerdo em véu', 'Hemitórax esquerdo mais opaco e borrado na base, sem nível.',
+        'Com o paciente deitado ou semissentado, o derrame pleural se espalha atrás do pulmão e deixa o hemitórax inteiro mais acinzentado, como um véu, sem o menisco típico da radiografia em pé. Após cirurgia da aorta, derrame à esquerda pode ser sangue e deve ser acompanhado com radiografias e, se crescer, puncionado.'),
+      p(0, 0.455, 0.45, 180, 'Fios de esternotomia', 'Laços metálicos no esterno, da cirurgia aberta.',
+        'Os fios de aço fecham o esterno depois da esternotomia mediana, a via de acesso da cirurgia da aorta ascendente. Fios alinhados e inteiros indicam esterno estável; fio rompido ou deslocado com dor e secreção sugere deiscência ou infecção do esterno.'),
+    ],
     achados: [
       'Prótese metálica projetada sobre a aorta ascendente.',
       'Coleção pleural esquerda com opacidade em véu.',
@@ -228,6 +241,61 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
         d('Fios de esternotomia sem prótese', 'São os pontos metálicos no esterno que todo operado tem, mas não formam a estrutura tubular sobre a aorta ascendente. Aqui há os dois.'),
         d('Dissecção aórtica aguda não tratada', 'Mostraria mediastino alargado sem dispositivo metálico, com dor intensa e instabilidade, e não um paciente operado em recuperação.'),
         d('Valva aórtica mecânica isolada', 'Aparece como anel metálico pequeno na altura da valva, e não como prótese tubular ao longo da aorta ascendente. Ela fica na raiz, abaixo da prótese.'),
+      ],
+    },
+  },
+
+  'intussuscepcao-ileocolica': {
+    tema: 'Obstrução',
+    titulo: 'Intussuscepção ileocólica no adulto com obstrução do cólon',
+    resumo: 'Alças de intestino grosso muito dilatadas no centro do abdome, sem níveis hidroaéreos, e ausência de gás na ampola retal.',
+    protocolo: 'Radiografia simples de abdome AP em decúbito',
+    rotulos: {
+      'dilation of large-bowel loops': r('Alças do cólon dilatadas', 'Cólon distendido por gás, com as pregas que não cruzam toda a alça.',
+        'Na intussuscepção, um segmento do intestino entra no seguinte como um telescópio. No adulto, quase sempre há uma lesão que puxa o segmento para dentro, o ponto de tração: um tumor, um lipoma, um pólipo ou um divertículo de Meckel. O segmento invaginado obstrui a passagem e as alças antes dele se dilatam. O cólon se reconhece pela posição na periferia e pelas haustrações, pregas que não atravessam toda a largura da alça, ao contrário das pregas do delgado.',
+        'Intussuscepção no adulto é cirúrgica: procure o tumor que serviu de ponta.'),
+      'Absence of rectal air': r('Ausência de ar no reto', 'Ampola retal sem gás.',
+        'Sem passagem de conteúdo pelo segmento obstruído, o ar não chega ao reto. A ausência de gás no reto, com alças dilatadas antes do ponto de obstrução, sugere obstrução mecânica, e não íleo paralítico, em que o gás chega até o reto. A TC é o exame que confirma o diagnóstico, mostrando a imagem em alvo e o tumor.'),
+    },
+    achados: [
+      'Dilatação acentuada de alças do intestino grosso, predominando no centro do abdome.',
+      'Ausência de ar na ampola retal, sugerindo obstrução mecânica.',
+      'Sem níveis hidroaéreos nem pneumoperitônio nesta incidência.',
+      'Alterações degenerativas da coluna lombar.',
+    ],
+    armadilhas: [
+      'A radiografia não mostra a intussuscepção em si: a TC confirma e mostra a causa.',
+      'Diferente da criança, no adulto não se faz redução por enema, pelo risco de espalhar um tumor.',
+      'Ceco acima de 12 cm de diâmetro tem risco de perfuração.',
+    ],
+    conduta: 'Jejum, sonda nasogástrica, hidratação venosa, TC de abdome com contraste e cirurgia com ressecção do segmento e do ponto de tração, com estudo anatomopatológico.',
+    vinheta: {
+      cenario: 'Pronto-socorro',
+      identificacao: 'Mulher de 64 anos, aposentada.',
+      queixa: 'Barriga inchada, cólicas e sem evacuar nem eliminar gases há três dias.',
+      historia: 'Há dois meses tem cólicas abdominais que vêm e passam, com alternância entre diarreia e intestino preso, e perdeu 6 kg sem fazer dieta. Há três dias parou de evacuar e de eliminar gases, a barriga inchou muito e começou a vomitar. Notou sangue escuro misturado às fezes antes de parar de evacuar.',
+      antecedentes: [
+        'Pessoais: hipertensão',
+        'Pessoais: nunca fez colonoscopia',
+        'Familiares: irmão com câncer de intestino aos 58 anos',
+        'Hábitos: dieta pobre em fibras, sedentária',
+      ],
+      vitais: { pa: '128 × 78 mmHg', fc: '108 bpm', fr: '22 irpm', satO2: '96% em ar ambiente', temp: '37,4 °C' },
+      exame: [
+        'Abdome muito distendido e timpânico',
+        'Massa alongada e dolorosa palpável no flanco direito',
+        'Toque retal com ampola vazia e resto de sangue escuro',
+        'Anemia com hemoglobina de 9,8 g/dL',
+      ],
+      pedido: 'Distensão, parada de eliminação de gases e fezes, massa palpável e emagrecimento em idosa com história familiar de câncer de intestino: a pergunta é se há obstrução mecânica.',
+      pergunta: 'Radiografia de abdome. Qual é o achado que responde à pergunta clínica?',
+      achado: 'Obstrução mecânica do intestino grosso',
+      veredito: 'Obstrução do intestino grosso por intussuscepção ileocólica, provável tumor como ponto de tração',
+      correlacao: 'Emagrecimento, alteração do hábito intestinal, anemia e irmão com câncer de intestino apontam para um tumor. Ele serviu de ponta e foi puxado pela peristalse para dentro do cólon, levando o íleo junto, o que forma a massa alongada palpável. O segmento invaginado fechou a passagem: o cólon antes dele dilatou e o reto ficou sem ar.',
+      distratores: [
+        d('Íleo paralítico pós-operatório', 'Também dilata as alças, mas o gás chega até o reto, não há massa palpável e o paciente costuma ter cirurgia recente, distúrbio de eletrólitos ou uso de opioides.'),
+        d('Pseudo-obstrução aguda do cólon', 'A síndrome de Ogilvie dilata muito o cólon sem obstrução mecânica, em pacientes graves e internados, e não forma massa palpável nem causa emagrecimento de meses.'),
+        d('Volvo do sigmoide com alça dilatada', 'Forma uma alça enorme em grão de café que sai da pelve, em idosos constipados, sem massa no flanco direito nem sangue nas fezes.'),
       ],
     },
   },
@@ -300,6 +368,10 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
       steinstrasse: r('Steinstrasse no ureter direito', 'Vários pequenos cálculos em fila no ureter distal direito.',
         'Steinstrasse é a palavra alemã para rua de pedras. São fragmentos de cálculo enfileirados no ureter, geralmente após litotripsia ou quando um cálculo grande se desfaz. Eles podem obstruir o rim, e o paciente sem sensibilidade pode não sentir cólica, o que torna a obstrução silenciosa e perigosa.'),
     },
+    apontamentosProprios: [
+      p(0, 0.62, 0.545, -30, 'Sonda suprapúbica', 'Tubo que entra na bexiga pela parede abdominal acima do púbis.',
+        'A sonda suprapúbica drena a bexiga neurogênica por longo tempo. Ela é corpo estranho dentro da bexiga: bactérias formam biofilme na superfície e os cristais de estruvita se depositam em volta, o que explica por que os cálculos crescem tanto nesses pacientes.'),
+    ],
     achados: [
       'Três grandes cálculos laminados na pelve central, o maior com 6,6 cm — cálculos vesicais.',
       'Sonda vesical suprapúbica.',
@@ -314,11 +386,11 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
     conduta: 'Cistolitotomia ou litotripsia vesical, desobstrução do ureter direito, tratamento da infecção urinária, manejo da úlcera com desbridamento e antibiótico para a osteomielite, e revisão do programa de esvaziamento vesical.',
     vinheta: {
       cenario: 'Ambulatório de urologia',
-      identificacao: 'Homem de 46 anos, paraplégico, aposentado por invalidez.',
+      identificacao: 'Rapaz de 19 anos, cadeirante, estudante.',
       queixa: 'Urina turva com cheiro forte e espasmos nas pernas mais frequentes.',
-      historia: 'Paraplégico há vinte anos após acidente de moto, usa sonda suprapúbica há dez anos. Nos últimos meses a urina está turva, a sonda entope com frequência e os espasmos nas pernas aumentaram. Tem uma ferida na nádega direita que não cicatriza há um ano.',
+      historia: 'Nasceu com mielomeningocele, foi operado no primeiro dia de vida e usa cadeira de rodas desde criança. Usa sonda suprapúbica há oito anos. Nos últimos meses a urina está turva, a sonda entope com frequência e os espasmos nas pernas aumentaram. Tem uma ferida na nádega direita que não cicatriza há um ano.',
       antecedentes: [
-        'Pessoais: lesão medular torácica com bexiga neurogênica',
+        'Pessoais: mielomeningocele lombar com bexiga neurogênica',
         'Pessoais: infecções urinárias de repetição',
         'Familiares: sem doenças relevantes',
         'Hábitos: cadeirante, passa muitas horas sentado',
@@ -330,15 +402,15 @@ export const CASOS_RX_CARDIO: Record<string, ConteudoCaso> = {
         'Urocultura com Proteus',
         'pH urinário de 8',
       ],
-      pedido: 'Infecção urinária por Proteus, urina alcalina e sonda que entope em paraplégico: a pergunta é se há cálculos no trato urinário.',
+      pedido: 'Infecção urinária por Proteus, urina alcalina e sonda que entope em jovem com bexiga neurogênica: a pergunta é se há cálculos no trato urinário.',
       pergunta: 'Radiografia de pelve. Qual é o achado que responde à pergunta clínica?',
       achado: 'Grandes cálculos vesicais laminados',
       veredito: 'Grandes cálculos vesicais de estruvita com steinstrasse ureteral direita e osteomielite isquiática',
       correlacao: 'A bexiga neurogênica com sonda deixa urina parada e infectada. O Proteus quebra a ureia, alcaliniza a urina e precipita estruvita em camadas, formando os grandes cálculos laminados. Sem sensibilidade, o paciente sente a irritação vesical como espasmos. A ferida crônica sobre o ísquio chegou ao osso.',
       distratores: [
         d('Flebólitos pélvicos múltiplos', 'São pequenas calcificações redondas nas veias da pelve, com centro mais claro, e não grandes massas laminadas de vários centímetros.'),
-        d('Leiomioma uterino calcificado', 'Seria possível apenas em mulher, como massa calcificada em pipoca na pelve, sem infecção urinária nem sonda. Este paciente é homem.'),
-        d('Teratoma ovariano com calcificação', 'Ocorre em mulheres, com gordura e calcificação em forma de dente na pelve, e não em homem paraplégico com sonda. Também não explicaria a urina alcalina.'),
+        d('Fecaloma retal volumoso', 'Forma massa com gás em bolhas misturado às fezes atrás da bexiga, comum em quem tem intestino neurogênico, mas sem as camadas concêntricas densas dos cálculos.'),
+        d('Calcificação dos ductos deferentes', 'Forma linhas calcificadas paralelas e simétricas acima da próstata, em diabéticos, e não massas redondas e laminadas de vários centímetros dentro da bexiga.'),
       ],
     },
   },

@@ -1,61 +1,7 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — pediatria. Pacientes fictícios. */
 export const CASOS_RX_PEDIATRICO: Record<string, ConteudoCaso> = {
-  'intussuscepcao-ileocolica': {
-    tema: 'Abdome do lactente',
-    titulo: 'Intussuscepção ileocólica no lactente',
-    resumo: 'Alças de intestino grosso dilatadas no centro do abdome com ausência de gás na ampola retal.',
-    protocolo: 'Radiografia simples de abdome AP',
-    rotulos: {
-      'dilation of large-bowel loops': r('Alças dilatadas', 'Alças intestinais distendidas no centro do abdome.',
-        'Na intussuscepção, um segmento do intestino entra no seguinte como um telescópio, quase sempre o íleo terminal dentro do cólon. O segmento invaginado obstrui a passagem e as alças antes dele se dilatam. A radiografia é normal em boa parte dos casos e serve sobretudo para procurar obstrução e ar livre antes da redução.',
-        'O ultrassom é o exame de escolha: mostra o sinal do alvo ou do pseudorrim no quadrante direito.'),
-      'Absence of rectal air': r('Ausência de ar no reto', 'Ampola retal sem gás.',
-        'Sem passagem de conteúdo pelo segmento obstruído, o ar não chega ao reto. A ausência de gás no reto e no cólon distal, com alças dilatadas antes, sugere obstrução mecânica. Outros sinais na radiografia são uma massa de partes moles no quadrante superior direito e o fígado sem a borda de gás do cólon ascendente.'),
-    },
-    achados: [
-      'Dilatação acentuada de alças intestinais, predominando no centro do abdome.',
-      'Ausência de ar na ampola retal.',
-      'Sem níveis hidroaéreos nem pneumoperitônio.',
-    ],
-    armadilhas: [
-      'Radiografia normal não exclui intussuscepção.',
-      'Ar livre ou peritonite contraindicam a redução por enema e indicam cirurgia.',
-      'Fora da faixa de 3 meses a 3 anos, procure uma causa como divertículo de Meckel ou linfoma.',
-    ],
-    conduta: 'Ultrassom para confirmar, hidratação venosa e redução por enema com ar ou soro guiado por imagem; cirurgia se houver perfuração, peritonite ou falha da redução.',
-    vinheta: {
-      cenario: 'Pronto-socorro pediátrico',
-      identificacao: 'Menino de 9 meses.',
-      queixa: 'Crises de choro com as pernas encolhidas e vômitos desde a manhã.',
-      historia: 'Desde a manhã tem crises de choro forte a cada 15 a 20 minutos, em que encolhe as pernas e fica pálido. Entre as crises fica abatido e sonolento. Vomitou três vezes, a última esverdeada. Há pouco evacuou fezes com muco e sangue, como geleia de framboesa. Teve um resfriado na semana passada.',
-      antecedentes: [
-        'Pessoais: nascido a termo, vacinação em dia',
-        'Pessoais: infecção viral das vias aéreas há uma semana',
-        'Familiares: sem doenças intestinais',
-        'Hábitos: introdução alimentar há três meses',
-      ],
-      vitais: { pa: '84 × 50 mmHg', fc: '168 bpm', fr: '38 irpm', satO2: '98% em ar ambiente', temp: '37,7 °C' },
-      exame: [
-        'Massa alongada palpável no quadrante superior direito',
-        'Fossa ilíaca direita vazia à palpação',
-        'Fezes com muco e sangue no toque retal',
-        'Desidratação leve',
-      ],
-      pedido: 'Lactente com cólica intermitente, vômitos, massa em salsicha e fezes em geleia de framboesa: a pergunta é se há obstrução e se a radiografia permite seguir para a redução.',
-      pergunta: 'Radiografia de abdome. Qual é o achado que responde à pergunta clínica?',
-      achado: 'Obstrução por intussuscepção',
-      veredito: 'Sinais de obstrução intestinal compatíveis com intussuscepção ileocólica',
-      correlacao: 'A virose recente aumentou as placas de Peyer do íleo terminal, que serviram de ponta para o íleo entrar no cólon. A cada onda de peristalse, a dor volta, por isso o choro em crises. O segmento preso congestiona e sangra, daí as fezes em geleia. A radiografia mostra a obstrução e afasta ar livre antes do enema.',
-      distratores: [
-        d('Gastroenterite viral com íleo', 'Causa vômitos e distensão com diarreia aquosa, sem massa palpável, sem dor em crises e sem fezes com sangue e muco. A criança ficaria irritada de forma contínua.'),
-        d('Estenose hipertrófica do piloro', 'Começa entre 2 e 8 semanas com vômitos em jato não biliosos e oliva palpável, com estômago distendido e pouco gás distal. Não há sangue nas fezes.'),
-        d('Volvo do intestino médio', 'Começa no recém-nascido com vômitos biliosos e é uma emergência, mostrada pelo trânsito com duodeno em saca-rolhas. O lactente estaria em choque.'),
-      ],
-    },
-  },
-
   'doenca-de-hirschsprung': {
     tema: 'Abdome do lactente',
     titulo: 'Doença de Hirschsprung com cólon sigmoide dilatado',
@@ -69,6 +15,13 @@ export const CASOS_RX_PEDIATRICO: Record<string, ConteudoCaso> = {
         'Na doença de Hirschsprung, faltam as células nervosas, os gânglios, na parede do reto e de um trecho variável do cólon. Sem elas, o segmento fica contraído e não deixa as fezes passarem. No enema, o reto doente fica estreito e o cólon normal acima dele se dilata. O reto deveria ser a parte mais larga: quando o índice retossigmoide é menor que 1, o padrão é sugestivo.',
         'A biópsia retal por sucção sem células ganglionares confirma o diagnóstico.'),
     },
+    apontamentosProprios: [
+      p(1, 0.55, 0.76, 0, 'Reto de calibre menor', 'O reto contrastado é mais estreito que o sigmoide acima dele.',
+        'Normalmente o reto é a parte mais larga do intestino grosso no enema. Na doença de Hirschsprung, o reto sem gânglios fica contraído e estreito, enquanto o sigmoide normal acima dele se dilata para vencer a obstrução. Comparar os dois calibres é o modo de calcular o índice retossigmoide.',
+        'Índice retossigmoide menor que 1: reto mais estreito que o sigmoide.'),
+      p(1, 0.50, 0.90, 0, 'Sonda retal do enema', 'Sonda por onde entra o contraste, sem balão insuflado.',
+        'Na suspeita de Hirschsprung, o enema é feito sem insuflar o balão da sonda e sem preparo intestinal, porque o balão distende o reto e o preparo esvazia o cólon, e os dois apagam a diferença de calibre que define a zona de transição.'),
+    ],
     achados: [
       'Cólon sigmoide muito dilatado e sem haustrações.',
       'Índice retossigmoide menor que 1 no enema, com reto relativamente estreito.',
@@ -244,6 +197,14 @@ export const CASOS_RX_PEDIATRICO: Record<string, ConteudoCaso> = {
       'periosteal reaction': r('Reação periosteal extensa', 'Periósteo descolado e calcificado ao longo dos ossos dos punhos.',
         'O colágeno defeituoso deixa os vasos frágeis, e o sangue se acumula embaixo do periósteo, descolando-o. Quando o tratamento começa, esse hematoma calcifica e aparece como uma reação periosteal larga. Essa hemorragia subperiosteal explica a dor intensa ao mexer as pernas.'),
     },
+    apontamentosProprios: [
+      p(0, 0.76, 0.635, 0, 'Linha de Frankel na tíbia', 'A mesma faixa densa na metáfise proximal da tíbia esquerda.',
+        'As alterações do escorbuto são simétricas e aparecem em todas as metáfises de crescimento rápido: fêmur distal, tíbia proximal, punhos e junções costocondrais. Encontrar o mesmo sinal em vários ossos ajuda a separar uma doença sistêmica de um trauma localizado.'),
+      p(0, 0.84, 0.52, 0, 'Anel de Wimberger', 'Epífise com borda densa e centro claro.',
+        'Na epífise, a falta de osso novo deixa o centro rarefeito, enquanto a borda de cartilagem calcificada fica densa: a epífise parece um anel desenhado a lápis. O anel de Wimberger é um sinal clássico de escorbuto, diferente do sinal de Wimberger da sífilis congênita, que é uma erosão na tíbia.'),
+      p(0, 0.76, 0.25, 0, 'Osteopenia difusa', 'Diáfises com cortical fina e osso mais transparente, aspecto em vidro fosco.',
+        'Sem vitamina C, os osteoblastos não formam a matriz de colágeno, e o osso fica pobre e transparente. A cortical se afina como um traço a lápis. A osteopenia difusa junto com metáfises densas é a combinação típica do escorbuto.'),
+    ],
     achados: [
       'Linha densa de calcificação provisória nas metáfises dos joelhos — linha de Frankel.',
       'Fratura metafisária com esporão — esporão de Pelkan.',

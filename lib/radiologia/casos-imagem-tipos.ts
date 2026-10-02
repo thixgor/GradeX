@@ -37,6 +37,20 @@ export interface RotuloDetalhado {
  */
 export type TraducaoRotulo = [nome: string, resumo: string] | RotuloDetalhado | null
 
+/**
+ * Seta acrescentada por nós onde o autor não apontou uma alteração importante.
+ * A posição é uma fração da imagem (0 a 1), para não depender da resolução
+ * do arquivo; a rotação segue a convenção do visor (0 aponta para a esquerda).
+ */
+export interface ApontamentoProprio extends RotuloDetalhado {
+  serie: number
+  /** Corte 0-based; nas radiografias é sempre 0. */
+  corte?: number
+  x: number
+  y: number
+  rotacao?: number
+}
+
 /** O que se escreve à mão para cada caso. O resto vem do manifesto. */
 export interface ConteudoCaso {
   /** Subgrupo dentro da região: "Vascular", "Trauma", "Infecção"… */
@@ -46,6 +60,8 @@ export interface ConteudoCaso {
   /** Protocolo das séries exibidas: com ou sem contraste, fase, incidência. */
   protocolo: string
   rotulos: Record<string, TraducaoRotulo>
+  /** Alterações sem seta do autor, apontadas por nós. */
+  apontamentosProprios?: ApontamentoProprio[]
   /** Nome de cada série, quando o caso tem mais de uma (0-based). */
   series?: string[]
   /** Leitura do exame, na ordem em que um radiologista a ditaria. */
@@ -58,6 +74,18 @@ export interface ConteudoCaso {
 export const d = (nome: string, porQue: string): DistratorClinico => ({ nome, porQue })
 
 /** Atalho para escrever um rótulo detalhado. */
+/** Atalho para escrever uma seta própria: série, posição em fração da imagem e rotação. */
+export const p = (
+  serie: number,
+  x: number,
+  y: number,
+  rotacao: number,
+  nome: string,
+  resumo: string,
+  explicacao: string,
+  dica?: string,
+): ApontamentoProprio => ({ serie, x, y, rotacao, nome, resumo, explicacao, dica })
+
 export const r = (nome: string, resumo: string, explicacao: string, dica?: string): RotuloDetalhado => ({
   nome,
   resumo,

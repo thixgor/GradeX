@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — doenças metabólicas, tumores ósseos e coluna. Pacientes fictícios. */
 export const CASOS_RX_OSSO_4: Record<string, ConteudoCaso> = {
@@ -32,18 +32,18 @@ export const CASOS_RX_OSSO_4: Record<string, ConteudoCaso> = {
     conduta: 'Dosar cálcio, fósforo, PTH e vitamina D; controlar o fósforo, repor vitamina D ativa, usar calcimimético e indicar paratireoidectomia nos casos refratários; tratar a fratura.',
     vinheta: {
       cenario: 'Ambulatório de nefrologia',
-      identificacao: 'Homem de 49 anos, em hemodiálise há nove anos.',
-      queixa: 'Dor no braço depois de esbarrar na porta e dores ósseas difusas.',
-      historia: 'Faz hemodiálise três vezes por semana há nove anos e não toma regularmente os quelantes de fósforo. Há meses tem dores nos ossos e coceira. Ao bater o braço numa porta, sentiu um estalo e o braço deformou. Também ficou mais baixo nos últimos anos.',
+      identificacao: 'Adolescente de 15 anos, em hemodiálise há seis anos.',
+      queixa: 'Dor na perna direita depois de uma queda simples e dores ósseas difusas.',
+      historia: 'Faz hemodiálise três vezes por semana desde os 9 anos e não toma regularmente os quelantes de fósforo. Há meses tem dores nos ossos e coceira. Ao tropeçar no degrau de casa, sentiu um estalo na perna direita e não conseguiu mais apoiar. Cresceu pouco nos últimos anos em relação aos colegas.',
       antecedentes: [
-        'Pessoais: doença renal crônica por nefropatia diabética',
+        'Pessoais: doença renal crônica por válvula de uretra posterior',
         'Pessoais: baixa adesão aos quelantes de fósforo',
         'Familiares: sem doenças ósseas',
         'Hábitos: dieta rica em laticínios e refrigerantes',
       ],
-      vitais: { pa: '152 × 88 mmHg', fc: '82 bpm', fr: '16 irpm', satO2: '97% em ar ambiente', temp: '36,5 °C' },
+      vitais: { pa: '142 × 86 mmHg', fc: '88 bpm', fr: '18 irpm', satO2: '97% em ar ambiente', temp: '36,5 °C' },
       exame: [
-        'Deformidade e dor no antebraço após trauma mínimo',
+        'Deformidade e dor na perna direita após trauma mínimo',
         'Dor à palpação das costelas',
         'Prurido com escoriações',
         'PTH de 2.100 pg/mL e fósforo de 8,2 mg/dL',
@@ -52,7 +52,7 @@ export const CASOS_RX_OSSO_4: Record<string, ConteudoCaso> = {
       pergunta: 'Radiografias da coluna, do tórax e do membro. Qual é o achado que responde à pergunta clínica?',
       achado: 'Tumores marrons com fratura patológica',
       veredito: 'Hiperparatireoidismo secundário com tumores marrons, deformidades e fratura patológica',
-      correlacao: 'O rim doente não elimina fósforo nem ativa a vitamina D, e o cálcio cai. As paratireoides respondem produzindo PTH sem parar, e o PTH retira cálcio do osso. Sem os quelantes, o fósforo ficou alto e o estímulo continuou por anos. O osso ficou cheio de tumores marrons e quebrou com um esbarrão.',
+      correlacao: 'O rim doente não elimina fósforo nem ativa a vitamina D, e o cálcio cai. As paratireoides respondem produzindo PTH sem parar, e o PTH retira cálcio do osso. Sem os quelantes, o fósforo ficou alto e o estímulo continuou por anos. O osso, ainda em crescimento, ficou cheio de tumores marrons e quebrou com um tropeço.',
       distratores: [
         d('Mieloma múltiplo com lesões líticas', 'Também dá lesões líticas e fraturas, mas com pico monoclonal, anemia e cálcio alto, sem o PTH muito elevado do renal crônico. O PTH aqui explica.'),
         d('Metástases ósseas líticas', 'Destroem o osso em múltiplos pontos em paciente com câncer conhecido, e não regridem com o controle do PTH. Aqui não há câncer conhecido.'),
@@ -137,6 +137,12 @@ export const CASOS_RX_OSSO_4: Record<string, ConteudoCaso> = {
         'Quando o cisto fratura, um fragmento da cortical se solta e afunda no líquido até a parte mais baixa da cavidade. Esse sinal prova que a lesão é cheia de líquido e não de tecido sólido, porque num tumor sólido o fragmento não teria para onde cair. É praticamente patognomônico de cisto ósseo simples.',
         'Fragmento de osso solto na parte pendente de uma lesão lítica: cisto ósseo simples.'),
     },
+    apontamentosProprios: [
+      p(0, 0.38, 0.225, 180, 'Placa de crescimento', 'Linha clara entre a epífise e a metáfise do úmero.',
+        'O cisto ósseo simples nasce junto à placa de crescimento e se afasta dela à medida que o osso cresce. Cisto colado na placa é chamado ativo, tem mais risco de recidiva e exige cuidado no tratamento para não lesar a placa e encurtar o braço.'),
+      p(0, 0.265, 0.47, 180, 'Cortical afilada', 'Parede do osso fina e abaulada em volta do cisto.',
+        'O líquido sob pressão dentro do cisto empurra a cortical de dentro para fora, que fica fina como uma casca. É esse afilamento que deixa o osso fraco e explica a fratura com um simples arremesso. Quanto mais fina a cortical, maior o risco de nova fratura.'),
+    ],
     achados: [
       'Lesão lítica expansiva de 72 × 24 mm na metáfise proximal do úmero, com margem esclerótica fina e zona de transição estreita.',
       'Fratura patológica com fragmento ósseo dentro da lesão — sinal do fragmento caído.',

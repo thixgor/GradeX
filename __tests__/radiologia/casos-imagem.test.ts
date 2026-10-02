@@ -153,5 +153,5 @@ function auditar(nome: string, colecao: ColecaoCasos, minimo: number) {
   })
 }
 
-auditar('TC', COLECAO_TC, 128)
-auditar('Raio-X', COLECAO_RX, 42)
+auditar('TC', COLECAO_TC, 155)
+auditar('Raio-X', COLECAO_RX, 54)

@@ -212,7 +212,7 @@ export function CatalogoCasosRaioX({
                 >
                   <Crosshair className="h-4 w-4 text-amber-200" />
                   {apontados.total} casos com apontamentos comentados
-                  <span className="hidden font-normal text-amber-100/60 sm:inline">setas do autor, uma a uma</span>
+                  <span className="hidden font-normal text-amber-100/60 sm:inline">cada alteração apontada e explicada</span>
                   <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
                 </Link>
               )}

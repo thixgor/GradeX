@@ -244,7 +244,8 @@ export function CasoImagemPagina({
               )}
               <p className="mt-3 text-[11px] text-muted-foreground">
                 {caso.series.length > 1 ? `${caso.series[atual.serie].rotulo} · ` : ''}
-                {caso.series[atual.serie].totalFatias > 1 ? `corte ${atual.pontos[0].corte + 1} · ` : ''}rótulo original do autor: <em>{atual.rotuloOriginal}</em>
+                {caso.series[atual.serie].totalFatias > 1 ? `corte ${atual.pontos[0].corte + 1} · ` : ''}
+                {atual.proprio ? 'seta acrescentada pela equipe Domine Aqui' : <>rótulo original do autor: <em>{atual.rotuloOriginal}</em></>}
               </p>
             </section>
           ) : (

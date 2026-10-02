@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Segunda leva de TC — trauma (órgãos sólidos, bacia, membros e coluna). Pacientes fictícios. */
 export const CASOS_TC_L2_TRAUMA: Record<string, ConteudoCaso> = {
@@ -267,6 +267,12 @@ export const CASOS_TC_L2_TRAUMA: Record<string, ConteudoCaso> = {
         'A espondilolistese traumática de C2 recebeu o nome de fratura do enforcado porque era a lesão causada pela forca, com hiperextensão e tração. Hoje ocorre em acidentes de carro, quando o queixo bate no painel e a cabeça é jogada para trás. O corpo de C2 desliza para a frente sobre C3 enquanto o arco posterior fica para trás, o que alarga o canal e explica por que muitos pacientes não têm déficit.',
         'Confira os forames transversos: traço que os atravessa pode lesar a artéria vertebral e exige angiotomografia.'),
     },
+    apontamentosProprios: [
+      { ...p(0, 0.61, 0.41, -45, 'Forame transverso preservado', 'Orifício por onde passa a artéria vertebral, sem traço de fratura.',
+        'A artéria vertebral sobe pelos forames transversos de C6 a C1. Na fratura do enforcado, o traço pode atravessar o forame e lesar a artéria, com risco de AVC de circulação posterior. Forames íntegros, como aqui, tornam a lesão vascular menos provável, mas a dúvida pede angiotomografia.'), corte: 15 },
+      { ...p(0, 0.50, 0.54, 90, 'Canal vertebral amplo', 'O canal fica largo porque o arco se separa do corpo de C2.',
+        'Na fratura do enforcado, o corpo de C2 desliza para a frente e o arco posterior fica para trás. Em vez de estreitar, o canal se alarga, o que explica por que a maioria dos pacientes não tem déficit neurológico. É o oposto da fratura em explosão, em que o fragmento invade o canal.'), corte: 15 },
+    ],
     achados: [
       'Fratura bilateral das partes interarticulares de C2.',
       'Anterolistese grau 1 de C2 sobre C3.',

@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — fraturas do membro superior. Pacientes fictícios. */
 export const CASOS_RX_OSSO: Record<string, ConteudoCaso> = {
@@ -75,6 +75,10 @@ export const CASOS_RX_OSSO: Record<string, ConteudoCaso> = {
         'A fratura de Barton é uma fratura-luxação: um fragmento da borda do rádio quebra e o carpo vai junto com ele. Na forma volar, a borda anterior quebra e o carpo escorrega para a frente. Como envolve a articulação e o carpo, é muito instável e quase sempre precisa de placa volar de apoio.',
         'Fratura que leva o carpo junto é fratura-luxação: gesso sozinho não segura.'),
     },
+    apontamentosProprios: [
+      p(1, 0.66, 0.44, 0, 'Carpo deslocado para a frente', 'O carpo acompanha o fragmento da borda volar e escorrega para a palma.',
+        'O que define a fratura de Barton é o carpo sair do lugar junto com o fragmento do rádio. No perfil, o semilunar e o capitato deixam de se apoiar no centro da superfície do rádio e escorregam para a frente. Por isso a lesão é uma fratura-luxação, instável, que pede placa volar de apoio.'),
+    ],
     achados: [
       'Fratura oblíqua da borda volar do rádio distal com extensão intra-articular, mais clara no perfil.',
       'Subluxação volar da articulação radiocárpica, com o carpo acompanhando o fragmento.',
@@ -127,6 +131,10 @@ export const CASOS_RX_OSSO: Record<string, ConteudoCaso> = {
         'A base do primeiro metacarpo articula com o trapézio na articulação em sela, que permite a oposição do polegar. A fratura de Bennett tem dois fragmentos, um pequeno que fica preso pelo ligamento e o resto do metacarpo, que é puxado pelo abdutor longo do polegar. A fratura de Rolando é a versão cominutiva, com três ou mais fragmentos em forma de Y ou T, e tem pior prognóstico pela maior lesão da superfície articular.',
         'Fratura articular da base do polegar mal reduzida leva a artrose dolorosa e perda da pinça.'),
     },
+    apontamentosProprios: [
+      p(0, 0.47, 0.74, 45, 'Articulação trapeziometacarpal', 'Articulação entre o trapézio e a base do metacarpo, levemente subluxada.',
+        'A articulação entre o trapézio e o primeiro metacarpo tem forma de sela e permite a oposição do polegar. Quando a base do metacarpo quebra em vários pedaços e perde o encaixe, a pinça perde força e a articulação evolui para artrose. Restaurar a congruência é o objetivo do tratamento.'),
+    ],
     achados: [
       'Fratura cominutiva da base do primeiro metacarpo direito com extensão intra-articular.',
       'Leve subluxação da articulação carpometacarpal do polegar.',

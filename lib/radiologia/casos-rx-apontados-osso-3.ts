@@ -1,4 +1,4 @@
-import { d, r, type ConteudoCaso } from './casos-imagem-tipos'
+import { d, p, r, type ConteudoCaso } from './casos-imagem-tipos'
 
 /** Raio-X com apontamentos — artropatias. Pacientes fictícios. */
 export const CASOS_RX_OSSO_3: Record<string, ConteudoCaso> = {
@@ -14,6 +14,12 @@ export const CASOS_RX_OSSO_3: Record<string, ConteudoCaso> = {
         'Na tendinite calcária, cristais de hidroxiapatita de cálcio se depositam dentro dos tendões do manguito rotador, mais no supraespinal e depois no infraespinal. O depósito pode ficar quieto por anos. Na fase de reabsorção, ele fica mais mole e mal definido, e a inflamação causa dor aguda muito intensa. Depósitos densos e bem definidos tendem a estar na fase de formação.',
         'Rodar o úmero na radiografia separa o supraespinal, em cima, do infraespinal, atrás.'),
     },
+    apontamentosProprios: [
+      p(0, 0.36, 0.32, -60, 'Espaço subacromial preservado', 'Distância normal entre o acrômio e a cabeça do úmero.',
+        'Entre o acrômio e a cabeça do úmero passam o tendão supraespinal e a bolsa subacromial. Espaço menor que 7 mm sugere ruptura extensa do manguito, porque a cabeça sobe sem o tendão para segurá-la. Aqui o espaço está preservado, o que combina com tendinite e não com ruptura.'),
+      p(0, 0.805, 0.62, 0, 'Eletrodos do marca-passo', 'Fios que descem do gerador para o coração.',
+        'Os eletrodos saem do gerador, entram pela veia subclávia e descem até as câmaras direitas. Ao descrever uma radiografia de ombro em portador de marca-passo, vale conferir se os fios estão contínuos, sem dobras ou fraturas, porque a lesão do fio pode deixar o paciente sem estímulo.'),
+    ],
     achados: [
       'Pequena calcificação amorfa projetada na inserção do tendão infraespinal na grande tuberosidade do úmero.',
       'Marca-passo cardíaco.',

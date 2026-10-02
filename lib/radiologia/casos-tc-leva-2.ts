@@ -13,6 +13,9 @@ import { CASOS_TC_L2_ABDOME_3 } from './casos-tc-leva-2-abdome-3'
 import { CASOS_TC_L2_ABDOME_4 } from './casos-tc-leva-2-abdome-4'
 import { CASOS_TC_L2_ABDOME_5 } from './casos-tc-leva-2-abdome-5'
 import { CASOS_TC_L2_TRAUMA } from './casos-tc-leva-2-trauma'
+import { CASOS_TC_L3_NEURO_TORAX } from './casos-tc-leva-3-neuro-torax'
+import { CASOS_TC_L3_ABDOME } from './casos-tc-leva-3-abdome'
+import { CASOS_TC_L3_TRAUMA } from './casos-tc-leva-3-trauma'
 
 /** Segunda leva de casos de TC, com séries múltiplas e setas comentadas em profundidade. */
 export const CASOS_TC_LEVA_2: Record<string, ConteudoCaso> = {
@@ -30,4 +33,7 @@ export const CASOS_TC_LEVA_2: Record<string, ConteudoCaso> = {
   ...CASOS_TC_L2_ABDOME_4,
   ...CASOS_TC_L2_ABDOME_5,
   ...CASOS_TC_L2_TRAUMA,
+  ...CASOS_TC_L3_NEURO_TORAX,
+  ...CASOS_TC_L3_ABDOME,
+  ...CASOS_TC_L3_TRAUMA,
 }
