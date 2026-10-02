@@ -3,6 +3,7 @@ import 'server-only'
 import { getDb } from '@/lib/mongodb'
 
 import estatico from './indice-estatico.gerado.json'
+import { expandir, type ItemCompacto } from './item'
 import { itensDoBanco } from './itens-do-banco'
 import { prepararIndice, type IndicePreparado } from './relacionar'
 import type { ItemDoManual } from './tipos'
@@ -20,12 +21,39 @@ import type { ItemDoManual } from './tipos'
  * A promessa fica guardada (não só o resultado) para que requisições
  * concorrentes na mesma lambda esperem a MESMA leitura em vez de dispararem
  * uma cada uma — o mesmo arranjo das calculadoras em `app/api/busca/route.ts`.
+ *
+ * Vencida a validade, a instância continua servindo o índice que tem e
+ * relê o banco em segundo plano (stale-while-revalidate): nenhuma requisição
+ * espera a leitura, e uma falha do banco não derruba o painel.
  */
 
-const VALIDADE_MS = 10 * 60 * 1000
+const VALIDADE_MS = 30 * 60 * 1000
 const TEMPO_MAXIMO_MS = 4000
 
-let emCache: { em: number; promessa: Promise<IndicePreparado> } | null = null
+/** Refs que só existem no banco. */
+const PREFIXOS_DO_BANCO = ['patologia:', 'farmaco:']
+
+export function refDoBanco(ref: string): boolean {
+  return PREFIXOS_DO_BANCO.some((p) => ref.startsWith(p))
+}
+
+let itensEstaticos: ItemDoManual[] | null = null
+function estaticos(): ItemDoManual[] {
+  if (!itensEstaticos) itensEstaticos = (estatico as ItemCompacto[]).map(expandir)
+  return itensEstaticos
+}
+
+let indiceEstatico: IndicePreparado | null = null
+
+/**
+ * Só a metade em código, sem banco nenhum. Basta para as rotas do "Meu
+ * Estudo" quando o estudo não tem ficha do Manual nem fármaco — o caso de
+ * marcar como estudado ou anotar um caso de TC não precisa ler duas coleções.
+ */
+export function obterIndiceEstatico(): IndicePreparado {
+  if (!indiceEstatico) indiceEstatico = prepararIndice(estaticos())
+  return indiceEstatico
+}
 
 async function lerDoBanco(): Promise<ItemDoManual[]> {
   const db = await getDb()
@@ -57,8 +85,7 @@ async function lerDoBanco(): Promise<ItemDoManual[]> {
 
 async function montar(): Promise<IndicePreparado> {
   const doBanco = await lerDoBanco()
-  const itens = [...(estatico as ItemDoManual[]), ...doBanco]
-  return prepararIndice(descartarLigacoesQuebradas(itens))
+  return prepararIndice(descartarLigacoesQuebradas([...estaticos(), ...doBanco]))
 }
 
 /**
@@ -77,15 +104,35 @@ function descartarLigacoesQuebradas(itens: ItemDoManual[]): ItemDoManual[] {
   })
 }
 
-export function obterIndice(): Promise<IndicePreparado> {
-  const agora = Date.now()
-  if (emCache && agora - emCache.em < VALIDADE_MS) return emCache.promessa
+let pronto: { em: number; indice: IndicePreparado } | null = null
+let emAndamento: Promise<IndicePreparado> | null = null
 
-  const promessa = montar().catch((erro) => {
-    // Uma falha não pode fossilizar no cache: a próxima requisição tenta de novo.
-    emCache = null
-    throw erro
-  })
-  emCache = { em: agora, promessa }
-  return promessa
+function recarregar(): Promise<IndicePreparado> {
+  if (!emAndamento) {
+    emAndamento = montar()
+      .then((indice) => {
+        pronto = { em: Date.now(), indice }
+        return indice
+      })
+      .finally(() => {
+        emAndamento = null
+      })
+  }
+  return emAndamento
+}
+
+/** O índice completo: os manuais em código e as fichas do banco. */
+export function obterIndice(): Promise<IndicePreparado> {
+  if (!pronto) return recarregar()
+  if (Date.now() - pronto.em > VALIDADE_MS) {
+    // Serve o que tem e atualiza por trás; uma falha mantém o índice antigo.
+    recarregar().catch((erro) => console.error('Falha ao atualizar o índice do Estudo Integrado:', erro))
+  }
+  return Promise.resolve(pronto.indice)
+}
+
+/** O menor índice que resolve estas refs: só vai ao banco se alguma morar lá. */
+export function obterIndicePara(refs: Iterable<string>): Promise<IndicePreparado> {
+  for (const ref of refs) if (refDoBanco(ref)) return obterIndice()
+  return Promise.resolve(obterIndiceEstatico())
 }

@@ -11,7 +11,6 @@ import { AdicionarAoEstudo } from '@/components/manual-clinico/integracao/adicio
 import { ROTA_ESTUDO_INTEGRADO, buscarConexoes, rotaDoTema } from '@/components/manual-clinico/integracao/api'
 import { SeloDoModulo, TrilhaDeConexoes } from '@/components/manual-clinico/integracao/trilha'
 import type { RespostaConexoes } from '@/lib/manual-clinico/integracao/tipos'
-import { nomeDoOrgao, pluralDaNatureza } from '@/lib/manual-clinico/integracao/vocabulario'
 
 /**
  * A trilha completa de um tema — a partir de uma ficha (`?ref=`) ou de um
@@ -46,12 +45,7 @@ function Trilha() {
 
   const titulo = dados?.origem?.titulo ?? q ?? 'Estudo Integrado'
   const todas = dados ? dados.grupos.flatMap((g) => g.itens.map((i) => i.ref)) : []
-  const leitura = dados?.origem
-    ? [
-        ...dados.origem.orgaos.slice(0, 2).map(nomeDoOrgao),
-        ...dados.origem.naturezas.slice(0, 2).map(pluralDaNatureza),
-      ]
-    : []
+  const leitura = dados?.origem?.leitura ?? []
 
   return (
     <PageScaffold>
@@ -92,7 +86,7 @@ function Trilha() {
             onChange={(e) => setNovoTema(e.target.value)}
             maxLength={120}
             placeholder="Integrar outro tema…"
-            className="min-h-[44px] w-full rounded-lg border border-border bg-card pl-9 pr-3 text-sm"
+            className="min-h-[44px] w-full rounded-lg border border-border bg-card pl-9 pr-3 text-base sm:text-sm"
           />
         </div>
         <button type="submit" className="inline-flex min-h-[44px] items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-semibold">

@@ -3,7 +3,7 @@ import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 import { montarIndiceEstatico } from '@/lib/manual-clinico/integracao/fontes-estaticas'
-import type { ItemDoManual } from '@/lib/manual-clinico/integracao/tipos'
+import { compactar, expandir, type ItemCompacto } from '@/lib/manual-clinico/integracao/item'
 
 /**
  * O índice estático do Estudo Integrado é gerado a partir dos acervos e
@@ -23,16 +23,19 @@ const ARQUIVO = path.resolve(__dirname, '../../../lib/manual-clinico/integracao/
 describe('índice estático do Estudo Integrado', () => {
   it('está em dia com os acervos', async () => {
     const itens = await montarIndiceEstatico()
-    const texto = `${JSON.stringify(itens)}\n`
+    const compactos = itens.map(compactar)
+    // A forma compacta precisa voltar exatamente ao item original.
+    expect(compactos.map(expandir)).toEqual(itens)
+    const texto = `${JSON.stringify(compactos)}\n`
 
     if (process.env.GERAR_INDICE_INTEGRACAO === '1') {
       writeFileSync(ARQUIVO, texto)
       return
     }
 
-    const versionado = JSON.parse(readFileSync(ARQUIVO, 'utf8')) as ItemDoManual[]
-    expect(versionado.length).toBe(itens.length)
-    expect(versionado).toEqual(itens)
+    const versionado = JSON.parse(readFileSync(ARQUIVO, 'utf8')) as ItemCompacto[]
+    expect(versionado.length).toBe(compactos.length)
+    expect(versionado).toEqual(compactos)
   }, 60_000)
 
   it('tem refs únicas e endereços internos', async () => {

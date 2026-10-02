@@ -44,12 +44,36 @@ export interface IndicePreparado {
   porRef: Map<string, ItemDoManual>
   idf: Map<string, number>
   idfPadrao: number
+  /**
+   * Índices invertidos. Comparar cada origem com os ~2.200 itens custava
+   * ~250 ms de CPU para um estudo com 80 itens — tempo de função cobrado a
+   * cada abertura do estudo. Só pode pontuar quem divide um termo, um órgão
+   * ou uma ligação com a origem; os outros nem entram no laço.
+   */
+  porTermo: Map<string, ItemDoManual[]>
+  porOrgao: Map<string, ItemDoManual[]>
+  /** Itens que apontam para a ref (a ligação vale nos dois sentidos). */
+  apontadoPor: Map<string, ItemDoManual[]>
+}
+
+function empilhar<K, V>(mapa: Map<K, V[]>, chave: K, valor: V) {
+  const lista = mapa.get(chave)
+  if (lista) lista.push(valor)
+  else mapa.set(chave, [valor])
 }
 
 export function prepararIndice(itens: ItemDoManual[]): IndicePreparado {
   const df = new Map<string, number>()
+  const porTermo = new Map<string, ItemDoManual[]>()
+  const porOrgao = new Map<string, ItemDoManual[]>()
+  const apontadoPor = new Map<string, ItemDoManual[]>()
   for (const item of itens) {
-    for (const t of new Set([...item.termos, ...(item.termosExtras ?? [])])) df.set(t, (df.get(t) ?? 0) + 1)
+    for (const t of todosOsTermos(item)) {
+      df.set(t, (df.get(t) ?? 0) + 1)
+      empilhar(porTermo, t, item)
+    }
+    for (const o of item.orgaos) empilhar(porOrgao, o, item)
+    for (const r of item.ligados ?? []) empilhar(apontadoPor, r, item)
   }
   const total = Math.max(itens.length, 1)
   const idf = new Map<string, number>()
@@ -60,7 +84,34 @@ export function prepararIndice(itens: ItemDoManual[]): IndicePreparado {
     idf,
     // Termo que não existe no índice é raríssimo — e por isso, específico.
     idfPadrao: Math.log(1 + total),
+    porTermo,
+    porOrgao,
+    apontadoPor,
   }
+}
+
+/** Título + sinônimos como conjunto, calculado uma vez por item. */
+const conjuntos = new WeakMap<object, Set<string>>()
+function todosOsTermos(x: { termos: string[]; termosExtras?: string[] }): Set<string> {
+  let conjunto = conjuntos.get(x)
+  if (!conjunto) {
+    conjunto = new Set([...x.termos, ...(x.termosExtras ?? [])])
+    conjuntos.set(x, conjunto)
+  }
+  return conjunto
+}
+
+/** Quem pode receber nota desta origem — o resto teria nota zero. */
+function candidatos(indice: IndicePreparado, origem: Origem): Set<ItemDoManual> {
+  const saida = new Set<ItemDoManual>()
+  for (const t of todosOsTermos(origem)) for (const i of indice.porTermo.get(t) ?? []) saida.add(i)
+  for (const o of origem.orgaos) for (const i of indice.porOrgao.get(o) ?? []) saida.add(i)
+  for (const r of origem.ligados ?? []) {
+    const i = indice.porRef.get(r)
+    if (i) saida.add(i)
+  }
+  if (origem.ref) for (const i of indice.apontadoPor.get(origem.ref) ?? []) saida.add(i)
+  return saida
 }
 
 /** O assunto de partida: um item do acervo ou um tema digitado. */
@@ -125,8 +176,8 @@ export function similaridade(
   b: { termos: string[]; termosExtras?: string[] },
 ): number {
   if (a.termos.length === 0 || b.termos.length === 0) return 0
-  const todosA = new Set([...a.termos, ...(a.termosExtras ?? [])])
-  const todosB = new Set([...b.termos, ...(b.termosExtras ?? [])])
+  const todosA = todosOsTermos(a)
+  const todosB = todosOsTermos(b)
   let comum = 0
   for (const t of todosA) if (todosB.has(t)) comum += peso(indice, t) ** 2
   if (comum === 0) return 0
@@ -261,7 +312,7 @@ export function relacionar(
   }
 
   for (const origem of origens) {
-    for (const item of indice.itens) {
+    for (const item of candidatos(indice, origem)) {
       const p = pontuar(indice, origem, item)
       if (p) guardar(p)
     }

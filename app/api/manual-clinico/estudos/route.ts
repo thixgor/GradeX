@@ -12,7 +12,7 @@ import {
   limparTitulo,
   resumirEstudo,
 } from '@/lib/manual-clinico/integracao/estudos'
-import { obterIndice } from '@/lib/manual-clinico/integracao/indice'
+import { obterIndicePara } from '@/lib/manual-clinico/integracao/indice'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -57,7 +57,12 @@ export async function POST(request: NextRequest) {
     if (!titulo) return NextResponse.json({ error: 'Dê um nome ao estudo' }, { status: 400 })
 
     const colecao = db.collection<Omit<EstudoNoBanco, '_id'>>(COLECAO_ESTUDOS)
-    const [total, indice] = await Promise.all([colecao.countDocuments({ userId }), obterIndice()])
+    const refs: unknown[] = Array.isArray(corpo?.refs) ? corpo.refs : []
+    const [total, indice] = await Promise.all([
+      colecao.countDocuments({ userId }),
+      obterIndicePara(refs.filter((r): r is string => typeof r === 'string')),
+      garantirIndicesDosEstudos(db),
+    ])
     if (total >= MAX_ESTUDOS_POR_USUARIO) {
       return NextResponse.json(
         { error: `Você chegou ao limite de ${MAX_ESTUDOS_POR_USUARIO} estudos. Exclua um para criar outro.` },
@@ -66,7 +71,6 @@ export async function POST(request: NextRequest) {
     }
 
     const agora = new Date()
-    const refs = Array.isArray(corpo?.refs) ? corpo.refs : []
     const { itens, recusados } = acrescentarItens([], refs, (r) => indice.porRef.has(r), agora)
 
     const doc = { userId, titulo, itens, criadoEm: agora, atualizadoEm: agora }

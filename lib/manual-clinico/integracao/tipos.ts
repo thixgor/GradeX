@@ -120,6 +120,8 @@ export interface RespostaConexoes {
     tipo?: string
     orgaos: string[]
     naturezas: Natureza[]
+    /** Órgão e processo já em português, para a tela não carregar o vocabulário. */
+    leitura?: string[]
   } | null
   grupos: GrupoDeConexoes[]
   total: number

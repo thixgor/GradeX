@@ -7,7 +7,7 @@ import {
   completarEstudo,
   resumirEstudo,
 } from '@/lib/manual-clinico/integracao/estudos'
-import { obterIndice } from '@/lib/manual-clinico/integracao/indice'
+import { obterIndicePara } from '@/lib/manual-clinico/integracao/indice'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const runtime = 'nodejs'
@@ -40,11 +40,10 @@ export async function GET(request: NextRequest, { params }: Params) {
   if (!id) return NextResponse.json({ error: 'Estudo não encontrado' }, { status: 404 })
 
   try {
-    const [doc, indice] = await Promise.all([
-      db.collection<EstudoNoBanco>(COLECAO_ESTUDOS).findOne({ _id: id, userId }),
-      obterIndice(),
-    ])
+    const doc = await db.collection<EstudoNoBanco>(COLECAO_ESTUDOS).findOne({ _id: id, userId })
     if (!doc) return NextResponse.json({ error: 'Estudo não encontrado' }, { status: 404 })
+    // Estudo sem ficha do Manual nem fármaco se resolve sem ler o banco.
+    const indice = await obterIndicePara(doc.itens.map((i) => i.ref))
     return jsonComprimido(
       request,
       { estudo: completarEstudo(doc, (r) => indice.porRef.get(r)) },
@@ -66,8 +65,10 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   try {
     const pedido = await request.json().catch(() => null)
     const colecao = db.collection<EstudoNoBanco>(COLECAO_ESTUDOS)
-    const [doc, indice] = await Promise.all([colecao.findOne({ _id: id, userId }), obterIndice()])
+    const doc = await colecao.findOne({ _id: id, userId })
     if (!doc) return NextResponse.json({ error: 'Estudo não encontrado' }, { status: 404 })
+    const pedidas = Array.isArray(pedido?.refs) ? pedido.refs.filter((r: unknown): r is string => typeof r === 'string') : []
+    const indice = await obterIndicePara([...doc.itens.map((i) => i.ref), ...pedidas])
 
     const agora = new Date()
     const resultado = aplicarAlteracao(doc, pedido, (r) => indice.porRef.has(r), agora)

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import estatico from '@/lib/manual-clinico/integracao/indice-estatico.gerado.json'
+import { expandir, type ItemCompacto } from '@/lib/manual-clinico/integracao/item'
 import { itensDoBanco } from '@/lib/manual-clinico/integracao/itens-do-banco'
 import {
   origemDaConsulta,
@@ -8,7 +9,7 @@ import {
   prepararIndice,
   relacionar,
 } from '@/lib/manual-clinico/integracao/relacionar'
-import type { Conexao, ItemDoManual } from '@/lib/manual-clinico/integracao/tipos'
+import type { Conexao } from '@/lib/manual-clinico/integracao/tipos'
 
 /**
  * Teste de aceitação do pedido que deu origem ao Estudo Integrado:
@@ -43,7 +44,7 @@ const MEDICAMENTOS = [
   { nome: 'Amoxicilina', slug: 'amoxicilina', sinonimos: [], classe_principal: 'Antimicrobianos', subclasse: 'Penicilinas' },
 ]
 
-const indice = prepararIndice([...(estatico as ItemDoManual[]), ...itensDoBanco(PATOLOGIAS, MEDICAMENTOS)])
+const indice = prepararIndice([...(estatico as ItemCompacto[]).map(expandir), ...itensDoBanco(PATOLOGIAS, MEDICAMENTOS)])
 
 function conexoesDe(ref: string) {
   const item = indice.porRef.get(ref)

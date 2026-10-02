@@ -72,7 +72,9 @@ function Estudo({ id }: { id: string }) {
     }
     let cancelado = false
     buscarConexoes({ refs: chaveDasRefs.split(',') })
-      .then((r) => !cancelado && setSugestoes(r.grupos.flatMap((g) => g.itens).slice(0, 12)))
+      // Por relevância, não pela ordem das etapas: a "mesma doença" em outro
+      // manual vem antes de mais um exame genérico do órgão.
+      .then((r) => !cancelado && setSugestoes(r.grupos.flatMap((g) => g.itens).sort((x, y) => y.pontos - x.pontos).slice(0, 12)))
       .catch(() => !cancelado && setSugestoes([]))
     return () => {
       cancelado = true
@@ -180,7 +182,7 @@ function Estudo({ id }: { id: string }) {
           </p>
         </div>
         <div className="flex items-center gap-4">
-          <ProgressRing percentage={pct} size={72} label={`${pct}%`} />
+          <ProgressRing percentage={pct} size={72} />
           <button
             type="button"
             onClick={excluir}
@@ -220,48 +222,52 @@ function Estudo({ id }: { id: string }) {
                       key={item.ref}
                       className={cn('rounded-lg border bg-card p-3', item.feito ? 'border-emerald-500/30' : 'border-border')}
                     >
-                      <div className="flex items-start gap-3">
-                        <button
-                          type="button"
-                          disabled={ocupado}
-                          onClick={() => alterar({ acao: 'marcar', ref: item.ref, feito: !item.feito })}
-                          aria-pressed={item.feito}
-                          aria-label={item.feito ? 'Marcar como não estudado' : 'Marcar como estudado'}
-                          className={cn(
-                            'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors',
-                            item.feito ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-border hover:border-primary',
-                          )}
-                        >
-                          {item.feito ? <Check className="h-4 w-4" aria-hidden /> : null}
-                        </button>
-                        <div className="min-w-0 flex-1">
-                          <div className="mb-1 flex flex-wrap items-center gap-1.5">
-                            {item.modulo ? <SeloDoModulo modulo={item.modulo} /> : null}
-                            {item.tipo ? <span className="text-[11px] text-muted-foreground">{item.tipo}</span> : null}
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <button
+                            type="button"
+                            disabled={ocupado}
+                            onClick={() => alterar({ acao: 'marcar', ref: item.ref, feito: !item.feito })}
+                            aria-pressed={item.feito}
+                            aria-label={item.feito ? 'Marcar como não estudado' : 'Marcar como estudado'}
+                            className={cn(
+                              'flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition-colors sm:mt-0.5 sm:h-6 sm:w-6',
+                              item.feito ? 'border-emerald-600 bg-emerald-600 text-white' : 'border-border hover:border-primary',
+                            )}
+                          >
+                            {item.feito ? <Check className="h-4 w-4" aria-hidden /> : null}
+                          </button>
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex flex-wrap items-center gap-1.5">
+                              {item.modulo ? <SeloDoModulo modulo={item.modulo} /> : null}
+                              {item.tipo ? <span className="text-[11px] text-muted-foreground">{item.tipo}</span> : null}
+                            </div>
+                            {item.href ? (
+                              <Link href={item.href} className={cn('group inline-flex items-start gap-1 text-sm font-semibold hover:text-primary', item.feito && 'text-muted-foreground line-through decoration-1')}>
+                                {item.titulo}
+                                <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-50 group-hover:opacity-100" aria-hidden />
+                              </Link>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">Este item não está mais no acervo ({item.ref}).</p>
+                            )}
+                            {item.nota && notaAberta !== item.ref ? (
+                              <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-muted/50 p-2 text-xs leading-relaxed">{item.nota}</p>
+                            ) : null}
+                            {notaAberta === item.ref ? (
+                              <NotaDoItem
+                                inicial={item.nota ?? ''}
+                                onCancelar={() => setNotaAberta(null)}
+                                onSalvar={(nota) => {
+                                  setNotaAberta(null)
+                                  alterar({ acao: 'anotar', ref: item.ref, nota })
+                                }}
+                              />
+                            ) : null}
                           </div>
-                          {item.href ? (
-                            <Link href={item.href} className={cn('group inline-flex items-start gap-1 text-sm font-semibold hover:text-primary', item.feito && 'text-muted-foreground line-through decoration-1')}>
-                              {item.titulo}
-                              <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-50 group-hover:opacity-100" aria-hidden />
-                            </Link>
-                          ) : (
-                            <p className="text-sm text-muted-foreground">Este item não está mais no acervo ({item.ref}).</p>
-                          )}
-                          {item.nota && notaAberta !== item.ref ? (
-                            <p className="mt-1.5 whitespace-pre-wrap rounded-md bg-muted/50 p-2 text-xs leading-relaxed">{item.nota}</p>
-                          ) : null}
-                          {notaAberta === item.ref ? (
-                            <NotaDoItem
-                              inicial={item.nota ?? ''}
-                              onCancelar={() => setNotaAberta(null)}
-                              onSalvar={(nota) => {
-                                setNotaAberta(null)
-                                alterar({ acao: 'anotar', ref: item.ref, nota })
-                              }}
-                            />
-                          ) : null}
                         </div>
-                        <div className="flex shrink-0 flex-col gap-1 sm:flex-row">
+                        {/* Celular: ações numa linha sob o texto, com alvo de toque
+                            de 40 px. Do tablet em diante, à direita, na mesma linha. */}
+                        <div className="flex shrink-0 justify-end gap-1 border-t border-border/60 pt-1 sm:border-0 sm:pt-0">
                           <BotaoIcone rotulo="Anotar" onClick={() => setNotaAberta(notaAberta === item.ref ? null : item.ref)} disabled={ocupado}>
                             <StickyNote className="h-4 w-4" aria-hidden />
                           </BotaoIcone>
@@ -297,7 +303,7 @@ function Estudo({ id }: { id: string }) {
         ) : sugestoes.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nada novo por perto — seu estudo já cobre o que os manuais têm sobre o tema.</p>
         ) : (
-          <ul className="grid gap-2 md:grid-cols-2">
+          <ul className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,20rem),1fr))] gap-2">
             {sugestoes.map((s) => (
               <li key={s.ref} className="flex items-start gap-2 rounded-lg border border-border bg-background p-3">
                 <div className="min-w-0 flex-1">
@@ -343,7 +349,7 @@ function BotaoIcone({
       disabled={disabled}
       aria-label={rotulo}
       title={rotulo}
-      className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30"
+      className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 sm:h-8 sm:w-8"
     >
       {children}
     </button>
@@ -370,7 +376,7 @@ function NotaDoItem({
         autoFocus
         aria-label="Nota do item"
         placeholder="O que você quer lembrar deste item?"
-        className="w-full rounded-md border border-border bg-background p-2 text-sm"
+        className="w-full rounded-md border border-border bg-background p-2 text-base sm:text-sm"
       />
       <div className="flex gap-2">
         <button type="button" onClick={() => onSalvar(texto)} className="min-h-[36px] rounded-md bg-primary px-3 text-xs font-semibold text-primary-foreground">

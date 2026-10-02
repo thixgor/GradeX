@@ -10,6 +10,7 @@ import {
   type Origem,
 } from '@/lib/manual-clinico/integracao/relacionar'
 import type { RespostaConexoes } from '@/lib/manual-clinico/integracao/tipos'
+import { nomeDoOrgao, pluralDaNatureza } from '@/lib/manual-clinico/integracao/vocabulario'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const runtime = 'nodejs'
@@ -78,15 +79,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Informe um item ou um tema' }, { status: 400 })
     }
 
-    const { grupos, total } = relacionar(indice, origens, {
-      porModulo: completo ? 12 : 4,
-      total: completo ? 90 : 24,
-      excluir: new Set(refs),
-    })
+    // Três recortes: a trilha completa, o painel da ficha e as sugestões de um
+    // estudo (só a dúzia que a tela mostra).
+    const recorte = completo ? { porModulo: 12, total: 90 } : refs.length > 0 ? { porModulo: 3, total: 12 } : { porModulo: 4, total: 24 }
+    const { grupos, total } = relacionar(indice, origens, { ...recorte, excluir: new Set(refs) })
+
+    // O painel e as sugestões não mostram o subtítulo: não há por que
+    // transferi-lo. A trilha completa mostra.
+    if (!completo) for (const g of grupos) for (const c of g.itens) delete c.subtitulo
+
+    if (origemResposta) {
+      origemResposta.leitura = [
+        ...origemResposta.orgaos.slice(0, 2).map(nomeDoOrgao),
+        ...origemResposta.naturezas.slice(0, 2).map(pluralDaNatureza),
+      ]
+    }
 
     const resposta: RespostaConexoes = { origem: origemResposta, grupos, total }
+    // O conteúdo muda só quando o acervo muda (deploy ou ficha nova): o
+    // navegador reaproveita por 15 minutos e, passado isso, mostra o que tem
+    // enquanto confirma por trás.
     return jsonComprimido(request, resposta, {
-      headers: { 'Cache-Control': 'private, max-age=300' },
+      headers: { 'Cache-Control': 'private, max-age=900, stale-while-revalidate=86400' },
     })
   } catch (erro) {
     console.error('Erro ao montar conexões do Manual:', erro)

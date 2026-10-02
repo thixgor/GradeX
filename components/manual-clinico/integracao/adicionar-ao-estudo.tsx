@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useState } from 'react'
-import { BookmarkPlus, Check, Loader2, Plus } from 'lucide-react'
+import { BookmarkPlus, Check, Loader2, Plus, X } from 'lucide-react'
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import type { EstudoResumo } from '@/lib/manual-clinico/integracao/tipos'
@@ -85,19 +85,30 @@ export function AdicionarAoEstudo({
         onClick={abrir}
         className={cn(
           variante === 'compacto'
-            ? 'inline-flex min-h-[36px] items-center gap-1 rounded-md border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground'
+            ? 'inline-flex min-h-[40px] min-w-[40px] shrink-0 items-center justify-center gap-1 rounded-md border border-border bg-background px-2.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground sm:min-h-[36px]'
             : 'inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-3.5 text-sm font-semibold text-primary transition-colors hover:bg-primary/10',
           className,
         )}
         aria-label={`${rotulo}: guardar no Estudo Integrado`}
       >
-        <BookmarkPlus className={variante === 'compacto' ? 'h-3.5 w-3.5' : 'h-4 w-4'} aria-hidden />
-        {rotulo}
+        <BookmarkPlus className={variante === 'compacto' ? 'h-4 w-4 sm:h-3.5 sm:w-3.5' : 'h-4 w-4'} aria-hidden />
+        {/* No cartão do celular, só o ícone: o texto roubaria a largura do título. */}
+        <span className={variante === 'compacto' ? 'hidden sm:inline' : undefined}>{rotulo}</span>
       </button>
 
-      <Dialog open={aberto} onOpenChange={setAberto}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
+      {/* No celular, folha que sobe do rodapé: o botão nasce onde o polegar já
+          está. A partir de `sm`, caixa centralizada. */}
+      <Dialog open={aberto} onOpenChange={setAberto} variant="sheet">
+        <DialogContent className="mx-0 w-full max-w-none rounded-b-none rounded-t-2xl border-x-0 border-b-0 pb-[env(safe-area-inset-bottom)] sm:mx-4 sm:max-w-md sm:rounded-lg sm:border sm:pb-0">
+          <button
+            type="button"
+            onClick={() => setAberto(false)}
+            aria-label="Fechar"
+            className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+          >
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+          <DialogHeader className="pr-12">
             <DialogTitle>Guardar no Estudo Integrado</DialogTitle>
             <DialogDescription>
               {refs.length === 1
@@ -107,7 +118,7 @@ export function AdicionarAoEstudo({
           </DialogHeader>
 
           {feito ? (
-            <div className="space-y-3 py-2">
+            <div className="space-y-3 px-6 pb-6">
               <p className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                 <Check className="h-4 w-4" aria-hidden /> Guardado em “{feito.titulo}”
               </p>
@@ -124,7 +135,7 @@ export function AdicionarAoEstudo({
               </Link>
             </div>
           ) : (
-            <div className="space-y-4 py-1">
+            <div className="space-y-4 px-6 pb-6">
               {erro ? <p className="rounded-md border border-destructive/30 bg-destructive/5 p-2.5 text-sm text-destructive">{erro}</p> : null}
 
               {estudos === null ? (
@@ -167,7 +178,7 @@ export function AdicionarAoEstudo({
                     value={novoTitulo}
                     onChange={(e) => setNovoTitulo(e.target.value)}
                     maxLength={120}
-                    className="min-h-[44px] min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm"
+                    className="min-h-[44px] min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-base sm:text-sm"
                     placeholder="Ex.: Neoplasias renais"
                   />
                   <button
