@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { BancoModulo, BancoModuloComContagem } from '@/lib/types/banco-questoes'
+import { nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,7 +76,9 @@ export async function GET(request: NextRequest) {
       .aggregate<BancoModuloComContagem>(pipeline)
       .toArray()
 
-    return NextResponse.json({ modulos })
+    // Módulo oculto ou de outro cargo não aparece (ver lib/banco/visibilidade.ts).
+    const barrados = await nosBarradosDoUsuario(db, session)
+    return NextResponse.json({ modulos: modulos.filter((m) => !barrados.modulos.has(String(m._id))) })
   } catch (error) {
     console.error('Erro ao buscar módulos:', error)
     return NextResponse.json({ error: 'Erro ao buscar módulos' }, { status: 500 })

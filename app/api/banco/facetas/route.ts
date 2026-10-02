@@ -5,6 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { campoTextoPreenchido, textoPreenchidoNaExpressao } from '@/lib/banco/filtros-conteudo'
 import { ordenarPeriodosLetivos } from '@/lib/banco/periodo-letivo'
+import { comBloqueio, nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -101,10 +102,14 @@ export async function GET(request: NextRequest) {
 
     const preenchido = campoTextoPreenchido()
 
+    // Os números precisam bater com o que a listagem devolve: módulo/tópico
+    // oculto ou de outro cargo não conta (ver lib/banco/visibilidade.ts).
+    const recorteVisivel = comBloqueio(recorte, await nosBarradosDoUsuario(db, session))
+
     const [agregado] = await db
       .collection('banco_questoes')
       .aggregate([
-        { $match: recorte },
+        { $match: recorteVisivel },
         {
           $facet: {
             resumo: [
@@ -161,7 +166,7 @@ export async function GET(request: NextRequest) {
             from: 'banco_questoes',
             localField: '_id',
             foreignField: '_id',
-            pipeline: [{ $match: recorte }, { $project: { _id: 1 } }],
+            pipeline: [{ $match: recorteVisivel }, { $project: { _id: 1 } }],
             as: 'questao',
           },
         },

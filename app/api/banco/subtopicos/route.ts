@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { BancoSubtopico, BancoSubtopicoComContagem } from '@/lib/types/banco-questoes'
+import { nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,7 +66,11 @@ export async function GET(request: NextRequest) {
       .aggregate<BancoSubtopicoComContagem>(pipeline)
       .toArray()
 
-    return NextResponse.json({ subtopicos })
+    // Subtópico de tópico barrado não aparece (ver lib/banco/visibilidade.ts).
+    const barrados = await nosBarradosDoUsuario(db, session)
+    return NextResponse.json({
+      subtopicos: subtopicos.filter((s) => !barrados.topicos.has(String(s.topicoId))),
+    })
   } catch (error) {
     console.error('Erro ao buscar subtópicos:', error)
     return NextResponse.json({ error: 'Erro ao buscar subtópicos' }, { status: 500 })

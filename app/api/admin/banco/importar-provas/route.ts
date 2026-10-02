@@ -5,6 +5,7 @@ import { getDb } from '@/lib/mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
 import { paraCodigo } from '@/lib/banco/hierarquia'
+import { esquecerVisibilidadeDoBanco } from '@/lib/banco/visibilidade-servidor'
 import {
   chaveDeOrigem,
   mapearProvas,
@@ -246,6 +247,9 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb()
     const gravadas = await gravar(db, questoes, session.userId)
+    // Tópico novo pode morar abaixo de um tópico oculto/restrito — a lista
+    // que a barreira percorre precisa conhecê-lo (ver lib/banco/visibilidade.ts).
+    esquecerVisibilidadeDoBanco()
     const proximoOffset = offset + fatia.length
 
     return NextResponse.json({

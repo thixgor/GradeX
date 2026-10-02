@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
     if (!ehAdmin) {
       const [periodo, gruposOcultos] = await Promise.all([
         lerPeriodoDoAluno(db, session.userId),
-        carregarIdsDeGruposOcultos(),
+        carregarIdsDeGruposOcultos(db, session.userId),
       ])
 
       /*

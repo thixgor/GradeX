@@ -12,6 +12,7 @@ import { contarQuestoes } from '@/lib/provas/arvore-grupos'
 import { ordenarProvas, participaDaOrdem } from '@/lib/provas/ordem-das-provas'
 import { HorariosDaProva } from '@/components/provas/horarios-da-prova'
 import { ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
+import { SeloDeCargos } from '@/components/seletor-de-cargos'
 
 interface GroupData {
   _id: string
@@ -26,6 +27,8 @@ interface GroupData {
   createdBy: string
   parentGroupId?: string | null
   isHidden?: boolean
+  /** Cargos que veem o grupo — vazio = todos (ver lib/provas/grupos-ocultos.ts). */
+  allowedGroups?: string[]
 }
 
 interface ExamGroupProps {
@@ -332,6 +335,9 @@ export function ExamGroup({
             >
               <EyeOff className="h-2.5 w-2.5" /> {ocultoPeloPai ? 'Oculto (grupo acima)' : 'Oculto'}
             </span>
+          )}
+          {group.allowedGroups && group.allowedGroups.length > 0 && (
+            <SeloDeCargos cargos={group.allowedGroups} className="mt-0.5 flex-shrink-0" />
           )}
         </div>
         {group.description && (

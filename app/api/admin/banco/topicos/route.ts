@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { BancoTopico, BancoTopicoComContagem } from '@/lib/types/banco-questoes'
+import { esquecerVisibilidadeDoBanco } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -142,6 +143,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await db.collection('banco_topicos').insertOne(novoTopico)
+    // Tópico novo pode morar abaixo de um tópico oculto/restrito — a lista
+    // que a barreira percorre precisa conhecê-lo (ver lib/banco/visibilidade.ts).
+    esquecerVisibilidadeDoBanco()
 
     return NextResponse.json({
       sucesso: true,

@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { isValidObjectId } from '@/lib/api-security'
 import { lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
+import { comBloqueio } from '@/lib/banco/visibilidade-servidor'
 import { imagensDoBancoParaQuestao } from '@/lib/provas/importar-do-banco'
 
 export const dynamic = 'force-dynamic'
@@ -120,7 +121,8 @@ export async function GET(request: NextRequest) {
     }
 
     const pipeline: any[] = [
-      { $match: matchStage },
+      // Módulo/tópico oculto ou de outro cargo não entra no sorteio.
+      { $match: comBloqueio(matchStage, acesso.barrados) },
       { $sample: { size: limit } },
       {
         $lookup: {

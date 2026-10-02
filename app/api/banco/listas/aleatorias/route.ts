@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoListaAleatoriaFiltros } from '@/lib/types/banco-questoes'
 import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
+import { comBloqueio, nosBarradosDoDocumento } from '@/lib/banco/visibilidade-servidor'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
 
@@ -153,7 +154,8 @@ export async function POST(request: NextRequest) {
     const tamanhoAmostra = Math.min(body.quantidade * fatorAmostra, limiteAmostra)
 
     const pipeline = [
-      { $match: matchStage },
+      // Módulo/tópico oculto ou de outro cargo não entra no sorteio.
+      { $match: comBloqueio(matchStage, await nosBarradosDoDocumento(db, user as any)) },
       { $sample: { size: tamanhoAmostra } },
       { $project: { _id: 1 } }
     ]

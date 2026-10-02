@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Exam } from '@/lib/types'
 import { ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
+import { SeloDeCargos } from '@/components/seletor-de-cargos'
 
 interface GroupCardData {
   _id: string
@@ -35,6 +36,8 @@ interface GroupCardData {
   createdBy: string
   parentGroupId?: string | null
   isHidden?: boolean
+  /** Cargos que veem o grupo — vazio = todos (ver lib/provas/grupos-ocultos.ts). */
+  allowedGroups?: string[]
 }
 
 interface GroupCardProps {
@@ -190,6 +193,13 @@ export function GroupCard({
               >
                 <EyeOff className="h-2.5 w-2.5" /> {ocultoPeloPai ? 'Oculto (grupo acima)' : 'Oculto'}
               </span>
+            )}
+
+            {group.allowedGroups && group.allowedGroups.length > 0 && (
+              <SeloDeCargos
+                cargos={group.allowedGroups}
+                className="absolute bottom-2 right-2 max-w-[60%] bg-background/90"
+              />
             )}
 
             {canManage && (

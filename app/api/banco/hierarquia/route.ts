@@ -2,21 +2,29 @@ import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { memoizarPorTempo } from '@/lib/cache-de-servidor'
+import { algoBarrado } from '@/lib/banco/visibilidade'
+import { nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
 /** A árvore é a mesma para todo mundo e muda quando um admin cadastra um nó. */
 const TTL_DA_ARVORE_MS = 60_000
 
+/** Oculto/restrito a cargos — ver lib/banco/visibilidade.ts. Só aparece quando marcado. */
+interface Marcacao {
+  isHidden?: boolean
+  allowedGroups?: string[]
+}
+
 interface ArvoreDoBanco {
-  modulos: Array<{ _id: string; nome: string; ordem: number; totalQuestoes: number }>
+  modulos: Array<{ _id: string; nome: string; ordem: number; totalQuestoes: number } & Marcacao>
   topicos: Array<{
     _id: string
     moduloId: string
     nome: string
     ordem: number
     totalQuestoes: number
-  }>
+  } & Marcacao>
   subtopicos: Array<{
     _id: string
     topicoId: string
@@ -59,7 +67,14 @@ async function montarArvoreDoBanco(): Promise<ArvoreDoBanco> {
 
   // Só nome/ordem/pai: os documentos de taxonomia podem ter descrição e outros
   // campos que a árvore da tela não desenha.
-  const camposDoNo = { nome: 1, ordem: 1, moduloId: 1, topicoId: 1 }
+  const camposDoNo = { nome: 1, ordem: 1, moduloId: 1, topicoId: 1, isHidden: 1, allowedGroups: 1 }
+
+  // A marcação só entra no JSON quando existe: a árvore sem marcação nenhuma
+  // continua do mesmo tamanho de antes.
+  const marcacao = (n: any): Marcacao => ({
+    ...(n.isHidden === true ? { isHidden: true } : {}),
+    ...(Array.isArray(n.allowedGroups) && n.allowedGroups.length > 0 ? { allowedGroups: n.allowedGroups } : {}),
+  })
 
   const [modulos, topicos, subtopicos, contagens] = await Promise.all([
     db.collection('banco_modulos').find({}, { projection: camposDoNo }).toArray(),
@@ -99,6 +114,7 @@ async function montarArvoreDoBanco(): Promise<ArvoreDoBanco> {
       nome: m.nome,
       ordem: m.ordem ?? 0,
       totalQuestoes: porModulo.get(String(m._id)) || 0,
+      ...marcacao(m),
     })),
     topicos: topicos.map((t: any) => ({
       _id: String(t._id),
@@ -106,6 +122,7 @@ async function montarArvoreDoBanco(): Promise<ArvoreDoBanco> {
       nome: t.nome,
       ordem: t.ordem ?? 0,
       totalQuestoes: porTopico.get(String(t._id)) || 0,
+      ...marcacao(t),
     })),
     subtopicos: subtopicos.map((s: any) => ({
       _id: String(s._id),
@@ -124,14 +141,34 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    // A árvore não depende de quem pede — o que muda por pessoa é o conteúdo da
-    // questão, e isso é decidido em /api/banco/questoes. Então a mesma instância
-    // serve a árvore já montada para o próximo aluno que abrir a tela.
-    const arvore = await memoizarPorTempo(
-      'banco:hierarquia',
-      TTL_DA_ARVORE_MS,
-      montarArvoreDoBanco,
-    )
+    // A árvore completa não depende de quem pede, então a mesma instância
+    // serve a árvore já montada para o próximo aluno que abrir a tela. O que
+    // muda por pessoa é o recorte (nós ocultos/restritos, abaixo) e o conteúdo
+    // da questão, decidido em /api/banco/questoes.
+    const db = await getDb()
+    const [completa, barrados] = await Promise.all([
+      memoizarPorTempo('banco:hierarquia', TTL_DA_ARVORE_MS, montarArvoreDoBanco),
+      nosBarradosDoUsuario(db, session),
+    ])
+
+    /*
+     * Módulo/tópico oculto ou restrito a outro cargo some da árvore desta
+     * pessoa, com os subtópicos dele (ver lib/banco/visibilidade.ts). O admin
+     * recebe tudo, com as marcações, e a tela dele desenha os selos.
+     */
+    const arvore = algoBarrado(barrados)
+      ? (() => {
+          const topicos = completa.topicos.filter(
+            (t) => !barrados.modulos.has(t.moduloId) && !barrados.topicos.has(t._id),
+          )
+          const topicosVisiveis = new Set(topicos.map((t) => t._id))
+          return {
+            modulos: completa.modulos.filter((m) => !barrados.modulos.has(m._id)),
+            topicos,
+            subtopicos: completa.subtopicos.filter((s) => topicosVisiveis.has(s.topicoId)),
+          }
+        })()
+      : completa
 
     return NextResponse.json(arvore, {
       headers: { 'Cache-Control': 'private, max-age=60, stale-while-revalidate=300' },

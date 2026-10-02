@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoListaUsuario, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
+import { comBloqueio, nosBarradosDoDocumento } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,7 +59,9 @@ export async function GET(
 
     const questoes = await db.collection('banco_questoes')
       .aggregate<BancoQuestaoComHierarquia>([
-        { $match: { _id: { $in: questaoObjectIds } } },
+        // Questão que mora em módulo/tópico oculto ou de outro cargo sai da
+        // lista para esta pessoa — a lista pode ter sido montada antes da marcação.
+        { $match: comBloqueio({ _id: { $in: questaoObjectIds } }, await nosBarradosDoDocumento(db, user as any)) },
         {
           $lookup: {
             from: 'banco_periodos',

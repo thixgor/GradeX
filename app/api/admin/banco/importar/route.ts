@@ -13,6 +13,7 @@ import {
 } from '@/lib/banco/importar-questoes'
 import { BancoAlternativaLetra, BancoQuestao } from '@/lib/types/banco-questoes'
 import { internalizarObjeto } from '@/lib/midia/internalizar'
+import { esquecerVisibilidadeDoBanco } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 // Um arquivo de milhares de questões, mesmo já dividido em pedaços pelo
@@ -360,6 +361,10 @@ export async function POST(request: NextRequest) {
         })
       }
     }
+
+    // Tópico novo pode morar abaixo de um tópico oculto/restrito — a lista
+    // que a barreira percorre precisa conhecê-lo (ver lib/banco/visibilidade.ts).
+    esquecerVisibilidadeDoBanco()
 
     return NextResponse.json({
       sucesso: importadas.length > 0,

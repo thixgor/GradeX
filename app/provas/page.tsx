@@ -77,6 +77,7 @@ import { BarraDeSelecao, MoverParaDialog, type AlvoDaMovimentacao } from '@/comp
 import { contarProvas, contarQuestoes } from '@/lib/provas/arvore-grupos'
 import { resumirMovimentacao } from '@/lib/provas/mover-provas'
 import { idsDeGruposOcultos, ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
+import { SeletorDeCargos } from '@/components/seletor-de-cargos'
 
 interface Group {
   _id: string
@@ -91,6 +92,8 @@ interface Group {
   createdBy: string
   parentGroupId?: string | null
   isHidden?: boolean
+  /** Cargos que veem o grupo — vazio = todos (ver lib/provas/grupos-ocultos.ts). */
+  allowedGroups?: string[]
 }
 
 const COURSE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
@@ -274,7 +277,7 @@ function ProvasContent() {
   const [showMinhasProvas, setShowMinhasProvas] = useState(false)
   const [viewMode, setViewMode] = useState<ViewMode>('home')
   const [editingGroup, setEditingGroup] = useState<Group | null>(null)
-  const [editGroupForm, setEditGroupForm] = useState({ name: '', description: '', color: '#3B82F6', icon: '', imageUrl: '', category: '', course: '' })
+  const [editGroupForm, setEditGroupForm] = useState({ name: '', description: '', color: '#3B82F6', icon: '', imageUrl: '', category: '', course: '', allowedGroups: [] as string[] })
   const [isSavingGroup, setIsSavingGroup] = useState(false)
   const [highlightGroupId, setHighlightGroupId] = useState<string | null>(null)
   const [pdfModalExam, setPdfModalExam] = useState<Exam | null>(null)
@@ -796,6 +799,7 @@ function ProvasContent() {
       imageUrl: (group as any).imageUrl || '',
       category: group.category || '',
       course: group.course || '',
+      allowedGroups: group.allowedGroups || [],
     })
   }
 
@@ -814,6 +818,10 @@ function ProvasContent() {
           imageUrl: editGroupForm.imageUrl || null,
           category: editGroupForm.category || undefined,
           course: editGroupForm.course || undefined,
+          // Só admin restringe, e só grupo geral — a rota recusa o resto.
+          ...(user?.role === 'admin' && editingGroup.type === 'general'
+            ? { allowedGroups: editGroupForm.allowedGroups }
+            : {}),
         }),
       })
       if (res.ok) {
@@ -826,6 +834,9 @@ function ProvasContent() {
           imageUrl: editGroupForm.imageUrl || null,
           category: (editGroupForm.category || undefined) as any,
           course: editGroupForm.course || undefined,
+          allowedGroups: user?.role === 'admin' && editingGroup.type === 'general'
+            ? editGroupForm.allowedGroups
+            : g.allowedGroups,
         } : g))
         setEditingGroup(null)
       } else {
@@ -3072,7 +3083,7 @@ function ProvasContent() {
     const isAdmin = user?.role === 'admin'
     return (
       <Dialog open={!!editingGroup} onOpenChange={(open) => { if (!open) setEditingGroup(null) }}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Edit2 className="h-4 w-4" />
@@ -3158,6 +3169,11 @@ function ProvasContent() {
                     </select>
                   </div>
                 )}
+                <SeletorDeCargos
+                  valor={editGroupForm.allowedGroups}
+                  onChange={(allowedGroups) => setEditGroupForm({ ...editGroupForm, allowedGroups })}
+                  descricao="Quem não tiver um dos cargos marcados não vê o grupo, os subgrupos nem as provas dele. Deixe tudo desmarcado para liberar a todos."
+                />
               </>
             )}
           </div>

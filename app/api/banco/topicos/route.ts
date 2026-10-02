@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { BancoTopico, BancoTopicoComContagem } from '@/lib/types/banco-questoes'
+import { nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,7 +76,9 @@ export async function GET(request: NextRequest) {
       .aggregate<BancoTopicoComContagem>(pipeline)
       .toArray()
 
-    return NextResponse.json({ topicos })
+    // Tópico oculto, de outro cargo ou de módulo barrado não aparece (ver lib/banco/visibilidade.ts).
+    const barrados = await nosBarradosDoUsuario(db, session)
+    return NextResponse.json({ topicos: topicos.filter((t) => !barrados.topicos.has(String(t._id))) })
   } catch (error) {
     console.error('Erro ao buscar tópicos:', error)
     return NextResponse.json({ error: 'Erro ao buscar tópicos' }, { status: 500 })

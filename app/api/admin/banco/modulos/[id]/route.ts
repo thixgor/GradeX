@@ -3,6 +3,9 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { removerQuestoes } from '@/lib/banco/exclusao'
+import { invalidarCacheDeServidor } from '@/lib/cache-de-servidor'
+import { esquecerVisibilidadeDoBanco } from '@/lib/banco/visibilidade-servidor'
+import { normalizarCargosPermitidos } from '@/lib/restricao-por-cargo'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,6 +47,18 @@ export async function PUT(
       updateData.ordem = body.ordem
     }
 
+    /*
+     * Ocultar o módulo do Banco geral e/ou deixá-lo visível só para alguns
+     * cargos — ver lib/banco/visibilidade.ts. Booleano de verdade: um "false"
+     * em texto é verdadeiro em JavaScript.
+     */
+    if (body.isHidden !== undefined) {
+      updateData.isHidden = body.isHidden === true
+    }
+    if (body.allowedGroups !== undefined) {
+      updateData.allowedGroups = normalizarCargosPermitidos(body.allowedGroups)
+    }
+
     if (body.periodoId !== undefined) {
       updateData.periodoId = new ObjectId(body.periodoId)
     }
@@ -56,6 +71,11 @@ export async function PUT(
     if (result.matchedCount === 0) {
       return NextResponse.json({ error: 'Módulo não encontrado' }, { status: 404 })
     }
+
+    // Marcação, nome (o caminho do tópico decide o que mora abaixo dele) e
+    // módulo mudam quem vê o quê — a memória curta das duas listas envelheceu.
+    esquecerVisibilidadeDoBanco()
+    invalidarCacheDeServidor('banco:hierarquia')
 
     return NextResponse.json({ sucesso: true })
   } catch (error) {

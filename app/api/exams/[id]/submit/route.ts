@@ -126,7 +126,7 @@ export async function POST(
         userId: session.userId,
         isAdmin: false,
         periodo: await lerPeriodoDoAluno(db, session.userId),
-        grupoOculto: await provaEstaEmGrupoOculto(exam.groupId),
+        grupoOculto: await provaEstaEmGrupoOculto(exam.groupId, db, session.userId),
       })
       if (!existe) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
