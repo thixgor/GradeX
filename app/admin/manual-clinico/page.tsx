@@ -197,6 +197,7 @@ export default function AdminManualClinico() {
   const [quotaUsers, setQuotaUsers] = useState<ManualQuotaUser[]>([])
   const [accessStats, setAccessStats] = useState({ premiumAccessCount: 0, quotaUserCount: 0 })
   const [revokingId, setRevokingId] = useState<string | null>(null)
+  const [downloadingNomes, setDownloadingNomes] = useState(false)
 
   const fetchPatologias = useCallback(async () => {
     setLoading(true)
@@ -462,6 +463,26 @@ export default function AdminManualClinico() {
       URL.revokeObjectURL(url)
     } catch (error) {
       console.error('Erro ao exportar:', error)
+    }
+  }
+
+  async function handleDownloadNomes() {
+    setDownloadingNomes(true)
+    try {
+      const res = await fetch('/api/admin/manual-clinico/nomes', { cache: 'no-store' })
+      if (!res.ok) throw new Error('Erro ao baixar nomes')
+      const txt = await res.text()
+      const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `manual-clinico-doencas-${new Date().toISOString().split('T')[0]}.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Erro ao baixar nomes:', error)
+    } finally {
+      setDownloadingNomes(false)
     }
   }
 
@@ -987,6 +1008,10 @@ export default function AdminManualClinico() {
             <Button variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Exportar
+            </Button>
+            <Button variant="outline" onClick={handleDownloadNomes} disabled={downloadingNomes}>
+              {downloadingNomes ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
+              Baixar nomes das doenças
             </Button>
           </div>
         </div>
