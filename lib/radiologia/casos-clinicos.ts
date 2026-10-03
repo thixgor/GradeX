@@ -3,6 +3,9 @@ import { VINHETAS_LEVA_2_TORAX } from './casos-clinicos-leva-2-torax'
 import { VINHETAS_LEVA_2_TRAUMA_PEDIATRIA } from './casos-clinicos-leva-2-trauma-pediatria'
 import { VINHETAS_LEVA_2_ABDOME } from './casos-clinicos-leva-2-abdome'
 import { VINHETAS_LEVA_2_OSTEOARTICULAR } from './casos-clinicos-leva-2-osteoarticular'
+import { ORIGEM_LEVA_3_CARDIO } from './casos-raio-x-leva-3-cardio'
+import { CASOS_RX_CARDIO } from './casos-rx-apontados-cardio'
+import { CASOS_RX_CARDIO_2 } from './casos-rx-apontados-cardio-2'
 
 /**
  * A consulta que antecede o filme.
@@ -3173,6 +3176,11 @@ const MEDIASTINO: Record<string, VinhetaClinica> = {
 // ══════════════════════════════════ Índice ══════════════════════════════════
 
 /** Vinheta clínica de cada caso, indexada pelo slug. */
+/** Terceira leva (coração): a mesma consulta do caso com apontamentos que usa a mesma radiografia. */
+const VINHETAS_LEVA_3_CARDIO: Record<string, VinhetaClinica> = Object.fromEntries(
+  Object.entries(ORIGEM_LEVA_3_CARDIO).map(([slug, origem]) => [slug, (CASOS_RX_CARDIO[origem] ?? CASOS_RX_CARDIO_2[origem]).vinheta]),
+)
+
 export const VINHETAS_CASOS_RAIO_X: Record<string, VinhetaClinica> = {
   ...CARDIOVASCULAR,
   ...VARIANTES,
@@ -3185,6 +3193,7 @@ export const VINHETAS_CASOS_RAIO_X: Record<string, VinhetaClinica> = {
   ...VINHETAS_LEVA_2_TRAUMA_PEDIATRIA,
   ...VINHETAS_LEVA_2_ABDOME,
   ...VINHETAS_LEVA_2_OSTEOARTICULAR,
+  ...VINHETAS_LEVA_3_CARDIO,
 }
 
 export function vinhetaDoCaso(slug: string): VinhetaClinica | null {

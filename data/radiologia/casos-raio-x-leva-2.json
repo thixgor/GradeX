@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-09-26T03:25:43.442Z",
+  "generatedAt": "2026-10-03T01:24:52.069Z",
   "casos": [
     {
       "categoria": "infeccoes",
@@ -3791,6 +3791,368 @@
           "altura": 368,
           "bytes": 96313,
           "sha256": "88abc3825f07a2c7416bab80ae8900ab2cd65b081eba1c6c63983caa3afdec94"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "estenose-mitral-reumatica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Perfil — átrio esquerdo e brônquio esquerdo deslocados para trás",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/estenose-mitral-reumatica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73735971/435f5087fd89b772b58789535e9eb60e5fcac8cbbf36569c9cb8123c8ec3a25d_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/walking-man-sign-of-left-atrial-enlargement",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 398,
+          "altura": 442,
+          "bytes": 55854,
+          "sha256": "d0cc93b69d05f84629f320cffac7979afce95e2054b7fb9fd22dd547d693eb99"
+        },
+        {
+          "indice": 2,
+          "titulo": "Frontal — abertura da carina",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/estenose-mitral-reumatica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73735970/c3d4c423cd1df5a49e89c2bf3030683b9872eb6ed96cb7b765ce0273e415f086_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/walking-man-sign-of-left-atrial-enlargement",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 398,
+          "altura": 442,
+          "bytes": 79024,
+          "sha256": "ab12e65544a331488e73ef46ed5c8b9bda84571af5a4bbfd7c8c75ca2bab2121"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "insuficiencia-mitral-reumatica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — átrio e ventrículo esquerdos aumentados",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/insuficiencia-mitral-reumatica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72920611/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/left-atrial-and-ventricular-hypertrophy",
+          "autoria": "Mukiza Festus",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 80174,
+          "sha256": "f2f906488dc5f2b447dbcf4d2c9dc6a6b74c624bc08f515914c10e63c6c596cc"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "estenose-aortica-calcificada",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Antes do implante — calcificação valvar aórtica",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/estenose-aortica-calcificada/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72314979/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/aortic-valve-calcifications-visible-on-plain-radiograph",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 367,
+          "bytes": 73593,
+          "sha256": "042f64b15c879503e1fc679ac74acabf6250a3045f8887efc5c50ed65ca2dbca"
+        },
+        {
+          "indice": 2,
+          "titulo": "Após o implante — prótese por cateter",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/estenose-aortica-calcificada/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72315102/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/aortic-valve-calcifications-visible-on-plain-radiograph",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 406,
+          "bytes": 107202,
+          "sha256": "5a991100c114417412fc4c324c375e39b5eb5bc1b790e1c53eb1f008b644f66f"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "pericardite-constritiva",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — calcificação pericárdica",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/pericardite-constritiva/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72052467/8a5f37ec58df44631b27e484ef4b5be1176eb0a1193c3e5d4c648e53068d645b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pericardial-calcifications",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 439,
+          "altura": 442,
+          "bytes": 82864,
+          "sha256": "325a0e6e2e52d2860b063651b0c56bc421b065c7979770ad6e05605107471bc0"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "pseudoaneurisma-ventricular",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal AP — abaulamento da ponta",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/pseudoaneurisma-ventricular/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/17054270/12b0225b4cd5d9949833f726c7c7a7_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/left-ventricular-pseudoaneurysm-massive",
+          "autoria": "Craig Hacking",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 419,
+          "bytes": 27637,
+          "sha256": "63cca92ff852667296fed69bc02071c3794296e7cf48b45343b9aad5818dbd12"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "protese-valvar-aortica-biologica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Tórax — prótese aórtica e marca-passo",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/protese-valvar-aortica-biologica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71313056/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bioprosthetic-aortic-valve-1",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 397,
+          "bytes": 73510,
+          "sha256": "42fa0440add983a5743fdaf91cab06913943393aeb97a29addf1300077797360"
+        },
+        {
+          "indice": 2,
+          "titulo": "Ampliação — anéis da prótese",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/protese-valvar-aortica-biologica/02.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71313057/74d39fd4e42d7784ea6b1b0a6257a98ec639468fe96d05ccecdf079e6a89d996_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/bioprosthetic-aortic-valve-1",
+          "autoria": "Ashesh Ishwarlal Ranchod",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 236,
+          "bytes": 69109,
+          "sha256": "76309ca4fd964d356f7cd9dcdc475fbb26d721c432c57bed05a872144e1c31e2"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "aneurisma-da-aorta-toracica",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — massa contínua com o arco aórtico",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/aneurisma-da-aorta-toracica/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72766584/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/thoracic-aortic-aneurysm-hilum-overlay-sign",
+          "autoria": "Mostafa Elfeky",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 364,
+          "bytes": 61277,
+          "sha256": "60ffb68de0e8635af0fc5430d4fab6ca8b3bb952a89727debc38bb4634907823"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "hipertensao-arterial-pulmonar",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — artérias pulmonares centrais dilatadas",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/hipertensao-arterial-pulmonar/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71620997/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-hypertension-18",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 442,
+          "bytes": 76109,
+          "sha256": "3105c9f211b93f35055521a117770a8f741b3fbc19dd6208b7c8936b2029f03e"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "sindrome-de-eisenmenger",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — hipertensão pulmonar e situs inversus abdominal",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/sindrome-de-eisenmenger/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/68300204/9acd9c3f292cf4a872817976f0e36b11e9b1a7be66ab61e6de555717ff4ece46_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/eisenmenger-syndrome-5",
+          "autoria": "Liz Silverstone",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 425,
+          "bytes": 85919,
+          "sha256": "a88b3a440ada8c7e05402ed2967cc2b611028009e7d0618f44bf56bda35ac4b6"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "tetralogia-de-fallot-operada",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — arco aórtico à direita",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/tetralogia-de-fallot-operada/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/71028314/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/tetralogy-of-fallot-with-right-aortic-arch-and-mirror-image-branching-of-the-arch-vessels",
+          "autoria": "Stefan Tigges",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 362,
+          "bytes": 65828,
+          "sha256": "c6fd6f1b90701277df9d5879af1e4dcad7639da0d54d153248a1b014d77cd1e8"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "sindrome-da-cimitarra",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — hipoplasia pulmonar direita",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/sindrome-da-cimitarra/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74597474/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/scimitar-syndrome-with-right-lung-hypoplasia",
+          "autoria": "Siang Ching Raymond Chieng",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 429,
+          "altura": 442,
+          "bytes": 92674,
+          "sha256": "fa8bb26595606ef0174c2e0396562ace854d921bc190ef73dcbde1a4754c5b27"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "sindrome-de-kartagener",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — dextrocardia e bronquiectasias",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/sindrome-de-kartagener/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/72041009/e2cfaab58d93f1c22b7f3f27714aade129d4c84d161130a4aaa34288fcdd984b_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/kartagener-syndrome-39",
+          "autoria": "Raman Mathur",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 422,
+          "altura": 442,
+          "bytes": 72564,
+          "sha256": "2e0d16f8232949530d62efab78f32a50b40edae2966f6e8fcbcfe1abd63c6729"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "pneumopericardio",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — ar em volta do coração",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/pneumopericardio/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/52012392/0e599264d3a5b5fc0cdf87000401d3_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/pneumopericardium-4",
+          "autoria": "Justin Luke Yap",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 427,
+          "altura": 442,
+          "bytes": 52650,
+          "sha256": "57d3abca7f6f1bbcaded6bdade472fa3ce1cca787b207a6c4efc77e9f3b4d463"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "coarctacao-com-erosoes-costais",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — sinal do três e erosões costais",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/coarctacao-com-erosoes-costais/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/73070191/dr-gallery.jpg",
+          "urlDoCaso": "https://radiopaedia.org/cases/coarctation-of-aorta-14",
+          "autoria": "Sagar Patil",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 411,
+          "bytes": 67370,
+          "sha256": "308b96935fd44e824af65ff425bc834ad2ec4a04421ca3c31329fe7d539792ef"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "derrame-pericardico-volumoso",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal — silhueta em moringa",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/derrame-pericardico-volumoso/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/75235364/ba2c45acbcb373ff433e7f98030fafd3b28f501226835f043eedf9788cf60393_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/massive-pericardial-effusion-3",
+          "autoria": "Abenezer Kebede Bekele",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 433,
+          "bytes": 80590,
+          "sha256": "023d1d266a9a27256dc96d0e629b9e07444a7b55316d9d957c35b7fd5507128d"
+        }
+      ]
+    },
+    {
+      "categoria": "cardiovascular",
+      "slug": "protese-de-aorta-ascendente",
+      "imagens": [
+        {
+          "indice": 1,
+          "titulo": "Frontal AP — prótese aórtica no pós-operatório",
+          "propria": true,
+          "arquivo": "/img/radiologia/casos-raio-x/v2/cardiovascular/protese-de-aorta-ascendente/01.jpg",
+          "urlOrigem": "https://prod-images-static.radiopaedia.org/images/74734873/69065b59a8cdf47ac056b2980d693f837af5814d5a82e1af1039d3bd82b077e6_gallery.jpeg",
+          "urlDoCaso": "https://radiopaedia.org/cases/aortic-dissection-with-intramural-hematoma",
+          "autoria": "王文豪",
+          "licenca": "CC BY-NC-SA 3.0 · termo conjunto DomineAqui (18/09/2026)",
+          "largura": 442,
+          "altura": 373,
+          "bytes": 72626,
+          "sha256": "76428c8b46b5c12f2ace0e42bd2b91e4fee5df80babe209444e4717f061f8d32"
         }
       ]
     }

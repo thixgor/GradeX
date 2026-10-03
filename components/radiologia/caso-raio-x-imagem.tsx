@@ -59,6 +59,8 @@ export function CasoRaioXImagem({
   // Imagem única (Radiopaedia): não existe quadro marcado para comparar. O modo
   // "Marcadores" ainda acende a lista de alterações — é ela que faz o trabalho.
   const semQuadroMarcado = imagem.quadros === 1
+  // Nesses filmes as marcações ganham setas desenhadas sobre a radiografia.
+  const temSetas = semQuadroMarcado && marcacoes.some((achado) => achado.seta)
 
   const alterarZoom = useCallback((delta: number) => {
     setZoom((atual) => Math.min(4, Math.max(1, Number((atual + delta).toFixed(2)))))
@@ -185,7 +187,7 @@ export function CasoRaioXImagem({
   const etiqueta = modo === 'limpa'
     ? (semQuadroMarcado ? 'Radiografia' : 'Sem marcações')
     : modo === 'marcada'
-      ? (semQuadroMarcado ? 'Alterações listadas' : 'Com marcações')
+      ? (semQuadroMarcado ? (temSetas ? 'Com setas' : 'Alterações listadas') : 'Com marcações')
       : 'Marcada · Limpa'
 
   const painel = (
@@ -301,6 +303,8 @@ export function CasoRaioXImagem({
 
           {marcado && !semQuadroMarcado && <Camada key={`marcada-${revelacao}`} imagem={imagem} marcada classe="rx-revela" />}
 
+          {marcado && temSetas && <Setas key={`setas-${revelacao}`} imagem={imagem} marcacoes={marcacoes} />}
+
           {modo === 'comparar' && (
             <>
               <div className="pointer-events-none absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${divisao}%` }}>
@@ -359,7 +363,7 @@ export function CasoRaioXImagem({
       {/* ── Modos ────────────────────────────────────────────────────── */}
       <div className={`grid ${semQuadroMarcado ? 'grid-cols-2' : 'grid-cols-3'} gap-1 border-t border-white/10 bg-white/[0.02] p-2`} role="group" aria-label="Modo de visualização">
         <BotaoModo ativo={modo === 'limpa'} onClick={() => trocarModo('limpa')} icone={<EyeOff />} titulo="Limpa" descricao={semQuadroMarcado ? 'Só a radiografia' : 'Sem marcações'} />
-        <BotaoModo ativo={marcado} onClick={() => trocarModo('marcada')} icone={<Eye />} titulo={semQuadroMarcado ? 'Alterações' : 'Marcadores'} descricao={semQuadroMarcado ? 'Lista o que procurar' : 'Revela alterações'} destaque />
+        <BotaoModo ativo={marcado} onClick={() => trocarModo('marcada')} icone={<Eye />} titulo={semQuadroMarcado && !temSetas ? 'Alterações' : 'Marcadores'} descricao={semQuadroMarcado && !temSetas ? 'Lista o que procurar' : 'Revela alterações'} destaque />
         {!semQuadroMarcado && (
           <BotaoModo ativo={modo === 'comparar'} onClick={() => trocarModo('comparar')} icone={<Columns2 />} titulo="Comparar" descricao="Arraste o divisor" />
         )}
@@ -386,6 +390,57 @@ export function CasoRaioXImagem({
       </button>
       {painel}
     </div>
+  )
+}
+
+const COR_DA_SETA: Record<TipoMarcacao, string> = {
+  achado: '#38bdf8',
+  medida: '#22d3ee',
+  referencia: '#e2e8f0',
+  armadilha: '#fbbf24',
+}
+
+/**
+ * Setas numeradas sobre o filme, na mesma numeração da lista de alterações.
+ * Desenhadas em SVG no sistema de coordenadas da própria imagem, acompanham o
+ * zoom e a tela cheia sem recalcular nada.
+ */
+function Setas({ imagem, marcacoes }: { imagem: ImagemCasoRaioX; marcacoes: AchadoMarcado[] }) {
+  const { largura, altura } = imagem
+  const escala = Math.max(largura, altura) / 440
+  const comprimento = 34 * escala
+  return (
+    <svg
+      aria-hidden
+      viewBox={`0 0 ${largura} ${altura}`}
+      preserveAspectRatio="none"
+      className="rx-revela pointer-events-none absolute inset-0 h-full w-full"
+    >
+      {marcacoes.map((achado, i) => {
+        if (!achado.seta) return null
+        const x = achado.seta.x * largura
+        const y = achado.seta.y * altura
+        const rad = (achado.seta.rotacao * Math.PI) / 180
+        const cx = x + Math.cos(rad) * comprimento
+        const cy = y + Math.sin(rad) * comprimento
+        const ang = Math.atan2(y - cy, x - cx)
+        const cabeca = 9 * escala
+        const p1 = `${x - Math.cos(ang - 0.45) * cabeca},${y - Math.sin(ang - 0.45) * cabeca}`
+        const p2 = `${x - Math.cos(ang + 0.45) * cabeca},${y - Math.sin(ang + 0.45) * cabeca}`
+        const cor = COR_DA_SETA[achado.tipo]
+        return (
+          <g key={`${achado.titulo}-${i}`}>
+            <line x1={cx} y1={cy} x2={x} y2={y} stroke="#000" strokeOpacity={0.65} strokeWidth={4.5 * escala} strokeLinecap="round" />
+            <line x1={cx} y1={cy} x2={x} y2={y} stroke={cor} strokeWidth={2 * escala} strokeLinecap="round" />
+            <polygon points={`${x},${y} ${p1} ${p2}`} fill={cor} stroke="#000" strokeOpacity={0.6} strokeWidth={0.8 * escala} />
+            <circle cx={cx} cy={cy} r={7.5 * escala} fill="#000" fillOpacity={0.78} stroke={cor} strokeWidth={1.4 * escala} />
+            <text x={cx} y={cy + 3.2 * escala} textAnchor="middle" fontSize={9.5 * escala} fontWeight={800} fill={cor}>
+              {i + 1}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
   )
 }
 

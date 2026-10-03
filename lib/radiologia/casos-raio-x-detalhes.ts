@@ -27,6 +27,8 @@ import { DETALHES_LEVA_2_TORAX } from './casos-raio-x-detalhes-leva-2-torax'
 import { DETALHES_LEVA_2_TRAUMA_PEDIATRIA } from './casos-raio-x-detalhes-leva-2-trauma-pediatria'
 import { DETALHES_LEVA_2_ABDOME } from './casos-raio-x-detalhes-leva-2-abdome'
 import { DETALHES_LEVA_2_OSTEOARTICULAR } from './casos-raio-x-detalhes-leva-2-osteoarticular'
+import { SETAS_MARCACOES } from './casos-raio-x-setas'
+import { DETALHES_LEVA_3_CARDIO } from './casos-raio-x-leva-3-cardio'
 
 export type TipoMarcacao = 'achado' | 'medida' | 'referencia' | 'armadilha'
 
@@ -36,6 +38,11 @@ export interface AchadoMarcado {
   /** O que a marcação aponta e como reconhecê-la sem ela. */
   descricao: string
   tipo: TipoMarcacao
+  /**
+   * Seta desenhada sobre a radiografia, para filmes sem versão marcada.
+   * Posição em fração da imagem; a rotação segue o visor (0 aponta para a esquerda).
+   */
+  seta?: { x: number; y: number; rotacao: number }
 }
 
 export interface EstruturaCaso {
@@ -3162,6 +3169,7 @@ export const DETALHES_CASOS_RAIO_X: Record<string, DetalheCaso> = {
   ...DETALHES_LEVA_2_TRAUMA_PEDIATRIA,
   ...DETALHES_LEVA_2_ABDOME,
   ...DETALHES_LEVA_2_OSTEOARTICULAR,
+  ...DETALHES_LEVA_3_CARDIO,
 }
 
 /**
@@ -3190,5 +3198,11 @@ export function detalheDoCaso(slug: string): DetalheCaso | null {
 
 /** Marcações de uma imagem específica, na ordem em que devem ser reveladas. */
 export function marcacoesDaImagem(slug: string, indice: number): AchadoMarcado[] {
-  return DETALHES_CASOS_RAIO_X[slug]?.marcacoes[indice] ?? []
+  const lista = DETALHES_CASOS_RAIO_X[slug]?.marcacoes[indice] ?? []
+  const setas = SETAS_MARCACOES[slug]?.[indice]
+  if (!setas) return lista
+  return lista.map((achado, i) => {
+    const seta = setas[i]
+    return seta ? { ...achado, seta: { x: seta[0], y: seta[1], rotacao: seta[2] } } : achado
+  })
 }

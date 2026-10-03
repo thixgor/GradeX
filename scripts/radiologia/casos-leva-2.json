@@ -2194,5 +2194,234 @@
         "autoria": "Aayush Agrawal"
       }
     ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "estenose-mitral-reumatica",
+    "imagens": [
+      {
+        "titulo": "Perfil — átrio esquerdo e brônquio esquerdo deslocados para trás",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/73735971/435f5087fd89b772b58789535e9eb60e5fcac8cbbf36569c9cb8123c8ec3a25d_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/walking-man-sign-of-left-atrial-enlargement",
+        "autoria": "Stefan Tigges"
+      },
+      {
+        "titulo": "Frontal — abertura da carina",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/73735970/c3d4c423cd1df5a49e89c2bf3030683b9872eb6ed96cb7b765ce0273e415f086_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/walking-man-sign-of-left-atrial-enlargement",
+        "autoria": "Stefan Tigges"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "insuficiencia-mitral-reumatica",
+    "imagens": [
+      {
+        "titulo": "Frontal — átrio e ventrículo esquerdos aumentados",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72920611/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/left-atrial-and-ventricular-hypertrophy",
+        "autoria": "Mukiza Festus"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "estenose-aortica-calcificada",
+    "imagens": [
+      {
+        "titulo": "Antes do implante — calcificação valvar aórtica",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72314979/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/aortic-valve-calcifications-visible-on-plain-radiograph",
+        "autoria": "Stefan Tigges"
+      },
+      {
+        "titulo": "Após o implante — prótese por cateter",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72315102/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/aortic-valve-calcifications-visible-on-plain-radiograph",
+        "autoria": "Stefan Tigges"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "pericardite-constritiva",
+    "imagens": [
+      {
+        "titulo": "Frontal — calcificação pericárdica",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72052467/8a5f37ec58df44631b27e484ef4b5be1176eb0a1193c3e5d4c648e53068d645b_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/pericardial-calcifications",
+        "autoria": "Stefan Tigges"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "pseudoaneurisma-ventricular",
+    "imagens": [
+      {
+        "titulo": "Frontal AP — abaulamento da ponta",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/17054270/12b0225b4cd5d9949833f726c7c7a7_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/left-ventricular-pseudoaneurysm-massive",
+        "autoria": "Craig Hacking"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "protese-valvar-aortica-biologica",
+    "imagens": [
+      {
+        "titulo": "Tórax — prótese aórtica e marca-passo",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/71313056/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/bioprosthetic-aortic-valve-1",
+        "autoria": "Ashesh Ishwarlal Ranchod"
+      },
+      {
+        "titulo": "Ampliação — anéis da prótese",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/71313057/74d39fd4e42d7784ea6b1b0a6257a98ec639468fe96d05ccecdf079e6a89d996_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/bioprosthetic-aortic-valve-1",
+        "autoria": "Ashesh Ishwarlal Ranchod"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "aneurisma-da-aorta-toracica",
+    "imagens": [
+      {
+        "titulo": "Frontal — massa contínua com o arco aórtico",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72766584/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/thoracic-aortic-aneurysm-hilum-overlay-sign",
+        "autoria": "Mostafa Elfeky"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "hipertensao-arterial-pulmonar",
+    "imagens": [
+      {
+        "titulo": "Frontal — artérias pulmonares centrais dilatadas",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/71620997/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/pulmonary-hypertension-18",
+        "autoria": "Stefan Tigges"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "sindrome-de-eisenmenger",
+    "imagens": [
+      {
+        "titulo": "Frontal — hipertensão pulmonar e situs inversus abdominal",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/68300204/9acd9c3f292cf4a872817976f0e36b11e9b1a7be66ab61e6de555717ff4ece46_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/eisenmenger-syndrome-5",
+        "autoria": "Liz Silverstone"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "tetralogia-de-fallot-operada",
+    "imagens": [
+      {
+        "titulo": "Frontal — arco aórtico à direita",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/71028314/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/tetralogy-of-fallot-with-right-aortic-arch-and-mirror-image-branching-of-the-arch-vessels",
+        "autoria": "Stefan Tigges"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "sindrome-da-cimitarra",
+    "imagens": [
+      {
+        "titulo": "Frontal — hipoplasia pulmonar direita",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/74597474/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/scimitar-syndrome-with-right-lung-hypoplasia",
+        "autoria": "Siang Ching Raymond Chieng"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "sindrome-de-kartagener",
+    "imagens": [
+      {
+        "titulo": "Frontal — dextrocardia e bronquiectasias",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/72041009/e2cfaab58d93f1c22b7f3f27714aade129d4c84d161130a4aaa34288fcdd984b_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/kartagener-syndrome-39",
+        "autoria": "Raman Mathur"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "pneumopericardio",
+    "imagens": [
+      {
+        "titulo": "Frontal — ar em volta do coração",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/52012392/0e599264d3a5b5fc0cdf87000401d3_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/pneumopericardium-4",
+        "autoria": "Justin Luke Yap"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "coarctacao-com-erosoes-costais",
+    "imagens": [
+      {
+        "titulo": "Frontal — sinal do três e erosões costais",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/73070191/dr-gallery.jpg",
+        "urlDoCaso": "https://radiopaedia.org/cases/coarctation-of-aorta-14",
+        "autoria": "Sagar Patil"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "derrame-pericardico-volumoso",
+    "imagens": [
+      {
+        "titulo": "Frontal — silhueta em moringa",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/75235364/ba2c45acbcb373ff433e7f98030fafd3b28f501226835f043eedf9788cf60393_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/massive-pericardial-effusion-3",
+        "autoria": "Abenezer Kebede Bekele"
+      }
+    ]
+  },
+  {
+    "categoria": "cardiovascular",
+    "slug": "protese-de-aorta-ascendente",
+    "imagens": [
+      {
+        "titulo": "Frontal AP — prótese aórtica no pós-operatório",
+        "propria": true,
+        "url": "https://prod-images-static.radiopaedia.org/images/74734873/69065b59a8cdf47ac056b2980d693f837af5814d5a82e1af1039d3bd82b077e6_gallery.jpeg",
+        "urlDoCaso": "https://radiopaedia.org/cases/aortic-dissection-with-intramural-hematoma",
+        "autoria": "王文豪"
+      }
+    ]
   }
 ]

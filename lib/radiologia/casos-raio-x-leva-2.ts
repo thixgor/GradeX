@@ -2,6 +2,7 @@ import type { CategoriaCasoRaioX } from './casos-raio-x'
 import { LEVA_2_TORAX } from './casos-raio-x-leva-2-torax'
 import { LEVA_2_TRAUMA_PEDIATRIA } from './casos-raio-x-leva-2-trauma-pediatria'
 import { LEVA_2_ABDOME } from './casos-raio-x-leva-2-abdome'
+import { LEVA_3_CARDIO } from './casos-raio-x-leva-3-cardio'
 import { LEVA_2_OSTEOARTICULAR } from './casos-raio-x-leva-2-osteoarticular'
 
 /**
@@ -29,4 +30,5 @@ export const DEFINICOES_LEVA_2: DefinicaoCasoRaioX[] = [
   ...LEVA_2_TRAUMA_PEDIATRIA,
   ...LEVA_2_ABDOME,
   ...LEVA_2_OSTEOARTICULAR,
+  ...LEVA_3_CARDIO,
 ]

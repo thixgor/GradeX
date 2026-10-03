@@ -254,7 +254,7 @@ export function CasoRaioXPagina({
                             </>
                           ) : (
                             <>
-                              <li><strong className="text-foreground">2.</strong> Ligue <strong className="text-foreground">Alterações</strong> e procure cada item da lista na própria radiografia — aqui não há setas, o olho é seu.</li>
+                              <li><strong className="text-foreground">2.</strong> Ligue <strong className="text-foreground">Marcadores</strong>: cada alteração da lista ganha uma seta numerada sobre a radiografia.</li>
                               <li><strong className="text-foreground">3.</strong> Use <strong className="text-foreground">zoom</strong> e <strong className="text-foreground">inversão</strong> (tecla I) para confirmar o que achou.</li>
                             </>
                           )}
