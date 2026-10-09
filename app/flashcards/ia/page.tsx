@@ -43,6 +43,7 @@ import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
 import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
 import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
 import { AppShell as LayoutShell } from '@/components/app-shell'
+import { MarcaDaguaFlashcard } from '@/components/flashcards/marca-dagua-flashcard'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { NotificationsBell } from '@/components/notifications-bell'
 import { PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
@@ -1224,7 +1225,7 @@ export default function FlashcardsPage() {
                 </div>
                 <div
                   className={cn(
-                    'rounded-2xl border p-4 sm:p-6 min-h-[200px] sm:min-h-[240px] cursor-pointer transition-all duration-300 flex flex-col justify-center',
+                    'relative overflow-hidden rounded-2xl border p-4 sm:p-6 min-h-[200px] sm:min-h-[240px] cursor-pointer transition-all duration-300 flex flex-col justify-center',
                     flipped
                       ? 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border-emerald-400/50 shadow-lg shadow-emerald-500/20'
                       : 'bg-gradient-to-br from-white/5 to-white/10 border-white/20 shadow-lg shadow-white/10'
@@ -1235,6 +1236,7 @@ export default function FlashcardsPage() {
                   <p className="text-lg sm:text-2xl font-bold text-white leading-relaxed break-words">
                     {flipped ? currentCard.back : currentCard.front}
                   </p>
+                  <MarcaDaguaFlashcard sobreFundoEscuro />
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm">

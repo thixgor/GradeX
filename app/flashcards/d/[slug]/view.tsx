@@ -1479,6 +1479,7 @@ export default function DeckPage() {
                 onToggleComment={() => setShowComment(s => !s)}
                 showHint={showHint}
                 onToggleHint={() => setShowHint(s => !s)}
+                marcaDagua
               />
             </div>
           )}

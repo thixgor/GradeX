@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useAnimationControls, useReducedMotion } from 
 import { cn } from '@/lib/utils'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import type { FlashcardManualCard } from '@/lib/types'
+import { MarcaDaguaFlashcard } from '@/components/flashcards/marca-dagua-flashcard'
 
 // useLayoutEffect no cliente, useEffect no SSR — evita o warning de hidratação
 // e garante que a altura do card seja medida ANTES da pintura, eliminando o
@@ -22,6 +23,8 @@ interface Props {
   showHint?: boolean
   onToggleHint?: () => void
   className?: string
+  /** Marca d'água com nome, e-mail e data de quem estuda (área de resolução). */
+  marcaDagua?: boolean
 }
 
 function renderInline(text: string): React.ReactNode[] {
@@ -414,6 +417,7 @@ export function FlashcardCardView({
   showHint = false,
   onToggleHint,
   className,
+  marcaDagua = false,
 }: Props) {
   const isHidden = card.kind === 'hidden_word'
   const [revealedHidden, setRevealedHidden] = useState(false)
@@ -744,6 +748,9 @@ export function FlashcardCardView({
             </AnimatePresence>
           </div>
         </motion.div>
+        {/* Fora do `motion.div` que gira: a marca acompanha o tamanho do card
+            sem entrar no contexto 3D — virar não a repinta. */}
+        {marcaDagua && <MarcaDaguaFlashcard />}
       </div>
     </div>
   )
