@@ -10,6 +10,7 @@ import {
   avaliarDevtools,
   avisoDoAtalho,
   deveBloquearMenu,
+  SELETOR_IMPRESSAO_LIVRE,
   type DetalheDoEventoDeInspecao,
 } from '@/lib/protecao-inspecao'
 
@@ -20,8 +21,10 @@ import {
  * letras o que isto NÃO faz: tudo o que chega ao navegador pode ser lido por
  * quem insistir. Aqui é só a ligação delas com a página:
  *
- * - **atalhos** do inspetor, do código-fonte e de salvar a página não fazem
- *   nada, e uma linha na tela diz por quê (tecla morta parece defeito);
+ * - **atalhos** do inspetor, do código-fonte, de salvar e de imprimir a página
+ *   não fazem nada, e uma linha na tela diz por quê (tecla morta parece
+ *   defeito);
+ * - **impressão** pelo menu do navegador sai em branco, com um aviso;
  * - **botão direito** do mouse não abre o menu nativo — exceto em link e em
  *   campo de escrita;
  * - **DevTools acoplado** à janela esconde a página atrás de um aviso, e a
@@ -78,6 +81,8 @@ export function ProtecaoContraInspecao() {
     const aoTeclar = (evento: KeyboardEvent) => {
       const qual = atalhoDeInspecao(evento)
       if (!qual) return
+      // A página que existe para ser impressa (o certificado) se declara.
+      if (qual === 'imprimir' && document.querySelector(SELETOR_IMPRESSAO_LIVRE)) return
       evento.preventDefault()
       avisar(avisoDoAtalho(qual))
     }
@@ -157,6 +162,16 @@ export function ProtecaoContraInspecao() {
   }, [aberto])
 
   useEffect(() => () => document.documentElement.removeAttribute('data-inspecao-aberta'), [])
+
+  // A impressão. O atalho é barrado acima, mas o menu do navegador também
+  // imprime e `beforeprint` não se cancela; quem barra de fato é a folha
+  // `@media print` de `globals.css`, que só vale com este atributo — então o
+  // admin, que fica de fora da proteção, continua imprimindo.
+  useEffect(() => {
+    if (!ligada) return
+    document.documentElement.setAttribute('data-sem-impressao', '')
+    return () => document.documentElement.removeAttribute('data-sem-impressao')
+  }, [ligada])
 
   if (!montado || !ligada) return null
 

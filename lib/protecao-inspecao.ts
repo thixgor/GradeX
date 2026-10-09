@@ -40,7 +40,7 @@ export interface TeclaPressionada {
   altKey: boolean
 }
 
-export type AtalhoBarrado = 'devtools' | 'codigo-fonte' | 'salvar'
+export type AtalhoBarrado = 'devtools' | 'codigo-fonte' | 'salvar' | 'imprimir'
 
 /** A letra da tecla, imune ao Option do Mac e ao Caps Lock. */
 function letraDa(evento: TeclaPressionada): string {
@@ -49,18 +49,22 @@ function letraDa(evento: TeclaPressionada): string {
 }
 
 /**
- * Esta combinação abre o inspetor, o código-fonte ou salva a página?
+ * Esta combinação abre o inspetor ou o código-fonte, salva ou imprime a página?
  *
  * - **F12**, em qualquer sistema.
  * - **Ctrl+Shift+I / J / C / K** (Windows e Linux; K é o console do Firefox).
  * - **Cmd+Option+I / J / C / U** (Mac; U é o código-fonte).
  * - **Ctrl/Cmd+U**: código-fonte.
  * - **Ctrl/Cmd+S**: salvar a página inteira, com o HTML já preenchido.
+ * - **Ctrl/Cmd+P**: imprimir — o "Salvar como PDF" levava uma prova inteira, em
+ *   dezoito páginas, num gesto. O atalho é só metade: o menu do navegador
+ *   também imprime, e quem fecha essa porta é a folha `@media print` de
+ *   `globals.css` (ver `data-sem-impressao`).
  *
- * Fora daqui, de propósito: copiar, colar, selecionar tudo e imprimir. São
- * decididos prova a prova pelo escudo anti-cola
- * (`components/exam/escudo-anti-cola.tsx`); barrá-los no site inteiro tiraria
- * do aluno o copiar de um enunciado de treino para pesquisar.
+ * Fora daqui, de propósito: copiar, colar e selecionar tudo. São decididos
+ * prova a prova pelo escudo anti-cola (`components/exam/escudo-anti-cola.tsx`);
+ * barrá-los no site inteiro tiraria do aluno o copiar de um enunciado de
+ * treino para pesquisar.
  */
 export function atalhoDeInspecao(evento: TeclaPressionada): AtalhoBarrado | null {
   if (evento.key === 'F12' || evento.code === 'F12') return 'devtools'
@@ -76,6 +80,7 @@ export function atalhoDeInspecao(evento: TeclaPressionada): AtalhoBarrado | null
   if ((ctrl || cmd) && !evento.shiftKey && !evento.altKey) {
     if (letra === 'u') return 'codigo-fonte'
     if (letra === 's') return 'salvar'
+    if (letra === 'p') return 'imprimir'
   }
   return null
 }
@@ -88,6 +93,8 @@ export function avisoDoAtalho(qual: AtalhoBarrado): string {
       return 'O código-fonte não está disponível neste site.'
     case 'salvar':
       return 'Salvar a página não está disponível neste site.'
+    case 'imprimir':
+      return 'A impressão não está disponível neste site.'
   }
 }
 
@@ -236,6 +243,13 @@ export function avaliarDevtools(estado: EstadoDaDeteccao, m: MedidasDaJanela): E
 
   return { janela, referencia, aberto }
 }
+
+/**
+ * Marca que libera a impressão na página que a contém — o certificado, cujo
+ * botão "Imprimir" é o próprio recurso. Ver a regra `@media print` em
+ * `globals.css`.
+ */
+export const SELETOR_IMPRESSAO_LIVRE = '[data-permite-impressao]'
 
 /** Nome do evento que a página da prova ouve para registrar no monitoramento. */
 export const EVENTO_INSPECAO = 'domineaqui:inspecao'

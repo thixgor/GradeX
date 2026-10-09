@@ -21,8 +21,13 @@ confundir uma com a outra.
 
 - `components/protecao-contra-inspecao.tsx` + `lib/protecao-inspecao.ts`, no
   layout raiz, para todos menos admin:
-  - F12, Ctrl+Shift+I/J/C/K, Cmd+Opt+I/J/C/U, Ctrl/Cmd+U e Ctrl/Cmd+S não fazem
-    nada (e uma linha na tela diz por quê);
+  - F12, Ctrl+Shift+I/J/C/K, Cmd+Opt+I/J/C/U, Ctrl/Cmd+U, Ctrl/Cmd+S e
+    Ctrl/Cmd+P não fazem nada (e uma linha na tela diz por quê);
+  - impressão pelo menu do navegador (e o "Salvar como PDF") sai em branco, com
+    um aviso — folha `@media print` em `globals.css`, ligada pelo atributo
+    `data-sem-impressao`. A página que precisa imprimir (o certificado de aula)
+    marca um elemento com `data-permite-impressao`. Cronograma em PDF e
+    exportação de flashcards abrem janela própria e não são afetados;
   - botão direito do mouse não abre o menu nativo — exceto em link e campo de
     escrita; no toque nada muda (o toque longo é o gesto de selecionar texto);
   - DevTools acoplado à janela esconde a página atrás de um aviso. Na prova

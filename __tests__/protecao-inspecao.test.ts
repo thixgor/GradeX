@@ -51,8 +51,13 @@ describe('atalhoDeInspecao', () => {
     expect(atalhoDeInspecao(tecla({ key: 'S', code: 'KeyS', metaKey: true }))).toBe('salvar')
   })
 
-  it('não toca em copiar, colar, selecionar tudo, imprimir — isso é decidido por prova', () => {
-    for (const letra of ['c', 'v', 'a', 'p', 'x', 'z', 'f']) {
+  it('barra imprimir: Ctrl+P e Cmd+P (o "Salvar como PDF" levava a prova inteira)', () => {
+    expect(atalhoDeInspecao(tecla({ key: 'p', code: 'KeyP', ctrlKey: true }))).toBe('imprimir')
+    expect(atalhoDeInspecao(tecla({ key: 'p', code: 'KeyP', metaKey: true }))).toBe('imprimir')
+  })
+
+  it('não toca em copiar, colar, selecionar tudo — isso é decidido por prova', () => {
+    for (const letra of ['c', 'v', 'a', 'x', 'z', 'f']) {
       const code = `Key${letra.toUpperCase()}`
       expect(atalhoDeInspecao(tecla({ key: letra, code, ctrlKey: true }))).toBeNull()
       expect(atalhoDeInspecao(tecla({ key: letra, code, metaKey: true }))).toBeNull()

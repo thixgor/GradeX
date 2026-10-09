@@ -7306,6 +7306,32 @@ html[data-inspecao-aberta] body > *:not(#protecao-inspecao) {
 }
 
 /*
+ * Impressão barrada no site todo.
+ *
+ * `data-sem-impressao` entra no `<html>` pelo
+ * `components/protecao-contra-inspecao.tsx` (todo mundo menos admin). O Ctrl+P
+ * já é barrado lá, mas o menu do navegador também imprime e o `beforeprint` não
+ * se cancela — então quem decide é esta folha: o papel (e o "Salvar como PDF")
+ * sai em branco, só com o aviso. É a mesma técnica do escudo anti-cola da prova.
+ *
+ * A página que existe para ser impressa — o certificado de aula — marca um
+ * elemento com `data-permite-impressao` e fica de fora pelo `:has`.
+ */
+@media print {
+  html[data-sem-impressao]:not(:has([data-permite-impressao])) body > * {
+    display: none !important;
+  }
+
+  html[data-sem-impressao]:not(:has([data-permite-impressao])) body::after {
+    content: 'A impressão não está disponível na DomineAqui.';
+    display: block;
+    padding: 4rem 2rem;
+    font: 600 14pt system-ui, sans-serif;
+    text-align: center;
+  }
+}
+
+/*
  * Marca d'água da área de resolução de flashcard
  * (`components/flashcards/marca-dagua-flashcard.tsx`).
  *

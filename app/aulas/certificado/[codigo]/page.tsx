@@ -76,7 +76,10 @@ export default function VerificarCertificadoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 px-4 py-8 print:bg-white print:p-0">
+    // `data-permite-impressao`: o site barra a impressão em toda página
+    // (ver `components/protecao-contra-inspecao.tsx`), mas aqui imprimir é o
+    // recurso — o certificado existe para virar papel.
+    <div data-permite-impressao className="min-h-screen bg-muted/30 px-4 py-8 print:bg-white print:p-0">
       {/* Faixa de verificação: some na impressão, porque no papel ela seria
           apenas uma barra verde sem função. */}
       <div className="mx-auto mb-4 flex max-w-3xl items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 print:hidden">
