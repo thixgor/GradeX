@@ -47,6 +47,9 @@
     "app/api/cron/payments-sweeper/route.ts": {
       "maxDuration": 300
     },
+    "app/api/cron/monitorias/route.ts": {
+      "maxDuration": 120
+    },
     "app/api/cron/fulfillment-sweeper/route.ts": {
       "maxDuration": 60,
       "memory": 1024
@@ -172,6 +175,10 @@
     {
       "path": "/api/cron/ticket-replies",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/monitorias",
+      "schedule": "7 * * * *"
     }
   ],
   "redirects": [

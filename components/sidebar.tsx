@@ -92,6 +92,7 @@ const SECTION_BADGES: Partial<Record<SidebarSectionKey, string>> = {
   games: 'Novo',
   materiais: 'Novo',
   rifas: 'Novo',
+  monitorias: 'Novo',
 }
 
 /**

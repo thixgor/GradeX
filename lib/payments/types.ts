@@ -36,7 +36,7 @@ export interface PayerAddress {
   federalUnit?: string
 }
 
-export type PaymentOrderType = 'plan' | 'material' | 'donation' | 'subscription' | 'product' | 'raffle' | 'physical'
+export type PaymentOrderType = 'plan' | 'material' | 'donation' | 'subscription' | 'product' | 'raffle' | 'physical' | 'monitoria'
 
 export type PaymentProviderId = 'mercado_pago'
 
@@ -62,6 +62,18 @@ export interface CreateOrderInput {
   allowedMethods?: PaymentMethodKind[]
   /** URL de retorno após Pix/boleto, opcional. */
   notificationUrl?: string
+  /**
+   * Vencimento do Pix/boleto. Sem ele, 24h. As monitorias passam um prazo
+   * menor: o horário da aula fica travado só até o fim do prazo de pagamento.
+   */
+  expiresAt?: Date
+}
+
+export interface RefundOptions {
+  /** Reembolso PARCIAL, em reais. Omitido = reembolso total. */
+  amountReais?: number
+  /** Chave determinística: repetir a chamada não reembolsa duas vezes. */
+  idempotencyKey?: string
 }
 
 export interface CreatePreapprovalInput {
@@ -134,7 +146,7 @@ export interface PaymentProvider {
    */
   findPaymentByExternalReference?(externalReference: string): Promise<ProviderOrder | null>
 
-  refundPayment(providerPaymentId: string): Promise<void>
+  refundPayment(providerPaymentId: string, options?: RefundOptions): Promise<void>
 
   createPreapproval(input: CreatePreapprovalInput): Promise<ProviderSubscription>
 

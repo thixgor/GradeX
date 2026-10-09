@@ -226,10 +226,21 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
     case 'physical':
       await applyPhysicalOrder(order, result)
       break
+    case 'monitoria': {
+      // Assento de monitoria pago: repasse em garantia + confirmação da aula.
+      const { aoAprovarPagamento } = await import('../monitorias/pagamento')
+      await aoAprovarPagamento(order, result)
+      break
+    }
   }
 }
 
 async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatus) {
+  if (order.type === 'monitoria') {
+    const { aoRevogarPagamento } = await import('../monitorias/pagamento')
+    await aoRevogarPagamento(order, newStatus)
+    return
+  }
   if ((order.type === 'plan' || order.type === 'subscription') && order.userId) {
     // Clawback do Plus+: rebaixa a conta na hora, encerra a assinatura e
     // registra o reembolso para a carência de reassinatura. Antes isso ficava

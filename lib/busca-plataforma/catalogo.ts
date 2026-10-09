@@ -62,6 +62,7 @@ const CHAVES_DA_AREA: Record<SidebarSectionKey, string[]> = {
   manualEletro: ['ecg', 'eletrocardiograma', 'eletro', 'ekg', 'ritmo', 'derivacoes', 'arritmia'],
   materiais: ['material', 'materiais', 'apostila', 'resumo', 'pdf', 'ebook', 'biblioteca', 'livro'],
   rifas: ['rifa', 'rifas', 'sorteio', 'sorteios', 'premio', 'numero da sorte'],
+  monitorias: ['monitoria', 'monitorias', 'monitor', 'aula particular', 'professor particular', 'tutor', 'reforco', 'aula em grupo'],
 }
 
 /** Ícone de cada área quando o admin não escolheu outro. */
@@ -85,6 +86,7 @@ const ICONE_DA_AREA: Record<SidebarSectionKey, string> = {
   manualEletro: 'activity',
   materiais: 'book-open',
   rifas: 'ticket',
+  monitorias: 'graduation-cap',
 }
 
 /**
@@ -383,6 +385,7 @@ const ADMIN: ItemBusca[] = [
   admin('games', 'Games (admin)', '/admin/games', ['jogos', 'cruzadas', 'forca'], 'gamepad-2'),
   admin('forum-topics', 'Tópicos do fórum', '/admin/forum-topics', ['forum', 'topicos', 'moderar'], 'message-circle'),
   admin('rifas', 'Rifas (admin)', '/admin/rifas', ['rifas', 'sorteios', 'numeros'], 'ticket'),
+  admin('monitorias', 'Monitorias (admin)', '/admin/monitorias', ['monitorias', 'monitores', 'repasses', 'disputas', 'pix'], 'graduation-cap'),
   admin('loja', 'Loja (admin)', '/admin/loja', ['loja', 'produtos', 'pedidos'], 'store'),
   admin('coupons', 'Cupons', '/admin/coupons', ['cupom', 'desconto', 'promocao'], 'tag'),
   admin('keys', 'Chaves de acesso', '/admin/keys', ['serial', 'chaves', 'ativacao'], 'key'),

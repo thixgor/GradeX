@@ -6,6 +6,7 @@ import type {
   ProviderOrder,
   ProviderSubscription,
   PayerAddress,
+  RefundOptions,
 } from '../types'
 import { getMpPaymentWithToken, getMpPreApprovalWithToken } from './client'
 import { mapMpPaymentStatus, mapMpPreapprovalStatus, mapMpPaymentMethod } from './status-mapper'
@@ -143,9 +144,14 @@ export class MercadoPagoProvider implements PaymentProvider {
       if (descriptor) body.statement_descriptor = descriptor.slice(0, 22)
     }
 
-    // Para Pix/boleto, precisamos avisar o vencimento (24h padrão)
+    // Para Pix/boleto, precisamos avisar o vencimento (24h padrão). Quem passa
+    // `expiresAt` (monitorias) recebe esse prazo — com piso de 30 min, o menor
+    // vencimento que o Mercado Pago aceita para Pix.
     if (input.paymentMethodId === 'pix' || isBoleto) {
-      const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+      const padrao = Date.now() + 24 * 60 * 60 * 1000
+      const piso = Date.now() + 30 * 60 * 1000
+      const pedido = input.expiresAt ? input.expiresAt.getTime() : padrao
+      const expires = new Date(Math.min(padrao, Math.max(piso, pedido)))
       body.date_of_expiration = expires.toISOString()
     }
 
@@ -229,19 +235,24 @@ export class MercadoPagoProvider implements PaymentProvider {
     return found ? mpPaymentToProviderOrder(found) : null
   }
 
-  async refundPayment(providerPaymentId: string): Promise<void> {
+  async refundPayment(providerPaymentId: string, options: RefundOptions = {}): Promise<void> {
     // SDK v2 ainda não expõe Refund de forma limpa em todos os builds — usar fetch direto
     const auth = await getEffectiveMpAuth()
+    // Corpo vazio = reembolso total; `amount` = parcial. A chave de
+    // idempotência determinística faz uma nova tentativa (cron, clique duplo)
+    // devolver o MESMO reembolso em vez de criar outro.
+    const body = options.amountReais != null ? { amount: round2(options.amountReais) } : {}
     const res = await fetch(
-      `https://api.mercadopago.com/v1/payments/${providerPaymentId}/refunds`,
+      `https://api.mercadopago.com/v1/payments/${encodeURIComponent(providerPaymentId)}/refunds`,
       {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${auth.accessToken}`,
           'Content-Type': 'application/json',
-          'X-Idempotency-Key': randomUUID(),
+          'X-Idempotency-Key': options.idempotencyKey || randomUUID(),
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(15_000),
       }
     )
     if (!res.ok) {

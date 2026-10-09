@@ -207,6 +207,13 @@ function isPublicRoute(pathname: string): boolean {
   // grande mas nenhuma miniatura — elas cairiam no portão de login.
   if (/^\/api\/materiais\/[a-fA-F0-9]{24}\/pdf-viewer\/thumb$/.test(pathname)) return true
   if (/^\/pacotes\/[a-fA-F0-9]{24}$/.test(pathname)) return true
+  // Monitorias: vitrine, página do anúncio e verificação de contrato abertas a
+  // visitante (é vitrine de venda). Os dados vêm só de `/api/monitorias/publico`,
+  // que devolve apenas o que é público. Pedir, agendar e pagar exige login.
+  if (pathname === '/monitorias') return true
+  if (/^\/monitorias\/anuncio\/[a-z0-9-]{3,80}$/.test(pathname)) return true
+  if (/^\/monitorias\/documentos\/verificar\/[A-Za-z0-9]{10}$/.test(pathname)) return true
+  if (/^\/api\/monitorias\/publico\//.test(pathname)) return true
   // Destino da reescrita de `/apg?periodo=N` (ver next.config.js). O visitante
   // entra por `/apg`, que já é pública; esta linha cobre quem abrir o destino
   // pelo endereço direto.

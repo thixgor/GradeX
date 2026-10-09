@@ -18,6 +18,7 @@ export type SidebarSectionKey =
   | 'manualEletro'
   | 'materiais'
   | 'rifas'
+  | 'monitorias'
 
 export type SidebarSectionSettings = Record<SidebarSectionKey, boolean>
 
@@ -168,6 +169,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Rifas & Sorteios',
     href: '/rifas',
     description: 'Rifas, venda de números e sorteios ao vivo.',
+    defaultEnabled: true,
+  },
+  {
+    key: 'monitorias',
+    label: 'Monitorias',
+    href: '/monitorias',
+    description: 'Aulas particulares e em grupo com monitores da comunidade, pagas por PIX com garantia.',
     defaultEnabled: true,
   },
 ]

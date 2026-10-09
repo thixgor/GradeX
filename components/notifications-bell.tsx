@@ -149,6 +149,11 @@ export function NotificationsBell() {
       router.push(notification.ticketId ? `/?suporte=${notification.ticketId}` : '/')
     } else if (notification.type === 'order_update') {
       router.push('/profile?tab=pedidos')
+    } else if (notification.type === 'monitoria') {
+      // Só caminho interno: `actionUrl` é gravado pelo servidor, mas não
+      // deixamos uma notificação mandar a pessoa para fora do site.
+      const destino = notification.actionUrl || ''
+      router.push(destino.startsWith('/') && !destino.startsWith('//') ? destino : '/monitorias/minhas')
     } else {
       router.push(`/exam/${notification.examId}/user/${notification.userId}`)
     }

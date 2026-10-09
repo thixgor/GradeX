@@ -2554,3 +2554,57 @@ export async function sendNewTicketAdminEmail(input: {
     html: getEmailTemplate('Novo ticket de suporte', content),
   })
 }
+
+// ─── Monitorias ──────────────────────────────────────────────────────────
+
+/**
+ * E-mail transacional das monitorias, no layout padrão.
+ *
+ * Recebe tudo em TEXTO PURO e escapa aqui: títulos de anúncio, nomes e
+ * mensagens vêm de usuários. `linhas` vira uma tabela de resumo (rótulo →
+ * valor); o botão leva para dentro da plataforma — o link da reunião nunca vai
+ * por e-mail (fica na página da reserva, só para quem pagou).
+ */
+export async function sendMonitoriaEmail(input: {
+  to: string
+  assunto: string
+  titulo: string
+  saudacaoNome?: string
+  paragrafos: string[]
+  linhas?: Array<[string, string]>
+  botao?: { texto: string; url: string }
+  aviso?: string
+  anexos?: Array<{ filename: string; content: Buffer | string; contentType: string }>
+}): Promise<boolean> {
+  if (!input.to) return false
+  const primeiro = (input.saudacaoNome || '').trim().split(/\s+/)[0]
+  const tabela = input.linhas?.length
+    ? `<table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:14px;">${input.linhas
+        .map(
+          ([rotulo, valor]) =>
+            `<tr><td style="padding:8px 10px;color:#718096;border-bottom:1px solid #edf2f7;width:40%;">${escapeHtml(rotulo)}</td><td style="padding:8px 10px;color:#1a202c;font-weight:600;border-bottom:1px solid #edf2f7;">${escapeHtml(valor)}</td></tr>`,
+        )
+        .join('')}</table>`
+    : ''
+  const content = `
+    <h1 class="h1">${escapeHtml(input.titulo)}</h1>
+    ${primeiro ? `<p>Olá, ${escapeHtml(primeiro)}!</p>` : ''}
+    ${input.paragrafos.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
+    ${tabela}
+    ${input.aviso ? `<div style="background-color:#fffbeb;border-left:4px solid #f59e0b;padding:12px 15px;margin:20px 0;border-radius:4px;font-size:14px;color:#92400e;">${escapeHtml(input.aviso)}</div>` : ''}
+    ${input.botao ? `<div style="text-align:center;"><a href="${escapeHtml(input.botao.url)}" class="button" target="_blank">${escapeHtml(input.botao.texto)}</a></div>` : ''}
+  `
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui - Monitorias" <no-reply@domineaqui.com.br>',
+      to: input.to,
+      subject: input.assunto,
+      html: getEmailTemplate(input.titulo, content),
+      attachments: input.anexos,
+    })
+    return true
+  } catch (err) {
+    console.error('[mail] monitoria falhou:', input.assunto, err)
+    return false
+  }
+}
