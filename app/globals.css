@@ -7289,6 +7289,38 @@ body.exam-sem-copia [data-permite-copia] {
   -webkit-touch-callout: default;
 }
 
+/*
+ * DevTools aberto: a página some atrás do aviso.
+ *
+ * O atributo entra no `<html>` quando `components/protecao-contra-inspecao.tsx`
+ * percebe o inspetor acoplado à janela. Tudo o que é filho do `<body>` fica
+ * invisível, menos o contêiner do aviso.
+ *
+ * `visibility`, e não `display: none`: esconder sem desmontar mantém a rolagem,
+ * o vídeo e o estado da prova onde estavam — quem fecha o inspetor volta
+ * exatamente ao ponto em que parou. É dissuasão, não cofre: o DOM continua lá
+ * para quem souber procurar (ver `lib/protecao-inspecao.ts`).
+ */
+html[data-inspecao-aberta] body > *:not(#protecao-inspecao) {
+  visibility: hidden !important;
+}
+
+/*
+ * Marca d'água da área de resolução de flashcard
+ * (`components/flashcards/marca-dagua-flashcard.tsx`).
+ *
+ * O ladrilho (nome, e-mail, data) chega pela variável `--marca-dagua`, como
+ * data-URI. `print-color-adjust` faz a marca sair também no papel e no
+ * "Salvar como PDF", que por padrão descartam fundos.
+ */
+.marca-dagua-flashcard {
+  background-image: var(--marca-dagua);
+  background-repeat: repeat;
+  background-size: 340px 200px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    Catálogo do Manual da Histologia
    Superfície escura da marca (verde-escuro #0B1F1A, laranja #E8763A) para as

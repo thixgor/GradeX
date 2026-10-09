@@ -7,6 +7,7 @@ import { Footer } from '@/components/footer'
 import { ScrollToTop } from '@/components/scroll-to-top'
 import { RouteProgress } from '@/components/route-progress'
 import { ImageProtectionProvider } from '@/components/image-protection-provider'
+import { ProtecaoContraInspecao } from '@/components/protecao-contra-inspecao'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
 import { RegisterSW } from '@/components/pwa/register-sw'
@@ -321,6 +322,7 @@ export default function RootLayout({
                <InstallPrompt />
                <TactileFeedback />
                <LiteModePrompt />
+               <ProtecaoContraInspecao />
              </ImageProtectionProvider>
             </FloatingDockProvider>
            </ShopCartProvider>
