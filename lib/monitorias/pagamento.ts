@@ -85,6 +85,22 @@ export async function criarCheckoutPix(input: {
   const charge = cobranca.charge
   const divisao = dividirValor(part.valorCentavos)
   const expiraEm = new Date(Math.max(reserva.prazoPagamento.getTime(), agora.getTime() + 30 * 60_000))
+  // O Mercado Pago não aceita PIX com menos de 30 min. Se isso passa do prazo
+  // da reserva (agendamento direto tem 30 min para assinar E pagar), o prazo
+  // e a trava do horário acompanham o PIX — senão o aluno pagaria um PIX
+  // válido depois de o horário já ter sido solto, e o pagamento seria devolvido.
+  if (expiraEm > reserva.prazoPagamento && reserva.inicio && expiraEm.getTime() < reserva.inicio.getTime() - 30 * 60_000) {
+    await Promise.all([
+      c.reservas.updateOne(
+        { _id: reserva._id as any, status: 'aguardando_pagamento', prazoPagamento: reserva.prazoPagamento },
+        { $set: { prazoPagamento: expiraEm, updatedAt: agora } },
+      ),
+      c.bloqueios.updateMany(
+        { reservaId: input.reservaId, tipo: 'hold' },
+        { $set: { expiraEm: new Date(expiraEm.getTime() + 15 * 60_000) } },
+      ),
+    ])
+  }
 
   const orderDoc: Omit<PaymentOrder, '_id'> = {
     userId: alunoId,
@@ -187,6 +203,18 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
   const partId = new ObjectId(order.refId)
   const agora = new Date()
   const pagoCentavos = reaisParaCentavos(order.paidAmount ?? result.amount ?? order.amount)
+
+  // Defesa em profundidade: o pagamento aprovado precisa cobrir o preço do
+  // assento. Um valor menor (pagamento adulterado, erro de integração) não
+  // confirma aula — devolve e avisa a equipe.
+  const esperado = await c.participacoes.findOne({ _id: partId } as any, { projection: { valorCentavos: 1, alunoId: 1 } })
+  if (esperado && result.amount != null && reaisParaCentavos(result.amount) + 1 < esperado.valorCentavos) {
+    console.error('[monitorias] pagamento menor que o devido', String(order._id), result.amount, esperado.valorCentavos)
+    await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'valor_menor', pago: result.amount, esperadoCentavos: esperado.valorCentavos } })
+    await c.participacoes.updateOne({ _id: partId, status: 'aguardando_pagamento' } as any, { $set: { status: 'paga', providerPaymentId: result.providerOrderId, paymentOrderId: String(order._id), pagoCentavos, pagoEm: agora } })
+    await reembolsarParticipacao({ participacaoId: order.refId, valorBaseCentavos: null, motivo: 'Valor pago diferente do combinado', por: 'sistema' })
+    return
+  }
 
   const paga = await c.participacoes.findOneAndUpdate(
     { _id: partId, status: 'aguardando_pagamento' } as any,

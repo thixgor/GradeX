@@ -113,7 +113,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
       )}
       <p className="flex items-start gap-2 rounded-xl bg-emerald-500/10 p-3 text-xs text-emerald-800 dark:text-emerald-300">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
-        Pagamento protegido: o valor fica em garantia e só vai para o monitor 48h depois da aula. Cancelou com 24h ou mais? Reembolso automático.
+        Pagamento protegido: o valor fica em garantia e só vai para o monitor 48h depois da aula. Desistiu em até 7 dias (antes da aula) ou cancelou com 24h de antecedência? Reembolso de 100%, automático.
       </p>
     </div>
   )

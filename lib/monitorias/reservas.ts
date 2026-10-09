@@ -36,6 +36,7 @@ export class ErroMonitoria extends Error {
 }
 
 const MAX_RESERVAS_ABERTAS_POR_ALUNO = 10
+const MAX_AGENDAMENTOS_PENDENTES_POR_MONITOR = 2
 const ANTECEDENCIA_MIN_PROPOSTA_MS = 3 * 3_600_000
 const HOLD_DIRETO_MS = 30 * 60_000
 const FOLGA_HOLD_MS = 15 * 60_000
@@ -197,6 +198,7 @@ export async function criarSolicitacao(input: {
     origem: input.gratis ? 'gratis' : input.modo,
     status: 'solicitada',
     aceites: {},
+    materiais: anuncio.materiais || [],
     versao: 0,
     ultimaAtividadeEm: agora,
     createdAt: agora,
@@ -518,8 +520,22 @@ export async function agendarDireto(input: {
   }
 
   const c = await cols()
-  if ((await contarAbertas(c, String(aluno._id))) >= MAX_RESERVAS_ABERTAS_POR_ALUNO) {
+  const [abertas, pendentesComEste] = await Promise.all([
+    contarAbertas(c, String(aluno._id)),
+    // Cada agendamento trava horário do monitor por até 30 min sem pagar. Sem
+    // este teto, uma pessoa sozinha conseguiria "sequestrar" a agenda inteira.
+    c.reservas.countDocuments({
+      solicitanteId: String(aluno._id),
+      tutorId: idDe(tutor),
+      origem: { $in: ['direto', 'gratis'] },
+      status: { $in: ['aguardando_assinaturas', 'aguardando_pagamento'] },
+    }),
+  ])
+  if (abertas >= MAX_RESERVAS_ABERTAS_POR_ALUNO) {
     throw new ErroMonitoria(429, 'Você tem pedidos demais em aberto. Conclua ou cancele algum antes.')
+  }
+  if (pendentesComEste >= MAX_AGENDAMENTOS_PENDENTES_POR_MONITOR) {
+    throw new ErroMonitoria(429, 'Você já tem horários reservados com este monitor esperando pagamento. Conclua ou cancele antes de reservar outro.')
   }
   const valor = input.gratis ? 0 : precoPorPessoaCentavos(anuncio, input.duracaoMin, input.vagas)
   const prazo = input.vagas > 1 ? prazoDePagamento(agora, input.inicio) : new Date(agora.getTime() + HOLD_DIRETO_MS)
@@ -548,6 +564,7 @@ export async function agendarDireto(input: {
     fim,
     prazoPagamento: prazo,
     ...(input.vagas > 1 ? { codigoConvite: codigoDeConvite() } : {}),
+    materiais: anuncio.materiais || [],
     versao: 0,
     ultimaAtividadeEm: agora,
     createdAt: agora,
@@ -633,6 +650,9 @@ export async function entrarNoGrupo(input: {
   ])
   if (ativos >= reserva.proposta.vagas) throw new ErroMonitoria(409, 'O grupo já está completo.')
   if (!organizadorContrato || !anuncio || !monitor) throw new ErroMonitoria(409, 'O grupo ainda não está pronto para receber alunos.')
+  if (mesmaPessoa(input.aluno, { ...(monitor as any), _id: new ObjectId(reserva.tutorUserId) })) {
+    throw new ErroMonitoria(400, 'Você não pode entrar como aluno na sua própria monitoria.')
+  }
   const assinaturaMonitor = organizadorContrato.assinaturas.find((a) => a.papel === 'contratado')!
   const part = await novoAssento(c, reserva, input.aluno)
   const contrato = await emitirContrato({
@@ -760,18 +780,35 @@ export async function cancelar(input: {
   const id = idDe(reserva)
   const atorId = String(input.ator._id)
 
+  // O organizador de um grupo em que OUTROS alunos já entraram não derruba a
+  // aula de todo mundo: ele sai só do próprio assento, como um membro.
+  let papelEfetivo = papel
+  if (papel === 'organizador') {
+    const outros = await c.participacoes.countDocuments({
+      reservaId: id,
+      alunoId: { $ne: atorId },
+      status: { $in: ['aguardando_assinatura', 'aguardando_pagamento', 'paga', 'gratis'] },
+    })
+    if (outros > 0) papelEfetivo = 'membro'
+  }
+
   // Membro do grupo sai só do próprio assento.
-  if (papel === 'membro') {
+  if (papelEfetivo === 'membro') {
     const part = await c.participacoes.findOne({ reservaId: id, alunoId: atorId })
     if (!part) throw new ErroMonitoria(404, 'Não encontrado.')
-    const decisao = decidirCancelamento({ ator: 'aluno', status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: part.status === 'paga' })
+    const decisao = decidirCancelamento({ ator: 'aluno', status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: part.status === 'paga', pagoEm: part.pagoEm })
     if (decisao.tipo === 'proibido') throw new ErroMonitoria(409, decisao.motivo)
     if (decisao.tipo === 'suporte') {
       const ticketId = await abrirTicket({ reserva, autor: input.ator, motivo: `Cancelamento com menos de 24h (assento de ${part.alunoNome}): ${motivo}`, participacaoId: idDe(part) })
       return { resultado: 'suporte', ticketId }
     }
     if (decisao.tipo === 'reembolso_total') {
-      const r = await reembolsarParticipacao({ participacaoId: idDe(part), valorBaseCentavos: null, motivo: `Cancelado pelo aluno: ${motivo}`, por: atorId })
+      const r = await reembolsarParticipacao({
+        participacaoId: idDe(part),
+        valorBaseCentavos: null,
+        motivo: `${decisao.arrependimento ? 'Direito de arrependimento (art. 49 do CDC)' : 'Cancelado pelo aluno'}: ${motivo}`,
+        por: atorId,
+      })
       if (!r.ok) throw new ErroMonitoria(502, r.erro)
       return { resultado: 'reembolsada' }
     }
@@ -780,9 +817,19 @@ export async function cancelar(input: {
     return { resultado: 'cancelada' }
   }
 
-  const pagos = await c.participacoes.countDocuments({ reservaId: id, status: { $in: ['paga', 'reembolso_processando'] } })
+  const pagas = await c.participacoes
+    .find({ reservaId: id, status: { $in: ['paga', 'reembolso_processando'] } }, { projection: { pagoEm: 1 } })
+    .toArray()
   const ator = papel === 'monitor' ? 'monitor' : 'aluno'
-  const decisao = decidirCancelamento({ ator, status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: pagos > 0 })
+  const primeiroPagamento = pagas.map((x) => x.pagoEm).filter(Boolean).sort((a, b) => +a! - +b!)[0]
+  const decisao = decidirCancelamento({
+    ator,
+    status: reserva.status,
+    inicio: reserva.inicio,
+    agora: new Date(),
+    haPagamento: pagas.length > 0,
+    pagoEm: primeiroPagamento,
+  })
   if (decisao.tipo === 'proibido') throw new ErroMonitoria(409, decisao.motivo)
 
   if (decisao.tipo === 'suporte') {
@@ -814,7 +861,13 @@ export async function cancelar(input: {
     ),
   ])
   if (decisao.tipo === 'reembolso_total') {
-    await reembolsarReserva(id, `${papel === 'monitor' ? 'Cancelado pelo monitor' : 'Cancelado pelo aluno com 24h+ de antecedência'}: ${motivo}`, atorId)
+    const porque =
+      papel === 'monitor'
+        ? 'Cancelado pelo monitor'
+        : decisao.arrependimento
+          ? 'Direito de arrependimento (art. 49 do CDC)'
+          : 'Cancelado pelo aluno com 24h+ de antecedência'
+    await reembolsarReserva(id, `${porque}: ${motivo}`, atorId)
   }
   if (papel === 'monitor' && reserva.status === 'confirmada') await registrarStrike(c, reserva, `Cancelou: ${motivo}`)
 

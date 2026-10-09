@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const [assentos, contratos, anuncio, tutor, mensagens] = await Promise.all([
       c.participacoes.find({ reservaId: id }).toArray(),
       c.contratos.find({ reservaId: id, status: { $ne: 'rescindido' } }, { projection: { dados: 0 } }).toArray(),
-      c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { slug: 1, conteudos: 1, aulaGratis: 1, grupo: 1, preco: 1, modos: 1 } }),
+      c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { slug: 1, conteudos: 1, aulaGratis: 1, grupo: 1, preco: 1, modos: 1, materiais: 1 } }),
       c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1, fotoUrl: 1, titulo: 1 } }),
       c.mensagens.find({ reservaId: id }).sort({ createdAt: -1 }).limit(150).toArray(),
     ])
@@ -31,12 +31,24 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const ehMonitor = papel === 'monitor'
     const pagouOuGratis = !!meu && ['paga', 'gratis', 'concluida'].includes(meu.status)
     const verLink = VE_LINK.includes(reserva.status) && (ehMonitor || pagouOuGratis)
+    // Materiais: os do anúncio quando a reserva nasceu + os atuais do anúncio
+    // + os que o monitor mandou só para esta aula (esses, só para quem pagou).
+    const doAnuncio = [...(reserva.materiais || []), ...(anuncio?.materiais || [])]
+    const vistos = new Set<string>()
+    const materiais = [
+      ...doAnuncio.map((m) => ({ titulo: m.titulo, url: m.url, dominio: m.dominio, exclusivo: false, em: null as Date | null })),
+      ...(ehMonitor || pagouOuGratis || sessao.role === 'admin'
+        ? (reserva.materiaisExtras || []).map((m) => ({ titulo: m.titulo, url: m.url, dominio: m.dominio, exclusivo: true, em: m.em }))
+        : []),
+    ].filter((m) => (vistos.has(m.url) ? false : (vistos.add(m.url), true)))
     const pendentesDoMonitor = ehMonitor
       ? contratos.filter((k) => k.status === 'aguardando_assinaturas' && quemFaltaAssinar(k).includes('contratado'))
       : []
 
     return ok({
       papel: papel || 'admin',
+      versao: reserva.versao,
+      maisAntigas: mensagens.length === 150,
       reserva: {
         id,
         anuncioId: reserva.anuncioId,
@@ -62,7 +74,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         podeReportar: !ehMonitor && pagouOuGratis && ['confirmada', 'realizada'].includes(reserva.status) && podeReportar(reserva.fim, new Date()),
         createdAt: reserva.createdAt,
       },
-      monitor: tutor ? { nome: tutor.nome, fotoUrl: tutor.fotoUrl || null, titulo: tutor.titulo, userId: reserva.tutorUserId } : null,
+      monitor: tutor ? { nome: tutor.nome, fotoUrl: tutor.fotoUrl || null, titulo: tutor.titulo } : null,
       meuAssento: meu
         ? {
             id: idDe(meu),
@@ -84,13 +96,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           }
         : null,
       contratosParaAssinar: pendentesDoMonitor.map((k) => ({ id: idDe(k), numero: k.numero })),
+      materiais,
       assentos:
         ehMonitor || papel === 'organizador' || sessao.role === 'admin'
           ? assentos.map((a) => ({
               alunoNome: ehMonitor || sessao.role === 'admin' ? a.alunoNome : a.alunoNome.split(' ')[0],
               status: a.status,
               eu: a.alunoId === sessao.userId,
-              ...(ehMonitor ? { contratoId: a.contratoId || null } : {}),
+              ...(ehMonitor ? { id: idDe(a), contratoId: a.contratoId || null } : {}),
             }))
           : [],
       mensagens: mensagens.reverse().map((m) => ({

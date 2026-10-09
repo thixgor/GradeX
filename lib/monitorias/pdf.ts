@@ -369,3 +369,37 @@ export async function pdfDosTermos(e: {
   p.secoes(e.secoes)
   return p.doc.save()
 }
+
+// ─── Histórico da conversa ──────────────────────────────────────────────
+
+export async function pdfDaConversa(e: {
+  titulo: string
+  reservaId: string
+  participantes: Array<[string, string]>
+  mensagens: Array<{ autor: string; texto: string; em: Date; sistema: boolean }>
+  materiais: Array<{ titulo: string; url: string }>
+}): Promise<Uint8Array> {
+  const p = await novoDocumento(`Histórico da monitoria — ${e.titulo}`, `Histórico da reserva ${e.reservaId}`)
+  p.titulo('Histórico da conversa da monitoria', `${e.titulo} · emitido em ${dataHora(new Date())}`)
+  p.tabela([['Reserva', e.reservaId], ...e.participantes])
+  if (e.materiais.length) {
+    p.texto('Materiais complementares (links externos, de responsabilidade de quem os indicou)', { tamanho: 10.5, negrito: true, depois: 3 })
+    for (const m of e.materiais) p.texto(`• ${m.titulo} — ${m.url}`, { tamanho: 8.8, depois: 2 })
+    p.linha()
+  }
+  p.texto(`Mensagens (${e.mensagens.length})`, { tamanho: 10.5, negrito: true, depois: 6 })
+  for (const m of e.mensagens) {
+    if (m.sistema) {
+      p.texto(`${dataHora(m.em)} · ${m.texto}`, { tamanho: 8.2, cor: CINZA, depois: 5 })
+    } else {
+      p.texto(`${m.autor} · ${dataHora(m.em)}`, { tamanho: 8.2, negrito: true, cor: VERDE, depois: 1 })
+      p.texto(m.texto, { tamanho: 9.2, recuo: 8, depois: 6 })
+    }
+  }
+  p.linha()
+  p.texto(
+    'Documento gerado a partir dos registros da plataforma. Antes do pagamento, contatos pessoais enviados no chat aparecem ocultados, como foram exibidos às partes.',
+    { tamanho: 8, cor: CINZA },
+  )
+  return p.doc.save()
+}

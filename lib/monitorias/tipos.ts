@@ -173,6 +173,8 @@ export interface AssinaturaOferta {
   em: Date
   ip: string
   userAgent: string
+  /** O texto assinado (prova autossuficiente). */
+  texto?: string
 }
 
 export interface Anuncio extends ConteudoAnuncio {
@@ -263,6 +265,10 @@ export interface Reserva {
   /** Código de convite do grupo — só aparece para quem já está na reserva. */
   codigoConvite?: string
   linkReuniao?: string
+  /** Materiais do anúncio no momento da reserva (o aluno não perde se o anúncio mudar). */
+  materiais?: MaterialComplementar[]
+  /** Materiais que o monitor mandou só para esta monitoria. */
+  materiaisExtras?: Array<MaterialComplementar & { em: Date }>
   motivoCancelamento?: string
   canceladaPor?: string
   ticketId?: string
@@ -419,6 +425,9 @@ export interface AceiteTermos {
   em: Date
   ip: string
   userAgent: string
+  /** Cópia do que foi aceito — reimprime a versão exata mesmo se o código mudar. */
+  titulo?: string
+  secoes?: Array<{ titulo: string; paragrafos: string[] }>
 }
 
 export interface EvidenciaAssinatura {
@@ -458,6 +467,8 @@ export interface DadosContrato {
   gratis: boolean
   origem: OrigemReserva
   emitidoEm: string
+  /** Intermediadora, foro e versão dos Termos congelados na emissão (modelo v2+). */
+  intermediadora?: { identificacao: string; foro: string; versaoTermos: string }
 }
 
 export interface Contrato {
@@ -468,6 +479,8 @@ export interface Contrato {
   contratanteId: string
   contratadoId: string
   dados: DadosContrato
+  /** O texto exato que foi emitido/assinado (modelo v2+). */
+  secoes?: Array<{ titulo: string; paragrafos: string[] }>
   hash: string
   assinaturas: EvidenciaAssinatura[]
   status: 'aguardando_assinaturas' | 'assinado' | 'rescindido'

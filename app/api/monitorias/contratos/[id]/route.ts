@@ -31,7 +31,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       id: idDe(contrato),
       numero: contrato.numero,
       titulo: tituloDoContrato(contrato.dados),
-      secoes: secoesDoContrato(contrato.dados),
+      secoes: contrato.secoes || secoesDoContrato(contrato.dados),
       hash: contrato.hash,
       status: contrato.status,
       reservaId: contrato.reservaId,

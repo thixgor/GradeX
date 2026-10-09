@@ -88,9 +88,10 @@ describe('contrato: hash muda quando o dado muda', () => {
     expect(hashDoContrato({ ...dados, inicio: '2026-10-19T22:00:00.000Z' })).not.toBe(h)
   })
 
-  it('o texto traz partes, valor e horário de Brasília', () => {
+  it('o texto traz partes (CPF mascarado), valor e horário de Brasília', () => {
     const texto = textoDoContrato(dados)
-    expect(texto).toContain('529.982.247-25')
+    expect(texto).toContain('***.982.247-**')
+    expect(texto).not.toContain('529.982.247-25')
     expect(texto).toContain('Monitora Teste')
     expect(texto).toContain('60,00')
     expect(texto).toContain('horário de Brasília')

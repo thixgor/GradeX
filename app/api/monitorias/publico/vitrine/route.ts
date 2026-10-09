@@ -13,6 +13,33 @@ function escaparRegex(texto: string) {
   return texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
+async function numerosDaVitrine() {
+  const c = await obterColecoes()
+  const [monitores, agregado] = await Promise.all([
+    c.anuncios.distinct('tutorId', { status: 'publicado' }),
+    c.tutores
+      .aggregate<{ aulas: number; avaliacoes: number; somaNotas: number }>([
+        { $match: { status: 'ativo' } },
+        {
+          $group: {
+            _id: null,
+            aulas: { $sum: '$stats.aulasDadas' },
+            avaliacoes: { $sum: '$stats.avaliacoes' },
+            somaNotas: { $sum: { $multiply: ['$stats.nota', '$stats.avaliacoes'] } },
+          },
+        },
+      ])
+      .toArray(),
+  ])
+  const g = agregado[0] || { aulas: 0, avaliacoes: 0, somaNotas: 0 }
+  return {
+    monitores: monitores.length,
+    aulas: g.aulas,
+    avaliacoes: g.avaliacoes,
+    nota: g.avaliacoes ? Math.round((g.somaNotas / g.avaliacoes) * 10) / 10 : 0,
+  }
+}
+
 /**
  * Vitrine pública: anúncios publicados com filtros simples.
  * GET ?q=&materia=&gratis=1&grupo=1&direto=1&ordem=recentes|nota|preco&pagina=1
@@ -38,7 +65,10 @@ export async function GET(request: NextRequest) {
       ordem === 'nota' ? { 'stats.nota': -1, publicadoEm: -1 } : ordem === 'preco' ? { 'preco.valorCentavos': 1 } : { publicadoEm: -1 }
 
     const c = await obterColecoes()
-    const [anuncios, total, materias] = await Promise.all([
+    // Números do herói (prova social) só na primeira página sem filtro — é a
+    // URL que todo visitante abre e que o CDN segura por 60 s.
+    const semFiltro = pagina === 1 && Object.keys(filtro).length === 1
+    const [anuncios, total, materias, numeros] = await Promise.all([
       c.anuncios
         .find(filtro as any, { projection: { revisaoPendente: 0, moderacao: 0, descricao: 0, faq: 0 } })
         .sort(sort)
@@ -47,6 +77,7 @@ export async function GET(request: NextRequest) {
         .toArray(),
       c.anuncios.countDocuments(filtro as any),
       c.anuncios.distinct('materia', { status: 'publicado' }),
+      semFiltro ? numerosDaVitrine() : Promise.resolve(null),
     ])
     const tutorIds = Array.from(new Set(anuncios.map((a) => a.tutorId)))
     const { ObjectId } = await import('mongodb')
@@ -60,7 +91,7 @@ export async function GET(request: NextRequest) {
     const itens = anuncios.map((a) => cardDoAnuncio({ ...(a as Anuncio), descricao: '', faq: [] }, porId.get(a.tutorId) || null))
     return jsonComprimido(
       request,
-      { itens, total, pagina, paginas: Math.ceil(total / POR_PAGINA), materias: (materias as string[]).sort((x, y) => x.localeCompare(y, 'pt-BR')) },
+      { itens, total, pagina, paginas: Math.ceil(total / POR_PAGINA), materias: (materias as string[]).sort((x, y) => x.localeCompare(y, 'pt-BR')), numeros },
       { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300' } },
     )
   })

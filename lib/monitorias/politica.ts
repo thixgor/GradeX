@@ -1,12 +1,19 @@
 /**
  * Política de cancelamento e reembolso — função pura, testada.
  *
- * | Quem cancela              | Quando            | Resultado                              |
- * |---------------------------|-------------------|----------------------------------------|
- * | Aluno                     | ≥ 24h antes       | 100% automático                        |
- * | Aluno                     | < 24h antes       | ticket no suporte, admin decide        |
- * | Monitor                   | a qualquer tempo  | 100% para todos + 1 strike no monitor  |
- * | Qualquer um, sem pagamento| antes de pagar    | só cancela (não há dinheiro)           |
+ * | Quem cancela              | Quando                                   | Resultado                             |
+ * |---------------------------|------------------------------------------|---------------------------------------|
+ * | Aluno                     | até 7 dias após pagar, antes da aula     | 100% (direito de arrependimento)      |
+ * | Aluno                     | ≥ 24h antes da aula                      | 100% automático                       |
+ * | Aluno                     | < 24h antes e mais de 7 dias após pagar  | ticket no suporte, admin decide       |
+ * | Monitor                   | a qualquer tempo                         | 100% para todos + 1 strike no monitor |
+ * | Qualquer um, sem pagamento| antes de pagar                           | só cancela (não há dinheiro)          |
+ *
+ * Por que os 7 dias: contratação pela internet é "fora do estabelecimento
+ * comercial" e o art. 49 do CDC dá ao consumidor 7 dias para desistir com
+ * devolução integral (Decreto 7.962/2013, art. 5º). Enquanto o serviço não
+ * foi prestado, nenhuma regra contratual pode tirar esse direito — uma regra
+ * de "menos de 24h não devolve" seria nula nesse período (art. 51, I e IV).
  *
  * Exemplo: aula sábado 19h (Brasília). Aluno cancela sexta 18h → faltam 25h →
  * reembolso automático. Cancela sexta 20h → faltam 23h → vira pedido ao suporte.
@@ -15,13 +22,14 @@
 import type { StatusReserva } from './tipos'
 
 export const ANTECEDENCIA_REEMBOLSO_HORAS = 24
+export const DIAS_ARREPENDIMENTO = 7
 export const GARANTIA_HORAS = 48
 export const STRIKES_PARA_SUSPENDER = 3
 export const JANELA_STRIKES_DIAS = 90
 
 export type DecisaoCancelamento =
   | { tipo: 'sem_pagamento' }
-  | { tipo: 'reembolso_total' }
+  | { tipo: 'reembolso_total'; arrependimento?: boolean }
   | { tipo: 'suporte' }
   | { tipo: 'proibido'; motivo: string }
 
@@ -31,8 +39,10 @@ export function decidirCancelamento(input: {
   inicio?: Date
   agora: Date
   haPagamento: boolean
+  /** Quando o aluno pagou (o mais antigo, num grupo). Conta o prazo de arrependimento. */
+  pagoEm?: Date
 }): DecisaoCancelamento {
-  const { ator, status, inicio, agora, haPagamento } = input
+  const { ator, status, inicio, agora, haPagamento, pagoEm } = input
   const cancelaveis: StatusReserva[] = [
     'solicitada',
     'em_negociacao',
@@ -48,8 +58,15 @@ export function decidirCancelamento(input: {
   }
   if (!haPagamento) return { tipo: 'sem_pagamento' }
   if (ator === 'monitor') return { tipo: 'reembolso_total' }
+  if (dentroDoArrependimento(pagoEm, agora)) return { tipo: 'reembolso_total', arrependimento: true }
   const horas = inicio ? (inicio.getTime() - agora.getTime()) / 3_600_000 : Infinity
   return horas >= ANTECEDENCIA_REEMBOLSO_HORAS ? { tipo: 'reembolso_total' } : { tipo: 'suporte' }
+}
+
+/** Ainda dentro dos 7 dias do art. 49 do CDC (contados do pagamento)? */
+export function dentroDoArrependimento(pagoEm: Date | undefined | null, agora: Date): boolean {
+  if (!pagoEm) return false
+  return agora.getTime() - new Date(pagoEm).getTime() <= DIAS_ARREPENDIMENTO * 24 * 3_600_000
 }
 
 /** Strikes dentro da janela — 3 em 90 dias suspende o monitor. */

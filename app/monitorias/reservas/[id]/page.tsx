@@ -4,20 +4,22 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
-  AlertTriangle, ArrowLeft, CalendarPlus, Check, CheckCircle2, Clock, Copy, CreditCard, FileText, HeartHandshake, Link2,
-  Loader2, Receipt, Send, Star, Users, Video, X, XCircle,
+  AlertTriangle, ArrowLeft, BookOpen, CalendarPlus, Check, CheckCircle2, Clock, Copy, CreditCard, FileText, HeartHandshake, Link2,
+  Loader2, MessagesSquare, Plus, Receipt, Repeat, Send, Star, Trash2, Users, Video, X, XCircle,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, CaixaAviso, CaixaErro, Esqueleto, HoraBrasilia, SeloStatus, api } from '@/components/monitorias/base'
 import { AssinaturaContrato } from '@/components/monitorias/assinatura-contrato'
+import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
-import { baixarIcs, type DetalheReserva } from '@/components/monitorias/tipos-cliente'
+import { baixarIcs, type DetalheReserva, type MensagemReserva } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { ETAPAS_LINHA_DO_TEMPO } from '@/lib/monitorias/estado'
+import { dentroDoArrependimento } from '@/lib/monitorias/politica'
 import { formatarEmBrasilia, horaEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 
@@ -43,12 +45,59 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
     carregar()
   }, [carregar])
 
-  // Chat e estado atualizam sozinhos, mas só com a aba visível.
-  useIntervaloVisivel(carregar, d ? 7000 : null)
+  // Polling barato: pede só as mensagens NOVAS + a versão da reserva. A sala
+  // inteira (assentos, contrato, proposta…) só é recarregada quando a versão
+  // muda — ou a cada ~10 voltas, como rede de segurança. Só com a aba visível.
+  const voltas = useRef(0)
+  const atualizar = useCallback(async () => {
+    if (!d) return
+    voltas.current++
+    const ultima = d.mensagens.at(-1)?.createdAt
+    try {
+      const x = await api<{ status: string; versao: number; mensagens: MensagemReserva[] }>(
+        `/api/monitorias/reservas/${params.id}/mensagens${ultima ? `?depois=${encodeURIComponent(ultima)}` : ''}`,
+      )
+      if (x.versao !== d.versao || x.status !== d.reserva.status || voltas.current % 10 === 0) return carregar()
+      if (x.mensagens.length) {
+        setD((atual) => {
+          if (!atual) return atual
+          const vistas = new Set(atual.mensagens.map((m) => m.id))
+          return { ...atual, mensagens: [...atual.mensagens, ...x.mensagens.filter((m) => !vistas.has(m.id))] }
+        })
+      }
+    } catch {
+      /* rede instável: a próxima volta tenta de novo */
+    }
+  }, [d, params.id, carregar])
+  const ativa = d && !['expirada', 'cancelada_aluno', 'cancelada_monitor', 'recusada', 'reembolsada', 'concluida'].includes(d.reserva.status)
+  const negociando = d && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento'].includes(d.reserva.status)
+  useIntervaloVisivel(atualizar, !ativa ? null : negociando ? 7000 : 15000)
 
+  const [carregandoAntigas, setCarregandoAntigas] = useState(false)
+  async function verAnteriores() {
+    if (!d || !d.mensagens.length) return
+    setCarregandoAntigas(true)
+    try {
+      const x = await api<{ mensagens: MensagemReserva[]; maisAntigas: boolean }>(
+        `/api/monitorias/reservas/${params.id}/mensagens?antes=${encodeURIComponent(d.mensagens[0].createdAt)}`,
+      )
+      setD((atual) => {
+        if (!atual) return atual
+        const vistas = new Set(atual.mensagens.map((m) => m.id))
+        return { ...atual, maisAntigas: x.maisAntigas, mensagens: [...x.mensagens.filter((m) => !vistas.has(m.id)), ...atual.mensagens] }
+      })
+    } catch (e) {
+      setAviso(e instanceof Error ? e.message : 'Não deu para carregar.')
+    } finally {
+      setCarregandoAntigas(false)
+    }
+  }
+
+  // Rola para o fim só quando chega mensagem NOVA (carregar as antigas não mexe na rolagem).
+  const ultimaMensagem = d?.mensagens.at(-1)?.id
   useEffect(() => {
     fimDoChat.current?.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'nearest' })
-  }, [d?.mensagens.length, reduzir])
+  }, [ultimaMensagem, reduzir])
 
   async function enviarMensagem() {
     if (!texto.trim()) return
@@ -132,6 +181,11 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
         {/* Chat */}
         <section className="flex min-h-[520px] flex-col overflow-hidden rounded-3xl border border-border bg-card">
           <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 620 }}>
+            {d.maisAntigas && (
+              <button type="button" onClick={verAnteriores} disabled={carregandoAntigas} className="mx-auto block rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted">
+                {carregandoAntigas ? 'Carregando…' : 'Ver mensagens anteriores'}
+              </button>
+            )}
             <AnimatePresence initial={false}>
               {d.mensagens.map((m) => {
                 if (m.tipo === 'sistema') {
@@ -250,6 +304,12 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
             <LinkDaReuniao d={d} onSalvar={(url) => acao({ acao: 'link', url })} />
           )}
 
+          <Materiais
+            d={d}
+            onAdicionar={(titulo, url) => acao({ acao: 'material', titulo, url })}
+            onRemover={(url) => acao({ acao: 'material_remover', url })}
+          />
+
           {ehMonitor && r.status === 'aguardando_pagamento' && d.assentos.some((a) => a.status === 'paga') && (p?.vagas || 1) > 1 && (
             <div className="rounded-2xl border border-border bg-card p-4 text-sm">
               <p className="font-semibold">Grupo incompleto?</p>
@@ -275,6 +335,18 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
           {!ehMonitor && assento && ['realizada', 'concluida'].includes(r.status) && ['paga', 'gratis', 'concluida'].includes(assento.status) && (
             <Avaliar jaAvaliado={assento.avaliacao} onEnviar={(nota, comentario) => acao({ acao: 'avaliar', nota, comentario })} />
+          )}
+
+          {!ehMonitor && r.anuncioSlug && ['realizada', 'concluida'].includes(r.status) && (
+            <Link href={`/monitorias/anuncio/${r.anuncioSlug}`}>
+              <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-white shadow-lg">
+                <Repeat className="h-6 w-6" />
+                <div>
+                  <p className="font-semibold">Agendar a próxima aula</p>
+                  <p className="text-xs text-white/80">Quem estuda com constância aprende mais. Mesmo monitor, mesmo jeito.</p>
+                </div>
+              </motion.div>
+            </Link>
           )}
 
           {r.status === 'confirmada' && r.inicio && r.fim && (
@@ -390,8 +462,10 @@ function FormMotivo({ tipo, d, onEnviar }: { tipo: 'cancelar' | 'recusar' | 'rep
   if (tipo === 'cancelar') {
     if (!pago) explicacao = 'Ainda não houve pagamento: a reserva só é encerrada.'
     else if (d.papel === 'monitor') explicacao = 'Todos os alunos recebem 100% de volta e você recebe uma advertência (strike). 3 strikes em 90 dias suspendem o perfil.'
+    else if (dentroDoArrependimento(d.meuAssento?.pagoEm ? new Date(d.meuAssento.pagoEm) : null, new Date()))
+      explicacao = 'Você está no prazo de arrependimento (7 dias desde o pagamento, CDC art. 49): recebe 100% de volta, inclusive a taxa do PIX, automaticamente.'
     else if (horas >= 24) explicacao = 'Faltam 24h ou mais: você recebe 100% de volta automaticamente.'
-    else explicacao = 'Faltam menos de 24h: seu pedido vai para o suporte, que decide sobre o reembolso.'
+    else explicacao = 'Faltam menos de 24h e já passou o prazo de arrependimento: seu pedido vai para o suporte, que decide o reembolso de forma fundamentada.'
   } else if (tipo === 'reportar') {
     explicacao = 'O valor fica retido e o suporte analisa (conte o que aconteceu: falta, atraso, aula diferente do combinado...).'
   } else {
@@ -500,7 +574,13 @@ function Documentos({ d }: { d: DetalheReserva }) {
   if (d.papel === 'monitor') {
     for (const a of d.assentos) {
       if (a.contratoId) itens.push({ href: `/api/monitorias/documentos/contrato/${a.contratoId}`, rotulo: `Contrato — ${a.alunoNome.split(' ')[0]}`, icone: FileText })
+      if (a.id && ['paga', 'concluida', 'reembolsada', 'reembolso_processando'].includes(a.status)) {
+        itens.push({ href: `/api/monitorias/documentos/venda/${a.id}`, rotulo: `Demonstrativo de venda — ${a.alunoNome.split(' ')[0]}`, icone: Receipt })
+      }
     }
+  }
+  if (d.mensagens.length) {
+    itens.push({ href: `/api/monitorias/documentos/conversa/${d.reserva.id}`, rotulo: 'Histórico da conversa', icone: MessagesSquare })
   }
   if (!itens.length) return null
   return (
@@ -515,6 +595,75 @@ function Documentos({ d }: { d: DetalheReserva }) {
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+function Materiais({ d, onAdicionar, onRemover }: { d: DetalheReserva; onAdicionar: (titulo: string, url: string) => Promise<void>; onRemover: (url: string) => Promise<void> }) {
+  const [abrir, setAbrir] = useState(false)
+  const [titulo, setTitulo] = useState('')
+  const [url, setUrl] = useState('')
+  const [erro, setErro] = useState('')
+  const ehMonitor = d.papel === 'monitor'
+  const podeEnviar = ehMonitor && ['aguardando_pagamento', 'confirmada', 'realizada', 'em_disputa', 'concluida'].includes(d.reserva.status)
+  if (!d.materiais.length && !podeEnviar) return null
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4">
+      <h2 className="flex items-center gap-1.5 text-sm font-semibold"><BookOpen className="h-4 w-4 text-primary" /> Materiais desta monitoria</h2>
+      {d.materiais.length > 0 ? (
+        <ul className="mt-2 space-y-1">
+          {d.materiais.map((m) => (
+            <li key={m.url} className="flex items-center gap-2">
+              <LinkExternoSeguro url={m.url} dominio={m.dominio}>
+                <span className="flex min-w-0 items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-muted">
+                  <FileText className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="min-w-0">
+                    <span className="block truncate">{m.titulo}</span>
+                    <span className="block text-[11px] text-muted-foreground">{m.dominio}{m.exclusivo ? ' · só para esta aula' : ''}</span>
+                  </span>
+                </span>
+              </LinkExternoSeguro>
+              {ehMonitor && m.exclusivo && (
+                <button type="button" aria-label="Remover material" className="ml-auto rounded p-1 text-muted-foreground hover:text-rose-600" onClick={() => onRemover(m.url).catch(() => {})}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-1 text-xs text-muted-foreground">Envie slides, resumos ou listas de exercícios por link. O aluno recebe um aviso e o material fica guardado aqui.</p>
+      )}
+      {podeEnviar && (
+        abrir ? (
+          <div className="mt-3 space-y-2">
+            <input value={titulo} onChange={(e) => setTitulo(e.target.value)} maxLength={100} placeholder="Título (ex.: Slides da aula)" className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm" />
+            <input value={url} onChange={(e) => setUrl(e.target.value)} maxLength={500} placeholder="https://drive.google.com/..." className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm" />
+            {erro && <p className="text-xs text-rose-600">{erro}</p>}
+            <BotaoAcao
+              className="w-full"
+              onClick={async () => {
+                setErro('')
+                try {
+                  await onAdicionar(titulo, url)
+                  setTitulo('')
+                  setUrl('')
+                  setAbrir(false)
+                } catch (e) {
+                  setErro(e instanceof Error ? e.message : 'Erro.')
+                }
+              }}
+            >
+              Enviar ao aluno
+            </BotaoAcao>
+          </div>
+        ) : (
+          <button type="button" onClick={() => setAbrir(true)} className="mt-2 flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+            <Plus className="h-3.5 w-3.5" /> Enviar material
+          </button>
+        )
+      )}
+      <p className="mt-2 text-[10px] leading-snug text-muted-foreground">Links externos indicados pelo monitor. A plataforma não hospeda nem se responsabiliza pelo conteúdo.</p>
     </div>
   )
 }

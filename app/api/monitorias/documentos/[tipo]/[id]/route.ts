@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
+import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import type { PaymentOrder } from '@/lib/types'
 import { idDe, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada } from '@/lib/monitorias/rota'
 import { secoesDoContrato, tituloDoContrato } from '@/lib/monitorias/documentos/contrato'
 import { secoesDosTermos, tituloDosTermos, VERSAO_TERMOS } from '@/lib/monitorias/documentos/termos'
-import { pdfDoComprovante, pdfDoContrato, pdfDoRepasse, pdfDosTermos } from '@/lib/monitorias/pdf'
+import { pdfDaConversa, pdfDoComprovante, pdfDoContrato, pdfDoRepasse, pdfDosTermos } from '@/lib/monitorias/pdf'
+import { papelNaReserva } from '@/lib/monitorias/reservas'
+import { ROTULOS_STATUS } from '@/lib/monitorias/estado'
 import { reaisParaCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { carregarUsuario } from '@/lib/monitorias/servidor'
@@ -55,6 +58,7 @@ function pdf(bytes: Uint8Array, nome: string) {
  *  - venda/<assentoId>           monitor da aula e admin (demonstrativo da venda)
  *  - repasse/<payoutId>          monitor e admin (comprovante do repasse)
  *  - termos/<monitor|aluno>      a própria pessoa (com o aceite registrado)
+ *  - conversa/<reservaId>        participantes e admin (histórico do chat + materiais)
  */
 export async function GET(request: NextRequest, { params }: { params: { tipo: string; id: string } }) {
   return rotaAutenticada(request, { limite: { limit: 30, windowMs: 60_000 } }, async ({ sessao }) => {
@@ -63,21 +67,60 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
 
     if (params.tipo === 'termos') {
       if (params.id !== 'monitor' && params.id !== 'aluno') return naoEncontrado()
-      const [aceite, user] = await Promise.all([
-        c.termos.findOne({ userId: sessao.userId, papel: params.id, versao: VERSAO_TERMOS }),
+      // O último aceite da pessoa, na versão que ELA aceitou (cópia guardada no aceite).
+      // Sem aceite (ou aceite antigo sem cópia): a versão vigente, sem evidências.
+      const [ultimo, user] = await Promise.all([
+        c.termos.find({ userId: sessao.userId, papel: params.id }).sort({ em: -1 }).limit(1).next(),
         carregarUsuario(sessao.userId),
       ])
+      const aceite = ultimo && (ultimo.secoes?.length || ultimo.versao === VERSAO_TERMOS) ? ultimo : null
+      const versao = aceite?.versao || VERSAO_TERMOS
       const bytes = await pdfDosTermos({
-        titulo: tituloDosTermos(params.id),
-        versao: VERSAO_TERMOS,
-        secoes: secoesDosTermos(params.id),
+        titulo: aceite?.titulo || tituloDosTermos(params.id),
+        versao,
+        secoes: aceite?.secoes?.length ? aceite.secoes : secoesDosTermos(params.id),
         aceite: aceite && user ? { nome: nomeCivil(user), em: aceite.em, ip: aceite.ip, hash: aceite.hash } : undefined,
       })
-      return pdf(bytes, `termos-monitoria-${params.id}-${VERSAO_TERMOS}.pdf`)
+      return pdf(bytes, `termos-monitoria-${params.id}-${versao}.pdf`)
     }
 
     if (!ObjectId.isValid(params.id)) return naoEncontrado()
     const _id = new ObjectId(params.id)
+
+    if (params.tipo === 'conversa') {
+      const reserva = await c.reservas.findOne({ _id } as any)
+      if (!reserva) return naoEncontrado()
+      const papel = await papelNaReserva(reserva, sessao.userId)
+      if (!papel && !admin) return naoEncontrado()
+      const reservaId = idDe(reserva)
+      const [mensagens, assentos, tutor] = await Promise.all([
+        c.mensagens.find({ reservaId }).sort({ createdAt: 1 }).limit(3000).toArray(),
+        c.participacoes.find({ reservaId }, { projection: { alunoId: 1, alunoNome: 1, status: 1 } }).toArray(),
+        c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1 } }),
+      ])
+      const nomes = new Map<string, string>([[reserva.tutorUserId, `${tutor?.nome || 'Monitor'} (monitor)`]])
+      for (const a of assentos) nomes.set(a.alunoId, `${a.alunoNome} (aluno)`)
+      const pagou = assentos.some((a) => a.alunoId === sessao.userId && ['paga', 'gratis', 'concluida'].includes(a.status))
+      const extras = papel === 'monitor' || pagou || admin ? reserva.materiaisExtras || [] : []
+      const bytes = await pdfDaConversa({
+        titulo: reserva.anuncioTitulo,
+        reservaId,
+        participantes: [
+          ['Monitor', tutor?.nome || '—'],
+          ['Alunos', assentos.map((a) => a.alunoNome).join(', ') || '—'],
+          ['Situação', ROTULOS_STATUS[reserva.status]?.rotulo || reserva.status],
+          ['Aula', reserva.inicio ? `${formatarEmBrasilia(reserva.inicio, { dateStyle: 'full', timeStyle: 'short' })} (Brasília)` : 'a combinar'],
+        ],
+        mensagens: mensagens.map((m) => ({
+          autor: m.autorId === 'sistema' ? 'Sistema' : nomes.get(m.autorId) || 'Participante',
+          texto: m.texto,
+          em: m.createdAt,
+          sistema: m.autorId === 'sistema' || m.tipo === 'sistema',
+        })),
+        materiais: [...(reserva.materiais || []), ...extras].map((m) => ({ titulo: m.titulo, url: m.url })),
+      })
+      return pdf(bytes, `historico-monitoria-${reservaId}.pdf`)
+    }
 
     if (params.tipo === 'contrato') {
       const k = await c.contratos.findOne({ _id } as any)
@@ -89,7 +132,7 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
         status,
         hash: k.hash,
         codigoVerificacao: k.codigoVerificacao,
-        secoes: secoesDoContrato(k.dados),
+        secoes: k.secoes || secoesDoContrato(k.dados),
         assinaturas: k.assinaturas,
       })
       return pdf(bytes, `contrato-${k.numero}.pdf`)

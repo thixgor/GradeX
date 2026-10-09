@@ -17,8 +17,8 @@ export async function GET(request: NextRequest, { params }: { params: { codigo: 
     const c = await obterColecoes()
     const contrato = await c.contratos.findOne({ codigoVerificacao: codigo })
     if (!contrato) return ok({ valido: false })
-    // Recalcula o hash a partir dos dados gravados: se alguém mexeu no banco, aparece aqui.
-    const integro = hashDoContrato(contrato.dados) === contrato.hash
+    // Recalcula o hash a partir do texto gravado: se alguém mexeu no banco, aparece aqui.
+    const integro = hashDoContrato(contrato.dados, contrato.secoes) === contrato.hash
     return ok({
       valido: integro,
       integro,

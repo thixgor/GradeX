@@ -18,7 +18,7 @@ import { getDb } from '@/lib/mongodb'
 import { onlyCpfDigits } from '@/lib/cpf'
 import { dividirValor } from './dinheiro'
 import { colecoes, idDe } from './db'
-import { hashDoContrato, VERSAO_CONTRATO } from './documentos/contrato'
+import { hashDoContrato, intermediadoraAtual, secoesDoContrato, VERSAO_CONTRATO } from './documentos/contrato'
 import type { UsuarioMonitoria } from './servidor'
 import type { Anuncio, Contrato, DadosContrato, EvidenciaAssinatura, Participacao, Reserva } from './tipos'
 
@@ -83,8 +83,10 @@ export async function emitirContrato(input: {
     gratis: proposta.gratis,
     origem: reserva.origem,
     emitidoEm: new Date().toISOString(),
+    intermediadora: intermediadoraAtual(),
   }
-  const hash = hashDoContrato(dados)
+  const secoes = secoesDoContrato(dados)
+  const hash = hashDoContrato(dados, secoes)
   const assinaturas: EvidenciaAssinatura[] = input.assinaturaPrevia ? [{ ...input.assinaturaPrevia, hash }] : []
   const agora = new Date()
   const contrato: Contrato = {
@@ -94,6 +96,7 @@ export async function emitirContrato(input: {
     contratanteId: String(aluno._id),
     contratadoId: String(monitor._id),
     dados,
+    secoes,
     hash,
     assinaturas,
     status: 'aguardando_assinaturas',

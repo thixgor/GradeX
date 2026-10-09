@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { erro, obterColecoes } from '@/lib/monitorias/db'
-import { rotaPublica, ok } from '@/lib/monitorias/rota'
+import { rotaPublica } from '@/lib/monitorias/rota'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { SLUG_VALIDO } from '@/lib/monitorias/validacao'
 import { duracoesPermitidas, horariosLivres } from '@/lib/monitorias/agenda'
 
@@ -53,6 +54,12 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       dias,
       passoInicioMin: 30,
     })
-    return ok({ duracoes: permitidas, duracao: pedida, horarios: livres })
+    // Igual para todo mundo: o CDN segura 15 s. Se alguém pegar o horário nesse
+    // meio-tempo, o agendamento recusa com "horário indisponível" (índice único).
+    return jsonComprimido(
+      request,
+      { duracoes: permitidas, duracao: pedida, horarios: livres },
+      { headers: { 'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30' } },
+    )
   })
 }

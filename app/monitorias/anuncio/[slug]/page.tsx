@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowLeft, BookOpenCheck, CalendarCheck, ChevronDown, ExternalLink, Gift, Loader2, MessageCircleQuestion,
-  MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2,
+  MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2, Flame, Quote, Undo2, FileSignature, Wallet,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
@@ -16,6 +16,7 @@ import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { Agendador, irParaLogin } from '@/components/monitorias/agendador'
 import { DialogoPedido } from '@/components/monitorias/dialogo-pedido'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
+import { economiaGrupoPercent } from '@/lib/monitorias/precos'
 import { formatarDuracao, NOMES_DIAS_CURTOS } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
@@ -28,7 +29,7 @@ interface Dados {
     modos: { direto: ConteudoAnuncio['modos']['direto'] | null; negociacao: boolean; aCombinar: boolean }
     stats: { reservas: number; nota: number; avaliacoes: number; perguntas: number }
   }
-  tutor: { id: string; userId: string; nome: string; titulo: string; bio: string; historia: string; fotoUrl: string | null; stats: { aulasDadas: number; nota: number; avaliacoes: number }; membroDesde: string }
+  tutor: { id: string; donoChave: string; nome: string; titulo: string; bio: string; historia: string; fotoUrl: string | null; stats: { aulasDadas: number; nota: number; avaliacoes: number }; membroDesde: string }
   disponibilidade: JanelaSemanal[]
   perguntas: Pergunta[]
   avaliacoes: Array<{ nome: string; nota: number; comentario: string; em: string }>
@@ -63,6 +64,30 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
       .catch(() => {})
   }, [params.slug])
 
+  // Agenda online: quantos horários livres há nesta semana (o CDN segura 15 s,
+  // então isto custa quase nada). Vira o "restam N horários" do card de preço.
+  const [livres, setLivres] = useState<{ semana: number; proximo: { dia: string; hora: string; inicio: string } | null } | null>(null)
+  const temDireto = !!dados?.anuncio.modos.direto
+  useEffect(() => {
+    if (!temDireto) return
+    api<{ horarios: Array<{ inicio: string; dia: string; hora: string }> }>(`/api/monitorias/publico/anuncios/${params.slug}/horarios`)
+      .then((r) => {
+        const limite = Date.now() + 7 * 86_400_000
+        setLivres({ semana: r.horarios.filter((h) => new Date(h.inicio).getTime() <= limite).length, proximo: r.horarios[0] || null })
+      })
+      .catch(() => {})
+  }, [temDireto, params.slug])
+
+  // O anúncio traz só o resumo (SHA-256) do dono; calculamos o nosso e comparamos.
+  const [euChave, setEuChave] = useState<string | null>(null)
+  useEffect(() => {
+    if (!eu || typeof crypto === 'undefined' || !crypto.subtle) return
+    crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(`monitorias:dono:${eu}`))
+      .then((buf) => setEuChave(Array.from(new Uint8Array(buf), (b) => b.toString(16).padStart(2, '0')).join('')))
+      .catch(() => {})
+  }, [eu])
+
   useEffect(() => {
     document.body.style.overflow = folha ? 'hidden' : ''
     return () => {
@@ -94,7 +119,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
   }
 
   const { anuncio: a, tutor } = dados
-  const souDono = eu === tutor.userId
+  const souDono = !!euChave && euChave === tutor.donoChave
   const sufixo = a.preco.modo === 'hora' ? '/hora' : '/aula'
   const soCombinar = a.modos.aCombinar && !a.modos.direto && !a.modos.negociacao
 
@@ -299,19 +324,38 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
                     {a.grupo.faixas.map((f) => (
                       <tr key={f.minAlunos}>
                         <td className="pt-1 text-muted-foreground">{f.minAlunos}+ alunos</td>
-                        <td className="pt-1 text-right font-semibold text-emerald-700 dark:text-emerald-400">{formatarCentavos(f.valorPorPessoaCentavos)}{sufixo} cada</td>
+                        <td className="pt-1 text-right font-semibold text-emerald-700 dark:text-emerald-400">
+                          {formatarCentavos(f.valorPorPessoaCentavos)}{sufixo} cada
+                          {economiaGrupoPercent(a, f.minAlunos) > 0 && (
+                            <span className="ml-1.5 rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">−{economiaGrupoPercent(a, f.minAlunos)}%</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             )}
+            {livres && livres.proximo && (
+              <div className={cn('mt-4 flex items-start gap-2 rounded-xl p-3 text-xs', livres.semana <= 6 ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300' : 'bg-primary/5 text-foreground')}>
+                <Flame className={cn('mt-0.5 h-4 w-4 shrink-0', livres.semana <= 6 ? 'text-rose-600' : 'text-primary')} />
+                <span>
+                  <strong>
+                    {livres.semana === 0
+                      ? 'Agenda desta semana lotada'
+                      : livres.semana <= 6
+                        ? `Só ${livres.semana} horário${livres.semana === 1 ? '' : 's'} livre${livres.semana === 1 ? '' : 's'} nos próximos 7 dias`
+                        : 'Agenda aberta — escolha e pague em 2 minutos'}
+                  </strong>
+                  <span className="block text-muted-foreground">
+                    Próximo: {formatarEmBrasilia(livres.proximo.inicio, { weekday: 'long', day: '2-digit', month: 'short' })} às {livres.proximo.hora} (Brasília)
+                  </span>
+                </span>
+              </div>
+            )}
             <div className="mt-5">{acoes}</div>
-            <div className="mt-4 space-y-1.5 border-t border-border pt-4 text-xs text-muted-foreground">
-              <p className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> Monitor só recebe 48h após a aula</p>
-              <p className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> Cancelou com 24h? Reembolso automático</p>
-              <p className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> Contrato e comprovante em PDF</p>
-            </div>
+            <Depoimento avaliacoes={dados.avaliacoes} />
+            <GarantiaDomineAqui />
           </Aparecer>
 
           {dados.disponibilidade.length > 0 && (
@@ -480,5 +524,45 @@ function Perguntas({ anuncioId, slug, iniciais, souDono }: { anuncioId: string; 
       </ul>
       {mais && <Button variant="outline" size="sm" className="mt-3" onClick={carregarMais}>Ver mais perguntas</Button>}
     </Aparecer>
+  )
+}
+
+/** O melhor comentário (5★ ou o mais bem avaliado) perto do botão — prova social na hora da decisão. */
+function Depoimento({ avaliacoes }: { avaliacoes: Dados['avaliacoes'] }) {
+  const melhor = [...avaliacoes].filter((a) => a.comentario.trim().length >= 12).sort((x, y) => y.nota - x.nota)[0]
+  if (!melhor || melhor.nota < 4) return null
+  return (
+    <figure className="mt-4 rounded-xl bg-muted/50 p-3 text-xs">
+      <Quote className="h-4 w-4 text-primary/60" />
+      <blockquote className="mt-1 line-clamp-4 text-foreground/90">{melhor.comentario}</blockquote>
+      <figcaption className="mt-1.5 flex items-center gap-1 text-muted-foreground">
+        <span className="flex">{Array.from({ length: melhor.nota }).map((_, i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</span>
+        {melhor.nome} · aluno verificado
+      </figcaption>
+    </figure>
+  )
+}
+
+const ITENS_GARANTIA = [
+  { icone: Wallet, texto: 'O monitor só recebe 48h depois da aula' },
+  { icone: Undo2, texto: '7 dias para desistir (antes da aula) com 100% de volta' },
+  { icone: ShieldCheck, texto: 'Monitor faltou ou cancelou? Reembolso integral' },
+  { icone: FileSignature, texto: 'Contrato assinado e comprovante em PDF' },
+]
+
+function GarantiaDomineAqui() {
+  return (
+    <div className="mt-4 rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 p-3">
+      <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
+        <ShieldCheck className="h-4 w-4" /> Garantia DomineAqui
+      </p>
+      <ul className="mt-2 space-y-1.5">
+        {ITENS_GARANTIA.map((g) => (
+          <li key={g.texto} className="flex items-start gap-2 text-xs text-foreground/85">
+            <g.icone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" /> {g.texto}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }

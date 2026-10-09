@@ -3,6 +3,7 @@ import { idDe, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { requisitosDoAlunoDe, requisitosDoMonitorDe } from '@/lib/monitorias/servidor'
 import { resumir } from '@/lib/monitorias/financeiro'
+import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
       requisitosDoMonitorDe(sessao.userId),
       requisitosDoAlunoDe(sessao.userId),
       c.anuncios
-        .find({ userId: sessao.userId }, { projection: { titulo: 1, slug: 1, status: 1, materia: 1, preco: 1, stats: 1, updatedAt: 1, revisaoPendente: 1, moderacao: 1, modos: 1, ofertaAssinada: 1 } })
+        .find({ userId: sessao.userId }, { projection: { titulo: 1, slug: 1, status: 1, materia: 1, preco: 1, stats: 1, updatedAt: 1, revisaoPendente: 1, moderacao: 1, modos: 1, ofertaAssinada: 1, descricao: 1, conteudos: 1, videos: 1, faq: 1, materiais: 1, temMateriais: 1, aulaGratis: 1, grupo: 1 } })
         .sort({ updatedAt: -1 })
         .toArray(),
       c.reservas.countDocuments({ tutorUserId: sessao.userId, status: { $in: ['solicitada', 'em_negociacao', 'aguardando_assinaturas'] } }),
@@ -46,6 +47,18 @@ export async function GET(request: NextRequest) {
         : null,
       anuncios: anuncios.map((a) => ({
         id: idDe(a),
+        forca: forcaDoAnuncio({
+          titulo: a.titulo || '',
+          descricao: a.descricao || '',
+          conteudos: a.conteudos?.length || 0,
+          videos: a.videos?.length || 0,
+          faq: a.faq?.length || 0,
+          materiais: a.materiais?.length || 0,
+          temMateriais: !!a.temMateriais,
+          aulaGratis: !!a.aulaGratis?.ativa,
+          grupo: !!a.grupo?.ativo,
+          agendaDireta: !!a.modos?.direto,
+        }),
         titulo: a.titulo,
         slug: a.slug,
         status: a.status,

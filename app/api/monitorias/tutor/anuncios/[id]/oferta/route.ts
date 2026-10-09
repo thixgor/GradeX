@@ -52,12 +52,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const [a, user] = await Promise.all([carregar(params.id, sessao.userId), carregarUsuario(sessao.userId)])
     if (!a || !user) return naoEncontrado()
     if (!a.modos.direto) return erro(409, 'Ative o agendamento direto no anúncio primeiro.')
-    const { hash } = montarOferta(a, nomeCivil(user))
+    const { texto, hash } = montarOferta(a, nomeCivil(user))
     if (hash !== corpo.data.hash) return erro(409, 'As condições do anúncio mudaram. Releia a oferta.')
     const r = await conferirCodigo(sessao.userId, `oferta:${params.id}`, corpo.data.codigo)
     if (r !== 'ok') return erro(400, mensagemDoCodigo(r))
     const c = await obterColecoes()
-    const assinatura = { versao: VERSAO_OFERTA, hash, em: new Date(), ip, userAgent: userAgentDe(request) }
+    const assinatura = { versao: VERSAO_OFERTA, hash, texto, em: new Date(), ip, userAgent: userAgentDe(request) }
     await c.anuncios.updateOne({ _id: a._id as any }, { $set: { ofertaAssinada: assinatura, updatedAt: new Date() } })
     return ok({ assinada: true, em: assinatura.em })
   })

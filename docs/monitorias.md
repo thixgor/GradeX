@@ -58,10 +58,17 @@ próprio contrato e paga a sua parte. Se o grupo não pagar todo até o prazo,
 
 | Quem | Quando | Resultado |
 |---|---|---|
-| Aluno | ≥ 24h antes | 100% automático |
-| Aluno | < 24h | ticket no suporte; reserva em disputa; admin decide |
+| Aluno | até **7 dias após pagar** e antes da aula | 100% automático, inclusive a taxa do PIX — **direito de arrependimento** (CDC art. 49; Decreto 7.962/2013, art. 5º) |
+| Aluno | ≥ 24h antes (fora dos 7 dias) | 100% automático |
+| Aluno | < 24h e fora dos 7 dias | ticket no suporte; reserva em disputa; admin decide de forma fundamentada (CC art. 413) |
 | Monitor | qualquer hora | 100% para todos + strike (3 em 90 dias suspende) |
 | Aluno | até 48h após a aula | "Reportar problema" → disputa |
+
+Por que os 7 dias valem mesmo a menos de 24h da aula: contratação pela
+internet é "fora do estabelecimento"; enquanto o serviço não foi prestado,
+nenhuma regra contratual tira esse direito (cláusula assim seria nula, CDC
+art. 51). Exemplo: pagou terça, aula quinta 10h, desistiu quinta 8h → 100%.
+Organizador de grupo que cancela com colegas já pagos sai só do próprio assento.
 
 Reembolso: intenção gravada com compare-and-set + chave de idempotência
 `refund:<assento>:<n>` enviada ao MP. Falhou? Fica "processando" e o cron
@@ -70,11 +77,26 @@ tenta de novo com a mesma chave.
 ## Contratos e PDFs
 
 - Texto em `lib/monitorias/documentos/` (termos versionados, contrato, oferta).
+  Termos `2026.10-v2` e contrato/oferta `2026.10-v2`: identificação da empresa
+  (Decreto 7.962, art. 2º), arrependimento, ressalva do CDC, mandato (CC 653),
+  LGPD (bases, operadores, retenção de 5 anos, direitos, encarregado), conduta,
+  imagem/gravação, menores, nulidade parcial, foro do consumidor (CDC 101, I).
 - Dados congelados no contrato + **hash SHA-256**; assinar exige mandar o hash
   que a tela mostrou (se o contrato mudou, a assinatura é recusada).
+- O contrato guarda o **texto exato emitido** (`Contrato.secoes`), o aceite dos
+  Termos guarda a cópia das seções aceitas e a oferta-padrão guarda o texto
+  assinado: mudar o modelo no código (ou o `.env` da empresa) nunca altera nem
+  invalida um documento já assinado — a verificação recalcula o hash sobre o
+  texto guardado.
+- O contrato é lido pelo aluno **antes de pagar**, então traz o CPF mascarado
+  (`***.456.789-**`) e nenhum e-mail — com o CPF inteiro (muitas vezes a chave
+  PIX do monitor) daria para pagar "por fora" e perder a garantia. A
+  qualificação completa fica em `Contrato.dados`, visível só às partes e ao admin.
 - PDFs gerados no servidor (`lib/monitorias/pdf.ts`): contrato com página de
   evidências e QR, comprovante de pagamento, demonstrativo de venda,
-  comprovante de repasse e termos aceitos.
+  comprovante de repasse, termos aceitos (a versão que a pessoa aceitou) e o
+  **histórico da conversa** (`/api/monitorias/documentos/conversa/<reservaId>`,
+  com os materiais da aula).
 - Verificação pública: `/monitorias/documentos/verificar/<código>`.
 - ⚠️ O texto foi escrito para afastar ao máximo a responsabilidade da
   plataforma, mas o CDC não permite afastar tudo. **Revisar com advogado** antes
@@ -91,10 +113,55 @@ tenta de novo com a mesma chave.
 - Link da reunião só para quem pagou (nunca por e-mail).
 - Vídeos: só YouTube/Instagram, guardados por ID; iframe montado pelo servidor.
 - Links externos: https, sem IP/credenciais, aviso antes de sair do site.
+- Toda rota que muda dado recusa `Origin` de outro site (`lib/monitorias/origem.ts`).
+- O anúncio público não expõe o `userId` do monitor, só `donoChave`
+  (SHA-256), que o navegador compara para saber "este anúncio é meu".
+- Aluno com data de nascimento de menor de 18 não contrata (o responsável
+  contrata pela própria conta).
+- Agendamento direto: no máximo 2 reservas sem pagar por aluno e monitor
+  (evita "sequestrar" a agenda com holds).
+
+## Histórico e materiais
+
+- "Minhas monitorias" (aluno) e "Pedidos" (monitor) mostram tudo, inclusive
+  canceladas/expiradas/reembolsadas, com resumo no topo e atalhos para
+  contrato, comprovante, materiais e PDF da conversa.
+- Materiais do anúncio são **copiados para a reserva** na hora do pedido (o
+  aluno não perde se o monitor mudar o anúncio). O monitor ainda pode enviar
+  materiais só daquela aula (ação `material`; até 20; só quem pagou vê).
+- Chat: a sala carrega as últimas 150 mensagens e o botão "Ver mensagens
+  anteriores" pagina com `?antes=`.
+
+## Custo (Vercel)
+
+- A sala da reserva faz polling **incremental**: `GET …/mensagens?depois=`
+  devolve só o que é novo + `versao`; a sala inteira só recarrega quando a
+  versão muda (ou a cada ~10 voltas). 7 s negociando, 15 s confirmada,
+  desligado quando encerrada — e só com a aba visível (`useIntervaloVisivel`).
+- O checkout tem um relógio só (o do PIX); o da assinatura do monitor só
+  roda enquanto se espera por ela.
+- "Nova mensagem" no sino é agrupada: se já há um aviso não lido da mesma sala
+  nos últimos 10 min, não cria outro.
+- Rotas públicas com cache de CDN: vitrine 60 s, anúncio 30 s, horários 15 s.
+
+## Conversão (o que deixa a seção persuasiva)
+
+- Vitrine: números reais de prova social (só aparecem acima de um mínimo, para
+  nunca mostrar "0 aulas"), "Como funciona" em 3 passos, simulador de ganhos
+  para quem quer ensinar (`ganhoMensalEstimado`), selo "N alunos já contrataram".
+- Anúncio: escassez real ("só N horários livres nos próximos 7 dias"),
+  melhor depoimento ao lado do botão, caixa "Garantia DomineAqui", % de
+  economia por faixa de grupo.
+- Checkout: contagem do horário guardado (o hold real de 30 min).
+- Monitor: **Força do anúncio** 0–100 com dicas ordenadas pelo ganho
+  (`lib/monitorias/forca-anuncio.ts`), no assistente e no painel.
 
 ## Operação
 
-- Variáveis: ver o bloco "Monitorias" em `.env.example`.
+- Variáveis: ver o bloco "Monitorias" em `.env.example`. **Antes de lançar**,
+  preencha `MONITORIAS_EMPRESA_RAZAO`, `MONITORIAS_EMPRESA_CNPJ`,
+  `MONITORIAS_EMPRESA_ENDERECO` e `MONITORIAS_EMPRESA_EMAIL` (entram nos Termos
+  e nos contratos; o Decreto 7.962/2013 exige essa identificação).
 - Depois do deploy: `npm run db:indexes` (índices únicos são regra de negócio).
 - Cron horário: `/api/cron/monitorias` (em `vercel.json`).
 - Admin: `/admin/monitorias` — moderação, disputas, repasses, denúncias.

@@ -10,7 +10,7 @@ import { ObjectId } from 'mongodb'
 import type { User } from '@/lib/types'
 import { colecoes, idDe, obterColecoes } from './db'
 import { pendentes, requisitosDoAluno, requisitosDoMonitor, type ItemRequisito } from './requisitos'
-import { textoDosTermos, VERSAO_TERMOS } from './documentos/termos'
+import { secoesDosTermos, textoCanonico, tituloDosTermos, VERSAO_TERMOS } from './documentos/termos'
 import { sha256 } from './documentos/contrato'
 import { DISPONIBILIDADE_VAZIA } from './agenda'
 import type { Anuncio, PapelTermos, Tutor } from './tipos'
@@ -68,7 +68,7 @@ export async function carregarUsuario(userId: string): Promise<UsuarioMonitoria 
 }
 
 export function hashDosTermos(papel: PapelTermos): string {
-  return sha256(textoDosTermos(papel))
+  return sha256(textoCanonico(tituloDosTermos(papel), VERSAO_TERMOS, secoesDosTermos(papel)))
 }
 
 export async function termosAceitos(userId: string, papel: PapelTermos): Promise<boolean> {
@@ -84,6 +84,8 @@ export async function registrarAceiteDosTermos(input: {
   userAgent: string
 }): Promise<void> {
   const { termos } = await obterColecoes()
+  const titulo = tituloDosTermos(input.papel)
+  const secoes = secoesDosTermos(input.papel)
   await termos.updateOne(
     { userId: input.userId, papel: input.papel, versao: VERSAO_TERMOS },
     {
@@ -91,7 +93,9 @@ export async function registrarAceiteDosTermos(input: {
         userId: input.userId,
         papel: input.papel,
         versao: VERSAO_TERMOS,
-        hash: hashDosTermos(input.papel),
+        hash: sha256(textoCanonico(titulo, VERSAO_TERMOS, secoes)),
+        titulo,
+        secoes,
         em: new Date(),
         ip: input.ip,
         userAgent: input.userAgent,

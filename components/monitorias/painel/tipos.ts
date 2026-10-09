@@ -32,6 +32,7 @@ export interface DadosPainel {
     moderacao: { acao: string; motivo?: string; em: string } | null
     direto: boolean
     ofertaAssinada: boolean
+    forca: { pontos: number; nivel: 'fraco' | 'bom' | 'excelente'; dicas: Array<{ texto: string; ganho: number }> }
   }>
   pedidosPendentes: number
 }

@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { getDb } from '@/lib/mongodb'
 import { erro, idDe, lerJson, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarReserva, papelNaReserva } from '@/lib/monitorias/reservas'
@@ -12,20 +13,36 @@ export const dynamic = 'force-dynamic'
 
 const LIVRE = ['confirmada', 'realizada', 'em_disputa', 'concluida']
 
-/** GET ?depois=<ISO> — mensagens novas (polling enquanto a aba está visível). */
+const POR_PAGINA = 100
+
+/**
+ * GET ?depois=<ISO> — mensagens novas (o polling da sala: barato, quase sempre
+ * volta vazio) junto com `versao`/`status`, para a tela só recarregar tudo
+ * quando a reserva mudou de verdade.
+ * GET ?antes=<ISO> — página anterior do histórico ("Ver mensagens anteriores").
+ */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: { limit: 120, windowMs: 60_000 } }, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
     const papel = await papelNaReserva(reserva, sessao.userId)
     if (!papel) return naoEncontrado()
-    const depois = new URL(request.url).searchParams.get('depois')
+    const busca = new URL(request.url).searchParams
+    const depois = busca.get('depois')
+    const antes = busca.get('antes')
     const c = await obterColecoes()
     const filtro: Record<string, unknown> = { reservaId: idDe(reserva) }
-    if (depois && !Number.isNaN(Date.parse(depois))) filtro.createdAt = { $gt: new Date(depois) }
-    const mensagens = await c.mensagens.find(filtro as any).sort({ createdAt: 1 }).limit(100).toArray()
+    let mensagens
+    if (antes && !Number.isNaN(Date.parse(antes))) {
+      filtro.createdAt = { $lt: new Date(antes) }
+      mensagens = (await c.mensagens.find(filtro as any).sort({ createdAt: -1 }).limit(POR_PAGINA).toArray()).reverse()
+    } else {
+      if (depois && !Number.isNaN(Date.parse(depois))) filtro.createdAt = { $gt: new Date(depois) }
+      mensagens = await c.mensagens.find(filtro as any).sort({ createdAt: 1 }).limit(POR_PAGINA).toArray()
+    }
     return ok({
       status: reserva.status,
       versao: reserva.versao,
+      maisAntigas: !!antes && mensagens.length === POR_PAGINA,
       mensagens: mensagens.map((m) => ({
         id: idDe(m),
         autor: m.autorId === 'sistema' ? 'sistema' : m.autorId === sessao.userId ? 'eu' : m.autorId === reserva.tutorUserId ? 'monitor' : 'aluno',
@@ -52,15 +69,26 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const { texto, mascarou } = LIVRE.includes(reserva.status) ? { texto: corpo.data.texto, mascarou: false } : mascararContato(corpo.data.texto)
     const c = await obterColecoes()
     const agora = new Date()
-    const res = await c.mensagens.insertOne({ reservaId: idDe(reserva), autorId: sessao.userId, tipo: 'texto', texto, createdAt: agora })
-    const primeiraRespostaDoMonitor = papel === 'monitor' && reserva.status === 'solicitada'
-    await c.reservas.updateOne(
-      { _id: reserva._id as any },
-      { $set: { ultimaAtividadeEm: agora, updatedAt: agora, ...(primeiraRespostaDoMonitor ? { status: 'em_negociacao' } : {}) }, ...(primeiraRespostaDoMonitor ? { $inc: { versao: 1 } } : {}) },
-    )
-    // Aviso no sino para o outro lado (sem e-mail por mensagem: seria spam).
     const destino = papel === 'monitor' ? reserva.solicitanteId : reserva.tutorUserId
-    await avisar([{ userId: destino, titulo: 'Nova mensagem', mensagem: `"${reserva.anuncioTitulo}": ${texto.slice(0, 80)}`, url: `/monitorias/reservas/${idDe(reserva)}` }])
+    const url = `/monitorias/reservas/${idDe(reserva)}`
+    const primeiraRespostaDoMonitor = papel === 'monitor' && reserva.status === 'solicitada'
+    const [res, , avisoRecente] = await Promise.all([
+      c.mensagens.insertOne({ reservaId: idDe(reserva), autorId: sessao.userId, tipo: 'texto', texto, createdAt: agora }),
+      c.reservas.updateOne(
+        { _id: reserva._id as any },
+        { $set: { ultimaAtividadeEm: agora, updatedAt: agora, ...(primeiraRespostaDoMonitor ? { status: 'em_negociacao' } : {}) }, ...(primeiraRespostaDoMonitor ? { $inc: { versao: 1 } } : {}) },
+      ),
+      // Uma conversa animada não pode virar 30 avisos no sino: se o outro lado
+      // já tem um "Nova mensagem" desta sala não lido dos últimos 10 min, basta.
+      (await getDb()).collection('notifications').findOne(
+        { userId: destino, read: false, title: 'Nova mensagem', actionUrl: url, createdAt: { $gt: new Date(agora.getTime() - 10 * 60_000) } },
+        { projection: { _id: 1 } },
+      ),
+    ])
+    // Aviso no sino para o outro lado (sem e-mail por mensagem: seria spam).
+    if (!avisoRecente) {
+      await avisar([{ userId: destino, titulo: 'Nova mensagem', mensagem: `"${reserva.anuncioTitulo}": ${texto.slice(0, 80)}`, url }])
+    }
     return ok({ id: String(res.insertedId), texto, createdAt: agora, aviso: mascarou ? AVISO_CONTATO : null }, 201)
   })
 }

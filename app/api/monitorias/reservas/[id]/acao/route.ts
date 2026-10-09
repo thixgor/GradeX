@@ -15,7 +15,7 @@ import {
 } from '@/lib/monitorias/reservas'
 import { carregarUsuario } from '@/lib/monitorias/servidor'
 import { limparTexto } from '@/lib/monitorias/validacao'
-import { PLATAFORMAS_DE_REUNIAO, validarLinkDeReuniao } from '@/lib/monitorias/links'
+import { PLATAFORMAS_DE_REUNIAO, validarLinkDeReuniao, validarLinkExterno } from '@/lib/monitorias/links'
 import { podeTransitar } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
 import { avaliar } from '@/lib/monitorias/avaliacoes'
@@ -43,6 +43,8 @@ const Corpo = z.discriminatedUnion('acao', [
   z.object({ acao: z.literal('confirmar') }).strict(),
   z.object({ acao: z.literal('reportar'), motivo }).strict(),
   z.object({ acao: z.literal('link'), url: z.string().max(500) }).strict(),
+  z.object({ acao: z.literal('material'), titulo: z.string().min(2).max(100), url: z.string().max(500) }).strict(),
+  z.object({ acao: z.literal('material_remover'), url: z.string().max(500) }).strict(),
   z.object({ acao: z.literal('avaliar'), nota: z.number().int().min(1).max(5), comentario: z.string().max(1000) }).strict(),
 ])
 
@@ -132,6 +134,38 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         await c.reservas.updateOne({ _id: reserva._id as any }, { $set: { linkReuniao: link.url, updatedAt: new Date() } })
         await c.mensagens.insertOne({ reservaId: idDe(reserva), autorId: 'sistema', tipo: 'sistema', texto: 'O monitor adicionou o link da reunião (visível só para quem pagou).', createdAt: new Date() })
         return ok({ linkReuniao: link.url })
+      }
+      case 'material': {
+        if (papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor envia materiais.')
+        if (!['aguardando_pagamento', 'confirmada', 'realizada', 'em_disputa', 'concluida'].includes(reserva.status)) {
+          throw new ErroMonitoria(409, 'Materiais podem ser enviados depois que a monitoria for combinada.')
+        }
+        const link = validarLinkExterno(corpo.url)
+        if (!link) throw new ErroMonitoria(400, 'Use um link https válido (Drive, Notion, YouTube...).')
+        const titulo = limparTexto(corpo.titulo).slice(0, 100)
+        if (titulo.length < 2) throw new ErroMonitoria(400, 'Dê um título ao material.')
+        const extras = reserva.materiaisExtras || []
+        if (extras.length >= 20) throw new ErroMonitoria(409, 'Limite de 20 materiais por monitoria.')
+        if (extras.some((m) => m.url === link.url)) throw new ErroMonitoria(409, 'Este link já foi enviado.')
+        const agora = new Date()
+        const res = await c.reservas.updateOne(
+          { _id: reserva._id as any, 'materiaisExtras.19': { $exists: false } } as any,
+          { $push: { materiaisExtras: { titulo, url: link.url, dominio: link.dominio, em: agora } }, $set: { updatedAt: agora } } as any,
+        )
+        if (!res.modifiedCount) throw new ErroMonitoria(409, 'Não foi possível adicionar agora.')
+        const alunos = await c.participacoes
+          .find({ reservaId: idDe(reserva), status: { $in: ['paga', 'gratis', 'concluida', 'aguardando_pagamento'] } }, { projection: { alunoId: 1 } })
+          .toArray()
+        await Promise.all([
+          c.mensagens.insertOne({ reservaId: idDe(reserva), autorId: 'sistema', tipo: 'sistema', texto: `O monitor enviou um material: "${titulo}" (${link.dominio}). Ele fica guardado em "Materiais desta monitoria".`, createdAt: agora }),
+          avisar(alunos.map((a) => ({ userId: a.alunoId, titulo: 'Material novo na sua monitoria', mensagem: `"${titulo}" em "${reserva.anuncioTitulo}"`, url: `/monitorias/reservas/${idDe(reserva)}` }))),
+        ])
+        return ok({ adicionado: true })
+      }
+      case 'material_remover': {
+        if (papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor remove materiais.')
+        await c.reservas.updateOne({ _id: reserva._id as any }, { $pull: { materiaisExtras: { url: corpo.url } }, $set: { updatedAt: new Date() } } as any)
+        return ok({ removido: true })
       }
       case 'avaliar': {
         if (papel === 'monitor') throw new ErroMonitoria(403, 'O monitor não se avalia.')

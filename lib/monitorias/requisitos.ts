@@ -130,10 +130,25 @@ export function requisitosDoMonitor(input: {
   return itens
 }
 
-/** Requisitos para CONTRATAR monitoria. */
-export function requisitosDoAluno(input: { user: UsuarioRequisitos; termosAceitos: boolean }): ItemRequisito[] {
+/**
+ * Requisitos para CONTRATAR monitoria. A maioridade é declarada no aceite dos
+ * Termos; se o perfil tem data de nascimento e ela indica menor de 18, bloqueia
+ * (menor não contrata sozinho — CC arts. 3º e 4º).
+ */
+export function requisitosDoAluno(input: { user: UsuarioRequisitos; termosAceitos: boolean; agora?: Date }): ItemRequisito[] {
+  const idade = idadeEmAnos(input.user.dateOfBirth, input.agora || new Date())
   return [
     ...base(input.user),
+    ...(idade !== null && idade < 18
+      ? [
+          {
+            chave: 'idade',
+            rotulo: 'Maior de 18 anos — menores contratam pela conta do responsável legal',
+            ok: false,
+            acao: { texto: 'Revisar data de nascimento', href: '/profile' },
+          },
+        ]
+      : []),
     {
       chave: 'termos',
       rotulo: 'Termos de Serviço do Aluno aceitos',

@@ -18,6 +18,8 @@ import { formatarCentavos, interpretarValorEmReais } from '@/lib/monitorias/dinh
 import { duracoesPermitidas, formatarDuracao } from '@/lib/monitorias/agenda'
 import type { ConteudoAnuncio, VideoAnuncio } from '@/lib/monitorias/tipos'
 import { CaixaAviso, CaixaErro, Esqueleto, api } from '../base'
+import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
+import { CartaoForca } from '@/components/monitorias/forca-anuncio'
 
 const PASSOS = ['Básico', 'Vídeos', 'Preço & contratação', 'FAQ', 'Materiais', 'Revisão'] as const
 
@@ -430,8 +432,21 @@ function VideoMini({ video }: { video: VideoAnuncio }) {
 
 function Revisao({ f, anuncioId, slug, status }: { f: Form; anuncioId?: string; slug: string; status: string }) {
   const valor = interpretarValorEmReais(f.valor) ?? 0
+  const forca = forcaDoAnuncio({
+    titulo: f.titulo,
+    descricao: f.descricao,
+    conteudos: f.conteudos.length,
+    videos: f.videos.filter((v) => v.trim()).length,
+    faq: f.faq.filter((x) => x.pergunta.trim() && x.resposta.trim()).length,
+    materiais: f.materiais.filter((x) => x.titulo.trim() && x.url.trim()).length,
+    temMateriais: f.temMateriais,
+    aulaGratis: f.gratis,
+    grupo: f.grupo,
+    agendaDireta: f.direto,
+  })
   return (
     <div className="space-y-4">
+      <CartaoForca forca={forca} />
       <div className="rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 p-5 text-white">
         <p className="text-xs uppercase tracking-wide text-white/75">{f.materia || 'Matéria'}</p>
         <p className="font-heading text-xl font-bold">{f.titulo || 'Título do anúncio'}</p>

@@ -65,3 +65,17 @@ export function validarFaixas(faixas: FaixaGrupo[], valorIndividualCentavos: num
   }
   return null
 }
+
+/**
+ * Simulador "quanto eu ganho ensinando": preço por hora × horas por semana ×
+ * 52/12 semanas por mês, menos os 10% da plataforma. Só uma estimativa para a
+ * tela — o dinheiro de verdade é sempre calculado por aula, em `dividirValor`.
+ *
+ * Exemplo: R$ 60/h, 4 h por semana → R$ 1.040,00 brutos/mês → R$ 936,00 líquidos.
+ */
+export function ganhoMensalEstimado(precoHoraCentavos: number, horasPorSemana: number): { brutoCentavos: number; liquidoCentavos: number } {
+  const preco = Math.max(0, Math.round(precoHoraCentavos))
+  const horas = Math.max(0, horasPorSemana)
+  const bruto = Math.round((preco * horas * 52) / 12)
+  return { brutoCentavos: bruto, liquidoCentavos: bruto - Math.floor(bruto / 10) }
+}

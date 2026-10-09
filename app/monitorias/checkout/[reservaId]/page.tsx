@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { ArrowLeft, CalendarPlus, Check, Clock, Copy, Download, FileText, Loader2, MessagesSquare, PartyPopper, Receipt, Users } from 'lucide-react'
+import { ArrowLeft, CalendarPlus, Check, Clock, Copy, Download, FileText, Hourglass, Loader2, MessagesSquare, PartyPopper, Receipt, Users } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Avatar, CaixaAviso, CaixaErro, Confete, Esqueleto, HoraBrasilia, api } from '@/components/monitorias/base'
@@ -46,8 +46,10 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
     return 0
   }, [d, assento, revisado])
 
-  // Esperando a outra parte (assinatura do monitor) ou o PIX: atualiza sozinho.
-  const esperando = !!d && passo >= 1 && passo < 3
+  // Só espera aqui a assinatura do MONITOR (o passo do PIX tem o próprio
+  // acompanhamento, mais leve, em <PagamentoPix>): nada de dois relógios.
+  const k = d?.meuContrato
+  const esperando = !!d && passo === 1 && !!k && !k.falta.includes('contratante') && k.falta.includes('contratado')
   useIntervaloVisivel(carregar, esperando ? 8000 : null)
 
   if (erro) return <PageScaffold><CaixaErro mensagem={erro} className="mx-auto mt-10 max-w-md" /></PageScaffold>
@@ -83,6 +85,8 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
             </li>
           ))}
         </ol>
+
+        {!encerrada && assento && passo < 2 && r.prazoPagamento && <HorarioGuardado ate={r.prazoPagamento} slug={r.anuncioSlug} />}
 
         {encerrada ? (
           <CaixaErro mensagem="Esta reserva foi encerrada. Volte ao anúncio para agendar de novo." />
@@ -135,7 +139,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                         )}
                       </dl>
                     )}
-                    {r.prazoPagamento && (
+                    {r.prazoPagamento && new Date(r.prazoPagamento).getTime() - Date.now() > 60 * 60_000 && (
                       <CaixaAviso>Este horário está reservado para você até <strong>{formatarEmBrasilia(r.prazoPagamento, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</strong> (Brasília). Conclua as etapas antes disso.</CaixaAviso>
                     )}
                     <Button className="h-12 w-full rounded-xl text-base font-semibold" onClick={() => setRevisado(true)}>
@@ -242,5 +246,46 @@ function ConviteGrupo({ link, copiado, onCopiar }: { link: string; copiado: bool
         <Button size="sm" onClick={onCopiar}>{copiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</Button>
       </div>
     </div>
+  )
+}
+
+/**
+ * "Este horário está guardado para você por 12:34". Só aparece na reta final
+ * (menos de 1 h): é o hold real do agendamento — quando zera, o horário volta
+ * para a agenda. Relógio só no navegador, nenhuma requisição.
+ */
+function HorarioGuardado({ ate, slug }: { ate: string; slug: string | null }) {
+  const reduzir = useReducedMotion()
+  const [agora, setAgora] = useState(() => Date.now())
+  const ms = new Date(ate).getTime() - agora
+  const perto = ms <= 60 * 60_000
+  useIntervaloVisivel(() => setAgora(Date.now()), perto ? 1000 : null)
+  if (!perto) return null
+  if (ms <= 0) {
+    return (
+      <CaixaAviso className="mb-4">
+        O tempo para concluir acabou e o horário pode ter voltado para a agenda.{' '}
+        {slug && <Link href={`/monitorias/anuncio/${slug}`} className="font-semibold underline">Escolher outro horário</Link>}
+      </CaixaAviso>
+    )
+  }
+  const m = Math.floor(ms / 60_000)
+  const seg = Math.floor((ms % 60_000) / 1000)
+  const urgente = ms < 5 * 60_000
+  return (
+    <motion.div
+      initial={reduzir ? false : { opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn(
+        'mb-4 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm',
+        urgente ? 'border-rose-400/60 bg-rose-500/10 text-rose-900 dark:text-rose-200' : 'border-amber-400/60 bg-amber-500/10 text-amber-900 dark:text-amber-200',
+      )}
+      role="timer"
+      aria-live="off"
+    >
+      <Hourglass className={cn('h-5 w-5 shrink-0', urgente && !reduzir && 'animate-pulse')} />
+      <span className="flex-1">Este horário está <strong>guardado só para você</strong> enquanto conclui.</span>
+      <span className="font-heading text-lg font-bold tabular-nums">{String(m).padStart(2, '0')}:{String(seg).padStart(2, '0')}</span>
+    </motion.div>
   )
 }

@@ -9,6 +9,8 @@ import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { cn } from '@/lib/utils'
 import { api, CaixaAviso, Selo } from '../base'
 import type { DadosPainel } from './tipos'
+import { AnelForca } from '@/components/monitorias/forca-anuncio'
+import { SimuladorGanhos } from '@/components/monitorias/simulador-ganhos'
 
 const STATUS_ANUNCIO: Record<string, { rotulo: string; tom: 'neutro' | 'info' | 'alerta' | 'sucesso' | 'erro' }> = {
   rascunho: { rotulo: 'Rascunho', tom: 'neutro' },
@@ -83,11 +85,14 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
           <Link href="/monitorias/painel/anuncios/novo"><Button size="sm"><Plus className="mr-1.5 h-4 w-4" /> Novo anúncio</Button></Link>
         </div>
         {dados.anuncios.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border bg-card px-6 py-12 text-center">
-            <p className="font-semibold">Você ainda não tem anúncios</p>
-            <p className="mt-1 text-sm text-muted-foreground">Crie o primeiro: conte o que você ensina, defina preço, agenda e forma de contratação.</p>
-            <Link href="/monitorias/painel/anuncios/novo"><Button className="mt-4"><Plus className="mr-1.5 h-4 w-4" /> Criar anúncio</Button></Link>
-          </div>
+          <>
+            <div className="rounded-3xl border border-dashed border-border bg-card px-6 py-12 text-center">
+              <p className="font-semibold">Você ainda não tem anúncios</p>
+              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">Crie o primeiro em 5 minutos: conte o que você ensina, grave um vídeo curto, defina preço e agenda. Anunciar é grátis — a plataforma só fica com 10% do que você vender.</p>
+              <Link href="/monitorias/painel/anuncios/novo"><Button className="mt-4"><Plus className="mr-1.5 h-4 w-4" /> Criar meu primeiro anúncio</Button></Link>
+            </div>
+            <SimuladorGanhos className="mt-4" compacto />
+          </>
         ) : (
           <ul className="space-y-2.5">
             {dados.anuncios.map((a, i) => {
@@ -95,6 +100,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
               return (
                 <motion.li key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="rounded-2xl border border-border bg-card p-4">
                   <div className="flex flex-wrap items-center gap-3">
+                    <AnelForca forca={a.forca} tamanho={48} />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="truncate font-semibold">{a.titulo}</p>
@@ -104,6 +110,9 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
                       </div>
                       <p className="text-xs text-muted-foreground">{a.materia} · {formatarCentavos(a.preco.valorCentavos)}/{a.preco.modo === 'hora' ? 'h' : 'aula'} · {a.stats.reservas} reservas · {a.stats.perguntas} perguntas</p>
                       {a.moderacao?.motivo && ['rejeitado', 'suspenso'].includes(a.status) && <p className="mt-1 text-xs text-rose-600">Moderação: {a.moderacao.motivo}</p>}
+                      {a.forca.dicas[0] && a.forca.pontos < 80 && (
+                        <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">💡 {a.forca.dicas[0].texto} <strong>(+{a.forca.dicas[0].ganho})</strong></p>
+                      )}
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {['publicado', 'pausado'].includes(a.status) && <Link href={`/monitorias/anuncio/${a.slug}`}><Button size="sm" variant="ghost"><Eye className="mr-1 h-3.5 w-3.5" /> Ver</Button></Link>}

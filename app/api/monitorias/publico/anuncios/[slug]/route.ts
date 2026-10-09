@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { createHash } from 'crypto'
 import { ObjectId } from 'mongodb'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { erro, idDe, obterColecoes } from '@/lib/monitorias/db'
@@ -30,7 +31,9 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       request,
       {
         anuncio: anuncioPublico(anuncio),
-        tutor: { ...tutorPublico(tutor), userId: tutor.userId },
+        // Nunca o userId cru numa resposta pública: só um resumo dele, para a
+        // tela saber "este anúncio é meu" (o navegador calcula o mesmo resumo).
+        tutor: { ...tutorPublico(tutor), donoChave: createHash('sha256').update(`monitorias:dono:${tutor.userId}`).digest('hex') },
         disponibilidade: tutor.disponibilidade.semanal,
         perguntas: perguntas.map((p) => ({
           id: idDe(p),

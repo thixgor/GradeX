@@ -10,6 +10,9 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { secureApiEndpoint, type RateLimitType } from '@/lib/api-security'
 import type { TokenPayload } from '@/lib/auth'
 import { ErroMonitoria } from './reservas'
+import { origemConfiavel } from './origem'
+
+export { origemConfiavel }
 
 export interface ContextoRota {
   sessao: TokenPayload
@@ -21,6 +24,9 @@ export async function rotaAutenticada(
   opcoes: { limite?: RateLimitType | { limit: number; windowMs: number }; admin?: boolean; emailVerificado?: boolean },
   fn: (ctx: ContextoRota) => Promise<Response>,
 ): Promise<Response> {
+  if (!origemConfiavel(request)) {
+    return NextResponse.json({ error: 'Origem da requisição não permitida.' }, { status: 403 })
+  }
   const seg = await secureApiEndpoint(request, {
     rateLimit: opcoes.limite ?? 'READ',
     auth: {

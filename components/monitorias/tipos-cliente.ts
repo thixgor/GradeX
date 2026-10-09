@@ -1,8 +1,14 @@
 /** Formato devolvido por GET /api/monitorias/reservas/[id] (usado pela sala e pelo checkout). */
 import type { StatusReserva, Proposta, ConteudoAnuncio } from '@/lib/monitorias/tipos'
 
+export type MensagemReserva = { id: string; autor: 'eu' | 'monitor' | 'aluno' | 'sistema'; tipo: string; texto: string; propostaId: string | null; createdAt: string }
+
 export interface DetalheReserva {
   papel: 'monitor' | 'organizador' | 'membro' | 'admin'
+  /** Muda a cada transição da reserva — o polling só recarrega tudo quando ela muda. */
+  versao: number
+  /** Há mensagens mais antigas que as 150 carregadas. */
+  maisAntigas: boolean
   reserva: {
     id: string
     anuncioId: string
@@ -28,7 +34,7 @@ export interface DetalheReserva {
     podeReportar: boolean
     createdAt: string
   }
-  monitor: { nome: string; fotoUrl: string | null; titulo: string; userId: string } | null
+  monitor: { nome: string; fotoUrl: string | null; titulo: string } | null
   meuAssento: {
     id: string
     status: string
@@ -41,8 +47,10 @@ export interface DetalheReserva {
   } | null
   meuContrato: { id: string; numero: string; status: string; falta: Array<'contratante' | 'contratado'> } | null
   contratosParaAssinar: Array<{ id: string; numero: string }>
-  assentos: Array<{ alunoNome: string; status: string; eu: boolean; contratoId?: string | null }>
-  mensagens: Array<{ id: string; autor: 'eu' | 'monitor' | 'aluno' | 'sistema'; tipo: string; texto: string; propostaId: string | null; createdAt: string }>
+  /** Do anúncio (guardados na reserva) + os enviados pelo monitor só para esta aula. */
+  materiais: Array<{ titulo: string; url: string; dominio: string; exclusivo: boolean; em: string | null }>
+  assentos: Array<{ alunoNome: string; status: string; eu: boolean; id?: string; contratoId?: string | null }>
+  mensagens: MensagemReserva[]
 }
 
 /** Arquivo .ics para "adicionar ao calendário". */

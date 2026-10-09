@@ -101,6 +101,11 @@ export function CartaoAnuncio({ anuncio, indice = 0 }: { anuncio: CardAnuncio; i
               ) : (
                 <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary">Novo</span>
               )}
+              {anuncio.stats.reservas > 0 && (
+                <p className="mt-1 text-[11px] font-medium text-rose-600 dark:text-rose-400">
+                  {anuncio.stats.reservas} aluno{anuncio.stats.reservas === 1 ? '' : 's'} já {anuncio.stats.reservas === 1 ? 'contratou' : 'contrataram'}
+                </p>
+              )}
             </div>
           </div>
         </div>
