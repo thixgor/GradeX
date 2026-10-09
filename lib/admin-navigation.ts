@@ -252,6 +252,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     keywords: ['material', 'pdf', 'apostila', 'pacote', 'marketplace'],
   },
   {
+    title: 'Monitorias',
+    description: 'Moderação de anúncios, disputas, reembolsos e repasses por PIX aos monitores.',
+    href: '/admin/monitorias',
+    icon: GraduationCap,
+    group: 'comercial',
+    keywords: ['monitoria', 'monitor', 'repasse', 'pix', 'disputa', 'reembolso', 'aula particular'],
+  },
+  {
     title: 'Loja Física',
     description: 'Produtos impressos, galeria, entrega, frete por região e pedidos.',
     href: '/admin/loja',

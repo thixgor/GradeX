@@ -1053,6 +1053,11 @@ export interface Notification {
     | 'order_update'
     /** Lembrete de avaliação (cron /api/cron/avaliacoes-lembretes) */
     | 'avaliacao_lembrete'
+    /** Monitorias: pedido, proposta, pagamento, repasse... (abre `actionUrl`) */
+    | 'monitoria'
+  /** Título curto e destino do clique (usados pelas notificações de monitoria). */
+  title?: string
+  actionUrl?: string
   message: string
   read: boolean
   createdAt: Date

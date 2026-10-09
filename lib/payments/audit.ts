@@ -35,6 +35,16 @@ export type AuditAction =
   | 'prouni_discount_applied'
   /** Alguém editou o registro de cargos em /admin/cargos. */
   | 'cargos_updated'
+  /** Monitorias (lib/monitorias): moderação, disputas e dinheiro do monitor. */
+  | 'monitoria_anuncio_moderado'
+  | 'monitoria_tutor_status'
+  | 'monitoria_disputa_resolvida'
+  | 'monitoria_pix_alterado'
+  | 'monitoria_pix_revelado'
+  | 'monitoria_payout_criado'
+  | 'monitoria_payout_comprovante'
+  | 'monitoria_payout_pago'
+  | 'monitoria_payout_cancelado'
 
 export interface AuditLogEntry {
   action: AuditAction
