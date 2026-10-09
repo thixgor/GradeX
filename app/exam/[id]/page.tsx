@@ -30,6 +30,7 @@ import { ExamQuestionPalette, PaletteQuestion } from '@/components/exam-question
 import { useProctoring } from '@/hooks/use-proctoring'
 import { useWebSocket } from '@/hooks/use-websocket'
 import { useVisibilityDetection } from '@/hooks/use-visibility-detection'
+import { EVENTO_INSPECAO, type DetalheDoEventoDeInspecao } from '@/lib/protecao-inspecao'
 import { useWebRTC } from '@/hooks/use-webrtc'
 import { ArrowLeft, Check, X, Send, FileDown, Clock, User, CheckCircle2, AlertCircle, List, StickyNote, Copy, ClipboardCheck, ClipboardList, Flag, ChevronRight, ChevronLeft, Bot, Maximize2, BookOpen, LogOut, Lock, Play, BarChart3, Trophy } from 'lucide-react'
 import { ImageModal } from '@/components/image-modal'
@@ -415,6 +416,23 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
       }
     },
   })
+
+  // DevTools aberto durante a prova monitorada vira alerta para o admin, pelo
+  // mesmo WebSocket da troca de aba. Quem detecta é o
+  // `components/protecao-contra-inspecao.tsx`, no layout; aqui só se repassa —
+  // nada vai à Vercel.
+  useEffect(() => {
+    if (!hasProctoring || !started || submitted || !wsConnected) return
+    const aoInspecionar = (evento: Event) => {
+      const { aberto } = (evento as CustomEvent<DetalheDoEventoDeInspecao>).detail || { aberto: false }
+      wsSendMessage({
+        type: 'devtools',
+        data: { aberto, examId: id, userName, userId },
+      })
+    }
+    window.addEventListener(EVENTO_INSPECAO, aoInspecionar)
+    return () => window.removeEventListener(EVENTO_INSPECAO, aoInspecionar)
+  }, [hasProctoring, started, submitted, wsConnected, wsSendMessage, id, userName, userId])
 
   // Iniciar WebRTC quando WebSocket conectar e stream estiver disponível
   useEffect(() => {

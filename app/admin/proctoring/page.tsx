@@ -385,6 +385,12 @@ export default function ProctoringMonitoringPage() {
                               <span className="font-semibold text-orange-600">Troca de Aba/Janela</span>
                             </>
                           )}
+                          {alert.type === 'suspicious' && alert.data?.motivo === 'devtools' && (
+                            <>
+                              <AlertTriangle className="h-4 w-4 text-red-600" />
+                              <span className="font-semibold text-red-600">Ferramentas de desenvolvedor</span>
+                            </>
+                          )}
                           <span className="text-sm text-muted-foreground">
                             {new Date(alert.timestamp).toLocaleTimeString()}
                           </span>
@@ -397,6 +403,11 @@ export default function ProctoringMonitoringPage() {
                               {alert.data?.duration && ` (ficou ${Math.round(alert.data.duration / 1000)}s fora)`}
                               {alert.data?.switchCount && ` - Total: ${alert.data.switchCount} trocas`}
                             </>
+                          )}
+                          {alert.type === 'suspicious' && alert.data?.motivo === 'devtools' && (
+                            alert.data?.aberto
+                              ? ' abriu as ferramentas de desenvolvedor (inspecionar) durante a prova'
+                              : ' fechou as ferramentas de desenvolvedor'
                           )}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">

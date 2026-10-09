@@ -222,7 +222,7 @@ function startWebSocketServer(port = 3001) {
     if (!client) return
 
     // Validar tipo de mensagem
-    const validTypes = ['tab-switch', 'webrtc-offer', 'webrtc-answer', 'webrtc-ice-candidate', 'ping']
+    const validTypes = ['tab-switch', 'devtools', 'webrtc-offer', 'webrtc-answer', 'webrtc-ice-candidate', 'ping']
     if (!message.type || !validTypes.includes(message.type)) {
       return
     }
@@ -240,6 +240,24 @@ function startWebSocketServer(port = 3001) {
           examId: client.examId,
           timestamp: new Date().toISOString(),
           data: message.data,
+        })
+        break
+
+      case 'devtools':
+        // O aluno abriu (ou fechou) as ferramentas de desenvolvedor durante a
+        // prova. Quem detecta é o navegador dele
+        // (components/protecao-contra-inspecao.tsx); aqui só se repassa, como
+        // alerta "suspicious", para o painel de monitoramento.
+        if (client.role !== 'user') return
+
+        broadcastToAdmins({
+          type: 'alert',
+          alertType: 'suspicious',
+          userId: client.userId,
+          userName: client.userName,
+          examId: client.examId,
+          timestamp: new Date().toISOString(),
+          data: { ...(message.data || {}), motivo: 'devtools' },
         })
         break
 
