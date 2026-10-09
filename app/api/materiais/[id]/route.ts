@@ -154,7 +154,20 @@ export async function GET(
     // Computed flags (never expose pdfFile.blobUrl / htmlFile.blobUrl to client)
     const _hasPdf = !!(material.pdfFile?.blobUrl)
     const _hasHtml = !!(material.htmlFile?.blobUrl)
-    const { pdfFile: _strippedPdf, htmlFile: _strippedHtml, ...materialWithoutPdf } = safeMaterial
+    const {
+      pdfFile: _strippedPdf,
+      htmlFile: _strippedHtml,
+      // Os complementares crus levam `buttonUrl` (código do embed de vídeo,
+      // link de destino) e os `blobUrl` de cada item. A versão filtrada por
+      // acesso sai em `complementaryItems`, no topo da resposta; a crua ficava
+      // junto, dentro de `material`, para qualquer visitante ler no Network.
+      // Só o admin precisa dela inteira.
+      complementaryItems: _rawComplementaryItems,
+      ...materialSemArquivos
+    } = safeMaterial
+    const materialWithoutPdf = isAdmin
+      ? { ...materialSemArquivos, complementaryItems: _rawComplementaryItems }
+      : materialSemArquivos
 
     // For flashcard_deck materials, fetch linked deck card count
     let _cardCount: number | undefined

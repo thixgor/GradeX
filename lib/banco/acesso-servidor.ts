@@ -102,6 +102,11 @@ export function ocultarConteudo<T extends Record<string, any>>(questao: T): T {
     explicacao,
     imagemUrl,
     imagensAlternativas,
+    // As imagens são conteúdo tanto quanto o texto: a lâmina do enunciado e o
+    // fluxograma do comentário entregam a questão — e o gabarito — sem que o
+    // enunciado precise vir junto.
+    imagens,
+    imagensExplicacao,
     ...resto
   } = questao
   return { ...resto, bloqueada: true } as unknown as T
