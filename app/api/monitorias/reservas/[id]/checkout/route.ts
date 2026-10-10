@@ -47,7 +47,7 @@ const Corpo = z.object({ incluirMaterial: z.boolean().optional() }).strict()
  * e o do material é o oficial, lido do banco. Qualquer outro campo: 400.
  */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao, ip }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao, ip }) => {
     const limite = await checkRateLimit(`mon-checkout:${sessao.userId}`, 'monitorias_checkout', 8, 10 * 60_000)
     if (!limite.success) return erro(429, 'Muitas tentativas de pagamento. Aguarde alguns minutos.')
     const bruto = await lerJson(request).catch(() => ({}))

@@ -458,6 +458,32 @@ suite('pagamentos das monitorias (Mongo real, MP falso)', () => {
     expect(mp.reembolsos).toHaveLength(1)
   })
 
+  it('14b. PIX pago com o CPF do próprio monitor (segunda conta): não confirma, volta inteiro e avisa a equipe', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { reserva, assentos } = await cenario()
+    const monitorId = new ObjectId()
+    await db.collection('users').insertOne({ _id: monitorId, name: 'Monitor', cpf: '529.982.247-25' } as any)
+    await db.collection('monitorias_reservas').updateOne({ _id: reserva._id }, { $set: { tutorUserId: String(monitorId) } })
+    const { orderId, providerPaymentId } = await pedido(assentos[0])
+    await applyPaymentResult(orderId, { ...aprovado(providerPaymentId), raw: { payer: { identification: { type: 'CPF', number: '52998224725' } } } } as any)
+    expect((await reservaAtual(reserva._id))!.status).toBe('aguardando_pagamento')
+    expect((await assento(assentos[0]._id))!.status).toBe('reembolsada')
+    expect(mp.reembolsos).toHaveLength(1)
+    expect(avisos.lista.some((a) => a.userId === 'equipe' && a.titulo === 'Autocompra bloqueada')).toBe(true)
+  })
+
+  it('14c. PIX pago com outro CPF segue normal', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { reserva, assentos } = await cenario()
+    const monitorId = new ObjectId()
+    await db.collection('users').insertOne({ _id: monitorId, name: 'Monitor', cpf: '52998224725' } as any)
+    await db.collection('monitorias_reservas').updateOne({ _id: reserva._id }, { $set: { tutorUserId: String(monitorId) } })
+    const { orderId, providerPaymentId } = await pedido(assentos[0])
+    await applyPaymentResult(orderId, { ...aprovado(providerPaymentId), raw: { payer: { identification: { number: '11144477735' } } } } as any)
+    expect((await assento(assentos[0]._id))!.status).toBe('paga')
+    expect(mp.reembolsos).toHaveLength(0)
+  })
+
   // ─── Conferência com o MP antes de liberar o dinheiro ao monitor ─────
 
   it('15. conferência: tudo batendo → conferido; MP fora → não libera nada', async () => {

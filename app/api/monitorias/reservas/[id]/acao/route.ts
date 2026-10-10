@@ -52,7 +52,7 @@ const Corpo = z.discriminatedUnion('acao', [
 
 /** POST {acao, ...} — todas as ações da sala da reserva num lugar só. */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     const parsed = Corpo.safeParse(await lerJson(request))
     if (!parsed.success) return erro(400, parsed.error.issues[0]?.message || 'Ação inválida.')
     const corpo = parsed.data

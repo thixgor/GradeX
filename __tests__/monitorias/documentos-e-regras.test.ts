@@ -75,12 +75,19 @@ describe('requisitos', () => {
     const falta = requisitosDoMonitor({ user: completo, tutor: null, termosAceitos: false, exigirCpfReceita: true, agora: new Date('2026-10-10') })
     expect(pendentes(falta).map((i) => i.chave).sort()).toEqual(['cpf_receita', 'foto', 'pix', 'termos'])
   })
-  it('menor de idade não anuncia; e-mail não verificado não contrata', () => {
+  it('menor de idade não anuncia; o monitor precisa do cadastro completo, o aluno não', () => {
     expect(idadeEmAnos(new Date('2010-05-01'), new Date('2026-10-10'))).toBe(16)
     const menor = requisitosDoMonitor({ user: { ...completo, dateOfBirth: new Date('2010-05-01') }, tutor: null, termosAceitos: true, exigirCpfReceita: false, agora: new Date('2026-10-10') })
     expect(pendentes(menor).some((i) => i.chave === 'idade')).toBe(true)
-    const aluno = requisitosDoAluno({ user: { ...completo, emailVerified: false }, termosAceitos: true })
-    expect(pendentes(aluno).map((i) => i.chave)).toEqual(['email'])
+    // Monitor: e-mail, CPF e nome civil continuam obrigatórios.
+    const monitorSemCadastro = requisitosDoMonitor({ user: { name: 'Ana' } as any, tutor: null, termosAceitos: true, exigirCpfReceita: false, agora: new Date('2026-10-10') })
+    expect(pendentes(monitorSemCadastro).map((i) => i.chave)).toEqual(expect.arrayContaining(['email', 'cpf', 'nome']))
+    // Aluno: pedir cadastro na hora de agendar derrubava a compra. Só a conta (e menor, se informado).
+    const alunoSemCadastro = requisitosDoAluno({ user: { name: 'Bruno', emailVerified: false } as any, termosAceitos: true })
+    expect(pendentes(alunoSemCadastro)).toEqual([])
+    const alunoMenor = requisitosDoAluno({ user: { name: 'Bia', dateOfBirth: new Date('2012-01-01') } as any, termosAceitos: true, agora: new Date('2026-10-10') })
+    expect(pendentes(alunoMenor).map((i) => i.chave)).toEqual(['idade'])
+    expect(pendentes(requisitosDoAluno({ user: { name: 'X', banned: true } as any, termosAceitos: true })).map((i) => i.chave)).toEqual(['conta'])
   })
 })
 

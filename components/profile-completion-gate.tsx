@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { useBootstrap } from '@/hooks/use-bootstrap'
 import {
   CompleteProfileModal,
@@ -67,9 +68,19 @@ export function resetProfilePromptDismissal() {
   }
 }
 
+/**
+ * Na jornada de COMPRA das Monitorias (vitrine, anúncio, checkout, sala) o
+ * modal não abre: interromper quem está agendando derrubava a compra. Para o
+ * monitor (painel) ele continua, e os dados dele são exigidos de qualquer jeito.
+ */
+function ehCompraDeMonitoria(pathname: string | null): boolean {
+  return !!pathname && pathname.startsWith('/monitorias') && !pathname.startsWith('/monitorias/painel')
+}
+
 export function ProfileCompletionGate() {
   const { profile, isAuthenticated, loading, refetch } = useBootstrap()
   const [dismissed, setDismissed] = useState(() => readDismissed())
+  const pathname = usePathname()
 
   // Uma sessão nova volta a ter direito de ver o modal.
   useEffect(() => {
@@ -79,7 +90,7 @@ export function ProfileCompletionGate() {
     }
   }, [isAuthenticated])
 
-  if (loading || !isAuthenticated || !profile || dismissed) return null
+  if (loading || !isAuthenticated || !profile || dismissed || ehCompraDeMonitoria(pathname)) return null
   if (profile.missingFields.length === 0) return null
 
   const snoozedUntil = profile.promptSnoozedUntil ? new Date(profile.promptSnoozedUntil) : null
