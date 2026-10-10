@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
             bio: tutor.bio,
             historia: tutor.historia,
             fotoUrl: tutor.fotoUrl || null,
+            avatar: tutor.avatar || null,
             status: tutor.status,
             disponibilidade: tutor.disponibilidade,
             pix: tutor.pix ? { tipo: tutor.pix.tipo, mascarada: tutor.pix.mascarada } : null,

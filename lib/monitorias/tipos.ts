@@ -71,6 +71,11 @@ export interface Tutor {
   userId: string
   /** Nome de exibição (copiado do usuário no momento da edição). */
   nome: string
+  /**
+   * Retrato escolhido no catálogo (`lib/monitorias/avatares.ts`). O monitor não
+   * envia foto: `fotoUrl` é sempre gravada pelo servidor a partir deste id.
+   */
+  avatar?: string
   fotoUrl?: string
   /** Frase curta do card ("Monitora de Fisiologia há 3 semestres"). */
   titulo: string

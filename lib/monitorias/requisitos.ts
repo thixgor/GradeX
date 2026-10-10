@@ -7,6 +7,7 @@ import { getMissingProfileFields } from '@/lib/profile-completeness'
 import { isValidCpf } from '@/lib/cpf'
 import type { User } from '@/lib/types'
 import type { Tutor } from './tipos'
+import { avatarPorId } from './avatares'
 
 export interface ItemRequisito {
   chave: string
@@ -79,7 +80,7 @@ function base(user: UsuarioRequisitos): ItemRequisito[] {
 /** Requisitos para ANUNCIAR monitoria. */
 export function requisitosDoMonitor(input: {
   user: UsuarioRequisitos
-  tutor: Pick<Tutor, 'fotoUrl' | 'pix' | 'status'> | null
+  tutor: Pick<Tutor, 'avatar' | 'pix' | 'status'> | null
   termosAceitos: boolean
   /** Só exige a conferência na Receita quando há provedor configurado. */
   exigirCpfReceita: boolean
@@ -106,8 +107,8 @@ export function requisitosDoMonitor(input: {
     {
       chave: 'foto',
       rotulo: 'Foto de perfil de monitor',
-      ok: !!tutor?.fotoUrl,
-      acao: { texto: 'Enviar foto', href: '/monitorias/painel/perfil' },
+      ok: !!avatarPorId(tutor?.avatar),
+      acao: { texto: 'Escolher foto', href: '/monitorias/painel/perfil' },
     },
     {
       chave: 'pix',

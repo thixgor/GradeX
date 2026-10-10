@@ -201,7 +201,12 @@ tenta de novo com a mesma chave.
 - Confirmar aula (grátis, manual ou após PIX) exige a aula inteira travada
   (`garantirBlocos`).
 - Agenda online só com oferta-padrão e Termos na versão vigente.
-- Foto do monitor em pasta opaca (`pastaDaFoto`) e só do store do site.
+- Foto do monitor: **não há envio de arquivo**. O monitor escolhe um retrato da
+  galeria (`lib/monitorias/avatares.ts`: médicos históricos e brasileiros, imagens
+  livres hospedadas no Wikimedia Commons). A rota recebe só o `id`; a URL gravada
+  sai do catálogo do servidor (URL própria, id inventado ou campo extra: 400).
+  Fotos enviadas antes da galeria são apagadas do Blob (`lib/monitorias/fotos.ts`,
+  na troca e na varredura horária). Créditos: página de cada arquivo no Commons.
 - Textos cortados antes de regex; PDF com quebra de linha linear; IP
   mascarado nos PDFs; limites para propostas (6/10 min) e pedidos (15/h).
 - O anúncio público não expõe o `userId` do monitor, só `donoChave`
