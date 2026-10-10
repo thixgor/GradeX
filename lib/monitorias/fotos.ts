@@ -2,7 +2,8 @@ import 'server-only'
 
 import { del } from '@vercel/blob'
 import { getDb } from '@/lib/mongodb'
-import { avatarPorId } from './avatares'
+import { ObjectId } from 'mongodb'
+import { avatarPorId, type Avatar } from './avatares'
 import { colecoes } from './db'
 
 /** Foto que veio de envio (Vercel Blob), e não do catálogo de retratos. */
@@ -22,6 +23,26 @@ export async function apagarFotoEnviada(url: string): Promise<boolean> {
     console.warn('[monitorias] não foi possível apagar foto enviada', err)
     return false
   }
+}
+
+/**
+ * Grava o retrato da CONTA (users.avatar) e, se a pessoa já é monitora, o do
+ * perfil de monitor também: uma foto só, escolhida no /profile ou no painel.
+ * Recebe o retrato já validado pelo catálogo; a URL nunca vem do cliente.
+ */
+export async function definirRetratoDaConta(userId: string, escolhido: Avatar): Promise<void> {
+  const db = await getDb()
+  const c = colecoes(db)
+  const agora = new Date()
+  const [, tutor] = await Promise.all([
+    db.collection('users').updateOne({ _id: new ObjectId(userId) }, { $set: { avatar: escolhido.id } }),
+    c.tutores.findOneAndUpdate(
+      { userId },
+      { $set: { avatar: escolhido.id, fotoUrl: escolhido.url, updatedAt: agora } },
+      { returnDocument: 'before', projection: { fotoUrl: 1 } },
+    ),
+  ])
+  if (tutor?.fotoUrl && tutor.fotoUrl !== escolhido.url) await apagarFotoEnviada(tutor.fotoUrl)
 }
 
 /**

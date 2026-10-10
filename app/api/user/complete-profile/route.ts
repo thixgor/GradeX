@@ -10,6 +10,7 @@ import { isValidCrmNumber, onlyCrmDigits } from '@/lib/crm'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { verifyCpfWithReceita, isCpfVerificationRequired } from '@/lib/receita-cpf'
 import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
+import { mesmoNomeCivil, normalizarNomeCivil, validarNomeCivil } from '@/lib/nome-civil'
 
 export const dynamic = 'force-dynamic'
 
@@ -114,8 +115,20 @@ export async function POST(request: NextRequest) {
     set.periodoBaseRef = getCurrentSemesterRef()
   }
 
-  if (fullName && String(fullName).trim()) {
-    set.fullName = String(fullName).trim().replace(/\s+/g, ' ')
+  // Documentos. Depois que a Receita confirmou o CPF, nome civil e data de
+  // nascimento ficam presos ao que ela devolveu: trocar aqui seria o atalho
+  // para assinar contrato (Monitorias) com um nome que não é o do titular.
+  // Reenviar o MESMO valor passa (o modal manda o que já está salvo).
+  const travadoPelaReceita = !!currentUser.cpfVerified
+
+  if (fullName !== undefined && normalizarNomeCivil(fullName)) {
+    const nome = normalizarNomeCivil(fullName)
+    if (travadoPelaReceita && currentUser.fullName && !mesmoNomeCivil(nome, currentUser.fullName)) {
+      return fieldError('fullName', 'Seu nome já foi confirmado pela Receita junto com o CPF. Para corrigir, fale com o suporte.', { locked: true })
+    }
+    const erroNome = validarNomeCivil(nome)
+    if (erroNome) return fieldError('fullName', erroNome)
+    if (!travadoPelaReceita || !currentUser.fullName) set.fullName = nome
   }
 
   let birthDateIso = ''
@@ -123,6 +136,10 @@ export async function POST(request: NextRequest) {
     const parsed = new Date(dateOfBirth)
     if (Number.isNaN(parsed.getTime())) {
       return fieldError('dateOfBirth', 'Data de nascimento inválida.')
+    }
+    const atual = currentUser.dateOfBirth ? new Date(currentUser.dateOfBirth).toISOString().slice(0, 10) : ''
+    if (travadoPelaReceita && atual && atual !== parsed.toISOString().slice(0, 10)) {
+      return fieldError('dateOfBirth', 'Sua data de nascimento já foi confirmada pela Receita. Para corrigir, fale com o suporte.', { locked: true })
     }
     const age = (Date.now() - parsed.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
     if (age < 15 || age > 110) {
@@ -138,8 +155,14 @@ export async function POST(request: NextRequest) {
   // é a única que custa dinheiro e latência.
   let cpfVerification: Awaited<ReturnType<typeof verifyCpfWithReceita>> | null = null
 
-  if (cpf) {
-    const digits = onlyCpfDigits(cpf)
+  const cpfDigitado = cpf ? onlyCpfDigits(cpf) : ''
+  // CPF cadastrado não se troca por aqui (seria trocar de titular da conta).
+  // O mesmo CPF já conferido não volta à Receita: a consulta custa dinheiro.
+  if (cpfDigitado && currentUser.cpf && cpfDigitado !== currentUser.cpf) {
+    return fieldError('cpf', 'Sua conta já tem um CPF. Para trocar, fale com o suporte.', { locked: true })
+  }
+  if (cpfDigitado && !(currentUser.cpf === cpfDigitado && currentUser.cpfVerified)) {
+    const digits = cpfDigitado
     if (!isValidCpf(digits)) {
       return fieldError('cpf', 'CPF inválido. Confira os números digitados.')
     }

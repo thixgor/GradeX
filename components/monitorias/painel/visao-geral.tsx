@@ -9,6 +9,7 @@ import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
+import { comVolta } from '@/lib/monitorias/requisitos'
 import { api, CaixaAviso, CaixaErro, Esqueleto, Selo, Vazio } from '../base'
 import type { DadosPainel } from './tipos'
 import type { ItemReserva } from '@/components/monitorias/lista-reservas'
@@ -91,7 +92,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
                   <span className={cn(i.ok && 'line-through decoration-muted-foreground/40')}>{i.rotulo}</span>
                 </span>
                 {!i.ok && i.acao && (
-                  <Link href={i.acao.href} className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-semibold text-primary transition hover:bg-primary/10">
+                  <Link href={comVolta(i.acao.href, '/monitorias/painel')} className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-semibold text-primary transition hover:bg-primary/10">
                     {i.acao.texto} <ChevronRight className="h-4 w-4" />
                   </Link>
                 )}

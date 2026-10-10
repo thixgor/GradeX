@@ -14,8 +14,9 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
+  ArrowLeft,
   BarChart3,
   Crown,
   KeyRound,
@@ -50,6 +51,13 @@ import { AccountType } from '@/lib/types'
 import { PLUS_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
 import { SeloDeCargo } from '@/components/cargo-badge'
 import { cn } from '@/lib/utils'
+import { Avatar as Retrato } from '@/components/monitorias/base'
+import { escopoMonitorias } from '@/components/monitorias/fonte'
+import { avatarPorId } from '@/lib/monitorias/avatares'
+import { voltarValido } from '@/lib/monitorias/requisitos'
+import type { CampoDoPerfil } from '@/components/profile/personal-data-card'
+
+const CAMPOS: CampoDoPerfil[] = ['email', 'dados', 'cpf', 'fullName', 'dateOfBirth', 'foto']
 
 type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
 
@@ -96,7 +104,19 @@ const EMPTY_STATS: OverviewStats = {
 export default function ProfilePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [tab, setTab] = useState<ProfileTab>(() => parseTab(searchParams?.get('tab')))
+  // Link de pendência (`?campo=`) abre direto em Configurações, no campo certo.
+  const [campo] = useState<CampoDoPerfil | null>(() => {
+    const c = searchParams?.get('campo') as CampoDoPerfil | null
+    return c && CAMPOS.includes(c) ? c : null
+  })
+  const [tab, setTab] = useState<ProfileTab>(() => (campo ? 'config' : parseTab(searchParams?.get('tab'))))
+  // De onde a pessoa veio (só caminhos das Monitorias; nada de redirecionamento aberto).
+  const [voltar] = useState<string | null>(() => {
+    const v = searchParams?.get('voltar')
+    return voltarValido(v) ? v : null
+  })
+  const [salvouAlgo, setSalvouAlgo] = useState(false)
+  const [avatar, setAvatar] = useState<string | null>(null)
 
   const [submissions, setSubmissions] = useState<UserSubmission[]>([])
   const [submissionsLoading, setSubmissionsLoading] = useState(true)
@@ -188,9 +208,23 @@ export default function ProfilePage() {
 
   function changeTab(next: ProfileTab) {
     setTab(next)
-    const url = next === 'visao-geral' ? '/profile' : `/profile?tab=${next}`
-    window.history.replaceState(null, '', url)
+    const params = new URLSearchParams()
+    if (next !== 'visao-geral') params.set('tab', next)
+    if (voltar) params.set('voltar', voltar)
+    const qs = params.toString()
+    window.history.replaceState(null, '', qs ? `/profile?${qs}` : '/profile')
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  /** O retrato do cabeçalho leva à galeria, em Configurações. */
+  function irParaFoto() {
+    if (tab !== 'config') changeTab('config')
+    setTimeout(() => {
+      const el = document.getElementById('foto')
+      el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const botao = el?.querySelector('button')
+      if (botao && botao.getAttribute('aria-expanded') === 'false') botao.click()
+    }, tab === 'config' ? 0 : 350)
   }
 
   async function loadSubmissions() {
@@ -217,6 +251,7 @@ export default function ProfilePage() {
         setAccountType(data.user?.accountType || 'gratuito')
         setUserEmail(data.user?.email || '')
         setUserId(data.user?._id || data.user?.id || '')
+        setAvatar(data.user?.avatar || null)
         if (data.user?.trialExpiresAt) setTrialExpiresAt(new Date(data.user.trialExpiresAt))
         setUserTotals({
           totalCronogramasCreated: data.user?.totalCronogramasCreated || 0,
@@ -320,29 +355,52 @@ export default function ProfilePage() {
   return (
     <AppShell headerTitle="Meu Perfil" headerSubtitle={userName || 'Conta'}>
       <BanChecker />
-      <div className="surface-page">
+      <div className={cn('surface-page', escopoMonitorias)}>
         <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+          {voltar && (
+            <div
+              className={cn(
+                'sticky top-2 z-20 mb-4 flex items-center justify-between gap-3 rounded-2xl border p-3 pl-4 shadow-sm backdrop-blur transition-colors',
+                salvouAlgo ? 'border-primary/40 bg-primary/10' : 'border-border bg-card/95',
+              )}
+            >
+              <p className="min-w-0 text-sm">
+                {salvouAlgo ? 'Salvo. Pode voltar e continuar de onde parou.' : 'Você veio das Monitorias. Complete aqui e volte.'}
+              </p>
+              <a
+                href={voltar}
+                className={cn(
+                  'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  salvouAlgo ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border border-border bg-background hover:bg-muted',
+                )}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </a>
+            </div>
+          )}
+
           {/* ====== Cabeçalho da conta ====== */}
-          <section className="mb-5">
-            <div className="relative overflow-hidden rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
-              <div
-                className="pointer-events-none absolute inset-0 opacity-40 dark:opacity-25"
-                style={{
-                  background:
-                    'radial-gradient(ellipse at 100% 0%, rgba(70,129,82,0.14), transparent 55%), radial-gradient(ellipse at 0% 100%, rgba(226,164,62,0.1), transparent 50%)',
-                }}
-                aria-hidden
-              />
-              <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:items-center">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-primary font-heading text-2xl font-semibold text-primary-foreground shadow-md sm:h-20 sm:w-20 sm:text-3xl">
-                  {(userName || '?').charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                  <p className="editorial-mark mb-1 justify-center sm:justify-start">Conta</p>
-                  <h1 className="truncate font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-                    {userName || 'Carregando…'}
+          <section className="mb-5 rounded-2xl border border-border bg-card p-5 sm:p-6">
+            <div className="grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center">
+              <div className="flex items-center gap-4 sm:contents">
+                <button
+                  type="button"
+                  onClick={irParaFoto}
+                  className="group relative shrink-0 rounded-[32%] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label={avatar ? 'Trocar foto do perfil' : 'Escolher foto do perfil'}
+                >
+                  <Retrato nome={userName || '?'} url={avatarPorId(avatar)?.url || null} tamanho={76} />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-border bg-card px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm transition group-hover:border-primary group-hover:text-primary">
+                    {avatar ? 'Trocar' : 'Escolher foto'}
+                  </span>
+                </button>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Sua conta</p>
+                  <h1 className="mt-0.5 truncate font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
+                    {userName || <span className="inline-block h-7 w-40 animate-pulse rounded-lg bg-muted align-middle" />}
                   </h1>
-                  {userEmail && <p className="mt-0.5 truncate text-xs text-muted-foreground sm:text-sm">{userEmail}</p>}
+                  {userEmail && <p className="mt-0.5 truncate text-sm text-muted-foreground">{userEmail}</p>}
                   {/*
                     O selo vem do registro de cargos (`/admin/cargos`). A versão
                     anterior era um `switch` com um ramo por cargo, e quem
@@ -356,40 +414,25 @@ export default function ProfilePage() {
                     sufixo={accountType === 'trial' ? getTrialTimeRemaining() : undefined}
                   />
                 </div>
-                <div className="flex shrink-0 flex-wrap justify-center gap-2">
-                  {/*
-                    O botão leva à vitrine de planos, e não a um diálogo com
-                    telefone e e-mail. Quem clica em "Assinar" já decidiu: o
-                    que essa pessoa precisa é ver preço, o que entra em cada
-                    plano e o botão de pagar — não uma instrução para mandar
-                    mensagem no WhatsApp e esperar resposta.
-
-                    Aparece para quem ainda não tem a plataforma inteira: além
-                    do gratuito, o trial (que vence) e o Quest (que cobre só o
-                    Banco de Questões).
-                  */}
-                  {userRole !== 'admin' && !isPlusAccount(accountType) && (
-                    <Button
-                      size="sm"
-                      onClick={() => router.push(ROTA_ASSINATURA)}
-                      className="h-9 gap-1.5 rounded-md bg-secondary text-xs font-bold text-secondary-foreground hover:bg-secondary/90"
-                    >
-                      <Sparkles className="h-3.5 w-3.5" />
-                      {isQuestAccount(accountType) ? `Migrar para ${PLUS_LABEL}` : `Assinar ${PLUS_LABEL}`}
-                    </Button>
-                  )}
-                  {userRole !== 'admin' && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setActivateDialogOpen(true)}
-                      className="h-9 gap-1.5 rounded-md text-xs font-semibold"
-                    >
-                      <KeyRound className="h-3.5 w-3.5" />
-                      Ativar key
-                    </Button>
-                  )}
-                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 sm:justify-end">
+                {/*
+                  O botão leva à vitrine de planos: quem clica em "Assinar" já
+                  decidiu e precisa ver preço e o botão de pagar. Aparece para
+                  quem ainda não tem a plataforma inteira (gratuito, trial e Quest).
+                */}
+                {userRole !== 'admin' && !isPlusAccount(accountType) && (
+                  <Button size="sm" onClick={() => router.push(ROTA_ASSINATURA)} className="h-10 gap-1.5 rounded-xl px-4 font-semibold">
+                    <Sparkles className="h-4 w-4" />
+                    {isQuestAccount(accountType) ? `Migrar para ${PLUS_LABEL}` : `Assinar ${PLUS_LABEL}`}
+                  </Button>
+                )}
+                {userRole !== 'admin' && (
+                  <Button size="sm" variant="outline" onClick={() => setActivateDialogOpen(true)} className="h-10 gap-1.5 rounded-xl px-4 font-semibold">
+                    <KeyRound className="h-4 w-4" />
+                    Ativar key
+                  </Button>
+                )}
               </div>
             </div>
           </section>
@@ -402,15 +445,10 @@ export default function ProfilePage() {
           )}
 
           {/* ====== Navegação entre seções ======
-              Grade de cinco colunas, e não uma faixa com rolagem lateral: com
-              a barra de rolagem escondida, "Configurações" ficava fora da tela
-              no celular e no tablet, sem nenhuma pista de que existia. Até o
-              `lg` o ícone vai em cima do rótulo, para caber em qualquer largura;
-              daí em diante, lado a lado. */}
-          <nav
-            aria-label="Seções do perfil"
-            className="mb-6 grid w-full grid-cols-5 gap-0.5 rounded-lg border border-border bg-muted/40 p-1 sm:gap-1"
-          >
+              Grade de cinco colunas, sem rolagem lateral: "Configurações" fica
+              sempre à vista no celular. Até o `lg` o ícone vai em cima do
+              rótulo; a pílula ativa desliza entre as abas. */}
+          <nav aria-label="Seções do perfil" className="mb-6 grid w-full grid-cols-5 gap-1 rounded-2xl border border-border bg-muted/40 p-1">
             {TABS.map(({ id, label, short, icon: Icon }) => (
               <button
                 key={id}
@@ -418,15 +456,20 @@ export default function ProfilePage() {
                 aria-current={tab === id ? 'page' : undefined}
                 onClick={() => changeTab(id)}
                 className={cn(
-                  'flex min-w-0 flex-col items-center justify-center gap-1 rounded-md border px-0.5 py-2 text-[11px] font-semibold leading-tight transition-colors sm:px-1 sm:text-xs lg:flex-row lg:gap-2 lg:px-3 lg:text-sm',
-                  tab === id
-                    ? 'border-border bg-card text-foreground shadow-sm'
-                    : 'border-transparent text-muted-foreground hover:bg-card/60 hover:text-foreground',
+                  'relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-2.5 text-[11px] font-semibold leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-xs lg:flex-row lg:gap-2 lg:px-3 lg:text-sm',
+                  tab === id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
-                <Icon className="h-5 w-5 shrink-0 lg:h-4 lg:w-4" />
-                <span className="hidden max-w-full truncate sm:inline">{label}</span>
-                <span className="max-w-full truncate sm:hidden">{short}</span>
+                {tab === id && (
+                  <motion.span
+                    layoutId="aba-perfil"
+                    className="absolute inset-0 rounded-xl border border-border bg-card shadow-sm"
+                    transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                  />
+                )}
+                <Icon className={cn('relative h-5 w-5 shrink-0 lg:h-4 lg:w-4', tab === id && 'text-primary')} />
+                <span className="relative hidden max-w-full truncate sm:inline">{label}</span>
+                <span className="relative max-w-full truncate sm:hidden">{short}</span>
               </button>
             ))}
           </nav>
@@ -475,6 +518,9 @@ export default function ProfilePage() {
           {tab === 'config' && (
             <SettingsTab
               userEmail={userEmail}
+              campo={campo}
+              onAvatarChange={setAvatar}
+              onSalvo={() => setSalvouAlgo(true)}
               userRole={userRole}
               hasRecurringSubscription={hasRecurringSubscription}
               cancelamentoAgendado={!!recurring?.cancelAtPeriodEnd}
@@ -491,100 +537,47 @@ export default function ProfilePage() {
           <ToastAlert open={toastOpen} onOpenChange={setToastOpen} message={toastMessage} type={toastType} />
 
 
-          <AnimatePresence>
-            {activateDialogOpen && (
-              <motion.div
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+          <Dialog open={activateDialogOpen} onOpenChange={(open) => !activating && setActivateDialogOpen(open)}>
+            <DialogContent className={cn('sm:max-w-md', escopoMonitorias)}>
+              <DialogHeader>
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <KeyRound className="h-6 w-6" />
+                </div>
+                <DialogTitle className="font-heading text-xl">Ativar serial key</DialogTitle>
+                <DialogDescription>Digite a key que você recebeu para liberar o produto ou plano na sua conta.</DialogDescription>
+              </DialogHeader>
+              <form
+                className="space-y-4 pt-1"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  if (serialKey.trim() && !activating) handleActivateKey()
+                }}
               >
-                <motion.div
-                  className="absolute inset-0 bg-black/70 backdrop-blur-md"
-                  onClick={() => !activating && setActivateDialogOpen(false)}
+                <label htmlFor="serial-key" className="sr-only">Serial key</label>
+                <input
+                  id="serial-key"
+                  type="text"
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                  spellCheck={false}
+                  placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+                  value={serialKey}
+                  onChange={(e) => setSerialKey(e.target.value.toUpperCase())}
+                  disabled={activating}
+                  className="h-12 w-full rounded-xl border border-input bg-background px-4 text-center font-mono text-sm tracking-[0.12em] outline-none transition placeholder:tracking-normal placeholder:text-muted-foreground/60 focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-60"
                 />
-                <motion.div
-                  role="dialog"
-                  aria-modal="true"
-                  className="relative z-10 box-border w-full max-w-[400px] overflow-hidden rounded-[26px] border p-6 sm:p-8"
-                  style={{
-                    background: 'linear-gradient(160deg, rgba(9,20,14,0.97) 0%, rgba(6,15,10,0.98) 100%)',
-                    borderColor: 'rgba(52,211,153,0.18)',
-                    boxShadow: '0 30px 90px -20px rgba(16,185,129,0.35), 0 0 0 1px rgba(255,255,255,0.04)',
-                  }}
-                  initial={{ opacity: 0, y: 30, scale: 0.94 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 20, scale: 0.96 }}
-                  transition={{ type: 'spring', stiffness: 280, damping: 26 }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => !activating && setActivateDialogOpen(false)}
-                    aria-label="Fechar"
-                    className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-white/40 transition-colors hover:bg-white/10 hover:text-white/80"
-                  >
-                    <XCircle className="h-5 w-5" />
-                  </button>
-
-                  <div className="flex flex-col items-center text-center">
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/30">
-                      <KeyRound className="h-8 w-8 text-white" strokeWidth={2} />
-                    </div>
-                    <h2 className="text-xl font-black text-white sm:text-2xl">Ativar Serial Key</h2>
-                    <p className="mt-2 max-w-[280px] text-sm leading-relaxed text-white/55">
-                      Insira sua serial key para liberar seu produto ou plano na conta.
-                    </p>
-                  </div>
-
-                  <div className="mt-6">
-                    <label className="mb-2 block text-[11px] font-bold uppercase tracking-wide text-emerald-300/80">
-                      Serial Key
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="text"
-                      autoComplete="off"
-                      autoCapitalize="characters"
-                      placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
-                      value={serialKey}
-                      onChange={(e) => setSerialKey(e.target.value.toUpperCase())}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && serialKey.trim() && !activating) handleActivateKey()
-                      }}
-                      disabled={activating}
-                      className="box-border w-full rounded-xl border border-emerald-400/20 bg-black/30 px-4 py-3 text-center font-mono text-sm tracking-[0.15em] text-white outline-none transition-colors placeholder:tracking-normal placeholder:text-white/25 focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/20 disabled:opacity-60"
-                    />
-                  </div>
-
-                  <div className="mt-6 flex flex-col gap-2.5">
-                    <button
-                      onClick={handleActivateKey}
-                      disabled={activating || !serialKey.trim()}
-                      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-3 text-[15px] font-extrabold text-[#04120a] shadow-lg shadow-emerald-500/25 transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {activating ? (
-                        <>
-                          <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#04120a]/30 border-t-[#04120a]" />{' '}
-                          Ativando...
-                        </>
-                      ) : (
-                        <>
-                          Ativar produto <KeyRound className="h-4 w-4" strokeWidth={2.5} />
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setActivateDialogOpen(false)}
-                      disabled={activating}
-                      className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-6 py-2.5 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.07] hover:text-white/80 disabled:opacity-50"
-                    >
-                      Cancelar
-                    </button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <DialogFooter className="flex-col gap-2 sm:flex-row">
+                  <Button type="button" variant="ghost" className="w-full rounded-xl sm:w-auto" onClick={() => setActivateDialogOpen(false)} disabled={activating}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" className="w-full gap-1.5 rounded-xl sm:w-auto" disabled={activating || !serialKey.trim()}>
+                    {activating ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" /> : <KeyRound className="h-4 w-4" />}
+                    {activating ? 'Ativando' : 'Ativar'}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
 
           {activationDetails && (
             <ActivationSuccessDialog

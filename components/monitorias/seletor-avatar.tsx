@@ -1,18 +1,27 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
-import { Check, ExternalLink, Loader2 } from 'lucide-react'
-import { AVATARES, FILTROS_AVATAR, SERIES_AVATAR, creditoDoAvatar, type Avatar, type FiltroAvatar, type SerieAvatar } from '@/lib/monitorias/avatares'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { Check, ChevronDown, ExternalLink, Loader2 } from 'lucide-react'
+import { AVATARES, FILTROS_AVATAR, SERIES_AVATAR, avatarPorId, creditoDoAvatar, descricaoDoAvatar, type Avatar, type FiltroAvatar, type SerieAvatar } from '@/lib/monitorias/avatares'
 import { cn } from '@/lib/utils'
-import { CaixaErro, api } from './base'
+import { Avatar as Iniciais, CaixaErro, api } from './base'
 
 /**
  * Galeria de retratos do monitor. Não há envio de foto: o monitor escolhe um
  * retrato do catálogo (imagens livres hospedadas na Wikimedia, nada no nosso
  * storage) e o servidor grava só o id.
  */
-export function SeletorAvatar({ atual, onEscolhido }: { atual: string | null; onEscolhido: (id: string) => void }) {
+export function SeletorAvatar({
+  atual,
+  onEscolhido,
+  endpoint = '/api/monitorias/tutor/foto',
+}: {
+  atual: string | null
+  onEscolhido: (id: string) => void
+  /** Onde grava: o painel do monitor ou o retrato da conta (/profile). Os dois mudam a mesma foto. */
+  endpoint?: string
+}) {
   const reduzir = useReducedMotion()
   const [filtro, setFiltro] = useState<FiltroAvatar>('todos')
   const [serie, setSerie] = useState<SerieAvatar | 'todas'>('todas')
@@ -35,7 +44,7 @@ export function SeletorAvatar({ atual, onEscolhido }: { atual: string | null; on
     setSalvando(id)
     setErro('')
     try {
-      await api('/api/monitorias/tutor/foto', { method: 'PUT', json: { avatar: id } })
+      await api(endpoint, { method: 'PUT', json: { avatar: id } })
       setEscolhido(id)
       onEscolhido(id)
     } catch (e) {
@@ -146,6 +155,85 @@ export function SeletorAvatar({ atual, onEscolhido }: { atual: string | null; on
         )}
       </div>
     </div>
+  )
+}
+
+/**
+ * Seção recolhível com o retrato atual e a galeria. Fechada quando já há
+ * retrato (só o resumo e "Trocar"); aberta quando ainda falta escolher.
+ * Usada no painel do monitor e no /profile: as duas gravam a mesma foto.
+ */
+export function SecaoRetrato({
+  titulo,
+  vazio,
+  nome,
+  atual: inicial,
+  endpoint,
+  onEscolhido,
+  abrir,
+  fechadaSemRetrato,
+  id = 'galeria-retratos',
+}: {
+  titulo: string
+  /** Texto quando ainda não há retrato. */
+  vazio: string
+  /** Nome da pessoa, para as iniciais enquanto não há retrato. */
+  nome: string
+  atual: string | null | undefined
+  endpoint?: string
+  onEscolhido?: (id: string) => void
+  /** Força abrir (link direto para a foto). */
+  abrir?: boolean
+  /** Começa fechada mesmo sem retrato (no /profile a foto é opcional). */
+  fechadaSemRetrato?: boolean
+  id?: string
+}) {
+  const reduzir = useReducedMotion()
+  const [atual, setAtual] = useState<string | null>(avatarPorId(inicial) ? inicial! : null)
+  const [aberto, setAberto] = useState(!!abrir || (!atual && !fechadaSemRetrato))
+  const retrato = avatarPorId(atual)
+  return (
+    <section id={id} className="scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-card">
+      <button
+        type="button"
+        onClick={() => setAberto((x) => !x)}
+        aria-expanded={aberto}
+        aria-controls={`${id}-corpo`}
+        className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
+      >
+        <Iniciais nome={nome || 'Você'} url={retrato?.url || null} tamanho={56} />
+        <span className="min-w-0 flex-1">
+          <span className="block font-heading text-lg font-semibold">{titulo}</span>
+          <span className="block truncate text-sm text-muted-foreground">{retrato ? descricaoDoAvatar(retrato) : vazio}</span>
+        </span>
+        <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato ? 'Trocar' : 'Escolher'}</span>
+        <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200', aberto && 'rotate-180')} />
+      </button>
+      <AnimatePresence initial={false}>
+        {aberto && (
+          <motion.div
+            id={`${id}-corpo`}
+            initial={reduzir ? false : { height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={reduzir ? { opacity: 0 } : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-border p-5 sm:p-6">
+              <SeletorAvatar
+                atual={atual}
+                endpoint={endpoint}
+                onEscolhido={(novo) => {
+                  setAtual(novo)
+                  setAberto(false)
+                  onEscolhido?.(novo)
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   )
 }
 

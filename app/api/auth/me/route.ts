@@ -62,6 +62,7 @@ export async function GET() {
           trialDuration: 1,
           secondaryRole: 1,
           emailVerified: 1,
+          avatar: 1,
         },
       }
     )
@@ -99,6 +100,7 @@ export async function GET() {
         trialDuration: user.trialDuration,
         secondaryRole: user.secondaryRole,
         emailVerified: !!user.emailVerified,
+        avatar: user.avatar || null,
       },
     }, { headers })
   } catch (error) {

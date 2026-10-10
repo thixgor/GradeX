@@ -10,8 +10,7 @@ import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { formatCpf } from '@/lib/cpf'
 import { Avatar, CaixaAviso, CaixaErro, api } from '../base'
 import { TermosAceite } from '../termos-aceite'
-import { SeletorAvatar } from '../seletor-avatar'
-import { avatarPorId } from '@/lib/monitorias/avatares'
+import { SecaoRetrato } from '../seletor-avatar'
 import type { DadosPainel } from './tipos'
 
 function Cartao({ titulo, children, id }: { titulo: string; children: React.ReactNode; id?: string }) {
@@ -41,56 +40,16 @@ export function PerfilMonitor({ dados, recarregar }: { dados: DadosPainel; recar
   )
 }
 
-/** Foto do monitor: escolhida numa galeria de retratos (não há envio de arquivo). */
+/** Foto do monitor: escolhida numa galeria de retratos (não há envio de arquivo). É a mesma foto da conta. */
 function FotoDoMonitor({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
-  const t = dados.tutor
-  const [atual, setAtual] = useState<string | null>(t?.avatar && avatarPorId(t.avatar) ? t.avatar : null)
-  // Sem retrato ainda: a seção já abre. Com retrato: fica fechada, só com o resumo.
-  const [aberto, setAberto] = useState(!atual)
-  const retrato = avatarPorId(atual)
   return (
-    <section className="overflow-hidden rounded-2xl border border-border bg-card">
-      <button
-        type="button"
-        onClick={() => setAberto((x) => !x)}
-        aria-expanded={aberto}
-        aria-controls="galeria-retratos"
-        className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
-      >
-        <Avatar nome={t?.nome || 'Você'} url={retrato?.url || null} tamanho={56} />
-        <span className="min-w-0 flex-1">
-          <span className="block font-heading text-lg font-semibold">Sua foto no anúncio</span>
-          <span className="block truncate text-sm text-muted-foreground">
-            {retrato ? `${retrato.nome}, ${retrato.ator ? retrato.legenda : retrato.legenda.charAt(0).toLowerCase() + retrato.legenda.slice(1)}` : 'Escolha um retrato. Aparece no anúncio e nas aulas.'}
-          </span>
-        </span>
-        <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato ? 'Trocar' : 'Escolher'}</span>
-        <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200', aberto && 'rotate-180')} />
-      </button>
-      <AnimatePresence initial={false}>
-        {aberto && (
-          <motion.div
-            id="galeria-retratos"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="border-t border-border p-5 sm:p-6">
-              <SeletorAvatar
-                atual={atual}
-                onEscolhido={(id) => {
-                  setAtual(id)
-                  setAberto(false)
-                  recarregar()
-                }}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </section>
+    <SecaoRetrato
+      titulo="Sua foto no anúncio"
+      vazio="Escolha um retrato. Aparece no anúncio, nas aulas e no seu perfil."
+      nome={dados.tutor?.nome || 'Você'}
+      atual={dados.tutor?.avatar}
+      onEscolhido={recarregar}
+    />
   )
 }
 

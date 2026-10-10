@@ -149,6 +149,11 @@ export function avatarPorId(id: string | null | undefined): Avatar | null {
   return (id && POR_ID.get(id)) || null
 }
 
+/** "Hipócrates, pai da medicina" / "Dr. Gregory House, Hugh Laurie em House". */
+export function descricaoDoAvatar(a: Avatar): string {
+  return `${a.nome}, ${a.ator ? a.legenda : a.legenda.charAt(0).toLowerCase() + a.legenda.slice(1)}`
+}
+
 /** Página do arquivo no Commons: autor, licença e origem da imagem. */
 export function creditoDoAvatar(a: Pick<Avatar, 'arquivo'>): string {
   return `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(a.arquivo.replace(/ /g, '_'))}`
