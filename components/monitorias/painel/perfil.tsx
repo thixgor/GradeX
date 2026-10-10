@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { KeyRound, Loader2, Lock, Mail, Save, ShieldCheck } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown, KeyRound, Loader2, Lock, Mail, Save, ShieldCheck } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
@@ -43,33 +45,52 @@ export function PerfilMonitor({ dados, recarregar }: { dados: DadosPainel; recar
 function FotoDoMonitor({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
   const t = dados.tutor
   const [atual, setAtual] = useState<string | null>(t?.avatar && avatarPorId(t.avatar) ? t.avatar : null)
-  // Sem retrato ainda: a galeria já abre. Com retrato: fica atrás de "Trocar foto".
+  // Sem retrato ainda: a seção já abre. Com retrato: fica fechada, só com o resumo.
   const [aberto, setAberto] = useState(!atual)
   const retrato = avatarPorId(atual)
   return (
-    <Cartao titulo="Sua foto no anúncio">
-      <div className="mb-5 flex items-center gap-4">
-        <Avatar nome={t?.nome || 'Você'} url={retrato?.url || null} tamanho={72} />
-        <div className="min-w-0 text-sm">
-          <p className="font-semibold">{retrato ? retrato.nome : 'Nenhum retrato escolhido'}</p>
-          <p className="text-muted-foreground">
-            {retrato ? retrato.legenda : 'Escolha quem representa você. Aparece no seu anúncio e nas aulas.'}
-          </p>
-        </div>
-      </div>
-      {aberto ? (
-        <SeletorAvatar
-          atual={atual}
-          onEscolhido={(id) => {
-            setAtual(id)
-            setAberto(false)
-            recarregar()
-          }}
-        />
-      ) : (
-        <Button type="button" variant="outline" className="w-full rounded-xl" onClick={() => setAberto(true)}>Trocar foto</Button>
-      )}
-    </Cartao>
+    <section className="overflow-hidden rounded-2xl border border-border bg-card">
+      <button
+        type="button"
+        onClick={() => setAberto((x) => !x)}
+        aria-expanded={aberto}
+        aria-controls="galeria-retratos"
+        className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
+      >
+        <Avatar nome={t?.nome || 'Você'} url={retrato?.url || null} tamanho={56} />
+        <span className="min-w-0 flex-1">
+          <span className="block font-heading text-lg font-semibold">Sua foto no anúncio</span>
+          <span className="block truncate text-sm text-muted-foreground">
+            {retrato ? `${retrato.nome}, ${retrato.legenda.charAt(0).toLowerCase()}${retrato.legenda.slice(1)}` : 'Escolha um retrato. Aparece no anúncio e nas aulas.'}
+          </span>
+        </span>
+        <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato ? 'Trocar' : 'Escolher'}</span>
+        <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200', aberto && 'rotate-180')} />
+      </button>
+      <AnimatePresence initial={false}>
+        {aberto && (
+          <motion.div
+            id="galeria-retratos"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-border p-5 sm:p-6">
+              <SeletorAvatar
+                atual={atual}
+                onEscolhido={(id) => {
+                  setAtual(id)
+                  setAberto(false)
+                  recarregar()
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
   )
 }
 
