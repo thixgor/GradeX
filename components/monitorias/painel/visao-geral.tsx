@@ -102,7 +102,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
         </motion.section>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         {/* O que depende de você */}
         <div className="space-y-6">
           <section>
@@ -214,7 +214,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
         </div>
         {erroAcao && <CaixaErro mensagem={erroAcao} className="mb-3" />}
         {dados.anuncios.length === 0 ? (
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
             <Vazio
               icone={<Plus className="h-5 w-5" />}
               titulo="Seu primeiro anúncio"

@@ -113,7 +113,7 @@ export default function VitrineMonitorias() {
   return (
     <PageScaffold wide>
       {/* ── Herói: uma chave para os dois públicos ─────────────────────── */}
-      <section className="grid items-center gap-10 pb-12 pt-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14 lg:pb-16 lg:pt-6">
+      <section className="grid grid-cols-1 items-center gap-10 pb-12 pt-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14 lg:pb-16 lg:pt-6 [&>*]:min-w-0">
         <div>
           <div className="inline-flex rounded-xl bg-muted/70 p-1" role="tablist" aria-label="O que você procura">
             {(['aprender', 'ensinar'] as const).map((p) => (
@@ -222,7 +222,7 @@ export default function VitrineMonitorias() {
       </section>
 
       {/* ── Garantia em uma linha ────────────────────────────────────────── */}
-      <section className="mb-14 grid gap-4 border-y border-border py-5 sm:grid-cols-3" aria-label="Garantias">
+      <section className="mb-14 grid grid-cols-1 gap-4 border-y border-border py-5 sm:grid-cols-3" aria-label="Garantias">
         {[
           { icone: ShieldCheck, texto: 'O monitor só recebe 48h depois da aula' },
           { icone: RotateCcw, texto: 'Desistiu em até 7 dias? 100% de volta' },
@@ -246,11 +246,11 @@ export default function VitrineMonitorias() {
               {numeros && numeros.avaliacoes >= 5 ? `, nota média ${numeros.nota.toFixed(1)}` : ''}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto">
             {publico === 'ensinar' && (
-              <div className="relative">
+              <div className="relative min-w-0 flex-1 sm:flex-none">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar" aria-label="Buscar monitoria" className="h-9 w-44 rounded-xl border border-border bg-card pl-9 pr-3 text-sm outline-none focus:border-primary/50" />
+                <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar" aria-label="Buscar monitoria" className="h-9 w-full rounded-xl sm:w-44 border border-border bg-card pl-9 pr-3 text-sm outline-none focus:border-primary/50" />
               </div>
             )}
             <label htmlFor="ordem-vitrine" className="sr-only">Ordenar</label>
@@ -261,7 +261,7 @@ export default function VitrineMonitorias() {
                 setOrdem(e.target.value)
                 setPagina(1)
               }}
-              className="h-9 rounded-xl border border-border bg-card px-3 text-sm outline-none focus:border-primary/50"
+              className="h-9 shrink-0 rounded-xl border border-border bg-card px-3 text-sm outline-none focus:border-primary/50"
             >
               <option value="recentes">Mais recentes</option>
               <option value="nota">Melhor avaliadas</option>
@@ -284,7 +284,7 @@ export default function VitrineMonitorias() {
         </div>
 
         {carregando && !dados ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {Array.from({ length: 6 }).map((_, i) => <Esqueleto key={i} className="h-72" />)}
           </div>
         ) : dados && dados.itens.length ? (
@@ -322,7 +322,7 @@ export default function VitrineMonitorias() {
       {!filtrando && publico === 'aprender' && (
         <section className="mt-20">
           <h2 className="font-heading text-2xl font-semibold">Como funciona para o aluno</h2>
-          <ol className="relative mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">
+          <ol className="relative mt-8 grid grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-6">
             <span className="absolute left-[15px] top-4 hidden h-px w-[calc(100%-30px)] bg-border sm:block" aria-hidden />
             {COMO_FUNCIONA.map((p, i) => (
               <li key={p.titulo} className="relative flex gap-4 sm:block">
@@ -366,8 +366,8 @@ const PASSOS_MONITOR = [
 
 function ParaMonitores({ comSimulador }: { comSimulador: boolean }) {
   return (
-    <section id="para-monitores" className={cn('scroll-mt-24 rounded-3xl bg-primary/10 p-6 sm:p-10 dark:bg-primary/[0.12]', comSimulador ? 'mt-20' : 'mb-16')}>
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+    <section id="para-monitores" className={cn('scroll-mt-24 rounded-3xl bg-primary/10 p-5 sm:p-10 dark:bg-primary/[0.12]', comSimulador ? 'mt-20' : 'mb-16')}>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center [&>*]:min-w-0">
         <div>
           <h2 className="font-heading text-3xl font-semibold leading-tight sm:text-4xl">
             {comSimulador ? 'Domina uma matéria? Isso vale dinheiro.' : 'Tudo o que você precisa para dar aula'}

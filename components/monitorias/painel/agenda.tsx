@@ -171,8 +171,8 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
         <div>
           <h2 className="font-heading text-xl font-semibold">Quando você dá aula</h2>
           <p className="mt-1 max-w-[58ch] text-sm leading-relaxed text-muted-foreground">
-            <span className="hidden md:inline">Clique e arraste na grade para marcar seus horários.</span>
-            <span className="md:hidden">Escolha o dia e toque nos horários livres.</span> Alunos só conseguem agendar direto dentro deles. Aulas já marcadas não mudam.
+            <span className="hidden md:[@media(pointer:fine)]:inline">Clique e arraste na grade para marcar seus horários.</span>
+            <span className="md:[@media(pointer:fine)]:hidden">Escolha o dia e toque nos horários livres.</span> Alunos só conseguem agendar direto dentro deles. Aulas já marcadas não mudam.
           </p>
         </div>
         <div className="flex items-baseline gap-4 rounded-2xl bg-muted/50 px-4 py-3">
@@ -210,8 +210,9 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
         </button>
       </div>
 
-      {/* Grade semanal (tablet e computador) */}
-      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card md:block">
+      {/* Grade de arrastar: só com mouse/trackpad. No toque ela travaria a rolagem
+          da página (touch-action: none), então tablet de toque usa a lista abaixo. */}
+      <div className="hidden overflow-hidden rounded-2xl border border-border bg-card md:[@media(pointer:fine)]:block">
         <div className="grid grid-cols-[3.25rem_repeat(7,minmax(0,1fr))] border-b border-border">
           <div />
           {ORDEM_DIAS.map((dia) => {
@@ -293,8 +294,8 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
         </div>
       </div>
 
-      {/* Celular: um dia por vez, toque para marcar */}
-      <div className="md:hidden">
+      {/* Toque (celular e tablet): um dia por vez, toque para marcar */}
+      <div className="md:[@media(pointer:fine)]:hidden">
         <div className="-mx-4 mb-3 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
           {ORDEM_DIAS.map((dia) => {
             const h = horasDoDia(dia)
@@ -327,7 +328,7 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-6">
             {linhas.map((m) => {
               const chave = chaveCelula(diaMovel, m)
               const on = celulas.has(chave)
@@ -349,7 +350,7 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
       </div>
 
       {/* Folga entre aulas + dias bloqueados */}
-      <div className="mt-6 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
         <section className="rounded-2xl border border-border bg-card p-5">
           <h3 className="font-heading text-base font-semibold">Pausa entre aulas</h3>
           <p className="mt-1 text-sm text-muted-foreground">Tempo livre antes e depois de cada aula, para você respirar.</p>
@@ -451,7 +452,7 @@ function CalendarioFolgas({ bloqueados, alternar }: { bloqueados: string[]; alte
           </Button>
         </div>
       </div>
-      <div className="mt-4 grid gap-6 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
         {meses.map(({ ano: a, mes: m }) => {
           const primeiro = new Date(Date.UTC(a, m, 1)).getUTCDay()
           const dias = new Date(Date.UTC(a, m + 1, 0)).getUTCDate()

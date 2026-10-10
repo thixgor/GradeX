@@ -145,7 +145,7 @@ export function SeletorAvatar({
           {creditos ? 'Esconder créditos das imagens' : 'Créditos das imagens'}
         </button>
         {creditos && (
-          <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+          <ul className="mt-2 grid grid-cols-1 gap-1 sm:grid-cols-2">
             {AVATARES.map((a) => (
               <li key={a.id}>
                 <a href={creditoDoAvatar(a)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 hover:text-foreground">

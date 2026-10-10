@@ -211,7 +211,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
   return (
     <PageScaffold>
-      <div className="mx-auto grid max-w-6xl gap-10 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-10 xl:grid-cols-[minmax(0,1fr)_340px]">
       <div className="min-w-0">
         <Link href="/monitorias/painel" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" /> Painel</Link>
         <h1 className="font-heading text-[1.75rem] font-semibold">{anuncioId ? 'Editar anúncio' : 'Novo anúncio'}</h1>
@@ -292,7 +292,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
               {passo === 2 && (
                 <>
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <Campo rotulo="Cobrar por">
                       <div className="flex gap-1.5">
                         {(['hora', 'aula'] as const).map((m) => (
@@ -314,7 +314,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                   <h3 className="pt-2 text-sm font-semibold">Como os alunos contratam? (escolha uma ou mais)</h3>
                   <Opcao ativo={f.direto} onClick={() => set('direto', !f.direto)} icone={CalendarCheck} titulo="Agendamento direto" texto="O aluno escolhe um horário livre na sua agenda e já paga. Você assina uma oferta-padrão uma vez.">
                     {f.direto && (
-                      <div className="mt-3 grid gap-2 sm:grid-cols-4" onClick={(e) => e.stopPropagation()}>
+                      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-4" onClick={(e) => e.stopPropagation()}>
                         <Mini rotulo="Duração mín.">
                           <select value={f.diretoMin} onChange={(e) => set('diretoMin', Number(e.target.value))} className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm">{[30, 60, 90, 120].map((m) => <option key={m} value={m}>{formatarDuracao(m)}</option>)}</select>
                         </Mini>
@@ -518,7 +518,7 @@ function Revisao({ f, anuncioId, slug, status }: { f: Form; anuncioId?: string; 
   return (
     <div className="space-y-4">
       <CartaoForca forca={forca} />
-      <ul className="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
         <ItemRevisao ok={f.conteudos.length > 0}>{f.conteudos.length} {f.conteudos.length === 1 ? 'conteúdo' : 'conteúdos'}</ItemRevisao>
         <ItemRevisao ok={f.videos.some((v) => v.trim())}>{f.videos.filter((v) => v.trim()).length} {f.videos.filter((v) => v.trim()).length === 1 ? 'vídeo' : 'vídeos'}</ItemRevisao>
         <ItemRevisao ok={f.faq.some((x) => x.pergunta && x.resposta)}>{f.faq.filter((x) => x.pergunta && x.resposta).length} perguntas frequentes</ItemRevisao>

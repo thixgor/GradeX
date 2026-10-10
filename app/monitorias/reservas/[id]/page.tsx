@@ -193,7 +193,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
         )}
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* Chat */}
         <section className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-border bg-card">
           <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 620 }}>

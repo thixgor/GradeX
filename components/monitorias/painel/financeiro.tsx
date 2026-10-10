@@ -44,7 +44,7 @@ export function FinanceiroMonitor() {
     <div className="space-y-10">
       {/* O caminho do dinheiro, da esquerda para a direita */}
       <section aria-label="Resumo do seu dinheiro">
-        <ol className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
+        <ol className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
           {ETAPAS.map((e, i) => (
             <li key={e.chave} className="bg-card p-5">
               <p className="flex items-center gap-2 text-sm text-muted-foreground">

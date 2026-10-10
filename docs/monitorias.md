@@ -271,6 +271,18 @@ tenta de novo com a mesma chave.
   já no campo, em edição. `comVolta` acrescenta `voltar=` (só caminhos
   `/monitorias…`, validado por `voltarValido`; nada de redirecionamento aberto)
   e o /profile mostra a faixa "Voltar" no topo.
+- Quem COMPRA não preenche cadastro: `requisitosDoAluno` pede só conta ativa e
+  maioridade (quando a data informada indica menor). E-mail confirmado, CPF e
+  nome civil continuam obrigatórios só para o MONITOR. As rotas do aluno não
+  exigem `emailVerificado`; a assinatura do contrato usa código enviado ao
+  e-mail, e acertar o código marca o e-mail como confirmado. O modal global de
+  "complete seu perfil" não abre em `/monitorias` (só no painel do monitor).
+- Monitor não contrata a si mesmo: o servidor recusa pela conta e pelo CPF
+  (`mesmaPessoa`), o anúncio esconde os botões do dono (`/api/auth/me` devolve
+  `user.id`) e, como o aluno pode não ter CPF, `aoAprovarPagamento` compara o
+  CPF de quem pagou o PIX (quando o Mercado Pago informa) com o do monitor:
+  igual → não confirma, devolve inteiro, audita `autocompra_cpf_do_monitor` e
+  avisa a equipe.
 - Textos cortados antes de regex; PDF com quebra de linha linear; IP
   mascarado nos PDFs; limites para propostas (6/10 min) e pedidos (15/h).
 - O anúncio público não expõe o `userId` do monitor, só `donoChave`
@@ -327,10 +339,17 @@ tenta de novo com a mesma chave.
   caixa-alta acima de título (`Cabecalho` em `base.tsx`); estados vazios com `Vazio`.
 - **Landing:** chave "Quero aprender / Quero ensinar" (lembrada no navegador);
   o monitor, cliente principal, tem caminho próprio com simulador ao vivo.
-- **Agenda:** grade semanal para pintar (clicar e arrastar; no celular, tocar),
-  atalhos, copiar dia, calendário de folgas e barra de salvar só com alterações.
+- **Agenda:** grade semanal para pintar (clicar e arrastar) só com mouse ou
+  trackpad (`md:[@media(pointer:fine)]`): a grade usa `touch-action: none` e, no
+  tablet de toque, travaria a rolagem. Toque (celular e tablet) usa a lista de um
+  dia por vez. Também tem atalhos, copiar dia, calendário de folgas e barra de salvar só com alterações.
   Conversão pura em `lib/monitorias/agenda.ts` (`janelasParaCelulas`/`celulasParaJanelas`).
 - **Assistente de anúncio:** prévia ao vivo do cartão da vitrine + força do anúncio.
+- **Navegação:** `NavMonitorias` (Encontrar / Minhas aulas / Painel do monitor)
+  no topo de toda tela da seção, menos no checkout.
+- **Telas estreitas (320px):** toda grade responsiva começa em `grid-cols-1`
+  (`minmax(0,1fr)`), nunca na coluna implícita `auto`, que cresce até o maior
+  conteúdo (texto com `truncate`, `whitespace-nowrap`) e vaza a tela.
 
 ## Operação
 

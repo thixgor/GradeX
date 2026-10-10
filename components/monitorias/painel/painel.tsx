@@ -82,7 +82,7 @@ export function PainelMonitor({ aba }: { aba: AbaPainel }) {
       </nav>
       {erro && <CaixaErro mensagem={erro} />}
       {!dados && !erro ? (
-        <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <Esqueleto className="h-64" />
           <Esqueleto className="h-64" />
         </div>

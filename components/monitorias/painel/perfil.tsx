@@ -25,7 +25,7 @@ function Cartao({ titulo, children, id }: { titulo: string; children: React.Reac
 export function PerfilMonitor({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
   const t = dados.tutor
   return (
-    <div className="grid gap-5 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       <div className="space-y-5">
         <FotoDoMonitor dados={dados} recarregar={recarregar} />
         <FotoEPerfil dados={dados} recarregar={recarregar} />
