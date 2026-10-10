@@ -72,6 +72,13 @@ export async function avisar(avisos: Aviso[]): Promise<void> {
   await deliverTransactionalEmails(envios)
 }
 
+/** Alerta para a equipe (admins) no sino — divergências financeiras, por exemplo. */
+export async function avisarEquipe(titulo: string, mensagem: string, url = '/admin/monitorias'): Promise<void> {
+  const db = await getDb()
+  const admins = await db.collection('users').find({ role: 'admin' }, { projection: { _id: 1 } }).limit(20).toArray()
+  if (admins.length) await avisar(admins.map((a) => ({ userId: String(a._id), titulo, mensagem, url })))
+}
+
 /** Código de confirmação (assinatura / PIX) — só por e-mail, nunca no sino. */
 export async function enviarCodigoPorEmail(input: {
   email: string

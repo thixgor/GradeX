@@ -297,6 +297,7 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_participacoes').createIndex({ reservaId: 1, alunoId: 1 }, { unique: true }),
     db.collection('monitorias_participacoes').createIndex({ alunoId: 1, createdAt: -1 }),
     db.collection('monitorias_participacoes').createIndex({ paymentOrderId: 1 }, { sparse: true }),
+    db.collection('monitorias_participacoes').createIndex({ providerPaymentId: 1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ 'reembolsos.status': 1 }),
     db.collection('monitorias_participacoes').createIndex({ 'avaliacao.anuncioId': 1, 'avaliacao.em': -1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ tutorId: 1, 'avaliacao.nota': 1 }),

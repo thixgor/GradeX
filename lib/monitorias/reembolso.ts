@@ -51,8 +51,9 @@ export async function reembolsarParticipacao(input: {
   const valor = total ? part.valorCentavos - jaReembolsado : Math.max(0, Math.round(input.valorBaseCentavos!))
   if (valor <= 0 && !total) return { ok: false, erro: 'Valor de reembolso inválido.' }
 
-  // Retomada: já existe um reembolso processando → tenta concluir ESSE.
-  const pendente = part.reembolsos.find((r) => r.status === 'processando')
+  // Retomada: já existe um reembolso em aberto → tenta concluir ESSE (nunca
+  // abre outro por cima: um "falhou" antigo pode ter sido feito no MP).
+  const pendente = part.reembolsos.find((r) => r.status === 'processando' || r.status === 'falhou')
   let reembolso: Reembolso
   if (pendente) {
     reembolso = pendente
@@ -67,7 +68,7 @@ export async function reembolsarParticipacao(input: {
       status: 'processando',
     }
     const cas = await c.participacoes.updateOne(
-      { _id, status: part.status, 'reembolsos.status': { $ne: 'processando' } } as any,
+      { _id, status: part.status, 'reembolsos.status': { $nin: ['processando', 'falhou'] } } as any,
       {
         $push: { reembolsos: reembolso },
         $set: { status: 'reembolso_processando', statusAntesDoReembolso: part.status, updatedAt: new Date() },
@@ -77,40 +78,41 @@ export async function reembolsarParticipacao(input: {
   }
 
   const ehTotal = reembolso.valorCentavos >= part.valorCentavos - jaReembolsado
-  try {
-    await getPaymentProvider().refundPayment(part.providerPaymentId, {
-      amountReais: ehTotal ? undefined : centavosParaReais(reembolso.valorCentavos),
-      idempotencyKey: reembolso.chave,
-    })
-  } catch (err: any) {
-    const tentativas = ((part as any).tentativasReembolso || 0) + 1
-    await c.participacoes.updateOne(
-      { _id, 'reembolsos.chave': reembolso.chave } as any,
-      {
-        $set: {
-          'reembolsos.$.erro': String(err?.message || err).slice(0, 300),
-          ...(tentativas >= MAX_TENTATIVAS ? { 'reembolsos.$.status': 'falhou' } : {}),
-          tentativasReembolso: tentativas,
-          updatedAt: new Date(),
-        },
-      } as any,
-    )
-    console.error('[monitorias] reembolso falhou:', input.participacaoId, err)
-    return { ok: false, erro: 'O Mercado Pago não confirmou o reembolso agora. Vamos tentar de novo automaticamente.' }
+  // Nova tentativa de um reembolso já pedido: a anterior pode ter dado certo no
+  // MP e falhado só do nosso lado (gravar a resposta). Pergunta ao MP ANTES de
+  // pedir de novo — a chave de idempotência é a segunda trava, não a única.
+  const jaFeito = pendente ? await devolvidoNoGateway(part.providerPaymentId, ehTotal ? 'total' : jaReembolsado + reembolso.valorCentavos) : false
+  if (!jaFeito) {
+    try {
+      await getPaymentProvider().refundPayment(part.providerPaymentId, {
+        amountReais: ehTotal ? undefined : centavosParaReais(reembolso.valorCentavos),
+        idempotencyKey: reembolso.chave,
+      })
+    } catch (err: any) {
+      // Nunca desiste: continua "processando" e a varredura tenta de hora em
+      // hora (sempre conferindo o MP antes). Na 6ª falha a equipe é avisada.
+      const tentativas = ((part as any).tentativasReembolso || 0) + 1
+      await c.participacoes.updateOne(
+        { _id, 'reembolsos.chave': reembolso.chave } as any,
+        { $set: { 'reembolsos.$.erro': String(err?.message || err).slice(0, 300), tentativasReembolso: tentativas, updatedAt: new Date() } } as any,
+      )
+      console.error('[monitorias] reembolso falhou:', input.participacaoId, err)
+      if (tentativas === MAX_TENTATIVAS) {
+        await audit({
+          action: 'payment_rejected',
+          targetUserId: part.alunoId,
+          resourceType: 'monitoria',
+          resourceId: input.participacaoId,
+          metadata: { motivo: 'reembolso falhando há várias tentativas — conferir no painel do MP', chave: reembolso.chave, erro: String(err?.message || err).slice(0, 300) },
+        })
+      }
+      return { ok: false, erro: 'O Mercado Pago não confirmou o reembolso agora. Vamos tentar de novo automaticamente.' }
+    }
   }
 
   const statusAntes = ((part as any).statusAntesDoReembolso as Participacao['status']) || 'paga'
-  await c.participacoes.updateOne(
-    { _id, 'reembolsos.chave': reembolso.chave } as any,
-    {
-      $set: {
-        'reembolsos.$.status': 'concluido',
-        status: ehTotal ? 'reembolsada' : statusAntes,
-        tentativasReembolso: 0,
-        updatedAt: new Date(),
-      },
-    } as any,
-  )
+  // Estorno do repasse ANTES de marcar concluído (é idempotente pela chave): se
+  // a função cair entre os dois, a próxima tentativa refaz sem descontar duas vezes.
   await estornarRepasse({
     participacaoId: input.participacaoId,
     valorBaseCentavos: reembolso.valorCentavos,
@@ -119,6 +121,21 @@ export async function reembolsarParticipacao(input: {
     por: reembolso.por,
     chave: reembolso.chave,
   })
+  // Compare-and-set: duas retomadas ao mesmo tempo (varredura + suporte) —
+  // só uma conclui e avisa; a outra só confirma que já está feito.
+  const concluiu = await c.participacoes.updateOne(
+    { _id, reembolsos: { $elemMatch: { chave: reembolso.chave, status: { $in: ['processando', 'falhou'] } } } } as any,
+    {
+      $set: {
+        'reembolsos.$.status': 'concluido',
+        ...(jaFeito ? { 'reembolsos.$.conciliadoNoGateway': true } : {}),
+        status: ehTotal ? 'reembolsada' : statusAntes,
+        tentativasReembolso: 0,
+        updatedAt: new Date(),
+      },
+    } as any,
+  )
+  if (!concluiu.modifiedCount) return { ok: true, total: ehTotal }
   // Reembolso parcial depois da aula concluída: o resto do repasse pode sair.
   if (!ehTotal) await liberarSePronta(part.reservaId)
   // Devolveu tudo: o contrato daquele assento deixa de valer (rescindido, com o
@@ -207,18 +224,41 @@ async function registrarIntencao(
   motivo: string,
   por: string,
 ): Promise<boolean> {
-  if (part.status !== 'paga' || part.reembolsos.some((r) => r.status === 'processando')) return false
+  if (part.status !== 'paga' || part.reembolsos.some((r) => r.status === 'processando' || r.status === 'falhou')) return false
   const jaReembolsado = part.reembolsos.filter((r) => r.status === 'concluido').reduce((t, r) => t + r.valorCentavos, 0)
   const valor = valorBaseCentavos === null ? part.valorCentavos - jaReembolsado : valorBaseCentavos
   if (valor <= 0) return false
   const res = await c.participacoes.updateOne(
-    { _id: part._id as any, status: 'paga', 'reembolsos.status': { $ne: 'processando' } } as any,
+    { _id: part._id as any, status: 'paga', 'reembolsos.status': { $nin: ['processando', 'falhou'] } } as any,
     {
       $push: { reembolsos: { chave: `refund:${idDe(part)}:${part.reembolsos.length}`, valorCentavos: valor, motivo, por, em: new Date(), status: 'processando' } },
       $set: { status: 'reembolso_processando', statusAntesDoReembolso: 'paga', updatedAt: new Date() },
     } as any,
   )
   return res.modifiedCount === 1
+}
+
+/**
+ * O MP já devolveu isto? `true` só com certeza; `false` se não; `null` se não
+ * deu para saber (MP fora) — aí segue com a chave de idempotência.
+ */
+async function devolvidoNoGateway(providerPaymentId: string, alvo: number | 'total'): Promise<boolean | null> {
+  try {
+    const r = await getPaymentProvider().getPayment(providerPaymentId)
+    // Devolvido inteiro, ou o banco já tirou o dinheiro por contestação: não há
+    // o que devolver de novo (pedir outra vez seria devolver em dobro).
+    if (r.status === 'refunded' || r.status === 'charged_back') return true
+    if (alvo === 'total') return false
+    const raw = (r.raw || {}) as { transaction_amount_refunded?: number; refunds?: Array<{ amount?: number; status?: string }> }
+    const devolvido =
+      raw.transaction_amount_refunded != null
+        ? Math.round(Number(raw.transaction_amount_refunded) * 100)
+        : (raw.refunds || []).filter((x) => x.status !== 'rejected').reduce((t, x) => t + Math.round(Number(x.amount || 0) * 100), 0)
+    return devolvido >= alvo
+  } catch (err) {
+    console.warn('[monitorias] consulta de reembolso no MP falhou', providerPaymentId, err)
+    return null
+  }
 }
 
 // ─── Devolução de pagamento avulso (não é o pagamento do assento) ───────
@@ -242,7 +282,7 @@ export async function devolverPagamentoAvulso(input: {
   const c = colecoes(await getDb())
   const chave = `duplicado:${input.orderId}`
   const agora = new Date()
-  await c.devolucoes.updateOne(
+  const novo = await c.devolucoes.updateOne(
     { _id: chave },
     { $setOnInsert: { ...input, status: 'processando', tentativas: 0, createdAt: agora, updatedAt: agora } },
     { upsert: true },
@@ -250,13 +290,16 @@ export async function devolverPagamentoAvulso(input: {
   const doc = await c.devolucoes.findOne({ _id: chave })
   if (!doc) return false
   if (doc.status !== 'processando') return doc.status === 'concluida'
-  return tentarDevolucao(doc)
+  // Já existia: outra execução pode ter pedido ao MP e caído antes de gravar.
+  return tentarDevolucao(doc, novo.upsertedCount === 0)
 }
 
-async function tentarDevolucao(doc: DevolucaoAvulsa): Promise<boolean> {
+async function tentarDevolucao(doc: DevolucaoAvulsa, retomada: boolean): Promise<boolean> {
   const c = colecoes(await getDb())
   try {
-    await getPaymentProvider().refundPayment(doc.providerPaymentId, { idempotencyKey: doc._id })
+    // Retomada: confere no MP antes de pedir de novo.
+    const jaFeito = retomada ? await devolvidoNoGateway(doc.providerPaymentId, 'total') : false
+    if (!jaFeito) await getPaymentProvider().refundPayment(doc.providerPaymentId, { idempotencyKey: doc._id })
     await c.devolucoes.updateOne({ _id: doc._id, status: 'processando' }, { $set: { status: 'concluida', updatedAt: new Date() }, $unset: { erro: '' } })
     await audit({
       action: 'payment_refunded',
@@ -267,14 +310,15 @@ async function tentarDevolucao(doc: DevolucaoAvulsa): Promise<boolean> {
     })
     return true
   } catch (err: any) {
+    // Não desiste: segue "processando" (a varredura tenta de hora em hora,
+    // conferindo o MP antes). Na 6ª falha a equipe é avisada.
     const tentativas = doc.tentativas + 1
-    const desistiu = tentativas >= MAX_TENTATIVAS
     await c.devolucoes.updateOne(
       { _id: doc._id, status: 'processando' },
-      { $set: { tentativas, erro: String(err?.message || err).slice(0, 300), updatedAt: new Date(), ...(desistiu ? { status: 'falhou' as const } : {}) } },
+      { $set: { tentativas, erro: String(err?.message || err).slice(0, 300), updatedAt: new Date() } },
     )
     console.error('[monitorias] devolução avulsa falhou', doc._id, err)
-    if (desistiu) {
+    if (tentativas === MAX_TENTATIVAS) {
       await audit({
         action: 'payment_rejected',
         targetUserId: doc.alunoId,
@@ -295,6 +339,6 @@ export async function retomarDevolucoesAvulsas(agora: Date, lote: number): Promi
     .limit(lote)
     .toArray()
   let ok = 0
-  for (const d of paradas) if (await tentarDevolucao(d)) ok++
+  for (const d of paradas) if (await tentarDevolucao(d, true)) ok++
   return ok
 }

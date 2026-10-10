@@ -59,6 +59,28 @@ const TERMINAL_APPROVED: PaymentStatus[] = ['approved']
 const TERMINAL_FAILED: PaymentStatus[] = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back']
 
 /**
+ * Leitura atrasada não volta o relógio. Webhook, polling da tela e varredura
+ * consultam o MP em paralelo; uma resposta lida ANTES (ainda "pending") pode
+ * chegar DEPOIS de outra já ter gravado "approved". Sem esta checagem o pedido
+ * voltava para pendente — e a próxima leitura "aprovava de novo", repetindo os
+ * efeitos (liberar acesso, e-mail). Mesma coisa para um estorno já gravado.
+ *
+ * Exceção legítima: aprovado → em mediação (contestação), que o MP informa
+ * como `in_mediation` (mapeado para `in_process`).
+ */
+export function transicaoObsoleta(prev: PaymentStatus, next: PaymentStatus, raw?: unknown): boolean {
+  if (prev === next) return false
+  if (prev === 'refunded' || prev === 'charged_back') return next !== 'refunded' && next !== 'charged_back'
+  if (prev === 'approved') {
+    if (next === 'pending') return true
+    if (next === 'in_process') return (raw as any)?.status !== 'in_mediation'
+    return false
+  }
+  if (prev === 'rejected' || prev === 'cancelled' || prev === 'expired') return next === 'pending' || next === 'in_process'
+  return false
+}
+
+/**
  * Aplica o estado canônico ao banco (atualiza order + payment) e dispara
  * o efeito apropriado conforme o tipo da order. Idempotente.
  */
@@ -74,6 +96,10 @@ export async function applyPaymentResult(
 
   const prevStatus = order.status
   const newStatus = result.status
+  if (transicaoObsoleta(prevStatus, newStatus, result.raw)) {
+    console.warn('[effects] leitura obsoleta ignorada', String(order._id), prevStatus, '→', newStatus)
+    return { applied: false, reason: 'transição obsoleta', order }
+  }
 
   // Total pago com juros/parcelas, como no comprovante do MP — é o que os
   // e-mails de compra mostram (ver lib/payments/receipt.ts).
