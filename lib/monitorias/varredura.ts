@@ -12,7 +12,10 @@ import 'server-only'
  *  3. Aula começou há pouco → lembretes de 24h e 1h antes.
  *  4. Aula acabou → "realizada" (pede avaliação; abre a janela de 48h).
  *  5. 48h depois sem reclamação → "concluída" e o valor do monitor é liberado.
- *  6. Reembolso que falhou → tenta de novo com a MESMA chave.
+ *  2b. Reserva aguardando pagamento → rede de segurança da aprovação (pedido
+ *     aprovado sem assento pago, assento pago sem repasse, grupo todo pago).
+ *  6. Reembolso que falhou → tenta de novo com a MESMA chave (inclusive a
+ *     devolução de PIX pago em dobro).
  *  7. Troca de chave PIX após a carência de 48h → passa a valer.
  */
 
@@ -26,7 +29,8 @@ import { colecoes, idDe } from './db'
 import { liberarRepassesDaReserva } from './financeiro'
 import { avisar } from './avisos'
 import { liberarBlocos } from './reservas'
-import { reembolsarParticipacao, reembolsarReserva } from './reembolso'
+import { reembolsarParticipacao, reembolsarReserva, retomarDevolucoesAvulsas } from './reembolso'
+import { curarPagamentosDaReserva } from './pagamento'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
 import type { Reserva } from './tipos'
@@ -134,6 +138,9 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   for (const reserva of vencidas) {
     await seguro(async () => {
       await reconciliarPagamentos(idDe(reserva))
+      // PIX que caiu (ou aprovação que ficou pela metade) com todos pagos →
+      // confirma em vez de expirar e devolver o dinheiro de quem pagou.
+      await curarPagamentosDaReserva(reserva)
       const atual = await c.reservas.findOne({ _id: reserva._id as any })
       if (!atual || !['aguardando_assinaturas', 'aguardando_pagamento'].includes(atual.status)) return
       const pagos = await c.participacoes.countDocuments({ reservaId: idDe(atual), status: 'paga' })
@@ -152,6 +159,13 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       }
     })
   }
+
+  // 2b. Aprovação pela metade em reserva ainda no prazo (parada há 10 min+).
+  const pendentes = await c.reservas
+    .find({ status: 'aguardando_pagamento', updatedAt: { $lt: new Date(agora.getTime() - 10 * 60_000) }, prazoPagamento: { $gte: agora } } as any)
+    .limit(LOTE)
+    .toArray()
+  for (const reserva of pendentes) await seguro(() => curarPagamentosDaReserva(reserva))
 
   // 3. Lembretes (24h e 1h antes).
   const proximas = await c.reservas
@@ -254,6 +268,11 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       if (out.ok) r.reembolsosRetomados++
     })
   }
+
+  // 6a. PIX pago em dobro cuja devolução falhou → mesma chave, de novo.
+  await seguro(async () => {
+    r.reembolsosRetomados += await retomarDevolucoesAvulsas(agora, LOTE)
+  })
 
   // 6b. Rede de segurança: assento PAGO numa reserva já encerrada (PIX que caiu
   // no mesmo instante do cancelamento, função que morreu no meio de um lote).

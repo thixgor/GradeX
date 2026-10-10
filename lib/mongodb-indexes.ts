@@ -315,6 +315,7 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_payouts').createIndex({ e2eId: 1 }, { unique: true, sparse: true }),
     db.collection('monitorias_termos_aceites').createIndex({ userId: 1, papel: 1, versao: 1 }, { unique: true }),
     db.collection('monitorias_contratos').createIndex({ participacaoId: 1 }, { unique: true }),
+    db.collection('monitorias_devolucoes').createIndex({ status: 1, updatedAt: 1 }),
     db.collection('monitorias_contratos').createIndex({ numero: 1 }, { unique: true }),
     db.collection('monitorias_contratos').createIndex({ codigoVerificacao: 1 }, { unique: true }),
     db.collection('monitorias_contratos').createIndex({ reservaId: 1 }),

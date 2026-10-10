@@ -276,6 +276,8 @@ export interface Reserva {
   disputa?: { abertaPor: string; em: Date; motivo: string; decisao?: string; decididaPor?: string; decididaEm?: Date }
   lembretes?: { h24?: Date; h1?: Date; avaliar?: Date }
   versao: number
+  /** Trava curta enquanto a confirmação após o pagamento roda (evita duas ao mesmo tempo). */
+  confirmandoEm?: Date
   /** Última atividade de cada lado — para "sem resposta há 72h". */
   ultimaAtividadeEm: Date
   createdAt: Date
@@ -339,6 +341,8 @@ export interface Participacao {
   /** Pedido de cancelamento (<24h, fora do arrependimento) esperando o suporte: segura o repasse. */
   cancelamentoPedidoEm?: Date
   cancelamentoTicketId?: string
+  /** Avisos de "pagamento confirmado" já mandados (reprocessar a aprovação não reenvia). */
+  pagamentoAvisadoEm?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -517,4 +521,23 @@ export interface CodigoConfirmacao {
   tentativas: number
   expiraEm: Date
   createdAt: Date
+}
+
+/**
+ * Devolução de um pagamento que NÃO é o do assento (PIX pago duas vezes, valor
+ * errado com o assento já pago). `_id` é a chave de idempotência no Mercado
+ * Pago — a varredura tenta de novo com a mesma chave até concluir.
+ */
+export interface DevolucaoAvulsa {
+  _id: string
+  orderId: string
+  providerPaymentId: string
+  participacaoId: string
+  alunoId: string
+  motivo: string
+  status: 'processando' | 'concluida' | 'falhou'
+  tentativas: number
+  erro?: string
+  createdAt: Date
+  updatedAt: Date
 }

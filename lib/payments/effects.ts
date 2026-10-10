@@ -130,6 +130,13 @@ export async function applyPaymentResult(
 
   // Idempotência: se já estava aprovado ou já é terminal igual, não reaplica.
   if (prevStatus === newStatus) {
+    // Monitoria: se a função caiu entre "pedido aprovado" e "assento pago",
+    // nenhum outro caminho reaplicaria. O aviso repetido do MP termina o
+    // serviço — aoAprovarPagamento é idempotente (não paga nem avisa duas vezes).
+    if (order.type === 'monitoria' && TERMINAL_APPROVED.includes(newStatus)) {
+      const { aoAprovarPagamento } = await import('../monitorias/pagamento')
+      await aoAprovarPagamento({ ...order, ...paidFields }, result)
+    }
     return { applied: false, reason: 'status inalterado', order: updatedOrder }
   }
 

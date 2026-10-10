@@ -20,7 +20,7 @@ import { centavosParaReais, formatarCentavos } from './dinheiro'
 import { colecoes, idDe } from './db'
 import { estornarRepasse, liberarSePronta } from './financeiro'
 import { avisar } from './avisos'
-import type { Participacao, Reembolso } from './tipos'
+import type { DevolucaoAvulsa, Participacao, Reembolso } from './tipos'
 
 const PODE_REEMBOLSAR: Participacao['status'][] = ['paga', 'concluida', 'reembolso_processando']
 const MAX_TENTATIVAS = 6
@@ -219,4 +219,82 @@ async function registrarIntencao(
     } as any,
   )
   return res.modifiedCount === 1
+}
+
+// ─── Devolução de pagamento avulso (não é o pagamento do assento) ───────
+
+/**
+ * Devolve um pagamento que sobrou: o mesmo assento pago duas vezes (dois QR em
+ * dois aparelhos), ou um valor errado chegando com o assento já pago. Não mexe
+ * no assento — o pagamento legítimo continua valendo.
+ *
+ * A intenção é gravada ANTES de chamar o Mercado Pago, com a chave
+ * `duplicado:<pedido>`: se a chamada falhar, a varredura tenta de novo com a
+ * mesma chave (o MP nunca devolve duas vezes) até concluir.
+ */
+export async function devolverPagamentoAvulso(input: {
+  orderId: string
+  providerPaymentId: string
+  participacaoId: string
+  alunoId: string
+  motivo: string
+}): Promise<boolean> {
+  const c = colecoes(await getDb())
+  const chave = `duplicado:${input.orderId}`
+  const agora = new Date()
+  await c.devolucoes.updateOne(
+    { _id: chave },
+    { $setOnInsert: { ...input, status: 'processando', tentativas: 0, createdAt: agora, updatedAt: agora } },
+    { upsert: true },
+  )
+  const doc = await c.devolucoes.findOne({ _id: chave })
+  if (!doc) return false
+  if (doc.status !== 'processando') return doc.status === 'concluida'
+  return tentarDevolucao(doc)
+}
+
+async function tentarDevolucao(doc: DevolucaoAvulsa): Promise<boolean> {
+  const c = colecoes(await getDb())
+  try {
+    await getPaymentProvider().refundPayment(doc.providerPaymentId, { idempotencyKey: doc._id })
+    await c.devolucoes.updateOne({ _id: doc._id, status: 'processando' }, { $set: { status: 'concluida', updatedAt: new Date() }, $unset: { erro: '' } })
+    await audit({
+      action: 'payment_refunded',
+      targetUserId: doc.alunoId,
+      resourceType: 'monitoria',
+      resourceId: doc.participacaoId,
+      metadata: { motivo: doc.motivo, orderId: doc.orderId, providerPaymentId: doc.providerPaymentId, chave: doc._id },
+    })
+    return true
+  } catch (err: any) {
+    const tentativas = doc.tentativas + 1
+    const desistiu = tentativas >= MAX_TENTATIVAS
+    await c.devolucoes.updateOne(
+      { _id: doc._id, status: 'processando' },
+      { $set: { tentativas, erro: String(err?.message || err).slice(0, 300), updatedAt: new Date(), ...(desistiu ? { status: 'falhou' as const } : {}) } },
+    )
+    console.error('[monitorias] devolução avulsa falhou', doc._id, err)
+    if (desistiu) {
+      await audit({
+        action: 'payment_rejected',
+        targetUserId: doc.alunoId,
+        resourceType: 'monitoria',
+        resourceId: doc.participacaoId,
+        metadata: { motivo: `${doc.motivo} — devolver manualmente`, orderId: doc.orderId, providerPaymentId: doc.providerPaymentId },
+      })
+    }
+    return false
+  }
+}
+
+/** Varredura: devoluções avulsas paradas há 20 min ou mais → tenta de novo, mesma chave. */
+export async function retomarDevolucoesAvulsas(agora: Date, lote: number): Promise<number> {
+  const c = colecoes(await getDb())
+  const paradas = await c.devolucoes
+    .find({ status: 'processando', updatedAt: { $lt: new Date(agora.getTime() - 20 * 60_000) } })
+    .limit(lote)
+    .toArray()
+  let ok = 0
+  for (const d of paradas) if (await tentarDevolucao(d)) ok++
+  return ok
 }

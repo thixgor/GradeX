@@ -14,6 +14,7 @@ import type {
   Bloqueio,
   CodigoConfirmacao,
   Contrato,
+  DevolucaoAvulsa,
   Lancamento,
   Mensagem,
   Participacao,
@@ -39,6 +40,7 @@ export const COLECOES = {
   contratos: 'monitorias_contratos',
   codigos: 'monitorias_codigos',
   cotasGratis: 'monitorias_cotas_gratis',
+  devolucoes: 'monitorias_devolucoes',
 } as const
 
 export function colecoes(db: Db) {
@@ -57,6 +59,7 @@ export function colecoes(db: Db) {
     contratos: db.collection<Contrato>(COLECOES.contratos),
     codigos: db.collection<CodigoConfirmacao>(COLECOES.codigos),
     cotasGratis: db.collection<{ alunoId: string; tutorId: string; reservaId: string; em: Date }>(COLECOES.cotasGratis),
+    devolucoes: db.collection<DevolucaoAvulsa>(COLECOES.devolucoes),
     users: db.collection<User>('users'),
   }
 }
