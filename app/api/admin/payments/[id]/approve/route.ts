@@ -64,6 +64,16 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
     }
   }
 
+  // Monitoria: aprovar "na mão" sem o MP confirmar criaria repasse ao monitor
+  // com dinheiro que nunca entrou (e um reembolso depois falharia). Em
+  // produção, só vale a confirmação real do Mercado Pago.
+  if (!result && order.type === 'monitoria' && process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Pagamento de monitoria só é aprovado com confirmação do Mercado Pago. Confira o ID do pagamento no painel do MP.' },
+      { status: 409 },
+    )
+  }
+
   // 2) Override manual: força approved e dispara os mesmos efeitos.
   if (!result) {
     result = {

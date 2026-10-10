@@ -7,6 +7,7 @@ import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarReserva, ErroMonitoria, firmarBlocos, liberarBlocos, registrarStrike } from '@/lib/monitorias/reservas'
 import { reembolsarParticipacao } from '@/lib/monitorias/reembolso'
 import { concluirReserva } from '@/lib/monitorias/varredura'
+import { liberarSePronta } from '@/lib/monitorias/financeiro'
 import { limparTexto } from '@/lib/monitorias/validacao'
 import { avisar } from '@/lib/monitorias/avisos'
 import { getDb } from '@/lib/mongodb'
@@ -76,6 +77,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       if (novoStatus === 'reembolsada') await liberarBlocos(id)
       if (novoStatus === 'confirmada') await firmarBlocos(id)
     }
+    // Pedidos de cancelamento de assento decididos: o repasse deles deixa de ficar retido.
+    await c.participacoes.updateMany(
+      { reservaId: id, cancelamentoPedidoEm: { $exists: true } } as any,
+      { $unset: { cancelamentoPedidoEm: '' }, $set: { updatedAt: agora } } as any,
+    )
+    if (novoStatus === 'concluida' || reserva.status === 'concluida') await liberarSePronta(id)
     if (corpo.data.culpaDoMonitor) await registrarStrike(c, reserva, `Decisão do suporte: ${nota}`)
     await audit({
       action: 'monitoria_disputa_resolvida',

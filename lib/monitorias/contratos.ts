@@ -87,7 +87,7 @@ export async function emitirContrato(input: {
   }
   const secoes = secoesDoContrato(dados)
   const hash = hashDoContrato(dados, secoes)
-  const assinaturas: EvidenciaAssinatura[] = input.assinaturaPrevia ? [{ ...input.assinaturaPrevia, hash }] : []
+  const assinaturas: EvidenciaAssinatura[] = input.assinaturaPrevia ? [{ ...input.assinaturaPrevia, hash, vinculadaEm: new Date() }] : []
   const agora = new Date()
   const contrato: Contrato = {
     numero,

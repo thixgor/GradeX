@@ -95,15 +95,22 @@ class Pagina {
           atual = tentativa
         } else {
           if (atual) linhas.push(atual)
-          // Palavra maior que a linha (hash, URL): corta em pedaços.
-          let resto = palavra
-          while (fonte.widthOfTextAtSize(resto, tamanho) > largura) {
-            let n = resto.length
-            while (n > 1 && fonte.widthOfTextAtSize(resto.slice(0, n), tamanho) > largura) n--
-            linhas.push(resto.slice(0, n))
-            resto = resto.slice(n)
+          // Palavra maior que a linha (hash, URL, "WWWW…"): corta em pedaços
+          // somando a largura letra a letra — tempo linear. (Medir prefixos
+          // cada vez menores era cúbico e travava o PDF com uma palavra longa.)
+          let pedaco = ''
+          let larguraPedaco = 0
+          for (const ch of palavra) {
+            const l = fonte.widthOfTextAtSize(ch, tamanho)
+            if (pedaco && larguraPedaco + l > largura) {
+              linhas.push(pedaco)
+              pedaco = ''
+              larguraPedaco = 0
+            }
+            pedaco += ch
+            larguraPedaco += l
           }
-          atual = resto
+          atual = pedaco
         }
       }
       linhas.push(atual)
@@ -197,6 +204,17 @@ async function novoDocumento(titulo: string, rodape: string) {
   return p
 }
 
+/** 189.45.12.34 → 189.45.*.* ; IPv6 → só os 2 primeiros grupos. */
+export function mascararIp(ip?: string): string {
+  if (!ip) return '—'
+  if (ip.includes('.') && !ip.includes(':')) {
+    const p = ip.split('.')
+    return p.length === 4 ? `${p[0]}.${p[1]}.*.*` : '—'
+  }
+  const g = ip.split(':').filter(Boolean)
+  return g.length ? `${g.slice(0, 2).join(':')}:…` : '—'
+}
+
 function dataHora(d: Date | string | undefined) {
   return d ? `${formatarEmBrasilia(d, { dateStyle: 'short', timeStyle: 'medium' })} (Brasília)` : '—'
 }
@@ -210,7 +228,7 @@ export interface EntradaPdfContrato {
   hash: string
   codigoVerificacao: string
   secoes: SecaoDocumento[]
-  assinaturas: Array<{ papel: string; nome: string; em: Date; ip: string; metodo: string; referencia?: string; hash: string }>
+  assinaturas: Array<{ papel: string; nome: string; em: Date; ip: string; metodo: string; referencia?: string; hash: string; hashOrigem?: string; vinculadaEm?: Date }>
 }
 
 export async function pdfDoContrato(e: EntradaPdfContrato): Promise<Uint8Array> {
@@ -231,19 +249,23 @@ export async function pdfDoContrato(e: EntradaPdfContrato): Promise<Uint8Array> 
   ])
   const metodos: Record<string, string> = {
     codigo_email: 'Aceite + código de 6 dígitos enviado ao e-mail cadastrado',
-    oferta_padrao: 'Oferta-padrão de agendamento direto assinada pelo monitor',
-    assinatura_da_reserva: 'Assinatura do monitor no contrato do organizador do grupo',
+    oferta_padrao: 'Adesão: oferta-padrão de agendamento direto assinada pelo monitor (Código Civil, art. 429)',
+    assinatura_da_reserva: 'Adesão: assinatura do monitor no contrato do organizador do grupo, nas mesmas condições',
   }
   if (!e.assinaturas.length) p.texto('Nenhuma assinatura registrada ainda.', { cor: CINZA })
   for (const a of e.assinaturas) {
     p.texto(a.papel === 'contratante' ? 'CONTRATANTE (Aluno)' : 'CONTRATADO (Monitor)', { negrito: true, tamanho: 10, depois: 2 })
+    const adesao = !!a.hashOrigem
     p.tabela([
       ['Nome', a.nome],
-      ['Data e hora', dataHora(a.em)],
-      ['Endereço IP', a.ip || '—'],
+      [adesao ? 'Assinou o documento de origem em' : 'Data e hora', dataHora(a.em)],
+      // IP mascarado no PDF entregue às partes (LGPD, minimização); o completo fica nos registros da plataforma.
+      ['Endereço IP', mascararIp(a.ip)],
       ['Método', metodos[a.metodo] || a.metodo],
-      ...(a.referencia ? ([['Referência', a.referencia]] as Array<[string, string]>) : []),
-      ['Hash assinado', a.hash],
+      ...(a.referencia ? ([['Documento de origem', a.referencia]] as Array<[string, string]>) : []),
+      ...(adesao ? ([['Hash do documento de origem', a.hashOrigem!]] as Array<[string, string]>) : []),
+      ...(adesao && a.vinculadaEm ? ([['Vinculada a este contrato em', dataHora(a.vinculadaEm)]] as Array<[string, string]>) : []),
+      [adesao ? 'Hash deste contrato (vinculado)' : 'Hash assinado', a.hash],
     ])
   }
   const url = `${appUrl()}/monitorias/documentos/verificar/${e.codigoVerificacao}`
@@ -378,6 +400,7 @@ export async function pdfDaConversa(e: {
   participantes: Array<[string, string]>
   mensagens: Array<{ autor: string; texto: string; em: Date; sistema: boolean }>
   materiais: Array<{ titulo: string; url: string }>
+  truncado?: boolean
 }): Promise<Uint8Array> {
   const p = await novoDocumento(`Histórico da monitoria — ${e.titulo}`, `Histórico da reserva ${e.reservaId}`)
   p.titulo('Histórico da conversa da monitoria', `${e.titulo} · emitido em ${dataHora(new Date())}`)
@@ -387,7 +410,8 @@ export async function pdfDaConversa(e: {
     for (const m of e.materiais) p.texto(`• ${m.titulo} — ${m.url}`, { tamanho: 8.8, depois: 2 })
     p.linha()
   }
-  p.texto(`Mensagens (${e.mensagens.length})`, { tamanho: 10.5, negrito: true, depois: 6 })
+  p.texto(`Mensagens (${e.mensagens.length}${e.truncado ? ' primeiras' : ''})`, { tamanho: 10.5, negrito: true, depois: 6 })
+  if (e.truncado) p.texto('Conversa longa: este PDF traz as primeiras mensagens. As seguintes continuam disponíveis na página da reserva; peça ao suporte a exportação completa se precisar.', { tamanho: 8.5, cor: CINZA, depois: 6 })
   for (const m of e.mensagens) {
     if (m.sistema) {
       p.texto(`${dataHora(m.em)} · ${m.texto}`, { tamanho: 8.2, cor: CINZA, depois: 5 })

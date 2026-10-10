@@ -96,3 +96,18 @@ export function mascararChavePix(tipo: TipoChavePix, chave: string): string {
   if (tipo === 'telefone') return `+55 (${chave.slice(3, 5)}) *****-${chave.slice(-4)}`
   return `${chave.slice(0, 4)}…${chave.slice(-4)}`
 }
+
+/**
+ * Pasta da foto do monitor no Blob público: um apelido opaco da conta (HMAC),
+ * nunca o userId — a URL da foto aparece na vitrine para qualquer visitante.
+ */
+export function pastaDaFoto(userId: string): string {
+  const chave = process.env.JWT_SECRET || process.env.MONITORIAS_PIX_SECRET || 'monitorias'
+  return `monitorias/fotos/${createHmac('sha256', chave).update(`foto:${userId}`).digest('hex').slice(0, 24)}/`
+}
+
+/** Host do store de imagens configurado (do token `vercel_blob_rw_<store>_…`). */
+export function hostDoBlobDeImagens(): string | null {
+  const m = /^vercel_blob_rw_([A-Za-z0-9]+)_/.exec(process.env.BLOB_READ_WRITE_TOKEN_MIDIA || '')
+  return m ? `${m[1].toLowerCase()}.public.blob.vercel-storage.com` : null
+}

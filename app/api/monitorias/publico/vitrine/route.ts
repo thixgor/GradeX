@@ -3,6 +3,7 @@ import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { obterColecoes } from '@/lib/monitorias/db'
 import { cardDoAnuncio } from '@/lib/monitorias/servidor'
 import { rotaPublica } from '@/lib/monitorias/rota'
+import { VERSAO_OFERTA } from '@/lib/monitorias/documentos/contrato'
 import type { Anuncio } from '@/lib/monitorias/tipos'
 
 export const dynamic = 'force-dynamic'
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
     if (materia) filtro.materia = materia
     if (url.searchParams.get('gratis') === '1') filtro['aulaGratis.ativa'] = true
     if (url.searchParams.get('grupo') === '1') filtro['grupo.ativo'] = true
-    if (url.searchParams.get('direto') === '1') filtro['ofertaAssinada'] = { $exists: true }
+    if (url.searchParams.get('direto') === '1') filtro['ofertaAssinada.versao'] = VERSAO_OFERTA
     if (q) {
       const rx = new RegExp(escaparRegex(q), 'i')
       filtro.$or = [{ titulo: rx }, { materia: rx }, { conteudos: rx }]

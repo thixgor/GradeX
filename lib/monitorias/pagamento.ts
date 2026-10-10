@@ -26,9 +26,9 @@ import { centavosParaReais, dividirValor, formatarCentavos, reaisParaCentavos } 
 import { colecoes, idDe } from './db'
 import { abrirRepasse } from './financeiro'
 import { avisar } from './avisos'
-import { avisarConfirmacao, ErroMonitoria, firmarBlocos, reservarBlocos } from './reservas'
+import { avisarConfirmacao, ErroMonitoria, firmarBlocos, garantirBlocos } from './reservas'
 import { reembolsarParticipacao } from './reembolso'
-import { blocosDaAula, formatarDuracao } from './agenda'
+import { formatarDuracao } from './agenda'
 import type { UsuarioMonitoria } from './servidor'
 import type { Reserva } from './tipos'
 
@@ -129,10 +129,22 @@ export async function criarCheckoutPix(input: {
   const inserted = await orders.insertOne(orderDoc as any)
   const orderId = String(inserted.insertedId)
   const idempotencyKey = deriveIdempotencyKey(orderId)
-  await Promise.all([
+  // Compare-and-set no assento: dois cliques (ou dois aparelhos) ao mesmo
+  // tempo não geram dois PIX — quem chegar segundo recebe o PIX do primeiro.
+  const [, vinculou] = await Promise.all([
     orders.updateOne({ _id: inserted.insertedId as any }, { $set: { idempotencyKey } }),
-    c.participacoes.updateOne({ _id: part._id as any, status: 'aguardando_pagamento' }, { $set: { paymentOrderId: orderId, updatedAt: agora } }),
+    c.participacoes.updateOne(
+      { _id: part._id as any, status: 'aguardando_pagamento', paymentOrderId: part.paymentOrderId ? part.paymentOrderId : { $exists: false } } as any,
+      { $set: { paymentOrderId: orderId, updatedAt: agora } },
+    ),
   ])
+  if (!vinculou.modifiedCount) {
+    await orders.updateOne({ _id: inserted.insertedId as any }, { $set: { status: 'cancelled', updatedAt: new Date() } })
+    const atual = await c.participacoes.findOne({ _id: part._id as any }, { projection: { paymentOrderId: 1 } })
+    const outra = atual?.paymentOrderId && ObjectId.isValid(atual.paymentOrderId) ? await orders.findOne({ _id: new ObjectId(atual.paymentOrderId) as any }) : null
+    if (outra?.pix) return respostaDe(outra)
+    throw new ErroMonitoria(409, 'Seu PIX já está sendo gerado. Aguarde alguns segundos e recarregue.')
+  }
 
   let criado: ProviderOrder | null = null
   try {
@@ -233,7 +245,27 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
 
   if (!paga) {
     const part = await c.participacoes.findOne({ _id: partId } as any)
-    if (!part || part.status === 'paga' || part.status === 'concluida' || part.status.startsWith('reembols')) return
+    if (!part) return
+    if (part.status === 'paga' || part.status === 'concluida' || part.status.startsWith('reembols')) {
+      // Mesmo assento pago DUAS vezes (dois QR em dois aparelhos): o segundo
+      // pagamento não é de ninguém — devolve na hora, com chave própria.
+      if (result.providerOrderId && part.providerPaymentId && part.providerPaymentId !== result.providerOrderId) {
+        try {
+          await getPaymentProvider().refundPayment(result.providerOrderId, { idempotencyKey: `duplicado:${String(order._id)}` })
+          await audit({
+            action: 'payment_refunded',
+            targetUserId: part.alunoId,
+            resourceType: 'monitoria',
+            resourceId: idDe(part),
+            metadata: { motivo: 'pagamento duplicado do mesmo assento', orderId: String(order._id), providerPaymentId: result.providerOrderId },
+          })
+        } catch (err) {
+          console.error('[monitorias] falha ao devolver pagamento duplicado', String(order._id), err)
+          await audit({ action: 'payment_rejected', targetUserId: part.alunoId, resourceType: 'monitoria', resourceId: idDe(part), metadata: { motivo: 'pagamento duplicado — devolver manualmente', orderId: String(order._id) } })
+        }
+      }
+      return
+    }
     // PIX que chegou depois de o assento expirar/cancelar: devolvemos tudo.
     await c.participacoes.updateOne(
       { _id: partId } as any,
@@ -318,31 +350,18 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
 async function confirmarAposPagamento(reserva: Reserva): Promise<void> {
   const c = colecoes(await getDb())
   const id = idDe(reserva)
-  // Os blocos ainda são "hold". Se QUALQUER um venceu (TTL), solta o resto e
-  // tenta travar a aula inteira de novo — firmar só parte deixaria brecha para
-  // outra pessoa marcar no meio da aula.
-  const tutor = await c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { disponibilidade: 1 } })
-  const intervaloMin = tutor?.disponibilidade.intervaloMin || 0
-  const esperados = blocosDaAula(reserva.inicio!, reserva.proposta!.duracaoMin, intervaloMin).length
-  const travados = await c.bloqueios.countDocuments({ reservaId: id })
-  if (travados < esperados) {
-    await c.bloqueios.deleteMany({ reservaId: id })
-    const ok = await reservarBlocos({
-      bloqueios: c.bloqueios,
-      tutorId: reserva.tutorId,
-      reservaId: id,
-      inicio: reserva.inicio!,
-      duracaoMin: reserva.proposta!.duracaoMin,
-      intervaloMin,
-      expiraEm: new Date(Date.now() + 60 * 60_000),
-    })
-    if (!ok) {
-      console.error('[monitorias] horário perdido após pagamento — reembolsando reserva', id)
-      const { reembolsarReserva } = await import('./reembolso')
-      await reembolsarReserva(id, 'O horário deixou de estar disponível antes da confirmação', 'sistema')
-      await c.reservas.updateOne({ _id: reserva._id as any }, { $set: { status: 'expirada', updatedAt: new Date() }, $inc: { versao: 1 } })
-      return
-    }
+  // Os blocos ainda são "hold". Se algum da aula venceu (TTL), tenta travar a
+  // aula inteira de novo — firmar só parte deixaria brecha para outra pessoa
+  // marcar no meio da aula. Perdeu o horário → devolve o dinheiro de todos.
+  if (!(await garantirBlocos(reserva))) {
+    console.error('[monitorias] horário perdido após pagamento — reembolsando reserva', id)
+    const { reembolsarReserva } = await import('./reembolso')
+    await reembolsarReserva(id, 'O horário deixou de estar disponível antes da confirmação', 'sistema')
+    await c.reservas.updateOne(
+      { _id: reserva._id as any, status: 'aguardando_pagamento' },
+      { $set: { status: 'expirada', updatedAt: new Date() }, $inc: { versao: 1 } },
+    )
+    return
   }
   const res = await c.reservas.findOneAndUpdate(
     { _id: reserva._id as any, status: 'aguardando_pagamento' },
@@ -361,6 +380,9 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
   if (!order.refId || !ObjectId.isValid(order.refId)) return
   const part = await c.participacoes.findOne({ _id: new ObjectId(order.refId) } as any)
   if (!part || part.status === 'reembolsada' || part.status === 'chargeback') return
+  // "refunded" que nós mesmos pedimos (reembolso em andamento ou feito pela
+  // plataforma): quem ajusta o repasse é o fluxo do reembolso, pela chave dele.
+  if (novoStatus !== 'charged_back' && part.reembolsos.length > 0) return
   const { estornarRepasse } = await import('./financeiro')
   await c.participacoes.updateOne(
     { _id: part._id as any },
@@ -372,6 +394,7 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
     total: true,
     motivo: novoStatus === 'charged_back' ? 'Contestação (chargeback) no cartão/banco' : 'Reembolso registrado no Mercado Pago',
     por: 'sistema',
+    chave: `revogacao:${idDe(part)}:${novoStatus}`,
   })
   await audit({
     action: 'payment_refunded',

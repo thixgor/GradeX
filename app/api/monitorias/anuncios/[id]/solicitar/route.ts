@@ -8,6 +8,7 @@ import { carregarAnuncioParaContratar } from '@/lib/monitorias/carregar'
 import { criarSolicitacao } from '@/lib/monitorias/reservas'
 import { limparTexto } from '@/lib/monitorias/validacao'
 import { mascararContato } from '@/lib/monitorias/contato'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,9 @@ const Corpo = z
 /** POST — abre um pedido de monitoria (negociação ou "a combinar"). */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: { limit: 10, windowMs: 60 * 60_000 }, emailVerificado: true }, async ({ sessao }) => {
+    // Por pessoa, somando todos os anúncios: cada pedido manda e-mail ao monitor.
+    const lim = await checkRateLimit(`mon-solic:${sessao.userId}`, 'monitorias_solicitar', 15, 60 * 60_000)
+    if (!lim.success) return erro(429, 'Muitos pedidos em pouco tempo. Tente de novo mais tarde.')
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Confira os dados do pedido (mensagem com pelo menos 10 caracteres).')
     const req = await requisitosDoAlunoDe(sessao.userId)

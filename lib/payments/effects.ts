@@ -172,9 +172,14 @@ export async function applyPaymentResult(
   }
 
   // Em refund/chargeback de plano/material, revogar (best-effort)
+  // Monitoria: a contestação passa por "in_mediation" (mapeado para in_process)
+  // antes do desfecho, então o status anterior não é mais "approved". O que
+  // importa é se o dinheiro já tinha entrado (paidAt) — senão o repasse do
+  // monitor seguiria de pé depois de um chargeback perdido.
+  const jaFoiPaga = TERMINAL_APPROVED.includes(prevStatus) || (order.type === 'monitoria' && !!order.paidAt)
   if (
     TERMINAL_FAILED.includes(newStatus) &&
-    TERMINAL_APPROVED.includes(prevStatus) &&
+    jaFoiPaga &&
     (newStatus === 'refunded' || newStatus === 'charged_back')
   ) {
     await releaseCouponRedemption(db, String(order._id), newStatus)

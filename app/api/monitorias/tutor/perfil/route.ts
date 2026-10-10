@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { erro, lerJson, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarUsuario, obterOuCriarTutor } from '@/lib/monitorias/servidor'
-import { SchemaPerfilTutor } from '@/lib/monitorias/validacao'
+import { SchemaPerfilTutor, semContato } from '@/lib/monitorias/validacao'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +15,12 @@ export async function PUT(request: NextRequest) {
     if (!user || user.banned) return erro(403, 'Conta indisponível.')
     const tutor = await obterOuCriarTutor(user)
     const c = await obterColecoes()
-    await c.tutores.updateOne({ _id: tutor._id as any }, { $set: { ...corpo.data, nome: user.name, updatedAt: new Date() } })
+    // O perfil aparece na página pública do anúncio: contato pessoal é mascarado.
+    const { titulo, bio, historia } = corpo.data
+    await c.tutores.updateOne(
+      { _id: tutor._id as any },
+      { $set: { titulo: semContato(titulo), bio: semContato(bio), historia: semContato(historia), nome: user.name, updatedAt: new Date() } },
+    )
     return ok({ salvo: true })
   })
 }

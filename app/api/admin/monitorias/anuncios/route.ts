@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { idDe, obterColecoes } from '@/lib/monitorias/db'
-import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
+import { rotaAutenticada } from '@/lib/monitorias/rota'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { carregarUsuario, requisitosDoMonitorDe } from '@/lib/monitorias/servidor'
 import { maskCpf } from '@/lib/cpf'
 
@@ -19,10 +20,17 @@ export async function GET(request: NextRequest) {
       .find({ _id: { $in: Array.from(new Set(anuncios.map((a) => a.tutorId))).filter(ObjectId.isValid).map((x) => new ObjectId(x)) } } as any)
       .toArray()
     const porTutor = new Map(tutores.map((t) => [idDe(t), t]))
+    // Uma consulta por MONITOR (não por anúncio): 100 anúncios de 30 monitores = 30, não 100.
+    const userIds = Array.from(new Set(anuncios.map((a) => a.userId)))
+    const dados = new Map(
+      await Promise.all(
+        userIds.map(async (id) => [id, await Promise.all([carregarUsuario(id), requisitosDoMonitorDe(id)])] as const),
+      ),
+    )
     const itens = await Promise.all(
       anuncios.map(async (a) => {
         const t = porTutor.get(a.tutorId)
-        const [user, req] = await Promise.all([carregarUsuario(a.userId), requisitosDoMonitorDe(a.userId)])
+        const [user, req] = dados.get(a.userId)!
         return {
           id: idDe(a),
           slug: a.slug,
@@ -49,6 +57,6 @@ export async function GET(request: NextRequest) {
         }
       }),
     )
-    return ok({ itens })
+    return jsonComprimido(request, { itens }, { headers: { 'Cache-Control': 'private, no-store' } })
   })
 }

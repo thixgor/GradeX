@@ -53,6 +53,18 @@ próprio contrato e paga a sua parte. Se o grupo não pagar todo até o prazo,
   (ou `estornado`). Estorno depois do repasse vira **saldo devedor**, abatido
   do próximo pagamento.
 - `monitorias_lancamentos` é um livro-razão só de inserção.
+- Estorno é idempotente pela chave do reembolso (`Repasse.estornos`) e
+  cumulativo: dois parciais nunca descontam duas vezes do valor cheio.
+- A garantia só libera repasse de assento sem pendência (reembolso em
+  andamento/falho ou pedido de cancelamento no suporte —
+  `Participacao.cancelamentoPedidoEm`); resolvida a pendência,
+  `liberarSePronta` solta o resto.
+- Reembolso em lote grava a intenção em todos os assentos antes de chamar o
+  Mercado Pago; a varredura retoma os que ficaram e reembolsa assento pago
+  que tenha sobrado numa reserva encerrada.
+- PIX: criação serializada por assento; segundo pagamento do mesmo assento é
+  devolvido; contestação que passa por mediação também estorna o repasse;
+  em produção o admin não aprova "na mão" pagamento de monitoria.
 
 ## Cancelamento e reembolso (`lib/monitorias/politica.ts`)
 
@@ -77,7 +89,7 @@ tenta de novo com a mesma chave.
 ## Contratos e PDFs
 
 - Texto em `lib/monitorias/documentos/` (termos versionados, contrato, oferta).
-  Termos `2026.10-v2` e contrato/oferta `2026.10-v2`: identificação da empresa
+  Termos e contrato `2026.10-v3` (oferta `2026.10-v2`): identificação da empresa
   (Decreto 7.962, art. 2º), arrependimento, ressalva do CDC, mandato (CC 653),
   LGPD (bases, operadores, retenção de 5 anos, direitos, encarregado), conduta,
   imagem/gravação, menores, nulidade parcial, foro do consumidor (CDC 101, I).
@@ -114,6 +126,18 @@ tenta de novo com a mesma chave.
 - Vídeos: só YouTube/Instagram, guardados por ID; iframe montado pelo servidor.
 - Links externos: https, sem IP/credenciais, aviso antes de sair do site.
 - Toda rota que muda dado recusa `Origin` de outro site (`lib/monitorias/origem.ts`).
+- Papel ATIVO (`papelNaReserva`) só com assento ativo; quem saiu (expirou,
+  cancelou, foi reembolsado) tem `acessoDeLeitura`: vê o histórico só para
+  leitura e com contatos mascarados. Reportar problema exige assento pago e
+  abre 15 min depois do início.
+- Blocos de agenda sempre na grade de 30 min (`blocosDaAula` alinha e
+  `inicioNaGrade` valida) — um início "quebrado" furaria o índice único.
+- Confirmar aula (grátis, manual ou após PIX) exige a aula inteira travada
+  (`garantirBlocos`).
+- Agenda online só com oferta-padrão e Termos na versão vigente.
+- Foto do monitor em pasta opaca (`pastaDaFoto`) e só do store do site.
+- Textos cortados antes de regex; PDF com quebra de linha linear; IP
+  mascarado nos PDFs; limites para propostas (6/10 min) e pedidos (15/h).
 - O anúncio público não expõe o `userId` do monitor, só `donoChave`
   (SHA-256), que o navegador compara para saber "este anúncio é meu".
 - Aluno com data de nascimento de menor de 18 não contrata (o responsável

@@ -18,7 +18,7 @@ import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { centavosParaReais, formatarCentavos } from './dinheiro'
 import { colecoes, idDe } from './db'
-import { estornarRepasse } from './financeiro'
+import { estornarRepasse, liberarSePronta } from './financeiro'
 import { avisar } from './avisos'
 import type { Participacao, Reembolso } from './tipos'
 
@@ -117,7 +117,10 @@ export async function reembolsarParticipacao(input: {
     total: ehTotal,
     motivo: reembolso.motivo,
     por: reembolso.por,
+    chave: reembolso.chave,
   })
+  // Reembolso parcial depois da aula concluída: o resto do repasse pode sair.
+  if (!ehTotal) await liberarSePronta(part.reservaId)
   await audit({
     action: 'payment_refunded',
     actorUserId: reembolso.por === 'sistema' ? undefined : reembolso.por,
@@ -162,9 +165,21 @@ export async function reembolsarParticipacao(input: {
   return { ok: true, total: ehTotal }
 }
 
-/** Reembolsa TODO assento pago da reserva (cancelamento do monitor, grupo que não fechou...). */
+/**
+ * Reembolsa TODO assento pago da reserva (cancelamento do monitor, grupo que não fechou...).
+ *
+ * Em duas passadas: primeiro grava a INTENÇÃO em todos os assentos
+ * ("reembolso_processando", com chave) e só depois chama o Mercado Pago um a
+ * um. Se a função morrer no meio (tempo limite, queda), os que faltaram já
+ * estão marcados e a varredura horária termina o serviço — nenhum assento
+ * pago fica esquecido numa reserva cancelada.
+ */
 export async function reembolsarReserva(reservaId: string, motivo: string, por: string): Promise<{ ok: number; falhas: number }> {
   const c = colecoes(await getDb())
+  const pagosAntes = await c.participacoes.find({ reservaId, status: 'paga' }).toArray()
+  for (const p of pagosAntes) {
+    await registrarIntencao(c, p, null, motivo, por)
+  }
   const pagos = await c.participacoes.find({ reservaId, status: { $in: ['paga', 'reembolso_processando'] } }).toArray()
   let ok = 0
   let falhas = 0
@@ -174,4 +189,26 @@ export async function reembolsarReserva(reservaId: string, motivo: string, por: 
     else falhas++
   }
   return { ok, falhas }
+}
+
+/** Só a primeira metade do reembolso: grava a intenção com chave (compare-and-set). */
+async function registrarIntencao(
+  c: ReturnType<typeof colecoes>,
+  part: Participacao,
+  valorBaseCentavos: number | null,
+  motivo: string,
+  por: string,
+): Promise<boolean> {
+  if (part.status !== 'paga' || part.reembolsos.some((r) => r.status === 'processando')) return false
+  const jaReembolsado = part.reembolsos.filter((r) => r.status === 'concluido').reduce((t, r) => t + r.valorCentavos, 0)
+  const valor = valorBaseCentavos === null ? part.valorCentavos - jaReembolsado : valorBaseCentavos
+  if (valor <= 0) return false
+  const res = await c.participacoes.updateOne(
+    { _id: part._id as any, status: 'paga', 'reembolsos.status': { $ne: 'processando' } } as any,
+    {
+      $push: { reembolsos: { chave: `refund:${idDe(part)}:${part.reembolsos.length}`, valorCentavos: valor, motivo, por, em: new Date(), status: 'processando' } },
+      $set: { status: 'reembolso_processando', statusAntesDoReembolso: 'paga', updatedAt: new Date() },
+    } as any,
+  )
+  return res.modifiedCount === 1
 }

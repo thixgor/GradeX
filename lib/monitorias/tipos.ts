@@ -336,6 +336,9 @@ export interface Participacao {
   /** Status a que o assento volta depois de um reembolso PARCIAL. */
   statusAntesDoReembolso?: StatusParticipacao
   tentativasReembolso?: number
+  /** Pedido de cancelamento (<24h, fora do arrependimento) esperando o suporte: segura o repasse. */
+  cancelamentoPedidoEm?: Date
+  cancelamentoTicketId?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -368,6 +371,10 @@ export interface Repasse {
   /** Fim da aula + 48h. */
   liberaEm?: Date
   payoutId?: string
+  /** Estornos já aplicados (pela chave do reembolso): nunca descontar duas vezes. */
+  estornos?: Array<{ chave: string; perdaCentavos: number; em: Date }>
+  /** Parte do bruto reembolsada DEPOIS que o repasse já tinha saído. */
+  brutoEstornadoAposPagoCentavos?: number
   createdAt: Date
   updatedAt: Date
 }
@@ -448,6 +455,14 @@ export interface EvidenciaAssinatura {
   hash: string
   /** De onde vem a assinatura prévia (versão da oferta / nº do contrato do organizador). */
   referencia?: string
+  /**
+   * Assinatura por ADESÃO (oferta-padrão ou contrato do organizador): o hash do
+   * documento que o monitor de fato assinou em `em`, e quando essa assinatura
+   * foi vinculada a este contrato. Assim a cronologia é verdadeira: "assinou a
+   * oferta X em 01/10; vinculada a este contrato na emissão, em 05/10".
+   */
+  hashOrigem?: string
+  vinculadaEm?: Date
 }
 
 /** Dados congelados no contrato — o PDF e o hash saem daqui. */

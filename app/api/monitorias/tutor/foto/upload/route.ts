@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client'
 import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { pastaDaFoto } from '@/lib/monitorias/cripto'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
@@ -9,7 +10,7 @@ export const maxDuration = 30
 /**
  * Autoriza o envio da foto de monitor direto do navegador para o Blob PÚBLICO
  * de imagens (mesmo store das imagens de flashcard). Cada conta só escreve na
- * própria pasta `monitorias/fotos/<userId>/` — é o que a rota de salvar a foto
+ * própria pasta (`pastaDaFoto`: apelido opaco da conta, não o userId) — é o que a rota de salvar a foto
  * confere depois.
  */
 export async function POST(request: NextRequest): Promise<Response> {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest): Promise<Response> {
         if (!session) throw new Error('Não autenticado')
         const limite = await checkRateLimit(`mon-foto:${session.userId}`, 'monitorias_foto', 10, 60 * 60_000)
         if (!limite.success) throw new Error('Muitos envios. Tente mais tarde.')
-        if (!pathname.startsWith(`monitorias/fotos/${session.userId}/`)) throw new Error('Caminho de upload inválido')
+        if (!pathname.startsWith(pastaDaFoto(session.userId))) throw new Error('Caminho de upload inválido')
         return {
           access: 'public',
           addRandomSuffix: true,

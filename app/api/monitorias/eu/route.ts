@@ -4,6 +4,7 @@ import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { requisitosDoAlunoDe, requisitosDoMonitorDe } from '@/lib/monitorias/servidor'
 import { resumir } from '@/lib/monitorias/financeiro'
 import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
+import { VERSAO_OFERTA } from '@/lib/monitorias/documentos/contrato'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
         temRevisaoPendente: !!a.revisaoPendente,
         moderacao: a.moderacao ? { acao: a.moderacao.acao, motivo: a.moderacao.motivo, em: a.moderacao.em } : null,
         direto: !!a.modos?.direto,
-        ofertaAssinada: !!a.ofertaAssinada,
+        ofertaAssinada: a.ofertaAssinada?.versao === VERSAO_OFERTA,
       })),
       pedidosPendentes: pendentes,
     })

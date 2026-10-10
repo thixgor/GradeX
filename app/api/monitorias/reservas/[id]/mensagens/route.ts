@@ -3,7 +3,7 @@ import { checkRateLimit } from '@/lib/rate-limit'
 import { getDb } from '@/lib/mongodb'
 import { erro, idDe, lerJson, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
-import { carregarReserva, papelNaReserva } from '@/lib/monitorias/reservas'
+import { acessoDeLeitura, assentoPago, carregarReserva, papelNaReserva } from '@/lib/monitorias/reservas'
 import { SchemaMensagem } from '@/lib/monitorias/validacao'
 import { AVISO_CONTATO, mascararContato } from '@/lib/monitorias/contato'
 import { STATUS_FINAIS } from '@/lib/monitorias/estado'
@@ -24,8 +24,8 @@ const POR_PAGINA = 100
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: { limit: 120, windowMs: 60_000 } }, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
-    const papel = await papelNaReserva(reserva, sessao.userId)
-    if (!papel) return naoEncontrado()
+    const acesso = await acessoDeLeitura(reserva, sessao.userId)
+    if (!acesso) return naoEncontrado()
     const busca = new URL(request.url).searchParams
     const depois = busca.get('depois')
     const antes = busca.get('antes')
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         id: idDe(m),
         autor: m.autorId === 'sistema' ? 'sistema' : m.autorId === sessao.userId ? 'eu' : m.autorId === reserva.tutorUserId ? 'monitor' : 'aluno',
         tipo: m.tipo,
-        texto: m.texto,
+        texto: acesso.mascarar ? mascararContato(m.texto).texto : m.texto,
         propostaId: m.propostaId || null,
         createdAt: m.createdAt,
       })),
@@ -58,15 +58,19 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 /** POST {texto} — mensagem no chat. Antes do pagamento, contatos pessoais são ocultados. */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
-    const corpo = SchemaMensagem.safeParse(await lerJson(request))
-    if (!corpo.success) return erro(400, corpo.error.issues[0]?.message || 'Mensagem inválida.')
+    // Limite ANTES de validar: o limite por conta (não por reserva) segura
+    // quem tentasse gastar CPU trocando o id na URL.
     const limite = await checkRateLimit(`mon-msg:${sessao.userId}`, 'monitorias_mensagem', 20, 60_000)
     if (!limite.success) return erro(429, 'Calma! Muitas mensagens seguidas.')
+    const corpo = SchemaMensagem.safeParse(await lerJson(request))
+    if (!corpo.success) return erro(400, corpo.error.issues[0]?.message || 'Mensagem inválida.')
     const reserva = await carregarReserva(params.id)
     const papel = await papelNaReserva(reserva, sessao.userId)
     if (!papel) return naoEncontrado()
     if (STATUS_FINAIS.includes(reserva.status) && reserva.status !== 'concluida') return erro(409, 'Esta reserva foi encerrada.')
-    const { texto, mascarou } = LIVRE.includes(reserva.status) ? { texto: corpo.data.texto, mascarou: false } : mascararContato(corpo.data.texto)
+    // Chat livre só depois da confirmação E para quem tem assento pago (ou o monitor).
+    const livre = LIVRE.includes(reserva.status) && (await assentoPago(reserva, sessao.userId))
+    const { texto, mascarou } = livre ? { texto: corpo.data.texto, mascarou: false } : mascararContato(corpo.data.texto)
     const c = await obterColecoes()
     const agora = new Date()
     const destino = papel === 'monitor' ? reserva.solicitanteId : reserva.tutorUserId

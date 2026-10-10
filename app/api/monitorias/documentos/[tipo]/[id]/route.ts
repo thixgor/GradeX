@@ -8,7 +8,8 @@ import { rotaAutenticada } from '@/lib/monitorias/rota'
 import { secoesDoContrato, tituloDoContrato } from '@/lib/monitorias/documentos/contrato'
 import { secoesDosTermos, tituloDosTermos, VERSAO_TERMOS } from '@/lib/monitorias/documentos/termos'
 import { pdfDaConversa, pdfDoComprovante, pdfDoContrato, pdfDoRepasse, pdfDosTermos } from '@/lib/monitorias/pdf'
-import { papelNaReserva } from '@/lib/monitorias/reservas'
+import { acessoDeLeitura } from '@/lib/monitorias/reservas'
+import { mascararContato } from '@/lib/monitorias/contato'
 import { ROTULOS_STATUS } from '@/lib/monitorias/estado'
 import { reaisParaCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
@@ -17,6 +18,9 @@ import { nomeCivil } from '@/lib/monitorias/contratos'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 30
+
+/** Teto do PDF da conversa (o documento avisa quando corta; o resto segue na sala). */
+const LIMITE_PDF_CONVERSA = 4000
 
 const ROTULO_ASSENTO: Record<string, string> = {
   aguardando_assinatura: 'Aguardando assinatura',
@@ -90,11 +94,12 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
     if (params.tipo === 'conversa') {
       const reserva = await c.reservas.findOne({ _id } as any)
       if (!reserva) return naoEncontrado()
-      const papel = await papelNaReserva(reserva, sessao.userId)
-      if (!papel && !admin) return naoEncontrado()
+      const acesso = await acessoDeLeitura(reserva, sessao.userId)
+      if (!acesso && !admin) return naoEncontrado()
+      const papel = acesso?.papel || null
       const reservaId = idDe(reserva)
       const [mensagens, assentos, tutor] = await Promise.all([
-        c.mensagens.find({ reservaId }).sort({ createdAt: 1 }).limit(3000).toArray(),
+        c.mensagens.find({ reservaId }).sort({ createdAt: 1 }).limit(LIMITE_PDF_CONVERSA + 1).toArray(),
         c.participacoes.find({ reservaId }, { projection: { alunoId: 1, alunoNome: 1, status: 1 } }).toArray(),
         c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1 } }),
       ])
@@ -111,9 +116,10 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
           ['Situação', ROTULOS_STATUS[reserva.status]?.rotulo || reserva.status],
           ['Aula', reserva.inicio ? `${formatarEmBrasilia(reserva.inicio, { dateStyle: 'full', timeStyle: 'short' })} (Brasília)` : 'a combinar'],
         ],
-        mensagens: mensagens.map((m) => ({
+        truncado: mensagens.length > LIMITE_PDF_CONVERSA,
+        mensagens: mensagens.slice(0, LIMITE_PDF_CONVERSA).map((m) => ({
           autor: m.autorId === 'sistema' ? 'Sistema' : nomes.get(m.autorId) || 'Participante',
-          texto: m.texto,
+          texto: acesso?.mascarar ? mascararContato(m.texto).texto : m.texto,
           em: m.createdAt,
           sistema: m.autorId === 'sistema' || m.tipo === 'sistema',
         })),
@@ -170,7 +176,8 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
         return pdf(bytes, `venda-monitoria-${idDe(part)}.pdf`)
       }
 
-      if (!part.paymentOrderId || !ObjectId.isValid(part.paymentOrderId)) return naoEncontrado()
+      // Comprovante só existe para pagamento que entrou de fato.
+      if (!part.paymentOrderId || !ObjectId.isValid(part.paymentOrderId) || !part.pagoEm) return naoEncontrado()
       const db = await getDb()
       const [order, aluno, monitor, contrato] = await Promise.all([
         db.collection<PaymentOrder>('payment_orders').findOne({ _id: new ObjectId(part.paymentOrderId) as any }),

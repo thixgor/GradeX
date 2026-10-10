@@ -224,3 +224,60 @@ describe('origem confiável (CSRF)', () => {
     expect(origemConfiavel(req('POST', { host: 'domineaqui.com.br' }))).toBe(true)
   })
 })
+
+describe('correções da revisão adversarial', () => {
+  it('blocos sempre na grade de 30 min: início quebrado não escapa do índice único', async () => {
+    const { blocosDaAula, inicioNaGrade } = await import('@/lib/monitorias/agenda')
+    const certo = blocosDaAula(new Date('2026-10-19T22:00:00.000Z'), 60)
+    const torto = blocosDaAula(new Date('2026-10-19T22:00:00.001Z'), 60)
+    // O torto cobre os mesmos blocos (e mais um) — colide com a aula já marcada.
+    for (const b of certo) expect(torto.map((x) => x.getTime())).toContain(b.getTime())
+    expect(inicioNaGrade(new Date('2026-10-19T22:30:00.000Z'))).toBe(true)
+    expect(inicioNaGrade(new Date('2026-10-19T22:10:00.000Z'))).toBe(false)
+    expect(inicioNaGrade(new Date('2026-10-19T22:00:00.001Z'))).toBe(false)
+  })
+
+  it('monitor que não aparece: reporte abre 15 min depois do início', async () => {
+    const { podeReportar } = await import('@/lib/monitorias/politica')
+    const inicio = new Date('2026-10-19T22:00:00Z')
+    const fim = new Date('2026-10-20T00:00:00Z')
+    expect(podeReportar(fim, new Date('2026-10-19T22:10:00Z'), inicio)).toBe(false)
+    expect(podeReportar(fim, new Date('2026-10-19T22:20:00Z'), inicio)).toBe(true)
+    expect(podeReportar(fim, new Date('2026-10-22T01:00:00Z'), inicio)).toBe(false)
+  })
+
+  it('IP aparece mascarado no PDF', async () => {
+    const { mascararIp } = await import('@/lib/monitorias/pdf')
+    expect(mascararIp('189.45.12.34')).toBe('189.45.*.*')
+    expect(mascararIp('2804:14c:abcd::1')).toBe('2804:14c:…')
+    expect(mascararIp(undefined)).toBe('—')
+  })
+
+  it('anúncio e perfil públicos não levam contato pessoal', async () => {
+    const { semContato } = await import('@/lib/monitorias/validacao')
+    const t = semContato('Chama no zap (11) 98888-7777 ou fulano@gmail.com, insta @fulano.med')
+    expect(t).not.toMatch(/98888|gmail|@fulano/)
+  })
+
+  it('texto gigante é cortado antes de qualquer regex (sem travar a função)', async () => {
+    const { limparTexto } = await import('@/lib/monitorias/validacao')
+    const inicio = performance.now()
+    const r = limparTexto('<'.repeat(1_000_000))
+    expect(performance.now() - inicio).toBeLessThan(1500)
+    expect(r.length).toBeLessThanOrEqual(20_000)
+  })
+
+  it('PDF com palavra de 2000 letras sai rápido (quebra linear)', async () => {
+    const { pdfDaConversa } = await import('@/lib/monitorias/pdf')
+    const inicio = performance.now()
+    const bytes = await pdfDaConversa({
+      titulo: 'Teste',
+      reservaId: 'x',
+      participantes: [],
+      materiais: [],
+      mensagens: Array.from({ length: 10 }, () => ({ autor: 'Aluno', texto: 'W'.repeat(2000), em: new Date(), sistema: false })),
+    })
+    expect(bytes.length).toBeGreaterThan(1000)
+    expect(performance.now() - inicio).toBeLessThan(3000)
+  })
+})

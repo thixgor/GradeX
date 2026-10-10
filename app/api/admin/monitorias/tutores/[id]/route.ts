@@ -36,7 +36,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         titulo: corpo.data.acao === 'suspender' ? 'Perfil de monitor suspenso' : corpo.data.acao === 'reativar' ? 'Perfil de monitor reativado' : 'Troca de chave PIX cancelada',
         mensagem: corpo.data.motivo,
         url: '/monitorias/painel',
-        email: { assunto: 'Atualização no seu perfil de monitor', paragrafos: [corpo.data.motivo] },
+        email: {
+          assunto: 'Atualização no seu perfil de monitor',
+          paragrafos: [
+            corpo.data.motivo,
+            // Termos do Monitor, 7.4: motivo comunicado e prazo de contestação.
+            ...(corpo.data.acao === 'suspender'
+              ? ['Você pode contestar esta suspensão em até 10 dias, abrindo um ticket na Central de Ajuda. Valores de aulas já prestadas continuam sendo repassados normalmente, descontados eventuais reembolsos.']
+              : []),
+          ],
+        },
       },
     ])
     return ok({ feito: true })

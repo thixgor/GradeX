@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { erro, lerJson, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarUsuario, obterOuCriarTutor } from '@/lib/monitorias/servidor'
+import { hostDoBlobDeImagens, pastaDaFoto } from '@/lib/monitorias/cripto'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,8 +22,11 @@ export async function PUT(request: NextRequest) {
     } catch {
       return erro(400, 'URL inválida.')
     }
-    const hostOk = url.protocol === 'https:' && /^[a-z0-9]+\.public\.blob\.vercel-storage\.com$/i.test(url.hostname)
-    if (!hostOk || !url.pathname.startsWith(`/monitorias/fotos/${sessao.userId}/`)) return erro(400, 'Foto inválida.')
+    // Só o store de imagens DESTE site (o de outra conta Vercel passaria por
+    // cima do limite de tipo e tamanho do upload) e só a pasta desta conta.
+    const host = hostDoBlobDeImagens()
+    const hostOk = url.protocol === 'https:' && (host ? url.hostname.toLowerCase() === host : /^[a-z0-9]+\.public\.blob\.vercel-storage\.com$/i.test(url.hostname))
+    if (!hostOk || !url.pathname.startsWith(`/${pastaDaFoto(sessao.userId)}`)) return erro(400, 'Foto inválida.')
     const user = await carregarUsuario(sessao.userId)
     if (!user || user.banned) return erro(403, 'Conta indisponível.')
     const tutor = await obterOuCriarTutor(user)
@@ -30,4 +34,9 @@ export async function PUT(request: NextRequest) {
     await c.tutores.updateOne({ _id: tutor._id as any }, { $set: { fotoUrl: `${url.origin}${url.pathname}`, updatedAt: new Date() } })
     return ok({ fotoUrl: `${url.origin}${url.pathname}` })
   })
+}
+
+/** GET — a pasta onde o navegador deve enviar a foto (apelido opaco da conta). */
+export async function GET(request: NextRequest) {
+  return rotaAutenticada(request, {}, async ({ sessao }) => ok({ pasta: pastaDaFoto(sessao.userId) }))
 }

@@ -93,6 +93,16 @@ export async function criarPayout(input: { tutorId: string; adminId: string; ip:
     await c.payouts.updateOne({ _id: res.insertedId } as any, { $set: { status: 'cancelado', updatedAt: new Date() } })
     throw new ErroMonitoria(409, 'Os repasses mudaram enquanto o pagamento era criado. Tente de novo.')
   }
+  // Um estorno parcial pode ter mudado algum valor entre a leitura e a trava:
+  // o total vem dos repasses JÁ travados (agora ninguém mais mexe neles).
+  const travadosAgora = await c.repasses.find({ payoutId, status: 'em_pagamento' }).toArray()
+  const somaReal = travadosAgora.reduce((t, r) => t + r.liquidoTutorCentavos, 0)
+  if (somaReal !== soma) {
+    const abatidoReal = Math.min(somaReal, Math.max(0, tutor.saldoDevedorCentavos || 0))
+    payout.totalCentavos = somaReal - abatidoReal
+    payout.abatidoCentavos = abatidoReal
+    await c.payouts.updateOne({ _id: res.insertedId } as any, { $set: { totalCentavos: payout.totalCentavos, abatidoCentavos: abatidoReal, updatedAt: new Date() } })
+  }
   await provedorDePayout().enviar(payout)
   await audit({ action: 'monitoria_payout_criado', actorUserId: input.adminId, targetUserId: tutor.userId, resourceType: 'monitoria_payout', resourceId: payoutId, metadata: { totalCentavos: total, abatido, repasses: payout.repasseIds.length }, ip: input.ip })
   return payout
@@ -144,12 +154,15 @@ export async function confirmarPayout(input: { payoutId: string; e2eId: string; 
     },
   ]
   if (payout.abatidoCentavos > 0) {
+    // Só informativo (valor 0): a dívida já entrou no extrato quando nasceu
+    // (lançamento 'saldo_devedor' negativo) e o PIX acima já veio menor.
+    // Lançar −abatido de novo descontaria a mesma dívida duas vezes.
     lancamentos.push({
       tutorId: payout.tutorId,
       payoutId: input.payoutId,
       tipo: 'repasse' as const,
-      valorCentavos: -payout.abatidoCentavos,
-      descricao: 'Saldo devedor abatido neste pagamento',
+      valorCentavos: 0,
+      descricao: `Saldo devedor de ${formatarCentavos(payout.abatidoCentavos)} quitado neste pagamento (descontado do PIX)`,
       por: input.adminId,
     })
     await c.tutores.updateOne({ _id: new ObjectId(payout.tutorId) } as any, { $inc: { saldoDevedorCentavos: -payout.abatidoCentavos } })
