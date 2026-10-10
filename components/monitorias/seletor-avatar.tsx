@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Check, ChevronDown, ExternalLink, Loader2 } from 'lucide-react'
 import { AVATARES, FILTROS_AVATAR, SERIES_AVATAR, avatarPorId, creditoDoAvatar, descricaoDoAvatar, type Avatar, type FiltroAvatar, type SerieAvatar } from '@/lib/monitorias/avatares'
 import { cn } from '@/lib/utils'
+import { atualizarAvatarNoBootstrap } from '@/hooks/use-bootstrap'
 import { Avatar as Iniciais, CaixaErro, api } from './base'
 
 /**
@@ -46,6 +47,7 @@ export function SeletorAvatar({
     try {
       await api(endpoint, { method: 'PUT', json: { avatar: id } })
       setEscolhido(id)
+      atualizarAvatarNoBootstrap(id)
       onEscolhido(id)
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Não foi possível salvar. Tente de novo.')

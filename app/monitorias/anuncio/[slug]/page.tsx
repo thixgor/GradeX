@@ -32,7 +32,7 @@ interface Dados {
   tutor: { id: string; donoChave: string; nome: string; titulo: string; bio: string; historia: string; fotoUrl: string | null; stats: { aulasDadas: number; nota: number; avaliacoes: number }; membroDesde: string }
   disponibilidade: JanelaSemanal[]
   perguntas: Pergunta[]
-  avaliacoes: Array<{ nome: string; nota: number; comentario: string; em: string }>
+  avaliacoes: Array<{ nome: string; foto?: string | null; nota: number; comentario: string; em: string }>
   outros: Array<{ slug: string; titulo: string; materia: string; preco: ConteudoAnuncio['preco'] }>
 }
 
@@ -280,8 +280,11 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {dados.avaliacoes.map((av, i) => (
                   <li key={i} className="rounded-2xl border border-border bg-card p-4 text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold">{av.nome}</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="flex min-w-0 items-center gap-2.5">
+                        <Avatar nome={av.nome} url={av.foto} tamanho={32} />
+                        <span className="truncate font-semibold">{av.nome}</span>
+                      </span>
                       <span className="flex">{Array.from({ length: 5 }).map((_, k) => <Star key={k} className={cn('h-3.5 w-3.5', k < av.nota ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30')} />)}</span>
                     </div>
                     {av.comentario && <p className="mt-1 text-muted-foreground">{av.comentario}</p>}
@@ -551,6 +554,7 @@ function Depoimento({ avaliacoes }: { avaliacoes: Dados['avaliacoes'] }) {
       <blockquote className="line-clamp-3 text-foreground/90">“{melhor.comentario}”</blockquote>
       <figcaption className="mt-1.5 flex items-center gap-1 text-muted-foreground">
         <span className="flex">{Array.from({ length: melhor.nota }).map((_, i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</span>
+        <Avatar nome={melhor.nome} url={melhor.foto} tamanho={20} className="ml-1" />
         {melhor.nome}, aluno verificado
       </figcaption>
     </figure>

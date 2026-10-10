@@ -35,6 +35,8 @@ export interface BootstrapUser {
   role: 'admin' | 'user'
   secondaryRole?: 'monitor' | string
   emailVerified: boolean
+  /** Retrato da galeria (id do catálogo em lib/monitorias/avatares). */
+  avatar?: string
   accountType: 'free' | 'trial' | 'premium'
   trialExpiresAt?: string
   trialDaysUsed?: number
@@ -542,6 +544,17 @@ export function clearBootstrapCache() {
   invalidateCache('/api/auth/me')
   invalidateCache('/api/user/tier-limits')
   invalidateCache('/api/notifications')
+  notifyListeners()
+}
+
+/**
+ * Troca o retrato no cache da sessão (memória + aparelho) sem refazer o
+ * bootstrap: o menu lateral e quem mais lê `user.avatar` atualizam na hora.
+ */
+export function atualizarAvatarNoBootstrap(avatar: string) {
+  if (!globalBootstrapData?.user) return
+  globalBootstrapData = { ...globalBootstrapData, user: { ...globalBootstrapData.user, avatar } }
+  saveBootstrapToStorage(globalBootstrapData)
   notifyListeners()
 }
 
