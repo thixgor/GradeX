@@ -169,6 +169,12 @@ export interface ConteudoAnuncio {
   materiais: MaterialComplementar[]
   /** Aviso "tenho materiais complementares" mesmo sem links públicos. */
   temMateriais: boolean
+  /**
+   * Material OFICIAL da plataforma (coleção `materials`) que o monitor indica
+   * para levar junto. Só o id: título e preço são sempre lidos do banco.
+   * Opcional para o aluno (sem venda casada, CDC art. 39, I).
+   */
+  materialOficialId?: string | null
 }
 
 export interface AssinaturaOferta {
@@ -355,8 +361,27 @@ export interface Participacao {
   pagamentoAvisadoEm?: Date
   /** Pagamento conferido no Mercado Pago (status, valor e referência) antes de liberar o repasse. */
   conferidoNoGatewayEm?: Date
+  /**
+   * Percentual da plataforma DESTA contratação, gravado uma vez, quando o
+   * pagamento é aprovado (vem do pedido, que o servidor montou). Ausente =
+   * assento de antes da regra = 10%.
+   */
+  taxaPercent?: number
+  /** Material oficial comprado junto no mesmo PIX (retrato do pedido aprovado). */
+  materialOficial?: MaterialNaCompra
   createdAt: Date
   updatedAt: Date
+}
+
+/** Retrato do material oficial vendido junto com a monitoria (preço oficial do banco). */
+export interface MaterialNaCompra {
+  id: string
+  titulo: string
+  precoCentavos: number
+  /** Pedido (payment_orders) em que foi vendido — a compra do material aponta para ele. */
+  paymentOrderId: string
+  /** Preço ≥ 10% do valor da aula no momento da compra. */
+  isentaTaxa: boolean
 }
 
 /** Blocos de 30 min ocupados. Índice único (tutorId, inicioBloco) = sem conflito de horário. */
@@ -383,6 +408,8 @@ export interface Repasse {
   brutoCentavos: number
   taxaPlataformaCentavos: number
   liquidoTutorCentavos: number
+  /** Percentual aplicado (0 ou 10). Ausente = repasse de antes da regra = 10%. */
+  taxaPercent?: number
   status: StatusRepasse
   /** Fim da aula + 48h. */
   liberaEm?: Date

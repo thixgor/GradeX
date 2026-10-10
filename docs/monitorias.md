@@ -3,7 +3,8 @@
 Marketplace de aulas entre usuários: quem domina uma matéria anuncia; quem
 precisa contrata, assina contrato e paga por PIX. A plataforma recebe o
 dinheiro, segura em **garantia** e repassa **90%** ao monitor depois da aula
-(10% ficam de taxa de intermediação).
+(10% ficam de taxa de intermediação), ou **100%** quando o aluno leva junto o
+material oficial indicado (ver "Comissão com material oficial").
 
 > "Monitor" aqui NÃO é o cargo de equipe `user.secondaryRole === 'monitor'`.
 > No código, quem anuncia é um **tutor**; as coleções são `monitorias_*`.
@@ -131,6 +132,49 @@ Saídas do grupo (cada assento é independente — contrato, pagamento, repasse)
 Teste de integração (Mongo real + MP falso), opcional:
 `MONITORIAS_MONGO_TESTE=mongodb://127.0.0.1:27017/ npx vitest run __tests__/monitorias/pagamentos-integracao.test.ts`
 (apaga o banco `monitorias-pagamentos-teste` daquela instância).
+
+## Comissão com material oficial (`lib/monitorias/comissao.ts`)
+
+Regra: o monitor recebe **100%** da aula quando o aluno compra junto, no mesmo
+PIX, o material OFICIAL indicado no anúncio, e o preço do material é **≥ 10%
+do valor da aula**. Senão, 90/10. Em centavos, sem divisão: `preço × 100 ≥ aula × 10`.
+
+| Aula | Material | Monitor |
+|---:|---:|---:|
+| R$ 100,00 | R$ 10,00 | 100% |
+| R$ 100,00 | R$ 9,99 | 90% (material vendido mesmo assim) |
+| R$ 200,00 | R$ 20,00 | 100% |
+| R$ 200,00 | R$ 15,00 | 90% |
+
+Como fica seguro:
+- **Material oficial** = documento de `materials` (só admin cria), `pricing: 'paid'`,
+  preço > 0 e visível. O anúncio guarda só `materialOficialId`; ao salvar,
+  `erroDoMaterialOficial` confere no banco (link externo, grátis, escondido ou id
+  inventado → 400). Troca em anúncio publicado passa pela revisão do admin.
+- **Preço oficial lido no checkout** (`materialOficialAVenda`), sem cupom/lote:
+  o navegador só manda `{ incluirMaterial: boolean }` (schema `strict`).
+- **Opcional para o aluno** (sem venda casada, CDC art. 39, I). Quem já tem acesso
+  (compra, pacote, admin) ou resgata pelo Plus+ (`alunoJaTemMaterial`) não recebe a
+  oferta, e forçar dá 409: sem venda, sem isenção.
+- **Gravado uma vez, do pedido pago**: o pedido leva `metadata.materialOficial`
+  e `taxaPercent`; na aprovação o assento copia (no mesmo compare-and-set do
+  "pago") `taxaPercent` e `materialOficial`, **recalculando a regra** a partir do
+  preço do pedido (metadado adulterado não isenta). Preço do material ou da aula
+  que muda depois não mexe na compra feita.
+- **Repasse** guarda `taxaPercent`; estorno usa o mesmo percentual. Registro sem o
+  campo = 10% (`percentualGravado`): nada muda para trás. `dividirValor` só aceita
+  0 ou 10.
+- **Entrega do material**: `material_purchases` com `providerOrderId` = pedido da
+  monitoria e `origem: 'monitoria'` (upsert por pedido; repetir a aprovação não
+  duplica). Só o material do pedido que pagou o assento (PIX duplicado volta inteiro).
+- **Reembolso total** (devolve o PIX inteiro) e estorno/contestação no MP revogam o
+  material. Parcial (só aula) mantém material e percentual.
+- **Antes de liberar** (`conferirComGateway`): se a venda do material não está mais
+  `completed`, `reaplicarTaxaSemMaterial` volta a 10% (dívida, se já pago).
+- Split do sócio (`commissionableAmount`) = taxa + material (salvo
+  `excludeFromCommission`).
+- Contrato v4: cláusula 3.3 (isenção) e 3.5 (material vendido pela plataforma,
+  opcional, reembolso total devolve o material).
 
 ## Cancelamento e reembolso (`lib/monitorias/politica.ts`)
 

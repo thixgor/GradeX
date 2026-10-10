@@ -46,12 +46,13 @@ export interface DetalheReserva {
     paymentOrderId: string | null
     reembolsos: Array<{ valorCentavos: number; status: string; em: string; motivo: string }>
     avaliacao: { nota: number; comentario: string } | null
+    materialOficial?: { id: string; titulo: string } | null
   } | null
   meuContrato: { id: string; numero: string; status: string; falta: Array<'contratante' | 'contratado'> } | null
   contratosParaAssinar: Array<{ id: string; numero: string }>
   /** Do anúncio (guardados na reserva) + os enviados pelo monitor só para esta aula. */
   materiais: Array<{ titulo: string; url: string; dominio: string; exclusivo: boolean; em: string | null }>
-  assentos: Array<{ alunoNome: string; status: string; eu: boolean; id?: string; contratoId?: string | null }>
+  assentos: Array<{ alunoNome: string; status: string; eu: boolean; id?: string; contratoId?: string | null; semTaxa?: boolean }>
   mensagens: MensagemReserva[]
 }
 

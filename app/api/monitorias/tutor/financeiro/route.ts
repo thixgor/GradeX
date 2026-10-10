@@ -52,6 +52,7 @@ export async function GET(request: NextRequest) {
         inicio: porReserva.get(r.reservaId)?.inicio || null,
         brutoCentavos: r.brutoCentavos,
         taxaCentavos: r.taxaPlataformaCentavos,
+        semTaxa: r.taxaPercent === 0,
         liquidoCentavos: r.liquidoTutorCentavos,
         status: r.status,
         liberaEm: r.liberaEm || null,

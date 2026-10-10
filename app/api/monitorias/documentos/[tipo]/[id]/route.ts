@@ -168,6 +168,7 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
               taxaCentavos: repasse.taxaPlataformaCentavos,
               liquidoCentavos: repasse.liquidoTutorCentavos,
               status: ROTULO_REPASSE[repasse.status] || repasse.status,
+              taxaPercent: repasse.taxaPercent,
             },
           ],
           totalCentavos: repasse.liquidoTutorCentavos,
@@ -187,6 +188,8 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
       ])
       if (!order || !aluno || !monitor) return naoEncontrado()
       const total = reaisParaCentavos(order.paidAmount ?? order.amount)
+      // Material vendido NESTE pedido (não entra como "taxa do PIX").
+      const material = part.materialOficial && part.materialOficial.paymentOrderId === String(order._id) ? part.materialOficial : null
       const bytes = await pdfDoComprovante({
         pedidoId: String(order._id),
         pagamentoId: order.providerPaymentId || '',
@@ -198,7 +201,9 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
         inicio: reserva.inicio,
         duracao: reserva.proposta ? formatarDuracao(reserva.proposta.duracaoMin) : '—',
         valorCentavos: part.valorCentavos,
-        taxaPixCentavos: Math.max(0, total - part.valorCentavos),
+        material: material ? { titulo: material.titulo, precoCentavos: material.precoCentavos } : null,
+        taxaPercent: part.taxaPercent,
+        taxaPixCentavos: Math.max(0, total - part.valorCentavos - (material?.precoCentavos ?? 0)),
         totalPagoCentavos: total,
         contratoNumero: contrato?.numero,
         status: order.status === 'approved' ? ROTULO_ASSENTO[part.status] || 'Pago' : `Pagamento ${order.status}`,
@@ -228,6 +233,7 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
           taxaCentavos: r.taxaPlataformaCentavos,
           liquidoCentavos: r.liquidoTutorCentavos,
           status: ROTULO_REPASSE[r.status] || r.status,
+          taxaPercent: r.taxaPercent,
         })),
         abatidoCentavos: payout.abatidoCentavos,
         totalCentavos: payout.totalCentavos,

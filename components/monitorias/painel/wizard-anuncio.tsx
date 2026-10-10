@@ -21,6 +21,7 @@ import { CaixaAviso, CaixaErro, Esqueleto, api } from '../base'
 import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
 import { AnelForca, CartaoForca } from '@/components/monitorias/forca-anuncio'
 import { CartaoAnuncio, type CardAnuncio } from '@/components/monitorias/cartao-anuncio'
+import { EscolherMaterialOficial } from '@/components/monitorias/escolher-material-oficial'
 
 const PASSOS = ['Básico', 'Vídeos', 'Preço', 'Perguntas', 'Materiais', 'Revisão'] as const
 
@@ -48,6 +49,7 @@ interface Form {
   faq: Array<{ pergunta: string; resposta: string }>
   materiais: Array<{ titulo: string; url: string }>
   temMateriais: boolean
+  materialOficialId: string | null
 }
 
 const VAZIO: Form = {
@@ -57,7 +59,7 @@ const VAZIO: Form = {
   negociacao: true, aCombinar: false,
   grupo: false, grupoMax: 4, faixas: [{ minAlunos: 2, valor: '' }],
   gratis: false, gratisDuracao: 30,
-  faq: [], materiais: [], temMateriais: false,
+  faq: [], materiais: [], temMateriais: false, materialOficialId: null,
 }
 
 const reais = (c: number) => (c / 100).toFixed(2).replace('.', ',')
@@ -74,6 +76,7 @@ function deConteudo(c: ConteudoAnuncio): Form {
     faixas: c.grupo.faixas.length ? c.grupo.faixas.map((f) => ({ minAlunos: f.minAlunos, valor: reais(f.valorPorPessoaCentavos) })) : [{ minAlunos: 2, valor: '' }],
     gratis: c.aulaGratis.ativa, gratisDuracao: c.aulaGratis.duracaoMin,
     faq: c.faq, materiais: c.materiais.map((m) => ({ titulo: m.titulo, url: m.url })), temMateriais: c.temMateriais,
+    materialOficialId: c.materialOficialId || null,
   }
 }
 
@@ -99,6 +102,7 @@ function paraCorpo(f: Form) {
     faq: f.faq.filter((x) => x.pergunta.trim() && x.resposta.trim()),
     materiais: f.materiais.filter((x) => x.titulo.trim() && x.url.trim()),
     temMateriais: f.temMateriais,
+    materialOficialId: f.materialOficialId,
   }
 }
 
@@ -305,7 +309,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                       </select>
                     </Campo>
                   </div>
-                  {valorCent > 0 && <p className="text-xs text-muted-foreground">Você recebe {formatarCentavos(valorCent - Math.floor(valorCent / 10))} de cada {formatarCentavos(valorCent)} (taxa da plataforma de 10%). A taxa do PIX é paga pelo aluno.</p>}
+                  {valorCent > 0 && <p className="text-xs text-muted-foreground">Você recebe {formatarCentavos(valorCent - Math.floor(valorCent / 10))} de cada {formatarCentavos(valorCent)} (taxa da plataforma de 10%), ou {formatarCentavos(valorCent)} inteiros quando o aluno leva junto o material oficial que você indicar no passo Materiais. A taxa do PIX é paga pelo aluno.</p>}
 
                   <h3 className="pt-2 text-sm font-semibold">Como os alunos contratam? (escolha uma ou mais)</h3>
                   <Opcao ativo={f.direto} onClick={() => set('direto', !f.direto)} icone={CalendarCheck} titulo="Agendamento direto" texto="O aluno escolhe um horário livre na sua agenda e já paga. Você assina uma oferta-padrão uma vez.">
@@ -390,6 +394,8 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
               {passo === 4 && (
                 <>
+                  <EscolherMaterialOficial valorId={f.materialOficialId} valorAulaCentavos={valorCent} onChange={(id) => set('materialOficialId', id)} />
+                  <h3 className="pt-2 text-sm font-semibold">Seus materiais por link (opcional)</h3>
                   <CaixaAviso>Materiais por link (Drive, Notion...) são de sua responsabilidade. A plataforma não hospeda nem se responsabiliza pelo conteúdo, e o aluno vê esse aviso antes de abrir o link.</CaixaAviso>
                   {f.materiais.map((m, i) => {
                     const valido = !m.url.trim() || !!validarLinkExterno(m.url)

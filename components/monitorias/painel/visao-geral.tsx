@@ -218,7 +218,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
             <Vazio
               icone={<Plus className="h-5 w-5" />}
               titulo="Seu primeiro anúncio"
-              texto="Conte o que você ensina, grave um vídeo curto e defina preço e agenda. Anunciar é grátis: a plataforma fica com 10% do que você vender."
+              texto="Conte o que você ensina, grave um vídeo curto e defina preço e agenda. Anunciar é grátis: a plataforma fica com 10% do que você vender, ou nada quando o aluno leva o material oficial que você indicar."
               acao={<Link href="/monitorias/painel/anuncios/novo"><Button className="rounded-xl">Criar anúncio</Button></Link>}
               className="h-full justify-center"
             />

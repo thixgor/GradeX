@@ -10,6 +10,12 @@ import 'server-only'
  *
  * O valor NUNCA vem do navegador: sai de `participacao.valorCentavos`, que o
  * servidor fixou quando a proposta foi aceita.
+ *
+ * Material oficial junto (opcional para o aluno): o navegador só diz "quero"
+ * ou "não quero". Qual material, quanto custa e se isenta a taxa sai do banco
+ * aqui, e fica gravado NO PEDIDO. Na aprovação, o assento copia do pedido que
+ * de fato foi pago — trocar de ideia, gerar outro PIX ou o admin mudar o preço
+ * do material depois não mexe numa compra já feita.
  */
 
 import { ObjectId } from 'mongodb'
@@ -23,6 +29,8 @@ import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payme
 import type { PaymentOrder } from '@/lib/types'
 import type { PaymentStatus, ProviderOrder } from '@/lib/payments/types'
 import { centavosParaReais, dividirValor, formatarCentavos, reaisParaCentavos } from './dinheiro'
+import { percentualGravado, taxaPercentDaContratacao } from './comissao'
+import { alunoJaTemMaterial, concederMaterialDaMonitoria, materialOficialAVenda, revogarMaterialDaMonitoria, vendaDoMaterialValida, type MaterialAVenda } from './material-oficial'
 import { colecoes, idDe } from './db'
 import { abrirRepasse } from './financeiro'
 import { avisar, avisarEquipe } from './avisos'
@@ -30,23 +38,54 @@ import { avisarConfirmacao, ErroMonitoria, firmarBlocos, garantirBlocos } from '
 import { devolverPagamentoAvulso, reembolsarParticipacao } from './reembolso'
 import { formatarDuracao } from './agenda'
 import type { UsuarioMonitoria } from './servidor'
-import type { Participacao, Reserva } from './tipos'
+import type { MaterialNaCompra, Participacao, Reserva } from './tipos'
 
 export interface RespostaCheckout {
   orderId: string
   status: PaymentStatus
   pix: { qrCode: string; qrCodeBase64: string; ticketUrl?: string } | null
+  /** Só a aula. */
   valorCentavos: number
+  /** Material oficial levado junto neste PIX (null = sem material). */
+  material: { titulo: string; precoCentavos: number } | null
   taxaCentavos: number
   totalCentavos: number
   taxaRotulo: string
   expiraEm: string
 }
 
+/** O que o checkout oferece a este aluno (a tela usa para mostrar a opção). */
+export interface OfertaDeMaterial {
+  material: Omit<MaterialAVenda, 'foraDaComissaoDoSocio'> | null
+  /** O aluno já tem acesso (comprou, tem o pacote ou resgata pelo Plus+): não vendemos de novo. */
+  jaTem: boolean
+}
+
+/** Material que o monitor indicou no anúncio, se ainda está à venda, e se este aluno já o tem. */
+export async function ofertaDeMaterial(reserva: Pick<Reserva, 'anuncioId'>, aluno: UsuarioMonitoria): Promise<OfertaDeMaterial & { interno: MaterialAVenda | null }> {
+  const db = await getDb()
+  const c = colecoes(db)
+  if (!ObjectId.isValid(reserva.anuncioId)) return { material: null, jaTem: false, interno: null }
+  const anuncio = await c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { materialOficialId: 1 } })
+  const material = await materialOficialAVenda(db, anuncio?.materialOficialId)
+  if (!material) return { material: null, jaTem: false, interno: null }
+  const jaTem = await alunoJaTemMaterial(db, aluno, material.id)
+  const { foraDaComissaoDoSocio: _, ...publico } = material
+  return { material: publico, jaTem, interno: material }
+}
+
+/** O pedido leva material? (lido do que o servidor gravou no pedido) */
+function materialDoPedido(order: PaymentOrder | null | undefined): Omit<MaterialNaCompra, 'paymentOrderId'> | null {
+  const m = order?.metadata?.materialOficial as Omit<MaterialNaCompra, 'paymentOrderId'> | undefined
+  return m && typeof m.id === 'string' && Number.isInteger(m.precoCentavos) && m.precoCentavos > 0 ? m : null
+}
+
 export async function criarCheckoutPix(input: {
   reservaId: string
   aluno: UsuarioMonitoria
   ip: string
+  /** O aluno marcou "levar o material junto". Só a vontade: o resto o servidor decide. */
+  incluirMaterial?: boolean
 }): Promise<RespostaCheckout> {
   const db = await getDb()
   const c = colecoes(db)
@@ -72,8 +111,21 @@ export async function criarCheckoutPix(input: {
   if (!reserva.prazoPagamento || reserva.prazoPagamento <= agora) throw new ErroMonitoria(409, 'O prazo de pagamento acabou.')
   if (part.valorCentavos <= 0) throw new ErroMonitoria(409, 'Assento sem valor a pagar.')
 
-  // Reaproveita o PIX ainda válido: recarregar a página não cria outro pagamento.
-  if (aberta && (aberta.status === 'pending' || aberta.status === 'in_process') && aberta.pix && aberta.expiresAt && aberta.expiresAt > agora) {
+  // Material junto: oferecido só se o anúncio indica um material oficial ainda
+  // à venda e o aluno não o tem. Pediu e não pode → explica, sem cobrar nada.
+  const querMaterial = !!input.incluirMaterial
+  const oferta = querMaterial ? await ofertaDeMaterial(reserva, input.aluno) : null
+  if (querMaterial && (!oferta?.interno || oferta.jaTem)) {
+    throw new ErroMonitoria(409, oferta?.jaTem ? 'Você já tem este material. Siga sem ele: a aula continua igual.' : 'Este material não está mais disponível. Siga sem ele: a aula continua igual.')
+  }
+  const material = oferta?.interno || null
+
+  // Reaproveita o PIX ainda válido: recarregar a página não cria outro
+  // pagamento. Só se for a MESMA escolha (com ou sem material): quem mudou de
+  // ideia recebe um PIX novo; se pagar os dois, o segundo volta inteiro
+  // (pagamento duplicado do mesmo assento, ver aoAprovarPagamento).
+  const mesmaEscolha = (o: PaymentOrder) => (materialDoPedido(o)?.id ?? null) === (material?.id ?? null)
+  if (aberta && (aberta.status === 'pending' || aberta.status === 'in_process') && aberta.pix && aberta.expiresAt && aberta.expiresAt > agora && mesmaEscolha(aberta)) {
     return respostaDe(aberta)
   }
   // A criação anterior estourou o tempo (não sabemos se o MP criou o PIX):
@@ -93,7 +145,7 @@ export async function criarCheckoutPix(input: {
   // O PIX deste assento está sendo gerado AGORA (outro clique, outra aba): o
   // pedido existe mas o QR ainda não voltou do MP. Espera por ele em vez de
   // criar um segundo — senão haveria dois QR válidos para o mesmo assento.
-  if (aberta && aberta.status === 'pending' && !aberta.pix && aberta.statusDetail !== PROVIDER_UNCONFIRMED && agora.getTime() - new Date(aberta.createdAt).getTime() < 60_000) {
+  if (aberta && aberta.status === 'pending' && !aberta.pix && aberta.statusDetail !== PROVIDER_UNCONFIRMED && agora.getTime() - new Date(aberta.createdAt).getTime() < 60_000 && mesmaEscolha(aberta)) {
     return esperarPix(String(aberta._id))
   }
 
@@ -102,11 +154,14 @@ export async function criarCheckoutPix(input: {
   const desligado = paymentMethodDisabledError('pix', enabled, { hasCardToken: false })
   if (desligado) throw new ErroMonitoria(400, desligado)
 
-  const base = centavosParaReais(part.valorCentavos)
+  // Regra da comissão (comissao.ts), com o preço OFICIAL lido agora do banco.
+  const materialCentavos = material?.precoCentavos ?? 0
+  const taxaPercent = taxaPercentDaContratacao({ valorAulaCentavos: part.valorCentavos, materialCentavos: material ? materialCentavos : null })
+  const base = centavosParaReais(part.valorCentavos + materialCentavos)
   const cobranca = await resolveCheckoutCharge({ baseAmount: base, paymentMethodId: 'pix', hasCardToken: false, policy: getFeePolicy() })
   if (!cobranca.ok) throw new ErroMonitoria(cobranca.status, cobranca.error)
   const charge = cobranca.charge
-  const divisao = dividirValor(part.valorCentavos)
+  const divisao = dividirValor(part.valorCentavos, taxaPercent)
   const expiraEm = new Date(Math.max(reserva.prazoPagamento.getTime(), agora.getTime() + 30 * 60_000))
   // O Mercado Pago não aceita PIX com menos de 30 min. Se isso passa do prazo
   // da reserva (agendamento direto tem 30 min para assinar E pagar), o prazo
@@ -139,10 +194,15 @@ export async function criarCheckoutPix(input: {
     status: 'pending',
     idempotencyKey: '',
     metadata: {
-      itemTitle: `Monitoria: ${reserva.anuncioTitulo}`,
+      itemTitle: material ? `Monitoria: ${reserva.anuncioTitulo} + material` : `Monitoria: ${reserva.anuncioTitulo}`,
       reservaId: input.reservaId,
       tutorId: reserva.tutorId,
+      valorAulaCentavos: part.valorCentavos,
+      taxaPercent,
       taxaPlataformaCentavos: divisao.taxaPlataformaCentavos,
+      ...(material
+        ? { materialOficial: { id: material.id, titulo: material.titulo, precoCentavos: material.precoCentavos, isentaTaxa: taxaPercent === 0 } }
+        : {}),
       ...chargeMetadata(charge),
     },
     expiresAt: expiraEm,
@@ -173,11 +233,12 @@ export async function criarCheckoutPix(input: {
     const resultado = await getPaymentProvider().createPayment({
       externalReference: orderId,
       amount: charge.transactionAmount,
-      // Sócio do split (se ligado) divide SÓ a parte da plataforma — os 90% do
-      // monitor não entram em comissão de ninguém.
-      commissionableAmount: centavosParaReais(divisao.taxaPlataformaCentavos),
+      // Sócio do split (se ligado) divide SÓ a receita da plataforma: a taxa
+      // (10% ou 0%) e o material, salvo material tirado da comissão pelo admin.
+      // O que é do monitor não entra em comissão de ninguém.
+      commissionableAmount: centavosParaReais(divisao.taxaPlataformaCentavos + (material && !material.foraDaComissaoDoSocio ? materialCentavos : 0)),
       currency: 'BRL',
-      description: `Monitoria: ${reserva.anuncioTitulo}`.slice(0, 200),
+      description: (material ? `Monitoria: ${reserva.anuncioTitulo} + material ${material.titulo}` : `Monitoria: ${reserva.anuncioTitulo}`).slice(0, 200),
       payerEmail: input.aluno.email,
       payerName: input.aluno.fullName || input.aluno.name,
       idempotencyKey,
@@ -196,7 +257,7 @@ export async function criarCheckoutPix(input: {
       targetUserId: alunoId,
       resourceType: 'monitoria',
       resourceId: idDe(part),
-      metadata: { valorCentavos: part.valorCentavos, providerPaymentId: resultado.providerOrderId, ...chargeMetadata(charge) },
+      metadata: { valorCentavos: part.valorCentavos, taxaPercent, materialId: material?.id, materialCentavos, providerPaymentId: resultado.providerOrderId, ...chargeMetadata(charge) },
       ip: input.ip,
     })
     const atual = await orders.findOne({ _id: inserted.insertedId as any })
@@ -241,11 +302,13 @@ function resultadoDoPedido(order: PaymentOrder): ProviderOrder {
 function respostaDe(order: PaymentOrder): RespostaCheckout {
   const base = reaisParaCentavos(order.baseAmount ?? order.amount)
   const total = reaisParaCentavos(order.amount)
+  const material = materialDoPedido(order)
   return {
     orderId: String(order._id),
     status: order.status,
     pix: order.pix || null,
-    valorCentavos: base,
+    valorCentavos: base - (material?.precoCentavos ?? 0),
+    material: material ? { titulo: material.titulo, precoCentavos: material.precoCentavos } : null,
     taxaCentavos: total - base,
     totalCentavos: total,
     taxaRotulo: (order.metadata?.feeLabel as string) || 'Taxa do PIX',
@@ -326,6 +389,9 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
     return
   }
 
+  // A comissão e o material desta contratação saem do PEDIDO pago (que o
+  // servidor montou), gravados uma vez, junto com o "pago" (mesmo compare-and-set).
+  const doPedido_ = condicoesDoPedido(order, esperado.valorCentavos)
   const paga = await c.participacoes.findOneAndUpdate(
     { _id: partId, status: 'aguardando_pagamento' } as any,
     {
@@ -335,6 +401,8 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
         providerPaymentId: pagamentoId,
         pagoCentavos,
         pagoEm: result.paidAt || agora,
+        taxaPercent: doPedido_.taxaPercent,
+        ...(doPedido_.material ? { materialOficial: doPedido_.material } : {}),
         updatedAt: agora,
       },
     },
@@ -382,6 +450,18 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
 }
 
 /**
+ * Percentual e material de um pedido, CONFERIDOS de novo contra a regra: um
+ * pedido cujo metadado diga "isento" sem material que cubra 10% da aula volta
+ * para 10%. Nunca confia em percentual escrito, só no que dá para recalcular.
+ */
+function condicoesDoPedido(order: PaymentOrder, valorAulaCentavos: number): { taxaPercent: number; material: MaterialNaCompra | null } {
+  const m = materialDoPedido(order)
+  const taxaPercent = taxaPercentDaContratacao({ valorAulaCentavos, materialCentavos: m ? m.precoCentavos : null })
+  if (!m) return { taxaPercent, material: null }
+  return { taxaPercent, material: { id: m.id, titulo: m.titulo, precoCentavos: m.precoCentavos, isentaTaxa: taxaPercent === 0, paymentOrderId: String(order._id) } }
+}
+
+/**
  * Tudo o que vem depois de o assento ficar pago. Idempotente: o repasse abre
  * uma vez (índice único), os avisos saem uma vez (`pagamentoAvisadoEm`) e a
  * confirmação da aula é compare-and-set.
@@ -406,6 +486,18 @@ async function concluirAprovacao(paga: Participacao, order: PaymentOrder, result
     return
   }
 
+  // O material comprado junto é entregue ANTES do repasse: a isenção só existe
+  // com a venda feita. Só o material do pedido que pagou ESTE assento.
+  if (paga.materialOficial && paga.materialOficial.paymentOrderId === paga.paymentOrderId) {
+    const db = await getDb()
+    const aluno = ObjectId.isValid(paga.alunoId) ? await c.users.findOne({ _id: new ObjectId(paga.alunoId) } as any, { projection: { email: 1 } }) : null
+    await concederMaterialDaMonitoria(db, {
+      material: paga.materialOficial,
+      aluno: { id: paga.alunoId, nome: paga.alunoNome, email: String(aluno?.email || '') },
+      participacaoId: idDe(paga),
+      providerPaymentId: String(paga.providerPaymentId || result.providerOrderId || ''),
+    })
+  }
   const repasseNovo = await abrirRepasse(paga, reserva)
   // Reprocessamento só avisa se a primeira vez caiu antes do repasse (logo,
   // antes dos avisos). Assentos antigos, sem a marca, não recebem e-mail repetido.
@@ -422,7 +514,9 @@ async function concluirAprovacao(paga: Participacao, order: PaymentOrder, result
 }
 
 async function avisarPagamento(paga: Participacao, reserva: Reserva, order: PaymentOrder, result: ProviderOrder): Promise<void> {
-  const divisao = dividirValor(paga.valorCentavos)
+  const percent = percentualGravado(paga.taxaPercent)
+  const divisao = dividirValor(paga.valorCentavos, percent)
+  const mat = paga.materialOficial
   const p = reserva.proposta!
   const pagoCentavos = paga.pagoCentavos ?? reaisParaCentavos(order.paidAmount ?? result.amount ?? order.amount)
   await avisar([
@@ -435,11 +529,13 @@ async function avisarPagamento(paga: Participacao, reserva: Reserva, order: Paym
         assunto: `Pagamento confirmado: ${reserva.anuncioTitulo}`,
         paragrafos: [
           'Seu pagamento foi aprovado. O valor fica em garantia e só é liberado ao monitor 48 horas depois da aula.',
+          ...(mat ? [`O material "${mat.titulo}" já está liberado na sua conta, em Materiais.`] : []),
           'O comprovante e o contrato em PDF estão na página da reserva.',
         ],
         linhas: [
           ['Monitoria', reserva.anuncioTitulo],
           ['Valor da aula', formatarCentavos(paga.valorCentavos)],
+          ...(mat ? ([['Material oficial', `${mat.titulo} (${formatarCentavos(mat.precoCentavos)})`]] as Array<[string, string]>) : []),
           ['Total pago', formatarCentavos(pagoCentavos)],
           ['ID do pagamento (Mercado Pago)', String(result.providerOrderId || '')],
           ['Pedido', String(order._id)],
@@ -456,11 +552,12 @@ async function avisarPagamento(paga: Participacao, reserva: Reserva, order: Paym
         assunto: `Nova venda: ${reserva.anuncioTitulo}`,
         paragrafos: [
           `${paga.alunoNome} pagou a monitoria. O valor está em garantia e fica disponível para repasse 48h após o fim da aula, se não houver reclamação.`,
+          ...(percent === 0 ? ['O aluno levou junto o material oficial que você indicou: nesta aula não há taxa da plataforma, o valor é todo seu.'] : []),
         ],
         linhas: [
           ['Aula', `${formatarDuracao(p.duracaoMin)}`],
           ['Valor', formatarCentavos(divisao.brutoCentavos)],
-          ['Taxa da plataforma (10%)', formatarCentavos(divisao.taxaPlataformaCentavos)],
+          [percent === 0 ? 'Taxa da plataforma' : `Taxa da plataforma (${percent}%)`, percent === 0 ? 'Isenta (material oficial)' : formatarCentavos(divisao.taxaPlataformaCentavos)],
           ['Você recebe', formatarCentavos(divisao.liquidoTutorCentavos)],
         ],
         botao: 'Ver reserva',
@@ -534,6 +631,8 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
     { _id: part._id as any },
     { $set: { status: novoStatus === 'charged_back' ? 'chargeback' : 'reembolsada', updatedAt: new Date() } },
   )
+  // O pagamento inteiro voltou: o material vendido nele sai junto.
+  await revogarMaterialDaMonitoria(await getDb(), part.materialOficial?.paymentOrderId)
   await estornarRepasse({
     participacaoId: idDe(part),
     valorBaseCentavos: part.valorCentavos,
@@ -657,6 +756,14 @@ export async function conferirComGateway(reserva: Reserva): Promise<boolean> {
       }
     }
     if (!divergencia) {
+      // Isenção da taxa só vale com a venda do material de pé. Estornado por
+      // fora (painel do MP, suporte de materiais)? A aula volta a ter 10%.
+      if (p.taxaPercent === 0 && p.materialOficial && !(await vendaDoMaterialValida(db, p.materialOficial, p.alunoId))) {
+        const { reaplicarTaxaSemMaterial } = await import('./financeiro')
+        if (await reaplicarTaxaSemMaterial(idDe(p), 'o material vendido junto foi estornado')) {
+          await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'isencao_revogada_material_estornado', materialId: p.materialOficial.id } })
+        }
+      }
       await c.participacoes.updateOne({ _id: p._id as any }, { $set: { conferidoNoGatewayEm: agora } })
       continue
     }

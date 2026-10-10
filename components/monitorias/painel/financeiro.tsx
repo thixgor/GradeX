@@ -9,7 +9,7 @@ import { Esqueleto, Selo, api } from '../base'
 
 interface Financeiro {
   resumo: { emGarantiaCentavos: number; liberadoCentavos: number; emPagamentoCentavos: number; pagoCentavos: number; saldoDevedorCentavos: number }
-  vendas: Array<{ id: string; participacaoId: string; reservaId: string; anuncioTitulo: string; inicio: string | null; brutoCentavos: number; taxaCentavos: number; liquidoCentavos: number; status: string; liberaEm: string | null; createdAt: string }>
+  vendas: Array<{ id: string; participacaoId: string; reservaId: string; anuncioTitulo: string; inicio: string | null; brutoCentavos: number; taxaCentavos: number; semTaxa?: boolean; liquidoCentavos: number; status: string; liberaEm: string | null; createdAt: string }>
   payouts: Array<{ id: string; totalCentavos: number; abatidoCentavos: number; status: string; pix: string; e2eId: string | null; pagoEm: string | null; temComprovante: boolean; createdAt: string }>
   lancamentos: Array<{ tipo: string; valorCentavos: number; descricao: string; em: string }>
 }
@@ -56,7 +56,7 @@ export function FinanceiroMonitor() {
             </li>
           ))}
         </ol>
-        <p className="mt-3 text-xs text-muted-foreground">Você recebe 90% de cada aula. Os 10% restantes são a taxa da plataforma.</p>
+        <p className="mt-3 text-xs text-muted-foreground">Você recebe 90% de cada aula, e 100% quando o aluno leva junto o material oficial que você indicou no anúncio (custando ao menos 10% da aula).</p>
         {f.resumo.saldoDevedorCentavos > 0 && (
           <p className="mt-3 flex items-center gap-2 rounded-xl bg-amber-500/10 px-3.5 py-2.5 text-sm text-amber-800 dark:text-amber-300">
             <ShieldAlert className="h-4 w-4 shrink-0" /> Saldo devedor de {formatarCentavos(f.resumo.saldoDevedorCentavos)} (estorno depois do repasse). Ele é abatido do próximo pagamento.
@@ -100,7 +100,7 @@ export function FinanceiroMonitor() {
                   </div>
                   <p className="hidden text-right text-xs text-muted-foreground sm:block">
                     <span className="block tabular-nums">{formatarCentavos(v.brutoCentavos)}</span>
-                    <span className="tabular-nums">taxa -{formatarCentavos(v.taxaCentavos)}</span>
+                    {v.semTaxa ? <span className="font-medium text-primary">sem taxa</span> : <span className="tabular-nums">taxa -{formatarCentavos(v.taxaCentavos)}</span>}
                   </p>
                   <p className="text-right font-semibold tabular-nums">{formatarCentavos(v.liquidoCentavos)}</p>
                   <div className="col-span-2 flex items-center gap-2 sm:col-span-1 sm:justify-end">

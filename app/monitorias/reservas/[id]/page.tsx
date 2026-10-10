@@ -643,10 +643,21 @@ function Materiais({ d, onAdicionar, onRemover }: { d: DetalheReserva; onAdicion
   const [removendo, setRemovendo] = useState<string | null>(null)
   const ehMonitor = d.papel === 'monitor'
   const podeEnviar = ehMonitor && ['aguardando_pagamento', 'confirmada', 'realizada', 'em_disputa', 'concluida'].includes(d.reserva.status)
-  if (!d.materiais.length && !podeEnviar) return null
+  const oficial = d.meuAssento?.materialOficial || null
+  if (!d.materiais.length && !podeEnviar && !oficial) return null
   return (
     <div className="rounded-2xl border border-border bg-card p-4">
       <h2 className="flex items-center gap-1.5 text-sm font-semibold"><BookOpen className="h-4 w-4 text-primary" /> Materiais desta monitoria</h2>
+      {oficial && (
+        <Link href={`/materiais/${oficial.id}`} className="mt-2 flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/[0.05] p-3 text-sm transition hover:bg-primary/10">
+          <BookOpen className="h-5 w-5 shrink-0 text-primary" />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate font-semibold">{oficial.titulo}</span>
+            <span className="block text-[11px] text-muted-foreground">Material oficial que você comprou junto · na sua conta</span>
+          </span>
+          <span className="shrink-0 text-xs font-semibold text-primary">Abrir</span>
+        </Link>
+      )}
       {d.materiais.length > 0 ? (
         <ul className="mt-2 space-y-1">
           {d.materiais.map((m) => (
