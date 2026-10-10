@@ -278,6 +278,8 @@ export interface Reserva {
   versao: number
   /** Trava curta enquanto a confirmação após o pagamento roda (evita duas ao mesmo tempo). */
   confirmandoEm?: Date
+  /** Trava curta: uma entrada por convite de cada vez (a última vaga não vai para dois). */
+  entrandoEm?: Date
   /** Última atividade de cada lado — para "sem resposta há 72h". */
   ultimaAtividadeEm: Date
   createdAt: Date
@@ -312,8 +314,11 @@ export interface Reembolso {
   motivo: string
   por: string
   em: Date
+  /** 'falhou' só em registros antigos: hoje a varredura nunca desiste. */
   status: 'processando' | 'concluido' | 'falhou'
   erro?: string
+  /** Concluído porque o MP já mostrava a devolução (a resposta anterior se perdeu). */
+  conciliadoNoGateway?: boolean
 }
 
 /** Um assento: um aluno numa reserva. É o que se paga e o que se reembolsa. */
@@ -343,6 +348,8 @@ export interface Participacao {
   cancelamentoTicketId?: string
   /** Avisos de "pagamento confirmado" já mandados (reprocessar a aprovação não reenvia). */
   pagamentoAvisadoEm?: Date
+  /** Pagamento conferido no Mercado Pago (status, valor e referência) antes de liberar o repasse. */
+  conferidoNoGatewayEm?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -381,6 +388,8 @@ export interface Repasse {
   brutoEstornadoAposPagoCentavos?: number
   createdAt: Date
   updatedAt: Date
+  /** Por que ficou retido (ex.: divergência com o Mercado Pago na conferência antes de liberar). */
+  retencao?: { motivo: string; em: Date; resolvidaPor?: string; resolvidaEm?: Date; nota?: string }
 }
 
 export type TipoLancamento = 'credito_bruto' | 'taxa_plataforma' | 'estorno' | 'repasse' | 'ajuste' | 'saldo_devedor'

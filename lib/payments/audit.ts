@@ -41,6 +41,8 @@ export type AuditAction =
   | 'monitoria_disputa_resolvida'
   | 'monitoria_pix_alterado'
   | 'monitoria_pix_revelado'
+  /** Repasse retido por divergência com o MP, decidido pelo admin. */
+  | 'monitoria_retencao_decidida'
   | 'monitoria_payout_criado'
   | 'monitoria_payout_comprovante'
   | 'monitoria_payout_pago'

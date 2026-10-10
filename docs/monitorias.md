@@ -92,6 +92,42 @@ Saídas do grupo (cada assento é independente — contrato, pagamento, repasse)
 | Mesmo assento pago duas vezes | O segundo volta inteiro por `devolverPagamentoAvulso` (chave `duplicado:<pedido>`, coleção `monitorias_devolucoes`, nova tentativa na varredura 6a); o estorno desse segundo pagamento NÃO derruba o assento (`aoRevogarPagamento` ignora pagamento que não é o do assento) |
 | PIX recusado/expirado | Assento segue aguardando; nova tentativa gera PIX novo; no fim do prazo a reserva expira e o horário é solto |
 
+### Devolução, conciliação e ordem dos avisos
+
+- **Uma movimentação por devolução:** a intenção é gravada com chave
+  (`refund:<assento>:<n>`) antes de chamar o MP; só uma fica em aberto por
+  assento; ao retomar, o sistema **pergunta ao MP** se já devolveu
+  (`devolvidoNoGateway`) antes de pedir de novo, e a chave é a segunda trava.
+  A conclusão é compare-and-set (avisa uma vez) e o estorno do repasse vem
+  antes dela (idempotente pela mesma chave).
+- **Nunca desiste:** devolução que falha segue "processando" e a varredura
+  tenta de hora em hora; na 6ª falha a equipe recebe um alerta. Registros
+  antigos com `falhou` são retomados do mesmo jeito.
+- **Aviso "refunded" do MP com devolução em aberto** conclui sem pedir de novo.
+- **Leitura atrasada não volta o relógio** (`transicaoObsoleta` em
+  `lib/payments/effects.ts`, vale para o site todo): aprovado não volta a
+  pendente (só a "em mediação" de verdade), devolvido não volta a aprovado,
+  recusado não volta a pendente.
+- **Identidade do pagamento:** a aprovação exige `external_reference` = id do
+  pedido e que o pagamento não esteja em outro assento; o valor pago tem de
+  ser exatamente o do pedido (±1 centavo) — diferente para mais ou para menos
+  volta inteiro e não confirma vaga.
+- **Conferência antes de liberar** (`conferirComGateway`, varredura passo 5 e
+  decisão de disputa): cada assento pago é conferido no MP (status, valor,
+  pedido). Bateu → `conferidoNoGatewayEm`. Devolvido/contestado no MP → registra
+  a revogação. Divergente (inclusive "aprovação manual" em produção) → repasse
+  daquele assento **retido** e alerta à equipe; admin decide em
+  Admin → Monitorias → Repasses ("liberar" ou "zerar"). MP fora do ar → nada
+  é liberado até a próxima hora. Nenhum caminho de conciliação cobra ou devolve.
+- **PIX incerto (timeout na criação):** antes de gerar outro, o checkout procura
+  o pedido no MP pela referência; a tela mostra "confirmando com o banco" e pega
+  o QR pelo acompanhamento.
+- **Última vaga do grupo:** entrada por convite com trava curta na reserva
+  (`entrandoEm`, vence em 20 s) — contar e inserir não deixam duas pessoas
+  ocuparem a mesma vaga.
+- **Contestação (chargeback):** só o assento contestado sai do repasse; os
+  outros alunos e a aula seguem; monitor e aluno são avisados.
+
 Teste de integração (Mongo real + MP falso), opcional:
 `MONITORIAS_MONGO_TESTE=mongodb://127.0.0.1:27017/ npx vitest run __tests__/monitorias/pagamentos-integracao.test.ts`
 (apaga o banco `monitorias-pagamentos-teste` daquela instância).

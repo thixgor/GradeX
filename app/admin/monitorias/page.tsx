@@ -323,6 +323,31 @@ function Repasses({ onMudou }: { onMudou: () => void }) {
         Fluxo: <strong>1.</strong> crie o pagamento do monitor → <strong>2.</strong> revele a chave PIX e faça o PIX pelo banco da empresa (confira o nome do titular!) → <strong>3.</strong> anexe o comprovante → <strong>4.</strong> informe o E2E. Em garantia agora: {formatarCentavos(dados.emGarantiaCentavos)}.
       </CaixaAviso>
 
+      {dados.retidos?.length > 0 && (
+        <section>
+          <h3 className="mb-2 font-heading text-lg font-semibold text-rose-600">Retidos: divergência com o Mercado Pago</h3>
+          <p className="mb-2 text-xs text-muted-foreground">Antes de liberar o valor ao monitor, cada pagamento é conferido no Mercado Pago. Confira no painel do MP e decida: nenhuma decisão aqui cobra ou devolve o aluno.</p>
+          <ul className="space-y-2">
+            {dados.retidos.map((r: any) => (
+              <li key={r.id} className="rounded-2xl border-2 border-rose-400/50 bg-card p-3 text-sm">
+                <p className="font-semibold">{r.nome} — {formatarCentavos(r.liquidoCentavos)} <a className="ml-1 text-xs font-normal text-primary underline" href={`/monitorias/reservas/${r.reservaId}`}>reserva</a></p>
+                <p className="text-xs text-rose-700 dark:text-rose-300">{r.motivo}</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" disabled={ocupado === `l${r.id}`} onClick={() => {
+                    const nota = prompt('O que você conferiu no Mercado Pago? (fica registrado)')
+                    if (nota && nota.trim().length >= 5) executar(`l${r.id}`, () => api('/api/admin/monitorias/repasses', { method: 'POST', json: { repasseId: r.id, decisao: 'liberar', nota } }))
+                  }}>Conferido: liberar ao monitor</Button>
+                  <Button size="sm" variant="ghost" className="text-rose-600" disabled={ocupado === `e${r.id}`} onClick={() => {
+                    const nota = prompt('Por que a receita não existe? (fica registrado)')
+                    if (nota && nota.trim().length >= 5) executar(`e${r.id}`, () => api('/api/admin/monitorias/repasses', { method: 'POST', json: { repasseId: r.id, decisao: 'estornar', nota } }))
+                  }}>Receita não confirmada: zerar repasse</Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section>
         <h3 className="mb-2 font-heading text-lg font-semibold">Liberados para pagar</h3>
         {dados.fila.length === 0 ? <p className="text-sm text-muted-foreground">Ninguém para pagar agora.</p> : (

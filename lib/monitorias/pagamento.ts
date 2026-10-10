@@ -18,14 +18,14 @@ import { deriveIdempotencyKey, getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { resolveCheckoutCharge } from '@/lib/payments/checkout-charge'
 import { getFeePolicy, chargeMetadata } from '@/lib/payments/fees'
-import { PROVIDER_UNCONFIRMED, recoverFromProviderFailure } from '@/lib/payments/provider-failure'
+import { PROVIDER_UNCONFIRMED, recoverFromProviderFailure, resolveUnconfirmedOrder } from '@/lib/payments/provider-failure'
 import { DEFAULT_PAYMENT_METHODS, paymentMethodDisabledError } from '@/lib/payment-methods'
 import type { PaymentOrder } from '@/lib/types'
 import type { PaymentStatus, ProviderOrder } from '@/lib/payments/types'
 import { centavosParaReais, dividirValor, formatarCentavos, reaisParaCentavos } from './dinheiro'
 import { colecoes, idDe } from './db'
 import { abrirRepasse } from './financeiro'
-import { avisar } from './avisos'
+import { avisar, avisarEquipe } from './avisos'
 import { avisarConfirmacao, ErroMonitoria, firmarBlocos, garantirBlocos } from './reservas'
 import { devolverPagamentoAvulso, reembolsarParticipacao } from './reembolso'
 import { formatarDuracao } from './agenda'
@@ -75,6 +75,20 @@ export async function criarCheckoutPix(input: {
   // Reaproveita o PIX ainda válido: recarregar a página não cria outro pagamento.
   if (aberta && (aberta.status === 'pending' || aberta.status === 'in_process') && aberta.pix && aberta.expiresAt && aberta.expiresAt > agora) {
     return respostaDe(aberta)
+  }
+  // A criação anterior estourou o tempo (não sabemos se o MP criou o PIX):
+  // procura no MP pela referência do pedido ANTES de gerar outro. Achou →
+  // devolve aquele mesmo PIX; ainda incerto (dentro de 3 min) → espera.
+  if (aberta && aberta.status === 'pending' && !aberta.pix && aberta.statusDetail === PROVIDER_UNCONFIRMED) {
+    const resolvida = await resolveUnconfirmedOrder(aberta).catch(() => null)
+    if (resolvida?.pix && (resolvida.status === 'pending' || resolvida.status === 'in_process')) return respostaDe(resolvida)
+    if (resolvida?.status === 'approved') {
+      await aoAprovarPagamento(resolvida, resultadoDoPedido(resolvida))
+      return respostaDe(resolvida)
+    }
+    if (!resolvida || resolvida.status === 'pending') {
+      throw new ErroMonitoria(409, 'Ainda estamos confirmando com o banco o PIX que você gerou. Aguarde um minuto e tente de novo.')
+    }
   }
   // O PIX deste assento está sendo gerado AGORA (outro clique, outra aba): o
   // pedido existe mas o QR ainda não voltou do MP. Espera por ele em vez de
@@ -270,9 +284,34 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
   // confirma aula — devolve e avisa a equipe.
   const esperado = await c.participacoes.findOne({ _id: partId } as any, { projection: { valorCentavos: 1, alunoId: 1 } })
   if (!esperado) return
-  if (result.amount != null && reaisParaCentavos(result.amount) + 1 < esperado.valorCentavos) {
-    console.error('[monitorias] pagamento menor que o devido', String(order._id), result.amount, esperado.valorCentavos)
-    await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'valor_menor', pago: result.amount, esperadoCentavos: esperado.valorCentavos } })
+
+  // O pagamento é MESMO deste pedido? O MP devolve a referência que mandamos
+  // na criação (o id do pedido). Pagamento de outro pedido, ou já usado por
+  // outro assento, não confirma vaga nenhuma — a equipe confere.
+  const referencia = (result.raw as { external_reference?: unknown } | null | undefined)?.external_reference
+  if (referencia != null && String(referencia) !== String(order._id)) {
+    console.error('[monitorias] pagamento de outro pedido', String(order._id), pagamentoId, referencia)
+    await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'referencia_divergente', orderId: String(order._id), referencia: String(referencia), providerPaymentId: pagamentoId } })
+    return
+  }
+  if (pagamentoId) {
+    const outro = await c.participacoes.findOne({ providerPaymentId: pagamentoId, _id: { $ne: partId } } as any, { projection: { _id: 1 } })
+    if (outro) {
+      console.error('[monitorias] pagamento já usado por outro assento', pagamentoId, idDe(outro))
+      await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'pagamento_de_outro_assento', providerPaymentId: pagamentoId, outroAssento: idDe(outro) } })
+      return
+    }
+  }
+
+  // O valor pago precisa ser EXATAMENTE o do pedido (o servidor fixou: aula +
+  // taxa do PIX), e nunca menos que o preço da aula. Diferente para mais ou
+  // para menos (pagamento adulterado, erro de integração) não confirma vaga:
+  // volta inteiro e a equipe é avisada.
+  const pagoReal = result.amount != null ? reaisParaCentavos(result.amount) : null
+  const doPedido = reaisParaCentavos(order.amount)
+  if (pagoReal != null && (pagoReal + 1 < esperado.valorCentavos || Math.abs(pagoReal - doPedido) > 1)) {
+    console.error('[monitorias] valor pago diferente do pedido', String(order._id), result.amount, order.amount, esperado.valorCentavos)
+    await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'valor_divergente', pago: result.amount, pedido: order.amount, esperadoCentavos: esperado.valorCentavos } })
     const marcou = await c.participacoes.updateOne(
       { _id: partId, status: 'aguardando_pagamento' } as any,
       { $set: { status: 'paga', providerPaymentId: pagamentoId, paymentOrderId: String(order._id), pagoCentavos, pagoEm: agora, updatedAt: agora } },
@@ -481,9 +520,15 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
   // pago pelo pagamento original — derrubá-lo tiraria a vaga de quem pagou.
   const pagamentoDoPedido = order.providerPaymentId || order.providerOrderId
   if (part.providerPaymentId && pagamentoDoPedido && String(pagamentoDoPedido) !== String(part.providerPaymentId)) return
-  // "refunded" que nós mesmos pedimos (reembolso em andamento ou feito pela
-  // plataforma): quem ajusta o repasse é o fluxo do reembolso, pela chave dele.
-  if (novoStatus !== 'charged_back' && part.reembolsos.length > 0) return
+  // "refunded" que nós mesmos pedimos: quem ajusta o repasse é o fluxo do
+  // reembolso, pela chave dele. Se ele ainda estava em aberto (a resposta do MP
+  // se perdeu), este aviso é a confirmação — conclui agora, sem pedir de novo
+  // (reembolsarParticipacao confere no MP antes de qualquer chamada).
+  if (novoStatus !== 'charged_back' && part.reembolsos.length > 0) {
+    const aberto = part.reembolsos.find((r) => r.status === 'processando' || r.status === 'falhou')
+    if (aberto) await reembolsarParticipacao({ participacaoId: idDe(part), valorBaseCentavos: aberto.valorCentavos, motivo: aberto.motivo, por: aberto.por })
+    return
+  }
   const { estornarRepasse } = await import('./financeiro')
   await c.participacoes.updateOne(
     { _id: part._id as any },
@@ -504,6 +549,26 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
     resourceId: idDe(part),
     metadata: { via: 'webhook', status: novoStatus },
   })
+  // Só ESTE assento sai do repasse; o dinheiro dos outros alunos não se move.
+  // A aula segue para quem pagou — monitor e aluno ficam sabendo.
+  const reserva = await c.reservas.findOne({ _id: new ObjectId(part.reservaId) } as any, { projection: { tutorUserId: 1, anuncioTitulo: 1 } })
+  if (reserva) {
+    const contestacao = novoStatus === 'charged_back'
+    await avisar([
+      {
+        userId: reserva.tutorUserId,
+        titulo: contestacao ? 'Pagamento contestado por um aluno' : 'Pagamento devolvido no Mercado Pago',
+        mensagem: `O pagamento de ${part.alunoNome} em "${reserva.anuncioTitulo}" foi ${contestacao ? 'contestado no banco' : 'devolvido'}. Só esse valor sai do seu repasse; o dos outros alunos continua.`,
+        url: `/monitorias/reservas/${part.reservaId}`,
+      },
+      {
+        userId: part.alunoId,
+        titulo: contestacao ? 'Sua contestação foi registrada' : 'Pagamento devolvido',
+        mensagem: `Seu assento em "${reserva.anuncioTitulo}" foi encerrado porque o pagamento ${contestacao ? 'foi contestado no banco' : 'foi devolvido'}.`,
+        url: `/monitorias/reservas/${part.reservaId}`,
+      },
+    ])
+  }
 }
 
 /**
@@ -541,4 +606,68 @@ export async function curarPagamentosDaReserva(reserva: Reserva): Promise<void> 
   if (atual?.status !== 'aguardando_pagamento') return
   const pagos = await c.participacoes.countDocuments({ reservaId: id, status: 'paga' })
   if (pagos >= atual.proposta!.vagas) await confirmarAposPagamento(atual)
+}
+
+/**
+ * Conferência com o Mercado Pago ANTES de o valor sair da garantia para o
+ * monitor. Só lê e registra — nunca cobra nem devolve ninguém:
+ *  - aprovado no MP, mesmo valor e mesma referência do pedido → conferido;
+ *  - devolvido/contestado no MP e não aqui → registra a revogação (o fluxo
+ *    normal do webhook, sem movimentar dinheiro);
+ *  - qualquer outra diferença (não aprovado, valor ou pedido diferentes,
+ *    "aprovação manual" sem MP em produção) → o repasse DAQUELE assento fica
+ *    retido e a equipe é avisada. Os outros assentos seguem normalmente.
+ * Devolve `false` se o MP não respondeu: a liberação espera a próxima varredura.
+ */
+export async function conferirComGateway(reserva: Reserva): Promise<boolean> {
+  const db = await getDb()
+  const c = colecoes(db)
+  const id = idDe(reserva)
+  const pagas = await c.participacoes
+    .find({ reservaId: id, status: { $in: ['paga', 'concluida'] }, providerPaymentId: { $exists: true }, conferidoNoGatewayEm: { $exists: false } } as any)
+    .toArray()
+  const agora = new Date()
+  for (const p of pagas) {
+    const pid = String(p.providerPaymentId)
+    let divergencia: string | null = null
+    if (pid.startsWith('manual-')) {
+      if (process.env.NODE_ENV === 'production') divergencia = 'Pagamento sem confirmação do Mercado Pago (aprovação manual).'
+    } else {
+      let r: ProviderOrder
+      try {
+        r = await getPaymentProvider().getPayment(pid)
+      } catch (err) {
+        console.warn('[monitorias] conferência com o MP indisponível', pid, err)
+        return false
+      }
+      if (r.status === 'refunded' || r.status === 'charged_back') {
+        // Devolvido/contestado direto no MP: registra pelo caminho de sempre.
+        if (p.paymentOrderId && ObjectId.isValid(p.paymentOrderId)) {
+          const { applyPaymentResult } = await import('@/lib/payments/effects')
+          await applyPaymentResult(p.paymentOrderId, r)
+        }
+        continue
+      }
+      const referencia = (r.raw as { external_reference?: unknown } | null | undefined)?.external_reference
+      if (r.status !== 'approved') divergencia = `No Mercado Pago o pagamento está "${r.status}", não aprovado.`
+      else if (p.pagoCentavos != null && r.amount != null && Math.abs(reaisParaCentavos(r.amount) - p.pagoCentavos) > 1) {
+        divergencia = `Valor no Mercado Pago (${formatarCentavos(reaisParaCentavos(r.amount))}) diferente do registrado (${formatarCentavos(p.pagoCentavos)}).`
+      } else if (referencia != null && p.paymentOrderId && String(referencia) !== p.paymentOrderId) {
+        divergencia = 'O pagamento no Mercado Pago pertence a outro pedido.'
+      }
+    }
+    if (!divergencia) {
+      await c.participacoes.updateOne({ _id: p._id as any }, { $set: { conferidoNoGatewayEm: agora } })
+      continue
+    }
+    const reteve = await c.repasses.updateOne(
+      { participacaoId: idDe(p), status: 'em_garantia' },
+      { $set: { status: 'retido', retencao: { motivo: divergencia, em: agora }, updatedAt: agora } },
+    )
+    await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'divergencia_na_conferencia', detalhe: divergencia, providerPaymentId: pid } })
+    if (reteve.modifiedCount) {
+      await avisarEquipe('Repasse retido: divergência com o Mercado Pago', `"${reserva.anuncioTitulo}", assento de ${p.alunoNome}: ${divergencia}`)
+    }
+  }
+  return true
 }

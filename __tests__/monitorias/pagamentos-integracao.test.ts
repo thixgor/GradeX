@@ -19,6 +19,9 @@ const mp = vi.hoisted(() => ({
   reembolsos: [] as Array<{ id: string; chave?: string }>,
   falharReembolso: false,
   proximoId: 1000,
+  /** Estado de cada pagamento "no MP" (getPayment). */
+  estado: {} as Record<string, any>,
+  foraDoAr: false,
 }))
 const avisos = vi.hoisted(() => ({ lista: [] as Array<{ userId: string; titulo: string }> }))
 
@@ -41,14 +44,18 @@ vi.mock('@/lib/payments', () => ({
       // Igual ao MP: a mesma chave não devolve duas vezes.
       if (!mp.reembolsos.some((r) => r.chave && r.chave === opts?.idempotencyKey)) mp.reembolsos.push({ id, chave: opts?.idempotencyKey })
     },
-    async getPayment() {
-      throw new Error('não usado')
+    async getPayment(id: string) {
+      if (mp.foraDoAr || !mp.estado[id]) throw new Error('MP fora do ar')
+      return mp.estado[id]
     },
   }),
 }))
 vi.mock('@/lib/monitorias/avisos', () => ({
   avisar: async (lista: Array<{ userId: string; titulo: string }>) => {
     avisos.lista.push(...lista.map((a) => ({ userId: a.userId, titulo: a.titulo })))
+  },
+  avisarEquipe: async (titulo: string) => {
+    avisos.lista.push({ userId: 'equipe', titulo })
   },
   enviarCodigoPorEmail: async () => {},
 }))
@@ -76,6 +83,8 @@ suite('pagamentos das monitorias (Mongo real, MP falso)', () => {
     mp.criados = 0
     mp.reembolsos = []
     mp.falharReembolso = false
+    mp.estado = {}
+    mp.foraDoAr = false
     avisos.lista = []
   })
 
@@ -315,5 +324,188 @@ suite('pagamentos das monitorias (Mongo real, MP falso)', () => {
     await db.collection('monitorias_participacoes').updateOne({ _id: assentos[0]._id }, { $set: { status: 'expirada' } })
     await Promise.all([applyPaymentResult(a.orderId, aprovado(a.providerPaymentId)), applyPaymentResult(b.orderId, aprovado(b.providerPaymentId))])
     expect(mp.reembolsos.map((r) => r.id).sort()).toEqual([a.providerPaymentId, b.providerPaymentId].sort())
+  })
+
+  // ─── Devoluções ──────────────────────────────────────────────────────
+
+  /** Assento pago e confirmado (repasse em garantia), pronto para devolver. */
+  async function assentoPago() {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { reserva, assentos } = await cenario()
+    const ped = await pedido(assentos[0])
+    await applyPaymentResult(ped.orderId, aprovado(ped.providerPaymentId))
+    return { reserva, part: assentos[0], ...ped }
+  }
+
+  it('9. a mesma devolução pedida 5 vezes ao mesmo tempo: UMA movimentação no MP', async () => {
+    const { reembolsarParticipacao } = await import('@/lib/monitorias/reembolso')
+    const { part } = await assentoPago()
+    await Promise.all([1, 2, 3, 4, 5].map(() => reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: null, motivo: 'teste', por: 'sistema' })))
+    expect(mp.reembolsos).toHaveLength(1)
+    const p = await assento(part._id)
+    expect(p!.reembolsos).toHaveLength(1)
+    expect(p!.status).toBe('reembolsada')
+    const rep = await db.collection('monitorias_repasses').findOne({ participacaoId: String(part._id) })
+    expect(rep!.status).toBe('estornado')
+    expect(avisos.lista.filter((a) => a.titulo === 'Reembolso enviado')).toHaveLength(1)
+  })
+
+  it('10. MP devolveu mas a resposta se perdeu: a retomada confere no MP e NÃO devolve de novo', async () => {
+    const { reembolsarParticipacao } = await import('@/lib/monitorias/reembolso')
+    const { part, providerPaymentId } = await assentoPago()
+    // Estado de quem caiu: intenção gravada ("processando"), MP já devolveu.
+    await db.collection('monitorias_participacoes').updateOne(
+      { _id: part._id },
+      { $set: { status: 'reembolso_processando', statusAntesDoReembolso: 'paga', reembolsos: [{ chave: `refund:${part._id}:0`, valorCentavos: 4000, motivo: 'saiu', por: 'aluno-0', em: new Date(), status: 'processando' }] } },
+    )
+    mp.estado[providerPaymentId] = { ...aprovado(providerPaymentId), status: 'refunded', raw: { status: 'refunded', transaction_amount_refunded: 40.4 } }
+    const r = await reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: null, motivo: 'saiu', por: 'aluno-0' })
+    expect(r.ok).toBe(true)
+    expect(mp.reembolsos).toHaveLength(0)
+    const p = await assento(part._id)
+    expect(p!.status).toBe('reembolsada')
+    expect(p!.reembolsos[0].status).toBe('concluido')
+    expect(p!.reembolsos[0].conciliadoNoGateway).toBe(true)
+  })
+
+  it('10b. aviso "refunded" do MP com a devolução em aberto: conclui sem pedir de novo', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { part, orderId, providerPaymentId } = await assentoPago()
+    await db.collection('monitorias_participacoes').updateOne(
+      { _id: part._id },
+      { $set: { status: 'reembolso_processando', statusAntesDoReembolso: 'paga', reembolsos: [{ chave: `refund:${part._id}:0`, valorCentavos: 4000, motivo: 'saiu', por: 'aluno-0', em: new Date(), status: 'processando' }] } },
+    )
+    const devolvido = { ...aprovado(providerPaymentId), status: 'refunded' as const, raw: { status: 'refunded', external_reference: orderId } }
+    mp.estado[providerPaymentId] = devolvido
+    await applyPaymentResult(orderId, devolvido)
+    expect(mp.reembolsos).toHaveLength(0)
+    expect((await assento(part._id))!.status).toBe('reembolsada')
+  })
+
+  it('11. MP fora do ar: a devolução nunca "desiste" — segue em aberto e conclui depois, com a MESMA chave', async () => {
+    const { reembolsarParticipacao } = await import('@/lib/monitorias/reembolso')
+    const { part } = await assentoPago()
+    mp.falharReembolso = true
+    for (let i = 0; i < 8; i++) await reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: null, motivo: 'saiu', por: 'aluno-0' })
+    let p = await assento(part._id)
+    expect(p!.reembolsos).toHaveLength(1)
+    expect(p!.reembolsos[0].status).toBe('processando')
+    expect(await db.collection('audit_logs').countDocuments({ 'metadata.chave': `refund:${part._id}:0`, action: 'payment_rejected' })).toBe(1)
+    mp.falharReembolso = false
+    await reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: null, motivo: 'saiu', por: 'aluno-0' })
+    p = await assento(part._id)
+    expect(p!.status).toBe('reembolsada')
+    expect(mp.reembolsos).toEqual([{ id: p!.providerPaymentId, chave: `refund:${part._id}:0` }])
+  })
+
+  it('11b. devolução parcial: o valor nunca passa do que sobra do assento', async () => {
+    const { reembolsarParticipacao } = await import('@/lib/monitorias/reembolso')
+    const { part } = await assentoPago()
+    await reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: 1500, motivo: 'parcial', por: 'admin' })
+    let p = await assento(part._id)
+    expect(p!.status).toBe('paga')
+    await reembolsarParticipacao({ participacaoId: String(part._id), valorBaseCentavos: 999_999, motivo: 'o resto', por: 'admin' })
+    p = await assento(part._id)
+    expect(p!.reembolsos.map((r: any) => r.valorCentavos)).toEqual([1500, 2500])
+    expect(p!.status).toBe('reembolsada')
+  })
+
+  // ─── Ordem dos avisos, identidade e valor ────────────────────────────
+
+  it('12. leitura atrasada "pendente" depois de aprovado não volta o status (nem repete efeitos)', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { reserva, assentos } = await cenario()
+    const { orderId, providerPaymentId } = await pedido(assentos[0])
+    await applyPaymentResult(orderId, aprovado(providerPaymentId))
+    const r = await applyPaymentResult(orderId, { ...aprovado(providerPaymentId), status: 'pending' as any })
+    expect(r.reason).toBe('transição obsoleta')
+    expect((await db.collection('payment_orders').findOne({ _id: new ObjectId(orderId) }))!.status).toBe('approved')
+    await applyPaymentResult(orderId, aprovado(providerPaymentId))
+    expect(avisos.lista.filter((a) => a.titulo.startsWith('Pagamento confirmado'))).toHaveLength(1)
+    expect((await reservaAtual(reserva._id))!.status).toBe('confirmada')
+    // E depois de devolvido, um "aprovado" velho também não ressuscita o pedido.
+    await db.collection('payment_orders').updateOne({ _id: new ObjectId(orderId) }, { $set: { status: 'refunded' } })
+    expect((await applyPaymentResult(orderId, aprovado(providerPaymentId))).reason).toBe('transição obsoleta')
+  })
+
+  it('13. pagamento de OUTRO pedido (referência diferente) não confirma vaga', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { assentos } = await cenario()
+    const { orderId, providerPaymentId } = await pedido(assentos[0])
+    await applyPaymentResult(orderId, { ...aprovado(providerPaymentId), raw: { external_reference: String(new ObjectId()) } })
+    expect((await assento(assentos[0]._id))!.status).toBe('aguardando_pagamento')
+    expect(await db.collection('monitorias_repasses').countDocuments()).toBe(0)
+  })
+
+  it('13b. o mesmo pagamento do MP não paga dois assentos', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { assentos } = await cenario(2)
+    const a = await pedido(assentos[0])
+    const b = await pedido(assentos[1])
+    await applyPaymentResult(a.orderId, aprovado(a.providerPaymentId))
+    await applyPaymentResult(b.orderId, aprovado(a.providerPaymentId)) // id reaproveitado por engano
+    expect((await assento(assentos[1]._id))!.status).toBe('aguardando_pagamento')
+    expect(await db.collection('monitorias_repasses').countDocuments()).toBe(1)
+  })
+
+  it('14. valor pago diferente do pedido (para mais) não confirma: volta inteiro', async () => {
+    const { applyPaymentResult } = await import('@/lib/payments/effects')
+    const { reserva, assentos } = await cenario()
+    const { orderId, providerPaymentId } = await pedido(assentos[0])
+    await applyPaymentResult(orderId, { ...aprovado(providerPaymentId), amount: 80 })
+    expect((await reservaAtual(reserva._id))!.status).toBe('aguardando_pagamento')
+    expect((await assento(assentos[0]._id))!.status).toBe('reembolsada')
+    expect(mp.reembolsos).toHaveLength(1)
+  })
+
+  // ─── Conferência com o MP antes de liberar o dinheiro ao monitor ─────
+
+  it('15. conferência: tudo batendo → conferido; MP fora → não libera nada', async () => {
+    const { conferirComGateway } = await import('@/lib/monitorias/pagamento')
+    const { reserva, part, orderId, providerPaymentId } = await assentoPago()
+    mp.foraDoAr = true
+    expect(await conferirComGateway(reserva as any)).toBe(false)
+    mp.foraDoAr = false
+    mp.estado[providerPaymentId] = { ...aprovado(providerPaymentId), raw: { status: 'approved', external_reference: orderId } }
+    expect(await conferirComGateway(reserva as any)).toBe(true)
+    expect((await assento(part._id))!.conferidoNoGatewayEm).toBeTruthy()
+    expect((await db.collection('monitorias_repasses').findOne({}))!.status).toBe('em_garantia')
+  })
+
+  it('15b. conferência: valor diferente no MP → repasse daquele assento RETIDO, sem cobrar nem devolver', async () => {
+    const { conferirComGateway } = await import('@/lib/monitorias/pagamento')
+    const { reserva, part, orderId, providerPaymentId } = await assentoPago()
+    mp.estado[providerPaymentId] = { ...aprovado(providerPaymentId), amount: 10, raw: { status: 'approved', external_reference: orderId } }
+    expect(await conferirComGateway(reserva as any)).toBe(true)
+    const rep = await db.collection('monitorias_repasses').findOne({ participacaoId: String(part._id) })
+    expect(rep!.status).toBe('retido')
+    expect(rep!.retencao.motivo).toMatch(/Valor no Mercado Pago/)
+    expect(mp.reembolsos).toHaveLength(0)
+    expect(mp.criados).toBe(0)
+    expect(avisos.lista.filter((a) => a.userId === 'equipe')).toHaveLength(1)
+  })
+
+  it('15c. conferência: pagamento "manual" sem MP em produção é receita não confirmada → retido', async () => {
+    const { conferirComGateway } = await import('@/lib/monitorias/pagamento')
+    const { reserva, part } = await assentoPago()
+    await db.collection('monitorias_participacoes').updateOne({ _id: part._id }, { $set: { providerPaymentId: `manual-${part._id}` } })
+    const antes = process.env.NODE_ENV
+    ;(process.env as any).NODE_ENV = 'production'
+    try {
+      await conferirComGateway(reserva as any)
+    } finally {
+      ;(process.env as any).NODE_ENV = antes
+    }
+    expect((await db.collection('monitorias_repasses').findOne({}))!.status).toBe('retido')
+  })
+
+  it('15d. conferência: devolvido direto no painel do MP → registra a revogação sem mexer no MP', async () => {
+    const { conferirComGateway } = await import('@/lib/monitorias/pagamento')
+    const { reserva, part, orderId, providerPaymentId } = await assentoPago()
+    mp.estado[providerPaymentId] = { ...aprovado(providerPaymentId), status: 'refunded', raw: { status: 'refunded', external_reference: orderId } }
+    await conferirComGateway(reserva as any)
+    expect((await assento(part._id))!.status).toBe('reembolsada')
+    expect((await db.collection('monitorias_repasses').findOne({}))!.status).toBe('estornado')
+    expect(mp.reembolsos).toHaveLength(0)
   })
 })

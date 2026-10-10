@@ -64,6 +64,9 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
       fetch(`/api/payments/orders/${dados.orderId}/status`, { cache: 'no-store' })
         .then((r) => (r.ok ? r.json() : null))
         .then((s) => {
+          // PIX que estava "confirmando com o banco" (criação demorou): o QR
+          // chega pelo acompanhamento — mostra o MESMO, sem gerar outro.
+          if (s?.pix && !dados.pix) setDados({ ...dados, pix: s.pix })
           if (s?.status === 'approved') onAprovado()
           else if (s?.status && ['rejected', 'cancelled', 'expired'].includes(s.status)) setErro('O PIX expirou ou foi cancelado. Gere um novo.')
         })
@@ -94,6 +97,11 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
             <div className="mt-1 flex justify-between"><span className="text-muted-foreground">{dados.taxaRotulo} (PIX)</span><span>{formatarCentavos(dados.taxaCentavos)}</span></div>
           )}
           <div className="mt-2 flex justify-between border-t border-border pt-2 text-base font-bold"><span>Total</span><span>{formatarCentavos(dados.totalCentavos)}</span></div>
+        </div>
+      )}
+      {dados && !dados.pix && !erro && (
+        <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-border p-5 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" /> Confirmando seu PIX com o banco… Não precisa gerar outro.
         </div>
       )}
       {dados?.pix && (

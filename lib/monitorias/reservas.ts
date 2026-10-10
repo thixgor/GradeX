@@ -747,15 +747,44 @@ export async function entrarNoGrupo(input: {
   if (anterior && ['cancelada', 'expirada', 'reembolsada', 'reembolso_processando', 'chargeback'].includes(anterior.status)) {
     throw new ErroMonitoria(409, 'Você já saiu deste grupo. Para voltar a estudar com este monitor, agende uma nova aula pelo anúncio.')
   }
+  // Última vaga: "contar e depois inserir" deixa duas pessoas passarem juntas.
+  // Uma entrada por vez neste grupo (trava curta na reserva, que vence sozinha
+  // em 20 s se a função cair); quem chega junto espera a vez e reconta.
+  const trava = await travarEntrada(c, reserva)
+  try {
+    return await entrarComTrava(c, reserva, input.aluno)
+  } finally {
+    await c.reservas.updateOne({ _id: reserva._id as any, entrandoEm: trava }, { $unset: { entrandoEm: '' } })
+  }
+}
+
+async function travarEntrada(c: Colecoes, reserva: Reserva): Promise<Date> {
+  for (let i = 0; i < 16; i++) {
+    const agora = new Date()
+    const res = await c.reservas.updateOne(
+      { _id: reserva._id as any, $or: [{ entrandoEm: { $exists: false } }, { entrandoEm: { $lt: new Date(agora.getTime() - 20_000) } }] } as any,
+      { $set: { entrandoEm: agora } },
+    )
+    if (res.modifiedCount) return agora
+    await new Promise((r) => setTimeout(r, 250))
+  }
+  throw new ErroMonitoria(409, 'Muita gente entrando neste grupo agora. Tente de novo em alguns segundos.')
+}
+
+async function entrarComTrava(c: Colecoes, anterior: Reserva, aluno: UsuarioMonitoria): Promise<{ reserva: Reserva; contrato: Contrato }> {
+  const input = { aluno }
+  // Relê com a trava na mão: enquanto esperava a vez, o grupo pode ter fechado.
+  const reserva = await c.reservas.findOne({ _id: anterior._id as any })
+  if (!reserva || !reserva.proposta || reserva.status !== 'aguardando_pagamento') throw new ErroMonitoria(409, 'Este grupo não está mais aceitando alunos.')
   const [ativos, organizadorContrato, anuncio, monitor] = await Promise.all([
-    c.participacoes.countDocuments({ reservaId: idDe(reserva), status: { $nin: ['expirada', 'cancelada', 'reembolsada'] } }),
+    c.participacoes.countDocuments({ reservaId: idDe(reserva), status: { $nin: ['expirada', 'cancelada', 'reembolsada', 'chargeback'] } }),
     // A assinatura do monitor nas condições do grupo: a do contrato do
     // organizador — mesmo que ele tenha saído depois (contrato rescindido).
     c.contratos.findOne({ reservaId: idDe(reserva), contratanteId: reserva.solicitanteId, 'assinaturas.papel': 'contratado' } as any),
     c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any),
     c.users.findOne({ _id: new ObjectId(reserva.tutorUserId) } as any, { projection: { name: 1, fullName: 1, email: 1, cpf: 1 } }),
   ])
-  if (ativos >= reserva.proposta.vagas) throw new ErroMonitoria(409, 'O grupo já está completo.')
+  if (ativos >= reserva.proposta!.vagas) throw new ErroMonitoria(409, 'O grupo já está completo.')
   if (!organizadorContrato || !anuncio || !monitor) throw new ErroMonitoria(409, 'O grupo ainda não está pronto para receber alunos.')
   if (mesmaPessoa(input.aluno, { ...(monitor as any), _id: new ObjectId(reserva.tutorUserId) })) {
     throw new ErroMonitoria(400, 'Você não pode entrar como aluno na sua própria monitoria.')

@@ -7,6 +7,7 @@ import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarReserva, ErroMonitoria, firmarBlocos, liberarBlocos, registrarStrike } from '@/lib/monitorias/reservas'
 import { reembolsarParticipacao } from '@/lib/monitorias/reembolso'
 import { concluirReserva } from '@/lib/monitorias/varredura'
+import { conferirComGateway } from '@/lib/monitorias/pagamento'
 import { liberarSePronta } from '@/lib/monitorias/financeiro'
 import { limparTexto } from '@/lib/monitorias/validacao'
 import { avisar } from '@/lib/monitorias/avisos'
@@ -59,6 +60,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       if (corpo.data.decisao === 'reembolsar' && restantes === 0) novoStatus = 'reembolsada'
       else if (futura) novoStatus = 'confirmada'
       else novoStatus = 'concluida'
+      // Liberar o valor ao monitor exige a conferência com o MP (como na varredura).
+      if (novoStatus === 'concluida' && !(await conferirComGateway(reserva))) {
+        throw new ErroMonitoria(503, 'Não foi possível conferir os pagamentos no Mercado Pago agora. Tente em alguns minutos.')
+      }
       const res = await c.reservas.updateOne(
         { _id: reserva._id as any, status: 'em_disputa', versao: reserva.versao },
         {

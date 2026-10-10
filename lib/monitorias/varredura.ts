@@ -11,7 +11,9 @@ import 'server-only'
  *     que não fechou).
  *  3. Aula começou há pouco → lembretes de 24h e 1h antes.
  *  4. Aula acabou → "realizada" (pede avaliação; abre a janela de 48h).
- *  5. 48h depois sem reclamação → "concluída" e o valor do monitor é liberado.
+ *  5. 48h depois sem reclamação → confere cada pagamento no Mercado Pago
+ *     (divergência retém o repasse daquele assento) → "concluída" e o valor
+ *     do monitor é liberado.
  *  2b. Reserva aguardando pagamento → rede de segurança da aprovação (pedido
  *     aprovado sem assento pago, assento pago sem repasse, grupo todo pago).
  *  6. Reembolso que falhou → tenta de novo com a MESMA chave (inclusive a
@@ -30,7 +32,7 @@ import { liberarRepassesDaReserva } from './financeiro'
 import { avisar } from './avisos'
 import { liberarBlocos } from './reservas'
 import { reembolsarParticipacao, reembolsarReserva, retomarDevolucoesAvulsas } from './reembolso'
-import { curarPagamentosDaReserva } from './pagamento'
+import { conferirComGateway, curarPagamentosDaReserva } from './pagamento'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
 import type { Reserva } from './tipos'
@@ -245,6 +247,9 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
     .toArray()
   for (const reserva of garantidas) {
     await seguro(async () => {
+      // Antes de o dinheiro sair da garantia: confere cada pagamento no MP.
+      // MP fora do ar → tenta na próxima hora (nada é liberado no escuro).
+      if (!(await conferirComGateway(reserva))) return
       const res = await c.reservas.updateOne(
         { _id: reserva._id as any, status: 'realizada', versao: reserva.versao },
         { $set: { status: 'concluida', updatedAt: agora }, $inc: { versao: 1 } },
@@ -257,12 +262,12 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
 
   // 6. Reembolsos presos.
   const presos = await c.participacoes
-    .find({ 'reembolsos.status': 'processando', status: 'reembolso_processando', updatedAt: { $lt: new Date(agora.getTime() - 20 * 60_000) } } as any)
+    .find({ 'reembolsos.status': { $in: ['processando', 'falhou'] }, status: 'reembolso_processando', updatedAt: { $lt: new Date(agora.getTime() - 20 * 60_000) } } as any)
     .limit(LOTE)
     .toArray()
   for (const p of presos) {
     await seguro(async () => {
-      const pendente = p.reembolsos.find((x) => x.status === 'processando')
+      const pendente = p.reembolsos.find((x) => x.status === 'processando' || x.status === 'falhou')
       if (!pendente) return
       const out = await reembolsarParticipacao({ participacaoId: idDe(p), valorBaseCentavos: pendente.valorCentavos, motivo: pendente.motivo, por: pendente.por })
       if (out.ok) r.reembolsosRetomados++
