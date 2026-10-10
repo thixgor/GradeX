@@ -94,6 +94,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
             paymentOrderId: meu.paymentOrderId ?? null,
             reembolsos: meu.reembolsos.map((r) => ({ valorCentavos: r.valorCentavos, status: r.status, em: r.em, motivo: r.motivo })),
             avaliacao: meu.avaliacao ? { nota: meu.avaliacao.nota, comentario: meu.avaliacao.comentario } : null,
+            // Material oficial comprado junto (link para abrir em Materiais).
+            materialOficial: meu.materialOficial ? { id: meu.materialOficial.id, titulo: meu.materialOficial.titulo } : null,
           }
         : null,
       meuContrato: meuContrato
@@ -112,7 +114,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
               alunoNome: ehMonitor || sessao.role === 'admin' ? a.alunoNome : a.alunoNome.split(' ')[0],
               status: a.status,
               eu: a.alunoId === sessao.userId,
-              ...(ehMonitor ? { id: idDe(a), contratoId: a.contratoId || null } : {}),
+              ...(ehMonitor ? { id: idDe(a), contratoId: a.contratoId || null, semTaxa: a.taxaPercent === 0 } : {}),
             }))
           : [],
       mensagens: mensagens.reverse().map((m) => ({

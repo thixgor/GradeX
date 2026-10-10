@@ -16,6 +16,7 @@ import 'server-only'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { centavosParaReais, dividirValor } from './dinheiro'
+import { percentualGravado } from './comissao'
 import { colecoes, idDe } from './db'
 import type { Lancamento, Participacao, Repasse } from './tipos'
 
@@ -32,7 +33,10 @@ export async function lancar(itens: NovoLancamento[]): Promise<void> {
 /** Abre o repasse do assento (uma vez só). Devolve `true` se abriu agora. */
 export async function abrirRepasse(participacao: Participacao, reserva: { _id?: unknown; tutorUserId: string }): Promise<boolean> {
   const c = colecoes(await getDb())
-  const divisao = dividirValor(participacao.valorCentavos)
+  // Percentual gravado no assento quando o pagamento foi aprovado (0 só com
+  // material oficial elegível vendido junto). Assento antigo, sem o campo: 10%.
+  const taxaPercent = percentualGravado(participacao.taxaPercent)
+  const divisao = dividirValor(participacao.valorCentavos, taxaPercent)
   const agora = new Date()
   const res = await c.repasses.updateOne(
     { participacaoId: idDe(participacao) },
@@ -43,6 +47,7 @@ export async function abrirRepasse(participacao: Participacao, reserva: { _id?: 
         tutorId: participacao.tutorId,
         tutorUserId: reserva.tutorUserId,
         ...divisao,
+        taxaPercent,
         status: 'em_garantia',
         createdAt: agora,
         updatedAt: agora,
@@ -68,7 +73,7 @@ export async function abrirRepasse(participacao: Participacao, reserva: { _id?: 
         participacaoId: idDe(participacao),
         tipo: 'taxa_plataforma',
         valorCentavos: -divisao.taxaPlataformaCentavos,
-        descricao: 'Taxa da plataforma (10%)',
+        descricao: taxaPercent === 0 ? 'Taxa da plataforma isenta: aluno levou material oficial' : `Taxa da plataforma (${taxaPercent}%)`,
         por: 'sistema',
       },
     ])
@@ -142,7 +147,9 @@ export async function estornarRepasse(input: {
     const pago = repasse.status === 'pago' || repasse.status === 'em_pagamento'
     const baseAtual = Math.max(0, repasse.brutoCentavos - (pago ? jaPosPago : 0))
     const novoBruto = input.total ? 0 : Math.max(0, baseAtual - input.valorBaseCentavos)
-    const perdaLiquida = dividirValor(baseAtual).liquidoTutorCentavos - dividirValor(novoBruto).liquidoTutorCentavos
+    // Mesmo percentual com que o repasse abriu: estorno nunca muda a regra da contratação.
+    const percent = percentualGravado(repasse.taxaPercent)
+    const perdaLiquida = dividirValor(baseAtual, percent).liquidoTutorCentavos - dividirValor(novoBruto, percent).liquidoTutorCentavos
     const marca = { chave: input.chave, perdaCentavos: perdaLiquida, em: new Date() }
 
     if (pago) {
@@ -180,7 +187,7 @@ export async function estornarRepasse(input: {
       return
     }
 
-    const nova = dividirValor(novoBruto)
+    const nova = dividirValor(novoBruto, percent)
     const res = await c.repasses.updateOne(
       { _id: repasse._id as any, status: repasse.status, brutoCentavos: repasse.brutoCentavos, 'estornos.chave': { $ne: input.chave } } as any,
       {
@@ -209,6 +216,47 @@ export async function estornarRepasse(input: {
     return
   }
   console.error('[monitorias] estorno não aplicado após 4 tentativas:', input.participacaoId, input.chave)
+}
+
+/**
+ * A venda do material que isentou a taxa foi desfeita (estorno do material
+ * fora do fluxo da monitoria) antes de o dinheiro sair: a contratação volta a
+ * ter 10%. Compare-and-set só em repasse que ainda não foi pago; se já foi, a
+ * diferença vira saldo devedor do monitor (como qualquer estorno pós-repasse).
+ * Idempotente: só age em repasse com taxa 0.
+ */
+export async function reaplicarTaxaSemMaterial(participacaoId: string, motivo: string): Promise<boolean> {
+  const c = colecoes(await getDb())
+  const repasse = await c.repasses.findOne({ participacaoId })
+  if (!repasse || repasse.taxaPercent !== 0 || repasse.status === 'estornado') return false
+  const nova = dividirValor(repasse.brutoCentavos, 10)
+  const diferenca = repasse.liquidoTutorCentavos - nova.liquidoTutorCentavos
+  const pago = repasse.status === 'pago' || repasse.status === 'em_pagamento'
+  const res = await c.repasses.updateOne(
+    { _id: repasse._id as any, taxaPercent: 0, status: repasse.status, brutoCentavos: repasse.brutoCentavos } as any,
+    {
+      $set: pago
+        ? { taxaPercent: 10, updatedAt: new Date() }
+        : { taxaPercent: 10, taxaPlataformaCentavos: nova.taxaPlataformaCentavos, liquidoTutorCentavos: nova.liquidoTutorCentavos, updatedAt: new Date() },
+    },
+  )
+  if (!res.modifiedCount) return false
+  await c.participacoes.updateOne({ _id: oidSeguro(participacaoId) as any }, { $set: { taxaPercent: 10, 'materialOficial.isentaTaxa': false, updatedAt: new Date() } })
+  if (pago && diferenca > 0) {
+    await c.tutores.updateOne({ _id: oidSeguro(repasse.tutorId) as any }, { $inc: { saldoDevedorCentavos: diferenca }, $set: { updatedAt: new Date() } })
+  }
+  await lancar([
+    {
+      tutorId: repasse.tutorId,
+      repasseId: idDe(repasse),
+      participacaoId,
+      tipo: pago ? 'saldo_devedor' : 'taxa_plataforma',
+      valorCentavos: -diferenca,
+      descricao: `Taxa da plataforma (10%) reaplicada: ${motivo}`,
+      por: 'sistema',
+    },
+  ])
+  return true
 }
 
 /** tutorId é o `_id` (string) do documento do tutor. */

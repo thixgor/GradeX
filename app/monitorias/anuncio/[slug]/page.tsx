@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
-  ArrowLeft, BookOpenCheck, CalendarCheck, ChevronDown, ExternalLink, Gift, Loader2, MessageCircleQuestion,
+  ArrowLeft, BookOpen, BookOpenCheck, CalendarCheck, ChevronDown, ExternalLink, Gift, Loader2, MessageCircleQuestion,
   MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2, Undo2, FileSignature, Wallet,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
@@ -34,6 +34,8 @@ interface Dados {
   perguntas: Pergunta[]
   avaliacoes: Array<{ nome: string; foto?: string | null; nota: number; comentario: string; em: string }>
   outros: Array<{ slug: string; titulo: string; materia: string; preco: ConteudoAnuncio['preco'] }>
+  /** Material oficial indicado pelo monitor (preço oficial da loja). */
+  materialOficial?: { id: string; titulo: string; capa: string | null; precoCentavos: number } | null
 }
 
 interface Pergunta {
@@ -352,6 +354,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
             )}
             <div className="mt-5">{acoes}</div>
             <Depoimento avaliacoes={dados.avaliacoes} />
+            {dados.materialOficial && <MaterialIndicado m={dados.materialOficial} />}
             <GarantiaDomineAqui />
           </Aparecer>
 
@@ -567,6 +570,25 @@ const ITENS_GARANTIA = [
   { icone: ShieldCheck, texto: 'Monitor faltou ou cancelou? Reembolso integral' },
   { icone: FileSignature, texto: 'Contrato assinado e comprovante em PDF' },
 ]
+
+/** Material oficial indicado pelo monitor: opcional, escolhido no pagamento. */
+function MaterialIndicado({ m }: { m: NonNullable<Dados['materialOficial']> }) {
+  return (
+    <div className="mt-5 flex items-center gap-3 rounded-xl border border-border p-3">
+      {m.capa ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={m.capa} alt="" loading="lazy" className="h-12 w-12 shrink-0 rounded-lg object-cover" />
+      ) : (
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary"><BookOpen className="h-5 w-5" strokeWidth={1.75} /></span>
+      )}
+      <div className="min-w-0 text-sm">
+        <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Material indicado pelo monitor</p>
+        <Link href={`/materiais/${m.id}`} className="block truncate font-semibold hover:underline">{m.titulo}</Link>
+        <p className="text-xs text-muted-foreground">Opcional. Leve junto no pagamento por {formatarCentavos(m.precoCentavos)}; se já tiver, não paga de novo.</p>
+      </div>
+    </div>
+  )
+}
 
 function GarantiaDomineAqui() {
   return (

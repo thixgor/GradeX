@@ -23,7 +23,7 @@ import { formatarDuracao } from '../agenda'
 import type { DadosContrato } from '../tipos'
 import { identificacaoDaPlataforma, PLATAFORMA, VERSAO_TERMOS, type SecaoDocumento } from './termos'
 
-export const VERSAO_CONTRATO = '2026.10-v3'
+export const VERSAO_CONTRATO = '2026.10-v4'
 export const VERSAO_OFERTA = '2026.10-v2'
 
 export function sha256(texto: string): string {
@@ -83,8 +83,13 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
           : '3.2. O pagamento é feito por PIX à INTERVENIENTE, que o recebe em nome e por conta do CONTRATADO e o retém em garantia até 48 horas após o término da monitoria.',
         d.gratis
           ? '3.3. As demais cláusulas valem integralmente.'
-          : `3.3. Da quantia, a INTERVENIENTE retém ${formatarCentavos(d.taxaPlataformaCentavos)} (10%) como remuneração pela intermediação e repassa o saldo ao CONTRATADO por PIX após a garantia.`,
+          : `3.3. Da quantia, a INTERVENIENTE retém ${formatarCentavos(d.taxaPlataformaCentavos)} (10%) como remuneração pela intermediação e repassa o saldo ao CONTRATADO por PIX após a garantia. Não há retenção, e o CONTRATADO recebe o valor integral da monitoria, se o CONTRATANTE comprar junto, no mesmo pagamento, o material oficial da plataforma indicado no anúncio, desde que o preço do material seja igual ou superior a 10% do valor da monitoria.`,
         '3.4. O CONTRATANTE declara ciência de que pagamento feito diretamente ao CONTRATADO, fora da plataforma, não tem garantia, contrato, comprovante nem reembolso.',
+        ...(d.gratis
+          ? []
+          : [
+              '3.5. O material oficial é vendido pela INTERVENIENTE, e não pelo CONTRATADO. A compra é opcional e não é condição para a monitoria (CDC, art. 39, I). Quem já tem o material não paga por ele de novo. O reembolso integral da monitoria devolve também o material e encerra o acesso a ele.',
+            ]),
       ],
     },
     {

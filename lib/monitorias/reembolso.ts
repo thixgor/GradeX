@@ -141,6 +141,10 @@ export async function reembolsarParticipacao(input: {
   // Devolveu tudo: o contrato daquele assento deixa de valer (rescindido, com o
   // motivo). Nada é apagado — o texto assinado, o hash e as evidências ficam.
   if (ehTotal) {
+    // Reembolso total devolve o PIX inteiro (aula, material e taxa): o material
+    // vendido junto deixa de ser do aluno.
+    const { revogarMaterialDaMonitoria } = await import('./material-oficial')
+    await revogarMaterialDaMonitoria(await getDb(), part.materialOficial?.paymentOrderId)
     await c.contratos.updateOne(
       { participacaoId: input.participacaoId, status: { $ne: 'rescindido' } } as any,
       { $set: { status: 'rescindido', rescisao: { em: new Date(), motivo: reembolso.motivo }, updatedAt: new Date() } },

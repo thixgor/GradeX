@@ -122,6 +122,8 @@ export const SchemaConteudoAnuncio = z
       .max(20),
     materiais: z.array(z.object({ titulo: texto(2, 100, 'Título do material'), url: z.string().max(500) }).strict()).max(15),
     temMateriais: z.boolean(),
+    /** Id do material OFICIAL (o servidor confere no banco ao salvar). */
+    materialOficialId: z.string().regex(/^[a-f0-9]{24}$/, 'Material oficial inválido.').optional().nullable(),
   })
   .strict()
 
@@ -204,6 +206,7 @@ export function normalizarAnuncio(
       faq: v.faq.map((f) => ({ pergunta: semContato(f.pergunta), resposta: semContato(f.resposta) })),
       materiais,
       temMateriais: v.temMateriais || materiais.length > 0,
+      materialOficialId: v.materialOficialId || null,
     },
   }
 }

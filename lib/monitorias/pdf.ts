@@ -286,6 +286,10 @@ export interface EntradaPdfComprovante {
   inicio?: Date
   duracao: string
   valorCentavos: number
+  /** Material oficial comprado no mesmo PIX (vendido pela plataforma). */
+  material?: { titulo: string; precoCentavos: number } | null
+  /** 0 = aula sem taxa da plataforma (material oficial elegível). */
+  taxaPercent?: number
   taxaPixCentavos: number
   totalPagoCentavos: number
   contratoNumero?: string
@@ -313,6 +317,7 @@ export async function pdfDoComprovante(e: EntradaPdfComprovante): Promise<Uint8A
   p.texto('Valores', { negrito: true, tamanho: 11, depois: 4 })
   p.tabela([
     ['Valor da monitoria', formatarCentavos(e.valorCentavos)],
+    ...(e.material ? ([[`Material oficial: ${e.material.titulo} (vendido pela DomineAqui)`, formatarCentavos(e.material.precoCentavos)]] as Array<[string, string]>) : []),
     ['Taxa do PIX (meio de pagamento)', formatarCentavos(e.taxaPixCentavos)],
     ['Total pago', formatarCentavos(e.totalPagoCentavos)],
   ])
@@ -321,7 +326,9 @@ export async function pdfDoComprovante(e: EntradaPdfComprovante): Promise<Uint8A
     p.tabela(e.reembolsos.map((r) => [dataHora(r.em), `${formatarCentavos(r.valorCentavos)} · ${r.status} · protocolo ${r.chave}`]))
   }
   p.texto(
-    'O valor fica retido em garantia pela plataforma até 48 horas após o término da monitoria e só então é repassado ao monitor (90%), descontada a taxa de intermediação (10%). Este comprovante não é nota fiscal.',
+    e.taxaPercent === 0
+      ? 'O valor da monitoria fica retido em garantia pela plataforma até 48 horas após o término e só então é repassado integralmente ao monitor (sem taxa de intermediação, porque o material oficial foi comprado junto). Este comprovante não é nota fiscal.'
+      : 'O valor fica retido em garantia pela plataforma até 48 horas após o término da monitoria e só então é repassado ao monitor (90%), descontada a taxa de intermediação (10%). Este comprovante não é nota fiscal.',
     { tamanho: 8.5, cor: CINZA },
   )
   return p.doc.save()
@@ -333,7 +340,7 @@ export interface EntradaPdfRepasse {
   titulo: string
   monitorNome: string
   monitorCpf: string
-  itens: Array<{ descricao: string; brutoCentavos: number; taxaCentavos: number; liquidoCentavos: number; status: string }>
+  itens: Array<{ descricao: string; brutoCentavos: number; taxaCentavos: number; liquidoCentavos: number; status: string; taxaPercent?: number }>
   abatidoCentavos?: number
   totalCentavos: number
   pix?: string
@@ -349,8 +356,10 @@ export async function pdfDoRepasse(e: EntradaPdfRepasse): Promise<Uint8Array> {
     p.tabela([
       ['Monitoria', item.descricao],
       ['Valor bruto', formatarCentavos(item.brutoCentavos)],
-      ['Taxa da plataforma (10%)', formatarCentavos(item.taxaCentavos)],
-      ['Líquido do monitor (90%)', formatarCentavos(item.liquidoCentavos)],
+      item.taxaPercent === 0
+        ? ['Taxa da plataforma', 'Isenta (aluno levou material oficial)']
+        : ['Taxa da plataforma (10%)', formatarCentavos(item.taxaCentavos)],
+      [item.taxaPercent === 0 ? 'Líquido do monitor (100%)' : 'Líquido do monitor (90%)', formatarCentavos(item.liquidoCentavos)],
       ['Situação', item.status],
     ])
   }

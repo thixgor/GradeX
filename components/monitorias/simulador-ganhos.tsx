@@ -32,7 +32,7 @@ export function SimuladorGanhos({ className, compacto = false, semBotao = false 
       >
         {formatarCentavos(liquidoCentavos)}
       </motion.p>
-      <p className="mt-1 text-xs text-muted-foreground">Estimativa com 4 semanas no mês, já sem os 10% da plataforma.</p>
+      <p className="mt-1 text-xs text-muted-foreground">Estimativa com 4 semanas no mês, já sem os 10% da plataforma (que caem a zero nas aulas em que o aluno leva o material oficial indicado).</p>
       <div className={cn('mt-6 grid gap-5', !compacto && 'sm:grid-cols-2')}>
         <Controle rotulo="Preço por hora" valor={`R$ ${preco}`} min={20} max={200} step={5} atual={preco} mudar={setPreco} />
         <Controle rotulo="Horas por semana" valor={`${horas} h`} min={1} max={20} step={1} atual={horas} mudar={setHoras} />

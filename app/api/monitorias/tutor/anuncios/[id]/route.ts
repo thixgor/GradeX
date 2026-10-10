@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { erro, idDe, lerJson, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
+import { erroDoMaterialOficial } from '@/lib/monitorias/material-oficial'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { normalizarAnuncio } from '@/lib/monitorias/validacao'
 import type { ConteudoAnuncio } from '@/lib/monitorias/tipos'
@@ -45,6 +46,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     if (a.status === 'suspenso') return erro(403, 'Anúncio suspenso pela moderação.')
     const normalizado = normalizarAnuncio(await lerJson(request))
     if (!normalizado.ok) return erro(400, normalizado.erros[0], { erros: normalizado.erros })
+    const erroMaterial = await erroDoMaterialOficial(normalizado.conteudo.materialOficialId)
+    if (erroMaterial) return erro(400, erroMaterial)
     const c = await obterColecoes()
     const agora = new Date()
     if (a.status === 'rascunho' || a.status === 'rejeitado' || a.status === 'em_analise') {

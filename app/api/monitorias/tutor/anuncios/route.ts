@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { randomBytes } from 'crypto'
 import { erro, idDe, lerJson, obterColecoes } from '@/lib/monitorias/db'
+import { erroDoMaterialOficial } from '@/lib/monitorias/material-oficial'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarUsuario, obterOuCriarTutor } from '@/lib/monitorias/servidor'
 import { gerarSlug, normalizarAnuncio } from '@/lib/monitorias/validacao'
@@ -15,6 +16,8 @@ export async function POST(request: NextRequest) {
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
     const normalizado = normalizarAnuncio(await lerJson(request))
     if (!normalizado.ok) return erro(400, normalizado.erros[0], { erros: normalizado.erros })
+    const erroMaterial = await erroDoMaterialOficial(normalizado.conteudo.materialOficialId)
+    if (erroMaterial) return erro(400, erroMaterial)
     const user = await carregarUsuario(sessao.userId)
     if (!user || user.banned) return erro(403, 'Conta indisponível.')
     const tutor = await obterOuCriarTutor(user)

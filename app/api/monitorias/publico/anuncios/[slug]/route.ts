@@ -7,6 +7,8 @@ import { anuncioPublico, tutorPublico } from '@/lib/monitorias/servidor'
 import { rotaPublica } from '@/lib/monitorias/rota'
 import { SLUG_VALIDO } from '@/lib/monitorias/validacao'
 import { avaliacoesDoAnuncio } from '@/lib/monitorias/avaliacoes'
+import { materialOficialAVenda } from '@/lib/monitorias/material-oficial'
+import { getDb } from '@/lib/mongodb'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     const c = await obterColecoes()
     const anuncio = await c.anuncios.findOne({ slug: params.slug, status: 'publicado' })
     if (!anuncio || !ObjectId.isValid(anuncio.tutorId)) return erro(404, 'Anúncio não encontrado.')
-    const [tutor, perguntas, outros, avaliacoes] = await Promise.all([
+    const [tutor, perguntas, outros, avaliacoes, material] = await Promise.all([
       c.tutores.findOne({ _id: new ObjectId(anuncio.tutorId), status: 'ativo' } as any),
       c.perguntas.find({ anuncioId: idDe(anuncio), status: 'visivel' }).sort({ createdAt: -1 }).limit(20).toArray(),
       c.anuncios
@@ -25,6 +27,9 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
         .limit(6)
         .toArray(),
       avaliacoesDoAnuncio(idDe(anuncio)),
+      // Material oficial indicado pelo monitor, com o preço OFICIAL de agora
+      // (some da página se sair da loja ou ficar grátis).
+      anuncio.materialOficialId ? getDb().then((db) => materialOficialAVenda(db, anuncio.materialOficialId)) : Promise.resolve(null),
     ])
     if (!tutor) return erro(404, 'Anúncio não encontrado.')
     return jsonComprimido(
@@ -43,6 +48,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
           createdAt: p.createdAt,
         })),
         avaliacoes,
+        materialOficial: material ? { id: material.id, titulo: material.titulo, capa: material.capa, precoCentavos: material.precoCentavos } : null,
         outros: outros.map((o) => ({ slug: o.slug, titulo: o.titulo, materia: o.materia, preco: o.preco })),
       },
       { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=120' } },

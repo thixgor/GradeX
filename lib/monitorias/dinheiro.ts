@@ -1,5 +1,6 @@
 /**
- * Dinheiro das monitorias: centavos inteiros e a divisão 10% / 90%.
+ * Dinheiro das monitorias: centavos inteiros e a divisão 10% / 90% (ou 0% / 100%
+ * quando o aluno leva material oficial elegível, ver `comissao.ts`).
  *
  * Exemplo: aula de R$ 125,55 → 12555 centavos.
  *  - taxa da plataforma = floor(12555 × 10%) = 1255 (R$ 12,55)
@@ -33,9 +34,15 @@ export interface Divisao {
   liquidoTutorCentavos: number
 }
 
-export function dividirValor(brutoCentavos: number): Divisao {
+/**
+ * @param taxaPercent percentual gravado na contratação. Só existem dois: 10
+ *   (padrão) e 0 (aluno levou material oficial elegível, ver `comissao.ts`).
+ *   Qualquer outro valor vira 10 — um campo adulterado nunca reduz a taxa.
+ */
+export function dividirValor(brutoCentavos: number, taxaPercent: number = TAXA_PLATAFORMA_PERCENT): Divisao {
   const bruto = Math.max(0, Math.round(brutoCentavos))
-  const taxa = Math.floor((bruto * TAXA_PLATAFORMA_PERCENT) / 100)
+  const percent = taxaPercent === 0 ? 0 : TAXA_PLATAFORMA_PERCENT
+  const taxa = Math.floor((bruto * percent) / 100)
   return { brutoCentavos: bruto, taxaPlataformaCentavos: taxa, liquidoTutorCentavos: bruto - taxa }
 }
 
