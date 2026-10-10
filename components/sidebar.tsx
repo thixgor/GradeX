@@ -47,6 +47,7 @@ import { useCargos } from '@/hooks/use-cargos'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
 import { BuscaGlobal } from '@/components/busca/busca-global'
+import { avatarPorId } from '@/lib/monitorias/avatares'
 
 interface SidebarProps {
   user: {
@@ -55,6 +56,8 @@ interface SidebarProps {
     name: string
     role: 'admin' | 'user'
     accountType?: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
+    /** Retrato da galeria (id do catálogo). */
+    avatar?: string
   } | null
   onCreateExam: () => void
   onLogout: () => void
@@ -1448,9 +1451,7 @@ function SidebarAccountFooter({
           transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
         }}
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary">
-          {user.name.charAt(0).toUpperCase()}
-        </span>
+        <RetratoDoMenu nome={user.name} avatar={user.avatar} />
         <span
           className="min-w-0 flex-1 text-left"
           style={{
@@ -1537,5 +1538,21 @@ function SidebarAccountFooter({
           document.body
         )}
     </div>
+  )
+}
+
+/** Retrato da conta no rodapé do menu; sem retrato (ou se a imagem falhar), a inicial. */
+function RetratoDoMenu({ nome, avatar }: { nome: string; avatar?: string }) {
+  const [falhou, setFalhou] = useState(false)
+  const url = avatarPorId(avatar)?.url
+  return (
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 font-semibold text-primary">
+      {url && !falhou ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFalhou(true)} className="h-full w-full object-cover object-[50%_22%]" />
+      ) : (
+        (nome || '?').charAt(0).toUpperCase()
+      )}
+    </span>
   )
 }

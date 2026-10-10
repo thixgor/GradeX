@@ -13,6 +13,7 @@ import { colecoes, idDe } from './db'
 import { ErroMonitoria } from './reservas'
 import { mascararContato } from './contato'
 import type { Reserva } from './tipos'
+import { avatarPorId } from './avatares'
 
 export async function avaliar(input: { reserva: Reserva; alunoId: string; nota: number; comentario: string }): Promise<void> {
   const { reserva } = input
@@ -41,9 +42,22 @@ export async function avaliar(input: { reserva: Reserva; alunoId: string; nota: 
 export async function avaliacoesDoAnuncio(anuncioId: string, limite = 10) {
   const c = colecoes(await getDb())
   const itens = await c.participacoes
-    .find({ 'avaliacao.anuncioId': anuncioId } as any, { projection: { alunoNome: 1, avaliacao: 1 } })
+    .find({ 'avaliacao.anuncioId': anuncioId } as any, { projection: { alunoId: 1, alunoNome: 1, avaliacao: 1 } })
     .sort({ 'avaliacao.em': -1 })
     .limit(limite)
     .toArray()
-  return itens.map((p) => ({ nome: p.alunoNome.split(' ')[0], nota: p.avaliacao!.nota, comentario: p.avaliacao!.comentario, em: p.avaliacao!.em }))
+  // Retrato atual de quem avaliou: só o id do catálogo sai do banco; a URL vem
+  // do catálogo (nunca do usuário) e o id da pessoa não vai para a página.
+  const ids = Array.from(new Set(itens.map((p) => p.alunoId))).filter((id) => ObjectId.isValid(id))
+  const donos = ids.length
+    ? await c.users.find({ _id: { $in: ids.map((id) => new ObjectId(id)) } } as any, { projection: { avatar: 1 } }).toArray()
+    : []
+  const fotos = new Map(donos.map((u: any) => [String(u._id), avatarPorId(u.avatar)?.url || null]))
+  return itens.map((p) => ({
+    nome: p.alunoNome.split(' ')[0],
+    foto: fotos.get(p.alunoId) || null,
+    nota: p.avaliacao!.nota,
+    comentario: p.avaliacao!.comentario,
+    em: p.avaliacao!.em,
+  }))
 }

@@ -52,6 +52,7 @@ interface User {
   accountType?: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
   secondaryRole?: string
   emailVerified?: boolean
+  avatar?: string
 }
 
 interface AppShellContextType {
@@ -216,6 +217,7 @@ export function AppShell({
       accountType: bootstrapUser.accountType === 'free' ? 'gratuito' : bootstrapUser.accountType,
       secondaryRole: bootstrapUser.secondaryRole,
       emailVerified: bootstrapUser.emailVerified,
+      avatar: bootstrapUser.avatar,
     }
   }, [bootstrapUser])
 
