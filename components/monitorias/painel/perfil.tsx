@@ -61,7 +61,7 @@ function FotoDoMonitor({ dados, recarregar }: { dados: DadosPainel; recarregar: 
         <span className="min-w-0 flex-1">
           <span className="block font-heading text-lg font-semibold">Sua foto no anúncio</span>
           <span className="block truncate text-sm text-muted-foreground">
-            {retrato ? `${retrato.nome}, ${retrato.legenda.charAt(0).toLowerCase()}${retrato.legenda.slice(1)}` : 'Escolha um retrato. Aparece no anúncio e nas aulas.'}
+            {retrato ? `${retrato.nome}, ${retrato.ator ? retrato.legenda : retrato.legenda.charAt(0).toLowerCase() + retrato.legenda.slice(1)}` : 'Escolha um retrato. Aparece no anúncio e nas aulas.'}
           </span>
         </span>
         <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato ? 'Trocar' : 'Escolher'}</span>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { AVATARES, FILTROS_AVATAR, avatarPorId, creditoDoAvatar } from '@/lib/monitorias/avatares'
+import { AVATARES, FILTROS_AVATAR, SERIES_AVATAR, avatarPorId, creditoDoAvatar } from '@/lib/monitorias/avatares'
 import { requisitosDoMonitor } from '@/lib/monitorias/requisitos'
 
 describe('galeria de retratos do monitor (sem envio de foto)', () => {
@@ -27,7 +27,25 @@ describe('galeria de retratos do monitor (sem envio de foto)', () => {
     const f = (id: string) => AVATARES.filter(FILTROS_AVATAR.find((x) => x.id === id)!.aceita)
     expect(f('brasil').length).toBeGreaterThanOrEqual(10)
     expect(f('mulheres').length).toBeGreaterThanOrEqual(10)
-    expect(f('classicos').length + f('seculo20').length + f('brasil').length).toBe(AVATARES.length)
+    expect(f('classicos').length + f('seculo20').length + f('brasil').length + f('series').length).toBe(AVATARES.length)
+  })
+
+  it('médicos de série: foto do ator identificada, todas as séries com personagens', () => {
+    const series = AVATARES.filter((a) => a.grupo === 'series')
+    expect(series.length).toBeGreaterThanOrEqual(30)
+    for (const a of series) {
+      expect(a.serie && SERIES_AVATAR.some((s) => s.id === a.serie)).toBeTruthy()
+      expect(a.ator).toBeTruthy()
+      expect(a.legenda).toContain(a.ator!)
+      expect(a.id).toMatch(/^serie-/)
+    }
+    for (const s of SERIES_AVATAR) expect(series.some((a) => a.serie === s.id)).toBe(true)
+    for (const id of ['serie-house', 'serie-cuddy', 'serie-wilson', 'serie-foreman', 'serie-chase', 'serie-taub', 'serie-shaun-murphy', 'serie-conrad-hawkins']) {
+      expect(avatarPorId(id)).not.toBeNull()
+    }
+    expect(series.some((a) => a.mulher)).toBe(true)
+    // Fora das séries não há campo de ator (só retratos históricos).
+    expect(AVATARES.filter((a) => a.grupo !== 'series').every((a) => !a.ator && !a.serie)).toBe(true)
   })
 
   it('crédito aponta para a página do arquivo no Commons', () => {
