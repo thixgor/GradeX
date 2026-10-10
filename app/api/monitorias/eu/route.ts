@@ -5,6 +5,8 @@ import { requisitosDoAlunoDe, requisitosDoMonitorDe } from '@/lib/monitorias/ser
 import { resumir } from '@/lib/monitorias/financeiro'
 import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
 import { VERSAO_OFERTA } from '@/lib/monitorias/documentos/contrato'
+import { abertaAgora } from '@/lib/monitorias/demandas'
+import { chaveDaMateria } from '@/lib/monitorias/demandas-regras'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +27,11 @@ export async function GET(request: NextRequest) {
       c.reservas.countDocuments({ tutorUserId: sessao.userId, status: { $in: ['solicitada', 'em_negociacao', 'aguardando_assinaturas'] } }),
     ])
     const tutor = monitor.tutor
+    // Pedidos de alunos abertos nas matérias dos meus anúncios publicados (selo da aba Oportunidades).
+    const minhasMaterias = Array.from(new Set(anuncios.filter((a) => a.status === 'publicado').map((a) => chaveDaMateria(a.materia || ''))))
+    const oportunidades = minhasMaterias.length
+      ? await c.demandas.countDocuments({ ...abertaAgora(), materiaChave: { $in: minhasMaterias }, alunoId: { $ne: sessao.userId } } as any)
+      : 0
     const repasses = tutor ? await c.repasses.find({ tutorId: idDe(tutor) }, { projection: { status: 1, liquidoTutorCentavos: 1 } }).toArray() : []
     return ok({
       requisitosMonitor: { itens: monitor.itens, ok: monitor.ok },
@@ -74,6 +81,7 @@ export async function GET(request: NextRequest) {
         ofertaAssinada: a.ofertaAssinada?.versao === VERSAO_OFERTA,
       })),
       pedidosPendentes: pendentes,
+      oportunidades,
     })
   })
 }

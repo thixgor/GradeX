@@ -133,6 +133,52 @@ Teste de integração (Mongo real + MP falso), opcional:
 `MONITORIAS_MONGO_TESTE=mongodb://127.0.0.1:27017/ npx vitest run __tests__/monitorias/pagamentos-integracao.test.ts`
 (apaga o banco `monitorias-pagamentos-teste` daquela instância).
 
+## Pedidos de monitoria (o aluno pede, os monitores vêm)
+
+O anúncio ao contrário: o aluno diz o que precisa e os monitores respondem.
+Resolve o "ovo e galinha" do começo: o aluno não sai de mãos vazias quando a
+vitrine está fraca, e o monitor que chega vê procura em vez de um site vazio.
+
+- **Aluno** (`/monitorias/pedir`, `components/monitorias/formulario-demanda.tsx`):
+  quase tudo é toque em opção. Matéria (com atalhos), assunto opcional,
+  pessoas (só eu, 2, 3, 4, 5+), quanto topa pagar por pessoa (ou "o monitor
+  propõe"), duração, para quando e melhor horário. Botão preso no rodapé. Sem
+  cadastro completo (mesma regra de `requisitosDoAluno`); sem login, o
+  rascunho fica no `sessionStorage` e volta depois do login.
+- **Monitor** (aba **Oportunidades** do painel): mural dos pedidos abertos, os
+  da matéria dele primeiro (selo "Sua matéria"; contador na aba vem de
+  `/api/monitorias/eu`). "Quero dar essa aula" → escolhe o anúncio (só os que
+  comportam o grupo) e a mensagem já vem escrita → cai na conversa.
+- **Responder = negociação comum** (`responderDemanda` em
+  `lib/monitorias/demandas.ts`): reserva `origem: 'negociacao'`, `status:
+  'solicitada'`, com a cópia do pedido em `reserva.demanda`. A proposta abre
+  com pessoas, duração e valor do pedido. Dali em diante é o fluxo de sempre
+  (chat, contrato, PIX, garantia, reembolso). O pedido nunca mexe com dinheiro.
+- **Fechamento:** quando a aula de uma resposta é confirmada
+  (`avisarConfirmacao` → `marcarDemandaAtendida`), o pedido sai do mural e os
+  outros monitores que responderam são avisados.
+- **Avisos:** pedido novo avisa no sino quem tem anúncio publicado da matéria
+  (comparação sem acento/maiúscula, collation `pt` strength 1, até 40
+  monitores); e-mail no máximo 1 por dia por monitor
+  (`tutor.ultimoAvisoDemandaEm`, reservado de forma atômica).
+- **Limites:** 3 pedidos abertos por aluno, 1 por matéria; 8 respostas por
+  pedido (`$inc` condicionado); uma resposta por monitor (índice único
+  parcial `{ 'demanda.id', tutorId }` em `monitorias_reservas`); 6 pedidos/h e
+  20 respostas/dia por pessoa. O pedido expira sozinho (3, 7, 14 ou 21 dias,
+  conforme "para quando"), sem cron: as consultas filtram `expiraEm`.
+  Respostas ainda sem conversa (`solicitada` com `demanda`) não contam no
+  limite de reservas abertas do aluno.
+- **Privacidade:** o monitor vê só o primeiro nome. O mural público da vitrine
+  (`/api/monitorias/publico/demandas`, CDN 60 s) não mostra nome nenhum.
+  Telefone/e-mail no assunto e na mensagem são mascarados.
+- **Onde aparece:** vitrine (link no herói, faixa depois da lista e o estado
+  vazio "Pedir monitoria de <busca>"), "Quero ensinar" (alunos procurando
+  agora, só se houver algum), Minhas monitorias ("Meus pedidos" com quem
+  respondeu e "Tirar do mural") e a sala da conversa (cartão "Seu pedido" /
+  "O pedido do aluno").
+- Regras puras e testáveis em `lib/monitorias/demandas-regras.ts`; testes em
+  `__tests__/monitorias/demandas-*.test.ts`.
+
 ## Comissão com material oficial (`lib/monitorias/comissao.ts`)
 
 Regra: o monitor recebe **100%** da aula quando o aluno compra junto, no mesmo
@@ -271,6 +317,18 @@ tenta de novo com a mesma chave.
   já no campo, em edição. `comVolta` acrescenta `voltar=` (só caminhos
   `/monitorias…`, validado por `voltarValido`; nada de redirecionamento aberto)
   e o /profile mostra a faixa "Voltar" no topo.
+- Quem COMPRA não preenche cadastro: `requisitosDoAluno` pede só conta ativa e
+  maioridade (quando a data informada indica menor). E-mail confirmado, CPF e
+  nome civil continuam obrigatórios só para o MONITOR. As rotas do aluno não
+  exigem `emailVerificado`; a assinatura do contrato usa código enviado ao
+  e-mail, e acertar o código marca o e-mail como confirmado. O modal global de
+  "complete seu perfil" não abre em `/monitorias` (só no painel do monitor).
+- Monitor não contrata a si mesmo: o servidor recusa pela conta e pelo CPF
+  (`mesmaPessoa`), o anúncio esconde os botões do dono (`/api/auth/me` devolve
+  `user.id`) e, como o aluno pode não ter CPF, `aoAprovarPagamento` compara o
+  CPF de quem pagou o PIX (quando o Mercado Pago informa) com o do monitor:
+  igual → não confirma, devolve inteiro, audita `autocompra_cpf_do_monitor` e
+  avisa a equipe.
 - Textos cortados antes de regex; PDF com quebra de linha linear; IP
   mascarado nos PDFs; limites para propostas (6/10 min) e pedidos (15/h).
 - O anúncio público não expõe o `userId` do monitor, só `donoChave`
@@ -327,10 +385,19 @@ tenta de novo com a mesma chave.
   caixa-alta acima de título (`Cabecalho` em `base.tsx`); estados vazios com `Vazio`.
 - **Landing:** chave "Quero aprender / Quero ensinar" (lembrada no navegador);
   o monitor, cliente principal, tem caminho próprio com simulador ao vivo.
-- **Agenda:** grade semanal para pintar (clicar e arrastar; no celular, tocar),
-  atalhos, copiar dia, calendário de folgas e barra de salvar só com alterações.
+- **Agenda:** grade semanal para pintar (clicar e arrastar) só com mouse ou
+  trackpad (`md:[@media(pointer:fine)]`): a grade usa `touch-action: none` e, no
+  tablet de toque, travaria a rolagem. Toque (celular e tablet) usa a lista de um
+  dia por vez. Também tem atalhos, copiar dia, calendário de folgas e barra de salvar só com alterações.
   Conversão pura em `lib/monitorias/agenda.ts` (`janelasParaCelulas`/`celulasParaJanelas`).
 - **Assistente de anúncio:** prévia ao vivo do cartão da vitrine + força do anúncio.
+  No celular e no tablet, Voltar/Salvar/Próximo ficam na `BarraInferior` (o "+"
+  flutuante cobria metade do "Próximo" no fim da página).
+- **Navegação:** `NavMonitorias` (Encontrar / Minhas aulas / Painel do monitor)
+  no topo de toda tela da seção, menos no checkout.
+- **Telas estreitas (320px):** toda grade responsiva começa em `grid-cols-1`
+  (`minmax(0,1fr)`), nunca na coluna implícita `auto`, que cresce até o maior
+  conteúdo (texto com `truncate`, `whitespace-nowrap`) e vaza a tela.
 
 ## Operação
 

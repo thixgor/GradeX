@@ -320,6 +320,14 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_contratos').createIndex({ numero: 1 }, { unique: true }),
     db.collection('monitorias_contratos').createIndex({ codigoVerificacao: 1 }, { unique: true }),
     db.collection('monitorias_contratos').createIndex({ reservaId: 1 }),
+    // Pedidos de monitoria: mural (abertos por matéria), "meus pedidos" e uma resposta por monitor.
+    db.collection('monitorias_demandas').createIndex({ status: 1, expiraEm: 1, createdAt: -1 }),
+    db.collection('monitorias_demandas').createIndex({ materiaChave: 1, status: 1, expiraEm: 1 }),
+    db.collection('monitorias_demandas').createIndex({ alunoId: 1, createdAt: -1 }),
+    db.collection('monitorias_reservas').createIndex(
+      { 'demanda.id': 1, tutorId: 1 },
+      { unique: true, partialFilterExpression: { 'demanda.id': { $exists: true } } },
+    ),
     db.collection('monitorias_codigos').createIndex({ userId: 1, finalidade: 1 }, { unique: true }),
     db.collection('monitorias_codigos').createIndex({ expiraEm: 1 }, { expireAfterSeconds: 3600 }),
     db.collection('monitorias_cotas_gratis').createIndex({ alunoId: 1, tutorId: 1 }, { unique: true }),

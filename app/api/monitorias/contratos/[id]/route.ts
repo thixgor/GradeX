@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 /** POST {codigo, hash} — assina. Exige os Termos do papel aceitos. */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao, ip }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao, ip }) => {
     const corpo = z.object({ codigo: z.string().max(10), hash: z.string().length(64) }).strict().safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Dados inválidos.')
     const contrato = await carregar(params.id, sessao.userId, false)
@@ -68,6 +68,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       userAgent: userAgentDe(request),
     })
     if (!resultado.ok) return erro(resultado.status, resultado.erro)
+    // O código chegou no e-mail da pessoa e foi digitado certo: o e-mail está
+    // provado. O aluno não precisa confirmar o e-mail antes de agendar, e o
+    // contrato ("e-mail verificado na plataforma") continua verdadeiro.
+    if (!user.emailVerified) {
+      const c = await obterColecoes()
+      await c.users.updateOne({ _id: new ObjectId(sessao.userId), emailVerified: { $ne: true } } as any, { $set: { emailVerified: true } })
+    }
     if (resultado.completo) {
       await aposContratoAssinado(resultado.contrato)
     } else {

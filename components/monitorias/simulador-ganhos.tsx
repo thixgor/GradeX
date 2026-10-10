@@ -19,7 +19,7 @@ export function SimuladorGanhos({ className, compacto = false, semBotao = false 
   const [horas, setHoras] = useState(4)
   const { liquidoCentavos } = ganhoMensalEstimado(preco * 100, horas)
   return (
-    <section className={cn('rounded-2xl border border-border bg-card p-6 shadow-[0_18px_44px_-24px_hsl(var(--primary)/0.4)] sm:p-7', className)} aria-label="Simulador de ganhos">
+    <section className={cn('min-w-0 rounded-2xl border border-border bg-card p-5 shadow-[0_18px_44px_-24px_hsl(var(--primary)/0.4)] sm:p-7', className)} aria-label="Simulador de ganhos">
       <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
         <Calculator className="h-4 w-4" strokeWidth={1.75} /> Quanto você ganharia por mês
       </div>
@@ -28,7 +28,7 @@ export function SimuladorGanhos({ className, compacto = false, semBotao = false 
         initial={reduzir ? false : { opacity: 0.4, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="mt-2 font-heading text-5xl font-semibold tabular-nums tracking-tight text-foreground"
+        className="mt-2 break-words font-heading text-4xl font-semibold tabular-nums tracking-tight text-foreground min-[380px]:text-5xl"
       >
         {formatarCentavos(liquidoCentavos)}
       </motion.p>

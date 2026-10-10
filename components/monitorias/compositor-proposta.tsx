@@ -22,11 +22,13 @@ export function CompositorProposta({ d, onEnviada }: { d: DetalheReserva; onEnvi
   const base = p ? relogioBrasilia(new Date(p.inicio)) : null
   const [dia, setDia] = useState(base?.dia || amanha)
   const [hora, setHora] = useState(base?.hora || '19:00')
-  const [duracao, setDuracao] = useState(p?.duracaoMin || r.precoReferencia?.duracaoPadraoMin || 60)
-  const [vagas, setVagas] = useState(p?.vagas || 1)
+  const [duracao, setDuracao] = useState(p?.duracaoMin || r.demanda?.duracaoMin || r.precoReferencia?.duracaoPadraoMin || 60)
+  const [vagas, setVagas] = useState(p?.vagas || Math.min(r.demanda?.pessoas || 1, r.grupo?.ativo ? r.grupo.maxAlunos : 1))
   const [gratis, setGratis] = useState(r.origem === 'gratis')
   const sugerido = r.precoReferencia && r.grupo ? precoPorPessoaCentavos({ preco: r.precoReferencia, grupo: r.grupo }, duracao, vagas) : 0
-  const [valor, setValor] = useState(p && !p.gratis ? (p.valorPorPessoaCentavos / 100).toFixed(2).replace('.', ',') : '')
+  // Sem proposta ainda e veio de um pedido: começa no valor que o aluno disse topar.
+  const valorInicial = p && !p.gratis ? p.valorPorPessoaCentavos : !p && r.demanda?.valorPorPessoaCentavos ? r.demanda.valorPorPessoaCentavos : null
+  const [valor, setValor] = useState(valorInicial ? (valorInicial / 100).toFixed(2).replace('.', ',') : '')
   const [conteudos, setConteudos] = useState<string[]>(p?.conteudos || [])
   const [obs, setObs] = useState('')
   const [enviando, setEnviando] = useState(false)

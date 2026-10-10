@@ -124,7 +124,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                       </div>
                     </div>
                     {p && (
-                      <dl className="grid gap-3 rounded-2xl bg-muted/40 p-4 text-sm sm:grid-cols-2">
+                      <dl className="grid grid-cols-1 gap-3 rounded-2xl bg-muted/40 p-4 text-sm sm:grid-cols-2">
                         <div>
                           <dt className="text-xs text-muted-foreground">Quando</dt>
                           <dd className="font-semibold">{formatarEmBrasilia(p.inicio, { weekday: 'long', day: '2-digit', month: 'long', hour: '2-digit', minute: '2-digit' })}</dd>
@@ -213,7 +213,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                     {linkConvite && r.status !== 'confirmada' && (
                       <ConviteGrupo link={linkConvite} copiado={copiado} onCopiar={() => { navigator.clipboard.writeText(linkConvite); setCopiado(true); setTimeout(() => setCopiado(false), 2000) }} />
                     )}
-                    <div className="grid gap-2 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       {d.meuContrato && (
                         <a href={`/api/monitorias/documentos/contrato/${d.meuContrato.id}`}>
                           <Button variant="outline" className="w-full"><FileText className="mr-2 h-4 w-4" /> Contrato (PDF)</Button>

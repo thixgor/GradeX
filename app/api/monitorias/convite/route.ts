@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
 /** POST {codigo} — entra no grupo (cria o assento e o contrato do aluno). */
 export async function POST(request: NextRequest) {
-  return rotaAutenticada(request, { limite: { limit: 10, windowMs: 10 * 60_000 }, emailVerificado: true }, async ({ sessao }) => {
+  return rotaAutenticada(request, { limite: { limit: 10, windowMs: 10 * 60_000 } }, async ({ sessao }) => {
     const corpo = z.object({ codigo: z.string().regex(CODIGO) }).strict().safeParse(await lerJson(request))
     if (!corpo.success) return erro(404, 'Convite inválido.')
     const req = await requisitosDoAlunoDe(sessao.userId)

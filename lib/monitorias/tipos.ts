@@ -22,6 +22,7 @@
  */
 
 import type { ObjectId } from 'mongodb'
+import type { PeriodoDemanda, QuandoDemanda, ResumoDemanda } from './demandas-regras'
 
 type Id = string | ObjectId
 
@@ -93,6 +94,8 @@ export interface Tutor {
   stats: { aulasDadas: number; nota: number; avaliacoes: number }
   createdAt: Date
   updatedAt: Date
+  /** Último e-mail de "aluno procurando monitor" (no máximo um por dia). */
+  ultimoAvisoDemandaEm?: Date
 }
 
 // ─── Anúncio ────────────────────────────────────────────────────────────
@@ -276,6 +279,8 @@ export interface Reserva {
   /** Código de convite do grupo — só aparece para quem já está na reserva. */
   codigoConvite?: string
   linkReuniao?: string
+  /** Nasceu da resposta de um monitor a um pedido do aluno (cópia do pedido). */
+  demanda?: { id: string } & ResumoDemanda
   /** Materiais do anúncio no momento da reserva (o aluno não perde se o anúncio mudar). */
   materiais?: MaterialComplementar[]
   /** Materiais que o monitor mandou só para esta monitoria. */
@@ -579,6 +584,34 @@ export interface DevolucaoAvulsa {
   status: 'processando' | 'concluida' | 'falhou'
   tentativas: number
   erro?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+// ─── Pedidos de monitoria (o aluno publica, monitores respondem) ─────────
+
+export type StatusDemanda = 'aberta' | 'atendida' | 'encerrada'
+
+export interface Demanda {
+  _id?: Id
+  alunoId: string
+  /** Só o primeiro nome aparece para os monitores. */
+  alunoPrimeiroNome: string
+  materia: string
+  /** `chaveDaMateria(materia)`: casa "fisiologia" com "Fisiologia". */
+  materiaChave: string
+  assunto?: string
+  pessoas: number
+  valorPorPessoaCentavos: number | null
+  duracaoMin: number
+  quando: QuandoDemanda
+  periodos: PeriodoDemanda[]
+  status: StatusDemanda
+  /** Monitores que responderam (teto em MAX_RESPOSTAS_POR_DEMANDA). */
+  respostas: number
+  /** Reserva que fechou o pedido (pago/confirmado). */
+  atendidaPor?: string
+  expiraEm: Date
   createdAt: Date
   updatedAt: Date
 }

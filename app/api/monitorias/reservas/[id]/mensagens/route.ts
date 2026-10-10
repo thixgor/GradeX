@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
 /** POST {texto} — mensagem no chat. Antes do pagamento, contatos pessoais são ocultados. */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     // Limite ANTES de validar: o limite por conta (não por reserva) segura
     // quem tentasse gastar CPU trocando o id na URL.
     const limite = await checkRateLimit(`mon-msg:${sessao.userId}`, 'monitorias_mensagem', 20, 60_000)

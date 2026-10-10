@@ -48,7 +48,7 @@ async function cols(): Promise<Colecoes> {
   return colecoes(await getDb())
 }
 
-function urlReserva(id: string) {
+export function urlReserva(id: string) {
   return `/monitorias/reservas/${id}`
 }
 
@@ -205,7 +205,7 @@ export async function assentoPago(reserva: Reserva, userId: string): Promise<boo
 }
 
 /** Mesmo CPF dos dois lados = a mesma pessoa com duas contas. */
-function mesmaPessoa(a: UsuarioMonitoria, b: UsuarioMonitoria): boolean {
+export function mesmaPessoa(a: UsuarioMonitoria, b: UsuarioMonitoria): boolean {
   if (String(a._id) === String(b._id)) return true
   const ca = onlyCpfDigits(a.cpf || '')
   return ca.length === 11 && ca === onlyCpfDigits(b.cpf || '')
@@ -230,7 +230,13 @@ async function mensagemDoSistema(c: Colecoes, reservaId: string, texto: string):
 }
 
 async function contarAbertas(c: Colecoes, alunoId: string): Promise<number> {
-  return c.reservas.countDocuments({ solicitanteId: alunoId, status: { $in: STATUS_EM_ABERTO } })
+  // Respostas de monitores a um pedido do aluno, ainda sem conversa, não contam:
+  // quem publicou um pedido não pode ficar travado por ter recebido respostas.
+  return c.reservas.countDocuments({
+    solicitanteId: alunoId,
+    status: { $in: STATUS_EM_ABERTO },
+    $nor: [{ status: 'solicitada', 'demanda.id': { $exists: true } }],
+  } as any)
 }
 
 function checarAnuncioAtivo(anuncio: Anuncio | null, tutor: Tutor | null): asserts anuncio is Anuncio {
@@ -855,6 +861,10 @@ export async function avisarConfirmacao(reserva: Reserva): Promise<void> {
     ['Alunos', alunos.map((a) => a.alunoNome.split(' ')[0]).join(', ')],
   ]
   await mensagemDoSistema(c, id, 'Monitoria confirmada! O link da reunião aparece aqui na página da reserva.')
+  if (reserva.demanda) {
+    const { marcarDemandaAtendida } = await import('./demandas')
+    await marcarDemandaAtendida(reserva)
+  }
   await avisar([
     {
       userId: reserva.tutorUserId,

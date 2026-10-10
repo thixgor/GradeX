@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
 /** POST {papel, hash} → registra o aceite (com IP, navegador e hash do texto lido). */
 export async function POST(request: NextRequest) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao, ip }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao, ip }) => {
     const corpo = z.object({ papel: Papel, hash: z.string().length(64) }).strict().safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Dados inválidos.')
     if (corpo.data.hash !== hashDosTermos(corpo.data.papel)) {

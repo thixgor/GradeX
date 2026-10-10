@@ -36,4 +36,6 @@ export interface DadosPainel {
     forca: { pontos: number; nivel: 'fraco' | 'bom' | 'excelente'; dicas: Array<{ texto: string; ganho: number }> }
   }>
   pedidosPendentes: number
+  /** Pedidos de alunos abertos nas matérias dos meus anúncios publicados. */
+  oportunidades: number
 }

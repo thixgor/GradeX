@@ -8,6 +8,7 @@ import {
   MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2, Undo2, FileSignature, Wallet,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
+import { BarraInferior } from '@/components/ui/barra-inferior'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Aparecer, Avatar, CaixaErro, Esqueleto, ErroApi, api } from '@/components/monitorias/base'
@@ -62,7 +63,9 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
       .catch((e) => setErro(e.message))
     fetch('/api/auth/me', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : null))
-      .then((d) => setEu(d?.user?._id || d?._id || null))
+      // /api/auth/me devolve `user.id` (string). Lendo `_id` o dono nunca era
+      // reconhecido e via os botões de contratar no próprio anúncio.
+      .then((d) => setEu(d?.user?.id || d?.user?._id || null))
       .catch(() => {})
   }, [params.slug])
 
@@ -112,7 +115,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
     return (
       <PageScaffold>
         <Esqueleto className="h-56 rounded-3xl" />
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
           <Esqueleto className="h-96" />
           <Esqueleto className="h-80" />
         </div>
@@ -125,10 +128,21 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
   const sufixo = a.preco.modo === 'hora' ? '/hora' : '/aula'
   const soCombinar = a.modos.aCombinar && !a.modos.direto && !a.modos.negociacao
 
-  const acoes = (
+  // Dono vendo o próprio anúncio: nada de "contratar"; atalhos para editar e para o painel.
+  const acoes = souDono ? (
+    <div className="space-y-2.5">
+      <p className="rounded-xl bg-muted/60 px-3 py-2.5 text-center text-sm text-muted-foreground">Este é o seu anúncio. É assim que os alunos o veem.</p>
+      <Link href={`/monitorias/painel/anuncios/${a.id}`} className="block">
+        <Button className="h-12 w-full rounded-xl text-base font-semibold">Editar anúncio</Button>
+      </Link>
+      <Link href="/monitorias/painel" className="block">
+        <Button variant="outline" className="h-11 w-full rounded-xl font-semibold">Ir para o painel do monitor</Button>
+      </Link>
+    </div>
+  ) : (
     <div className="space-y-2.5">
       {a.modos.direto && (
-        <Button className="h-12 w-full rounded-xl text-base font-semibold shadow-md" onClick={() => setFolha({ tipo: 'agendar', gratis: false })} disabled={souDono}>
+        <Button className="h-12 w-full rounded-xl text-base font-semibold shadow-md" onClick={() => setFolha({ tipo: 'agendar', gratis: false })}>
           <CalendarCheck className="mr-2 h-5 w-5" /> Agendar e pagar agora
         </Button>
       )}
@@ -137,7 +151,6 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
           variant={a.modos.direto ? 'outline' : 'default'}
           className="h-12 w-full rounded-xl text-base font-semibold"
           onClick={() => setFolha({ tipo: 'pedido', modo: a.modos.negociacao ? 'negociacao' : 'a_combinar', gratis: false })}
-          disabled={souDono}
         >
           {a.modos.negociacao ? <HeartHandshake className="mr-2 h-5 w-5" /> : <MessagesSquare className="mr-2 h-5 w-5" />}
           {a.modos.negociacao ? 'Negociar no chat' : 'Combinar dia e valor'}
@@ -150,12 +163,10 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
           onClick={() =>
             setFolha(a.modos.direto ? { tipo: 'agendar', gratis: true } : { tipo: 'pedido', modo: a.modos.negociacao ? 'negociacao' : 'a_combinar', gratis: true })
           }
-          disabled={souDono}
         >
           <Gift className="mr-2 h-4 w-4" /> Aula experimental grátis ({formatarDuracao(a.aulaGratis.duracaoMin)})
         </Button>
       )}
-      {souDono && <p className="text-center text-xs text-muted-foreground">Este é o seu anúncio. É assim que os alunos o veem.</p>}
     </div>
   )
 
@@ -189,7 +200,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
         </div>
       </motion.section>
 
-      <div className="mt-10 grid gap-10 pb-24 lg:grid-cols-[minmax(0,1fr)_380px] lg:pb-0">
+      <div className="mt-10 grid grid-cols-1 gap-10 pb-24 lg:grid-cols-[minmax(0,1fr)_380px] lg:pb-0">
         <div className="min-w-0 space-y-12">
           {a.videos.length > 0 && (
             <Aparecer>
@@ -233,9 +244,9 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
                       <LinkExternoSeguro url={m.url} dominio={m.dominio}>
                         <span className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm transition hover:border-primary/40">
                           <Link2 className="h-4 w-4 shrink-0 text-primary" />
-                          <span className="font-medium">{m.titulo}</span>
-                          <span className="ml-auto text-xs text-muted-foreground">{m.dominio}</span>
-                          <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span className="min-w-0 flex-1 truncate font-medium">{m.titulo}</span>
+                          <span className="hidden max-w-[40%] truncate text-xs text-muted-foreground min-[420px]:inline">{m.dominio}</span>
+                          <ExternalLink className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                         </span>
                       </LinkExternoSeguro>
                     </li>
@@ -257,7 +268,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
                 {a.faq.map((f, i) => (
                   <div key={i}>
                     <button type="button" aria-expanded={faqAberto === i} onClick={() => setFaqAberto(faqAberto === i ? null : i)} className="flex w-full items-center justify-between gap-3 py-4 text-left font-medium">
-                      {f.pergunta}
+                      <span className="min-w-0 break-words">{f.pergunta}</span>
                       <ChevronDown className={cn('h-4 w-4 shrink-0 transition-transform', faqAberto === i && 'rotate-180')} />
                     </button>
                     <AnimatePresence initial={false}>
@@ -279,7 +290,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
                 <Star className="h-5 w-5 fill-amber-400 text-amber-400" /> {a.stats.nota.toFixed(1)}
                 <span className="text-base font-normal text-muted-foreground">({a.stats.avaliacoes} {a.stats.avaliacoes === 1 ? 'avaliação' : 'avaliações'})</span>
               </h2>
-              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+              <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {dados.avaliacoes.map((av, i) => (
                   <li key={i} className="rounded-2xl border border-border bg-card p-4 text-sm">
                     <div className="flex items-center justify-between gap-3">
@@ -301,7 +312,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
         </div>
 
         {/* Coluna de contratação */}
-        <aside className="order-first space-y-4 lg:order-none lg:sticky lg:top-20 lg:self-start">
+        <aside className="order-first min-w-0 space-y-4 lg:order-none lg:sticky lg:top-20 lg:self-start">
           <Aparecer className="rounded-2xl border border-border bg-card p-6 shadow-[0_18px_44px_-24px_hsl(var(--primary)/0.35)]">
             {soCombinar && <p className="text-xs text-muted-foreground">Valor a combinar, a partir de</p>}
             <p className="font-heading text-[2rem] font-semibold tabular-nums">
@@ -317,16 +328,16 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
             {a.grupo.ativo && a.grupo.faixas.length > 0 && (
               <div className="mt-4 rounded-xl bg-muted/50 p-3.5">
                 <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4 text-primary" strokeWidth={1.75} /> Em grupo sai mais barato</p>
-                <table className="w-full text-sm">
+                <table className="w-full table-fixed text-sm">
                   <tbody>
-                    <tr className="text-muted-foreground"><td>1 aluno</td><td className="text-right font-semibold text-foreground">{formatarCentavos(a.preco.valorCentavos)}{sufixo}</td></tr>
+                    <tr className="text-muted-foreground"><td className="w-[38%]">1 aluno</td><td className="text-right font-semibold text-foreground">{formatarCentavos(a.preco.valorCentavos)}{sufixo}</td></tr>
                     {a.grupo.faixas.map((f) => (
                       <tr key={f.minAlunos}>
                         <td className="pt-1 text-muted-foreground">{f.minAlunos}+ alunos</td>
                         <td className="pt-1 text-right font-semibold tabular-nums text-foreground">
-                          {formatarCentavos(f.valorPorPessoaCentavos)}{sufixo} cada
+                          <span className="whitespace-nowrap">{formatarCentavos(f.valorPorPessoaCentavos)}{sufixo} cada</span>
                           {economiaGrupoPercent(a, f.minAlunos) > 0 && (
-                            <span className="ml-1.5 rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary">-{economiaGrupoPercent(a, f.minAlunos)}%</span>
+                            <span className="ml-1.5 inline-block whitespace-nowrap rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary">-{economiaGrupoPercent(a, f.minAlunos)}%</span>
                           )}
                         </td>
                       </tr>
@@ -389,9 +400,10 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
       </div>
 
       {/* Celular: preço e ação principal sempre à mão */}
+      {/* BarraInferior publica a própria altura: o "+" flutuante sobe e não cobre o "Agendar". */}
       {!souDono && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
-          <div className="mx-auto flex max-w-xl items-center justify-between gap-3">
+        <BarraInferior className="lg:hidden">
+          <div className="flex w-full items-center justify-between gap-3 px-1">
             <p className="font-heading text-xl font-semibold tabular-nums">
               {formatarCentavos(a.preco.valorCentavos)}
               <span className="text-sm font-normal text-muted-foreground">{sufixo}</span>
@@ -405,7 +417,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               {a.modos.direto ? 'Agendar' : 'Pedir monitoria'}
             </Button>
           </div>
-        </div>
+        </BarraInferior>
       )}
 
       {/* Folha de contratação */}
@@ -503,9 +515,9 @@ function Perguntas({ anuncioId, slug, iniciais, souDono }: { anuncioId: string; 
       {!souDono && (
         <div className="mt-3 space-y-2">
           <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={1000} placeholder="Tem alguma dúvida antes de contratar? Pergunte aqui. A pergunta fica pública." />
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground">Telefone e e-mail são ocultados automaticamente.</p>
-            <Button size="sm" onClick={perguntar} disabled={enviando || texto.trim().length < 5}>{enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Perguntar'}</Button>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="min-w-0 flex-1 text-xs text-muted-foreground">Telefone e e-mail são ocultados automaticamente.</p>
+            <Button size="sm" className="shrink-0" onClick={perguntar} disabled={enviando || texto.trim().length < 5}>{enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Perguntar'}</Button>
           </div>
         </div>
       )}

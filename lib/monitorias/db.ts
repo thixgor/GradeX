@@ -14,6 +14,7 @@ import type {
   Bloqueio,
   CodigoConfirmacao,
   Contrato,
+  Demanda,
   DevolucaoAvulsa,
   Lancamento,
   Mensagem,
@@ -41,6 +42,7 @@ export const COLECOES = {
   codigos: 'monitorias_codigos',
   cotasGratis: 'monitorias_cotas_gratis',
   devolucoes: 'monitorias_devolucoes',
+  demandas: 'monitorias_demandas',
 } as const
 
 export function colecoes(db: Db) {
@@ -60,9 +62,12 @@ export function colecoes(db: Db) {
     codigos: db.collection<CodigoConfirmacao>(COLECOES.codigos),
     cotasGratis: db.collection<{ alunoId: string; tutorId: string; reservaId: string; em: Date }>(COLECOES.cotasGratis),
     devolucoes: db.collection<DevolucaoAvulsa>(COLECOES.devolucoes),
+    demandas: db.collection<Demanda>(COLECOES.demandas),
     users: db.collection<User>('users'),
   }
 }
+
+export type Colecoes = ReturnType<typeof colecoes>
 
 export async function obterColecoes() {
   return colecoes(await getDb())

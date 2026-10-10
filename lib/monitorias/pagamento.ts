@@ -34,6 +34,7 @@ import { alunoJaTemMaterial, concederMaterialDaMonitoria, materialOficialAVenda,
 import { colecoes, idDe } from './db'
 import { abrirRepasse } from './financeiro'
 import { avisar, avisarEquipe } from './avisos'
+import { onlyCpfDigits } from '@/lib/cpf'
 import { avisarConfirmacao, ErroMonitoria, firmarBlocos, garantirBlocos } from './reservas'
 import { devolverPagamentoAvulso, reembolsarParticipacao } from './reembolso'
 import { formatarDuracao } from './agenda'
@@ -366,6 +367,34 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
     }
   }
 
+  // Autocompra: o próprio monitor pagando a aula dele (com uma segunda conta,
+  // para inflar vendas/avaliações). O Mercado Pago informa o CPF de quem pagou
+  // quando o banco repassa: se for o do monitor, o pagamento volta inteiro e a
+  // equipe confere. Melhor esforço: sem CPF na resposta, segue a trava de conta.
+  const cpfPagador = cpfDoPagador(result.raw)
+  if (cpfPagador) {
+    const reservaDoAssento = await c.participacoes.findOne({ _id: partId } as any, { projection: { reservaId: 1 } })
+    const res = reservaDoAssento && ObjectId.isValid(reservaDoAssento.reservaId)
+      ? await c.reservas.findOne({ _id: new ObjectId(reservaDoAssento.reservaId) } as any, { projection: { tutorUserId: 1, anuncioTitulo: 1 } })
+      : null
+    const monitor = res && ObjectId.isValid(res.tutorUserId) ? await c.users.findOne({ _id: new ObjectId(res.tutorUserId) } as any, { projection: { cpf: 1 } }) : null
+    if (monitor?.cpf && onlyCpfDigits(String(monitor.cpf)) === cpfPagador) {
+      console.error('[monitorias] autocompra: pagador com o CPF do monitor', String(order._id))
+      await audit({ action: 'payment_rejected', targetUserId: esperado.alunoId, resourceType: 'monitoria', resourceId: order.refId, metadata: { motivo: 'autocompra_cpf_do_monitor', orderId: String(order._id), providerPaymentId: pagamentoId } })
+      await avisarEquipe('Autocompra bloqueada', `Pagamento de "${res?.anuncioTitulo || ''}" feito com o CPF do próprio monitor. Devolvido inteiro.`)
+      const marcou = await c.participacoes.updateOne(
+        { _id: partId, status: 'aguardando_pagamento' } as any,
+        { $set: { status: 'paga', providerPaymentId: pagamentoId, paymentOrderId: String(order._id), pagoCentavos, pagoEm: agora, updatedAt: agora } },
+      )
+      if (marcou.modifiedCount) {
+        await reembolsarParticipacao({ participacaoId: order.refId, valorBaseCentavos: null, motivo: 'O monitor não pode contratar a própria monitoria', por: 'sistema' })
+      } else {
+        await devolverAvulso(esperado.alunoId, 'O monitor não pode contratar a própria monitoria')
+      }
+      return
+    }
+  }
+
   // O valor pago precisa ser EXATAMENTE o do pedido (o servidor fixou: aula +
   // taxa do PIX), e nunca menos que o preço da aula. Diferente para mais ou
   // para menos (pagamento adulterado, erro de integração) não confirma vaga:
@@ -447,6 +476,20 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
     motivo: 'Pagamento recebido depois do prazo (horário já liberado)',
     por: 'sistema',
   })
+}
+
+/** CPF de quem pagou, se o Mercado Pago o devolveu (pagador ou dados do banco no PIX). */
+function cpfDoPagador(raw: unknown): string | null {
+  const r = raw as any
+  const candidatos = [
+    r?.payer?.identification?.number,
+    r?.point_of_interaction?.transaction_data?.bank_info?.payer?.identification?.number,
+  ]
+  for (const c of candidatos) {
+    const d = onlyCpfDigits(String(c ?? ''))
+    if (d.length === 11) return d
+  }
+  return null
 }
 
 /**

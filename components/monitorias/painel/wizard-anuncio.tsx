@@ -11,6 +11,7 @@ import {
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { BarraInferior } from '@/components/ui/barra-inferior'
 import { cn } from '@/lib/utils'
 import { interpretarUrlDeVideo, urlDeMiniatura, urlOriginal } from '@/lib/monitorias/videos'
 import { validarLinkExterno } from '@/lib/monitorias/links'
@@ -211,7 +212,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
   return (
     <PageScaffold>
-      <div className="mx-auto grid max-w-6xl gap-10 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-10 xl:grid-cols-[minmax(0,1fr)_340px]">
       <div className="min-w-0">
         <Link href="/monitorias/painel" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" /> Painel</Link>
         <h1 className="font-heading text-[1.75rem] font-semibold">{anuncioId ? 'Editar anúncio' : 'Novo anúncio'}</h1>
@@ -292,7 +293,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
               {passo === 2 && (
                 <>
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <Campo rotulo="Cobrar por">
                       <div className="flex gap-1.5">
                         {(['hora', 'aula'] as const).map((m) => (
@@ -314,7 +315,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                   <h3 className="pt-2 text-sm font-semibold">Como os alunos contratam? (escolha uma ou mais)</h3>
                   <Opcao ativo={f.direto} onClick={() => set('direto', !f.direto)} icone={CalendarCheck} titulo="Agendamento direto" texto="O aluno escolhe um horário livre na sua agenda e já paga. Você assina uma oferta-padrão uma vez.">
                     {f.direto && (
-                      <div className="mt-3 grid gap-2 sm:grid-cols-4" onClick={(e) => e.stopPropagation()}>
+                      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-4" onClick={(e) => e.stopPropagation()}>
                         <Mini rotulo="Duração mín.">
                           <select value={f.diretoMin} onChange={(e) => set('diretoMin', Number(e.target.value))} className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm">{[30, 60, 90, 120].map((m) => <option key={m} value={m}>{formatarDuracao(m)}</option>)}</select>
                         </Mini>
@@ -342,13 +343,13 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                           <input type="number" min={2} max={30} value={f.grupoMax} onChange={(e) => set('grupoMax', Math.max(2, Math.min(30, Number(e.target.value) || 2)))} className="h-9 w-24 rounded-lg border border-border bg-background px-2 text-sm" />
                         </Mini>
                         {f.faixas.map((x, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm">
-                            <span>A partir de</span>
-                            <input type="number" min={2} max={f.grupoMax} value={x.minAlunos} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, minAlunos: Number(e.target.value) || 2 } : y)))} className="h-9 w-16 rounded-lg border border-border bg-background px-2" />
-                            <span>alunos: R$</span>
-                            <input value={x.valor} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, valor: e.target.value } : y)))} placeholder="45,00" inputMode="decimal" className="h-9 w-24 rounded-lg border border-border bg-background px-2" />
-                            <span className="text-xs text-muted-foreground">por pessoa/{f.precoModo}</span>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => set('faixas', f.faixas.filter((_, k) => k !== i))}><Trash2 className="h-4 w-4" /></Button>
+                          <div key={i} className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm">
+                            <span className="whitespace-nowrap">A partir de</span>
+                            <input type="number" aria-label="Mínimo de alunos da faixa" min={2} max={f.grupoMax} value={x.minAlunos} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, minAlunos: Number(e.target.value) || 2 } : y)))} className="h-9 w-16 rounded-lg border border-border bg-background px-2" />
+                            <span className="whitespace-nowrap">alunos: R$</span>
+                            <input aria-label="Valor por pessoa da faixa" value={x.valor} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, valor: e.target.value } : y)))} placeholder="45,00" inputMode="decimal" className="h-9 w-24 rounded-lg border border-border bg-background px-2" />
+                            <span className="whitespace-nowrap text-xs text-muted-foreground">por pessoa/{f.precoModo}</span>
+                            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Remover faixa" onClick={() => set('faixas', f.faixas.filter((_, k) => k !== i))}><Trash2 className="h-4 w-4" /></Button>
                           </div>
                         ))}
                         {f.faixas.length < 6 && <Button size="sm" variant="outline" onClick={() => set('faixas', [...f.faixas, { minAlunos: (f.faixas.at(-1)?.minAlunos || 1) + 1, valor: '' }])}><Plus className="mr-1 h-3.5 w-3.5" /> Faixa</Button>}
@@ -426,7 +427,10 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
           )}
           {ok && <CaixaAviso tom="sucesso" className="mt-4">{ok}</CaixaAviso>}
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
+          {/* Computador: no fim do passo. Celular e tablet: presos no rodapé, ao
+              alcance do polegar; a barra publica a altura e o "+" flutuante sobe
+              (antes ele cobria metade do "Próximo" no fim da página). */}
+          <div className="mt-6 hidden flex-wrap items-center justify-between gap-2 border-t border-border pt-4 lg:flex">
             <Button variant="ghost" onClick={() => setPasso((p) => Math.max(0, p - 1))} disabled={passo === 0}><ArrowLeft className="mr-1 h-4 w-4" /> Voltar</Button>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={salvar} disabled={salvando}>{salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="mr-1.5 h-4 w-4" /> Salvar</>}</Button>
@@ -437,6 +441,28 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
               ) : null}
             </div>
           </div>
+          <div className="h-24 lg:hidden" aria-hidden />
+          <BarraInferior className="lg:hidden">
+            <div className="flex w-full items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-xl" aria-label="Passo anterior" onClick={() => setPasso((p) => Math.max(0, p - 1))} disabled={passo === 0}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" className="h-11 shrink-0 rounded-xl px-3" aria-label="Salvar" onClick={salvar} disabled={salvando}>
+                {salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              </Button>
+              {passo < PASSOS.length - 1 ? (
+                <Button className="h-11 min-w-0 flex-1 rounded-xl" onClick={() => setPasso((p) => p + 1)}>
+                  <span className="truncate">Próximo: {PASSOS[passo + 1]}</span> <ArrowRight className="ml-1 h-4 w-4 shrink-0" />
+                </Button>
+              ) : ['rascunho', 'rejeitado'].includes(status) ? (
+                <Button className="h-11 min-w-0 flex-1 rounded-xl" onClick={enviarAnalise} disabled={salvando}>
+                  <Send className="mr-1.5 h-4 w-4 shrink-0" /> <span className="truncate">Enviar para análise</span>
+                </Button>
+              ) : (
+                <span className="flex-1" />
+              )}
+            </div>
+          </BarraInferior>
         </div>
       </div>
 
@@ -518,7 +544,7 @@ function Revisao({ f, anuncioId, slug, status }: { f: Form; anuncioId?: string; 
   return (
     <div className="space-y-4">
       <CartaoForca forca={forca} />
-      <ul className="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
         <ItemRevisao ok={f.conteudos.length > 0}>{f.conteudos.length} {f.conteudos.length === 1 ? 'conteúdo' : 'conteúdos'}</ItemRevisao>
         <ItemRevisao ok={f.videos.some((v) => v.trim())}>{f.videos.filter((v) => v.trim()).length} {f.videos.filter((v) => v.trim()).length === 1 ? 'vídeo' : 'vídeos'}</ItemRevisao>
         <ItemRevisao ok={f.faq.some((x) => x.pergunta && x.resposta)}>{f.faq.filter((x) => x.pergunta && x.resposta).length} perguntas frequentes</ItemRevisao>

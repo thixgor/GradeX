@@ -23,9 +23,12 @@ const Corpo = z
  * vira um jeito de disparar e-mail para qualquer coisa.
  */
 export async function POST(request: NextRequest) {
-  return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Dados inválidos.')
+    // Assinar contrato (aluno): o próprio código por e-mail prova o e-mail.
+    // Chave PIX e oferta-padrão são do monitor: exigem e-mail já confirmado.
+    if (corpo.data.finalidade !== 'assinar' && !sessao.emailVerified) return erro(403, 'Confirme seu e-mail para continuar.')
     const limite = await checkRateLimit(`mon-codigo:${sessao.userId}`, 'monitorias_codigo', 5, 10 * 60_000)
     if (!limite.success) return erro(429, 'Muitos códigos pedidos. Aguarde alguns minutos.')
 

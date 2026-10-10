@@ -154,14 +154,18 @@ export function requisitosDoMonitor(input: {
 }
 
 /**
- * Requisitos para CONTRATAR monitoria. A maioridade é declarada no aceite dos
+ * Requisitos para CONTRATAR monitoria. De propósito, SEM o cadastro completo
+ * (e-mail confirmado, CPF, nome civil, perfil): pedir isso na hora de agendar
+ * derrubava a compra. O contrato é assinado com código enviado ao e-mail (o que
+ * prova o e-mail) e o PIX identifica quem pagou. Ficam só a maioridade (quando
+ * a data informada indica menor) e a conta ativa; os Termos são aceitos na
+ * etapa do contrato, sem tirar a pessoa do fluxo. A maioridade é declarada no aceite dos
  * Termos; se o perfil tem data de nascimento e ela indica menor de 18, bloqueia
  * (menor não contrata sozinho — CC arts. 3º e 4º).
  */
 export function requisitosDoAluno(input: { user: UsuarioRequisitos; termosAceitos: boolean; agora?: Date }): ItemRequisito[] {
   const idade = idadeEmAnos(input.user.dateOfBirth, input.agora || new Date())
   return [
-    ...base(input.user),
     ...(idade !== null && idade < 18
       ? [
           {
