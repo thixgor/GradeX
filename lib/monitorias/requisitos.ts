@@ -7,6 +7,8 @@ import { getMissingProfileFields } from '@/lib/profile-completeness'
 import { isValidCpf } from '@/lib/cpf'
 import type { User } from '@/lib/types'
 import type { Tutor } from './tipos'
+import { avatarPorId } from './avatares'
+import { validarNomeCivil } from '@/lib/nome-civil'
 
 export interface ItemRequisito {
   chave: string
@@ -46,6 +48,27 @@ export function idadeEmAnos(nascimento: Date | string | undefined, agora: Date):
   return idade
 }
 
+/** Campos do /profile que um requisito pode abrir direto (com o formulário já em edição). */
+export type CampoDoPerfil = 'email' | 'dados' | 'cpf' | 'fullName' | 'dateOfBirth'
+
+export function linkDoPerfil(campo: CampoDoPerfil): string {
+  return `/profile?tab=config&campo=${campo}`
+}
+
+/**
+ * Leva junto o caminho de volta (`voltar`) para o /profile mostrar o atalho
+ * "Voltar para as Monitorias" depois de salvar. Só caminhos das Monitorias:
+ * o /profile recusa qualquer outro (nada de redirecionamento aberto).
+ */
+export function comVolta(href: string, voltar: string): string {
+  if (!href.startsWith('/profile') || !voltarValido(voltar)) return href
+  return `${href}${href.includes('?') ? '&' : '?'}voltar=${encodeURIComponent(voltar)}`
+}
+
+export function voltarValido(voltar: string | null | undefined): voltar is string {
+  return !!voltar && /^\/monitorias(\/[\w\-/]*)?(#[\w-]*)?$/.test(voltar) && !voltar.includes('//')
+}
+
 function base(user: UsuarioRequisitos): ItemRequisito[] {
   const faltando = getMissingProfileFields(user)
   return [
@@ -53,25 +76,25 @@ function base(user: UsuarioRequisitos): ItemRequisito[] {
       chave: 'email',
       rotulo: 'E-mail verificado',
       ok: !!user.emailVerified,
-      acao: { texto: 'Verificar e-mail', href: '/profile' },
+      acao: { texto: 'Verificar e-mail', href: linkDoPerfil('email') },
     },
     {
       chave: 'perfil',
       rotulo: faltando.length ? `Perfil completo (falta: ${faltando.map((f) => f.label).join(', ')})` : 'Perfil completo',
       ok: faltando.length === 0,
-      acao: { texto: 'Completar perfil', href: '/profile' },
+      acao: { texto: 'Completar perfil', href: linkDoPerfil('dados') },
     },
     {
       chave: 'cpf',
       rotulo: 'CPF válido',
       ok: !!user.cpf && isValidCpf(user.cpf),
-      acao: { texto: 'Informar CPF', href: '/profile' },
+      acao: { texto: 'Informar CPF', href: linkDoPerfil('cpf') },
     },
     {
       chave: 'nome',
       rotulo: 'Nome completo (como no documento)',
-      ok: !!(user.fullName || '').trim() && (user.fullName || '').trim().includes(' '),
-      acao: { texto: 'Informar nome completo', href: '/profile' },
+      ok: validarNomeCivil(user.fullName) === null,
+      acao: { texto: 'Informar nome completo', href: linkDoPerfil('fullName') },
     },
   ]
 }
@@ -79,7 +102,7 @@ function base(user: UsuarioRequisitos): ItemRequisito[] {
 /** Requisitos para ANUNCIAR monitoria. */
 export function requisitosDoMonitor(input: {
   user: UsuarioRequisitos
-  tutor: Pick<Tutor, 'fotoUrl' | 'pix' | 'status'> | null
+  tutor: Pick<Tutor, 'avatar' | 'pix' | 'status'> | null
   termosAceitos: boolean
   /** Só exige a conferência na Receita quando há provedor configurado. */
   exigirCpfReceita: boolean
@@ -93,7 +116,7 @@ export function requisitosDoMonitor(input: {
       chave: 'cpf_receita',
       rotulo: 'CPF conferido na Receita Federal',
       ok: !!user.cpfVerified,
-      acao: { texto: 'Conferir CPF', href: '/profile' },
+      acao: { texto: 'Conferir CPF', href: linkDoPerfil('cpf') },
     })
   }
   itens.push(
@@ -101,13 +124,13 @@ export function requisitosDoMonitor(input: {
       chave: 'idade',
       rotulo: 'Maior de 18 anos (data de nascimento no perfil)',
       ok: idade !== null && idade >= 18,
-      acao: { texto: 'Informar data de nascimento', href: '/profile' },
+      acao: { texto: 'Informar data de nascimento', href: linkDoPerfil('dateOfBirth') },
     },
     {
       chave: 'foto',
-      rotulo: 'Foto de perfil de monitor',
-      ok: !!tutor?.fotoUrl,
-      acao: { texto: 'Enviar foto', href: '/monitorias/painel/perfil' },
+      rotulo: 'Retrato escolhido na galeria',
+      ok: !!avatarPorId(tutor?.avatar),
+      acao: { texto: 'Escolher foto', href: '/monitorias/painel/perfil' },
     },
     {
       chave: 'pix',
@@ -145,7 +168,7 @@ export function requisitosDoAluno(input: { user: UsuarioRequisitos; termosAceito
             chave: 'idade',
             rotulo: 'Maior de 18 anos — menores contratam pela conta do responsável legal',
             ok: false,
-            acao: { texto: 'Revisar data de nascimento', href: '/profile' },
+            acao: { texto: 'Revisar data de nascimento', href: linkDoPerfil('dateOfBirth') },
           },
         ]
       : []),

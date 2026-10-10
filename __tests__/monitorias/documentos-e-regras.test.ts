@@ -70,7 +70,7 @@ describe('requisitos', () => {
     phone: '11987654321', state: 'SP', profession: 'academico' as const, afyaUnit: 'X', periodoBase: 4, emailVerified: true,
   }
   it('monitor completo passa; sem foto/PIX/termos, não', () => {
-    const ok = requisitosDoMonitor({ user: completo, tutor: { fotoUrl: 'u', pix: {} as any, status: 'ativo' }, termosAceitos: true, exigirCpfReceita: false, agora: new Date('2026-10-10') })
+    const ok = requisitosDoMonitor({ user: completo, tutor: { avatar: 'osler', pix: {} as any, status: 'ativo' }, termosAceitos: true, exigirCpfReceita: false, agora: new Date('2026-10-10') })
     expect(pendentes(ok)).toEqual([])
     const falta = requisitosDoMonitor({ user: completo, tutor: null, termosAceitos: false, exigirCpfReceita: true, agora: new Date('2026-10-10') })
     expect(pendentes(falta).map((i) => i.chave).sort()).toEqual(['cpf_receita', 'foto', 'pix', 'termos'])

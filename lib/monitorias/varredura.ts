@@ -18,6 +18,7 @@ import 'server-only'
  *     aprovado sem assento pago, assento pago sem repasse, grupo todo pago).
  *  6. Reembolso que falhou → tenta de novo com a MESMA chave (inclusive a
  *     devolução de PIX pago em dobro).
+ *  6c. Foto enviada ao Blob (de antes da galeria de retratos) → apagada.
  *  7. Troca de chave PIX após a carência de 48h → passa a valer.
  */
 
@@ -33,6 +34,7 @@ import { avisar } from './avisos'
 import { liberarBlocos } from './reservas'
 import { reembolsarParticipacao, reembolsarReserva, retomarDevolucoesAvulsas } from './reembolso'
 import { conferirComGateway, curarPagamentosDaReserva } from './pagamento'
+import { limparFotosEnviadas } from './fotos'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
 import type { Reserva } from './tipos'
@@ -303,6 +305,11 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       })
     }
   }
+
+  // 6c. Fotos enviadas antes da galeria de retratos: saem do Blob (economia de storage).
+  await seguro(async () => {
+    await limparFotosEnviadas(LOTE)
+  })
 
   // 7. Chave PIX nova depois da carência.
   const trocas = await c.tutores.find({ 'pixPendente.liberaEm': { $lt: agora } }).limit(LOTE).toArray()

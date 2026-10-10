@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Loader2, Minus, Plus, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
+import { comVolta } from '@/lib/monitorias/requisitos'
 import { api, CaixaAviso, CaixaErro, ErroApi } from './base'
 import { irParaLogin } from './agendador'
 
@@ -27,6 +28,7 @@ export function DialogoPedido({
   gratis: boolean
 }) {
   const router = useRouter()
+  const caminho = usePathname() || '/monitorias'
   const [mensagem, setMensagem] = useState('')
   const [vagas, setVagas] = useState(1)
   const [escolhidos, setEscolhidos] = useState<string[]>([])
@@ -110,7 +112,7 @@ export function DialogoPedido({
             <li key={p.rotulo} className="flex items-center justify-between gap-2">
               <span>• {p.rotulo}</span>
               {p.acao && (
-                <a href={p.acao.href} className="text-xs font-semibold text-primary hover:underline">
+                <a href={comVolta(p.acao.href, caminho)} className="text-xs font-semibold text-primary hover:underline">
                   {p.acao.texto}
                 </a>
               )}

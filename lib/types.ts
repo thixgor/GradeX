@@ -525,6 +525,8 @@ export interface User {
   // Campos de autenticação social
   googleId?: string // ID do Google (sub)
   profilePicture?: string // URL da foto de perfil
+  /** Retrato escolhido na galeria (id de lib/monitorias/avatares). Nunca uma URL: a imagem sai do catálogo. */
+  avatar?: string
   // Banco de questões gratuito — modelo ANTIGO: 5 questões sorteadas por período.
   // Continua sendo lido (as questões dele entram como já desbloqueadas) e nunca
   // mais é escrito. Ver lib/banco/gratuito.ts.

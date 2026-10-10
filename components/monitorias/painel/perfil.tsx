@@ -1,19 +1,21 @@
 'use client'
 
-import { useRef, useState } from 'react'
-import { upload } from '@vercel/blob/client'
-import { Camera, KeyRound, Loader2, Lock, Mail, Save, ShieldCheck } from 'lucide-react'
+import { useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronDown, KeyRound, Loader2, Lock, Mail, Save, ShieldCheck } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { formatCpf } from '@/lib/cpf'
 import { Avatar, CaixaAviso, CaixaErro, api } from '../base'
 import { TermosAceite } from '../termos-aceite'
+import { SecaoRetrato } from '../seletor-avatar'
 import type { DadosPainel } from './tipos'
 
 function Cartao({ titulo, children, id }: { titulo: string; children: React.ReactNode; id?: string }) {
   return (
-    <section id={id} className="rounded-3xl border border-border bg-card p-5">
+    <section id={id} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
       <h2 className="mb-4 font-heading text-lg font-semibold">{titulo}</h2>
       {children}
     </section>
@@ -25,6 +27,7 @@ export function PerfilMonitor({ dados, recarregar }: { dados: DadosPainel; recar
   return (
     <div className="grid gap-5 lg:grid-cols-2">
       <div className="space-y-5">
+        <FotoDoMonitor dados={dados} recarregar={recarregar} />
         <FotoEPerfil dados={dados} recarregar={recarregar} />
       </div>
       <div className="space-y-5">
@@ -37,15 +40,26 @@ export function PerfilMonitor({ dados, recarregar }: { dados: DadosPainel; recar
   )
 }
 
+/** Foto do monitor: escolhida numa galeria de retratos (não há envio de arquivo). É a mesma foto da conta. */
+function FotoDoMonitor({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
+  return (
+    <SecaoRetrato
+      titulo="Sua foto no anúncio"
+      vazio="Escolha um retrato. Aparece no anúncio, nas aulas e no seu perfil."
+      nome={dados.tutor?.nome || 'Você'}
+      atual={dados.tutor?.avatar}
+      onEscolhido={recarregar}
+    />
+  )
+}
+
 function FotoEPerfil({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
   const t = dados.tutor
   const [titulo, setTitulo] = useState(t?.titulo || '')
   const [bio, setBio] = useState(t?.bio || '')
   const [historia, setHistoria] = useState(t?.historia || '')
   const [salvando, setSalvando] = useState(false)
-  const [enviandoFoto, setEnviandoFoto] = useState(false)
   const [msg, setMsg] = useState<{ tom: 'erro' | 'ok'; texto: string } | null>(null)
-  const arquivo = useRef<HTMLInputElement>(null)
 
   async function salvar() {
     setSalvando(true)
@@ -61,49 +75,8 @@ function FotoEPerfil({ dados, recarregar }: { dados: DadosPainel; recarregar: ()
     }
   }
 
-  async function enviarFoto(file: File) {
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) return setMsg({ tom: 'erro', texto: 'Use JPG, PNG ou WEBP.' })
-    if (file.size > 3 * 1024 * 1024) return setMsg({ tom: 'erro', texto: 'Foto maior que 3 MB.' })
-    setEnviandoFoto(true)
-    setMsg(null)
-    try {
-      // O caminho precisa estar na pasta da própria conta — o servidor diz qual e confere.
-      const { pasta } = await api<{ pasta: string }>('/api/monitorias/tutor/foto')
-      const ext = file.type.split('/')[1]
-      const blob = await upload(`${pasta}${Date.now()}.${ext}`, file, {
-        access: 'public',
-        contentType: file.type,
-        handleUploadUrl: '/api/monitorias/tutor/foto/upload',
-      })
-      await api('/api/monitorias/tutor/foto', { method: 'PUT', json: { url: blob.url } })
-      recarregar()
-    } catch (e) {
-      setMsg({ tom: 'erro', texto: e instanceof Error ? e.message : 'Erro ao enviar foto.' })
-    } finally {
-      setEnviandoFoto(false)
-    }
-  }
-
   return (
     <Cartao titulo="Seu perfil de monitor">
-      <div className="mb-5 flex items-center gap-4">
-        <div className="relative">
-          <Avatar nome={t?.nome || 'Você'} url={t?.fotoUrl} tamanho={84} />
-          <button
-            type="button"
-            onClick={() => arquivo.current?.click()}
-            className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
-            aria-label="Trocar foto"
-          >
-            {enviandoFoto ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
-          </button>
-          <input ref={arquivo} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => e.target.files?.[0] && enviarFoto(e.target.files[0])} />
-        </div>
-        <div className="text-sm">
-          <p className="font-semibold">Foto de perfil</p>
-          <p className="text-xs text-muted-foreground">Rosto visível, boa luz. Aparece no seu anúncio. Até 3 MB.</p>
-        </div>
-      </div>
       <div className="space-y-3">
         <label className="block text-sm font-medium">
           Título do perfil

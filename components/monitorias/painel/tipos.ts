@@ -11,6 +11,7 @@ export interface DadosPainel {
     bio: string
     historia: string
     fotoUrl: string | null
+    avatar: string | null
     status: 'ativo' | 'suspenso'
     disponibilidade: Disponibilidade
     pix: { tipo: string; mascarada: string } | null

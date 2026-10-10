@@ -201,7 +201,32 @@ tenta de novo com a mesma chave.
 - Confirmar aula (grátis, manual ou após PIX) exige a aula inteira travada
   (`garantirBlocos`).
 - Agenda online só com oferta-padrão e Termos na versão vigente.
-- Foto do monitor em pasta opaca (`pastaDaFoto`) e só do store do site.
+- Foto do monitor: **não há envio de arquivo**. O monitor escolhe um retrato da
+  galeria (`lib/monitorias/avatares.ts`: médicos históricos e brasileiros, imagens
+  livres hospedadas no Wikimedia Commons). A rota recebe só o `id`; a URL gravada
+  sai do catálogo do servidor (URL própria, id inventado ou campo extra: 400).
+  Fotos enviadas antes da galeria são apagadas do Blob (`lib/monitorias/fotos.ts`,
+  na troca e na varredura horária). Créditos: página de cada arquivo no Commons.
+  Filtro "Séries": médicos de séries (House, The Good Doctor, The Resident,
+  Grey's Anatomy, Plantão Médico, Scrubs) com a foto livre do **ator** em evento
+  público, identificada como "Ator em Série" e com aviso de que não há vínculo
+  com estúdios ou atores. Nunca cena ou divulgação da série (são do estúdio).
+- Um retrato por conta: `users.avatar` (id do catálogo). Escolher no /profile
+  (`PUT /api/user/avatar`) ou no painel (`PUT /api/monitorias/tutor/foto`) muda
+  os dois lugares (`definirRetratoDaConta`); monitor novo já nasce com o retrato
+  da conta.
+- Documentos no /profile (aba Configurações, bloco "Documentos"): nome civil,
+  nascimento e CPF, gravados por `/api/user/complete-profile` (a mesma rota do
+  modal). Regra única de nome civil em `lib/nome-civil.ts` (nome e sobrenome, só
+  letras), usada também pelo requisito "Nome completo". Travas: CPF cadastrado
+  não se troca por ali; depois da conferência na Receita, nome e nascimento
+  também ficam travados (reenviar o mesmo valor passa). Antes disso o nome civil
+  só era pedido quando a Receita recusava, então o requisito ficava pendente sem
+  ter onde preencher.
+- Links das pendências: `linkDoPerfil(campo)` abre `/profile?tab=config&campo=`
+  já no campo, em edição. `comVolta` acrescenta `voltar=` (só caminhos
+  `/monitorias…`, validado por `voltarValido`; nada de redirecionamento aberto)
+  e o /profile mostra a faixa "Voltar" no topo.
 - Textos cortados antes de regex; PDF com quebra de linha linear; IP
   mascarado nos PDFs; limites para propostas (6/10 min) e pedidos (15/h).
 - O anúncio público não expõe o `userId` do monitor, só `donoChave`

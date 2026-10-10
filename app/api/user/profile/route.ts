@@ -35,6 +35,7 @@ const PROFILE_PROJECTION = {
   cpfVerified: 1,
   fullName: 1,
   dateOfBirth: 1,
+  avatar: 1,
 } as const
 
 // Dados de perfil que o próprio usuário pode ver/editar em /profile.
@@ -82,6 +83,7 @@ export async function GET() {
       cpf: maskCpf(user.cpf),
       hasCpf: !!user.cpf,
       cpfVerified: !!user.cpfVerified,
+      avatar: user.avatar || '',
     },
   })
 }

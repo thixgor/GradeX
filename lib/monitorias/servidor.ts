@@ -13,6 +13,7 @@ import { pendentes, requisitosDoAluno, requisitosDoMonitor, type ItemRequisito }
 import { secoesDosTermos, textoCanonico, tituloDosTermos, VERSAO_TERMOS } from './documentos/termos'
 import { sha256, VERSAO_OFERTA } from './documentos/contrato'
 import { DISPONIBILIDADE_VAZIA } from './agenda'
+import { avatarPorId } from './avatares'
 import type { Anuncio, PapelTermos, Tutor } from './tipos'
 
 export const PROJECAO_USUARIO = {
@@ -36,6 +37,7 @@ export const PROJECAO_USUARIO = {
   banned: 1,
   role: 1,
   profilePicture: 1,
+  avatar: 1,
 } as const
 
 export type UsuarioMonitoria = Pick<
@@ -59,6 +61,7 @@ export type UsuarioMonitoria = Pick<
   | 'banned'
   | 'role'
   | 'profilePicture'
+  | 'avatar'
 > & { _id: ObjectId; emailVerified?: boolean }
 
 export async function carregarUsuario(userId: string): Promise<UsuarioMonitoria | null> {
@@ -118,6 +121,8 @@ export async function obterOuCriarTutor(user: UsuarioMonitoria): Promise<Tutor> 
   const { tutores } = await obterColecoes()
   const userId = String(user._id)
   const agora = new Date()
+  // Quem já escolheu o retrato da conta no /profile começa com ele como monitor.
+  const retrato = avatarPorId(user.avatar)
   const tutor = await tutores.findOneAndUpdate(
     { userId },
     {
@@ -132,6 +137,7 @@ export async function obterOuCriarTutor(user: UsuarioMonitoria): Promise<Tutor> 
         disponibilidade: DISPONIBILIDADE_VAZIA,
         saldoDevedorCentavos: 0,
         stats: { aulasDadas: 0, nota: 0, avaliacoes: 0 },
+        ...(retrato ? { avatar: retrato.id, fotoUrl: retrato.url } : {}),
         createdAt: agora,
         updatedAt: agora,
       },
