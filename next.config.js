@@ -242,6 +242,17 @@ const nextConfig = {
           },
         ],
       },
+      // Vídeos públicos versionados no nome (monitorias-1x1-v1.mp4): trocar o
+      // vídeo = novo nome, então o cache pode ser imutável.
+      {
+        source: '/videos/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
       // Cache longo para assets estáticos
       {
         source: '/img/(.*)',

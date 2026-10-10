@@ -8,6 +8,7 @@ import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { CartaoAnuncio, type CardAnuncio } from '@/components/monitorias/cartao-anuncio'
 import { Esqueleto, Vazio, api } from '@/components/monitorias/base'
+import { VideoAnuncioResponsivo } from '@/components/monitorias/video-anuncio'
 import { SimuladorGanhos } from '@/components/monitorias/simulador-ganhos'
 import { cn } from '@/lib/utils'
 
@@ -52,7 +53,6 @@ export default function VitrineMonitorias() {
   const [dados, setDados] = useState<RespostaVitrine | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [numeros, setNumeros] = useState<RespostaVitrine['numeros']>(null)
-  const [destaques, setDestaques] = useState<CardAnuncio[]>([])
 
   // Lembra a escolha (aprender/ensinar) entre visitas. Só conveniência.
   useEffect(() => {
@@ -93,8 +93,6 @@ export default function VitrineMonitorias() {
       const r = await api<RespostaVitrine>(url)
       setDados(r)
       if (r.numeros) setNumeros(r.numeros)
-      // Os destaques do herói são os mais bem avaliados da primeira carga.
-      setDestaques((d) => (d.length ? d : [...r.itens].sort((a, b) => b.stats.nota * 10 + b.stats.reservas - (a.stats.nota * 10 + a.stats.reservas)).slice(0, 2)))
     } catch {
       setDados({ itens: [], total: 0, pagina: 1, paginas: 0, materias: [] })
     } finally {
@@ -193,25 +191,20 @@ export default function VitrineMonitorias() {
           </AnimatePresence>
         </div>
 
-        {/* Visual do herói: componentes reais, não figuras (no celular, só no modo ensinar) */}
-        <div className={cn('relative', publico === 'aprender' && 'hidden lg:block')}>
+        {/* Visual do herói: o vídeo-anúncio (aluno) ou o simulador de ganhos (monitor).
+            Quadrado na coluna do computador e no celular; banner 4:1 no tablet. */}
+        <div className="relative">
           <AnimatePresence mode="wait" initial={false}>
             {publico === 'aprender' ? (
               <motion.div
-                key="destaques"
+                key="video"
                 initial={reduzir ? false : { opacity: 0, x: 16 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduzir ? undefined : { opacity: 0, x: -12 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="grid gap-4 xl:grid-cols-2"
+                className="mx-auto w-full max-w-[520px] md:max-w-none lg:ml-auto lg:mr-0 lg:max-w-[470px]"
               >
-                {destaques.length
-                  ? destaques.map((a, i) => (
-                      <div key={a.id} className={cn(i === 1 && 'xl:mt-10')}>
-                        <CartaoAnuncio anuncio={a} indice={i} />
-                      </div>
-                    ))
-                  : [0, 1].map((i) => <Esqueleto key={i} className={cn('h-72', i === 1 && 'xl:mt-10')} />)}
+                <VideoAnuncioResponsivo />
               </motion.div>
             ) : (
               <motion.div

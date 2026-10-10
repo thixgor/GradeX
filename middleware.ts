@@ -678,7 +678,9 @@ export const config = {
      * - pwa/, shortcuts/, icon-, logo, apple-: ícones e telas de partida do app
      * - manifest, robots.txt, sitemap.xml: metadados públicos por definição
      * - sw.js: o service worker, que precisa ser buscável sem sessão
+     * - videos/: vídeos públicos (ex.: anúncio das Monitorias), lidos em
+     *   pedaços (Range); cada pedaço passando por aqui seria uma execução
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|atlas-anatomia/|Manual-Histologia/|models/|patologia/|fonts/|pwa/|shortcuts/|icon-|apple-|logo[-0-9_.]|manifest\\.|robots\\.txt|sitemap\\.xml|sw\\.js|logo_manual_tomografia|ldpg-mnclinico).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|videos/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|atlas-anatomia/|Manual-Histologia/|models/|patologia/|fonts/|pwa/|shortcuts/|icon-|apple-|logo[-0-9_.]|manifest\\.|robots\\.txt|sitemap\\.xml|sw\\.js|logo_manual_tomografia|ldpg-mnclinico).*)',
   ],
 }

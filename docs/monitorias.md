@@ -343,3 +343,15 @@ tenta de novo com a mesma chave.
 - Admin: `/admin/monitorias` — moderação, disputas, repasses, denúncias.
 - Repasse manual: criar pagamento → revelar chave → PIX pelo banco → anexar
   comprovante (Blob privado) → informar E2E.
+
+## Vídeo-anúncio no herói (`components/monitorias/video-anuncio.tsx`)
+
+- Arquivos em `public/videos/monitorias/` com versão no nome (`-v1`), cache
+  imutável (`next.config.js`) e fora do middleware (nenhuma execução por pedaço
+  de vídeo). Trocar o vídeo = novo nome (`-v2`).
+- Quadrado no celular e no computador; banner 4:1 só no tablet. A tela escolhe
+  um formato e baixa só ele.
+- `preload="none"` + pôster; toca sem som só enquanto visível; sem autoplay para
+  quem pede menos movimento ou economia de dados; "Ativar som" volta ao início.
+- Compressão: H.264 CRF 27, 720 px (quadrado) e 1440 px (banner), ~1,6 MB cada.
+
