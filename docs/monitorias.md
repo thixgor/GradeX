@@ -78,6 +78,24 @@ Saídas do grupo (cada assento é independente — contrato, pagamento, repasse)
   devolvido; contestação que passa por mediação também estorna o repasse;
   em produção o admin não aprova "na mão" pagamento de monitoria.
 
+### Pagamento: nada em dobro, nada pela metade
+
+| Situação | O que acontece |
+|---|---|
+| Dois cliques / duas abas em "pagar" | Um PIX só: o segundo espera o QR do primeiro (`esperarPix`) e recebe o MESMO |
+| Recarregar a página | Reaproveita o PIX válido; não cria transação |
+| Aprovado no MP, função caiu antes do assento | Reaplicado por: aviso repetido do MP (`effects.ts` reexecuta `aoAprovarPagamento` em `approved → approved`), volta do aluno ao checkout (conclui em vez de gerar outro PIX) e varredura 2b (`curarPagamentosDaReserva`) |
+| Assento pago, repasse/avisos/confirmação não rodaram | `concluirAprovacao` é idempotente: repasse com índice único, avisos marcados (`pagamentoAvisadoEm`), confirmação com trava curta (`Reserva.confirmandoEm`) |
+| PIX aprovado tarde, dentro do prazo | Confirma normalmente |
+| PIX aprovado depois de o horário ser solto | Devolvido inteiro (compare-and-set: dois atrasados não se sobrescrevem) |
+| Prazo venceu com o grupo todo pago | A varredura confirma a aula em vez de devolver |
+| Mesmo assento pago duas vezes | O segundo volta inteiro por `devolverPagamentoAvulso` (chave `duplicado:<pedido>`, coleção `monitorias_devolucoes`, nova tentativa na varredura 6a); o estorno desse segundo pagamento NÃO derruba o assento (`aoRevogarPagamento` ignora pagamento que não é o do assento) |
+| PIX recusado/expirado | Assento segue aguardando; nova tentativa gera PIX novo; no fim do prazo a reserva expira e o horário é solto |
+
+Teste de integração (Mongo real + MP falso), opcional:
+`MONITORIAS_MONGO_TESTE=mongodb://127.0.0.1:27017/ npx vitest run __tests__/monitorias/pagamentos-integracao.test.ts`
+(apaga o banco `monitorias-pagamentos-teste` daquela instância).
+
 ## Cancelamento e reembolso (`lib/monitorias/politica.ts`)
 
 | Quem | Quando | Resultado |

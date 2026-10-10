@@ -29,7 +29,8 @@ export async function lancar(itens: NovoLancamento[]): Promise<void> {
 }
 
 /** Cria o repasse em garantia (idempotente: um por participação). */
-export async function abrirRepasse(participacao: Participacao, reserva: { _id?: unknown; tutorUserId: string }): Promise<void> {
+/** Abre o repasse do assento (uma vez só). Devolve `true` se abriu agora. */
+export async function abrirRepasse(participacao: Participacao, reserva: { _id?: unknown; tutorUserId: string }): Promise<boolean> {
   const c = colecoes(await getDb())
   const divisao = dividirValor(participacao.valorCentavos)
   const agora = new Date()
@@ -72,6 +73,7 @@ export async function abrirRepasse(participacao: Participacao, reserva: { _id?: 
       },
     ])
   }
+  return res.upsertedCount === 1
 }
 
 /**
