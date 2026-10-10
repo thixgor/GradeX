@@ -156,12 +156,12 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
       </Link>
 
       {/* Cabeçalho */}
-      <div className="mb-5 rounded-3xl border border-border bg-card p-5 shadow-sm">
+      <div className="mb-6 rounded-2xl border border-border bg-card p-5 sm:p-6">
         <div className="flex flex-wrap items-center gap-4">
           <Avatar nome={ehMonitor ? outroNome : d.monitor?.nome || '?'} url={ehMonitor ? null : d.monitor?.fotoUrl} tamanho={52} />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate font-heading text-xl font-bold">{r.anuncioTitulo}</h1>
-            <p className="text-sm text-muted-foreground">{ehMonitor ? `Aluno: ${outroNome}` : `Monitor: ${d.monitor?.nome}`}{d.assentos.length > 1 ? ` · grupo de ${p?.vagas}` : ''}</p>
+            <h1 className="truncate font-heading text-2xl font-semibold">{r.anuncioTitulo}</h1>
+            <p className="text-sm text-muted-foreground">{ehMonitor ? `Aluno: ${outroNome}` : `Monitor: ${d.monitor?.nome}`}{d.assentos.length > 1 ? `, grupo de ${p?.vagas}` : ''}</p>
           </div>
           <SeloStatus status={r.status} />
         </div>
@@ -173,11 +173,11 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
                   <motion.span
                     initial={false}
                     animate={{ scale: i === etapaAtual ? 1.15 : 1 }}
-                    className={cn('flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold', i < etapaAtual ? 'bg-primary text-primary-foreground' : i === etapaAtual ? 'bg-amber-400 text-amber-950 ring-4 ring-amber-400/25' : 'bg-muted text-muted-foreground')}
+                    className={cn('flex h-7 w-7 items-center justify-center rounded-lg text-xs font-semibold', i < etapaAtual ? 'bg-primary text-primary-foreground' : i === etapaAtual ? 'bg-card text-primary ring-2 ring-primary' : 'bg-muted text-muted-foreground')}
                   >
                     {i < etapaAtual ? <Check className="h-3.5 w-3.5" /> : i + 1}
                   </motion.span>
-                  <span className="hidden text-[10px] font-medium sm:block">{e.rotulo}</span>
+                  <span className={cn('hidden text-xs sm:block', i === etapaAtual ? 'font-semibold text-foreground' : 'text-muted-foreground')}>{e.rotulo}</span>
                 </div>
                 {i < ETAPAS_LINHA_DO_TEMPO.length - 1 && <span className={cn('mx-1 h-0.5 flex-1 rounded', i < etapaAtual ? 'bg-primary' : 'bg-muted')} />}
               </li>
@@ -195,7 +195,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
         {/* Chat */}
-        <section className="flex min-h-[520px] flex-col overflow-hidden rounded-3xl border border-border bg-card">
+        <section className="flex min-h-[520px] flex-col overflow-hidden rounded-2xl border border-border bg-card">
           <div className="flex-1 space-y-3 overflow-y-auto p-4" style={{ maxHeight: 620 }}>
             {d.maisAntigas && (
               <button type="button" onClick={verAnteriores} disabled={carregandoAntigas} className="mx-auto block rounded-full border border-border px-3 py-1 text-xs text-muted-foreground hover:bg-muted">
@@ -219,11 +219,11 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
                     <div
                       className={cn(
                         'max-w-[85%] rounded-2xl px-3.5 py-2 text-sm shadow-sm',
-                        ehProposta ? 'border-2 border-amber-400/60 bg-amber-50 text-amber-950 dark:bg-amber-500/10 dark:text-amber-100' : meu ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted',
+                        ehProposta ? 'border border-primary/40 bg-primary/[0.06] text-foreground' : meu ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted',
                         ehProposta && !vigente && 'opacity-60',
                       )}
                     >
-                      {ehProposta && <p className="mb-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide"><HeartHandshake className="h-3.5 w-3.5" /> Proposta {vigente ? '' : '(substituída)'}</p>}
+                      {ehProposta && <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-primary"><HeartHandshake className="h-3.5 w-3.5" /> Proposta {vigente ? '' : '(substituída)'}</p>}
                       <p className="whitespace-pre-line break-words">{m.texto}</p>
                       <p className={cn('mt-1 text-[10px]', meu && !ehProposta ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{horaEmBrasilia(m.createdAt)}</p>
                     </div>
@@ -303,17 +303,17 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
           )}
 
           {precisaCheckout && (
-            <motion.div initial={{ scale: 0.97 }} animate={{ scale: 1 }} className="rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 p-4 text-white shadow-lg">
+            <motion.div initial={{ scale: 0.97 }} animate={{ scale: 1 }} className="rounded-2xl bg-primary p-5 text-primary-foreground">
               <p className="font-semibold">{assento!.status === 'aguardando_assinatura' ? 'Falta assinar o contrato' : 'Falta pagar'}</p>
-              <p className="mt-0.5 text-xs text-white/80">Contrato, pagamento PIX e comprovante num só lugar.</p>
+              <p className="mt-0.5 text-sm text-primary-foreground/80">Contrato, PIX e comprovante em um só lugar.</p>
               <Link href={`/monitorias/checkout/${r.id}`}>
-                <Button className="mt-3 w-full bg-amber-400 font-semibold text-amber-950 hover:bg-amber-300"><CreditCard className="mr-2 h-4 w-4" /> Ir para o checkout</Button>
+                <Button className="mt-4 h-11 w-full rounded-xl bg-card font-semibold text-foreground hover:bg-card/90"><CreditCard className="mr-2 h-4 w-4" /> Continuar</Button>
               </Link>
             </motion.div>
           )}
 
           {ehMonitor && d.contratosParaAssinar.length > 0 && (
-            <div className="rounded-2xl border-2 border-amber-400/60 bg-card p-4">
+            <div className="rounded-2xl border border-primary/40 bg-card p-4">
               <p className="mb-3 text-sm font-semibold">Assine o contrato para liberar o pagamento do aluno</p>
               {d.contratosParaAssinar.map((k) => (
                 <AssinaturaContrato key={k.id} contratoId={k.id} onAssinado={carregar} />
@@ -360,11 +360,11 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
           {!ehMonitor && r.anuncioSlug && ['realizada', 'concluida'].includes(r.status) && (
             <Link href={`/monitorias/anuncio/${r.anuncioSlug}`}>
-              <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-white shadow-lg">
-                <Repeat className="h-6 w-6" />
+              <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/[0.06] p-4">
+                <Repeat className="h-5 w-5 text-primary" />
                 <div>
                   <p className="font-semibold">Agendar a próxima aula</p>
-                  <p className="text-xs text-white/80">Quem estuda com constância aprende mais. Mesmo monitor, mesmo jeito.</p>
+                  <p className="text-xs text-muted-foreground">Mesmo monitor, do jeito que você já conhece.</p>
                 </div>
               </motion.div>
             </Link>
@@ -378,7 +378,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
           <div className="space-y-2">
             {r.podeReportar && (
-              <Button variant="outline" className="w-full border-amber-400 text-amber-800 dark:text-amber-300" onClick={() => setModal('reportar')}>
+              <Button variant="outline" className="w-full rounded-xl" onClick={() => setModal('reportar')}>
                 <AlertTriangle className="mr-2 h-4 w-4" /> Reportar problema
               </Button>
             )}
@@ -435,9 +435,9 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 const ROTULO_ASSENTO: Record<string, string> = {
   aguardando_assinatura: 'assinando',
   aguardando_pagamento: 'pagando',
-  paga: 'pago ✓',
-  gratis: 'grátis ✓',
-  concluida: 'concluída ✓',
+  paga: 'pago',
+  gratis: 'grátis',
+  concluida: 'concluída',
   reembolsada: 'reembolsado',
   reembolso_processando: 'reembolsando',
   cancelada: 'saiu',
@@ -490,7 +490,7 @@ function FormMotivo({ tipo, d, onEnviar }: { tipo: 'cancelar' | 'recusar' | 'rep
   } else if (tipo === 'reportar') {
     explicacao = 'O valor fica retido e o suporte analisa (conte o que aconteceu: falta, atraso, aula diferente do combinado...).'
   } else {
-    explicacao = 'O aluno é avisado. Seja gentil — explique o motivo.'
+    explicacao = 'O aluno é avisado. Seja gentil e explique o motivo.'
   }
   return (
     <div className="space-y-3">
@@ -558,11 +558,11 @@ function LinkDaReuniao({ d, onSalvar }: { d: DetalheReserva; onSalvar: (url: str
   if (r.linkReuniao) {
     return (
       <a href={r.linkReuniao} target="_blank" rel="noopener noreferrer">
-        <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-sky-600 to-indigo-600 p-4 text-white shadow-lg">
-          <Video className="h-6 w-6" />
+        <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl bg-primary p-4 text-primary-foreground shadow-[0_12px_30px_-14px_hsl(var(--primary)/0.7)]">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary-foreground/15"><Video className="h-5 w-5" /></span>
           <div>
             <p className="font-semibold">Entrar na aula</p>
-            <p className="text-xs text-white/80">Abre a sala de reunião</p>
+            <p className="text-xs text-primary-foreground/80">Abre a sala de reunião</p>
           </div>
         </motion.div>
       </a>
@@ -576,10 +576,11 @@ function Convite({ codigo }: { codigo: string }) {
   const [copiado, setCopiado] = useState(false)
   const link = typeof window !== 'undefined' ? `${window.location.origin}/monitorias/convite/${codigo}` : ''
   return (
-    <div className="rounded-2xl border border-amber-400/50 bg-amber-50 p-4 dark:bg-amber-500/10">
-      <p className="flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4" /> Link de convite do grupo</p>
+    <div className="rounded-2xl border border-primary/30 bg-primary/[0.05] p-4">
+      <p className="flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4 text-primary" /> Convide seus colegas</p>
+      <p className="mt-0.5 text-xs text-muted-foreground">Cada um assina e paga a própria parte.</p>
       <div className="mt-2 flex gap-2">
-        <input readOnly value={link} className="h-9 min-w-0 flex-1 rounded-lg border border-amber-300 bg-white px-2 text-xs dark:bg-background" onFocus={(e) => e.target.select()} />
+        <input readOnly value={link} className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-background px-2 text-xs" onFocus={(e) => e.target.select()} />
         <Button
           size="sm"
           aria-label={copiado ? 'Link copiado' : 'Copiar link de convite'}
@@ -608,9 +609,9 @@ function Documentos({ d }: { d: DetalheReserva }) {
   }
   if (d.papel === 'monitor') {
     for (const a of d.assentos) {
-      if (a.contratoId) itens.push({ href: `/api/monitorias/documentos/contrato/${a.contratoId}`, rotulo: `Contrato — ${a.alunoNome.split(' ')[0]}`, icone: FileText })
+      if (a.contratoId) itens.push({ href: `/api/monitorias/documentos/contrato/${a.contratoId}`, rotulo: `Contrato de ${a.alunoNome.split(' ')[0]}`, icone: FileText })
       if (a.id && ['paga', 'concluida', 'reembolsada', 'reembolso_processando'].includes(a.status)) {
-        itens.push({ href: `/api/monitorias/documentos/venda/${a.id}`, rotulo: `Demonstrativo de venda — ${a.alunoNome.split(' ')[0]}`, icone: Receipt })
+        itens.push({ href: `/api/monitorias/documentos/venda/${a.id}`, rotulo: `Demonstrativo de venda de ${a.alunoNome.split(' ')[0]}`, icone: Receipt })
       }
     }
   }

@@ -54,7 +54,7 @@ export function DialogoPedido({
 
   return (
     <div className="space-y-4">
-      {gratis && <CaixaAviso tom="sucesso">Pedido de aula experimental grátis — uma por monitor.</CaixaAviso>}
+      {gratis && <CaixaAviso tom="sucesso">Pedido de aula experimental grátis (uma por monitor).</CaixaAviso>}
       <div>
         <label className="mb-1.5 block text-sm font-semibold" htmlFor="msg-pedido">
           Conte para o monitor o que você precisa
@@ -122,7 +122,7 @@ export function DialogoPedido({
         {enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Send className="mr-2 h-4 w-4" /> Enviar pedido</>}
       </Button>
       <p className="text-center text-[11px] text-muted-foreground">
-        Combine tudo pelo chat da plataforma: contatos pessoais ficam ocultos até o pagamento — é o que garante seu contrato e reembolso.
+        Combine tudo pelo chat da plataforma: contatos pessoais ficam ocultos até o pagamento. É o que garante seu contrato e seu reembolso.
       </p>
     </div>
   )

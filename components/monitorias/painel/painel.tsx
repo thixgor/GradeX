@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CalendarDays, Inbox, LayoutDashboard, UserRound, Wallet, Store } from 'lucide-react'
-import { PageScaffold, PageHeader } from '@/components/page-scaffold'
+import { CalendarDays, Inbox, LayoutDashboard, UserRound, Wallet, Plus } from 'lucide-react'
+import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { CaixaErro, Esqueleto, api } from '../base'
+import { Cabecalho, CaixaErro, Esqueleto, api } from '../base'
 import { ListaReservas } from '../lista-reservas'
 import type { DadosPainel } from './tipos'
 import { VisaoGeral } from './visao-geral'
@@ -22,7 +22,7 @@ const ABAS: Array<{ chave: AbaPainel; rotulo: string; icone: typeof Inbox; href:
   { chave: 'visao', rotulo: 'Visão geral', icone: LayoutDashboard, href: '/monitorias/painel' },
   { chave: 'pedidos', rotulo: 'Pedidos', icone: Inbox, href: '/monitorias/painel/pedidos' },
   { chave: 'agenda', rotulo: 'Agenda', icone: CalendarDays, href: '/monitorias/painel/agenda' },
-  { chave: 'perfil', rotulo: 'Perfil & PIX', icone: UserRound, href: '/monitorias/painel/perfil' },
+  { chave: 'perfil', rotulo: 'Perfil e PIX', icone: UserRound, href: '/monitorias/painel/perfil' },
   { chave: 'financeiro', rotulo: 'Financeiro', icone: Wallet, href: '/monitorias/painel/financeiro' },
 ]
 
@@ -38,30 +38,57 @@ export function PainelMonitor({ aba }: { aba: AbaPainel }) {
     carregar()
   }, [carregar])
 
+  const primeiroNome = (dados?.tutor?.nome || '').split(' ')[0]
+  const pendentes = dados?.pedidosPendentes || 0
   return (
     <PageScaffold wide>
-      <PageHeader
-        eyebrow="Monitorias"
-        title="Painel do monitor"
-        description="Anuncie, organize sua agenda, negocie com alunos e acompanhe seus repasses."
-        actions={<Link href="/monitorias"><Button variant="outline"><Store className="mr-2 h-4 w-4" /> Vitrine</Button></Link>}
+      <Cabecalho
+        titulo={primeiroNome ? `Olá, ${primeiroNome}` : 'Painel do monitor'}
+        descricao={
+          !dados
+            ? 'Seus anúncios, sua agenda e seu dinheiro em um lugar.'
+            : pendentes
+              ? `${pendentes} ${pendentes === 1 ? 'pedido em aberto' : 'pedidos em aberto'}.`
+              : dados.anuncios.length
+                ? 'Tudo em dia por aqui.'
+                : 'Comece pelo seu primeiro anúncio. Leva uns 5 minutos.'
+        }
+        acoes={
+          <>
+            <Link href="/monitorias" className="rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground">Ver vitrine</Link>
+            <Link href="/monitorias/painel/anuncios/novo">
+              <Button className="rounded-xl"><Plus className="mr-1.5 h-4 w-4" /> Novo anúncio</Button>
+            </Link>
+          </>
+        }
       />
-      <nav className="mb-6 flex gap-1 overflow-x-auto rounded-2xl border border-border bg-card p-1 [scrollbar-width:none]">
-        {ABAS.map((a) => (
-          <Link key={a.chave} href={a.href} className={cn('relative flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors', aba === a.chave ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}>
-            {aba === a.chave && <motion.span layoutId="aba-painel" className="absolute inset-0 rounded-xl bg-primary" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
-            <a.icone className="relative h-4 w-4" />
-            <span className="relative">{a.rotulo}</span>
-            {a.chave === 'pedidos' && dados?.pedidosPendentes ? <span className="relative rounded-full bg-amber-400 px-1.5 text-[10px] font-bold text-amber-950">{dados.pedidosPendentes}</span> : null}
-          </Link>
-        ))}
+      <nav className="-mx-4 mb-7 flex gap-1 overflow-x-auto border-b border-border px-4 [scrollbar-width:none] sm:mx-0 sm:px-0" aria-label="Seções do painel">
+        {ABAS.map((a) => {
+          const ativa = aba === a.chave
+          return (
+            <Link
+              key={a.chave}
+              href={a.href}
+              aria-current={ativa ? 'page' : undefined}
+              className={cn('relative flex shrink-0 items-center gap-2 px-3 pb-3 pt-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', ativa ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}
+            >
+              <a.icone className="h-4 w-4" strokeWidth={1.75} />
+              {a.rotulo}
+              {a.chave === 'pedidos' && pendentes ? <span className="rounded-md bg-primary px-1.5 text-[11px] font-semibold tabular-nums text-primary-foreground">{pendentes}</span> : null}
+              {ativa && <motion.span layoutId="aba-painel" className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            </Link>
+          )
+        })}
       </nav>
       {erro && <CaixaErro mensagem={erro} />}
       {!dados && !erro ? (
-        <Esqueleto className="h-96" />
+        <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+          <Esqueleto className="h-64" />
+          <Esqueleto className="h-64" />
+        </div>
       ) : dados ? (
         <AnimatePresence mode="wait">
-          <motion.div key={aba} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+          <motion.div key={aba} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>
             {aba === 'visao' && <VisaoGeral dados={dados} recarregar={carregar} />}
             {aba === 'perfil' && <PerfilMonitor dados={dados} recarregar={carregar} />}
             {aba === 'agenda' && <EditorAgenda inicial={dados.tutor?.disponibilidade || DISPONIBILIDADE_VAZIA} recarregar={carregar} />}

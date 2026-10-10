@@ -154,7 +154,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                       <CaixaAviso>Este horário está reservado para você até <strong>{formatarEmBrasilia(r.prazoPagamento, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</strong> (Brasília). Conclua as etapas antes disso.</CaixaAviso>
                     )}
                     <Button className="h-12 w-full rounded-xl text-base font-semibold" onClick={() => setRevisado(true)}>
-                      Está tudo certo — continuar
+                      Está tudo certo, continuar
                     </Button>
                   </div>
                 )}
@@ -173,7 +173,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                     {termosOk && <AssinaturaContrato contratoId={d.meuContrato.id} onAssinado={() => carregar()} />}
                     {termosOk && d.meuContrato.falta.includes('contratado') && !d.meuContrato.falta.includes('contratante') && (
                       <CaixaAviso tom="info">
-                        <Loader2 className="mr-1 inline h-3.5 w-3.5 animate-spin" /> Você já assinou. Aguardando a assinatura do monitor — avisamos por e-mail assim que ele assinar.
+                        <Loader2 className="mr-1 inline h-3.5 w-3.5 animate-spin" /> Você já assinou. Falta o monitor assinar; avisamos por e-mail quando ele assinar.
                       </CaixaAviso>
                     )}
                   </div>
@@ -203,7 +203,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                       <PartyPopper className="h-10 w-10" />
                     </motion.div>
                     <div>
-                      <h1 className="font-heading text-2xl font-bold">{r.status === 'confirmada' ? 'Monitoria confirmada!' : assento.status === 'gratis' ? 'Aula grátis garantida!' : 'Pagamento confirmado!'}</h1>
+                      <h1 className="font-heading text-2xl font-bold">{r.status === 'confirmada' ? 'Monitoria confirmada' : assento.status === 'gratis' ? 'Aula grátis garantida!' : 'Pagamento confirmado!'}</h1>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {r.status === 'confirmada'
                           ? 'Enviamos tudo para o seu e-mail. O link da reunião aparece na página da reserva.'
@@ -249,7 +249,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
 
 function ConviteGrupo({ link, copiado, onCopiar }: { link: string; copiado: boolean; onCopiar: () => void }) {
   return (
-    <div className="rounded-2xl border border-amber-400/50 bg-amber-50 p-4 text-left dark:bg-amber-500/10">
+    <div className="rounded-2xl border border-primary/30 bg-primary/[0.05] p-4 text-left">
       <p className="flex items-center gap-1.5 text-sm font-semibold text-amber-900 dark:text-amber-200"><Users className="h-4 w-4" /> Convide os colegas do grupo</p>
       <p className="mt-1 text-xs text-amber-900/80 dark:text-amber-200/80">Cada um entra pelo link, assina o próprio contrato e paga a sua parte até o prazo.</p>
       <div className="mt-2 flex gap-2">
@@ -290,7 +290,7 @@ function HorarioGuardado({ ate, slug }: { ate: string; slug: string | null }) {
       animate={{ opacity: 1, y: 0 }}
       className={cn(
         'mb-4 flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm',
-        urgente ? 'border-rose-400/60 bg-rose-500/10 text-rose-900 dark:text-rose-200' : 'border-amber-400/60 bg-amber-500/10 text-amber-900 dark:text-amber-200',
+        urgente ? 'border-rose-400/50 bg-rose-500/10 text-rose-900 dark:text-rose-200' : 'border-border bg-card text-foreground',
       )}
       role="timer"
       aria-live="off"

@@ -53,7 +53,7 @@ export default function Convite({ params }: { params: { codigo: string } }) {
         {erro && !previa && <CaixaErro mensagem={erro} />}
         {previa && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="overflow-hidden rounded-3xl border border-border bg-card shadow-lg">
-            <div className="bg-gradient-to-br from-emerald-600 to-teal-700 p-6 text-center text-white">
+            <div className="bg-primary p-6 text-center text-primary-foreground">
               <Users className="mx-auto h-8 w-8" />
               <p className="mt-2 text-sm text-white/80">Você foi convidado para uma monitoria em grupo</p>
               <h1 className="mt-1 font-heading text-xl font-bold">{previa.anuncioTitulo}</h1>

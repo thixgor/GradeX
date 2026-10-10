@@ -12,6 +12,14 @@ import { precoPorPessoaCentavos } from '@/lib/monitorias/precos'
 import type { ConteudoAnuncio } from '@/lib/monitorias/tipos'
 import { api, CaixaErro, ErroApi, HoraBrasilia } from './base'
 
+const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
+const PERIODOS = [
+  { rotulo: 'Madrugada', de: 0, ate: 6 },
+  { rotulo: 'Manhã', de: 6, ate: 12 },
+  { rotulo: 'Tarde', de: 12, ate: 18 },
+  { rotulo: 'Noite', de: 18, ate: 24 },
+]
+
 interface Horario {
   inicio: string
   dia: string
@@ -109,14 +117,15 @@ export function Agendador({
       {/* Duração */}
       {!gratis && duracoes.length > 1 && (
         <div>
-          <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><Clock className="h-4 w-4 text-primary" /> Quanto tempo de aula?</p>
+          <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold"><Clock className="h-4 w-4 text-primary" strokeWidth={1.75} /> Duração</p>
           <div className="flex flex-wrap gap-2">
             {duracoes.map((d) => (
               <button
                 key={d}
                 type="button"
+                aria-pressed={d === duracao}
                 onClick={() => setDuracao(d)}
-                className={cn('rounded-xl border px-3.5 py-2 text-sm font-semibold transition', d === duracao ? 'border-primary bg-primary text-primary-foreground shadow' : 'border-border bg-card hover:border-primary/50')}
+                className={cn('rounded-xl px-3.5 py-2 text-sm font-medium transition active:scale-[0.98]', d === duracao ? 'bg-foreground text-background' : 'bg-card ring-1 ring-border hover:ring-primary/40')}
               >
                 {formatarDuracao(d)}
               </button>
@@ -127,11 +136,13 @@ export function Agendador({
 
       {/* Dia */}
       <div>
-        <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><CalendarDays className="h-4 w-4 text-primary" /> Escolha o dia</p>
+        <p className="mb-2.5 flex items-center gap-1.5 text-sm font-semibold"><CalendarDays className="h-4 w-4 text-primary" strokeWidth={1.75} /> Dia</p>
         {carregando ? (
-          <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Buscando horários livres…</div>
+          <div className="flex gap-2" aria-label="Carregando horários">
+            {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-[72px] w-16 shrink-0 animate-pulse rounded-xl bg-muted/70" />)}
+          </div>
         ) : dias.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+          <p className="rounded-xl bg-muted/50 px-4 py-6 text-center text-sm text-muted-foreground">
             Sem horários livres nas próximas 3 semanas. Tente outra duração ou combine pelo chat.
           </p>
         ) : (
@@ -142,18 +153,19 @@ export function Agendador({
                 <button
                   key={d}
                   type="button"
+                  aria-pressed={d === dia}
                   onClick={() => {
                     setDia(d)
                     setEscolhido(null)
                   }}
                   className={cn(
-                    'flex w-16 shrink-0 flex-col items-center rounded-2xl border px-2 py-2 transition',
-                    d === dia ? 'border-primary bg-primary text-primary-foreground shadow-md' : 'border-border bg-card hover:border-primary/50',
+                    'flex w-16 shrink-0 flex-col items-center rounded-xl px-2 py-2.5 transition active:scale-[0.98]',
+                    d === dia ? 'bg-foreground text-background' : 'bg-card ring-1 ring-border hover:ring-primary/40',
                   )}
                 >
-                  <span className="text-[11px] font-medium uppercase opacity-80">{NOMES_DIAS_CURTOS[diaDaSemana(d)]}</span>
-                  <span className="text-lg font-bold leading-tight">{dd}</span>
-                  <span className="text-[10px] opacity-70">/{m}</span>
+                  <span className="text-xs opacity-75">{NOMES_DIAS_CURTOS[diaDaSemana(d)]}</span>
+                  <span className="font-heading text-xl font-semibold leading-tight tabular-nums">{dd}</span>
+                  <span className="text-[11px] opacity-60">{MESES[Number(m) - 1]}</span>
                 </button>
               )
             })}
@@ -165,24 +177,35 @@ export function Agendador({
       <AnimatePresence mode="wait">
         {dia && doDia.length > 0 && (
           <motion.div key={dia} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <p className="mb-2 flex items-center justify-between text-sm font-semibold">
-              <span>Que horas?</span> <HoraBrasilia />
+            <p className="mb-2.5 flex items-center justify-between text-sm font-semibold">
+              <span>Horário</span> <HoraBrasilia />
             </p>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {doDia.map((h) => (
-                <motion.button
-                  key={h.inicio}
-                  type="button"
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setEscolhido(h)}
-                  className={cn(
-                    'rounded-xl border px-2 py-2 text-sm font-semibold tabular-nums transition',
-                    escolhido?.inicio === h.inicio ? 'border-amber-500 bg-amber-400 text-amber-950 shadow' : 'border-border bg-card hover:border-primary/50',
-                  )}
-                >
-                  {h.hora}
-                </motion.button>
-              ))}
+            <div className="space-y-3">
+              {PERIODOS.map((per) => {
+                const lista = doDia.filter((h) => per.de <= Number(h.hora.slice(0, 2)) && Number(h.hora.slice(0, 2)) < per.ate)
+                if (!lista.length) return null
+                return (
+                  <div key={per.rotulo}>
+                    <p className="mb-1.5 text-xs text-muted-foreground">{per.rotulo}</p>
+                    <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
+                      {lista.map((h) => (
+                        <button
+                          key={h.inicio}
+                          type="button"
+                          aria-pressed={escolhido?.inicio === h.inicio}
+                          onClick={() => setEscolhido(h)}
+                          className={cn(
+                            'rounded-lg py-2 text-sm font-medium tabular-nums transition active:scale-[0.97]',
+                            escolhido?.inicio === h.inicio ? 'bg-primary text-primary-foreground' : 'bg-card ring-1 ring-border hover:ring-primary/40',
+                          )}
+                        >
+                          {h.hora}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </motion.div>
         )}
@@ -190,8 +213,8 @@ export function Agendador({
 
       {/* Alunos */}
       {maxVagas > 1 && (
-        <div className="flex items-center justify-between rounded-xl border border-border bg-muted/40 px-3 py-2">
-          <span className="flex items-center gap-1.5 text-sm font-medium"><Users className="h-4 w-4 text-primary" /> Alunos no grupo</span>
+        <div className="flex items-center justify-between rounded-xl bg-muted/50 px-3.5 py-2.5">
+          <span className="flex items-center gap-1.5 text-sm font-medium"><Users className="h-4 w-4 text-primary" strokeWidth={1.75} /> Alunos no grupo</span>
           <div className="flex items-center gap-2">
             <Button type="button" size="icon" variant="outline" className="h-8 w-8" onClick={() => setVagas((v) => Math.max(1, v - 1))} aria-label="Menos alunos">
               <Minus className="h-3.5 w-3.5" />
@@ -211,21 +234,19 @@ export function Agendador({
 
       {erro && <CaixaErro mensagem={erro} />}
 
-      <div className="flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 p-4 text-white shadow-lg">
-        <div>
-          <p className="text-xs text-white/80">{gratis ? 'Aula experimental' : vagas > 1 ? 'Por pessoa' : 'Total da aula'}</p>
-          <p className="font-heading text-2xl font-bold">{gratis ? 'Grátis' : formatarCentavos(valor)}</p>
-          {escolhido && duracao && (
-            <p className="text-xs text-white/80">
-              {escolhido.dia.split('-').reverse().join('/')} às {escolhido.hora} · {formatarDuracao(duracao)}
-            </p>
-          )}
+      <div className="sticky bottom-0 -mx-5 -mb-5 flex items-center justify-between gap-3 border-t border-border bg-card px-5 py-4 sm:-mx-6 sm:-mb-6 sm:px-6">
+        <div className="min-w-0">
+          <p className="text-xs text-muted-foreground">{gratis ? 'Aula experimental' : vagas > 1 ? 'Por pessoa' : 'Total'}</p>
+          <p className="font-heading text-2xl font-semibold tabular-nums">{gratis ? 'Grátis' : formatarCentavos(valor)}</p>
+          <p className="truncate text-xs text-muted-foreground">
+            {escolhido && duracao ? `${escolhido.dia.split('-').reverse().slice(0, 2).join('/')} às ${escolhido.hora}, ${formatarDuracao(duracao)}` : 'Escolha um horário'}
+          </p>
         </div>
-        <Button onClick={continuar} disabled={!escolhido || enviando} className="h-11 rounded-xl bg-amber-400 px-5 font-semibold text-amber-950 hover:bg-amber-300">
+        <Button onClick={continuar} disabled={!escolhido || enviando} className="h-11 shrink-0 rounded-xl px-6">
           {enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Continuar'}
         </Button>
       </div>
-      <p className="text-center text-[11px] text-muted-foreground">Ao continuar, o horário fica reservado para você por 30 minutos enquanto assina o contrato e paga.</p>
+      <p className="-mt-2 text-center text-xs text-muted-foreground">O horário fica guardado por 30 minutos enquanto você assina e paga.</p>
     </div>
   )
 }

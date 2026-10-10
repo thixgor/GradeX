@@ -1,14 +1,17 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
-import { AlertCircle, CheckCircle2, ExternalLink, Eye, Pause, Pencil, Play, Plus, Send, Star, Wallet, CalendarClock, Inbox } from 'lucide-react'
-import { MetricTile } from '@/components/page-scaffold'
+import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowRight, CalendarClock, Check, ChevronRight, Eye, Inbox, Lightbulb, Pause, Pencil, Play, Plus, Send, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
+import { formatarDuracao } from '@/lib/monitorias/agenda'
+import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
-import { api, CaixaAviso, Selo } from '../base'
+import { api, CaixaAviso, CaixaErro, Esqueleto, Selo, Vazio } from '../base'
 import type { DadosPainel } from './tipos'
+import type { ItemReserva } from '@/components/monitorias/lista-reservas'
 import { AnelForca } from '@/components/monitorias/forca-anuncio'
 import { SimuladorGanhos } from '@/components/monitorias/simulador-ganhos'
 
@@ -21,116 +24,260 @@ const STATUS_ANUNCIO: Record<string, { rotulo: string; tom: 'neutro' | 'info' | 
   suspenso: { rotulo: 'Suspenso', tom: 'erro' },
 }
 
+/** Pedidos em aberto (a mesma regra da contagem do cabeçalho, em /api/monitorias/eu). */
+const ESPERA_O_MONITOR = new Set(['solicitada', 'em_negociacao', 'aguardando_assinaturas'])
+const TEXTO_PEDIDO: Record<string, string> = {
+  solicitada: 'Pedido novo: responda ou faça uma proposta',
+  em_negociacao: 'Em negociação: acompanhe a conversa',
+  aguardando_assinaturas: 'Contrato aguardando assinatura',
+}
+
 export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarregar: () => void }) {
+  const reduzir = useReducedMotion()
   const req = dados.requisitosMonitor
   const feitos = req.itens.filter((i) => i.ok).length
-  const pct = req.itens.length ? Math.round((feitos / req.itens.length) * 100) : 0
   const t = dados.tutor
+  const [reservas, setReservas] = useState<ItemReserva[] | null>(null)
+  const [erroAcao, setErroAcao] = useState('')
+
+  useEffect(() => {
+    api<{ reservas: ItemReserva[] }>('/api/monitorias/reservas?papel=monitor&escopo=ativas')
+      .then((r) => setReservas(r.reservas))
+      .catch(() => setReservas([]))
+  }, [])
 
   async function acao(id: string, acao: 'enviar' | 'pausar' | 'retomar') {
+    setErroAcao('')
     try {
       await api(`/api/monitorias/tutor/anuncios/${id}/acao`, { method: 'POST', json: { acao } })
       recarregar()
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Erro')
+      setErroAcao(e instanceof Error ? e.message : 'Não foi possível concluir. Tente de novo.')
     }
   }
 
+  const agora = Date.now()
+  const pedidos = (reservas || []).filter((r) => ESPERA_O_MONITOR.has(r.status))
+  const proximas = (reservas || [])
+    .filter((r) => r.status === 'confirmada' && r.inicio && new Date(r.inicio).getTime() > agora - 2 * 3_600_000)
+    .sort((a, b) => new Date(a.inicio!).getTime() - new Date(b.inicio!).getTime())
+    .slice(0, 4)
+  const fin = t?.financeiro
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {t?.status === 'suspenso' && <CaixaAviso tom="alerta">Seu perfil de monitor está suspenso. Fale com o suporte para entender o motivo.</CaixaAviso>}
+
+      {/* Primeiros passos: aparece só até o cadastro ficar completo */}
       {!req.ok && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-border bg-card p-5">
-          <div className="flex items-center gap-4">
-            <div className="relative h-16 w-16 shrink-0">
-              <svg viewBox="0 0 36 36" className="h-16 w-16 -rotate-90">
-                <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-muted" strokeWidth="3.5" />
-                <motion.circle
-                  cx="18" cy="18" r="15.5" fill="none" className="stroke-primary" strokeWidth="3.5" strokeLinecap="round"
-                  strokeDasharray="97.4" initial={{ strokeDashoffset: 97.4 }} animate={{ strokeDashoffset: 97.4 - (97.4 * pct) / 100 }} transition={{ duration: 1, ease: 'easeOut' }}
-                />
-              </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-sm font-bold">{pct}%</span>
-            </div>
+        <motion.section initial={reduzir ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+          <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="font-heading text-lg font-semibold">Complete seu cadastro de monitor</h2>
-              <p className="text-sm text-muted-foreground">Por segurança (envolve dinheiro), só publicamos anúncios com tudo preenchido e verificado.</p>
+              <h2 className="font-heading text-xl font-semibold">Faltam {req.itens.length - feitos} passos para você vender</h2>
+              <p className="mt-1 max-w-[56ch] text-sm text-muted-foreground">Como a aula envolve dinheiro, o anúncio só vai ao ar com o cadastro completo.</p>
             </div>
+            <p className="font-heading text-sm font-semibold tabular-nums text-primary">{feitos} de {req.itens.length}</p>
           </div>
-          <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 flex gap-1" aria-hidden>
+            {req.itens.map((i) => <span key={i.chave} className={cn('h-1.5 flex-1 rounded-full', i.ok ? 'bg-primary' : 'bg-muted')} />)}
+          </div>
+          <ol className="mt-5 divide-y divide-border">
             {req.itens.map((i) => (
-              <li key={i.chave} className={cn('flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm', i.ok ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-border')}>
-                <span className="flex items-center gap-2">
-                  {i.ok ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <AlertCircle className="h-4 w-4 text-amber-500" />}
-                  {i.rotulo}
+              <li key={i.chave} className="flex items-center justify-between gap-3 py-3">
+                <span className={cn('flex items-center gap-3 text-sm', i.ok && 'text-muted-foreground')}>
+                  <span className={cn('inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-lg', i.ok ? 'bg-primary text-primary-foreground' : 'border border-border')}>
+                    {i.ok && <Check className="h-3.5 w-3.5" />}
+                  </span>
+                  <span className={cn(i.ok && 'line-through decoration-muted-foreground/40')}>{i.rotulo}</span>
                 </span>
-                {!i.ok && i.acao && <Link href={i.acao.href} className="shrink-0 text-xs font-semibold text-primary hover:underline">{i.acao.texto}</Link>}
+                {!i.ok && i.acao && (
+                  <Link href={i.acao.href} className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2 py-1 text-sm font-semibold text-primary transition hover:bg-primary/10">
+                    {i.acao.texto} <ChevronRight className="h-4 w-4" />
+                  </Link>
+                )}
               </li>
             ))}
-          </ul>
-        </motion.div>
+          </ol>
+        </motion.section>
       )}
 
-      {t?.status === 'suspenso' && <CaixaAviso tom="alerta">Seu perfil de monitor está suspenso. Fale com o suporte.</CaixaAviso>}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        {/* O que depende de você */}
+        <div className="space-y-6">
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-heading text-lg font-semibold">Precisa de você</h2>
+              {pedidos.length > 0 && <Link href="/monitorias/painel/pedidos" className="text-sm font-medium text-primary hover:underline">Ver todos</Link>}
+            </div>
+            {!reservas ? (
+              <Esqueleto className="h-24" />
+            ) : pedidos.length === 0 ? (
+              <p className="flex items-center gap-2 rounded-2xl bg-muted/40 px-4 py-4 text-sm text-muted-foreground">
+                <Inbox className="h-4 w-4" strokeWidth={1.75} /> Nenhum pedido em aberto.
+              </p>
+            ) : (
+              <ul className="space-y-2">
+                {pedidos.slice(0, 4).map((r) => (
+                  <li key={r.id}>
+                    <Link href={`/monitorias/reservas/${r.id}`} className="group flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/[0.04] px-4 py-3 transition hover:border-primary/60">
+                      <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Inbox className="h-4 w-4" /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold">{r.anuncioTitulo}</span>
+                        <span className="block text-xs text-muted-foreground">{TEXTO_PEDIDO[r.status]}</span>
+                      </span>
+                      <ArrowRight className="h-4 w-4 text-primary transition group-hover:translate-x-0.5" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <MetricTile label="Pedidos pendentes" value={dados.pedidosPendentes} icon={<Inbox className="h-4 w-4" />} hint="aguardando você" />
-        <MetricTile label="Em garantia" value={formatarCentavos(t?.financeiro.emGarantiaCentavos || 0)} icon={<CalendarClock className="h-4 w-4" />} hint="libera 48h após a aula" />
-        <MetricTile label="Disponível p/ repasse" value={formatarCentavos(t?.financeiro.liberadoCentavos || 0)} icon={<Wallet className="h-4 w-4" />} hint="pago por PIX" />
-        <MetricTile label="Avaliação" value={t?.stats.avaliacoes ? t.stats.nota.toFixed(1) : '—'} icon={<Star className="h-4 w-4" />} hint={`${t?.stats.aulasDadas || 0} aulas dadas`} />
+          <section>
+            <h2 className="mb-3 font-heading text-lg font-semibold">Próximas aulas</h2>
+            {!reservas ? (
+              <Esqueleto className="h-32" />
+            ) : proximas.length === 0 ? (
+              <p className="flex items-center gap-2 rounded-2xl bg-muted/40 px-4 py-4 text-sm text-muted-foreground">
+                <CalendarClock className="h-4 w-4" strokeWidth={1.75} /> Nenhuma aula marcada. Uma agenda com mais horários atrai mais alunos.
+                <Link href="/monitorias/painel/agenda" className="ml-auto shrink-0 font-semibold text-primary hover:underline">Abrir agenda</Link>
+              </p>
+            ) : (
+              <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+                {proximas.map((r) => {
+                  const d = new Date(r.inicio!)
+                  return (
+                    <li key={r.id}>
+                      <Link href={`/monitorias/reservas/${r.id}`} className="flex items-center gap-4 px-4 py-3 transition hover:bg-muted/40">
+                        <span className="flex w-12 shrink-0 flex-col items-center rounded-xl bg-muted/60 py-1.5">
+                          <span className="text-[11px] text-muted-foreground">{formatarEmBrasilia(d, { month: 'short' }).replace('.', '')}</span>
+                          <span className="font-heading text-lg font-semibold leading-none tabular-nums">{formatarEmBrasilia(d, { day: '2-digit' })}</span>
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-semibold">{r.anuncioTitulo}</span>
+                          <span className="block text-xs text-muted-foreground">
+                            {formatarEmBrasilia(d, { weekday: 'long', hour: '2-digit', minute: '2-digit' })}
+                            {r.duracaoMin ? `, ${formatarDuracao(r.duracaoMin)}` : ''}
+                            {r.vagas > 1 ? `, grupo de ${r.vagas}` : ''}
+                          </span>
+                        </span>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </section>
+        </div>
+
+        {/* Dinheiro e reputação */}
+        <aside className="space-y-4">
+          <section className="rounded-2xl bg-primary p-5 text-primary-foreground">
+            <p className="text-sm text-primary-foreground/80">Pronto para receber</p>
+            <p className="mt-1 font-heading text-3xl font-semibold tabular-nums">{formatarCentavos(fin?.liberadoCentavos || 0)}</p>
+            <p className="mt-1 text-xs text-primary-foreground/75">Vai por PIX na próxima rodada de repasses.</p>
+            <div className="mt-4 flex items-center justify-between border-t border-primary-foreground/20 pt-3 text-sm">
+              <span className="text-primary-foreground/80">Em garantia</span>
+              <span className="font-semibold tabular-nums">{formatarCentavos(fin?.emGarantiaCentavos || 0)}</span>
+            </div>
+            <p className="mt-1 text-xs text-primary-foreground/70">Libera 48h depois de cada aula.</p>
+            <Link href="/monitorias/painel/financeiro" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold underline-offset-4 hover:underline">
+              Ver extrato <ArrowRight className="h-4 w-4" />
+            </Link>
+          </section>
+          <section className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5">
+            <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/15 text-amber-600 dark:text-amber-400">
+              <Star className="h-5 w-5 fill-current" />
+            </span>
+            <div>
+              <p className="font-heading text-xl font-semibold tabular-nums">{t?.stats.avaliacoes ? t.stats.nota.toFixed(1) : 'Sem nota'}</p>
+              <p className="text-xs text-muted-foreground">
+                {t?.stats.aulasDadas || 0} {t?.stats.aulasDadas === 1 ? 'aula dada' : 'aulas dadas'}
+                {t?.stats.avaliacoes ? `, ${t.stats.avaliacoes} ${t.stats.avaliacoes === 1 ? 'avaliação' : 'avaliações'}` : ''}
+              </p>
+            </div>
+          </section>
+        </aside>
       </div>
 
-      <div>
+      {/* Anúncios */}
+      <section>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-heading text-lg font-semibold">Meus anúncios</h2>
-          <Link href="/monitorias/painel/anuncios/novo"><Button size="sm"><Plus className="mr-1.5 h-4 w-4" /> Novo anúncio</Button></Link>
+          <h2 className="font-heading text-lg font-semibold">Seus anúncios</h2>
+          {dados.anuncios.length > 0 && (
+            <Link href="/monitorias/painel/anuncios/novo" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">
+              <Plus className="h-4 w-4" /> Novo
+            </Link>
+          )}
         </div>
+        {erroAcao && <CaixaErro mensagem={erroAcao} className="mb-3" />}
         {dados.anuncios.length === 0 ? (
-          <>
-            <div className="rounded-3xl border border-dashed border-border bg-card px-6 py-12 text-center">
-              <p className="font-semibold">Você ainda não tem anúncios</p>
-              <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">Crie o primeiro em 5 minutos: conte o que você ensina, grave um vídeo curto, defina preço e agenda. Anunciar é grátis — a plataforma só fica com 10% do que você vender.</p>
-              <Link href="/monitorias/painel/anuncios/novo"><Button className="mt-4"><Plus className="mr-1.5 h-4 w-4" /> Criar meu primeiro anúncio</Button></Link>
-            </div>
-            <SimuladorGanhos className="mt-4" compacto />
-          </>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+            <Vazio
+              icone={<Plus className="h-5 w-5" />}
+              titulo="Seu primeiro anúncio"
+              texto="Conte o que você ensina, grave um vídeo curto e defina preço e agenda. Anunciar é grátis: a plataforma fica com 10% do que você vender."
+              acao={<Link href="/monitorias/painel/anuncios/novo"><Button className="rounded-xl">Criar anúncio</Button></Link>}
+              className="h-full justify-center"
+            />
+            <SimuladorGanhos compacto />
+          </div>
         ) : (
-          <ul className="space-y-2.5">
-            {dados.anuncios.map((a, i) => {
+          <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+            {dados.anuncios.map((a) => {
               const s = STATUS_ANUNCIO[a.status] || { rotulo: a.status, tom: 'neutro' as const }
+              const dica = a.forca.dicas[0] && a.forca.pontos < 80 ? a.forca.dicas[0] : null
               return (
-                <motion.li key={a.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="rounded-2xl border border-border bg-card p-4">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <AnelForca forca={a.forca} tamanho={48} />
-                    <div className="min-w-0 flex-1">
+                <li key={a.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+                  <div className="flex min-w-0 flex-1 items-center gap-4">
+                    <AnelForca forca={a.forca} tamanho={44} />
+                    <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="truncate font-semibold">{a.titulo}</p>
                         <Selo tom={s.tom}>{s.rotulo}</Selo>
                         {a.temRevisaoPendente && <Selo tom="info">Alteração em análise</Selo>}
-                        {a.direto && !a.ofertaAssinada && <Selo tom="alerta">Agenda direta sem oferta assinada</Selo>}
+                        {a.direto && !a.ofertaAssinada && <Selo tom="alerta">Assine a oferta para abrir a agenda</Selo>}
                       </div>
-                      <p className="text-xs text-muted-foreground">{a.materia} · {formatarCentavos(a.preco.valorCentavos)}/{a.preco.modo === 'hora' ? 'h' : 'aula'} · {a.stats.reservas} reservas · {a.stats.perguntas} perguntas</p>
-                      {a.moderacao?.motivo && ['rejeitado', 'suspenso'].includes(a.status) && <p className="mt-1 text-xs text-rose-600">Moderação: {a.moderacao.motivo}</p>}
-                      {a.forca.dicas[0] && a.forca.pontos < 80 && (
-                        <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">💡 {a.forca.dicas[0].texto} <strong>(+{a.forca.dicas[0].ganho})</strong></p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {formatarCentavos(a.preco.valorCentavos)}/{a.preco.modo === 'hora' ? 'h' : 'aula'}, {a.stats.reservas} {a.stats.reservas === 1 ? 'reserva' : 'reservas'}, {a.stats.perguntas} {a.stats.perguntas === 1 ? 'pergunta' : 'perguntas'}
+                      </p>
+                      {a.moderacao?.motivo && ['rejeitado', 'suspenso'].includes(a.status) && <p className="mt-1 text-xs text-rose-600 dark:text-rose-400">Moderação: {a.moderacao.motivo}</p>}
+                      {dica && (
+                        <p className="mt-1 flex items-start gap-1.5 text-xs text-muted-foreground">
+                          <Lightbulb className="mt-px h-3.5 w-3.5 shrink-0 text-amber-500" /> {dica.texto} <span className="font-semibold text-primary">+{dica.ganho}</span>
+                        </p>
                       )}
                     </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {['publicado', 'pausado'].includes(a.status) && <Link href={`/monitorias/anuncio/${a.slug}`}><Button size="sm" variant="ghost"><Eye className="mr-1 h-3.5 w-3.5" /> Ver</Button></Link>}
-                      {a.status !== 'suspenso' && <Link href={`/monitorias/painel/anuncios/${a.id}`}><Button size="sm" variant="outline"><Pencil className="mr-1 h-3.5 w-3.5" /> Editar</Button></Link>}
-                      {['rascunho', 'rejeitado'].includes(a.status) && <Button size="sm" onClick={() => acao(a.id, 'enviar')}><Send className="mr-1 h-3.5 w-3.5" /> Enviar p/ análise</Button>}
-                      {a.status === 'publicado' && <Button size="sm" variant="outline" onClick={() => acao(a.id, 'pausar')}><Pause className="mr-1 h-3.5 w-3.5" /> Pausar</Button>}
-                      {a.status === 'pausado' && <Button size="sm" onClick={() => acao(a.id, 'retomar')}><Play className="mr-1 h-3.5 w-3.5" /> Retomar</Button>}
-                    </div>
                   </div>
-                </motion.li>
+                  <div className="flex shrink-0 items-center gap-1 sm:justify-end">
+                    {['rascunho', 'rejeitado'].includes(a.status) && <Button size="sm" className="rounded-lg" onClick={() => acao(a.id, 'enviar')}><Send className="mr-1.5 h-3.5 w-3.5" /> Enviar para análise</Button>}
+                    {a.status === 'pausado' && <Button size="sm" className="rounded-lg" onClick={() => acao(a.id, 'retomar')}><Play className="mr-1.5 h-3.5 w-3.5" /> Retomar</Button>}
+                    {a.status !== 'suspenso' && (
+                      <Link href={`/monitorias/painel/anuncios/${a.id}`} aria-label={`Editar ${a.titulo}`}>
+                        <Button size="sm" variant="ghost" className="rounded-lg"><Pencil className="mr-1.5 h-3.5 w-3.5" /> Editar</Button>
+                      </Link>
+                    )}
+                    {['publicado', 'pausado'].includes(a.status) && (
+                      <Link href={`/monitorias/anuncio/${a.slug}`} aria-label={`Ver ${a.titulo} na vitrine`}>
+                        <Button size="sm" variant="ghost" className="rounded-lg"><Eye className="h-3.5 w-3.5" /></Button>
+                      </Link>
+                    )}
+                    {a.status === 'publicado' && (
+                      <Button size="sm" variant="ghost" className="rounded-lg" onClick={() => acao(a.id, 'pausar')} aria-label={`Pausar ${a.titulo}`}><Pause className="h-3.5 w-3.5" /></Button>
+                    )}
+                  </div>
+                </li>
               )
             })}
           </ul>
         )}
-      </div>
+      </section>
+
       <p className="text-xs text-muted-foreground">
-        Dúvidas sobre regras, taxa de 10%, garantia de 48h e reembolsos? <Link href="/monitorias/termos?papel=monitor" className="font-semibold text-primary hover:underline">Leia os Termos do Monitor <ExternalLink className="inline h-3 w-3" /></Link>
+        Regras, taxa de 10%, garantia de 48h e reembolsos: <Link href="/monitorias/termos?papel=monitor" className="font-semibold text-primary hover:underline">Termos do Monitor</Link>
       </p>
     </div>
   )
 }
+

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowLeft, BookOpenCheck, CalendarCheck, ChevronDown, ExternalLink, Gift, Loader2, MessageCircleQuestion,
-  MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2, Flame, Quote, Undo2, FileSignature, Wallet,
+  MessagesSquare, ShieldCheck, Star, Users, X, HeartHandshake, Link2, Undo2, FileSignature, Wallet,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
@@ -144,7 +144,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
       {a.aulaGratis.ativa && (
         <Button
           variant="outline"
-          className="h-11 w-full rounded-xl border-amber-400 bg-amber-50 font-semibold text-amber-900 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-200"
+          className="h-11 w-full rounded-xl border-primary/40 font-semibold text-primary hover:bg-primary/5"
           onClick={() =>
             setFolha(a.modos.direto ? { tipo: 'agendar', gratis: true } : { tipo: 'pedido', modo: a.modos.negociacao ? 'negociacao' : 'a_combinar', gratis: true })
           }
@@ -153,7 +153,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
           <Gift className="mr-2 h-4 w-4" /> Aula experimental grátis ({formatarDuracao(a.aulaGratis.duracaoMin)})
         </Button>
       )}
-      {souDono && <p className="text-center text-xs text-muted-foreground">Este é o seu anúncio — é assim que os alunos o veem.</p>}
+      {souDono && <p className="text-center text-xs text-muted-foreground">Este é o seu anúncio. É assim que os alunos o veem.</p>}
     </div>
   )
 
@@ -164,79 +164,72 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
       </Link>
 
       {/* Herói */}
-      <motion.section
-        initial={reduzir ? false : { opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-700 via-teal-700 to-emerald-900 p-6 text-white shadow-xl sm:p-8"
-      >
-        <div className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
-          <motion.div initial={reduzir ? false : { scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.1 }}>
-            <Avatar nome={tutor.nome} url={tutor.fotoUrl} tamanho={104} className="ring-4 ring-white/30" />
-          </motion.div>
-          <div className="min-w-0 flex-1">
-            <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide">{a.materia}</span>
-            <h1 className="mt-2 font-heading text-2xl font-bold leading-tight sm:text-4xl">{a.titulo}</h1>
-            <p className="mt-1 text-sm text-white/85">
-              com <strong>{tutor.nome}</strong>
-              {tutor.titulo ? ` · ${tutor.titulo}` : ''}
-            </p>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/85">
-              {tutor.stats.avaliacoes > 0 ? (
-                <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5 fill-amber-300 text-amber-300" /> {tutor.stats.nota.toFixed(1)} ({tutor.stats.avaliacoes} avaliações)</span>
-              ) : (
-                <span className="inline-flex items-center gap-1"><Star className="h-3.5 w-3.5" /> Monitor novo</span>
-              )}
-              <span>{tutor.stats.aulasDadas} aula{tutor.stats.aulasDadas === 1 ? '' : 's'} dada{tutor.stats.aulasDadas === 1 ? '' : 's'}</span>
-              {a.grupo.ativo && <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> grupos de até {a.grupo.maxAlunos}</span>}
+      <motion.section initial={reduzir ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="max-w-3xl">
+        <p className="text-sm font-medium text-primary">{a.materia}</p>
+        <h1 className="mt-2 font-heading text-[2rem] font-semibold leading-[1.1] sm:text-[2.6rem]">{a.titulo}</h1>
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div className="flex items-center gap-3">
+            <Avatar nome={tutor.nome} url={tutor.fotoUrl} tamanho={48} />
+            <div>
+              <p className="font-semibold leading-tight">{tutor.nome}</p>
+              {tutor.titulo && <p className="text-sm text-muted-foreground">{tutor.titulo}</p>}
             </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm text-muted-foreground">
+            {tutor.stats.avaliacoes > 0 ? (
+              <span className="inline-flex items-center gap-1.5"><Star className="h-4 w-4 fill-amber-400 text-amber-400" /><span className="font-semibold text-foreground">{tutor.stats.nota.toFixed(1)}</span> ({tutor.stats.avaliacoes} {tutor.stats.avaliacoes === 1 ? 'avaliação' : 'avaliações'})</span>
+            ) : (
+              <span>Monitor novo</span>
+            )}
+            <span>{tutor.stats.aulasDadas} {tutor.stats.aulasDadas === 1 ? 'aula dada' : 'aulas dadas'}</span>
+            {a.grupo.ativo && <span className="inline-flex items-center gap-1.5"><Users className="h-4 w-4" strokeWidth={1.75} /> grupos de até {a.grupo.maxAlunos}</span>}
           </div>
         </div>
       </motion.section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_380px]">
-        <div className="min-w-0 space-y-6">
+      <div className="mt-10 grid gap-10 pb-24 lg:grid-cols-[minmax(0,1fr)_380px] lg:pb-0">
+        <div className="min-w-0 space-y-12">
           {a.videos.length > 0 && (
-            <Aparecer className="rounded-2xl border border-border bg-card p-4 sm:p-5">
-              <h2 className="mb-3 font-heading text-lg font-semibold">Veja como é a aula</h2>
+            <Aparecer>
+              <h2 className="mb-4 font-heading text-xl font-semibold">Veja como é a aula</h2>
               <GaleriaVideos videos={a.videos} />
             </Aparecer>
           )}
 
-          <Aparecer atraso={0.05} className="rounded-2xl border border-border bg-card p-5">
-            <h2 className="font-heading text-lg font-semibold">Sobre a monitoria</h2>
-            <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-foreground/90">{a.descricao}</p>
-            <h3 className="mt-5 text-sm font-semibold">Conteúdos / módulos</h3>
-            <div className="mt-2 flex flex-wrap gap-1.5">
+          <Aparecer atraso={0.05}>
+            <h2 className="font-heading text-xl font-semibold">Sobre a monitoria</h2>
+            <p className="mt-3 max-w-[68ch] whitespace-pre-line text-[15px] leading-relaxed text-foreground/90">{a.descricao}</p>
+            <h3 className="mt-6 text-sm font-semibold">O que dá para estudar</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
               {a.conteudos.map((c) => (
-                <span key={c} className="rounded-full border border-primary/25 bg-primary/5 px-3 py-1 text-xs font-medium text-primary">{c}</span>
+                <span key={c} className="rounded-lg bg-muted px-3 py-1.5 text-sm">{c}</span>
               ))}
             </div>
           </Aparecer>
 
           {(tutor.bio || tutor.historia) && (
-            <Aparecer atraso={0.1} className="rounded-2xl border border-border bg-card p-5">
+            <Aparecer atraso={0.1} className="rounded-2xl bg-muted/40 p-6">
               <div className="flex items-center gap-3">
                 <Avatar nome={tutor.nome} url={tutor.fotoUrl} tamanho={44} />
                 <div>
-                  <h2 className="font-heading text-lg font-semibold">Quem é {tutor.nome.split(' ')[0]}</h2>
+                  <h2 className="font-heading text-xl font-semibold">Quem é {tutor.nome.split(' ')[0]}</h2>
                   <p className="text-xs text-muted-foreground">Monitor desde {formatarEmBrasilia(tutor.membroDesde, { month: 'long', year: 'numeric' })}</p>
                 </div>
               </div>
-              {tutor.bio && <p className="mt-3 text-sm leading-relaxed">{tutor.bio}</p>}
-              {tutor.historia && <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-foreground/85">{tutor.historia}</p>}
+              {tutor.bio && <p className="mt-4 max-w-[68ch] text-[15px] leading-relaxed">{tutor.bio}</p>}
+              {tutor.historia && <p className="mt-3 max-w-[68ch] whitespace-pre-line text-[15px] leading-relaxed text-foreground/85">{tutor.historia}</p>}
             </Aparecer>
           )}
 
           {(a.materiais.length > 0 || a.temMateriais) && (
-            <Aparecer atraso={0.12} className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="flex items-center gap-2 font-heading text-lg font-semibold"><BookOpenCheck className="h-5 w-5 text-primary" /> Materiais complementares</h2>
+            <Aparecer atraso={0.12}>
+              <h2 className="flex items-center gap-2 font-heading text-xl font-semibold"><BookOpenCheck className="h-5 w-5 text-primary" strokeWidth={1.75} /> Materiais de apoio</h2>
               {a.materiais.length ? (
                 <ul className="mt-3 space-y-2">
                   {a.materiais.map((m) => (
                     <li key={m.url}>
                       <LinkExternoSeguro url={m.url} dominio={m.dominio}>
-                        <span className="flex items-center gap-2 rounded-xl border border-border px-3 py-2 text-sm transition hover:border-primary/40">
+                        <span className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm transition hover:border-primary/40">
                           <Link2 className="h-4 w-4 shrink-0 text-primary" />
                           <span className="font-medium">{m.titulo}</span>
                           <span className="ml-auto text-xs text-muted-foreground">{m.dominio}</span>
@@ -249,25 +242,25 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">Este monitor tem materiais complementares que compartilha com os alunos durante a monitoria.</p>
               )}
-              <p className="mt-3 text-[11px] text-muted-foreground">
+              <p className="mt-3 text-xs text-muted-foreground">
                 Materiais por link são de responsabilidade de quem os indicou. A plataforma não hospeda nem se responsabiliza pelo conteúdo externo.
               </p>
             </Aparecer>
           )}
 
           {a.faq.length > 0 && (
-            <Aparecer atraso={0.14} className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="font-heading text-lg font-semibold">Perguntas frequentes</h2>
+            <Aparecer atraso={0.14}>
+              <h2 className="font-heading text-xl font-semibold">Perguntas frequentes</h2>
               <div className="mt-3 divide-y divide-border">
                 {a.faq.map((f, i) => (
                   <div key={i}>
-                    <button type="button" onClick={() => setFaqAberto(faqAberto === i ? null : i)} className="flex w-full items-center justify-between gap-3 py-3 text-left text-sm font-semibold">
+                    <button type="button" aria-expanded={faqAberto === i} onClick={() => setFaqAberto(faqAberto === i ? null : i)} className="flex w-full items-center justify-between gap-3 py-4 text-left font-medium">
                       {f.pergunta}
                       <ChevronDown className={cn('h-4 w-4 shrink-0 transition-transform', faqAberto === i && 'rotate-180')} />
                     </button>
                     <AnimatePresence initial={false}>
                       {faqAberto === i && (
-                        <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden whitespace-pre-line pb-3 text-sm text-muted-foreground">
+                        <motion.p initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="max-w-[68ch] overflow-hidden whitespace-pre-line pb-4 text-[15px] leading-relaxed text-muted-foreground">
                           {f.resposta}
                         </motion.p>
                       )}
@@ -279,19 +272,20 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
           )}
 
           {dados.avaliacoes.length > 0 && (
-            <Aparecer atraso={0.15} className="rounded-2xl border border-border bg-card p-5">
-              <h2 className="flex items-center gap-2 font-heading text-lg font-semibold">
-                <Star className="h-5 w-5 fill-amber-400 text-amber-400" /> {a.stats.nota.toFixed(1)} · {a.stats.avaliacoes} avaliação{a.stats.avaliacoes === 1 ? '' : 'ões'}
+            <Aparecer atraso={0.15}>
+              <h2 className="flex items-center gap-2 font-heading text-xl font-semibold">
+                <Star className="h-5 w-5 fill-amber-400 text-amber-400" /> {a.stats.nota.toFixed(1)}
+                <span className="text-base font-normal text-muted-foreground">({a.stats.avaliacoes} {a.stats.avaliacoes === 1 ? 'avaliação' : 'avaliações'})</span>
               </h2>
-              <ul className="mt-3 space-y-3">
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {dados.avaliacoes.map((av, i) => (
-                  <li key={i} className="rounded-xl bg-muted/40 p-3 text-sm">
+                  <li key={i} className="rounded-2xl border border-border bg-card p-4 text-sm">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold">{av.nome}</span>
                       <span className="flex">{Array.from({ length: 5 }).map((_, k) => <Star key={k} className={cn('h-3.5 w-3.5', k < av.nota ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/30')} />)}</span>
                     </div>
                     {av.comentario && <p className="mt-1 text-muted-foreground">{av.comentario}</p>}
-                    <p className="mt-1 text-[11px] text-muted-foreground">Aluno verificado · {formatarEmBrasilia(av.em, { month: 'short', year: 'numeric' })}</p>
+                    <p className="mt-2 text-xs text-muted-foreground">Aluno verificado, {formatarEmBrasilia(av.em, { month: 'short', year: 'numeric' })}</p>
                   </li>
                 ))}
               </ul>
@@ -303,9 +297,9 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
 
         {/* Coluna de contratação */}
         <aside className="order-first space-y-4 lg:order-none lg:sticky lg:top-20 lg:self-start">
-          <Aparecer className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-            {soCombinar && <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Valor a combinar · a partir de</p>}
-            <p className="font-heading text-3xl font-bold">
+          <Aparecer className="rounded-2xl border border-border bg-card p-6 shadow-[0_18px_44px_-24px_hsl(var(--primary)/0.35)]">
+            {soCombinar && <p className="text-xs text-muted-foreground">Valor a combinar, a partir de</p>}
+            <p className="font-heading text-[2rem] font-semibold tabular-nums">
               {formatarCentavos(a.preco.valorCentavos)}
               <span className="text-sm font-medium text-muted-foreground">{sufixo}</span>
             </p>
@@ -316,18 +310,18 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               </p>
             )}
             {a.grupo.ativo && a.grupo.faixas.length > 0 && (
-              <div className="mt-4 rounded-xl bg-emerald-500/5 p-3">
-                <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-emerald-800 dark:text-emerald-300"><Users className="h-3.5 w-3.5" /> Em grupo sai mais barato</p>
-                <table className="w-full text-xs">
+              <div className="mt-4 rounded-xl bg-muted/50 p-3.5">
+                <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4 text-primary" strokeWidth={1.75} /> Em grupo sai mais barato</p>
+                <table className="w-full text-sm">
                   <tbody>
                     <tr className="text-muted-foreground"><td>1 aluno</td><td className="text-right font-semibold text-foreground">{formatarCentavos(a.preco.valorCentavos)}{sufixo}</td></tr>
                     {a.grupo.faixas.map((f) => (
                       <tr key={f.minAlunos}>
                         <td className="pt-1 text-muted-foreground">{f.minAlunos}+ alunos</td>
-                        <td className="pt-1 text-right font-semibold text-emerald-700 dark:text-emerald-400">
+                        <td className="pt-1 text-right font-semibold tabular-nums text-foreground">
                           {formatarCentavos(f.valorPorPessoaCentavos)}{sufixo} cada
                           {economiaGrupoPercent(a, f.minAlunos) > 0 && (
-                            <span className="ml-1.5 rounded-full bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">−{economiaGrupoPercent(a, f.minAlunos)}%</span>
+                            <span className="ml-1.5 rounded-md bg-primary/10 px-1.5 py-0.5 text-[11px] font-semibold text-primary">-{economiaGrupoPercent(a, f.minAlunos)}%</span>
                           )}
                         </td>
                       </tr>
@@ -337,17 +331,17 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               </div>
             )}
             {livres && livres.proximo && (
-              <div className={cn('mt-4 flex items-start gap-2 rounded-xl p-3 text-xs', livres.semana <= 6 ? 'bg-rose-500/10 text-rose-800 dark:text-rose-300' : 'bg-primary/5 text-foreground')}>
-                <Flame className={cn('mt-0.5 h-4 w-4 shrink-0', livres.semana <= 6 ? 'text-rose-600' : 'text-primary')} />
+              <div className={cn('mt-4 flex items-start gap-2.5 rounded-xl p-3.5 text-sm', livres.semana <= 6 ? 'bg-amber-500/10' : 'bg-primary/[0.06]')}>
+                <CalendarCheck className={cn('mt-0.5 h-4 w-4 shrink-0', livres.semana <= 6 ? 'text-amber-600 dark:text-amber-400' : 'text-primary')} strokeWidth={1.75} />
                 <span>
                   <strong>
                     {livres.semana === 0
                       ? 'Agenda desta semana lotada'
                       : livres.semana <= 6
                         ? `Só ${livres.semana} horário${livres.semana === 1 ? '' : 's'} livre${livres.semana === 1 ? '' : 's'} nos próximos 7 dias`
-                        : 'Agenda aberta — escolha e pague em 2 minutos'}
+                        : 'Agenda aberta: escolha e pague em 2 minutos'}
                   </strong>
-                  <span className="block text-muted-foreground">
+                  <span className="block text-xs text-muted-foreground">
                     Próximo: {formatarEmBrasilia(livres.proximo.inicio, { weekday: 'long', day: '2-digit', month: 'short' })} às {livres.proximo.hora} (Brasília)
                   </span>
                 </span>
@@ -360,10 +354,11 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
 
           {dados.disponibilidade.length > 0 && (
             <Aparecer atraso={0.05} className="rounded-2xl border border-border bg-card p-5">
-              <h3 className="text-sm font-semibold">Disponibilidade (horário de Brasília)</h3>
-              <ul className="mt-2 space-y-1 text-xs">
+              <h3 className="text-sm font-semibold">Horários de aula</h3>
+              <p className="text-xs text-muted-foreground">horário de Brasília</p>
+              <ul className="mt-3 space-y-1.5 text-sm">
                 {dados.disponibilidade.map((j, i) => (
-                  <li key={i} className="flex justify-between"><span className="font-medium">{NOMES_DIAS_CURTOS[j.dia]}</span><span className="tabular-nums text-muted-foreground">{j.inicio} – {j.fim}</span></li>
+                  <li key={i} className="flex justify-between"><span className="font-medium">{NOMES_DIAS_CURTOS[j.dia]}</span><span className="tabular-nums text-muted-foreground">{j.inicio}-{j.fim}</span></li>
                 ))}
               </ul>
             </Aparecer>
@@ -375,9 +370,9 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               <ul className="mt-2 space-y-2">
                 {dados.outros.map((o) => (
                   <li key={o.slug}>
-                    <Link href={`/monitorias/anuncio/${o.slug}`} className="block rounded-lg border border-border px-3 py-2 text-sm hover:border-primary/40">
+                    <Link href={`/monitorias/anuncio/${o.slug}`} className="block rounded-xl border border-border px-3.5 py-2.5 text-sm transition hover:border-primary/40">
                       <span className="font-medium">{o.titulo}</span>
-                      <span className="block text-xs text-muted-foreground">{o.materia} · {formatarCentavos(o.preco.valorCentavos)}{o.preco.modo === 'hora' ? '/h' : '/aula'}</span>
+                      <span className="block text-xs text-muted-foreground">{o.materia}, {formatarCentavos(o.preco.valorCentavos)}{o.preco.modo === 'hora' ? '/h' : '/aula'}</span>
                     </Link>
                   </li>
                 ))}
@@ -386,6 +381,26 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
           )}
         </aside>
       </div>
+
+      {/* Celular: preço e ação principal sempre à mão */}
+      {!souDono && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur lg:hidden">
+          <div className="mx-auto flex max-w-xl items-center justify-between gap-3">
+            <p className="font-heading text-xl font-semibold tabular-nums">
+              {formatarCentavos(a.preco.valorCentavos)}
+              <span className="text-sm font-normal text-muted-foreground">{sufixo}</span>
+            </p>
+            <Button
+              className="h-11 rounded-xl px-5"
+              onClick={() =>
+                setFolha(a.modos.direto ? { tipo: 'agendar', gratis: false } : { tipo: 'pedido', modo: a.modos.negociacao ? 'negociacao' : 'a_combinar', gratis: false })
+              }
+            >
+              {a.modos.direto ? 'Agendar' : 'Pedir monitoria'}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Folha de contratação */}
       <AnimatePresence>
@@ -398,7 +413,7 @@ export default function PaginaAnuncio({ params }: { params: { slug: string } }) 
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 260, damping: 26 }}
-              className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-2xl sm:rounded-3xl"
+              className="max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-border bg-card p-5 shadow-2xl sm:rounded-3xl sm:p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-4 flex items-center justify-between">
@@ -477,13 +492,13 @@ function Perguntas({ anuncioId, slug, iniciais, souDono }: { anuncioId: string; 
   }
 
   return (
-    <Aparecer atraso={0.16} className="rounded-2xl border border-border bg-card p-5" id="perguntas">
-      <h2 className="flex items-center gap-2 font-heading text-lg font-semibold"><MessageCircleQuestion className="h-5 w-5 text-primary" /> Perguntas ao monitor</h2>
+    <Aparecer atraso={0.16} id="perguntas">
+      <h2 className="flex items-center gap-2 font-heading text-xl font-semibold"><MessageCircleQuestion className="h-5 w-5 text-primary" strokeWidth={1.75} /> Perguntas ao monitor</h2>
       {!souDono && (
         <div className="mt-3 space-y-2">
-          <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={1000} placeholder="Tem alguma dúvida antes de contratar? Pergunte aqui (fica público)." />
+          <Textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={2} maxLength={1000} placeholder="Tem alguma dúvida antes de contratar? Pergunte aqui. A pergunta fica pública." />
           <div className="flex items-center justify-between">
-            <p className="text-[11px] text-muted-foreground">Não coloque telefone ou e-mail — eles são ocultados.</p>
+            <p className="text-xs text-muted-foreground">Telefone e e-mail são ocultados automaticamente.</p>
             <Button size="sm" onClick={perguntar} disabled={enviando || texto.trim().length < 5}>{enviando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Perguntar'}</Button>
           </div>
         </div>
@@ -492,7 +507,7 @@ function Perguntas({ anuncioId, slug, iniciais, souDono }: { anuncioId: string; 
       <ul className="mt-4 space-y-3">
         <AnimatePresence initial={false}>
           {perguntas.map((p) => (
-            <motion.li key={p.id} layout initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-xl bg-muted/40 p-3">
+            <motion.li key={p.id} layout initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-2xl border border-border bg-card p-4">
               <p className="text-sm"><span className="font-semibold">{p.autorNome}:</span> {p.texto}</p>
               {p.resposta ? (
                 <p className="mt-2 border-l-2 border-primary pl-3 text-sm text-foreground/85"><span className="font-semibold text-primary">Monitor:</span> {p.resposta.texto}</p>
@@ -520,7 +535,7 @@ function Perguntas({ anuncioId, slug, iniciais, souDono }: { anuncioId: string; 
             </motion.li>
           ))}
         </AnimatePresence>
-        {perguntas.length === 0 && <li className="text-sm text-muted-foreground">Nenhuma pergunta ainda. Seja o primeiro!</li>}
+        {perguntas.length === 0 && <li className="text-sm text-muted-foreground">Nenhuma pergunta ainda.</li>}
       </ul>
       {mais && <Button variant="outline" size="sm" className="mt-3" onClick={carregarMais}>Ver mais perguntas</Button>}
     </Aparecer>
@@ -532,12 +547,11 @@ function Depoimento({ avaliacoes }: { avaliacoes: Dados['avaliacoes'] }) {
   const melhor = [...avaliacoes].filter((a) => a.comentario.trim().length >= 12).sort((x, y) => y.nota - x.nota)[0]
   if (!melhor || melhor.nota < 4) return null
   return (
-    <figure className="mt-4 rounded-xl bg-muted/50 p-3 text-xs">
-      <Quote className="h-4 w-4 text-primary/60" />
-      <blockquote className="mt-1 line-clamp-4 text-foreground/90">{melhor.comentario}</blockquote>
+    <figure className="mt-5 border-l-2 border-primary/40 pl-3.5 text-sm">
+      <blockquote className="line-clamp-3 text-foreground/90">“{melhor.comentario}”</blockquote>
       <figcaption className="mt-1.5 flex items-center gap-1 text-muted-foreground">
         <span className="flex">{Array.from({ length: melhor.nota }).map((_, i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}</span>
-        {melhor.nome} · aluno verificado
+        {melhor.nome}, aluno verificado
       </figcaption>
     </figure>
   )
@@ -552,14 +566,12 @@ const ITENS_GARANTIA = [
 
 function GarantiaDomineAqui() {
   return (
-    <div className="mt-4 rounded-xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 p-3">
-      <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
-        <ShieldCheck className="h-4 w-4" /> Garantia DomineAqui
-      </p>
-      <ul className="mt-2 space-y-1.5">
+    <div className="mt-5 border-t border-border pt-4">
+      <p className="flex items-center gap-1.5 text-sm font-semibold"><ShieldCheck className="h-4 w-4 text-primary" strokeWidth={1.75} /> Garantia DomineAqui</p>
+      <ul className="mt-2.5 space-y-2">
         {ITENS_GARANTIA.map((g) => (
-          <li key={g.texto} className="flex items-start gap-2 text-xs text-foreground/85">
-            <g.icone className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600" /> {g.texto}
+          <li key={g.texto} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+            <g.icone className="mt-0.5 h-4 w-4 shrink-0 text-primary/80" strokeWidth={1.75} /> {g.texto}
           </li>
         ))}
       </ul>

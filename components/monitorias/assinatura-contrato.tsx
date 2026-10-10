@@ -100,12 +100,12 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
       </div>
 
       {contrato.euAssinei || contrato.status === 'assinado' ? (
-        <motion.div initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-          <p className="flex items-center gap-2 font-semibold text-emerald-700 dark:text-emerald-300"><CheckCircle2 className="h-5 w-5" /> {contrato.status === 'assinado' ? 'Contrato assinado pelas partes' : 'Você já assinou'}</p>
+        <motion.div initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="rounded-xl border border-primary/30 bg-primary/[0.06] p-4">
+          <p className="flex items-center gap-2 font-semibold text-primary"><CheckCircle2 className="h-5 w-5" /> {contrato.status === 'assinado' ? 'Contrato assinado pelas partes' : 'Você já assinou'}</p>
           <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
             {contrato.assinaturas.map((a) => (
               <li key={a.papel}>
-                {a.papel === 'contratante' ? 'Aluno' : 'Monitor'}: {a.nome} — {formatarEmBrasilia(a.em)}
+                {a.papel === 'contratante' ? 'Aluno' : 'Monitor'}: {a.nome}, {formatarEmBrasilia(a.em)}
                 {a.metodo !== 'codigo_email' ? ' (assinatura prévia)' : ''}
               </li>
             ))}

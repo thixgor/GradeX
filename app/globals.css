@@ -7555,3 +7555,47 @@ html[data-inspecao-aberta] body > *:not(#protecao-inspecao) {
     color: rgb(255 255 255 / 0.7);
   }
 }
+
+/* ─── Monitorias: escopo visual da seção ───────────────────────────────
+   Títulos em Space Grotesk (variável trocada só aqui dentro), números
+   tabulares e um único raio por camada: 16px contêiner, 12px controle. */
+.mon-escopo {
+  --font-heading: var(--font-mon-display), ui-sans-serif, system-ui, sans-serif;
+}
+.mon-escopo :is(h1, h2, h3, h4) {
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.mon-escopo p {
+  text-wrap: pretty;
+}
+
+/* Controle deslizante das monitorias: trilho fino, preenchido até o valor. */
+.mon-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(to right, hsl(var(--primary)) var(--pct, 50%), hsl(var(--muted)) var(--pct, 50%));
+  outline: none;
+}
+.mon-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 8px;
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--primary));
+  box-shadow: 0 2px 6px hsl(var(--primary) / 0.3);
+  cursor: grab;
+  transition: transform 0.15s;
+}
+.mon-range::-webkit-slider-thumb:active { transform: scale(1.1); cursor: grabbing; }
+.mon-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 8px;
+  background: hsl(var(--card));
+  border: 2px solid hsl(var(--primary));
+}
+.mon-range:focus-visible { box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35); }

@@ -110,10 +110,10 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={`data:image/png;base64,${dados.pix.qrCodeBase64}`} alt="QR Code PIX" className="h-52 w-52 rounded-lg bg-white p-2" />
           <Button variant="outline" onClick={copiar} className="w-full">
-            {copiado ? <><Check className="mr-2 h-4 w-4 text-emerald-600" /> Copiado!</> : <><Copy className="mr-2 h-4 w-4" /> Copiar PIX copia e cola</>}
+            {copiado ? <><Check className="mr-2 h-4 w-4 text-primary" /> Copiado</> : <><Copy className="mr-2 h-4 w-4" /> Copiar PIX copia e cola</>}
           </Button>
           <div className="flex w-full items-center justify-between text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1"><Timer className="h-3.5 w-3.5" /> Expira em {relogio || '—'}</span>
+            <span className="inline-flex items-center gap-1"><Timer className="h-3.5 w-3.5" /> Expira em {relogio || '--:--'}</span>
             <span className="inline-flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> aguardando pagamento</span>
           </div>
         </motion.div>
@@ -124,7 +124,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
           <Button variant="outline" onClick={gerar} disabled={gerando} className="w-full">Tentar de novo</Button>
         </div>
       )}
-      <p className="flex items-start gap-2 rounded-xl bg-emerald-500/10 p-3 text-xs text-emerald-800 dark:text-emerald-300">
+      <p className="flex items-start gap-2 rounded-xl bg-primary/[0.06] p-3.5 text-xs leading-relaxed text-foreground/80">
         <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
         Pagamento protegido: o valor fica em garantia e só vai para o monitor 48h depois da aula. Desistiu em até 7 dias (antes da aula) ou cancelou com 24h de antecedência? Reembolso de 100%, automático.
       </p>

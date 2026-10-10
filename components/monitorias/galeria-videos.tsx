@@ -51,9 +51,9 @@ export function GaleriaVideos({ videos }: { videos: VideoAnuncio[] }) {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={mini} alt="" className="absolute inset-0 h-full w-full object-cover opacity-80 transition group-hover:opacity-100" loading="lazy" />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-600 via-rose-500 to-amber-400" />
+                <div className="absolute inset-0 bg-foreground/80" />
               )}
-              <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-emerald-700 shadow-xl transition group-hover:scale-110">
+              <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-primary shadow-xl transition group-hover:scale-110">
                 <Play className="ml-1 h-7 w-7 fill-current" />
               </span>
             </motion.button>
