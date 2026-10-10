@@ -8,6 +8,7 @@ import 'server-only'
 
 import { NextResponse, type NextRequest } from 'next/server'
 import { secureApiEndpoint, type RateLimitType } from '@/lib/api-security'
+import { checkRateLimit } from '@/lib/rate-limit'
 import type { TokenPayload } from '@/lib/auth'
 import { ErroMonitoria } from './reservas'
 import { origemConfiavel } from './origem'
@@ -50,6 +51,13 @@ export async function rotaPublica(
 ): Promise<Response> {
   const seg = await secureApiEndpoint(request, { rateLimit: limite })
   if (!seg.success) return seg.errorResponse!
+  // Com cookie de sessão, a cota acima é contada pelo cookie — que aqui nem é
+  // validado (rota pública). Um script trocando o cookie a cada chamada teria
+  // cota infinita; por isso, nesse caso, também conta pelo IP.
+  if (request.cookies.get('auth-token')) {
+    const porIp = await checkRateLimit(`ip:${seg.ip}`, 'monitorias_publico', 300, 60_000)
+    if (!porIp.success) return NextResponse.json({ error: 'Muitas requisições. Tente de novo em instantes.' }, { status: 429 })
+  }
   try {
     return await fn(seg.ip)
   } catch (err) {

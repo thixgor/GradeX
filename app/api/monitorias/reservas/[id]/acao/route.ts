@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { erro, idDe, lerJson, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import {
@@ -14,7 +15,7 @@ import {
   reportarProblema,
 } from '@/lib/monitorias/reservas'
 import { carregarUsuario } from '@/lib/monitorias/servidor'
-import { limparTexto } from '@/lib/monitorias/validacao'
+import { limparTexto, semContato } from '@/lib/monitorias/validacao'
 import { PLATAFORMAS_DE_REUNIAO, validarLinkDeReuniao, validarLinkExterno } from '@/lib/monitorias/links'
 import { podeTransitar } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
@@ -60,9 +61,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const ator = await carregarUsuario(sessao.userId)
     if (!ator || ator.banned) return erro(403, 'Conta indisponível.')
     const c = await obterColecoes()
+    // Antes do pagamento, contato pessoal não passa nem pela observação da
+    // proposta nem pelos motivos (que aparecem na sala e vão por e-mail).
+    const livre = ['confirmada', 'realizada', 'em_disputa', 'concluida'].includes(reserva.status)
+    const seguro = (t: string) => (livre ? limparTexto(t) : semContato(limparTexto(t)))
 
     switch (corpo.acao) {
       case 'propor': {
+        // Cada proposta manda e-mail ao outro lado: no máximo 6 a cada 10 min por pessoa e reserva.
+        const lim = await checkRateLimit(`mon-prop:${idDe(reserva)}:${sessao.userId}`, 'monitorias_proposta', 6, 10 * 60_000)
+        if (!lim.success) throw new ErroMonitoria(429, 'Muitas propostas seguidas. Converse no chat e tente de novo em alguns minutos.')
         const anuncio = await c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any)
         if (!anuncio) throw new ErroMonitoria(404, 'Anúncio não encontrado.')
         const atualizada = await proporNova({
@@ -77,7 +85,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           // Valor livre só na negociação/"a combinar"; o servidor aplica limites.
           valorPorPessoaCentavos: corpo.gratis ? undefined : corpo.valorPorPessoaCentavos,
           gratis: corpo.gratis,
-          observacao: corpo.observacao ? limparTexto(corpo.observacao) : undefined,
+          observacao: corpo.observacao ? seguro(corpo.observacao) : undefined,
         })
         return ok({ status: atualizada.status, propostaId: atualizada.proposta?.id })
       }
@@ -98,7 +106,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         if (!podeTransitar(reserva.status, 'recusada')) throw new ErroMonitoria(409, 'Não é possível recusar agora.')
         const res = await c.reservas.updateOne(
           { _id: reserva._id as any, status: reserva.status, versao: reserva.versao },
-          { $set: { status: 'recusada', motivoCancelamento: limparTexto(corpo.motivo), updatedAt: new Date() }, $inc: { versao: 1 } },
+          { $set: { status: 'recusada', motivoCancelamento: seguro(corpo.motivo), updatedAt: new Date() }, $inc: { versao: 1 } },
         )
         if (!res.matchedCount) throw new ErroMonitoria(409, 'A reserva mudou. Recarregue.')
         await avisar([
@@ -107,13 +115,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
             titulo: 'Pedido recusado',
             mensagem: `O monitor recusou "${reserva.anuncioTitulo}".`,
             url: `/monitorias/reservas/${idDe(reserva)}`,
-            email: { assunto: `Pedido recusado: ${reserva.anuncioTitulo}`, paragrafos: ['O monitor não pôde aceitar seu pedido desta vez.'], linhas: [['Motivo', limparTexto(corpo.motivo)]], botao: 'Ver outros monitores' },
+            email: { assunto: `Pedido recusado: ${reserva.anuncioTitulo}`, paragrafos: ['O monitor não pôde aceitar seu pedido desta vez.'], linhas: [['Motivo', seguro(corpo.motivo)]], botao: 'Ver outros monitores' },
           },
         ])
         return ok({ status: 'recusada' })
       }
       case 'cancelar': {
-        const r = await cancelar({ reserva, ator, papel, motivo: limparTexto(corpo.motivo) })
+        const r = await cancelar({ reserva, ator, papel, motivo: seguro(corpo.motivo) })
         return ok(r)
       }
       case 'confirmar': {
@@ -121,7 +129,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         return ok({ status: 'confirmada' })
       }
       case 'reportar': {
-        const ticketId = await reportarProblema({ reserva, autor: ator, papel, motivo: limparTexto(corpo.motivo) })
+        const ticketId = await reportarProblema({ reserva, autor: ator, papel, motivo: seguro(corpo.motivo) })
         return ok({ status: 'em_disputa', ticketId })
       }
       case 'link': {
@@ -164,6 +172,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       }
       case 'material_remover': {
         if (papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor remove materiais.')
+        // Depois que a aula começou, o material vira registro do que foi entregue
+        // (o aluno e o PDF da conversa contam com ele): não some mais.
+        if (!reserva.inicio || reserva.inicio.getTime() <= Date.now() || ['realizada', 'concluida', 'em_disputa'].includes(reserva.status)) {
+          throw new ErroMonitoria(409, 'Depois do início da aula o material fica guardado para o aluno. Se precisar corrigir, envie uma versão nova.')
+        }
         await c.reservas.updateOne({ _id: reserva._id as any }, { $pull: { materiaisExtras: { url: corpo.url } }, $set: { updatedAt: new Date() } } as any)
         return ok({ removido: true })
       }

@@ -44,6 +44,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       )
       return ok({ status: 'em_analise' })
     }
+    if (corpo.data.acao === 'retomar') {
+      const tutor = await c.tutores.findOne({ userId: sessao.userId }, { projection: { status: 1 } })
+      if (tutor?.status !== 'ativo') return erro(403, 'Seu perfil de monitor está suspenso. Fale com o suporte.')
+    }
     const de = corpo.data.acao === 'pausar' ? 'publicado' : 'pausado'
     const para = corpo.data.acao === 'pausar' ? 'pausado' : 'publicado'
     const res = await c.anuncios.updateOne({ _id: a._id as any, status: de }, { $set: { status: para, updatedAt: agora } })

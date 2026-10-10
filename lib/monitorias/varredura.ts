@@ -243,7 +243,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
 
   // 6. Reembolsos presos.
   const presos = await c.participacoes
-    .find({ status: 'reembolso_processando', updatedAt: { $lt: new Date(agora.getTime() - 20 * 60_000) } })
+    .find({ 'reembolsos.status': 'processando', status: 'reembolso_processando', updatedAt: { $lt: new Date(agora.getTime() - 20 * 60_000) } } as any)
     .limit(LOTE)
     .toArray()
   for (const p of presos) {
@@ -253,6 +253,31 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       const out = await reembolsarParticipacao({ participacaoId: idDe(p), valorBaseCentavos: pendente.valorCentavos, motivo: pendente.motivo, por: pendente.por })
       if (out.ok) r.reembolsosRetomados++
     })
+  }
+
+  // 6b. Rede de segurança: assento PAGO numa reserva já encerrada (PIX que caiu
+  // no mesmo instante do cancelamento, função que morreu no meio de um lote).
+  const encerradas = await c.reservas
+    .find(
+      {
+        status: { $in: ['cancelada_aluno', 'cancelada_monitor', 'expirada', 'recusada', 'reembolsada'] },
+        updatedAt: { $gt: new Date(agora.getTime() - 14 * 24 * H), $lt: new Date(agora.getTime() - 20 * 60_000) },
+      } as any,
+      { projection: { _id: 1 } },
+    )
+    .limit(LOTE)
+    .toArray()
+  if (encerradas.length) {
+    const orfas = await c.participacoes
+      .find({ reservaId: { $in: encerradas.map((x) => idDe(x)) }, status: 'paga' }, { projection: { _id: 1 } })
+      .limit(LOTE)
+      .toArray()
+    for (const p of orfas) {
+      await seguro(async () => {
+        const out = await reembolsarParticipacao({ participacaoId: idDe(p), valorBaseCentavos: null, motivo: 'Reserva encerrada: devolução automática do pagamento', por: 'sistema' })
+        if (out.ok) r.reembolsosRetomados++
+      })
+    }
   }
 
   // 7. Chave PIX nova depois da carência.

@@ -7,6 +7,8 @@ export interface DetalheReserva {
   papel: 'monitor' | 'organizador' | 'membro' | 'admin'
   /** Muda a cada transição da reserva — o polling só recarrega tudo quando ela muda. */
   versao: number
+  /** Saiu da reserva: vê o histórico, mas não escreve nem age. */
+  somenteLeitura: boolean
   /** Há mensagens mais antigas que as 150 carregadas. */
   maisAntigas: boolean
   reserva: {

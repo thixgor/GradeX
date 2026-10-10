@@ -92,8 +92,12 @@ export function cabeNaDisponibilidade(disp: Disponibilidade, inicio: Date, durac
 /** Blocos de 30 min que a aula ocupa, incluindo a folga antes e depois. */
 export function blocosDaAula(inicio: Date, duracaoMin: number, intervaloMin = 0): Date[] {
   const folga = Math.ceil(Math.max(0, intervaloMin) / BLOCO_MIN) * BLOCO_MIN
-  const de = inicio.getTime() - folga * MS_MIN
-  const ate = inicio.getTime() + (duracaoMin + folga) * MS_MIN
+  // Sempre na grade de 30 min: um início "quebrado" (19:00:00.001) cobre o
+  // bloco onde cai, em vez de gerar blocos deslocados que escapariam do
+  // índice único e permitiriam duas aulas no mesmo horário.
+  const passo = BLOCO_MIN * MS_MIN
+  const de = Math.floor((inicio.getTime() - folga * MS_MIN) / passo) * passo
+  const ate = Math.ceil((inicio.getTime() + (duracaoMin + folga) * MS_MIN) / passo) * passo
   const blocos: Date[] = []
   for (let t = de; t < ate; t += BLOCO_MIN * MS_MIN) blocos.push(new Date(t))
   return blocos
@@ -165,3 +169,11 @@ export function formatarDuracao(min: number): string {
 }
 
 export const DISPONIBILIDADE_VAZIA: Disponibilidade = { semanal: [], diasBloqueados: [], intervaloMin: 0 }
+
+/** Início válido para uma aula: na grade de 30 min (horário cheio ou meia hora). */
+export function inicioNaGrade(inicio: Date): boolean {
+  return Number.isFinite(inicio.getTime()) && inicio.getTime() % (BLOCO_MIN * MS_MIN) === 0
+}
+
+/** Até quantos dias à frente se pode marcar uma aula. */
+export const DIAS_MAXIMOS_DE_ANTECEDENCIA = 90

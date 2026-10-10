@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Check, Copy, Loader2, QrCode, ShieldCheck, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
+import { pollingDelayMs } from '@/lib/payments/polling'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { api, CaixaErro } from './base'
 
@@ -36,6 +37,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
   const [gerando, setGerando] = useState(false)
   const [copiado, setCopiado] = useState(false)
   const [relogio, setRelogio] = useState('')
+  const [inicioDoPolling, setInicioDoPolling] = useState(0)
 
   const gerar = useCallback(async () => {
     setGerando(true)
@@ -43,6 +45,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
     try {
       const r = await api<Checkout>(`/api/monitorias/reservas/${reservaId}/checkout`, { method: 'POST' })
       setDados(r)
+      setInicioDoPolling(Date.now())
       if (r.status === 'approved') onAprovado()
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Erro ao gerar PIX.')
@@ -66,7 +69,9 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
         })
         .catch(() => {})
     },
-    dados?.orderId && !erro ? 5000 : null,
+    // Ritmo do checkout padrão: 3 s nos 2 primeiros minutos (quando quase todo
+    // PIX é pago), depois 6 s e 15 s; e PARA quando o QR vence.
+    dados?.orderId && !erro && restante(dados.expiraEm).ms > 0 ? pollingDelayMs(Date.now() - inicioDoPolling) : null,
   )
 
   useIntervaloVisivel(() => dados && setRelogio(restante(dados.expiraEm).texto), dados ? 1000 : null)

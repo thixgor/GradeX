@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { erro, obterColecoes } from '@/lib/monitorias/db'
 import { rotaPublica } from '@/lib/monitorias/rota'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
+import { VERSAO_OFERTA } from '@/lib/monitorias/documentos/contrato'
 import { SLUG_VALIDO } from '@/lib/monitorias/validacao'
 import { duracoesPermitidas, horariosLivres } from '@/lib/monitorias/agenda'
 
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     const gratis = url.searchParams.get('gratis') === '1'
     const c = await obterColecoes()
     const anuncio = await c.anuncios.findOne({ slug: params.slug, status: 'publicado' })
-    if (!anuncio?.modos.direto || !anuncio.ofertaAssinada || !ObjectId.isValid(anuncio.tutorId)) {
+    if (!anuncio?.modos.direto || anuncio.ofertaAssinada?.versao !== VERSAO_OFERTA || !ObjectId.isValid(anuncio.tutorId)) {
       return erro(404, 'Este anúncio não tem agendamento direto.')
     }
     const direto = anuncio.modos.direto

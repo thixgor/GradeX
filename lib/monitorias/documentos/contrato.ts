@@ -23,7 +23,7 @@ import { formatarDuracao } from '../agenda'
 import type { DadosContrato } from '../tipos'
 import { identificacaoDaPlataforma, PLATAFORMA, VERSAO_TERMOS, type SecaoDocumento } from './termos'
 
-export const VERSAO_CONTRATO = '2026.10-v2'
+export const VERSAO_CONTRATO = '2026.10-v3'
 export const VERSAO_OFERTA = '2026.10-v2'
 
 export function sha256(texto: string): string {
@@ -60,7 +60,7 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
         `1.2. Conteúdos combinados: ${d.conteudos.length ? d.conteudos.join('; ') : 'conforme o anúncio e o chat da reserva'}.`,
         '1.3. Modalidade: online, por link de reunião fornecido pelo CONTRATADO na página da reserva, ou conforme combinado por escrito no chat da plataforma.',
         d.vagas > 1
-          ? `1.4. Monitoria em grupo de até ${d.vagas} alunos. Cada aluno firma o próprio contrato e paga o próprio valor.`
+          ? `1.4. Monitoria em grupo de até ${d.vagas} alunos. Cada aluno firma o próprio contrato e paga o próprio valor. Alunos que entram pelo convite aderem às mesmas condições, e a assinatura do CONTRATADO no contrato do organizador vale para eles por adesão.`
           : '1.4. Monitoria individual.',
         '1.5. A monitoria tem caráter exclusivamente educacional e complementar: não é curso regular, não confere certificado ou crédito acadêmico e não constitui consulta, diagnóstico, prescrição ou orientação profissional para caso real.',
       ],
@@ -127,8 +127,8 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
         `8.1. Integram este contrato os Termos de Serviço da Monitoria (versão ${inter.versaoTermos}) aceitos pelas partes, o anúncio e as mensagens trocadas no chat da reserva. Havendo conflito, prevalece este contrato.`,
         '8.2. As partes admitem como válida a assinatura eletrônica deste instrumento, feita por aceite expresso e código de uso único enviado ao e-mail cadastrado, com registro de data, hora, IP, navegador e hash SHA-256 do conteúdo (MP 2.200-2/2001, art. 10, § 2º; Código Civil, art. 107; assinatura eletrônica simples, Lei 14.063/2020, art. 4º, I).',
         d.origem === 'direto'
-          ? '8.3. Reserva feita por agendamento direto: a assinatura do CONTRATADO é a da oferta-padrão que ele assinou ao ativar essa modalidade, vigente no momento da reserva (Código Civil, art. 429).'
-          : '8.3. Condições negociadas e aceitas por ambas as partes no chat da reserva.',
+          ? '8.3. Reserva feita por agendamento direto: a assinatura do CONTRATADO é, por adesão, a da oferta-padrão que ele assinou ao ativar essa modalidade, vigente no momento da reserva (Código Civil, art. 429). A página de evidências registra quando ele a assinou e quando ela foi vinculada a este contrato.'
+          : '8.3. Condições negociadas e aceitas no chat da reserva. Em grupo, o aluno que entra pelo convite adere às condições já aceitas pelo organizador e pelo CONTRATADO.',
         '8.4. Se alguma cláusula for considerada inválida, as demais continuam valendo (Código Civil, art. 184).',
         `8.5. Foro: domicílio do CONTRATANTE (CDC, art. 101, I).${inter.foro && !/domic[ií]lio do consumidor/i.test(inter.foro) ? ` Nas questões entre CONTRATADO e INTERVENIENTE, foro da ${inter.foro}.` : ''}`,
       ],

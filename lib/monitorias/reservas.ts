@@ -16,7 +16,7 @@ import { onlyCpfDigits } from '@/lib/cpf'
 import { audit } from '@/lib/payments/audit'
 import { VALOR_MAXIMO_CENTAVOS, VALOR_MINIMO_CENTAVOS, formatarCentavos } from './dinheiro'
 import { precoPorPessoaCentavos } from './precos'
-import { blocosDaAula, cabeNaDisponibilidade, duracoesPermitidas, formatarDuracao } from './agenda'
+import { blocosDaAula, cabeNaDisponibilidade, DIAS_MAXIMOS_DE_ANTECEDENCIA, duracoesPermitidas, formatarDuracao, inicioNaGrade } from './agenda'
 import { colecoes, ehDuplicada, idDe } from './db'
 import { negociavel, podeTransitar, STATUS_EM_ABERTO } from './estado'
 import { decidirCancelamento, prazoDePagamento, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
@@ -24,6 +24,7 @@ import { emitirContrato, nomeCivil, rescindirContratosDaReserva } from './contra
 import { avisar } from './avisos'
 import { reembolsarReserva, reembolsarParticipacao } from './reembolso'
 import { VERSAO_OFERTA } from './documentos/contrato'
+import { VERSAO_TERMOS } from './documentos/termos'
 import type { UsuarioMonitoria } from './servidor'
 import type { Anuncio, Bloqueio, Contrato, Participacao, Proposta, Reserva, StatusReserva, Tutor } from './tipos'
 import type { Ticket } from '@/lib/types'
@@ -87,6 +88,38 @@ export async function reservarBlocos(input: {
   }
 }
 
+/**
+ * Garante que a aula inteira está travada para esta reserva antes de
+ * confirmá-la. Se algum bloco da aula venceu (hold de 30 min, TTL) e alguém
+ * pegou o horário, devolve false — quem chama não confirma. Conta só os
+ * blocos da AULA (sem a folga): mudar o intervalo do monitor depois não
+ * derruba uma reserva que já estava travada.
+ */
+export async function garantirBlocos(reserva: Reserva): Promise<boolean> {
+  const c = await cols()
+  const id = idDe(reserva)
+  if (!reserva.inicio || !reserva.proposta) return false
+  const nucleo = blocosDaAula(reserva.inicio, reserva.proposta.duracaoMin, 0)
+  const agora = new Date()
+  const vivos = await c.bloqueios.countDocuments({
+    reservaId: id,
+    inicioBloco: { $in: nucleo },
+    $or: [{ tipo: 'firme' }, { expiraEm: { $gt: agora } }],
+  } as any)
+  if (vivos >= nucleo.length) return true
+  const tutor = await c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { disponibilidade: 1 } })
+  await c.bloqueios.deleteMany({ reservaId: id })
+  return reservarBlocos({
+    bloqueios: c.bloqueios,
+    tutorId: reserva.tutorId,
+    reservaId: id,
+    inicio: reserva.inicio,
+    duracaoMin: reserva.proposta.duracaoMin,
+    intervaloMin: tutor?.disponibilidade.intervaloMin || 0,
+    expiraEm: new Date(agora.getTime() + 60 * 60_000),
+  })
+}
+
 export async function firmarBlocos(reservaId: string): Promise<void> {
   const c = await cols()
   await c.bloqueios.updateMany({ reservaId }, { $set: { tipo: 'firme' }, $unset: { expiraEm: '' } })
@@ -109,12 +142,54 @@ export async function carregarReserva(id: string): Promise<Reserva> {
   return reserva
 }
 
+/** Assento que ainda participa da reserva (quem expirou, cancelou ou foi reembolsado saiu). */
+const ASSENTO_ATIVO = ['aguardando_assinatura', 'aguardando_pagamento', 'paga', 'gratis', 'concluida', 'reembolso_processando']
+const ASSENTO_PAGO = ['paga', 'gratis', 'concluida']
+
+function papelPeloAssento(reserva: Reserva, userId: string, part: { status: string } | null): Papel | null {
+  if (reserva.tutorUserId === userId) return 'monitor'
+  if (reserva.solicitanteId === userId) {
+    // Na negociação o organizador ainda não tem assento: segue organizador.
+    return !part || ASSENTO_ATIVO.includes(part.status) ? 'organizador' : null
+  }
+  return part && ASSENTO_ATIVO.includes(part.status) ? 'membro' : null
+}
+
+/** Papel ATIVO na reserva: quem pode agir e escrever. */
 export async function papelNaReserva(reserva: Reserva, userId: string): Promise<Papel | null> {
   if (reserva.tutorUserId === userId) return 'monitor'
-  if (reserva.solicitanteId === userId) return 'organizador'
   const c = await cols()
-  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { _id: 1 } })
-  return part ? 'membro' : null
+  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { status: 1 } })
+  return papelPeloAssento(reserva, userId, part)
+}
+
+/**
+ * Leitura da sala, das mensagens e do PDF da conversa. Quem já participou
+ * continua vendo o próprio histórico ("acesso a tudo"), mas:
+ *  - sem papel ativo (expirou, cancelou, foi reembolsado) é só leitura;
+ *  - sem assento pago/grátis, os contatos aparecem mascarados — senão quem
+ *    nunca pagou leria o telefone que o monitor mandou depois da confirmação.
+ */
+export async function acessoDeLeitura(
+  reserva: Reserva,
+  userId: string,
+): Promise<{ papel: Papel; somenteLeitura: boolean; mascarar: boolean } | null> {
+  if (reserva.tutorUserId === userId) return { papel: 'monitor', somenteLeitura: false, mascarar: false }
+  const c = await cols()
+  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { status: 1 } })
+  const papel = papelPeloAssento(reserva, userId, part)
+  const pago = !!part && ASSENTO_PAGO.includes(part.status)
+  if (papel) return { papel, somenteLeitura: false, mascarar: !pago }
+  if (part) return { papel: reserva.solicitanteId === userId ? 'organizador' : 'membro', somenteLeitura: true, mascarar: true }
+  return null
+}
+
+/** Quem tem assento pago/grátis/concluído (ou é o monitor) escreve sem máscara depois da confirmação. */
+export async function assentoPago(reserva: Reserva, userId: string): Promise<boolean> {
+  if (reserva.tutorUserId === userId) return true
+  const c = await cols()
+  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { status: 1 } })
+  return !!part && ASSENTO_PAGO.includes(part.status)
 }
 
 /** Mesmo CPF dos dois lados = a mesma pessoa com duas contas. */
@@ -282,6 +357,7 @@ export async function proporNova(input: {
     throw new ErroMonitoria(400, 'A aula precisa começar daqui a pelo menos 3 horas.')
   }
   if (input.inicio.getTime() > Date.now() + 120 * 24 * 3_600_000) throw new ErroMonitoria(400, 'Data muito distante (máximo 120 dias).')
+  if (!inicioNaGrade(input.inicio)) throw new ErroMonitoria(400, 'Escolha um horário cheio ou de meia hora (ex.: 19:00 ou 19:30).')
   const maxVagas = anuncio.grupo.ativo ? anuncio.grupo.maxAlunos : 1
   if (input.vagas > maxVagas) throw new ErroMonitoria(400, `Este anúncio aceita no máximo ${maxVagas} aluno(s).`)
 
@@ -502,6 +578,18 @@ export async function agendarDireto(input: {
   checarAnuncioAtivo(anuncio, tutor)
   const direto = anuncio.modos.direto
   if (!direto || !anuncio.ofertaAssinada) throw new ErroMonitoria(400, 'Este anúncio não tem agendamento direto.')
+  // O contrato gerado aqui declara que o monitor aceitou os Termos VIGENTES e
+  // a oferta VIGENTE. Oferta de versão antiga, ou Termos não reaceitos, não
+  // valem como assinatura dele: o agendamento direto fica indisponível até ele
+  // reassinar (o painel avisa).
+  if (anuncio.ofertaAssinada.versao !== VERSAO_OFERTA) throw new ErroMonitoria(409, 'O monitor precisa renovar a assinatura da agenda online. Use "Negociar no chat" por enquanto.')
+  {
+    const cTermos = await cols()
+    const aceite = await cTermos.termos.findOne({ userId: String(monitor._id), papel: 'monitor', versao: VERSAO_TERMOS }, { projection: { _id: 1 } })
+    if (!aceite) throw new ErroMonitoria(409, 'O monitor precisa aceitar os Termos atualizados. Use "Negociar no chat" por enquanto.')
+  }
+  if (!inicioNaGrade(input.inicio)) throw new ErroMonitoria(400, 'Horário inválido. Escolha um dos horários da agenda.')
+  if (input.inicio.getTime() > Date.now() + DIAS_MAXIMOS_DE_ANTECEDENCIA * 24 * 3_600_000) throw new ErroMonitoria(400, 'Data muito distante.')
   if (mesmaPessoa(aluno, monitor)) throw new ErroMonitoria(400, 'Você não pode contratar a sua própria monitoria.')
   if (input.gratis) {
     if (!anuncio.aulaGratis.ativa) throw new ErroMonitoria(400, 'Este anúncio não oferece aula grátis.')
@@ -615,7 +703,8 @@ export async function agendarDireto(input: {
       ip: oferta.ip,
       userAgent: oferta.userAgent,
       metodo: 'oferta_padrao',
-      referencia: `Oferta-padrão ${oferta.versao} (hash ${oferta.hash.slice(0, 16)}…)`,
+      referencia: `Oferta-padrão ${oferta.versao}`,
+      hashOrigem: oferta.hash,
     },
   })
   await mensagemDoSistema(
@@ -670,6 +759,7 @@ export async function entrarNoGrupo(input: {
       userAgent: assinaturaMonitor.userAgent,
       metodo: 'assinatura_da_reserva',
       referencia: `Contrato do organizador nº ${organizadorContrato.numero}`,
+      hashOrigem: assinaturaMonitor.hash,
     },
   })
   await mensagemDoSistema(c, idDe(reserva), `${input.aluno.name} entrou no grupo.`)
@@ -694,6 +784,11 @@ export async function aposContratoAssinado(contrato: Contrato): Promise<void> {
   )
   if (reserva.status !== 'aguardando_assinaturas') return
   if (gratis) {
+    if (!(await garantirBlocos(reserva))) {
+      await transitar(c, reserva, 'expirada', { motivoCancelamento: 'O horário deixou de estar disponível antes da confirmação.' })
+      await liberarBlocos(idDe(reserva))
+      throw new ErroMonitoria(409, 'Esse horário não está mais disponível. Escolha outro na agenda do monitor.')
+    }
     await transitar(c, reserva, 'confirmada')
     await firmarBlocos(idDe(reserva))
     await avisarConfirmacao(reserva)
@@ -755,6 +850,9 @@ export async function confirmarComQuemPagou(reserva: Reserva, papel: Papel | nul
   const c = await cols()
   const pagos = await c.participacoes.countDocuments({ reservaId: idDe(reserva), status: 'paga' })
   if (pagos === 0) throw new ErroMonitoria(409, 'Ninguém pagou ainda.')
+  if (!(await garantirBlocos(reserva))) {
+    throw new ErroMonitoria(409, 'O horário desta aula não está mais travado na sua agenda (outra reserva ocupou). Cancele para reembolsar quem pagou, ou fale com o suporte.')
+  }
   const atualizada = await transitar(c, reserva, 'confirmada')
   await Promise.all([
     firmarBlocos(idDe(reserva)),
@@ -796,10 +894,35 @@ export async function cancelar(input: {
   if (papelEfetivo === 'membro') {
     const part = await c.participacoes.findOne({ reservaId: id, alunoId: atorId })
     if (!part) throw new ErroMonitoria(404, 'Não encontrado.')
+    // Reembolso que ficou no meio (o Mercado Pago falhou): clicar de novo RETOMA, nunca descarta.
+    if (part.status === 'reembolso_processando') {
+      const pendente = part.reembolsos.find((x) => x.status === 'processando')
+      const r = await reembolsarParticipacao({
+        participacaoId: idDe(part),
+        valorBaseCentavos: pendente ? pendente.valorCentavos : null,
+        motivo: pendente?.motivo || `Cancelado pelo aluno: ${motivo}`,
+        por: pendente?.por || atorId,
+      })
+      if (!r.ok) throw new ErroMonitoria(502, r.erro)
+      return { resultado: 'reembolsada' }
+    }
+    if (['reembolsada', 'chargeback', 'cancelada', 'expirada'].includes(part.status)) {
+      throw new ErroMonitoria(409, 'Você já saiu desta monitoria.')
+    }
+    if (part.cancelamentoPedidoEm) {
+      throw new ErroMonitoria(409, 'Seu pedido de cancelamento já está com o suporte. Você recebe a decisão por e-mail.')
+    }
     const decisao = decidirCancelamento({ ator: 'aluno', status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: part.status === 'paga', pagoEm: part.pagoEm })
     if (decisao.tipo === 'proibido') throw new ErroMonitoria(409, decisao.motivo)
     if (decisao.tipo === 'suporte') {
+      // Um pedido por assento (marca atômica) — e o repasse dele fica retido até a decisão.
+      const marcou = await c.participacoes.updateOne(
+        { _id: part._id as any, cancelamentoPedidoEm: { $exists: false } } as any,
+        { $set: { cancelamentoPedidoEm: new Date(), updatedAt: new Date() } },
+      )
+      if (!marcou.modifiedCount) throw new ErroMonitoria(409, 'Seu pedido de cancelamento já está com o suporte.')
       const ticketId = await abrirTicket({ reserva, autor: input.ator, motivo: `Cancelamento com menos de 24h (assento de ${part.alunoNome}): ${motivo}`, participacaoId: idDe(part) })
+      await c.participacoes.updateOne({ _id: part._id as any }, { $set: { cancelamentoTicketId: ticketId } })
       return { resultado: 'suporte', ticketId }
     }
     if (decisao.tipo === 'reembolso_total') {
@@ -812,7 +935,12 @@ export async function cancelar(input: {
       if (!r.ok) throw new ErroMonitoria(502, r.erro)
       return { resultado: 'reembolsada' }
     }
-    await c.participacoes.updateOne({ _id: part._id as any }, { $set: { status: 'cancelada', updatedAt: new Date() } })
+    // Só assento sem dinheiro vira "cancelada" (o filtro de status impede apagar um pago por corrida).
+    const saiu = await c.participacoes.updateOne(
+      { _id: part._id as any, status: { $in: ['aguardando_assinatura', 'aguardando_pagamento', 'gratis'] } } as any,
+      { $set: { status: 'cancelada', updatedAt: new Date() } },
+    )
+    if (!saiu.modifiedCount) throw new ErroMonitoria(409, 'Seu assento mudou agora (o pagamento pode ter acabado de cair). Recarregue a página.')
     await c.contratos.updateOne({ participacaoId: idDe(part), status: 'aguardando_assinaturas' }, { $set: { status: 'rescindido', updatedAt: new Date() } })
     return { resultado: 'cancelada' }
   }
@@ -860,16 +988,22 @@ export async function cancelar(input: {
       { $set: { status: 'cancelada', updatedAt: new Date() } },
     ),
   ])
-  if (decisao.tipo === 'reembolso_total') {
+  // Também cobre o PIX que caiu no mesmo instante do cancelamento (decidido
+  // como "sem pagamento" com uma leitura de antes): quem pagou é reembolsado.
+  const pagouAgora = decisao.tipo !== 'reembolso_total' && (await c.participacoes.countDocuments({ reservaId: id, status: 'paga' })) > 0
+  if (decisao.tipo === 'reembolso_total' || pagouAgora) {
     const porque =
       papel === 'monitor'
         ? 'Cancelado pelo monitor'
-        : decisao.arrependimento
+        : decisao.tipo === 'reembolso_total' && decisao.arrependimento
           ? 'Direito de arrependimento (art. 49 do CDC)'
-          : 'Cancelado pelo aluno com 24h+ de antecedência'
+          : pagouAgora
+            ? 'Reserva cancelada antes da confirmação do pagamento'
+            : 'Cancelado pelo aluno com 24h+ de antecedência'
     await reembolsarReserva(id, `${porque}: ${motivo}`, atorId)
   }
-  if (papel === 'monitor' && reserva.status === 'confirmada') await registrarStrike(c, reserva, `Cancelou: ${motivo}`)
+  // Termos 7.2: monitor que cancela aula com pagamento recebe strike (grupo parcial inclusive).
+  if (papel === 'monitor' && (decisao.tipo === 'reembolso_total' || pagouAgora)) await registrarStrike(c, reserva, `Cancelou: ${motivo}`)
 
   const outros = papel === 'monitor' ? await alunosDaReserva(c, id) : [reserva.tutorUserId]
   await avisar(
@@ -905,7 +1039,7 @@ export async function registrarStrike(c: Colecoes, reserva: Reserva, motivo: str
   )
   if (tutor && strikesRecentes(tutor.strikes, new Date()) >= STRIKES_PARA_SUSPENDER && tutor.status === 'ativo') {
     await c.tutores.updateOne({ _id: tutor._id as any }, { $set: { status: 'suspenso', updatedAt: new Date() } })
-    await c.anuncios.updateMany({ tutorId: idDe(tutor), status: 'publicado' }, { $set: { status: 'suspenso', updatedAt: new Date() } })
+    await c.anuncios.updateMany({ tutorId: idDe(tutor), status: { $in: ['publicado', 'pausado', 'em_analise'] } } as any, { $set: { status: 'suspenso', updatedAt: new Date() } })
     await audit({ action: 'monitoria_tutor_status', targetUserId: tutor.userId, resourceType: 'monitoria_tutor', resourceId: idDe(tutor), metadata: { motivo: 'strikes', strikes: tutor.strikes.length } })
     await avisar([
       {
@@ -931,7 +1065,11 @@ export async function reportarProblema(input: { reserva: Reserva; autor: Usuario
   const { reserva, papel } = input
   if (papel === 'monitor') throw new ErroMonitoria(403, 'Monitor fala com o suporte pela Central de Ajuda.')
   if (!['confirmada', 'realizada'].includes(reserva.status)) throw new ErroMonitoria(409, 'Não é possível reportar problema nesta etapa.')
-  if (!podeReportar(reserva.fim, new Date())) throw new ErroMonitoria(409, 'O prazo para reportar problema é de até 48 horas após o fim da aula.')
+  // Só quem tem assento pago/grátis desta aula trava o repasse com uma disputa.
+  if (!(await assentoPago(reserva, String(input.autor._id)))) throw new ErroMonitoria(403, 'Só quem participa (com pagamento confirmado) pode reportar problema nesta aula.')
+  if (!podeReportar(reserva.fim, new Date(), reserva.inicio)) {
+    throw new ErroMonitoria(409, 'Problemas podem ser reportados a partir de 15 minutos depois do início e até 48 horas após o fim da aula.')
+  }
   const c = await cols()
   const atualizada = await transitar(c, reserva, 'em_disputa', {
     disputa: { abertaPor: String(input.autor._id), em: new Date(), motivo: input.motivo },

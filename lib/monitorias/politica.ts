@@ -54,7 +54,7 @@ export function decidirCancelamento(input: {
     return { tipo: 'proibido', motivo: 'Esta monitoria não pode mais ser cancelada por aqui. Fale com o suporte.' }
   }
   if (inicio && inicio.getTime() <= agora.getTime()) {
-    return { tipo: 'proibido', motivo: 'A aula já começou. Se houve problema, use "Reportar problema".' }
+    return { tipo: 'proibido', motivo: 'A aula já começou. Se o monitor não apareceu em 15 minutos, ou houve outro problema, use "Reportar problema".' }
   }
   if (!haPagamento) return { tipo: 'sem_pagamento' }
   if (ator === 'monitor') return { tipo: 'reembolso_total' }
@@ -80,10 +80,15 @@ export function liberacaoDoValor(fim: Date): Date {
   return new Date(fim.getTime() + GARANTIA_HORAS * 3_600_000)
 }
 
-/** Até quando o aluno pode reportar problema: as mesmas 48h da garantia. */
-export function podeReportar(fim: Date | undefined, agora: Date): boolean {
+/**
+ * Janela para reportar problema: a partir de 15 min depois do INÍCIO (atraso
+ * maior que 15 min sem aviso já é falta — contrato, cláusula 2.3) até as 48h
+ * da garantia depois do fim. Sem o início, abre 15 min antes do fim.
+ */
+export function podeReportar(fim: Date | undefined, agora: Date, inicio?: Date): boolean {
   if (!fim) return false
-  return agora.getTime() >= fim.getTime() - 15 * 60_000 && agora.getTime() <= liberacaoDoValor(fim).getTime()
+  const abre = inicio ? inicio.getTime() + 15 * 60_000 : fim.getTime() - 15 * 60_000
+  return agora.getTime() >= abre && agora.getTime() <= liberacaoDoValor(fim).getTime()
 }
 
 /**

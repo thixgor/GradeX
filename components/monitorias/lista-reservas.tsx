@@ -56,16 +56,34 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
   const [escopo, setEscopo] = useState<'ativas' | 'todas'>('ativas')
   const [itens, setItens] = useState<ItemReserva[] | null>(null)
   const [resumo, setResumo] = useState<Resumo | null>(null)
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [carregandoMais, setCarregandoMais] = useState(false)
 
   useEffect(() => {
     setItens(null)
-    api<{ reservas: ItemReserva[]; resumo: Resumo }>(`/api/monitorias/reservas?papel=${papel}&escopo=${escopo}`)
+    setCursor(null)
+    api<{ reservas: ItemReserva[]; resumo: Resumo | null; proximoCursor: string | null }>(`/api/monitorias/reservas?papel=${papel}&escopo=${escopo}`)
       .then((r) => {
         setItens(r.reservas)
-        setResumo(r.resumo)
+        if (r.resumo) setResumo(r.resumo)
+        setCursor(r.proximoCursor)
       })
       .catch(() => setItens([]))
   }, [papel, escopo])
+
+  async function carregarMais() {
+    if (!cursor) return
+    setCarregandoMais(true)
+    try {
+      const r = await api<{ reservas: ItemReserva[]; proximoCursor: string | null }>(
+        `/api/monitorias/reservas?papel=${papel}&escopo=${escopo}&cursor=${encodeURIComponent(cursor)}`,
+      )
+      setItens((atual) => [...(atual || []), ...r.reservas.filter((x) => !(atual || []).some((y) => y.id === x.id))])
+      setCursor(r.proximoCursor)
+    } finally {
+      setCarregandoMais(false)
+    }
+  }
 
   const tiles = resumo
     ? [
@@ -152,6 +170,13 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
             ))}
           </AnimatePresence>
         </ul>
+      )}
+      {cursor && itens && itens.length > 0 && (
+        <div className="mt-4 text-center">
+          <Button variant="outline" onClick={carregarMais} disabled={carregandoMais}>
+            {carregandoMais ? 'Carregando…' : 'Carregar mais'}
+          </Button>
+        </div>
       )}
     </div>
   )

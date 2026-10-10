@@ -25,7 +25,7 @@
 
 import type { PapelTermos } from '../tipos'
 
-export const VERSAO_TERMOS = '2026.10-v2'
+export const VERSAO_TERMOS = '2026.10-v3'
 
 function env(nome: string): string {
   return (process.env[nome] || '').trim()
@@ -136,14 +136,15 @@ const MONITOR: SecaoDocumento[] = [
       '7.1. O Monitor reconhece que o Aluno tem direito de arrependimento de 7 (sete) dias, contados do pagamento, até o início da monitoria (Código de Defesa do Consumidor, art. 49), e que nesse caso o Aluno recebe todo o valor pago de volta, sem remuneração ao Monitor.',
       '7.2. Se o Monitor cancelar a monitoria a qualquer tempo, ou não comparecer, o Aluno é reembolsado em 100% e o Monitor recebe uma advertência ("strike").',
       '7.3. Três strikes em 90 (noventa) dias suspendem automaticamente o perfil de Monitor e pausam seus anúncios.',
-      '7.4. Em caso de violação destes Termos, fraude, reclamações reiteradas ou ordem de autoridade, a Plataforma pode suspender anúncios e perfis e reter valores ainda em garantia. Salvo urgência (fraude, risco a pessoas ou ordem legal), a suspensão é precedida de aviso com o motivo, e o Monitor pode contestá-la pelo suporte em até 10 (dez) dias. Valores que já pertençam ao Monitor por aulas regularmente prestadas são repassados, deduzidos eventuais reembolsos.',
+      '7.4. Em caso de violação destes Termos, fraude, reclamações reiteradas ou ordem de autoridade, a Plataforma pode suspender anúncios e perfis e reter valores ainda em garantia. A suspensão é comunicada por e-mail com o motivo, e o Monitor pode contestá-la pelo suporte em até 10 (dez) dias; procedente a contestação, o perfil é reativado. Valores que já pertençam ao Monitor por aulas regularmente prestadas são repassados, deduzidos eventuais reembolsos.',
     ],
   },
   {
     titulo: '8. Oferta-padrão do agendamento direto',
     paragrafos: [
       '8.1. Ao ativar o agendamento direto, o Monitor assina uma OFERTA-PADRÃO: compromete-se a prestar a monitoria a qualquer Aluno que reservar um horário livre da sua agenda, dentro das durações e preços anunciados, sem necessidade de nova aceitação a cada reserva (Código Civil, art. 429).',
-      '8.2. Cada reserva por agendamento direto gera um Contrato de Monitoria em que a assinatura do Monitor é a da oferta-padrão vigente no momento da reserva. Manter a agenda atualizada é obrigação do Monitor.',
+      '8.2. Cada reserva por agendamento direto gera um Contrato de Monitoria em que a assinatura do Monitor é a da oferta-padrão vigente no momento da reserva, por adesão. O documento registra a data em que o Monitor assinou a oferta, o resumo criptográfico dela e a data em que foi vinculada ao contrato. Manter a agenda atualizada é obrigação do Monitor.',
+      '8.3. Monitoria em grupo: quando um aluno entra pelo convite do organizador, nas mesmas condições já aceitas pelo Monitor no contrato do organizador (data, duração, conteúdo e valor por pessoa), a assinatura do Monitor naquele contrato vale, por adesão, para o contrato do novo aluno, com o mesmo registro de datas e resumo criptográfico.',
     ],
   },
   {

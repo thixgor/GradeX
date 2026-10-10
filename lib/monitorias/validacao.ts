@@ -12,11 +12,15 @@ import { validarFaixas } from './precos'
 import { interpretarUrlDeVideo, videoValido } from './videos'
 import { validarLinkExterno } from './links'
 import { validarJanelas } from './agenda'
+import { mascararContato } from './contato'
 import type { ConteudoAnuncio, Disponibilidade, VideoAnuncio } from './tipos'
 
 /** Remove HTML e espaços duplicados, preservando quebras de parágrafo. */
 export function limparTexto(texto: string): string {
+  // Teto antes de qualquer regex: entrada gigante ("<<<<…" com 1 MB) não pode
+  // prender a função por segundos. Nenhum campo das monitorias passa de 5.000.
   return String(texto || '')
+    .slice(0, 20_000)
     .split(/\n{2,}/)
     .map((p) => stripHtml(p))
     .filter(Boolean)
@@ -27,6 +31,7 @@ export function limparTexto(texto: string): string {
 const texto = (min: number, max: number, campo: string) =>
   z
     .string({ required_error: `${campo} é obrigatório` })
+    .max(max * 2 + 200, `${campo}: máximo de ${max} caracteres`)
     .transform(limparTexto)
     .refine((v) => v.length >= min, `${campo}: mínimo de ${min} caracteres`)
     .refine((v) => v.length <= max, `${campo}: máximo de ${max} caracteres`)
@@ -182,11 +187,13 @@ export function normalizarAnuncio(
   if (erros.length) return { ok: false, erros: Array.from(new Set(erros)) }
   return {
     ok: true,
+    // Contato pessoal no anúncio público (WhatsApp, e-mail, @) seria convite ao
+    // pagamento por fora — mascarado aqui, como no chat antes do pagamento.
     conteudo: {
-      titulo: v.titulo,
+      titulo: semContato(v.titulo),
       materia: v.materia,
-      conteudos,
-      descricao: v.descricao,
+      conteudos: conteudos.map(semContato),
+      descricao: semContato(v.descricao),
       videos,
       preco: v.preco,
       grupo: v.grupo.ativo
@@ -194,7 +201,7 @@ export function normalizarAnuncio(
         : { ativo: false, maxAlunos: 1, faixas: [] },
       aulaGratis: v.aulaGratis,
       modos,
-      faq: v.faq,
+      faq: v.faq.map((f) => ({ pergunta: semContato(f.pergunta), resposta: semContato(f.resposta) })),
       materiais,
       temMateriais: v.temMateriais || materiais.length > 0,
     },
@@ -234,3 +241,8 @@ export function gerarSlug(titulo: string, sufixo: string): string {
 }
 
 export const SLUG_VALIDO = /^[a-z0-9-]{3,80}$/
+
+/** Texto público (anúncio, perfil): sem telefone, e-mail, WhatsApp ou @. */
+export function semContato(texto: string): string {
+  return mascararContato(texto).texto
+}

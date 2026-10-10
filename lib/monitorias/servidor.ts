@@ -11,7 +11,7 @@ import type { User } from '@/lib/types'
 import { colecoes, idDe, obterColecoes } from './db'
 import { pendentes, requisitosDoAluno, requisitosDoMonitor, type ItemRequisito } from './requisitos'
 import { secoesDosTermos, textoCanonico, tituloDosTermos, VERSAO_TERMOS } from './documentos/termos'
-import { sha256 } from './documentos/contrato'
+import { sha256, VERSAO_OFERTA } from './documentos/contrato'
 import { DISPONIBILIDADE_VAZIA } from './agenda'
 import type { Anuncio, PapelTermos, Tutor } from './tipos'
 
@@ -208,7 +208,8 @@ export function anuncioPublico(anuncio: Anuncio) {
     grupo: anuncio.grupo,
     aulaGratis: anuncio.aulaGratis,
     modos: {
-      direto: anuncio.ofertaAssinada ? anuncio.modos.direto || null : null,
+      // Oferta assinada numa versão antiga não vale: agenda online some até o monitor reassinar.
+      direto: anuncio.ofertaAssinada?.versao === VERSAO_OFERTA ? anuncio.modos.direto || null : null,
       negociacao: !!anuncio.modos.negociacao,
       aCombinar: !!anuncio.modos.aCombinar,
     },

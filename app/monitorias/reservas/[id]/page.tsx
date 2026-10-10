@@ -35,9 +35,19 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const [modal, setModal] = useState<Modal>(null)
   const fimDoChat = useRef<HTMLDivElement>(null)
 
+  // Recarga cheia preserva o que a pessoa já abriu com "Ver mensagens
+  // anteriores": a resposta traz só as 150 últimas, então as mais antigas que
+  // já estavam na tela continuam lá (mescladas por id), sem a rolagem pular.
   const carregar = useCallback(() => {
     api<DetalheReserva>(`/api/monitorias/reservas/${params.id}`)
-      .then((x) => setD(x))
+      .then((x) =>
+        setD((atual) => {
+          if (!atual || !x.mensagens.length) return x
+          const primeira = new Date(x.mensagens[0].createdAt).getTime()
+          const antigas = atual.mensagens.filter((m) => new Date(m.createdAt).getTime() < primeira)
+          return antigas.length ? { ...x, mensagens: [...antigas, ...x.mensagens], maisAntigas: atual.maisAntigas } : x
+        }),
+      )
       .catch((e) => setErro(e.message))
   }, [params.id])
 
@@ -103,10 +113,15 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
     if (!texto.trim()) return
     setEnviando(true)
     try {
-      const r = await api<{ aviso: string | null }>(`/api/monitorias/reservas/${params.id}/mensagens`, { method: 'POST', json: { texto } })
+      const r = await api<{ id: string; texto: string; createdAt: string; aviso: string | null }>(`/api/monitorias/reservas/${params.id}/mensagens`, { method: 'POST', json: { texto } })
       setTexto('')
       setAviso(r.aviso || '')
-      carregar()
+      // Entra direto na lista (sem recarregar a sala inteira); o polling traz o resto.
+      setD((atual) =>
+        atual && !atual.mensagens.some((m) => m.id === r.id)
+          ? { ...atual, mensagens: [...atual.mensagens, { id: r.id, autor: 'eu', tipo: 'texto', texto: r.texto, propostaId: null, createdAt: r.createdAt }] }
+          : atual,
+      )
     } catch (e) {
       setAviso(e instanceof Error ? e.message : 'Erro ao enviar.')
     } finally {
@@ -128,10 +143,11 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const outroNome = ehMonitor ? (d.assentos[0]?.alunoNome || 'Aluno') : d.monitor?.nome || 'Monitor'
   const etapaAtual = ETAPAS_LINHA_DO_TEMPO.findIndex((e) => e.status.includes(r.status))
   const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'recusada', 'reembolsada'].includes(r.status)
-  const propostaPendente = r.status === 'em_negociacao' && p && (ehMonitor ? !r.aceites.tutor : !r.aceites.aluno)
+  const propostaPendente = !d.somenteLeitura && r.status === 'em_negociacao' && p && (ehMonitor ? !r.aceites.tutor : !r.aceites.aluno)
   const assento = d.meuAssento
   const precisaCheckout = !ehMonitor && assento && ['aguardando_assinatura', 'aguardando_pagamento'].includes(assento.status) && ['aguardando_assinaturas', 'aguardando_pagamento'].includes(r.status)
-  const podeCancelar = !encerrada && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento', 'confirmada'].includes(r.status)
+  const somenteLeitura = d.somenteLeitura
+  const podeCancelar = !somenteLeitura && !encerrada && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento', 'confirmada'].includes(r.status)
 
   return (
     <PageScaffold wide>
@@ -233,7 +249,12 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
             </motion.div>
           )}
 
-          {!encerrada && (
+          {somenteLeitura && (
+            <p className="border-t border-border p-3 text-center text-xs text-muted-foreground">
+              Você saiu desta monitoria. O histórico fica aqui para consulta (contatos pessoais aparecem ocultos).
+            </p>
+          )}
+          {!encerrada && !somenteLeitura && (
             <div className="border-t border-border p-3">
               {aviso && <p className="mb-2 rounded-lg bg-amber-500/10 px-3 py-1.5 text-xs text-amber-800 dark:text-amber-300">{aviso}</p>}
               <div className="flex items-end gap-2">
@@ -559,7 +580,21 @@ function Convite({ codigo }: { codigo: string }) {
       <p className="flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4" /> Link de convite do grupo</p>
       <div className="mt-2 flex gap-2">
         <input readOnly value={link} className="h-9 min-w-0 flex-1 rounded-lg border border-amber-300 bg-white px-2 text-xs dark:bg-background" onFocus={(e) => e.target.select()} />
-        <Button size="sm" onClick={() => { navigator.clipboard.writeText(link); setCopiado(true); setTimeout(() => setCopiado(false), 2000) }}>{copiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}</Button>
+        <Button
+          size="sm"
+          aria-label={copiado ? 'Link copiado' : 'Copiar link de convite'}
+          onClick={() => {
+            navigator.clipboard
+              .writeText(link)
+              .then(() => {
+                setCopiado(true)
+                setTimeout(() => setCopiado(false), 2000)
+              })
+              .catch(() => window.prompt('Copie o link do convite:', link))
+          }}
+        >
+          {copiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+        </Button>
       </div>
     </div>
   )
@@ -568,7 +603,7 @@ function Convite({ codigo }: { codigo: string }) {
 function Documentos({ d }: { d: DetalheReserva }) {
   const itens: Array<{ href: string; rotulo: string; icone: typeof FileText }> = []
   if (d.meuContrato) itens.push({ href: `/api/monitorias/documentos/contrato/${d.meuContrato.id}`, rotulo: `Contrato nº ${d.meuContrato.numero}`, icone: FileText })
-  if (d.meuAssento && d.meuAssento.paymentOrderId && d.meuAssento.status !== 'aguardando_pagamento') {
+  if (d.meuAssento && d.meuAssento.paymentOrderId && d.meuAssento.pagoEm) {
     itens.push({ href: `/api/monitorias/documentos/comprovante/${d.meuAssento.id}`, rotulo: 'Comprovante de pagamento', icone: Receipt })
   }
   if (d.papel === 'monitor') {
@@ -604,6 +639,7 @@ function Materiais({ d, onAdicionar, onRemover }: { d: DetalheReserva; onAdicion
   const [titulo, setTitulo] = useState('')
   const [url, setUrl] = useState('')
   const [erro, setErro] = useState('')
+  const [removendo, setRemovendo] = useState<string | null>(null)
   const ehMonitor = d.papel === 'monitor'
   const podeEnviar = ehMonitor && ['aguardando_pagamento', 'confirmada', 'realizada', 'em_disputa', 'concluida'].includes(d.reserva.status)
   if (!d.materiais.length && !podeEnviar) return null
@@ -623,8 +659,20 @@ function Materiais({ d, onAdicionar, onRemover }: { d: DetalheReserva; onAdicion
                   </span>
                 </span>
               </LinkExternoSeguro>
-              {ehMonitor && m.exclusivo && (
-                <button type="button" aria-label="Remover material" className="ml-auto rounded p-1 text-muted-foreground hover:text-rose-600" onClick={() => onRemover(m.url).catch(() => {})}>
+              {ehMonitor && m.exclusivo && d.reserva.inicio && new Date(d.reserva.inicio).getTime() > Date.now() && (
+                <button
+                  type="button"
+                  aria-label={`Remover material ${m.titulo}`}
+                  disabled={removendo === m.url}
+                  className="ml-auto rounded p-1 text-muted-foreground hover:text-rose-600 disabled:opacity-40"
+                  onClick={() => {
+                    setRemovendo(m.url)
+                    setErro('')
+                    onRemover(m.url)
+                      .catch((e) => setErro(e instanceof Error ? e.message : 'Não foi possível remover.'))
+                      .finally(() => setRemovendo(null))
+                  }}
+                >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               )}
@@ -663,6 +711,7 @@ function Materiais({ d, onAdicionar, onRemover }: { d: DetalheReserva; onAdicion
           </button>
         )
       )}
+      {erro && !abrir && <p className="mt-1 text-xs text-rose-600">{erro}</p>}
       <p className="mt-2 text-[10px] leading-snug text-muted-foreground">Links externos indicados pelo monitor. A plataforma não hospeda nem se responsabiliza pelo conteúdo.</p>
     </div>
   )

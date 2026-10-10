@@ -67,11 +67,10 @@ function FotoEPerfil({ dados, recarregar }: { dados: DadosPainel; recarregar: ()
     setEnviandoFoto(true)
     setMsg(null)
     try {
-      // O caminho precisa estar na pasta da própria conta — o servidor confere.
-      const me = await fetch('/api/auth/me', { cache: 'no-store' }).then((r) => r.json())
-      const userId = me?.user?._id || me?.user?.id
+      // O caminho precisa estar na pasta da própria conta — o servidor diz qual e confere.
+      const { pasta } = await api<{ pasta: string }>('/api/monitorias/tutor/foto')
       const ext = file.type.split('/')[1]
-      const blob = await upload(`monitorias/fotos/${userId}/${Date.now()}.${ext}`, file, {
+      const blob = await upload(`${pasta}${Date.now()}.${ext}`, file, {
         access: 'public',
         contentType: file.type,
         handleUploadUrl: '/api/monitorias/tutor/foto/upload',

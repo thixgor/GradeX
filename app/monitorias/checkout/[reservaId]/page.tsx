@@ -50,7 +50,18 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
   // acompanhamento, mais leve, em <PagamentoPix>): nada de dois relógios.
   const k = d?.meuContrato
   const esperando = !!d && passo === 1 && !!k && !k.falta.includes('contratante') && k.falta.includes('contratado')
-  useIntervaloVisivel(carregar, esperando ? 8000 : null)
+  // Esperando o monitor assinar: pergunta só a VERSÃO da reserva (rota leve,
+  // a mesma do chat) e recarrega tudo apenas quando ela muda.
+  const [desde] = useState(() => new Date().toISOString())
+  const versaoVista = d?.versao
+  const espiar = useCallback(() => {
+    api<{ versao: number }>(`/api/monitorias/reservas/${params.reservaId}/mensagens?depois=${encodeURIComponent(desde)}`)
+      .then((x) => {
+        if (x.versao !== versaoVista) carregar()
+      })
+      .catch(() => {})
+  }, [params.reservaId, desde, versaoVista, carregar])
+  useIntervaloVisivel(espiar, esperando ? 8000 : null)
 
   if (erro) return <PageScaffold><CaixaErro mensagem={erro} className="mx-auto mt-10 max-w-md" /></PageScaffold>
   if (!d) return <PageScaffold><Esqueleto className="mx-auto h-[520px] max-w-2xl rounded-3xl" /></PageScaffold>
@@ -259,7 +270,8 @@ function HorarioGuardado({ ate, slug }: { ate: string; slug: string | null }) {
   const [agora, setAgora] = useState(() => Date.now())
   const ms = new Date(ate).getTime() - agora
   const perto = ms <= 60 * 60_000
-  useIntervaloVisivel(() => setAgora(Date.now()), perto ? 1000 : null)
+  // Longe do prazo, confere a cada minuto (para a contagem aparecer quando faltar 1 h).
+  useIntervaloVisivel(() => setAgora(Date.now()), perto ? 1000 : 60_000)
   if (!perto) return null
   if (ms <= 0) {
     return (

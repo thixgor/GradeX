@@ -1,8 +1,10 @@
 import { NextRequest } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { idDe, naoEncontrado, obterColecoes } from '@/lib/monitorias/db'
-import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
-import { carregarReserva, papelNaReserva } from '@/lib/monitorias/reservas'
+import { rotaAutenticada } from '@/lib/monitorias/rota'
+import { acessoDeLeitura, carregarReserva } from '@/lib/monitorias/reservas'
+import { mascararContato } from '@/lib/monitorias/contato'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { quemFaltaAssinar } from '@/lib/monitorias/contratos'
 import { podeReportar } from '@/lib/monitorias/politica'
 import { negociavel } from '@/lib/monitorias/estado'
@@ -15,8 +17,10 @@ const VE_LINK = ['confirmada', 'realizada', 'em_disputa', 'concluida']
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: { limit: 120, windowMs: 60_000 } }, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
-    const papel = await papelNaReserva(reserva, sessao.userId)
-    if (!papel && sessao.role !== 'admin') return naoEncontrado()
+    const acesso = await acessoDeLeitura(reserva, sessao.userId)
+    if (!acesso && sessao.role !== 'admin') return naoEncontrado()
+    const papel = acesso?.papel || null
+    const ver = (texto: string) => (acesso?.mascarar ? mascararContato(texto).texto : texto)
     const c = await obterColecoes()
     const id = idDe(reserva)
     const [assentos, contratos, anuncio, tutor, mensagens] = await Promise.all([
@@ -45,8 +49,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       ? contratos.filter((k) => k.status === 'aguardando_assinaturas' && quemFaltaAssinar(k).includes('contratado'))
       : []
 
-    return ok({
+    return jsonComprimido(request, {
       papel: papel || 'admin',
+      /** Saiu da reserva (expirou, cancelou, foi reembolsado): vê o histórico, não age nem escreve. */
+      somenteLeitura: !!acesso?.somenteLeitura,
       versao: reserva.versao,
       maisAntigas: mensagens.length === 150,
       reserva: {
@@ -60,7 +66,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         precoReferencia: anuncio?.preco || null,
         status: reserva.status,
         origem: reserva.origem,
-        proposta: reserva.proposta || null,
+        // Sem o id da conta de quem propôs: só o lado (monitor/aluno).
+        proposta: reserva.proposta
+          ? { ...reserva.proposta, autorId: undefined, deMonitor: reserva.proposta.autorId === reserva.tutorUserId, observacao: reserva.proposta.observacao ? ver(reserva.proposta.observacao) : undefined }
+          : null,
         aceites: reserva.aceites,
         inicio: reserva.inicio || null,
         fim: reserva.fim || null,
@@ -68,10 +77,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         linkReuniao: verLink ? reserva.linkReuniao || null : null,
         temLink: !!reserva.linkReuniao,
         codigoConvite: reserva.codigoConvite && (ehMonitor || papel === 'organizador') ? reserva.codigoConvite : null,
-        motivoCancelamento: reserva.motivoCancelamento || null,
+        motivoCancelamento: reserva.motivoCancelamento ? ver(reserva.motivoCancelamento) : null,
         disputa: reserva.disputa ? { em: reserva.disputa.em, motivo: reserva.disputa.motivo, decisao: reserva.disputa.decisao || null } : null,
         negociavel: negociavel(reserva.status) && reserva.origem !== 'direto',
-        podeReportar: !ehMonitor && pagouOuGratis && ['confirmada', 'realizada'].includes(reserva.status) && podeReportar(reserva.fim, new Date()),
+        podeReportar: !ehMonitor && pagouOuGratis && ['confirmada', 'realizada'].includes(reserva.status) && podeReportar(reserva.fim, new Date(), reserva.inicio),
         createdAt: reserva.createdAt,
       },
       monitor: tutor ? { nome: tutor.nome, fotoUrl: tutor.fotoUrl || null, titulo: tutor.titulo } : null,
@@ -110,10 +119,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         id: idDe(m),
         autor: m.autorId === 'sistema' ? 'sistema' : m.autorId === sessao.userId ? 'eu' : m.autorId === reserva.tutorUserId ? 'monitor' : 'aluno',
         tipo: m.tipo,
-        texto: m.texto,
+        texto: ver(m.texto),
         propostaId: m.propostaId || null,
         createdAt: m.createdAt,
       })),
-    })
+    }, { headers: { 'Cache-Control': 'private, no-store' } })
   })
 }

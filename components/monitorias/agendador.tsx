@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CalendarDays, Clock, Loader2, Minus, Plus, Users } from 'lucide-react'
@@ -48,7 +48,15 @@ export function Agendador({
   const [enviando, setEnviando] = useState(false)
   const [erro, setErro] = useState('')
 
+  // A 1ª resposta já traz os horários da duração padrão: guardar essa duração
+  // não deve disparar uma 2ª requisição idêntica.
+  const duracaoDaResposta = useRef<number | null>(null)
+
   useEffect(() => {
+    if (duracao !== null && duracao === duracaoDaResposta.current) {
+      duracaoDaResposta.current = null
+      return
+    }
     let vivo = true
     setCarregando(true)
     setErro('')
@@ -59,7 +67,10 @@ export function Agendador({
       .then((r) => {
         if (!vivo) return
         setDuracoes(r.duracoes)
-        if (!duracao) setDuracao(r.duracao)
+        if (!duracao) {
+          duracaoDaResposta.current = r.duracao
+          setDuracao(r.duracao)
+        }
         setHorarios(r.horarios)
         setEscolhido(null)
         setDia((atual) => (atual && r.horarios.some((h) => h.dia === atual) ? atual : r.horarios[0]?.dia || null))
