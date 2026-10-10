@@ -74,6 +74,47 @@ export function validarJanelas(janelas: JanelaSemanal[]): string | null {
   return null
 }
 
+// ─── Grade do editor de agenda (células de 30 min) ──────────────────────
+
+/** Chave de uma célula da grade: dia da semana + minuto de início ("1:1140" = seg 19:00). */
+export function chaveCelula(dia: number, minuto: number): string {
+  return `${dia}:${minuto}`
+}
+
+/** Janelas semanais → células de 30 min marcadas. */
+export function janelasParaCelulas(janelas: JanelaSemanal[]): Set<string> {
+  const celulas = new Set<string>()
+  for (const j of janelas) {
+    const ini = hhmmParaMinutos(j.inicio)
+    const fim = hhmmParaMinutos(j.fim)
+    if (!Number.isFinite(ini) || !Number.isFinite(fim)) continue
+    for (let m = Math.floor(ini / BLOCO_MIN) * BLOCO_MIN; m < fim; m += BLOCO_MIN) celulas.add(chaveCelula(j.dia, m))
+  }
+  return celulas
+}
+
+/** Células marcadas → janelas contínuas, ordenadas (o formato que o servidor valida). */
+export function celulasParaJanelas(celulas: Set<string>): JanelaSemanal[] {
+  const janelas: JanelaSemanal[] = []
+  for (let dia = 0; dia < 7; dia++) {
+    let inicio: number | null = null
+    for (let m = 0; m <= 24 * 60; m += BLOCO_MIN) {
+      const marcada = m < 24 * 60 && celulas.has(chaveCelula(dia, m))
+      if (marcada && inicio === null) inicio = m
+      if (!marcada && inicio !== null) {
+        janelas.push({ dia, inicio: minutosParaHhmm(inicio), fim: minutosParaHhmm(m) })
+        inicio = null
+      }
+    }
+  }
+  return janelas
+}
+
+/** Horas por semana disponíveis (para o resumo do editor). */
+export function horasPorSemana(celulas: Set<string>): number {
+  return (celulas.size * BLOCO_MIN) / 60
+}
+
 /**
  * O intervalo [inicio, inicio+duracao) cabe numa janela do monitor naquele dia
  * de Brasília (e o dia não está bloqueado)? Aula atravessando a meia-noite não

@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Search, ShieldCheck, FileSignature, Receipt, Sparkles, GraduationCap, Gift, Users, CalendarCheck, ArrowRight, LayoutDashboard, SlidersHorizontal, Star, MousePointerClick, MessagesSquare, BadgeCheck } from 'lucide-react'
+import { ArrowRight, CalendarCheck, FileCheck2, Gift, GraduationCap, Coins, RotateCcw, Search, ShieldCheck, Users, Wallet } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { CartaoAnuncio, type CardAnuncio } from '@/components/monitorias/cartao-anuncio'
-import { Esqueleto, api } from '@/components/monitorias/base'
+import { Esqueleto, Vazio, api } from '@/components/monitorias/base'
 import { SimuladorGanhos } from '@/components/monitorias/simulador-ganhos'
 import { cn } from '@/lib/utils'
 
@@ -20,11 +20,7 @@ interface RespostaVitrine {
   numeros?: { monitores: number; aulas: number; avaliacoes: number; nota: number } | null
 }
 
-const PASSOS = [
-  { icone: MousePointerClick, titulo: 'Escolha seu monitor', texto: 'Veja vídeo, história, avaliações e tire dúvidas antes de decidir.' },
-  { icone: MessagesSquare, titulo: 'Agende ou combine', texto: 'Pegue um horário livre na agenda ou negocie dia, duração e valor no chat.' },
-  { icone: BadgeCheck, titulo: 'Aprenda com garantia', texto: 'Contrato assinado, PIX protegido e o monitor só recebe depois da aula.' },
-]
+type Publico = 'aprender' | 'ensinar'
 
 const FILTROS = [
   { chave: 'gratis', rotulo: 'Aula grátis', icone: Gift },
@@ -32,14 +28,21 @@ const FILTROS = [
   { chave: 'direto', rotulo: 'Agenda online', icone: CalendarCheck },
 ] as const
 
-const GARANTIAS = [
-  { icone: ShieldCheck, titulo: 'Pagamento protegido', texto: 'O monitor só recebe 48h depois da aula. Desistiu em 7 dias ou ele faltou? 100% de volta.' },
-  { icone: FileSignature, titulo: 'Contrato assinado', texto: 'Tudo combinado vira contrato com assinatura eletrônica e PDF.' },
-  { icone: Receipt, titulo: 'Comprovante formal', texto: 'PIX automático pelo Mercado Pago e comprovante na hora.' },
+const COMO_FUNCIONA = [
+  { titulo: 'Escolha', texto: 'Veja o vídeo, a história e as avaliações. Pergunte antes de contratar.' },
+  { titulo: 'Agende', texto: 'Pegue um horário livre na agenda ou combine dia e valor no chat.' },
+  { titulo: 'Aprenda', texto: 'Contrato assinado e PIX protegido. O monitor só recebe depois da aula.' },
+]
+
+const PARA_MONITOR = [
+  { icone: Coins, titulo: 'Você define o preço', texto: 'Por hora ou por aula, com desconto para grupos. Anunciar é grátis.' },
+  { icone: CalendarCheck, titulo: 'Sua agenda, suas regras', texto: 'Marque os horários livres. O aluno agenda e paga sozinho.' },
+  { icone: Wallet, titulo: 'Recebe sem cobrar ninguém', texto: 'PIX na sua conta 48h depois da aula. Contrato e comprovante automáticos.' },
 ]
 
 export default function VitrineMonitorias() {
   const reduzir = useReducedMotion()
+  const [publico, setPublico] = useState<Publico>('aprender')
   const [busca, setBusca] = useState('')
   const [buscaAplicada, setBuscaAplicada] = useState('')
   const [materia, setMateria] = useState('')
@@ -49,6 +52,21 @@ export default function VitrineMonitorias() {
   const [dados, setDados] = useState<RespostaVitrine | null>(null)
   const [carregando, setCarregando] = useState(true)
   const [numeros, setNumeros] = useState<RespostaVitrine['numeros']>(null)
+  const [destaques, setDestaques] = useState<CardAnuncio[]>([])
+
+  // Lembra a escolha (aprender/ensinar) entre visitas. Só conveniência.
+  useEffect(() => {
+    try {
+      const salvo = localStorage.getItem('monitorias-publico')
+      if (salvo === 'ensinar' || salvo === 'aprender') setPublico(salvo)
+    } catch {}
+  }, [])
+  function escolher(p: Publico) {
+    setPublico(p)
+    try {
+      localStorage.setItem('monitorias-publico', p)
+    } catch {}
+  }
 
   // Busca com pequena espera: não dispara uma requisição por tecla.
   useEffect(() => {
@@ -75,6 +93,8 @@ export default function VitrineMonitorias() {
       const r = await api<RespostaVitrine>(url)
       setDados(r)
       if (r.numeros) setNumeros(r.numeros)
+      // Os destaques do herói são os mais bem avaliados da primeira carga.
+      setDestaques((d) => (d.length ? d : [...r.itens].sort((a, b) => b.stats.nota * 10 + b.stats.reservas - (a.stats.nota * 10 + a.stats.reservas)).slice(0, 2)))
     } catch {
       setDados({ itens: [], total: 0, pagina: 1, paginas: 0, materias: [] })
     } finally {
@@ -86,208 +106,315 @@ export default function VitrineMonitorias() {
     carregar()
   }, [carregar])
 
+  const filtrando = !!(buscaAplicada || materia || Object.values(filtros).some(Boolean))
+
+  function irParaLista() {
+    document.getElementById('lista-monitorias')?.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'start' })
+  }
+
   return (
     <PageScaffold wide>
-      {/* Herói */}
-      <section className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-700 via-teal-700 to-emerald-900 px-6 py-10 text-white shadow-xl sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-24 left-10 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" />
-        <motion.div initial={reduzir ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5" /> Monitorias
-          </span>
-          <h1 className="mt-4 font-heading text-3xl font-bold leading-tight sm:text-5xl">
-            Aprenda com quem já <span className="text-amber-300">dominou</span> a matéria.
-          </h1>
-          <p className="mt-3 max-w-xl text-sm text-white/80 sm:text-base">
-            Aquela matéria que travou seu semestre fica clara em uma hora com quem já passou por ela. Aulas particulares ou em grupo (mais baratas), na agenda ou combinadas no chat — com PIX protegido.
-          </p>
-          {numeros && (numeros.monitores >= 3 || numeros.aulas >= 10) && (
-            <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              {numeros.monitores >= 3 && <span><strong className="font-heading text-2xl">{numeros.monitores}</strong> <span className="text-white/75">monitores</span></span>}
-              {numeros.aulas >= 10 && <span><strong className="font-heading text-2xl">{numeros.aulas}</strong> <span className="text-white/75">aulas dadas</span></span>}
-              {numeros.avaliacoes >= 5 && (
-                <span className="inline-flex items-center gap-1"><Star className="h-5 w-5 fill-amber-300 text-amber-300" /><strong className="font-heading text-2xl">{numeros.nota.toFixed(1)}</strong> <span className="text-white/75">de nota média</span></span>
-              )}
-            </div>
-          )}
-          <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-emerald-900/50" />
-              <input
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                placeholder="Fisiologia, ECG, farmacologia..."
-                className="h-12 w-full rounded-xl border-0 bg-white pl-10 pr-4 text-sm text-emerald-950 shadow-lg outline-none ring-amber-300 placeholder:text-emerald-900/40 focus:ring-2"
-                aria-label="Buscar monitoria"
-              />
-            </div>
-            <Link href="/monitorias/painel">
-              <Button size="lg" className="h-12 w-full rounded-xl bg-amber-400 font-semibold text-amber-950 hover:bg-amber-300 sm:w-auto">
-                <GraduationCap className="mr-2 h-4 w-4" /> Quero ser monitor
-              </Button>
-            </Link>
+      {/* ── Herói: uma chave para os dois públicos ─────────────────────── */}
+      <section className="grid items-center gap-10 pb-12 pt-2 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-14 lg:pb-16 lg:pt-6">
+        <div>
+          <div className="inline-flex rounded-xl bg-muted/70 p-1" role="tablist" aria-label="O que você procura">
+            {(['aprender', 'ensinar'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                role="tab"
+                aria-selected={publico === p}
+                onClick={() => escolher(p)}
+                className={cn('relative rounded-lg px-4 py-1.5 text-sm font-medium transition-colors', publico === p ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}
+              >
+                {publico === p && <motion.span layoutId="publico-heroi" className="absolute inset-0 rounded-lg bg-card shadow-sm" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+                <span className="relative">{p === 'aprender' ? 'Quero aprender' : 'Quero ensinar'}</span>
+              </button>
+            ))}
           </div>
-        </motion.div>
-        <div className="relative mt-8 grid gap-3 sm:grid-cols-3">
-          {GARANTIAS.map((g, i) => (
+
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={g.titulo}
-              initial={reduzir ? false : { opacity: 0, y: 16 }}
+              key={publico}
+              initial={reduzir ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + i * 0.08 }}
-              className="rounded-2xl bg-white/10 p-4 backdrop-blur"
+              exit={reduzir ? undefined : { opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             >
-              <g.icone className="h-5 w-5 text-amber-300" />
-              <p className="mt-2 text-sm font-semibold">{g.titulo}</p>
-              <p className="mt-0.5 text-xs text-white/75">{g.texto}</p>
+              {publico === 'aprender' ? (
+                <>
+                  <h1 className="mt-6 font-heading text-[2.4rem] font-semibold leading-[1.05] text-foreground sm:text-5xl lg:text-[3.4rem]">
+                    Aulas com quem já passou pela mesma prova.
+                  </h1>
+                  <p className="mt-4 max-w-[46ch] text-[17px] leading-relaxed text-muted-foreground">
+                    Particular ou em grupo, com monitores da comunidade. Pagamento por PIX com devolução garantida.
+                  </p>
+                  <form
+                    className="mt-7 flex max-w-xl items-center gap-2 rounded-2xl border border-border bg-card p-1.5 shadow-[0_8px_30px_-12px_hsl(var(--primary)/0.25)] focus-within:border-primary/50"
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      setBuscaAplicada(busca.trim())
+                      irParaLista()
+                    }}
+                  >
+                    <Search className="ml-3 h-5 w-5 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                    <label htmlFor="busca-monitoria" className="sr-only">Buscar matéria ou assunto</label>
+                    <input
+                      id="busca-monitoria"
+                      value={busca}
+                      onChange={(e) => setBusca(e.target.value)}
+                      placeholder="Matéria ou assunto, ex.: ECG"
+                      className="h-11 min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-muted-foreground/70"
+                    />
+                    <Button type="submit" className="h-11 rounded-xl px-5">Buscar</Button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <h1 className="mt-6 font-heading text-[2.4rem] font-semibold leading-[1.05] text-foreground sm:text-5xl lg:text-[3.4rem]">
+                    Ganhe dinheiro ensinando o que você domina.
+                  </h1>
+                  <p className="mt-4 max-w-[46ch] text-[17px] leading-relaxed text-muted-foreground">
+                    Você define preço e horários. A plataforma cuida do pagamento, do contrato e da agenda.
+                  </p>
+                  <div className="mt-7 flex flex-wrap items-center gap-3">
+                    <Link href="/monitorias/painel">
+                      <Button className="h-12 rounded-xl px-6 text-base">
+                        Começar a ensinar <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <a href="#para-monitores" className="rounded-xl px-3 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground">
+                      Como funciona para o monitor
+                    </a>
+                  </div>
+                </>
+              )}
             </motion.div>
-          ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Visual do herói: componentes reais, não figuras */}
+        <div className="relative">
+          <AnimatePresence mode="wait" initial={false}>
+            {publico === 'aprender' ? (
+              <motion.div
+                key="destaques"
+                initial={reduzir ? false : { opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={reduzir ? undefined : { opacity: 0, x: -12 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
+              >
+                {destaques.length
+                  ? destaques.map((a, i) => (
+                      <div key={a.id} className={cn(i === 1 && 'xl:mt-10')}>
+                        <CartaoAnuncio anuncio={a} indice={i} />
+                      </div>
+                    ))
+                  : [0, 1].map((i) => <Esqueleto key={i} className={cn('h-72', i === 1 && 'xl:mt-10')} />)}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="simulador"
+                initial={reduzir ? false : { opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={reduzir ? undefined : { opacity: 0, x: -12 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <SimuladorGanhos compacto />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
 
-      {/* Como funciona — some quando a pessoa já está buscando */}
-      {!buscaAplicada && !materia && pagina === 1 && (
-        <section className="mb-8 grid gap-3 sm:grid-cols-3">
-          {PASSOS.map((p, i) => (
-            <motion.div
-              key={p.titulo}
-              initial={reduzir ? false : { opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="relative rounded-2xl border border-border bg-card p-4"
+      {/* ── Garantia em uma linha ────────────────────────────────────────── */}
+      <section className="mb-14 grid gap-4 border-y border-border py-5 sm:grid-cols-3" aria-label="Garantias">
+        {[
+          { icone: ShieldCheck, texto: 'O monitor só recebe 48h depois da aula' },
+          { icone: RotateCcw, texto: 'Desistiu em até 7 dias? 100% de volta' },
+          { icone: FileCheck2, texto: 'Contrato assinado e comprovante em PDF' },
+        ].map((g) => (
+          <p key={g.texto} className="flex items-center gap-3 text-sm text-foreground">
+            <g.icone className="h-5 w-5 shrink-0 text-primary" strokeWidth={1.75} /> {g.texto}
+          </p>
+        ))}
+      </section>
+
+      {publico === 'ensinar' && <ParaMonitores comSimulador={false} />}
+
+      {/* ── Lista ───────────────────────────────────────────────────────── */}
+      <section id="lista-monitorias" className="scroll-mt-24">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-heading text-2xl font-semibold">{publico === 'ensinar' ? 'Quem já ensina por aqui' : 'Monitorias disponíveis'}</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {dados ? `${dados.total} ${dados.total === 1 ? 'monitoria' : 'monitorias'}` : 'Carregando'}
+              {numeros && numeros.avaliacoes >= 5 ? `, nota média ${numeros.nota.toFixed(1)}` : ''}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            {publico === 'ensinar' && (
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input value={busca} onChange={(e) => setBusca(e.target.value)} placeholder="Buscar" aria-label="Buscar monitoria" className="h-9 w-44 rounded-xl border border-border bg-card pl-9 pr-3 text-sm outline-none focus:border-primary/50" />
+              </div>
+            )}
+            <label htmlFor="ordem-vitrine" className="sr-only">Ordenar</label>
+            <select
+              id="ordem-vitrine"
+              value={ordem}
+              onChange={(e) => {
+                setOrdem(e.target.value)
+                setPagina(1)
+              }}
+              className="h-9 rounded-xl border border-border bg-card px-3 text-sm outline-none focus:border-primary/50"
             >
-              <span className="absolute right-4 top-3 font-heading text-3xl font-bold text-primary/15">{i + 1}</span>
-              <p.icone className="h-5 w-5 text-primary" />
-              <p className="mt-2 text-sm font-semibold">{p.titulo}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">{p.texto}</p>
-            </motion.div>
+              <option value="recentes">Mais recentes</option>
+              <option value="nota">Melhor avaliadas</option>
+              <option value="preco">Menor preço</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="-mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0">
+          <Chip ativo={!materia} onClick={() => { setMateria(''); setPagina(1) }}>Todas</Chip>
+          {dados?.materias.map((m) => (
+            <Chip key={m} ativo={m === materia} onClick={() => { setMateria(m === materia ? '' : m); setPagina(1) }}>{m}</Chip>
           ))}
+          <span className="mx-1 w-px shrink-0 self-stretch bg-border" aria-hidden />
+          {FILTROS.map((f) => (
+            <Chip key={f.chave} ativo={!!filtros[f.chave]} onClick={() => { setFiltros((x) => ({ ...x, [f.chave]: !x[f.chave] })); setPagina(1) }}>
+              <f.icone className="h-3.5 w-3.5" strokeWidth={1.75} /> {f.rotulo}
+            </Chip>
+          ))}
+        </div>
+
+        {carregando && !dados ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {Array.from({ length: 6 }).map((_, i) => <Esqueleto key={i} className="h-72" />)}
+          </div>
+        ) : dados && dados.itens.length ? (
+          <>
+            <div className={cn('grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4', carregando && 'opacity-60 transition-opacity')}>
+              <AnimatePresence>
+                {dados.itens.map((a, i) => <CartaoAnuncio key={a.id} anuncio={a} indice={i} />)}
+              </AnimatePresence>
+            </div>
+            {dados.paginas > 1 && (
+              <div className="mt-8 flex items-center justify-center gap-3">
+                <Button variant="outline" className="rounded-xl" disabled={pagina <= 1} onClick={() => setPagina((p) => p - 1)}>Anterior</Button>
+                <span className="text-sm tabular-nums text-muted-foreground">{pagina} de {dados.paginas}</span>
+                <Button variant="outline" className="rounded-xl" disabled={pagina >= dados.paginas} onClick={() => setPagina((p) => p + 1)}>Próxima</Button>
+              </div>
+            )}
+          </>
+        ) : (
+          <Vazio
+            icone={<GraduationCap className="h-5 w-5" />}
+            titulo={filtrando ? 'Nada com esses filtros' : 'Ainda não há monitorias por aqui'}
+            texto={filtrando ? 'Tente outra palavra ou tire algum filtro.' : 'Que tal ser a primeira pessoa a ensinar o que você domina?'}
+            acao={
+              filtrando ? (
+                <Button variant="outline" className="rounded-xl" onClick={() => { setBusca(''); setMateria(''); setFiltros({}) }}>Limpar filtros</Button>
+              ) : (
+                <Link href="/monitorias/painel"><Button className="rounded-xl">Anunciar minha monitoria</Button></Link>
+              )
+            }
+          />
+        )}
+      </section>
+
+      {/* ── Como funciona (aluno): linha do tempo ──────────────────────── */}
+      {!filtrando && publico === 'aprender' && (
+        <section className="mt-20">
+          <h2 className="font-heading text-2xl font-semibold">Como funciona para o aluno</h2>
+          <ol className="relative mt-8 grid gap-8 sm:grid-cols-3 sm:gap-6">
+            <span className="absolute left-[15px] top-4 hidden h-px w-[calc(100%-30px)] bg-border sm:block" aria-hidden />
+            {COMO_FUNCIONA.map((p, i) => (
+              <li key={p.titulo} className="relative flex gap-4 sm:block">
+                <span className="relative z-10 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary font-heading text-sm font-semibold text-primary-foreground">{i + 1}</span>
+                <div className="sm:mt-4">
+                  <p className="font-heading text-lg font-semibold">{p.titulo}</p>
+                  <p className="mt-1 max-w-[34ch] text-sm leading-relaxed text-muted-foreground">{p.texto}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </section>
       )}
 
-      {/* Atalhos */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          <Link href="/monitorias/minhas" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:border-primary/40">
-            <CalendarCheck className="h-3.5 w-3.5 text-primary" /> Minhas monitorias
-          </Link>
-          <Link href="/monitorias/painel" className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium hover:border-primary/40">
-            <LayoutDashboard className="h-3.5 w-3.5 text-primary" /> Painel do monitor
-          </Link>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-          <select
-            value={ordem}
-            onChange={(e) => {
-              setOrdem(e.target.value)
-              setPagina(1)
-            }}
-            className="rounded-lg border border-border bg-card px-2 py-1.5 text-xs"
-            aria-label="Ordenar"
-          >
-            <option value="recentes">Mais recentes</option>
-            <option value="nota">Melhor avaliados</option>
-            <option value="preco">Menor preço</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Filtros */}
-      <div className="mb-6 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-        <button
-          type="button"
-          onClick={() => {
-            setMateria('')
-            setPagina(1)
-          }}
-          className={cn('shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition', !materia ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:border-primary/40')}
-        >
-          Todas
-        </button>
-        {dados?.materias.map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => {
-              setMateria(m === materia ? '' : m)
-              setPagina(1)
-            }}
-            className={cn('shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition', m === materia ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card hover:border-primary/40')}
-          >
-            {m}
-          </button>
-        ))}
-        <span className="mx-1 w-px shrink-0 bg-border" />
-        {FILTROS.map((f) => (
-          <button
-            key={f.chave}
-            type="button"
-            onClick={() => {
-              setFiltros((x) => ({ ...x, [f.chave]: !x[f.chave] }))
-              setPagina(1)
-            }}
-            className={cn(
-              'inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition',
-              filtros[f.chave] ? 'border-amber-500 bg-amber-500/15 text-amber-800 dark:text-amber-300' : 'border-border bg-card hover:border-primary/40',
-            )}
-          >
-            <f.icone className="h-3.5 w-3.5" /> {f.rotulo}
-          </button>
-        ))}
-      </div>
-
-      {/* Grade */}
-      {carregando && !dados ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Esqueleto key={i} className="h-72 rounded-2xl" />
-          ))}
-        </div>
-      ) : dados && dados.itens.length ? (
-        <>
-          <p className="mb-3 text-xs text-muted-foreground">{dados.total} monitoria{dados.total === 1 ? '' : 's'} encontrada{dados.total === 1 ? '' : 's'}</p>
-          <motion.div layout className={cn('grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4', carregando && 'opacity-60')}>
-            <AnimatePresence>
-              {dados.itens.map((a, i) => (
-                <CartaoAnuncio key={a.id} anuncio={a} indice={i} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-          {dados.paginas > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-2">
-              <Button variant="outline" size="sm" disabled={pagina <= 1} onClick={() => setPagina((p) => p - 1)}>
-                Anterior
-              </Button>
-              <span className="text-xs text-muted-foreground">
-                {pagina} de {dados.paginas}
-              </span>
-              <Button variant="outline" size="sm" disabled={pagina >= dados.paginas} onClick={() => setPagina((p) => p + 1)}>
-                Próxima
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-3xl border border-dashed border-border bg-card px-6 py-16 text-center">
-          <GraduationCap className="mx-auto h-10 w-10 text-primary" />
-          <h2 className="mt-3 font-heading text-lg font-semibold">Nenhuma monitoria por aqui ainda</h2>
-          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-            {buscaAplicada || materia || Object.values(filtros).some(Boolean)
-              ? 'Tente outra busca ou tire alguns filtros.'
-              : 'Seja a primeira pessoa a ensinar o que você domina — e ganhe por isso.'}
-          </p>
-          <Link href="/monitorias/painel">
-            <Button className="mt-5">
-              Anunciar minha monitoria <ArrowRight className="ml-1.5 h-4 w-4" />
-            </Button>
-          </Link>
-        </motion.div>
-      )}
-
-      <SimuladorGanhos className="mt-12" />
+      {publico === 'aprender' && <ParaMonitores comSimulador />}
     </PageScaffold>
+  )
+}
+
+function Chip({ ativo, onClick, children }: { ativo: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={ativo}
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-medium transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        ativo ? 'bg-foreground text-background' : 'bg-card text-foreground ring-1 ring-border hover:ring-primary/40',
+      )}
+    >
+      {children}
+    </button>
+  )
+}
+
+const PASSOS_MONITOR = [
+  { titulo: 'Crie o anúncio', texto: 'Título, conteúdos, um vídeo curto e o preço. Passamos por uma revisão rápida.' },
+  { titulo: 'Abra a agenda', texto: 'Pinte seus horários livres. Quem quiser combinar fala com você no chat.' },
+  { titulo: 'Dê a aula e receba', texto: 'O aluno paga antes. O valor cai por PIX 48h depois da aula.' },
+]
+
+function ParaMonitores({ comSimulador }: { comSimulador: boolean }) {
+  return (
+    <section id="para-monitores" className={cn('scroll-mt-24 rounded-3xl bg-primary/10 p-6 sm:p-10 dark:bg-primary/[0.12]', comSimulador ? 'mt-20' : 'mb-16')}>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+        <div>
+          <h2 className="font-heading text-3xl font-semibold leading-tight sm:text-4xl">
+            {comSimulador ? 'Domina uma matéria? Isso vale dinheiro.' : 'Tudo o que você precisa para dar aula'}
+          </h2>
+          <p className="mt-3 max-w-[44ch] text-base leading-relaxed text-muted-foreground">Monte seu anúncio em 5 minutos. A gente cuida do resto.</p>
+          <ul className="mt-8 space-y-5">
+            {PARA_MONITOR.map((b) => (
+              <li key={b.titulo} className="flex gap-4">
+                <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card text-primary shadow-sm">
+                  <b.icone className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <div>
+                  <p className="font-semibold">{b.titulo}</p>
+                  <p className="mt-0.5 max-w-[42ch] text-sm leading-relaxed text-muted-foreground">{b.texto}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+          {comSimulador && (
+            <Link href="/monitorias/painel">
+              <Button className="mt-8 h-12 rounded-xl px-6 text-base">Começar a ensinar <ArrowRight className="ml-2 h-4 w-4" /></Button>
+            </Link>
+          )}
+        </div>
+        {comSimulador ? (
+          <SimuladorGanhos semBotao />
+        ) : (
+          <ol className="space-y-3">
+            {PASSOS_MONITOR.map((p, i) => (
+              <li key={p.titulo} className="flex gap-4 rounded-2xl bg-card p-5 shadow-sm">
+                <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary font-heading text-sm font-semibold text-primary-foreground">{i + 1}</span>
+                <div>
+                  <p className="font-heading text-lg font-semibold">{p.titulo}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.texto}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </section>
   )
 }

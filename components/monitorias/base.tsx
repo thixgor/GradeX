@@ -42,17 +42,17 @@ export async function api<T = any>(url: string, init: RequestInit & { json?: unk
 }
 
 const TONS: Record<string, string> = {
-  neutro: 'bg-muted text-muted-foreground border-border',
-  info: 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/25',
-  alerta: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25',
-  sucesso: 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25',
-  erro: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/25',
+  neutro: 'bg-muted text-muted-foreground border-transparent',
+  info: 'bg-sky-500/10 text-sky-800 dark:text-sky-300 border-transparent',
+  alerta: 'bg-amber-500/12 text-amber-800 dark:text-amber-300 border-transparent',
+  sucesso: 'bg-primary/10 text-primary border-transparent',
+  erro: 'bg-rose-500/10 text-rose-700 dark:text-rose-300 border-transparent',
 }
 
 export function SeloStatus({ status, className }: { status: StatusReserva; className?: string }) {
   const s = ROTULOS_STATUS[status] || { rotulo: status, tom: 'neutro' }
   return (
-    <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold', TONS[s.tom], className)}>
+    <span className={cn('inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2 py-0.5 text-xs font-semibold', TONS[s.tom], className)}>
       <span className="h-1.5 w-1.5 rounded-full bg-current" aria-hidden />
       {s.rotulo}
     </span>
@@ -60,12 +60,12 @@ export function SeloStatus({ status, className }: { status: StatusReserva; class
 }
 
 export function Selo({ children, tom = 'neutro', className }: { children: ReactNode; tom?: keyof typeof TONS; className?: string }) {
-  return <span className={cn('inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold', TONS[tom], className)}>{children}</span>
+  return <span className={cn('inline-flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5 text-xs font-semibold', TONS[tom], className)}>{children}</span>
 }
 
 export function Avatar({ nome, url, tamanho = 48, className }: { nome: string; url?: string | null; tamanho?: number; className?: string }) {
   // Foto que não carrega (apagada, rede ruim) volta para as iniciais em vez de
-  // mostrar o texto alternativo espremido dentro do círculo.
+  // mostrar o texto alternativo espremido dentro do quadro.
   const [falhou, setFalhou] = useState(false)
   const iniciais = (nome || '?')
     .split(/\s+/)
@@ -74,16 +74,51 @@ export function Avatar({ nome, url, tamanho = 48, className }: { nome: string; u
     .join('')
   return (
     <span
-      className={cn('relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 font-semibold text-white ring-2 ring-background', className)}
+      className={cn('relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-[32%] bg-primary/10 font-heading font-semibold text-primary', className)}
       style={{ width: tamanho, height: tamanho, fontSize: tamanho * 0.36 }}
     >
       {url && !falhou ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={url} alt={nome} className="h-full w-full object-cover" loading="lazy" referrerPolicy="no-referrer" onError={() => setFalhou(true)} />
+        <img src={url} alt={`Foto de ${nome}`} className="h-full w-full object-cover" loading="lazy" referrerPolicy="no-referrer" onError={() => setFalhou(true)} />
       ) : (
         iniciais
       )}
     </span>
+  )
+}
+
+/**
+ * Cabeçalho de página das monitorias: título, uma linha de apoio e ações.
+ * Sem rótulo em caixa-alta acima do título — o título basta.
+ */
+export function Cabecalho({ titulo, descricao, acoes, voltar, className }: { titulo: ReactNode; descricao?: ReactNode; acoes?: ReactNode; voltar?: { href: string; rotulo: string }; className?: string }) {
+  return (
+    <header className={cn('mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between', className)}>
+      <div className="min-w-0">
+        {voltar && (
+          <a href={voltar.href} className="mb-3 inline-flex items-center gap-1 rounded-lg text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <span aria-hidden>←</span> {voltar.rotulo}
+          </a>
+        )}
+        <h1 className="font-heading text-[1.75rem] font-semibold leading-tight text-foreground sm:text-[2rem]">{titulo}</h1>
+        {descricao && <p className="mt-1.5 max-w-[60ch] text-[15px] leading-relaxed text-muted-foreground">{descricao}</p>}
+      </div>
+      {acoes && <div className="flex shrink-0 flex-wrap items-center gap-2">{acoes}</div>}
+    </header>
+  )
+}
+
+/** Estado vazio composto: ícone, título curto, uma frase e a ação que resolve. */
+export function Vazio({ icone, titulo, texto, acao, className }: { icone?: ReactNode; titulo: string; texto?: ReactNode; acao?: ReactNode; className?: string }) {
+  return (
+    <div className={cn('flex flex-col items-start gap-3 rounded-2xl bg-muted/40 px-6 py-10 sm:items-center sm:text-center', className)}>
+      {icone && <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-card text-primary shadow-sm">{icone}</span>}
+      <div>
+        <p className="font-heading text-lg font-semibold">{titulo}</p>
+        {texto && <p className="mt-1 max-w-[46ch] text-sm leading-relaxed text-muted-foreground">{texto}</p>}
+      </div>
+      {acao}
+    </div>
   )
 }
 
@@ -104,31 +139,31 @@ export function Aparecer({ children, atraso = 0, className, ...resto }: HTMLMoti
 }
 
 export function Esqueleto({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-lg bg-muted/70', className)} />
+  return <div className={cn('animate-pulse rounded-2xl bg-muted/70', className)} />
 }
 
 export function CaixaErro({ mensagem, className }: { mensagem: string; className?: string }) {
   return (
-    <div role="alert" className={cn('rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-700 dark:text-rose-300', className)}>
+    <div role="alert" className={cn('rounded-xl bg-rose-500/10 px-3.5 py-2.5 text-sm text-rose-700 dark:text-rose-300', className)}>
       {mensagem}
     </div>
   )
 }
 
 export function CaixaAviso({ children, className, tom = 'alerta' }: { children: ReactNode; className?: string; tom?: 'alerta' | 'info' | 'sucesso' }) {
-  return <div className={cn('rounded-lg border px-3 py-2 text-sm', TONS[tom], className)}>{children}</div>
+  return <div className={cn('rounded-xl border px-3.5 py-2.5 text-sm leading-relaxed', TONS[tom], className)}>{children}</div>
 }
 
 /** Rótulo "Horário de Brasília" que acompanha todo horário na tela. */
 export function HoraBrasilia({ className }: { className?: string }) {
-  return <span className={cn('text-[11px] font-medium uppercase tracking-wide text-muted-foreground', className)}>horário de Brasília</span>
+  return <span className={cn('text-xs text-muted-foreground', className)}>horário de Brasília</span>
 }
 
-/** Confete leve em CSS — sem lib, sem canvas. */
+/** Confete leve: sem lib, sem canvas. */
 export function Confete() {
   const reduzir = useReducedMotion()
   if (reduzir) return null
-  const cores = ['#468152', '#f59e0b', '#0ea5e9', '#e11d48', '#a855f7', '#10b981']
+  const cores = ['#468152', '#7fb08a', '#2f5d39', '#c9dccd', '#5f9a6b', '#a8c9b0']
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
       {Array.from({ length: 28 }).map((_, i) => (
