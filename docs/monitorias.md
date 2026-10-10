@@ -40,6 +40,18 @@ Aula em grupo: o organizador recebe um link de convite; cada colega assina o
 próprio contrato e paga a sua parte. Se o grupo não pagar todo até o prazo,
 **todos são reembolsados** — ou o monitor confirma "só com quem pagou".
 
+Saídas do grupo (cada assento é independente — contrato, pagamento, repasse):
+- Quem sai é reembolsado pela política normal; o valor por pessoa de quem
+  fica **não muda** e os repasses dos outros não são tocados.
+- O organizador com colegas ativos sai só do próprio assento.
+- Se todos os que ficaram já pagaram, o monitor é avisado para confirmar com
+  eles. Se o último sair, a reserva é encerrada e o horário volta à agenda.
+- Quem saiu não volta pelo convite (evita cobrança nova sobre assento antigo);
+  vê o histórico só para leitura. Nada é apagado: assento, repasse estornado,
+  lançamentos e contrato (rescindido, com o motivo) ficam registrados.
+- Reembolso que o Mercado Pago não confirma na hora fica "em andamento" e a
+  varredura conclui; a saída vale do mesmo jeito.
+
 ## Dinheiro
 
 - Valores em **centavos inteiros** (`lib/monitorias/dinheiro.ts`). Taxa =
@@ -89,7 +101,7 @@ tenta de novo com a mesma chave.
 ## Contratos e PDFs
 
 - Texto em `lib/monitorias/documentos/` (termos versionados, contrato, oferta).
-  Termos e contrato `2026.10-v3` (oferta `2026.10-v2`): identificação da empresa
+  Termos `2026.10-v4`, contrato `2026.10-v3` (oferta `2026.10-v2`): identificação da empresa
   (Decreto 7.962, art. 2º), arrependimento, ressalva do CDC, mandato (CC 653),
   LGPD (bases, operadores, retenção de 5 anos, direitos, encarregado), conduta,
   imagem/gravação, menores, nulidade parcial, foro do consumidor (CDC 101, I).

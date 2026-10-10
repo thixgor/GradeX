@@ -25,7 +25,7 @@
 
 import type { PapelTermos } from '../tipos'
 
-export const VERSAO_TERMOS = '2026.10-v3'
+export const VERSAO_TERMOS = '2026.10-v4'
 
 function env(nome: string): string {
   return (process.env[nome] || '').trim()
@@ -194,7 +194,7 @@ const ALUNO: SecaoDocumento[] = [
       '6.2. Fora do prazo de arrependimento, cancelamento pelo Aluno com 24 horas ou mais de antecedência do início: reembolso de 100% do valor pago, automático.',
       '6.3. Fora do prazo de arrependimento, cancelamento pelo Aluno com menos de 24 horas: a solicitação vai ao suporte, que decide o reembolso de forma fundamentada, considerando a antecedência, a possibilidade de o Monitor reaproveitar o horário e a boa-fé das partes (Código Civil, art. 413). O não comparecimento do Aluno sem aviso, com o Monitor presente, equivale a serviço prestado.',
       '6.4. Cancelamento ou falta do Monitor: reembolso de 100% ao Aluno.',
-      '6.5. Monitoria em grupo que não atingir o mínimo de alunos: reembolso de 100%. Se o grupo fechar numa faixa mais barata, a diferença é devolvida.',
+      '6.5. Monitoria em grupo: cada aluno tem o próprio assento, contrato e pagamento. Quem sai é reembolsado conforme estes Termos, e o valor por pessoa de quem fica não muda. Se o grupo não se completar até o prazo de pagamento, todos recebem 100% de volta, salvo se o Monitor confirmar a aula com quem já pagou, pelo mesmo valor por pessoa. Quem saiu de um grupo não volta a ele: pode contratar uma nova aula.',
       '6.6. Reembolsos são pedidos ao Mercado Pago na hora da decisão e voltam pelo mesmo meio de pagamento; o prazo para aparecer depende do banco do Aluno.',
     ],
   },

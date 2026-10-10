@@ -146,7 +146,19 @@ export async function carregarReserva(id: string): Promise<Reserva> {
 const ASSENTO_ATIVO = ['aguardando_assinatura', 'aguardando_pagamento', 'paga', 'gratis', 'concluida', 'reembolso_processando']
 const ASSENTO_PAGO = ['paga', 'gratis', 'concluida']
 
-function papelPeloAssento(reserva: Reserva, userId: string, part: { status: string } | null): Papel | null {
+type AssentoResumo = { status: string; valorCentavos?: number; reembolsos?: Array<{ status: string; valorCentavos: number }> }
+const PROJECAO_ASSENTO = { status: 1, valorCentavos: 1, reembolsos: 1 } as const
+
+/** Reembolso INTEGRAL em andamento = a pessoa está saindo (o parcial do suporte não tira ninguém). */
+function saindo(part: AssentoResumo | null): boolean {
+  if (!part || part.status !== 'reembolso_processando') return false
+  const feitos = (part.reembolsos || []).filter((x) => x.status === 'concluido').reduce((t, x) => t + x.valorCentavos, 0)
+  const pendente = (part.reembolsos || []).find((x) => x.status === 'processando')
+  return !!pendente && pendente.valorCentavos >= (part.valorCentavos || 0) - feitos
+}
+
+function papelPeloAssento(reserva: Reserva, userId: string, part: AssentoResumo | null): Papel | null {
+  if (part && saindo(part)) return null
   if (reserva.tutorUserId === userId) return 'monitor'
   if (reserva.solicitanteId === userId) {
     // Na negociação o organizador ainda não tem assento: segue organizador.
@@ -159,7 +171,7 @@ function papelPeloAssento(reserva: Reserva, userId: string, part: { status: stri
 export async function papelNaReserva(reserva: Reserva, userId: string): Promise<Papel | null> {
   if (reserva.tutorUserId === userId) return 'monitor'
   const c = await cols()
-  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { status: 1 } })
+  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: PROJECAO_ASSENTO })
   return papelPeloAssento(reserva, userId, part)
 }
 
@@ -176,7 +188,7 @@ export async function acessoDeLeitura(
 ): Promise<{ papel: Papel; somenteLeitura: boolean; mascarar: boolean } | null> {
   if (reserva.tutorUserId === userId) return { papel: 'monitor', somenteLeitura: false, mascarar: false }
   const c = await cols()
-  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: { status: 1 } })
+  const part = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: userId }, { projection: PROJECAO_ASSENTO })
   const papel = papelPeloAssento(reserva, userId, part)
   const pago = !!part && ASSENTO_PAGO.includes(part.status)
   if (papel) return { papel, somenteLeitura: false, mascarar: !pago }
@@ -731,9 +743,15 @@ export async function entrarNoGrupo(input: {
   }
   const alunoId = String(input.aluno._id)
   if (alunoId === reserva.tutorUserId) throw new ErroMonitoria(400, 'Você é o monitor desta aula.')
+  const anterior = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId }, { projection: { status: 1 } })
+  if (anterior && ['cancelada', 'expirada', 'reembolsada', 'reembolso_processando', 'chargeback'].includes(anterior.status)) {
+    throw new ErroMonitoria(409, 'Você já saiu deste grupo. Para voltar a estudar com este monitor, agende uma nova aula pelo anúncio.')
+  }
   const [ativos, organizadorContrato, anuncio, monitor] = await Promise.all([
     c.participacoes.countDocuments({ reservaId: idDe(reserva), status: { $nin: ['expirada', 'cancelada', 'reembolsada'] } }),
-    c.contratos.findOne({ reservaId: idDe(reserva), contratanteId: reserva.solicitanteId, status: 'assinado' }),
+    // A assinatura do monitor nas condições do grupo: a do contrato do
+    // organizador — mesmo que ele tenha saído depois (contrato rescindido).
+    c.contratos.findOne({ reservaId: idDe(reserva), contratanteId: reserva.solicitanteId, 'assinaturas.papel': 'contratado' } as any),
     c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any),
     c.users.findOne({ _id: new ObjectId(reserva.tutorUserId) } as any, { projection: { name: 1, fullName: 1, email: 1, cpf: 1 } }),
   ])
@@ -872,7 +890,7 @@ export async function cancelar(input: {
   ator: UsuarioMonitoria
   papel: Papel
   motivo: string
-}): Promise<{ resultado: 'cancelada' | 'reembolsada' | 'suporte'; ticketId?: string }> {
+}): Promise<{ resultado: 'cancelada' | 'reembolsada' | 'reembolso_em_andamento' | 'suporte'; ticketId?: string }> {
   const { reserva, papel, motivo } = input
   const c = await cols()
   const id = idDe(reserva)
@@ -903,8 +921,7 @@ export async function cancelar(input: {
         motivo: pendente?.motivo || `Cancelado pelo aluno: ${motivo}`,
         por: pendente?.por || atorId,
       })
-      if (!r.ok) throw new ErroMonitoria(502, r.erro)
-      return { resultado: 'reembolsada' }
+      return concluirSaida(c, reserva, part, r, motivo)
     }
     if (['reembolsada', 'chargeback', 'cancelada', 'expirada'].includes(part.status)) {
       throw new ErroMonitoria(409, 'Você já saiu desta monitoria.')
@@ -932,8 +949,7 @@ export async function cancelar(input: {
         motivo: `${decisao.arrependimento ? 'Direito de arrependimento (art. 49 do CDC)' : 'Cancelado pelo aluno'}: ${motivo}`,
         por: atorId,
       })
-      if (!r.ok) throw new ErroMonitoria(502, r.erro)
-      return { resultado: 'reembolsada' }
+      return concluirSaida(c, reserva, part, r, motivo)
     }
     // Só assento sem dinheiro vira "cancelada" (o filtro de status impede apagar um pago por corrida).
     const saiu = await c.participacoes.updateOne(
@@ -942,6 +958,7 @@ export async function cancelar(input: {
     )
     if (!saiu.modifiedCount) throw new ErroMonitoria(409, 'Seu assento mudou agora (o pagamento pode ter acabado de cair). Recarregue a página.')
     await c.contratos.updateOne({ participacaoId: idDe(part), status: 'aguardando_assinaturas' }, { $set: { status: 'rescindido', updatedAt: new Date() } })
+    await depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo)
     return { resultado: 'cancelada' }
   }
 
@@ -1024,6 +1041,72 @@ export async function cancelar(input: {
     })),
   )
   return { resultado: decisao.tipo === 'reembolso_total' ? 'reembolsada' : 'cancelada' }
+}
+
+/**
+ * Fim da saída de um aluno com reembolso. Se o Mercado Pago não confirmou na
+ * hora, a INTENÇÃO já está gravada (assento "reembolso_processando", chave
+ * única) e a varredura conclui sozinha — a saída vale do mesmo jeito.
+ */
+async function concluirSaida(
+  c: Colecoes,
+  reserva: Reserva,
+  part: Participacao,
+  r: { ok: true; total: boolean } | { ok: false; erro: string },
+  motivo: string,
+): Promise<{ resultado: 'reembolsada' | 'reembolso_em_andamento' }> {
+  if (!r.ok) {
+    const agora = await c.participacoes.findOne({ _id: part._id as any }, { projection: { status: 1 } })
+    if (agora?.status !== 'reembolso_processando') throw new ErroMonitoria(502, r.erro)
+  }
+  await depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo)
+  return { resultado: r.ok ? 'reembolsada' : 'reembolso_em_andamento' }
+}
+
+/**
+ * Alguém saiu do grupo (assento cancelado ou reembolsado). Os outros assentos
+ * NÃO mudam: cada um tem o próprio valor, contrato e repasse. Mas:
+ *  - se não sobrou NINGUÉM ativo, a reserva é encerrada e o horário do
+ *    monitor volta para a agenda (antes ela ficava "viva" sem alunos);
+ *  - se o grupo ainda espera pagamentos e todos os que ficaram já pagaram,
+ *    o monitor é avisado de que pode confirmar só com eles — senão, no prazo,
+ *    o grupo incompleto expira e todos são reembolsados.
+ */
+async function depoisDeSairDoGrupo(c: Colecoes, reserva: Reserva, quem: string, motivo: string): Promise<void> {
+  const id = idDe(reserva)
+  const restantes = await c.participacoes
+    // Reembolso em andamento = quem está saindo (o próprio, ou outro que acabou de sair).
+    .find({ reservaId: id, status: { $in: ['aguardando_assinatura', 'aguardando_pagamento', 'paga', 'gratis'] } }, { projection: { status: 1 } })
+    .toArray()
+  if (!restantes.length) {
+    const atual = await c.reservas.findOne({ _id: reserva._id as any })
+    if (atual && podeTransitar(atual.status, 'cancelada_aluno')) {
+      await transitar(c, atual, 'cancelada_aluno', { motivoCancelamento: `Todos os alunos saíram do grupo (último: ${quem}).`, canceladaPor: 'sistema' }).catch(() => null)
+      await Promise.all([liberarBlocos(id), rescindirContratosDaReserva(id)])
+      await avisar([
+        {
+          userId: reserva.tutorUserId,
+          titulo: 'Monitoria em grupo encerrada',
+          mensagem: `Todos os alunos saíram de "${reserva.anuncioTitulo}". O horário voltou para a sua agenda.`,
+          url: urlReserva(id),
+        },
+      ])
+    }
+    return
+  }
+  await mensagemDoSistema(c, id, `${quem.split(' ')[0]} saiu do grupo.`)
+  const pagos = restantes.filter((p) => p.status === 'paga').length
+  if (reserva.status === 'aguardando_pagamento' && pagos > 0 && pagos === restantes.length) {
+    await avisar([
+      {
+        userId: reserva.tutorUserId,
+        titulo: 'Um aluno saiu do grupo',
+        mensagem: `Em "${reserva.anuncioTitulo}", todos os que ficaram já pagaram. Confirme a aula com eles para não expirar no prazo.`,
+        url: urlReserva(id),
+      },
+    ])
+  }
+  void motivo
 }
 
 async function alunosDaReserva(c: Colecoes, reservaId: string): Promise<string[]> {
