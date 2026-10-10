@@ -19,9 +19,10 @@ import { duracoesPermitidas, formatarDuracao } from '@/lib/monitorias/agenda'
 import type { ConteudoAnuncio, VideoAnuncio } from '@/lib/monitorias/tipos'
 import { CaixaAviso, CaixaErro, Esqueleto, api } from '../base'
 import { forcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
-import { CartaoForca } from '@/components/monitorias/forca-anuncio'
+import { AnelForca, CartaoForca } from '@/components/monitorias/forca-anuncio'
+import { CartaoAnuncio, type CardAnuncio } from '@/components/monitorias/cartao-anuncio'
 
-const PASSOS = ['Básico', 'Vídeos', 'Preço & contratação', 'FAQ', 'Materiais', 'Revisão'] as const
+const PASSOS = ['Básico', 'Vídeos', 'Preço', 'Perguntas', 'Materiais', 'Revisão'] as const
 
 interface Form {
   titulo: string
@@ -135,7 +136,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
     try {
       if (anuncioId) {
         const r = await api<{ revisaoPendente?: boolean; ofertaInvalidada?: boolean }>(`/api/monitorias/tutor/anuncios/${anuncioId}`, { method: 'PATCH', json: paraCorpo(f) })
-        setOk(r.revisaoPendente ? 'Alterações enviadas para análise. A versão atual continua no ar até a aprovação.' : r.ofertaInvalidada ? 'Salvo! Como o preço/duração mudou, assine a oferta do agendamento direto de novo.' : 'Salvo!')
+        setOk(r.revisaoPendente ? 'Alterações enviadas para análise. A versão atual continua no ar até a aprovação.' : r.ofertaInvalidada ? 'Salvo. Como o preço ou a duração mudou, assine de novo a oferta do agendamento direto.' : 'Salvo.')
         return anuncioId
       }
       const r = await api<{ id: string }>('/api/monitorias/tutor/anuncios', { method: 'POST', json: paraCorpo(f) })
@@ -155,34 +156,80 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
     try {
       await api(`/api/monitorias/tutor/anuncios/${id}/acao`, { method: 'POST', json: { acao: 'enviar' } })
       setStatus('em_analise')
-      setOk('Enviado! Avisamos por e-mail quando o anúncio for aprovado.')
+      setOk('Enviado. Avisamos por e-mail quando o anúncio for aprovado.')
     } catch (e: any) {
       setErros([e instanceof Error ? e.message : 'Erro.', ...((e?.dados?.pendentes as string[]) || [])])
     }
   }
 
   const videosOk = useMemo(() => f.videos.map((v) => (v.trim() ? interpretarUrlDeVideo(v) : null)), [f.videos])
+
+  // Prévia ao vivo: o mesmo cartão da vitrine, montado com o que está no formulário.
+  const [eu, setEu] = useState<{ nome: string; fotoUrl: string | null; titulo: string } | null>(null)
+  useEffect(() => {
+    api<{ tutor: { nome: string; fotoUrl: string | null; titulo: string } | null }>('/api/monitorias/eu')
+      .then((r) => r.tutor && setEu({ nome: r.tutor.nome, fotoUrl: r.tutor.fotoUrl, titulo: r.tutor.titulo }))
+      .catch(() => {})
+  }, [])
+  const previa: CardAnuncio = useMemo(() => {
+    const faixas = f.grupo ? f.faixas.map((x) => interpretarValorEmReais(x.valor)).filter((x): x is number => !!x) : []
+    return {
+      id: 'previa',
+      slug: slug || 'previa',
+      titulo: f.titulo || 'Título do seu anúncio',
+      materia: f.materia || 'Matéria',
+      conteudos: f.conteudos,
+      preco: { modo: f.precoModo, valorCentavos: interpretarValorEmReais(f.valor) ?? 0 },
+      grupo: { ativo: f.grupo, maxAlunos: f.grupoMax, menorValor: faixas.length ? Math.min(...faixas) : null },
+      aulaGratis: f.gratis,
+      modos: { direto: f.direto ? {} : null, negociacao: f.negociacao, aCombinar: f.aCombinar },
+      temVideo: videosOk.some(Boolean),
+      temMateriais: f.temMateriais || f.materiais.some((m) => m.titulo.trim() && m.url.trim()),
+      stats: { reservas: 0, nota: 0, avaliacoes: 0 },
+      tutor: eu || { nome: 'Você', fotoUrl: null, titulo: '' },
+    }
+  }, [f, slug, eu, videosOk])
+  const forcaAtual = forcaDoAnuncio({
+    titulo: f.titulo,
+    descricao: f.descricao,
+    conteudos: f.conteudos.length,
+    videos: f.videos.filter((v) => v.trim()).length,
+    faq: f.faq.filter((x) => x.pergunta.trim() && x.resposta.trim()).length,
+    materiais: f.materiais.filter((x) => x.titulo.trim() && x.url.trim()).length,
+    temMateriais: f.temMateriais,
+    aulaGratis: f.gratis,
+    grupo: f.grupo,
+    agendaDireta: f.direto,
+  })
   const valorCent = interpretarValorEmReais(f.valor) ?? 0
 
   if (carregando) return <PageScaffold><Esqueleto className="h-[600px] rounded-3xl" /></PageScaffold>
 
   return (
     <PageScaffold>
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto grid max-w-6xl gap-10 xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="min-w-0">
         <Link href="/monitorias/painel" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" /> Painel</Link>
-        <h1 className="font-heading text-2xl font-bold">{anuncioId ? 'Editar anúncio' : 'Novo anúncio de monitoria'}</h1>
+        <h1 className="font-heading text-[1.75rem] font-semibold">{anuncioId ? 'Editar anúncio' : 'Novo anúncio'}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Uns 5 minutos. Dá para salvar e continuar depois.</p>
         {['publicado', 'pausado'].includes(status) && <CaixaAviso tom="info" className="mt-3">Este anúncio está no ar. Suas alterações passam por análise antes de substituir a versão publicada.</CaixaAviso>}
 
-        <div className="my-6 flex items-center gap-1.5 overflow-x-auto pb-1">
+        <nav className="-mx-4 my-6 flex items-center gap-1 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:px-0" aria-label="Etapas do anúncio">
           {PASSOS.map((p, i) => (
-            <button key={p} type="button" onClick={() => setPasso(i)} className={cn('flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition', i === passo ? 'bg-primary text-primary-foreground shadow' : i < passo ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground')}>
-              <span className={cn('flex h-5 w-5 items-center justify-center rounded-full text-[10px]', i === passo ? 'bg-white/25' : 'bg-background/60')}>{i < passo ? <Check className="h-3 w-3" /> : i + 1}</span>
+            <button
+              key={p}
+              type="button"
+              onClick={() => setPasso(i)}
+              aria-current={i === passo ? 'step' : undefined}
+              className={cn('flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition', i === passo ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground')}
+            >
+              <span className={cn('flex h-5 w-5 items-center justify-center rounded-md text-[11px] font-semibold', i === passo ? 'bg-background/20' : i < passo ? 'bg-primary text-primary-foreground' : 'bg-muted')}>{i < passo ? <Check className="h-3 w-3" /> : i + 1}</span>
               {p}
             </button>
           ))}
-        </div>
+        </nav>
 
-        <div className="overflow-hidden rounded-3xl border border-border bg-card p-5 sm:p-7">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-7">
           <AnimatePresence mode="wait">
             <motion.div key={passo} initial={reduzir ? false : { opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={reduzir ? undefined : { opacity: 0, x: -30 }} transition={{ duration: 0.25 }} className="space-y-4">
               {passo === 0 && (
@@ -276,7 +323,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                         <Mini rotulo="Antecedência mín.">
                           <select value={f.antecedencia} onChange={(e) => set('antecedencia', Number(e.target.value))} className="h-9 w-full rounded-lg border border-border bg-background px-2 text-sm">{[2, 4, 6, 12, 24, 48].map((h) => <option key={h} value={h}>{h}h</option>)}</select>
                         </Mini>
-                        <p className="text-[11px] text-muted-foreground sm:col-span-4">Opções para o aluno: {duracoesPermitidas(f.diretoMin, f.diretoMax, f.diretoPasso).map(formatarDuracao).join(', ') || '—'}. Os dias e horários vêm da aba Agenda (horário de Brasília).</p>
+                        <p className="text-[11px] text-muted-foreground sm:col-span-4">Opções para o aluno: {duracoesPermitidas(f.diretoMin, f.diretoMax, f.diretoPasso).map(formatarDuracao).join(', ') || 'nenhuma'}. Os dias e horários vêm da aba Agenda (horário de Brasília).</p>
                       </div>
                     )}
                   </Opcao>
@@ -343,7 +390,7 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
 
               {passo === 4 && (
                 <>
-                  <CaixaAviso>Materiais por link (Drive, Notion...) são de sua responsabilidade. A plataforma não hospeda nem se responsabiliza pelo conteúdo — e o aluno vê esse aviso antes de abrir o link.</CaixaAviso>
+                  <CaixaAviso>Materiais por link (Drive, Notion...) são de sua responsabilidade. A plataforma não hospeda nem se responsabiliza pelo conteúdo, e o aluno vê esse aviso antes de abrir o link.</CaixaAviso>
                   {f.materiais.map((m, i) => {
                     const valido = !m.url.trim() || !!validarLinkExterno(m.url)
                     return (
@@ -385,6 +432,24 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Prévia ao vivo (computador): é exatamente o cartão da vitrine */}
+      <aside className="hidden xl:block">
+        <div className="sticky top-24 space-y-4 pt-24">
+          <p className="text-sm font-medium text-muted-foreground">Assim os alunos veem na vitrine</p>
+          <div className="pointer-events-none select-none" aria-hidden>
+            <CartaoAnuncio anuncio={previa} />
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl bg-muted/40 p-4">
+            <AnelForca forca={forcaAtual} tamanho={44} />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold">Força do anúncio</p>
+              <p className="text-xs text-muted-foreground">{forcaAtual.dicas[0] ? forcaAtual.dicas[0].texto : 'Completo. Anúncios assim vendem mais.'}</p>
+            </div>
+          </div>
+        </div>
+      </aside>
       </div>
     </PageScaffold>
   )
@@ -447,17 +512,13 @@ function Revisao({ f, anuncioId, slug, status }: { f: Form; anuncioId?: string; 
   return (
     <div className="space-y-4">
       <CartaoForca forca={forca} />
-      <div className="rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 p-5 text-white">
-        <p className="text-xs uppercase tracking-wide text-white/75">{f.materia || 'Matéria'}</p>
-        <p className="font-heading text-xl font-bold">{f.titulo || 'Título do anúncio'}</p>
-        <p className="mt-1 text-sm text-white/85">{formatarCentavos(valor)}/{f.precoModo}{f.grupo ? ' · grupos' : ''}{f.gratis ? ' · 1ª aula grátis' : ''}</p>
-      </div>
-      <ul className="grid gap-2 text-sm sm:grid-cols-2">
-        <li>📚 {f.conteudos.length} conteúdo(s)</li>
-        <li>🎬 {f.videos.filter((v) => v.trim()).length} vídeo(s)</li>
-        <li>❓ {f.faq.filter((x) => x.pergunta && x.resposta).length} pergunta(s) no FAQ</li>
-        <li>🔗 {f.materiais.length} material(is)</li>
-        <li>🗓️ {[f.direto && 'Agenda direta', f.negociacao && 'Negociação', f.aCombinar && 'A combinar'].filter(Boolean).join(' · ') || 'Nenhuma forma de contratação!'}</li>
+      <ul className="grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
+        <ItemRevisao ok={f.conteudos.length > 0}>{f.conteudos.length} {f.conteudos.length === 1 ? 'conteúdo' : 'conteúdos'}</ItemRevisao>
+        <ItemRevisao ok={f.videos.some((v) => v.trim())}>{f.videos.filter((v) => v.trim()).length} {f.videos.filter((v) => v.trim()).length === 1 ? 'vídeo' : 'vídeos'}</ItemRevisao>
+        <ItemRevisao ok={f.faq.some((x) => x.pergunta && x.resposta)}>{f.faq.filter((x) => x.pergunta && x.resposta).length} perguntas frequentes</ItemRevisao>
+        <ItemRevisao ok={f.materiais.length > 0 || f.temMateriais}>{f.materiais.length} {f.materiais.length === 1 ? 'material' : 'materiais'}</ItemRevisao>
+        <ItemRevisao ok={!!valor}>{formatarCentavos(valor)}/{f.precoModo}{f.grupo ? ', com preço de grupo' : ''}{f.gratis ? ', 1ª aula grátis' : ''}</ItemRevisao>
+        <ItemRevisao ok={f.direto || f.negociacao || f.aCombinar}>{[f.direto && 'Agenda online', f.negociacao && 'Negociação', f.aCombinar && 'A combinar'].filter(Boolean).join(', ') || 'Escolha como o aluno contrata'}</ItemRevisao>
       </ul>
       {slug && ['publicado', 'pausado'].includes(status) && (
         <Link href={`/monitorias/anuncio/${slug}`} target="_blank" className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"><Eye className="h-4 w-4" /> Ver anúncio publicado</Link>
@@ -465,6 +526,15 @@ function Revisao({ f, anuncioId, slug, status }: { f: Form; anuncioId?: string; 
       {f.direto && (anuncioId ? <OfertaPadrao anuncioId={anuncioId} /> : <CaixaAviso tom="info">Salve o anúncio para assinar a oferta-padrão do agendamento direto.</CaixaAviso>)}
       <p className="text-xs text-muted-foreground">Depois de enviado, nossa equipe confere o anúncio e seus dados. Você recebe um e-mail quando for aprovado.</p>
     </div>
+  )
+}
+
+function ItemRevisao({ ok, children }: { ok: boolean; children: React.ReactNode }) {
+  return (
+    <li className={cn('flex items-center gap-2.5', !ok && 'text-muted-foreground')}>
+      <span className={cn('inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md', ok ? 'bg-primary text-primary-foreground' : 'border border-border')}>{ok && <Check className="h-3 w-3" />}</span>
+      {children}
+    </li>
   )
 }
 
@@ -484,10 +554,10 @@ function OfertaPadrao({ anuncioId }: { anuncioId: string }) {
   if (erro) return <CaixaErro mensagem={erro} />
   if (!oferta) return null
   return (
-    <div className="space-y-3 rounded-2xl border-2 border-amber-400/60 p-4">
+    <div className="space-y-3 rounded-2xl border border-primary/40 bg-primary/[0.04] p-4">
       <p className="flex items-center gap-2 font-semibold"><FileSignature className="h-4 w-4 text-primary" /> Oferta-padrão do agendamento direto</p>
       {oferta.assinada ? (
-        <p className="text-sm text-emerald-700 dark:text-emerald-400">✓ Assinada. Alunos podem agendar direto nas condições atuais.</p>
+        <p className="text-sm font-medium text-primary">Assinada. Alunos já podem agendar direto nas condições atuais.</p>
       ) : (
         <>
           <pre className="max-h-48 overflow-y-auto whitespace-pre-wrap rounded-xl bg-muted/50 p-3 font-sans text-xs leading-relaxed">{oferta.texto}</pre>
@@ -507,7 +577,7 @@ function OfertaPadrao({ anuncioId }: { anuncioId: string }) {
                 }
               }}
             >
-              <Mail className="mr-1.5 h-4 w-4" /> Li e quero assinar — enviar código
+              <Mail className="mr-1.5 h-4 w-4" /> Li e quero assinar: enviar código
             </Button>
           ) : (
             <div className="flex flex-wrap items-center gap-2">

@@ -193,8 +193,8 @@ export default function VitrineMonitorias() {
           </AnimatePresence>
         </div>
 
-        {/* Visual do herói: componentes reais, não figuras */}
-        <div className="relative">
+        {/* Visual do herói: componentes reais, não figuras (no celular, só no modo ensinar) */}
+        <div className={cn('relative', publico === 'aprender' && 'hidden lg:block')}>
           <AnimatePresence mode="wait" initial={false}>
             {publico === 'aprender' ? (
               <motion.div
@@ -203,7 +203,7 @@ export default function VitrineMonitorias() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduzir ? undefined : { opacity: 0, x: -12 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2"
+                className="grid gap-4 xl:grid-cols-2"
               >
                 {destaques.length
                   ? destaques.map((a, i) => (

@@ -246,6 +246,23 @@ tenta de novo com a mesma chave.
 - Monitor: **Força do anúncio** 0–100 com dicas ordenadas pelo ganho
   (`lib/monitorias/forca-anuncio.ts`), no assistente e no painel.
 
+## Visual e UX (regras da seção)
+
+- **Títulos** em Space Grotesk só dentro das monitorias (`components/monitorias/fonte.ts`
+  troca `--font-heading` no invólucro `.mon-escopo`); texto segue Source Sans.
+- **Uma cor de destaque:** o verde da marca (`primary`). Âmbar só em estrela de
+  avaliação e aviso; vermelho só em erro. Sem gradientes coloridos.
+- **Raios:** contêiner 16px (`rounded-2xl`), controle 12px (`rounded-xl`),
+  etiqueta 6-8px. Avatar em "squircle" (`rounded-[32%]`).
+- **Sem travessão (—)** e sem exclamação em mensagens de sucesso; sem rótulo em
+  caixa-alta acima de título (`Cabecalho` em `base.tsx`); estados vazios com `Vazio`.
+- **Landing:** chave "Quero aprender / Quero ensinar" (lembrada no navegador);
+  o monitor, cliente principal, tem caminho próprio com simulador ao vivo.
+- **Agenda:** grade semanal para pintar (clicar e arrastar; no celular, tocar),
+  atalhos, copiar dia, calendário de folgas e barra de salvar só com alterações.
+  Conversão pura em `lib/monitorias/agenda.ts` (`janelasParaCelulas`/`celulasParaJanelas`).
+- **Assistente de anúncio:** prévia ao vivo do cartão da vitrine + força do anúncio.
+
 ## Operação
 
 - Variáveis: ver o bloco "Monitorias" em `.env.example`. **Antes de lançar**,

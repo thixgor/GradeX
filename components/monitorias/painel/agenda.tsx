@@ -171,7 +171,8 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
         <div>
           <h2 className="font-heading text-xl font-semibold">Quando você dá aula</h2>
           <p className="mt-1 max-w-[58ch] text-sm leading-relaxed text-muted-foreground">
-            Clique e arraste na grade para marcar seus horários. Alunos só conseguem agendar direto dentro deles. Aulas já marcadas não mudam.
+            <span className="hidden md:inline">Clique e arraste na grade para marcar seus horários.</span>
+            <span className="md:hidden">Escolha o dia e toque nos horários livres.</span> Alunos só conseguem agendar direto dentro deles. Aulas já marcadas não mudam.
           </p>
         </div>
         <div className="flex items-baseline gap-4 rounded-2xl bg-muted/50 px-4 py-3">
@@ -272,7 +273,7 @@ export function EditorAgenda({ inicial, recarregar }: { inicial: Disponibilidade
                         }
                       }}
                       className={cn(
-                        'block h-[18px] w-full cursor-pointer transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+                        'block h-full min-h-[18px] w-full cursor-pointer transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
                         on ? 'bg-primary' : 'hover:bg-primary/15',
                         on && !antes && 'rounded-t-md',
                         on && !depois && 'rounded-b-md',

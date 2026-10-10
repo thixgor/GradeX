@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
 import { BookOpen, CalendarCheck, ChevronRight, FileText, GraduationCap, MessagesSquare, Receipt, Search, Sparkles, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Avatar, Esqueleto, SeloStatus, api } from '@/components/monitorias/base'
+import { Avatar, Esqueleto, SeloStatus, Vazio, api } from '@/components/monitorias/base'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
@@ -43,7 +43,7 @@ type Resumo = { aulas: number; proximas: number; investidoCentavos?: number; ven
 const SITUACAO_PAGAMENTO: Record<string, string> = {
   aguardando_assinatura: 'Falta assinar',
   aguardando_pagamento: 'Falta pagar',
-  paga: 'Pago · em garantia',
+  paga: 'Pago, em garantia',
   gratis: 'Grátis',
   concluida: 'Pago',
   reembolso_processando: 'Reembolso em andamento',
@@ -98,51 +98,53 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
   return (
     <div>
       {tiles.length > 0 && (resumo!.aulas > 0 || resumo!.proximas > 0) && (
-        <div className="mb-5 grid grid-cols-3 gap-2 sm:gap-3">
-          {tiles.map((t, i) => (
-            <motion.div key={t.rotulo} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="rounded-2xl border border-border bg-card p-3 sm:p-4">
-              <t.icone className="h-4 w-4 text-primary" />
-              <p className="mt-1.5 font-heading text-lg font-bold tabular-nums sm:text-2xl">{t.valor}</p>
-              <p className="text-[11px] leading-tight text-muted-foreground sm:text-xs">{t.rotulo}</p>
-            </motion.div>
+        <dl className="mb-6 grid grid-cols-3 divide-x divide-border rounded-2xl border border-border bg-card">
+          {tiles.map((t) => (
+            <div key={t.rotulo} className="px-3 py-4 sm:px-5">
+              <dt className="text-xs text-muted-foreground">{t.rotulo}</dt>
+              <dd className="mt-1 font-heading text-lg font-semibold tabular-nums sm:text-2xl">{t.valor}</dd>
+            </div>
           ))}
-        </div>
+        </dl>
       )}
-      <div className="mb-4 inline-flex rounded-xl border border-border bg-card p-1">
+      <div className="mb-4 inline-flex rounded-xl bg-muted/60 p-1" role="tablist">
         {(['ativas', 'todas'] as const).map((e) => (
-          <button key={e} type="button" onClick={() => setEscopo(e)} className={cn('rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition', escopo === e ? 'bg-primary text-primary-foreground' : 'text-muted-foreground')}>
-            {e === 'ativas' ? 'Em andamento' : 'Histórico'}
+          <button key={e} type="button" role="tab" aria-selected={escopo === e} onClick={() => setEscopo(e)} className={cn('relative rounded-lg px-4 py-1.5 text-sm font-medium transition-colors', escopo === e ? 'text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+            {escopo === e && <motion.span layoutId={`escopo-${papel}`} className="absolute inset-0 rounded-lg bg-card shadow-sm" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
+            <span className="relative">{e === 'ativas' ? 'Em andamento' : 'Histórico'}</span>
           </button>
         ))}
       </div>
       {!itens ? (
         <div className="space-y-3">{Array.from({ length: 3 }).map((_, i) => <Esqueleto key={i} className="h-20" />)}</div>
       ) : itens.length === 0 ? (
-        <div className="rounded-3xl border border-dashed border-border bg-card px-6 py-14 text-center">
-          <CalendarCheck className="mx-auto h-9 w-9 text-primary" />
-          <p className="mt-3 font-semibold">{escopo === 'ativas' ? (papel === 'aluno' ? 'Nenhuma monitoria em andamento' : 'Nenhum pedido em andamento') : papel === 'aluno' ? 'Sua primeira monitoria começa aqui' : 'Nenhum pedido ainda'}</p>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            {papel === 'aluno'
-              ? 'Uma hora com quem já passou pela mesma prova economiza semanas de estudo sozinho. Pagamento protegido: o monitor só recebe depois da aula.'
-              : 'Anúncios com vídeo, foto e aula grátis recebem mais pedidos. Capriche no seu e compartilhe o link.'}
-          </p>
-          {papel === 'aluno' ? (
-            <Link href="/monitorias"><Button className="mt-4"><Search className="mr-2 h-4 w-4" /> Encontrar meu monitor</Button></Link>
-          ) : (
-            <Link href="/monitorias/painel/anuncios"><Button className="mt-4"><Sparkles className="mr-2 h-4 w-4" /> Melhorar meus anúncios</Button></Link>
-          )}
-        </div>
+        <Vazio
+          icone={<CalendarCheck className="h-5 w-5" />}
+          titulo={escopo === 'ativas' ? (papel === 'aluno' ? 'Nenhuma monitoria em andamento' : 'Nenhum pedido em andamento') : papel === 'aluno' ? 'Sua primeira monitoria começa aqui' : 'Nenhum pedido ainda'}
+          texto={
+            papel === 'aluno'
+              ? 'Uma hora com quem já passou pela mesma prova economiza semanas estudando sozinho. O monitor só recebe depois da aula.'
+              : 'Anúncios com vídeo, foto e aula grátis recebem mais pedidos. Capriche no seu e compartilhe o link.'
+          }
+          acao={
+            papel === 'aluno' ? (
+              <Link href="/monitorias"><Button className="rounded-xl"><Search className="mr-2 h-4 w-4" /> Encontrar monitor</Button></Link>
+            ) : (
+              <Link href="/monitorias/painel"><Button className="rounded-xl"><Sparkles className="mr-2 h-4 w-4" /> Melhorar meus anúncios</Button></Link>
+            )
+          }
+        />
       ) : (
-        <ul className="space-y-2.5">
+        <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
           <AnimatePresence>
             {itens.map((r, i) => (
-              <motion.li key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.03 }} className="rounded-2xl border border-border bg-card transition hover:border-primary/40 hover:shadow-md">
+              <motion.li key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i, 10) * 0.03 }} className="transition-colors hover:bg-muted/30">
                 <Link href={`/monitorias/reservas/${r.id}`} className="group flex items-center gap-4 p-4">
-                  <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-xl bg-muted/60">
                     {r.inicio ? (
                       <>
-                        <span className="text-[10px] font-semibold uppercase">{formatarEmBrasilia(r.inicio, { month: 'short' }).replace('.', '')}</span>
-                        <span className="text-lg font-bold leading-none">{formatarEmBrasilia(r.inicio, { day: '2-digit' })}</span>
+                        <span className="text-[11px] text-muted-foreground">{formatarEmBrasilia(r.inicio, { month: 'short' }).replace('.', '')}</span>
+                        <span className="font-heading text-lg font-semibold leading-none tabular-nums">{formatarEmBrasilia(r.inicio, { day: '2-digit' })}</span>
                       </>
                     ) : (
                       <GraduationCap className="h-5 w-5" />
@@ -157,9 +159,9 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
                     )}
                     <p className="text-xs text-muted-foreground">
                       {r.inicio ? `${formatarEmBrasilia(r.inicio, { weekday: 'short', hour: '2-digit', minute: '2-digit' })} (Brasília)` : 'Data a combinar'}
-                      {r.duracaoMin ? ` · ${formatarDuracao(r.duracaoMin)}` : ''}
-                      {r.vagas > 1 ? ` · grupo de ${r.vagas}` : ''}
-                      {r.gratis ? ' · grátis' : r.valorPorPessoaCentavos ? ` · ${formatarCentavos(r.valorPorPessoaCentavos)}` : ''}
+                      {r.duracaoMin ? `, ${formatarDuracao(r.duracaoMin)}` : ''}
+                      {r.vagas > 1 ? `, grupo de ${r.vagas}` : ''}
+                      {r.gratis ? ', grátis' : r.valorPorPessoaCentavos ? `, ${formatarCentavos(r.valorPorPessoaCentavos)}` : ''}
                     </p>
                   </div>
                   <SeloStatus status={r.status} className="hidden sm:inline-flex" />
@@ -173,8 +175,8 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
       )}
       {cursor && itens && itens.length > 0 && (
         <div className="mt-4 text-center">
-          <Button variant="outline" onClick={carregarMais} disabled={carregandoMais}>
-            {carregandoMais ? 'Carregando…' : 'Carregar mais'}
+          <Button variant="outline" className="rounded-xl" onClick={carregarMais} disabled={carregandoMais}>
+            {carregandoMais ? 'Carregando' : 'Carregar mais'}
           </Button>
         </div>
       )}
@@ -194,11 +196,11 @@ function Atalhos({ r, papel }: { r: ItemReserva; papel: 'aluno' | 'monitor' }) {
   const valor = a?.pagoCentavos ? formatarCentavos(a.pagoCentavos - (a.reembolsadoCentavos || 0)) : null
   if (!itens.length && !pagamento && papel === 'aluno') return null
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-border/70 px-4 py-2 text-xs">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 pb-3 pl-20 text-xs">
       {papel === 'aluno' && pagamento && (
         <span className="font-medium text-muted-foreground">
           {pagamento}
-          {valor ? ` · ${valor}` : ''}
+          {valor ? `, ${valor}` : ''}
           {a?.reembolsadoCentavos ? ` (devolvido ${formatarCentavos(a.reembolsadoCentavos)})` : ''}
         </span>
       )}
@@ -207,7 +209,7 @@ function Atalhos({ r, papel }: { r: ItemReserva; papel: 'aluno' | 'monitor' }) {
       )}
       <span className="ml-auto flex flex-wrap gap-1.5">
         {itens.map((x) => (
-          <a key={x.rotulo} href={x.href} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-muted-foreground transition hover:border-primary hover:text-primary">
+          <a key={x.rotulo} href={x.href} className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-muted-foreground transition hover:bg-primary/10 hover:text-primary">
             <x.icone className="h-3 w-3" /> {x.rotulo}
           </a>
         ))}

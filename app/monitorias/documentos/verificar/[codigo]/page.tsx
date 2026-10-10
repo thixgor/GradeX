@@ -31,7 +31,7 @@ export default function VerificarDocumento({ params }: { params: { codigo: strin
           <Esqueleto className="h-72 rounded-3xl" />
         ) : (
           <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="rounded-3xl border border-border bg-card p-6 text-center shadow-lg">
-            {v.valido ? <BadgeCheck className="mx-auto h-14 w-14 text-emerald-600" /> : <ShieldX className="mx-auto h-14 w-14 text-rose-600" />}
+            {v.valido ? <BadgeCheck className="mx-auto h-14 w-14 text-primary" /> : <ShieldX className="mx-auto h-14 w-14 text-rose-600" />}
             <h1 className="mt-3 font-heading text-xl font-bold">{v.valido ? 'Documento autêntico' : 'Documento não encontrado ou alterado'}</h1>
             {v.numero && (
               <dl className="mt-5 space-y-2 text-left text-sm">

@@ -5,8 +5,8 @@ import { Lightbulb, TrendingUp } from 'lucide-react'
 import type { ForcaDoAnuncio } from '@/lib/monitorias/forca-anuncio'
 import { cn } from '@/lib/utils'
 
-const COR = { fraco: 'text-rose-500', bom: 'text-amber-500', excelente: 'text-emerald-500' } as const
-const ROTULO = { fraco: 'Precisa de atenção', bom: 'Bom — dá para melhorar', excelente: 'Excelente' } as const
+const COR = { fraco: 'text-rose-500', bom: 'text-amber-500', excelente: 'text-primary' } as const
+const ROTULO = { fraco: 'Precisa de atenção', bom: 'Bom, dá para melhorar', excelente: 'Excelente' } as const
 
 /** Anel animado com a nota. */
 export function AnelForca({ forca, tamanho = 64 }: { forca: Pick<ForcaDoAnuncio, 'pontos' | 'nivel'>; tamanho?: number }) {
@@ -53,7 +53,7 @@ export function CartaoForca({ forca }: { forca: ForcaDoAnuncio }) {
             <li key={d.texto} className="flex items-start gap-2 text-xs">
               <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
               <span className="flex-1">{d.texto}</span>
-              <span className="shrink-0 rounded-full bg-emerald-500/10 px-1.5 font-semibold text-emerald-700 dark:text-emerald-400">+{d.ganho}</span>
+              <span className="shrink-0 rounded-md bg-primary/10 px-1.5 font-semibold text-primary">+{d.ganho}</span>
             </li>
           ))}
         </ul>

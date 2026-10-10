@@ -52,7 +52,7 @@ function FotoEPerfil({ dados, recarregar }: { dados: DadosPainel; recarregar: ()
     setMsg(null)
     try {
       await api('/api/monitorias/tutor/perfil', { method: 'PUT', json: { titulo, bio, historia } })
-      setMsg({ tom: 'ok', texto: 'Perfil salvo!' })
+      setMsg({ tom: 'ok', texto: 'Perfil salvo.' })
       recarregar()
     } catch (e) {
       setMsg({ tom: 'erro', texto: e instanceof Error ? e.message : 'Erro ao salvar.' })
@@ -175,16 +175,16 @@ function ChavePix({ pix, pendente, recarregar }: { pix: { tipo: string; mascarad
   return (
     <Cartao titulo="Chave PIX para receber">
       <p className="mb-3 flex items-start gap-2 text-xs text-muted-foreground">
-        <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> A chave fica criptografada. A titularidade precisa ser sua (mesmo CPF do cadastro). Trocas só valem depois de 48h, com alerta no seu e-mail — proteção contra invasão de conta.
+        <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" /> A chave fica criptografada. A titularidade precisa ser sua (mesmo CPF do cadastro). Trocas só valem depois de 48h, com alerta no seu e-mail. Proteção contra invasão de conta.
       </p>
       {pix && !editando && (
-        <div className="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-3 py-2.5">
-          <span className="flex items-center gap-2 text-sm"><ShieldCheck className="h-4 w-4 text-emerald-600" /> <strong>{pix.mascarada}</strong> <span className="text-xs text-muted-foreground">({pix.tipo})</span></span>
+        <div className="flex items-center justify-between rounded-xl border border-primary/30 bg-primary/[0.05] px-3.5 py-2.5">
+          <span className="flex items-center gap-2 text-sm"><ShieldCheck className="h-4 w-4 text-primary" /> <strong>{pix.mascarada}</strong> <span className="text-xs text-muted-foreground">({pix.tipo})</span></span>
           <Button size="sm" variant="ghost" onClick={() => setEditando(true)}>Trocar</Button>
         </div>
       )}
       {pendente && (
-        <CaixaAviso className="mt-3">Troca agendada para <strong>{pendente.mascarada}</strong> — passa a valer em {formatarEmBrasilia(pendente.liberaEm)}. Não foi você? Abra um ticket no suporte.</CaixaAviso>
+        <CaixaAviso className="mt-3">Troca agendada para <strong>{pendente.mascarada}</strong>. Passa a valer em {formatarEmBrasilia(pendente.liberaEm)}. Não foi você? Abra um ticket no suporte.</CaixaAviso>
       )}
       {editando && (
         <div className="space-y-3">

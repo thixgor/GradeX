@@ -68,7 +68,7 @@ export function TermosAceite({ papel, onAceito, compacto = false }: { papel: 'mo
         </a>
       </div>
       {termos.aceito ? (
-        <p className="rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300">✓ Você aceitou a versão {termos.versao}.</p>
+        <p className="rounded-xl bg-primary/[0.08] px-3.5 py-2.5 text-sm font-medium text-primary">Você aceitou a versão {termos.versao}.</p>
       ) : (
         <>
           <div ref={caixa} onScroll={aoRolar} className={`${compacto ? 'max-h-56' : 'max-h-80'} overflow-y-auto rounded-xl border border-border bg-muted/30 p-4 text-xs leading-relaxed`}>

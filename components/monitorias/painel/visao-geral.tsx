@@ -150,7 +150,7 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
                     <li key={r.id}>
                       <Link href={`/monitorias/reservas/${r.id}`} className="flex items-center gap-4 px-4 py-3 transition hover:bg-muted/40">
                         <span className="flex w-12 shrink-0 flex-col items-center rounded-xl bg-muted/60 py-1.5">
-                          <span className="text-[11px] uppercase text-muted-foreground">{formatarEmBrasilia(d, { month: 'short' }).replace('.', '')}</span>
+                          <span className="text-[11px] text-muted-foreground">{formatarEmBrasilia(d, { month: 'short' }).replace('.', '')}</span>
                           <span className="font-heading text-lg font-semibold leading-none tabular-nums">{formatarEmBrasilia(d, { day: '2-digit' })}</span>
                         </span>
                         <span className="min-w-0 flex-1">
