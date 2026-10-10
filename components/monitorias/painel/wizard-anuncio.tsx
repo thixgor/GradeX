@@ -342,13 +342,13 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
                           <input type="number" min={2} max={30} value={f.grupoMax} onChange={(e) => set('grupoMax', Math.max(2, Math.min(30, Number(e.target.value) || 2)))} className="h-9 w-24 rounded-lg border border-border bg-background px-2 text-sm" />
                         </Mini>
                         {f.faixas.map((x, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm">
-                            <span>A partir de</span>
-                            <input type="number" min={2} max={f.grupoMax} value={x.minAlunos} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, minAlunos: Number(e.target.value) || 2 } : y)))} className="h-9 w-16 rounded-lg border border-border bg-background px-2" />
-                            <span>alunos: R$</span>
-                            <input value={x.valor} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, valor: e.target.value } : y)))} placeholder="45,00" inputMode="decimal" className="h-9 w-24 rounded-lg border border-border bg-background px-2" />
-                            <span className="text-xs text-muted-foreground">por pessoa/{f.precoModo}</span>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => set('faixas', f.faixas.filter((_, k) => k !== i))}><Trash2 className="h-4 w-4" /></Button>
+                          <div key={i} className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-sm">
+                            <span className="whitespace-nowrap">A partir de</span>
+                            <input type="number" aria-label="Mínimo de alunos da faixa" min={2} max={f.grupoMax} value={x.minAlunos} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, minAlunos: Number(e.target.value) || 2 } : y)))} className="h-9 w-16 rounded-lg border border-border bg-background px-2" />
+                            <span className="whitespace-nowrap">alunos: R$</span>
+                            <input aria-label="Valor por pessoa da faixa" value={x.valor} onChange={(e) => set('faixas', f.faixas.map((y, k) => (k === i ? { ...y, valor: e.target.value } : y)))} placeholder="45,00" inputMode="decimal" className="h-9 w-24 rounded-lg border border-border bg-background px-2" />
+                            <span className="whitespace-nowrap text-xs text-muted-foreground">por pessoa/{f.precoModo}</span>
+                            <Button variant="ghost" size="icon" className="h-9 w-9" aria-label="Remover faixa" onClick={() => set('faixas', f.faixas.filter((_, k) => k !== i))}><Trash2 className="h-4 w-4" /></Button>
                           </div>
                         ))}
                         {f.faixas.length < 6 && <Button size="sm" variant="outline" onClick={() => set('faixas', [...f.faixas, { minAlunos: (f.faixas.at(-1)?.minAlunos || 1) + 1, valor: '' }])}><Plus className="mr-1 h-3.5 w-3.5" /> Faixa</Button>}
