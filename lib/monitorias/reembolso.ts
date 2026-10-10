@@ -121,6 +121,14 @@ export async function reembolsarParticipacao(input: {
   })
   // Reembolso parcial depois da aula concluída: o resto do repasse pode sair.
   if (!ehTotal) await liberarSePronta(part.reservaId)
+  // Devolveu tudo: o contrato daquele assento deixa de valer (rescindido, com o
+  // motivo). Nada é apagado — o texto assinado, o hash e as evidências ficam.
+  if (ehTotal) {
+    await c.contratos.updateOne(
+      { participacaoId: input.participacaoId, status: { $ne: 'rescindido' } } as any,
+      { $set: { status: 'rescindido', rescisao: { em: new Date(), motivo: reembolso.motivo }, updatedAt: new Date() } },
+    )
+  }
   await audit({
     action: 'payment_refunded',
     actorUserId: reembolso.por === 'sistema' ? undefined : reembolso.por,

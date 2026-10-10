@@ -499,6 +499,8 @@ export interface Contrato {
   hash: string
   assinaturas: EvidenciaAssinatura[]
   status: 'aguardando_assinaturas' | 'assinado' | 'rescindido'
+  /** Por que deixou de valer (ex.: reembolso integral do assento). O texto assinado não muda. */
+  rescisao?: { em: Date; motivo: string }
   /** Código curto para a página pública de verificação. */
   codigoVerificacao: string
   pdfPath?: string

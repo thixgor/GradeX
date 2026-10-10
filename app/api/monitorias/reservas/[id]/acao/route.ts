@@ -11,6 +11,7 @@ import {
   confirmarComQuemPagou,
   ErroMonitoria,
   papelNaReserva,
+  acessoDeLeitura,
   proporNova,
   reportarProblema,
 } from '@/lib/monitorias/reservas'
@@ -57,7 +58,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const corpo = parsed.data
     const reserva = await carregarReserva(params.id)
     const papel = await papelNaReserva(reserva, sessao.userId)
-    if (!papel) return naoEncontrado()
+    if (!papel) {
+      // Quem já saiu (vê o histórico) recebe o motivo; estranho continua com 404.
+      const leitura = await acessoDeLeitura(reserva, sessao.userId)
+      if (leitura?.somenteLeitura) return erro(409, 'Você já saiu desta monitoria. O histórico continua disponível só para consulta.')
+      return naoEncontrado()
+    }
     const ator = await carregarUsuario(sessao.userId)
     if (!ator || ator.banned) return erro(403, 'Conta indisponível.')
     const c = await obterColecoes()
