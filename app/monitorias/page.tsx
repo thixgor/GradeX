@@ -10,6 +10,7 @@ import { CartaoAnuncio, type CardAnuncio } from '@/components/monitorias/cartao-
 import { Esqueleto, Vazio, api } from '@/components/monitorias/base'
 import { VideoAnuncioResponsivo } from '@/components/monitorias/video-anuncio'
 import { SimuladorGanhos } from '@/components/monitorias/simulador-ganhos'
+import { AlunosProcurando } from '@/components/monitorias/alunos-procurando'
 import { cn } from '@/lib/utils'
 
 interface RespostaVitrine {
@@ -166,6 +167,13 @@ export default function VitrineMonitorias() {
                     />
                     <Button type="submit" className="h-11 rounded-xl px-5">Buscar</Button>
                   </form>
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Não achou?{' '}
+                    <Link href="/monitorias/pedir" className="font-semibold text-primary underline-offset-4 hover:underline">
+                      Peça uma monitoria
+                    </Link>{' '}
+                    e os monitores vêm até você.
+                  </p>
                 </>
               ) : (
                 <>
@@ -234,6 +242,7 @@ export default function VitrineMonitorias() {
         ))}
       </section>
 
+      {publico === 'ensinar' && <AlunosProcurando />}
       {publico === 'ensinar' && <ParaMonitores comSimulador={false} />}
 
       {/* ── Lista ───────────────────────────────────────────────────────── */}
@@ -301,18 +310,38 @@ export default function VitrineMonitorias() {
                 <Button variant="outline" className="rounded-xl" disabled={pagina >= dados.paginas} onClick={() => setPagina((p) => p + 1)}>Próxima</Button>
               </div>
             )}
+            {publico === 'aprender' && (
+              <div className="mt-8 flex flex-col items-start gap-3 rounded-2xl border border-dashed border-primary/40 bg-primary/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-[15px]">
+                  <span className="font-semibold">Não encontrou o que precisa?</span>{' '}
+                  <span className="text-muted-foreground">Diga a matéria e o valor, e os monitores vêm até você.</span>
+                </p>
+                <Link href="/monitorias/pedir" className="w-full shrink-0 sm:w-auto">
+                  <Button variant="outline" className="w-full rounded-xl sm:w-auto">Pedir monitoria</Button>
+                </Link>
+              </div>
+            )}
           </>
         ) : (
           <Vazio
             icone={<GraduationCap className="h-5 w-5" />}
             titulo={filtrando ? 'Nada com esses filtros' : 'Ainda não há monitorias por aqui'}
-            texto={filtrando ? 'Tente outra palavra ou tire algum filtro.' : 'Que tal ser a primeira pessoa a ensinar o que você domina?'}
+            texto={
+              filtrando
+                ? 'Peça uma monitoria: os monitores da matéria recebem o seu pedido e vêm até você.'
+                : 'Peça a sua monitoria e avisamos os monitores. Ou seja a primeira pessoa a ensinar o que você domina.'
+            }
             acao={
-              filtrando ? (
-                <Button variant="outline" className="rounded-xl" onClick={() => { setBusca(''); setMateria(''); setFiltros({}) }}>Limpar filtros</Button>
-              ) : (
-                <Link href="/monitorias/painel"><Button className="rounded-xl">Anunciar minha monitoria</Button></Link>
-              )
+              <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+                <Link href={`/monitorias/pedir${materia || buscaAplicada ? `?materia=${encodeURIComponent(materia || buscaAplicada)}` : ''}`}>
+                  <Button className="w-full rounded-xl sm:w-auto">Pedir monitoria{materia || buscaAplicada ? ` de ${materia || buscaAplicada}` : ''}</Button>
+                </Link>
+                {filtrando ? (
+                  <Button variant="outline" className="rounded-xl" onClick={() => { setBusca(''); setBuscaAplicada(''); setMateria(''); setFiltros({}) }}>Limpar filtros</Button>
+                ) : (
+                  <Link href="/monitorias/painel"><Button variant="outline" className="w-full rounded-xl sm:w-auto">Anunciar minha monitoria</Button></Link>
+                )}
+              </div>
             }
           />
         )}

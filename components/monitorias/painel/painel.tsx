@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CalendarDays, Inbox, LayoutDashboard, UserRound, Wallet, Plus } from 'lucide-react'
+import { CalendarDays, Inbox, LayoutDashboard, Megaphone, UserRound, Wallet, Plus } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -14,13 +14,15 @@ import { VisaoGeral } from './visao-geral'
 import { PerfilMonitor } from './perfil'
 import { EditorAgenda } from './agenda'
 import { FinanceiroMonitor } from './financeiro'
+import { Oportunidades } from './oportunidades'
 import { DISPONIBILIDADE_VAZIA } from '@/lib/monitorias/agenda'
 
-export type AbaPainel = 'visao' | 'perfil' | 'agenda' | 'pedidos' | 'financeiro'
+export type AbaPainel = 'visao' | 'oportunidades' | 'perfil' | 'agenda' | 'pedidos' | 'financeiro'
 
 const ABAS: Array<{ chave: AbaPainel; rotulo: string; icone: typeof Inbox; href: string }> = [
   { chave: 'visao', rotulo: 'Visão geral', icone: LayoutDashboard, href: '/monitorias/painel' },
   { chave: 'pedidos', rotulo: 'Pedidos', icone: Inbox, href: '/monitorias/painel/pedidos' },
+  { chave: 'oportunidades', rotulo: 'Oportunidades', icone: Megaphone, href: '/monitorias/painel/oportunidades' },
   { chave: 'agenda', rotulo: 'Agenda', icone: CalendarDays, href: '/monitorias/painel/agenda' },
   { chave: 'perfil', rotulo: 'Perfil e PIX', icone: UserRound, href: '/monitorias/painel/perfil' },
   { chave: 'financeiro', rotulo: 'Financeiro', icone: Wallet, href: '/monitorias/painel/financeiro' },
@@ -75,6 +77,7 @@ export function PainelMonitor({ aba }: { aba: AbaPainel }) {
               <a.icone className="h-4 w-4" strokeWidth={1.75} />
               {a.rotulo}
               {a.chave === 'pedidos' && pendentes ? <span className="rounded-md bg-primary px-1.5 text-[11px] font-semibold tabular-nums text-primary-foreground">{pendentes}</span> : null}
+              {a.chave === 'oportunidades' && dados?.oportunidades ? <span className="rounded-md bg-amber-500/15 px-1.5 text-[11px] font-semibold tabular-nums text-amber-800 dark:text-amber-300">{dados.oportunidades}</span> : null}
               {ativa && <motion.span layoutId="aba-painel" className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-primary" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
             </Link>
           )
@@ -93,6 +96,7 @@ export function PainelMonitor({ aba }: { aba: AbaPainel }) {
             {aba === 'perfil' && <PerfilMonitor dados={dados} recarregar={carregar} />}
             {aba === 'agenda' && <EditorAgenda inicial={dados.tutor?.disponibilidade || DISPONIBILIDADE_VAZIA} recarregar={carregar} />}
             {aba === 'pedidos' && <ListaReservas papel="monitor" />}
+            {aba === 'oportunidades' && <Oportunidades />}
             {aba === 'financeiro' && <FinanceiroMonitor />}
           </motion.div>
         </AnimatePresence>

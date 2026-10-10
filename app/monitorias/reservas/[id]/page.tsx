@@ -14,6 +14,7 @@ import { Avatar, CaixaAviso, CaixaErro, Esqueleto, HoraBrasilia, SeloStatus, api
 import { AssinaturaContrato } from '@/components/monitorias/assinatura-contrato'
 import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
+import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
 import { baixarIcs, type DetalheReserva, type MensagemReserva } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
@@ -287,6 +288,9 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
         {/* Painel lateral */}
         <aside className="space-y-4">
+          {r.demanda && !p && (
+            <CartaoDemanda d={r.demanda} topo={d.papel === 'monitor' ? 'O pedido do aluno' : 'Seu pedido'} />
+          )}
           {p && (
             <div className="rounded-2xl border border-border bg-card p-4">
               <h2 className="text-sm font-semibold">O combinado</h2>

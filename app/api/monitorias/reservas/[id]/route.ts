@@ -66,6 +66,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         precoReferencia: anuncio?.preco || null,
         status: reserva.status,
         origem: reserva.origem,
+        /** Pedido do aluno que originou a conversa (cópia, sem dados pessoais). */
+        demanda: reserva.demanda ? { ...reserva.demanda, id: undefined } : null,
         // Sem o id da conta de quem propôs: só o lado (monitor/aluno).
         proposta: reserva.proposta
           ? { ...reserva.proposta, autorId: undefined, deMonitor: reserva.proposta.autorId === reserva.tutorUserId, observacao: reserva.proposta.observacao ? ver(reserva.proposta.observacao) : undefined }

@@ -1,5 +1,6 @@
 /** Formato devolvido por GET /api/monitorias/reservas/[id] (usado pela sala e pelo checkout). */
 import type { StatusReserva, Proposta, ConteudoAnuncio } from '@/lib/monitorias/tipos'
+import type { ResumoDemanda } from '@/lib/monitorias/demandas-regras'
 
 export type MensagemReserva = { id: string; autor: 'eu' | 'monitor' | 'aluno' | 'sistema'; tipo: string; texto: string; propostaId: string | null; createdAt: string }
 
@@ -22,6 +23,7 @@ export interface DetalheReserva {
     precoReferencia: ConteudoAnuncio['preco'] | null
     status: StatusReserva
     origem: 'direto' | 'negociacao' | 'a_combinar' | 'gratis'
+    demanda: ResumoDemanda | null
     proposta: (Omit<Proposta, 'inicio' | 'criadaEm'> & { inicio: string; criadaEm: string }) | null
     aceites: { aluno?: string; tutor?: string }
     inicio: string | null

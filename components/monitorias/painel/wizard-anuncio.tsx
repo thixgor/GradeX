@@ -11,6 +11,7 @@ import {
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { BarraInferior } from '@/components/ui/barra-inferior'
 import { cn } from '@/lib/utils'
 import { interpretarUrlDeVideo, urlDeMiniatura, urlOriginal } from '@/lib/monitorias/videos'
 import { validarLinkExterno } from '@/lib/monitorias/links'
@@ -426,7 +427,10 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
           )}
           {ok && <CaixaAviso tom="sucesso" className="mt-4">{ok}</CaixaAviso>}
 
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
+          {/* Computador: no fim do passo. Celular e tablet: presos no rodapé, ao
+              alcance do polegar; a barra publica a altura e o "+" flutuante sobe
+              (antes ele cobria metade do "Próximo" no fim da página). */}
+          <div className="mt-6 hidden flex-wrap items-center justify-between gap-2 border-t border-border pt-4 lg:flex">
             <Button variant="ghost" onClick={() => setPasso((p) => Math.max(0, p - 1))} disabled={passo === 0}><ArrowLeft className="mr-1 h-4 w-4" /> Voltar</Button>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" onClick={salvar} disabled={salvando}>{salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="mr-1.5 h-4 w-4" /> Salvar</>}</Button>
@@ -437,6 +441,28 @@ export function WizardAnuncio({ anuncioId }: { anuncioId?: string }) {
               ) : null}
             </div>
           </div>
+          <div className="h-24 lg:hidden" aria-hidden />
+          <BarraInferior className="lg:hidden">
+            <div className="flex w-full items-center gap-2">
+              <Button variant="ghost" size="icon" className="h-11 w-11 shrink-0 rounded-xl" aria-label="Passo anterior" onClick={() => setPasso((p) => Math.max(0, p - 1))} disabled={passo === 0}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <Button variant="outline" className="h-11 shrink-0 rounded-xl px-3" aria-label="Salvar" onClick={salvar} disabled={salvando}>
+                {salvando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              </Button>
+              {passo < PASSOS.length - 1 ? (
+                <Button className="h-11 min-w-0 flex-1 rounded-xl" onClick={() => setPasso((p) => p + 1)}>
+                  <span className="truncate">Próximo: {PASSOS[passo + 1]}</span> <ArrowRight className="ml-1 h-4 w-4 shrink-0" />
+                </Button>
+              ) : ['rascunho', 'rejeitado'].includes(status) ? (
+                <Button className="h-11 min-w-0 flex-1 rounded-xl" onClick={enviarAnalise} disabled={salvando}>
+                  <Send className="mr-1.5 h-4 w-4 shrink-0" /> <span className="truncate">Enviar para análise</span>
+                </Button>
+              ) : (
+                <span className="flex-1" />
+              )}
+            </div>
+          </BarraInferior>
         </div>
       </div>
 
