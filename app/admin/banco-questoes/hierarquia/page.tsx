@@ -5,12 +5,14 @@ import Link from 'next/link'
 import {
   ArrowLeft,
   ChevronRight,
+  EyeOff,
   FolderTree,
   Loader2,
   Move,
   Pencil,
   Plus,
   Search,
+  ShieldCheck,
   Trash2,
   X,
 } from 'lucide-react'
@@ -20,6 +22,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import { filtrarArvore, montarArvore, paraBusca, type ModuloDaArvore } from '@/lib/banco/hierarquia'
+import { marcacaoHerdadaDoTopico, noMarcado } from '@/lib/banco/visibilidade'
+import { SeletorDeCargos, SeloDeCargos } from '@/components/seletor-de-cargos'
 
 /**
  * Gerenciar a hierarquia do Banco de Questões.
@@ -72,6 +76,27 @@ interface Movimento {
 }
 
 /**
+ * Quem vê um módulo ou tópico — ver lib/banco/visibilidade.ts.
+ *
+ * Módulo é o "grupo" (vindo de /provas) e tópico é o caminho dos subgrupos
+ * dentro dele. A marcação desce: módulo oculto/restrito leva os tópicos, e um
+ * tópico leva os que moram abaixo dele no caminho.
+ */
+interface Visibilidade {
+  nivel: 'modulo' | 'topico'
+  id: string
+  nome: string
+  isHidden: boolean
+  allowedGroups: string[]
+}
+
+/** O que a árvore crua traz de marcação em cada nó. */
+interface Marca {
+  isHidden?: boolean
+  allowedGroups?: string[]
+}
+
+/**
  * O que o admin pediu para excluir, com o tamanho do estrago já medido.
  *
  * A tela usava `confirm()` do navegador, que só cabe uma frase e só tem "ok" e
@@ -107,6 +132,9 @@ export default function HierarquiaPage() {
   const [erro, setErro] = useState('')
   const [recado, setRecado] = useState('')
 
+  const [visibilidade, setVisibilidade] = useState<Visibilidade | null>(null)
+  const [salvandoVisibilidade, setSalvandoVisibilidade] = useState(false)
+
   const [movimento, setMovimento] = useState<Movimento | null>(null)
   const [buscaMovimento, setBuscaMovimento] = useState('')
   const [movendo, setMovendo] = useState(false)
@@ -132,6 +160,26 @@ export default function HierarquiaPage() {
     [modulos, topicos, subtopicos],
   )
   const visivel = useMemo(() => filtrarArvore(arvore, busca), [arvore, busca])
+
+  /** Marcação própria de cada módulo/tópico, por id — `montarArvore` não a carrega. */
+  const marcas = useMemo(() => {
+    const mapa = new Map<string, Marca>()
+    for (const n of [...modulos, ...topicos]) {
+      if (noMarcado(n)) mapa.set(String(n._id), { isHidden: n.isHidden, allowedGroups: n.allowedGroups })
+    }
+    return mapa
+  }, [modulos, topicos])
+
+  /** Tópicos marcados por um tópico acima deles no caminho: id → nome do de cima. */
+  const herdadas = useMemo(() => {
+    const mapa = new Map<string, string>()
+    if (!topicos.some(noMarcado)) return mapa
+    for (const t of topicos) {
+      const acima = marcacaoHerdadaDoTopico(t, topicos)
+      if (acima) mapa.set(String(t._id), acima.nome)
+    }
+    return mapa
+  }, [topicos])
   const buscando = busca.trim().length >= 2
 
   /**
@@ -215,6 +263,44 @@ export default function HierarquiaPage() {
       await carregar()
     } finally {
       setExcluindo(false)
+    }
+  }
+
+  function abrirVisibilidade(nivel: 'modulo' | 'topico', id: string, nome: string) {
+    const marca = marcas.get(id) || {}
+    setErro('')
+    setRecado('')
+    setVisibilidade({
+      nivel,
+      id,
+      nome,
+      isHidden: marca.isHidden === true,
+      allowedGroups: marca.allowedGroups || [],
+    })
+  }
+
+  async function salvarVisibilidade() {
+    if (!visibilidade) return
+    setSalvandoVisibilidade(true)
+    try {
+      const res = await fetch(`${ROTA[visibilidade.nivel]}/${visibilidade.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          isHidden: visibilidade.isHidden,
+          allowedGroups: visibilidade.allowedGroups,
+        }),
+      })
+      const dados = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setErro(dados.error || 'Não foi possível salvar a visibilidade')
+        return
+      }
+      setRecado(`Visibilidade de "${visibilidade.nome}" atualizada.`)
+      setVisibilidade(null)
+      await carregar()
+    } finally {
+      setSalvandoVisibilidade(false)
     }
   }
 
@@ -349,6 +435,9 @@ export default function HierarquiaPage() {
                   setExclusao(alvo)
                 }}
                 onMover={abrirMovimento}
+                marcas={marcas}
+                herdadas={herdadas}
+                onVisibilidade={abrirVisibilidade}
               />
             ))
           )}
@@ -390,6 +479,71 @@ export default function HierarquiaPage() {
               </Button>
               <Button size="sm" disabled={!edicao.nome.trim() || salvando} onClick={salvar}>
                 {salvando ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
+                Salvar
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+      {/* ── Visibilidade ───────────────────────────────────────────────── */}
+      {visibilidade ? (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !salvandoVisibilidade) setVisibilidade(null)
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Visibilidade de ${visibilidade.nome}`}
+            className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-2xl"
+          >
+            <h2 className="flex items-center gap-2 text-sm font-bold">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              Quem vê &ldquo;{visibilidade.nome}&rdquo;
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {visibilidade.nivel === 'modulo'
+                ? 'Vale para o módulo inteiro: tópicos, subtópicos e questões. O admin continua vendo tudo.'
+                : 'Vale para o tópico, os subtópicos e as questões dele — e para os tópicos que moram abaixo dele no caminho. O admin continua vendo tudo.'}
+            </p>
+
+            <label className="mt-4 flex cursor-pointer items-start gap-2 rounded-lg border border-border p-2.5 text-xs">
+              <input
+                type="checkbox"
+                checked={visibilidade.isHidden}
+                onChange={(e) => setVisibilidade({ ...visibilidade, isHidden: e.target.checked })}
+                className="mt-0.5 h-3.5 w-3.5 flex-none"
+              />
+              <span>
+                <span className="font-semibold">Ocultar do Banco geral</span>
+                <span className="block text-muted-foreground">
+                  Some para todo mundo que não é admin, qualquer que seja o cargo.
+                </span>
+              </span>
+            </label>
+
+            <div className="mt-3">
+              <SeletorDeCargos
+                valor={visibilidade.allowedGroups}
+                onChange={(allowedGroups) => setVisibilidade({ ...visibilidade, allowedGroups })}
+                desabilitado={visibilidade.isHidden}
+                descricao="Quem não tiver um dos cargos marcados não vê este nível nem as questões dele. Deixe tudo desmarcado para liberar a todos."
+              />
+            </div>
+
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={salvandoVisibilidade}
+                onClick={() => setVisibilidade(null)}
+              >
+                Cancelar
+              </Button>
+              <Button size="sm" disabled={salvandoVisibilidade} onClick={salvarVisibilidade}>
+                {salvandoVisibilidade ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : null}
                 Salvar
               </Button>
             </div>
@@ -584,6 +738,9 @@ function LinhaModulo({
   onEditar,
   onExcluir,
   onMover,
+  marcas,
+  herdadas,
+  onVisibilidade,
 }: {
   modulo: ModuloDaArvore
   aberto: boolean
@@ -591,6 +748,9 @@ function LinhaModulo({
   onEditar: (e: Edicao) => void
   onExcluir: (alvo: Exclusao) => void
   onMover: (m: Movimento) => void
+  marcas: Map<string, Marca>
+  herdadas: Map<string, string>
+  onVisibilidade: (nivel: 'modulo' | 'topico', id: string, nome: string) => void
 }) {
   return (
     <div className="mb-0.5">
@@ -606,6 +766,7 @@ function LinhaModulo({
           <ChevronRight className={cn('h-3.5 w-3.5 transition-transform', aberto && 'rotate-90')} />
         </button>
         <span className="min-w-0 flex-1 truncate py-1.5 text-[13px] font-semibold">{modulo.nome}</span>
+        <SelosDeMarca marca={marcas.get(modulo._id)} />
         <span className="flex-none text-[11px] tabular-nums text-muted-foreground">
           {modulo.totalQuestoes}
         </span>
@@ -613,6 +774,7 @@ function LinhaModulo({
           onNovo={() => onEditar({ nivel: 'topico', nome: '', paiId: modulo._id })}
           rotuloNovo="Novo tópico"
           onRenomear={() => onEditar({ nivel: 'modulo', id: modulo._id, nome: modulo.nome })}
+          onVisibilidade={() => onVisibilidade('modulo', modulo._id, modulo.nome)}
           onExcluir={() =>
             onExcluir({
               nivel: 'modulo',
@@ -636,6 +798,7 @@ function LinhaModulo({
               <div key={topico._id}>
                 <div className="flex items-center gap-0.5 rounded-lg px-1 hover:bg-muted/60">
                   <span className="min-w-0 flex-1 truncate py-1.5 pl-2 text-[12.5px]">{topico.nome}</span>
+                  <SelosDeMarca marca={marcas.get(topico._id)} herdadaDe={herdadas.get(topico._id)} />
                   <span className="flex-none text-[11px] tabular-nums text-muted-foreground">
                     {topico.totalQuestoes}
                   </span>
@@ -643,6 +806,7 @@ function LinhaModulo({
                     onNovo={() => onEditar({ nivel: 'subtopico', nome: '', paiId: topico._id })}
                     rotuloNovo="Novo subtópico"
                     onRenomear={() => onEditar({ nivel: 'topico', id: topico._id, nome: topico.nome })}
+                    onVisibilidade={() => onVisibilidade('topico', topico._id, topico.nome)}
                     onMover={() =>
                       onMover({
                         nivel: 'topico',
@@ -710,16 +874,47 @@ function LinhaModulo({
   )
 }
 
+/** "Oculto" / "Só Plus+" ao lado do nome — ou de onde a marcação vem, quando é herdada. */
+function SelosDeMarca({ marca, herdadaDe }: { marca?: Marca; herdadaDe?: string }) {
+  if (!marca && !herdadaDe) return null
+  return (
+    <span className="flex min-w-0 flex-none items-center gap-1">
+      {marca?.isHidden ? (
+        <span
+          title="Oculto do Banco geral — só admins veem"
+          className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[9.5px] font-semibold text-amber-700 dark:text-amber-400"
+        >
+          <EyeOff className="h-2.5 w-2.5" /> Oculto
+        </span>
+      ) : null}
+      {marca?.allowedGroups?.length ? (
+        <SeloDeCargos cargos={marca.allowedGroups} className="max-w-[9rem]" />
+      ) : null}
+      {!marca && herdadaDe ? (
+        <span
+          title={`Segue a visibilidade de "${herdadaDe}", acima no caminho`}
+          className="inline-flex max-w-[9rem] items-center gap-1 truncate rounded-full bg-muted px-1.5 py-0.5 text-[9.5px] font-medium text-muted-foreground"
+        >
+          <ShieldCheck className="h-2.5 w-2.5 flex-none" /> Herdado
+        </span>
+      ) : null}
+    </span>
+  )
+}
+
 function Acoes({
   onNovo,
   rotuloNovo,
   onRenomear,
+  onVisibilidade,
   onMover,
   onExcluir,
 }: {
   onNovo?: () => void
   rotuloNovo?: string
   onRenomear: () => void
+  /** Ocultar / restringir a cargos — só módulo e tópico. */
+  onVisibilidade?: () => void
   /** Só tópico e subtópico têm para onde ir — módulo é o topo da árvore. */
   onMover?: () => void
   onExcluir: () => void
@@ -746,6 +941,17 @@ function Acoes({
       >
         <Pencil className="h-3.5 w-3.5" />
       </button>
+      {onVisibilidade ? (
+        <button
+          type="button"
+          onClick={onVisibilidade}
+          aria-label="Quem vê"
+          title="Quem vê (ocultar ou restringir a cargos)"
+          className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition hover:bg-muted hover:text-foreground"
+        >
+          <ShieldCheck className="h-3.5 w-3.5" />
+        </button>
+      ) : null}
       {onMover ? (
         <button
           type="button"

@@ -27,14 +27,63 @@
  * esconderia do próprio dono a pasta que ele criou. A regra vale para os
  * grupos gerais, que são os que o admin publica.
  *
- * Este arquivo não importa nada: é lido pela tela e pelas rotas.
+ * ## Grupo só para alguns cargos
+ *
+ * Além de ocultar para todos, o admin pode restringir o grupo a cargos
+ * (`allowedGroups`: "plus", "quest", um cargo criado em `/admin/cargos`,
+ * "monitor"). Lista vazia é "todo mundo". Quem não tem um dos cargos não vê o
+ * grupo — nem o selo, nem as provas, nem pelo endereço direto — exatamente como
+ * se ele estivesse oculto. A restrição desce pela árvore pelo mesmo motivo da
+ * ocultação: um subgrupo de um grupo "só Plus+" é "só Plus+" também. Um
+ * subgrupo pode restringir MAIS que o pai (os dois filtros valem juntos), nunca
+ * menos.
+ *
+ * O teste do cargo é o mesmo dos materiais (ver `lib/restricao-por-cargo.ts`),
+ * com os aliases legados do Plus+ incluídos.
+ *
+ * Este arquivo só importa funções puras: é lido pela tela e pelas rotas.
  */
+
+import { cargoPassa, type QuemPedeAcesso } from '@/lib/restricao-por-cargo'
 
 export interface GrupoComOcultacao {
   _id: unknown
   parentGroupId?: unknown
   isHidden?: boolean
   type?: string
+  /** Cargos que enxergam o grupo. Vazio ou ausente = todos. */
+  allowedGroups?: string[] | null
+}
+
+/**
+ * Quem está olhando, para a restrição por cargo.
+ *
+ * Ausente = só a ocultação conta. É o que o admin usa para desenhar os selos e
+ * o que a rota usa quando nenhum grupo da árvore tem restrição de cargo.
+ */
+export type QuemVeOGrupo = QuemPedeAcesso
+
+/** Os cargos que enxergam o grupo, já limpos. Vazio = todo mundo. */
+export function cargosDoGrupo(grupo: Pick<GrupoComOcultacao, 'allowedGroups' | 'type'> | null | undefined): string[] {
+  if (!grupo || grupo.type === 'personal' || !Array.isArray(grupo.allowedGroups)) return []
+  return grupo.allowedGroups.map((g) => String(g)).filter(Boolean)
+}
+
+/** O grupo (ele mesmo, sem olhar os pais) é restrito a algum cargo? */
+export function grupoRestritoACargos(grupo: GrupoComOcultacao | null | undefined): boolean {
+  return cargosDoGrupo(grupo).length > 0
+}
+
+/** Alguma restrição de cargo na lista? Se não, ninguém precisa ler o cargo de ninguém. */
+export function algumGrupoRestrito(grupos: GrupoComOcultacao[]): boolean {
+  return grupos.some(grupoRestritoACargos)
+}
+
+/** O próprio grupo barra esta pessoa — por estar oculto ou por não ser do cargo dela? */
+function grupoBarra(grupo: GrupoComOcultacao, quem: QuemVeOGrupo | undefined): boolean {
+  if (grupoMarcadoComoOculto(grupo)) return true
+  if (!quem) return false
+  return !cargoPassa(cargosDoGrupo(grupo), quem)
 }
 
 /** Profundidade máxima percorrida. Um ciclo em dado antigo trava o laço, não a rota. */
@@ -48,8 +97,29 @@ export function grupoMarcadoComoOculto(grupo: GrupoComOcultacao | null | undefin
 /**
  * Os ids de todos os grupos que estão fora do ar: os marcados e os que moram
  * abaixo de um marcado, em qualquer profundidade.
+ *
+ * Com `quem`, fora do ar também quer dizer "restrito a cargos que esta pessoa
+ * não tem" — no grupo ou em qualquer ancestral. Admin não passa por aqui: a
+ * rota simplesmente não filtra.
  */
-export function idsDeGruposOcultos(grupos: GrupoComOcultacao[]): Set<string> {
+export function idsDeGruposOcultos(grupos: GrupoComOcultacao[], quem?: QuemVeOGrupo): Set<string> {
+  return idsBarradosPor(grupos, (g) => grupoBarra(g, quem))
+}
+
+/**
+ * Os ids dos grupos que PODEM estar fora do ar para alguém: ocultos, ou com
+ * restrição de cargo no caminho. Serve para a rota decidir se precisa ler o
+ * cargo de quem pergunta — prova fora deste conjunto é visível para qualquer
+ * cargo, e a leitura é dispensada.
+ */
+export function idsDeGruposComAlgumaBarreira(grupos: GrupoComOcultacao[]): Set<string> {
+  return idsBarradosPor(grupos, (g) => grupoMarcadoComoOculto(g) || grupoRestritoACargos(g))
+}
+
+function idsBarradosPor(
+  grupos: GrupoComOcultacao[],
+  barra: (grupo: GrupoComOcultacao) => boolean,
+): Set<string> {
   const porId = new Map(grupos.map((g) => [String(g._id), g]))
   const memo = new Map<string, boolean>()
 
@@ -71,7 +141,7 @@ export function idsDeGruposOcultos(grupos: GrupoComOcultacao[]): Set<string> {
       const grupo = porId.get(atualId)
       if (!grupo) break // pai apagado por fora: o grupo vale como raiz
       caminho.push(atualId)
-      if (grupoMarcadoComoOculto(grupo)) {
+      if (barra(grupo)) {
         resposta = true
         break
       }

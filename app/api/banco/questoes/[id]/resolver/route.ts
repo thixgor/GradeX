@@ -5,6 +5,8 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { BancoQuestao, BancoResolucao, BancoAlternativaLetra } from '@/lib/types/banco-questoes'
 import { temAcessoAoBanco } from '@/lib/account-tier'
+import { nosBarrados } from '@/lib/banco/visibilidade-servidor'
+import { questaoBarrada } from '@/lib/banco/visibilidade'
 import { areaLiberada, resolverPermissoes } from '@/lib/plan-entitlements-server'
 
 export const dynamic = 'force-dynamic'
@@ -67,7 +69,13 @@ export async function POST(
     const questao = await db.collection<BancoQuestao>('banco_questoes')
       .findOne({ _id: new ObjectId(id) })
 
-    if (!questao) {
+    // Módulo/tópico oculto ou de outro cargo: a questão não existe para esta
+    // pessoa, e responder devolveria o gabarito (ver lib/banco/visibilidade.ts).
+    const barrados = await nosBarrados(
+      db,
+      isAdmin ? null : { accountType: user.accountType, secondaryRole: (user as any).secondaryRole },
+    )
+    if (!questao || questaoBarrada(questao, barrados)) {
       return NextResponse.json({ error: 'Questão não encontrada' }, { status: 404 })
     }
 

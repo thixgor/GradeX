@@ -9,6 +9,7 @@ import {
   BancoQuestoesResponse
 } from '@/lib/types/banco-questoes'
 import { lerAcessoAoBanco, ocultarConteudo } from '@/lib/banco/acesso-servidor'
+import { comBloqueio } from '@/lib/banco/visibilidade-servidor'
 import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
 import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
@@ -278,7 +279,11 @@ export async function GET(request: NextRequest) {
     // nomes de período/módulo/tópico/subtópico não importam para contar — o
     // pipeline completo, com os 5 lookups, rodava DE NOVO só para chegar num
     // número, dobrando o trabalho de toda listagem.
-    const countPipeline: any[] = [{ $match: matchStage }]
+    // Módulo/tópico oculto ou restrito a outro cargo não existe para esta
+    // pessoa: nem na contagem, nem na página (ver lib/banco/visibilidade.ts).
+    const matchVisivel = comBloqueio(matchStage, acesso.barrados)
+
+    const countPipeline: any[] = [{ $match: matchVisivel }]
     if (precisaResolucoes) countPipeline.push(resolucoesLookup, resolucoesAddFields, resolucoesMatch)
     countPipeline.push({ $count: 'total' })
 
@@ -329,7 +334,7 @@ export async function GET(request: NextRequest) {
           ? [{ $sort: { totalRespostas: 1, createdAt: -1 } }]
           : [{ $sort: { createdAt: -1 } }]
 
-    const pipeline: any[] = [{ $match: matchStage }]
+    const pipeline: any[] = [{ $match: matchVisivel }]
 
     if (precisaResolucoes) {
       pipeline.push(resolucoesLookup, resolucoesAddFields, resolucoesMatch)

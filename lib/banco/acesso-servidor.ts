@@ -11,6 +11,8 @@ import {
   resolverPermissoes,
   type ContextoDePermissoes,
 } from '@/lib/plan-entitlements-server'
+import { nosBarrados } from '@/lib/banco/visibilidade-servidor'
+import type { NosBarrados } from '@/lib/banco/visibilidade'
 
 /**
  * Quem pode ver o quê no Banco de Questões.
@@ -33,6 +35,12 @@ export interface AcessoAoBanco {
    * piso de todo mundo, em vez de perder a seção por completo.
    */
   permissoes: ContextoDePermissoes
+  /**
+   * Módulos e tópicos ocultos ou restritos a cargos que esta pessoa não tem
+   * (ver `lib/banco/visibilidade.ts`). Toda consulta de questões passa por
+   * `comBloqueio(filtro, acesso.barrados)`.
+   */
+  barrados: NosBarrados
 }
 
 /**
@@ -46,6 +54,7 @@ export interface AcessoAoBanco {
 const CAMPOS_DE_ACESSO = {
   role: 1,
   accountType: 1,
+  secondaryRole: 1,
   premiumPlanType: 1,
   bancoQuestoesLiberadas: 1,
   freeQuestionsByPeriod: 1,
@@ -58,12 +67,18 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
   if (!usuario) return null
 
   const ehAdmin = usuario.role === 'admin'
-  const permissoes = await resolverPermissoes(db, {
-    userId,
-    role: usuario.role,
-    accountType: usuario.accountType,
-    premiumPlanType: usuario.premiumPlanType as string | null,
-  })
+  const [permissoes, barrados] = await Promise.all([
+    resolverPermissoes(db, {
+      userId,
+      role: usuario.role,
+      accountType: usuario.accountType,
+      premiumPlanType: usuario.premiumPlanType as string | null,
+    }),
+    nosBarrados(
+      db,
+      ehAdmin ? null : { accountType: usuario.accountType, secondaryRole: (usuario as any).secondaryRole },
+    ),
+  ])
 
   /*
    * Com o bloco modular ligado (plano comprado ou cargo do registro), a regra
@@ -83,6 +98,7 @@ export async function lerAcessoAoBanco(db: Db, userId: string): Promise<AcessoAo
     ehGratuito: !ehAdmin && !ehAssinante,
     gratuito: lerEstadoGratuito(usuario as any),
     permissoes,
+    barrados,
   }
 }
 

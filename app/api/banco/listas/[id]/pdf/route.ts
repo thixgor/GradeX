@@ -6,6 +6,7 @@ import { ObjectId } from 'mongodb'
 import { User } from '@/lib/types'
 import { jsPDF } from 'jspdf'
 import { bancoLiberadoPeloPlano } from '@/lib/banco/acesso-servidor'
+import { comBloqueio, nosBarradosDoDocumento } from '@/lib/banco/visibilidade-servidor'
 import { checkPlusDownloadAllowance, recordPlusDownload } from '@/lib/plus-guard'
 import { absoluteUrl } from '@/lib/seo'
 
@@ -126,7 +127,8 @@ export async function GET(
     // Buscar as questões da lista com hierarquia
     const questoes = await db.collection('banco_questoes')
       .aggregate([
-        { $match: { _id: { $in: questaoObjectIds } } },
+        // Módulo/tópico oculto ou de outro cargo não sai no PDF.
+        { $match: comBloqueio({ _id: { $in: questaoObjectIds } }, await nosBarradosDoDocumento(db, user as any)) },
         {
           $lookup: {
             from: 'banco_periodos',

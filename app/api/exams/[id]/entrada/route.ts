@@ -49,7 +49,7 @@ export async function POST(
     // não. Sem isto, esta rota seria um jeito de descobrir que a prova existe.
     if (!isAdmin) {
       const periodo = await lerPeriodoDoAluno(db, session.userId)
-      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId, db, session.userId) })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }
@@ -123,7 +123,7 @@ export async function PATCH(
     const isAdmin = session.role === 'admin'
     if (!isAdmin) {
       const periodo = await lerPeriodoDoAluno(db, session.userId)
-      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId) })) {
+      if (!provaExisteParaPessoa(exam, { userId: session.userId, isAdmin, periodo, grupoOculto: await provaEstaEmGrupoOculto(exam.groupId, db, session.userId) })) {
         return NextResponse.json({ error: 'Prova não encontrada' }, { status: 404 })
       }
     }

@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { abrirQuestaoGratuita, lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
+import { comBloqueio } from '@/lib/banco/visibilidade-servidor'
 import { restantes } from '@/lib/banco/gratuito'
 import {
   avaliarUsoDoPlano,
@@ -45,7 +46,8 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
     // id que não existe seria cobrar por nada.
     const existe = await db
       .collection('banco_questoes')
-      .countDocuments({ _id: new ObjectId(id) }, { limit: 1 })
+      // Módulo/tópico oculto ou de outro cargo: a questão não existe para esta pessoa.
+      .countDocuments(comBloqueio({ _id: new ObjectId(id) }, acesso.barrados), { limit: 1 })
     if (existe === 0) {
       return NextResponse.json({ error: 'Questão não encontrada' }, { status: 404 })
     }

@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { BancoQuestao, BancoQuestaoComHierarquia } from '@/lib/types/banco-questoes'
 import { lerAcessoAoBanco } from '@/lib/banco/acesso-servidor'
+import { comBloqueio } from '@/lib/banco/visibilidade-servidor'
 import { jaDesbloqueada, restantes } from '@/lib/banco/gratuito'
 
 export const dynamic = 'force-dynamic'
@@ -58,7 +59,9 @@ export async function GET(
 
     // Buscar questão com hierarquia
     const pipeline = [
-      { $match: { _id: new ObjectId(id) } },
+      // Questão de módulo/tópico oculto ou de outro cargo responde como
+      // inexistente (ver lib/banco/visibilidade.ts).
+      { $match: comBloqueio({ _id: new ObjectId(id) }, acesso.barrados) },
       {
         $lookup: {
           from: 'banco_periodos',

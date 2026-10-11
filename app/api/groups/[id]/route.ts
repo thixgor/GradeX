@@ -10,6 +10,7 @@ import {
 import { podeMoverGrupo, type GrupoNaArvore } from '@/lib/provas/arvore-grupos'
 import { colecaoDeGrupos, colecaoDeProvas } from '@/lib/provas/colecoes'
 import { esquecerGruposOcultos } from '@/lib/provas/grupos-ocultos-servidor'
+import { normalizarCargosPermitidos } from '@/lib/restricao-por-cargo'
 
 export const dynamic = 'force-dynamic'
 
@@ -97,6 +98,20 @@ export async function PUT(
     }
 
     /*
+     * Restringir o grupo a cargos — ver "Grupo só para alguns cargos" em
+     * `lib/provas/grupos-ocultos.ts`. Lista vazia devolve o grupo a todos.
+     */
+    if (body.allowedGroups !== undefined) {
+      if (session.role !== 'admin') {
+        return NextResponse.json({ error: 'Apenas administradores podem restringir grupos' }, { status: 403 })
+      }
+      if (group.type === 'personal') {
+        return NextResponse.json({ error: 'Grupos pessoais não podem ser restritos a cargos' }, { status: 400 })
+      }
+      updateData.allowedGroups = normalizarCargosPermitidos(body.allowedGroups)
+    }
+
+    /*
      * Mover o grupo para dentro de outro (ou para a raiz).
      *
      * Trocar `parentGroupId` move o ramo inteiro de uma vez: as provas apontam
@@ -140,9 +155,11 @@ export async function PUT(
       { $set: updateData }
     )
 
-    // Ocultar muda quem vê o ramo; mover muda QUAL ramo fica embaixo de um
-    // grupo oculto. Nos dois casos a memória da árvore envelheceu.
-    if ('isHidden' in updateData || 'parentGroupId' in updateData) esquecerGruposOcultos()
+    // Ocultar e restringir mudam quem vê o ramo; mover muda QUAL ramo fica
+    // embaixo de um grupo oculto ou restrito. Nos dois casos a memória da árvore envelheceu.
+    if ('isHidden' in updateData || 'allowedGroups' in updateData || 'parentGroupId' in updateData) {
+      esquecerGruposOcultos()
+    }
 
     return NextResponse.json({ message: 'Grupo atualizado com sucesso' })
   } catch (error) {

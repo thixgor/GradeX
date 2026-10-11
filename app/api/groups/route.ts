@@ -3,7 +3,9 @@ import { getSession } from '@/lib/auth'
 import clientPromise from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { normalizeImageUrl, decodeHtmlEntities } from '@/lib/api-security'
-import { idsDeGruposOcultos } from '@/lib/provas/grupos-ocultos'
+import { algumGrupoRestrito, idsDeGruposOcultos } from '@/lib/provas/grupos-ocultos'
+import { esquecerGruposOcultos, lerCargoDoAluno } from '@/lib/provas/grupos-ocultos-servidor'
+import { normalizarCargosPermitidos } from '@/lib/restricao-por-cargo'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,14 +34,21 @@ export async function GET(req: NextRequest) {
 
     /*
      * Grupo oculto (e tudo abaixo dele) só existe para o admin — ver
-     * `lib/provas/grupos-ocultos.ts`. O admin recebe todos, com o `isHidden`
-     * de cada um, e a tela desenha o selo.
+     * `lib/provas/grupos-ocultos.ts`. O mesmo vale para o grupo restrito a
+     * cargos que a pessoa não tem. O admin recebe todos, com o `isHidden` e o
+     * `allowedGroups` de cada um, e a tela desenha os selos.
      *
      * A árvore é calculada sobre a lista inteira que veio do banco: um
      * subgrupo sem marcação própria está oculto se o pai estiver, e só dá
      * para saber isso olhando o pai.
      */
-    const ocultos = session.role === 'admin' ? new Set<string>() : idsDeGruposOcultos(groups as any)
+    const ehAdmin = session.role === 'admin'
+    // Grupo restrito a cargos some, com o ramo, para quem não tem o cargo. O
+    // cargo só é lido quando algum grupo tem restrição — o caso raro.
+    const quem = !ehAdmin && algumGrupoRestrito(groups as any)
+      ? await lerCargoDoAluno(db, session.userId)
+      : undefined
+    const ocultos = ehAdmin ? new Set<string>() : idsDeGruposOcultos(groups as any, quem)
     const visiveis = ocultos.size > 0 ? groups.filter(g => !ocultos.has(String(g._id))) : groups
 
     // Corrige capas salvas antes da correção do bug de sanitização (URLs com "&#x2F;" no lugar de "/")
@@ -62,7 +71,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
     }
 
-    const { name, description, color, icon, type, parentGroupId, category, course, imageUrl } = await req.json()
+    const { name, description, color, icon, type, parentGroupId, category, course, imageUrl, allowedGroups } = await req.json()
 
     // Validação
     if (!name || !name.trim()) {
@@ -136,8 +145,16 @@ export async function POST(req: NextRequest) {
     if (course && session.role === 'admin') {
       newGroup.course = course
     }
+    // Restrição por cargo — só grupo geral, só admin (ver lib/provas/grupos-ocultos.ts).
+    const cargos = normalizarCargosPermitidos(allowedGroups)
+    if (cargos.length > 0 && session.role === 'admin' && newGroup.type === 'general') {
+      newGroup.allowedGroups = cargos
+    }
 
     const result = await groupsCollection.insertOne(newGroup)
+    // Um subgrupo novo dentro de um ramo oculto/restrito precisa entrar na
+    // árvore que barra as provas dele — a memória curta ainda não o conhece.
+    if (newGroup.type === 'general') esquecerGruposOcultos()
 
     return NextResponse.json({
       message: 'Grupo criado com sucesso',
