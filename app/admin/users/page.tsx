@@ -1039,6 +1039,39 @@ export default function AdminUsersPage() {
     }
   }
 
+  const [removendoCpf, setRemovendoCpf] = useState(false)
+
+  /**
+   * Tira o CPF desta conta para que o titular consiga cadastrá-lo na conta
+   * certa — o CPF é único entre as contas (ver app/api/admin/users/[userId]/cpf).
+   */
+  async function handleRemoverCpf() {
+    if (!selectedUser?.cpf) return
+    const formatado = selectedUser.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+    const ok = window.confirm(
+      `Remover o CPF ${formatado} da conta de ${selectedUser.name} (${selectedUser.email})?\n\n` +
+        'O número fica livre para ser cadastrado em outra conta. Pedidos já feitos não mudam.',
+    )
+    if (!ok) return
+
+    setRemovendoCpf(true)
+    try {
+      const res = await fetch(`/api/admin/users/${selectedUser._id}/cpf`, { method: 'DELETE' })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data?.error || 'Erro ao remover o CPF')
+      }
+      const id = selectedUser._id
+      setUsers((prev) => prev.map((u) => (u._id === id ? { ...u, cpf: undefined } : u)))
+      setSelectedUser((u) => (u && u._id === id ? { ...u, cpf: undefined } : u))
+      showToastMessage('CPF removido. Ele já pode ser cadastrado em outra conta.', 'success')
+    } catch (error: any) {
+      showToastMessage(error?.message || 'Erro ao remover o CPF')
+    } finally {
+      setRemovendoCpf(false)
+    }
+  }
+
   async function handleRevokeSession(sessionId: string) {
     if (!selectedUser) return
     setRevokingSessionId(sessionId)
@@ -2382,6 +2415,19 @@ export default function AdminUsersPage() {
                     ? selectedUser.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
                     : <span className="text-muted-foreground italic">Não informado</span>}
                 </p>
+                {selectedUser?.cpf ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={removendoCpf}
+                    onClick={handleRemoverCpf}
+                    className="mt-3 h-8 w-full text-xs text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+                    {removendoCpf ? 'Removendo…' : 'Remover CPF desta conta'}
+                  </Button>
+                ) : null}
               </div>
 
               <div className="rounded-xl border bg-muted/40 p-4 min-w-0">
