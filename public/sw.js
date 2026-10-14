@@ -22,9 +22,19 @@
  * defeito nosso). O custo disso é pago com navigation preload — o browser
  * dispara a requisição em paralelo com a subida do SW —, então a regra de
  * "não atrapalhar o caminho normal" continua valendo na prática.
+ *
+ * E outra, por custo: o VÍDEO dos anúncios (Vercel Blob, cobrado por byte
+ * transferido). Ver `videoDeAnuncio` mais abaixo.
  */
 
 const CACHE_VERSION = 'da-static-v3'
+
+// Vídeos de anúncio já baixados. Fora do CACHE_VERSION de propósito: uma
+// versão nova do worker não pode jogar fora um vídeo que o aluno já pagou
+// (em banda) para baixar.
+const CACHE_ANUNCIOS = 'da-anuncios-v1'
+// Poucos vídeos bastam (é o que está no ar); o mais antigo sai primeiro.
+const ANUNCIOS_MAX_VIDEOS = 6
 
 // Página mostrada quando a navegação falha por falta de rede. Ela existe por
 // causa do app instalado: no navegador, cair na tela de erro é normal; dentro
@@ -119,7 +129,9 @@ self.addEventListener('activate', (event) => {
       // Remove caches de versões anteriores, preservando o atual.
       const keys = await caches.keys()
       await Promise.all(
-        keys.filter((k) => k !== CACHE_VERSION).map((k) => caches.delete(k))
+        keys
+          .filter((k) => k !== CACHE_VERSION && k !== CACHE_ANUNCIOS)
+          .map((k) => caches.delete(k))
       )
       await self.clients.claim()
     })()
@@ -136,6 +148,11 @@ self.addEventListener('fetch', (event) => {
   try {
     url = new URL(request.url)
   } catch {
+    return
+  }
+
+  if (videoDeAnuncio(url)) {
+    event.respondWith(responderVideoDeAnuncio(event, request, url))
     return
   }
 
@@ -196,3 +213,193 @@ self.addEventListener('fetch', (event) => {
     })().catch(() => fetch(request))
   )
 })
+
+/*
+ * ── Vídeo de anúncio: baixado UMA vez por aparelho ──────────────────────────
+ *
+ * O vídeo vem do Vercel Blob, que cobra cada byte entregue. Sem isto, quem vê
+ * o anúncio em dez páginas pode baixá-lo de novo várias vezes:
+ *
+ *  - O <video> pede o arquivo em pedaços (cabeçalho `Range`), e o cache HTTP
+ *    do navegador lida mal com pedaços: o Safari praticamente não reaproveita,
+ *    e o Chrome descarta com facilidade arquivos grandes.
+ *  - O vídeo toca em loop e pausa/retoma ao sair e voltar à tela — cada
+ *    retomada pode virar um pedido novo.
+ *
+ * Aqui o arquivo é baixado inteiro na primeira vez, guardado no Cache Storage
+ * e, dali em diante, TODO pedido (início, loop, salto, outra página, outro
+ * dia) é respondido do disco, recortando o pedaço pedido. A URL do Blob é
+ * imutável (nome com sufixo aleatório), então a cópia nunca fica velha.
+ *
+ * Qualquer falha cai no caminho normal (`fetch(request)`): no pior caso, o
+ * vídeo toca como tocaria sem o worker.
+ */
+
+function videoDeAnuncio(url) {
+  return (
+    url.hostname.endsWith('.public.blob.vercel-storage.com') &&
+    url.pathname.startsWith('/anuncios/videos/') &&
+    url.pathname.endsWith('.mp4')
+  )
+}
+
+// Download inteiro em andamento, por URL: pedidos simultâneos (o vídeo pede o
+// começo e logo um salto) esperam o MESMO download em vez de abrir outro.
+const downloadsEmAndamento = new Map()
+
+/** `bytes=a-b`, `bytes=a-`, `bytes=-n` → { inicio, fim? } ou { sufixo }. */
+function lerRange(cabecalho) {
+  const m = /^bytes=(\d*)-(\d*)$/.exec((cabecalho || '').trim())
+  if (!m || (m[1] === '' && m[2] === '')) return null
+  if (m[1] === '') return { sufixo: Number(m[2]) }
+  return { inicio: Number(m[1]), fim: m[2] === '' ? undefined : Number(m[2]) }
+}
+
+/** Resposta parcial (206) recortada de um vídeo inteiro já guardado. */
+async function recortar(guardado, range) {
+  const corpo = await guardado.blob()
+  const total = corpo.size
+  if (!range) {
+    return new Response(corpo, {
+      status: 200,
+      headers: {
+        'Content-Type': 'video/mp4',
+        'Content-Length': String(total),
+        'Accept-Ranges': 'bytes',
+      },
+    })
+  }
+
+  let inicio
+  let fim
+  if (range.sufixo !== undefined) {
+    inicio = Math.max(0, total - range.sufixo)
+    fim = total - 1
+  } else {
+    inicio = range.inicio
+    fim = range.fim === undefined ? total - 1 : Math.min(range.fim, total - 1)
+  }
+  if (inicio >= total || inicio > fim) {
+    return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${total}` } })
+  }
+
+  return new Response(corpo.slice(inicio, fim + 1), {
+    status: 206,
+    headers: {
+      'Content-Type': 'video/mp4',
+      'Content-Length': String(fim - inicio + 1),
+      'Content-Range': `bytes ${inicio}-${fim}/${total}`,
+      'Accept-Ranges': 'bytes',
+    },
+  })
+}
+
+/**
+ * Um pedaço direto da rede, mas passando pelo worker em modo CORS.
+ *
+ * Por que não `fetch(request)`: o <video> pede sem CORS, e a resposta viria
+ * "opaca". O navegador recusa um vídeo cujos pedaços misturam resposta opaca
+ * com resposta montada aqui — o próximo pedaço, vindo do cache, quebraria a
+ * reprodução. Todo pedaço sai daqui do mesmo tipo.
+ */
+async function pedacoDaRede(url, request) {
+  const cabecalhos = {}
+  const range = request.headers.get('Range')
+  if (range) cabecalhos.Range = range
+  const rede = await fetch(url.href, { mode: 'cors', credentials: 'omit', headers: cabecalhos })
+  const copiar = ['Content-Type', 'Content-Length', 'Content-Range', 'Accept-Ranges']
+  const saida = {}
+  for (const nome of copiar) {
+    const valor = rede.headers.get(nome)
+    if (valor) saida[nome] = valor
+  }
+  return new Response(rede.body, { status: rede.status, headers: saida })
+}
+
+/** Mantém só os vídeos mais recentes (as chaves vêm na ordem de inserção). */
+async function aparar(cache) {
+  const chaves = await cache.keys()
+  const excesso = chaves.length - ANUNCIOS_MAX_VIDEOS
+  for (let i = 0; i < excesso; i++) await cache.delete(chaves[i])
+}
+
+/**
+ * Baixa o arquivo inteiro (modo CORS: o worker precisa LER os bytes para
+ * guardar e recortar) e devolve dois fluxos do mesmo download: um vai para o
+ * Cache Storage, o outro é entregue já ao vídeo — que começa a tocar sem
+ * esperar o arquivo terminar.
+ */
+async function iniciarDownload(event, url) {
+  const rede = await fetch(url.href, { mode: 'cors', credentials: 'omit' })
+  if (!rede.ok || rede.status !== 200 || !rede.body) throw new Error('download do vídeo falhou')
+
+  const [paraCache, paraVideo] = rede.body.tee()
+  const cabecalhos = { 'Content-Type': 'video/mp4' }
+  const tamanho = rede.headers.get('Content-Length')
+  if (tamanho) cabecalhos['Content-Length'] = tamanho
+
+  const gravacao = (async () => {
+    const cache = await caches.open(CACHE_ANUNCIOS)
+    await cache.put(url.href, new Response(paraCache, { status: 200, headers: cabecalhos }))
+    await aparar(cache)
+  })()
+  const concluido = gravacao.finally(() => downloadsEmAndamento.delete(url.href))
+  downloadsEmAndamento.set(url.href, concluido)
+  // O vídeo pode ser desmontado no meio (a pessoa trocou de página): o
+  // download termina mesmo assim, para não ter sido pago à toa.
+  event.waitUntil(concluido.catch(() => {}))
+
+  return { paraVideo, total: Number(rede.headers.get('Content-Length')) || 0, concluido }
+}
+
+async function responderVideoDeAnuncio(event, request, url) {
+  try {
+    const cache = await caches.open(CACHE_ANUNCIOS)
+    const range = lerRange(request.headers.get('Range'))
+
+    // 1. Já está no aparelho: zero byte de rede.
+    const guardado = await cache.match(url.href)
+    if (guardado) return await recortar(guardado, range)
+
+    // 2. Está baixando: espera o mesmo download e recorta.
+    const emAndamento = downloadsEmAndamento.get(url.href)
+    if (emAndamento) {
+      await emAndamento
+      const pronto = await cache.match(url.href)
+      if (pronto) return await recortar(pronto, range)
+      return await pedacoDaRede(url, request)
+    }
+
+    // 3. Primeiro pedido "do começo" (o que o <video> faz ao dar play): vira o
+    //    download inteiro, entregue em fluxo enquanto é guardado.
+    const doComeco =
+      !range || (range.inicio === 0 && (range.fim === undefined || range.fim >= 1024 * 1024))
+    if (doComeco) {
+      const { paraVideo, total } = await iniciarDownload(event, url)
+      if (!range || !total) {
+        return new Response(paraVideo, {
+          status: 200,
+          headers: { 'Content-Type': 'video/mp4', 'Accept-Ranges': 'bytes', ...(total ? { 'Content-Length': String(total) } : {}) },
+        })
+      }
+      return new Response(paraVideo, {
+        status: 206,
+        headers: {
+          'Content-Type': 'video/mp4',
+          'Content-Length': String(total),
+          'Content-Range': `bytes 0-${total - 1}/${total}`,
+          'Accept-Ranges': 'bytes',
+        },
+      })
+    }
+
+    // 4. Pedido pequeno antes de existir download (o Safari sonda `bytes=0-1`):
+    //    vai à rede — são poucos bytes.
+    return await pedacoDaRede(url, request)
+  } catch {
+    // CORS indisponível ou rede instável: o caminho normal do navegador. Se o
+    // CORS falha, falha em todo pedaço, então a resposta fica opaca do começo
+    // ao fim — sem mistura.
+    return fetch(request)
+  }
+}
