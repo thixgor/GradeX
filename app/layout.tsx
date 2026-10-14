@@ -10,6 +10,7 @@ import { ImageProtectionProvider } from '@/components/image-protection-provider'
 import { ProtecaoContraInspecao } from '@/components/protecao-contra-inspecao'
 import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { AppChrome } from '@/components/app-chrome'
+import { SlotDeAnuncio } from '@/components/anuncio-na-pagina-slot'
 import { RegisterSW } from '@/components/pwa/register-sw'
 import { InstallPrompt } from '@/components/pwa/install-prompt'
 import { MobileFloatingDock } from '@/components/mobile-floating-dock'
@@ -313,6 +314,8 @@ export default function RootLayout({
              <ImageProtectionProvider>
                <div className="flex-1 flex flex-col">
                  {children}
+                 {/* Anúncio na página para quem não usa o AppShell (ver o slot). */}
+                 <SlotDeAnuncio global />
                </div>
                <Footer />
                <AppChrome />

@@ -9,11 +9,21 @@ import {
   sanitizeDestino,
   type AnuncioDestino,
 } from '@/lib/anuncio-destinos'
+import {
+  capaDaMidia,
+  sanitizarMidia,
+  sanitizarPaginas,
+  type AnuncioExibicao,
+  type AnuncioMidia,
+  type AnuncioPosicao,
+} from '@/lib/anuncio-midia'
+import { apagarMidiasSemUso, urlsDoAnuncio } from '@/lib/anuncio-blob-limpeza'
 
 export const dynamic = 'force-dynamic'
 
 interface Anuncio {
   _id?: ObjectId
+  /** Arte do banner flutuante. No anúncio na página, a capa da mídia (lista do admin). */
   imagemUrl: string
   ativo: boolean
   ordem: number
@@ -31,6 +41,16 @@ interface Anuncio {
   modalBotaoTexto?: string
   modalBotaoLink?: string
   modalBotaoDestino?: AnuncioDestino
+  /** Vídeo ou imagem dentro do modal. Sem ela, o modal mostra `imagemUrl`. */
+  modalMidia?: AnuncioMidia
+  /** Ausente = flutuante (todos os anúncios anteriores a este campo). */
+  exibicao?: AnuncioExibicao
+  /** Anúncio na página: a mídia principal e, opcional, a versão do celular. */
+  midia?: AnuncioMidia
+  midiaCelular?: AnuncioMidia
+  /** Caminhos onde o anúncio na página aparece (`*` = todas). */
+  paginas?: string[]
+  posicao?: AnuncioPosicao
   // Segmentação por período: vazio/ausente = exibe para todos os períodos.
   periodos?: number[]
   criadoEm: Date
@@ -75,6 +95,13 @@ function sanitizePeriodos(value: unknown): number[] {
     if (p !== null) set.add(p)
   }
   return Array.from(set).sort((a, b) => a - b)
+}
+
+/** Lê um campo de mídia do corpo; `erro` quando veio algo mas não é válido. */
+function lerMidia(value: unknown, rotulo: string): { midia?: AnuncioMidia; erro?: string } {
+  const midia = sanitizarMidia(value)
+  if (midia === null) return { erro: `${rotulo} invalida. Envie o arquivo de novo.` }
+  return { midia }
 }
 
 // GET - Retornar todos os anuncios (admin ve todos, usuario ve apenas ativos)
@@ -127,14 +154,45 @@ export async function POST(request: NextRequest) {
     const modalBotaoTexto = getString(body.modalBotaoTexto, LIMITES.modalBotaoTexto)
     const modalBotaoLink = getString(body.modalBotaoLink)
 
-    if (!imagemUrl) {
+    const exibicao: AnuncioExibicao = body.exibicao === 'pagina' ? 'pagina' : 'flutuante'
+    const naPagina = exibicao === 'pagina'
+    const posicao: AnuncioPosicao = body.posicao === 'rodape' ? 'rodape' : 'topo'
+    const paginas = sanitizarPaginas(body.paginas)
+    const midiaLida = lerMidia(body.midia, 'Midia do anuncio')
+    const midiaCelularLida = lerMidia(body.midiaCelular, 'Midia do celular')
+    const modalMidiaLida = lerMidia(body.modalMidia, 'Midia do modal')
+    const erroDeMidia = midiaLida.erro || midiaCelularLida.erro || modalMidiaLida.erro
+    if (erroDeMidia) {
+      return NextResponse.json({ error: erroDeMidia }, { status: 400 })
+    }
+
+    if (naPagina) {
+      if (!midiaLida.midia) {
+        return NextResponse.json(
+          { error: 'Envie a imagem ou o video do anuncio na pagina' },
+          { status: 400 }
+        )
+      }
+      if (paginas.length === 0) {
+        return NextResponse.json(
+          { error: 'Escolha pelo menos uma pagina onde o anuncio aparece' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // No anúncio na página a "imagem" é a capa da mídia: é ela que a lista do
+    // admin e o diagnóstico mostram.
+    const imagemFinal = naPagina ? capaDaMidia(midiaLida.midia) || imagemUrl : imagemUrl
+
+    if (!naPagina && !imagemUrl) {
       return NextResponse.json(
         { error: 'A imagem do anuncio e obrigatoria' },
         { status: 400 }
       )
     }
 
-    if (!isValidImageUrl(imagemUrl)) {
+    if (imagemFinal && !isValidImageUrl(imagemFinal)) {
       return NextResponse.json(
         { error: 'Envie uma imagem ou use uma URL http(s) / caminho interno iniciado por /' },
         { status: 400 }
@@ -197,7 +255,7 @@ export async function POST(request: NextRequest) {
     const isLink = body.tipoAcao === 'link'
 
     const novoAnuncio = stripUndefined({
-      imagemUrl,
+      imagemUrl: imagemFinal,
       ativo: body.ativo ?? true,
       ordem: novaOrdem,
       tipoAcao: body.tipoAcao as 'link' | 'modal',
@@ -212,6 +270,12 @@ export async function POST(request: NextRequest) {
       modalBotaoLink: isLink ? undefined : modalBotaoLink || undefined,
       modalBotaoDestino:
         !isLink && modalBotaoLink ? sanitizeDestino(body.modalBotaoDestino, modalBotaoLink) : undefined,
+      modalMidia: isLink ? undefined : modalMidiaLida.midia,
+      exibicao,
+      midia: naPagina ? midiaLida.midia : undefined,
+      midiaCelular: naPagina ? midiaCelularLida.midia : undefined,
+      paginas: naPagina ? paginas : undefined,
+      posicao: naPagina ? posicao : undefined,
       periodos: sanitizePeriodos(body.periodos),
       criadoEm: new Date(),
       atualizadoEm: new Date(),
@@ -321,19 +385,68 @@ export async function PUT(request: NextRequest) {
 
     if (body.imagemUrl !== undefined) {
       const imagemUrl = getString(body.imagemUrl)
-      if (!imagemUrl) {
-        return NextResponse.json(
-          { error: 'A imagem do anuncio nao pode ficar vazia' },
-          { status: 400 }
-        )
-      }
-      if (!isValidImageUrl(imagemUrl)) {
+      if (imagemUrl && !isValidImageUrl(imagemUrl)) {
         return NextResponse.json(
           { error: 'Envie uma imagem ou use uma URL http(s) / caminho interno iniciado por /' },
           { status: 400 }
         )
       }
-      updateData.imagemUrl = imagemUrl
+      updateData.imagemUrl = imagemUrl || undefined
+    }
+
+    // Exibição e mídia ------------------------------------------------------
+    if (body.exibicao !== undefined) {
+      updateData.exibicao = body.exibicao === 'pagina' ? 'pagina' : 'flutuante'
+    }
+    if (body.posicao !== undefined) {
+      updateData.posicao = body.posicao === 'rodape' ? 'rodape' : 'topo'
+    }
+    if (body.paginas !== undefined) {
+      updateData.paginas = sanitizarPaginas(body.paginas)
+    }
+    for (const [campo, rotulo] of [
+      ['midia', 'Midia do anuncio'],
+      ['midiaCelular', 'Midia do celular'],
+      ['modalMidia', 'Midia do modal'],
+    ] as const) {
+      if (body[campo] === undefined) continue
+      const lida = lerMidia(body[campo], rotulo)
+      if (lida.erro) return NextResponse.json({ error: lida.erro }, { status: 400 })
+      updateData[campo] = lida.midia
+    }
+
+    const exibicaoFinal: AnuncioExibicao = updateData.exibicao ?? anuncioExistente.exibicao ?? 'flutuante'
+    if (exibicaoFinal === 'pagina') {
+      const midiaFinal = 'midia' in updateData ? updateData.midia : anuncioExistente.midia
+      const paginasFinal = updateData.paginas ?? anuncioExistente.paginas ?? []
+      if (!midiaFinal) {
+        return NextResponse.json(
+          { error: 'Envie a imagem ou o video do anuncio na pagina' },
+          { status: 400 }
+        )
+      }
+      if (paginasFinal.length === 0) {
+        return NextResponse.json(
+          { error: 'Escolha pelo menos uma pagina onde o anuncio aparece' },
+          { status: 400 }
+        )
+      }
+      // A capa acompanha a mídia: trocar o vídeo troca a miniatura da lista.
+      const capa = capaDaMidia(midiaFinal)
+      if (capa) updateData.imagemUrl = capa
+      if (!updateData.posicao && !anuncioExistente.posicao) updateData.posicao = 'topo'
+    } else {
+      const imagemFinal = 'imagemUrl' in updateData ? updateData.imagemUrl : anuncioExistente.imagemUrl
+      if (!imagemFinal) {
+        return NextResponse.json(
+          { error: 'A imagem do anuncio nao pode ficar vazia' },
+          { status: 400 }
+        )
+      }
+      unsetData.midia = ''
+      unsetData.midiaCelular = ''
+      unsetData.paginas = ''
+      unsetData.posicao = ''
     }
 
     if (body.ativo !== undefined) {
@@ -431,6 +544,7 @@ export async function PUT(request: NextRequest) {
       unsetData.modalBotaoTexto = ''
       unsetData.modalBotaoLink = ''
       unsetData.modalBotaoDestino = ''
+      unsetData.modalMidia = ''
     }
 
     if (tipoAcaoFinal === 'modal') {
@@ -494,6 +608,13 @@ export async function PUT(request: NextRequest) {
     // Buscar anuncio atualizado
     const anuncioAtualizado = await anunciosCollection.findOne({ _id: new ObjectId(id) })
 
+    // Arquivo trocado ou removido sai do Blob (se nenhum outro anúncio o usa).
+    const urlsAtuais = new Set(urlsDoAnuncio(anuncioAtualizado))
+    await apagarMidiasSemUso(
+      db,
+      urlsDoAnuncio(anuncioExistente).filter((url) => !urlsAtuais.has(url)),
+    )
+
     return NextResponse.json({
       sucesso: true,
       anuncio: anuncioAtualizado
@@ -532,14 +653,17 @@ export async function DELETE(request: NextRequest) {
     const db = await getDb()
     const anunciosCollection = db.collection<Anuncio>('anuncios')
 
-    const result = await anunciosCollection.deleteOne({ _id: new ObjectId(id) })
+    const removido = await anunciosCollection.findOneAndDelete({ _id: new ObjectId(id) })
 
-    if (result.deletedCount === 0) {
+    if (!removido) {
       return NextResponse.json(
         { error: 'Anuncio nao encontrado' },
         { status: 404 }
       )
     }
+
+    // A imagem e o vídeo do anúncio excluído não ficam pagos no Blob.
+    await apagarMidiasSemUso(db, urlsDoAnuncio(removido))
 
     return NextResponse.json({ sucesso: true })
   } catch (error) {

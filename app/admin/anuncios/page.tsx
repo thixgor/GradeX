@@ -13,10 +13,12 @@ import {
   ExternalLink,
   Eye,
   EyeOff,
+  Film,
   Image,
   ImageOff,
   Link2,
   Loader2,
+  LayoutTemplate,
   Megaphone,
   MonitorUp,
   PanelTop,
@@ -50,6 +52,8 @@ import { cn } from '@/lib/utils'
 import { PERIODO_OPTIONS, formatPeriodoLabel } from '@/lib/user-periodo'
 import { CampoDestino } from '@/components/admin/anuncios/campo-destino'
 import { CampoImagem } from '@/components/admin/anuncios/campo-imagem'
+import { CampoMidia } from '@/components/admin/anuncios/campo-midia'
+import { CampoPaginas, resumirPaginas } from '@/components/admin/anuncios/campo-paginas'
 import { EditorConteudo } from '@/components/admin/anuncios/editor-conteudo'
 import { PainelDiagnostico } from '@/components/admin/anuncios/painel-diagnostico'
 import { PainelModelos } from '@/components/admin/anuncios/painel-modelos'
@@ -63,10 +67,19 @@ import {
   isValidNavigationUrl,
   type AnuncioDestino,
 } from '@/lib/anuncio-destinos'
+import {
+  ANUNCIO_POSICAO_LABEL,
+  capaDaMidia,
+  rotuloDaProporcao,
+  type AnuncioExibicao,
+  type AnuncioMidia,
+  type AnuncioPosicao,
+} from '@/lib/anuncio-midia'
 
 type TipoAcao = 'link' | 'modal'
 type StatusFilter = 'all' | 'active' | 'inactive'
 type TypeFilter = 'all' | TipoAcao
+type ExibicaoFilter = 'all' | AnuncioExibicao
 
 interface Anuncio {
   _id: string
@@ -84,6 +97,12 @@ interface Anuncio {
   modalBotaoTexto?: string
   modalBotaoLink?: string
   modalBotaoDestino?: AnuncioDestino
+  modalMidia?: AnuncioMidia
+  exibicao?: AnuncioExibicao
+  midia?: AnuncioMidia
+  midiaCelular?: AnuncioMidia
+  paginas?: string[]
+  posicao?: AnuncioPosicao
   periodos?: number[]
   criadoEm?: string
   atualizadoEm?: string
@@ -102,6 +121,12 @@ interface FormData {
   modalBotaoTexto: string
   modalBotaoLink: string
   modalBotaoDestino?: AnuncioDestino
+  modalMidia?: AnuncioMidia
+  exibicao: AnuncioExibicao
+  midia?: AnuncioMidia
+  midiaCelular?: AnuncioMidia
+  paginas: string[]
+  posicao: AnuncioPosicao
   periodos: number[]
   ativo: boolean
 }
@@ -119,6 +144,12 @@ const initialFormData: FormData = {
   modalBotaoTexto: '',
   modalBotaoLink: '',
   modalBotaoDestino: undefined,
+  modalMidia: undefined,
+  exibicao: 'flutuante',
+  midia: undefined,
+  midiaCelular: undefined,
+  paginas: [],
+  posicao: 'topo',
   periodos: [],
   ativo: true,
 }
@@ -127,6 +158,12 @@ const statusFilters: Array<{ value: StatusFilter; label: string }> = [
   { value: 'all', label: 'Todos' },
   { value: 'active', label: 'Ativos' },
   { value: 'inactive', label: 'Inativos' },
+]
+
+const exibicaoFilters: Array<{ value: ExibicaoFilter; label: string }> = [
+  { value: 'all', label: 'Todos' },
+  { value: 'flutuante', label: 'Flutuante' },
+  { value: 'pagina', label: 'Na pagina' },
 ]
 
 const typeFilters: Array<{ value: TypeFilter; label: string }> = [
@@ -192,6 +229,7 @@ function AdminAnunciosContent() {
   const [loadingAnuncios, setLoadingAnuncios] = useState(true)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [exibicaoFilter, setExibicaoFilter] = useState<ExibicaoFilter>('all')
   const [search, setSearch] = useState('')
 
   const [dialogOpen, setDialogOpen] = useState(false)
@@ -250,6 +288,7 @@ function AdminAnunciosContent() {
     const active = anuncios.filter((ad) => ad.ativo).length
     const link = anuncios.filter((ad) => ad.tipoAcao === 'link').length
     const modal = anuncios.filter((ad) => ad.tipoAcao === 'modal').length
+    const naPagina = anuncios.filter((ad) => ad.exibicao === 'pagina').length
 
     return {
       total: anuncios.length,
@@ -257,6 +296,7 @@ function AdminAnunciosContent() {
       inactive: anuncios.length - active,
       link,
       modal,
+      naPagina,
     }
   }, [anuncios])
 
@@ -292,6 +332,7 @@ function AdminAnunciosContent() {
       if (statusFilter === 'active' && !ad.ativo) return false
       if (statusFilter === 'inactive' && ad.ativo) return false
       if (typeFilter !== 'all' && ad.tipoAcao !== typeFilter) return false
+      if (exibicaoFilter !== 'all' && (ad.exibicao ?? 'flutuante') !== exibicaoFilter) return false
       if (!query) return true
 
       return normalizeSearch(
@@ -304,12 +345,13 @@ function AdminAnunciosContent() {
           ad.modalConteudo,
           ad.modalBotaoTexto,
           ad.modalBotaoLink,
+          ...(ad.paginas ?? []),
         ]
           .filter(Boolean)
           .join(' '),
       ).includes(query)
     })
-  }, [search, sortedAnuncios, statusFilter, typeFilter])
+  }, [exibicaoFilter, search, sortedAnuncios, statusFilter, typeFilter])
 
   function openCreateDialog() {
     setEditingAnuncio(null)
@@ -334,6 +376,12 @@ function AdminAnunciosContent() {
       modalBotaoTexto: anuncio.modalBotaoTexto || '',
       modalBotaoLink: anuncio.modalBotaoLink || '',
       modalBotaoDestino: anuncio.modalBotaoDestino,
+      modalMidia: anuncio.modalMidia,
+      exibicao: anuncio.exibicao ?? 'flutuante',
+      midia: anuncio.midia,
+      midiaCelular: anuncio.midiaCelular,
+      paginas: Array.isArray(anuncio.paginas) ? anuncio.paginas : [],
+      posicao: anuncio.posicao ?? 'topo',
       periodos: Array.isArray(anuncio.periodos) ? anuncio.periodos : [],
       ativo: anuncio.ativo,
     })
@@ -364,8 +412,18 @@ function AdminAnunciosContent() {
     const imageUrl = formData.imagemUrl.trim()
     const linkUrl = formData.linkUrl.trim()
     const modalButtonLink = formData.modalBotaoLink.trim()
+    const naPagina = formData.exibicao === 'pagina'
 
-    if (!isValidImageUrl(imageUrl)) {
+    if (naPagina) {
+      if (!formData.midia) {
+        showToast('Envie a imagem ou o video do anuncio', 'error')
+        return
+      }
+      if (formData.paginas.length === 0) {
+        showToast('Escolha pelo menos uma pagina onde o anuncio aparece', 'error')
+        return
+      }
+    } else if (!isValidImageUrl(imageUrl)) {
       showToast('Envie uma imagem do computador ou informe uma URL http(s) valida', 'error')
       return
     }
@@ -409,7 +467,14 @@ function AdminAnunciosContent() {
     setSubmitting(true)
     try {
       const comum = {
-        imagemUrl: imageUrl,
+        // No anúncio na página, a "imagem" é a capa da mídia (miniatura da lista).
+        imagemUrl: naPagina ? capaDaMidia(formData.midia) : imageUrl,
+        exibicao: formData.exibicao,
+        // null apaga: o PUT entende "sem mídia" e tira o campo do documento.
+        midia: naPagina ? formData.midia : null,
+        midiaCelular: naPagina ? formData.midiaCelular ?? null : null,
+        paginas: naPagina ? formData.paginas : [],
+        posicao: formData.posicao,
         tipoAcao: formData.tipoAcao,
         ativo: formData.ativo,
         periodos: formData.periodos,
@@ -434,6 +499,7 @@ function AdminAnunciosContent() {
               modalBotaoTexto: formData.modalBotaoTexto.trim() || undefined,
               modalBotaoLink: modalButtonLink || undefined,
               modalBotaoDestino: modalButtonLink ? formData.modalBotaoDestino : undefined,
+              modalMidia: formData.modalMidia ?? null,
             }
 
       const res = await fetch(
@@ -595,12 +661,13 @@ function AdminAnunciosContent() {
 
       <PainelDiagnostico anuncios={anuncios} tituloDe={getAdTitle} />
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <MetricCard icon={BarChart3} label="Total" value={stats.total} helper="Cadastrados" />
         <MetricCard icon={CheckCircle2} label="Ativos" value={stats.active} helper="Rodando agora" tone="emerald" />
         <MetricCard icon={XCircle} label="Inativos" value={stats.inactive} helper="Fora da rotacao" tone="slate" />
         <MetricCard icon={Link2} label="Links" value={stats.link} helper="Destino direto" tone="amber" />
         <MetricCard icon={PanelTop} label="Modais" value={stats.modal} helper="Abrem popup" tone="violet" />
+        <MetricCard icon={LayoutTemplate} label="Na pagina" value={stats.naPagina} helper="Dentro do conteudo" tone="emerald" />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -622,6 +689,13 @@ function AdminAnunciosContent() {
                 value={statusFilter}
                 items={statusFilters}
                 onChange={(value) => setStatusFilter(value as StatusFilter)}
+              />
+
+              <SegmentedFilter
+                label="Onde"
+                value={exibicaoFilter}
+                items={exibicaoFilters}
+                onChange={(value) => setExibicaoFilter(value as ExibicaoFilter)}
               />
 
               <SegmentedFilter
@@ -674,9 +748,10 @@ function AdminAnunciosContent() {
               <h3 className="text-sm font-bold">Padrao recomendado</h3>
             </div>
             <div className="space-y-3 text-sm text-muted-foreground">
-              <GuidelineItem label="Imagem" value="1200 x 400 px ou proporcao 3:1" />
-              <GuidelineItem label="Envio" value="Arraste o arquivo: fica hospedado aqui, sem Imgur" />
-              <GuidelineItem label="Peso" value="Use JPG/WEBP leve para nao atrasar paginas" />
+              <GuidelineItem label="Flutuante" value="1200 x 400 px ou proporcao 3:1" />
+              <GuidelineItem label="Na pagina" value="16:9, 4:5, 9:16 ou 4:1 — imagem ou MP4" />
+              <GuidelineItem label="Celular" value="Envie uma versao 4:5 ou 9:16 para o telefone" />
+              <GuidelineItem label="Peso" value="Comprimido sozinho antes de enviar; o original nao sobe" />
               <GuidelineItem label="Destino" value="Prefira material, produto ou area do site" />
               <GuidelineItem label="Texto" value="Chamada com numero e prazo converte mais" />
             </div>
@@ -695,12 +770,89 @@ function AdminAnunciosContent() {
 
           <div className="grid max-h-[68vh] gap-5 overflow-y-auto pr-1 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div className="space-y-5">
-              <CampoImagem
-                value={formData.imagemUrl}
-                onChange={(imagemUrl) => setFormData((current) => ({ ...current, imagemUrl }))}
-                onError={(message) => showToast(message, 'error')}
-                onSuccess={(message) => showToast(message, 'success')}
-              />
+              <div className="space-y-3">
+                <Label>Onde o anuncio aparece *</Label>
+                <RadioGroup
+                  value={formData.exibicao}
+                  onValueChange={(value) =>
+                    setFormData((current) => ({ ...current, exibicao: value as AnuncioExibicao }))
+                  }
+                  className="grid gap-3 sm:grid-cols-2"
+                >
+                  <ActionChoice
+                    id="exibicao-flutuante"
+                    value="flutuante"
+                    title="Banner flutuante"
+                    description="Fica preso no rodape da tela, por cima do conteudo, girando com os outros."
+                    icon={MonitorUp}
+                  />
+                  <ActionChoice
+                    id="exibicao-pagina"
+                    value="pagina"
+                    title="Na pagina (imagem ou video)"
+                    description="Entra no conteudo, no topo ou no fim das paginas que voce escolher."
+                    icon={LayoutTemplate}
+                  />
+                </RadioGroup>
+              </div>
+
+              {formData.exibicao === 'pagina' ? (
+                <div className="space-y-5 rounded-lg border border-[#468152]/30 bg-[#468152]/5 p-4">
+                  <CampoMidia
+                    label="Imagem ou video do anuncio"
+                    helper="Aparece em todas as telas. 16:9 ou 4:1 funcionam bem no computador."
+                    obrigatorio
+                    value={formData.midia}
+                    onChange={(midia) => setFormData((current) => ({ ...current, midia }))}
+                    onError={(message) => showToast(message, 'error')}
+                    onSuccess={(message) => showToast(message, 'success')}
+                  />
+                  <CampoMidia
+                    label="Versao para celular (opcional)"
+                    helper="Se enviar, o celular mostra esta no lugar da principal — ideal em 4:5 ou 9:16. So uma das duas e baixada."
+                    value={formData.midiaCelular}
+                    onChange={(midiaCelular) => setFormData((current) => ({ ...current, midiaCelular }))}
+                    onError={(message) => showToast(message, 'error')}
+                    onSuccess={(message) => showToast(message, 'success')}
+                  />
+                  <CampoPaginas
+                    value={formData.paginas}
+                    onChange={(paginas) => setFormData((current) => ({ ...current, paginas }))}
+                    onError={(message) => showToast(message, 'error')}
+                  />
+                  <div className="space-y-2">
+                    <Label>Posicao na pagina</Label>
+                    <div className="flex flex-wrap gap-2">
+                      {(Object.keys(ANUNCIO_POSICAO_LABEL) as AnuncioPosicao[]).map((posicao) => (
+                        <button
+                          key={posicao}
+                          type="button"
+                          onClick={() => setFormData((current) => ({ ...current, posicao }))}
+                          className={cn(
+                            'rounded-lg px-3 py-2 text-xs font-bold transition',
+                            formData.posicao === posicao
+                              ? 'bg-[#468152] text-white shadow-sm'
+                              : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground',
+                          )}
+                        >
+                          {ANUNCIO_POSICAO_LABEL[posicao]}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Topo: logo abaixo do cabecalho, visto por todos. Fim: depois do conteudo, sem atrapalhar quem
+                      veio estudar. Paginas sem a barra lateral mostram sempre no fim.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <CampoImagem
+                  value={formData.imagemUrl}
+                  onChange={(imagemUrl) => setFormData((current) => ({ ...current, imagemUrl }))}
+                  onError={(message) => showToast(message, 'error')}
+                  onSuccess={(message) => showToast(message, 'success')}
+                />
+              )}
 
               <PainelModelos onAplicar={applyTemplate} />
 
@@ -719,6 +871,7 @@ function AdminAnunciosContent() {
                       modalConteudo: formData.modalConteudo,
                       modalBotaoTexto: formData.modalBotaoTexto,
                       modalBotaoLink: formData.modalBotaoLink,
+                      modalMidia: formData.modalMidia,
                     })
                   }
                   className="w-full"
@@ -807,6 +960,14 @@ function AdminAnunciosContent() {
                 </div>
               ) : (
                 <div className="space-y-4 rounded-lg border border-[#468152]/30 bg-[#468152]/5 p-4">
+                  <CampoMidia
+                    label="Video ou imagem dentro do modal (opcional)"
+                    helper="Aparece no alto do modal, no lugar da arte do banner. O video comeca sem som, com botao para ativar."
+                    value={formData.modalMidia}
+                    onChange={(modalMidia) => setFormData((current) => ({ ...current, modalMidia }))}
+                    onError={(message) => showToast(message, 'error')}
+                    onSuccess={(message) => showToast(message, 'success')}
+                  />
                   <div className="space-y-2">
                     <Label htmlFor="modalTitulo">Titulo do modal *</Label>
                     <Input
@@ -923,7 +1084,9 @@ function AdminAnunciosContent() {
                 <MiniAdPreview formData={formData} />
               </div>
               <div className="rounded-lg border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground">
-                A peca publica aparece fixa na parte inferior, com botao para ocultar por 30 minutos e rotacao automatica entre anuncios ativos.
+                {formData.exibicao === 'pagina'
+                  ? 'A peca entra no conteudo das paginas escolhidas, na proporcao do arquivo. Video toca sem som so quando esta na tela; com mais de um anuncio para a mesma pagina, um e sorteado a cada visita.'
+                  : 'A peca publica aparece fixa na parte inferior, com botao para ocultar por 30 minutos e rotacao automatica entre anuncios ativos.'}
               </div>
             </div>
           </div>
@@ -965,15 +1128,22 @@ function AdminAnunciosContent() {
 
           {anuncioToDelete && (
             <div className="space-y-3">
-              <div className="overflow-hidden rounded-lg border bg-muted/30">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={anuncioToDelete.imagemUrl}
-                  alt={getAdTitle(anuncioToDelete)}
-                  className="max-h-36 w-full object-contain"
-                />
-              </div>
-              <p className="truncate text-sm text-muted-foreground">{anuncioToDelete.imagemUrl}</p>
+              {anuncioToDelete.imagemUrl && (
+                <div className="overflow-hidden rounded-lg border bg-muted/30">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={anuncioToDelete.imagemUrl}
+                    alt={getAdTitle(anuncioToDelete)}
+                    className="max-h-36 w-full object-contain"
+                  />
+                </div>
+              )}
+              <p className="truncate text-sm text-muted-foreground">
+                {anuncioToDelete.midia?.url || anuncioToDelete.imagemUrl}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Os arquivos enviados para este anuncio tambem sao apagados do armazenamento.
+              </p>
             </div>
           )}
 
@@ -1117,12 +1287,18 @@ function AdListItem({
       <div className="grid gap-4 p-4 md:grid-cols-[180px_minmax(0,1fr)_auto]">
         <div className="overflow-hidden rounded-lg border bg-muted/25">
           <div className="relative aspect-[3/1] md:aspect-[16/9]">
-            {imagemQuebrada ? (
+            {!anuncio.imagemUrl || imagemQuebrada ? (
               // Sumir com a imagem escondia o problema: o card ficava com um
               // buraco branco e nada dizia que a URL parou de responder.
               <div className="flex h-full w-full flex-col items-center justify-center gap-1 bg-muted/60 p-2 text-center">
-                <ImageOff className="h-5 w-5 text-muted-foreground" />
-                <span className="text-[10px] font-semibold text-muted-foreground">Imagem indisponivel</span>
+                {anuncio.midia?.tipo === 'video' ? (
+                  <Film className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <ImageOff className="h-5 w-5 text-muted-foreground" />
+                )}
+                <span className="text-[10px] font-semibold text-muted-foreground">
+                  {anuncio.midia?.tipo === 'video' ? 'Video sem capa' : 'Imagem indisponivel'}
+                </span>
               </div>
             ) : (
               /* eslint-disable-next-line @next/next/no-img-element */
@@ -1132,6 +1308,12 @@ function AdListItem({
                 className="h-full w-full object-cover"
                 onError={() => setImagemQuebrada(true)}
               />
+            )}
+            {anuncio.midia?.tipo === 'video' && (
+              <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold text-white">
+                <Film className="h-3 w-3" />
+                Video
+              </span>
             )}
             <div className="absolute left-2 top-2 flex items-center gap-1">
               <Badge className={cn('border px-2 py-0.5 text-[11px]', anuncio.ativo ? 'border-emerald-500/25 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300' : 'border-slate-500/25 bg-slate-500/15 text-slate-600 dark:text-slate-300')}>
@@ -1149,6 +1331,22 @@ function AdListItem({
             <span className="rounded-lg bg-muted px-2 py-1 text-xs font-semibold text-muted-foreground">
               Ordem {anuncio.ordem}
             </span>
+            {anuncio.exibicao === 'pagina' ? (
+              <Badge className="border border-sky-500/25 bg-sky-500/10 text-xs text-sky-700 dark:text-sky-300">
+                Na pagina · {ANUNCIO_POSICAO_LABEL[anuncio.posicao ?? 'topo'].replace(' da página', '')}
+                {anuncio.midia ? ` · ${rotuloDaProporcao(anuncio.midia.largura, anuncio.midia.altura)}` : ''}
+                {anuncio.midiaCelular ? ' + celular' : ''}
+              </Badge>
+            ) : (
+              <Badge className="border border-slate-500/25 bg-slate-500/10 text-xs text-slate-600 dark:text-slate-300">
+                Flutuante
+              </Badge>
+            )}
+            {anuncio.modalMidia?.tipo === 'video' && (
+              <Badge className="border border-violet-500/25 bg-violet-500/10 text-xs text-violet-700 dark:text-violet-300">
+                Video no modal
+              </Badge>
+            )}
             {anuncio.tipoAcao === 'link' && anuncio.linkUrl && (
               <Badge
                 className={cn(
@@ -1179,7 +1377,14 @@ function AdListItem({
               ? getDestinationLabel(anuncio.linkUrl)
               : resumirConteudoAnuncio(anuncio.modalConteudo) || 'Modal sem resumo'}
           </p>
-          <p className="mt-2 truncate text-xs text-muted-foreground">Imagem: {anuncio.imagemUrl}</p>
+          {anuncio.exibicao === 'pagina' && (
+            <p className="mt-1 truncate text-xs font-semibold text-muted-foreground">
+              Paginas: {resumirPaginas(anuncio.paginas)}
+            </p>
+          )}
+          <p className="mt-2 truncate text-xs text-muted-foreground">
+            {anuncio.midia ? `Midia: ${anuncio.midia.url}` : `Imagem: ${anuncio.imagemUrl}`}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2 md:w-[112px] md:justify-end">
@@ -1203,7 +1408,10 @@ function AdListItem({
               <Eye className="h-4 w-4" />
             </IconButton>
           )}
-          <IconButton label="Copiar URL da imagem" onClick={() => onCopy(anuncio.imagemUrl, 'URL da imagem')}>
+          <IconButton
+            label="Copiar URL da midia"
+            onClick={() => onCopy(anuncio.midia?.url || anuncio.imagemUrl, 'URL da midia')}
+          >
             <Copy className="h-4 w-4" />
           </IconButton>
           <IconButton label="Editar" onClick={() => onEdit(anuncio)}>
@@ -1301,7 +1509,9 @@ function GlobalPreview({ anuncios }: { anuncios: Anuncio[] }) {
 }
 
 function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: FormData }) {
-  const imageUrl = anuncio?.imagemUrl || formData?.imagemUrl || ''
+  const midia = anuncio?.midia || formData?.midia
+  const naPagina = (anuncio?.exibicao || formData?.exibicao) === 'pagina'
+  const imageUrl = naPagina ? capaDaMidia(midia) : anuncio?.imagemUrl || formData?.imagemUrl || ''
   const title = anuncio
     ? getAdTitle(anuncio)
     : formData?.titulo?.trim() ||
@@ -1312,6 +1522,35 @@ function MiniAdPreview({ anuncio, formData }: { anuncio?: Anuncio; formData?: Fo
   const type = anuncio?.tipoAcao || formData?.tipoAcao || 'link'
   const cta =
     (anuncio?.ctaTexto || formData?.ctaTexto || '').trim() || (type === 'link' ? 'Ver agora' : 'Abrir modal')
+
+  if (naPagina) {
+    return (
+      <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+        <div
+          className="relative flex w-full items-center justify-center bg-black/80"
+          style={{ aspectRatio: midia ? `${midia.largura} / ${midia.altura}` : '16 / 9', maxHeight: 260 }}
+        >
+          {imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={imageUrl} alt={title} className="h-full w-full object-contain" />
+          ) : midia?.tipo === 'video' ? (
+            <Film className="h-6 w-6 text-white/70" />
+          ) : (
+            <Image className="h-6 w-6 text-white/70" />
+          )}
+          <span className="absolute left-1.5 top-1.5 rounded-full bg-black/50 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+            Publicidade
+          </span>
+        </div>
+        {(anuncio?.titulo || formData?.titulo) && (
+          <div className="flex items-center justify-between gap-2 border-t px-2 py-1.5">
+            <p className="line-clamp-1 text-xs font-bold">{title}</p>
+            <span className="shrink-0 rounded bg-[#468152] px-1.5 py-0.5 text-[10px] font-bold text-white">{cta}</span>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/50 bg-white/80 p-2 shadow-lg backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/70">
@@ -1357,7 +1596,7 @@ function ActionChoice({
   icon: Icon,
 }: {
   id: string
-  value: TipoAcao
+  value: string
   title: string
   description: string
   icon: LucideIcon

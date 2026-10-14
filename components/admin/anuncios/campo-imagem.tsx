@@ -21,6 +21,7 @@ import {
   validateAnuncioImage,
 } from '@/lib/anuncio-image-upload'
 import { isValidImageUrl } from '@/lib/anuncio-destinos'
+import { formatarBytes } from '@/lib/anuncio-midia'
 import { cn } from '@/lib/utils'
 
 interface CampoImagemProps {
@@ -48,9 +49,15 @@ export function CampoImagem({ value, onChange, onError, onSuccess }: CampoImagem
       setUploading(true)
       setProgress(0)
       try {
-        const url = await uploadAnuncioImage(file, setProgress)
+        const { url, otimizada } = await uploadAnuncioImage(file, setProgress)
         onChange(url)
-        onSuccess?.('Imagem enviada')
+        // Diz quanto a compressão economizou: é o que justifica o arquivo
+        // original nunca ter saído do computador.
+        onSuccess?.(
+          otimizada.bytesFinais < otimizada.bytesOriginais
+            ? `Imagem otimizada e enviada: ${formatarBytes(otimizada.bytesOriginais)} → ${formatarBytes(otimizada.bytesFinais)}`
+            : 'Imagem enviada',
+        )
       } catch (error) {
         onError(error instanceof Error ? error.message : 'Erro ao enviar a imagem')
       } finally {
@@ -128,7 +135,7 @@ export function CampoImagem({ value, onChange, onError, onSuccess }: CampoImagem
         {uploading ? (
           <>
             <Loader2 className="h-6 w-6 animate-spin text-[#468152]" />
-            <p className="text-sm font-semibold">Enviando... {progress}%</p>
+            <p className="text-sm font-semibold">Otimizando e enviando... {progress}%</p>
             <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-[#468152] transition-all"
@@ -141,7 +148,7 @@ export function CampoImagem({ value, onChange, onError, onSuccess }: CampoImagem
             <Upload className="h-6 w-6 text-[#468152]" />
             <p className="text-sm font-bold">Arraste a imagem ou clique para escolher</p>
             <p className="text-xs text-muted-foreground">
-              JPG, PNG, WEBP, GIF ou AVIF — até 8 MB. Também dá para colar (Ctrl+V).
+              JPG, PNG, WEBP, GIF ou AVIF — até 40 MB. Comprimida aqui mesmo antes de subir. Também dá para colar (Ctrl+V).
             </p>
           </>
         )}

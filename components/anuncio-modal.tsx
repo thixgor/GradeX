@@ -23,6 +23,14 @@
  * Agora: largura inteira, cantos arredondados só em cima, conteúdo rolando no
  * meio e o botão de ação fixo embaixo, respeitando a área segura do aparelho.
  * A partir de `sm` volta a ser a caixa centralizada de sempre.
+ *
+ * ## Vídeo no modal
+ *
+ * `modalMidia` troca a arte do banner por um vídeo (ou outra imagem) dentro
+ * do modal. O vídeo é o mesmo player do anúncio na página
+ * (`components/anuncio-video.tsx`): começa sem som, com botão "Ativar som".
+ * A altura é limitada pela tela — um vídeo vertical 9:16 não empurra o texto e
+ * o botão para fora dela: ele encolhe e fica centralizado.
  */
 
 import { useCallback, type MouseEvent, type ReactNode } from 'react'
@@ -39,6 +47,8 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toInternalPath } from '@/lib/anuncio-destinos'
 import { formatarConteudoAnuncio } from '@/lib/anuncio-formatacao'
+import type { AnuncioMidia } from '@/lib/anuncio-midia'
+import { AnuncioVideo } from '@/components/anuncio-video'
 
 export interface AnuncioModalAd {
   imagemUrl?: string
@@ -46,7 +56,12 @@ export interface AnuncioModalAd {
   modalConteudo?: string
   modalBotaoTexto?: string
   modalBotaoLink?: string
+  /** Vídeo ou imagem do modal. Sem ela, vale `imagemUrl`. */
+  modalMidia?: AnuncioMidia
 }
+
+/** Altura máxima da mídia no modal: sobra espaço para o texto e o botão. */
+const MIDIA_ALTURA_MAX = 'min(42dvh, 420px)'
 
 /** Tags que sobrevivem à exibição pública. O resto é desembrulhado ou removido. */
 const ALLOWED_TAGS = new Set([
@@ -255,7 +270,29 @@ export function AnuncioModal({
 
         {/* Conteúdo ------------------------------------------------------- */}
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain bg-white px-4 py-4 dark:bg-[#07110d] sm:px-6 sm:py-5">
-          {ad?.imagemUrl && (
+          {ad?.modalMidia ? (
+            <div
+              className="mx-auto mb-4 w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 shadow-inner dark:border-emerald-300/12 dark:bg-[#0d1b15]"
+              style={{
+                // Largura que faz a altura caber no teto, mantendo a proporção.
+                maxWidth: `min(100%, calc(${MIDIA_ALTURA_MAX} * ${ad.modalMidia.largura / ad.modalMidia.altura}))`,
+              }}
+            >
+              {ad.modalMidia.tipo === 'video' ? (
+                <AnuncioVideo midia={ad.modalMidia} rotulo={ad.modalTitulo || 'Vídeo do anúncio'} imediato />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={ad.modalMidia.url}
+                  alt={ad.modalTitulo || 'Anuncio'}
+                  width={ad.modalMidia.largura}
+                  height={ad.modalMidia.altura}
+                  decoding="async"
+                  className="block h-auto w-full"
+                />
+              )}
+            </div>
+          ) : ad?.imagemUrl && (
             <div className="mb-4 max-w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2 shadow-inner dark:border-emerald-300/12 dark:bg-[#0d1b15]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
