@@ -28,6 +28,7 @@ import { MotionConfig } from 'framer-motion'
 import type { SidebarSectionOrder, SidebarSectionSettings } from '@/lib/sidebar-sections'
 import type { SidebarSectionIcons } from '@/lib/sidebar-icons'
 import type { SidebarGroupDefinition, SidebarSectionGroups } from '@/lib/sidebar-groups'
+import { SlotDeAnuncio, useShellComAnuncio } from '@/components/anuncio-na-pagina-slot'
 
 /**
  * AppShell Component - Optimized Version
@@ -171,6 +172,9 @@ export function AppShell({
   const pathname = usePathname()
   const { showSupport } = useUIPreferences()
   const { liteMode } = useLiteMode()
+  // Avisa ao lugar global de anúncio que esta página tem os seus (topo e fim
+  // do <main>) — inclusive durante o carregamento, antes de o <main> existir.
+  useShellComAnuncio()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -418,7 +422,9 @@ export function AppShell({
             )}
 
             <main className="min-h-screen">
+              <SlotDeAnuncio posicao="topo" />
               {children}
+              <SlotDeAnuncio posicao="rodape" />
             </main>
 
             {guestNotice && <GuestAccessNotice />}
@@ -538,7 +544,11 @@ export function AppShell({
             </header>
           )}
 
-          <main className="flex-1 min-w-0">{children}</main>
+          <main className="flex-1 min-w-0">
+            <SlotDeAnuncio posicao="topo" />
+            {children}
+            <SlotDeAnuncio posicao="rodape" />
+          </main>
         </div>
 
         {/* Create Exam Modal */}

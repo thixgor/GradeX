@@ -1,9 +1,11 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { ObjectId } from 'mongodb'
 import { getUserCurrentPeriodo } from '@/lib/user-periodo'
 import { anuncioVisivelParaPeriodo } from '@/lib/anuncio-exibicao'
+import type { AnuncioExibicao, AnuncioMidia, AnuncioPosicao } from '@/lib/anuncio-midia'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,9 +25,15 @@ interface PublicAnuncio {
   modalBotaoTexto?: string
   modalBotaoLink?: string
   periodos?: number[]
+  modalMidia?: AnuncioMidia
+  exibicao?: AnuncioExibicao
+  midia?: AnuncioMidia
+  midiaCelular?: AnuncioMidia
+  paginas?: string[]
+  posicao?: AnuncioPosicao
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const db = await getDb()
 
@@ -66,6 +74,12 @@ export async function GET() {
             modalBotaoTexto: 1,
             modalBotaoLink: 1,
             periodos: 1,
+            modalMidia: 1,
+            exibicao: 1,
+            midia: 1,
+            midiaCelular: 1,
+            paginas: 1,
+            posicao: 1,
           },
         },
       )
@@ -83,7 +97,11 @@ export async function GET() {
     // A resposta agora depende do usuário (período), então não pode ser
     // compartilhada entre usuários por CDN. Cache privado curto deduplica
     // rajadas do mesmo usuário sem vazar segmentação entre contas.
-    return NextResponse.json({ anuncios: filtered }, {
+    //
+    // Comprimida dentro da função: o texto dos modais e as listas de páginas
+    // fazem desta a maior resposta que todo aluno baixa, e no Vercel cada byte
+    // cru que sai da função é Fast Origin Transfer.
+    return jsonComprimido(request, { anuncios: filtered }, {
       headers: {
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=300',
       },

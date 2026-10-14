@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import {
   ArrowRight,
   ChevronLeft,
@@ -12,7 +12,10 @@ import {
   Sparkles,
   X,
 } from 'lucide-react'
-import { AnuncioModal, renderizarConteudoModal } from '@/components/anuncio-modal'
+import { AnuncioModal } from '@/components/anuncio-modal'
+import { useAcaoDoAnuncio } from '@/components/anuncio-acao'
+import { carregarAnunciosPublicos } from '@/lib/anuncios-publicos'
+import type { AnuncioExibicao, AnuncioMidia } from '@/lib/anuncio-midia'
 import { cn } from '@/lib/utils'
 import { toInternalPath, type AnuncioDestinoTipo } from '@/lib/anuncio-destinos'
 import {
@@ -44,6 +47,8 @@ export interface PlatformAd {
   modalBotaoTexto?: string
   modalBotaoLink?: string
   modalBotaoDestino?: PlatformAdDestino
+  modalMidia?: AnuncioMidia
+  exibicao?: AnuncioExibicao
 }
 
 const ROTATION_MS = 8000
@@ -63,6 +68,8 @@ function normalizeAds(payload: unknown): PlatformAd[] {
         typeof candidate.imagemUrl === 'string' &&
         candidate.imagemUrl.trim().length > 0 &&
         candidate.ativo === true &&
+        // O anúncio na página tem o seu próprio lugar (components/anuncio-na-pagina).
+        candidate.exibicao !== 'pagina' &&
         (candidate.tipoAcao === 'link' || candidate.tipoAcao === 'modal')
       )
     })
@@ -118,13 +125,11 @@ function getAdDestination(ad: PlatformAd) {
 
 export function PlatformAds() {
   const pathname = usePathname()
-  const router = useRouter()
   const [ads, setAds] = useState<PlatformAd[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [dismissed, setDismissed] = useState(false)
   const [paused, setPaused] = useState(false)
-  const [modalOpen, setModalOpen] = useState(false)
-  const [selectedAd, setSelectedAd] = useState<PlatformAd | null>(null)
+  const { abrir, modalAberto: modalOpen, modalProps } = useAcaoDoAnuncio()
 
   const hiddenOnRoute = shouldHideAdsOnRoute(pathname)
 
@@ -152,25 +157,13 @@ export function PlatformAds() {
     let cancelled = false
 
     // A busca acontece mesmo com os anúncios ocultos: quando o prazo vence, o
-    // conteúdo já está em mãos e a peça aparece na hora, sem novo fetch.
-    async function fetchAds() {
-      try {
-        const response = await fetch('/api/anuncios', {
-          cache: 'no-store',
-        })
-        if (!response.ok) {
-          console.error('Anuncios: resposta', response.status, 'de /api/anuncios')
-          return
-        }
-
-        const data = await response.json()
-        if (!cancelled) setAds(normalizeAds(data))
-      } catch (error) {
-        console.error('Erro ao carregar anuncios globais:', error)
-      }
-    }
-
-    fetchAds()
+    // conteúdo já está em mãos e a peça aparece na hora, sem novo fetch. A
+    // lista é a mesma dos anúncios na página (uma busca só para os dois).
+    carregarAnunciosPublicos()
+      .then((lista) => {
+        if (!cancelled) setAds(normalizeAds(lista))
+      })
+      .catch((error) => console.error('Erro ao carregar anuncios globais:', error))
 
     return () => {
       cancelled = true
@@ -201,10 +194,6 @@ export function PlatformAds() {
       ? !!toInternalPath(currentAd.linkUrl, window.location.origin)
       : false
   const ctaLabel = currentAd?.ctaTexto?.trim() || (isLinkAd ? 'Ver agora' : 'Abrir')
-  const sanitizedModalContent = useMemo(
-    () => renderizarConteudoModal(selectedAd?.modalConteudo),
-    [selectedAd?.modalConteudo],
-  )
 
   const goTo = useCallback(
     (direction: 'previous' | 'next') => {
@@ -226,69 +215,6 @@ export function PlatformAds() {
       // Non-critical preference.
     }
   }, [])
-
-  /**
-   * Abre o destino do anúncio.
-   *
-   * Destino DENTRO da plataforma navega com o router: abrir uma aba nova para
-   * ir de `/dashboard` a `/materiais/x` custa o carregamento inteiro do app e,
-   * no PWA instalado, ainda joga a pessoa para fora, no navegador. Só o que sai
-   * do domínio é que ganha aba nova.
-   */
-  const openDestination = useCallback(
-    (url?: string, novaAba?: boolean) => {
-      if (!url) return
-
-      const interno = toInternalPath(url, window.location.origin)
-      if (interno) {
-        router.push(interno)
-        return
-      }
-
-      if (novaAba ?? true) {
-        window.open(url, '_blank', 'noopener,noreferrer')
-      } else {
-        window.location.href = url
-      }
-    },
-    [router],
-  )
-
-  const handleAdClick = useCallback(
-    (ad: PlatformAd) => {
-      if (ad.tipoAcao === 'link' && ad.linkUrl) {
-        openDestination(ad.linkUrl, ad.linkNovaAba)
-        return
-      }
-
-      if (ad.tipoAcao === 'modal') {
-        setSelectedAd(ad)
-        setModalOpen(true)
-      }
-    },
-    [openDestination],
-  )
-
-  const handleModalButtonClick = useCallback(() => {
-    openDestination(selectedAd?.modalBotaoLink)
-    setModalOpen(false)
-  }, [openDestination, selectedAd?.modalBotaoLink])
-
-  /** Link escrito no corpo do modal: mesmo tratamento do botão. */
-  const handleModalContentClick = useCallback(
-    (event: MouseEvent<HTMLDivElement>) => {
-      const anchor = (event.target as HTMLElement | null)?.closest('a')
-      if (!anchor) return
-
-      const interno = toInternalPath(anchor.getAttribute('href') || '', window.location.origin)
-      if (!interno) return
-
-      event.preventDefault()
-      setModalOpen(false)
-      router.push(interno)
-    },
-    [router],
-  )
 
   if (hiddenOnRoute || dismissed || !currentAd || ads.length === 0) {
     return null
@@ -334,7 +260,7 @@ export function PlatformAds() {
           <div className="relative flex min-h-[104px] items-stretch gap-2 p-2.5 sm:min-h-[116px] sm:gap-3 sm:p-3">
             <button
               type="button"
-              onClick={() => handleAdClick(currentAd)}
+              onClick={() => abrir(currentAd)}
               className="group/ad grid min-w-0 flex-1 grid-cols-[112px_minmax(0,1fr)] items-center gap-3 rounded-lg text-left outline-none transition hover:bg-black/[0.035] focus-visible:ring-2 focus-visible:ring-[#468152] dark:hover:bg-white/[0.06] sm:grid-cols-[190px_minmax(0,1fr)_auto]"
             >
               <span className="relative flex h-full min-h-[84px] shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/55 bg-white/80 p-1.5 shadow-inner dark:border-white/10 dark:bg-slate-900/80 sm:min-h-[92px]">
@@ -420,14 +346,7 @@ export function PlatformAds() {
         </div>
       </aside>
 
-      <AnuncioModal
-        ad={selectedAd}
-        html={sanitizedModalContent}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onAcao={handleModalButtonClick}
-        onLinkNoTexto={handleModalContentClick}
-      />
+      <AnuncioModal {...modalProps} />
 
       <style jsx>{`
         @keyframes platform-ad-progress {
