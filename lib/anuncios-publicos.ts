@@ -5,15 +5,19 @@
  *
  * O banner flutuante e os anúncios na página (topo e fim) leem a mesma lista.
  * Cada um buscando a sua seriam três idas ao Mongo por navegação; aqui a
- * primeira busca é compartilhada e a lista vale por um minuto — o mesmo
- * `max-age` que a rota já declara.
+ * primeira busca é compartilhada e a lista vale por 15 minutos.
+ *
+ * Por que tanto: cada busca é uma invocação de função (cobrada por uso). Antes
+ * do anúncio na página, o banner buscava UMA vez por carregamento do app; com
+ * validade de um minuto, quem navega por meia hora faria 30. Anúncio não muda
+ * de minuto em minuto — e recarregar a página sempre busca de novo.
  *
  * Também guarda a última lista recebida: numa navegação dentro do app, o
  * anúncio da página seguinte nasce já com o conteúdo, sem esperar rede e sem
  * empurrar o texto para baixo depois de aparecer.
  */
 
-const VALIDADE_MS = 60_000
+const VALIDADE_MS = 15 * 60_000
 
 let ultimaLista: unknown[] | null = null
 let busca: { em: number; promessa: Promise<unknown[]> } | null = null

@@ -63,8 +63,15 @@ const IMAGEM_QUALIDADE = 0.9
 const VIDEO_LADO_MAIOR_MAX = 1920
 const VIDEO_LADO_MENOR_MAX = 1080
 const VIDEO_FPS_MAX = 30
-/** Taxa de referência para 1920×1080 a 30 fps em H.264. */
-const VIDEO_BITRATE_1080P = 4_000_000
+/**
+ * Taxa de referência para 1920×1080 a 30 fps em H.264.
+ *
+ * 2,5 Mbps é a faixa que plataformas de vídeo entregam em 1080p: anúncio é
+ * arte, texto e movimento moderado, e fica limpo nela. Cada byte aqui é pago
+ * em transferência do Blob a CADA pessoa que assiste — 30 s ficam em ~9 MB,
+ * contra ~15 MB a 4 Mbps, sem diferença visível na caixa do anúncio.
+ */
+const VIDEO_BITRATE_1080P = 2_500_000
 const AUDIO_BITRATE = 128_000
 const POSTER_QUALIDADE = 0.85
 
