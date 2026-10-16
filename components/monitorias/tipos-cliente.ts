@@ -2,6 +2,9 @@
 import type { StatusReserva, Proposta, ConteudoAnuncio } from '@/lib/monitorias/tipos'
 import type { ResumoDemanda } from '@/lib/monitorias/demandas-regras'
 
+/** Quem está na sala agora (página da reserva). */
+export type PresencaNaSala = { presentes: number; monitorPresente: boolean }
+
 export type MensagemReserva = { id: string; autor: 'eu' | 'monitor' | 'aluno' | 'sistema'; tipo: string; texto: string; propostaId: string | null; createdAt: string }
 
 export interface DetalheReserva {
@@ -31,6 +34,13 @@ export interface DetalheReserva {
     prazoPagamento: string | null
     linkReuniao: string | null
     temLink: boolean
+    sala: {
+      nativa: boolean
+      linkExternoPermitido: boolean
+      podeEntrar: boolean
+      janela: { abreEm: string; fechaEm: string } | null
+      presenca: PresencaNaSala | null
+    }
     codigoConvite: string | null
     motivoCancelamento: string | null
     disputa: { em: string; motivo: string; decisao: string | null } | null
@@ -71,7 +81,7 @@ export function baixarIcs(titulo: string, inicio: string, fim: string, url: stri
     `DTSTART:${f(inicio)}`,
     `DTEND:${f(fim)}`,
     `SUMMARY:Monitoria: ${titulo.replace(/[,;\n]/g, ' ')}`,
-    `DESCRIPTION:O link da reunião fica na página da reserva: ${url}`,
+    `DESCRIPTION:Entre na aula pela página da reserva: ${url}`,
     `URL:${url}`,
     'END:VEVENT',
     'END:VCALENDAR',

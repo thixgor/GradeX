@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { idDe, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
+import { resumirPresenca } from '@/lib/monitorias/sala/regras'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,7 +13,12 @@ export async function GET(request: NextRequest) {
     const filtro = status === 'todas' ? {} : { status }
     const reservas = await c.reservas.find(filtro as any).sort({ updatedAt: -1 }).limit(100).toArray()
     const ids = reservas.map((r) => idDe(r))
-    const assentos = await c.participacoes.find({ reservaId: { $in: ids } }).toArray()
+    const [assentos, salas] = await Promise.all([
+      c.participacoes.find({ reservaId: { $in: ids } }).toArray(),
+      // Presença na sala de aula (registro mínimo): evidência para decidir "o monitor faltou".
+      c.salas.find({ _id: { $in: ids } }, { projection: { registro: 1 } }).toArray(),
+    ])
+    const presencaPorReserva = new Map(salas.map((s) => [String(s._id), resumirPresenca(s.registro || [])]))
     return ok({
       reservas: reservas.map((r) => ({
         id: idDe(r),
@@ -26,6 +32,7 @@ export async function GET(request: NextRequest) {
         ticketId: r.ticketId || null,
         motivoCancelamento: r.motivoCancelamento || null,
         updatedAt: r.updatedAt,
+        presenca: presencaPorReserva.get(idDe(r)) || [],
         assentos: assentos
           .filter((a) => a.reservaId === idDe(r))
           .map((a) => ({

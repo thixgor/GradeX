@@ -21,6 +21,7 @@ import { PLATAFORMAS_DE_REUNIAO, validarLinkDeReuniao, validarLinkExterno } from
 import { podeTransitar } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
 import { avaliar } from '@/lib/monitorias/avaliacoes'
+import { configDaSala } from '@/lib/monitorias/sala/config'
 
 export const dynamic = 'force-dynamic'
 
@@ -140,6 +141,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       }
       case 'link': {
         if (papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor define o link da reunião.')
+        if (!(await configDaSala()).linkExternoPermitido) {
+          throw new ErroMonitoria(409, 'O link externo está desativado. A aula acontece na sala de aula da plataforma.')
+        }
         if (!['aguardando_pagamento', 'confirmada', 'aguardando_assinaturas'].includes(reserva.status)) {
           throw new ErroMonitoria(409, 'Não é possível alterar o link agora.')
         }

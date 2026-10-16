@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { useLiteMode } from '@/hooks/use-lite-mode'
+import { ehRotaDaSala } from '@/lib/monitorias/sala/regras'
 
 // Componentes pesados de "chrome" da aplicação. Carregados via next/dynamic
 // (ssr:false) para que NÃO entrem no bundle inicial nem bloqueiem a hidratação
@@ -93,6 +94,10 @@ export function AppChrome() {
   const { liteMode, hydrated: liteHydrated } = useLiteMode()
   const authless = isAuthlessRoute(pathname)
   const noMusic = hideMusicPlayer(pathname)
+  // Sala de aula das monitorias: música por cima da voz do monitor, anúncio
+  // girando e convite de avaliação no meio da chamada só atrapalham (e cada um
+  // faz requisições). A presença continua: é o que conta quem está online.
+  const emAula = ehRotaDaSala(pathname)
   // Os anúncios fazem fetch em /api/anuncios (Mongo) e mantêm um intervalo de
   // rotação. Nada disso precisa acontecer enquanto a página ainda está
   // pintando — sobretudo na landing, onde o visitante nem está logado.
@@ -104,11 +109,11 @@ export function AppChrome() {
 
   return (
     <>
-      {!authless && <TrialExpirationChecker />}
-      {!authless && <ReviewPromptHost />}
+      {!authless && !emAula && <TrialExpirationChecker />}
+      {!authless && !emAula && <ReviewPromptHost />}
       {!authless && <PresenceHeartbeat />}
-      {!authless && !noMusic && showMusic && <StudyMusicPlayer />}
-      {adsReady && <PlatformAds />}
+      {!authless && !noMusic && !emAula && showMusic && <StudyMusicPlayer />}
+      {adsReady && !emAula && <PlatformAds />}
     </>
   )
 }

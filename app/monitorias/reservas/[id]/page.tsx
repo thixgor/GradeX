@@ -15,7 +15,8 @@ import { AssinaturaContrato } from '@/components/monitorias/assinatura-contrato'
 import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
 import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
-import { baixarIcs, type DetalheReserva, type MensagemReserva } from '@/components/monitorias/tipos-cliente'
+import { CartaoSalaDeAula } from '@/components/monitorias/sala/cartao-sala-de-aula'
+import { baixarIcs, type DetalheReserva, type MensagemReserva, type PresencaNaSala } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
@@ -34,6 +35,8 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const [aviso, setAviso] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [modal, setModal] = useState<Modal>(null)
+  /** Quem está na sala de aula, de carona no polling das mensagens. */
+  const [presencaSala, setPresencaSala] = useState<PresencaNaSala | null>(null)
   const fimDoChat = useRef<HTMLDivElement>(null)
 
   // Recarga cheia preserva o que a pessoa já abriu com "Ver mensagens
@@ -41,14 +44,15 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   // já estavam na tela continuam lá (mescladas por id), sem a rolagem pular.
   const carregar = useCallback(() => {
     api<DetalheReserva>(`/api/monitorias/reservas/${params.id}`)
-      .then((x) =>
+      .then((x) => {
+        setPresencaSala(x.reserva.sala?.presenca ?? null)
         setD((atual) => {
           if (!atual || !x.mensagens.length) return x
           const primeira = new Date(x.mensagens[0].createdAt).getTime()
           const antigas = atual.mensagens.filter((m) => new Date(m.createdAt).getTime() < primeira)
           return antigas.length ? { ...x, mensagens: [...antigas, ...x.mensagens], maisAntigas: atual.maisAntigas } : x
-        }),
-      )
+        })
+      })
       .catch((e) => setErro(e.message))
   }, [params.id])
 
@@ -65,9 +69,10 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
     voltas.current++
     const ultima = d.mensagens.at(-1)?.createdAt
     try {
-      const x = await api<{ status: string; versao: number; mensagens: MensagemReserva[] }>(
+      const x = await api<{ status: string; versao: number; mensagens: MensagemReserva[]; sala?: PresencaNaSala | null }>(
         `/api/monitorias/reservas/${params.id}/mensagens${ultima ? `?depois=${encodeURIComponent(ultima)}` : ''}`,
       )
+      setPresencaSala(x.sala ?? null)
       if (x.versao !== d.versao || x.status !== d.reserva.status || voltas.current % 10 === 0) return carregar()
       if (x.mensagens.length) {
         setD((atual) => {
@@ -325,6 +330,8 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
             </div>
           )}
 
+          <CartaoSalaDeAula d={d} presenca={presencaSala} />
+
           {(r.status === 'confirmada' || r.status === 'aguardando_pagamento' || r.status === 'realizada') && (
             <LinkDaReuniao d={d} onSalvar={(url) => acao({ acao: 'link', url })} />
           )}
@@ -522,19 +529,36 @@ function FormMotivo({ tipo, d, onEnviar }: { tipo: 'cancelar' | 'recusar' | 'rep
   )
 }
 
+/**
+ * Link externo (Meet, Zoom…). Com a sala nativa ligada ele vira o PLANO B:
+ * discreto, para quando a sala da plataforma não funcionar. O admin pode
+ * desligá-lo (Admin → Monitorias → Sala de vídeo); link já colocado continua
+ * visível para quem pagou.
+ */
 function LinkDaReuniao({ d, onSalvar }: { d: DetalheReserva; onSalvar: (url: string) => Promise<void> }) {
   const [url, setUrl] = useState('')
   const [editando, setEditando] = useState(false)
+  const [aberto, setAberto] = useState(false)
   const [erro, setErro] = useState('')
   const r = d.reserva
+  const nativa = !!r.sala?.nativa
+  const permitido = r.sala?.linkExternoPermitido !== false
   if (d.papel === 'monitor') {
+    if (!permitido && !r.linkReuniao) return null
+    if (nativa && !r.linkReuniao && !aberto) {
+      return (
+        <button type="button" onClick={() => setAberto(true)} className="w-full rounded-2xl border border-dashed border-border px-4 py-3 text-left text-xs text-muted-foreground transition hover:bg-muted/50">
+          <span className="font-medium text-foreground">Plano B:</span> colocar um link de Meet ou Zoom, caso a sala da plataforma não funcione.
+        </button>
+      )
+    }
     return (
       <div className="rounded-2xl border border-border bg-card p-4">
-        <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Video className="h-4 w-4 text-primary" /> Link da reunião</h2>
-        {r.linkReuniao && !editando ? (
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Video className="h-4 w-4 text-primary" /> {nativa ? 'Link externo (plano B)' : 'Link da reunião'}</h2>
+        {r.linkReuniao && (!editando || !permitido) ? (
           <div className="mt-2 space-y-2">
             <a href={r.linkReuniao} target="_blank" rel="noopener noreferrer" className="block truncate text-sm text-primary hover:underline">{r.linkReuniao}</a>
-            <button type="button" className="text-xs text-muted-foreground hover:underline" onClick={() => setEditando(true)}>Trocar link</button>
+            {permitido && <button type="button" className="text-xs text-muted-foreground hover:underline" onClick={() => setEditando(true)}>Trocar link</button>}
           </div>
         ) : (
           <div className="mt-2 space-y-2">
@@ -559,6 +583,14 @@ function LinkDaReuniao({ d, onSalvar }: { d: DetalheReserva; onSalvar: (url: str
       </div>
     )
   }
+  if (r.linkReuniao && nativa && r.sala?.podeEntrar) {
+    return (
+      <p className="px-1 text-xs text-muted-foreground">
+        Problemas com a sala? O monitor deixou um{' '}
+        <a href={r.linkReuniao} target="_blank" rel="noopener noreferrer" className="font-medium text-primary hover:underline">link externo da reunião</a>.
+      </p>
+    )
+  }
   if (r.linkReuniao) {
     return (
       <a href={r.linkReuniao} target="_blank" rel="noopener noreferrer">
@@ -572,7 +604,7 @@ function LinkDaReuniao({ d, onSalvar }: { d: DetalheReserva; onSalvar: (url: str
       </a>
     )
   }
-  if (r.status === 'confirmada') return <CaixaAviso tom="info">O monitor ainda vai colocar o link da reunião aqui. Você será avisado.</CaixaAviso>
+  if (r.status === 'confirmada' && !nativa) return <CaixaAviso tom="info">O monitor ainda vai colocar o link da reunião aqui. Você será avisado.</CaixaAviso>
   return null
 }
 

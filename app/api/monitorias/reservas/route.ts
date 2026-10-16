@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import { idDe, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { STATUS_ATIVOS } from '@/lib/monitorias/estado'
+import { configDaSala } from '@/lib/monitorias/sala/config'
 
 export const dynamic = 'force-dynamic'
 
@@ -92,6 +93,8 @@ export async function GET(request: NextRequest) {
     return ok({
       resumo,
       proximoCursor,
+      // O atalho "Entrar na sala" da lista só aparece com a sala ligada no admin.
+      salaNativaAtiva: (await configDaSala()).salaNativaAtiva,
       reservas: reservas.map((r) => {
         const id = idDe(r)
         const eu = meuAssento.get(id)

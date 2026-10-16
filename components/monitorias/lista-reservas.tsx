@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BookOpen, CalendarCheck, ChevronRight, FileText, GraduationCap, MessagesSquare, Receipt, Search, Sparkles, Wallet } from 'lucide-react'
+import { BookOpen, CalendarCheck, ChevronRight, FileText, GraduationCap, MessagesSquare, Receipt, Search, Sparkles, Video, Wallet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, Esqueleto, SeloStatus, Vazio, api } from '@/components/monitorias/base'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
@@ -11,6 +11,7 @@ import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
+import { ASSENTOS_COM_AULA, salaAbertaAgora } from '@/lib/monitorias/sala/regras'
 
 export interface ItemReserva {
   id: string
@@ -57,14 +58,16 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
   const [itens, setItens] = useState<ItemReserva[] | null>(null)
   const [resumo, setResumo] = useState<Resumo | null>(null)
   const [cursor, setCursor] = useState<string | null>(null)
+  const [salaNativa, setSalaNativa] = useState(false)
   const [carregandoMais, setCarregandoMais] = useState(false)
 
   useEffect(() => {
     setItens(null)
     setCursor(null)
-    api<{ reservas: ItemReserva[]; resumo: Resumo | null; proximoCursor: string | null }>(`/api/monitorias/reservas?papel=${papel}&escopo=${escopo}`)
+    api<{ reservas: ItemReserva[]; resumo: Resumo | null; proximoCursor: string | null; salaNativaAtiva?: boolean }>(`/api/monitorias/reservas?papel=${papel}&escopo=${escopo}`)
       .then((r) => {
         setItens(r.reservas)
+        setSalaNativa(!!r.salaNativaAtiva)
         if (r.resumo) setResumo(r.resumo)
         setCursor(r.proximoCursor)
       })
@@ -167,7 +170,7 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
                   <SeloStatus status={r.status} className="hidden sm:inline-flex" />
                   <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </Link>
-                <Atalhos r={r} papel={papel} />
+                <Atalhos r={r} papel={papel} salaNativa={salaNativa} />
               </motion.li>
             ))}
           </AnimatePresence>
@@ -185,8 +188,10 @@ export function ListaReservas({ papel }: { papel: 'aluno' | 'monitor' }) {
 }
 
 /** Linha de atalhos: o que a pessoa costuma procurar depois (documentos, histórico). */
-function Atalhos({ r, papel }: { r: ItemReserva; papel: 'aluno' | 'monitor' }) {
+function Atalhos({ r, papel, salaNativa }: { r: ItemReserva; papel: 'aluno' | 'monitor'; salaNativa: boolean }) {
   const a = r.meuAssento
+  const temAula = papel === 'monitor' || (!!a && ASSENTOS_COM_AULA.includes(a.status))
+  const salaAberta = salaNativa && temAula && salaAbertaAgora({ status: r.status, inicio: r.inicio, duracaoMin: r.duracaoMin, papel: papel === 'monitor' ? 'monitor' : 'aluno' })
   const itens: Array<{ href: string; rotulo: string; icone: typeof FileText; baixar?: boolean }> = []
   if (a?.contratoId) itens.push({ href: `/api/monitorias/documentos/contrato/${a.contratoId}`, rotulo: 'Contrato', icone: FileText, baixar: true })
   if (a?.temComprovante) itens.push({ href: `/api/monitorias/documentos/comprovante/${a.id}`, rotulo: 'Comprovante', icone: Receipt, baixar: true })
@@ -194,7 +199,7 @@ function Atalhos({ r, papel }: { r: ItemReserva; papel: 'aluno' | 'monitor' }) {
   if (r.status !== 'solicitada') itens.push({ href: `/api/monitorias/documentos/conversa/${r.id}`, rotulo: 'Conversa (PDF)', icone: MessagesSquare, baixar: true })
   const pagamento = a ? SITUACAO_PAGAMENTO[a.status] : null
   const valor = a?.pagoCentavos ? formatarCentavos(a.pagoCentavos - (a.reembolsadoCentavos || 0)) : null
-  if (!itens.length && !pagamento && papel === 'aluno') return null
+  if (!itens.length && !pagamento && papel === 'aluno' && !salaAberta) return null
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-4 pb-3 pl-20 text-xs">
       {papel === 'aluno' && pagamento && (
@@ -208,6 +213,11 @@ function Atalhos({ r, papel }: { r: ItemReserva; papel: 'aluno' | 'monitor' }) {
         <span className="font-medium text-muted-foreground">{r.alunosPagos} aluno{r.alunosPagos > 1 ? 's' : ''} pago{r.alunosPagos > 1 ? 's' : ''}</span>
       )}
       <span className="ml-auto flex flex-wrap gap-1.5">
+        {salaAberta && (
+          <Link href={`/monitorias/reservas/${r.id}/sala`} className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 font-semibold text-primary-foreground transition hover:bg-primary/90">
+            <Video className="h-3 w-3" /> Entrar na sala
+          </Link>
+        )}
         {itens.map((x) => (
           <a key={x.rotulo} href={x.href} className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-muted-foreground transition hover:bg-primary/10 hover:text-primary">
             <x.icone className="h-3 w-3" /> {x.rotulo}

@@ -1,0 +1,1076 @@
+'use client'
+
+/**
+ * O controlador da sala: uma instância por tela aberta, fora do React.
+ *
+ * Ele é dono de tudo que precisa ser desligado: trilhas de câmera, microfone e
+ * tela, conexões P2P, temporizadores, ouvintes de janela, Wake Lock e o canal
+ * entre abas. `destruir()` (e qualquer saída) desliga TUDO — a luz da câmera
+ * apaga e nenhuma requisição sai depois.
+ *
+ * ## Quando ele fala com o servidor
+ *
+ * Só nestes casos, com a cadência de `cadenciaDaSala` (regras.ts):
+ *  - esperando alguém chegar (3 s → 10 s, para depois de 45 min);
+ *  - negociando (1 s por poucos segundos);
+ *  - reconectando um par cujo canal P2P caiu (recuo até 8 s);
+ *  - pulso de presença de 30 s com a aula andando (304 quase sempre);
+ *  - renovação do token a cada ~10 min (reconfere a autorização);
+ *  - mensagem de chat (gravada no chat da reserva; entregue ao vivo pelo P2P).
+ */
+
+import { faseDeSinal, podeIrPara, type FaseDaSala, type FaseDoPar, type MotivoDeSaida } from '../maquina'
+import { AVISO_FECHAMENTO_MIN, cadenciaDaSala, RENOVAR_ANTES_MS, type FaseDeSinal } from '../regras'
+import type { CredenciaisDaSala, MensagemDoCanal, RespostaDoSinal, RetratoDaSala, SinalRecebido, TipoDeSinal, UsoDaConexao } from '../mensagens'
+import type { PapelNaSala } from '../../tipos'
+import { novaGeracao, Par, type TrilhasLocais } from './par'
+import {
+  capturar,
+  capturarTela,
+  guardarPreferencias,
+  lerPreferencias,
+  listarAparelhos,
+  pararTrilha,
+  podeCompartilharTela,
+  suporteDoNavegador,
+  type Aparelhos,
+  type EstadoDoAparelho,
+  type PreferenciasDeAparelho,
+} from './midia'
+
+export interface ParticipanteNaTela {
+  pid: string
+  nome: string
+  papel: PapelNaSala
+  /** `aguardando` = está na sala, mas a conexão com ele ainda não começou. */
+  fase: FaseDoPar | 'aguardando'
+  camera: MediaStream | null
+  tela: MediaStream | null
+  versaoDasTrilhas: number
+  mic: boolean
+  cam: boolean
+  compartilhando: boolean
+  /** O vídeo dele parou por causa da rede (o áudio segue). */
+  videoPausado: boolean
+  conexao: 'boa' | 'instavel' | 'fraca'
+  falando: boolean
+}
+
+export interface MensagemDeChat {
+  id: string
+  minha: boolean
+  nome: string
+  texto: string
+  em: string
+}
+
+export interface EstadoDaSalaNaTela {
+  fase: FaseDaSala
+  semSuporte: 'inseguro' | 'webrtc' | 'midia' | null
+  saida: { motivo: MotivoDeSaida; mensagem: string } | null
+  erroAoEntrar: string | null
+  abreEm: string | null
+  eu: { pid: string; papel: PapelNaSala; nome: string } | null
+  local: { audio: MediaStreamTrack | null; camera: MediaStream | null; tela: MediaStream | null; mic: EstadoDoAparelho; cam: EstadoDoAparelho; versao: number }
+  participantes: ParticipanteNaTela[]
+  sinal: FaseDeSinal | null
+  semInternet: boolean
+  problemaNoServidor: boolean
+  ociosa: boolean
+  encerrada: boolean
+  fechaEm: string | null
+  avisoDeFechamento: boolean
+  chat: MensagemDeChat[]
+  naoLidas: number
+  config: CredenciaisDaSala['config'] | null
+  aparelhos: Aparelhos
+  prefs: PreferenciasDeAparelho
+  podeCompartilhar: boolean
+  turn: boolean
+  /** Outra aba deste navegador já está na sala. */
+  outraAba: boolean
+  economiaDeDados: boolean
+  aviso: string | null
+}
+
+const CANAL_DE_ABAS = 'domineaqui:sala:'
+const MAX_CHAT = 200
+
+type Ouvinte = () => void
+
+export class ControladorDaSala {
+  private readonly reservaId: string
+  private estado: EstadoDaSalaNaTela
+  private readonly ouvintes = new Set<Ouvinte>()
+  private agendado = false
+
+  // Mídia local
+  private audio: MediaStreamTrack | null = null
+  private cam: MediaStreamTrack | null = null
+  private tela: MediaStreamTrack | null = null
+  private cameraLocal: MediaStream | null = null
+  private telaLocal: MediaStream | null = null
+
+  // Sala
+  private creds: CredenciaisDaSala | null = null
+  private retrato: RetratoDaSala | null = null
+  private readonly pares = new Map<string, Par>()
+  private desde = 0
+  private ultimoProcessado = 0
+  private etag: string | null = null
+  private falhas = 0
+  private faseDoSinal: FaseDeSinal | null = null
+  private faseDesde = 0
+  private ultimoPulso = 0
+  /** Quando a última volta terminou: a próxima conta daqui (atualizações da tela não a adiam). */
+  private ultimaPuxada = 0
+  private alvoDoSinal = 0
+  private puxando = false
+  private idsDoChat = new Set<string>()
+  private chatAberto = false
+
+  // Consumo (relatado na renovação e na saída)
+  private bytesPorPar = new Map<string, number>()
+  private uso = { bytesRelay: 0, segundosRelay: 0, segundosDireta: 0 }
+  private ultimaAmostra = 0
+
+  private timers: Partial<Record<'sinal' | 'renovar' | 'stats' | 'fala' | 'aviso' | 'fecha', ReturnType<typeof setTimeout>>> = {}
+  private canalAbas: BroadcastChannel | null = null
+  private wakeLock: { release: () => Promise<void> } | null = null
+  private removerOuvintes: Array<() => void> = []
+  private destruido = false
+  /** Sobe a cada entrada/saída: resposta atrasada de uma entrada antiga é ignorada. */
+  private ciclo = 0
+
+  constructor(reservaId: string) {
+    this.reservaId = reservaId
+    this.estado = {
+      fase: 'verificando',
+      semSuporte: null,
+      saida: null,
+      erroAoEntrar: null,
+      abreEm: null,
+      eu: null,
+      local: { audio: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: 0 },
+      participantes: [],
+      sinal: null,
+      semInternet: false,
+      problemaNoServidor: false,
+      ociosa: false,
+      encerrada: false,
+      fechaEm: null,
+      avisoDeFechamento: false,
+      chat: [],
+      naoLidas: 0,
+      config: null,
+      aparelhos: { cameras: [], microfones: [], saidas: [] },
+      prefs: { micId: null, camId: null, saidaId: null, micLigado: true, camLigada: true },
+      podeCompartilhar: false,
+      turn: false,
+      outraAba: false,
+      economiaDeDados: false,
+      aviso: null,
+    }
+  }
+
+  // ─── Assinatura (useSyncExternalStore) ──────────────────────────────
+
+  obter = (): EstadoDaSalaNaTela => this.estado
+
+  assinar = (fn: Ouvinte): (() => void) => {
+    this.ouvintes.add(fn)
+    return () => this.ouvintes.delete(fn)
+  }
+
+  private definir(parcial: Partial<EstadoDaSalaNaTela>): void {
+    this.estado = { ...this.estado, ...parcial }
+    this.emitir()
+  }
+
+  /** Junta várias mudanças num quadro só (eventos de ICE chegam em rajadas). */
+  private atualizar = (): void => {
+    if (this.agendado || this.destruido) return
+    this.agendado = true
+    queueMicrotask(() => {
+      this.agendado = false
+      if (this.destruido) return
+      this.estado = { ...this.estado, participantes: this.montarParticipantes(), sinal: this.faseDoSinal }
+      this.emitir()
+      this.reagendarSinal()
+    })
+  }
+
+  private emitir(): void {
+    for (const fn of this.ouvintes) fn()
+  }
+
+  private irPara(fase: FaseDaSala, extra: Partial<EstadoDaSalaNaTela> = {}): boolean {
+    if (fase !== this.estado.fase && !podeIrPara(this.estado.fase, fase)) return false
+    this.definir({ fase, ...extra })
+    return true
+  }
+
+  // ─── Saguão: suporte e aparelhos ────────────────────────────────────
+
+  async iniciar(): Promise<void> {
+    const suporte = suporteDoNavegador()
+    if (!suporte.ok) {
+      this.irPara('sem_suporte', { semSuporte: suporte.motivo })
+      return
+    }
+    const prefs = lerPreferencias()
+    this.irPara('saguao', { prefs, podeCompartilhar: podeCompartilharTela() })
+    this.ouvirAbas()
+    const aoMudarAparelhos = () => void this.recarregarAparelhos()
+    navigator.mediaDevices.addEventListener?.('devicechange', aoMudarAparelhos)
+    this.removerOuvintesDeAparelho = () => navigator.mediaDevices.removeEventListener?.('devicechange', aoMudarAparelhos)
+    await this.abrirMidia()
+  }
+
+  private removerOuvintesDeAparelho: () => void = () => {}
+
+  private async abrirMidia(): Promise<void> {
+    const p = this.estado.prefs
+    const r = await capturar({ audio: true, video: p.camLigada, micId: p.micId, camId: p.camId })
+    if (this.destruido) {
+      pararTrilha(r.audio)
+      pararTrilha(r.video)
+      return
+    }
+    pararTrilha(this.audio)
+    pararTrilha(this.cam)
+    this.audio = r.audio
+    this.cam = r.video
+    if (this.audio) this.audio.enabled = p.micLigado
+    this.vigiarTrilha(this.audio, 'mic')
+    this.vigiarTrilha(this.cam, 'cam')
+    this.definirLocal({
+      mic: r.audio ? (p.micLigado ? 'ligado' : 'desligado') : r.estadoAudio,
+      cam: r.video ? 'ligado' : p.camLigada ? r.estadoVideo : 'desligado',
+    })
+    await this.recarregarAparelhos()
+  }
+
+  /** "Tentar de novo" do saguão, depois de permissão negada ou aparelho ocupado. */
+  async tentarAparelhosDeNovo(): Promise<void> {
+    const { cam } = this.estado.local
+    if (cam === 'negado' || cam === 'em_uso' || cam === 'indisponivel' || cam === 'erro') this.guardar({ camLigada: true })
+    await this.abrirMidia()
+    this.distribuirTrilhas()
+  }
+
+  private vigiarTrilha(t: MediaStreamTrack | null, tipo: 'mic' | 'cam'): void {
+    if (!t) return
+    t.onended = () => {
+      // Aparelho desconectado (fone tirado, câmera USB solta).
+      if (tipo === 'mic' && this.audio === t) {
+        this.audio = null
+        this.definirLocal({ mic: 'indisponivel' })
+        this.definir({ aviso: 'O microfone foi desconectado. Escolha outro em Configurações.' })
+      }
+      if (tipo === 'cam' && this.cam === t) {
+        this.cam = null
+        this.definirLocal({ cam: 'indisponivel' })
+        this.definir({ aviso: 'A câmera foi desconectada.' })
+      }
+      this.distribuirTrilhas()
+    }
+  }
+
+  private async recarregarAparelhos(): Promise<void> {
+    const aparelhos = await listarAparelhos()
+    if (!this.destruido) this.definir({ aparelhos })
+  }
+
+  private definirLocal(parcial: Partial<Omit<EstadoDaSalaNaTela['local'], 'camera' | 'tela' | 'versao' | 'audio'>>): void {
+    if (this.cam) {
+      if (!this.cameraLocal || this.cameraLocal.getVideoTracks()[0] !== this.cam) this.cameraLocal = new MediaStream([this.cam])
+    } else this.cameraLocal = null
+    if (this.tela) {
+      if (!this.telaLocal || this.telaLocal.getVideoTracks()[0] !== this.tela) this.telaLocal = new MediaStream([this.tela])
+    } else this.telaLocal = null
+    this.definir({
+      local: { ...this.estado.local, ...parcial, audio: this.audio, camera: this.cameraLocal, tela: this.telaLocal, versao: this.estado.local.versao + 1 },
+    })
+  }
+
+  private guardar(parcial: Partial<PreferenciasDeAparelho>): void {
+    const prefs = { ...this.estado.prefs, ...parcial }
+    guardarPreferencias(prefs)
+    this.definir({ prefs })
+  }
+
+  async trocarAparelho(tipo: 'mic' | 'cam' | 'saida', id: string): Promise<void> {
+    if (tipo === 'saida') return this.guardar({ saidaId: id })
+    if (tipo === 'mic') {
+      const r = await capturar({ audio: true, video: false, micId: id })
+      if (!r.audio) return this.definir({ aviso: 'Não deu para usar esse microfone. Ele pode estar em uso por outro aplicativo.' })
+      pararTrilha(this.audio)
+      this.audio = r.audio
+      this.audio.enabled = this.estado.prefs.micLigado
+      this.vigiarTrilha(this.audio, 'mic')
+      this.guardar({ micId: id })
+      this.definirLocal({ mic: this.estado.prefs.micLigado ? 'ligado' : 'desligado' })
+    } else {
+      const r = await capturar({ audio: false, video: true, camId: id })
+      if (!r.video) return this.definir({ aviso: 'Não deu para usar essa câmera. Ela pode estar em uso por outro aplicativo.' })
+      pararTrilha(this.cam)
+      this.cam = r.video
+      this.vigiarTrilha(this.cam, 'cam')
+      this.guardar({ camId: id, camLigada: true })
+      this.definirLocal({ cam: 'ligado' })
+    }
+    this.distribuirTrilhas()
+  }
+
+  async alternarMic(): Promise<void> {
+    if (!this.audio) {
+      // Sem trilha (negado, indisponível, desconectado): tenta de novo, a pedido.
+      const r = await capturar({ audio: true, video: false, micId: this.estado.prefs.micId })
+      if (!r.audio) return this.definirLocal({ mic: r.estadoAudio })
+      this.audio = r.audio
+      this.vigiarTrilha(this.audio, 'mic')
+      this.guardar({ micLigado: true })
+      this.definirLocal({ mic: 'ligado' })
+      this.distribuirTrilhas()
+      return
+    }
+    const ligar = !this.audio.enabled
+    this.audio.enabled = ligar
+    this.guardar({ micLigado: ligar })
+    this.definirLocal({ mic: ligar ? 'ligado' : 'desligado' })
+    this.enviarEstado()
+  }
+
+  async alternarCam(): Promise<void> {
+    if (this.cam) {
+      // Desligar de verdade: para a trilha (a luz apaga) e nada de vídeo sai.
+      pararTrilha(this.cam)
+      this.cam = null
+      this.guardar({ camLigada: false })
+      this.definirLocal({ cam: 'desligado' })
+      this.distribuirTrilhas()
+      return
+    }
+    const r = await capturar({ audio: false, video: true, camId: this.estado.prefs.camId })
+    if (!r.video) return this.definirLocal({ cam: r.estadoVideo })
+    this.cam = r.video
+    this.vigiarTrilha(this.cam, 'cam')
+    this.guardar({ camLigada: true })
+    this.definirLocal({ cam: 'ligado' })
+    this.distribuirTrilhas()
+  }
+
+  async alternarTela(): Promise<void> {
+    if (this.tela) return this.pararTela()
+    if (!this.estado.config?.compartilharTela && this.estado.fase === 'na_sala') return
+    try {
+      const t = await capturarTela(this.perfil())
+      if (!t) return
+      this.tela = t
+      t.onended = () => this.pararTela()
+      this.definirLocal({})
+      this.distribuirTrilhas()
+    } catch (err) {
+      if ((err as { name?: string })?.name !== 'NotAllowedError') this.definir({ aviso: 'Não deu para compartilhar a tela.' })
+    }
+  }
+
+  private pararTela(): void {
+    pararTrilha(this.tela)
+    this.tela = null
+    this.definirLocal({})
+    this.distribuirTrilhas()
+  }
+
+  private trilhas(): TrilhasLocais {
+    return { audio: this.audio, cam: this.cam, tela: this.tela }
+  }
+
+  private distribuirTrilhas(): void {
+    const t = this.trilhas()
+    for (const par of this.pares.values()) par.definirTrilhas(t)
+    this.enviarEstado()
+  }
+
+  // ─── Entrar ─────────────────────────────────────────────────────────
+
+  async entrar(): Promise<void> {
+    if (!this.irPara('entrando', { erroAoEntrar: null, saida: null, ociosa: false })) return
+    const ciclo = ++this.ciclo
+    let res: Response
+    try {
+      res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'entrar' }),
+        cache: 'no-store',
+      })
+    } catch {
+      if (ciclo === this.ciclo) this.irPara('saguao', { erroAoEntrar: 'Sem conexão com a plataforma. Confira a internet e tente de novo.' })
+      return
+    }
+    if (ciclo !== this.ciclo || this.destruido) return
+    const corpo = await res.json().catch(() => null)
+    if (!res.ok) return this.recusaAoEntrar(res.status, corpo)
+    this.creds = corpo as CredenciaisDaSala
+    this.aplicarEntrada()
+  }
+
+  private recusaAoEntrar(status: number, corpo: { error?: string; motivo?: string; abreEm?: string } | null): void {
+    const mensagem = corpo?.error || 'Não foi possível entrar na sala.'
+    if (status === 401) return void this.irPara('fora', { saida: { motivo: 'sessao', mensagem: 'Sua sessão expirou. Entre na sua conta de novo.' } })
+    if (status === 429 || status >= 500 || corpo?.motivo === 'nao_abriu') {
+      return void this.irPara('saguao', { erroAoEntrar: mensagem, abreEm: corpo?.abreEm || this.estado.abreEm })
+    }
+    const motivo: MotivoDeSaida = corpo?.motivo === 'encerrada' ? 'encerrada' : corpo?.motivo === 'fechada' ? 'fechada' : 'negado'
+    this.pararMidia()
+    this.irPara('fora', { saida: { motivo, mensagem } })
+  }
+
+  private aplicarEntrada(): void {
+    const c = this.creds!
+    this.desde = c.sala.seq
+    this.ultimoProcessado = c.sala.seq
+    this.etag = null
+    this.falhas = 0
+    this.uso = { bytesRelay: 0, segundosRelay: 0, segundosDireta: 0 }
+    this.bytesPorPar.clear()
+    this.retrato = c.sala
+    this.faseDoSinal = null
+    this.ultimaPuxada = Date.now()
+    this.irPara('na_sala', {
+      eu: { pid: c.eu.pid, papel: c.eu.papel, nome: c.eu.nome },
+      config: c.config,
+      fechaEm: c.janela.fechaEm,
+      turn: c.turn,
+      encerrada: c.sala.encerrada,
+      outraAba: false,
+      aviso: null,
+    })
+    // Avisa as outras abas deste navegador: a aula agora é aqui.
+    this.canalAbas?.postMessage({ t: 'assumi', cx: c.eu.cx })
+    // Quem chega oferece a quem já está (o servidor ordena as entradas: só um lado vê o outro).
+    for (const p of c.sala.participantes) {
+      if (!p.eu && p.presente && p.cx && this.pares.size < c.config.limiteMalha - 1) this.criarPar(p.pid, p.cx, true, novaGeracao())
+    }
+    this.ligarCiclosDaAula()
+    this.atualizar()
+  }
+
+  private perfil(): 'individual' | 'grupo' {
+    return (this.retrato?.esperados ?? 2) > 2 ? 'grupo' : 'individual'
+  }
+
+  private criarPar(pid: string, cx: string, ofertante: boolean, geracao: string, estadoInicial?: Par['estado']): Par {
+    const c = this.creds!
+    const par: Par = new Par(
+      {
+        pid,
+        cx,
+        ofertante,
+        geracao,
+        iceServers: c.iceServers,
+        perfil: this.perfil(),
+        papelLocal: c.eu.papel,
+        estadoInicial,
+        pelaRede: (tipo, dados) => this.enviarSinal(tipo, pid, dados),
+        aoMudar: this.atualizar,
+        aoMensagem: (m) => this.aoMensagem(pid, m),
+        aoReconstruir: () => this.reconstruir(pid),
+        aoCanalAberto: () => this.enviarEstado(par),
+      },
+      this.trilhas(),
+    )
+    this.pares.set(pid, par)
+    this.bytesPorPar.set(pid, 0)
+    if (ofertante) void par.ofertar()
+    return par
+  }
+
+  private fecharPar(pid: string): void {
+    this.pares.get(pid)?.fechar()
+    this.pares.delete(pid)
+    this.bytesPorPar.delete(pid)
+  }
+
+  private reconstruir(pid: string): void {
+    const antigo = this.pares.get(pid)
+    if (!antigo || !this.creds) return
+    const { cx, estado } = antigo
+    this.fecharPar(pid)
+    this.criarPar(pid, cx, true, novaGeracao(), estado)
+    this.atualizar()
+  }
+
+  tentarDeNovo(pid: string): void {
+    this.pares.get(pid)?.tentarDeNovo()
+    this.atualizar()
+  }
+
+  // ─── Sinalização (polling adaptativo) ───────────────────────────────
+
+  private cabecalhos(): Record<string, string> {
+    return { Authorization: `Bearer ${this.creds?.token || ''}` }
+  }
+
+  private reagendarSinal(): void {
+    if (this.estado.fase !== 'na_sala' || !this.creds || this.estado.semInternet || this.destruido) {
+      clearTimeout(this.timers.sinal)
+      this.timers.sinal = undefined
+      return
+    }
+    const outros = (this.retrato?.participantes || []).filter((p) => !p.eu && p.presente).length
+    const fase = faseDeSinal({ pares: Array.from(this.pares.values()).map((p) => p.estado.fase), outrosPresentes: outros, esperados: this.retrato?.esperados ?? 2 })
+    if (fase !== this.faseDoSinal) {
+      this.faseDoSinal = fase
+      this.faseDesde = Date.now()
+      this.estado = { ...this.estado, sinal: fase }
+    }
+    const ms = cadenciaDaSala({ fase, visivel: document.visibilityState === 'visible', haMs: Date.now() - this.faseDesde, falhasSeguidas: this.falhas })
+    if (ms === null) {
+      clearTimeout(this.timers.sinal)
+      this.timers.sinal = undefined
+      if (!this.estado.ociosa) this.definir({ ociosa: true })
+      return
+    }
+    // A próxima volta conta a partir da última, não de agora: eventos de ICE e a
+    // estatística chamam isto o tempo todo e não podem empurrar o pulso para longe.
+    const alvo = this.ultimaPuxada + ms
+    if (this.timers.sinal && Math.abs(alvo - this.alvoDoSinal) < 50) return
+    clearTimeout(this.timers.sinal)
+    this.alvoDoSinal = alvo
+    this.timers.sinal = setTimeout(() => {
+      this.timers.sinal = undefined
+      void this.puxar()
+    }, Math.max(0, alvo - Date.now()))
+  }
+
+  private async puxar(): Promise<void> {
+    if (this.puxando || !this.creds || this.estado.fase !== 'na_sala') return
+    this.puxando = true
+    const ciclo = this.ciclo
+    const agora = Date.now()
+    const pulso = agora - this.ultimoPulso >= 20_000
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala/sinal?desde=${this.desde}${pulso ? '&pulso=1' : ''}`, {
+        headers: { ...this.cabecalhos(), ...(this.etag ? { 'If-None-Match': this.etag } : {}) },
+        cache: 'no-store',
+      })
+      if (ciclo !== this.ciclo) return
+      if (res.status === 304 || res.ok) {
+        this.falhas = 0
+        if (pulso) this.ultimoPulso = agora
+        if (this.estado.problemaNoServidor) this.definir({ problemaNoServidor: false })
+        if (res.ok) {
+          this.etag = res.headers.get('etag')
+          const corpo = (await res.json()) as RespostaDoSinal
+          this.aplicarRetrato(corpo)
+          this.processarSinais(corpo.sinais)
+          this.desde = Math.max(this.desde, corpo.seq)
+        }
+      } else {
+        await this.falhaDoServidor(res)
+      }
+    } catch {
+      this.falhas++
+      if (this.falhas >= 3 && !this.estado.problemaNoServidor) this.definir({ problemaNoServidor: true })
+    } finally {
+      this.puxando = false
+      this.ultimaPuxada = Date.now()
+      this.atualizar()
+    }
+  }
+
+  private async falhaDoServidor(res: Response): Promise<void> {
+    const corpo = await res.json().catch(() => null)
+    if (res.status === 401) {
+      // Token vencido (aba dormindo): renova; se não der, a renovação decide.
+      await this.renovar()
+      return
+    }
+    if (res.status === 409 && corpo?.motivo === 'substituida') return this.sairCom('substituida', corpo.error)
+    if (res.status === 410) return this.sairCom('fechada', corpo?.error || 'O horário desta monitoria terminou.')
+    if (res.status === 404) return this.sairCom('negado', 'Esta sala não está mais disponível.')
+    this.falhas++
+    if (this.falhas >= 3 && !this.estado.problemaNoServidor) this.definir({ problemaNoServidor: true })
+  }
+
+  private aplicarRetrato(r: RetratoDaSala): void {
+    this.retrato = r
+    const presentes = new Map(r.participantes.filter((p) => !p.eu && p.presente).map((p) => [p.pid, p]))
+    for (const [pid, par] of this.pares) {
+      const p = presentes.get(pid)
+      // Conexão P2P viva vale mais que a presença do servidor (o polling dele pode ter falhado).
+      if (par.estado.fase === 'conectado') continue
+      if (!p || (p.cx && p.cx !== par.cx)) this.fecharPar(pid)
+    }
+    if (r.encerrada !== this.estado.encerrada) this.definir({ encerrada: r.encerrada })
+    if (r.encerrada && this.creds?.eu.papel === 'aluno') this.sairCom('encerrada', 'O monitor encerrou a aula.')
+  }
+
+  private processarSinais(lista: SinalRecebido[]): void {
+    const eu = this.creds?.eu
+    if (!eu) return
+    for (const s of [...lista].sort((a, b) => a.seq - b.seq)) {
+      if (s.seq <= this.ultimoProcessado) continue
+      this.ultimoProcessado = s.seq
+      const quem = this.retrato?.participantes.find((p) => p.pid === s.de)
+      if (!quem || quem.cx !== s.cx) continue // aba antiga do outro, ou ele já saiu
+      let par = this.pares.get(s.de)
+      const dados = (s.dados || {}) as Record<string, any>
+      if (s.tipo === 'oferta') {
+        const geracao = String(dados.neg || '').split('.')[0]
+        if (par?.ofertante) {
+          // Ofertas cruzadas (raro): o menor id continua ofertando.
+          if (eu.pid < s.de) continue
+          this.fecharPar(s.de)
+          par = undefined
+        }
+        if (par && (par.cx !== s.cx || par.geracao !== geracao)) {
+          this.fecharPar(s.de)
+          par = undefined
+        }
+        if (!par) {
+          if (this.pares.size >= (this.creds?.config.limiteMalha ?? 2) - 1) continue
+          par = this.criarPar(s.de, s.cx, false, geracao)
+        }
+        void par.receberOferta(String(dados.sdp), String(dados.neg))
+      } else if (par && par.cx === s.cx) {
+        if (s.tipo === 'resposta') void par.receberResposta(String(dados.sdp), String(dados.neg))
+        else if (s.tipo === 'candidatos' && Array.isArray(dados.lista)) par.receberCandidatos(dados.lista, String(dados.neg))
+        else if (s.tipo === 'reiniciar') par.receberPedidoDeReinicio()
+      }
+    }
+  }
+
+  private async enviarSinal(tipo: TipoDeSinal, para: string, dados: Record<string, unknown>, tentativa = 0): Promise<void> {
+    if (!this.creds) return
+    const ciclo = this.ciclo
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala/sinal`, {
+        method: 'POST',
+        headers: { ...this.cabecalhos(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo, para, dados }),
+        cache: 'no-store',
+      })
+      if (ciclo !== this.ciclo) return
+      if (res.status === 401 && tentativa === 0) {
+        if (await this.renovar()) return this.enviarSinal(tipo, para, dados, 1)
+        return
+      }
+      if (res.status === 409) {
+        const corpo = await res.json().catch(() => null)
+        if (corpo?.motivo === 'substituida') this.sairCom('substituida', corpo.error)
+      }
+    } catch {
+      this.falhas++
+    } finally {
+      // Mandou algo: a resposta vem pelo polling, que acelera na negociação.
+      this.atualizar()
+    }
+  }
+
+  // ─── Canal P2P: estado, chat, tchau ─────────────────────────────────
+
+  private enviarEstado(so?: Par): void {
+    const base = { mic: !!this.audio && this.audio.enabled, cam: !!this.cam, tela: !!this.tela }
+    for (const par of so ? [so] : this.pares.values()) {
+      par.enviarPeloCanal({ t: 'estado', ...base, videoPausado: par.pausouVideoPelaRede })
+    }
+  }
+
+  private nomeDe(pid: string): string {
+    return this.retrato?.participantes.find((p) => p.pid === pid)?.nome || 'Participante'
+  }
+
+  private aoMensagem(pid: string, m: MensagemDoCanal): void {
+    if (m.t === 'chat') {
+      if (this.idsDoChat.has(m.id)) return
+      this.idsDoChat.add(m.id)
+      const chat = [...this.estado.chat, { id: m.id, minha: false, nome: this.nomeDe(pid), texto: m.texto, em: m.em }].slice(-MAX_CHAT)
+      this.definir({ chat, naoLidas: this.chatAberto ? 0 : this.estado.naoLidas + 1 })
+    } else if (m.t === 'tchau') {
+      this.fecharPar(pid)
+      this.atualizar()
+    } else if (m.t === 'encerrar' && this.creds?.eu.papel === 'aluno') {
+      this.sairCom('encerrada', 'O monitor encerrou a aula.')
+    }
+  }
+
+  /**
+   * Chat da aula = chat da reserva: grava pela rota que já existe (com as regras
+   * de sempre e o registro que os Termos pedem) e entrega ao vivo pelo P2P.
+   */
+  async enviarChat(texto: string): Promise<string | null> {
+    const limpo = texto.trim()
+    if (!limpo) return null
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/mensagens`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto: limpo }),
+        cache: 'no-store',
+      })
+      const corpo = await res.json().catch(() => null)
+      if (!res.ok) return corpo?.error || 'Mensagem não enviada.'
+      const msg = { id: String(corpo.id), texto: String(corpo.texto), em: new Date(corpo.createdAt).toISOString() }
+      this.idsDoChat.add(msg.id)
+      for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'chat', ...msg })
+      this.definir({ chat: [...this.estado.chat, { ...msg, minha: true, nome: 'Você' }].slice(-MAX_CHAT) })
+      return null
+    } catch {
+      return 'Sem conexão. A mensagem não foi enviada.'
+    }
+  }
+
+  definirChatAberto(aberto: boolean): void {
+    this.chatAberto = aberto
+    if (aberto && this.estado.naoLidas) this.definir({ naoLidas: 0 })
+  }
+
+  /** Economia de dados: pede aos outros que parem de mandar vídeo (o áudio segue). */
+  alternarEconomiaDeDados(): void {
+    const ligar = !this.estado.economiaDeDados
+    for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'video', receber: !ligar })
+    this.definir({ economiaDeDados: ligar })
+  }
+
+  limparAviso(): void {
+    if (this.estado.aviso) this.definir({ aviso: null })
+  }
+
+  continuarEsperando(): void {
+    this.faseDesde = Date.now()
+    this.definir({ ociosa: false })
+    void this.puxar()
+  }
+
+  async encerrarParaTodos(encerrar: boolean): Promise<string | null> {
+    if (!this.creds || this.creds.eu.papel !== 'monitor') return null
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala/sinal`, {
+        method: 'POST',
+        headers: { ...this.cabecalhos(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo: encerrar ? 'encerrar' : 'reabrir' }),
+        cache: 'no-store',
+      })
+      if (!res.ok) return (await res.json().catch(() => null))?.error || 'Não deu agora. Tente de novo.'
+      if (encerrar) for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'encerrar' })
+      this.definir({ encerrada: encerrar })
+      return null
+    } catch {
+      return 'Sem conexão. Tente de novo.'
+    }
+  }
+
+  // ─── Ciclos da aula: estatística, fala, renovação, fechamento ───────
+
+  private ligarCiclosDaAula(): void {
+    this.agendarRenovacao()
+    this.agendarFechamento()
+    this.agendarEstatisticas()
+    this.agendarFala()
+    void this.pedirWakeLock()
+    const aoMudarVisibilidade = () => {
+      if (document.visibilityState === 'visible') void this.pedirWakeLock()
+      this.reagendarSinal()
+    }
+    const aoFicarOffline = () => this.definir({ semInternet: true })
+    const aoVoltarOnline = () => {
+      this.definir({ semInternet: false })
+      this.falhas = 0
+      void this.puxar()
+    }
+    const aoSairDaPagina = () => this.destruir()
+    document.addEventListener('visibilitychange', aoMudarVisibilidade)
+    window.addEventListener('offline', aoFicarOffline)
+    window.addEventListener('online', aoVoltarOnline)
+    window.addEventListener('pagehide', aoSairDaPagina)
+    this.removerOuvintes.push(
+      () => document.removeEventListener('visibilitychange', aoMudarVisibilidade),
+      () => window.removeEventListener('offline', aoFicarOffline),
+      () => window.removeEventListener('online', aoVoltarOnline),
+      () => window.removeEventListener('pagehide', aoSairDaPagina),
+    )
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) this.definir({ semInternet: true })
+  }
+
+  private agendarEstatisticas(): void {
+    clearTimeout(this.timers.stats)
+    const intervalo = document.visibilityState === 'visible' ? 2_000 : 5_000
+    this.timers.stats = setTimeout(async () => {
+      await this.amostrar()
+      if (this.estado.fase === 'na_sala') this.agendarEstatisticas()
+    }, intervalo)
+  }
+
+  private async amostrar(): Promise<void> {
+    const agora = Date.now()
+    const decorrido = this.ultimaAmostra ? Math.min(10, (agora - this.ultimaAmostra) / 1000) : 0
+    this.ultimaAmostra = agora
+    let relay = false
+    let direta = false
+    for (const [pid, par] of this.pares) {
+      const l = await par.amostrar()
+      if (!l || !l.tipo) continue
+      const anterior = this.bytesPorPar.get(pid) ?? 0
+      // Par de candidatos trocado (reinício): o contador recomeça do zero.
+      const delta = l.bytesDoPar >= anterior ? l.bytesDoPar - anterior : l.bytesDoPar
+      this.bytesPorPar.set(pid, l.bytesDoPar)
+      if (l.tipo === 'retransmitida') {
+        this.uso.bytesRelay += delta
+        relay = true
+      } else direta = true
+    }
+    if (relay) this.uso.segundosRelay += decorrido
+    else if (direta) this.uso.segundosDireta += decorrido
+    this.atualizar()
+  }
+
+  private agendarFala(): void {
+    clearTimeout(this.timers.fala)
+    this.timers.fala = setTimeout(() => {
+      if (document.visibilityState === 'visible') {
+        const antes = this.estado.participantes.map((p) => p.falando).join()
+        const depois = this.montarParticipantes()
+        if (depois.map((p) => p.falando).join() !== antes) this.definir({ participantes: depois })
+      }
+      if (this.estado.fase === 'na_sala') this.agendarFala()
+    }, 400)
+  }
+
+  private colherUso(): UsoDaConexao | undefined {
+    const segundos = Math.round(this.uso.segundosRelay + this.uso.segundosDireta)
+    if (!segundos && !this.uso.bytesRelay) return undefined
+    const uso: UsoDaConexao = {
+      tipo: this.uso.segundosRelay > this.uso.segundosDireta ? 'retransmitida' : 'direta',
+      bytesRelay: Math.round(this.uso.bytesRelay),
+      segundos,
+    }
+    this.uso = { bytesRelay: 0, segundosRelay: 0, segundosDireta: 0 }
+    return uso
+  }
+
+  private agendarRenovacao(): void {
+    clearTimeout(this.timers.renovar)
+    if (!this.creds) return
+    const ms = Math.max(30_000, new Date(this.creds.expiraEm).getTime() - Date.now() - RENOVAR_ANTES_MS)
+    this.timers.renovar = setTimeout(() => void this.renovar(), ms)
+  }
+
+  /** Reconfere a autorização e troca o token. `false` = não renovou. */
+  private async renovar(): Promise<boolean> {
+    if (!this.creds) return false
+    const ciclo = this.ciclo
+    const uso = this.colherUso()
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala`, {
+        method: 'POST',
+        headers: { ...this.cabecalhos(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'renovar', ...(uso ? { uso } : {}) }),
+        cache: 'no-store',
+      })
+      if (ciclo !== this.ciclo || !this.creds) return false
+      const corpo = await res.json().catch(() => null)
+      if (res.ok) {
+        this.creds = { ...this.creds, token: corpo.token, expiraEm: corpo.expiraEm }
+        this.aplicarRetrato(corpo.sala)
+        this.agendarRenovacao()
+        return true
+      }
+      if (res.status === 401 && corpo?.motivo !== 'token') {
+        this.sairCom('sessao', 'Sua sessão expirou. Entre na sua conta de novo.')
+      } else if (res.status === 409 && corpo?.motivo === 'substituida') {
+        this.sairCom('substituida', corpo.error)
+      } else if (res.status === 401 || res.status === 404 || res.status === 409 || res.status === 503) {
+        const motivo: MotivoDeSaida = corpo?.motivo === 'encerrada' ? 'encerrada' : corpo?.motivo === 'fechada' ? 'fechada' : 'negado'
+        this.sairCom(motivo, corpo?.error || 'Sua participação nesta aula foi encerrada.')
+      } else {
+        this.devolverUso(uso)
+        this.timers.renovar = setTimeout(() => void this.renovar(), 30_000)
+      }
+      return false
+    } catch {
+      this.devolverUso(uso)
+      this.timers.renovar = setTimeout(() => void this.renovar(), 30_000)
+      return false
+    }
+  }
+
+  private devolverUso(uso: UsoDaConexao | undefined): void {
+    if (!uso) return
+    this.uso.bytesRelay += uso.bytesRelay
+    if (uso.tipo === 'retransmitida') this.uso.segundosRelay += uso.segundos
+    else this.uso.segundosDireta += uso.segundos
+  }
+
+  private agendarFechamento(): void {
+    clearTimeout(this.timers.aviso)
+    clearTimeout(this.timers.fecha)
+    if (!this.creds) return
+    const fecha = new Date(this.creds.janela.fechaEm).getTime()
+    const aviso = fecha - AVISO_FECHAMENTO_MIN * 60_000
+    const agora = Date.now()
+    // setTimeout só aceita ~24 dias; a janela é de horas.
+    if (aviso > agora) this.timers.aviso = setTimeout(() => this.definir({ avisoDeFechamento: true }), aviso - agora)
+    else this.definir({ avisoDeFechamento: true })
+    this.timers.fecha = setTimeout(() => this.sairCom('fechada', 'O horário desta monitoria terminou.'), Math.max(0, fecha - agora))
+  }
+
+  private async pedirWakeLock(): Promise<void> {
+    try {
+      const wl = (navigator as unknown as { wakeLock?: { request: (t: 'screen') => Promise<{ release: () => Promise<void> }> } }).wakeLock
+      if (!wl || this.estado.fase !== 'na_sala' || document.visibilityState !== 'visible') return
+      this.wakeLock = await wl.request('screen')
+    } catch {
+      /* sem suporte ou negado: a tela pode apagar, a aula continua */
+    }
+  }
+
+  // ─── Abas do mesmo navegador ────────────────────────────────────────
+
+  private ouvirAbas(): void {
+    if (typeof BroadcastChannel === 'undefined') return
+    try {
+      this.canalAbas = new BroadcastChannel(CANAL_DE_ABAS + this.reservaId)
+    } catch {
+      return
+    }
+    this.canalAbas.onmessage = (ev) => {
+      const m = ev.data as { t?: string }
+      if (m?.t === 'assumi' && this.estado.fase === 'na_sala') this.sairCom('substituida', 'Você abriu a aula em outra aba. Esta janela saiu da sala.')
+      else if (m?.t === 'quem' && this.estado.fase === 'na_sala') this.canalAbas?.postMessage({ t: 'estou' })
+      else if (m?.t === 'estou' && this.estado.fase === 'saguao') this.definir({ outraAba: true })
+    }
+    this.canalAbas.postMessage({ t: 'quem' })
+  }
+
+  // ─── Saída e limpeza ────────────────────────────────────────────────
+
+  /** Botão "Sair". */
+  sair(): void {
+    this.sairCom('voce', 'Você pode voltar enquanto a sala estiver aberta.')
+  }
+
+  private sairCom(motivo: MotivoDeSaida, mensagem: string): void {
+    if (this.estado.fase !== 'na_sala' && this.estado.fase !== 'entrando') return
+    // Substituída/negada: o servidor já não reconhece esta conexão; não gasta invocação.
+    this.encerrarRede(motivo !== 'substituida' && motivo !== 'negado' && motivo !== 'sessao')
+    this.pararMidia()
+    this.irPara('fora', { saida: { motivo, mensagem }, participantes: [], sinal: null, ociosa: false, avisoDeFechamento: false })
+  }
+
+  /** "Voltar para a aula" depois de sair. */
+  async voltar(): Promise<void> {
+    if (this.estado.fase !== 'fora') return
+    await this.abrirMidia()
+    await this.entrar()
+  }
+
+  /** "Ajustar câmera e microfone": de fora para o saguão. */
+  async voltarAoSaguao(): Promise<void> {
+    if (!this.irPara('saguao', { saida: null, erroAoEntrar: null })) return
+    await this.abrirMidia()
+  }
+
+  private encerrarRede(avisarServidor: boolean): void {
+    this.ciclo++
+    for (const k of Object.keys(this.timers) as Array<keyof typeof this.timers>) clearTimeout(this.timers[k])
+    this.timers = {}
+    for (const par of this.pares.values()) {
+      if (avisarServidor) par.enviarPeloCanal({ t: 'tchau' })
+      par.fechar()
+    }
+    this.pares.clear()
+    this.bytesPorPar.clear()
+    if (avisarServidor && this.creds) {
+      const uso = this.colherUso()
+      const corpo = JSON.stringify({ tipo: 'sair', token: this.creds.token, ...(uso ? { uso } : {}) })
+      const url = `/api/monitorias/reservas/${this.reservaId}/sala/sinal`
+      try {
+        const foi = typeof navigator.sendBeacon === 'function' && navigator.sendBeacon(url, new Blob([corpo], { type: 'text/plain' }))
+        if (!foi) void fetch(url, { method: 'POST', body: corpo, keepalive: true, headers: { 'Content-Type': 'text/plain' } }).catch(() => {})
+      } catch {
+        /* a presença vence sozinha em 75 s */
+      }
+    }
+    this.creds = null
+    this.retrato = null
+    for (const remover of this.removerOuvintes) remover()
+    this.removerOuvintes = []
+    void this.wakeLock?.release().catch(() => {})
+    this.wakeLock = null
+  }
+
+  private pararMidia(): void {
+    pararTrilha(this.audio)
+    pararTrilha(this.cam)
+    pararTrilha(this.tela)
+    this.audio = this.cam = this.tela = null
+    this.cameraLocal = this.telaLocal = null
+    this.definir({ local: { audio: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: this.estado.local.versao + 1 } })
+  }
+
+  /** Desmontagem da tela (ou `pagehide`): desliga tudo, avisa a saída. Idempotente. */
+  destruir(): void {
+    if (this.destruido) return
+    this.encerrarRede(this.estado.fase === 'na_sala')
+    this.pararMidia()
+    this.removerOuvintesDeAparelho()
+    try {
+      this.canalAbas?.close()
+    } catch {
+      /* nada */
+    }
+    this.canalAbas = null
+    this.destruido = true
+    this.ouvintes.clear()
+  }
+
+  // ─── O que a tela mostra ────────────────────────────────────────────
+
+  private montarParticipantes(): ParticipanteNaTela[] {
+    const lista: ParticipanteNaTela[] = []
+    for (const p of this.retrato?.participantes || []) {
+      if (p.eu || !p.presente) continue
+      const par = this.pares.get(p.pid)
+      lista.push({
+        pid: p.pid,
+        nome: p.nome,
+        papel: p.papel,
+        fase: par ? par.estado.fase : 'aguardando',
+        camera: par ? par.cameraRemota : null,
+        tela: par && par.remoto.tela ? par.telaRemota : null,
+        versaoDasTrilhas: par?.versaoDasTrilhas ?? 0,
+        mic: par?.remoto.mic ?? true,
+        cam: par ? par.remoto.cam && !par.remoto.videoPausado : false,
+        compartilhando: !!par?.remoto.tela,
+        videoPausado: !!par?.remoto.videoPausado,
+        conexao: par?.rotulo ?? 'boa',
+        falando: !!par && par.remoto.mic && par.nivelDeAudio() > 0.04,
+      })
+    }
+    // Pares conectados com alguém que o servidor ainda não lista (presença atrasada).
+    for (const [pid, par] of this.pares) {
+      if (lista.some((x) => x.pid === pid) || par.estado.fase !== 'conectado') continue
+      lista.push({
+        pid,
+        nome: this.nomeDe(pid),
+        papel: 'aluno',
+        fase: 'conectado',
+        camera: par.cameraRemota,
+        tela: par.remoto.tela ? par.telaRemota : null,
+        versaoDasTrilhas: par.versaoDasTrilhas,
+        mic: par.remoto.mic,
+        cam: par.remoto.cam && !par.remoto.videoPausado,
+        compartilhando: par.remoto.tela,
+        videoPausado: par.remoto.videoPausado,
+        conexao: par.rotulo,
+        falando: par.remoto.mic && par.nivelDeAudio() > 0.04,
+      })
+    }
+    // O monitor primeiro: é quem mais importa ver.
+    return lista.sort((a, b) => (a.papel === b.papel ? a.nome.localeCompare(b.nome) : a.papel === 'monitor' ? -1 : 1))
+  }
+}

@@ -22,8 +22,8 @@ Monitor                                   Aluno
                                           5. Escolhe: agendar direto | negociar | a combinar
                                           6. Assina o contrato (código no e-mail)
                                           7. Paga o PIX (checkout próprio, 4 passos)
-8. Aula confirmada · coloca link da reunião
-                       ── aula acontece ──
+8. Aula confirmada                          (a sala abre 15 min antes)
+                 ── aula acontece na sala de aula da DomineAqui ──
                                           9. Avalia (ou reporta problema em até 48h)
 10. 48h depois: valor liberado
 11. Admin faz o PIX, anexa comprovante + E2E → monitor recebe e-mail e PDF
@@ -278,7 +278,7 @@ tenta de novo com a mesma chave.
 - Sem conflito de horário: índice único `(tutorId, inicioBloco)` em blocos de 30 min.
 - Toda transição de estado é compare-and-set com `versao`.
 - Contatos pessoais ocultados no chat e nas perguntas antes do pagamento.
-- Link da reunião só para quem pagou (nunca por e-mail).
+- Link da reunião (plano B, se o admin permitir) só para quem pagou (nunca por e-mail).
 - Vídeos: só YouTube/Instagram, guardados por ID; iframe montado pelo servidor.
 - Links externos: https, sem IP/credenciais, aviso antes de sair do site.
 - Toda rota que muda dado recusa `Origin` de outro site (`lib/monitorias/origem.ts`).
@@ -337,6 +337,136 @@ tenta de novo com a mesma chave.
   contrata pela própria conta).
 - Agendamento direto: no máximo 2 reservas sem pagar por aluno e monitor
   (evita "sequestrar" a agenda com holds).
+
+## Sala de aula (videoconferência nativa, `lib/monitorias/sala/`)
+
+A aula acontece dentro da DomineAqui, em `/monitorias/reservas/<id>/sala`.
+Monitor e aluno não instalam nada nem copiam link.
+
+```
+Navegador A ◄────── áudio/vídeo P2P (ou relé Cloudflare TURN) ──────► Navegador B
+     │  ▲          + canal "controle" (DataChannel): estado, chat, tchau     │  ▲
+     ▼  │                                                                   ▼  │
+ Vercel: só apresenta as pessoas e ajuda a reconectar → Mongo `monitorias_salas`
+```
+
+- **Mídia nunca passa pela Vercel.** Direto entre os navegadores; quando a rede
+  não deixa (empresa, universidade, alguns 4G), pelo Cloudflare TURN.
+- **Quem entra** (`avaliarAcessoSala`, testada): o monitor, ou aluno com assento
+  `paga`/`gratis`/`concluida` (reembolso PARCIAL em andamento não tira ninguém).
+  Reserva `confirmada`/`realizada`, ou `em_disputa` aberta DEPOIS do início (o
+  aluno reportou durante a aula). Janela: monitor 30 min antes, aluno 15 min,
+  até 30 min depois do fim. Estranho recebe 404. A identidade vem da sessão; o
+  papel, do servidor.
+- **Grupos:** malha P2P de até `limiteMalha` pessoas (admin, 2 a 4, padrão 4 =
+  monitor + 3). Com o link externo desligado, aula NOVA não passa disso
+  (`vagasMaximasPelaSala`). Acima de 4, só com SFU (fase 2, não implementada).
+- **Nada da sala mexe na reserva.** Status, `versao`, pagamentos, repasses e
+  reembolsos seguem só as regras de sempre; perder a conexão não conclui nada.
+
+### Fluxo
+
+1. Saguão (sem servidor): prévia da câmera, medidor do microfone, escolha de
+   aparelhos, ajuda de permissão por navegador. `GET …/sala` traz se a sala está
+   aberta e quem já está nela (uma vez; de novo só quando abre, e a cada 20 s por
+   no máximo 10 min com a aba visível).
+2. `POST …/sala {acao:'entrar'}`: reconfere tudo, grava a conexão (`conexao`
+   aleatória, `epoca+1`) e devolve o **token da sala** (15 min), os servidores ICE
+   (STUN + credencial TURN temporária, se ligado) e quem está na sala.
+3. Quem chega oferece a quem já está (o `findOneAndUpdate` ordena as entradas:
+   só um lado vê o outro, então não há ofertas cruzadas). Oferta e resposta vão
+   com os candidatos dentro (espera a coleta por até 1,5 s); atrasados em lote.
+4. Conectado: três transceptores fixos (áudio, câmera, tela). Ligar/desligar a
+   câmera e compartilhar a tela são `replaceTrack`, sem renegociar. Estado de
+   microfone/câmera, chat e "tchau" vão pelo DataChannel.
+5. Renovação a cada ~10 min (`acao:'renovar'`): reconfere reembolso, banimento,
+   fim do horário; recusa encerra a aula na tela com o motivo.
+6. Saída: botão Sair, desmontagem ou `pagehide` → "tchau" pelo DataChannel e
+   `sendBeacon` (token no corpo). Tudo desligado: trilhas, pares, timers,
+   Wake Lock, canal entre abas.
+
+### Custo (o que foi medido)
+
+- `GET …/sala/sinal` é a única rota repetida: valida o token e o JWT do cookie
+  só em CPU (sem `getSession`, sem rate limit no banco) e faz **uma** operação
+  no Mongo (projeção que já filtra os sinais de quem pergunta). Sala parada → 304.
+- Cadência (`cadenciaDaSala`): sozinho 3 s → 6 s → 10 s (para em 45 min com
+  "Ainda está aí?"); negociando 1 s por até 15 s; grupo incompleto 6 s → 30 s;
+  reconectando 1 → 8 s; **em aula, pulso de 30 s**. Teste com dois Chromium:
+  65 s de aula = 2 requisições por pessoa (maioria 304), nenhum POST.
+- Estimativa: ~320 invocações por hora de aula 1:1.
+- Na rota da sala o chrome do app não monta (menu, sino, música, anúncios,
+  convites): `ehRotaDaSala` em `components/monitorias/shell.tsx` e
+  `components/app-chrome.tsx`.
+- "O monitor já está na sala" na página da reserva vem de carona no polling de
+  mensagens que já existia (`presencaResumida`, só dentro da janela).
+
+### TURN e as chaves do admin (Admin → Monitorias → Sala de vídeo)
+
+- `salaNativaAtiva`, `linkExternoPermitido`, `turnAtivo`, `turnOrcamentoGbMes`
+  (padrão 900 GB), `turnCorteAutomaticoPct` (padrão 90%), `limiteMalha`,
+  `compartilharTela`, `chatNaSala`. Em `admin_settings.monitoriasSala`, cache de
+  60 s por instância.
+- Credencial TURN só dentro da janela, TTL até a sala fechar. O consumo do mês
+  é estimado pelos navegadores (bytes do par `relay` no `getStats`, cortados ao
+  plausível) em `monitorias_sala_uso`; no teto × %, o servidor para de entregar
+  TURN sozinho. "Cortar TURN agora" desliga e revoga as credenciais entregues.
+- Variáveis: `CLOUDFLARE_TURN_KEY_ID`, `CLOUDFLARE_TURN_API_TOKEN` e, opcional,
+  `MONITORIAS_SALA_SECRET`.
+
+### Segurança
+
+- Token da sala: `aud` próprio, 15 min, uma sala, uma conexão e uma época, preso
+  ao `jti` do cookie. Vive só na memória da aba e vai no header `Authorization`.
+- Toda gravação filtra `conexao` + `epoca` atuais: aba antiga ou aparelho
+  substituído recebe 409 e não injeta nada. Outra aba do mesmo navegador sai na
+  hora (`BroadcastChannel`).
+- Sinais: schema `zod` estrito, SDP ≤ 16 KB com ≤ 6 seções, ≤ 30 candidatos;
+  gravados como `$literal` (nada vira operador do Mongo); fila de 60, ignorados
+  depois de 2 min; ≤ 60 envios/min por conexão (contador no próprio documento).
+  Entrar 20/h e renovar 20/h por conta (limite durável).
+- Participantes se veem por id opaco (`pid` = HMAC), primeiro nome (o monitor vê o
+  nome completo) e papel. Nenhum userId, e-mail ou credencial TURN de outro.
+- Limite real: um P2P já estabelecido não é derrubado pelo servidor. O fim vem
+  do cliente (renovação recusada, horário) e do vencimento do TURN, e só envolve
+  as partes autorizadas.
+
+### Privacidade
+
+- Sem gravação. SDP, candidatos e estatísticas ficam em memória; no banco, os
+  sinais duram até 2 h depois do fim (varredura 4b).
+- Registro mínimo em `monitorias_salas.registro`: entrada, último sinal, saída e
+  tipo de conexão (direta/relé). Sem IP, sem aparelho. Aparece só para o admin,
+  na disputa (`resumirPresenca`), como evidência, nunca como decisão.
+
+### Qualidade
+
+Perfis conservadores com degradação automática a cada 2 s (`getStats`):
+1:1 640×360@24 até 600 kbps → 480×270@15 → 320×180@10 → só áudio; no grupo, por
+par, 300 kbps (monitor 400) → 180 → 100 → só áudio. Desce em 2 leituras ruins,
+sobe depois de 10 boas. Áudio com prioridade alta. Tela ≤ 5 fps (1,2 Mbps no
+1:1, 500 kbps por par no grupo). "Economia de dados" para de receber vídeo.
+
+### Testes
+
+- `__tests__/monitorias/sala-regras.test.ts`, `sala-maquina.test.ts`,
+  `sala-token.test.ts` (rodam no `npm test`).
+- `sala-integracao.test.ts`: Mongo real, opcional
+  (`MONITORIAS_MONGO_TESTE=mongodb://127.0.0.1:27999/ npx vitest run __tests__/monitorias/sala-integracao.test.ts`).
+- O cliente (controlador + pares) foi exercitado em dois Chromium com câmera e
+  microfone falsos contra um servidor de sinalização falso: conexão, áudio/vídeo,
+  estado, câmera, tela, chat, saída, volta, recarga, segunda aba, encerrar e
+  limpeza total.
+
+### Pendências antes de lançar
+
+- **Jurídico:** Termos 4.4, contrato 1.3/5.1 citam "link de reunião (Zoom,
+  Meet)" e a 8.2 isenta falhas "de serviços de terceiros… salvo serviço que ela
+  própria presta" — com a sala nativa, a plataforma presta o vídeo. Nova versão
+  dos documentos com revisão de advogado (documentos já assinados guardam o
+  próprio texto). Política de privacidade: incluir câmera/microfone, conexão P2P,
+  Cloudflare como operador e o registro de presença.
+- Conta Cloudflare + as duas variáveis do TURN.
 
 ## Histórico e materiais
 

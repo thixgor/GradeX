@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ArrowRight, CalendarClock, Check, ChevronRight, Eye, Inbox, Lightbulb, Pause, Pencil, Play, Plus, Send, Star } from 'lucide-react'
+import { ArrowRight, CalendarClock, Check, ChevronRight, Eye, Inbox, Lightbulb, Pause, Pencil, Play, Plus, Send, Star, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 import { comVolta } from '@/lib/monitorias/requisitos'
+import { salaAbertaAgora } from '@/lib/monitorias/sala/regras'
 import { api, CaixaAviso, CaixaErro, Esqueleto, Selo, Vazio } from '../base'
 import type { DadosPainel } from './tipos'
 import type { ItemReserva } from '@/components/monitorias/lista-reservas'
@@ -39,11 +40,15 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
   const feitos = req.itens.filter((i) => i.ok).length
   const t = dados.tutor
   const [reservas, setReservas] = useState<ItemReserva[] | null>(null)
+  const [salaNativa, setSalaNativa] = useState(false)
   const [erroAcao, setErroAcao] = useState('')
 
   useEffect(() => {
-    api<{ reservas: ItemReserva[] }>('/api/monitorias/reservas?papel=monitor&escopo=ativas')
-      .then((r) => setReservas(r.reservas))
+    api<{ reservas: ItemReserva[]; salaNativaAtiva?: boolean }>('/api/monitorias/reservas?papel=monitor&escopo=ativas')
+      .then((r) => {
+        setReservas(r.reservas)
+        setSalaNativa(!!r.salaNativaAtiva)
+      })
       .catch(() => setReservas([]))
   }, [])
 
@@ -147,9 +152,10 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
               <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
                 {proximas.map((r) => {
                   const d = new Date(r.inicio!)
+                  const aberta = salaNativa && salaAbertaAgora({ status: r.status, inicio: r.inicio, duracaoMin: r.duracaoMin, papel: 'monitor', agora })
                   return (
-                    <li key={r.id}>
-                      <Link href={`/monitorias/reservas/${r.id}`} className="flex items-center gap-4 px-4 py-3 transition hover:bg-muted/40">
+                    <li key={r.id} className="flex items-center">
+                      <Link href={`/monitorias/reservas/${r.id}`} className="flex min-w-0 flex-1 items-center gap-4 px-4 py-3 transition hover:bg-muted/40">
                         <span className="flex w-12 shrink-0 flex-col items-center rounded-xl bg-muted/60 py-1.5">
                           <span className="text-[11px] text-muted-foreground">{formatarEmBrasilia(d, { month: 'short' }).replace('.', '')}</span>
                           <span className="font-heading text-lg font-semibold leading-none tabular-nums">{formatarEmBrasilia(d, { day: '2-digit' })}</span>
@@ -162,8 +168,16 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
                             {r.vagas > 1 ? `, grupo de ${r.vagas}` : ''}
                           </span>
                         </span>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        {!aberta && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                       </Link>
+                      {aberta && (
+                        <Link
+                          href={`/monitorias/reservas/${r.id}/sala`}
+                          className="mr-3 inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+                        >
+                          <Video className="h-4 w-4" /> Entrar
+                        </Link>
+                      )}
                     </li>
                   )
                 })}

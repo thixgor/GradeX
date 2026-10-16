@@ -615,3 +615,99 @@ export interface Demanda {
   createdAt: Date
   updatedAt: Date
 }
+
+// ─── Sala de aula (videoconferência nativa; ver lib/monitorias/sala/) ────
+
+/**
+ * Chaves da sala no Admin → Monitorias (`admin_settings.monitoriasSala`).
+ * Registro sem o campo = o padrão de `normalizarConfigSala`.
+ */
+export interface ConfigSala {
+  /** Desligada: ninguém entra na sala nativa (botão "Entrar" some). */
+  salaNativaAtiva: boolean
+  /** O monitor pode colar link de Meet/Zoom (plano B). */
+  linkExternoPermitido: boolean
+  /** Entrega credenciais do Cloudflare TURN. Desligado: só STUN (grátis). */
+  turnAtivo: boolean
+  /** Teto mensal estimado de relé, em GB. `null` = sem teto. */
+  turnOrcamentoGbMes: number | null
+  /** Percentual do teto em que o TURN para de ser entregue sozinho. */
+  turnCorteAutomaticoPct: number
+  /** Pessoas ao mesmo tempo na sala (malha P2P): 2 a 4. */
+  limiteMalha: number
+  compartilharTela: boolean
+  chatNaSala: boolean
+}
+
+export type PapelNaSala = 'monitor' | 'aluno'
+
+export interface ParticipanteSala {
+  uid: string
+  papel: PapelNaSala
+  /** Nome completo; quem vê o primeiro nome ou o completo é decidido na saída. */
+  nome: string
+  /** Conexão ativa (uma aba/aparelho). `null` = saiu. */
+  conexao: string | null
+  /** Sobe a cada entrada: aba ou aparelho antigo deixa de valer. */
+  epoca: number
+  entrouEm: Date
+  vistoEm: Date
+  saiuEm?: Date
+  /** Usuário da credencial TURN entregue (para revogar no "cortar agora"). */
+  turnUsuario?: string
+  /** Limite de envio de sinais: janela de 1 min e quantos foram. */
+  envio?: { inicio: Date; n: number }
+}
+
+/** Sinal em trânsito: SDP/candidatos. Some sozinho (fila curta + 2 min + limpeza da varredura). */
+export interface SinalArmazenado {
+  seq: number
+  de: string
+  /** Conexão de quem enviou — o destinatário descarta o que vem de aba antiga. */
+  cx: string
+  para: string
+  tipo: 'oferta' | 'resposta' | 'candidatos' | 'reiniciar'
+  dados: unknown
+  em: Date
+}
+
+/** Presença mínima: sem IP, sem SDP, sem aparelho. Evidência para o suporte numa disputa. */
+export interface RegistroPresenca {
+  /** A conexão (entrada) a que o registro se refere. */
+  id: string
+  pid: string
+  papel: PapelNaSala
+  entrou: Date
+  /** Último sinal de vida (pulso/renovação). */
+  ate: Date
+  saiu?: Date
+  conexaoTipo?: 'direta' | 'retransmitida'
+}
+
+export interface Sala {
+  /** O id da reserva. Uma sala por reserva, criada só por entrada autorizada. */
+  _id: string
+  fim: Date
+  /** Por id opaco (`pid`), que não revela o userId aos outros participantes. */
+  participantes: Record<string, ParticipanteSala>
+  seq: number
+  /** Sobe quando alguém entra, sai ou troca de aba — a ETag do polling sai daqui. */
+  versao: number
+  sinais: SinalArmazenado[]
+  registro: RegistroPresenca[]
+  /** Quantas pessoas a aula espera (monitor + assentos com aula), até o limite da sala. */
+  esperados?: number
+  encerradaEm?: Date | null
+  avisouEntradaMonitor?: Date
+  createdAt: Date
+  updatedAt: Date
+}
+
+/** Consumo estimado do mês (um documento por "AAAA-MM"), para o teto de TURN. */
+export interface UsoDaSala {
+  _id: string
+  bytesRelay: number
+  segundosRelay: number
+  segundosDireta: number
+  atualizadoEm: Date
+}

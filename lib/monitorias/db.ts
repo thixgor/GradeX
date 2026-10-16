@@ -23,7 +23,9 @@ import type {
   Pergunta,
   Repasse,
   Reserva,
+  Sala,
   Tutor,
+  UsoDaSala,
 } from './tipos'
 
 export const COLECOES = {
@@ -43,6 +45,8 @@ export const COLECOES = {
   cotasGratis: 'monitorias_cotas_gratis',
   devolucoes: 'monitorias_devolucoes',
   demandas: 'monitorias_demandas',
+  salas: 'monitorias_salas',
+  usoDaSala: 'monitorias_sala_uso',
 } as const
 
 export function colecoes(db: Db) {
@@ -63,6 +67,8 @@ export function colecoes(db: Db) {
     cotasGratis: db.collection<{ alunoId: string; tutorId: string; reservaId: string; em: Date }>(COLECOES.cotasGratis),
     devolucoes: db.collection<DevolucaoAvulsa>(COLECOES.devolucoes),
     demandas: db.collection<Demanda>(COLECOES.demandas),
+    salas: db.collection<Sala>(COLECOES.salas),
+    usoDaSala: db.collection<UsoDaSala>(COLECOES.usoDaSala),
     users: db.collection<User>('users'),
   }
 }

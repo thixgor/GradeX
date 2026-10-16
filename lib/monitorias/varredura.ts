@@ -11,6 +11,8 @@ import 'server-only'
  *     que não fechou).
  *  3. Aula começou há pouco → lembretes de 24h e 1h antes.
  *  4. Aula acabou → "realizada" (pede avaliação; abre a janela de 48h).
+ *  4b. Sala de aula: sinais em trânsito (SDP e candidatos, com endereços de
+ *     rede) não ficam guardados depois da aula.
  *  5. 48h depois sem reclamação → confere cada pagamento no Mercado Pago
  *     (divergência retém o repasse daquele assento) → "concluída" e o valor
  *     do monitor é liberado.
@@ -37,6 +39,7 @@ import { conferirComGateway, curarPagamentosDaReserva } from './pagamento'
 import { limparFotosEnviadas } from './fotos'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
+import { configDaSala } from './sala/config'
 import type { Reserva } from './tipos'
 
 const LOTE = 100
@@ -47,6 +50,7 @@ export interface RelatorioVarredura {
   pagamentosExpirados: number
   lembretes: number
   realizadas: number
+  salasLimpas: number
   concluidas: number
   reembolsosRetomados: number
   pixAtivados: number
@@ -99,6 +103,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
     pagamentosExpirados: 0,
     lembretes: 0,
     realizadas: 0,
+    salasLimpas: 0,
     concluidas: 0,
     reembolsosRetomados: 0,
     pixAtivados: 0,
@@ -172,6 +177,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   for (const reserva of pendentes) await seguro(() => curarPagamentosDaReserva(reserva))
 
   // 3. Lembretes (24h e 1h antes).
+  const salaNativa = (await configDaSala()).salaNativaAtiva
   const proximas = await c.reservas
     .find({ status: 'confirmada', inicio: { $gt: agora, $lte: new Date(agora.getTime() + 24 * H) } })
     .limit(LOTE)
@@ -200,9 +206,11 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
             assunto: chave === 'h1' ? `Começa em 1 hora: ${reserva.anuncioTitulo}` : `Lembrete: ${reserva.anuncioTitulo}`,
             paragrafos: [
               `A monitoria "${reserva.anuncioTitulo}" é ${quando} (horário de Brasília).`,
-              userId === reserva.tutorUserId && !reserva.linkReuniao
-                ? 'Você ainda não colocou o link da reunião. Adicione na página da reserva.'
-                : 'O link da reunião está na página da reserva.',
+              salaNativa
+                ? 'A aula acontece na sala de aula da DomineAqui: entre pela página da reserva, sem instalar nada. A sala abre 15 minutos antes (30 para o monitor).'
+                : userId === reserva.tutorUserId && !reserva.linkReuniao
+                  ? 'Você ainda não colocou o link da reunião. Adicione na página da reserva.'
+                  : 'O link da reunião está na página da reserva.',
             ],
             botao: 'Abrir a reserva',
           },
@@ -241,6 +249,14 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       )
     })
   }
+
+  // 4b. Sala de aula: os sinais em trânsito (SDP e candidatos ICE, que levam
+  // endereços de rede) só servem enquanto a aula acontece. Duas horas depois do
+  // fim saem do banco; fica só o registro mínimo de presença.
+  await seguro(async () => {
+    const res = await c.salas.updateMany({ fim: { $lt: new Date(agora.getTime() - 2 * H) }, 'sinais.0': { $exists: true } } as any, { $set: { sinais: [] } })
+    r.salasLimpas = res.modifiedCount
+  })
 
   // 5. 48h depois sem disputa → concluída, valor liberado.
   const garantidas = await c.reservas

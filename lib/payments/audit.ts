@@ -47,6 +47,9 @@ export type AuditAction =
   | 'monitoria_payout_comprovante'
   | 'monitoria_payout_pago'
   | 'monitoria_payout_cancelado'
+  /** Chaves da sala de aula (Admin → Monitorias → Sala de vídeo) e o corte do TURN. */
+  | 'monitoria_sala_config'
+  | 'monitoria_sala_turn_cortado'
 
 export interface AuditLogEntry {
   action: AuditAction

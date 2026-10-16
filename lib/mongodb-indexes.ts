@@ -331,5 +331,8 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_codigos').createIndex({ userId: 1, finalidade: 1 }, { unique: true }),
     db.collection('monitorias_codigos').createIndex({ expiraEm: 1 }, { expireAfterSeconds: 3600 }),
     db.collection('monitorias_cotas_gratis').createIndex({ alunoId: 1, tutorId: 1 }, { unique: true }),
+    // Sala de aula: o `_id` é o id da reserva (toda leitura da sala vai por ele).
+    // `fim` serve só à varredura, que apaga os sinais em trânsito depois da aula.
+    db.collection('monitorias_salas').createIndex({ fim: 1 }),
   ])
 }

@@ -3,19 +3,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  AlertTriangle, BadgeCheck, Ban, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Wallet, X,
+  AlertTriangle, BadgeCheck, Ban, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Video, Wallet, X,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, CaixaAviso, CaixaErro, Esqueleto, Selo, SeloStatus, api } from '@/components/monitorias/base'
+import { AdminSalaDeVideo } from '@/components/monitorias/admin-sala-de-video'
 import { formatarCentavos, interpretarValorEmReais } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
 
-type Aba = 'moderacao' | 'disputas' | 'repasses' | 'perguntas'
+type Aba = 'moderacao' | 'disputas' | 'repasses' | 'perguntas' | 'sala'
 
 interface Resumo {
   emAnalise: number
@@ -40,6 +41,7 @@ export default function AdminMonitorias() {
     { chave: 'disputas', rotulo: 'Disputas', n: resumo?.disputas, icone: Gavel },
     { chave: 'repasses', rotulo: 'Repasses', n: (resumo?.payoutsAbertos || 0) + (resumo?.liberados ? 1 : 0), icone: Wallet },
     { chave: 'perguntas', rotulo: 'Denúncias', n: resumo?.denunciadas, icone: Flag },
+    { chave: 'sala', rotulo: 'Sala de vídeo', icone: Video },
   ]
 
   return (
@@ -64,6 +66,7 @@ export default function AdminMonitorias() {
             {aba === 'disputas' && <Disputas onMudou={recarregarResumo} />}
             {aba === 'repasses' && <Repasses onMudou={recarregarResumo} />}
             {aba === 'perguntas' && <Denuncias onMudou={recarregarResumo} />}
+            {aba === 'sala' && <AdminSalaDeVideo />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -206,6 +209,7 @@ function Disputas({ onMudou }: { onMudou: () => void }) {
                 <a href={`/monitorias/reservas/${r.id}`} target="_blank" rel="noreferrer" className="ml-auto text-xs font-semibold text-primary hover:underline">Abrir sala</a>
               </div>
               {r.disputa && <p className="mt-2 rounded-lg bg-amber-500/10 p-2 text-xs"><strong>Relato:</strong> {r.disputa.motivo}{r.disputa.decisao ? ` — Decisão: ${r.disputa.decisao}` : ''}</p>}
+              <PresencaNaSala presenca={r.presenca || []} />
               <ul className="mt-2 space-y-1 text-xs">
                 {r.assentos.map((a: any) => (
                   <li key={a.id} className="flex flex-wrap gap-2">
@@ -226,6 +230,28 @@ function Disputas({ onMudou }: { onMudou: () => void }) {
       <AnimatePresence>
         {decidindo && <Decisao reserva={decidindo} onFechar={() => setDecidindo(null)} onFeito={() => { setDecidindo(null); carregar(); onMudou() }} />}
       </AnimatePresence>
+    </div>
+  )
+}
+
+/**
+ * Registro mínimo da sala de aula (entrada, última atividade, minutos): ajuda a
+ * decidir "o monitor não apareceu". É evidência, não decisão: nada aqui muda a reserva.
+ */
+function PresencaNaSala({ presenca }: { presenca: Array<{ pid: string; papel: 'monitor' | 'aluno'; primeiraEntrada: string; ultimaAtividade: string; minutos: number; retransmitida: boolean }> }) {
+  if (!presenca.length) return <p className="mt-2 text-xs text-muted-foreground">Sala de aula: ninguém entrou pela plataforma.</p>
+  const monitores = presenca.filter((p) => p.papel === 'monitor').length
+  return (
+    <div className="mt-2 rounded-lg bg-muted/50 p-2 text-xs">
+      <p className="font-semibold">Presença na sala de aula{monitores === 0 ? ' (o monitor não entrou pela plataforma)' : ''}</p>
+      <ul className="mt-1 space-y-0.5">
+        {presenca.map((p) => (
+          <li key={p.pid}>
+            {p.papel === 'monitor' ? 'Monitor' : `Aluno ${presenca.filter((x) => x.papel === 'aluno').indexOf(p) + 1}`}: entrou {formatarEmBrasilia(p.primeiraEntrada, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}, último sinal{' '}
+            {formatarEmBrasilia(p.ultimaAtividade, { hour: '2-digit', minute: '2-digit' })}, {p.minutos} min na sala{p.retransmitida ? ' (via relé)' : ''}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

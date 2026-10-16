@@ -8,6 +8,7 @@ import { SchemaMensagem } from '@/lib/monitorias/validacao'
 import { AVISO_CONTATO, mascararContato } from '@/lib/monitorias/contato'
 import { STATUS_FINAIS } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
+import { presencaResumida } from '@/lib/monitorias/sala/servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,16 +33,22 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const c = await obterColecoes()
     const filtro: Record<string, unknown> = { reservaId: idDe(reserva) }
     let mensagens
+    let sala: Awaited<ReturnType<typeof presencaResumida>> = null
     if (antes && !Number.isNaN(Date.parse(antes))) {
       filtro.createdAt = { $lt: new Date(antes) }
       mensagens = (await c.mensagens.find(filtro as any).sort({ createdAt: -1 }).limit(POR_PAGINA).toArray()).reverse()
     } else {
       if (depois && !Number.isNaN(Date.parse(depois))) filtro.createdAt = { $gt: new Date(depois) }
-      mensagens = await c.mensagens.find(filtro as any).sort({ createdAt: 1 }).limit(POR_PAGINA).toArray()
+      // "O monitor já está na sala" vai de carona no polling (só dentro da janela da aula).
+      ;[mensagens, sala] = await Promise.all([
+        c.mensagens.find(filtro as any).sort({ createdAt: 1 }).limit(POR_PAGINA).toArray(),
+        acesso.somenteLeitura ? Promise.resolve(null) : presencaResumida(reserva, sessao.userId),
+      ])
     }
     return ok({
       status: reserva.status,
       versao: reserva.versao,
+      sala,
       maisAntigas: !!antes && mensagens.length === POR_PAGINA,
       mensagens: mensagens.map((m) => ({
         id: idDe(m),

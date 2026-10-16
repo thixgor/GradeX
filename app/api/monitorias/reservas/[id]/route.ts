@@ -8,6 +8,9 @@ import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { quemFaltaAssinar } from '@/lib/monitorias/contratos'
 import { podeReportar } from '@/lib/monitorias/politica'
 import { negociavel } from '@/lib/monitorias/estado'
+import { configDaSala } from '@/lib/monitorias/sala/config'
+import { ASSENTOS_COM_AULA, janelaDaSala } from '@/lib/monitorias/sala/regras'
+import { presencaResumida } from '@/lib/monitorias/sala/servidor'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,18 +26,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const ver = (texto: string) => (acesso?.mascarar ? mascararContato(texto).texto : texto)
     const c = await obterColecoes()
     const id = idDe(reserva)
-    const [assentos, contratos, anuncio, tutor, mensagens] = await Promise.all([
+    const [assentos, contratos, anuncio, tutor, mensagens, configSala, presenca] = await Promise.all([
       c.participacoes.find({ reservaId: id }).toArray(),
       c.contratos.find({ reservaId: id, status: { $ne: 'rescindido' } }, { projection: { dados: 0 } }).toArray(),
       c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { slug: 1, conteudos: 1, aulaGratis: 1, grupo: 1, preco: 1, modos: 1, materiais: 1 } }),
       c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1, fotoUrl: 1, titulo: 1 } }),
       c.mensagens.find({ reservaId: id }).sort({ createdAt: -1 }).limit(150).toArray(),
+      configDaSala(),
+      papel ? presencaResumida(reserva, sessao.userId) : Promise.resolve(null),
     ])
     const meu = assentos.find((a) => a.alunoId === sessao.userId) || null
     const meuContrato = meu ? contratos.find((k) => k.participacaoId === idDe(meu)) || null : null
     const ehMonitor = papel === 'monitor'
     const pagouOuGratis = !!meu && ['paga', 'gratis', 'concluida'].includes(meu.status)
     const verLink = VE_LINK.includes(reserva.status) && (ehMonitor || pagouOuGratis)
+    // Sala nativa: quem tem aula (monitor ou assento com aula) vê o cartão de entrada.
+    // É só a dica da tela; quem decide a entrada é `…/sala` (reconfere tudo).
+    const temAula = !acesso?.somenteLeitura && (ehMonitor || (!!meu && ASSENTOS_COM_AULA.includes(meu.status)))
     // Materiais: os do anúncio quando a reserva nasceu + os atuais do anúncio
     // + os que o monitor mandou só para esta aula (esses, só para quem pagou).
     const doAnuncio = [...(reserva.materiais || []), ...(anuncio?.materiais || [])]
@@ -78,6 +86,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         prazoPagamento: reserva.prazoPagamento || null,
         linkReuniao: verLink ? reserva.linkReuniao || null : null,
         temLink: !!reserva.linkReuniao,
+        sala: {
+          nativa: configSala.salaNativaAtiva,
+          linkExternoPermitido: configSala.linkExternoPermitido,
+          podeEntrar: temAula && configSala.salaNativaAtiva,
+          janela: temAula && reserva.inicio && reserva.fim ? janelaDaSala(reserva.inicio, reserva.fim, ehMonitor ? 'monitor' : 'aluno') : null,
+          presenca: temAula ? presenca : null,
+        },
         codigoConvite: reserva.codigoConvite && (ehMonitor || papel === 'organizador') ? reserva.codigoConvite : null,
         motivoCancelamento: reserva.motivoCancelamento ? ver(reserva.motivoCancelamento) : null,
         disputa: reserva.disputa ? { em: reserva.disputa.em, motivo: reserva.disputa.motivo, decisao: reserva.disputa.decisao || null } : null,

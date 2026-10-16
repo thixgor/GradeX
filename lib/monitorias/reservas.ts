@@ -25,6 +25,8 @@ import { avisar } from './avisos'
 import { reembolsarReserva, reembolsarParticipacao } from './reembolso'
 import { VERSAO_OFERTA } from './documentos/contrato'
 import { VERSAO_TERMOS } from './documentos/termos'
+import { configDaSala } from './sala/config'
+import { vagasMaximasPelaSala } from './sala/regras'
 import type { UsuarioMonitoria } from './servidor'
 import type { Anuncio, Bloqueio, Contrato, Participacao, Proposta, Reserva, StatusReserva, Tutor } from './tipos'
 import type { Ticket } from '@/lib/types'
@@ -157,7 +159,7 @@ function saindo(part: AssentoResumo | null): boolean {
   return !!pendente && pendente.valorCentavos >= (part.valorCentavos || 0) - feitos
 }
 
-function papelPeloAssento(reserva: Reserva, userId: string, part: AssentoResumo | null): Papel | null {
+export function papelPeloAssento(reserva: Reserva, userId: string, part: AssentoResumo | null): Papel | null {
   if (part && saindo(part)) return null
   if (reserva.tutorUserId === userId) return 'monitor'
   if (reserva.solicitanteId === userId) {
@@ -239,6 +241,17 @@ async function contarAbertas(c: Colecoes, alunoId: string): Promise<number> {
   } as any)
 }
 
+/**
+ * Vagas máximas de uma aula NOVA: o que o anúncio aceita e, com o link externo
+ * desligado no admin, o que a sala de aula comporta (não se vende o que a sala
+ * não comporta). Reservas já existentes não são tocadas.
+ */
+async function maxVagasDe(anuncio: Anuncio): Promise<number> {
+  const doAnuncio = anuncio.grupo.ativo ? anuncio.grupo.maxAlunos : 1
+  const daSala = vagasMaximasPelaSala(await configDaSala())
+  return daSala === null ? doAnuncio : Math.max(1, Math.min(doAnuncio, daSala))
+}
+
 function checarAnuncioAtivo(anuncio: Anuncio | null, tutor: Tutor | null): asserts anuncio is Anuncio {
   if (!anuncio || anuncio.status !== 'publicado' || !tutor || tutor.status !== 'ativo') {
     throw new ErroMonitoria(404, 'Este anúncio não está disponível.')
@@ -264,7 +277,7 @@ export async function criarSolicitacao(input: {
   if (input.modo === 'negociacao' && !anuncio.modos.negociacao) throw new ErroMonitoria(400, 'Este anúncio não aceita negociação.')
   if (input.modo === 'a_combinar' && !anuncio.modos.aCombinar) throw new ErroMonitoria(400, 'Este anúncio não é "a combinar".')
   if (input.gratis && !anuncio.aulaGratis.ativa) throw new ErroMonitoria(400, 'Este anúncio não oferece aula grátis.')
-  const maxVagas = anuncio.grupo.ativo ? anuncio.grupo.maxAlunos : 1
+  const maxVagas = await maxVagasDe(anuncio)
   if (input.vagas < 1 || input.vagas > maxVagas || (input.gratis && input.vagas !== 1)) {
     throw new ErroMonitoria(400, `Número de alunos inválido (máximo ${maxVagas}).`)
   }
@@ -376,7 +389,7 @@ export async function proporNova(input: {
   }
   if (input.inicio.getTime() > Date.now() + 120 * 24 * 3_600_000) throw new ErroMonitoria(400, 'Data muito distante (máximo 120 dias).')
   if (!inicioNaGrade(input.inicio)) throw new ErroMonitoria(400, 'Escolha um horário cheio ou de meia hora (ex.: 19:00 ou 19:30).')
-  const maxVagas = anuncio.grupo.ativo ? anuncio.grupo.maxAlunos : 1
+  const maxVagas = await maxVagasDe(anuncio)
   if (input.vagas > maxVagas) throw new ErroMonitoria(400, `Este anúncio aceita no máximo ${maxVagas} aluno(s).`)
 
   const gratis = reserva.origem === 'gratis' ? true : input.gratis && papel === 'monitor'
@@ -615,7 +628,7 @@ export async function agendarDireto(input: {
   } else if (!duracoesPermitidas(direto.duracaoMinMin, direto.duracaoMaxMin, direto.passoMin).includes(input.duracaoMin)) {
     throw new ErroMonitoria(400, 'Duração fora do que o monitor oferece.')
   }
-  const maxVagas = anuncio.grupo.ativo ? anuncio.grupo.maxAlunos : 1
+  const maxVagas = await maxVagasDe(anuncio)
   if (input.vagas < 1 || input.vagas > maxVagas) throw new ErroMonitoria(400, `Número de alunos inválido (máximo ${maxVagas}).`)
   const agora = new Date()
   if (input.inicio.getTime() < agora.getTime() + direto.antecedenciaMinHoras * 3_600_000) {

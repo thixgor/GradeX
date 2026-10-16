@@ -242,6 +242,19 @@ const nextConfig = {
           },
         ],
       },
+      // A sala de aula das monitorias é a ÚNICA página com microfone e
+      // compartilhamento de tela. A regra global acima mantém `microphone=()`
+      // no resto do site; esta vem depois e, para a mesma chave, a última
+      // vence (comportamento documentado do `headers()` do Next).
+      {
+        source: '/monitorias/reservas/:id/sala',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(self), microphone=(self), display-capture=(self), geolocation=()',
+          },
+        ],
+      },
       // Vídeos públicos versionados no nome (monitorias-1x1-v1.mp4): trocar o
       // vídeo = novo nome, então o cache pode ser imutável.
       {
