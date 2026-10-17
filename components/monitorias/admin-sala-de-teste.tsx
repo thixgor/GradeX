@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, Copy, FlaskConical, Loader2, Video } from 'lucide-react'
+import { Check, Copy, FlaskConical, Loader2, Trash2, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api, CaixaErro } from '@/components/monitorias/base'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
@@ -19,6 +19,7 @@ interface SalaDeTeste {
   codigo: string
   inicio: string
   fim: string
+  aberta: boolean
   alunos: string[]
 }
 
@@ -27,6 +28,7 @@ export function AdminSalaDeTeste() {
   const [criando, setCriando] = useState(false)
   const [erro, setErro] = useState('')
   const [copiado, setCopiado] = useState<string | null>(null)
+  const [excluindo, setExcluindo] = useState<string | null>(null)
 
   const carregar = useCallback(() => {
     api<{ salas: SalaDeTeste[] }>('/api/admin/monitorias/teste')
@@ -45,6 +47,21 @@ export function AdminSalaDeTeste() {
       setErro(e instanceof Error ? e.message : 'Não deu para criar.')
     } finally {
       setCriando(false)
+    }
+  }
+
+  async function excluir(s: SalaDeTeste) {
+    const aviso = s.aberta && s.alunos.length ? ' Quem estiver dentro sai da sala agora.' : ''
+    if (!window.confirm(`Excluir esta sala de teste? O convite para de funcionar e o chat dela é apagado.${aviso}`)) return
+    setExcluindo(s.id)
+    setErro('')
+    try {
+      await api('/api/admin/monitorias/teste', { method: 'DELETE', json: { id: s.id } })
+      setSalas((atual) => atual.filter((x) => x.id !== s.id))
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Não deu para excluir.')
+    } finally {
+      setExcluindo(null)
     }
   }
 
@@ -69,7 +86,7 @@ export function AdminSalaDeTeste() {
           <p className="text-sm font-semibold">Sala de teste</p>
           <p className="mt-0.5 max-w-[62ch] text-xs leading-relaxed text-muted-foreground">
             Testar com um amigo: a sala é a mesma das aulas (vídeo, TURN, chat, tela, controles, anotações). Você entra como monitor e quem tiver o link entra como aluno. Sem
-            anúncio, contrato nem pagamento; vale 90 min.
+            anúncio, contrato nem pagamento; vale 90 min. Exclua quando terminar (ou ela some sozinha em 7 dias).
           </p>
         </div>
         <Button size="sm" onClick={() => void criar()} disabled={criando}>
@@ -83,16 +100,27 @@ export function AdminSalaDeTeste() {
             {salas.map((s) => (
               <motion.li key={s.id} layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card p-3 text-sm">
                 <span className="min-w-0 flex-1">
-                  <span className="block font-medium">Até {horaEmBrasilia(s.fim)}</span>
+                  <span className="flex items-center gap-2 font-medium">
+                    Até {horaEmBrasilia(s.fim)}
+                    {!s.aberta && <span className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">Encerrada</span>}
+                  </span>
                   <span className="block truncate text-xs text-muted-foreground">{s.alunos.length ? `Convidados: ${s.alunos.join(', ')}` : 'Ninguém entrou ainda'}</span>
                 </span>
+                {s.aberta && (
                 <Button size="sm" variant="outline" onClick={() => copiar(s)}>
                   {copiado === s.id ? <Check className="mr-1 h-4 w-4 text-primary" /> : <Copy className="mr-1 h-4 w-4" />} {copiado === s.id ? 'Copiado!' : 'Copiar convite'}
                 </Button>
+                )}
                 {/* Navegação completa: a sala carrega com a permissão de microfone. */}
-                <a href={`/monitorias/reservas/${s.id}/sala`} target="_blank" rel="noopener" className="inline-flex h-9 items-center gap-1 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-                  <Video className="h-4 w-4" /> Entrar como monitor
-                </a>
+                {s.aberta && (
+                  <a href={`/monitorias/reservas/${s.id}/sala`} target="_blank" rel="noopener" className="inline-flex h-9 items-center gap-1 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                    <Video className="h-4 w-4" /> Entrar como monitor
+                  </a>
+                )}
+                <Button size="sm" variant="ghost" className="text-rose-600 hover:bg-rose-500/10 hover:text-rose-700" disabled={excluindo === s.id} onClick={() => void excluir(s)} aria-label="Excluir sala de teste">
+                  {excluindo === s.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  <span className="ml-1 hidden sm:inline">Excluir</span>
+                </Button>
               </motion.li>
             ))}
           </motion.ul>

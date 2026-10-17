@@ -58,6 +58,7 @@ export type AuditAction =
   /** Suporte mudou o horário (ou "iniciar agora") e salas de teste do admin. */
   | 'monitoria_horario_suporte'
   | 'monitoria_sala_teste'
+  | 'monitoria_sala_teste_excluida'
 
 export interface AuditLogEntry {
   action: AuditAction

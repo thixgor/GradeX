@@ -4,10 +4,25 @@ import { audit } from '@/lib/payments/audit'
 import { erro, lerJson, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { configDaSala, mesDoUso, salvarConfigSala, usoDoMes } from '@/lib/monitorias/sala/config'
-import { BYTES_POR_GB, LIMITE_MALHA_MAX, LIMITE_MALHA_MIN, presente, situacaoDoTurn } from '@/lib/monitorias/sala/regras'
+import { BYTES_POR_GB, LIMITE_MALHA_MAX, LIMITE_MALHA_MIN, LIMITES_DE_VIDEO, normalizarConfigVideo, presente, situacaoDoTurn } from '@/lib/monitorias/sala/regras'
 import { revogarCredencialTurn, turnConfigurado } from '@/lib/monitorias/sala/turn'
 
 export const dynamic = 'force-dynamic'
+
+const L = LIMITES_DE_VIDEO
+const Video = z
+  .object({
+    perfil: z.enum(['fluido', 'equilibrado', 'nitido', 'economico', 'personalizado']),
+    fpsMax: z.number().int().min(L.fpsMax[0]).max(L.fpsMax[1]),
+    bitrateIndividualKbps: z.number().int().min(L.bitrateIndividualKbps[0]).max(L.bitrateIndividualKbps[1]),
+    bitrateGrupoKbps: z.number().int().min(L.bitrateGrupoKbps[0]).max(L.bitrateGrupoKbps[1]),
+    resolucao: z.union([z.literal(360), z.literal(480)]),
+    adaptativo: z.boolean(),
+    telaFps: z.number().int().min(L.telaFps[0]).max(L.telaFps[1]),
+    telaBitrateKbps: z.number().int().min(L.telaBitrateKbps[0]).max(L.telaBitrateKbps[1]),
+  })
+  .partial()
+  .strict()
 
 const Config = z
   .object({
@@ -19,6 +34,7 @@ const Config = z
     limiteMalha: z.number().int().min(LIMITE_MALHA_MIN).max(LIMITE_MALHA_MAX),
     compartilharTela: z.boolean(),
     chatNaSala: z.boolean(),
+    video: Video,
   })
   .partial()
   .strict()
@@ -59,7 +75,8 @@ export async function PUT(request: NextRequest) {
     const parsed = Config.safeParse(await lerJson(request))
     if (!parsed.success) return erro(400, parsed.error.issues[0]?.message || 'Configuração inválida.')
     const antes = await configDaSala()
-    const depois = await salvarConfigSala({ ...antes, ...parsed.data })
+    const { video, ...resto } = parsed.data
+    const depois = await salvarConfigSala({ ...antes, ...resto, video: normalizarConfigVideo({ ...antes.video, ...video }) })
     await audit({ action: 'monitoria_sala_config', actorUserId: sessao.userId, resourceType: 'monitorias_sala', metadata: { antes, depois }, ip })
     return ok({ config: depois })
   })

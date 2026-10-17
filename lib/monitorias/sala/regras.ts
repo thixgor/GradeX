@@ -10,7 +10,7 @@
  * invocações só enquanto ninguém está conectado.
  */
 
-import type { ConfigSala, PapelNaSala, ParticipanteSala, StatusReserva } from '../tipos'
+import type { ConfigSala, ConfigVideo, PapelNaSala, ParticipanteSala, PerfilDeVideo, StatusReserva } from '../tipos'
 
 // ─── Janela de horário ─────────────────────────────────────────────────
 
@@ -65,6 +65,49 @@ export const CONFIG_SALA_PADRAO: ConfigSala = {
   limiteMalha: 4,
   compartilharTela: true,
   chatNaSala: true,
+  video: {
+    perfil: 'fluido',
+    fpsMax: 30,
+    bitrateIndividualKbps: 800,
+    bitrateGrupoKbps: 350,
+    resolucao: 360,
+    adaptativo: true,
+    telaFps: 5,
+    telaBitrateKbps: 1200,
+  },
+}
+
+/** Predefinições do admin. "Personalizado" = os números digitados. */
+export const PERFIS_DE_VIDEO: Record<Exclude<PerfilDeVideo, 'personalizado'>, Omit<ConfigVideo, 'perfil' | 'adaptativo' | 'telaFps' | 'telaBitrateKbps'>> = {
+  fluido: { fpsMax: 30, bitrateIndividualKbps: 800, bitrateGrupoKbps: 350, resolucao: 360 },
+  equilibrado: { fpsMax: 24, bitrateIndividualKbps: 600, bitrateGrupoKbps: 300, resolucao: 360 },
+  nitido: { fpsMax: 24, bitrateIndividualKbps: 1200, bitrateGrupoKbps: 450, resolucao: 480 },
+  economico: { fpsMax: 15, bitrateIndividualKbps: 300, bitrateGrupoKbps: 150, resolucao: 360 },
+}
+
+export const LIMITES_DE_VIDEO = {
+  fpsMax: [10, 30],
+  bitrateIndividualKbps: [150, 1500],
+  bitrateGrupoKbps: [80, 800],
+  telaFps: [2, 15],
+  telaBitrateKbps: [300, 2500],
+} as const
+
+export function normalizarConfigVideo(cru: unknown): ConfigVideo {
+  const v = (cru && typeof cru === 'object' ? cru : {}) as Partial<Record<keyof ConfigVideo, unknown>>
+  const p = CONFIG_SALA_PADRAO.video
+  const L = LIMITES_DE_VIDEO
+  const perfil = typeof v.perfil === 'string' && (v.perfil === 'personalizado' || v.perfil in PERFIS_DE_VIDEO) ? (v.perfil as PerfilDeVideo) : p.perfil
+  return {
+    perfil,
+    fpsMax: inteiroEntre(v.fpsMax, L.fpsMax[0], L.fpsMax[1], p.fpsMax),
+    bitrateIndividualKbps: inteiroEntre(v.bitrateIndividualKbps, L.bitrateIndividualKbps[0], L.bitrateIndividualKbps[1], p.bitrateIndividualKbps),
+    bitrateGrupoKbps: inteiroEntre(v.bitrateGrupoKbps, L.bitrateGrupoKbps[0], L.bitrateGrupoKbps[1], p.bitrateGrupoKbps),
+    resolucao: v.resolucao === 480 ? 480 : 360,
+    adaptativo: typeof v.adaptativo === 'boolean' ? v.adaptativo : p.adaptativo,
+    telaFps: inteiroEntre(v.telaFps, L.telaFps[0], L.telaFps[1], p.telaFps),
+    telaBitrateKbps: inteiroEntre(v.telaBitrateKbps, L.telaBitrateKbps[0], L.telaBitrateKbps[1], p.telaBitrateKbps),
+  }
 }
 
 export const LIMITE_MALHA_MIN = 2
@@ -91,6 +134,7 @@ export function normalizarConfigSala(cru: unknown): ConfigSala {
     limiteMalha: inteiroEntre(c.limiteMalha, LIMITE_MALHA_MIN, LIMITE_MALHA_MAX, p.limiteMalha),
     compartilharTela: bool(c.compartilharTela, p.compartilharTela),
     chatNaSala: bool(c.chatNaSala, p.chatNaSala),
+    video: normalizarConfigVideo(c.video),
   }
 }
 
@@ -212,6 +256,33 @@ export function salaCheia(participantes: Record<string, ParticipanteSala>, meuPi
   return outros + 1 > limite
 }
 
+/**
+ * Conferência DEPOIS de gravar a entrada (a de antes não é atômica: duas
+ * entradas no mesmo instante passariam as duas). Os presentes em ordem de
+ * chegada; quem ficou além do limite desfaz a própria entrada.
+ */
+export function entrouAlemDoLimite(participantes: Record<string, ParticipanteSala>, meuPid: string, limite: number, agora: Date): boolean {
+  const fila = Object.entries(participantes)
+    .filter(([, p]) => presente(p, agora))
+    .sort(([pa, a], [pb, b]) => new Date(a.entrouEm).getTime() - new Date(b.entrouEm).getTime() || pa.localeCompare(pb))
+    .map(([pid]) => pid)
+  const posicao = fila.indexOf(meuPid)
+  return posicao >= limite
+}
+
+/**
+ * Par conectado que o servidor não lista mais: fecha. Removido = na hora;
+ * ausente do retrato = depois de 90 s (dois pulsos), para um polling que
+ * falhou uma vez não derrubar uma aula boa.
+ */
+export const AUSENCIA_PARA_FECHAR_MS = 90_000
+
+export function devoFecharOPar(s: { removido: boolean; listado: boolean; ausenteDesde: number | null; agora: number }): boolean {
+  if (s.removido) return true
+  if (s.listado || s.ausenteDesde === null) return false
+  return s.agora - s.ausenteDesde >= AUSENCIA_PARA_FECHAR_MS
+}
+
 export function primeiroNome(nome: string): string {
   return (nome || '').trim().split(/\s+/)[0] || 'Participante'
 }
@@ -279,44 +350,70 @@ export interface NivelDeVideo {
 /** `null` = vídeo pausado, só áudio. */
 export type Nivel = NivelDeVideo | null
 
-export const CAPTURA_VIDEO = { largura: 640, altura: 360, fps: 24 } as const
 export const AUDIO_MAX_BITRATE = 32_000
 
-/**
- * Perfis conservadores. No grupo cada pessoa envia um vídeo POR PAR (malha),
- * então o teto por par é menor: com 4 pessoas, o monitor sobe 3 vídeos.
- */
-export const NIVEIS: Record<'individual' | 'grupo', Nivel[]> = {
-  individual: [
-    { maxBitrate: 600_000, escala: 1, maxFramerate: 24 },
-    { maxBitrate: 300_000, escala: 4 / 3, maxFramerate: 15 },
-    { maxBitrate: 150_000, escala: 2, maxFramerate: 10 },
-    null,
-  ],
-  grupo: [
-    { maxBitrate: 300_000, escala: 4 / 3, maxFramerate: 15 },
-    { maxBitrate: 180_000, escala: 2, maxFramerate: 12 },
-    { maxBitrate: 100_000, escala: 8 / 3, maxFramerate: 8 },
-    null,
-  ],
+/** Tudo o que o vídeo precisa, calculado da config do admin (`niveisDaConfig`). */
+export interface NiveisDeVideo {
+  captura: { largura: number; altura: number; fps: number }
+  individual: Nivel[]
+  grupo: Nivel[]
+  /** No grupo o monitor é quem mais importa ver: um pouco mais no nível de entrada. */
+  monitorGrupoN0: number
+  tela: Record<'individual' | 'grupo', { maxBitrate: number; maxFramerate: number }>
+  /** Câmera enquanto a tela está compartilhada: miniatura. */
+  cameraDuranteTela: NonNullable<Nivel>
+  /** Desce a qualidade sozinho com a rede ruim. */
+  adaptativo: boolean
 }
 
-/** No grupo o monitor é quem mais importa ver: um pouco mais no nível de entrada. */
-export const BITRATE_MONITOR_GRUPO_N0 = 400_000
+const fps = (base: number, fator: number) => Math.max(5, Math.round(base * fator))
+const kbps = (k: number) => Math.round(k) * 1000
 
-export const TELA = {
-  individual: { maxBitrate: 1_200_000, maxFramerate: 5 },
-  grupo: { maxBitrate: 500_000, maxFramerate: 5 },
-} as const
+/**
+ * Fluidez antes de resolução: aula é gente falando e apontando, e 10 fps parece
+ * travado mesmo em imagem nítida. O nível 0 é o teto do admin; os de baixo
+ * (rede ruim) caem na mesma proporção da tabela-padrão. No grupo cada pessoa
+ * envia um vídeo POR PAR (malha), então o teto por par é menor.
+ */
+export function niveisDaConfig(v: ConfigVideo): NiveisDeVideo {
+  const ind = v.bitrateIndividualKbps
+  const gr = v.bitrateGrupoKbps
+  return {
+    captura: v.resolucao === 480 ? { largura: 854, altura: 480, fps: v.fpsMax } : { largura: 640, altura: 360, fps: v.fpsMax },
+    individual: [
+      { maxBitrate: kbps(ind), escala: 1, maxFramerate: v.fpsMax },
+      { maxBitrate: kbps(ind * 0.5625), escala: 1, maxFramerate: fps(v.fpsMax, 0.8) },
+      { maxBitrate: kbps(ind * 0.3125), escala: 4 / 3, maxFramerate: fps(v.fpsMax, 0.5) },
+      null,
+    ],
+    grupo: [
+      { maxBitrate: kbps(gr), escala: 4 / 3, maxFramerate: fps(v.fpsMax, 0.8) },
+      { maxBitrate: kbps(gr * (4 / 7)), escala: 2, maxFramerate: fps(v.fpsMax, 0.5) },
+      { maxBitrate: kbps(gr * (11 / 35)), escala: 8 / 3, maxFramerate: fps(v.fpsMax, 1 / 3) },
+      null,
+    ],
+    monitorGrupoN0: kbps(gr * (9 / 7)),
+    tela: {
+      individual: { maxBitrate: kbps(v.telaBitrateKbps), maxFramerate: v.telaFps },
+      grupo: { maxBitrate: kbps(Math.max(300, v.telaBitrateKbps * 0.42)), maxFramerate: v.telaFps },
+    },
+    cameraDuranteTela: { maxBitrate: 150_000, escala: 2, maxFramerate: 10 },
+    adaptativo: v.adaptativo,
+  }
+}
 
-/** Câmera enquanto a tela está compartilhada: miniatura. */
-export const CAMERA_DURANTE_TELA = { maxBitrate: 150_000, escala: 2, maxFramerate: 10 } as const
+export const NIVEIS_PADRAO = niveisDaConfig(CONFIG_SALA_PADRAO.video)
 
-export function nivelDeVideo(perfil: 'individual' | 'grupo', indice: number, papel: PapelNaSala): Nivel {
-  const lista = NIVEIS[perfil]
+export function nivelDeVideo(perfil: 'individual' | 'grupo', indice: number, papel: PapelNaSala, niveis: NiveisDeVideo = NIVEIS_PADRAO): Nivel {
+  const lista = niveis[perfil]
   const nivel = lista[Math.min(lista.length - 1, Math.max(0, indice))]
-  if (nivel && perfil === 'grupo' && indice === 0 && papel === 'monitor') return { ...nivel, maxBitrate: BITRATE_MONITOR_GRUPO_N0 }
+  if (nivel && perfil === 'grupo' && indice === 0 && papel === 'monitor') return { ...nivel, maxBitrate: niveis.monitorGrupoN0 }
   return nivel
+}
+
+/** GB por hora de vídeo de UMA pessoa enviando no teto (estimativa do admin: relé conta ida e volta). */
+export function gbPorHoraNoTeto(kbpsDeVideo: number): number {
+  return ((kbpsDeVideo + AUDIO_MAX_BITRATE / 1000) * 1000 * 3600) / 8 / BYTES_POR_GB
 }
 
 export type Amostra = 'boa' | 'ruim' | 'neutra'
@@ -324,6 +421,11 @@ export type Amostra = 'boa' | 'ruim' | 'neutra'
 /**
  * Uma leitura do `getStats` vira boa, ruim ou neutra. Perda e atraso pesam mais
  * que banda: áudio picotado incomoda mais que imagem menor.
+ *
+ * `limitadoPorBanda` sozinho NÃO é ruim: o Chrome dá esse motivo também quando o
+ * vídeo só encosta no `maxBitrate` que nós mesmos pusemos — contar isso como
+ * ruim derrubava conexões boas até 10 fps. Ruim de verdade é a banda estimada
+ * abaixo do alvo; sem estimativa (Firefox), o limite só impede de subir.
  */
 export function classificarAmostra(s: {
   perda: number | null
@@ -334,8 +436,9 @@ export function classificarAmostra(s: {
 }): Amostra {
   const perda = s.perda ?? 0
   const rtt = s.rttMs ?? 0
-  if (perda > 0.08 || rtt > 600 || s.limitadoPorBanda) return 'ruim'
+  if (perda > 0.08 || rtt > 600) return 'ruim'
   if (s.bitrateDisponivel !== null && s.bitrateDisponivel < s.alvoBitrate * 0.8) return 'ruim'
+  if (s.limitadoPorBanda && s.bitrateDisponivel === null) return 'neutra'
   const folgado = s.bitrateDisponivel === null || s.bitrateDisponivel > s.alvoBitrate * 1.6
   if (perda < 0.02 && rtt < 300 && folgado) return 'boa'
   return 'neutra'
@@ -347,8 +450,8 @@ export interface EstadoDeQualidade {
   boas: number
 }
 
-/** Amostras ruins seguidas para descer; boas seguidas para subir (a cada 2 s). */
-export const RUINS_PARA_DESCER = 2
+/** Amostras ruins seguidas para descer (6 s de rede ruim, não um soluço); boas seguidas para subir (a cada 2 s). */
+export const RUINS_PARA_DESCER = 3
 export const BOAS_PARA_SUBIR = 10
 /**
  * O estimador de banda do WebRTC começa baixo e sobe nos primeiros segundos:

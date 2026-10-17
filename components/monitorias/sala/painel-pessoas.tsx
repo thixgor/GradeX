@@ -13,7 +13,9 @@
 
 import { useState } from 'react'
 import {
+  Clock,
   Hand,
+  Link2,
   Mic,
   MicOff,
   MoreHorizontal,
@@ -31,6 +33,7 @@ import {
 import { Avatar } from '@/components/monitorias/base'
 import type { ControladorDaSala, EstadoDaSalaNaTela, ParticipanteNaTela } from '@/lib/monitorias/sala/cliente/controlador'
 import { cn } from '@/lib/utils'
+import { copiarLink } from '@/lib/monitorias/sala/cliente/copiar'
 
 function Chave({ rotulo, texto, ligada, onMudar, ocupada }: { rotulo: string; texto: string; ligada: boolean; onMudar: () => void; ocupada?: boolean }) {
   return (
@@ -133,6 +136,16 @@ export function PainelDePessoas({
               <Acao icone={VolumeX} onClick={() => ctrl.pedirATodos('silenciar')}>
                 Silenciar todos{alunosComMicrofone ? ` (${alunosComMicrofone})` : ''}
               </Acao>
+              {estado.reserva?.convite && (
+                <Acao
+                  icone={Link2}
+                  onClick={async () => {
+                    if (await copiarLink(estado.reserva!.convite!)) ctrl.avisar('Link da aula copiado!')
+                  }}
+                >
+                  Copiar link da aula
+                </Acao>
+              )}
             </div>
             {estado.config?.compartilharTela && (
               <Chave
@@ -159,7 +172,7 @@ export function PainelDePessoas({
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/50">Na sala ({pessoas.length + 1})</h3>
           <ul className="space-y-1">
             <li className="flex items-center gap-3 rounded-xl px-2 py-2">
-              <Avatar nome={estado.eu?.nome || 'Você'} tamanho={36} />
+              <Avatar nome={estado.eu?.nome || 'Você'} url={estado.eu?.foto} tamanho={36} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium">{estado.eu?.nome} (você)</span>
                 <span className="block text-xs text-white/50">{ehMonitor ? 'Monitor' : 'Aluno'}</span>
@@ -173,7 +186,7 @@ export function PainelDePessoas({
               return (
                 <li key={p.pid} className={cn('rounded-xl', menu && 'bg-white/5')}>
                   <div className="flex items-center gap-3 px-2 py-2">
-                    <Avatar nome={p.nome} tamanho={36} />
+                    <Avatar nome={p.nome} url={p.foto} tamanho={36} />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{p.nome}</span>
                       <span className="block text-xs text-white/50">
@@ -228,6 +241,22 @@ export function PainelDePessoas({
             })}
           </ul>
         </section>
+
+        {ehMonitor && estado.faltam.length > 0 && (
+          <section aria-label="Ainda não chegaram">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/50">Ainda não chegaram ({estado.faltam.length})</h3>
+            <ul className="space-y-1">
+              {estado.faltam.map((f) => (
+                <li key={f.pid} className="flex items-center gap-3 rounded-xl px-2 py-2 opacity-70">
+                  <Avatar nome={f.nome} tamanho={32} />
+                  <span className="min-w-0 flex-1 truncate text-sm">{f.nome}</span>
+                  <Clock className="h-4 w-4 text-white/50" aria-label="ainda não entrou" />
+                </li>
+              ))}
+            </ul>
+            <p className="mt-1 px-2 text-[11px] text-white/45">Só entra quem tem vaga nesta monitoria. A lista vem do servidor.</p>
+          </section>
+        )}
 
         {ehMonitor && estado.removidos.length > 0 && (
           <section aria-label="Tirados da sala">

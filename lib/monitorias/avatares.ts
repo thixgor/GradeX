@@ -149,6 +149,20 @@ export function avatarPorId(id: string | null | undefined): Avatar | null {
   return (id && POR_ID.get(id)) || null
 }
 
+/**
+ * Conta e perfil de monitor com retratos diferentes (dados de antes de a foto
+ * ser uma só): o da CONTA vence, porque é o que a pessoa vê no /profile e no
+ * menu. Conta sem retrato adota o do monitor. Id fora do catálogo não conta.
+ * `null` = já estão iguais (ou nenhum dos dois tem retrato).
+ */
+export function retratoQueVence(conta: string | null | undefined, monitor: string | null | undefined): { conta?: Avatar; monitor?: Avatar } | null {
+  const daConta = avatarPorId(conta)
+  const doMonitor = avatarPorId(monitor)
+  if (daConta) return daConta.id === monitor ? null : { monitor: daConta }
+  if (doMonitor) return { conta: doMonitor }
+  return null
+}
+
 /** "Hipócrates, pai da medicina" / "Dr. Gregory House, Hugh Laurie em House". */
 export function descricaoDoAvatar(a: Avatar): string {
   return `${a.nome}, ${a.ator ? a.legenda : a.legenda.charAt(0).toLowerCase() + a.legenda.slice(1)}`

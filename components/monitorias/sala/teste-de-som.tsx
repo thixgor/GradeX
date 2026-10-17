@@ -13,7 +13,19 @@ const GRAVACAO_MS = 4_000
  * gravar 4 s e ouvir de volta (seguro, sem microfonia), ouvir ao vivo (com
  * fone) e um toque para conferir o alto-falante.
  */
-export function TesteDeSom({ trilha, micLigado, saidaId, tema = 'claro' }: { trilha: MediaStreamTrack | null; micLigado: boolean; saidaId: string | null; tema?: 'claro' | 'escuro' }) {
+export function TesteDeSom({
+  trilha,
+  micLigado,
+  saidaId,
+  tema = 'claro',
+  titulo = 'Teste de som',
+}: {
+  trilha: MediaStreamTrack | null
+  micLigado: boolean
+  saidaId: string | null
+  tema?: 'claro' | 'escuro'
+  titulo?: string
+}) {
   const [fase, setFase] = useState<'parado' | 'gravando' | 'tocando'>('parado')
   const [aoVivo, setAoVivo] = useState(false)
   const [aviso, setAviso] = useState('')
@@ -62,7 +74,7 @@ export function TesteDeSom({ trilha, micLigado, saidaId, tema = 'claro' }: { tri
   return (
     <div className={cn('rounded-2xl p-3.5', escuro ? 'bg-white/5' : 'border border-border bg-card')}>
       <p className={cn('mb-2 flex items-center gap-1.5 text-sm font-semibold', escuro ? 'text-white' : '')}>
-        <Ear className="h-4 w-4 text-primary" aria-hidden /> Teste de som
+        <Ear className="h-4 w-4 text-primary" aria-hidden /> {titulo}
       </p>
       <div className="grid grid-cols-1 gap-2 min-[420px]:grid-cols-3">
         {podeGravar() && (

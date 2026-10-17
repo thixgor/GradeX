@@ -20,28 +20,46 @@
  */
 
 import { faseDeSinal, podeIrPara, type FaseDaSala, type FaseDoPar, type MotivoDeSaida } from '../maquina'
-import { AVISO_FECHAMENTO_MIN, cadenciaDaSala, RENOVAR_ANTES_MS, type FaseDeSinal } from '../regras'
+import { AVISO_FECHAMENTO_MIN, cadenciaDaSala, devoFecharOPar, niveisDaConfig, NIVEIS_PADRAO, RENOVAR_ANTES_MS, type FaseDeSinal, type NiveisDeVideo } from '../regras'
 import { detectarContato } from '../../contato-inteligente'
+import { aplicarAnotacao, INTERVALO_DE_REACAO_MS, podeAnotar, type MensagemDeAnotacao, type Reacao, type Traco } from '../tela-anotada'
 import type { CredenciaisDaSala, MensagemDoCanal, PedidoDoMonitor, RespostaDoSinal, RetratoDaSala, SinalRecebido, TipoDeSinal, UsoDaConexao } from '../mensagens'
 import type { PapelNaSala } from '../../tipos'
-import { novaGeracao, Par, type TrilhasLocais } from './par'
+import { novaGeracao, Par, type EstatisticasDoPar, type TrilhasLocais } from './par'
 import {
   capturar,
   capturarTela,
+  definirCaptura,
   guardarPreferencias,
   lerPreferencias,
   listarAparelhos,
   pararTrilha,
   podeCompartilharTela,
+  restricaoDeTamanho,
   suporteDoNavegador,
   type Aparelhos,
   type EstadoDoAparelho,
   type PreferenciasDeAparelho,
 } from './midia'
+import {
+  aplicarDesfoqueNativo,
+  guardarEfeitos,
+  lerEfeitos,
+  precisaProcessarVideo,
+  ProcessadorDeAudio,
+  ProcessadorDeVideo,
+  suportaDesfoqueNativo,
+  suportaEfeitosDeVideo,
+  suportaEfeitosDeVoz,
+  type EfeitoDeVideo,
+  type EfeitoDeVoz,
+} from './efeitos'
 
 export interface ParticipanteNaTela {
   pid: string
   nome: string
+  /** Foto do perfil (a mesma do /profile), para o quadro com a câmera desligada. */
+  foto: string | null
   papel: PapelNaSala
   /** `aguardando` = está na sala, mas a conexão com ele ainda não começou. */
   fase: FaseDoPar | 'aguardando'
@@ -58,6 +76,8 @@ export interface ParticipanteNaTela {
   /** Mão levantada (e desde quando, para a fila de quem quer falar). */
   mao: boolean
   maoDesde: number
+  /** Números do `getStats` (painel "Estatísticas da conexão"). */
+  estatisticas: EstatisticasDoPar | null
 }
 
 export interface MensagemDeChat {
@@ -74,8 +94,30 @@ export interface EstadoDaSalaNaTela {
   saida: { motivo: MotivoDeSaida; mensagem: string } | null
   erroAoEntrar: string | null
   abreEm: string | null
-  eu: { pid: string; papel: PapelNaSala; nome: string } | null
-  local: { audio: MediaStreamTrack | null; camera: MediaStream | null; tela: MediaStream | null; mic: EstadoDoAparelho; cam: EstadoDoAparelho; versao: number }
+  eu: { pid: string; papel: PapelNaSala; nome: string; foto: string | null } | null
+  local: {
+    /** Microfone cru (medidor de voz, "falando"). */
+    audio: MediaStreamTrack | null
+    /** O que os outros ouvem: com o efeito de voz, se houver. */
+    audioComEfeito: MediaStreamTrack | null
+    /** O que os outros veem: com o efeito de câmera, se houver. */
+    camera: MediaStream | null
+    tela: MediaStream | null
+    mic: EstadoDoAparelho
+    cam: EstadoDoAparelho
+    versao: number
+  }
+  /** Efeitos de câmera e de voz (tudo no aparelho). */
+  efeitos: {
+    video: EfeitoDeVideo
+    voz: EfeitoDeVoz
+    suportaVideo: boolean
+    suportaVoz: boolean
+    /** A câmera atual tem fundo desfocado do próprio navegador. */
+    desfoque: boolean
+    /** O aparelho não está dando conta do efeito (vídeo saindo travado). */
+    pesado: boolean
+  }
   participantes: ParticipanteNaTela[]
   sinal: FaseDeSinal | null
   semInternet: boolean
@@ -104,6 +146,14 @@ export interface EstadoDaSalaNaTela {
   /** O monitor pediu para ligar o microfone ou a câmera (a pessoa decide). */
   pedido: { acao: 'pedir_mic' | 'pedir_camera' } | null
   reserva: CredenciaisDaSala['reserva'] | null
+  /** Só o monitor: alunos com assento ativo que ainda não estão na sala. */
+  faltam: Array<{ pid: string; nome: string }>
+  /** Reações dos últimos segundos (a tela anima e some com elas). `pid` = quem reagiu (o meu é o meu pid). */
+  reacoes: Array<{ id: number; pid: string; e: Reacao }>
+  /** Traços por cima da tela compartilhada que está no palco. */
+  tracos: Traco[]
+  /** Quem é o dono da tela no palco (pid), para saber quem pode riscar. */
+  donoDaTela: string | null
 }
 
 const CANAL_DE_ABAS = 'domineaqui:sala:'
@@ -123,6 +173,13 @@ export class ControladorDaSala {
   private tela: MediaStreamTrack | null = null
   private cameraLocal: MediaStream | null = null
   private telaLocal: MediaStream | null = null
+  private procVideo: ProcessadorDeVideo | null = null
+  private procAudio: ProcessadorDeAudio | null = null
+  /** Câmera com o desfoque nativo ligado (para desligar ao trocar de efeito). */
+  private desfocada: MediaStreamTrack | null = null
+  private amostrasPesadas = 0
+  /** Tetos do vídeo: o padrão até entrar; depois, os da config do admin. */
+  private niveis: NiveisDeVideo = NIVEIS_PADRAO
 
   // Sala
   private creds: CredenciaisDaSala | null = null
@@ -146,6 +203,9 @@ export class ControladorDaSala {
   private bytesPorPar = new Map<string, number>()
   private uso = { bytesRelay: 0, segundosRelay: 0, segundosDireta: 0 }
   private ultimaAmostra = 0
+  /** Desde quando cada par conectado está fora da lista do servidor. */
+  private ausentesDesde = new Map<string, number>()
+  private esperadosNomes: Array<{ pid: string; nome: string }> = []
 
   private timers: Partial<Record<'sinal' | 'renovar' | 'stats' | 'fala' | 'aviso' | 'fecha', ReturnType<typeof setTimeout>>> = {}
   private canalAbas: BroadcastChannel | null = null
@@ -164,7 +224,8 @@ export class ControladorDaSala {
       erroAoEntrar: null,
       abreEm: null,
       eu: null,
-      local: { audio: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: 0 },
+      local: { audio: null, audioComEfeito: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: 0 },
+      efeitos: { video: 'nenhum', voz: 'nenhum', suportaVideo: false, suportaVoz: false, desfoque: false, pesado: false },
       participantes: [],
       sinal: null,
       semInternet: false,
@@ -188,6 +249,10 @@ export class ControladorDaSala {
       removidos: [],
       pedido: null,
       reserva: null,
+      faltam: [],
+      reacoes: [],
+      tracos: [],
+      donoDaTela: null,
     }
   }
 
@@ -202,7 +267,67 @@ export class ControladorDaSala {
 
   private definir(parcial: Partial<EstadoDaSalaNaTela>): void {
     this.estado = { ...this.estado, ...parcial }
+    this.conferirDonoDaTela()
     this.emitir()
+  }
+
+  /** Mudou quem está com a tela no palco (ou ninguém): os traços da tela anterior somem. */
+  private conferirDonoDaTela(): void {
+    const eu = this.creds?.eu.pid ?? null
+    let dono: string | null = this.tela ? eu : null
+    if (!dono) for (const [pid, par] of this.pares) if (par.remoto.tela && par.estado.fase === 'conectado') dono = dono ?? pid
+    if (dono !== this.estado.donoDaTela) this.estado = { ...this.estado, donoDaTela: dono, tracos: [] }
+  }
+
+  // ─── Reações e anotações (pelo canal P2P; nada passa pelo servidor) ──
+
+  private ultimaReacao = new Map<string, number>()
+  private idDeReacao = 0
+
+  private mostrarReacao(pid: string, e: Reacao): void {
+    const agora = Date.now()
+    if (agora - (this.ultimaReacao.get(pid) ?? 0) < INTERVALO_DE_REACAO_MS) return
+    this.ultimaReacao.set(pid, agora)
+    const id = ++this.idDeReacao
+    this.definir({ reacoes: [...this.estado.reacoes.slice(-11), { id, pid, e }] })
+    setTimeout(() => {
+      if (!this.destruido) this.definir({ reacoes: this.estado.reacoes.filter((r) => r.id !== id) })
+    }, 3_200)
+  }
+
+  reagir(e: Reacao): void {
+    const eu = this.creds?.eu.pid
+    if (!eu || Date.now() - (this.ultimaReacao.get(eu) ?? 0) < INTERVALO_DE_REACAO_MS) return
+    this.mostrarReacao(eu, e)
+    for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'reacao', e })
+  }
+
+  /** Eu posso riscar a tela que está no palco? */
+  get possoAnotar(): boolean {
+    const eu = this.creds?.eu
+    return !!eu && !!this.estado.donoDaTela && podeAnotar({ papel: eu.papel, donoDaTela: this.estado.donoDaTela === eu.pid })
+  }
+
+  anotar(m: MensagemDeAnotacao): void {
+    const eu = this.creds?.eu
+    if (!eu || !this.possoAnotar) return
+    this.definir({ tracos: aplicarAnotacao(this.estado.tracos, eu.pid, m, true) })
+    for (const par of this.pares.values()) par.enviarPeloCanal(m)
+  }
+
+  private receberAnotacao(pid: string, m: MensagemDeAnotacao): void {
+    const dono = this.estado.donoDaTela
+    if (!dono) return
+    const papel = this.vemDoMonitor(pid) ? 'monitor' : 'aluno'
+    const ehDono = dono === pid
+    if (!podeAnotar({ papel, donoDaTela: ehDono })) return
+    this.definir({ tracos: aplicarAnotacao(this.estado.tracos, pid, m, papel === 'monitor' || ehDono) })
+  }
+
+  /** Nível da voz de alguém (0 a 1), lido do receptor de áudio — local, sem rede. */
+  nivelDeAudio(pid: string): number {
+    const par = this.pares.get(pid)
+    return par && par.remoto.mic ? par.nivelDeAudio() : 0
   }
 
   /** Junta várias mudanças num quadro só (eventos de ICE chegam em rajadas). */
@@ -213,6 +338,7 @@ export class ControladorDaSala {
       this.agendado = false
       if (this.destruido) return
       this.estado = { ...this.estado, participantes: this.montarParticipantes(), sinal: this.faseDoSinal }
+      this.conferirDonoDaTela()
       this.emitir()
       this.reagendarSinal()
     })
@@ -237,7 +363,20 @@ export class ControladorDaSala {
       return
     }
     const prefs = lerPreferencias()
-    this.irPara('saguao', { prefs, podeCompartilhar: podeCompartilharTela() })
+    const suportaVideo = suportaEfeitosDeVideo()
+    const suportaVoz = suportaEfeitosDeVoz()
+    const lembrados = lerEfeitos()
+    this.irPara('saguao', {
+      prefs,
+      podeCompartilhar: podeCompartilharTela(),
+      efeitos: {
+        ...this.estado.efeitos,
+        suportaVideo,
+        suportaVoz,
+        video: suportaVideo || lembrados.video === 'desfoque' ? lembrados.video : 'nenhum',
+        voz: suportaVoz ? lembrados.voz : 'nenhum',
+      },
+    })
     this.ouvirAbas()
     const aoMudarAparelhos = () => void this.recarregarAparelhos()
     navigator.mediaDevices.addEventListener?.('devicechange', aoMudarAparelhos)
@@ -330,16 +469,111 @@ export class ControladorDaSala {
     if (!this.destruido) this.definir({ aparelhos })
   }
 
-  private definirLocal(parcial: Partial<Omit<EstadoDaSalaNaTela['local'], 'camera' | 'tela' | 'versao' | 'audio'>>): void {
-    if (this.cam) {
-      if (!this.cameraLocal || this.cameraLocal.getVideoTracks()[0] !== this.cam) this.cameraLocal = new MediaStream([this.cam])
+  private definirLocal(parcial: Partial<Omit<EstadoDaSalaNaTela['local'], 'camera' | 'tela' | 'versao' | 'audio' | 'audioComEfeito'>>): void {
+    this.sincronizarEfeitos()
+    const cam = this.camEnviada()
+    if (cam) {
+      if (!this.cameraLocal || this.cameraLocal.getVideoTracks()[0] !== cam) this.cameraLocal = new MediaStream([cam])
     } else this.cameraLocal = null
     if (this.tela) {
       if (!this.telaLocal || this.telaLocal.getVideoTracks()[0] !== this.tela) this.telaLocal = new MediaStream([this.tela])
     } else this.telaLocal = null
     this.definir({
-      local: { ...this.estado.local, ...parcial, audio: this.audio, camera: this.cameraLocal, tela: this.telaLocal, versao: this.estado.local.versao + 1 },
+      local: {
+        ...this.estado.local,
+        ...parcial,
+        audio: this.audio,
+        audioComEfeito: this.audioEnviado(),
+        camera: this.cameraLocal,
+        tela: this.telaLocal,
+        versao: this.estado.local.versao + 1,
+      },
     })
+  }
+
+  // ─── Efeitos ────────────────────────────────────────────────────────
+
+  private camEnviada(): MediaStreamTrack | null {
+    return this.procVideo?.saida ?? this.cam
+  }
+
+  private audioEnviado(): MediaStreamTrack | null {
+    return this.procAudio?.saida ?? this.audio
+  }
+
+  /**
+   * Deixa os processadores de efeito de acordo com as trilhas cruas e a escolha:
+   * criados só com efeito ligado e trilha aberta, refeitos quando a trilha muda
+   * (outro aparelho) e desmontados quando ela some (câmera desligada).
+   */
+  private sincronizarEfeitos(): void {
+    const { video, voz } = this.estado.efeitos
+    // Câmera
+    const processar = !!this.cam && precisaProcessarVideo(video)
+    if (this.procVideo && (!processar || this.procVideo.entrada !== this.cam)) {
+      this.procVideo.destruir()
+      this.procVideo = null
+    }
+    if (processar && !this.procVideo) {
+      try {
+        this.procVideo = new ProcessadorDeVideo(this.cam!, video)
+      } catch {
+        this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, video: 'nenhum', suportaVideo: false }, aviso: 'Este aparelho não conseguiu aplicar efeitos de câmera.' }
+      }
+    } else this.procVideo?.definir(video)
+    // Fundo desfocado do navegador
+    const desfocar = !!this.cam && video === 'desfoque'
+    if (this.desfocada && (this.desfocada !== this.cam || !desfocar)) {
+      if (this.desfocada.readyState === 'live') void aplicarDesfoqueNativo(this.desfocada, false)
+      this.desfocada = null
+    }
+    if (desfocar && this.desfocada !== this.cam) {
+      const alvo = this.cam!
+      this.desfocada = alvo
+      void aplicarDesfoqueNativo(alvo, true).then((ok) => {
+        if (!ok && this.desfocada === alvo) this.definir({ aviso: 'O fundo desfocado não funciona nesta câmera ou navegador.' })
+      })
+    }
+    const desfoque = suportaDesfoqueNativo(this.cam)
+    if (desfoque !== this.estado.efeitos.desfoque) this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, desfoque } }
+    // Voz
+    const processarVoz = !!this.audio && voz !== 'nenhum'
+    if (this.procAudio && (!processarVoz || this.procAudio.entrada !== this.audio)) {
+      this.procAudio.destruir()
+      this.procAudio = null
+    }
+    if (processarVoz && !this.procAudio) {
+      try {
+        this.procAudio = new ProcessadorDeAudio(this.audio!, voz)
+      } catch {
+        this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, voz: 'nenhum', suportaVoz: false }, aviso: 'Este aparelho não conseguiu aplicar efeitos de voz.' }
+      }
+    } else this.procAudio?.definir(voz)
+    if (this.procAudio && this.audio) this.procAudio.saida.enabled = this.audio.enabled
+  }
+
+  private desmontarEfeitos(): void {
+    this.procVideo?.destruir()
+    this.procAudio?.destruir()
+    this.procVideo = this.procAudio = null
+    this.desfocada = null
+  }
+
+  definirEfeitoDeVideo(video: EfeitoDeVideo): void {
+    if (video === this.estado.efeitos.video) return
+    this.amostrasPesadas = 0
+    this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, video, pesado: false } }
+    guardarEfeitos(this.estado.efeitos)
+    this.definirLocal({})
+    this.distribuirTrilhas()
+  }
+
+  definirEfeitoDeVoz(voz: EfeitoDeVoz): void {
+    if (voz === this.estado.efeitos.voz) return
+    this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, voz } }
+    guardarEfeitos(this.estado.efeitos)
+    this.definirLocal({})
+    this.distribuirTrilhas()
   }
 
   private guardar(parcial: Partial<PreferenciasDeAparelho>): void {
@@ -483,7 +717,7 @@ export class ControladorDaSala {
       return this.definir({ aviso: 'O monitor pausou o compartilhamento de tela dos alunos.' })
     }
     try {
-      const t = await capturarTela(this.perfil())
+      const t = await capturarTela(this.perfil(), this.niveis.tela[this.perfil()].maxFramerate)
       if (!t) return
       this.tela = t
       t.onended = () => this.pararTela()
@@ -501,8 +735,9 @@ export class ControladorDaSala {
     this.distribuirTrilhas()
   }
 
+  /** O que vai para os pares: as trilhas com efeito, quando há. */
   private trilhas(): TrilhasLocais {
-    return { audio: this.audio, cam: this.cam, tela: this.tela }
+    return { audio: this.audioEnviado(), cam: this.camEnviada(), tela: this.tela }
   }
 
   private distribuirTrilhas(): void {
@@ -555,10 +790,13 @@ export class ControladorDaSala {
     this.uso = { bytesRelay: 0, segundosRelay: 0, segundosDireta: 0 }
     this.bytesPorPar.clear()
     this.retrato = c.sala
+    this.esperadosNomes = c.esperadosNomes || []
+    this.ausentesDesde.clear()
     this.faseDoSinal = null
+    this.aplicarConfigDeVideo(c.config.video ? niveisDaConfig(c.config.video) : NIVEIS_PADRAO)
     this.ultimaPuxada = Date.now()
     this.irPara('na_sala', {
-      eu: { pid: c.eu.pid, papel: c.eu.papel, nome: c.eu.nome },
+      eu: { pid: c.eu.pid, papel: c.eu.papel, nome: c.eu.nome, foto: c.eu.foto ?? null },
       config: c.config,
       fechaEm: c.janela.fechaEm,
       turn: c.turn,
@@ -577,8 +815,17 @@ export class ControladorDaSala {
     for (const p of c.sala.participantes) {
       if (!p.eu && p.presente && p.cx && this.pares.size < c.config.limiteMalha - 1) this.criarPar(p.pid, p.cx, true, novaGeracao())
     }
+    this.atualizarFaltam()
     this.ligarCiclosDaAula()
     this.atualizar()
+  }
+
+  /** A câmera já aberta no saguão passa a respeitar o tamanho e o fps do admin (sem reabrir). */
+  private aplicarConfigDeVideo(niveis: NiveisDeVideo): void {
+    const mudouCaptura = JSON.stringify(niveis.captura) !== JSON.stringify(this.niveis.captura)
+    this.niveis = niveis
+    definirCaptura(niveis.captura)
+    if (mudouCaptura && this.cam) void this.cam.applyConstraints(restricaoDeTamanho()).catch(() => {})
   }
 
   private perfil(): 'individual' | 'grupo' {
@@ -595,6 +842,7 @@ export class ControladorDaSala {
         geracao,
         iceServers: c.iceServers,
         perfil: this.perfil(),
+        niveis: this.niveis,
         papelLocal: c.eu.papel,
         estadoInicial,
         pelaRede: (tipo, dados) => this.enviarSinal(tipo, pid, dados),
@@ -609,6 +857,40 @@ export class ControladorDaSala {
     this.bytesPorPar.set(pid, 0)
     if (ofertante) void par.ofertar()
     return par
+  }
+
+  /**
+   * Fecha a conexão com quem o servidor não lista: na hora quem foi tirado da
+   * sala; depois de 90 s quem sumiu da lista com a conexão direta ainda viva
+   * (tolera um polling que falhou). Roda a cada retrato e a cada estatística,
+   * porque o retrato não muda enquanto ninguém entra nem sai (304).
+   */
+  private conferirPares(): void {
+    const r = this.retrato
+    if (!r) return
+    const presentes = new Map(r.participantes.filter((p) => !p.eu && p.presente).map((p) => [p.pid, p]))
+    const fora = new Set(r.fora || [])
+    const agora = Date.now()
+    for (const [pid, par] of this.pares) {
+      const p = presentes.get(pid)
+      const listado = !!p && (!p.cx || p.cx === par.cx)
+      if (listado) this.ausentesDesde.delete(pid)
+      else if (!this.ausentesDesde.has(pid)) this.ausentesDesde.set(pid, agora)
+      const fechar =
+        par.estado.fase === 'conectado' ? devoFecharOPar({ removido: fora.has(pid), listado, ausenteDesde: this.ausentesDesde.get(pid) ?? null, agora }) : !listado
+      if (fechar) {
+        this.fecharPar(pid)
+        this.ausentesDesde.delete(pid)
+      }
+    }
+  }
+
+  /** Monitor: quem tem assento e ainda não entrou. */
+  private atualizarFaltam(): void {
+    if (this.creds?.eu.papel !== 'monitor') return
+    const aqui = new Set((this.retrato?.participantes || []).filter((p) => p.presente).map((p) => p.pid))
+    const faltam = this.esperadosNomes.filter((e) => !aqui.has(e.pid))
+    if (faltam.map((f) => f.pid).join() !== this.estado.faltam.map((f) => f.pid).join()) this.estado = { ...this.estado, faltam }
   }
 
   private fecharPar(pid: string): void {
@@ -722,13 +1004,8 @@ export class ControladorDaSala {
 
   private aplicarRetrato(r: RetratoDaSala): void {
     this.retrato = r
-    const presentes = new Map(r.participantes.filter((p) => !p.eu && p.presente).map((p) => [p.pid, p]))
-    for (const [pid, par] of this.pares) {
-      const p = presentes.get(pid)
-      // Conexão P2P viva vale mais que a presença do servidor (o polling dele pode ter falhado).
-      if (par.estado.fase === 'conectado') continue
-      if (!p || (p.cx && p.cx !== par.cx)) this.fecharPar(pid)
-    }
+    this.conferirPares()
+    this.atualizarFaltam()
     const permissoes = r.permissoes || { telaAlunos: true, chatAlunos: true }
     this.definir({ encerrada: r.encerrada, removidos: r.removidos || [] })
     this.aplicarPermissoes(permissoes)
@@ -837,6 +1114,10 @@ export class ControladorDaSala {
     } else if (m.t === 'tchau') {
       this.fecharPar(pid)
       this.atualizar()
+    } else if (m.t === 'reacao') {
+      this.mostrarReacao(pid, m.e)
+    } else if (m.t === 'anotacao') {
+      this.receberAnotacao(pid, m)
     } else if (!this.vemDoMonitor(pid)) {
       // Pedidos, remoção, permissões e "encerrar" só valem vindos do monitor
       // (o papel vem do servidor, não do outro navegador).
@@ -994,6 +1275,11 @@ export class ControladorDaSala {
     this.definir({ economiaDeDados: ligar })
   }
 
+  /** Um aviso passageiro da própria tela (ex.: "Link copiado!"). */
+  avisar(texto: string): void {
+    this.definir({ aviso: texto })
+  }
+
   limparAviso(): void {
     if (this.estado.aviso) this.definir({ aviso: null })
   }
@@ -1077,7 +1363,22 @@ export class ControladorDaSala {
     }
     if (relay) this.uso.segundosRelay += decorrido
     else if (direta) this.uso.segundosDireta += decorrido
+    this.conferirEfeitoPesado()
+    this.conferirPares()
     this.atualizar()
+  }
+
+  /**
+   * Efeito de câmera que o aparelho não aguenta: o processador entrega menos de
+   * 15 quadros por segundo e o navegador diz que o limite é o processador.
+   * Três leituras seguidas (6 s) e a tela oferece desligar.
+   */
+  private conferirEfeitoPesado(): void {
+    const cpu = Array.from(this.pares.values()).some((p) => p.estatisticas?.motivoDoLimite === 'cpu')
+    const lento = !!this.procVideo && this.procVideo.fps < 15 && cpu
+    this.amostrasPesadas = lento ? this.amostrasPesadas + 1 : 0
+    const pesado = this.amostrasPesadas >= 3 || (this.estado.efeitos.pesado && !!this.procVideo)
+    if (pesado !== this.estado.efeitos.pesado) this.estado = { ...this.estado, efeitos: { ...this.estado.efeitos, pesado } }
   }
 
   private agendarFala(): void {
@@ -1127,6 +1428,7 @@ export class ControladorDaSala {
       const corpo = await res.json().catch(() => null)
       if (res.ok) {
         this.creds = { ...this.creds, token: corpo.token, expiraEm: corpo.expiraEm }
+        if (Array.isArray(corpo.esperadosNomes)) this.esperadosNomes = corpo.esperadosNomes
         this.aplicarRetrato(corpo.sala)
         this.agendarRenovacao()
         return true
@@ -1255,12 +1557,13 @@ export class ControladorDaSala {
   }
 
   private pararMidia(): void {
+    this.desmontarEfeitos()
     pararTrilha(this.audio)
     pararTrilha(this.cam)
     pararTrilha(this.tela)
     this.audio = this.cam = this.tela = null
     this.cameraLocal = this.telaLocal = null
-    this.definir({ local: { audio: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: this.estado.local.versao + 1 } })
+    this.definir({ local: { audio: null, audioComEfeito: null, camera: null, tela: null, mic: 'desligado', cam: 'desligado', versao: this.estado.local.versao + 1 } })
   }
 
   /** Desmontagem da tela (ou `pagehide`): desliga tudo, avisa a saída. Idempotente. */
@@ -1289,6 +1592,7 @@ export class ControladorDaSala {
       lista.push({
         pid: p.pid,
         nome: p.nome,
+        foto: p.foto ?? null,
         papel: p.papel,
         fase: par ? par.estado.fase : 'aguardando',
         camera: par ? par.cameraRemota : null,
@@ -1302,6 +1606,7 @@ export class ControladorDaSala {
         falando: !!par && par.remoto.mic && par.nivelDeAudio() > 0.04,
         mao: !!par?.remoto.mao,
         maoDesde: par?.maoDesde ?? 0,
+        estatisticas: par?.estatisticas ?? null,
       })
     }
     // Pares conectados com alguém que o servidor ainda não lista (presença atrasada).
@@ -1310,6 +1615,7 @@ export class ControladorDaSala {
       lista.push({
         pid,
         nome: this.nomeDe(pid),
+        foto: null,
         papel: 'aluno',
         fase: 'conectado',
         camera: par.cameraRemota,
@@ -1323,6 +1629,7 @@ export class ControladorDaSala {
         falando: par.remoto.mic && par.nivelDeAudio() > 0.04,
         mao: par.remoto.mao,
         maoDesde: par.maoDesde,
+        estatisticas: par.estatisticas,
       })
     }
     // Tela de aluno com o compartilhamento pausado pelo monitor não aparece

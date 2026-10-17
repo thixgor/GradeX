@@ -405,8 +405,18 @@ Navegador A ◄────── áudio/vídeo P2P (ou relé Cloudflare TURN) �
 
 - `salaNativaAtiva`, `linkExternoPermitido`, `turnAtivo`, `turnOrcamentoGbMes`
   (padrão 900 GB), `turnCorteAutomaticoPct` (padrão 90%), `limiteMalha`,
-  `compartilharTela`, `chatNaSala`. Em `admin_settings.monitoriasSala`, cache de
-  60 s por instância.
+  `compartilharTela`, `chatNaSala` e `video` (qualidade, abaixo). Em
+  `admin_settings.monitoriasSala`, cache de 60 s por instância.
+- **Qualidade do vídeo** (`ConfigSala.video`): predefinições Fluido (30 fps,
+  800 kbps 1:1, 350 por par no grupo — padrão), Equilibrado, Nítido (480p) e
+  Econômico (15 fps, 300 kbps), ou "Ajuste fino" (fps, resolução, tetos, tela,
+  ajuste automático). `niveisDaConfig` gera os degraus de rede ruim a partir do
+  teto; chega ao navegador nas credenciais do `entrar` (a câmera aberta no
+  saguão é ajustada por `applyConstraints`, sem reabrir). A tela mostra a
+  estimativa de GB/h pelo relé.
+- **Sala de teste**: "Excluir" apaga reserva, assentos, chat, sala, anotações,
+  avisos do sino e revoga o TURN de quem estava dentro (`excluirSalasDeTeste`,
+  a mesma limpeza da varredura de 7 dias). Só toca em `teste: true`.
 - Credencial TURN só dentro da janela, TTL até a sala fechar. O consumo do mês
   é estimado pelos navegadores (bytes do par `relay` no `getStats`, cortados ao
   plausível) em `monitorias_sala_uso`; no teto × %, o servidor para de entregar
@@ -427,9 +437,19 @@ Navegador A ◄────── áudio/vídeo P2P (ou relé Cloudflare TURN) �
   Entrar 20/h e renovar 20/h por conta (limite durável).
 - Participantes se veem por id opaco (`pid` = HMAC), primeiro nome (o monitor vê o
   nome completo) e papel. Nenhum userId, e-mail ou credencial TURN de outro.
-- Limite real: um P2P já estabelecido não é derrubado pelo servidor. O fim vem
-  do cliente (renovação recusada, horário) e do vencimento do TURN, e só envolve
-  as partes autorizadas.
+- **Só fica quem pode** (o P2P não passa pelo servidor, então quem fecha a
+  conexão são os navegadores de quem continua autorizado):
+  - o retrato manda a todos os `pid`s tirados da sala (`fora`); cada navegador
+    fecha na hora a conexão direta com eles — inclusive quem o suporte tirou;
+  - par conectado que some da lista do servidor por 90 s é fechado
+    (`devoFecharOPar`); a ETag do sinal inclui quem está presente, para a
+    presença que vence sem escrita também chegar;
+  - reembolso integral, assento cancelado ou reserva cancelada tiram a pessoa da
+    sala na hora (`tirarDaSala`, `lib/monitorias/sala/expulsar.ts`), e renovação
+    recusada solta a conexão gravada (não fica "presente" ocupando vaga);
+  - a lotação é conferida de novo depois de gravar a entrada
+    (`entrouAlemDoLimite`): duas entradas simultâneas não passam do limite;
+  - o monitor vê "Ainda não chegaram" (assentos ativos, vindo do servidor).
 
 ### Privacidade
 
@@ -441,11 +461,53 @@ Navegador A ◄────── áudio/vídeo P2P (ou relé Cloudflare TURN) �
 
 ### Qualidade
 
-Perfis conservadores com degradação automática a cada 2 s (`getStats`):
-1:1 640×360@24 até 600 kbps → 480×270@15 → 320×180@10 → só áudio; no grupo, por
-par, 300 kbps (monitor 400) → 180 → 100 → só áudio. Desce em 2 leituras ruins,
-sobe depois de 10 boas. Áudio com prioridade alta. Tela ≤ 5 fps (1,2 Mbps no
-1:1, 500 kbps por par no grupo). "Economia de dados" para de receber vídeo.
+Fluidez antes de resolução, com degradação automática a cada 2 s (`getStats`).
+Padrão (perfil Fluido): 1:1 640×360@30 até 800 kbps → 640×360@24/450 →
+480×270@15/250 → só áudio; no grupo, por par, 350 kbps@24 (monitor 450) →
+200@15 → 110@10 → só áudio. Desce em 3 leituras ruins, sobe depois de 10 boas.
+`qualityLimitationReason = bandwidth` sozinho NÃO é leitura ruim (o Chrome diz
+isso quando o vídeo só encosta no teto que nós pusemos — era o que derrubava
+aulas boas para 10 fps); ruim é banda estimada abaixo do alvo, perda > 8% ou
+RTT > 600 ms. Câmera com `degradationPreference: maintain-framerate` (cai a
+resolução antes do movimento); tela com `maintain-resolution`. Os tetos são
+aplicados quando a conexão sobe (antes da negociação o `sender` recusa — o
+lado que respondia ficava sem teto). "Estatísticas da conexão" em Ajustes: fps,
+resolução e kbps enviados/recebidos, atraso, perda, caminho e o que limita.
+"Economia de dados" para de receber vídeo.
+
+### Efeitos de câmera e voz (`cliente/efeitos.ts`)
+
+- Tudo no aparelho; sem efeito, nada roda. Câmera: shader WebGL (P&B, sépia,
+  quente, frio, vívido, neon, retrô, pixelado, desenho, espelho, raio-X,
+  termografia; molduras DomineAqui, confete, batimentos, plantão). Chrome/Edge
+  bombeiam por `MediaStreamTrackProcessor`/`Generator` (segue a 30 fps com a aba
+  oculta); Safari/Firefox por `<video>` + `canvas.captureStream`. Fundo
+  desfocado só onde o navegador oferece (`backgroundBlur`).
+- Voz (Web Audio): robô, grave, esquilo, eco, caverna, rádio, alienígena. A
+  trilha crua continua do controlador (liga/desliga de verdade, mede quem fala);
+  os pares recebem a processada por `replaceTrack`.
+- Filtro de câmera lembrado no aparelho; efeito de voz só na aba. Aviso "efeito
+  pesado" quando o processador cai abaixo de 15 fps com limite de CPU.
+
+### Barra flutuante, anotações na tela, reações e brilho
+
+- **Barra flutuante** (Chrome/Edge no computador, Document Picture-in-Picture):
+  janela de vidro por cima de tudo, com marca, microfone, câmera, parar de
+  compartilhar, mão, reações, "Anotar" e sair. Abre ao compartilhar a tela (ou
+  oferece o botão), pela folha "Mais" e sozinha ao trocar de aba (ação
+  `enterpictureinpicture` do `mediaSession`). `mediaSession` também liga
+  microfone/câmera/desligar nos controles do sistema.
+- **Anotações na tela**: traços vetoriais (0–1 sobre a imagem) pelo canal P2P,
+  desenhados por cada navegador por cima da tela compartilhada — nada de
+  reprocessar vídeo, nada pelo servidor. Riscam o monitor (qualquer tela) e quem
+  compartilha (a própria); quem recebe confere. Somem quando a tela para.
+- **Reações**: 8 emojis pelo canal P2P, 1 a cada 700 ms por pessoa.
+- **Brilho de quem fala**: nível lido a cada quadro (`useBrilhoDaVoz`), escrito
+  em `--voz` sem re-render; o meu vem do microfone cru, o dos outros do receptor.
+- **Foto do perfil** na sala (quadro com câmera desligada, Pessoas, saguão): o
+  retrato da conta (`users.avatar`). A varredura (6d) iguala o perfil de monitor
+  à conta nos dados antigos (`sincronizarRetratos`).
+- O monitor copia o link da aula (na sala de teste, o convite).
 
 ### Testes
 
@@ -460,7 +522,14 @@ sobe depois de 10 boas. Áudio com prioridade alta. Tela ≤ 5 fps (1,2 Mbps no
   silenciar, pedir microfone, baixar mão, chat pausado, contato bloqueado,
   anotações com PDF, tirar e liberar da sala, e capturas em cinco aparelhos.
 - `contato-inteligente.test.ts`, `sala-anfitriao-e-suporte.test.ts`,
-  `anotacoes.test.ts`.
+  `anotacoes.test.ts`, `rodada4.test.ts` (níveis da config, retratos, efeitos,
+  reações/anotações, lotação, fechar par, ETag com presença).
+- Rodada 4 em dois Chromium: 30 fps recebidos sem rebaixar, teto aplicado nos
+  dois lados, P&B chegando cinza ao outro lado, voz de robô, reações,
+  anotações, par fechado depois de o suporte tirar alguém (com o cliente dele
+  insistindo) e perfil Econômico do admin aplicado; na tela real, navegação
+  interna até a sala (recarrega e libera o microfone), barra flutuante,
+  anotação vista pelo aluno, brilho, link copiado e estatísticas.
 
 ### Controles do monitor e mão levantada
 

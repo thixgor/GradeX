@@ -25,6 +25,15 @@ export function useSalaDeAula(reservaId: string, ativo = true): { ctrl: Controla
 
 const MARCA_DE_RECARGA = 'domineaqui:sala:recarregou'
 
+const caminhoDaSala = (reservaId: string) => `/monitorias/reservas/${reservaId}/sala`
+const semBarra = (u: string) => new URL(u, location.href).pathname.replace(/\/$/, '')
+
+/** O documento atual foi carregado pelo navegador já NA sala (e não em outra página do site)? */
+function documentoDaSala(reservaId: string): boolean {
+  const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+  return !nav || semBarra(nav.name) === caminhoDaSala(reservaId)
+}
+
 /**
  * A sala precisa ser um documento NOVO: o cabeçalho que libera o microfone
  * (`Permissions-Policy: microphone=(self)`) só vale para a página carregada
@@ -32,37 +41,36 @@ const MARCA_DE_RECARGA = 'domineaqui:sala:recarregou'
  * documento continua com a política da página anterior (`microphone=()`) e o
  * navegador recusa o microfone mesmo com "Permitir" no cadeado. Nesse caso,
  * recarrega uma vez antes de pedir qualquer aparelho.
+ *
+ * Compara com o caminho da sala montado do id — não com `location`: na
+ * navegação interna do Next a página nova renderiza ANTES de o endereço mudar.
+ * Sem efeito colateral (o React pode chamar duas vezes): a marca "já
+ * recarreguei" é gravada só em `recarregarASala`.
  */
-export function precisaRecarregarASala(): boolean {
+export function precisaRecarregarASala(reservaId: string): boolean {
   if (typeof window === 'undefined') return false
   try {
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
-    const caminho = (u: string) => new URL(u, location.href).pathname.replace(/\/$/, '')
-    const carregouAqui = !nav || caminho(nav.name) === caminho(location.href)
-    // Sem efeito colateral aqui (o React pode chamar duas vezes): a marca
-    // "já recarreguei" é gravada só na hora de recarregar.
-    if (carregouAqui) return false
-    return sessionStorage.getItem(MARCA_DE_RECARGA) !== location.pathname
+    if (documentoDaSala(reservaId)) return false
+    return sessionStorage.getItem(MARCA_DE_RECARGA) !== caminhoDaSala(reservaId)
   } catch {
     return false
   }
 }
 
 /** Recarrega a sala uma vez só (a marca evita laço se o navegador insistir). */
-export function recarregarASala(): void {
+export function recarregarASala(reservaId: string): void {
   try {
-    sessionStorage.setItem(MARCA_DE_RECARGA, location.pathname)
+    sessionStorage.setItem(MARCA_DE_RECARGA, caminhoDaSala(reservaId))
   } catch {
-    /* sem storage: recarrega assim mesmo; na volta "carregou aqui" */
+    /* sem storage: recarrega assim mesmo; na volta o documento já é da sala */
   }
-  location.replace(location.href)
+  location.replace(caminhoDaSala(reservaId) + location.search)
 }
 
 /** Chamado quando a sala carregou como documento próprio: limpa a marca. */
-export function salaCarregouDireito(): void {
+export function salaCarregouDireito(reservaId: string): void {
   try {
-    const nav = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
-    if (nav && new URL(nav.name).pathname.replace(/\/$/, '') === location.pathname.replace(/\/$/, '')) sessionStorage.removeItem(MARCA_DE_RECARGA)
+    if (documentoDaSala(reservaId)) sessionStorage.removeItem(MARCA_DE_RECARGA)
   } catch {
     /* nada */
   }

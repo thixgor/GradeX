@@ -9,7 +9,8 @@
  * escapa o texto na tela; isto protege o resto (memória, laços, estados).
  */
 
-import type { PapelNaSala } from '../tipos'
+import type { ConfigVideo, PapelNaSala } from '../tipos'
+import { lerAnotacao, lerReacao, type MensagemDeAnotacao, type Reacao } from './tela-anotada'
 
 export const SDP_MAX = 16_000
 export const CANDIDATOS_POR_MENSAGEM = 30
@@ -63,6 +64,8 @@ export interface ParticipanteVisivel {
   papel: PapelNaSala
   /** Primeiro nome para os alunos; o monitor vê o nome completo. */
   nome: string
+  /** Foto do perfil (catálogo de retratos), a mesma do /profile. */
+  foto: string | null
   presente: boolean
   /** Conexão atual: sinal de outra conexão (aba antiga) é descartado. */
   cx: string | null
@@ -83,6 +86,8 @@ export interface RetratoDaSala {
   permissoes: { telaAlunos: boolean; chatAlunos: boolean }
   /** Tirados da sala (só o monitor recebe a lista, para liberar a volta). */
   removidos: Array<{ pid: string; nome: string; por: 'monitor' | 'suporte' }>
+  /** Só os ids dos tirados, para TODOS: cada navegador fecha a conexão direta com eles. */
+  fora: string[]
 }
 
 export interface RespostaDoSinal extends RetratoDaSala {
@@ -93,14 +98,16 @@ export interface RespostaDoSinal extends RetratoDaSala {
 export interface CredenciaisDaSala {
   token: string
   expiraEm: string
-  eu: { pid: string; papel: PapelNaSala; nome: string; cx: string; ep: number }
+  eu: { pid: string; papel: PapelNaSala; nome: string; foto: string | null; cx: string; ep: number }
   iceServers: RTCIceServer[]
   turn: boolean
   sala: RetratoDaSala
-  config: { compartilharTela: boolean; chatNaSala: boolean; limiteMalha: number }
+  config: { compartilharTela: boolean; chatNaSala: boolean; limiteMalha: number; video: ConfigVideo }
   janela: { inicio: string; fim: string; abreEm: string; fechaEm: string }
-  /** Para a marca d'água: id, título e o nome do monitor. */
-  reserva: { id: string; titulo: string; monitor: string }
+  /** Para a marca d'água: id, título e o nome do monitor. `convite`: link para o monitor mandar (só ele recebe). */
+  reserva: { id: string; titulo: string; monitor: string; convite?: string }
+  /** Só o monitor: alunos com assento ativo (para ver quem ainda não chegou). */
+  esperadosNomes?: Array<{ pid: string; nome: string }>
 }
 
 /** O que `GET …/sala` devolve: o saguão antes de entrar. */
@@ -114,7 +121,9 @@ export interface EstadoDoSaguao {
   }
   papel: PapelNaSala
   reserva: { id: string; titulo: string; inicio: string | null; fim: string | null }
-  presentes: Array<{ papel: PapelNaSala; nome: string }>
+  presentes: Array<{ papel: PapelNaSala; nome: string; foto: string | null }>
+  /** A minha foto do perfil (prévia do saguão). */
+  foto: string | null
   config: { compartilharTela: boolean; chatNaSala: boolean }
   /** Plano B: só quando o admin permite e o monitor colocou. */
   linkReuniao: string | null
@@ -135,6 +144,9 @@ export type MensagemDoCanal =
   | { t: 'tchau' }
   | { t: 'encerrar' }
   | { t: 'video'; receber: boolean }
+  | { t: 'reacao'; e: Reacao }
+  // Anotação sobre a tela compartilhada: vale do monitor ou de quem compartilha.
+  | MensagemDeAnotacao
   // Só valem vindas do monitor (quem recebe confere o papel pelo retrato do servidor).
   | { t: 'pedido'; acao: PedidoDoMonitor }
   | { t: 'removido'; pid: string }
@@ -207,6 +219,10 @@ export function lerMensagemDoCanal(bruto: unknown): MensagemDoCanal | null {
       return typeof m.pid === 'string' && /^[A-Za-z0-9_-]{16}$/.test(m.pid) ? { t: 'removido', pid: m.pid } : null
     case 'permissoes':
       return ehBool(m.telaAlunos) && ehBool(m.chatAlunos) ? { t: 'permissoes', telaAlunos: m.telaAlunos, chatAlunos: m.chatAlunos } : null
+    case 'reacao':
+      return lerReacao(m)
+    case 'anotacao':
+      return lerAnotacao(m)
     case 'reiniciar':
     case 'tchau':
     case 'encerrar':

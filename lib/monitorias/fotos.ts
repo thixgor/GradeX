@@ -3,7 +3,7 @@ import 'server-only'
 import { del } from '@vercel/blob'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { avatarPorId, type Avatar } from './avatares'
+import { avatarPorId, retratoQueVence, type Avatar } from './avatares'
 import { colecoes } from './db'
 
 /** Foto que veio de envio (Vercel Blob), e não do catálogo de retratos. */
@@ -67,4 +67,42 @@ export async function limparFotosEnviadas(lote: number): Promise<number> {
     n++
   }
   return n
+}
+
+/** Sobe quando a regra de `retratoQueVence` mudar: todos os monitores são conferidos de novo. */
+const VERSAO_DA_CONFERENCIA = 1
+
+/**
+ * Varredura: deixa o retrato do perfil de monitor igual ao da conta (o mesmo do
+ * /profile e da sala de aula). Daqui para frente `definirRetratoDaConta` já grava
+ * os dois juntos; isto acerta os dados antigos, em lotes, uma vez por monitor.
+ */
+export async function sincronizarRetratos(lote: number): Promise<number> {
+  const db = await getDb()
+  const c = colecoes(db)
+  const tutores = await c.tutores
+    .find({ retratoConferido: { $ne: VERSAO_DA_CONFERENCIA } } as any, { projection: { userId: 1, avatar: 1 } })
+    .limit(lote)
+    .toArray()
+  if (!tutores.length) return 0
+  const ids = tutores.map((t) => t.userId).filter((id) => ObjectId.isValid(id))
+  const contas = await db
+    .collection('users')
+    .find({ _id: { $in: ids.map((id) => new ObjectId(id)) } }, { projection: { avatar: 1 } })
+    .toArray()
+  const avatarDaConta = new Map(contas.map((u) => [String(u._id), u.avatar as string | undefined]))
+  const agora = new Date()
+  const nosMonitores: any[] = []
+  const nasContas: any[] = []
+  let acertados = 0
+  for (const t of tutores) {
+    const vence = avatarDaConta.has(t.userId) ? retratoQueVence(avatarDaConta.get(t.userId), t.avatar) : null
+    const $set: Record<string, unknown> = { retratoConferido: VERSAO_DA_CONFERENCIA }
+    if (vence?.monitor) Object.assign($set, { avatar: vence.monitor.id, fotoUrl: vence.monitor.url, updatedAt: agora })
+    if (vence?.conta) nasContas.push({ updateOne: { filter: { _id: new ObjectId(t.userId) }, update: { $set: { avatar: vence.conta.id } } } })
+    if (vence) acertados++
+    nosMonitores.push({ updateOne: { filter: { _id: t._id }, update: { $set } } })
+  }
+  await Promise.all([c.tutores.bulkWrite(nosMonitores, { ordered: false }), nasContas.length ? db.collection('users').bulkWrite(nasContas, { ordered: false }) : null])
+  return acertados
 }

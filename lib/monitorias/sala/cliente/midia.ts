@@ -9,7 +9,7 @@
  * aparelho. Nenhum caminho aqui pede permissão em laço.
  */
 
-import { CAPTURA_VIDEO } from '../regras'
+import { NIVEIS_PADRAO, type NiveisDeVideo } from '../regras'
 
 /**
  * `pedindo`: o navegador está perguntando (a tela explica onde clicar).
@@ -76,14 +76,20 @@ function estadoDoErro(err: unknown): EstadoDoAparelho {
   return 'erro'
 }
 
+/** Tamanho e fps da câmera: o padrão até entrar; depois, o que o admin configurou. */
+let captura: NiveisDeVideo['captura'] = NIVEIS_PADRAO.captura
+
+export function definirCaptura(c: NiveisDeVideo['captura']): void {
+  captura = c
+}
+
+export function restricaoDeTamanho(): MediaTrackConstraints {
+  return { width: { ideal: captura.largura }, height: { ideal: captura.altura }, frameRate: { ideal: captura.fps, max: 30 } }
+}
+
 function restricaoDeVideo(deviceId?: string | null, folgada = false): MediaTrackConstraints {
   if (folgada) return deviceId ? { deviceId: { exact: deviceId } } : {}
-  return {
-    ...(deviceId ? { deviceId: { exact: deviceId } } : {}),
-    width: { ideal: CAPTURA_VIDEO.largura },
-    height: { ideal: CAPTURA_VIDEO.altura },
-    frameRate: { ideal: CAPTURA_VIDEO.fps, max: 30 },
-  }
+  return { ...(deviceId ? { deviceId: { exact: deviceId } } : {}), ...restricaoDeTamanho() }
 }
 
 function restricaoDeAudio(deviceId?: string | null): MediaTrackConstraints {
@@ -162,9 +168,9 @@ export async function capturar(opcoes: { audio: boolean; video: boolean; micId?:
   return r
 }
 
-export async function capturarTela(perfil: 'individual' | 'grupo'): Promise<MediaStreamTrack | null> {
+export async function capturarTela(perfil: 'individual' | 'grupo', fpsMax = 5): Promise<MediaStreamTrack | null> {
   const s = await navigator.mediaDevices.getDisplayMedia({
-    video: { frameRate: { max: 5 }, width: { max: 1920 }, height: { max: 1080 } },
+    video: { frameRate: { max: fpsMax }, width: { max: 1920 }, height: { max: 1080 } },
     audio: false,
   })
   const t = s.getVideoTracks()[0] || null
@@ -234,6 +240,42 @@ export function medirNivel(trilha: MediaStreamTrack, aoMedir: (nivel: number) =>
       /* nada */
     }
     void ctx.close().catch(() => {})
+  }
+}
+
+/**
+ * Medidor de voz para quem lê no próprio ritmo (o brilho de quem fala lê a
+ * cada quadro da tela). `ler()` devolve de 0 a 1; `parar()` solta o áudio.
+ */
+export function criarMedidor(trilha: MediaStreamTrack): { ler: () => number; parar: () => void } {
+  const Contexto = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  if (!Contexto) return { ler: () => 0, parar: () => {} }
+  const ctx = new Contexto()
+  const acordar = () => void ctx.resume().catch(() => {})
+  acordar()
+  window.addEventListener('pointerdown', acordar, { once: true })
+  const fonte = ctx.createMediaStreamSource(new MediaStream([trilha]))
+  const analisador = ctx.createAnalyser()
+  analisador.fftSize = 512
+  fonte.connect(analisador)
+  const dados = new Uint8Array(analisador.fftSize)
+  return {
+    ler: () => {
+      if (!trilha.enabled) return 0
+      analisador.getByteTimeDomainData(dados)
+      let soma = 0
+      for (const v of dados) soma += ((v - 128) / 128) ** 2
+      return Math.min(1, Math.sqrt(soma / dados.length) * 3)
+    },
+    parar: () => {
+      window.removeEventListener('pointerdown', acordar)
+      try {
+        fonte.disconnect()
+      } catch {
+        /* nada */
+      }
+      void ctx.close().catch(() => {})
+    },
   }
 }
 

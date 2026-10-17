@@ -33,10 +33,10 @@ import type { PaymentOrder } from '@/lib/types'
 import { colecoes, idDe } from './db'
 import { liberarRepassesDaReserva } from './financeiro'
 import { avisar } from './avisos'
-import { liberarBlocos } from './reservas'
+import { excluirSalasDeTeste, liberarBlocos } from './reservas'
 import { reembolsarParticipacao, reembolsarReserva, retomarDevolucoesAvulsas } from './reembolso'
 import { conferirComGateway, curarPagamentosDaReserva } from './pagamento'
-import { limparFotosEnviadas } from './fotos'
+import { limparFotosEnviadas, sincronizarRetratos } from './fotos'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
 import { configDaSala } from './sala/config'
@@ -261,15 +261,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   // 4c. Salas de teste do admin: somem 7 dias depois (reserva, assentos, chat e sala).
   await seguro(async () => {
     const velhas = await c.reservas.find({ teste: true, createdAt: { $lt: new Date(agora.getTime() - 7 * 24 * H) } } as any, { projection: { _id: 1 } }).limit(LOTE).toArray()
-    if (!velhas.length) return
-    const ids = velhas.map((x) => idDe(x))
-    await Promise.all([
-      c.participacoes.deleteMany({ reservaId: { $in: ids } }),
-      c.mensagens.deleteMany({ reservaId: { $in: ids } }),
-      c.salas.deleteMany({ _id: { $in: ids } }),
-      c.anotacoes.deleteMany({ reservaId: { $in: ids } }),
-    ])
-    await c.reservas.deleteMany({ _id: { $in: velhas.map((x) => x._id) }, teste: true } as any)
+    if (velhas.length) await excluirSalasDeTeste(velhas.map((x) => idDe(x)))
   })
 
   // 5. 48h depois sem disputa → concluída, valor liberado.
@@ -339,6 +331,11 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   // 6c. Fotos enviadas antes da galeria de retratos: saem do Blob (economia de storage).
   await seguro(async () => {
     await limparFotosEnviadas(LOTE)
+  })
+
+  // 6d. Retrato do perfil de monitor igual ao da conta (o mesmo do /profile e da sala).
+  await seguro(async () => {
+    await sincronizarRetratos(LOTE)
   })
 
   // 7. Chave PIX nova depois da carência.

@@ -16,11 +16,11 @@ import type { EstadoDoSaguao } from '@/lib/monitorias/sala/mensagens'
 const ATUALIZACOES_DO_SAGUAO = 30
 
 export default function PaginaDaSala({ params }: { params: { id: string } }) {
-  const [recarregando] = useState(precisaRecarregarASala)
+  const [recarregando] = useState(() => precisaRecarregarASala(params.id))
   useEffect(() => {
-    if (recarregando) recarregarASala()
-    else salaCarregouDireito()
-  }, [recarregando])
+    if (recarregando) recarregarASala(params.id)
+    else salaCarregouDireito(params.id)
+  }, [recarregando, params.id])
   const { ctrl, estado } = useSalaDeAula(params.id, !recarregando)
   const [saguao, setSaguao] = useState<EstadoDoSaguao | null>(null)
   const [erroSaguao, setErroSaguao] = useState('')

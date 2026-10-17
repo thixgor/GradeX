@@ -78,6 +78,8 @@ export interface Tutor {
    */
   avatar?: string
   fotoUrl?: string
+  /** Versão da conferência "retrato do monitor = retrato da conta" já feita (varredura). */
+  retratoConferido?: number
   /** Frase curta do card ("Monitora de Fisiologia há 3 semestres"). */
   titulo: string
   bio: string
@@ -645,6 +647,27 @@ export interface ConfigSala {
   limiteMalha: number
   compartilharTela: boolean
   chatNaSala: boolean
+  /** Qualidade do vídeo (fluidez, nitidez, consumo). */
+  video: ConfigVideo
+}
+
+export type PerfilDeVideo = 'fluido' | 'equilibrado' | 'nitido' | 'economico' | 'personalizado'
+
+/** O teto do vídeo de câmera e da tela; os degraus de rede ruim saem daqui (`niveisDaConfig`). */
+export interface ConfigVideo {
+  perfil: PerfilDeVideo
+  /** Quadros por segundo no melhor nível (10 a 30). */
+  fpsMax: number
+  /** Teto da câmera numa aula 1:1, em kbps. */
+  bitrateIndividualKbps: number
+  /** Teto por par numa aula em grupo (malha: cada um envia um vídeo por pessoa), em kbps. */
+  bitrateGrupoKbps: number
+  /** Altura da captura: 360p (padrão) ou 480p. */
+  resolucao: 360 | 480
+  /** Desce a qualidade sozinho quando a rede piora (recomendado). */
+  adaptativo: boolean
+  telaFps: number
+  telaBitrateKbps: number
 }
 
 export type PapelNaSala = 'monitor' | 'aluno'
@@ -654,6 +677,8 @@ export interface ParticipanteSala {
   papel: PapelNaSala
   /** Nome completo; quem vê o primeiro nome ou o completo é decidido na saída. */
   nome: string
+  /** Retrato da conta (id do catálogo, o mesmo do /profile); a URL sai do catálogo na leitura. */
+  avatar?: string
   /** Conexão ativa (uma aba/aparelho). `null` = saiu. */
   conexao: string | null
   /** Sobe a cada entrada: aba ou aparelho antigo deixa de valer. */

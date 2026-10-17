@@ -20,7 +20,6 @@
 import { candidatoLimpo, lerMensagemDoCanal, type CandidatoIce, type MensagemDoCanal, type TipoDeSinal } from '../mensagens'
 import { PAR_NOVO, transicaoDoPar, type AcaoDoPar, type EstadoDoPar, type EventoDoPar } from '../maquina'
 import {
-  CAMERA_DURANTE_TELA,
   classificarAmostra,
   ACOMODACAO_MS,
   AQUECIMENTO_MS,
@@ -30,12 +29,23 @@ import {
   PRAZO_NEGOCIACAO_MS,
   proximaQualidade,
   rotuloDeConexao,
-  TELA,
   type Amostra,
   type EstadoDeQualidade,
+  type NiveisDeVideo,
 } from '../regras'
 import type { PapelNaSala } from '../../tipos'
 import { aplicarAudio, aplicarNivelDeVideo, aplicarTela, lerEstatisticas, type LeituraDoPar } from './qualidade'
+
+/** O que o painel "Estatísticas da conexão" mostra deste par (tudo do `getStats`, sem rede). */
+export interface EstatisticasDoPar {
+  tipo: 'direta' | 'retransmitida' | null
+  rttMs: number | null
+  perdaPct: number | null
+  nivel: number
+  envio: { fps: number | null; largura: number | null; altura: number | null; kbps: number | null } | null
+  recebimento: { fps: number | null; largura: number | null; altura: number | null; kbps: number | null } | null
+  motivoDoLimite: LeituraDoPar['motivoDoLimite']
+}
 
 export interface TrilhasLocais {
   audio: MediaStreamTrack | null
@@ -52,6 +62,8 @@ export interface OpcoesDoPar {
   geracao: string
   iceServers: RTCIceServer[]
   perfil: 'individual' | 'grupo'
+  /** Tetos e degraus do vídeo, da config do admin. */
+  niveis: NiveisDeVideo
   papelLocal: PapelNaSala
   /** Manda pelo servidor (quando o canal P2P não serve). */
   pelaRede: (tipo: TipoDeSinal, dados: Record<string, unknown>) => Promise<void>
@@ -87,6 +99,8 @@ export class Par {
   ultimaAmostra: Amostra = 'neutra'
   /** Vezes que as trilhas remotas mudaram (a tela reatribui o `srcObject`). */
   versaoDasTrilhas = 0
+  estatisticas: EstatisticasDoPar | null = null
+  private bytesAnteriores: { em: number; envio: number; recebimento: number } | null = null
 
   private readonly o: OpcoesDoPar
   private tx: { audio?: RTCRtpTransceiver; cam?: RTCRtpTransceiver; tela?: RTCRtpTransceiver } = {}
@@ -140,7 +154,12 @@ export class Par {
       if (s === 'connected' || s === 'completed') {
         clearTimeout(this.timers.prazo)
         clearTimeout(this.timers.espera)
-        if (this.estado.fase !== 'conectado') this.conectadoEm = Date.now()
+        if (this.estado.fase !== 'conectado') {
+          this.conectadoEm = Date.now()
+          // Antes da negociação o `sender` não tem codificação e recusa o teto
+          // (era assim que o lado que responde ficava sem limite nenhum): aplica agora.
+          void this.aplicarQualidade()
+        }
         this.transicao({ tipo: 'conectou' })
       } else if (s === 'disconnected') {
         this.transicao({ tipo: 'oscilou' })
@@ -291,6 +310,7 @@ export class Par {
       if (!this.tx.audio) this.atribuirTransceptores()
       await this.drenarCandidatos()
       await this.pc.setLocalDescription(await this.pc.createAnswer())
+      void this.aplicarQualidade()
       await this.esperarColeta()
       if (this.fechado || !this.pc.localDescription) return
       const resposta = this.pc.localDescription.sdp
@@ -431,7 +451,7 @@ export class Par {
   /** O vídeo que vai para ESTE par: nível da rede, tela e economia de dados do outro. */
   async aplicarQualidade(): Promise<void> {
     if (!this.tx.audio) return
-    const nivel = nivelDeVideo(this.o.perfil, this.qualidade.nivel, this.o.papelLocal)
+    const nivel = nivelDeVideo(this.o.perfil, this.qualidade.nivel, this.o.papelLocal, this.o.niveis)
     const pausar = nivel === null || this.outroNaoQuerVideo
     if (pausar !== this.videoPausado) {
       this.videoPausado = pausar
@@ -441,8 +461,9 @@ export class Par {
     const tela = !!this.trilhas.tela
     await aplicarAudio(this.tx.audio.sender)
     if (tela) {
-      await aplicarTela(this.tx.tela?.sender, TELA[this.o.perfil].maxBitrate, TELA[this.o.perfil].maxFramerate)
-      await aplicarNivelDeVideo(this.tx.cam?.sender, CAMERA_DURANTE_TELA)
+      const tela = this.o.niveis.tela[this.o.perfil]
+      await aplicarTela(this.tx.tela?.sender, tela.maxBitrate, tela.maxFramerate)
+      await aplicarNivelDeVideo(this.tx.cam?.sender, this.o.niveis.cameraDuranteTela)
     } else if (nivel) {
       await aplicarNivelDeVideo(this.tx.cam?.sender, nivel)
     }
@@ -455,10 +476,12 @@ export class Par {
   /** Uma amostra (a cada 2 s): ajusta o nível e devolve a leitura para o consumo. */
   async amostrar(): Promise<LeituraDoPar | null> {
     if (this.fechado || this.estado.fase !== 'conectado') return null
-    const l = await lerEstatisticas(this.pc)
-    const nivel = nivelDeVideo(this.o.perfil, this.qualidade.nivel, this.o.papelLocal)
+    const l = await lerEstatisticas(this.pc, this.tx.cam?.mid)
+    this.guardarEstatisticas(l)
+    const nivel = nivelDeVideo(this.o.perfil, this.qualidade.nivel, this.o.papelLocal, this.o.niveis)
     const agora = Date.now()
-    const acomodando = agora - this.conectadoEm < AQUECIMENTO_MS || agora - this.nivelMudouEm < ACOMODACAO_MS
+    // Adaptação desligada pelo admin: mede (para as estatísticas), mas não muda o nível.
+    const acomodando = !this.o.niveis.adaptativo || agora - this.conectadoEm < AQUECIMENTO_MS || agora - this.nivelMudouEm < ACOMODACAO_MS
     this.ultimaAmostra = acomodando ? 'neutra' : classificarAmostra({ ...l, alvoBitrate: nivel?.maxBitrate ?? 100_000 })
     const novo = proximaQualidade(this.qualidade, this.ultimaAmostra, 3)
     const mudou = novo.nivel !== this.qualidade.nivel
@@ -469,6 +492,25 @@ export class Par {
       this.o.aoMudar()
     }
     return l
+  }
+
+  private guardarEstatisticas(l: LeituraDoPar): void {
+    const em = Date.now()
+    const antes = this.bytesAnteriores
+    const segundos = antes ? (em - antes.em) / 1000 : 0
+    const kbps = (agora: number | undefined, anterior: number | undefined) =>
+      agora === undefined || anterior === undefined || segundos <= 0 || agora < anterior ? null : Math.round(((agora - anterior) * 8) / segundos / 1000)
+    const video = (v: LeituraDoPar['envio'], anterior: number | undefined) => (v ? { fps: v.fps, largura: v.largura, altura: v.altura, kbps: kbps(v.bytes, anterior) } : null)
+    this.estatisticas = {
+      tipo: l.tipo,
+      rttMs: l.rttMs === null ? null : Math.round(l.rttMs),
+      perdaPct: l.perda === null ? null : Math.round(l.perda * 1000) / 10,
+      nivel: this.qualidade.nivel,
+      envio: video(l.envio, antes?.envio),
+      recebimento: video(l.recebimento, antes?.recebimento),
+      motivoDoLimite: l.motivoDoLimite,
+    }
+    this.bytesAnteriores = { em, envio: l.envio?.bytes ?? 0, recebimento: l.recebimento?.bytes ?? 0 }
   }
 
   get rotulo(): 'boa' | 'instavel' | 'fraca' {

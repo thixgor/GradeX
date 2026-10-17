@@ -230,8 +230,18 @@ describe('sala: qualidade adaptativa', () => {
     expect(classificarAmostra({ perda: 0.03, rttMs: 80, bitrateDisponivel: 2e6, limitadoPorBanda: false, alvoBitrate: 600_000 })).toBe('neutra')
   })
 
-  it('desce em 2 amostras ruins e sobe só depois de 10 boas', () => {
+  it('encostar no próprio teto de bitrate não rebaixa a qualidade (a causa dos ~10 fps)', () => {
+    // Chrome diz "bandwidth" quando o vídeo bate no maxBitrate que nós pusemos.
+    expect(classificarAmostra({ perda: 0, rttMs: 40, bitrateDisponivel: 3e6, limitadoPorBanda: true, alvoBitrate: 800_000 })).toBe('boa')
+    // Sem estimativa de banda (Firefox): não desce, mas também não sobe.
+    expect(classificarAmostra({ perda: 0, rttMs: 40, bitrateDisponivel: null, limitadoPorBanda: true, alvoBitrate: 800_000 })).toBe('neutra')
+    // Banda estimada abaixo do alvo continua ruim.
+    expect(classificarAmostra({ perda: 0, rttMs: 40, bitrateDisponivel: 500_000, limitadoPorBanda: true, alvoBitrate: 800_000 })).toBe('ruim')
+  })
+
+  it('desce em 3 amostras ruins e sobe só depois de 10 boas', () => {
     let e = { nivel: 0, ruins: 0, boas: 0 }
+    e = proximaQualidade(e, 'ruim', 3)
     e = proximaQualidade(e, 'ruim', 3)
     expect(e.nivel).toBe(0)
     e = proximaQualidade(e, 'ruim', 3)
@@ -244,7 +254,7 @@ describe('sala: qualidade adaptativa', () => {
 
   it('nunca passa do último nível (só áudio) nem sobe acima do primeiro', () => {
     let e = { nivel: 3, ruins: 0, boas: 0 }
-    e = proximaQualidade(proximaQualidade(e, 'ruim', 3), 'ruim', 3)
+    for (let i = 0; i < 6; i++) e = proximaQualidade(e, 'ruim', 3)
     expect(e.nivel).toBe(3)
     e = { nivel: 0, ruins: 0, boas: 0 }
     for (let i = 0; i < 30; i++) e = proximaQualidade(e, 'boa', 3)
@@ -252,9 +262,12 @@ describe('sala: qualidade adaptativa', () => {
   })
 
   it('no grupo o teto por par é menor, com um pouco mais para o monitor; último nível pausa o vídeo', () => {
-    expect(nivelDeVideo('individual', 0, 'aluno')!.maxBitrate).toBe(600_000)
-    expect(nivelDeVideo('grupo', 0, 'aluno')!.maxBitrate).toBe(300_000)
-    expect(nivelDeVideo('grupo', 0, 'monitor')!.maxBitrate).toBe(400_000)
+    expect(nivelDeVideo('individual', 0, 'aluno')).toEqual({ maxBitrate: 800_000, escala: 1, maxFramerate: 30 })
+    // Primeiro degrau 1:1 corta bitrate, não movimento.
+    expect(nivelDeVideo('individual', 1, 'aluno')!.maxFramerate).toBe(24)
+    expect(nivelDeVideo('grupo', 0, 'aluno')!.maxBitrate).toBe(350_000)
+    expect(nivelDeVideo('grupo', 0, 'aluno')!.maxFramerate).toBe(24)
+    expect(nivelDeVideo('grupo', 0, 'monitor')!.maxBitrate).toBe(450_000)
     expect(nivelDeVideo('grupo', 3, 'monitor')).toBeNull()
   })
 })

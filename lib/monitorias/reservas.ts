@@ -27,6 +27,8 @@ import { VERSAO_OFERTA } from './documentos/contrato'
 import { VERSAO_TERMOS } from './documentos/termos'
 import { configDaSala } from './sala/config'
 import { vagasMaximasPelaSala } from './sala/regras'
+import { revogarCredencialTurn } from './sala/turn'
+import { tirarDaSala } from './sala/expulsar'
 import type { UsuarioMonitoria } from './servidor'
 import type { Anuncio, Bloqueio, Contrato, Participacao, Proposta, Reserva, StatusReserva, Tutor } from './tipos'
 import type { Ticket } from '@/lib/types'
@@ -1009,6 +1011,7 @@ export async function cancelar(input: {
       { $set: { status: 'cancelada', updatedAt: new Date() } },
     )
     if (!saiu.modifiedCount) throw new ErroMonitoria(409, 'Seu assento mudou agora (o pagamento pode ter acabado de cair). Recarregue a página.')
+    await tirarDaSala(id, [part.alunoId])
     await c.contratos.updateOne({ participacaoId: idDe(part), status: 'aguardando_assinaturas' }, { $set: { status: 'rescindido', updatedAt: new Date() } })
     await depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo)
     return { resultado: 'cancelada' }
@@ -1049,6 +1052,7 @@ export async function cancelar(input: {
   const para: StatusReserva = papel === 'monitor' ? 'cancelada_monitor' : 'cancelada_aluno'
   await transitar(c, reserva, para, { motivoCancelamento: motivo, canceladaPor: atorId })
   await Promise.all([
+    tirarDaSala(id),
     liberarBlocos(id),
     rescindirContratosDaReserva(id),
     c.cotasGratis.deleteMany({ reservaId: id }),
@@ -1115,6 +1119,7 @@ export async function cancelarPeloSuporte(input: {
   const id = idDe(reserva)
   await transitar(c, reserva, 'cancelada_suporte', { motivoCancelamento: motivo, canceladaPor: adminId })
   await Promise.all([
+    tirarDaSala(id),
     liberarBlocos(id),
     rescindirContratosDaReserva(id),
     c.cotasGratis.deleteMany({ reservaId: id }),
@@ -1269,6 +1274,34 @@ export async function criarSalaDeTeste(admin: { userId: string; nome: string }, 
   return { ...doc, _id: res.insertedId as any }
 }
 
+/**
+ * Apaga salas de teste por completo: reserva, assentos, chat, sala, anotações e
+ * os avisos do sino que apontavam para ela. Quem ainda estiver dentro cai na
+ * próxima renovação/sinal (a sala deixa de existir) e o relé dele é revogado.
+ * Só toca em reserva `teste: true` — nunca numa aula de verdade.
+ */
+export async function excluirSalasDeTeste(reservaIds: string[]): Promise<number> {
+  const validos = reservaIds.filter((id) => ObjectId.isValid(id))
+  if (!validos.length) return 0
+  const c = await cols()
+  const testes = await c.reservas.find({ _id: { $in: validos.map((id) => new ObjectId(id)) }, teste: true } as any, { projection: { _id: 1 } }).toArray()
+  const ids = testes.map((x) => idDe(x))
+  if (!ids.length) return 0
+  const salas = await c.salas.find({ _id: { $in: ids } }, { projection: { participantes: 1 } }).toArray()
+  const turn = salas.flatMap((s) => Object.values(s.participantes || {}).map((p) => p.turnUsuario).filter((u): u is string => !!u))
+  const db = await getDb()
+  await Promise.all([
+    c.participacoes.deleteMany({ reservaId: { $in: ids } }),
+    c.mensagens.deleteMany({ reservaId: { $in: ids } }),
+    c.salas.deleteMany({ _id: { $in: ids } }),
+    c.anotacoes.deleteMany({ reservaId: { $in: ids } }),
+    db.collection('notifications').deleteMany({ actionUrl: { $in: ids.flatMap((id) => [`/monitorias/reservas/${id}`, `/monitorias/reservas/${id}/sala`]) } }),
+    ...turn.slice(0, 20).map((u) => revogarCredencialTurn(u).catch(() => false)),
+  ])
+  const res = await c.reservas.deleteMany({ _id: { $in: testes.map((x) => x._id) }, teste: true } as any)
+  return res.deletedCount
+}
+
 /** Entrada pelo convite da sala de teste: um assento grátis (idempotente). */
 export async function entrarNaSalaDeTeste(codigo: string, usuario: { userId: string; nome: string }, limiteDeAlunos: number, agora = new Date()): Promise<string> {
   const c = await cols()
@@ -1311,7 +1344,7 @@ async function concluirSaida(
     const agora = await c.participacoes.findOne({ _id: part._id as any }, { projection: { status: 1 } })
     if (agora?.status !== 'reembolso_processando') throw new ErroMonitoria(502, r.erro)
   }
-  await depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo)
+  await Promise.all([depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo), tirarDaSala(idDe(reserva), [part.alunoId])])
   return { resultado: r.ok ? 'reembolsada' : 'reembolso_em_andamento' }
 }
 

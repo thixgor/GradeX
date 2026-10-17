@@ -5,7 +5,10 @@ import { motion } from 'framer-motion'
 import {
   FlipHorizontal2,
   Hand,
+  Highlighter,
+  Link2,
   Loader2,
+  PictureInPicture2,
   Minus,
   MessageSquare,
   Mic,
@@ -28,6 +31,7 @@ import {
   Video,
   VideoOff,
   Volume2,
+  Wand2,
   WifiOff,
   X,
   Zap,
@@ -35,8 +39,12 @@ import {
 import { Avatar } from '@/components/monitorias/base'
 import { EditorDeAnotacoes } from '@/components/monitorias/anotacoes'
 import { useCelularEmPe, useViewportVisivel } from '@/hooks/use-viewport-visivel'
+import { useBrilhoDaVoz } from '@/hooks/use-brilho-da-voz'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
-import { podeEscolherSaida } from '@/lib/monitorias/sala/cliente/midia'
+import { criarMedidor, podeEscolherSaida } from '@/lib/monitorias/sala/cliente/midia'
+import { copiarLink } from '@/lib/monitorias/sala/cliente/copiar'
+import { EFEITOS_DE_VOZ, espelharPrevia } from '@/lib/monitorias/sala/cliente/efeitos'
+import type { MensagemDeAnotacao, Traco } from '@/lib/monitorias/sala/tela-anotada'
 import type { ControladorDaSala, EstadoDaSalaNaTela, ParticipanteNaTela } from '@/lib/monitorias/sala/cliente/controlador'
 import { cn } from '@/lib/utils'
 import { MarcaDagua, MarcaNoTopo } from './marca'
@@ -44,6 +52,11 @@ import { AudioRemoto, destravarAudios, VideoAoVivo } from './midia-ao-vivo'
 import { PainelDePessoas } from './painel-pessoas'
 import { SeletorDeAparelho } from './saguao'
 import { TesteDeSom } from './teste-de-som'
+import { PainelDeEfeitos } from './painel-efeitos'
+import { BarraFlutuante, useJanelaFlutuante } from './barra-flutuante'
+import { CamadaDeAnotacao, FerramentasDeAnotacao, useAnotador } from './camada-anotacao'
+import { BotaoDeReacoes, FileiraDeReacoes, ReacoesFlutuantes } from './reacoes'
+import { EstatisticasDaConexao } from './estatisticas-conexao'
 
 type Painel = 'chat' | 'pessoas' | 'anotacoes'
 
@@ -147,6 +160,7 @@ const ESTADO_DO_PAR: Record<ParticipanteNaTela['fase'], string | null> = {
 
 function Quadro({
   nome,
+  foto = null,
   papel,
   stream,
   versao,
@@ -160,11 +174,16 @@ function Quadro({
   fixado = false,
   contain = false,
   eu = false,
+  espelhar = eu,
+  selo,
   pequeno = false,
+  lerNivel = null,
   aoTentar,
   aoFixar,
 }: {
   nome: string
+  /** Foto do perfil, para quando a câmera está desligada. */
+  foto?: string | null
   papel?: 'monitor' | 'aluno'
   stream: MediaStream | null
   versao: number
@@ -178,30 +197,65 @@ function Quadro({
   fixado?: boolean
   contain?: boolean
   eu?: boolean
+  /** Prévia da própria câmera espelhada (padrão: só a minha). */
+  espelhar?: boolean
+  /** Lembrete discreto no canto (ex.: efeito de voz ligado). */
+  selo?: string
   pequeno?: boolean
   aoTentar?: () => void
   /** Duplo clique fixa no palco (atalho do painel Pessoas). */
   aoFixar?: () => void
+  /** Nível da voz (0 a 1), lido a cada quadro: o brilho acompanha a fala. Estável (useCallback). */
+  lerNivel?: (() => number) | null
 }) {
   const estadoDoPar = ESTADO_DO_PAR[fase]
   const mostrarVideo = !!stream && camLigada && fase !== 'perdido'
+  const raiz = useRef<HTMLDivElement>(null)
+  useBrilhoDaVoz(raiz, micLigado ? lerNivel : null)
   return (
     <motion.div
+      ref={raiz}
+      // O brilho é uma sombra; o anel da mão (também sombra) vai junto, senão um apagaria o outro.
+      style={
+        lerNivel
+          ? {
+              boxShadow: [
+                mao ? '0 0 0 2px rgb(10 10 10), 0 0 0 4px rgb(252 211 77)' : null,
+                '0 0 calc(var(--voz, 0) * 30px) calc(var(--voz, 0) * 3px) hsl(var(--primary) / calc(var(--voz, 0) * 0.75))',
+              ]
+                .filter(Boolean)
+                .join(', '),
+            }
+          : undefined
+      }
       initial={{ opacity: 0, scale: 0.94 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       onDoubleClick={aoFixar}
       className={cn(
-        'relative h-full w-full overflow-hidden rounded-2xl bg-neutral-900 transition-shadow',
-        falando && 'ring-2 ring-primary ring-offset-2 ring-offset-neutral-950',
-        mao && !falando && 'ring-2 ring-amber-300 ring-offset-2 ring-offset-neutral-950',
+        'group/quadro relative h-full w-full overflow-hidden rounded-2xl bg-neutral-900',
+        // Sem leitor de nível (par sem áudio ainda): o anel de antes, por `falando`.
+        !lerNivel && falando && 'ring-2 ring-primary ring-offset-2 ring-offset-neutral-950',
+        !lerNivel && mao && !falando && 'ring-2 ring-amber-300 ring-offset-2 ring-offset-neutral-950',
       )}
     >
+      {/* Brilho de quem fala: anel e reflexo de vidro na intensidade da voz (variável --voz). */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[4] rounded-2xl"
+        style={{
+          boxShadow:
+            'inset 0 0 0 calc(var(--voz, 0) * 4px) hsl(var(--primary) / calc(0.4 + var(--voz, 0) * 0.6)), inset 0 0 calc(var(--voz, 0) * 46px) hsl(var(--primary) / calc(var(--voz, 0) * 0.5))',
+          background: 'linear-gradient(145deg, rgb(255 255 255 / calc(var(--voz, 0) * 0.24)) 0%, rgb(255 255 255 / 0) 42%)',
+        }}
+      />
       {mostrarVideo ? (
-        <VideoAoVivo stream={stream} versao={versao} espelhar={eu} contain={contain} rotulo={eu ? 'Sua câmera' : `Câmera de ${nome}`} />
+        <VideoAoVivo stream={stream} versao={versao} espelhar={espelhar} contain={contain} rotulo={eu ? 'Sua câmera' : `Câmera de ${nome}`} />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <Avatar nome={nome} tamanho={pequeno ? 36 : 76} />
+          <span className="rounded-[32%] transition-transform duration-75" style={{ transform: 'scale(calc(1 + var(--voz, 0) * 0.1))', boxShadow: '0 0 calc(var(--voz, 0) * 34px) hsl(var(--primary) / calc(var(--voz, 0) * 0.8))' }}>
+            <Avatar nome={nome} url={foto} tamanho={pequeno ? 40 : 96} className={cn('shadow-lg shadow-black/40', !lerNivel && falando && 'ring-2 ring-primary')} />
+          </span>
         </div>
       )}
 
@@ -215,6 +269,12 @@ function Quadro({
             </button>
           )}
         </div>
+      )}
+
+      {selo && (
+        <span className={cn('absolute left-2 top-2 rounded-full bg-black/60 font-medium text-white backdrop-blur', pequeno ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-xs')} title="Efeito de voz ligado">
+          {selo}
+        </span>
       )}
 
       {videoPausado && fase === 'conectado' && !pequeno && (
@@ -243,7 +303,13 @@ function Quadro({
       )}
 
       <div className="absolute inset-x-1.5 bottom-1.5 flex items-center justify-between gap-2 sm:inset-x-2 sm:bottom-2">
-        <span className={cn('inline-flex min-w-0 items-center gap-1.5 rounded-lg bg-black/55 px-2 py-1 text-white', pequeno ? 'text-[11px]' : 'text-xs')}>
+        <span
+          className={cn(
+            'inline-flex min-w-0 items-center gap-1.5 rounded-lg bg-black/55 px-2 py-1 text-white ring-white/30 transition-all duration-200',
+            'group-data-[falando=sim]/quadro:bg-white/15 group-data-[falando=sim]/quadro:ring-1 group-data-[falando=sim]/quadro:backdrop-blur-md',
+            pequeno ? 'text-[11px]' : 'text-xs',
+          )}
+        >
           {!micLigado && <MicOff className="h-3.5 w-3.5 shrink-0 text-rose-300" aria-label="microfone desligado" />}
           <span className="truncate">{eu ? 'Você' : nome}</span>
           {papel === 'monitor' && !eu && <span className="rounded bg-primary/90 px-1 text-[10px] font-semibold text-primary-foreground">Monitor</span>}
@@ -263,8 +329,30 @@ function Quadro({
  * Tela compartilhada. Texto pequeno de slide é ilegível num celular: botões de
  * zoom e toque duplo ampliam, e arrastar move (rolagem nativa, sem biblioteca).
  */
-function PalcoDaTela({ stream, versao, legenda, zoomavel, acao }: { stream: MediaStream | null; versao: number; legenda: string; zoomavel: boolean; acao?: React.ReactNode }) {
+function PalcoDaTela({
+  stream,
+  versao,
+  legenda,
+  zoomavel,
+  acao,
+  anotacao,
+}: {
+  stream: MediaStream | null
+  versao: number
+  legenda: string
+  zoomavel: boolean
+  acao?: React.ReactNode
+  /** Traços por cima da tela; `pode` = eu posso riscar (monitor ou dono da tela). */
+  anotacao?: { tracos: Traco[]; pode: boolean; meuPid: string | null; aoAnotar: (m: MensagemDeAnotacao) => void }
+}) {
   const [zoom, setZoom] = useState(1)
+  const [alvo, setAlvo] = useState<HTMLDivElement | null>(null)
+  const [anotando, setAnotando] = useState(false)
+  const anotador = useAnotador(anotacao?.meuPid ?? null, anotacao?.tracos ?? [], anotacao?.aoAnotar ?? (() => {}))
+  const desenhando = anotando && !!anotacao?.pode
+  useEffect(() => {
+    if (!anotacao?.pode) setAnotando(false)
+  }, [anotacao?.pode])
   const caixa = useRef<HTMLDivElement>(null)
   const ultimoToque = useRef(0)
   useEffect(() => {
@@ -273,7 +361,7 @@ function PalcoDaTela({ stream, versao, legenda, zoomavel, acao }: { stream: Medi
     el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2
     el.scrollTop = (el.scrollHeight - el.clientHeight) / 2
   }, [zoom])
-  const alternar = () => zoomavel && setZoom((z) => (z === 1 ? 2 : 1))
+  const alternar = () => zoomavel && !desenhando && setZoom((z) => (z === 1 ? 2 : 1))
   return (
     <div className="relative min-h-0 flex-1 overflow-hidden rounded-2xl bg-black">
       <div
@@ -289,10 +377,35 @@ function PalcoDaTela({ stream, versao, legenda, zoomavel, acao }: { stream: Medi
           ultimoToque.current = agora
         }}
       >
-        <div style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}>
+        <div ref={setAlvo} className="relative" style={{ width: `${zoom * 100}%`, height: `${zoom * 100}%` }}>
           <VideoAoVivo stream={stream} versao={versao} contain rotulo={legenda} />
+          {anotacao && (
+            <CamadaDeAnotacao alvo={alvo} tracos={anotacao.tracos} desenhando={desenhando} ferramenta={anotador.ferramenta} cor={anotador.cor} aoAnotar={anotacao.aoAnotar} />
+          )}
         </div>
       </div>
+      {anotacao?.pode &&
+        (desenhando ? (
+          <div className="absolute left-1/2 top-2.5 z-10 -translate-x-1/2">
+            <FerramentasDeAnotacao
+              ferramenta={anotador.ferramenta}
+              cor={anotador.cor}
+              aoFerramenta={anotador.setFerramenta}
+              aoCor={anotador.setCor}
+              aoDesfazer={anotador.desfazer}
+              aoLimpar={anotador.limpar}
+              aoFechar={() => setAnotando(false)}
+            />
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setAnotando(true)}
+            className="absolute right-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-neutral-900/60 px-3 py-1.5 text-xs font-semibold text-white shadow-lg backdrop-blur-xl hover:bg-neutral-900/80"
+          >
+            <Highlighter className="h-3.5 w-3.5" aria-hidden /> Anotar na tela
+          </button>
+        ))}
       <span className="absolute bottom-3 left-3 max-w-[60%] truncate rounded-lg bg-black/60 px-2 py-1 text-xs text-white">{legenda}</span>
       {acao}
       {zoomavel && (
@@ -469,6 +582,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
   const [painel, setPainel] = useState<Painel | null>(null)
   const [mais, setMais] = useState(false)
   const [ajustes, setAjustes] = useState(false)
+  const [efeitosAbertos, setEfeitosAbertos] = useState(false)
   const [confirmarSaida, setConfirmarSaida] = useState(false)
   const [audioBloqueado, setAudioBloqueado] = useState(false)
   const [anuncio, setAnuncio] = useState('')
@@ -476,6 +590,11 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
   const [pipNoTopo, setPipNoTopo] = useState(false)
   const [fixado, setFixado] = useState<string | null>(null)
   const [maoNova, setMaoNova] = useState<string | null>(null)
+  const [oferecerBarra, setOferecerBarra] = useState(false)
+  const janela = useJanelaFlutuante()
+  const fecharJanela = janela.fechar
+  // Saiu da sala: a barra flutuante fecha junto.
+  useEffect(() => () => fecharJanela(), [fecharJanela])
   const { altura, topo } = useViewportVisivel()
   const emPe = useCelularEmPe()
 
@@ -488,7 +607,84 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
   const chatNaSala = !!estado.config?.chatNaSala
   const podeTela = estado.podeCompartilhar && !!estado.config?.compartilharTela && (ehMonitor || estado.permissoes.telaAlunos)
   const maosLevantadas = remotos.filter((p) => p.mao).length
+  const vozComEfeito = estado.efeitos.voz !== 'nenhum' ? EFEITOS_DE_VOZ.find((e) => e.id === estado.efeitos.voz) : undefined
   const aoBloquear = useCallback(() => setAudioBloqueado(true), [])
+
+  // Compartilhar a tela já tenta abrir a barra flutuante (para controlar e
+  // anotar de fora da aba). Sem o gesto ainda valendo, oferece o botão.
+  const alternarTela = async () => {
+    const ia = !estado.local.tela
+    await ctrl.alternarTela()
+    if (ia && janela.suportada && !janela.aberta && ctrl.obter().local.tela) {
+      if (!(await janela.abrir())) setOferecerBarra(true)
+    }
+  }
+  useEffect(() => {
+    if (!estado.local.tela || janela.aberta) setOferecerBarra(false)
+  }, [estado.local.tela, janela.aberta])
+
+  // Controles do sistema (central de mídia e o PiP automático do Chrome ao
+  // trocar de aba numa videochamada): microfone, câmera, desligar, barra flutuante.
+  const abrirJanela = janela.abrir
+  useEffect(() => {
+    const ms = typeof navigator !== 'undefined' ? (navigator.mediaSession as (MediaSession & { setActionHandler: (a: string, h: (() => void) | null) => void }) | undefined) : undefined
+    if (!ms) return
+    const acoes: Array<[string, () => void]> = [
+      ['togglemicrophone', () => void ctrl.alternarMic()],
+      ['togglecamera', () => void ctrl.alternarCam()],
+      ['hangup', () => ctrl.sair()],
+    ]
+    if (janela.suportada) acoes.push(['enterpictureinpicture', () => void abrirJanela()])
+    for (const [acao, fn] of acoes) {
+      try {
+        ms.setActionHandler(acao, fn)
+      } catch {
+        /* ação desconhecida neste navegador */
+      }
+    }
+    return () => {
+      for (const [acao] of acoes) {
+        try {
+          ms.setActionHandler(acao, null)
+        } catch {
+          /* nada */
+        }
+      }
+    }
+  }, [ctrl, janela.suportada, abrirJanela])
+  useEffect(() => {
+    const ms = typeof navigator !== 'undefined' ? (navigator.mediaSession as (MediaSession & { setMicrophoneActive?: (v: boolean) => void; setCameraActive?: (v: boolean) => void }) | undefined) : undefined
+    try {
+      ms?.setMicrophoneActive?.(micLigado)
+      ms?.setCameraActive?.(camLigada)
+    } catch {
+      /* sem suporte */
+    }
+  }, [micLigado, camLigada])
+
+  // Brilho de quem fala: o meu vem do microfone cru (analisador local); o dos
+  // outros, do receptor de áudio de cada um. Leitores estáveis por pessoa.
+  const medidor = useRef<ReturnType<typeof criarMedidor> | null>(null)
+  useEffect(() => {
+    const trilha = estado.local.audio
+    if (!trilha) return
+    const m = criarMedidor(trilha)
+    medidor.current = m
+    return () => {
+      m.parar()
+      if (medidor.current === m) medidor.current = null
+    }
+  }, [estado.local.audio])
+  const lerMeuNivel = useCallback(() => medidor.current?.ler() ?? 0, [])
+  const leitores = useRef(new Map<string, () => number>())
+  const lerNivelDe = (pid: string) => {
+    let ler = leitores.current.get(pid)
+    if (!ler) {
+      ler = () => Math.min(1, ctrl.nivelDeAudio(pid) * 3.5)
+      leitores.current.set(pid, ler)
+    }
+    return ler
+  }
   const alternarPainel = (p: Painel) => setPainel((atual) => (atual === p ? null : p))
 
   useEffect(() => {
@@ -569,12 +765,26 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
   const nomeDoEsperado = ehMonitor ? 'os alunos' : 'o monitor'
 
   const meuQuadro = (pequeno: boolean) => (
-    <Quadro nome={estado.eu?.nome || 'Você'} stream={estado.local.camera} versao={estado.local.versao} camLigada={camLigada} micLigado={micLigado} mao={estado.mao} eu pequeno={pequeno} />
+    <Quadro
+      nome={estado.eu?.nome || 'Você'}
+      foto={estado.eu?.foto}
+      stream={estado.local.camera}
+      versao={estado.local.versao}
+      camLigada={camLigada}
+      micLigado={micLigado}
+      mao={estado.mao}
+      eu
+      espelhar={espelharPrevia(estado.efeitos.video)}
+      selo={vozComEfeito ? `${vozComEfeito.emoji} ${pequeno ? '' : vozComEfeito.rotulo}`.trim() : undefined}
+      pequeno={pequeno}
+      lerNivel={lerMeuNivel}
+    />
   )
   const quadroDe = (p: ParticipanteNaTela, opcoes: { pequeno?: boolean; contain?: boolean } = {}) => (
     <Quadro
       key={p.pid}
       nome={p.nome}
+      foto={p.foto}
       papel={p.papel}
       stream={p.camera}
       versao={p.versaoDasTrilhas}
@@ -590,6 +800,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
       pequeno={opcoes.pequeno}
       aoTentar={() => ctrl.tentarDeNovo(p.pid)}
       aoFixar={() => setFixado((f) => (f === p.pid ? null : p.pid))}
+      lerNivel={p.fase === 'conectado' ? lerNivelDe(p.pid) : null}
     />
   )
   const faixaDeMiniaturas = (lista: ParticipanteNaTela[]) => (
@@ -603,21 +814,26 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
     </div>
   )
 
+  const aoAnotar = useCallback((m: MensagemDeAnotacao) => ctrl.anotar(m), [ctrl])
+  const anotacaoDoPalco = { tracos: estado.tracos, pode: ctrl.possoAnotar, meuPid: estado.eu?.pid ?? null, aoAnotar }
+  const nomeDe = (pid: string) => (pid === estado.eu?.pid ? 'Você' : remotos.find((p) => p.pid === pid)?.nome || 'Alguém')
+
   const destaque = fixado ? remotos.find((p) => p.pid === fixado) : undefined
   let palco: React.ReactNode
   if (telaRemota || compartilhando) {
     palco = (
       <div className="flex h-full flex-col gap-2 lg:flex-row">
         {telaRemota ? (
-          <PalcoDaTela stream={telaRemota.tela} versao={telaRemota.versaoDasTrilhas} legenda={`Tela de ${telaRemota.nome}`} zoomavel />
+          <PalcoDaTela stream={telaRemota.tela} versao={telaRemota.versaoDasTrilhas} legenda={`Tela de ${telaRemota.nome}`} zoomavel anotacao={anotacaoDoPalco} />
         ) : (
           <PalcoDaTela
             stream={estado.local.tela}
             versao={estado.local.versao}
             legenda="Você está compartilhando a tela"
             zoomavel={false}
+            anotacao={anotacaoDoPalco}
             acao={
-              <button type="button" onClick={() => void ctrl.alternarTela()} className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500">
+              <button type="button" onClick={() => void alternarTela()} className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-full bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-500">
                 <ScreenShareOff className="h-3.5 w-3.5" aria-hidden /> Parar
               </button>
             }
@@ -738,6 +954,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
         <div className="relative min-w-0 flex-1">
           {palco}
           {codigo && <MarcaDagua codigo={codigo} monitor={monitorNome} eu={estado.eu?.nome || ''} papel={ehMonitor ? 'monitor' : 'aluno'} />}
+          <ReacoesFlutuantes reacoes={estado.reacoes} nomeDe={nomeDe} />
 
           {/* Abaixo da marca d'água até o desktop largo, onde as duas cabem lado a lado. */}
           <div className="pointer-events-none absolute inset-x-0 top-12 z-10 flex flex-col items-center gap-2 px-3 sm:top-14 lg:top-2">
@@ -790,6 +1007,34 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
                 Você encerrou a aula para os alunos.
               </Faixa>
             )}
+            {oferecerBarra && (
+              <Faixa
+                acao={
+                  <span className="flex gap-1.5">
+                    <button type="button" onClick={() => void janela.abrir().then((ok) => ok && setOferecerBarra(false))} className="rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-neutral-900">
+                      Abrir
+                    </button>
+                    <button type="button" onClick={() => setOferecerBarra(false)} className="rounded-lg px-2 py-1.5 text-xs font-semibold text-white/80" aria-label="Agora não">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </span>
+                }
+              >
+                <PictureInPicture2 className="mr-1.5 inline h-4 w-4" aria-hidden /> Barra flutuante: controle a aula e anote por cima da tela mesmo fora desta aba.
+              </Faixa>
+            )}
+            {estado.efeitos.pesado && (
+              <Faixa
+                tom="alerta"
+                acao={
+                  <button type="button" onClick={() => ctrl.definirEfeitoDeVideo('nenhum')} className="rounded-lg bg-neutral-950 px-3 py-1.5 text-xs font-semibold text-white">
+                    Desligar efeito
+                  </button>
+                }
+              >
+                O efeito de câmera está pesado para este aparelho: seu vídeo está saindo travado.
+              </Faixa>
+            )}
             {estado.aviso && <Faixa>{estado.aviso}</Faixa>}
             {erroDoMonitor && <Faixa tom="alerta">{erroDoMonitor}</Faixa>}
           </div>
@@ -823,7 +1068,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
           {camLigada ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
         </BotaoDeControle>
         {podeTela && (
-          <BotaoDeControle rotulo={compartilhando ? 'Parar de compartilhar a tela' : 'Compartilhar a tela'} ativo={!compartilhando} pressionado={compartilhando} className="hidden sm:inline-flex" onClick={() => void ctrl.alternarTela()}>
+          <BotaoDeControle rotulo={compartilhando ? 'Parar de compartilhar a tela' : 'Compartilhar a tela'} ativo={!compartilhando} pressionado={compartilhando} className="hidden sm:inline-flex" onClick={() => void alternarTela()}>
             {compartilhando ? <ScreenShareOff className="h-5 w-5" /> : <ScreenShare className="h-5 w-5" />}
           </BotaoDeControle>
         )}
@@ -849,6 +1094,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
         <BotaoDeControle rotulo="Minhas anotações" expandido={painel === 'anotacoes'} className="hidden sm:inline-flex" onClick={() => alternarPainel('anotacoes')}>
           <PencilLine className="h-5 w-5" />
         </BotaoDeControle>
+        <BotaoDeReacoes aoReagir={(e) => ctrl.reagir(e)} className="hidden sm:block" />
         <BotaoDeControle rotulo="Mais opções" expandido={mais} onClick={() => setMais(true)}>
           <MoreHorizontal className="h-5 w-5" />
         </BotaoDeControle>
@@ -859,12 +1105,19 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
 
       {mais && (
         <Dialogo titulo="Mais opções" aoFechar={() => setMais(false)}>
+          <FileiraDeReacoes
+            aoReagir={(e) => {
+              ctrl.reagir(e)
+              setMais(false)
+            }}
+            className="-mx-1 mb-2 justify-between rounded-2xl bg-white/5 p-1 sm:hidden"
+          />
           <div className="-mx-2 space-y-0.5">
             <div className="sm:hidden">
               {!ehMonitor && <ItemDaFolha icone={Users} rotulo="Pessoas" detalhe="Quem está na sala e mãos levantadas" onClick={() => { setMais(false); setPainel('pessoas') }} />}
               <ItemDaFolha icone={PencilLine} rotulo="Minhas anotações" detalhe="Salvas sozinhas; baixe em PDF" onClick={() => { setMais(false); setPainel('anotacoes') }} />
               {podeTela && (
-                <ItemDaFolha icone={compartilhando ? ScreenShareOff : ScreenShare} rotulo={compartilhando ? 'Parar de compartilhar a tela' : 'Compartilhar a tela'} ativo={compartilhando} onClick={() => { setMais(false); void ctrl.alternarTela() }} />
+                <ItemDaFolha icone={compartilhando ? ScreenShareOff : ScreenShare} rotulo={compartilhando ? 'Parar de compartilhar a tela' : 'Compartilhar a tela'} ativo={compartilhando} onClick={() => { setMais(false); void alternarTela() }} />
               )}
             </div>
             {estado.aparelhos.cameras.length > 1 && camLigada && (
@@ -877,7 +1130,38 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
               ativo={estado.economiaDeDados}
               onClick={() => ctrl.alternarEconomiaDeDados()}
             />
-            <ItemDaFolha icone={Settings2} rotulo="Câmera, microfone e som" detalhe="Trocar de aparelho" onClick={() => { setMais(false); setAjustes(true) }} />
+            <ItemDaFolha
+              icone={Wand2}
+              rotulo="Efeitos de câmera e voz"
+              detalhe={estado.efeitos.video !== 'nenhum' || estado.efeitos.voz !== 'nenhum' ? 'Ligados: toque para trocar' : 'Filtros, molduras e voz de robô'}
+              ativo={estado.efeitos.video !== 'nenhum' || estado.efeitos.voz !== 'nenhum'}
+              onClick={() => { setMais(false); setEfeitosAbertos(true) }}
+            />
+            <ItemDaFolha icone={Settings2} rotulo="Câmera, microfone e som" detalhe="Trocar de aparelho e ver a conexão" onClick={() => { setMais(false); setAjustes(true) }} />
+            {janela.suportada && (
+              <ItemDaFolha
+                icone={PictureInPicture2}
+                rotulo={janela.aberta ? 'Fechar a barra flutuante' : 'Barra flutuante'}
+                detalhe="Controles e anotações por cima de tudo, mesmo fora desta aba"
+                ativo={janela.aberta}
+                onClick={() => {
+                  setMais(false)
+                  if (janela.aberta) janela.fechar()
+                  else void janela.abrir()
+                }}
+              />
+            )}
+            {ehMonitor && estado.reserva?.convite && (
+              <ItemDaFolha
+                icone={Link2}
+                rotulo="Copiar link da aula"
+                detalhe={estado.reserva.convite.includes('/teste/') ? 'Convite da sala de teste: quem abrir entra como aluno' : 'Só entra quem tem vaga nesta monitoria'}
+                onClick={async () => {
+                  setMais(false)
+                  if (await copiarLink(estado.reserva!.convite!)) ctrl.avisar('Link da aula copiado!')
+                }}
+              />
+            )}
             {ehMonitor && (
               <ItemDaFolha
                 icone={Power}
@@ -901,7 +1185,16 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
             <SeletorDeAparelho rotulo="Microfone" valor={estado.prefs.micId} opcoes={estado.aparelhos.microfones} aoMudar={(id) => void ctrl.trocarAparelho('mic', id)} />
             {podeEscolherSaida() && <SeletorDeAparelho rotulo="Alto-falante" valor={estado.prefs.saidaId} opcoes={estado.aparelhos.saidas} aoMudar={(id) => void ctrl.trocarAparelho('saida', id)} />}
             <TesteDeSom trilha={estado.local.audio} micLigado={micLigado} saidaId={estado.prefs.saidaId} tema="escuro" />
+            <EstatisticasDaConexao estado={estado} />
           </div>
+        </Dialogo>
+      )}
+
+      <BarraFlutuante janela={janela.janela} ctrl={ctrl} estado={estado} fim={fim} aoFechar={janela.fechar} />
+
+      {efeitosAbertos && (
+        <Dialogo titulo="Efeitos de câmera e voz" aoFechar={() => setEfeitosAbertos(false)}>
+          <PainelDeEfeitos ctrl={ctrl} estado={estado} tema="escuro" comPrevia />
         </Dialogo>
       )}
 

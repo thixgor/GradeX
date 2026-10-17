@@ -20,6 +20,7 @@ import { centavosParaReais, formatarCentavos } from './dinheiro'
 import { colecoes, idDe } from './db'
 import { estornarRepasse, liberarSePronta } from './financeiro'
 import { avisar } from './avisos'
+import { tirarDaSala } from './sala/expulsar'
 import type { DevolucaoAvulsa, Participacao, Reembolso } from './tipos'
 
 const PODE_REEMBOLSAR: Participacao['status'][] = ['paga', 'concluida', 'reembolso_processando']
@@ -78,6 +79,8 @@ export async function reembolsarParticipacao(input: {
   }
 
   const ehTotal = reembolso.valorCentavos >= part.valorCentavos - jaReembolsado
+  // Reembolso integral = a pessoa saiu da aula: deixa a sala agora (o parcial do suporte não tira ninguém).
+  if (ehTotal) await tirarDaSala(part.reservaId, [part.alunoId])
   // Nova tentativa de um reembolso já pedido: a anterior pode ter dado certo no
   // MP e falhado só do nosso lado (gravar a resposta). Pergunta ao MP ANTES de
   // pedir de novo — a chave de idempotência é a segunda trava, não a única.

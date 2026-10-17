@@ -17,7 +17,7 @@ import 'server-only'
  * só as regras de `reservas.ts`/`varredura.ts`.
  */
 
-import { randomBytes } from 'crypto'
+import { createHash, randomBytes } from 'crypto'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/lib/mongodb'
 import { colecoes, ehDuplicada, idDe } from '../db'
@@ -35,6 +35,7 @@ import {
   presente,
   primeiroNome,
   salaCheia,
+  entrouAlemDoLimite,
   SINAL_TTL_MS,
   situacaoDoTurn,
   statusHttpDaRecusa,
@@ -48,6 +49,7 @@ import { gerarCredenciaisTurn, STUN_PADRAO, turnConfigurado, type ServidorIce } 
 import type { CredenciaisDaSala, EstadoDoSaguao, ParticipanteVisivel, RespostaDoSinal, RetratoDaSala, UsoDaConexao } from './mensagens'
 import type { EnvioValidado } from './esquemas'
 import { detectarContato } from '../contato-inteligente'
+import { avatarPorId } from '../avatares'
 
 export interface SessaoDaSala {
   userId: string
@@ -117,6 +119,10 @@ interface Contexto {
   reservaId: string
   acesso: ResultadoAcesso
   nome: string
+  /** Retrato da conta (id do catálogo): o mesmo do /profile. */
+  avatar: string | null
+  /** Alunos com assento ativo (pid e nome) — o monitor vê quem ainda não chegou. */
+  alunosEsperados: Array<{ pid: string; nome: string }>
   /** Nome do monitor (marca d'água da sala). */
   nomeDoMonitor: string
   config: ConfigSala
@@ -129,18 +135,25 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
   const id = idDe(reserva)
   const ehMonitor = reserva.tutorUserId === userId
   const c = colecoes(await getDb())
-  const [part, tutor, config, sala, comAula] = await Promise.all([
+  const [part, tutor, config, sala, assentos, usuario] = await Promise.all([
     ehMonitor
       ? null
       : c.participacoes.findOne({ reservaId: id, alunoId: userId }, { projection: { status: 1, valorCentavos: 1, reembolsos: 1, alunoNome: 1 } }),
     c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1 } }),
     configDaSala(),
     c.salas.findOne({ _id: id }, { projection: PROJECAO_SALA }) as Promise<SalaLida | null>,
-    c.participacoes.countDocuments({ reservaId: id, status: { $in: ASSENTOS_COM_AULA } } as any),
+    c.participacoes
+      .find({ reservaId: id, status: { $in: ASSENTOS_COM_AULA } } as any, { projection: { alunoId: 1, alunoNome: 1, status: 1, valorCentavos: 1, reembolsos: 1 } })
+      .limit(50)
+      .toArray(),
+    ObjectId.isValid(userId) ? c.users.findOne({ _id: new ObjectId(userId) } as any, { projection: { avatar: 1, name: 1 } }) : null,
   ])
   // Sala de teste sem perfil de monitor: o nome do monitor é o do admin.
   const nomeDoAdminDeTeste =
-    reserva.teste && !tutor ? (await c.users.findOne({ _id: new ObjectId(reserva.tutorUserId) } as any, { projection: { name: 1 } }))?.name || 'Equipe DomineAqui' : null
+    reserva.teste && !tutor
+      ? (ehMonitor ? (usuario as { name?: string } | null)?.name : (await c.users.findOne({ _id: new ObjectId(reserva.tutorUserId) } as any, { projection: { name: 1 } }))?.name) ||
+        'Equipe DomineAqui'
+      : null
   const acesso = avaliarAcessoSala({
     ehMonitor,
     assento: part ? { status: part.status, ativo: !!papelPeloAssento(reserva, userId, part) } : null,
@@ -159,10 +172,13 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     reservaId: id,
     acesso,
     nome: (ehMonitor ? tutor?.nome || nomeDoAdminDeTeste : part?.alunoNome) || 'Participante',
+    avatar: avatarPorId((usuario as { avatar?: string } | null)?.avatar)?.id || null,
     nomeDoMonitor: tutor?.nome || nomeDoAdminDeTeste || 'Monitor',
     config,
     sala,
-    esperados: Math.min(config.limiteMalha, 1 + comAula),
+    // Quem está saindo com reembolso integral não é mais esperado (mesma regra do acesso).
+    alunosEsperados: assentos.filter((a) => papelPeloAssento(reserva, a.alunoId, a)).map((a) => ({ pid: pidDe(id, a.alunoId), nome: a.alunoNome || 'Aluno' })),
+    esperados: Math.min(config.limiteMalha, 1 + assentos.filter((a) => papelPeloAssento(reserva, a.alunoId, a)).length),
   }
 }
 
@@ -194,6 +210,7 @@ export function retratoDaSala(sala: SalaLida, meuPid: string, leitor: PapelNaSal
       pid,
       papel: p.papel,
       nome: nomeVisivel(p.nome, p.papel, leitor),
+      foto: avatarPorId(p.avatar)?.url || null,
       presente: aqui,
       cx: aqui ? p.conexao : null,
       eu,
@@ -213,6 +230,7 @@ export function retratoDaSala(sala: SalaLida, meuPid: string, leitor: PapelNaSal
       leitor === 'monitor'
         ? Object.entries(sala.removidos || {}).map(([pid, r]) => ({ pid, nome: r.nome, por: r.por }))
         : [],
+    fora: Object.keys(sala.removidos || {}),
   }
 }
 
@@ -226,7 +244,7 @@ export async function estadoDoSaguao(reservaId: string, userId: string, agora: D
   const presentes = ctx.sala
     ? Object.entries(ctx.sala.participantes || {})
         .filter(([pid, p]) => pid !== meuPid && presente(p, agora))
-        .map(([, p]) => ({ papel: p.papel, nome: nomeVisivel(p.nome, p.papel, papel) }))
+        .map(([, p]) => ({ papel: p.papel, nome: nomeVisivel(p.nome, p.papel, papel), foto: avatarPorId(p.avatar)?.url || null }))
     : []
   const a = ctx.acesso
   return {
@@ -236,6 +254,7 @@ export async function estadoDoSaguao(reservaId: string, userId: string, agora: D
     papel,
     reserva: { id: ctx.reservaId, titulo: ctx.reserva.anuncioTitulo, inicio: ctx.reserva.inicio?.toISOString() || null, fim: ctx.reserva.fim?.toISOString() || null },
     presentes,
+    foto: avatarPorId(ctx.avatar)?.url || null,
     config: { compartilharTela: ctx.config.compartilharTela, chatNaSala: ctx.config.chatNaSala },
     linkReuniao: ctx.config.linkExternoPermitido ? ctx.reserva.linkReuniao || null : null,
   }
@@ -280,12 +299,14 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
           [`${P}.uid`]: sessao.userId,
           [`${P}.papel`]: papel,
           [`${P}.nome`]: ctx.nome,
+          ...(ctx.avatar ? { [`${P}.avatar`]: ctx.avatar } : {}),
           [`${P}.conexao`]: cx,
           [`${P}.entrouEm`]: agora,
           [`${P}.vistoEm`]: agora,
           ...(ice.usuario ? { [`${P}.turnUsuario`]: ice.usuario } : {}),
         },
-        $unset: { [`${P}.saiuEm`]: '' },
+        // Tirou a foto do perfil depois de entrar: a sala acompanha.
+        $unset: { [`${P}.saiuEm`]: '', ...(ctx.avatar ? {} : { [`${P}.avatar`]: '' }) },
         $inc: { versao: 1, [`${P}.epoca`]: 1 },
         $push: { registro: { $each: [{ id: cx, pid, papel, entrou: agora, ate: agora }], $slice: -200 } },
       } as any,
@@ -301,6 +322,11 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
   }
   if (!sala) throw new Error('sala não gravada')
   const ep = sala.participantes[pid]?.epoca || 1
+  if (entrouAlemDoLimite(sala.participantes || {}, pid, ctx.config.limiteMalha, agora)) {
+    // Duas entradas ao mesmo tempo passaram da conferência de antes: a última desfaz.
+    await c.salas.updateOne({ _id: ctx.reservaId, [`${P}.conexao`]: cx } as any, { $set: { [`${P}.conexao`]: null, [`${P}.saiuEm`]: agora }, $inc: { versao: 1 } } as any)
+    return { ok: false, status: 409, motivo: 'cheia', mensagem: `A sala comporta ${ctx.config.limiteMalha} pessoas ao mesmo tempo e já está completa.` }
+  }
 
   if (papel === 'monitor' && !sala.avisouEntradaMonitor) await avisarEntradaDoMonitor(ctx.reservaId, ctx.reserva.anuncioTitulo, sala, agora)
 
@@ -309,13 +335,22 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
   return {
     token,
     expiraEm: expiraEm.toISOString(),
-    eu: { pid, papel, nome: ctx.nome, cx, ep },
+    eu: { pid, papel, nome: ctx.nome, foto: avatarPorId(ctx.avatar)?.url || null, cx, ep },
     iceServers: ice.servidores as RTCIceServer[],
     turn: !!ice.usuario,
     sala: retratoDaSala(sala, pid, papel, agora),
-    config: { compartilharTela: ctx.config.compartilharTela, chatNaSala: ctx.config.chatNaSala, limiteMalha: ctx.config.limiteMalha },
+    config: { compartilharTela: ctx.config.compartilharTela, chatNaSala: ctx.config.chatNaSala, limiteMalha: ctx.config.limiteMalha, video: ctx.config.video },
     janela: { inicio: ctx.reserva.inicio!.toISOString(), fim: ctx.reserva.fim!.toISOString(), abreEm: abreEm.toISOString(), fechaEm: fechaEm.toISOString() },
-    reserva: { id: ctx.reservaId, titulo: ctx.reserva.anuncioTitulo, monitor: nomeVisivel(ctx.nomeDoMonitor, 'monitor', papel) },
+    reserva: {
+      id: ctx.reservaId,
+      titulo: ctx.reserva.anuncioTitulo,
+      monitor: nomeVisivel(ctx.nomeDoMonitor, 'monitor', papel),
+      // Só o monitor: o link para mandar aos alunos (na sala de teste, o convite que dá o assento).
+      ...(papel === 'monitor'
+        ? { convite: ctx.reserva.teste && ctx.reserva.codigoTeste ? `/monitorias/teste/${ctx.reserva.codigoTeste}` : `/monitorias/reservas/${ctx.reservaId}/sala` }
+        : {}),
+    },
+    ...(papel === 'monitor' ? { esperadosNomes: ctx.alunosEsperados } : {}),
   }
 }
 
@@ -345,12 +380,21 @@ export async function renovarNaSala(
   claims: ClaimsDaSala | null,
   uso: UsoDaConexao | undefined,
   agora = new Date(),
-): Promise<{ token: string; expiraEm: string; sala: RetratoDaSala } | Recusa> {
+): Promise<{ token: string; expiraEm: string; sala: RetratoDaSala; esperadosNomes?: Array<{ pid: string; nome: string }> } | Recusa> {
   if (!claims || claims.sala !== reservaId || claims.uid !== sessao.userId || claims.sj !== vinculoDaSessao(sessao)) return TOKEN_INVALIDO
   const ctx = await contexto(reservaId, sessao.userId, agora)
-  if (!ctx.acesso.ok) return recusaDe(ctx.acesso)
   const P = `participantes.${claims.pid}`
   const c = colecoes(await getDb())
+  if (!ctx.acesso.ok) {
+    // Perdeu o acesso no meio da aula (reembolso, cancelamento, fim): solta a
+    // conexão gravada. Sem isto ela seguia "presente", ocupando vaga e podendo
+    // sinalizar até o token vencer.
+    await c.salas.updateOne(
+      { _id: ctx.reservaId, [`${P}.conexao`]: claims.cx } as any,
+      { $set: { [`${P}.conexao`]: null, [`${P}.saiuEm`]: agora, updatedAt: agora }, $inc: { versao: 1 } } as any,
+    )
+    return recusaDe(ctx.acesso)
+  }
   const [sala] = await Promise.all([
     c.salas.findOneAndUpdate(
       { _id: ctx.reservaId, [`${P}.conexao`]: claims.cx, [`${P}.epoca`]: claims.ep } as any,
@@ -369,7 +413,12 @@ export async function renovarNaSala(
   if (!sala) return SUBSTITUIDA
   const expiraEm = new Date(Math.min(agora.getTime() + TOKEN_TTL_MS, ctx.acesso.fechaEm.getTime()))
   const token = await emitirTokenDaSala({ ...claims }, expiraEm)
-  return { token, expiraEm: expiraEm.toISOString(), sala: retratoDaSala(sala, claims.pid, claims.papel, agora) }
+  return {
+    token,
+    expiraEm: expiraEm.toISOString(),
+    sala: retratoDaSala(sala, claims.pid, claims.papel, agora),
+    ...(claims.papel === 'monitor' ? { esperadosNomes: ctx.alunosEsperados } : {}),
+  }
 }
 
 // ─── Sinais ────────────────────────────────────────────────────────────
@@ -385,8 +434,19 @@ function motivoDaConexaoPerdida(sala: Pick<Sala, 'removidos'> | null, pid: strin
   return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
 }
 
-export function etagDaSala(r: Pick<RetratoDaSala, 'seq' | 'versao' | 'encerrada'>): string {
-  return `W/"s${r.seq}.v${r.versao}.e${r.encerrada ? 1 : 0}"`
+/**
+ * Muda quando muda o que a tela mostra. Inclui QUEM está presente: a presença
+ * vence sozinha (sem escrita, sem `versao` nova) e os outros precisam saber
+ * para fechar a conexão direta com quem sumiu.
+ */
+export function etagDaSala(r: Pick<RetratoDaSala, 'seq' | 'versao' | 'encerrada'> & { participantes?: RetratoDaSala['participantes'] }): string {
+  const presentes = (r.participantes || [])
+    .filter((p) => p.presente)
+    .map((p) => p.pid)
+    .sort()
+    .join(',')
+  const marca = presentes ? createHash('sha1').update(presentes).digest('base64url').slice(0, 8) : '0'
+  return `W/"s${r.seq}.v${r.versao}.e${r.encerrada ? 1 : 0}.p${marca}"`
 }
 
 /**

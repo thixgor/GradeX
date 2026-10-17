@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { motion, useReducedMotion, type Variants } from 'framer-motion'
-import { ArrowLeft, Clock, Loader2, Mic, MicOff, MousePointerClick, RefreshCw, RotateCw, ShieldCheck, Sparkles, Users, Video, VideoOff } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion, type Variants } from 'framer-motion'
+import { ArrowLeft, Clock, Loader2, Mic, MicOff, MousePointerClick, RefreshCw, RotateCw, ShieldCheck, Sparkles, Users, Video, VideoOff, Wand2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, CaixaAviso, CaixaErro } from '@/components/monitorias/base'
 import { formatarEmBrasilia, horaEmBrasilia } from '@/lib/fuso-brasilia'
@@ -15,6 +15,8 @@ import { VideoAoVivo } from './midia-ao-vivo'
 import { AjudaDeAparelho } from './ajuda-permissao'
 import { MarcaClara } from './marca'
 import { TesteDeSom } from './teste-de-som'
+import { PainelDeEfeitos } from './painel-efeitos'
+import { EFEITOS_DE_VIDEO, EFEITOS_DE_VOZ, espelharPrevia } from '@/lib/monitorias/sala/cliente/efeitos'
 
 const COM_PROBLEMA: EstadoDoAparelho[] = ['negado', 'indisponivel', 'em_uso', 'erro', 'pagina']
 
@@ -134,6 +136,7 @@ const entrada: Variants = {
 
 export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: ControladorDaSala; estado: EstadoDaSalaNaTela; saguao: EstadoDoSaguao | null; erroSaguao: string }) {
   const reduzir = useReducedMotion()
+  const [efeitosAbertos, setEfeitosAbertos] = useState(false)
   const [agora, setAgora] = useState(() => Date.now())
   const abreEm = saguao?.acesso.motivo === 'nao_abriu' ? saguao.acesso.abreEm : estado.abreEm
   useEffect(() => {
@@ -174,7 +177,7 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
       </header>
 
       <main className="grid flex-1 place-items-center px-4 pb-10 pt-2">
-        <div className="grid w-full max-w-5xl grid-cols-1 items-center gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-10">
+        <div className={cn('grid w-full max-w-5xl grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-10', efeitosAbertos ? 'items-start' : 'items-center')}>
           {/* Prévia */}
           <motion.section aria-label="Prévia da sua câmera" {...anim(0)}>
             <div
@@ -182,10 +185,16 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
               style={micLigado ? { boxShadow: `0 0 0 ${2 + nivel * 7}px hsl(var(--primary) / ${0.18 + nivel * 0.55}), 0 20px 50px -20px rgba(0,0,0,.45)` } : undefined}
             >
               {local.camera ? (
-                <VideoAoVivo stream={local.camera} versao={local.versao} espelhar rotulo="Sua câmera" />
+                <VideoAoVivo stream={local.camera} versao={local.versao} espelhar={espelharPrevia(estado.efeitos.video)} rotulo="Sua câmera" />
               ) : (
                 <div className="flex h-full flex-col items-center justify-center gap-3 text-neutral-300">
-                  {local.cam === 'pedindo' ? <Loader2 className="h-8 w-8 animate-spin" aria-hidden /> : <VideoOff className="h-8 w-8" aria-hidden />}
+                  {local.cam === 'pedindo' ? (
+                    <Loader2 className="h-8 w-8 animate-spin" aria-hidden />
+                  ) : saguao?.foto ? (
+                    <Avatar nome="Você" url={saguao.foto} tamanho={88} className="shadow-lg shadow-black/40" />
+                  ) : (
+                    <VideoOff className="h-8 w-8" aria-hidden />
+                  )}
                   <p className="text-sm">
                     {local.cam === 'pedindo' ? 'Esperando você permitir a câmera…' : local.cam === 'desligado' ? 'Câmera desligada' : 'Câmera indisponível'}
                   </p>
@@ -220,6 +229,23 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
                 >
                   {camLigada ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
                 </motion.button>
+                {(estado.efeitos.suportaVideo || estado.efeitos.suportaVoz) && (
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setEfeitosAbertos((v) => !v)}
+                    aria-expanded={efeitosAbertos}
+                    aria-label="Efeitos de câmera e voz"
+                    title="Efeitos de câmera e voz"
+                    className={cn(
+                      'relative inline-flex h-12 w-12 touch-manipulation items-center justify-center rounded-full transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white',
+                      efeitosAbertos ? 'bg-white text-neutral-900' : 'bg-white/15 text-white hover:bg-white/25',
+                    )}
+                  >
+                    <Wand2 className="h-5 w-5" />
+                    {(estado.efeitos.video !== 'nenhum' || estado.efeitos.voz !== 'nenhum') && <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-neutral-900" aria-hidden />}
+                  </motion.button>
+                )}
                 {micLigado && (
                   <span className="ml-1 inline-flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-xs text-white">
                     <BarrasDoMicrofone nivel={nivel} /> {nivel > 0.12 ? 'Estamos te ouvindo!' : 'Fale para testar'}
@@ -227,6 +253,29 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
                 )}
               </div>
             </div>
+            {(estado.efeitos.video !== 'nenhum' || estado.efeitos.voz !== 'nenhum') && !efeitosAbertos && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Efeitos ligados:{' '}
+                {[EFEITOS_DE_VIDEO.find((e) => e.id === estado.efeitos.video && e.id !== 'nenhum'), EFEITOS_DE_VOZ.find((e) => e.id === estado.efeitos.voz && e.id !== 'nenhum')]
+                  .filter(Boolean)
+                  .map((e) => `${e!.emoji} ${e!.rotulo}`)
+                  .join(' · ')}
+              </p>
+            )}
+            <AnimatePresence initial={false}>
+              {efeitosAbertos && (
+                <motion.div
+                  initial={reduzir ? false : { opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 rounded-2xl border border-border bg-card p-4">
+                    <PainelDeEfeitos ctrl={ctrl} estado={estado} tema="claro" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <p className="mt-3 flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
               A aula não é gravada pela DomineAqui. Câmera e microfone só ficam ligados enquanto esta tela estiver aberta.
@@ -257,7 +306,7 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
                     <div className="flex items-center gap-3">
                       <span className="relative flex -space-x-2">
                         {saguao.presentes.slice(0, 3).map((p) => (
-                          <Avatar key={p.nome} nome={p.nome} tamanho={34} className="ring-2 ring-card" />
+                          <Avatar key={p.nome} nome={p.nome} url={p.foto} tamanho={34} className="ring-2 ring-card" />
                         ))}
                         <span className="absolute -right-1 -top-1 h-3 w-3 animate-ping rounded-full bg-primary/70" aria-hidden />
                       </span>

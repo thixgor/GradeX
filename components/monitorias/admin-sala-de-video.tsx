@@ -9,6 +9,7 @@ import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import type { ConfigSala } from '@/lib/monitorias/tipos'
 import { cn } from '@/lib/utils'
 import { AdminSalaDeTeste } from './admin-sala-de-teste'
+import { QualidadeDoVideo } from './admin-qualidade-video'
 
 interface DadosDaSala {
   config: ConfigSala
@@ -124,7 +125,7 @@ export function AdminSalaDeVideo() {
           ligado={rascunho.linkExternoPermitido}
           onMudar={(v) => mudar({ linkExternoPermitido: v })}
         />
-        <Chave titulo="Compartilhar a tela" texto="No computador. Limitado a 5 quadros por segundo para não pesar na rede." ligado={rascunho.compartilharTela} onMudar={(v) => mudar({ compartilharTela: v })} />
+        <Chave titulo="Compartilhar a tela" texto="No computador. Quadros por segundo e teto em “Qualidade do vídeo”." ligado={rascunho.compartilharTela} onMudar={(v) => mudar({ compartilharTela: v })} />
         <Chave titulo="Chat na sala" texto="As mensagens vão para o chat da reserva (ficam registradas) e chegam ao vivo pela conexão direta." ligado={rascunho.chatNaSala} onMudar={(v) => mudar({ chatNaSala: v })} />
         <div className="flex items-start justify-between gap-4 py-3">
           <div>
@@ -145,6 +146,8 @@ export function AdminSalaDeVideo() {
           </select>
         </div>
       </section>
+
+      <QualidadeDoVideo valor={rascunho.video} aoMudar={(video) => mudar({ video })} />
 
       <section className="rounded-2xl border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
