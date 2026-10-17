@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Clock, Mic, Video } from 'lucide-react'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
@@ -31,9 +30,9 @@ export function CartaoSalaDeAula({ d, presenca }: { d: DetalheReserva; presenca:
         <p className="mt-1.5 flex items-center gap-1.5 text-sm text-muted-foreground">
           <Clock className="h-3.5 w-3.5" aria-hidden /> Abre às {horaEmBrasilia(sala.janela.abreEm)} ({ehMonitor ? '30' : '15'} min antes), direto aqui na DomineAqui.
         </p>
-        <Link href={href} className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium transition hover:bg-muted">
+        <a href={href} className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-sm font-medium transition hover:bg-muted">
           <Mic className="h-4 w-4 text-primary" aria-hidden /> Testar câmera e microfone
-        </Link>
+        </a>
       </div>
     )
   }
@@ -41,7 +40,7 @@ export function CartaoSalaDeAula({ d, presenca }: { d: DetalheReserva; presenca:
   const outro = ehMonitor ? (presenca?.presentes ? (presenca.presentes > 1 ? `${presenca.presentes} alunos estão na sala` : 'O aluno já está na sala') : 'Nenhum aluno na sala ainda') : presenca?.monitorPresente ? 'O monitor já está na sala' : 'O monitor ainda não entrou'
   const alguem = ehMonitor ? !!presenca?.presentes : !!presenca?.monitorPresente
   return (
-    <Link href={href}>
+    <a href={href}>
       <motion.div whileHover={{ y: -2 }} className="flex items-center gap-3 rounded-2xl bg-primary p-4 text-primary-foreground shadow-[0_12px_30px_-14px_hsl(var(--primary)/0.7)]">
         <span className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-foreground/15">
           <Video className="h-5 w-5" aria-hidden />
@@ -52,6 +51,6 @@ export function CartaoSalaDeAula({ d, presenca }: { d: DetalheReserva; presenca:
           <p className="text-xs text-primary-foreground/85">{outro}. Sem instalar nada.</p>
         </div>
       </motion.div>
-    </Link>
+    </a>
   )
 }

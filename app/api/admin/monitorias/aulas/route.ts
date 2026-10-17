@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
 
     const reservas = await c.reservas
       .find(condicoes.length ? ({ $and: condicoes } as any) : {}, {
-        projection: { anuncioTitulo: 1, status: 1, inicio: 1, fim: 1, tutorUserId: 1, tutorId: 1, solicitanteId: 1, motivoCancelamento: 1, disputa: 1, linkReuniao: 1 },
+        projection: { anuncioTitulo: 1, status: 1, inicio: 1, fim: 1, tutorUserId: 1, tutorId: 1, solicitanteId: 1, motivoCancelamento: 1, disputa: 1, linkReuniao: 1, teste: 1, proposta: 1 },
       })
       .sort(ordem)
       .limit(60)
@@ -95,6 +95,8 @@ export async function GET(request: NextRequest) {
           motivoCancelamento: r.motivoCancelamento || null,
           disputa: r.disputa ? { motivo: r.disputa.motivo, em: r.disputa.em } : null,
           temLinkExterno: !!r.linkReuniao,
+          teste: !!r.teste,
+          duracaoMin: r.proposta?.duracaoMin || null,
           alunos: assentos.filter((a) => a.reservaId === id).map((a) => ({ id: idDe(a), nome: a.alunoNome, status: a.status, valorCentavos: a.valorCentavos })),
           sala: sala ? salaParaOSuporte(sala, agora) : null,
           presenca: sala ? resumirPresenca(sala.registro || []) : [],

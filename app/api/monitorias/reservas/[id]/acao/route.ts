@@ -138,6 +138,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         return ok({ status: 'confirmada' })
       }
       case 'reportar': {
+        if (reserva.teste) throw new ErroMonitoria(409, 'Sala de teste: não há o que reportar.')
         const ticketId = await reportarProblema({ reserva, autor: ator, papel, motivo: seguro(corpo.motivo) })
         return ok({ status: 'em_disputa', ticketId })
       }
@@ -208,6 +209,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       }
       case 'avaliar': {
         if (papel === 'monitor') throw new ErroMonitoria(403, 'O monitor não se avalia.')
+        if (reserva.teste) throw new ErroMonitoria(409, 'Sala de teste não recebe avaliação.')
         await avaliar({ reserva, alunoId: sessao.userId, nota: corpo.nota, comentario: limparTexto(corpo.comentario) })
         return ok({ avaliado: true })
       }

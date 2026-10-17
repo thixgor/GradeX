@@ -179,7 +179,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   // 3. Lembretes (24h e 1h antes).
   const salaNativa = (await configDaSala()).salaNativaAtiva
   const proximas = await c.reservas
-    .find({ status: 'confirmada', inicio: { $gt: agora, $lte: new Date(agora.getTime() + 24 * H) } })
+    .find({ status: 'confirmada', teste: { $ne: true }, inicio: { $gt: agora, $lte: new Date(agora.getTime() + 24 * H) } } as any)
     .limit(LOTE)
     .toArray()
   for (const reserva of proximas) {
@@ -220,7 +220,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   }
 
   // 4. Aula acabou → realizada.
-  const terminadas = await c.reservas.find({ status: 'confirmada', fim: { $lt: agora } }).limit(LOTE).toArray()
+  const terminadas = await c.reservas.find({ status: 'confirmada', teste: { $ne: true }, fim: { $lt: agora } } as any).limit(LOTE).toArray()
   for (const reserva of terminadas) {
     await seguro(async () => {
       const res = await c.reservas.updateOne(
@@ -258,9 +258,23 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
     r.salasLimpas = res.modifiedCount
   })
 
+  // 4c. Salas de teste do admin: somem 7 dias depois (reserva, assentos, chat e sala).
+  await seguro(async () => {
+    const velhas = await c.reservas.find({ teste: true, createdAt: { $lt: new Date(agora.getTime() - 7 * 24 * H) } } as any, { projection: { _id: 1 } }).limit(LOTE).toArray()
+    if (!velhas.length) return
+    const ids = velhas.map((x) => idDe(x))
+    await Promise.all([
+      c.participacoes.deleteMany({ reservaId: { $in: ids } }),
+      c.mensagens.deleteMany({ reservaId: { $in: ids } }),
+      c.salas.deleteMany({ _id: { $in: ids } }),
+      c.anotacoes.deleteMany({ reservaId: { $in: ids } }),
+    ])
+    await c.reservas.deleteMany({ _id: { $in: velhas.map((x) => x._id) }, teste: true } as any)
+  })
+
   // 5. 48h depois sem disputa → concluída, valor liberado.
   const garantidas = await c.reservas
-    .find({ status: 'realizada', fim: { $lt: new Date(agora.getTime() - 48 * H) } })
+    .find({ status: 'realizada', teste: { $ne: true }, fim: { $lt: new Date(agora.getTime() - 48 * H) } } as any)
     .limit(LOTE)
     .toArray()
   for (const reserva of garantidas) {

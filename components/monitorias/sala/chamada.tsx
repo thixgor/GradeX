@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   FlipHorizontal2,
   Hand,
@@ -42,6 +43,7 @@ import { MarcaDagua, MarcaNoTopo } from './marca'
 import { AudioRemoto, destravarAudios, VideoAoVivo } from './midia-ao-vivo'
 import { PainelDePessoas } from './painel-pessoas'
 import { SeletorDeAparelho } from './saguao'
+import { TesteDeSom } from './teste-de-som'
 
 type Painel = 'chat' | 'pessoas' | 'anotacoes'
 
@@ -117,7 +119,10 @@ function IconeDeConexao({ nivel, className }: { nivel: 'boa' | 'instavel' | 'fra
 
 function Faixa({ children, acao, tom = 'info' }: { children: React.ReactNode; acao?: React.ReactNode; tom?: 'info' | 'alerta' | 'mao' }) {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: -10, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: 'spring', stiffness: 380, damping: 26 }}
       className={cn(
         'pointer-events-auto flex max-w-[min(92vw,560px)] items-center gap-3 rounded-xl px-3.5 py-2 text-sm shadow-lg backdrop-blur',
         tom === 'alerta' ? 'bg-amber-400/95 text-neutral-950' : tom === 'mao' ? 'bg-amber-300/95 text-neutral-950' : 'bg-neutral-800/95 text-white',
@@ -126,7 +131,7 @@ function Faixa({ children, acao, tom = 'info' }: { children: React.ReactNode; ac
     >
       <span className="min-w-0 flex-1">{children}</span>
       {acao}
-    </div>
+    </motion.div>
   )
 }
 
@@ -181,7 +186,10 @@ function Quadro({
   const estadoDoPar = ESTADO_DO_PAR[fase]
   const mostrarVideo = !!stream && camLigada && fase !== 'perdido'
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.94 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       onDoubleClick={aoFixar}
       className={cn(
         'relative h-full w-full overflow-hidden rounded-2xl bg-neutral-900 transition-shadow',
@@ -221,9 +229,15 @@ function Quadro({
             </span>
           )}
           {mao && (
-            <span className="rounded-full bg-amber-300 p-1.5 text-neutral-950 shadow" title="Mão levantada">
+            <motion.span
+              initial={{ scale: 0, y: 8 }}
+              animate={{ scale: 1, y: 0, rotate: [0, -16, 14, -10, 0] }}
+              transition={{ scale: { type: 'spring', stiffness: 500, damping: 15 }, rotate: { duration: 0.9, repeat: Infinity, repeatDelay: 1.4 } }}
+              className="inline-flex rounded-full bg-amber-300 p-1.5 text-neutral-950 shadow-lg shadow-amber-300/40"
+              title="Mão levantada"
+            >
               <Hand className={pequeno ? 'h-3 w-3' : 'h-4 w-4'} aria-label="mão levantada" />
-            </span>
+            </motion.span>
           )}
         </span>
       )}
@@ -241,7 +255,7 @@ function Quadro({
           </span>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -304,7 +318,10 @@ const TITULO_DO_PAINEL: Record<Painel, string> = { chat: 'Chat da aula', pessoas
 
 function CascaDoPainel({ painel, aoFechar, children }: { painel: Painel; aoFechar: () => void; children: React.ReactNode }) {
   return (
-    <aside
+    <motion.aside
+      initial={{ opacity: 0, y: 28 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 30 }}
       className="absolute inset-x-0 bottom-0 z-20 flex max-h-[78%] min-h-[45%] flex-col rounded-t-2xl border-t border-white/10 bg-neutral-900 shadow-2xl sm:static sm:z-auto sm:ml-3 sm:max-h-none sm:min-h-0 sm:w-80 sm:shrink-0 sm:rounded-2xl sm:border lg:w-96"
       aria-label={TITULO_DO_PAINEL[painel]}
     >
@@ -315,7 +332,7 @@ function CascaDoPainel({ painel, aoFechar, children }: { painel: Painel; aoFecha
         </button>
       </div>
       {children}
-    </aside>
+    </motion.aside>
   )
 }
 
@@ -346,11 +363,17 @@ function PainelDeChat({ estado, ctrl }: { estado: EstadoDaSalaNaTela; ctrl: Cont
           </p>
         ) : (
           estado.chat.map((m) => (
-            <div key={m.id} className={cn('max-w-[90%] rounded-2xl px-3 py-2 text-sm', m.minha ? 'ml-auto rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-white/10')}>
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+              className={cn('max-w-[90%] rounded-2xl px-3 py-2 text-sm', m.minha ? 'ml-auto rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-white/10')}
+            >
               {!m.minha && <p className="mb-0.5 text-[11px] font-semibold text-white/70">{m.nome}</p>}
               <p className="whitespace-pre-line break-words">{m.texto}</p>
               <p className={cn('mt-0.5 text-[10px]', m.minha ? 'text-primary-foreground/70' : 'text-white/50')}>{horaEmBrasilia(m.em)}</p>
-            </div>
+            </motion.div>
           ))
         )}
         <div ref={fim} />
@@ -877,6 +900,7 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
             <SeletorDeAparelho rotulo="Câmera" valor={estado.prefs.camId} opcoes={estado.aparelhos.cameras} aoMudar={(id) => void ctrl.trocarAparelho('cam', id)} />
             <SeletorDeAparelho rotulo="Microfone" valor={estado.prefs.micId} opcoes={estado.aparelhos.microfones} aoMudar={(id) => void ctrl.trocarAparelho('mic', id)} />
             {podeEscolherSaida() && <SeletorDeAparelho rotulo="Alto-falante" valor={estado.prefs.saidaId} opcoes={estado.aparelhos.saidas} aoMudar={(id) => void ctrl.trocarAparelho('saida', id)} />}
+            <TesteDeSom trilha={estado.local.audio} micLigado={micLigado} saidaId={estado.prefs.saidaId} tema="escuro" />
           </div>
         </Dialogo>
       )}

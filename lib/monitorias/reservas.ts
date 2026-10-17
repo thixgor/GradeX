@@ -19,7 +19,7 @@ import { precoPorPessoaCentavos } from './precos'
 import { blocosDaAula, cabeNaDisponibilidade, DIAS_MAXIMOS_DE_ANTECEDENCIA, duracoesPermitidas, formatarDuracao, inicioNaGrade } from './agenda'
 import { colecoes, ehDuplicada, idDe } from './db'
 import { negociavel, podeTransitar, STATUS_EM_ABERTO } from './estado'
-import { decidirCancelamento, prazoDePagamento, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
+import { decidirCancelamento, prazoDePagamento, regraDeAlterarHorario, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
 import { emitirContrato, nomeCivil, rescindirContratosDaReserva } from './contratos'
 import { avisar } from './avisos'
 import { reembolsarReserva, reembolsarParticipacao } from './reembolso'
@@ -1145,6 +1145,154 @@ export async function cancelarPeloSuporte(input: {
     })),
   )
   return { reembolsos }
+}
+
+/**
+ * O suporte muda o horário da monitoria (ou "inicia agora", para testar ou
+ * adiantar uma aula combinada). A agenda do monitor é trocada de forma
+ * segura: os blocos antigos saem, os novos entram pelo índice único (horário
+ * ocupado = 409 e os antigos voltam) e a reserva muda por compare-and-set.
+ * O contrato assinado guarda a data original; a mensagem do sistema e a
+ * auditoria registram a mudança.
+ */
+export async function alterarHorarioPeloSuporte(input: { reserva: Reserva; inicio: Date; duracaoMin: number; agora?: Date }): Promise<Reserva> {
+  const { reserva, duracaoMin } = input
+  const agora = input.agora || new Date()
+  const inicio = new Date(Math.floor(input.inicio.getTime() / 60_000) * 60_000)
+  const regra = regraDeAlterarHorario(reserva.status, inicio, agora)
+  if (!regra.ok) throw new ErroMonitoria(409, regra.motivo)
+  if (!reserva.proposta) throw new ErroMonitoria(409, 'Esta monitoria ainda não tem proposta.')
+  if (!Number.isInteger(duracaoMin) || duracaoMin < 15 || duracaoMin > 480) throw new ErroMonitoria(400, 'Duração entre 15 min e 8 h.')
+  const c = await cols()
+  const id = idDe(reserva)
+  const fim = new Date(inicio.getTime() + duracaoMin * 60_000)
+  const aguardando = reserva.status !== 'confirmada'
+  const prazo = aguardando ? prazoDePagamento(agora, inicio) : undefined
+
+  // Agenda do monitor (sala de teste não tem agenda).
+  const antigos = reserva.teste ? [] : await c.bloqueios.find({ reservaId: id }).toArray()
+  const devolverAntigos = async () => {
+    await c.bloqueios.deleteMany({ reservaId: id })
+    if (antigos.length) await c.bloqueios.insertMany(antigos.map(({ _id, ...b }) => b) as Bloqueio[], { ordered: false }).catch(() => {})
+  }
+  if (!reserva.teste) {
+    const tutor = await c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { disponibilidade: 1 } })
+    await c.bloqueios.deleteMany({ reservaId: id })
+    const travou = await reservarBlocos({
+      bloqueios: c.bloqueios,
+      tutorId: reserva.tutorId,
+      reservaId: id,
+      inicio,
+      duracaoMin,
+      intervaloMin: tutor?.disponibilidade?.intervaloMin || 0,
+      expiraEm: prazo || new Date(agora.getTime() + 60 * 60_000),
+    })
+    if (!travou) {
+      await devolverAntigos()
+      throw new ErroMonitoria(409, 'O monitor já tem outra aula nesse horário. Escolha outro.')
+    }
+    if (!aguardando) await firmarBlocos(id)
+  }
+
+  const atualizada = await c.reservas.findOneAndUpdate(
+    { _id: reserva._id as any, status: reserva.status, versao: reserva.versao },
+    {
+      $set: { inicio, fim, 'proposta.inicio': inicio, 'proposta.duracaoMin': duracaoMin, updatedAt: agora, ...(prazo ? { prazoPagamento: prazo } : {}) },
+      $unset: { lembretes: '' },
+      $inc: { versao: 1 },
+    } as any,
+    { returnDocument: 'after' },
+  )
+  if (!atualizada) {
+    if (!reserva.teste) await devolverAntigos()
+    throw new ErroMonitoria(409, 'A reserva mudou enquanto você agia. Recarregue.')
+  }
+  await c.salas.updateOne({ _id: id }, { $set: { fim, updatedAt: agora } })
+
+  const quando = formatarEmBrasilia(inicio, { weekday: 'long', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+  await mensagemDoSistema(c, id, `O suporte da DomineAqui mudou o horário da monitoria para ${quando} (Brasília), com ${duracaoMin} min.`)
+  if (!reserva.teste) {
+    const pessoas = await alunosDaReserva(c, id)
+    const comecaJa = inicio.getTime() <= agora.getTime() + 15 * 60_000
+    await avisar(
+      Array.from(new Set([reserva.tutorUserId, ...pessoas])).map((userId) => ({
+        userId,
+        titulo: comecaJa ? 'A monitoria começa agora' : 'Horário da monitoria alterado',
+        mensagem: `"${reserva.anuncioTitulo}": ${quando}.`,
+        url: comecaJa && !aguardando ? `/monitorias/reservas/${id}/sala` : urlReserva(id),
+        email: {
+          assunto: comecaJa ? `A monitoria começa agora: ${reserva.anuncioTitulo}` : `Novo horário: ${reserva.anuncioTitulo}`,
+          paragrafos: [`O suporte da DomineAqui ${comecaJa ? 'adiantou a monitoria para agora' : 'mudou o horário da monitoria'}.`],
+          linhas: [['Novo horário', `${quando} (Brasília)`], ['Duração', `${duracaoMin} min`]],
+          botao: comecaJa && !aguardando ? 'Entrar na sala' : 'Ver detalhes',
+        },
+      })),
+    )
+  }
+  return atualizada
+}
+
+/** Id "vazio" válido (24 hex): a sala de teste não tem anúncio nem perfil de monitor obrigatório. */
+const SEM_ID = '000000000000000000000000'
+
+/**
+ * Sala de teste do admin: uma reserva `teste` já confirmada, começando agora e
+ * com 90 min, em que o admin é o monitor. Quem tiver o link entra como aluno
+ * (assento grátis), sem anúncio, contrato ou pagamento. É a mesma sala de
+ * verdade — WebRTC, TURN, controles, anotações — para testar com um amigo.
+ */
+export async function criarSalaDeTeste(admin: { userId: string; nome: string }, agora = new Date()): Promise<Reserva> {
+  const c = await cols()
+  const tutor = await c.tutores.findOne({ userId: admin.userId }, { projection: { _id: 1 } })
+  const inicio = new Date(Math.floor(agora.getTime() / 60_000) * 60_000)
+  const duracaoMin = 90
+  const doc: Reserva = {
+    anuncioId: SEM_ID,
+    anuncioTitulo: 'Sala de teste',
+    tutorId: tutor ? idDe(tutor) : SEM_ID,
+    tutorUserId: admin.userId,
+    solicitanteId: admin.userId,
+    origem: 'gratis',
+    status: 'confirmada',
+    proposta: { id: randomUUID(), autorId: admin.userId, inicio, duracaoMin, vagas: 3, valorPorPessoaCentavos: 0, gratis: true, criadaEm: agora } as Proposta,
+    aceites: { aluno: agora, tutor: agora },
+    inicio,
+    fim: new Date(inicio.getTime() + duracaoMin * 60_000),
+    teste: true,
+    codigoTeste: randomBytes(9).toString('base64url'),
+    versao: 1,
+    ultimaAtividadeEm: agora,
+    createdAt: agora,
+    updatedAt: agora,
+  }
+  const res = await c.reservas.insertOne(doc as any)
+  return { ...doc, _id: res.insertedId as any }
+}
+
+/** Entrada pelo convite da sala de teste: um assento grátis (idempotente). */
+export async function entrarNaSalaDeTeste(codigo: string, usuario: { userId: string; nome: string }, limiteDeAlunos: number, agora = new Date()): Promise<string> {
+  const c = await cols()
+  const reserva = await c.reservas.findOne({ teste: true, codigoTeste: codigo })
+  if (!reserva) throw new ErroMonitoria(404, 'Convite inválido.')
+  if (!reserva.fim || reserva.fim.getTime() + 30 * 60_000 < agora.getTime() || reserva.status !== 'confirmada') {
+    throw new ErroMonitoria(410, 'Esta sala de teste já terminou. Peça um link novo.')
+  }
+  const id = idDe(reserva)
+  if (reserva.tutorUserId === usuario.userId) return id
+  const ja = await c.participacoes.findOne({ reservaId: id, alunoId: usuario.userId }, { projection: { _id: 1 } })
+  if (!ja) {
+    const ocupados = await c.participacoes.countDocuments({ reservaId: id })
+    if (ocupados >= limiteDeAlunos) throw new ErroMonitoria(409, 'A sala de teste está cheia.')
+    await c.participacoes.updateOne(
+      { reservaId: id, alunoId: usuario.userId },
+      {
+        $setOnInsert: { reservaId: id, alunoId: usuario.userId, alunoNome: usuario.nome.slice(0, 120), tutorId: reserva.tutorId, status: 'gratis', valorCentavos: 0, reembolsos: [], createdAt: agora },
+        $set: { updatedAt: agora },
+      } as any,
+      { upsert: true },
+    )
+  }
+  return id
 }
 
 /**

@@ -171,12 +171,12 @@ export function VisaoGeral({ dados, recarregar }: { dados: DadosPainel; recarreg
                         {!aberta && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
                       </Link>
                       {aberta && (
-                        <Link
+                        <a
                           href={`/monitorias/reservas/${r.id}/sala`}
                           className="mr-3 inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
                         >
                           <Video className="h-4 w-4" /> Entrar
-                        </Link>
+                        </a>
                       )}
                     </li>
                   )

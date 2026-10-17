@@ -100,3 +100,28 @@ export function prazoDePagamento(agora: Date, inicio: Date): Date {
   const duasAntes = inicio.getTime() - 2 * 3_600_000
   return new Date(Math.max(agora.getTime() + 15 * 60_000, Math.min(vinteQuatro, duasAntes)))
 }
+
+/**
+ * O suporte pode mudar o horário (ou "iniciar agora")? Pura, testada.
+ *  - confirmada: qualquer horário de agora (5 min de tolerância) até 90 dias;
+ *  - aguardando contrato/pagamento: só com 2 h de folga (o prazo de pagamento
+ *    termina 2 h antes da aula);
+ *  - o resto (em negociação, já realizada, encerradas): não.
+ */
+export function regraDeAlterarHorario(
+  status: StatusReserva,
+  inicio: Date,
+  agora: Date,
+): { ok: true } | { ok: false; motivo: string } {
+  if (Number.isNaN(inicio.getTime())) return { ok: false, motivo: 'Horário inválido.' }
+  if (inicio.getTime() > agora.getTime() + 90 * 24 * 3_600_000) return { ok: false, motivo: 'No máximo 90 dias à frente.' }
+  if (status === 'confirmada') {
+    return inicio.getTime() >= agora.getTime() - 5 * 60_000 ? { ok: true } : { ok: false, motivo: 'O novo horário não pode estar no passado.' }
+  }
+  if (status === 'aguardando_assinaturas' || status === 'aguardando_pagamento') {
+    return inicio.getTime() >= agora.getTime() + 2 * 3_600_000
+      ? { ok: true }
+      : { ok: false, motivo: 'Antes da confirmação do pagamento, o novo horário precisa estar pelo menos 2 h à frente.' }
+  }
+  return { ok: false, motivo: 'Só dá para mudar o horário de monitorias confirmadas ou aguardando contrato/pagamento.' }
+}

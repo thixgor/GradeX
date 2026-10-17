@@ -206,7 +206,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                       <h1 className="font-heading text-2xl font-bold">{r.status === 'confirmada' ? 'Monitoria confirmada' : assento.status === 'gratis' ? 'Aula grátis garantida!' : 'Pagamento confirmado!'}</h1>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {r.status === 'confirmada'
-                          ? 'Enviamos tudo para o seu e-mail. O link da reunião aparece na página da reserva.'
+                          ? 'Enviamos tudo para o seu e-mail. A aula acontece na sala de aula da DomineAqui, que abre na página da reserva um pouco antes do horário.'
                           : 'Assim que todos do grupo pagarem, a aula fica confirmada.'}
                       </p>
                     </div>

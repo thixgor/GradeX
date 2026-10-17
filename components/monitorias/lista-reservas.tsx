@@ -214,9 +214,9 @@ function Atalhos({ r, papel, salaNativa }: { r: ItemReserva; papel: 'aluno' | 'm
       )}
       <span className="ml-auto flex flex-wrap gap-1.5">
         {salaAberta && (
-          <Link href={`/monitorias/reservas/${r.id}/sala`} className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 font-semibold text-primary-foreground transition hover:bg-primary/90">
+          <a href={`/monitorias/reservas/${r.id}/sala`} className="inline-flex items-center gap-1 rounded-md bg-primary px-2 py-1 font-semibold text-primary-foreground transition hover:bg-primary/90">
             <Video className="h-3 w-3" /> Entrar na sala
-          </Link>
+          </a>
         )}
         {itens.map((x) => (
           <a key={x.rotulo} href={x.href} className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-muted-foreground transition hover:bg-primary/10 hover:text-primary">

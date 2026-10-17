@@ -299,6 +299,13 @@ export interface Reserva {
   entrandoEm?: Date
   /** Última atividade de cada lado — para "sem resposta há 72h". */
   ultimaAtividadeEm: Date
+  /**
+   * Sala de teste do admin (sem anúncio, contrato nem pagamento). Fica fora dos
+   * lembretes, da conclusão, das estatísticas e das avaliações; some em 7 dias.
+   */
+  teste?: boolean
+  /** Código do convite da sala de teste (`/monitorias/teste/<código>`). */
+  codigoTeste?: string
   createdAt: Date
   updatedAt: Date
 }

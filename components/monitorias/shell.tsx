@@ -13,7 +13,8 @@ import { NavMonitorias } from './nav-monitorias'
  */
 export function ShellMonitorias({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  if (ehRotaDaSala(pathname)) return <>{children}</>
+  // O convite da sala de teste também é tela própria (marca e um botão só).
+  if (ehRotaDaSala(pathname) || pathname?.startsWith('/monitorias/teste/')) return <>{children}</>
   return (
     <AppShell allowGuest headerTitle="Monitorias" headerSubtitle="Aulas com monitores da comunidade">
       <NavMonitorias />

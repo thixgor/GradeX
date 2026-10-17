@@ -11,7 +11,12 @@
 
 import { CAPTURA_VIDEO } from '../regras'
 
-export type EstadoDoAparelho = 'ligado' | 'desligado' | 'negado' | 'indisponivel' | 'em_uso' | 'erro'
+/**
+ * `pedindo`: o navegador está perguntando (a tela explica onde clicar).
+ * `pagina`: a própria página abriu sem permissão de usar o aparelho (navegação
+ * interna do site carregou a política de outra página) — só recarregar resolve.
+ */
+export type EstadoDoAparelho = 'ligado' | 'desligado' | 'pedindo' | 'negado' | 'indisponivel' | 'em_uso' | 'erro' | 'pagina'
 
 export interface ResultadoDaCaptura {
   audio: MediaStreamTrack | null
@@ -34,6 +39,33 @@ export function podeCompartilharTela(): boolean {
 
 export function podeEscolherSaida(): boolean {
   return typeof HTMLMediaElement !== 'undefined' && 'setSinkId' in HTMLMediaElement.prototype
+}
+
+/**
+ * A política da página permite o aparelho? (Chrome/Edge expõem; nos outros
+ * devolve `true` e quem decide é o pedido.) A sala carrega com
+ * `microphone=(self)`; uma navegação interna a partir de outra página do site
+ * herda `microphone=()` e o navegador recusa sem nem perguntar.
+ */
+export function politicaPermite(recurso: 'microphone' | 'camera'): boolean {
+  if (typeof document === 'undefined') return true
+  const d = document as unknown as { permissionsPolicy?: { allowsFeature: (f: string) => boolean }; featurePolicy?: { allowsFeature: (f: string) => boolean } }
+  try {
+    const p = d.permissionsPolicy || d.featurePolicy
+    return p ? p.allowsFeature(recurso) : true
+  } catch {
+    return true
+  }
+}
+
+/** Estado da permissão do navegador para um aparelho, quando dá para saber sem perguntar. */
+export async function estadoDaPermissao(recurso: 'microphone' | 'camera'): Promise<'granted' | 'denied' | 'prompt' | null> {
+  try {
+    const r = await navigator.permissions?.query({ name: recurso as PermissionName })
+    return r ? (r.state as 'granted' | 'denied' | 'prompt') : null
+  } catch {
+    return null
+  }
 }
 
 function estadoDoErro(err: unknown): EstadoDoAparelho {
@@ -69,6 +101,16 @@ async function pedir(c: MediaStreamConstraints): Promise<MediaStream> {
  */
 export async function capturar(opcoes: { audio: boolean; video: boolean; micId?: string | null; camId?: string | null }): Promise<ResultadoDaCaptura> {
   const r: ResultadoDaCaptura = { audio: null, video: null, estadoAudio: 'desligado', estadoVideo: 'desligado' }
+  // A página não permite o aparelho: nem pergunta (o navegador recusaria) e não
+  // deixa o pedido conjunto derrubar o outro.
+  if (opcoes.audio && !politicaPermite('microphone')) {
+    const resto = opcoes.video ? await capturar({ ...opcoes, audio: false }) : r
+    return { ...resto, audio: null, estadoAudio: 'pagina' }
+  }
+  if (opcoes.video && !politicaPermite('camera')) {
+    const resto = opcoes.audio ? await capturar({ ...opcoes, video: false }) : r
+    return { ...resto, video: null, estadoVideo: 'pagina' }
+  }
   if (!opcoes.audio && !opcoes.video) return r
   try {
     const s = await pedir({ audio: opcoes.audio ? restricaoDeAudio(opcoes.micId) : false, video: opcoes.video ? restricaoDeVideo(opcoes.camId) : false })
@@ -78,9 +120,17 @@ export async function capturar(opcoes: { audio: boolean; video: boolean; micId?:
     r.estadoVideo = r.video ? 'ligado' : opcoes.video ? 'indisponivel' : 'desligado'
     return r
   } catch (err) {
-    // Negado de uma vez: pedir separado só repetiria a pergunta (ou o "não").
+    // Negado no pedido conjunto: descobre QUAL foi negado. Só pede de novo o
+    // aparelho que o navegador diz estar permitido (sem repetir a pergunta).
     if (estadoDoErro(err) === 'negado' && opcoes.audio && opcoes.video) {
-      return { audio: null, video: null, estadoAudio: 'negado', estadoVideo: 'negado' }
+      const [pMic, pCam] = await Promise.all([estadoDaPermissao('microphone'), estadoDaPermissao('camera')])
+      if (pMic !== 'granted' && pCam !== 'granted') return { audio: null, video: null, estadoAudio: 'negado', estadoVideo: 'negado' }
+      const so = await capturar({ ...opcoes, audio: pMic === 'granted', video: pCam === 'granted' })
+      return {
+        ...so,
+        estadoAudio: pMic === 'granted' ? so.estadoAudio : 'negado',
+        estadoVideo: pCam === 'granted' ? so.estadoVideo : 'negado',
+      }
     }
   }
   if (opcoes.audio) {
@@ -157,6 +207,10 @@ export function medirNivel(trilha: MediaStreamTrack, aoMedir: (nivel: number) =>
   const Contexto = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
   if (!Contexto) return () => {}
   const ctx = new Contexto()
+  // Nasce suspenso sem um toque na tela (Chrome/Safari): tenta já e no primeiro toque.
+  const acordar = () => void ctx.resume().catch(() => {})
+  acordar()
+  window.addEventListener('pointerdown', acordar, { once: true })
   const fonte = ctx.createMediaStreamSource(new MediaStream([trilha]))
   const analisador = ctx.createAnalyser()
   analisador.fftSize = 512
@@ -173,6 +227,7 @@ export function medirNivel(trilha: MediaStreamTrack, aoMedir: (nivel: number) =>
   quadro = requestAnimationFrame(ler)
   return () => {
     cancelAnimationFrame(quadro)
+    window.removeEventListener('pointerdown', acordar)
     try {
       fonte.disconnect()
     } catch {

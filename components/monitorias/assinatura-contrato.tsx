@@ -1,10 +1,11 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
-import { CheckCircle2, Download, FileSignature, Loader2, Mail, ShieldCheck } from 'lucide-react'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { ArrowDown, Check, CheckCircle2, Download, FileSignature, Loader2, Mail, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
+import { cn } from '@/lib/utils'
 import { api, CaixaErro, ErroApi } from './base'
 import { TermosAceite } from './termos-aceite'
 
@@ -37,7 +38,10 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
   const [codigoEnviadoPara, setCodigoEnviadoPara] = useState('')
   const [codigo, setCodigo] = useState('')
   const [ocupado, setOcupado] = useState(false)
+  const [progresso, setProgresso] = useState(0)
   const caixa = useRef<HTMLDivElement>(null)
+  const caixaDoAceite = useRef<HTMLLabelElement>(null)
+  const reduzir = useReducedMotion()
 
   const carregar = useCallback(() => {
     api<Contrato>(`/api/monitorias/contratos/${contratoId}`).then(setContrato).catch((e) => setErro(e.message))
@@ -49,7 +53,25 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
 
   function aoRolar() {
     const el = caixa.current
-    if (el && el.scrollTop + el.clientHeight >= el.scrollHeight - 24) setLeu(true)
+    if (!el) return
+    const rolavel = el.scrollHeight - el.clientHeight
+    setProgresso(rolavel <= 24 ? 1 : Math.min(1, el.scrollTop / rolavel))
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 24) setLeu(true)
+  }
+
+  // Contrato curto (sem barra de rolagem): já está lido por inteiro.
+  useEffect(() => {
+    if (contrato) requestAnimationFrame(aoRolar)
+  }, [contrato])
+
+  // Terminou de ler: leva o olhar até a caixa de "li e concordo".
+  useEffect(() => {
+    if (leu) caixaDoAceite.current?.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'nearest' })
+  }, [leu, reduzir])
+
+  function irParaOFim() {
+    const el = caixa.current
+    el?.scrollTo({ top: el.scrollHeight, behavior: reduzir ? 'auto' : 'smooth' })
   }
 
   async function pedirCodigo() {
@@ -87,8 +109,11 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
   const pdf = `/api/monitorias/documentos/contrato/${contrato.id}`
   const papelTermos = contrato.meuPapel === 'contratado' ? 'monitor' : 'aluno'
 
+  const passo = !leu ? 0 : !concordo ? 1 : 2
+  const PASSOS = ['Leia até o fim', 'Marque "li e concordo"', 'Código no seu e-mail']
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" id={`contrato-${contrato.id}`}>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="flex items-center gap-2 text-sm font-semibold"><FileSignature className="h-4 w-4 text-primary" /> Contrato nº {contrato.numero}</p>
@@ -118,7 +143,28 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
         <TermosAceite papel={papelTermos} compacto onAceito={() => setPrecisaTermos(null)} />
       ) : (
         <>
-          <div ref={caixa} onScroll={aoRolar} className="max-h-72 overflow-y-auto rounded-xl border border-border bg-muted/30 p-4 text-xs leading-relaxed">
+          <ol className="grid grid-cols-3 gap-1.5" aria-label="Passos para assinar">
+            {PASSOS.map((rotulo, i) => (
+              <li
+                key={rotulo}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-xl px-2 py-1.5 text-[11px] font-medium leading-tight transition-colors sm:text-xs',
+                  i < passo ? 'bg-primary/10 text-primary' : i === passo ? 'bg-primary text-primary-foreground shadow-sm' : 'bg-muted text-muted-foreground',
+                )}
+                aria-current={i === passo ? 'step' : undefined}
+              >
+                <span className={cn('flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold', i === passo ? 'bg-primary-foreground/20' : 'bg-background/60')}>
+                  {i < passo ? <Check className="h-3 w-3" /> : i + 1}
+                </span>
+                {rotulo}
+              </li>
+            ))}
+          </ol>
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
+            <motion.div className="h-full rounded-full bg-primary" animate={{ width: `${Math.round((leu ? 1 : progresso) * 100)}%` }} transition={{ duration: 0.2 }} />
+          </div>
+          <div className="relative">
+          <div ref={caixa} onScroll={aoRolar} className="max-h-72 overflow-y-auto rounded-xl border border-border bg-muted/30 p-4 pb-12 text-xs leading-relaxed">
             <p className="mb-3 text-sm font-semibold text-foreground">{contrato.titulo}</p>
             {contrato.secoes.map((s) => (
               <div key={s.titulo} className="mb-3">
@@ -129,9 +175,34 @@ export function AssinaturaContrato({ contratoId, onAssinado }: { contratoId: str
               </div>
             ))}
           </div>
-          {!leu && <p className="text-[11px] text-muted-foreground">Role até o fim do contrato para liberar a assinatura.</p>}
-          <label className="flex items-start gap-2 text-sm">
-            <input type="checkbox" className="mt-0.5 h-4 w-4" disabled={!leu} checked={concordo} onChange={(e) => setConcordo(e.target.checked)} />
+            <AnimatePresence>
+              {!leu && (
+                <motion.button
+                  type="button"
+                  onClick={irParaOFim}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: [0, -4, 0] }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ y: { duration: 1.2, repeat: Infinity }, opacity: { duration: 0.2 } }}
+                  className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground shadow-lg"
+                >
+                  <ArrowDown className="h-3.5 w-3.5" aria-hidden /> Role até o fim para assinar
+                </motion.button>
+              )}
+            </AnimatePresence>
+          </div>
+          <AnimatePresence>
+            {leu && (
+              <motion.p initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                <motion.span initial={{ scale: 0 }} animate={{ scale: [0, 1.3, 1] }} transition={{ duration: 0.45 }}>
+                  <CheckCircle2 className="h-4 w-4" aria-hidden />
+                </motion.span>
+                Leitura concluída. Agora marque a caixa abaixo.
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <label ref={caixaDoAceite} className={cn('flex items-start gap-2 rounded-xl p-2 text-sm transition-colors', leu && !concordo && 'bg-primary/[0.07] ring-2 ring-primary/40')}>
+            <input type="checkbox" className="mt-0.5 h-5 w-5 accent-[hsl(var(--primary))]" disabled={!leu} checked={concordo} onChange={(e) => setConcordo(e.target.checked)} />
             <span>Li o contrato inteiro, concordo com todas as cláusulas e reconheço a validade da assinatura eletrônica.</span>
           </label>
           {!codigoEnviadoPara ? (

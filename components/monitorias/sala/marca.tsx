@@ -61,3 +61,17 @@ export function MarcaDagua({
     </div>
   )
 }
+
+/** A marca nas telas claras da sala (saguão, depois de sair, sem suporte). */
+export function MarcaClara({ className }: { className?: string }) {
+  return (
+    <span className={cn('inline-flex items-center gap-2', className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/favicon.png" alt="" width={32} height={32} className="h-8 w-8 rounded-xl shadow-sm" />
+      <span className="leading-tight">
+        <span className="block text-sm font-bold tracking-tight">DomineAqui</span>
+        <span className="block text-[11px] text-muted-foreground">www.domineaqui.com.br</span>
+      </span>
+    </span>
+  )
+}

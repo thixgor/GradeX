@@ -4,18 +4,17 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
-  AlertTriangle, ArrowLeft, BookOpen, CalendarPlus, Check, CheckCircle2, Clock, Copy, CreditCard, FileText, HeartHandshake, Link2,
+  AlertTriangle, ArrowLeft, BookOpen, CalendarPlus, Check, CheckCircle2, Clock, Copy, FileText, HeartHandshake, Link2,
   Loader2, MessagesSquare, Plus, Receipt, Repeat, Send, Star, Trash2, Users, Video, X, XCircle,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, CaixaAviso, CaixaErro, Esqueleto, HoraBrasilia, SeloStatus, api } from '@/components/monitorias/base'
-import { AssinaturaContrato } from '@/components/monitorias/assinatura-contrato'
 import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
 import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
-import { CartaoSalaDeAula } from '@/components/monitorias/sala/cartao-sala-de-aula'
+import { ProximoPasso } from '@/components/monitorias/proximo-passo'
 import { CartaoDeAnotacoes } from '@/components/monitorias/anotacoes'
 import { baixarIcs, type DetalheReserva, type MensagemReserva, type PresencaNaSala } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
@@ -152,7 +151,6 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'recusada', 'reembolsada'].includes(r.status)
   const propostaPendente = !d.somenteLeitura && r.status === 'em_negociacao' && p && (ehMonitor ? !r.aceites.tutor : !r.aceites.aluno)
   const assento = d.meuAssento
-  const precisaCheckout = !ehMonitor && assento && ['aguardando_assinatura', 'aguardando_pagamento'].includes(assento.status) && ['aguardando_assinaturas', 'aguardando_pagamento'].includes(r.status)
   const somenteLeitura = d.somenteLeitura
   const podeCancelar = !somenteLeitura && !encerrada && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento', 'confirmada'].includes(r.status)
 
@@ -179,14 +177,24 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
                 <div className="flex flex-col items-center gap-1">
                   <motion.span
                     initial={false}
-                    animate={{ scale: i === etapaAtual ? 1.15 : 1 }}
+                    animate={i === etapaAtual && !reduzir ? { scale: [1.1, 1.22, 1.1] } : { scale: 1 }}
+                    transition={i === etapaAtual ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : undefined}
                     className={cn('flex h-7 w-7 items-center justify-center rounded-lg text-xs font-semibold', i < etapaAtual ? 'bg-primary text-primary-foreground' : i === etapaAtual ? 'bg-card text-primary ring-2 ring-primary' : 'bg-muted text-muted-foreground')}
                   >
                     {i < etapaAtual ? <Check className="h-3.5 w-3.5" /> : i + 1}
                   </motion.span>
                   <span className={cn('hidden text-xs sm:block', i === etapaAtual ? 'font-semibold text-foreground' : 'text-muted-foreground')}>{e.rotulo}</span>
                 </div>
-                {i < ETAPAS_LINHA_DO_TEMPO.length - 1 && <span className={cn('mx-1 h-0.5 flex-1 rounded', i < etapaAtual ? 'bg-primary' : 'bg-muted')} />}
+                {i < ETAPAS_LINHA_DO_TEMPO.length - 1 && (
+                  <span className="relative mx-1 h-1 flex-1 overflow-hidden rounded-full bg-muted">
+                    <motion.span
+                      className="absolute inset-y-0 left-0 rounded-full bg-primary"
+                      initial={reduzir ? false : { width: 0 }}
+                      animate={{ width: i < etapaAtual ? '100%' : '0%' }}
+                      transition={{ duration: 0.6, delay: 0.15 + i * 0.12, ease: 'easeOut' }}
+                    />
+                  </span>
+                )}
               </li>
             ))}
           </ol>
@@ -199,6 +207,8 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
           </CaixaAviso>
         )}
       </div>
+
+      <ProximoPasso d={d} presenca={presencaSala} onAceitar={(propostaId) => acao({ acao: 'aceitar', propostaId })} onPropor={() => setModal('propor')} onAtualizar={carregar} />
 
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_360px]">
         {/* Chat */}
@@ -226,12 +236,25 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
                     <div
                       className={cn(
                         'max-w-[85%] rounded-2xl px-3.5 py-2 text-sm shadow-sm',
-                        ehProposta ? 'border border-primary/40 bg-primary/[0.06] text-foreground' : meu ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted',
+                        ehProposta ? cn('border bg-primary/[0.06] text-foreground', vigente ? 'border-primary/60 ring-2 ring-primary/20' : 'border-primary/30') : meu ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md bg-muted',
                         ehProposta && !vigente && 'opacity-60',
                       )}
                     >
-                      {ehProposta && <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-primary"><HeartHandshake className="h-3.5 w-3.5" /> Proposta {vigente ? '' : '(substituída)'}</p>}
-                      <p className="whitespace-pre-line break-words">{m.texto}</p>
+                      {ehProposta && (
+                        <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-primary">
+                          <HeartHandshake className="h-3.5 w-3.5" /> {vigente ? 'Proposta atual' : <span className="line-through">Proposta substituída</span>}
+                        </p>
+                      )}
+                      <p className={cn('whitespace-pre-line break-words', ehProposta && !vigente && 'line-through decoration-muted-foreground/50')}>{m.texto}</p>
+                      {vigente && propostaPendente && (
+                        <button
+                          type="button"
+                          onClick={() => document.getElementById('proximo-passo')?.scrollIntoView({ behavior: reduzir ? 'auto' : 'smooth', block: 'start' })}
+                          className="mt-2 inline-flex items-center gap-1 rounded-lg bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground"
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Responder a proposta
+                        </button>
+                      )}
                       <p className={cn('mt-1 text-[10px]', meu && !ehProposta ? 'text-primary-foreground/70' : 'text-muted-foreground')}>{horaEmBrasilia(m.createdAt)}</p>
                     </div>
                   </motion.div>
@@ -241,20 +264,6 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
             <div ref={fimDoChat} />
           </div>
 
-          {propostaPendente && p && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="border-t border-amber-300/50 bg-amber-50 p-4 dark:bg-amber-500/10">
-              <p className="text-sm font-semibold">Proposta aguardando sua resposta</p>
-              <p className="text-xs text-muted-foreground">
-                {formatarEmBrasilia(p.inicio, { weekday: 'long', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })} (Brasília) · {formatarDuracao(p.duracaoMin)} ·{' '}
-                {p.gratis ? 'grátis' : `${formatarCentavos(p.valorPorPessoaCentavos)} por pessoa`}{p.vagas > 1 ? ` · ${p.vagas} alunos` : ''}
-              </p>
-              {p.observacao && <p className="mt-1 text-xs italic">“{p.observacao}”</p>}
-              <div className="mt-3 flex flex-wrap gap-2">
-                <BotaoAcao onClick={() => acao({ acao: 'aceitar', propostaId: p.id })}><CheckCircle2 className="mr-1.5 h-4 w-4" /> Aceitar</BotaoAcao>
-                <Button variant="outline" size="sm" onClick={() => setModal('propor')}>Contraproposta</Button>
-              </div>
-            </motion.div>
-          )}
 
           {somenteLeitura && (
             <p className="border-t border-border p-3 text-center text-xs text-muted-foreground">
@@ -312,26 +321,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
             </div>
           )}
 
-          {precisaCheckout && (
-            <motion.div initial={{ scale: 0.97 }} animate={{ scale: 1 }} className="rounded-2xl bg-primary p-5 text-primary-foreground">
-              <p className="font-semibold">{assento!.status === 'aguardando_assinatura' ? 'Falta assinar o contrato' : 'Falta pagar'}</p>
-              <p className="mt-0.5 text-sm text-primary-foreground/80">Contrato, PIX e comprovante em um só lugar.</p>
-              <Link href={`/monitorias/checkout/${r.id}`}>
-                <Button className="mt-4 h-11 w-full rounded-xl bg-card font-semibold text-foreground hover:bg-card/90"><CreditCard className="mr-2 h-4 w-4" /> Continuar</Button>
-              </Link>
-            </motion.div>
-          )}
 
-          {ehMonitor && d.contratosParaAssinar.length > 0 && (
-            <div className="rounded-2xl border border-primary/40 bg-card p-4">
-              <p className="mb-3 text-sm font-semibold">Assine o contrato para liberar o pagamento do aluno</p>
-              {d.contratosParaAssinar.map((k) => (
-                <AssinaturaContrato key={k.id} contratoId={k.id} onAssinado={carregar} />
-              ))}
-            </div>
-          )}
-
-          <CartaoSalaDeAula d={d} presenca={presencaSala} />
 
           {['confirmada', 'realizada', 'em_disputa', 'concluida'].includes(r.status) && <CartaoDeAnotacoes reservaId={r.id} />}
 

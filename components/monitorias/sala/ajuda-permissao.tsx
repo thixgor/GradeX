@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { Lock } from 'lucide-react'
+import { Lock, RotateCw } from 'lucide-react'
 import type { EstadoDoAparelho } from '@/lib/monitorias/sala/cliente/midia'
 
 type Plataforma = 'ios' | 'android' | 'safari' | 'firefox' | 'chromium'
@@ -27,6 +27,16 @@ const PASSOS: Record<Plataforma, string[]> = {
 /** O que fazer quando câmera ou microfone não abrem, em português e sem termo técnico. */
 export function AjudaDeAparelho({ mic, cam }: { mic: EstadoDoAparelho; cam: EstadoDoAparelho }) {
   const plataforma = useMemo(detectar, [])
+  if (mic === 'pagina' || cam === 'pagina') {
+    return (
+      <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-3.5 text-sm text-amber-900 dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-200" role="alert">
+        <p className="flex items-center gap-1.5 font-semibold">
+          <RotateCw className="h-4 w-4" aria-hidden /> Recarregue a página para liberar {mic === 'pagina' && cam === 'pagina' ? 'a câmera e o microfone' : mic === 'pagina' ? 'o microfone' : 'a câmera'}
+        </p>
+        <p className="mt-1">Não é bloqueio seu: a página abriu sem a liberação. Toque em &quot;Recarregar a página&quot; abaixo.</p>
+      </div>
+    )
+  }
   if (mic === 'negado' || cam === 'negado') {
     return (
       <div className="rounded-xl border border-amber-300/60 bg-amber-50 p-3.5 text-sm text-amber-900 dark:border-amber-400/30 dark:bg-amber-500/10 dark:text-amber-200" role="alert">

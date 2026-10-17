@@ -8,6 +8,7 @@ import { api, CaixaAviso, CaixaErro, Esqueleto, Selo } from '@/components/monito
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import type { ConfigSala } from '@/lib/monitorias/tipos'
 import { cn } from '@/lib/utils'
+import { AdminSalaDeTeste } from './admin-sala-de-teste'
 
 interface DadosDaSala {
   config: ConfigSala
@@ -104,6 +105,8 @@ export function AdminSalaDeVideo() {
           <p className="text-xs text-muted-foreground">Áudio e vídeo vão direto entre os participantes (ou pelo TURN da Cloudflare). Nada disso passa pela Vercel.</p>
         </div>
       </div>
+
+      <AdminSalaDeTeste />
 
       {aviso && <CaixaAviso tom="sucesso">{aviso}</CaixaAviso>}
       {erro && <CaixaErro mensagem={erro} />}

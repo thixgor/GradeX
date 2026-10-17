@@ -247,16 +247,43 @@ export class ControladorDaSala {
 
   private removerOuvintesDeAparelho: () => void = () => {}
 
+  /**
+   * Uma captura de cada vez. Cada pedido ganha um número; resposta que chega
+   * depois de outra mais nova (ou depois de sair da tela) é descartada e tem as
+   * trilhas paradas — nada de câmera acesa "fantasma".
+   */
+  private capturaSeq = 0
+  get capturando(): boolean {
+    return this.estado.local.mic === 'pedindo' || this.estado.local.cam === 'pedindo'
+  }
+
+  private novaCaptura(): number {
+    return ++this.capturaSeq
+  }
+
+  /** A resposta desta captura ainda vale? Se não, para o que ela abriu. */
+  private aindaVale(seq: number, ...trilhas: Array<MediaStreamTrack | null>): boolean {
+    if (!this.destruido && seq === this.capturaSeq) return true
+    for (const t of trilhas) pararTrilha(t)
+    return false
+  }
+
+  /** Guarda o aparelho que de fato abriu (o id lembrado pode ter mudado). */
+  private lembrarAparelhos(): void {
+    const micId = this.audio?.getSettings?.().deviceId || this.estado.prefs.micId
+    const camId = this.cam?.getSettings?.().deviceId || this.estado.prefs.camId
+    if (micId !== this.estado.prefs.micId || camId !== this.estado.prefs.camId) this.guardar({ micId, camId })
+  }
+
   private async abrirMidia(): Promise<void> {
+    const seq = this.novaCaptura()
     const p = this.estado.prefs
-    const r = await capturar({ audio: true, video: p.camLigada, micId: p.micId, camId: p.camId })
-    if (this.destruido) {
-      pararTrilha(r.audio)
-      pararTrilha(r.video)
-      return
-    }
     pararTrilha(this.audio)
     pararTrilha(this.cam)
+    this.audio = this.cam = null
+    this.definirLocal({ mic: 'pedindo', cam: p.camLigada ? 'pedindo' : 'desligado' })
+    const r = await capturar({ audio: true, video: p.camLigada, micId: p.micId, camId: p.camId })
+    if (!this.aindaVale(seq, r.audio, r.video)) return
     this.audio = r.audio
     this.cam = r.video
     if (this.audio) this.audio.enabled = p.micLigado
@@ -266,15 +293,18 @@ export class ControladorDaSala {
       mic: r.audio ? (p.micLigado ? 'ligado' : 'desligado') : r.estadoAudio,
       cam: r.video ? 'ligado' : p.camLigada ? r.estadoVideo : 'desligado',
     })
+    this.lembrarAparelhos()
+    this.distribuirTrilhas()
     await this.recarregarAparelhos()
   }
 
   /** "Tentar de novo" do saguão, depois de permissão negada ou aparelho ocupado. */
   async tentarAparelhosDeNovo(): Promise<void> {
-    const { cam } = this.estado.local
+    const { cam, mic } = this.estado.local
+    // A página abriu sem permissão (navegação interna): só recarregar resolve.
+    if (cam === 'pagina' || mic === 'pagina') return window.location.reload()
     if (cam === 'negado' || cam === 'em_uso' || cam === 'indisponivel' || cam === 'erro') this.guardar({ camLigada: true })
     await this.abrirMidia()
-    this.distribuirTrilhas()
   }
 
   private vigiarTrilha(t: MediaStreamTrack | null, tipo: 'mic' | 'cam'): void {
@@ -320,8 +350,11 @@ export class ControladorDaSala {
 
   async trocarAparelho(tipo: 'mic' | 'cam' | 'saida', id: string): Promise<void> {
     if (tipo === 'saida') return this.guardar({ saidaId: id })
+    if (this.capturando) return
+    const seq = this.novaCaptura()
     if (tipo === 'mic') {
       const r = await capturar({ audio: true, video: false, micId: id })
+      if (!this.aindaVale(seq, r.audio)) return
       if (!r.audio) return this.definir({ aviso: 'Não deu para usar esse microfone. Ele pode estar em uso por outro aplicativo.' })
       pararTrilha(this.audio)
       this.audio = r.audio
@@ -330,21 +363,40 @@ export class ControladorDaSala {
       this.guardar({ micId: id })
       this.definirLocal({ mic: this.estado.prefs.micLigado ? 'ligado' : 'desligado' })
     } else {
-      const r = await capturar({ audio: false, video: true, camId: id })
-      if (!r.video) return this.definir({ aviso: 'Não deu para usar essa câmera. Ela pode estar em uso por outro aplicativo.' })
+      // Solta a câmera atual ANTES de abrir a outra: muitos celulares e webcams
+      // não abrem duas ao mesmo tempo ("em uso"). Se a nova falhar, volta à antiga.
+      const anterior = this.cam?.getSettings?.().deviceId || this.estado.prefs.camId
       pararTrilha(this.cam)
+      this.cam = null
+      let r = await capturar({ audio: false, video: true, camId: id })
+      if (!this.aindaVale(seq, r.video)) return
+      if (!r.video) {
+        this.definir({ aviso: 'Não deu para usar essa câmera. Ela pode estar em uso por outro aplicativo.' })
+        r = await capturar({ audio: false, video: true, camId: anterior })
+        if (!this.aindaVale(seq, r.video)) return
+        if (!r.video) {
+          this.definirLocal({ cam: r.estadoVideo })
+          this.distribuirTrilhas()
+          return
+        }
+        id = anterior || id
+      }
       this.cam = r.video
       this.vigiarTrilha(this.cam, 'cam')
-      this.guardar({ camId: id, camLigada: true })
+      this.guardar({ camId: r.video.getSettings?.().deviceId || id, camLigada: true })
       this.definirLocal({ cam: 'ligado' })
     }
     this.distribuirTrilhas()
   }
 
   async alternarMic(): Promise<void> {
+    if (this.capturando) return
     if (!this.audio) {
       // Sem trilha (negado, indisponível, desconectado): tenta de novo, a pedido.
+      if (this.estado.local.mic === 'pagina') return window.location.reload()
+      const seq = this.novaCaptura()
       const r = await capturar({ audio: true, video: false, micId: this.estado.prefs.micId })
+      if (!this.aindaVale(seq, r.audio)) return
       if (!r.audio) return this.definirLocal({ mic: r.estadoAudio })
       this.audio = r.audio
       this.vigiarTrilha(this.audio, 'mic')
@@ -361,6 +413,7 @@ export class ControladorDaSala {
   }
 
   async alternarCam(): Promise<void> {
+    if (this.capturando) return
     if (this.cam) {
       // Desligar de verdade: para a trilha (a luz apaga) e nada de vídeo sai.
       pararTrilha(this.cam)
@@ -370,7 +423,10 @@ export class ControladorDaSala {
       this.distribuirTrilhas()
       return
     }
+    if (this.estado.local.cam === 'pagina') return window.location.reload()
+    const seq = this.novaCaptura()
     const r = await capturar({ audio: false, video: true, camId: this.estado.prefs.camId })
+    if (!this.aindaVale(seq, r.video)) return
     if (!r.video) return this.definirLocal({ cam: r.estadoVideo })
     this.cam = r.video
     this.vigiarTrilha(this.cam, 'cam')
@@ -393,10 +449,12 @@ export class ControladorDaSala {
    * aula em segundo plano. Na volta, tenta pegar de novo o que estava ligado.
    */
   private async retomarAparelhos(): Promise<void> {
-    if (this.estado.fase !== 'na_sala') return
+    if (this.estado.fase !== 'na_sala' || this.capturando) return
     const { prefs, local } = this.estado
     if (!this.audio && local.mic === 'indisponivel') {
+      const seq = this.novaCaptura()
       const r = await capturar({ audio: true, video: false, micId: prefs.micId })
+      if (!this.aindaVale(seq, r.audio)) return
       if (r.audio && this.estado.fase === 'na_sala') {
         this.audio = r.audio
         this.audio.enabled = prefs.micLigado
@@ -406,7 +464,9 @@ export class ControladorDaSala {
       } else pararTrilha(r.audio)
     }
     if (!this.cam && prefs.camLigada && local.cam === 'indisponivel') {
+      const seq = this.novaCaptura()
       const r = await capturar({ audio: false, video: true, camId: prefs.camId })
+      if (!this.aindaVale(seq, r.video)) return
       if (r.video && this.estado.fase === 'na_sala') {
         this.cam = r.video
         this.vigiarTrilha(this.cam, 'cam')

@@ -138,6 +138,9 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     c.salas.findOne({ _id: id }, { projection: PROJECAO_SALA }) as Promise<SalaLida | null>,
     c.participacoes.countDocuments({ reservaId: id, status: { $in: ASSENTOS_COM_AULA } } as any),
   ])
+  // Sala de teste sem perfil de monitor: o nome do monitor é o do admin.
+  const nomeDoAdminDeTeste =
+    reserva.teste && !tutor ? (await c.users.findOne({ _id: new ObjectId(reserva.tutorUserId) } as any, { projection: { name: 1 } }))?.name || 'Equipe DomineAqui' : null
   const acesso = avaliarAcessoSala({
     ehMonitor,
     assento: part ? { status: part.status, ativo: !!papelPeloAssento(reserva, userId, part) } : null,
@@ -155,8 +158,8 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     reserva,
     reservaId: id,
     acesso,
-    nome: (ehMonitor ? tutor?.nome : part?.alunoNome) || 'Participante',
-    nomeDoMonitor: tutor?.nome || 'Monitor',
+    nome: (ehMonitor ? tutor?.nome || nomeDoAdminDeTeste : part?.alunoNome) || 'Participante',
+    nomeDoMonitor: tutor?.nome || nomeDoAdminDeTeste || 'Monitor',
     config,
     sala,
     esperados: Math.min(config.limiteMalha, 1 + comAula),

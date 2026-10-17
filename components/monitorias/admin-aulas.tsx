@@ -11,12 +11,12 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Ban, Copy, DoorOpen, ExternalLink, Loader2, MessageSquareText, Power, Radio, RotateCcw, Search, ShieldAlert, UserMinus, UserPlus, X } from 'lucide-react'
+import { Ban, CalendarClock, Copy, DoorOpen, ExternalLink, FlaskConical, Loader2, MessageSquareText, Play, Power, Radio, RotateCcw, Search, ShieldAlert, UserMinus, UserPlus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { api, CaixaErro, Esqueleto, Selo, SeloStatus } from '@/components/monitorias/base'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
-import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
+import { formatarEmBrasilia, offsetDeBrasilia } from '@/lib/fuso-brasilia'
 import { ROTULO_CATEGORIA, type CategoriaContato } from '@/lib/monitorias/contato-inteligente'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
 import { cn } from '@/lib/utils'
@@ -43,6 +43,8 @@ interface Aula {
   motivoCancelamento: string | null
   disputa: { motivo: string; em: string } | null
   temLinkExterno: boolean
+  teste: boolean
+  duracaoMin: number | null
   alunos: Array<{ id: string; nome: string; status: string; valorCentavos: number }>
   sala: null | {
     encerrada: boolean
@@ -74,6 +76,7 @@ export function AdminAulas() {
   const [erro, setErro] = useState('')
   const [conversa, setConversa] = useState<{ id: string; titulo: string } | null>(null)
   const [cancelando, setCancelando] = useState<Aula | null>(null)
+  const [remarcando, setRemarcando] = useState<Aula | null>(null)
   const [ocupado, setOcupado] = useState<string | null>(null)
 
   const carregar = useCallback(() => {
@@ -165,6 +168,11 @@ export function AdminAulas() {
                   )}
                   <p className="font-semibold">{a.titulo}</p>
                   <SeloStatus status={a.status} />
+                  {a.teste && (
+                    <Selo tom="info">
+                      <FlaskConical className="mr-0.5 inline h-3 w-3" /> Teste
+                    </Selo>
+                  )}
                   <button
                     type="button"
                     onClick={() => navigator.clipboard?.writeText(a.id).catch(() => {})}
@@ -248,7 +256,12 @@ export function AdminAulas() {
                       </Button>
                     )
                   )}
-                  {podeCancelar && (
+                  {['confirmada', 'aguardando_assinaturas', 'aguardando_pagamento'].includes(a.status) && (
+                    <Button size="sm" variant="outline" onClick={() => setRemarcando(a)}>
+                      <CalendarClock className="mr-1 h-4 w-4" /> Alterar horário
+                    </Button>
+                  )}
+                  {podeCancelar && !a.teste && (
                     <Button size="sm" variant="outline" className="text-rose-600" onClick={() => setCancelando(a)}>
                       <Ban className="mr-1 h-4 w-4" /> Cancelar monitoria
                     </Button>
@@ -264,6 +277,16 @@ export function AdminAulas() {
       )}
       <AnimatePresence>
         {conversa && <ConversaDaMonitoria reservaId={conversa.id} titulo={conversa.titulo} onFechar={() => setConversa(null)} />}
+        {remarcando && (
+          <AlterarHorario
+            aula={remarcando}
+            onFechar={() => setRemarcando(null)}
+            onFeito={() => {
+              setRemarcando(null)
+              carregar()
+            }}
+          />
+        )}
         {cancelando && (
           <CancelarMonitoria
             aula={cancelando}
@@ -458,6 +481,78 @@ function CancelarMonitoria({ aula, onFechar, onFeito }: { aula: Aula; onFechar: 
           <Button variant="ghost" onClick={onFechar}>Voltar</Button>
           <Button variant="destructive" onClick={confirmar} disabled={ocupado || motivo.trim().length < 5}>
             {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : <><DoorOpen className="mr-1 h-4 w-4" /> Cancelar monitoria</>}
+          </Button>
+        </div>
+      </div>
+    </Janela>
+  )
+}
+
+/** "AAAA-MM-DDTHH:mm" no horário de Brasília (para o campo datetime-local). */
+function paraCampo(iso: string | null): string {
+  const d = iso ? new Date(iso) : new Date()
+  const [sinal, hh, mm] = offsetDeBrasilia(d).match(/([+-])(\d{2}):(\d{2})/)!.slice(1)
+  const desloc = (sinal === '-' ? -1 : 1) * (Number(hh) * 60 + Number(mm))
+  return new Date(d.getTime() + desloc * 60_000).toISOString().slice(0, 16)
+}
+
+/**
+ * Mudar o horário (ou "Iniciar agora"): a sala abre na hora, a agenda do
+ * monitor é trocada com segurança e todos recebem aviso.
+ */
+function AlterarHorario({ aula, onFechar, onFeito }: { aula: Aula; onFechar: () => void; onFeito: () => void }) {
+  const [quando, setQuando] = useState(() => paraCampo(aula.inicio))
+  const [duracao, setDuracao] = useState(String(aula.duracaoMin || 60))
+  const [ocupado, setOcupado] = useState<null | 'agora' | 'data'>(null)
+  const [erro, setErro] = useState('')
+  const confirmada = aula.status === 'confirmada'
+
+  async function enviar(inicio: 'agora' | string) {
+    setOcupado(inicio === 'agora' ? 'agora' : 'data')
+    setErro('')
+    try {
+      const iso = inicio === 'agora' ? 'agora' : `${inicio}:00${offsetDeBrasilia(new Date(`${inicio}:00Z`))}`
+      await api(`/api/admin/monitorias/reservas/${aula.id}/horario`, { method: 'POST', json: { inicio: iso, duracaoMin: Number(duracao) } })
+      onFeito()
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro')
+    } finally {
+      setOcupado(null)
+    }
+  }
+
+  return (
+    <Janela titulo={`Horário: ${aula.titulo}`} onFechar={onFechar} largura="max-w-lg">
+      <div className="space-y-4 overflow-y-auto px-5 py-4 text-sm">
+        {confirmada && (
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-primary/30 bg-primary/[0.06] p-4">
+            <p className="font-semibold">Iniciar agora</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">A sala abre na hora para monitor e alunos, com a mesma duração. Todos recebem aviso com o link.</p>
+            <Button className="mt-3 w-full" onClick={() => void enviar('agora')} disabled={!!ocupado}>
+              {ocupado === 'agora' ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Play className="mr-1 h-4 w-4" /> Iniciar a monitoria agora</>}
+            </Button>
+          </motion.div>
+        )}
+        <div className="space-y-3">
+          <p className="font-semibold">Ou escolha outro horário</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_140px]">
+            <label className="block text-xs font-medium text-muted-foreground">
+              Data e hora (Brasília)
+              <input type="datetime-local" value={quando} onChange={(e) => setQuando(e.target.value)} className="campo-sem-zoom mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground" />
+            </label>
+            <label className="block text-xs font-medium text-muted-foreground">
+              Duração (min)
+              <input type="number" min={15} max={480} step={15} value={duracao} onChange={(e) => setDuracao(e.target.value)} className="campo-sem-zoom mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-sm text-foreground" />
+            </label>
+          </div>
+          {!confirmada && <p className="text-xs text-muted-foreground">Antes da confirmação do pagamento, o novo horário precisa estar pelo menos 2 h à frente.</p>}
+          <p className="text-xs text-muted-foreground">O contrato assinado guarda a data original; a mudança fica registrada no chat e na auditoria.</p>
+        </div>
+        {erro && <CaixaErro mensagem={erro} />}
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={onFechar}>Voltar</Button>
+          <Button onClick={() => void enviar(quando)} disabled={!!ocupado || !quando}>
+            {ocupado === 'data' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Salvar novo horário'}
           </Button>
         </div>
       </div>

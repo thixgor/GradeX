@@ -55,6 +55,9 @@ export type AuditAction =
   | 'monitoria_cancelada_suporte'
   /** O admin abriu a conversa de uma monitoria (prestação de contas, LGPD). */
   | 'monitoria_chat_lido'
+  /** Suporte mudou o horário (ou "iniciar agora") e salas de teste do admin. */
+  | 'monitoria_horario_suporte'
+  | 'monitoria_sala_teste'
 
 export interface AuditLogEntry {
   action: AuditAction

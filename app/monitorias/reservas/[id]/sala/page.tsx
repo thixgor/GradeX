@@ -2,12 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { MotionConfig } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { api, ErroApi } from '@/components/monitorias/base'
 import { Saguao } from '@/components/monitorias/sala/saguao'
 import { SalaChamada } from '@/components/monitorias/sala/chamada'
 import { ForaDaSala, SemSuporte } from '@/components/monitorias/sala/fora-da-sala'
-import { useSalaDeAula } from '@/hooks/use-sala-de-aula'
+import { precisaRecarregarASala, recarregarASala, salaCarregouDireito, useSalaDeAula } from '@/hooks/use-sala-de-aula'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import type { EstadoDoSaguao } from '@/lib/monitorias/sala/mensagens'
 
@@ -15,7 +16,12 @@ import type { EstadoDoSaguao } from '@/lib/monitorias/sala/mensagens'
 const ATUALIZACOES_DO_SAGUAO = 30
 
 export default function PaginaDaSala({ params }: { params: { id: string } }) {
-  const { ctrl, estado } = useSalaDeAula(params.id)
+  const [recarregando] = useState(precisaRecarregarASala)
+  useEffect(() => {
+    if (recarregando) recarregarASala()
+    else salaCarregouDireito()
+  }, [recarregando])
+  const { ctrl, estado } = useSalaDeAula(params.id, !recarregando)
   const [saguao, setSaguao] = useState<EstadoDoSaguao | null>(null)
   const [erroSaguao, setErroSaguao] = useState('')
   const [naoEncontrada, setNaoEncontrada] = useState(false)
@@ -32,8 +38,8 @@ export default function PaginaDaSala({ params }: { params: { id: string } }) {
   }, [params.id])
 
   useEffect(() => {
-    void carregar()
-  }, [carregar])
+    if (!recarregando) void carregar()
+  }, [carregar, recarregando])
 
   // Voltou ao saguão (depois de sair): retrato novo da sala.
   const fase = estado?.fase
@@ -81,8 +87,18 @@ export default function PaginaDaSala({ params }: { params: { id: string } }) {
     )
   }
 
-  if (estado.fase === 'sem_suporte') return <SemSuporte motivo={estado.semSuporte || 'webrtc'} reservaId={params.id} />
-  if (estado.fase === 'na_sala') return <SalaChamada ctrl={ctrl} estado={estado} titulo={saguao?.reserva.titulo || 'Monitoria'} fim={saguao?.reserva.fim || null} />
-  if (estado.fase === 'fora') return <ForaDaSala ctrl={ctrl} estado={estado} reservaId={params.id} ehAluno={saguao?.papel === 'aluno'} />
-  return <Saguao ctrl={ctrl} estado={estado} saguao={saguao} erroSaguao={erroSaguao} />
+  // A sala fica fora do app-shell: aqui ela mesma respeita "reduzir movimento".
+  return (
+    <MotionConfig reducedMotion="user">
+      {estado.fase === 'sem_suporte' ? (
+        <SemSuporte motivo={estado.semSuporte || 'webrtc'} reservaId={params.id} />
+      ) : estado.fase === 'na_sala' ? (
+        <SalaChamada ctrl={ctrl} estado={estado} titulo={saguao?.reserva.titulo || 'Monitoria'} fim={saguao?.reserva.fim || null} />
+      ) : estado.fase === 'fora' ? (
+        <ForaDaSala ctrl={ctrl} estado={estado} reservaId={params.id} ehAluno={saguao?.papel === 'aluno'} />
+      ) : (
+        <Saguao ctrl={ctrl} estado={estado} saguao={saguao} erroSaguao={erroSaguao} />
+      )}
+    </MotionConfig>
+  )
 }
