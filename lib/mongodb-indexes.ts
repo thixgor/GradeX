@@ -334,5 +334,12 @@ export async function ensureIndexes(db: Db): Promise<void> {
     // Sala de aula: o `_id` é o id da reserva (toda leitura da sala vai por ele).
     // `fim` serve só à varredura, que apaga os sinais em trânsito depois da aula.
     db.collection('monitorias_salas').createIndex({ fim: 1 }),
+    db.collection('monitorias_infracoes').createIndex({ userId: 1, createdAt: -1 }),
+    db.collection('monitorias_infracoes').createIndex({ reservaId: 1, createdAt: -1 }),
+    db.collection('monitorias_infracoes').createIndex({ vistaEm: 1, nivel: 1, createdAt: -1 }),
+    // Evidência de violação do contrato: guardada por 2 anos, depois some sozinha
+    // (o mesmo índice serve à lista do admin, mais recentes primeiro).
+    db.collection('monitorias_infracoes').createIndex({ createdAt: 1 }, { name: 'ttl_infracoes', expireAfterSeconds: 2 * 365 * 24 * 3600 }),
+    db.collection('monitorias_anotacoes').createIndex({ userId: 1, reservaId: 1 }, { unique: true }),
   ])
 }

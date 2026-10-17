@@ -129,7 +129,7 @@ export function ttlDoTurnSegundos(agora: Date, fechaEm: Date): number {
 /** Assento que dá direito à aula (o reembolso PARCIAL em andamento não tira ninguém). */
 export const ASSENTOS_COM_AULA = ['paga', 'gratis', 'concluida', 'reembolso_processando']
 
-export type MotivoRecusa = 'sem_acesso' | 'desligada' | 'status' | 'sem_horario' | 'nao_abriu' | 'fechada' | 'encerrada' | 'cheia'
+export type MotivoRecusa = 'sem_acesso' | 'desligada' | 'status' | 'sem_horario' | 'nao_abriu' | 'fechada' | 'encerrada' | 'cheia' | 'removido'
 
 export type ResultadoAcesso =
   | { ok: true; papel: PapelNaSala; abreEm: Date; fechaEm: Date }
@@ -145,6 +145,10 @@ export interface EntradaDoAcesso {
   /** Quando a disputa foi aberta, se houver. */
   disputaEm?: Date | null
   encerradaEm?: Date | null
+  /** O suporte encerrou: nem o monitor entra (só o suporte reabre). */
+  encerradaPeloSuporte?: boolean
+  /** O monitor ou o suporte tirou esta pessoa da sala. */
+  removido?: { por: 'monitor' | 'suporte' } | null
   agora: Date
   config: ConfigSala
 }
@@ -176,8 +180,20 @@ export function avaliarAcessoSala(e: EntradaDoAcesso): ResultadoAcesso {
   if (e.agora.getTime() > fechaEm.getTime()) {
     return { ok: false, motivo: 'fechada', mensagem: 'O horário desta monitoria terminou e a sala foi fechada.', abreEm, fechaEm }
   }
+  if (e.encerradaEm && e.encerradaPeloSuporte) {
+    return { ok: false, motivo: 'encerrada', mensagem: 'O suporte da DomineAqui encerrou esta aula. Em caso de dúvida, fale com o suporte.', abreEm, fechaEm }
+  }
   if (e.encerradaEm && !e.ehMonitor) {
     return { ok: false, motivo: 'encerrada', mensagem: 'O monitor encerrou a aula. Se ele reabrir a sala, você pode voltar.', abreEm, fechaEm }
+  }
+  if (e.removido && !e.ehMonitor) {
+    return {
+      ok: false,
+      motivo: 'removido',
+      mensagem: e.removido.por === 'suporte' ? 'O suporte da DomineAqui tirou você desta aula. Fale com o suporte.' : 'O monitor tirou você da sala. Se foi engano, ele pode liberar sua volta.',
+      abreEm,
+      fechaEm,
+    }
   }
   return { ok: true, papel, abreEm, fechaEm }
 }
@@ -186,6 +202,7 @@ export function avaliarAcessoSala(e: EntradaDoAcesso): ResultadoAcesso {
 export function statusHttpDaRecusa(motivo: MotivoRecusa): number {
   if (motivo === 'sem_acesso') return 404
   if (motivo === 'desligada') return 503
+  if (motivo === 'removido') return 403
   return 409
 }
 

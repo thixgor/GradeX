@@ -5,7 +5,7 @@ import { origemConfiavel } from '@/lib/monitorias/origem'
 import { CORPO_MAX_BYTES } from '@/lib/monitorias/sala/mensagens'
 import { EsquemaEnvio } from '@/lib/monitorias/sala/esquemas'
 import { verificarTokenDaSala, vinculoDaSessao, type ClaimsDaSala } from '@/lib/monitorias/sala/token'
-import { encerrarOuReabrir, enviarSinal, lerSinais, sairDaSala } from '@/lib/monitorias/sala/servidor'
+import { acaoDoAnfitriao, encerrarOuReabrir, enviarSinal, lerSinais, sairDaSala } from '@/lib/monitorias/sala/servidor'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -94,8 +94,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 /**
- * POST — oferta, resposta, candidatos, pedido de reinício, saída e
- * encerrar/reabrir (monitor). A saída também chega pelo `sendBeacon` da aba que
+ * POST — oferta, resposta, candidatos, pedido de reinício, saída,
+ * encerrar/reabrir e os controles do anfitrião que valem no servidor
+ * (tirar/liberar alguém, permissões dos alunos) — estes só para o monitor. A saída também chega pelo `sendBeacon` da aba que
  * fecha, com o token no corpo (o beacon não envia header).
  */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
@@ -124,6 +125,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     }
     if (envio.tipo === 'encerrar' || envio.tipo === 'reabrir') {
       const r = await encerrarOuReabrir(claims, envio.tipo === 'encerrar')
+      return r.ok ? NextResponse.json({ ok: true }, { headers: SEM_CACHE }) : falha(r.status, r.mensagem, { motivo: r.motivo })
+    }
+    if (envio.tipo === 'remover' || envio.tipo === 'readmitir' || envio.tipo === 'permissoes') {
+      const r = await acaoDoAnfitriao(claims, envio)
       return r.ok ? NextResponse.json({ ok: true }, { headers: SEM_CACHE }) : falha(r.status, r.mensagem, { motivo: r.motivo })
     }
     const r = await enviarSinal(claims, envio)

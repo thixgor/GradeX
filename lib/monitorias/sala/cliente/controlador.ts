@@ -21,7 +21,8 @@
 
 import { faseDeSinal, podeIrPara, type FaseDaSala, type FaseDoPar, type MotivoDeSaida } from '../maquina'
 import { AVISO_FECHAMENTO_MIN, cadenciaDaSala, RENOVAR_ANTES_MS, type FaseDeSinal } from '../regras'
-import type { CredenciaisDaSala, MensagemDoCanal, RespostaDoSinal, RetratoDaSala, SinalRecebido, TipoDeSinal, UsoDaConexao } from '../mensagens'
+import { detectarContato } from '../../contato-inteligente'
+import type { CredenciaisDaSala, MensagemDoCanal, PedidoDoMonitor, RespostaDoSinal, RetratoDaSala, SinalRecebido, TipoDeSinal, UsoDaConexao } from '../mensagens'
 import type { PapelNaSala } from '../../tipos'
 import { novaGeracao, Par, type TrilhasLocais } from './par'
 import {
@@ -54,6 +55,9 @@ export interface ParticipanteNaTela {
   videoPausado: boolean
   conexao: 'boa' | 'instavel' | 'fraca'
   falando: boolean
+  /** Mão levantada (e desde quando, para a fila de quem quer falar). */
+  mao: boolean
+  maoDesde: number
 }
 
 export interface MensagemDeChat {
@@ -91,6 +95,15 @@ export interface EstadoDaSalaNaTela {
   outraAba: boolean
   economiaDeDados: boolean
   aviso: string | null
+  /** Minha mão levantada. */
+  mao: boolean
+  /** O que o monitor liberou para os alunos nesta aula. */
+  permissoes: RetratoDaSala['permissoes']
+  /** Quem foi tirado da sala (só o monitor recebe). */
+  removidos: RetratoDaSala['removidos']
+  /** O monitor pediu para ligar o microfone ou a câmera (a pessoa decide). */
+  pedido: { acao: 'pedir_mic' | 'pedir_camera' } | null
+  reserva: CredenciaisDaSala['reserva'] | null
 }
 
 const CANAL_DE_ABAS = 'domineaqui:sala:'
@@ -170,6 +183,11 @@ export class ControladorDaSala {
       outraAba: false,
       economiaDeDados: false,
       aviso: null,
+      mao: false,
+      permissoes: { telaAlunos: true, chatAlunos: true },
+      removidos: [],
+      pedido: null,
+      reserva: null,
     }
   }
 
@@ -361,9 +379,49 @@ export class ControladorDaSala {
     this.distribuirTrilhas()
   }
 
+  /** Celular: alterna entre a câmera da frente e a de trás (ou a próxima da lista). */
+  async virarCamera(): Promise<void> {
+    const cameras = this.estado.aparelhos.cameras
+    if (cameras.length < 2) return
+    const atual = this.cam?.getSettings().deviceId || this.estado.prefs.camId
+    const i = cameras.findIndex((c) => c.deviceId === atual)
+    await this.trocarAparelho('cam', cameras[(i + 1) % cameras.length].deviceId)
+  }
+
+  /**
+   * iOS/Android: uma ligação ou outro app pode tomar a câmera/microfone com a
+   * aula em segundo plano. Na volta, tenta pegar de novo o que estava ligado.
+   */
+  private async retomarAparelhos(): Promise<void> {
+    if (this.estado.fase !== 'na_sala') return
+    const { prefs, local } = this.estado
+    if (!this.audio && local.mic === 'indisponivel') {
+      const r = await capturar({ audio: true, video: false, micId: prefs.micId })
+      if (r.audio && this.estado.fase === 'na_sala') {
+        this.audio = r.audio
+        this.audio.enabled = prefs.micLigado
+        this.vigiarTrilha(this.audio, 'mic')
+        this.definirLocal({ mic: prefs.micLigado ? 'ligado' : 'desligado' })
+        this.distribuirTrilhas()
+      } else pararTrilha(r.audio)
+    }
+    if (!this.cam && prefs.camLigada && local.cam === 'indisponivel') {
+      const r = await capturar({ audio: false, video: true, camId: prefs.camId })
+      if (r.video && this.estado.fase === 'na_sala') {
+        this.cam = r.video
+        this.vigiarTrilha(this.cam, 'cam')
+        this.definirLocal({ cam: 'ligado' })
+        this.distribuirTrilhas()
+      } else pararTrilha(r.video)
+    }
+  }
+
   async alternarTela(): Promise<void> {
     if (this.tela) return this.pararTela()
     if (!this.estado.config?.compartilharTela && this.estado.fase === 'na_sala') return
+    if (this.creds?.eu.papel === 'aluno' && !this.estado.permissoes.telaAlunos) {
+      return this.definir({ aviso: 'O monitor pausou o compartilhamento de tela dos alunos.' })
+    }
     try {
       const t = await capturarTela(this.perfil())
       if (!t) return
@@ -423,7 +481,7 @@ export class ControladorDaSala {
     if (status === 429 || status >= 500 || corpo?.motivo === 'nao_abriu') {
       return void this.irPara('saguao', { erroAoEntrar: mensagem, abreEm: corpo?.abreEm || this.estado.abreEm })
     }
-    const motivo: MotivoDeSaida = corpo?.motivo === 'encerrada' ? 'encerrada' : corpo?.motivo === 'fechada' ? 'fechada' : 'negado'
+    const motivo = motivoDaRecusa(corpo?.motivo)
     this.pararMidia()
     this.irPara('fora', { saida: { motivo, mensagem } })
   }
@@ -447,6 +505,11 @@ export class ControladorDaSala {
       encerrada: c.sala.encerrada,
       outraAba: false,
       aviso: null,
+      mao: false,
+      pedido: null,
+      permissoes: c.sala.permissoes || { telaAlunos: true, chatAlunos: true },
+      removidos: c.sala.removidos || [],
+      reserva: c.reserva,
     })
     // Avisa as outras abas deste navegador: a aula agora é aqui.
     this.canalAbas?.postMessage({ t: 'assumi', cx: c.eu.cx })
@@ -590,6 +653,7 @@ export class ControladorDaSala {
       return
     }
     if (res.status === 409 && corpo?.motivo === 'substituida') return this.sairCom('substituida', corpo.error)
+    if (res.status === 403 && corpo?.motivo === 'removido') return this.sairCom('removida', corpo.error)
     if (res.status === 410) return this.sairCom('fechada', corpo?.error || 'O horário desta monitoria terminou.')
     if (res.status === 404) return this.sairCom('negado', 'Esta sala não está mais disponível.')
     this.falhas++
@@ -605,8 +669,24 @@ export class ControladorDaSala {
       if (par.estado.fase === 'conectado') continue
       if (!p || (p.cx && p.cx !== par.cx)) this.fecharPar(pid)
     }
-    if (r.encerrada !== this.estado.encerrada) this.definir({ encerrada: r.encerrada })
+    const permissoes = r.permissoes || { telaAlunos: true, chatAlunos: true }
+    this.definir({ encerrada: r.encerrada, removidos: r.removidos || [] })
+    this.aplicarPermissoes(permissoes)
+    if (r.encerradaPeloSuporte) return this.sairCom('encerrada', 'O suporte da DomineAqui encerrou esta aula.')
     if (r.encerrada && this.creds?.eu.papel === 'aluno') this.sairCom('encerrada', 'O monitor encerrou a aula.')
+  }
+
+  private aplicarPermissoes(p: RetratoDaSala['permissoes']): void {
+    const antes = this.estado.permissoes
+    if (antes.telaAlunos === p.telaAlunos && antes.chatAlunos === p.chatAlunos) return
+    this.definir({ permissoes: p })
+    if (this.creds?.eu.papel !== 'aluno') return
+    if (!p.telaAlunos && this.tela) {
+      this.pararTela()
+      this.definir({ aviso: 'O monitor pausou o compartilhamento de tela dos alunos.' })
+    } else if (antes.chatAlunos !== p.chatAlunos) {
+      this.definir({ aviso: p.chatAlunos ? 'O monitor liberou o chat.' : 'O monitor pausou o chat dos alunos. Levante a mão para falar.' })
+    }
   }
 
   private processarSinais(lista: SinalRecebido[]): void {
@@ -659,9 +739,10 @@ export class ControladorDaSala {
         if (await this.renovar()) return this.enviarSinal(tipo, para, dados, 1)
         return
       }
-      if (res.status === 409) {
+      if (res.status === 409 || res.status === 403) {
         const corpo = await res.json().catch(() => null)
         if (corpo?.motivo === 'substituida') this.sairCom('substituida', corpo.error)
+        else if (corpo?.motivo === 'removido') this.sairCom('removida', corpo.error)
       }
     } catch {
       this.falhas++
@@ -674,7 +755,7 @@ export class ControladorDaSala {
   // ─── Canal P2P: estado, chat, tchau ─────────────────────────────────
 
   private enviarEstado(so?: Par): void {
-    const base = { mic: !!this.audio && this.audio.enabled, cam: !!this.cam, tela: !!this.tela }
+    const base = { mic: !!this.audio && this.audio.enabled, cam: !!this.cam, tela: !!this.tela, mao: this.estado.mao }
     for (const par of so ? [so] : this.pares.values()) {
       par.enviarPeloCanal({ t: 'estado', ...base, videoPausado: par.pausouVideoPelaRede })
     }
@@ -688,13 +769,130 @@ export class ControladorDaSala {
     if (m.t === 'chat') {
       if (this.idsDoChat.has(m.id)) return
       this.idsDoChat.add(m.id)
+      // O servidor já recusa contato no chat; isto barra quem mandasse direto
+      // pelo canal P2P, sem passar por ele.
+      if (detectarContato(m.texto).nivel === 'bloqueio') return
       const chat = [...this.estado.chat, { id: m.id, minha: false, nome: this.nomeDe(pid), texto: m.texto, em: m.em }].slice(-MAX_CHAT)
       this.definir({ chat, naoLidas: this.chatAberto ? 0 : this.estado.naoLidas + 1 })
     } else if (m.t === 'tchau') {
       this.fecharPar(pid)
       this.atualizar()
+    } else if (!this.vemDoMonitor(pid)) {
+      // Pedidos, remoção, permissões e "encerrar" só valem vindos do monitor
+      // (o papel vem do servidor, não do outro navegador).
     } else if (m.t === 'encerrar' && this.creds?.eu.papel === 'aluno') {
       this.sairCom('encerrada', 'O monitor encerrou a aula.')
+    } else if (m.t === 'pedido' && this.creds?.eu.papel === 'aluno') {
+      void this.atenderPedido(m.acao)
+    } else if (m.t === 'removido') {
+      if (m.pid === this.creds?.eu.pid) this.sairCom('removida', 'O monitor tirou você da sala. Se foi engano, ele pode liberar sua volta.')
+      else this.esquecerParticipante(m.pid)
+    } else if (m.t === 'permissoes') {
+      this.aplicarPermissoes({ telaAlunos: m.telaAlunos, chatAlunos: m.chatAlunos })
+    }
+  }
+
+  private vemDoMonitor(pid: string): boolean {
+    return this.retrato?.participantes.some((p) => p.pid === pid && p.papel === 'monitor') ?? false
+  }
+
+  /** Tirado da sala: some da tela na hora (o servidor confirma no próximo retrato). */
+  private esquecerParticipante(pid: string): void {
+    this.fecharPar(pid)
+    if (this.retrato) this.retrato = { ...this.retrato, participantes: this.retrato.participantes.filter((p) => p.pid !== pid) }
+    this.atualizar()
+  }
+
+  private async atenderPedido(acao: PedidoDoMonitor): Promise<void> {
+    if (acao === 'silenciar' && this.audio?.enabled) {
+      this.audio.enabled = false
+      this.guardar({ micLigado: false })
+      this.definirLocal({ mic: 'desligado' })
+      this.enviarEstado()
+      this.definir({ aviso: 'O monitor silenciou seu microfone. Ligue de novo quando for falar.' })
+    } else if (acao === 'desligar_camera' && this.cam) {
+      await this.alternarCam()
+      this.definir({ aviso: 'O monitor desligou sua câmera.' })
+    } else if (acao === 'parar_tela' && this.tela) {
+      this.pararTela()
+      this.definir({ aviso: 'O monitor parou o seu compartilhamento de tela.' })
+    } else if (acao === 'pedir_mic' && !(this.audio?.enabled ?? false)) {
+      this.definir({ pedido: { acao } })
+    } else if (acao === 'pedir_camera' && !this.cam) {
+      this.definir({ pedido: { acao } })
+    } else if (acao === 'baixar_mao' && this.estado.mao) {
+      this.definir({ mao: false, aviso: 'O monitor baixou sua mão.' })
+      this.enviarEstado()
+    }
+  }
+
+  /** Resposta ao "o monitor pediu para ligar o microfone/câmera". Nada liga sem a pessoa aceitar. */
+  async responderPedido(aceitar: boolean): Promise<void> {
+    const pedido = this.estado.pedido
+    this.definir({ pedido: null })
+    if (!aceitar || !pedido) return
+    if (pedido.acao === 'pedir_mic' && !(this.audio?.enabled ?? false)) await this.alternarMic()
+    if (pedido.acao === 'pedir_camera' && !this.cam) await this.alternarCam()
+  }
+
+  alternarMao(): void {
+    this.definir({ mao: !this.estado.mao })
+    this.enviarEstado()
+  }
+
+  // ─── Controles do anfitrião (monitor) ───────────────────────────────
+
+  /** Pedido a uma pessoa (silenciar, desligar câmera, parar tela, pedir para ligar, baixar a mão). */
+  pedirA(pid: string, acao: PedidoDoMonitor): void {
+    if (this.creds?.eu.papel !== 'monitor') return
+    this.pares.get(pid)?.enviarPeloCanal({ t: 'pedido', acao })
+  }
+
+  pedirATodos(acao: 'silenciar' | 'baixar_mao'): void {
+    if (this.creds?.eu.papel !== 'monitor') return
+    for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'pedido', acao })
+  }
+
+  /** Tira da sala (vale no servidor: a pessoa não volta até ser liberada). */
+  async removerParticipante(pid: string): Promise<string | null> {
+    const falha = await this.acaoNoServidor({ tipo: 'remover', alvo: pid })
+    if (falha) return falha
+    for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'removido', pid })
+    this.esquecerParticipante(pid)
+    return null
+  }
+
+  async readmitir(pid: string): Promise<string | null> {
+    const falha = await this.acaoNoServidor({ tipo: 'readmitir', alvo: pid })
+    if (!falha) this.definir({ removidos: this.estado.removidos.filter((r) => r.pid !== pid) })
+    return falha
+  }
+
+  /** Tela e chat dos alunos: grava no servidor (vale para quem entrar depois) e avisa já pelo P2P. */
+  async definirPermissoes(mudanca: Partial<RetratoDaSala['permissoes']>): Promise<string | null> {
+    const falha = await this.acaoNoServidor({ tipo: 'permissoes', ...mudanca })
+    if (falha) return falha
+    const permissoes = { ...this.estado.permissoes, ...mudanca }
+    for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'permissoes', ...permissoes })
+    this.definir({ permissoes })
+    return null
+  }
+
+  private async acaoNoServidor(corpo: Record<string, unknown>): Promise<string | null> {
+    if (!this.creds || this.creds.eu.papel !== 'monitor') return 'Só o monitor pode fazer isso.'
+    try {
+      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala/sinal`, {
+        method: 'POST',
+        headers: { ...this.cabecalhos(), 'Content-Type': 'application/json' },
+        body: JSON.stringify(corpo),
+        cache: 'no-store',
+      })
+      if (res.ok) return null
+      const erro = await res.json().catch(() => null)
+      if (erro?.motivo === 'substituida') this.sairCom('substituida', erro.error)
+      return erro?.error || 'Não deu agora. Tente de novo.'
+    } catch {
+      return 'Sem conexão. Tente de novo.'
     }
   }
 
@@ -709,7 +907,7 @@ export class ControladorDaSala {
       const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/mensagens`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texto: limpo }),
+        body: JSON.stringify({ texto: limpo, origem: 'sala' }),
         cache: 'no-store',
       })
       const corpo = await res.json().catch(() => null)
@@ -748,20 +946,11 @@ export class ControladorDaSala {
 
   async encerrarParaTodos(encerrar: boolean): Promise<string | null> {
     if (!this.creds || this.creds.eu.papel !== 'monitor') return null
-    try {
-      const res = await fetch(`/api/monitorias/reservas/${this.reservaId}/sala/sinal`, {
-        method: 'POST',
-        headers: { ...this.cabecalhos(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipo: encerrar ? 'encerrar' : 'reabrir' }),
-        cache: 'no-store',
-      })
-      if (!res.ok) return (await res.json().catch(() => null))?.error || 'Não deu agora. Tente de novo.'
-      if (encerrar) for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'encerrar' })
-      this.definir({ encerrada: encerrar })
-      return null
-    } catch {
-      return 'Sem conexão. Tente de novo.'
-    }
+    const falha = await this.acaoNoServidor({ tipo: encerrar ? 'encerrar' : 'reabrir' })
+    if (falha) return falha
+    if (encerrar) for (const par of this.pares.values()) par.enviarPeloCanal({ t: 'encerrar' })
+    this.definir({ encerrada: encerrar })
+    return null
   }
 
   // ─── Ciclos da aula: estatística, fala, renovação, fechamento ───────
@@ -773,7 +962,10 @@ export class ControladorDaSala {
     this.agendarFala()
     void this.pedirWakeLock()
     const aoMudarVisibilidade = () => {
-      if (document.visibilityState === 'visible') void this.pedirWakeLock()
+      if (document.visibilityState === 'visible') {
+        void this.pedirWakeLock()
+        void this.retomarAparelhos()
+      }
       this.reagendarSinal()
     }
     const aoFicarOffline = () => this.definir({ semInternet: true })
@@ -883,9 +1075,8 @@ export class ControladorDaSala {
         this.sairCom('sessao', 'Sua sessão expirou. Entre na sua conta de novo.')
       } else if (res.status === 409 && corpo?.motivo === 'substituida') {
         this.sairCom('substituida', corpo.error)
-      } else if (res.status === 401 || res.status === 404 || res.status === 409 || res.status === 503) {
-        const motivo: MotivoDeSaida = corpo?.motivo === 'encerrada' ? 'encerrada' : corpo?.motivo === 'fechada' ? 'fechada' : 'negado'
-        this.sairCom(motivo, corpo?.error || 'Sua participação nesta aula foi encerrada.')
+      } else if (res.status === 401 || res.status === 403 || res.status === 404 || res.status === 409 || res.status === 503) {
+        this.sairCom(motivoDaRecusa(corpo?.motivo), corpo?.error || 'Sua participação nesta aula foi encerrada.')
       } else {
         this.devolverUso(uso)
         this.timers.renovar = setTimeout(() => void this.renovar(), 30_000)
@@ -956,9 +1147,9 @@ export class ControladorDaSala {
   private sairCom(motivo: MotivoDeSaida, mensagem: string): void {
     if (this.estado.fase !== 'na_sala' && this.estado.fase !== 'entrando') return
     // Substituída/negada: o servidor já não reconhece esta conexão; não gasta invocação.
-    this.encerrarRede(motivo !== 'substituida' && motivo !== 'negado' && motivo !== 'sessao')
+    this.encerrarRede(motivo !== 'substituida' && motivo !== 'negado' && motivo !== 'sessao' && motivo !== 'removida')
     this.pararMidia()
-    this.irPara('fora', { saida: { motivo, mensagem }, participantes: [], sinal: null, ociosa: false, avisoDeFechamento: false })
+    this.irPara('fora', { saida: { motivo, mensagem }, participantes: [], sinal: null, ociosa: false, avisoDeFechamento: false, mao: false, pedido: null })
   }
 
   /** "Voltar para a aula" depois de sair. */
@@ -1049,6 +1240,8 @@ export class ControladorDaSala {
         videoPausado: !!par?.remoto.videoPausado,
         conexao: par?.rotulo ?? 'boa',
         falando: !!par && par.remoto.mic && par.nivelDeAudio() > 0.04,
+        mao: !!par?.remoto.mao,
+        maoDesde: par?.maoDesde ?? 0,
       })
     }
     // Pares conectados com alguém que o servidor ainda não lista (presença atrasada).
@@ -1068,9 +1261,24 @@ export class ControladorDaSala {
         videoPausado: par.remoto.videoPausado,
         conexao: par.rotulo,
         falando: par.remoto.mic && par.nivelDeAudio() > 0.04,
+        mao: par.remoto.mao,
+        maoDesde: par.maoDesde,
       })
+    }
+    // Tela de aluno com o compartilhamento pausado pelo monitor não aparece
+    // (protege de um navegador que ignore a pausa).
+    if (!this.estado.permissoes.telaAlunos) {
+      for (const p of lista) if (p.papel === 'aluno' && p.tela) Object.assign(p, { tela: null, compartilhando: false })
     }
     // O monitor primeiro: é quem mais importa ver.
     return lista.sort((a, b) => (a.papel === b.papel ? a.nome.localeCompare(b.nome) : a.papel === 'monitor' ? -1 : 1))
   }
+}
+
+/** Recusa do servidor (entrar/renovar) para o motivo de saída que a tela explica. */
+function motivoDaRecusa(motivo: string | undefined): MotivoDeSaida {
+  if (motivo === 'encerrada') return 'encerrada'
+  if (motivo === 'fechada') return 'fechada'
+  if (motivo === 'removido') return 'removida'
+  return 'negado'
 }

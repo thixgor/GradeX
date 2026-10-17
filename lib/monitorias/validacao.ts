@@ -10,7 +10,7 @@ import { stripHtml } from '@/lib/api-security'
 import { VALOR_MAXIMO_CENTAVOS, VALOR_MINIMO_CENTAVOS } from './dinheiro'
 import { validarFaixas } from './precos'
 import { interpretarUrlDeVideo, videoValido } from './videos'
-import { validarLinkExterno } from './links'
+import { validarLinkDeMaterial } from './links'
 import { validarJanelas } from './agenda'
 import { mascararContato } from './contato'
 import type { ConteudoAnuncio, Disponibilidade, VideoAnuncio } from './tipos'
@@ -152,8 +152,8 @@ export function normalizarAnuncio(
 
   const materiais: ConteudoAnuncio['materiais'] = []
   for (const m of v.materiais) {
-    const link = validarLinkExterno(m.url)
-    if (!link) erros.push(`Link de material inválido ("${m.titulo}"): use um endereço https completo.`)
+    const link = validarLinkDeMaterial(m.url)
+    if (!link) erros.push(`Link de material inválido ("${m.titulo}"): use um endereço https completo de material de estudo (sem WhatsApp, redes sociais ou encurtadores).`)
     else materiais.push({ titulo: m.titulo, url: link.url, dominio: link.dominio })
   }
 
@@ -223,7 +223,7 @@ export const SchemaProposta = z
   })
   .strict()
 
-export const SchemaMensagem = z.object({ texto: texto(1, 2000, 'Mensagem') }).strict()
+export const SchemaMensagem = z.object({ texto: texto(1, 2000, 'Mensagem'), origem: z.enum(['sala']).optional() }).strict()
 
 export const SchemaPergunta = z.object({ texto: texto(5, 1000, 'Pergunta') }).strict()
 export const SchemaResposta = z.object({ texto: texto(2, 2000, 'Resposta') }).strict()

@@ -1096,6 +1096,58 @@ export async function cancelar(input: {
 }
 
 /**
+ * O suporte cancela a monitoria (Admin → Monitorias → Aulas). Vale para
+ * qualquer reserva ainda não concluída — inclusive confirmada, já realizada ou
+ * em disputa: quem pagou recebe o reembolso integral (o mesmo caminho idempotente
+ * do cancelamento pelo monitor), assentos sem pagamento são cancelados, blocos
+ * da agenda e contratos são liberados. `culpaDoMonitor` registra strike.
+ *
+ * Fechar a sala de vídeo fica com a rota (a sala depende deste módulo).
+ */
+export async function cancelarPeloSuporte(input: {
+  reserva: Reserva
+  adminId: string
+  motivo: string
+  culpaDoMonitor: boolean
+}): Promise<{ reembolsos: { ok: number; falhas: number } }> {
+  const { reserva, adminId, motivo } = input
+  const c = await cols()
+  const id = idDe(reserva)
+  await transitar(c, reserva, 'cancelada_suporte', { motivoCancelamento: motivo, canceladaPor: adminId })
+  await Promise.all([
+    liberarBlocos(id),
+    rescindirContratosDaReserva(id),
+    c.cotasGratis.deleteMany({ reservaId: id }),
+    c.participacoes.updateMany(
+      { reservaId: id, status: { $in: ['aguardando_assinatura', 'aguardando_pagamento', 'gratis'] } },
+      { $set: { status: 'cancelada', updatedAt: new Date() } },
+    ),
+  ])
+  const reembolsos = await reembolsarReserva(id, `Cancelado pelo suporte: ${motivo}`, adminId)
+  if (input.culpaDoMonitor) await registrarStrike(c, reserva, `Cancelada pelo suporte: ${motivo}`)
+  await mensagemDoSistema(c, id, `A monitoria foi cancelada pelo suporte da DomineAqui. Motivo: ${motivo}`)
+  const pessoas = await alunosDaReserva(c, id)
+  await avisar(
+    Array.from(new Set([reserva.tutorUserId, ...pessoas])).map((userId) => ({
+      userId,
+      titulo: 'Monitoria cancelada pelo suporte',
+      mensagem: `"${reserva.anuncioTitulo}" foi cancelada pelo suporte.`,
+      url: urlReserva(id),
+      email: {
+        assunto: `Monitoria cancelada pelo suporte: ${reserva.anuncioTitulo}`,
+        paragrafos: [
+          `A monitoria "${reserva.anuncioTitulo}" foi cancelada pelo suporte da DomineAqui.`,
+          userId === reserva.tutorUserId ? 'Os valores desta monitoria não serão repassados.' : 'Se você pagou, o reembolso integral foi solicitado ao Mercado Pago.',
+        ],
+        linhas: [['Motivo', motivo]],
+        botao: 'Ver detalhes',
+      },
+    })),
+  )
+  return { reembolsos }
+}
+
+/**
  * Fim da saída de um aluno com reembolso. Se o Mercado Pago não confirmou na
  * hora, a INTENÇÃO já está gravada (assento "reembolso_processando", chave
  * única) e a varredura conclui sozinha — a saída vale do mesmo jeito.

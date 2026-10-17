@@ -16,6 +16,7 @@ import { LinkExternoSeguro } from '@/components/monitorias/link-externo-seguro'
 import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
 import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
 import { CartaoSalaDeAula } from '@/components/monitorias/sala/cartao-sala-de-aula'
+import { CartaoDeAnotacoes } from '@/components/monitorias/anotacoes'
 import { baixarIcs, type DetalheReserva, type MensagemReserva, type PresencaNaSala } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
@@ -85,7 +86,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
       /* rede instável: a próxima volta tenta de novo */
     }
   }, [d, params.id, carregar])
-  const ativa = d && !['expirada', 'cancelada_aluno', 'cancelada_monitor', 'recusada', 'reembolsada', 'concluida'].includes(d.reserva.status)
+  const ativa = d && !['expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'recusada', 'reembolsada', 'concluida'].includes(d.reserva.status)
   const negociando = d && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento'].includes(d.reserva.status)
   useIntervaloVisivel(atualizar, !ativa ? null : negociando ? 7000 : 15000)
 
@@ -148,7 +149,7 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const ehMonitor = d.papel === 'monitor'
   const outroNome = ehMonitor ? (d.assentos[0]?.alunoNome || 'Aluno') : d.monitor?.nome || 'Monitor'
   const etapaAtual = ETAPAS_LINHA_DO_TEMPO.findIndex((e) => e.status.includes(r.status))
-  const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'recusada', 'reembolsada'].includes(r.status)
+  const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'recusada', 'reembolsada'].includes(r.status)
   const propostaPendente = !d.somenteLeitura && r.status === 'em_negociacao' && p && (ehMonitor ? !r.aceites.tutor : !r.aceites.aluno)
   const assento = d.meuAssento
   const precisaCheckout = !ehMonitor && assento && ['aguardando_assinatura', 'aguardando_pagamento'].includes(assento.status) && ['aguardando_assinaturas', 'aguardando_pagamento'].includes(r.status)
@@ -331,6 +332,8 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
           )}
 
           <CartaoSalaDeAula d={d} presenca={presencaSala} />
+
+          {['confirmada', 'realizada', 'em_disputa', 'concluida'].includes(r.status) && <CartaoDeAnotacoes reservaId={r.id} />}
 
           {(r.status === 'confirmada' || r.status === 'aguardando_pagamento' || r.status === 'realizada') && (
             <LinkDaReuniao d={d} onSalvar={(url) => acao({ acao: 'link', url })} />

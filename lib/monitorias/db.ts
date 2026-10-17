@@ -10,12 +10,14 @@ import { getDb } from '@/lib/mongodb'
 import type { User } from '@/lib/types'
 import type {
   AceiteTermos,
+  Anotacao,
   Anuncio,
   Bloqueio,
   CodigoConfirmacao,
   Contrato,
   Demanda,
   DevolucaoAvulsa,
+  Infracao,
   Lancamento,
   Mensagem,
   Participacao,
@@ -47,6 +49,8 @@ export const COLECOES = {
   demandas: 'monitorias_demandas',
   salas: 'monitorias_salas',
   usoDaSala: 'monitorias_sala_uso',
+  infracoes: 'monitorias_infracoes',
+  anotacoes: 'monitorias_anotacoes',
 } as const
 
 export function colecoes(db: Db) {
@@ -69,6 +73,8 @@ export function colecoes(db: Db) {
     demandas: db.collection<Demanda>(COLECOES.demandas),
     salas: db.collection<Sala>(COLECOES.salas),
     usoDaSala: db.collection<UsoDaSala>(COLECOES.usoDaSala),
+    infracoes: db.collection<Infracao>(COLECOES.infracoes),
+    anotacoes: db.collection<Anotacao>(COLECOES.anotacoes),
     users: db.collection<User>('users'),
   }
 }

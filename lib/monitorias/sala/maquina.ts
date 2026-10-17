@@ -19,7 +19,7 @@ export type FaseDaSala = 'verificando' | 'sem_suporte' | 'saguao' | 'entrando' |
  * Por que a pessoa está fora da sala. `voce` e `substituida` permitem voltar;
  * `negado` e `fechada` não (a não ser que a situação mude no servidor).
  */
-export type MotivoDeSaida = 'voce' | 'encerrada' | 'fechada' | 'substituida' | 'negado' | 'sessao' | 'conexao'
+export type MotivoDeSaida = 'voce' | 'encerrada' | 'fechada' | 'substituida' | 'negado' | 'sessao' | 'conexao' | 'removida'
 
 const TRANSICOES: Record<FaseDaSala, FaseDaSala[]> = {
   verificando: ['sem_suporte', 'saguao'],

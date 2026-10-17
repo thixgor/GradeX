@@ -456,7 +456,112 @@ sobe depois de 10 boas. Áudio com prioridade alta. Tela ≤ 5 fps (1,2 Mbps no
 - O cliente (controlador + pares) foi exercitado em dois Chromium com câmera e
   microfone falsos contra um servidor de sinalização falso: conexão, áudio/vídeo,
   estado, câmera, tela, chat, saída, volta, recarga, segunda aba, encerrar e
-  limpeza total.
+  limpeza total. Na rodada 2, também na tela real (next dev): mão levantada,
+  silenciar, pedir microfone, baixar mão, chat pausado, contato bloqueado,
+  anotações com PDF, tirar e liberar da sala, e capturas em cinco aparelhos.
+- `contato-inteligente.test.ts`, `sala-anfitriao-e-suporte.test.ts`,
+  `anotacoes.test.ts`.
+
+### Controles do monitor e mão levantada
+
+- Pelo painel **Pessoas** (e pela faixa "fulano levantou a mão"): silenciar um
+  ou todos, desligar câmera, parar a tela, pedir para ligar microfone/câmera,
+  baixar mãos (uma ou todas), fixar no palco, **tirar da sala** e liberar a
+  volta, e as permissões **tela dos alunos** e **chat dos alunos**.
+- Pedidos (silenciar, câmera, tela, mão) vão pelo canal P2P (`t:'pedido'`), sem
+  custo de servidor; quem recebe só obedece se o remetente for o monitor
+  segundo o retrato do servidor. Ligar microfone ou câmera de alguém **nunca** é
+  forçado: o aluno vê "O monitor pediu para você falar" e decide.
+- Tirar da sala e permissões valem no servidor (`acaoDoAnfitriao` em
+  `servidor.ts`, POST `…/sala/sinal` com `remover`/`readmitir`/`permissoes`):
+  `removidos.<pid>` recusa entrada/renovação/sinais (403 `removido`) até ser
+  liberado; o chat pausado também vale no POST de mensagens (`chatDosAlunosPausado`,
+  uma leitura só dentro da janela da aula). A tela de aluno com a tela pausada
+  não é exibida nem se o navegador dele ignorar a pausa.
+- Aluno levanta a mão pelo botão (ou Ctrl/⌘+Alt+H); o monitor vê a fila em ordem.
+
+### Anotações (`/api/monitorias/reservas/[id]/anotacoes`, `hooks/use-anotacoes.ts`)
+
+- Painel na sala (e cartão "Minhas anotações" na página da reserva). Só quem
+  escreveu lê. Botão "Horário" marca `[14:32]`; `# título` e `- item` saem
+  formatados no PDF.
+- Local primeiro (`localStorage` a cada pausa); servidor com folga: no máximo a
+  cada 30 s escrevendo, ao fechar o painel e ao esconder a aba (`keepalive`).
+  Conflito de dois aparelhos: 409 com o texto do servidor e junção sem perda
+  (`juntarAnotacoes`). Coleção `monitorias_anotacoes` (único userId+reservaId).
+- **PDF feito no navegador** (`lib/monitorias/anotacoes-pdf.ts`, jsPDF carregado
+  só no clique): faixa da marca com o ícone, ficha (título, #código, data,
+  monitor, aluno), corpo formatado, rodapé com página. Helvetica embutida (nada
+  de baixar 2 MB de Roboto); o que ela não desenha vira texto (`paraWinAnsi`).
+
+### Marca e marca d'água
+
+- Topo da sala: ícone da DomineAqui (`/favicon.png`, 6 KB) e, do tablet para
+  cima, "www.domineaqui.com.br".
+- Marca d'água pequena e translúcida no canto do palco, sem receber toques:
+  "www.domineaqui.com.br · Monitoria #XXXXXX" e "Monitor: Fulano S. · Aluno:
+  Ciclano L." (quem está vendo). Aparece em qualquer captura ou gravação feita
+  por fora. Testada em iPhone SE, iPhone 14, celular deitado, iPad e desktop:
+  não encosta nos controles nem cobre rosto.
+
+### Celular e iOS
+
+- Altura pela `visualViewport` (`hooks/use-viewport-visivel.ts`): com o teclado
+  aberto no iOS, o campo do chat continua visível. Campos com 16 px no toque
+  (sem zoom automático), `enterKeyHint="send"`, `touch-manipulation`.
+- Barra do celular: microfone, câmera, mão (aluno) ou pessoas (monitor), chat,
+  "Mais" e sair; o resto (anotações, virar câmera, economia de dados, aparelhos,
+  encerrar) fica na folha "Mais". Painéis viram folha inferior no celular e
+  coluna lateral no tablet/desktop. Botões de 44 px abaixo de 380 px de largura
+  e compactos com o celular deitado.
+- Celular em pé com vídeo deitado: o quadro aparece inteiro (`contain`), sem
+  cortar o rosto. Tela compartilhada com zoom (+/−, toque duplo, arrastar).
+- Ao voltar do segundo plano, câmera/microfone tomados por outro app (ligação)
+  são pegos de novo sozinhos.
+
+## Contato por fora: detector, bloqueio e registro
+
+- `lib/monitorias/contato-inteligente.ts` (puro, testado com 110 casos): telefone
+  com DDD válido (também por extenso, com emoji, espaçado, +55, 0xx), e-mail
+  (inclusive "arroba"/"ponto com"), links sem http e domínio espaçado, @perfil e
+  "meu insta é…", CPF/CNPJ com dígito verificador, chave PIX aleatória, convites
+  ("me chama no zap", "passa teu número") e pagamento por fora ("pix direto",
+  "sem a taxa da plataforma"). Não bloqueia conversa de aula: "PA 120/80",
+  "FC 80 90 100 110", datas e horários, "questões 12, 13 e 14", "o tumor cresce
+  por fora", "nesse ponto com certeza". Telefone mandado em pedaços é pego
+  juntando as últimas mensagens do mesmo autor (`detectarEmSequencia`).
+- **Chat (reserva e sala):** `bloqueio` → 422 com o aviso, a mensagem não entra
+  e fica em `monitorias_infracoes`; `alerta` (só cita um canal, "o zap caiu") é
+  entregue e registrado. Na 3ª tentativa bloqueada em 24 h a equipe recebe aviso.
+  O canal P2P da sala descarta o mesmo conteúdo (quem burlasse o servidor).
+- Material enviado pelo monitor: `validarLinkDeMaterial` recusa mensageiros,
+  redes sociais, "link na bio", agendadores e encurtadores; título com contato é
+  bloqueado e registrado. Nome de cadastro com contato não aparece na sala
+  (`nomeVisivel`).
+- Limite honesto: o que aparece **dentro do vídeo ou da tela compartilhada**
+  (um papel com o número) não é lido pela plataforma.
+
+## Admin: aulas, conversas e cancelamento pelo suporte
+
+- **Aulas** (`/api/admin/monitorias/aulas`): ao vivo agora (atualiza a cada 30 s
+  com a aba visível), hoje, próximas, todas; busca por #ID (6 últimos
+  caracteres), id completo, título ou nome do aluno. Mostra quem está na sala,
+  quem foi tirado, permissões pausadas e tentativas de contato.
+- **Ver conversa** (`…/reservas/[id]/conversa`): chat completo, sem máscara, com
+  as tentativas bloqueadas (que não chegaram ao outro lado). Abrir fica na
+  auditoria (`monitoria_chat_lido`).
+- **Encerrar/reabrir aula e tirar/liberar alguém** (`…/reservas/[id]/sala`):
+  `encerradaPeloSuporte` impede até o monitor de reabrir; quem está dentro sai no
+  próximo pulso (até ~30 s). Não mexe na reserva.
+- **Cancelar monitoria** (`…/reservas/[id]/cancelar`): status
+  `cancelada_suporte` a partir de qualquer estado não concluído, reembolso
+  integral de quem pagou (caminho idempotente de sempre), agenda e contratos
+  liberados, strike opcional, aviso por e-mail a todos e sala encerrada.
+- **Contato por fora** (`/api/admin/monitorias/infracoes`): novas/todas,
+  reincidência em 30 dias, histórico por pessoa, marcar como vista (contador na
+  aba). Registro guardado por 2 anos (índice TTL).
+- Depois do deploy: `npm run db:indexes` (índices de `monitorias_infracoes` e
+  `monitorias_anotacoes`).
 
 ### Pendências antes de lançar
 

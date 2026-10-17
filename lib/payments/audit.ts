@@ -50,6 +50,11 @@ export type AuditAction =
   /** Chaves da sala de aula (Admin → Monitorias → Sala de vídeo) e o corte do TURN. */
   | 'monitoria_sala_config'
   | 'monitoria_sala_turn_cortado'
+  /** Suporte agindo numa aula: encerrar/reabrir, tirar/liberar alguém, cancelar. */
+  | 'monitoria_sala_suporte'
+  | 'monitoria_cancelada_suporte'
+  /** O admin abriu a conversa de uma monitoria (prestação de contas, LGPD). */
+  | 'monitoria_chat_lido'
 
 export interface AuditLogEntry {
   action: AuditAction

@@ -80,7 +80,9 @@ export class Par {
   readonly cameraRemota: MediaStream
   readonly telaRemota: MediaStream
   estado: EstadoDoPar = PAR_NOVO
-  remoto = { mic: true, cam: true, tela: false, videoPausado: false }
+  remoto = { mic: true, cam: true, tela: false, videoPausado: false, mao: false }
+  /** Quando o outro levantou a mão (ordem da fila de quem quer falar). */
+  maoDesde = 0
   qualidade: EstadoDeQualidade = { nivel: 0, ruins: 0, boas: 0 }
   ultimaAmostra: Amostra = 'neutra'
   /** Vezes que as trilhas remotas mudaram (a tela reatribui o `srcObject`). */
@@ -397,7 +399,8 @@ export class Par {
       case 'reiniciar':
         return this.receberPedidoDeReinicio()
       case 'estado':
-        this.remoto = { mic: m.mic, cam: m.cam, tela: m.tela, videoPausado: m.videoPausado }
+        if (m.mao && !this.remoto.mao) this.maoDesde = Date.now()
+        this.remoto = { mic: m.mic, cam: m.cam, tela: m.tela, videoPausado: m.videoPausado, mao: m.mao }
         this.o.aoMudar()
         return
       case 'video':

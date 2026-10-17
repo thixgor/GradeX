@@ -13,6 +13,7 @@ const TITULOS: Record<NonNullable<EstadoDaSalaNaTela['saida']>['motivo'], { titu
   negado: { titulo: 'Não foi possível entrar', icone: ShieldAlert },
   sessao: { titulo: 'Sua sessão expirou', icone: LogIn },
   conexao: { titulo: 'A conexão caiu', icone: WifiOff },
+  removida: { titulo: 'Você saiu da sala por decisão do monitor', icone: ShieldAlert },
 }
 
 /** Depois da saída: o que aconteceu e o próximo passo, sem termos técnicos. A câmera já está desligada. */

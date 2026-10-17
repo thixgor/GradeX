@@ -237,6 +237,7 @@ export type StatusReserva =
   | 'em_disputa'
   | 'cancelada_aluno'
   | 'cancelada_monitor'
+  | 'cancelada_suporte'
   | 'recusada'
   | 'expirada'
   | 'reembolsada'
@@ -698,9 +699,22 @@ export interface Sala {
   /** Quantas pessoas a aula espera (monitor + assentos com aula), até o limite da sala. */
   esperados?: number
   encerradaEm?: Date | null
+  /** Quem encerrou foi o suporte: o monitor não reabre. */
+  encerradaPeloSuporte?: boolean
+  /** Tirados da sala (pelo monitor ou pelo suporte): não entram de novo até serem liberados. */
+  removidos?: Record<string, { em: Date; por: 'monitor' | 'suporte'; nome: string }>
+  /** O que o monitor liberou para os alunos nesta aula (ausente = liberado). */
+  permissoes?: PermissoesDaSala
   avisouEntradaMonitor?: Date
   createdAt: Date
   updatedAt: Date
+}
+
+export interface PermissoesDaSala {
+  /** Alunos podem compartilhar a tela. */
+  telaAlunos: boolean
+  /** Alunos podem escrever no chat durante a aula. */
+  chatAlunos: boolean
 }
 
 /** Consumo estimado do mês (um documento por "AAAA-MM"), para o teto de TURN. */
@@ -710,4 +724,41 @@ export interface UsoDaSala {
   segundosRelay: number
   segundosDireta: number
   atualizadoEm: Date
+}
+
+/** Onde a tentativa de contato apareceu. */
+export type OrigemInfracao = 'chat' | 'chat_sala' | 'material'
+
+/**
+ * Tentativa de passar contato ou combinar por fora (`contato-inteligente.ts`).
+ * `bloqueio` não foi entregue; `alerta` foi, mas o admin pode querer olhar.
+ */
+export interface Infracao {
+  _id?: Id
+  reservaId: string
+  userId: string
+  /** Nome no momento (o admin lê sem abrir o cadastro). */
+  nome: string
+  papel: 'monitor' | 'aluno'
+  origem: OrigemInfracao
+  nivel: 'bloqueio' | 'alerta'
+  categorias: string[]
+  trechos: string[]
+  /** A mensagem (cortada em 500 caracteres): é a evidência para o suporte. */
+  texto: string
+  vistaEm?: Date
+  vistaPor?: string
+  createdAt: Date
+}
+
+/** Anotações de uma pessoa numa monitoria (só ela lê). O PDF sai no navegador. */
+export interface Anotacao {
+  _id?: Id
+  userId: string
+  reservaId: string
+  texto: string
+  /** Sobe a cada gravação: o aparelho com versão antiga não sobrescreve o mais novo. */
+  versao: number
+  createdAt: Date
+  updatedAt: Date
 }

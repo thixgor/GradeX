@@ -46,6 +46,8 @@ export type EnvioDeSinal =
   | { tipo: 'sair'; uso?: UsoDaConexao }
   | { tipo: 'encerrar' }
   | { tipo: 'reabrir' }
+  | { tipo: 'remover' | 'readmitir'; alvo: string }
+  | { tipo: 'permissoes'; telaAlunos?: boolean; chatAlunos?: boolean }
 
 export interface SinalRecebido {
   seq: number
@@ -74,7 +76,13 @@ export interface RetratoDaSala {
   /** Quantas pessoas a aula espera (monitor + assentos), até o limite da sala. */
   esperados: number
   encerrada: boolean
+  /** Encerrada pelo suporte: nem o monitor reabre. */
+  encerradaPeloSuporte: boolean
   fechaEm: string
+  /** O que o monitor liberou para os alunos. */
+  permissoes: { telaAlunos: boolean; chatAlunos: boolean }
+  /** Tirados da sala (só o monitor recebe a lista, para liberar a volta). */
+  removidos: Array<{ pid: string; nome: string; por: 'monitor' | 'suporte' }>
 }
 
 export interface RespostaDoSinal extends RetratoDaSala {
@@ -91,14 +99,15 @@ export interface CredenciaisDaSala {
   sala: RetratoDaSala
   config: { compartilharTela: boolean; chatNaSala: boolean; limiteMalha: number }
   janela: { inicio: string; fim: string; abreEm: string; fechaEm: string }
-  reserva: { id: string; titulo: string }
+  /** Para a marca d'água: id, título e o nome do monitor. */
+  reserva: { id: string; titulo: string; monitor: string }
 }
 
 /** O que `GET …/sala` devolve: o saguão antes de entrar. */
 export interface EstadoDoSaguao {
   acesso: {
     ok: boolean
-    motivo: 'sem_acesso' | 'desligada' | 'status' | 'sem_horario' | 'nao_abriu' | 'fechada' | 'encerrada' | 'cheia' | null
+    motivo: 'sem_acesso' | 'desligada' | 'status' | 'sem_horario' | 'nao_abriu' | 'fechada' | 'encerrada' | 'cheia' | 'removido' | null
     mensagem: string | null
     abreEm: string | null
     fechaEm: string | null
@@ -113,8 +122,12 @@ export interface EstadoDoSaguao {
 
 // ─── Canal P2P (RTCDataChannel) ────────────────────────────────────────
 
+/** O que o monitor pode pedir a um participante (o navegador dele obedece; nada é forçado no servidor). */
+export type PedidoDoMonitor = 'silenciar' | 'desligar_camera' | 'parar_tela' | 'pedir_mic' | 'pedir_camera' | 'baixar_mao'
+const PEDIDOS: PedidoDoMonitor[] = ['silenciar', 'desligar_camera', 'parar_tela', 'pedir_mic', 'pedir_camera', 'baixar_mao']
+
 export type MensagemDoCanal =
-  | { t: 'estado'; mic: boolean; cam: boolean; tela: boolean; videoPausado: boolean }
+  | { t: 'estado'; mic: boolean; cam: boolean; tela: boolean; videoPausado: boolean; mao: boolean }
   | { t: 'chat'; id: string; texto: string; em: string }
   | { t: 'sdp'; tipo: 'offer' | 'answer'; sdp: string; neg: string }
   | { t: 'ice'; lista: CandidatoIce[]; neg: string }
@@ -122,6 +135,10 @@ export type MensagemDoCanal =
   | { t: 'tchau' }
   | { t: 'encerrar' }
   | { t: 'video'; receber: boolean }
+  // Só valem vindas do monitor (quem recebe confere o papel pelo retrato do servidor).
+  | { t: 'pedido'; acao: PedidoDoMonitor }
+  | { t: 'removido'; pid: string }
+  | { t: 'permissoes'; telaAlunos: boolean; chatAlunos: boolean }
 
 const ehTexto = (v: unknown, max: number): v is string => typeof v === 'string' && v.length <= max
 const ehBool = (v: unknown): v is boolean => typeof v === 'boolean'
@@ -170,7 +187,7 @@ export function lerMensagemDoCanal(bruto: unknown): MensagemDoCanal | null {
   switch (m.t) {
     case 'estado':
       return ehBool(m.mic) && ehBool(m.cam) && ehBool(m.tela)
-        ? { t: 'estado', mic: m.mic, cam: m.cam, tela: m.tela, videoPausado: m.videoPausado === true }
+        ? { t: 'estado', mic: m.mic, cam: m.cam, tela: m.tela, videoPausado: m.videoPausado === true, mao: m.mao === true }
         : null
     case 'chat':
       return ehTexto(m.id, 40) && ehTexto(m.texto, CHAT_MAX) && m.texto.trim() && ehTexto(m.em, 40)
@@ -184,6 +201,12 @@ export function lerMensagemDoCanal(bruto: unknown): MensagemDoCanal | null {
       return listaDeCandidatos(m.lista) && ehTexto(m.neg, 40) ? { t: 'ice', lista: m.lista, neg: m.neg } : null
     case 'video':
       return ehBool(m.receber) ? { t: 'video', receber: m.receber } : null
+    case 'pedido':
+      return PEDIDOS.includes(m.acao as PedidoDoMonitor) ? { t: 'pedido', acao: m.acao as PedidoDoMonitor } : null
+    case 'removido':
+      return typeof m.pid === 'string' && /^[A-Za-z0-9_-]{16}$/.test(m.pid) ? { t: 'removido', pid: m.pid } : null
+    case 'permissoes':
+      return ehBool(m.telaAlunos) && ehBool(m.chatAlunos) ? { t: 'permissoes', telaAlunos: m.telaAlunos, chatAlunos: m.chatAlunos } : null
     case 'reiniciar':
     case 'tchau':
     case 'encerrar':

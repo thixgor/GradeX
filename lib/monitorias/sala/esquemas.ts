@@ -40,6 +40,10 @@ export const EsquemaEnvio = z.discriminatedUnion('tipo', [
   z.object({ tipo: z.literal('sair'), uso: EsquemaUso.optional(), token: z.string().max(2_000).optional() }).strict(),
   z.object({ tipo: z.literal('encerrar') }).strict(),
   z.object({ tipo: z.literal('reabrir') }).strict(),
+  // Controles do anfitrião que valem no servidor (só o monitor).
+  z.object({ tipo: z.literal('remover'), alvo: Pid }).strict(),
+  z.object({ tipo: z.literal('readmitir'), alvo: Pid }).strict(),
+  z.object({ tipo: z.literal('permissoes'), telaAlunos: z.boolean().optional(), chatAlunos: z.boolean().optional() }).strict(),
 ])
 
 export type EnvioValidado = z.infer<typeof EsquemaEnvio>

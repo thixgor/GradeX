@@ -94,7 +94,7 @@ describe('sala: mensagens do canal P2P (dado não confiável)', () => {
   const sdp = 'v=0\r\no=- 1 2 IN IP4 127.0.0.1\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\n'
 
   it('aceita o formato certo', () => {
-    expect(lerMensagemDoCanal(JSON.stringify({ t: 'estado', mic: true, cam: false, tela: false }))).toEqual({ t: 'estado', mic: true, cam: false, tela: false, videoPausado: false })
+    expect(lerMensagemDoCanal(JSON.stringify({ t: 'estado', mic: true, cam: false, tela: false }))).toEqual({ t: 'estado', mic: true, cam: false, tela: false, videoPausado: false, mao: false })
     expect(lerMensagemDoCanal(JSON.stringify({ t: 'chat', id: 'a1', texto: 'oi', em: '2026-11-10T17:00:00Z' }))?.t).toBe('chat')
     expect(lerMensagemDoCanal(JSON.stringify({ t: 'sdp', tipo: 'offer', sdp, neg: 'n1' }))?.t).toBe('sdp')
     expect(lerMensagemDoCanal(JSON.stringify({ t: 'tchau' }))).toEqual({ t: 'tchau' })

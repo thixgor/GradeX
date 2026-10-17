@@ -23,7 +23,7 @@ import { getDb } from '@/lib/mongodb'
 import { colecoes, ehDuplicada, idDe } from '../db'
 import { carregarReserva, papelPeloAssento } from '../reservas'
 import { avisar } from '../avisos'
-import type { ConfigSala, PapelNaSala, Reserva, Sala } from '../tipos'
+import type { ConfigSala, PapelNaSala, PermissoesDaSala, Reserva, Sala } from '../tipos'
 import { bytesDeRelayNoMes, configDaSala, mesDoUso } from './config'
 import {
   ASSENTOS_COM_AULA,
@@ -47,6 +47,7 @@ import { emitirTokenDaSala, pidDe, vinculoDaSessao, type ClaimsDaSala } from './
 import { gerarCredenciaisTurn, STUN_PADRAO, turnConfigurado, type ServidorIce } from './turn'
 import type { CredenciaisDaSala, EstadoDoSaguao, ParticipanteVisivel, RespostaDoSinal, RetratoDaSala, UsoDaConexao } from './mensagens'
 import type { EnvioValidado } from './esquemas'
+import { detectarContato } from '../contato-inteligente'
 
 export interface SessaoDaSala {
   userId: string
@@ -63,8 +64,22 @@ export interface Recusa {
   fechaEm?: string
 }
 
-const PROJECAO_SALA = { participantes: 1, versao: 1, seq: 1, esperados: 1, encerradaEm: 1, fim: 1, avisouEntradaMonitor: 1 } as const
-type SalaLida = Pick<Sala, 'participantes' | 'versao' | 'seq' | 'esperados' | 'encerradaEm' | 'fim' | 'avisouEntradaMonitor'>
+const PROJECAO_SALA = {
+  participantes: 1,
+  versao: 1,
+  seq: 1,
+  esperados: 1,
+  encerradaEm: 1,
+  encerradaPeloSuporte: 1,
+  removidos: 1,
+  permissoes: 1,
+  fim: 1,
+  avisouEntradaMonitor: 1,
+} as const
+type SalaLida = Pick<
+  Sala,
+  'participantes' | 'versao' | 'seq' | 'esperados' | 'encerradaEm' | 'encerradaPeloSuporte' | 'removidos' | 'permissoes' | 'fim' | 'avisouEntradaMonitor'
+>
 
 function recusaDe(acesso: Extract<ResultadoAcesso, { ok: false }>): Recusa {
   return {
@@ -86,6 +101,15 @@ const SUBSTITUIDA: Recusa = {
 
 const TOKEN_INVALIDO: Recusa = { ok: false, status: 401, motivo: 'token', mensagem: 'Sua entrada na sala venceu. Entre de novo.' }
 
+function mensagemDeRemovido(por: 'monitor' | 'suporte'): string {
+  return por === 'suporte' ? 'O suporte da DomineAqui tirou você desta aula. Fale com o suporte.' : 'O monitor tirou você da sala. Se foi engano, ele pode liberar sua volta.'
+}
+
+/** Permissões em vigor (documento sem o campo = tudo liberado). */
+export function permissoesDe(sala: Pick<Sala, 'permissoes'> | null | undefined): PermissoesDaSala {
+  return { telaAlunos: sala?.permissoes?.telaAlunos !== false, chatAlunos: sala?.permissoes?.chatAlunos !== false }
+}
+
 // ─── Contexto: tudo que a autorização precisa, numa leva só ────────────
 
 interface Contexto {
@@ -93,6 +117,8 @@ interface Contexto {
   reservaId: string
   acesso: ResultadoAcesso
   nome: string
+  /** Nome do monitor (marca d'água da sala). */
+  nomeDoMonitor: string
   config: ConfigSala
   sala: SalaLida | null
   esperados: number
@@ -107,7 +133,7 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     ehMonitor
       ? null
       : c.participacoes.findOne({ reservaId: id, alunoId: userId }, { projection: { status: 1, valorCentavos: 1, reembolsos: 1, alunoNome: 1 } }),
-    ehMonitor ? c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1 } }) : null,
+    c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1 } }),
     configDaSala(),
     c.salas.findOne({ _id: id }, { projection: PROJECAO_SALA }) as Promise<SalaLida | null>,
     c.participacoes.countDocuments({ reservaId: id, status: { $in: ASSENTOS_COM_AULA } } as any),
@@ -120,6 +146,8 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     fim: reserva.fim,
     disputaEm: reserva.disputa?.em,
     encerradaEm: sala?.encerradaEm,
+    encerradaPeloSuporte: !!sala?.encerradaPeloSuporte,
+    removido: sala?.removidos?.[pidDe(id, userId)] || null,
     agora,
     config,
   })
@@ -128,6 +156,7 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
     reservaId: id,
     acesso,
     nome: (ehMonitor ? tutor?.nome : part?.alunoNome) || 'Participante',
+    nomeDoMonitor: tutor?.nome || 'Monitor',
     config,
     sala,
     esperados: Math.min(config.limiteMalha, 1 + comAula),
@@ -136,6 +165,19 @@ async function contexto(reservaId: string, userId: string, agora: Date): Promise
 
 function fechaEmDe(sala: Pick<Sala, 'fim'>): Date {
   return new Date(new Date(sala.fim).getTime() + FECHA_DEPOIS_MIN * 60_000)
+}
+
+/**
+ * Nome como os outros veem. O monitor vê o nome completo dos alunos (como no
+ * resto das monitorias); entre alunos, só o primeiro nome. O nome do monitor é
+ * público no anúncio. Nome de cadastro com telefone, @ ou link não vai para a
+ * tela da sala: vira só a primeira palavra (ou o papel).
+ */
+export function nomeVisivel(nome: string, papel: PapelNaSala, leitor: PapelNaSala): string {
+  const base = leitor === 'monitor' || papel === 'monitor' ? nome : primeiroNome(nome)
+  if (detectarContato(base).nivel !== 'bloqueio') return base
+  const primeiro = primeiroNome(nome)
+  return /^[\p{L}'-]{2,30}$/u.test(primeiro) ? primeiro : papel === 'monitor' ? 'Monitor' : 'Aluno'
 }
 
 /** O que cada participante pode ver dos outros: id opaco, papel, nome e presença. */
@@ -148,9 +190,7 @@ export function retratoDaSala(sala: SalaLida, meuPid: string, leitor: PapelNaSal
     participantes.push({
       pid,
       papel: p.papel,
-      // O monitor vê o nome completo dos alunos (como no resto das monitorias);
-      // entre alunos, só o primeiro nome. O nome do monitor é público no anúncio.
-      nome: leitor === 'monitor' || p.papel === 'monitor' ? p.nome : primeiroNome(p.nome),
+      nome: nomeVisivel(p.nome, p.papel, leitor),
       presente: aqui,
       cx: aqui ? p.conexao : null,
       eu,
@@ -162,7 +202,14 @@ export function retratoDaSala(sala: SalaLida, meuPid: string, leitor: PapelNaSal
     participantes,
     esperados: sala.esperados || 2,
     encerrada: !!sala.encerradaEm,
+    encerradaPeloSuporte: !!(sala.encerradaEm && sala.encerradaPeloSuporte),
     fechaEm: fechaEmDe(sala).toISOString(),
+    permissoes: permissoesDe(sala),
+    // Só o monitor vê quem foi tirado (para liberar a volta).
+    removidos:
+      leitor === 'monitor'
+        ? Object.entries(sala.removidos || {}).map(([pid, r]) => ({ pid, nome: r.nome, por: r.por }))
+        : [],
   }
 }
 
@@ -176,7 +223,7 @@ export async function estadoDoSaguao(reservaId: string, userId: string, agora: D
   const presentes = ctx.sala
     ? Object.entries(ctx.sala.participantes || {})
         .filter(([pid, p]) => pid !== meuPid && presente(p, agora))
-        .map(([, p]) => ({ papel: p.papel, nome: papel === 'monitor' || p.papel === 'monitor' ? p.nome : primeiroNome(p.nome) }))
+        .map(([, p]) => ({ papel: p.papel, nome: nomeVisivel(p.nome, p.papel, papel) }))
     : []
   const a = ctx.acesso
   return {
@@ -265,7 +312,7 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
     sala: retratoDaSala(sala, pid, papel, agora),
     config: { compartilharTela: ctx.config.compartilharTela, chatNaSala: ctx.config.chatNaSala, limiteMalha: ctx.config.limiteMalha },
     janela: { inicio: ctx.reserva.inicio!.toISOString(), fim: ctx.reserva.fim!.toISOString(), abreEm: abreEm.toISOString(), fechaEm: fechaEm.toISOString() },
-    reserva: { id: ctx.reservaId, titulo: ctx.reserva.anuncioTitulo },
+    reserva: { id: ctx.reservaId, titulo: ctx.reserva.anuncioTitulo, monitor: nomeVisivel(ctx.nomeDoMonitor, 'monitor', papel) },
   }
 }
 
@@ -326,7 +373,14 @@ export async function renovarNaSala(
 
 export type ResultadoDaLeitura =
   | { ok: true; resposta: RespostaDoSinal; etag: string }
-  | { ok: false; status: number; motivo: 'substituida' | 'fechada' | 'nao_encontrada'; mensagem: string }
+  | { ok: false; status: number; motivo: 'substituida' | 'fechada' | 'nao_encontrada' | 'removido'; mensagem: string }
+
+/** Conexão que não vale mais: foi tirada da sala ou trocou de aba/aparelho? */
+function motivoDaConexaoPerdida(sala: Pick<Sala, 'removidos'> | null, pid: string): Extract<ResultadoDaLeitura, { ok: false }> {
+  const removido = sala?.removidos?.[pid]
+  if (removido) return { ok: false, status: 403, motivo: 'removido', mensagem: mensagemDeRemovido(removido.por) }
+  return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+}
 
 export function etagDaSala(r: Pick<RetratoDaSala, 'seq' | 'versao' | 'encerrada'>): string {
   return `W/"s${r.seq}.v${r.versao}.e${r.encerrada ? 1 : 0}"`
@@ -345,6 +399,9 @@ export async function lerSinais(claims: ClaimsDaSala, desde: number, pulso: bool
     versao: 1,
     esperados: 1,
     encerradaEm: 1,
+    encerradaPeloSuporte: 1,
+    removidos: 1,
+    permissoes: 1,
     fim: 1,
     participantes: 1,
     sinais: {
@@ -365,16 +422,14 @@ export async function lerSinais(claims: ClaimsDaSala, desde: number, pulso: bool
       { arrayFilters: [{ 'r.id': claims.cx }], returnDocument: 'after', projection: projection as any },
     )) as any
     if (!sala) {
-      const existe = await c.salas.findOne({ _id: claims.sala }, { projection: { _id: 1 } })
-      return existe
-        ? { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
-        : { ok: false, status: 404, motivo: 'nao_encontrada', mensagem: 'Sala não encontrada.' }
+      const existe = await c.salas.findOne({ _id: claims.sala }, { projection: { [`removidos.${claims.pid}`]: 1 } })
+      return existe ? motivoDaConexaoPerdida(existe, claims.pid) : { ok: false, status: 404, motivo: 'nao_encontrada', mensagem: 'Sala não encontrada.' }
     }
   } else {
     sala = (await c.salas.findOne({ _id: claims.sala }, { projection: projection as any })) as any
     if (!sala) return { ok: false, status: 404, motivo: 'nao_encontrada', mensagem: 'Sala não encontrada.' }
     const eu = sala.participantes?.[claims.pid]
-    if (!eu || eu.conexao !== claims.cx || eu.epoca !== claims.ep) return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+    if (!eu || eu.conexao !== claims.cx || eu.epoca !== claims.ep) return motivoDaConexaoPerdida(sala, claims.pid)
   }
   if (agora.getTime() > fechaEmDe(sala).getTime()) {
     return { ok: false, status: 410, motivo: 'fechada', mensagem: 'O horário desta monitoria terminou e a sala foi fechada.' }
@@ -390,7 +445,7 @@ export async function lerSinais(claims: ClaimsDaSala, desde: number, pulso: bool
   }
 }
 
-export type ResultadoDoEnvio = { ok: true } | { ok: false; status: number; mensagem: string; motivo?: 'substituida' }
+export type ResultadoDoEnvio = { ok: true } | { ok: false; status: number; mensagem: string; motivo?: 'substituida' | 'removido' }
 
 /**
  * Empilha um sinal para outro participante, numa escrita só: a sequência sobe,
@@ -444,9 +499,12 @@ export async function enviarSinal(claims: ClaimsDaSala, envio: Extract<EnvioVali
   )
   if (res.matchedCount) return { ok: true }
   // Não gravou: descobre o porquê (caminho raro, uma leitura a mais).
-  const sala = await c.salas.findOne({ _id: claims.sala }, { projection: { [P]: 1, [`participantes.${envio.para}.conexao`]: 1 } })
+  const sala = await c.salas.findOne({ _id: claims.sala }, { projection: { [P]: 1, [`participantes.${envio.para}.conexao`]: 1, [`removidos.${claims.pid}`]: 1 } })
   const eu = sala?.participantes?.[claims.pid]
-  if (!eu || eu.conexao !== claims.cx || eu.epoca !== claims.ep) return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+  if (!eu || eu.conexao !== claims.cx || eu.epoca !== claims.ep) {
+    const perdida = motivoDaConexaoPerdida(sala, claims.pid)
+    return { ok: false, status: perdida.status, motivo: perdida.motivo === 'removido' ? 'removido' : 'substituida', mensagem: perdida.mensagem }
+  }
   if (!sala?.participantes?.[envio.para]?.conexao) return { ok: false, status: 409, mensagem: 'Esse participante saiu da sala.' }
   return { ok: false, status: 429, mensagem: 'Muitos sinais seguidos. Aguarde alguns segundos.' }
 }
@@ -481,10 +539,155 @@ export async function encerrarOuReabrir(claims: ClaimsDaSala, encerrar: boolean,
   const c = colecoes(await getDb())
   const P = `participantes.${claims.pid}`
   const res = await c.salas.updateOne(
-    { _id: claims.sala, [`${P}.conexao`]: claims.cx, [`${P}.epoca`]: claims.ep } as any,
+    { _id: claims.sala, [`${P}.conexao`]: claims.cx, [`${P}.epoca`]: claims.ep, encerradaPeloSuporte: { $ne: true } } as any,
     { $set: { encerradaEm: encerrar ? agora : null, updatedAt: agora }, $inc: { versao: 1 } },
   )
-  return res.matchedCount ? { ok: true } : { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+  if (res.matchedCount) return { ok: true }
+  const sala = await c.salas.findOne({ _id: claims.sala }, { projection: { encerradaPeloSuporte: 1 } })
+  if (sala?.encerradaPeloSuporte) return { ok: false, status: 409, mensagem: 'O suporte encerrou esta aula; só o suporte pode reabrir.' }
+  return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+}
+
+// ─── Controles do anfitrião (monitor) ──────────────────────────────────
+
+export type AcaoDoAnfitriao =
+  | { tipo: 'remover'; alvo: string }
+  | { tipo: 'readmitir'; alvo: string }
+  | { tipo: 'permissoes'; telaAlunos?: boolean; chatAlunos?: boolean }
+
+/**
+ * O que precisa valer no servidor (e não só na tela do monitor): tirar alguém
+ * da sala (não volta até ser liberado) e as permissões dos alunos (o chat
+ * pausado vale também na rota de mensagens). Silenciar, desligar câmera ou
+ * baixar a mão são pedidos pelo canal P2P, sem custo de servidor.
+ */
+export async function acaoDoAnfitriao(claims: ClaimsDaSala, acao: AcaoDoAnfitriao, agora = new Date()): Promise<ResultadoDoEnvio> {
+  if (claims.papel !== 'monitor') return { ok: false, status: 403, mensagem: 'Só o monitor controla a sala.' }
+  const c = colecoes(await getDb())
+  const P = `participantes.${claims.pid}`
+  const minhaConexao = { _id: claims.sala, [`${P}.conexao`]: claims.cx, [`${P}.epoca`]: claims.ep }
+  if (acao.tipo === 'permissoes') {
+    if (typeof acao.telaAlunos !== 'boolean' && typeof acao.chatAlunos !== 'boolean') return { ok: false, status: 400, mensagem: 'Nada para mudar.' }
+    const set: Record<string, unknown> = { updatedAt: agora }
+    if (typeof acao.telaAlunos === 'boolean') set['permissoes.telaAlunos'] = acao.telaAlunos
+    if (typeof acao.chatAlunos === 'boolean') set['permissoes.chatAlunos'] = acao.chatAlunos
+    const res = await c.salas.updateOne(minhaConexao as any, { $set: set, $inc: { versao: 1 } })
+    return res.matchedCount ? { ok: true } : { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+  }
+  if (acao.alvo === claims.pid) return { ok: false, status: 400, mensagem: 'Você não pode tirar a si mesmo.' }
+  const sala = await c.salas.findOne(minhaConexao as any, { projection: { [`participantes.${acao.alvo}`]: 1, [`removidos.${acao.alvo}`]: 1 } })
+  if (!sala) return { ok: false, status: 409, motivo: 'substituida', mensagem: SUBSTITUIDA.mensagem }
+  if (acao.tipo === 'readmitir') {
+    if (sala.removidos?.[acao.alvo]?.por === 'suporte') return { ok: false, status: 403, mensagem: 'Quem foi tirado pelo suporte só volta com o suporte.' }
+    await c.salas.updateOne({ _id: claims.sala }, { $unset: { [`removidos.${acao.alvo}`]: '' }, $set: { updatedAt: agora }, $inc: { versao: 1 } } as any)
+    return { ok: true }
+  }
+  const alvo = sala.participantes?.[acao.alvo]
+  if (!alvo) return { ok: false, status: 404, mensagem: 'Participante não encontrado.' }
+  if (alvo.papel === 'monitor') return { ok: false, status: 403, mensagem: 'O monitor não pode ser tirado da sala.' }
+  await removerParticipante(claims.sala, acao.alvo, alvo.nome, 'monitor', agora)
+  return { ok: true }
+}
+
+/** Tira da sala: a conexão deixa de valer na hora e a entrada fica recusada. */
+async function removerParticipante(salaId: string, pid: string, nome: string, por: 'monitor' | 'suporte', agora: Date): Promise<void> {
+  const c = colecoes(await getDb())
+  const P = `participantes.${pid}`
+  await c.salas.updateOne(
+    { _id: salaId },
+    {
+      $set: {
+        [`removidos.${pid}`]: { em: agora, por, nome },
+        [`${P}.conexao`]: null,
+        [`${P}.saiuEm`]: agora,
+        updatedAt: agora,
+        'registro.$[r].saiu': agora,
+      },
+      $inc: { versao: 1 },
+    } as any,
+    { arrayFilters: [{ 'r.pid': pid, 'r.saiu': { $exists: false } }] },
+  )
+}
+
+/**
+ * Chat dos alunos pausado pelo monitor? Só durante a janela da sala (fora dela
+ * o chat da reserva é sempre livre) — e só então custa uma leitura.
+ */
+export async function chatDosAlunosPausado(reserva: Pick<Reserva, '_id' | 'inicio' | 'fim'>, agora = new Date()): Promise<boolean> {
+  if (!reserva.inicio || !reserva.fim) return false
+  const { abreEm, fechaEm } = janelaDaSala(reserva.inicio, reserva.fim, 'monitor')
+  if (agora < abreEm || agora > fechaEm) return false
+  const c = colecoes(await getDb())
+  const sala = await c.salas.findOne({ _id: idDe(reserva) }, { projection: { permissoes: 1 } })
+  return !permissoesDe(sala).chatAlunos
+}
+
+// ─── Suporte (admin) ───────────────────────────────────────────────────
+
+export type AcaoDoSuporte =
+  | { acao: 'encerrar' }
+  | { acao: 'reabrir' }
+  | { acao: 'remover'; pid: string }
+  | { acao: 'readmitir'; pid: string }
+
+/**
+ * O admin encerra/reabre a aula ou tira alguém. Os participantes descobrem no
+ * próximo pulso (até ~30 s) ou na renovação. Encerrar uma sala que ainda não
+ * existe cria o documento já encerrado (ninguém entra).
+ */
+export async function acaoDoSuporte(reserva: Reserva, a: AcaoDoSuporte, agora = new Date()): Promise<{ ok: true } | { ok: false; status: number; mensagem: string }> {
+  const c = colecoes(await getDb())
+  const id = idDe(reserva)
+  if (a.acao === 'encerrar' || a.acao === 'reabrir') {
+    if (!reserva.fim) return { ok: false, status: 409, mensagem: 'A monitoria não tem horário.' }
+    const encerrar = a.acao === 'encerrar'
+    await c.salas.updateOne(
+      { _id: id },
+      {
+        $setOnInsert: { seq: 0, sinais: [], registro: [], participantes: {}, createdAt: agora, fim: reserva.fim },
+        $set: { encerradaEm: encerrar ? agora : null, encerradaPeloSuporte: encerrar, updatedAt: agora },
+        $inc: { versao: 1 },
+      } as any,
+      { upsert: true },
+    )
+    return { ok: true }
+  }
+  const sala = await c.salas.findOne({ _id: id }, { projection: { [`participantes.${a.pid}`]: 1 } })
+  const alvo = sala?.participantes?.[a.pid]
+  if (!alvo) return { ok: false, status: 404, mensagem: 'Participante não encontrado.' }
+  if (alvo.papel === 'monitor') return { ok: false, status: 409, mensagem: 'Para tirar o monitor, encerre a aula.' }
+  if (a.acao === 'readmitir') {
+    await c.salas.updateOne({ _id: id }, { $unset: { [`removidos.${a.pid}`]: '' }, $set: { updatedAt: agora }, $inc: { versao: 1 } } as any)
+    return { ok: true }
+  }
+  await removerParticipante(id, a.pid, alvo.nome, 'suporte', agora)
+  return { ok: true }
+}
+
+export interface SalaParaOSuporte {
+  reservaId: string
+  encerrada: boolean
+  encerradaPeloSuporte: boolean
+  permissoes: PermissoesDaSala
+  participantes: Array<{ pid: string; papel: PapelNaSala; nome: string; presente: boolean; entrouEm: string; removido: null | 'monitor' | 'suporte' }>
+}
+
+/** Retrato completo para o admin (nomes completos, presentes e removidos). */
+export function salaParaOSuporte(sala: Pick<Sala, '_id' | 'participantes' | 'encerradaEm' | 'encerradaPeloSuporte' | 'removidos' | 'permissoes'>, agora: Date): SalaParaOSuporte {
+  return {
+    reservaId: String(sala._id),
+    encerrada: !!sala.encerradaEm,
+    encerradaPeloSuporte: !!(sala.encerradaEm && sala.encerradaPeloSuporte),
+    permissoes: permissoesDe(sala),
+    participantes: Object.entries(sala.participantes || {}).map(([pid, p]) => ({
+      pid,
+      papel: p.papel,
+      nome: p.nome,
+      presente: presente(p, agora),
+      entrouEm: new Date(p.entrouEm).toISOString(),
+      removido: sala.removidos?.[pid]?.por || null,
+    })),
+  }
 }
 
 // ─── Consumo (teto do TURN) ────────────────────────────────────────────

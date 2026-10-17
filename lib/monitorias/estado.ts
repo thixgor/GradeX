@@ -6,7 +6,8 @@
  *                     concluida ◄── (48h sem reclamação) ◄── realizada ◄── (aula acabou)┘
  *
  * Saídas laterais: recusada, expirada, cancelada_aluno, cancelada_monitor,
- * em_disputa → (admin decide) concluida | reembolsada.
+ * em_disputa → (admin decide) concluida | reembolsada. O suporte pode cancelar
+ * qualquer reserva ainda não concluída (cancelada_suporte, com reembolso de quem pagou).
  *
  * Esta tabela é a ÚNICA fonte de "pode ir de X para Y". As rotas a consultam
  * e, ao gravar, fazem compare-and-set (`{_id, status: de, versao}`): se outra
@@ -17,17 +18,18 @@
 import type { StatusReserva } from './tipos'
 
 const TRANSICOES: Record<StatusReserva, StatusReserva[]> = {
-  solicitada: ['em_negociacao', 'aguardando_assinaturas', 'recusada', 'expirada', 'cancelada_aluno'],
-  em_negociacao: ['em_negociacao', 'aguardando_assinaturas', 'recusada', 'expirada', 'cancelada_aluno', 'cancelada_monitor'],
-  aguardando_assinaturas: ['em_negociacao', 'aguardando_pagamento', 'confirmada', 'expirada', 'cancelada_aluno', 'cancelada_monitor'],
-  aguardando_pagamento: ['confirmada', 'expirada', 'cancelada_aluno', 'cancelada_monitor', 'em_disputa'],
-  confirmada: ['realizada', 'cancelada_aluno', 'cancelada_monitor', 'em_disputa'],
-  realizada: ['concluida', 'em_disputa'],
+  solicitada: ['em_negociacao', 'aguardando_assinaturas', 'recusada', 'expirada', 'cancelada_aluno', 'cancelada_suporte'],
+  em_negociacao: ['em_negociacao', 'aguardando_assinaturas', 'recusada', 'expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte'],
+  aguardando_assinaturas: ['em_negociacao', 'aguardando_pagamento', 'confirmada', 'expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte'],
+  aguardando_pagamento: ['confirmada', 'expirada', 'cancelada_aluno', 'cancelada_monitor', 'em_disputa', 'cancelada_suporte'],
+  confirmada: ['realizada', 'cancelada_aluno', 'cancelada_monitor', 'em_disputa', 'cancelada_suporte'],
+  realizada: ['concluida', 'em_disputa', 'cancelada_suporte'],
   // `confirmada`: o suporte negou o cancelamento de última hora e a aula segue.
-  em_disputa: ['confirmada', 'concluida', 'reembolsada'],
+  em_disputa: ['confirmada', 'concluida', 'reembolsada', 'cancelada_suporte'],
   concluida: [],
   cancelada_aluno: [],
   cancelada_monitor: [],
+  cancelada_suporte: [],
   recusada: [],
   expirada: [],
   reembolsada: [],
@@ -50,6 +52,7 @@ export const STATUS_FINAIS: StatusReserva[] = [
   'concluida',
   'cancelada_aluno',
   'cancelada_monitor',
+  'cancelada_suporte',
   'recusada',
   'expirada',
   'reembolsada',
@@ -71,6 +74,7 @@ export const ROTULOS_STATUS: Record<StatusReserva, { rotulo: string; tom: 'neutr
   em_disputa: { rotulo: 'Em análise pelo suporte', tom: 'alerta' },
   cancelada_aluno: { rotulo: 'Cancelada pelo aluno', tom: 'erro' },
   cancelada_monitor: { rotulo: 'Cancelada pelo monitor', tom: 'erro' },
+  cancelada_suporte: { rotulo: 'Cancelada pelo suporte', tom: 'erro' },
   recusada: { rotulo: 'Recusada', tom: 'erro' },
   expirada: { rotulo: 'Expirada', tom: 'neutro' },
   reembolsada: { rotulo: 'Reembolsada', tom: 'neutro' },

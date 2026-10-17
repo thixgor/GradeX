@@ -17,7 +17,9 @@ import {
 } from '@/lib/monitorias/reservas'
 import { carregarUsuario } from '@/lib/monitorias/servidor'
 import { limparTexto, semContato } from '@/lib/monitorias/validacao'
-import { PLATAFORMAS_DE_REUNIAO, validarLinkDeReuniao, validarLinkExterno } from '@/lib/monitorias/links'
+import { AVISO_LINK_DE_MATERIAL, PLATAFORMAS_DE_REUNIAO, validarLinkDeMaterial, validarLinkDeReuniao } from '@/lib/monitorias/links'
+import { AVISO_BLOQUEIO, detectarContato } from '@/lib/monitorias/contato-inteligente'
+import { registrarInfracao } from '@/lib/monitorias/infracoes'
 import { podeTransitar } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
 import { avaliar } from '@/lib/monitorias/avaliacoes'
@@ -158,10 +160,24 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         if (!['aguardando_pagamento', 'confirmada', 'realizada', 'em_disputa', 'concluida'].includes(reserva.status)) {
           throw new ErroMonitoria(409, 'Materiais podem ser enviados depois que a monitoria for combinada.')
         }
-        const link = validarLinkExterno(corpo.url)
-        if (!link) throw new ErroMonitoria(400, 'Use um link https válido (Drive, Notion, YouTube...).')
+        const link = validarLinkDeMaterial(corpo.url)
+        if (!link) throw new ErroMonitoria(400, AVISO_LINK_DE_MATERIAL)
         const titulo = limparTexto(corpo.titulo).slice(0, 100)
         if (titulo.length < 2) throw new ErroMonitoria(400, 'Dê um título ao material.')
+        const noTitulo = detectarContato(titulo)
+        if (noTitulo.nivel === 'bloqueio') {
+          await registrarInfracao({
+            reservaId: idDe(reserva),
+            titulo: reserva.anuncioTitulo,
+            userId: sessao.userId,
+            nome: sessao.name || 'Monitor',
+            papel: 'monitor',
+            origem: 'material',
+            deteccao: noTitulo,
+            texto: titulo,
+          })
+          throw new ErroMonitoria(422, AVISO_BLOQUEIO)
+        }
         const extras = reserva.materiaisExtras || []
         if (extras.length >= 20) throw new ErroMonitoria(409, 'Limite de 20 materiais por monitoria.')
         if (extras.some((m) => m.url === link.url)) throw new ErroMonitoria(409, 'Este link já foi enviado.')

@@ -8,7 +8,9 @@ import { SchemaMensagem } from '@/lib/monitorias/validacao'
 import { AVISO_CONTATO, mascararContato } from '@/lib/monitorias/contato'
 import { STATUS_FINAIS } from '@/lib/monitorias/estado'
 import { avisar } from '@/lib/monitorias/avisos'
-import { presencaResumida } from '@/lib/monitorias/sala/servidor'
+import { chatDosAlunosPausado, presencaResumida } from '@/lib/monitorias/sala/servidor'
+import { AVISO_BLOQUEIO } from '@/lib/monitorias/contato-inteligente'
+import { analisarMensagem, registrarInfracao } from '@/lib/monitorias/infracoes'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,7 +64,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   })
 }
 
-/** POST {texto} — mensagem no chat. Antes do pagamento, contatos pessoais são ocultados. */
+/**
+ * POST {texto, origem?} — mensagem no chat (da reserva ou da sala de aula, que é
+ * o mesmo chat). Telefone, e-mail, link, perfil, CPF/PIX e convite para outro
+ * canal são RECUSADOS (422) e ficam registrados para o admin; o que só cita um
+ * canal ("o zap caiu") passa, mas também fica no registro. Antes do pagamento,
+ * o que escapar do detector ainda é mascarado como sempre.
+ */
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     // Limite ANTES de validar: o limite por conta (não por reserva) segura
@@ -75,11 +83,31 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const papel = await papelNaReserva(reserva, sessao.userId)
     if (!papel) return naoEncontrado()
     if (STATUS_FINAIS.includes(reserva.status) && reserva.status !== 'concluida') return erro(409, 'Esta reserva foi encerrada.')
+    const agora = new Date()
+    if (papel !== 'monitor' && (await chatDosAlunosPausado(reserva, agora))) {
+      return erro(403, 'O monitor pausou o chat dos alunos durante a aula. Use "Levantar a mão" para falar.', { chatPausado: true })
+    }
+    const deteccao = await analisarMensagem(idDe(reserva), sessao.userId, corpo.data.texto, agora)
+    if (deteccao.nivel) {
+      await registrarInfracao(
+        {
+          reservaId: idDe(reserva),
+          titulo: reserva.anuncioTitulo,
+          userId: sessao.userId,
+          nome: sessao.name || 'Usuário',
+          papel: papel === 'monitor' ? 'monitor' : 'aluno',
+          origem: corpo.data.origem === 'sala' ? 'chat_sala' : 'chat',
+          deteccao,
+          texto: corpo.data.texto,
+        },
+        agora,
+      )
+      if (deteccao.nivel === 'bloqueio') return erro(422, AVISO_BLOQUEIO, { bloqueado: true, categorias: deteccao.categorias })
+    }
     // Chat livre só depois da confirmação E para quem tem assento pago (ou o monitor).
     const livre = LIVRE.includes(reserva.status) && (await assentoPago(reserva, sessao.userId))
     const { texto, mascarou } = livre ? { texto: corpo.data.texto, mascarou: false } : mascararContato(corpo.data.texto)
     const c = await obterColecoes()
-    const agora = new Date()
     const destino = papel === 'monitor' ? reserva.solicitanteId : reserva.tutorUserId
     const url = `/monitorias/reservas/${idDe(reserva)}`
     const primeiraRespostaDoMonitor = papel === 'monitor' && reserva.status === 'solicitada'

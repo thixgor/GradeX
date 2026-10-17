@@ -3,20 +3,23 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  AlertTriangle, BadgeCheck, Ban, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Video, Wallet, X,
+  AlertTriangle, BadgeCheck, Ban, CalendarClock, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Video, Wallet, X,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, CaixaAviso, CaixaErro, Esqueleto, Selo, SeloStatus, api } from '@/components/monitorias/base'
 import { AdminSalaDeVideo } from '@/components/monitorias/admin-sala-de-video'
+import { AdminAulas } from '@/components/monitorias/admin-aulas'
+import { AdminContatoPorFora } from '@/components/monitorias/admin-contato-por-fora'
 import { formatarCentavos, interpretarValorEmReais } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
 
-type Aba = 'moderacao' | 'disputas' | 'repasses' | 'perguntas' | 'sala'
+type Aba = 'aulas' | 'moderacao' | 'disputas' | 'repasses' | 'perguntas' | 'contato' | 'sala'
+const ABAS: Aba[] = ['aulas', 'moderacao', 'disputas', 'repasses', 'perguntas', 'contato', 'sala']
 
 interface Resumo {
   emAnalise: number
@@ -26,10 +29,26 @@ interface Resumo {
   payoutsAbertos: number
   denunciadas: number
   reembolsosFalhos: number
+  contatoPorFora: number
 }
 
 export default function AdminMonitorias() {
-  const [aba, setAba] = useState<Aba>('moderacao')
+  const [aba, setAbaEstado] = useState<Aba>('aulas')
+  // ?aba=contato (link do aviso de "tentativas de contato por fora").
+  useEffect(() => {
+    const pedida = new URLSearchParams(window.location.search).get('aba') as Aba | null
+    if (pedida && ABAS.includes(pedida)) setAbaEstado(pedida)
+  }, [])
+  const setAba = (a: Aba) => {
+    setAbaEstado(a)
+    try {
+      const url = new URL(window.location.href)
+      url.searchParams.set('aba', a)
+      window.history.replaceState(null, '', url)
+    } catch {
+      /* nada */
+    }
+  }
   const [resumo, setResumo] = useState<Resumo | null>(null)
   const recarregarResumo = useCallback(() => {
     api<Resumo>('/api/admin/monitorias/resumo').then(setResumo).catch(() => {})
@@ -37,15 +56,17 @@ export default function AdminMonitorias() {
   useEffect(() => recarregarResumo(), [recarregarResumo])
 
   const abas: Array<{ chave: Aba; rotulo: string; n?: number; icone: typeof Gavel }> = [
+    { chave: 'aulas', rotulo: 'Aulas', icone: CalendarClock },
     { chave: 'moderacao', rotulo: 'Moderação', n: (resumo?.emAnalise || 0) + (resumo?.revisoes || 0), icone: BadgeCheck },
     { chave: 'disputas', rotulo: 'Disputas', n: resumo?.disputas, icone: Gavel },
     { chave: 'repasses', rotulo: 'Repasses', n: (resumo?.payoutsAbertos || 0) + (resumo?.liberados ? 1 : 0), icone: Wallet },
     { chave: 'perguntas', rotulo: 'Denúncias', n: resumo?.denunciadas, icone: Flag },
+    { chave: 'contato', rotulo: 'Contato por fora', n: resumo?.contatoPorFora, icone: ShieldAlert },
     { chave: 'sala', rotulo: 'Sala de vídeo', icone: Video },
   ]
 
   return (
-    <AppShell headerTitle="Monitorias" headerSubtitle="Moderação, disputas e repasses">
+    <AppShell headerTitle="Monitorias" headerSubtitle="Aulas, moderação, disputas e repasses">
       <div className="mx-auto max-w-6xl px-4 py-6">
         {resumo?.reembolsosFalhos ? (
           <CaixaAviso className="mb-4"><AlertTriangle className="mr-1 inline h-4 w-4" /> {resumo.reembolsosFalhos} reembolso(s) falharam várias vezes no Mercado Pago — confira na aba Disputas (todas) e no painel do MP.</CaixaAviso>
@@ -62,10 +83,12 @@ export default function AdminMonitorias() {
         </nav>
         <AnimatePresence mode="wait">
           <motion.div key={aba} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+            {aba === 'aulas' && <AdminAulas />}
             {aba === 'moderacao' && <Moderacao onMudou={recarregarResumo} />}
             {aba === 'disputas' && <Disputas onMudou={recarregarResumo} />}
             {aba === 'repasses' && <Repasses onMudou={recarregarResumo} />}
             {aba === 'perguntas' && <Denuncias onMudou={recarregarResumo} />}
+            {aba === 'contato' && <AdminContatoPorFora onMudou={recarregarResumo} />}
             {aba === 'sala' && <AdminSalaDeVideo />}
           </motion.div>
         </AnimatePresence>

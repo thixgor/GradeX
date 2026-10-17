@@ -302,7 +302,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   const encerradas = await c.reservas
     .find(
       {
-        status: { $in: ['cancelada_aluno', 'cancelada_monitor', 'expirada', 'recusada', 'reembolsada'] },
+        status: { $in: ['cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'expirada', 'recusada', 'reembolsada'] },
         updatedAt: { $gt: new Date(agora.getTime() - 14 * 24 * H), $lt: new Date(agora.getTime() - 20 * 60_000) },
       } as any,
       { projection: { _id: 1 } },

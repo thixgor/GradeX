@@ -68,7 +68,7 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
 
   const r = d.reserva
   const p = r.proposta
-  const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'recusada', 'reembolsada'].includes(r.status)
+  const encerrada = ['expirada', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'recusada', 'reembolsada'].includes(r.status)
   const urlSala = `/monitorias/reservas/${r.id}`
   const linkConvite = r.codigoConvite && typeof window !== 'undefined' ? `${window.location.origin}/monitorias/convite/${r.codigoConvite}` : ''
 
