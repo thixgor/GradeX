@@ -24,7 +24,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Ação inválida.')
-    const reserva = await carregarReserva(params.id)
+    const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const r = await acaoDoSuporte(reserva, corpo.data)
     if (!r.ok) return erro(r.status, r.mensagem)
     await audit({ action: 'monitoria_sala_suporte', actorUserId: sessao.userId, resourceType: 'monitoria_reserva', resourceId: idDe(reserva), metadata: { ...corpo.data }, ip })

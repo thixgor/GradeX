@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const status = new URL(request.url).searchParams.get('status') || 'em_disputa'
     const c = await obterColecoes()
-    const filtro = status === 'todas' ? {} : { status }
+    const filtro = status === 'todas' ? { excluidaEm: { $exists: false } } : { status, excluidaEm: { $exists: false } }
     const reservas = await c.reservas.find(filtro as any).sort({ updatedAt: -1 }).limit(100).toArray()
     const ids = reservas.map((r) => idDe(r))
     const [assentos, salas] = await Promise.all([

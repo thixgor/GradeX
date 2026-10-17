@@ -22,7 +22,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Horário inválido.')
-    const reserva = await carregarReserva(params.id)
+    const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const agora = new Date()
     const inicio = corpo.data.inicio === 'agora' ? agora : new Date(corpo.data.inicio)
     const duracaoMin = corpo.data.duracaoMin ?? reserva.proposta?.duracaoMin ?? 60

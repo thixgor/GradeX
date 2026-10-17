@@ -21,7 +21,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Escreva o motivo (ele vai para o monitor e os alunos).')
-    const reserva = await carregarReserva(params.id)
+    const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const motivo = limparTexto(corpo.data.motivo)
     const { reembolsos } = await cancelarPeloSuporte({ reserva, adminId: sessao.userId, motivo, culpaDoMonitor: corpo.data.culpaDoMonitor })
     if (reserva.fim) await acaoDoSuporte(reserva, { acao: 'encerrar' })

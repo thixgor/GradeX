@@ -626,6 +626,18 @@ resolução e kbps enviados/recebidos, atraso, perda, caminho e o que limita.
   `cancelada_suporte` a partir de qualquer estado não concluído, reembolso
   integral de quem pagou (caminho idempotente de sempre), agenda e contratos
   liberados, strike opcional, aviso por e-mail a todos e sala encerrada.
+- **Excluir monitoria** (`…/reservas/[id]/excluir`, regras em
+  `planoDeExclusao`): vale para qualquer uma, inclusive as do histórico, menos
+  em disputa (decida antes). Antes da aula, cancela primeiro (reembolso de quem
+  pagou); depois que a aula começou, só exclui (o valor segue o caminho normal).
+  Sem nenhum dinheiro envolvido (pagamento, pedido de pagamento ou repasse),
+  apaga de vez. Com dinheiro, a reserva ganha `excluidaEm` e os assentos
+  `reservaExcluida`: some das listas, do histórico e da página do aluno e do
+  monitor (`carregarReserva` responde 404; só as rotas do admin passam
+  `incluirExcluida`), mas pagamento, repasse e contrato ficam guardados — o
+  saldo do monitor não quebra. O filtro "Excluídas" mostra essas e permite
+  restaurar (`DELETE` na mesma rota). Os avisos do sino que levavam a ela saem;
+  as avaliações deixadas pelos alunos continuam no perfil do monitor.
 - **Contato por fora** (`/api/admin/monitorias/infracoes`): novas/todas,
   reincidência em 30 dias, histórico por pessoa, marcar como vista (contador na
   aba). Registro guardado por 2 anos (índice TTL).

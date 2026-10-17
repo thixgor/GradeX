@@ -93,7 +93,7 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
 
     if (params.tipo === 'conversa') {
       const reserva = await c.reservas.findOne({ _id } as any)
-      if (!reserva) return naoEncontrado()
+      if (!reserva || (reserva.excluidaEm && !admin)) return naoEncontrado()
       const acesso = await acessoDeLeitura(reserva, sessao.userId)
       if (!acesso && !admin) return naoEncontrado()
       const papel = acesso?.papel || null
@@ -148,7 +148,7 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
       const part = await c.participacoes.findOne({ _id } as any)
       if (!part) return naoEncontrado()
       const reserva = await c.reservas.findOne({ _id: new ObjectId(part.reservaId) } as any)
-      if (!reserva) return naoEncontrado()
+      if (!reserva || (reserva.excluidaEm && !admin)) return naoEncontrado()
       const ehAluno = part.alunoId === sessao.userId
       const ehMonitor = reserva.tutorUserId === sessao.userId
       if (params.tipo === 'comprovante' && !ehAluno && !ehMonitor && !admin) return naoEncontrado()

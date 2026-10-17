@@ -125,3 +125,31 @@ export function regraDeAlterarHorario(
   }
   return { ok: false, motivo: 'Só dá para mudar o horário de monitorias confirmadas ou aguardando contrato/pagamento.' }
 }
+
+/**
+ * O que acontece quando o suporte EXCLUI uma monitoria (Admin → Aulas):
+ *  - em disputa: não exclui — o dinheiro ainda está sendo decidido;
+ *  - antes da aula (negociação, contrato, pagamento ou confirmada que ainda não
+ *    começou): cancela antes (quem pagou é reembolsado, agenda e contratos
+ *    liberados), depois exclui;
+ *  - aula que já começou, realizada ou encerrada: só exclui (o valor segue o
+ *    caminho normal; quem quiser reembolsar decide antes, em "Cancelar");
+ *  - sem nenhum dinheiro envolvido (nem pagamento, nem pedido de pagamento,
+ *    nem repasse): apaga de vez; com dinheiro, sai de todas as telas, mas o
+ *    registro financeiro e o contrato ficam guardados.
+ */
+export function planoDeExclusao(r: {
+  status: StatusReserva
+  inicio: Date | null | undefined
+  temDinheiro: boolean
+  agora: Date
+}): { ok: false; motivo: string } | { ok: true; cancelarAntes: boolean; apagarDeVez: boolean } {
+  if (r.status === 'em_disputa') return { ok: false, motivo: 'Esta monitoria está em disputa. Decida a disputa antes de excluir.' }
+  const antesDaAula =
+    r.status === 'solicitada' ||
+    r.status === 'em_negociacao' ||
+    r.status === 'aguardando_assinaturas' ||
+    r.status === 'aguardando_pagamento' ||
+    (r.status === 'confirmada' && (!r.inicio || r.inicio.getTime() > r.agora.getTime()))
+  return { ok: true, cancelarAntes: antesDaAula, apagarDeVez: !r.temDinheiro }
+}

@@ -308,6 +308,13 @@ export interface Reserva {
   teste?: boolean
   /** Código do convite da sala de teste (`/monitorias/teste/<código>`). */
   codigoTeste?: string
+  /**
+   * Excluída pelo suporte: some de todas as telas (aluno, monitor, admin), mas
+   * o registro financeiro e o contrato ficam guardados. O admin pode restaurar.
+   */
+  excluidaEm?: Date
+  excluidaPor?: string
+  motivoExclusao?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -360,6 +367,8 @@ export interface Participacao {
   contratoId?: string
   paymentOrderId?: string
   providerPaymentId?: string
+  /** A reserva foi excluída pelo suporte: o assento some das listas e do "investido" do aluno. */
+  reservaExcluida?: boolean
   /** Total que saiu do bolso do aluno (com taxa Pix), em centavos. */
   pagoCentavos?: number
   pagoEm?: Date

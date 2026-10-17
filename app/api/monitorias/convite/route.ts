@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const codigo = new URL(request.url).searchParams.get('codigo') || ''
     if (!CODIGO.test(codigo)) return erro(404, 'Convite inválido.')
     const c = await obterColecoes()
-    const reserva = await c.reservas.findOne({ codigoConvite: codigo })
+    const reserva = await c.reservas.findOne({ codigoConvite: codigo, excluidaEm: { $exists: false } } as any)
     if (!reserva?.proposta) return erro(404, 'Convite inválido.')
     const [ocupados, tutor] = await Promise.all([
       c.participacoes.countDocuments({ reservaId: idDe(reserva), status: { $nin: ['expirada', 'cancelada', 'reembolsada'] } }),

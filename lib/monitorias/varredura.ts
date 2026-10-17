@@ -179,7 +179,7 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   // 3. Lembretes (24h e 1h antes).
   const salaNativa = (await configDaSala()).salaNativaAtiva
   const proximas = await c.reservas
-    .find({ status: 'confirmada', teste: { $ne: true }, inicio: { $gt: agora, $lte: new Date(agora.getTime() + 24 * H) } } as any)
+    .find({ status: 'confirmada', teste: { $ne: true }, excluidaEm: { $exists: false }, inicio: { $gt: agora, $lte: new Date(agora.getTime() + 24 * H) } } as any)
     .limit(LOTE)
     .toArray()
   for (const reserva of proximas) {
@@ -229,6 +229,8 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
       )
       if (res.matchedCount === 0) return
       r.realizadas++
+      // Excluída pelo suporte: o dinheiro segue o caminho normal, mas ninguém é chamado a avaliar.
+      if (reserva.excluidaEm) return
       const alunos = await c.participacoes.find({ reservaId: idDe(reserva), status: { $in: ['paga', 'gratis'] } }).toArray()
       const ate = formatarEmBrasilia(liberacaoDoValor(reserva.fim!), { dateStyle: 'short', timeStyle: 'short' })
       await avisar(

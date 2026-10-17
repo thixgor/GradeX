@@ -24,15 +24,17 @@ export async function GET(request: NextRequest) {
     let filtro: Record<string, unknown>
     let minhas: Array<{ _id?: unknown; reservaId: string; status: string; valorCentavos: number; pagoCentavos?: number; pagoEm?: Date; contratoId?: string; paymentOrderId?: string; reembolsos: Array<{ valorCentavos: number; status: string }> }> = []
     if (papel === 'monitor') {
-      filtro = { tutorUserId: sessao.userId }
+      filtro = { tutorUserId: sessao.userId, excluidaEm: { $exists: false } }
     } else {
       minhas = await c.participacoes
-        .find({ alunoId: sessao.userId }, { projection: { reservaId: 1, status: 1, valorCentavos: 1, pagoCentavos: 1, pagoEm: 1, contratoId: 1, paymentOrderId: 1, reembolsos: 1 } })
+        .find({ alunoId: sessao.userId, reservaExcluida: { $ne: true } }, { projection: { reservaId: 1, status: 1, valorCentavos: 1, pagoCentavos: 1, pagoEm: 1, contratoId: 1, paymentOrderId: 1, reembolsos: 1 } })
         .sort({ createdAt: -1 })
         .limit(500)
         .toArray()
       filtro = {
         $or: [{ solicitanteId: sessao.userId }, { _id: { $in: minhas.filter((p) => ObjectId.isValid(p.reservaId)).map((p) => new ObjectId(p.reservaId)) } }],
+        // Excluída pelo suporte: some do histórico de todo mundo.
+        excluidaEm: { $exists: false },
       }
     }
     const filtroBase = { ...filtro }
@@ -81,8 +83,8 @@ export async function GET(request: NextRequest) {
           }
         : await (async () => {
             const [aulas, proximas, vendido] = await Promise.all([
-              c.reservas.countDocuments({ tutorUserId: sessao.userId, status: { $in: ['realizada', 'concluida'] } }),
-              c.reservas.countDocuments({ tutorUserId: sessao.userId, status: 'confirmada', inicio: { $gt: agora } }),
+              c.reservas.countDocuments({ tutorUserId: sessao.userId, status: { $in: ['realizada', 'concluida'] }, excluidaEm: { $exists: false } } as any),
+              c.reservas.countDocuments({ tutorUserId: sessao.userId, status: 'confirmada', inicio: { $gt: agora }, excluidaEm: { $exists: false } } as any),
               c.repasses
                 .aggregate<{ total: number }>([{ $match: { tutorUserId: sessao.userId, status: { $ne: 'estornado' } } }, { $group: { _id: null, total: { $sum: '$brutoCentavos' } } }])
                 .toArray(),

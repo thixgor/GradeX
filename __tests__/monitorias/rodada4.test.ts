@@ -155,3 +155,25 @@ describe('acesso: só fica quem pode', () => {
     expect(com).not.toBe(sem)
   })
 })
+
+describe('admin: excluir monitoria', () => {
+  const agora = new Date('2026-10-20T15:00:00Z')
+  const depois = new Date(agora.getTime() + 3_600_000)
+  const antes = new Date(agora.getTime() - 3_600_000)
+  it('em disputa não exclui', async () => {
+    const { planoDeExclusao } = await import('@/lib/monitorias/politica')
+    expect(planoDeExclusao({ status: 'em_disputa', inicio: antes, temDinheiro: true, agora }).ok).toBe(false)
+  })
+  it('antes da aula cancela primeiro; depois que começou, só exclui', async () => {
+    const { planoDeExclusao } = await import('@/lib/monitorias/politica')
+    expect(planoDeExclusao({ status: 'confirmada', inicio: depois, temDinheiro: true, agora })).toEqual({ ok: true, cancelarAntes: true, apagarDeVez: false })
+    expect(planoDeExclusao({ status: 'em_negociacao', inicio: null, temDinheiro: false, agora })).toEqual({ ok: true, cancelarAntes: true, apagarDeVez: true })
+    expect(planoDeExclusao({ status: 'confirmada', inicio: antes, temDinheiro: true, agora })).toEqual({ ok: true, cancelarAntes: false, apagarDeVez: false })
+    expect(planoDeExclusao({ status: 'concluida', inicio: antes, temDinheiro: true, agora })).toEqual({ ok: true, cancelarAntes: false, apagarDeVez: false })
+  })
+  it('sem dinheiro nenhum apaga de vez; com dinheiro guarda', async () => {
+    const { planoDeExclusao } = await import('@/lib/monitorias/politica')
+    expect(planoDeExclusao({ status: 'expirada', inicio: antes, temDinheiro: false, agora })).toMatchObject({ apagarDeVez: true })
+    expect(planoDeExclusao({ status: 'cancelada_aluno', inicio: depois, temDinheiro: true, agora })).toMatchObject({ apagarDeVez: false, cancelarAntes: false })
+  })
+})

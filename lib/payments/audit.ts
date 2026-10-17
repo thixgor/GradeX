@@ -53,6 +53,8 @@ export type AuditAction =
   /** Suporte agindo numa aula: encerrar/reabrir, tirar/liberar alguém, cancelar. */
   | 'monitoria_sala_suporte'
   | 'monitoria_cancelada_suporte'
+  | 'monitoria_excluida_suporte'
+  | 'monitoria_restaurada_suporte'
   /** O admin abriu a conversa de uma monitoria (prestação de contas, LGPD). */
   | 'monitoria_chat_lido'
   /** Suporte mudou o horário (ou "iniciar agora") e salas de teste do admin. */

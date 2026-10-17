@@ -9,12 +9,12 @@ import { inicioDoDiaEmBrasilia, inicioDoDiaSeguinteEmBrasilia } from '@/lib/fuso
 
 export const dynamic = 'force-dynamic'
 
-type Filtro = 'ao_vivo' | 'hoje' | 'proximas' | 'todas'
+type Filtro = 'ao_vivo' | 'hoje' | 'proximas' | 'todas' | 'excluidas'
 
 const escapar = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /**
- * GET ?filtro=ao_vivo|hoje|proximas|todas&q= — as aulas para o suporte agir:
+ * GET ?filtro=ao_vivo|hoje|proximas|todas|excluidas&q= — as aulas para o suporte agir:
  * quem está na sala agora, presença, tentativas de contato e o estado da sala.
  * `q` aceita o id completo, os 6 últimos caracteres do id (#A1B2C3), o título
  * do anúncio ou o nome de um aluno.
@@ -22,12 +22,13 @@ const escapar = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const busca = new URL(request.url).searchParams
-    const filtro = (['ao_vivo', 'hoje', 'proximas', 'todas'].includes(busca.get('filtro') || '') ? busca.get('filtro') : 'ao_vivo') as Filtro
+    const filtro = (['ao_vivo', 'hoje', 'proximas', 'todas', 'excluidas'].includes(busca.get('filtro') || '') ? busca.get('filtro') : 'ao_vivo') as Filtro
     const q = (busca.get('q') || '').trim().replace(/^#/, '').slice(0, 80)
     const agora = new Date()
     const c = await obterColecoes()
 
-    const condicoes: Record<string, unknown>[] = []
+    // Excluídas só aparecem no filtro delas (lá dá para restaurar).
+    const condicoes: Record<string, unknown>[] = [{ excluidaEm: { $exists: filtro === 'excluidas' } }]
     if (q) {
       if (/^[a-f0-9]{24}$/i.test(q)) condicoes.push({ _id: new ObjectId(q) })
       else {
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    let ordem: Record<string, 1 | -1> = { inicio: -1 }
+    let ordem: Record<string, 1 | -1> = filtro === 'excluidas' ? { excluidaEm: -1 } : { inicio: -1 }
     if (!q && filtro === 'ao_vivo') {
       const salas = await c.salas.find({ fim: { $gt: new Date(agora.getTime() - 30 * 60_000) } }, { projection: { participantes: 1 } }).limit(500).toArray()
       const vivas = salas.filter((s) => Object.values(s.participantes || {}).some((p) => presente(p, agora))).map((s) => new ObjectId(String(s._id)))
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
 
     const reservas = await c.reservas
       .find(condicoes.length ? ({ $and: condicoes } as any) : {}, {
-        projection: { anuncioTitulo: 1, status: 1, inicio: 1, fim: 1, tutorUserId: 1, tutorId: 1, solicitanteId: 1, motivoCancelamento: 1, disputa: 1, linkReuniao: 1, teste: 1, proposta: 1 },
+        projection: { anuncioTitulo: 1, status: 1, inicio: 1, fim: 1, tutorUserId: 1, tutorId: 1, solicitanteId: 1, motivoCancelamento: 1, disputa: 1, linkReuniao: 1, teste: 1, proposta: 1, excluidaEm: 1, motivoExclusao: 1 },
       })
       .sort(ordem)
       .limit(60)
@@ -96,6 +97,7 @@ export async function GET(request: NextRequest) {
           disputa: r.disputa ? { motivo: r.disputa.motivo, em: r.disputa.em } : null,
           temLinkExterno: !!r.linkReuniao,
           teste: !!r.teste,
+          excluida: r.excluidaEm ? { em: r.excluidaEm, motivo: r.motivoExclusao || '' } : null,
           duracaoMin: r.proposta?.duracaoMin || null,
           alunos: assentos.filter((a) => a.reservaId === id).map((a) => ({ id: idDe(a), nome: a.alunoNome, status: a.status, valorCentavos: a.valorCentavos })),
           sala: sala ? salaParaOSuporte(sala, agora) : null,

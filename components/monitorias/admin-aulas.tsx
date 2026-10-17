@@ -3,7 +3,8 @@
 /**
  * Admin → Monitorias → Aulas: o suporte acha qualquer monitoria (por #ID,
  * título ou aluno), vê quem está na sala agora, lê a conversa, encerra ou
- * reabre a aula, tira alguém da sala e cancela com reembolso.
+ * reabre a aula, tira alguém da sala, cancela com reembolso e exclui
+ * (de vez, sem dinheiro; fora de vista e restaurável, com dinheiro).
  *
  * O suporte NÃO entra na chamada (privacidade e custo): age sobre a sala pelo
  * servidor, e os participantes sentem no próximo pulso (até ~30 s).
@@ -11,7 +12,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Ban, CalendarClock, Copy, DoorOpen, ExternalLink, FlaskConical, Loader2, MessageSquareText, Play, Power, Radio, RotateCcw, Search, ShieldAlert, UserMinus, UserPlus, X } from 'lucide-react'
+import { Archive, ArchiveRestore, Ban, CalendarClock, Copy, DoorOpen, ExternalLink, FlaskConical, Loader2, MessageSquareText, Play, Power, Radio, RotateCcw, Search, ShieldAlert, Trash2, UserMinus, UserPlus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { api, CaixaErro, Esqueleto, Selo, SeloStatus } from '@/components/monitorias/base'
@@ -19,9 +20,10 @@ import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarEmBrasilia, offsetDeBrasilia } from '@/lib/fuso-brasilia'
 import { ROTULO_CATEGORIA, type CategoriaContato } from '@/lib/monitorias/contato-inteligente'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
+import { planoDeExclusao } from '@/lib/monitorias/politica'
 import { cn } from '@/lib/utils'
 
-type Filtro = 'ao_vivo' | 'hoje' | 'proximas' | 'todas'
+type Filtro = 'ao_vivo' | 'hoje' | 'proximas' | 'todas' | 'excluidas'
 
 interface ParticipanteDaSala {
   pid: string
@@ -44,6 +46,8 @@ interface Aula {
   disputa: { motivo: string; em: string } | null
   temLinkExterno: boolean
   teste: boolean
+  /** Excluída pelo suporte (guardada por ter dinheiro envolvido): dá para restaurar. */
+  excluida: { em: string; motivo: string } | null
   duracaoMin: number | null
   alunos: Array<{ id: string; nome: string; status: string; valorCentavos: number }>
   sala: null | {
@@ -61,6 +65,7 @@ const FILTROS: Array<{ chave: Filtro; rotulo: string }> = [
   { chave: 'hoje', rotulo: 'Hoje' },
   { chave: 'proximas', rotulo: 'Próximas' },
   { chave: 'todas', rotulo: 'Todas' },
+  { chave: 'excluidas', rotulo: 'Excluídas' },
 ]
 
 const FINAIS: StatusReserva[] = ['concluida', 'cancelada_aluno', 'cancelada_monitor', 'cancelada_suporte', 'recusada', 'expirada', 'reembolsada']
@@ -76,6 +81,7 @@ export function AdminAulas() {
   const [erro, setErro] = useState('')
   const [conversa, setConversa] = useState<{ id: string; titulo: string } | null>(null)
   const [cancelando, setCancelando] = useState<Aula | null>(null)
+  const [excluindo, setExcluindo] = useState<Aula | null>(null)
   const [remarcando, setRemarcando] = useState<Aula | null>(null)
   const [ocupado, setOcupado] = useState<string | null>(null)
 
@@ -150,7 +156,7 @@ export function AdminAulas() {
         <Esqueleto className="h-64" />
       ) : aulas.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          {consulta ? 'Nenhuma monitoria encontrada.' : filtro === 'ao_vivo' ? 'Nenhuma aula acontecendo agora.' : 'Nada por aqui.'}
+          {consulta ? 'Nenhuma monitoria encontrada.' : filtro === 'ao_vivo' ? 'Nenhuma aula acontecendo agora.' : filtro === 'excluidas' ? 'Nenhuma monitoria excluída guardada.' : 'Nada por aqui.'}
         </p>
       ) : (
         <ul className="space-y-3">
@@ -173,6 +179,11 @@ export function AdminAulas() {
                       <FlaskConical className="mr-0.5 inline h-3 w-3" /> Teste
                     </Selo>
                   )}
+                  {a.excluida && (
+                    <Selo tom="erro">
+                      <Archive className="mr-0.5 inline h-3 w-3" /> Excluída {dia(a.excluida.em)}
+                    </Selo>
+                  )}
                   <button
                     type="button"
                     onClick={() => navigator.clipboard?.writeText(a.id).catch(() => {})}
@@ -192,6 +203,7 @@ export function AdminAulas() {
                   {dia(a.inicio)}{a.fim ? ` às ${hora(a.fim)}` : ''} · Monitor: {a.monitor} · {a.alunos.length} aluno(s){a.temLinkExterno ? ' · tem link externo' : ''}
                 </p>
                 {a.motivoCancelamento && <p className="mt-1 text-xs text-rose-600">Motivo do cancelamento: {a.motivoCancelamento}</p>}
+                {a.excluida?.motivo && <p className="mt-1 text-xs text-rose-600">Motivo da exclusão: {a.excluida.motivo}</p>}
                 {a.disputa && <p className="mt-2 rounded-lg bg-amber-500/10 p-2 text-xs"><strong>Relato:</strong> {a.disputa.motivo}</p>}
 
                 {a.sala && a.sala.participantes.length > 0 && (
@@ -244,7 +256,7 @@ export function AdminAulas() {
                       <RotateCcw className="mr-1 h-4 w-4" /> Reabrir aula
                     </Button>
                   ) : (
-                    a.fim && !FINAIS.includes(a.status) && (
+                    a.fim && !FINAIS.includes(a.status) && !a.excluida && (
                       <Button
                         size="sm"
                         variant="outline"
@@ -256,19 +268,51 @@ export function AdminAulas() {
                       </Button>
                     )
                   )}
-                  {['confirmada', 'aguardando_assinaturas', 'aguardando_pagamento'].includes(a.status) && (
+                  {!a.excluida && ['confirmada', 'aguardando_assinaturas', 'aguardando_pagamento'].includes(a.status) && (
                     <Button size="sm" variant="outline" onClick={() => setRemarcando(a)}>
                       <CalendarClock className="mr-1 h-4 w-4" /> Alterar horário
                     </Button>
                   )}
-                  {podeCancelar && !a.teste && (
+                  {podeCancelar && !a.teste && !a.excluida && (
                     <Button size="sm" variant="outline" className="text-rose-600" onClick={() => setCancelando(a)}>
                       <Ban className="mr-1 h-4 w-4" /> Cancelar monitoria
                     </Button>
                   )}
-                  <a href={`/monitorias/reservas/${a.id}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-2 text-xs font-semibold text-primary hover:underline">
+                  {a.excluida ? (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={ocupado === `r${a.id}`}
+                      onClick={async () => {
+                        if (!window.confirm('Restaurar esta monitoria? Ela volta a aparecer para o aluno, o monitor e o admin, no estado em que estava.')) return
+                        setOcupado(`r${a.id}`)
+                        try {
+                          await api(`/api/admin/monitorias/reservas/${a.id}/excluir`, { method: 'DELETE' })
+                          carregar()
+                        } catch (e) {
+                          alert(e instanceof Error ? e.message : 'Erro')
+                        } finally {
+                          setOcupado(null)
+                        }
+                      }}
+                    >
+                      <ArchiveRestore className="mr-1 h-4 w-4" /> Restaurar
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-rose-300 text-rose-700 hover:bg-rose-500/10"
+                      disabled={a.status === 'em_disputa'}
+                      title={a.status === 'em_disputa' ? 'Decida a disputa antes de excluir' : undefined}
+                      onClick={() => setExcluindo(a)}
+                    >
+                      <Trash2 className="mr-1 h-4 w-4" /> Excluir
+                    </Button>
+                  )}
+                  {!a.excluida && <a href={`/monitorias/reservas/${a.id}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 px-2 text-xs font-semibold text-primary hover:underline">
                     Abrir reserva <ExternalLink className="h-3 w-3" />
-                  </a>
+                  </a>}
                 </div>
               </li>
             )
@@ -283,6 +327,16 @@ export function AdminAulas() {
             onFechar={() => setRemarcando(null)}
             onFeito={() => {
               setRemarcando(null)
+              carregar()
+            }}
+          />
+        )}
+        {excluindo && (
+          <ExcluirMonitoria
+            aula={excluindo}
+            onFechar={() => setExcluindo(null)}
+            onFeito={() => {
+              setExcluindo(null)
               carregar()
             }}
           />
@@ -482,6 +536,92 @@ function CancelarMonitoria({ aula, onFechar, onFeito }: { aula: Aula; onFechar: 
           <Button variant="destructive" onClick={confirmar} disabled={ocupado || motivo.trim().length < 5}>
             {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : <><DoorOpen className="mr-1 h-4 w-4" /> Cancelar monitoria</>}
           </Button>
+        </div>
+      </div>
+    </Janela>
+  )
+}
+
+const ASSENTO_COM_DINHEIRO = ['paga', 'concluida', 'reembolsada', 'reembolso_processando', 'chargeback']
+
+/**
+ * Excluir de vez (ou guardar fora de vista, quando houve dinheiro). O texto
+ * diz o que vai acontecer antes de confirmar; o servidor decide de novo com os
+ * dados completos (`planoDeExclusao`).
+ */
+function ExcluirMonitoria({ aula, onFechar, onFeito }: { aula: Aula; onFechar: () => void; onFeito: () => void }) {
+  const [motivo, setMotivo] = useState('')
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState('')
+  const pagos = aula.alunos.filter((a) => ASSENTO_COM_DINHEIRO.includes(a.status))
+  const plano = planoDeExclusao({ status: aula.status, inicio: aula.inicio ? new Date(aula.inicio) : null, temDinheiro: pagos.length > 0, agora: new Date() })
+  const reembolsar = aula.alunos.filter((a) => a.status === 'paga')
+
+  async function confirmar() {
+    setOcupado(true)
+    setErro('')
+    try {
+      const r = await api<{ apagadaDeVez: boolean; reembolsos: { ok: number; falhas: number } | null }>(`/api/admin/monitorias/reservas/${aula.id}/excluir`, {
+        method: 'POST',
+        json: { motivo: motivo.trim() },
+      })
+      if (r.reembolsos?.falhas) alert(`${r.reembolsos.falhas} reembolso(s) falharam no Mercado Pago agora; o sistema tenta de novo sozinho.`)
+      if (!r.apagadaDeVez) alert('Monitoria excluída das telas. Como houve dinheiro, o registro financeiro e o contrato ficaram guardados (filtro "Excluídas").')
+      onFeito()
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro')
+    } finally {
+      setOcupado(false)
+    }
+  }
+
+  return (
+    <Janela titulo={`Excluir: ${aula.titulo}`} onFechar={onFechar} largura="max-w-lg">
+      <div className="space-y-3 overflow-y-auto px-5 py-4 text-sm">
+        {!plano.ok ? (
+          <CaixaErro mensagem={plano.motivo} />
+        ) : (
+          <>
+            <p>
+              A monitoria <strong>#{aula.curto}</strong> some do painel do admin, da página e do histórico do aluno e do monitor. A sala de vídeo fecha (quem estiver dentro sai na
+              hora).
+            </p>
+            <ul className="space-y-2">
+              {plano.cancelarAntes && (
+                <li className={cn('flex gap-2 rounded-xl p-3 text-xs', reembolsar.length ? 'bg-amber-500/10' : 'bg-muted')}>
+                  <Ban className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <span>
+                    A aula ainda não aconteceu: antes de excluir, ela é cancelada pelo suporte (agenda do monitor liberada, aviso por e-mail
+                    {reembolsar.length ? ` e reembolso integral para ${reembolsar.map((p) => p.nome).join(', ')}` : ''}).
+                  </span>
+                </li>
+              )}
+              {!plano.cancelarAntes && pagos.length > 0 && (
+                <li className="flex gap-2 rounded-xl bg-muted p-3 text-xs">
+                  <DoorOpen className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                  <span>A aula já aconteceu: ninguém é reembolsado e o valor do monitor segue o caminho normal. Para devolver dinheiro, use &quot;Cancelar&quot; ou a disputa antes.</span>
+                </li>
+              )}
+              <li className="flex gap-2 rounded-xl bg-muted p-3 text-xs">
+                {plano.apagarDeVez ? <Trash2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /> : <Archive className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />}
+                <span>
+                  {plano.apagarDeVez
+                    ? 'Sem nenhum pagamento: é apagada de vez (reserva, conversa, contrato sem efeito, sala e anotações). Não dá para desfazer.'
+                    : 'Houve dinheiro: o pagamento, o repasse do monitor e o contrato ficam guardados (a lei pede e o saldo do monitor não quebra). Dá para restaurar no filtro "Excluídas".'}
+                </span>
+              </li>
+            </ul>
+            <Textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} rows={3} className="campo-sem-zoom" placeholder="Motivo (fica no registro do admin)" />
+          </>
+        )}
+        {erro && <CaixaErro mensagem={erro} />}
+        <div className="flex justify-end gap-2 pt-1">
+          <Button variant="ghost" onClick={onFechar}>Voltar</Button>
+          {plano.ok && (
+            <Button variant="destructive" onClick={confirmar} disabled={ocupado || motivo.trim().length < 5}>
+              {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Trash2 className="mr-1 h-4 w-4" /> Excluir monitoria</>}
+            </Button>
+          )}
         </div>
       </div>
     </Janela>

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, corpo.error.issues[0]?.message || 'Dados inválidos.')
-    const reserva = await carregarReserva(params.id)
+    const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const c = colecoes(await getDb())
     const nota = limparTexto(corpo.data.nota)
     const id = idDe(reserva)

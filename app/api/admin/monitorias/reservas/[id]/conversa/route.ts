@@ -16,7 +16,7 @@ const POR_PAGINA = 200
  */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
-    const reserva = await carregarReserva(params.id)
+    const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const id = idDe(reserva)
     const antes = new URL(request.url).searchParams.get('antes')
     const c = await obterColecoes()

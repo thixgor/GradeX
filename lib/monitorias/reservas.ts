@@ -19,7 +19,7 @@ import { precoPorPessoaCentavos } from './precos'
 import { blocosDaAula, cabeNaDisponibilidade, DIAS_MAXIMOS_DE_ANTECEDENCIA, duracoesPermitidas, formatarDuracao, inicioNaGrade } from './agenda'
 import { colecoes, ehDuplicada, idDe } from './db'
 import { negociavel, podeTransitar, STATUS_EM_ABERTO } from './estado'
-import { decidirCancelamento, prazoDePagamento, regraDeAlterarHorario, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
+import { decidirCancelamento, planoDeExclusao, prazoDePagamento, regraDeAlterarHorario, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
 import { emitirContrato, nomeCivil, rescindirContratosDaReserva } from './contratos'
 import { avisar } from './avisos'
 import { reembolsarReserva, reembolsarParticipacao } from './reembolso'
@@ -138,11 +138,15 @@ export async function liberarBlocos(reservaId: string): Promise<void> {
 
 export type Papel = 'monitor' | 'organizador' | 'membro'
 
-export async function carregarReserva(id: string): Promise<Reserva> {
+/**
+ * A reserva pelo id. Excluída pelo suporte = "não encontrada" para todo mundo,
+ * menos para as rotas do admin (`incluirExcluida`).
+ */
+export async function carregarReserva(id: string, opcoes: { incluirExcluida?: boolean } = {}): Promise<Reserva> {
   if (!ObjectId.isValid(id)) throw new ErroMonitoria(404, 'Não encontrado.')
   const c = await cols()
   const reserva = await c.reservas.findOne({ _id: new ObjectId(id) } as any)
-  if (!reserva) throw new ErroMonitoria(404, 'Não encontrado.')
+  if (!reserva || (reserva.excluidaEm && !opcoes.incluirExcluida)) throw new ErroMonitoria(404, 'Não encontrado.')
   return reserva
 }
 
@@ -1300,6 +1304,83 @@ export async function excluirSalasDeTeste(reservaIds: string[]): Promise<number>
   ])
   const res = await c.reservas.deleteMany({ _id: { $in: testes.map((x) => x._id) }, teste: true } as any)
   return res.deletedCount
+}
+
+const ASSENTO_COM_DINHEIRO = ['paga', 'concluida', 'reembolsada', 'reembolso_processando', 'chargeback']
+
+/**
+ * O suporte exclui uma monitoria (Admin → Aulas). Regras em `planoDeExclusao`:
+ * antes da aula, cancela primeiro (reembolso de quem pagou); sem dinheiro
+ * nenhum, apaga de vez; com dinheiro, some de todas as telas (aluno, monitor e
+ * admin) mas o pagamento, o repasse e o contrato ficam guardados — o saldo do
+ * monitor não quebra e o admin pode restaurar.
+ */
+export async function excluirMonitoriaPeloSuporte(input: {
+  reserva: Reserva
+  adminId: string
+  motivo: string
+  agora?: Date
+}): Promise<{ apagadaDeVez: boolean; cancelada: boolean; reembolsos: { ok: number; falhas: number } | null }> {
+  const { reserva, adminId, motivo } = input
+  const agora = input.agora || new Date()
+  const id = idDe(reserva)
+  if (reserva.teste) {
+    await excluirSalasDeTeste([id])
+    return { apagadaDeVez: true, cancelada: false, reembolsos: null }
+  }
+  const c = await cols()
+  const [assentos, repasses] = await Promise.all([
+    c.participacoes.find({ reservaId: id }, { projection: { alunoId: 1, status: 1, pagoEm: 1, paymentOrderId: 1, providerPaymentId: 1, reembolsos: 1 } }).toArray(),
+    c.repasses.countDocuments({ reservaId: id }),
+  ])
+  // Pedido de pagamento aberto conta como dinheiro: um PIX pode cair depois e
+  // precisa achar o assento para ser devolvido.
+  const temDinheiro =
+    repasses > 0 || assentos.some((a) => a.pagoEm || a.paymentOrderId || a.providerPaymentId || a.reembolsos?.length || ASSENTO_COM_DINHEIRO.includes(a.status))
+  const plano = planoDeExclusao({ status: reserva.status, inicio: reserva.inicio, temDinheiro, agora })
+  if (!plano.ok) throw new ErroMonitoria(409, plano.motivo)
+
+  let reembolsos: { ok: number; falhas: number } | null = null
+  if (plano.cancelarAntes) {
+    reembolsos = (await cancelarPeloSuporte({ reserva, adminId, motivo: `Excluída pelo suporte: ${motivo}`, culpaDoMonitor: false })).reembolsos
+  }
+  // Os avisos do sino que levavam a ela (o e-mail de cancelamento/reembolso já foi).
+  const pessoas = Array.from(new Set([reserva.tutorUserId, reserva.solicitanteId, ...assentos.map((a) => a.alunoId)].filter(Boolean)))
+  const db = await getDb()
+  const apagarAvisos = db.collection('notifications').deleteMany({ userId: { $in: pessoas }, actionUrl: { $regex: `^/monitorias/reservas/${id}` } })
+  await tirarDaSala(id, undefined, agora)
+
+  if (plano.apagarDeVez) {
+    await Promise.all([
+      c.participacoes.deleteMany({ reservaId: id }),
+      c.mensagens.deleteMany({ reservaId: id }),
+      c.salas.deleteMany({ _id: id }),
+      c.anotacoes.deleteMany({ reservaId: id }),
+      c.contratos.deleteMany({ reservaId: id }),
+      c.cotasGratis.deleteMany({ reservaId: id }),
+      c.bloqueios.deleteMany({ reservaId: id }),
+      apagarAvisos,
+    ])
+    await c.reservas.deleteOne({ _id: reserva._id as any })
+    return { apagadaDeVez: true, cancelada: plano.cancelarAntes, reembolsos }
+  }
+  await Promise.all([
+    c.reservas.updateOne({ _id: reserva._id as any }, { $set: { excluidaEm: agora, excluidaPor: adminId, motivoExclusao: motivo, updatedAt: agora } }),
+    c.participacoes.updateMany({ reservaId: id }, { $set: { reservaExcluida: true } }),
+    apagarAvisos,
+  ])
+  return { apagadaDeVez: false, cancelada: plano.cancelarAntes, reembolsos }
+}
+
+/** Desfaz uma exclusão (só das que ficaram guardadas; o status continua o que era). */
+export async function restaurarMonitoria(reserva: Reserva): Promise<void> {
+  if (!reserva.excluidaEm) throw new ErroMonitoria(409, 'Esta monitoria não está excluída.')
+  const c = await cols()
+  const id = idDe(reserva)
+  await Promise.all([
+    c.reservas.updateOne({ _id: reserva._id as any }, { $unset: { excluidaEm: '', excluidaPor: '', motivoExclusao: '' }, $set: { updatedAt: new Date() } }),
+    c.participacoes.updateMany({ reservaId: id }, { $unset: { reservaExcluida: '' } }),
+  ])
 }
 
 /** Entrada pelo convite da sala de teste: um assento grátis (idempotente). */
