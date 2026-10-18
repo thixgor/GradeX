@@ -8,6 +8,6 @@ export const maxDuration = 120
 /** Varredura horária das monitorias — ver lib/monitorias/varredura.ts. */
 export async function GET(request: NextRequest) {
   if (!isCronAuthorized(request)) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-  const relatorio = await varrer()
+  const relatorio = await varrer(new Date(), new URL(request.url).origin)
   return NextResponse.json({ ok: true, ...relatorio })
 }

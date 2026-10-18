@@ -11,6 +11,8 @@ import {
   type SidebarSectionSettings,
 } from '@/lib/sidebar-sections'
 import { normalizeSidebarIcons, type SidebarSectionIcons } from '@/lib/sidebar-icons'
+import { cifraDeConfigDisponivel, mascararSegredo, proximoSegredo } from '@/lib/ia/cripto-config'
+import { invalidarConfigDeIA, MODELO_FLASH_PADRAO, MODELO_FLASH_RESERVA, modeloDesligado } from '@/lib/ia/gemini'
 import {
   normalizeSidebarGroups,
   normalizeSidebarSectionGroups,
@@ -34,12 +36,18 @@ interface AIKeySettings {
   flashcards?: string
 }
 
+interface IAModelos {
+  principal?: string
+  reserva?: string
+}
+
 interface LandingSettings {
   landingPageEnabled: boolean
   personalExamsEnabled?: boolean
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
+  iaModelos?: IAModelos
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
   sidebarSectionIcons?: SidebarSectionIcons
@@ -77,21 +85,45 @@ function sidebarGroupPayload(rawGroups: unknown, rawAssignments: unknown) {
   }
 }
 
-// GET - Obter configurações (público)
+const SECOES_DE_CHAVE = ['generalExams', 'personalExams', 'flashcards'] as const
+
+/**
+ * O documento é lido em público (landing, menu lateral), mas as chaves de IA
+ * NÃO: o visitante não recebe `aiKeys` nem `iaModelos`; o admin recebe as
+ * chaves mascaradas ("••••1a2b") e o PUT ignora a máscara — a chave de verdade
+ * nunca sai do servidor depois de salva.
+ */
+function semSegredos(doc: Record<string, any>, admin: boolean): Record<string, any> {
+  const { aiKeys, iaModelos, ...resto } = doc
+  if (!admin) return resto
+  return {
+    ...resto,
+    aiKeys: Object.fromEntries(SECOES_DE_CHAVE.map((s) => [s, mascararSegredo(aiKeys?.[s])])),
+    iaModelos: { principal: iaModelos?.principal || '', reserva: iaModelos?.reserva || '' },
+    iaPadroes: { principal: MODELO_FLASH_PADRAO, reserva: MODELO_FLASH_RESERVA, cifraAtiva: cifraDeConfigDisponivel() },
+  }
+}
+
+function modeloValido(valor: unknown): string {
+  const m = typeof valor === 'string' ? valor.trim() : ''
+  return /^[a-z0-9][a-z0-9.\-]{2,63}$/.test(m) && !modeloDesligado(m) ? m : ''
+}
+
+// GET - Obter configurações (público; segredos só para o admin, mascarados)
 export async function GET(req: NextRequest) {
   try {
     const db = await getDb()
-    const settings = await db.collection('landing_settings').findOne({})
+    const [settings, session] = await Promise.all([db.collection('landing_settings').findOne({}), getSession().catch(() => null)])
+    const admin = session?.role === 'admin'
 
     if (!settings) {
       // Retornar configurações padrão
-      return NextResponse.json(DEFAULT_LANDING_SETTINGS, { headers: NO_STORE_HEADERS })
+      return NextResponse.json(semSegredos(DEFAULT_LANDING_SETTINGS as Record<string, any>, admin), { headers: NO_STORE_HEADERS })
     }
 
     return NextResponse.json(
       {
-        ...DEFAULT_LANDING_SETTINGS,
-        ...settings,
+        ...semSegredos({ ...DEFAULT_LANDING_SETTINGS, ...settings }, admin),
         sidebarSections: normalizeSidebarSections(settings.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(settings.sidebarSectionOrder),
         sidebarSectionIcons: normalizeSidebarIcons(settings.sidebarSectionIcons),
@@ -116,7 +148,11 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body: Partial<LandingSettings> = await req.json()
+    const { _id: _ignorado, iaPadroes: _padroes, ...body } = (await req.json()) as Partial<LandingSettings> & { _id?: unknown; iaPadroes?: unknown }
+
+    const db = await getDb()
+    const collection = db.collection('landing_settings')
+    const atual = await collection.findOne({}, { projection: { aiKeys: 1, iaModelos: 1 } })
 
     const sanitizedBody: Partial<LandingSettings> = {
       ...body,
@@ -124,10 +160,13 @@ export async function PUT(req: NextRequest) {
       sidebarSectionOrder: normalizeSidebarOrder(body.sidebarSectionOrder),
       sidebarSectionIcons: normalizeSidebarIcons(body.sidebarSectionIcons),
       ...sidebarGroupPayload(body.sidebarGroups, body.sidebarSectionGroups),
+      // Máscara ou campo ausente mantêm a chave gravada; texto novo é cifrado.
+      aiKeys: Object.fromEntries(SECOES_DE_CHAVE.map((s) => [s, proximoSegredo(body.aiKeys?.[s], atual?.aiKeys?.[s])])) as AIKeySettings,
+      iaModelos:
+        body.iaModelos === undefined
+          ? atual?.iaModelos || {}
+          : { principal: modeloValido(body.iaModelos?.principal), reserva: modeloValido(body.iaModelos?.reserva) },
     }
-
-    const db = await getDb()
-    const collection = db.collection('landing_settings')
 
     // Se existirem múltiplos documentos (legado), consolidar em um só para
     // evitar que GET retorne valores diferentes de PUT.
@@ -151,6 +190,7 @@ export async function PUT(req: NextRequest) {
     // servidor (ver lib/sidebar-section-access.ts). Descartá-la aqui faz o
     // toggle valer na próxima navegação, e não só quando a janela expirar.
     invalidarCacheDeServidor('sidebar-sections')
+    invalidarConfigDeIA()
 
     // Buscar as configurações atualizadas para retornar
     const updatedSettings = await collection.findOne({})
@@ -159,7 +199,7 @@ export async function PUT(req: NextRequest) {
       {
         success: true,
         message: 'Configurações atualizadas com sucesso',
-        ...updatedSettings,
+        ...semSegredos(updatedSettings || {}, true),
         sidebarSections: normalizeSidebarSections(updatedSettings?.sidebarSections),
         sidebarSectionOrder: normalizeSidebarOrder(updatedSettings?.sidebarSectionOrder),
         sidebarSectionIcons: normalizeSidebarIcons(updatedSettings?.sidebarSectionIcons),

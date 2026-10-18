@@ -79,16 +79,46 @@ export async function reembolsarParticipacao(input: {
   }
 
   const ehTotal = reembolso.valorCentavos >= part.valorCentavos - jaReembolsado
+  // Resumo por IA no reembolso integral: decidido UMA vez (depois da troca
+  // atômica do assento) e gravado no próprio reembolso, para a retomada
+  // repetir igual. Não entregue → vai junto; entregue → fica fora (valor explícito).
+  if (ehTotal && reembolso.adicional === undefined) {
+    const { prepararAdicionalNoReembolso } = await import('./resumo/adicional')
+    const plano = await prepararAdicionalNoReembolso(part, true, reembolso.chave, reembolso.motivo, reembolso.por)
+    if (plano.plano !== 'sem_adicional') {
+      reembolso = { ...reembolso, adicional: plano.plano, valorGatewayCentavos: plano.valorGatewayCentavos, alvoGatewayCentavos: plano.alvoGatewayCentavos }
+      await c.participacoes.updateOne(
+        { _id, 'reembolsos.chave': reembolso.chave } as any,
+        {
+          $set: {
+            'reembolsos.$.adicional': plano.plano,
+            ...(plano.valorGatewayCentavos != null ? { 'reembolsos.$.valorGatewayCentavos': plano.valorGatewayCentavos, 'reembolsos.$.alvoGatewayCentavos': plano.alvoGatewayCentavos } : {}),
+          },
+        } as any,
+      )
+    }
+  }
   // Reembolso integral = a pessoa saiu da aula: deixa a sala agora (o parcial do suporte não tira ninguém).
   if (ehTotal) await tirarDaSala(part.reservaId, [part.alunoId])
   // Nova tentativa de um reembolso já pedido: a anterior pode ter dado certo no
   // MP e falhado só do nosso lado (gravar a resposta). Pergunta ao MP ANTES de
   // pedir de novo — a chave de idempotência é a segunda trava, não a única.
-  const jaFeito = pendente ? await devolvidoNoGateway(part.providerPaymentId, ehTotal ? 'total' : jaReembolsado + reembolso.valorCentavos) : false
-  if (!jaFeito) {
+  // Devolução própria do Resumo por IA conta no total devolvido do MP.
+  const { devolvidoDoAdicionalAParte } = await import('./resumo/adicional')
+  const alvo: number | 'total' = ehTotal
+    ? reembolso.alvoGatewayCentavos ?? 'total'
+    : jaReembolsadoNoGateway(part) + (await devolvidoDoAdicionalAParte(input.participacaoId)) + reembolso.valorCentavos
+  const jaFeito = pendente ? await devolvidoNoGateway(part.providerPaymentId, alvo) : false
+  // Integral sem o adicional e nada mais a devolver (o resto já voltou): não há chamada a fazer.
+  const nadaAPedir = ehTotal && reembolso.valorGatewayCentavos === 0
+  if (!jaFeito && !nadaAPedir) {
     try {
       await getPaymentProvider().refundPayment(part.providerPaymentId, {
-        amountReais: ehTotal ? undefined : centavosParaReais(reembolso.valorCentavos),
+        amountReais: ehTotal
+          ? reembolso.valorGatewayCentavos != null
+            ? centavosParaReais(reembolso.valorGatewayCentavos)
+            : undefined
+          : centavosParaReais(reembolso.valorCentavos),
         idempotencyKey: reembolso.chave,
       })
     } catch (err: any) {
@@ -138,6 +168,11 @@ export async function reembolsarParticipacao(input: {
       },
     } as any,
   )
+  // O adicional que ia junto vira "reembolsado" (idempotente: roda mesmo se outra retomada concluiu).
+  if (reembolso.adicional === 'incluir') {
+    const { concluirAdicionalNoReembolso } = await import('./resumo/adicional')
+    await concluirAdicionalNoReembolso(input.participacaoId, reembolso.chave)
+  }
   if (!concluiu.modifiedCount) return { ok: true, total: ehTotal }
   // Reembolso parcial depois da aula concluída: o resto do repasse pode sair.
   if (!ehTotal) await liberarSePronta(part.reservaId)
@@ -176,7 +211,14 @@ export async function reembolsarParticipacao(input: {
           'O valor volta pela mesma conta/banco usada no PIX. Dependendo do banco, pode levar alguns dias para aparecer.',
         ],
         linhas: [
-          ['Valor', ehTotal ? 'Integral (inclui a taxa do PIX)' : formatarCentavos(reembolso.valorCentavos)],
+          [
+            'Valor',
+            ehTotal
+              ? reembolso.adicional === 'excluir'
+                ? `${formatarCentavos(reembolso.valorGatewayCentavos ?? 0)} (tudo, menos o Resumo por IA já entregue)`
+                : 'Integral (inclui a taxa do PIX)'
+              : formatarCentavos(reembolso.valorCentavos),
+          ],
           ['Motivo', reembolso.motivo],
           ['Protocolo', reembolso.chave],
         ],
@@ -195,6 +237,11 @@ export async function reembolsarParticipacao(input: {
       : []),
   ])
   return { ok: true, total: ehTotal }
+}
+
+/** Quanto os reembolsos JÁ CONCLUÍDOS da aula devolveram no Mercado Pago. */
+function jaReembolsadoNoGateway(part: Participacao): number {
+  return part.reembolsos.filter((r) => r.status === 'concluido').reduce((t, r) => t + (r.valorGatewayCentavos ?? r.valorCentavos), 0)
 }
 
 /**
@@ -249,7 +296,7 @@ async function registrarIntencao(
  * O MP já devolveu isto? `true` só com certeza; `false` se não; `null` se não
  * deu para saber (MP fora) — aí segue com a chave de idempotência.
  */
-async function devolvidoNoGateway(providerPaymentId: string, alvo: number | 'total'): Promise<boolean | null> {
+export async function devolvidoNoGateway(providerPaymentId: string, alvo: number | 'total'): Promise<boolean | null> {
   try {
     const r = await getPaymentProvider().getPayment(providerPaymentId)
     // Devolvido inteiro, ou o banco já tirou o dinheiro por contestação: não há

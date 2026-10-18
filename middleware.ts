@@ -173,6 +173,9 @@ const publicPrefixes = [
   '/api/plans',
   '/api/anuncios',
   '/api/cron/',
+  // Processador do Resumo por IA: chamado servidor-a-servidor, sem sessão. A
+  // própria rota exige CRON_SECRET (isCronAuthorized), como as de /api/cron.
+  '/api/interno/monitorias/resumos',
   '/api/leads/',
   '/api/study-playlists',
   '/api/stripe/', // stubs 410 — detectar tráfego residual; remover após 2026-08-09

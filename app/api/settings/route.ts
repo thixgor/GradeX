@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Settings } from '@/lib/types'
+import { mascararSegredo, proximoSegredo } from '@/lib/ia/cripto-config'
+import { invalidarConfigDeIA } from '@/lib/ia/gemini'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +36,8 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({ settings })
+    // A chave salva nunca volta inteira ao navegador (o PATCH ignora a máscara).
+    return NextResponse.json({ settings: { ...settings, geminiApiKey: mascararSegredo(settings.geminiApiKey) } })
   } catch (error) {
     console.error('Get settings error:', error)
     return NextResponse.json(
@@ -69,9 +72,10 @@ export async function PATCH(request: NextRequest) {
       updatedBy: session.userId
     }
 
-    // Apenas atualizar geminiApiKey se foi fornecido
+    // Apenas atualizar geminiApiKey se foi fornecido (a máscara mantém a
+    // gravada; texto novo é cifrado; vazio apaga).
     if (geminiApiKey !== undefined) {
-      updateData.geminiApiKey = geminiApiKey
+      updateData.geminiApiKey = proximoSegredo(geminiApiKey, existing?.geminiApiKey)
     }
 
     if (existing) {
@@ -87,6 +91,8 @@ export async function PATCH(request: NextRequest) {
         updatedAt: new Date()
       } as Settings)
     }
+
+    invalidarConfigDeIA()
 
     return NextResponse.json({
       success: true,

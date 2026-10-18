@@ -10,12 +10,14 @@ import { formatarEmBrasilia, horaEmBrasilia } from '@/lib/fuso-brasilia'
 import { medirNivel, podeEscolherSaida, type EstadoDoAparelho } from '@/lib/monitorias/sala/cliente/midia'
 import type { ControladorDaSala, EstadoDaSalaNaTela } from '@/lib/monitorias/sala/cliente/controlador'
 import type { EstadoDoSaguao } from '@/lib/monitorias/sala/mensagens'
+import type { EstadoDoResumoNaSala } from '@/lib/monitorias/resumo/tipos'
 import { cn } from '@/lib/utils'
 import { VideoAoVivo } from './midia-ao-vivo'
 import { AjudaDeAparelho } from './ajuda-permissao'
 import { MarcaClara } from './marca'
 import { TesteDeSom } from './teste-de-som'
 import { PainelDeEfeitos } from './painel-efeitos'
+import { AutorizacaoDoResumo, precisaAutorizar, textoDePrivacidade } from './resumo-ia-sala'
 import { EFEITOS_DE_VIDEO, EFEITOS_DE_VOZ, espelharPrevia } from '@/lib/monitorias/sala/cliente/efeitos'
 
 const COM_PROBLEMA: EstadoDoAparelho[] = ['negado', 'indisponivel', 'em_uso', 'erro', 'pagina']
@@ -156,7 +158,12 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
   const pedindo = local.mic === 'pedindo' || local.cam === 'pedindo'
   const entrando = estado.fase === 'entrando'
   const reservaId = saguao?.reserva.id
-  const podeEntrar = !!saguao?.acesso.ok && !entrando && !pedindo
+  // Resumo por IA: a decisão do monitor nesta tela vale sobre o retrato do saguão
+  // (recusar devolve null — a aula fica sem resumo). Ao entrar, vale o servidor.
+  const [decidido, setDecidido] = useState<EstadoDoResumoNaSala | null | undefined>(undefined)
+  const resumo = decidido !== undefined ? decidido : saguao?.resumo ?? null
+  const faltaAutorizar = precisaAutorizar(resumo)
+  const podeEntrar = !!saguao?.acesso.ok && !entrando && !pedindo && !faltaAutorizar
   const recarregar = local.mic === 'pagina' || local.cam === 'pagina'
   const problema = COM_PROBLEMA.includes(local.mic) || COM_PROBLEMA.includes(local.cam)
   const nomeDoOutro = saguao?.papel === 'monitor' ? 'o aluno' : 'o monitor'
@@ -278,7 +285,7 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
             </AnimatePresence>
             <p className="mt-3 flex items-start gap-1.5 text-xs leading-relaxed text-muted-foreground">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-              A aula não é gravada pela DomineAqui. Câmera e microfone só ficam ligados enquanto esta tela estiver aberta.
+              {textoDePrivacidade(resumo)}
             </p>
           </motion.section>
 
@@ -334,6 +341,16 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
               </motion.div>
             )}
 
+            {resumo?.ativo && reservaId && (
+              <AutorizacaoDoResumo
+                reservaId={reservaId}
+                resumo={resumo}
+                onDecidido={(r) => {
+                  setDecidido(r)
+                  ctrl.definirResumo(r)
+                }}
+              />
+            )}
             {estado.outraAba && <CaixaAviso tom="info">A aula está aberta em outra aba deste navegador. Entrar aqui fecha a outra.</CaixaAviso>}
             {estado.aviso && <CaixaAviso tom="info">{estado.aviso}</CaixaAviso>}
             <AjudaDeAparelho mic={local.mic} cam={local.cam} />
@@ -361,6 +378,7 @@ export function Saguao({ ctrl, estado, saguao, erroSaguao }: { ctrl: Controlador
                   {recarregar ? 'Recarregar a página' : 'Tentar de novo'}
                 </Button>
               )}
+              {faltaAutorizar && saguao?.acesso.ok && <p className="text-center text-xs text-muted-foreground">Decida sobre o Resumo por IA acima para entrar.</p>}
               {podeEntrar && !micLigado && !camLigada && (
                 <p className="text-center text-xs text-muted-foreground">Você vai entrar com câmera e microfone desligados. Dá para ligar lá dentro.</p>
               )}

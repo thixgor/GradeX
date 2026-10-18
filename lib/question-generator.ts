@@ -1,78 +1,14 @@
-import { Question, Alternative, KeyPoint, Settings, AlternativeType } from './types'
-import { getDb } from './mongodb'
-import { getAIKey, AIKeySection } from './ai-keys'
+import { Question, Alternative, KeyPoint, AlternativeType } from './types'
+import { gerarConteudoGemini, type SecaoDeChave } from './ia/gemini'
 import { v4 as uuidv4 } from 'uuid'
 
-const GEMINI_MODELS = [
-  'gemini-2.5-flash',     // Modelo principal (mesmo usado no teste de conexão)
-  'gemini-2.0-flash',     // Fallback estável
-  'gemini-1.5-flash',     // Fallback legado
-]
+type AIKeySection = SecaoDeChave
 
-// Timeout para cada chamada individual ao Gemini (45 segundos)
-// gemini-2.5-flash é um modelo "thinking" que pode levar mais tempo
+// Modelos, chaves e raciocínio: `lib/ia/gemini.ts` (gemini-3.8-flash com
+// gemini-2.5-flash de reserva; os 2.0/1.5 que estavam aqui já foram desligados
+// pelo Google). Uma tentativa leva até 45 s e todas juntas cabem na função (60 s).
 const GEMINI_FETCH_TIMEOUT_MS = 45000
-
-/**
- * Cria um AbortSignal com timeout para fetch
- */
-function createTimeoutSignal(ms: number): AbortSignal {
-  const controller = new AbortController()
-  setTimeout(() => controller.abort(), ms)
-  return controller.signal
-}
-
-/**
- * Busca TODAS as API Keys do Gemini disponíveis, em ordem de prioridade.
- * Retorna um array de chaves únicas para que o caller possa tentar a próxima
- * se uma delas falhar (ex: chave expirada, rate limit, etc).
- */
-async function getAllGeminiApiKeys(section?: AIKeySection): Promise<string[]> {
-  const keys: string[] = []
-
-  try {
-    // 1. Chave específica da seção (landing_settings.aiKeys.personalExams, etc)
-    if (section) {
-      const sectionKey = await getAIKey(section)
-      if (sectionKey) {
-        keys.push(sectionKey)
-      }
-    }
-
-    // 2. Chave padrão do banco de dados (settings.geminiApiKey) — mesma usada pelos flashcards
-    const db = await getDb()
-    const settingsCollection = db.collection<Settings>('settings')
-    const settings = await settingsCollection.findOne({})
-    if (settings?.geminiApiKey && !keys.includes(settings.geminiApiKey)) {
-      keys.push(settings.geminiApiKey)
-    }
-
-    // 3. Qualquer outra chave disponível em landing_settings.aiKeys
-    const allKeys = await import('./ai-keys').then(m => m.getAllAIKeys())
-    for (const key of Object.values(allKeys) as string[]) {
-      if (key && !keys.includes(key)) {
-        keys.push(key)
-      }
-    }
-  } catch (error) {
-    console.error('Erro ao buscar API Keys do Gemini:', error)
-  }
-
-  if (keys.length === 0) {
-    throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini')
-  }
-
-  return keys
-}
-
-/**
- * Busca a API Key do Gemini do banco de dados (retorna a primeira disponível)
- * Mantida para compatibilidade — prefira getAllGeminiApiKeys para fallback automático.
- */
-async function getGeminiApiKey(section?: AIKeySection): Promise<string> {
-  const keys = await getAllGeminiApiKeys(section)
-  return keys[0]
-}
+const GEMINI_PRAZO_TOTAL_MS = 55000
 
 // Variável global para armazenar a seção de IA a ser usada
 let currentAIKeySection: AIKeySection | undefined = undefined
@@ -405,79 +341,29 @@ IMPORTANTE:
 }
 
 /**
- * Chama a API Gemini com fallback de chaves e modelos.
- * Tenta cada chave com cada modelo antes de desistir.
+ * Chama a API Gemini com fallback de chaves e modelos (o helper tenta modelo
+ * por fora e chave por dentro: seção → padrão → demais → env).
  */
 async function callGeminiWithFallback(
   prompt: string,
   generationConfig: Record<string, any> = {},
 ): Promise<string> {
-  const section = getAIKeySection()
-  const apiKeys = await getAllGeminiApiKeys(section)
-
-  let lastError: any = null
-
-  // Tentar cada chave disponível
-  for (const apiKey of apiKeys) {
-    // Tentar modelos em ordem de prioridade para cada chave
-    for (const model of GEMINI_MODELS) {
-      try {
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
-
-        console.log(`[Gemini] Tentando modelo ${model} com key ...${apiKey.slice(-6)}`)
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-goog-api-key': apiKey,
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              temperature: 0.8,
-              topK: 40,
-              topP: 0.95,
-              maxOutputTokens: 4096,
-              ...generationConfig,
-            },
-          }),
-          signal: createTimeoutSignal(GEMINI_FETCH_TIMEOUT_MS),
-        })
-
-        if (!response.ok) {
-          const errorData = await response.json()
-          const status = response.status
-          const errorMsg = errorData.error?.message || response.statusText
-          console.warn(`[Gemini] Falha ${status} com modelo ${model}:`, errorMsg)
-
-          // Erro de autenticação/autorização → pular para próxima chave
-          if (status === 401 || status === 403) {
-            console.warn(`[Gemini] Key ...${apiKey.slice(-6)} inválida ou sem permissão, tentando próxima key...`)
-            break // Sai do loop de modelos, vai para próxima chave
-          }
-
-          throw new Error(`Gemini API error (${model}): ${errorMsg}`)
-        }
-
-        const data = await response.json()
-        const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-        if (!generatedText) {
-          throw new Error(`Resposta vazia da API Gemini (${model})`)
-        }
-
-        return generatedText
-      } catch (error: any) {
-        const isTimeout = error?.name === 'AbortError'
-        console.error(`[Gemini] Erro com modelo ${model}${isTimeout ? ' (TIMEOUT)' : ''}:`, error?.message || error)
-        lastError = error
-        if (isTimeout) continue
-      }
-    }
-  }
-
-  throw lastError || new Error('Falha ao chamar Gemini com todos os modelos e chaves disponíveis')
+  const { texto } = await gerarConteudoGemini({
+    secao: getAIKeySection(),
+    corpo: {
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: {
+        temperature: 0.8,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 4096,
+        ...generationConfig,
+      },
+    },
+    timeoutMs: GEMINI_FETCH_TIMEOUT_MS,
+    prazoMs: GEMINI_PRAZO_TOTAL_MS,
+  })
+  return texto
 }
 
 /**

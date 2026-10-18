@@ -180,16 +180,20 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
       // Comprovante só existe para pagamento que entrou de fato.
       if (!part.paymentOrderId || !ObjectId.isValid(part.paymentOrderId) || !part.pagoEm) return naoEncontrado()
       const db = await getDb()
-      const [order, aluno, monitor, contrato] = await Promise.all([
+      const [order, aluno, monitor, contrato, adicional] = await Promise.all([
         db.collection<PaymentOrder>('payment_orders').findOne({ _id: new ObjectId(part.paymentOrderId) as any }),
         carregarUsuario(part.alunoId),
         carregarUsuario(reserva.tutorUserId),
         c.contratos.findOne({ participacaoId: idDe(part) }, { projection: { numero: 1 } }),
+        c.resumosAdicionais.findOne({ participacaoId: idDe(part) }, { projection: { precoCentavos: 1, status: 1, paymentOrderId: 1 } }),
       ])
       if (!order || !aluno || !monitor) return naoEncontrado()
       const total = reaisParaCentavos(order.paidAmount ?? order.amount)
       // Material vendido NESTE pedido (não entra como "taxa do PIX").
       const material = part.materialOficial && part.materialOficial.paymentOrderId === String(order._id) ? part.materialOficial : null
+      // Resumo por IA vendido NESTE pedido (também não é "taxa do PIX").
+      const resumoIA = adicional && adicional.paymentOrderId === String(order._id) ? adicional : null
+      const SITUACAO_DO_RESUMO: Record<string, string> = { pago: 'contratado', entregue: 'entregue', reembolso_processando: 'reembolso em andamento', reembolsado: 'reembolsado' }
       const bytes = await pdfDoComprovante({
         pedidoId: String(order._id),
         pagamentoId: order.providerPaymentId || '',
@@ -202,8 +206,9 @@ export async function GET(request: NextRequest, { params }: { params: { tipo: st
         duracao: reserva.proposta ? formatarDuracao(reserva.proposta.duracaoMin) : '—',
         valorCentavos: part.valorCentavos,
         material: material ? { titulo: material.titulo, precoCentavos: material.precoCentavos } : null,
+        resumoIA: resumoIA ? { precoCentavos: resumoIA.precoCentavos, situacao: SITUACAO_DO_RESUMO[resumoIA.status] || resumoIA.status } : null,
         taxaPercent: part.taxaPercent,
-        taxaPixCentavos: Math.max(0, total - part.valorCentavos - (material?.precoCentavos ?? 0)),
+        taxaPixCentavos: Math.max(0, total - part.valorCentavos - (material?.precoCentavos ?? 0) - (resumoIA?.precoCentavos ?? 0)),
         totalPagoCentavos: total,
         contratoNumero: contrato?.numero,
         status: order.status === 'approved' ? ROTULO_ASSENTO[part.status] || 'Pago' : `Pagamento ${order.status}`,

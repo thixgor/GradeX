@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 async function meuAnuncio(id: string, userId: string) {
   if (!ObjectId.isValid(id)) return null
   const c = await obterColecoes()
-  return c.anuncios.findOne({ _id: new ObjectId(id), userId } as any)
+  return c.anuncios.findOne({ _id: new ObjectId(id), userId, excluidoEm: { $exists: false } } as any)
 }
 
 /** GET — o anúncio para edição (com a revisão pendente, se houver). */

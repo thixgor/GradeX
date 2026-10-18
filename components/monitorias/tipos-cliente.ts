@@ -46,6 +46,8 @@ export interface DetalheReserva {
     disputa: { em: string; motivo: string; decisao: string | null } | null
     negociavel: boolean
     podeReportar: boolean
+    /** Resumo por IA: estado da tarefa da aula e o meu adicional (null = não tenho nada a ver com isso). */
+    resumoIA?: { tarefa: string; meu: string | null } | null
     createdAt: string
   }
   monitor: { nome: string; fotoUrl: string | null; titulo: string } | null

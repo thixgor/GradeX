@@ -107,6 +107,10 @@
     "app/api/admin/banco/importar/route.ts": {
       "maxDuration": 60
     },
+    "app/api/interno/monitorias/resumos/route.ts": {
+      "maxDuration": 300,
+      "memory": 512
+    },
     "app/api/admin/cronogramas/extrair/route.ts": {
       "maxDuration": 300,
       "memory": 1024

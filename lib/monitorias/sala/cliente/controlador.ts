@@ -25,6 +25,8 @@ import { detectarContato } from '../../contato-inteligente'
 import { aplicarAnotacao, INTERVALO_DE_REACAO_MS, podeAnotar, type MensagemDeAnotacao, type Reacao, type Traco } from '../tela-anotada'
 import type { CredenciaisDaSala, MensagemDoCanal, PedidoDoMonitor, RespostaDoSinal, RetratoDaSala, SinalRecebido, TipoDeSinal, UsoDaConexao } from '../mensagens'
 import type { PapelNaSala } from '../../tipos'
+import type { EstadoDoResumoNaSala } from '../../resumo/tipos'
+import { GravadorDeVoz, gravacaoSuportada, type EstadoDoGravador } from './gravador'
 import { novaGeracao, Par, type EstatisticasDoPar, type TrilhasLocais } from './par'
 import {
   capturar,
@@ -154,6 +156,10 @@ export interface EstadoDaSalaNaTela {
   tracos: Traco[]
   /** Quem é o dono da tela no palco (pid), para saber quem pode riscar. */
   donoDaTela: string | null
+  /** Resumo por IA desta aula (null = a aula não tem). Todos veem o selo. */
+  resumo: EstadoDoResumoNaSala | null
+  /** O meu gravador (só quando a minha voz é transcrita e autorizada). */
+  gravacao: EstadoDoGravador | null
 }
 
 const CANAL_DE_ABAS = 'domineaqui:sala:'
@@ -175,6 +181,8 @@ export class ControladorDaSala {
   private telaLocal: MediaStream | null = null
   private procVideo: ProcessadorDeVideo | null = null
   private procAudio: ProcessadorDeAudio | null = null
+  /** Resumo por IA: grava a MINHA voz crua (sem efeito) quando ela é transcrita. */
+  private gravador: GravadorDeVoz | null = null
   /** Câmera com o desfoque nativo ligado (para desligar ao trocar de efeito). */
   private desfocada: MediaStreamTrack | null = null
   private amostrasPesadas = 0
@@ -253,6 +261,8 @@ export class ControladorDaSala {
       reacoes: [],
       tracos: [],
       donoDaTela: null,
+      resumo: null,
+      gravacao: null,
     }
   }
 
@@ -471,6 +481,8 @@ export class ControladorDaSala {
 
   private definirLocal(parcial: Partial<Omit<EstadoDaSalaNaTela['local'], 'camera' | 'tela' | 'versao' | 'audio' | 'audioComEfeito'>>): void {
     this.sincronizarEfeitos()
+    // O gravador do resumo segue o microfone cru (troca de aparelho, religar).
+    this.gravador?.definirTrilha(this.audio)
     const cam = this.camEnviada()
     if (cam) {
       if (!this.cameraLocal || this.cameraLocal.getVideoTracks()[0] !== cam) this.cameraLocal = new MediaStream([cam])
@@ -808,7 +820,9 @@ export class ControladorDaSala {
       permissoes: c.sala.permissoes || { telaAlunos: true, chatAlunos: true },
       removidos: c.sala.removidos || [],
       reserva: c.reserva,
+      resumo: c.resumo ?? null,
     })
+    this.ligarGravador(c.resumo ?? null)
     // Avisa as outras abas deste navegador: a aula agora é aqui.
     this.canalAbas?.postMessage({ t: 'assumi', cx: c.eu.cx })
     // Quem chega oferece a quem já está (o servidor ordena as entradas: só um lado vê o outro).
@@ -818,6 +832,31 @@ export class ControladorDaSala {
     this.atualizarFaltam()
     this.ligarCiclosDaAula()
     this.atualizar()
+  }
+
+  // ─── Resumo por IA ──────────────────────────────────────────────────
+
+  /** Liga o gravador da minha voz se ela é transcrita nesta aula (e o navegador grava). */
+  private ligarGravador(resumo: EstadoDoResumoNaSala | null): void {
+    if (this.gravador || !resumo?.gravar || !gravacaoSuportada()) return
+    this.gravador = new GravadorDeVoz(this.reservaId, resumo.proximoSeq, (g) => this.definir({ gravacao: { ...g } }))
+    this.gravador.definirTrilha(this.audio)
+  }
+
+  private desligarGravador(): void {
+    this.gravador?.encerrar()
+    this.gravador = null
+  }
+
+  /** "Pausar a transcrição da minha voz" (só a minha; a aula segue normal). */
+  pausarTranscricao(sim: boolean): void {
+    this.gravador?.pausar(sim)
+  }
+
+  /** O monitor decidiu no saguão: guarda para ligar o gravador ao entrar. */
+  definirResumo(resumo: EstadoDoResumoNaSala | null): void {
+    this.definir({ resumo })
+    if (this.estado.fase === 'na_sala') this.ligarGravador(resumo)
   }
 
   /** A câmera já aberta no saguão passa a respeitar o tamanho e o fps do admin (sem reabrir). */
@@ -1508,6 +1547,7 @@ export class ControladorDaSala {
 
   private sairCom(motivo: MotivoDeSaida, mensagem: string): void {
     if (this.estado.fase !== 'na_sala' && this.estado.fase !== 'entrando') return
+    this.desligarGravador()
     // Substituída/negada: o servidor já não reconhece esta conexão; não gasta invocação.
     this.encerrarRede(motivo !== 'substituida' && motivo !== 'negado' && motivo !== 'sessao' && motivo !== 'removida')
     this.pararMidia()
@@ -1569,6 +1609,7 @@ export class ControladorDaSala {
   /** Desmontagem da tela (ou `pagehide`): desliga tudo, avisa a saída. Idempotente. */
   destruir(): void {
     if (this.destruido) return
+    this.desligarGravador()
     this.encerrarRede(this.estado.fase === 'na_sala')
     this.pararMidia()
     this.removerOuvintesDeAparelho()

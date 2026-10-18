@@ -207,6 +207,13 @@ export interface Anuncio extends ConteudoAnuncio {
   ofertaAssinada?: AssinaturaOferta
   stats: { reservas: number; nota: number; avaliacoes: number; perguntas: number }
   publicadoEm?: Date
+  /**
+   * Excluído pelo suporte com reservas no histórico: fica suspenso e some da
+   * vitrine, do painel do monitor e da moderação (as reservas guardam o título).
+   */
+  excluidoEm?: Date
+  excluidoPor?: string
+  motivoExclusao?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -315,6 +322,10 @@ export interface Reserva {
   excluidaEm?: Date
   excluidaPor?: string
   motivoExclusao?: string
+  /** Já somou 1 em `anuncios.stats.reservas` (marcado na confirmação paga). */
+  contouNaVitrine?: boolean
+  /** O que a exclusão descontou dos contadores públicos (a restauração devolve). */
+  contadoresDescontados?: { reservas: boolean; aulasDadas: boolean }
   createdAt: Date
   updatedAt: Date
 }
@@ -352,6 +363,16 @@ export interface Reembolso {
   erro?: string
   /** Concluído porque o MP já mostrava a devolução (a resposta anterior se perdeu). */
   conciliadoNoGateway?: boolean
+  /**
+   * Resumo por IA no reembolso INTEGRAL (decidido ao registrar, para a
+   * retomada repetir igual): `incluir` = vai junto (MP devolve tudo o que
+   * resta); `excluir` = já entregue, o valor dele fica fora.
+   */
+  adicional?: 'incluir' | 'excluir'
+  /** Valor explícito pedido ao MP (integral sem o adicional). Ausente = o de sempre. */
+  valorGatewayCentavos?: number
+  /** Total devolvido no MP depois deste reembolso (confere a retomada). */
+  alvoGatewayCentavos?: number
 }
 
 /** Um assento: um aluno numa reserva. É o que se paga e o que se reembolsa. */
@@ -393,6 +414,8 @@ export interface Participacao {
   taxaPercent?: number
   /** Material oficial comprado junto no mesmo PIX (retrato do pedido aprovado). */
   materialOficial?: MaterialNaCompra
+  /** Resumo por IA comprado junto (retrato; o registro de verdade é `monitorias_resumos_adicionais`). */
+  resumoIA?: { precoCentavos: number; paymentOrderId: string }
   createdAt: Date
   updatedAt: Date
 }

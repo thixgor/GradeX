@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       requisitosDoMonitorDe(sessao.userId),
       requisitosDoAlunoDe(sessao.userId),
       c.anuncios
-        .find({ userId: sessao.userId }, { projection: { titulo: 1, slug: 1, status: 1, materia: 1, preco: 1, stats: 1, updatedAt: 1, revisaoPendente: 1, moderacao: 1, modos: 1, ofertaAssinada: 1, descricao: 1, conteudos: 1, videos: 1, faq: 1, materiais: 1, temMateriais: 1, aulaGratis: 1, grupo: 1 } })
+        .find({ userId: sessao.userId, excluidoEm: { $exists: false } }, { projection: { titulo: 1, slug: 1, status: 1, materia: 1, preco: 1, stats: 1, updatedAt: 1, revisaoPendente: 1, moderacao: 1, modos: 1, ofertaAssinada: 1, descricao: 1, conteudos: 1, videos: 1, faq: 1, materiais: 1, temMateriais: 1, aulaGratis: 1, grupo: 1 } })
         .sort({ updatedAt: -1 })
         .toArray(),
       c.reservas.countDocuments({ tutorUserId: sessao.userId, status: { $in: ['solicitada', 'em_negociacao', 'aguardando_assinaturas'] }, excluidaEm: { $exists: false } } as any),

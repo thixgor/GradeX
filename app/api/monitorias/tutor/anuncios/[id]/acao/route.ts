@@ -20,7 +20,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const corpo = z.object({ acao: z.enum(['enviar', 'pausar', 'retomar']) }).strict().safeParse(await lerJson(request))
     if (!corpo.success || !ObjectId.isValid(params.id)) return erro(400, 'Ação inválida.')
     const c = await obterColecoes()
-    const a = await c.anuncios.findOne({ _id: new ObjectId(params.id), userId: sessao.userId } as any)
+    const a = await c.anuncios.findOne({ _id: new ObjectId(params.id), userId: sessao.userId, excluidoEm: { $exists: false } } as any)
     if (!a) return naoEncontrado()
     const agora = new Date()
     if (corpo.data.acao === 'enviar') {

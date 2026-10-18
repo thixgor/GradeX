@@ -288,6 +288,8 @@ export interface EntradaPdfComprovante {
   valorCentavos: number
   /** Material oficial comprado no mesmo PIX (vendido pela plataforma). */
   material?: { titulo: string; precoCentavos: number } | null
+  /** Resumo por IA comprado no mesmo PIX (serviço da plataforma, fora do repasse). */
+  resumoIA?: { precoCentavos: number; situacao: string } | null
   /** 0 = aula sem taxa da plataforma (material oficial elegível). */
   taxaPercent?: number
   taxaPixCentavos: number
@@ -318,6 +320,7 @@ export async function pdfDoComprovante(e: EntradaPdfComprovante): Promise<Uint8A
   p.tabela([
     ['Valor da monitoria', formatarCentavos(e.valorCentavos)],
     ...(e.material ? ([[`Material oficial: ${e.material.titulo} (vendido pela DomineAqui)`, formatarCentavos(e.material.precoCentavos)]] as Array<[string, string]>) : []),
+    ...(e.resumoIA ? ([[`Resumo Inteligente por IA (serviço da DomineAqui) · ${e.resumoIA.situacao}`, formatarCentavos(e.resumoIA.precoCentavos)]] as Array<[string, string]>) : []),
     ['Taxa do PIX (meio de pagamento)', formatarCentavos(e.taxaPixCentavos)],
     ['Total pago', formatarCentavos(e.totalPagoCentavos)],
   ])

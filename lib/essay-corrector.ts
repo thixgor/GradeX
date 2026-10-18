@@ -1,27 +1,5 @@
-import { Question, EssayCompetence, EssayStyle, Settings } from './types'
-import { getDb } from './mongodb'
-
-const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent'
-
-/**
- * Busca a API Key do Gemini do banco de dados
- */
-async function getGeminiApiKey(): Promise<string> {
-  try {
-    const db = await getDb()
-    const settingsCollection = db.collection<Settings>('settings')
-    const settings = await settingsCollection.findOne({})
-
-    if (!settings?.geminiApiKey) {
-      throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini')
-    }
-
-    return settings.geminiApiKey
-  } catch (error) {
-    console.error('Erro ao buscar API Key do Gemini:', error)
-    throw error
-  }
-}
+import { Question, EssayCompetence, EssayStyle } from './types'
+import { gerarConteudoGemini } from './ia/gemini'
 
 interface EssayCorrectionResult {
   score: number
@@ -234,45 +212,22 @@ export async function correctEssayWithGemini(
     ? buildEnemPrompt(question.essayTheme, essayText, rigor)
     : buildUerjPrompt(question.essayTheme, essayText, rigor)
 
-  const apiKey = await getGeminiApiKey()
-
   try {
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
+    // Chave e modelo vêm do helper único (padrão → seções → env), com
+    // raciocínio baixo e prazo que cabe na função que chama a correção.
+    const { texto: generatedText } = await gerarConteudoGemini({
+      corpo: {
+        contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.2,
           topK: 40,
           topP: 0.95,
           maxOutputTokens: 8192,
         },
-      }),
+      },
+      timeoutMs: 24_000,
+      prazoMs: 27_000,
     })
-
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`)
-    }
-
-    const data = await response.json()
-    const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-    if (!generatedText) {
-      throw new Error('Resposta vazia da API Gemini')
-    }
 
     return parseCorrectionResponse(generatedText, question.essayStyle!)
   } catch (error) {
@@ -384,38 +339,5 @@ function parseCorrectionResponse(response: string, essayStyle: EssayStyle): Essa
     console.error('Erro ao parsear resposta do Gemini:', error)
     console.error('Resposta recebida:', response)
     throw new Error('Falha ao interpretar resposta do corretor automático de redação')
-  }
-}
-
-/**
- * Testa a conexão com a API Gemini
- */
-export async function testGeminiConnection(apiKey?: string): Promise<boolean> {
-  try {
-    const key = apiKey || await getGeminiApiKey()
-
-    const response = await fetch(GEMINI_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': key,
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: 'Teste de conexão. Responda apenas "OK".',
-              },
-            ],
-          },
-        ],
-      }),
-    })
-
-    return response.ok
-  } catch (error) {
-    console.error('Erro ao testar conexão Gemini:', error)
-    return false
   }
 }

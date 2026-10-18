@@ -26,16 +26,19 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const ver = (texto: string) => (acesso?.mascarar ? mascararContato(texto).texto : texto)
     const c = await obterColecoes()
     const id = idDe(reserva)
-    const [assentos, contratos, anuncio, tutor, mensagens, configSala, presenca] = await Promise.all([
+    const [assentos, contratos, anuncio, tutor, mensagens, configSala, presenca, tarefaResumo] = await Promise.all([
       c.participacoes.find({ reservaId: id }).toArray(),
       c.contratos.find({ reservaId: id, status: { $ne: 'rescindido' } }, { projection: { dados: 0 } }).toArray(),
-      c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { slug: 1, conteudos: 1, aulaGratis: 1, grupo: 1, preco: 1, modos: 1, materiais: 1 } }),
+      c.anuncios.findOne({ _id: new ObjectId(reserva.anuncioId) } as any, { projection: { slug: 1, conteudos: 1, aulaGratis: 1, grupo: 1, preco: 1, modos: 1, materiais: 1, excluidoEm: 1 } }),
       c.tutores.findOne({ _id: new ObjectId(reserva.tutorId) } as any, { projection: { nome: 1, fotoUrl: 1, titulo: 1 } }),
       c.mensagens.find({ reservaId: id }).sort({ createdAt: -1 }).limit(150).toArray(),
       configDaSala(),
       papel ? presencaResumida(reserva, sessao.userId) : Promise.resolve(null),
+      c.resumos.findOne({ _id: id }, { projection: { status: 1 } }),
     ])
     const meu = assentos.find((a) => a.alunoId === sessao.userId) || null
+    // Resumo por IA: o meu adicional (se comprei) e se a aula tem resumo (o monitor vê para autorizar na sala).
+    const meuResumo = meu && tarefaResumo ? await c.resumosAdicionais.findOne({ participacaoId: idDe(meu) }, { projection: { status: 1 } }) : null
     const meuContrato = meu ? contratos.find((k) => k.participacaoId === idDe(meu)) || null : null
     const ehMonitor = papel === 'monitor'
     const pagouOuGratis = !!meu && ['paga', 'gratis', 'concluida'].includes(meu.status)
@@ -67,7 +70,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         id,
         anuncioId: reserva.anuncioId,
         anuncioTitulo: reserva.anuncioTitulo,
-        anuncioSlug: anuncio?.slug || null,
+        anuncioSlug: (anuncio && !anuncio.excluidoEm && anuncio.slug) || null,
         conteudosDoAnuncio: anuncio?.conteudos || [],
         aulaGratis: anuncio?.aulaGratis || null,
         grupo: anuncio?.grupo || null,
@@ -98,6 +101,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         disputa: reserva.disputa ? { em: reserva.disputa.em, motivo: reserva.disputa.motivo, decisao: reserva.disputa.decisao || null } : null,
         negociavel: negociavel(reserva.status) && reserva.origem !== 'direto',
         podeReportar: !ehMonitor && pagouOuGratis && ['confirmada', 'realizada'].includes(reserva.status) && podeReportar(reserva.fim, new Date(), reserva.inicio),
+        resumoIA: tarefaResumo && (meuResumo || ehMonitor) ? { tarefa: tarefaResumo.status, meu: meuResumo?.status || null } : null,
         createdAt: reserva.createdAt,
       },
       monitor: tutor ? { nome: tutor.nome, fotoUrl: tutor.fotoUrl || null, titulo: tutor.titulo } : null,

@@ -342,5 +342,18 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_infracoes').createIndex({ createdAt: 1 }, { name: 'ttl_infracoes', expireAfterSeconds: 2 * 365 * 24 * 3600 }),
     db.collection('monitorias_anotacoes').createIndex({ userId: 1, reservaId: 1 }, { unique: true }),
     db.collection('monitorias_reservas').createIndex({ codigoTeste: 1 }, { unique: true, sparse: true }),
+    // Resumo por IA: um adicional por assento (a aprovação repetida não cria dois),
+    // os da aula por estado (entrega/reembolso) e os reembolsos a retomar.
+    db.collection('monitorias_resumos_adicionais').createIndex({ participacaoId: 1 }, { unique: true }),
+    db.collection('monitorias_resumos_adicionais').createIndex({ reservaId: 1, status: 1 }),
+    db.collection('monitorias_resumos_adicionais').createIndex({ status: 1, updatedAt: 1 }),
+    // Tarefas: candidatas a resumir (fim da aula), falhas de 48 h e retenção.
+    db.collection('monitorias_resumos').createIndex({ status: 1, fim: 1 }),
+    db.collection('monitorias_resumos').createIndex({ status: 1, falhouEm: 1 }, { sparse: true }),
+    db.collection('monitorias_resumos').createIndex({ transcricaoExpiraEm: 1 }, { sparse: true }),
+    // Trechos de voz: um por (aula, pessoa, número) — o reenvio não duplica — e a fila do processador.
+    db.collection('monitorias_resumos_segmentos').createIndex({ reservaId: 1, userId: 1, seq: 1 }, { unique: true }),
+    db.collection('monitorias_resumos_segmentos').createIndex({ status: 1, createdAt: 1 }),
+    db.collection('monitorias_resumos_segmentos').createIndex({ reservaId: 1, status: 1 }),
   ])
 }

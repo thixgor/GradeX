@@ -77,8 +77,6 @@ vi.mock('@/lib/mongodb', () => ({
   },
 }))
 
-vi.mock('@/lib/ai-keys', () => ({ getAllAIKeys: async () => ({}) }))
-
 beforeEach(() => {
   process.env.GEMINI_API_KEY = 'chave-de-teste'
   vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -119,7 +117,7 @@ describe('leitura das imagens', () => {
     await lerCalendarios([IMAGEM])
 
     const [url, opcoes] = chamada.mock.calls[0] as unknown as [string, RequestInit]
-    expect(url).toContain('gemini-3.6-flash')
+    expect(url).toContain('gemini-3.8-flash')
     expect((opcoes.headers as Record<string, string>)['X-goog-api-key']).toBe('chave-de-teste')
 
     const corpo = JSON.parse(String(opcoes.body))
@@ -128,13 +126,16 @@ describe('leitura das imagens', () => {
       data: IMAGEM.base64,
     })
     expect(corpo.generationConfig.responseMimeType).toBe('application/json')
-    expect(corpo.generationConfig.temperature).toBe(0)
+    // O 3.x ignora a amostragem (a documentação manda tirar) e recebe o
+    // raciocínio no nível mais baixo que aceita.
+    expect(corpo.generationConfig.temperature).toBeUndefined()
+    expect(corpo.generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'low' })
     // A regra do fuso precisa estar no pedido: sem ela o modelo escolhe sozinho
     // entre as três colunas de horário.
     expect(corpo.contents[0].parts[0].text).toContain('Brasília')
   })
 
-  it('desliga o raciocínio só no 2.5, que é quem conhece o campo', async () => {
+  it('raciocínio no mínimo de cada geração: low no 3.x, orçamento zero no 2.5', async () => {
     const chamada = vi
       .fn()
       .mockResolvedValueOnce(falhaDoGemini(400, 'unsupported'))
@@ -146,12 +147,29 @@ describe('leitura das imagens', () => {
     const primeira = JSON.parse(String((chamada.mock.calls[0] as any)[1].body))
     const segunda = JSON.parse(String((chamada.mock.calls[1] as any)[1].body))
 
-    // O 3.6 não recebe `thinkingConfig`; o 2.5 recebe com orçamento zero,
-    // porque o "pensar" antes de responder é o que estourava o tempo.
-    expect(String((chamada.mock.calls[0] as any)[0])).toContain('gemini-3.6-flash')
-    expect(primeira.generationConfig.thinkingConfig).toBeUndefined()
+    // O "pensar" antes de responder é o que estourava o tempo: o 3.x vai com
+    // `thinkingLevel: low` (o 3.8 não aceita `minimal`) e o 2.5 com orçamento zero.
+    expect(String((chamada.mock.calls[0] as any)[0])).toContain('gemini-3.8-flash')
+    expect(primeira.generationConfig.thinkingConfig).toEqual({ thinkingLevel: 'low' })
     expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-2.5-flash')
     expect(segunda.generationConfig.thinkingConfig).toEqual({ thinkingBudget: 0 })
+  })
+
+  it('chave que recusa o campo de raciocínio: repete no mesmo modelo sem ele', async () => {
+    const chamada = vi
+      .fn()
+      .mockResolvedValueOnce(falhaDoGemini(400, 'Invalid JSON payload received. Unknown name "thinkingConfig"'))
+      .mockResolvedValueOnce(respostaDoGemini(TRANSCRICAO))
+    vi.stubGlobal('fetch', chamada)
+
+    const [leitura] = await lerCalendarios([IMAGEM])
+
+    expect(leitura.linhas).toHaveLength(2)
+    const segunda = JSON.parse(String((chamada.mock.calls[1] as any)[1].body))
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-3.8-flash')
+    expect(segunda.generationConfig.thinkingConfig).toBeUndefined()
+    expect(segunda.generationConfig.temperature).toBeUndefined()
+    expect(segunda.generationConfig.responseMimeType).toBe('application/json')
   })
 
   it('insiste no mesmo modelo enquanto a sobrecarga for temporária', async () => {
@@ -169,29 +187,27 @@ describe('leitura das imagens', () => {
     expect(leitura.linhas).toHaveLength(2)
     expect(chamada).toHaveBeenCalledTimes(3)
     for (const chamado of chamada.mock.calls) {
-      expect(String((chamado as any)[0])).toContain('gemini-3.6-flash')
+      expect(String((chamado as any)[0])).toContain('gemini-3.8-flash')
     }
     // As esperas são reais (1,5s + 4s), então este caso precisa de mais que o
     // limite padrão do vitest.
   }, 20_000)
 
   it('a escada de modelos é configurável por ambiente', async () => {
-    vi.resetModules()
     process.env.GEMINI_MODELOS = 'modelo-a, modelo-b'
 
     const chamada = vi.fn(async () => falhaDoGemini(400, 'ruim'))
     vi.stubGlobal('fetch', chamada)
 
-    // Reimporta com a variável no lugar: a lista é lida na carga do módulo.
-    const { lerCalendarios: lerComOutraEscada } = await import('@/lib/cronogramas/extrair-imagem')
-    await lerComOutraEscada([IMAGEM])
+    // A lista é lida a cada chamada (sem banco, nada fica em cache), então
+    // basta a variável no lugar — e o painel, quando houver, vem antes dela.
+    await lerCalendarios([IMAGEM])
 
     const modelos = chamada.mock.calls.map(chamado => String((chamado as any)[0]))
     expect(modelos[0]).toContain('modelo-a')
     expect(modelos.some(url => url.includes('modelo-b'))).toBe(true)
 
     delete process.env.GEMINI_MODELOS
-    vi.resetModules()
   })
 
   it('sem tempo para outra tentativa, devolve o erro real — não só "tempo esgotado"', async () => {
@@ -230,7 +246,7 @@ describe('leitura das imagens', () => {
     // trocaria qualidade de transcrição por nada.
     expect(leitura.linhas).toHaveLength(2)
     expect(chamada).toHaveBeenCalledTimes(2)
-    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-3.6-flash')
+    expect(String((chamada.mock.calls[1] as any)[0])).toContain('gemini-3.8-flash')
   })
 
   it('a falha traz o motivo de todos os modelos, não o do último', async () => {
@@ -242,7 +258,7 @@ describe('leitura das imagens', () => {
 
     const [leitura] = await lerCalendarios([IMAGEM])
 
-    expect(leitura.erro).toContain('gemini-3.6-flash: imagem ilegível')
+    expect(leitura.erro).toContain('gemini-3.8-flash: imagem ilegível')
     expect(leitura.erro).toContain('gemini-2.5-flash: model not found')
   })
 

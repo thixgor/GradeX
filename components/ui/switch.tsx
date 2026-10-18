@@ -12,6 +12,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
   ({ className, checked, onCheckedChange, disabled, ...props }, ref) => {
     return (
       <button
+        {...props}
         type="button"
         role="switch"
         aria-checked={checked}

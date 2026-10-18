@@ -6,6 +6,7 @@ import { colecoes, erro, idDe, lerJson } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarReserva, ErroMonitoria, firmarBlocos, liberarBlocos, registrarStrike } from '@/lib/monitorias/reservas'
 import { reembolsarParticipacao } from '@/lib/monitorias/reembolso'
+import { reembolsarAdicional } from '@/lib/monitorias/resumo/adicional'
 import { concluirReserva } from '@/lib/monitorias/varredura'
 import { conferirComGateway } from '@/lib/monitorias/pagamento'
 import { liberarSePronta } from '@/lib/monitorias/financeiro'
@@ -23,6 +24,12 @@ const Corpo = z
     reembolsos: z.array(z.object({ participacaoId: z.string().length(24), valorCentavos: z.number().int().min(1).nullable() }).strict()).max(30),
     culpaDoMonitor: z.boolean(),
     nota: z.string().min(5).max(2000),
+    /**
+     * Resumo por IA dos assentos reembolsados também volta, mesmo já entregue
+     * (decisão do suporte pela política, nunca automática). Sem isso: reembolso
+     * integral antes da entrega leva o adicional junto; depois da entrega, não.
+     */
+    reembolsarResumo: z.boolean().optional(),
   })
   .strict()
 
@@ -49,6 +56,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         if (!assento) throw new ErroMonitoria(404, 'Assento não pertence a esta reserva.')
         const out = await reembolsarParticipacao({ participacaoId: r.participacaoId, valorBaseCentavos: r.valorCentavos, motivo: `Decisão do suporte: ${nota}`, por: sessao.userId })
         if (!out.ok) falhas.push(`${assento.alunoNome}: ${out.erro}`)
+        if (corpo.data.reembolsarResumo && out.ok) {
+          const resumo = await reembolsarAdicional({ participacaoId: r.participacaoId, motivo: `Decisão do suporte: ${nota}`, por: sessao.userId, forcar: true })
+          if (!resumo.ok && resumo.erro !== 'Adicional não encontrado.') falhas.push(`${assento.alunoNome} (Resumo por IA): ${resumo.erro}`)
+        }
       }
     }
 
@@ -94,7 +105,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       actorUserId: sessao.userId,
       resourceType: 'monitoria_reserva',
       resourceId: id,
-      metadata: { decisao: corpo.data.decisao, reembolsos: corpo.data.reembolsos, culpaDoMonitor: corpo.data.culpaDoMonitor, nota, falhas, novoStatus },
+      metadata: { decisao: corpo.data.decisao, reembolsos: corpo.data.reembolsos, culpaDoMonitor: corpo.data.culpaDoMonitor, reembolsarResumo: !!corpo.data.reembolsarResumo, nota, falhas, novoStatus },
       ip,
     })
     const pessoas = await c.participacoes.find({ reservaId: id }, { projection: { alunoId: 1 } }).toArray()

@@ -16,6 +16,7 @@ import { CompositorProposta } from '@/components/monitorias/compositor-proposta'
 import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
 import { ProximoPasso } from '@/components/monitorias/proximo-passo'
 import { CartaoDeAnotacoes } from '@/components/monitorias/anotacoes'
+import { CartaoDoResumo } from '@/components/monitorias/resumo/cartao-resumo'
 import { baixarIcs, type DetalheReserva, type MensagemReserva, type PresencaNaSala } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
@@ -322,6 +323,8 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
           )}
 
 
+
+          {r.resumoIA && <CartaoDoResumo reservaId={r.id} tarefa={r.resumoIA.tarefa} meu={r.resumoIA.meu} ehMonitor={ehMonitor} />}
 
           {['confirmada', 'realizada', 'em_disputa', 'concluida'].includes(r.status) && <CartaoDeAnotacoes reservaId={r.id} />}
 

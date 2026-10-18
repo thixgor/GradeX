@@ -9,7 +9,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check, Copy, FlaskConical, Loader2, Trash2, Video } from 'lucide-react'
+import { Brain, Check, Copy, FlaskConical, Loader2, Trash2, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api, CaixaErro } from '@/components/monitorias/base'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
@@ -21,6 +21,17 @@ interface SalaDeTeste {
   fim: string
   aberta: boolean
   alunos: string[]
+  /** Estado do Resumo por IA de teste (null = sala sem resumo). */
+  resumoIA: string | null
+}
+
+const ESTADO_DO_RESUMO: Record<string, string> = {
+  aguardando: 'aguardando a aula',
+  transcrevendo: 'transcrevendo',
+  resumindo: 'gerando o resumo',
+  pronto: 'pronto',
+  falhou: 'falhou',
+  cancelado: 'cancelado',
 }
 
 export function AdminSalaDeTeste() {
@@ -29,6 +40,7 @@ export function AdminSalaDeTeste() {
   const [erro, setErro] = useState('')
   const [copiado, setCopiado] = useState<string | null>(null)
   const [excluindo, setExcluindo] = useState<string | null>(null)
+  const [comResumo, setComResumo] = useState(false)
 
   const carregar = useCallback(() => {
     api<{ salas: SalaDeTeste[] }>('/api/admin/monitorias/teste')
@@ -41,7 +53,7 @@ export function AdminSalaDeTeste() {
     setCriando(true)
     setErro('')
     try {
-      await api('/api/admin/monitorias/teste', { method: 'POST', json: {} })
+      await api('/api/admin/monitorias/teste', { method: 'POST', json: comResumo ? { resumoIA: true } : {} })
       carregar()
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Não deu para criar.')
@@ -89,9 +101,15 @@ export function AdminSalaDeTeste() {
             anúncio, contrato nem pagamento; vale 90 min. Exclua quando terminar (ou ela some sozinha em 7 dias).
           </p>
         </div>
-        <Button size="sm" onClick={() => void criar()} disabled={criando}>
-          {criando ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <FlaskConical className="mr-1 h-4 w-4" />} Criar sala de teste
-        </Button>
+        <div className="flex flex-col items-end gap-1.5">
+          <Button size="sm" onClick={() => void criar()} disabled={criando}>
+            {criando ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <FlaskConical className="mr-1 h-4 w-4" />} Criar sala de teste
+          </Button>
+          <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground">
+            <input type="checkbox" checked={comResumo} onChange={(e) => setComResumo(e.target.checked)} />
+            <Brain className="h-3.5 w-3.5 text-primary" aria-hidden /> com Resumo por IA (sem cobrança)
+          </label>
+        </div>
       </div>
       {erro && <CaixaErro mensagem={erro} className="mt-3" />}
       <AnimatePresence initial={false}>
@@ -105,6 +123,16 @@ export function AdminSalaDeTeste() {
                     {!s.aberta && <span className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">Encerrada</span>}
                   </span>
                   <span className="block truncate text-xs text-muted-foreground">{s.alunos.length ? `Convidados: ${s.alunos.join(', ')}` : 'Ninguém entrou ainda'}</span>
+                  {s.resumoIA && (
+                    <span className="mt-0.5 flex items-center gap-1 text-xs text-primary">
+                      <Brain className="h-3 w-3" aria-hidden /> Resumo por IA: {ESTADO_DO_RESUMO[s.resumoIA] || s.resumoIA}
+                      {s.resumoIA === 'pronto' && (
+                        <a href={`/monitorias/reservas/${s.id}/resumo`} target="_blank" rel="noopener" className="ml-1 font-semibold underline">
+                          ler
+                        </a>
+                      )}
+                    </span>
+                  )}
                 </span>
                 {s.aberta && (
                 <Button size="sm" variant="outline" onClick={() => copiar(s)}>

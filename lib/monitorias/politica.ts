@@ -153,3 +153,15 @@ export function planoDeExclusao(r: {
     (r.status === 'confirmada' && (!r.inicio || r.inicio.getTime() > r.agora.getTime()))
   return { ok: true, cancelarAntes: antesDaAula, apagarDeVez: !r.temDinheiro }
 }
+
+/**
+ * O que uma reserva somou nos contadores públicos: `anuncios.stats.reservas`
+ * (+1 na confirmação paga) e `tutores.stats.aulasDadas` (+1 ao concluir). Ao
+ * excluir, desconta-se exatamente isso. Reservas antigas não têm a marca
+ * `contouNaVitrine`: aí vale "teve pagamento aprovado e não expirou" (o
+ * pagamento que chega depois do horário perdido vira `expirada` sem somar).
+ */
+export function contadoresDaReserva(r: { status: StatusReserva; contouNaVitrine?: boolean; teveAprovacao: boolean }): { reservas: boolean; aulasDadas: boolean } {
+  const reservas = r.contouNaVitrine ?? (r.teveAprovacao && r.status !== 'expirada')
+  return { reservas, aulasDadas: r.status === 'concluida' }
+}

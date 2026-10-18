@@ -16,6 +16,7 @@ import { normalizePlanPermissions } from '@/lib/plan-entitlements'
 import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { useCargos } from '@/hooks/use-cargos'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
+import { ConfigResumoIA } from '@/components/admin/config-resumo-ia'
 import {
   normalizeSidebarOrder,
   normalizeSidebarSections,
@@ -59,6 +60,10 @@ interface LandingSettings {
   registrationBlocked?: boolean
   registrationBlockedMessage?: string
   aiKeys?: AIKeySettings
+  /** Modelos Gemini das ferramentas de IA (vazio = padrão do servidor). */
+  iaModelos?: { principal?: string; reserva?: string }
+  /** Só leitura: padrões do servidor e se a cifra das chaves está ativa. */
+  iaPadroes?: { principal: string; reserva: string; cifraAtiva: boolean }
   sidebarSections?: SidebarSectionSettings
   sidebarSectionOrder?: SidebarSectionOrder
   sidebarSectionIcons?: SidebarSectionIcons
@@ -255,6 +260,8 @@ export default function SettingsPage() {
             personalExams: '',
             flashcards: ''
           },
+          iaModelos: data.iaModelos || { principal: '', reserva: '' },
+          iaPadroes: data.iaPadroes,
           sidebarSections: normalizeSidebarSections(data.sidebarSections),
           sidebarSectionOrder: normalizeSidebarOrder(data.sidebarSectionOrder),
           sidebarSectionIcons: normalizeSidebarIcons(data.sidebarSectionIcons),
@@ -362,7 +369,8 @@ export default function SettingsPage() {
       const res = await fetch('/api/settings/test-gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey })
+        // Chave já salva chega mascarada: o servidor testa a gravada da seção.
+        body: JSON.stringify({ apiKey, secao: keyType })
       })
 
       const data = await res.json()
@@ -967,7 +975,7 @@ export default function SettingsPage() {
                   <Input
                     id="ai-general"
                     type="password"
-                    placeholder="sk-..."
+                    placeholder="AIza... (vazio = chave padrão)"
                     value={settings.aiKeys?.generalExams || ''}
                     onChange={(e) => setSettings({
                       ...settings,
@@ -1010,7 +1018,7 @@ export default function SettingsPage() {
                   <Input
                     id="ai-personal"
                     type="password"
-                    placeholder="sk-..."
+                    placeholder="AIza... (vazio = chave padrão)"
                     value={settings.aiKeys?.personalExams || ''}
                     onChange={(e) => setSettings({
                       ...settings,
@@ -1053,7 +1061,7 @@ export default function SettingsPage() {
                   <Input
                     id="ai-flashcards"
                     type="password"
-                    placeholder="sk-..."
+                    placeholder="AIza... (vazio = chave padrão)"
                     value={settings.aiKeys?.flashcards || ''}
                     onChange={(e) => setSettings({
                       ...settings,
@@ -1092,8 +1100,41 @@ export default function SettingsPage() {
               {/* Info Card */}
               <div className="p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p className="text-sm text-blue-900 dark:text-blue-100">
-                  <strong>💡 Dica:</strong> Use diferentes chaves de IA para distribuir a carga e evitar limites de RPM. Se deixar vazio, usará a chave padrão do ambiente.
+                  <strong>💡 Dica:</strong> Use diferentes chaves do Gemini para distribuir a carga e evitar limites de RPM. Se deixar vazio, usa a chave padrão (Provas → API Gemini) e, por último, a variável <code>GEMINI_API_KEY</code>.
                 </p>
+                <p className="mt-2 text-xs text-blue-900/80 dark:text-blue-100/80">
+                  🔒 Depois de salva, a chave aparece mascarada (••••) e nunca volta inteira ao navegador. Para trocar, apague e cole a nova.
+                  {settings.iaPadroes && !settings.iaPadroes.cifraAtiva && ' Atenção: defina CONFIG_SECRET (32 bytes em base64) para guardar as chaves cifradas no banco.'}
+                </p>
+              </div>
+
+              {/* Modelos */}
+              <div className="grid gap-3 rounded-lg border p-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <p className="text-sm font-semibold">Modelos do Gemini</p>
+                  <p className="text-xs text-muted-foreground">
+                    Usados por provas, questões, flashcards, correções e cronogramas. Se o principal falhar, tenta o reserva. Vazio = padrão ({settings.iaPadroes?.principal || 'gemini-3.8-flash'} / {settings.iaPadroes?.reserva || 'gemini-2.5-flash'}). Modelos já desligados pelo Google (2.0, 1.5) são ignorados.
+                  </p>
+                </div>
+                {(['principal', 'reserva'] as const).map((campo) => (
+                  <div key={campo} className="space-y-1">
+                    <Label htmlFor={`ia-modelo-${campo}`}>{campo === 'principal' ? 'Modelo principal' : 'Modelo reserva'}</Label>
+                    <Input
+                      id={`ia-modelo-${campo}`}
+                      list="ia-modelos-sugeridos"
+                      placeholder={campo === 'principal' ? settings.iaPadroes?.principal || 'gemini-3.8-flash' : settings.iaPadroes?.reserva || 'gemini-2.5-flash'}
+                      value={settings.iaModelos?.[campo] || ''}
+                      onChange={(e) => setSettings({ ...settings, iaModelos: { ...settings.iaModelos, [campo]: e.target.value.trim() } })}
+                      className="font-mono text-sm"
+                    />
+                  </div>
+                ))}
+                <datalist id="ia-modelos-sugeridos">
+                  <option value="gemini-3.8-flash" />
+                  <option value="gemini-2.5-flash" />
+                  <option value="gemini-3.5-flash-lite" />
+                  <option value="gemini-flash-latest" />
+                </datalist>
               </div>
 
               {/* Messages */}
@@ -1130,6 +1171,9 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Resumo por IA das monitorias (Gemini) */}
+          <ConfigResumoIA />
 
           {/* Plus+ — cargo único da plataforma */}
           <PlusGuardPanel />

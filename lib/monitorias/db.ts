@@ -29,6 +29,7 @@ import type {
   Tutor,
   UsoDaSala,
 } from './tipos'
+import type { AdicionalResumo, SegmentoDeAudio, TarefaResumo, UsoDoResumo } from './resumo/tipos'
 
 export const COLECOES = {
   tutores: 'monitorias_tutores',
@@ -51,6 +52,10 @@ export const COLECOES = {
   usoDaSala: 'monitorias_sala_uso',
   infracoes: 'monitorias_infracoes',
   anotacoes: 'monitorias_anotacoes',
+  resumosAdicionais: 'monitorias_resumos_adicionais',
+  resumos: 'monitorias_resumos',
+  resumosSegmentos: 'monitorias_resumos_segmentos',
+  resumosUso: 'monitorias_resumos_uso',
 } as const
 
 export function colecoes(db: Db) {
@@ -75,6 +80,10 @@ export function colecoes(db: Db) {
     usoDaSala: db.collection<UsoDaSala>(COLECOES.usoDaSala),
     infracoes: db.collection<Infracao>(COLECOES.infracoes),
     anotacoes: db.collection<Anotacao>(COLECOES.anotacoes),
+    resumosAdicionais: db.collection<AdicionalResumo>(COLECOES.resumosAdicionais),
+    resumos: db.collection<TarefaResumo>(COLECOES.resumos),
+    resumosSegmentos: db.collection<SegmentoDeAudio>(COLECOES.resumosSegmentos),
+    resumosUso: db.collection<UsoDoResumo>(COLECOES.resumosUso),
     users: db.collection<User>('users'),
   }
 }

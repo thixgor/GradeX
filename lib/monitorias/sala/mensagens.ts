@@ -11,6 +11,7 @@
 
 import type { ConfigVideo, PapelNaSala } from '../tipos'
 import { lerAnotacao, lerReacao, type MensagemDeAnotacao, type Reacao } from './tela-anotada'
+import type { EstadoDoResumoNaSala } from '../resumo/tipos'
 
 export const SDP_MAX = 16_000
 export const CANDIDATOS_POR_MENSAGEM = 30
@@ -108,6 +109,8 @@ export interface CredenciaisDaSala {
   reserva: { id: string; titulo: string; monitor: string; convite?: string }
   /** Só o monitor: alunos com assento ativo (para ver quem ainda não chegou). */
   esperadosNomes?: Array<{ pid: string; nome: string }>
+  /** Resumo por IA desta aula para esta pessoa (null = a aula não tem). */
+  resumo?: EstadoDoResumoNaSala | null
 }
 
 /** O que `GET …/sala` devolve: o saguão antes de entrar. */
@@ -127,6 +130,8 @@ export interface EstadoDoSaguao {
   config: { compartilharTela: boolean; chatNaSala: boolean }
   /** Plano B: só quando o admin permite e o monitor colocou. */
   linkReuniao: string | null
+  /** Resumo por IA: o monitor autoriza aqui, antes de entrar. */
+  resumo?: EstadoDoResumoNaSala | null
 }
 
 // ─── Canal P2P (RTCDataChannel) ────────────────────────────────────────

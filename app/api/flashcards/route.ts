@@ -11,7 +11,7 @@ import {
   registrarUsoDoPlano,
   resolverPermissoes,
 } from '@/lib/plan-entitlements-server'
-import { getGeminiApiKey, GEMINI_ENDPOINT } from '@/lib/gemini'
+import { gerarConteudoGemini } from '@/lib/ia/gemini'
 import { v4 as uuidv4 } from 'uuid'
 
 export const dynamic = 'force-dynamic'
@@ -41,7 +41,6 @@ async function fetchFlashcardPrompt(
   randomDifficulty: boolean,
   cards: number,
 ): Promise<any[]> {
-  const apiKey = await getGeminiApiKey()
   const difficultyPct = Math.round(difficulty * 100)
 
   const prompt = `Você é um treinador de flashcards agressivo e direto. Gere ${cards} flashcards sobre o tema "${theme}" com o título "${title}".
@@ -60,13 +59,11 @@ Regras:
 - Não repita objetivos entre cartões.
 - RESPONDA APENAS COM O JSON ARRAY, NADA MAIS. SEM MARKDOWN. SEM BACKTICKS.`
 
-  const response = await fetch(GEMINI_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-goog-api-key': apiKey,
-    },
-    body: JSON.stringify({
+  // Modelo, chave (seção Flashcards → padrão → env) e raciocínio vêm do
+  // helper único; o prazo cabe nos 30 s da função.
+  const { texto: generatedText } = await gerarConteudoGemini({
+    secao: 'flashcards',
+    corpo: {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.9,
@@ -74,20 +71,10 @@ Regras:
         topP: 0.95,
         maxOutputTokens: 4096,
       },
-    }),
+    },
+    timeoutMs: 24_000,
+    prazoMs: 27_000,
   })
-
-  if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(`Gemini API error: ${errorData.error?.message || response.statusText}`)
-  }
-
-  const data = await response.json()
-  const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text
-
-  if (!generatedText) {
-    throw new Error('Resposta vazia da API Gemini')
-  }
 
   let parsed: any
   try {

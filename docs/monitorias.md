@@ -453,8 +453,10 @@ Navegador A ◄────── áudio/vídeo P2P (ou relé Cloudflare TURN) �
 
 ### Privacidade
 
-- Sem gravação. SDP, candidatos e estatísticas ficam em memória; no banco, os
-  sinais duram até 2 h depois do fim (varredura 4b).
+- Sem gravação de vídeo. A exceção é a voz, só quando há Resumo por IA
+  contratado e a pessoa autorizou (ver "Resumo Inteligente por IA"). SDP,
+  candidatos e estatísticas ficam em memória; no banco, os sinais duram até 2 h
+  depois do fim (varredura 4b).
 - Registro mínimo em `monitorias_salas.registro`: entrada, último sinal, saída e
   tipo de conexão (direta/relé). Sem IP, sem aparelho. Aparece só para o admin,
   na disputa (`resumirPresenca`), como evidência, nunca como decisão.
@@ -588,6 +590,203 @@ resolução e kbps enviados/recebidos, atraso, perda, caminho e o que limita.
 - Ao voltar do segundo plano, câmera/microfone tomados por outro app (ligação)
   são pegos de novo sozinhos.
 
+## Resumo Inteligente por IA (`lib/monitorias/resumo/`)
+
+Adicional opcional, pago no mesmo PIX da aula: depois da aula o aluno recebe um
+resumo médico em pt-BR gerado pelo Gemini a partir da transcrição da voz. A
+receita é 100% da plataforma e o repasse do monitor não muda.
+
+### Configuração (Admin → Configurações → "Resumo Inteligente por IA")
+
+- Guardada em `admin_settings.monitoriasResumo` (cache de 60 s, `config.ts`;
+  regras puras e padrões em `regras.ts`).
+- **Venda:** a venda só liga com duas condições. O admin marca que a chave
+  padrão do Gemini é de projeto **com faturamento** (no nível gratuito o Google
+  pode usar o conteúdo) e existe uma chave padrão (`settings.geminiApiKey` ou
+  `GEMINI_API_KEY`). O resumo nunca usa as chaves das seções. Desligar só tira
+  a opção do checkout: quem já comprou recebe.
+- **Modelos:** `gemini-3.8-flash` na transcrição e no resumo (padrão). A tabela
+  de preços tem vigência por data:
+  - 0,75 / 0,75 / 3,75 US$ por 1M de tokens (texto / áudio / saída) até
+    31/12/2026;
+  - 1,50 / 1,50 / 7,50 a partir de 01/01/2027;
+  - `gemini-2.5-flash` como reserva.
+  Modelo sem linha na tabela não vende.
+- **Preço** (`precoDoResumo`, tabela vigente **no dia da aula**): (custo
+  estimado + custos diretos) × margem de segurança (50%) → reais pela PTAX do
+  Banco Central (cache de 6 h, `cambio.ts`) + 8% de IOF/spread → × margem
+  comercial (100%) → arredonda para ",90" → mínimo R$ 4,90 e máximo R$ 29,90.
+  Sem PTAX, vale o câmbio manual (R$ 5,60). A estimativa conta 32 tokens por
+  segundo de áudio, 60% de fala do monitor e 25% do aluno.
+- **Limites:** aula de até 240 min, teto de US$ 1,50 por aula (conferido antes
+  de cada chamada), orçamento de US$ 50 por mês e 3 tentativas por etapa. Com
+  100% do orçamento gasto, a venda para; com 120%, o processamento para e os
+  adicionais pendentes são reembolsados.
+
+### Quem é transcrito
+
+- **Aula individual:** o monitor e o aluno que comprou.
+- **Aula em grupo:** **só o monitor**. A voz dos alunos nunca é gravada, nem
+  a de quem comprou.
+- Cada um grava só o próprio microfone e só depois de autorizar no saguão. A
+  autorização vale uma vez (versão do aditivo, data e IP em `vozes.<id>.consentimento`).
+- **O monitor não autorizou:** o adicional é reembolsado na hora e a tarefa é
+  cancelada.
+
+### Fluxo
+
+1. **Checkout:** o cartão "Resumo Inteligente por IA" mostra o preço fixo e o
+   aditivo. O aceite vai com versão e hash do texto (`VERSAO_ADITIVO_RESUMO`).
+   O servidor recalcula o preço e grava em `metadata.resumoIA` do pedido.
+   Ficam assim:
+   - `base = aula + material + resumo`;
+   - a taxa PIX sobe por gross-up, como sempre;
+   - `commissionableAmount` inclui o resumo (a opção "fora da comissão do
+     sócio" tira).
+2. **Aprovação** (`registrarAdicionalPago`, idempotente): grava o documento em
+   `monitorias_resumos_adicionais` (único por `participacaoId`) e a cópia
+   `resumoIA` no assento, cria a tarefa (`monitorias_resumos`, uma por reserva)
+   e avisa o monitor.
+3. **Sala** (`lib/monitorias/sala/cliente/gravador.ts`):
+   - O `MediaRecorder` grava em opus a 24 kbps, sobre a trilha crua do
+     microfone (sem o efeito de voz).
+   - Uma detecção de voz a cada 100 ms pausa a gravação no silêncio ou com o
+     microfone mudo. Cada retomada registra uma marca `{audioMs, realMs}` para
+     recompor o tempo real.
+   - Cada trecho tem até 10 min de fala e fica no IndexedDB até o envio
+     confirmar.
+   - Todos veem o selo do resumo. Quem é transcrito pode pausar a própria voz.
+4. **Envio sem passar mídia pela Vercel:**
+   - `POST …/resumo/envio` confere a sequência e o tamanho, e abre no servidor
+     uma sessão *resumable* do Files API.
+   - O navegador manda os bytes **direto ao Google** e confirma em
+     `…/envio/concluido`, que dispara o processador.
+   - Se o Google recusar (CORS ou rede), o trecho vai para o Vercel Blob
+     privado (`…/resumo/blob`) e o processador repassa ao Google.
+   - Trecho que não subiu é reenviado na próxima abertura da sala ou da reserva.
+5. **Processador** (`/api/interno/monitorias/resumos`):
+   - Exige `CRON_SECRET`, responde 202 na hora e trabalha em `waitUntil`
+     (`@vercel/functions`).
+   - Cada chamada faz **um passo** sob lease de 5 min: transcrever um trecho
+     ou gerar o resumo. Se restar trabalho, ele se dispara de novo.
+   - Quem dispara: a confirmação de cada trecho, a saída da sala (`…/resumo/fim`)
+     e o passo 6e da varredura de hora em hora. A varredura recupera lease
+     vencido, faz as novas tentativas e aplica a retenção.
+6. **Transcrição:**
+   - Interactions API com `store: false`, saída JSON com esquema
+     (`esquema.ts`) e o contexto da aula para acertar os termos médicos.
+   - O arquivo é apagado do Google logo depois.
+   - Um 429 adia o trecho com espera crescente, nunca em laço.
+7. **Resumo:**
+   - Começa só quando todos saíram e todos os trechos chegaram, ou 2 h depois
+     do fim.
+   - As vozes viram uma linha do tempo rotulada ("[mm:ss] MONITOR (Carla): …"),
+     com as lacunas marcadas.
+   - Transcrição acima de 150k tokens passa por map-reduce, em janelas de
+     40 min com 3 min de sobreposição.
+   - O resultado é validado e, se vier inválido, há uma tentativa de reparo.
+   - O resumo traz: síntese, tópicos (explicação, conceitos, mecanismos,
+     raciocínio do monitor), dúvidas e respostas, comparações, pontos de
+     atenção, revisão rápida, questões com gabarito comentado, lacunas e "a
+     verificar".
+   - É gerado uma vez e guardado. Abrir a página nunca chama o modelo.
+8. **Leitura:** `/monitorias/reservas/[id]/resumo` (índice, questões com "ver
+   gabarito", PDF pelo jsPDF). Lê o comprador; o admin lê com auditoria
+   (`monitoria_resumo_lido`). O monitor e o aluno que não comprou recebem 404.
+
+### Dinheiro e reembolso (`adicional.ts`, integrado a `reembolso.ts`)
+
+- **Reembolso integral da aula antes da entrega:** devolve o adicional junto (o
+  Mercado Pago devolve tudo).
+- **Reembolso integral depois da entrega:** a chamada ao Mercado Pago leva um
+  **valor explícito** sem o adicional e sem a parte dele na taxa PIX. O resumo
+  entregue não é devolvido automaticamente.
+- **Reembolso parcial:** o adicional não muda.
+- **Falha definitiva** (3 tentativas, depois aviso à equipe e "Tentar de novo"
+  no admin):
+  - sem solução em 48 h, ou com "Reembolsar adicional" clicado, devolve **só**
+    o adicional + a parte dele na taxa PIX;
+  - o pedido ao Mercado Pago é parcial, com chave `refund:resumo:<id>`;
+  - a varredura repete; depois de 6 falhas, avisa a equipe.
+- **Devolução imediata:** o monitor não autorizou, a aula não aconteceu, ou a
+  cobertura da gravação ficou abaixo de 30% da aula.
+- **Chargeback ou estorno no Mercado Pago:** o adicional vira `reembolsado`.
+- **Disputa:** o admin escolhe "Reembolsar também o Resumo por IA".
+- **Exclusão pelo suporte:** devolve o adicional ainda não entregue.
+- Tudo é idempotente (troca de estado atômica) e **nunca cobra o monitor**.
+- A receita aparece na aba "Resumos por IA" do admin: vendas, reembolsos e
+  gasto com IA no mês (agregado `monitorias_resumos_uso`).
+
+### Privacidade (LGPD)
+
+- Aditivo próprio, aceito no checkout e pela pessoa na sala. Os termos gerais
+  não subiram de versão. O aditivo nomeia o Google (Gemini API) como operador.
+- **Áudio:** fica no IndexedDB do aparelho até o envio. No Google, é apagado
+  logo depois da transcrição (no máximo 48 h). No Blob, só no caminho de
+  reserva, também apagado depois.
+- **Transcrição:** guardada por 7 dias (configurável), nunca mostrada a ninguém.
+  Depois, a varredura apaga.
+- **Resumo:** fica enquanto existir a reserva.
+- `store: false` em todas as chamadas da Interactions API. Os logs não levam
+  nem chave nem conteúdo.
+
+### Chaves e modelos de IA (`lib/ia/`)
+
+- `GET /api/admin/settings` é público e devolvia `aiKeys` em texto puro.
+  Agora devolve sem segredos ao visitante e mascarado (`••••1a2b`) ao admin. O
+  `PUT` ignora a máscara.
+- As chaves são guardadas cifradas: AES-256-GCM, prefixo `enc:v1:`, chave em
+  `CONFIG_SECRET`, com `MONITORIAS_PIX_SECRET` como reserva. Uma chave antiga
+  em texto puro é cifrada no próximo salvar.
+- Um helper só (`lib/ia/gemini.ts`) atende os 6 pontos que chamam o Gemini:
+  - padrão `gemini-3.8-flash`, reserva `gemini-2.5-flash`, trocáveis no painel;
+  - os modelos `gemini-1.5-*` e `gemini-2.0-*`, já desligados, saíram;
+  - nos 3.x, `thinkingLevel` e sem os parâmetros de amostragem.
+
+### Variáveis e deploy
+
+- `CONFIG_SECRET`: 32 bytes em base64. Sem ela, usa `MONITORIAS_PIX_SECRET`.
+- Chave do Gemini de projeto **com faturamento**: no painel (Provas → API
+  Gemini) ou em `GEMINI_API_KEY`.
+- `CRON_SECRET` (já existe): protege o processador.
+- `GEMINI_API_BASE` é opcional, só para testes (servidor falso).
+- Depois do deploy: `npm run db:indexes` (índices dos adicionais, tarefas,
+  trechos e uso).
+
+### Custo estimado (padrões, câmbio de R$ 5,60)
+
+| Aula | Custo Gemini (2026) | Preço (2026) | Custo (2027) | Preço (2027) |
+| --- | --- | --- | --- | --- |
+| 60 min, individual | US$ 0,21 | R$ 4,90 | US$ 0,41 | R$ 7,90 |
+| 60 min, grupo | US$ 0,16 | R$ 4,90 | US$ 0,32 | R$ 6,90 |
+| 120 min, individual | US$ 0,36 | R$ 6,90 | US$ 0,71 | R$ 13,90 |
+
+- São estimativas conservadoras: a pausa no silêncio costuma cortar de 40 a 70%
+  do áudio, e o custo real de cada chamada (pelo `usage`) fica gravado na
+  tarefa.
+- Na Vercel, nenhum byte de áudio passa pelas funções no caminho normal. O
+  cartão da reserva consulta o estado a cada 60 s só enquanto processa e com a
+  aba visível.
+
+### Testes
+
+- `__tests__/monitorias/resumo-ia.test.ts` (unitários): preço, config, vozes,
+  reembolso, cobertura, validação, cifra das chaves, `configDeGeracao` e o GET
+  público de settings.
+- `__tests__/monitorias/resumo-ia-integracao.test.ts`: Mongo real
+  (`MONITORIAS_MONGO_TESTE`), Mercado Pago e Gemini falsos. Cobre:
+  - checkout;
+  - aprovação duplicada;
+  - reembolsos antes e depois da entrega, parcial, próprio e chargeback;
+  - recusa do monitor;
+  - fluxo completo do processador;
+  - lease concorrente e vencido, e 429;
+  - cobertura baixa;
+  - map-reduce;
+  - aula não realizada;
+  - varredura;
+  - exclusão.
+
 ## Contato por fora: detector, bloqueio e registro
 
 - `lib/monitorias/contato-inteligente.ts` (puro, testado com 110 casos): telefone
@@ -638,6 +837,17 @@ resolução e kbps enviados/recebidos, atraso, perda, caminho e o que limita.
   saldo do monitor não quebra. O filtro "Excluídas" mostra essas e permite
   restaurar (`DELETE` na mesma rota). Os avisos do sino que levavam a ela saem;
   as avaliações deixadas pelos alunos continuam no perfil do monitor.
+- **Excluir anúncio** (Moderação, `POST /api/admin/monitorias/anuncios/[id]`
+  com `acao: 'excluir'` e motivo):
+  - **Sem reservas:** apaga de vez (anúncio e perguntas).
+  - **Com reservas:** o anúncio ganha `excluidoEm` e fica `suspenso`. Some da
+    vitrine, da página pública, do painel do monitor e das filas; as reservas
+    antigas continuam.
+  - O filtro "Excluídos" lista esses e tem "Restaurar", que devolve o anúncio
+    como suspenso.
+  - Ao excluir uma monitoria, os contadores públicos (`stats.reservas` do
+    anúncio e `stats.aulasDadas` do monitor) são descontados. Restaurar
+    devolve.
 - **Contato por fora** (`/api/admin/monitorias/infracoes`): novas/todas,
   reincidência em 30 dias, histórico por pessoa, marcar como vista (contador na
   aba). Registro guardado por 2 anos (índice TTL).

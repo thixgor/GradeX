@@ -61,6 +61,11 @@ export type AuditAction =
   | 'monitoria_horario_suporte'
   | 'monitoria_sala_teste'
   | 'monitoria_sala_teste_excluida'
+  /** Resumo por IA: config do admin, leitura do resumo pelo suporte, nova tentativa e reembolso do adicional. */
+  | 'monitoria_resumo_config'
+  | 'monitoria_resumo_lido'
+  | 'monitoria_resumo_suporte'
+  | 'monitoria_resumo_reembolsado'
 
 export interface AuditLogEntry {
   action: AuditAction

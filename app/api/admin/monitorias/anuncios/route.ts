@@ -8,13 +8,18 @@ import { maskCpf } from '@/lib/cpf'
 
 export const dynamic = 'force-dynamic'
 
-/** GET ?fila=analise|revisoes|todos — anúncios para moderação, com dados do monitor para conferência. */
+/** GET ?fila=analise|revisoes|todos|excluidos — anúncios para moderação, com dados do monitor para conferência. */
 export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const fila = new URL(request.url).searchParams.get('fila') || 'analise'
     const c = await obterColecoes()
     const filtro =
-      fila === 'analise' ? { status: 'em_analise' } : fila === 'revisoes' ? { revisaoPendente: { $exists: true } } : {}
+      fila === 'excluidos'
+        ? { excluidoEm: { $exists: true } }
+        : {
+            excluidoEm: { $exists: false },
+            ...(fila === 'analise' ? { status: 'em_analise' } : fila === 'revisoes' ? { revisaoPendente: { $exists: true } } : {}),
+          }
     const anuncios = await c.anuncios.find(filtro as any).sort({ updatedAt: -1 }).limit(100).toArray()
     const tutores = await c.tutores
       .find({ _id: { $in: Array.from(new Set(anuncios.map((a) => a.tutorId))).filter(ObjectId.isValid).map((x) => new ObjectId(x)) } } as any)
@@ -38,6 +43,7 @@ export async function GET(request: NextRequest) {
           conteudo: { titulo: a.titulo, materia: a.materia, conteudos: a.conteudos, descricao: a.descricao, videos: a.videos, preco: a.preco, grupo: a.grupo, aulaGratis: a.aulaGratis, modos: a.modos, faq: a.faq, materiais: a.materiais, temMateriais: a.temMateriais },
           revisaoPendente: a.revisaoPendente || null,
           moderacao: a.moderacao || null,
+          excluido: a.excluidoEm ? { em: a.excluidoEm, motivo: a.motivoExclusao || '' } : null,
           updatedAt: a.updatedAt,
           monitor: {
             tutorId: a.tutorId,

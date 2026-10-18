@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
-  AlertTriangle, BadgeCheck, Ban, CalendarClock, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Video, Wallet, X,
+  AlertTriangle, BadgeCheck, Ban, Brain, CalendarClock, Check, Copy, Eye, FileUp, Flag, Gavel, Loader2, RotateCcw, ShieldAlert, Trash2, Video, Wallet, X,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
@@ -12,14 +12,15 @@ import { Avatar, CaixaAviso, CaixaErro, Esqueleto, Selo, SeloStatus, api } from 
 import { AdminSalaDeVideo } from '@/components/monitorias/admin-sala-de-video'
 import { AdminAulas } from '@/components/monitorias/admin-aulas'
 import { AdminContatoPorFora } from '@/components/monitorias/admin-contato-por-fora'
+import { AdminResumosIA } from '@/components/monitorias/resumo/admin-resumos'
 import { formatarCentavos, interpretarValorEmReais } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 import type { StatusReserva } from '@/lib/monitorias/tipos'
 
-type Aba = 'aulas' | 'moderacao' | 'disputas' | 'repasses' | 'perguntas' | 'contato' | 'sala'
-const ABAS: Aba[] = ['aulas', 'moderacao', 'disputas', 'repasses', 'perguntas', 'contato', 'sala']
+type Aba = 'aulas' | 'moderacao' | 'disputas' | 'repasses' | 'resumos' | 'perguntas' | 'contato' | 'sala'
+const ABAS: Aba[] = ['aulas', 'moderacao', 'disputas', 'repasses', 'resumos', 'perguntas', 'contato', 'sala']
 
 interface Resumo {
   emAnalise: number
@@ -30,6 +31,7 @@ interface Resumo {
   denunciadas: number
   reembolsosFalhos: number
   contatoPorFora: number
+  resumosFalhos?: number
 }
 
 export default function AdminMonitorias() {
@@ -60,6 +62,7 @@ export default function AdminMonitorias() {
     { chave: 'moderacao', rotulo: 'Moderação', n: (resumo?.emAnalise || 0) + (resumo?.revisoes || 0), icone: BadgeCheck },
     { chave: 'disputas', rotulo: 'Disputas', n: resumo?.disputas, icone: Gavel },
     { chave: 'repasses', rotulo: 'Repasses', n: (resumo?.payoutsAbertos || 0) + (resumo?.liberados ? 1 : 0), icone: Wallet },
+    { chave: 'resumos', rotulo: 'Resumos por IA', n: resumo?.resumosFalhos, icone: Brain },
     { chave: 'perguntas', rotulo: 'Denúncias', n: resumo?.denunciadas, icone: Flag },
     { chave: 'contato', rotulo: 'Contato por fora', n: resumo?.contatoPorFora, icone: ShieldAlert },
     { chave: 'sala', rotulo: 'Sala de vídeo', icone: Video },
@@ -87,6 +90,7 @@ export default function AdminMonitorias() {
             {aba === 'moderacao' && <Moderacao onMudou={recarregarResumo} />}
             {aba === 'disputas' && <Disputas onMudou={recarregarResumo} />}
             {aba === 'repasses' && <Repasses onMudou={recarregarResumo} />}
+            {aba === 'resumos' && <AdminResumosIA onMudou={recarregarResumo} />}
             {aba === 'perguntas' && <Denuncias onMudou={recarregarResumo} />}
             {aba === 'contato' && <AdminContatoPorFora onMudou={recarregarResumo} />}
             {aba === 'sala' && <AdminSalaDeVideo />}
@@ -100,7 +104,7 @@ export default function AdminMonitorias() {
 // ─── Moderação ──────────────────────────────────────────────────────────
 
 function Moderacao({ onMudou }: { onMudou: () => void }) {
-  const [fila, setFila] = useState<'analise' | 'revisoes' | 'todos'>('analise')
+  const [fila, setFila] = useState<'analise' | 'revisoes' | 'todos' | 'excluidos'>('analise')
   const [itens, setItens] = useState<any[] | null>(null)
   const [aberto, setAberto] = useState<string | null>(null)
   const carregar = useCallback(() => {
@@ -110,11 +114,13 @@ function Moderacao({ onMudou }: { onMudou: () => void }) {
   useEffect(() => carregar(), [carregar])
 
   async function moderar(id: string, acao: string) {
-    const precisaMotivo = ['rejeitar', 'suspender', 'rejeitar_revisao'].includes(acao)
+    if (acao === 'excluir' && !window.confirm('Excluir o anúncio? Sem reservas ele é apagado de vez; com reservas some da vitrine e do painel do monitor, e as aulas já marcadas continuam.')) return
+    const precisaMotivo = ['rejeitar', 'suspender', 'rejeitar_revisao', 'excluir'].includes(acao)
     const motivo = precisaMotivo ? window.prompt('Motivo (o monitor vai ler):') : undefined
     if (precisaMotivo && !motivo) return
     try {
-      await api(`/api/admin/monitorias/anuncios/${id}`, { method: 'POST', json: { acao, ...(motivo ? { motivo } : {}) } })
+      const r = await api<{ apagadoDeVez?: boolean }>(`/api/admin/monitorias/anuncios/${id}`, { method: 'POST', json: { acao, ...(motivo ? { motivo } : {}) } })
+      if (acao === 'excluir') alert(r.apagadoDeVez ? 'Anúncio apagado de vez (não tinha reservas).' : 'Anúncio excluído. Ele fica no filtro "Excluídos" porque tem reservas no histórico.')
       carregar()
       onMudou()
     } catch (e) {
@@ -135,10 +141,10 @@ function Moderacao({ onMudou }: { onMudou: () => void }) {
 
   return (
     <div>
-      <div className="mb-4 flex gap-2">
-        {(['analise', 'revisoes', 'todos'] as const).map((f) => (
+      <div className="mb-4 flex flex-wrap gap-2">
+        {(['analise', 'revisoes', 'todos', 'excluidos'] as const).map((f) => (
           <Button key={f} size="sm" variant={fila === f ? 'default' : 'outline'} onClick={() => setFila(f)}>
-            {f === 'analise' ? 'Novos para análise' : f === 'revisoes' ? 'Alterações pendentes' : 'Todos'}
+            {f === 'analise' ? 'Novos para análise' : f === 'revisoes' ? 'Alterações pendentes' : f === 'todos' ? 'Todos' : 'Excluídos'}
           </Button>
         ))}
       </div>
@@ -158,7 +164,9 @@ function Moderacao({ onMudou }: { onMudou: () => void }) {
                       <Selo tom="info">{a.status}</Selo>
                       {a.revisaoPendente && <Selo tom="alerta">alteração pendente</Selo>}
                       {m.status === 'suspenso' && <Selo tom="erro">monitor suspenso</Selo>}
+                      {a.excluido && <Selo tom="erro">excluído</Selo>}
                     </div>
+                    {a.excluido && <p className="mt-0.5 text-xs text-rose-600">Excluído em {formatarEmBrasilia(a.excluido.em, { dateStyle: 'short', timeStyle: 'short' })}: {a.excluido.motivo}</p>}
                     <p className="text-xs text-muted-foreground">{m.nome} · {m.nomeCivil || 'sem nome civil'} · {m.email} · CPF {m.cpf || '—'} {m.cpfVerificado ? '✓ Receita' : ''} · {m.strikes} strike(s)</p>
                     {pend.length > 0 && <p className="mt-1 text-xs text-rose-600">Pendências: {pend.map((x) => x.rotulo).join('; ')}</p>}
                   </div>
@@ -188,11 +196,16 @@ function Moderacao({ onMudou }: { onMudou: () => void }) {
                   )}
                 </AnimatePresence>
                 <div className="mt-3 flex flex-wrap gap-2">
+                  {a.excluido ? (
+                    <Button size="sm" variant="outline" onClick={() => moderar(a.id, 'restaurar')}><RotateCcw className="mr-1 h-4 w-4" /> Restaurar (volta suspenso)</Button>
+                  ) : <>
                   {a.status === 'em_analise' && <><Button size="sm" onClick={() => moderar(a.id, 'aprovar')}><Check className="mr-1 h-4 w-4" /> Aprovar</Button><Button size="sm" variant="outline" onClick={() => moderar(a.id, 'rejeitar')}><X className="mr-1 h-4 w-4" /> Pedir ajustes</Button></>}
                   {a.revisaoPendente && <><Button size="sm" onClick={() => moderar(a.id, 'aprovar_revisao')}><Check className="mr-1 h-4 w-4" /> Aprovar alteração</Button><Button size="sm" variant="outline" onClick={() => moderar(a.id, 'rejeitar_revisao')}>Recusar alteração</Button></>}
                   {['publicado', 'pausado'].includes(a.status) && <Button size="sm" variant="outline" className="text-rose-600" onClick={() => moderar(a.id, 'suspender')}><Ban className="mr-1 h-4 w-4" /> Suspender anúncio</Button>}
                   {a.status === 'suspenso' && <Button size="sm" variant="outline" onClick={() => moderar(a.id, 'reativar')}><RotateCcw className="mr-1 h-4 w-4" /> Reativar</Button>}
+                  <Button size="sm" variant="outline" className="border-rose-300 text-rose-600" onClick={() => moderar(a.id, 'excluir')}><Trash2 className="mr-1 h-4 w-4" /> Excluir anúncio</Button>
                   {m.status === 'ativo' ? <Button size="sm" variant="ghost" className="text-rose-600" onClick={() => tutor(m.tutorId, 'suspender')}>Suspender monitor</Button> : <Button size="sm" variant="ghost" onClick={() => tutor(m.tutorId, 'reativar')}>Reativar monitor</Button>}
+                  </>}
                 </div>
               </li>
             )
@@ -285,6 +298,7 @@ function Decisao({ reserva, onFechar, onFeito }: { reserva: any; onFechar: () =>
   const [valores, setValores] = useState<Record<string, string>>({})
   const [marcados, setMarcados] = useState<Record<string, boolean>>(Object.fromEntries(pagos.map((a: any) => [a.id, true])))
   const [culpa, setCulpa] = useState(false)
+  const [comResumo, setComResumo] = useState(false)
   const [nota, setNota] = useState('')
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState('')
@@ -296,7 +310,10 @@ function Decisao({ reserva, onFechar, onFeito }: { reserva: any; onFechar: () =>
       const reembolsos = decisao === 'reembolsar'
         ? pagos.filter((a: any) => marcados[a.id]).map((a: any) => ({ participacaoId: a.id, valorCentavos: valores[a.id]?.trim() ? interpretarValorEmReais(valores[a.id]) : null }))
         : []
-      const r = await api<{ falhas: string[] }>(`/api/admin/monitorias/reservas/${reserva.id}`, { method: 'POST', json: { decisao, reembolsos, culpaDoMonitor: culpa, nota } })
+      const r = await api<{ falhas: string[] }>(`/api/admin/monitorias/reservas/${reserva.id}`, {
+        method: 'POST',
+        json: { decisao, reembolsos, culpaDoMonitor: culpa, nota, ...(decisao === 'reembolsar' && comResumo ? { reembolsarResumo: true } : {}) },
+      })
       if (r.falhas?.length) alert(`Algumas devoluções falharam (o sistema tenta de novo):\n${r.falhas.join('\n')}`)
       onFeito()
     } catch (e) {
@@ -324,6 +341,15 @@ function Decisao({ reserva, onFechar, onFeito }: { reserva: any; onFechar: () =>
               </li>
             ))}
           </ul>
+        )}
+        {decisao === 'reembolsar' && (
+          <label className="mt-3 flex items-start gap-2 text-sm">
+            <input type="checkbox" className="mt-1" checked={comResumo} onChange={(e) => setComResumo(e.target.checked)} />
+            <span>
+              Reembolsar também o Resumo por IA dos assentos marcados
+              <span className="block text-xs text-muted-foreground">Sem marcar: reembolso integral antes da entrega leva o resumo junto; depois de entregue, o resumo fica (serviço prestado).</span>
+            </span>
+          </label>
         )}
         <label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={culpa} onChange={(e) => setCulpa(e.target.checked)} /> Falta/culpa do monitor (gera strike)</label>
         <Textarea value={nota} onChange={(e) => setNota(e.target.value)} rows={3} className="mt-3" placeholder="Justificativa (vai para aluno e monitor)" />

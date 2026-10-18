@@ -48,6 +48,7 @@ import type { MensagemDeAnotacao, Traco } from '@/lib/monitorias/sala/tela-anota
 import type { ControladorDaSala, EstadoDaSalaNaTela, ParticipanteNaTela } from '@/lib/monitorias/sala/cliente/controlador'
 import { cn } from '@/lib/utils'
 import { MarcaDagua, MarcaNoTopo } from './marca'
+import { SeloDoResumo } from './resumo-ia-sala'
 import { AudioRemoto, destravarAudios, VideoAoVivo } from './midia-ao-vivo'
 import { PainelDePessoas } from './painel-pessoas'
 import { SeletorDeAparelho } from './saguao'
@@ -955,6 +956,12 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
           {palco}
           {codigo && <MarcaDagua codigo={codigo} monitor={monitorNome} eu={estado.eu?.nome || ''} papel={ehMonitor ? 'monitor' : 'aluno'} />}
           <ReacoesFlutuantes reacoes={estado.reacoes} nomeDe={nomeDe} />
+          {/* Resumo por IA: todos sabem quando há voz sendo transcrita; quem é gravado pausa a própria. */}
+          {estado.resumo?.ativo && (
+            <div className="absolute bottom-2 left-2 z-20">
+              <SeloDoResumo resumo={estado.resumo} gravacao={estado.gravacao} onPausar={(sim) => ctrl.pausarTranscricao(sim)} />
+            </div>
+          )}
 
           {/* Abaixo da marca d'água até o desktop largo, onde as duas cabem lado a lado. */}
           <div className="pointer-events-none absolute inset-x-0 top-12 z-10 flex flex-col items-center gap-2 px-3 sm:top-14 lg:top-2">

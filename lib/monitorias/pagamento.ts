@@ -40,6 +40,8 @@ import { devolverPagamentoAvulso, reembolsarParticipacao } from './reembolso'
 import { formatarDuracao } from './agenda'
 import type { UsuarioMonitoria } from './servidor'
 import type { MaterialNaCompra, Participacao, Reserva } from './tipos'
+import { adicionalRevogadoNoGateway, ofertaDoResumo, registrarAdicionalPago, resumoDoPedido, type OfertaDoResumo } from './resumo/adicional'
+import type { ResumoNoPedido } from './resumo/tipos'
 
 export interface RespostaCheckout {
   orderId: string
@@ -49,6 +51,8 @@ export interface RespostaCheckout {
   valorCentavos: number
   /** Material oficial levado junto neste PIX (null = sem material). */
   material: { titulo: string; precoCentavos: number } | null
+  /** Resumo por IA levado junto neste PIX (null = sem resumo). Receita da plataforma, fora do repasse. */
+  resumo: { precoCentavos: number } | null
   taxaCentavos: number
   totalCentavos: number
   taxaRotulo: string
@@ -87,6 +91,9 @@ export async function criarCheckoutPix(input: {
   ip: string
   /** O aluno marcou "levar o material junto". Só a vontade: o resto o servidor decide. */
   incluirMaterial?: boolean
+  /** O aluno marcou o Resumo por IA e aceitou o aditivo (versão + hash do texto que viu). */
+  incluirResumo?: boolean
+  aceiteResumo?: { versao: string; hash: string }
 }): Promise<RespostaCheckout> {
   const db = await getDb()
   const c = colecoes(db)
@@ -121,11 +128,24 @@ export async function criarCheckoutPix(input: {
   }
   const material = oferta?.interno || null
 
+  // Resumo por IA junto: preço fixado aqui pelo servidor (custo estimado,
+  // margens, câmbio do dia) e só com o aceite do texto que o aluno viu.
+  // Indisponível → explica, sem cobrar nada; a aula segue igual.
+  let resumo: OfertaDoResumo | null = null
+  if (input.incluirResumo) {
+    resumo = await ofertaDoResumo(reserva, part, agora)
+    if (!resumo.disponivel) throw new ErroMonitoria(409, 'O Resumo por IA não está disponível para esta aula agora. Siga sem ele: a aula continua igual.')
+    if (!input.aceiteResumo || input.aceiteResumo.versao !== resumo.versao || input.aceiteResumo.hash !== resumo.hash) {
+      throw new ErroMonitoria(409, 'Os termos do Resumo por IA foram atualizados. Recarregue a página, leia e aceite de novo.')
+    }
+  }
+  const resumoCentavos = resumo?.precoCentavos ?? 0
+
   // Reaproveita o PIX ainda válido: recarregar a página não cria outro
-  // pagamento. Só se for a MESMA escolha (com ou sem material): quem mudou de
-  // ideia recebe um PIX novo; se pagar os dois, o segundo volta inteiro
-  // (pagamento duplicado do mesmo assento, ver aoAprovarPagamento).
-  const mesmaEscolha = (o: PaymentOrder) => (materialDoPedido(o)?.id ?? null) === (material?.id ?? null)
+  // pagamento. Só se for a MESMA escolha (com ou sem material, com ou sem
+  // resumo): quem mudou de ideia recebe um PIX novo; se pagar os dois, o
+  // segundo volta inteiro (pagamento duplicado do mesmo assento, ver aoAprovarPagamento).
+  const mesmaEscolha = (o: PaymentOrder) => (materialDoPedido(o)?.id ?? null) === (material?.id ?? null) && !!resumoDoPedido(o) === !!resumo
   if (aberta && (aberta.status === 'pending' || aberta.status === 'in_process') && aberta.pix && aberta.expiresAt && aberta.expiresAt > agora && mesmaEscolha(aberta)) {
     return respostaDe(aberta)
   }
@@ -158,7 +178,7 @@ export async function criarCheckoutPix(input: {
   // Regra da comissão (comissao.ts), com o preço OFICIAL lido agora do banco.
   const materialCentavos = material?.precoCentavos ?? 0
   const taxaPercent = taxaPercentDaContratacao({ valorAulaCentavos: part.valorCentavos, materialCentavos: material ? materialCentavos : null })
-  const base = centavosParaReais(part.valorCentavos + materialCentavos)
+  const base = centavosParaReais(part.valorCentavos + materialCentavos + resumoCentavos)
   const cobranca = await resolveCheckoutCharge({ baseAmount: base, paymentMethodId: 'pix', hasCardToken: false, policy: getFeePolicy() })
   if (!cobranca.ok) throw new ErroMonitoria(cobranca.status, cobranca.error)
   const charge = cobranca.charge
@@ -195,7 +215,7 @@ export async function criarCheckoutPix(input: {
     status: 'pending',
     idempotencyKey: '',
     metadata: {
-      itemTitle: material ? `Monitoria: ${reserva.anuncioTitulo} + material` : `Monitoria: ${reserva.anuncioTitulo}`,
+      itemTitle: `Monitoria: ${reserva.anuncioTitulo}${material ? ' + material' : ''}${resumo ? ' + Resumo por IA' : ''}`,
       reservaId: input.reservaId,
       tutorId: reserva.tutorId,
       valorAulaCentavos: part.valorCentavos,
@@ -203,6 +223,16 @@ export async function criarCheckoutPix(input: {
       taxaPlataformaCentavos: divisao.taxaPlataformaCentavos,
       ...(material
         ? { materialOficial: { id: material.id, titulo: material.titulo, precoCentavos: material.precoCentavos, isentaTaxa: taxaPercent === 0 } }
+        : {}),
+      ...(resumo?.interno
+        ? {
+            resumoIA: {
+              precoCentavos: resumoCentavos,
+              estimativa: resumo.interno.estimativa,
+              aceite: { versao: resumo.versao, hash: resumo.hash, em: agora.toISOString(), ip: input.ip },
+              foraDaComissaoDoSocio: resumo.interno.foraDaComissaoDoSocio,
+            } satisfies ResumoNoPedido,
+          }
         : {}),
       ...chargeMetadata(charge),
     },
@@ -235,11 +265,15 @@ export async function criarCheckoutPix(input: {
       externalReference: orderId,
       amount: charge.transactionAmount,
       // Sócio do split (se ligado) divide SÓ a receita da plataforma: a taxa
-      // (10% ou 0%) e o material, salvo material tirado da comissão pelo admin.
-      // O que é do monitor não entra em comissão de ninguém.
-      commissionableAmount: centavosParaReais(divisao.taxaPlataformaCentavos + (material && !material.foraDaComissaoDoSocio ? materialCentavos : 0)),
+      // (10% ou 0%), o material e o Resumo por IA, salvo o que o admin tirou
+      // da comissão. O que é do monitor não entra em comissão de ninguém.
+      commissionableAmount: centavosParaReais(
+        divisao.taxaPlataformaCentavos +
+          (material && !material.foraDaComissaoDoSocio ? materialCentavos : 0) +
+          (resumo?.interno && !resumo.interno.foraDaComissaoDoSocio ? resumoCentavos : 0),
+      ),
       currency: 'BRL',
-      description: (material ? `Monitoria: ${reserva.anuncioTitulo} + material ${material.titulo}` : `Monitoria: ${reserva.anuncioTitulo}`).slice(0, 200),
+      description: `Monitoria: ${reserva.anuncioTitulo}${material ? ` + material ${material.titulo}` : ''}${resumo ? ' + Resumo por IA' : ''}`.slice(0, 200),
       payerEmail: input.aluno.email,
       payerName: input.aluno.fullName || input.aluno.name,
       idempotencyKey,
@@ -258,7 +292,7 @@ export async function criarCheckoutPix(input: {
       targetUserId: alunoId,
       resourceType: 'monitoria',
       resourceId: idDe(part),
-      metadata: { valorCentavos: part.valorCentavos, taxaPercent, materialId: material?.id, materialCentavos, providerPaymentId: resultado.providerOrderId, ...chargeMetadata(charge) },
+      metadata: { valorCentavos: part.valorCentavos, taxaPercent, materialId: material?.id, materialCentavos, resumoCentavos, providerPaymentId: resultado.providerOrderId, ...chargeMetadata(charge) },
       ip: input.ip,
     })
     const atual = await orders.findOne({ _id: inserted.insertedId as any })
@@ -304,12 +338,14 @@ function respostaDe(order: PaymentOrder): RespostaCheckout {
   const base = reaisParaCentavos(order.baseAmount ?? order.amount)
   const total = reaisParaCentavos(order.amount)
   const material = materialDoPedido(order)
+  const resumo = resumoDoPedido(order)
   return {
     orderId: String(order._id),
     status: order.status,
     pix: order.pix || null,
-    valorCentavos: base - (material?.precoCentavos ?? 0),
+    valorCentavos: base - (material?.precoCentavos ?? 0) - (resumo?.precoCentavos ?? 0),
     material: material ? { titulo: material.titulo, precoCentavos: material.precoCentavos } : null,
+    resumo: resumo ? { precoCentavos: resumo.precoCentavos } : null,
     taxaCentavos: total - base,
     totalCentavos: total,
     taxaRotulo: (order.metadata?.feeLabel as string) || 'Taxa do PIX',
@@ -432,6 +468,7 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
         pagoEm: result.paidAt || agora,
         taxaPercent: doPedido_.taxaPercent,
         ...(doPedido_.material ? { materialOficial: doPedido_.material } : {}),
+        ...(doPedido_.resumo ? { resumoIA: doPedido_.resumo } : {}),
         updatedAt: agora,
       },
     },
@@ -497,11 +534,14 @@ function cpfDoPagador(raw: unknown): string | null {
  * pedido cujo metadado diga "isento" sem material que cubra 10% da aula volta
  * para 10%. Nunca confia em percentual escrito, só no que dá para recalcular.
  */
-function condicoesDoPedido(order: PaymentOrder, valorAulaCentavos: number): { taxaPercent: number; material: MaterialNaCompra | null } {
+function condicoesDoPedido(order: PaymentOrder, valorAulaCentavos: number): { taxaPercent: number; material: MaterialNaCompra | null; resumo: Participacao['resumoIA'] | null } {
   const m = materialDoPedido(order)
+  // O Resumo por IA nunca entra na regra da comissão: a taxa é só sobre a aula (e o material).
   const taxaPercent = taxaPercentDaContratacao({ valorAulaCentavos, materialCentavos: m ? m.precoCentavos : null })
-  if (!m) return { taxaPercent, material: null }
-  return { taxaPercent, material: { id: m.id, titulo: m.titulo, precoCentavos: m.precoCentavos, isentaTaxa: taxaPercent === 0, paymentOrderId: String(order._id) } }
+  const r = resumoDoPedido(order)
+  const resumo = r ? { precoCentavos: r.precoCentavos, paymentOrderId: String(order._id) } : null
+  if (!m) return { taxaPercent, material: null, resumo }
+  return { taxaPercent, material: { id: m.id, titulo: m.titulo, precoCentavos: m.precoCentavos, isentaTaxa: taxaPercent === 0, paymentOrderId: String(order._id) }, resumo }
 }
 
 /**
@@ -541,6 +581,10 @@ async function concluirAprovacao(paga: Participacao, order: PaymentOrder, result
       providerPaymentId: String(paga.providerPaymentId || result.providerOrderId || ''),
     })
   }
+  // Resumo por IA comprado neste PIX: registro próprio (fora do repasse) e a tarefa da aula.
+  if (paga.resumoIA && paga.resumoIA.paymentOrderId === paga.paymentOrderId) {
+    await registrarAdicionalPago(paga, order, reserva)
+  }
   const repasseNovo = await abrirRepasse(paga, reserva)
   // Reprocessamento só avisa se a primeira vez caiu antes do repasse (logo,
   // antes dos avisos). Assentos antigos, sem a marca, não recebem e-mail repetido.
@@ -560,6 +604,7 @@ async function avisarPagamento(paga: Participacao, reserva: Reserva, order: Paym
   const percent = percentualGravado(paga.taxaPercent)
   const divisao = dividirValor(paga.valorCentavos, percent)
   const mat = paga.materialOficial
+  const resumoIA = paga.resumoIA
   const p = reserva.proposta!
   const pagoCentavos = paga.pagoCentavos ?? reaisParaCentavos(order.paidAmount ?? result.amount ?? order.amount)
   await avisar([
@@ -573,12 +618,14 @@ async function avisarPagamento(paga: Participacao, reserva: Reserva, order: Paym
         paragrafos: [
           'Seu pagamento foi aprovado. O valor fica em garantia e só é liberado ao monitor 48 horas depois da aula.',
           ...(mat ? [`O material "${mat.titulo}" já está liberado na sua conta, em Materiais.`] : []),
+          ...(resumoIA ? ['Você levou o Resumo Inteligente por IA: ele fica pronto na página da reserva depois da aula.'] : []),
           'O comprovante e o contrato em PDF estão na página da reserva.',
         ],
         linhas: [
           ['Monitoria', reserva.anuncioTitulo],
           ['Valor da aula', formatarCentavos(paga.valorCentavos)],
           ...(mat ? ([['Material oficial', `${mat.titulo} (${formatarCentavos(mat.precoCentavos)})`]] as Array<[string, string]>) : []),
+          ...(resumoIA ? ([['Resumo por IA', formatarCentavos(resumoIA.precoCentavos)]] as Array<[string, string]>) : []),
           ['Total pago', formatarCentavos(pagoCentavos)],
           ['ID do pagamento (Mercado Pago)', String(result.providerOrderId || '')],
           ['Pedido', String(order._id)],
@@ -640,7 +687,7 @@ export async function confirmarAposPagamento(reserva: Reserva): Promise<void> {
   }
   const res = await c.reservas.findOneAndUpdate(
     { _id: reserva._id as any, status: 'aguardando_pagamento' },
-    { $set: { status: 'confirmada', updatedAt: new Date(), ultimaAtividadeEm: new Date() }, $unset: { confirmandoEm: '' }, $inc: { versao: 1 } },
+    { $set: { status: 'confirmada', contouNaVitrine: true, updatedAt: new Date(), ultimaAtividadeEm: new Date() }, $unset: { confirmandoEm: '' }, $inc: { versao: 1 } },
     { returnDocument: 'after' },
   )
   if (!res) return
@@ -674,8 +721,9 @@ export async function aoRevogarPagamento(order: PaymentOrder, novoStatus: Paymen
     { _id: part._id as any },
     { $set: { status: novoStatus === 'charged_back' ? 'chargeback' : 'reembolsada', updatedAt: new Date() } },
   )
-  // O pagamento inteiro voltou: o material vendido nele sai junto.
+  // O pagamento inteiro voltou: o material vendido nele sai junto, e o Resumo por IA também.
   await revogarMaterialDaMonitoria(await getDb(), part.materialOficial?.paymentOrderId)
+  await adicionalRevogadoNoGateway(idDe(part), novoStatus === 'charged_back')
   await estornarRepasse({
     participacaoId: idDe(part),
     valorBaseCentavos: part.valorCentavos,

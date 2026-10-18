@@ -1,0 +1,65 @@
+import { NextRequest } from 'next/server'
+import { audit } from '@/lib/payments/audit'
+import { getDb } from '@/lib/mongodb'
+import { erro, lerJson, colecoes } from '@/lib/monitorias/db'
+import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
+import { mesDoUso } from '@/lib/monitorias/sala/config'
+import { cambioAtual } from '@/lib/monitorias/resumo/cambio'
+import { configDoResumo, salvarConfigDoResumo } from '@/lib/monitorias/resumo/config'
+import { CONFIG_RESUMO_PADRAO, precoDoResumo, vendaLiberada } from '@/lib/monitorias/resumo/regras'
+import { chaveGeminiDoResumo } from '@/lib/ia/gemini'
+
+export const dynamic = 'force-dynamic'
+
+const DURACOES = [30, 60, 90, 120, 180]
+
+/** GET — config, câmbio em uso, prévia de preço por duração e consumo do mês. */
+export async function GET(request: NextRequest) {
+  return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
+    const config = await configDoResumo()
+    const agora = new Date()
+    const [cambio, chave, uso] = await Promise.all([
+      cambioAtual(config, agora),
+      chaveGeminiDoResumo(),
+      colecoes(await getDb()).resumosUso.findOne({ _id: mesDoUso(agora) }),
+    ])
+    const previa = DURACOES.map((duracaoMin) => ({
+      duracaoMin,
+      individual: precoDoResumo({ duracaoMin, individual: true, config, brlPorUsd: cambio.brlPorUsd, dataDaAula: agora }),
+      grupo: precoDoResumo({ duracaoMin, individual: false, config, brlPorUsd: cambio.brlPorUsd, dataDaAula: agora }),
+    }))
+    return ok({
+      config,
+      padrao: CONFIG_RESUMO_PADRAO,
+      liberada: vendaLiberada(config),
+      chaveConfigurada: !!chave,
+      cambio,
+      previa,
+      uso: { realUsd: uso?.realUsd || 0, chamadas: uso?.chamadas || 0, aulas: uso?.aulas || 0, vendasCentavos: uso?.vendasCentavos || 0, reembolsosCentavos: uso?.reembolsosCentavos || 0 },
+    })
+  })
+}
+
+/** PUT — salva (normalizada). Ligar a venda exige a confirmação do nível pago e uma chave. */
+export async function PUT(request: NextRequest) {
+  return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
+    const corpo = await lerJson(request)
+    if (!corpo || typeof corpo !== 'object') return erro(400, 'Configuração inválida.')
+    const quer = corpo as { vendaAtiva?: unknown; nivelPagoConfirmado?: unknown }
+    if (quer.vendaAtiva === true) {
+      if (quer.nivelPagoConfirmado !== true) return erro(400, 'Para ligar a venda, confirme que a chave do Gemini é de um projeto com faturamento ativo (nível pago).')
+      if (!(await chaveGeminiDoResumo())) return erro(400, 'Configure a chave padrão do Gemini (Provas → API Gemini) ou a variável GEMINI_API_KEY antes de ligar a venda.')
+    }
+    const antes = await configDoResumo()
+    const config = await salvarConfigDoResumo(corpo)
+    await audit({
+      action: 'monitoria_resumo_config',
+      actorUserId: sessao.userId,
+      resourceType: 'monitoria_resumo',
+      resourceId: 'config',
+      metadata: { vendaAtiva: [antes.vendaAtiva, config.vendaAtiva], nivelPagoConfirmado: config.nivelPagoConfirmado, modelos: [config.modeloTranscricao, config.modeloResumo], margens: [config.margemSegurancaPct, config.margemComercialPct], limites: config.limites },
+      ip,
+    })
+    return ok({ config, liberada: vendaLiberada(config) })
+  })
+}

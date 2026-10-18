@@ -30,7 +30,7 @@ import { getPaymentProvider } from '@/lib/payments'
 import { applyPaymentResult } from '@/lib/payments/effects'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import type { PaymentOrder } from '@/lib/types'
-import { colecoes, idDe } from './db'
+import { appUrl, colecoes, idDe } from './db'
 import { liberarRepassesDaReserva } from './financeiro'
 import { avisar } from './avisos'
 import { excluirSalasDeTeste, liberarBlocos } from './reservas'
@@ -54,6 +54,8 @@ export interface RelatorioVarredura {
   concluidas: number
   reembolsosRetomados: number
   pixAtivados: number
+  /** Resumo por IA: reembolsos de adicionais, transcrições apagadas, processador disparado. */
+  resumos?: { reembolsos: number; apagadas: number; disparou: boolean }
   erros: number
 }
 
@@ -96,7 +98,7 @@ async function reconciliarPagamentos(reservaId: string): Promise<void> {
   }
 }
 
-export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
+export async function varrer(agora = new Date(), origem = appUrl()): Promise<RelatorioVarredura> {
   const c = colecoes(await getDb())
   const r: RelatorioVarredura = {
     pedidosExpirados: 0,
@@ -338,6 +340,12 @@ export async function varrer(agora = new Date()): Promise<RelatorioVarredura> {
   // 6d. Retrato do perfil de monitor igual ao da conta (o mesmo do /profile e da sala).
   await seguro(async () => {
     await sincronizarRetratos(LOTE)
+  })
+
+  // 6e. Resumo por IA: retomada, retenção, falhas sem solução e orçamento.
+  await seguro(async () => {
+    const { varrerResumos } = await import('./resumo/varredura')
+    r.resumos = await varrerResumos(agora, origem)
   })
 
   // 7. Chave PIX nova depois da carência.

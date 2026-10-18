@@ -15,27 +15,15 @@
 
 import 'server-only'
 
-import { getDb } from '@/lib/mongodb'
-import { getAllAIKeys } from '@/lib/ai-keys'
+import { baseDaApiGemini, chavesGemini, configDeGeracao, modelosGemini } from '@/lib/ia/gemini'
 import type { LinhaExtraida } from './extracao'
 
 /**
- * A escada de modelos.
- *
- * Ela envelhece sozinha: o `1.5-flash` sumiu do v1beta, e logo depois o
- * `2.0-flash` respondeu "no longer available, use models/gemini-3.6-flash".
- * Duas aposentadorias em poucos dias, cada uma custando uma rodada de deploy.
- *
- * Por isso a lista é configurável por ambiente (`GEMINI_MODELOS`, separados
- * por vírgula): quando o Google aposentar o próximo, dá para trocar sem
- * publicar código. O padrão abaixo vai do modelo atual para o anterior e
- * termina no apelido `flash-latest`, que o Google mantém sempre apontado para
- * a geração vigente — é a rede que impede a lista inteira de morrer junto.
+ * A escada de modelos vem de `lib/ia/gemini.ts` (`modelosGemini`): os do
+ * painel → `GEMINI_MODELOS` → gemini-3.8-flash e gemini-2.5-flash. Ela
+ * envelhece sozinha (o `1.5-flash` e o `2.0-flash` sumiram em poucos dias),
+ * por isso continua trocável sem publicar código — agora pelo painel também.
  */
-const MODELOS = (process.env.GEMINI_MODELOS || 'gemini-3.6-flash,gemini-2.5-flash,gemini-flash-latest')
-  .split(',')
-  .map(modelo => modelo.trim())
-  .filter(Boolean)
 
 /** Esperas entre tentativas na mesma dupla modelo/chave. */
 const ESPERAS_MS = [1_500, 4_000]
@@ -171,38 +159,6 @@ const ESQUEMA = {
   required: ['linhas'],
 } as const
 
-/**
- * Todas as chaves do Gemini disponíveis, em ordem de preferência.
- *
- * Mesma escada do gerador de questões: a chave de seção configurada no painel,
- * a chave geral de `settings` e, por último, o ambiente. Tentar a próxima
- * quando uma falha é o que impede que uma cota estourada em outra área do site
- * derrube a importação do calendário.
- */
-async function chavesDoGemini(): Promise<string[]> {
-  const chaves: string[] = []
-
-  const adicionar = (valor?: string | null) => {
-    if (valor && !chaves.includes(valor)) chaves.push(valor)
-  }
-
-  try {
-    const db = await getDb()
-    const settings = await db.collection('settings').findOne({})
-    adicionar(settings?.geminiApiKey)
-
-    const doPainel = await getAllAIKeys()
-    for (const chave of Object.values(doPainel ?? {})) adicionar(chave as string)
-  } catch (erro) {
-    console.error('[cronogramas] falha ao buscar chaves do Gemini:', erro)
-  }
-
-  adicionar(process.env.GEMINI_API_KEY)
-  adicionar(process.env.GOOGLE_AI_API_KEY)
-
-  return chaves
-}
-
 /** O JSON pode vir cercado de ``` mesmo com `responseMimeType` — não custa tolerar. */
 function extrairJson(texto: string): any {
   const recorte = texto.match(/\{[\s\S]*\}/)
@@ -217,6 +173,32 @@ function normalizarLinhas(bruto: any): LinhaExtraida[] {
     .slice(0, 200) as LinhaExtraida[]
 }
 
+/**
+ * Copiar uma tabela não precisa de raciocínio: `configDeGeracao` põe o nível
+ * mais baixo que o modelo aceita (low no 3.x, orçamento 0 no 2.5) e tira a
+ * amostragem que os 3.6+ ignoram. A chave que recusa o campo de raciocínio
+ * ganha uma segunda passada sem ele (`desligarRaciocinio` falso).
+ */
+function geracaoDaLeitura(modelo: string, desligarRaciocinio: boolean): Record<string, unknown> {
+  const config = configDeGeracao(
+    modelo,
+    {
+      // Transcrição não é lugar para criatividade.
+      temperature: 0,
+      topP: 0.95,
+      // Uma tabela de quinze linhas transcrita passa dos 4k tokens; a folga
+      // evita resposta cortada no meio, que voltaria como JSON inválido em vez
+      // de erro claro.
+      maxOutputTokens: 16384,
+      responseMimeType: 'application/json',
+      responseSchema: ESQUEMA,
+    },
+    'baixo',
+  )
+  if (!desligarRaciocinio) delete config.thinkingConfig
+  return config
+}
+
 async function chamarGemini(
   modelo: string,
   chave: string,
@@ -229,7 +211,7 @@ async function chamarGemini(
 
   try {
     const resposta = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`,
+      `${baseDaApiGemini()}/v1beta/models/${modelo}:generateContent`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-goog-api-key': chave },
@@ -243,23 +225,7 @@ async function chamarGemini(
               ],
             },
           ],
-          generationConfig: {
-            // Transcrição não é lugar para criatividade.
-            temperature: 0,
-            topP: 0.95,
-            // Uma tabela de quinze linhas transcrita passa dos 4k tokens; a
-            // folga evita resposta cortada no meio, que voltaria como JSON
-            // inválido em vez de erro claro.
-            maxOutputTokens: 16384,
-            responseMimeType: 'application/json',
-            responseSchema: ESQUEMA,
-            // Copiar uma tabela não precisa de raciocínio, e no 2.5 o
-            // "pensar" antes de responder é o que fazia a leitura estourar o
-            // tempo. Só o 2.5 aceita o campo; mandá-lo para os outros vira 400.
-            ...(desligarRaciocinio && modelo.startsWith('gemini-2.5')
-              ? { thinkingConfig: { thinkingBudget: 0 } }
-              : {}),
-          },
+          generationConfig: geracaoDaLeitura(modelo, desligarRaciocinio),
         }),
       },
     )
@@ -321,12 +287,13 @@ function resumirErros(erros: string[], semTempo: boolean): string {
 async function lerArquivo(
   arquivo: ArquivoParaLer,
   chaves: string[],
+  modelos: string[],
   prazo: number,
 ): Promise<LeituraDeArquivo> {
   const erros: string[] = []
   let comRaciocinioDesligado = true
 
-  for (const modelo of MODELOS) {
+  for (const modelo of modelos) {
     for (const chave of chaves) {
       // Três passadas na mesma dupla modelo/chave: as extras existem para
       // sobrecarga temporária do modelo e para a chave que não aceita desligar
@@ -378,11 +345,13 @@ async function lerArquivo(
 }
 
 export async function lerCalendarios(arquivos: ArquivoParaLer[]): Promise<LeituraDeArquivo[]> {
-  const chaves = await chavesDoGemini()
+  // O orçamento conta desde a chegada: a ida ao banco atrás das chaves também
+  // sai do tempo da função.
+  const prazo = Date.now() + ORCAMENTO_MS
+  const [chaves, modelos] = await Promise.all([chavesGemini(), modelosGemini()])
   if (chaves.length === 0) {
     throw new Error('API Key do Gemini não configurada. Configure em Configurações > API Gemini.')
   }
 
-  const prazo = Date.now() + ORCAMENTO_MS
-  return Promise.all(arquivos.map(arquivo => lerArquivo(arquivo, chaves, prazo)))
+  return Promise.all(arquivos.map(arquivo => lerArquivo(arquivo, chaves, modelos, prazo)))
 }

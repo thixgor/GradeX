@@ -50,6 +50,7 @@ import type { CredenciaisDaSala, EstadoDoSaguao, ParticipanteVisivel, RespostaDo
 import type { EnvioValidado } from './esquemas'
 import { detectarContato } from '../contato-inteligente'
 import { avatarPorId } from '../avatares'
+import { estadoDoResumoNaSala } from '../resumo/tarefa'
 
 export interface SessaoDaSala {
   userId: string
@@ -257,6 +258,7 @@ export async function estadoDoSaguao(reservaId: string, userId: string, agora: D
     foto: avatarPorId(ctx.avatar)?.url || null,
     config: { compartilharTela: ctx.config.compartilharTela, chatNaSala: ctx.config.chatNaSala },
     linkReuniao: ctx.config.linkExternoPermitido ? ctx.reserva.linkReuniao || null : null,
+    resumo: await estadoDoResumoNaSala(ctx.reserva, userId).catch(() => null),
   }
 }
 
@@ -351,6 +353,7 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
         : {}),
     },
     ...(papel === 'monitor' ? { esperadosNomes: ctx.alunosEsperados } : {}),
+    resumo: await estadoDoResumoNaSala(ctx.reserva, sessao.userId).catch(() => null),
   }
 }
 

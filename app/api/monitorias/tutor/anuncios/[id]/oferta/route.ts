@@ -30,7 +30,7 @@ function montarOferta(anuncio: Anuncio, nome: string) {
 async function carregar(id: string, userId: string) {
   if (!ObjectId.isValid(id)) return null
   const c = await obterColecoes()
-  return c.anuncios.findOne({ _id: new ObjectId(id), userId } as any)
+  return c.anuncios.findOne({ _id: new ObjectId(id), userId, excluidoEm: { $exists: false } } as any)
 }
 
 /** GET — texto da oferta-padrão (o que o monitor vai assinar). */
