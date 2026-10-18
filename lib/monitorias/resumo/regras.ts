@@ -44,6 +44,7 @@ export const CONFIG_RESUMO_PADRAO: ConfigResumo = {
   },
   margemSegurancaPct: 50,
   margemComercialPct: 100,
+  lucroMinimoCentavos: 800,
   custosDiretosUsd: 0.02,
   precoMinimoCentavos: 490,
   precoMaximoCentavos: 2990,
@@ -107,6 +108,7 @@ export function normalizarConfigResumo(bruto: unknown): ConfigResumo {
     },
     margemSegurancaPct: num(b.margemSegurancaPct, p.margemSegurancaPct, 0, 500),
     margemComercialPct: num(b.margemComercialPct, p.margemComercialPct, 0, 1000),
+    lucroMinimoCentavos: inteiro(b.lucroMinimoCentavos, p.lucroMinimoCentavos, 0, 100_000),
     custosDiretosUsd: num(b.custosDiretosUsd, p.custosDiretosUsd, 0, 10),
     precoMinimoCentavos: minimo,
     precoMaximoCentavos: Math.max(minimo, inteiro(b.precoMaximoCentavos, p.precoMaximoCentavos, 100, 100_000)),
@@ -200,21 +202,55 @@ export interface PrecoCalculado {
   brlPorUsdEfetivo: number
   tabelaDesde: string
   limitado: 'minimo' | 'maximo' | null
+  /** Custo esperado (estimativa + custos diretos), em centavos. */
+  custoCentavos: number
+  /** Custo com a margem de segurança, em centavos: o pior caso que o preço cobre. */
+  custoSeguroCentavos: number
+  /** Preço − custo esperado: o que a plataforma deve ganhar nesta venda. */
+  lucroCentavos: number
+  /** Preço − custo com a margem: o lucro mesmo que a aula gaste o que a margem prevê. */
+  lucroMinimoGarantidoCentavos: number
+  /** Qual caminho formou o preço: lucro fixo ou margem comercial. */
+  regra: 'lucro' | 'margem'
+}
+
+/** Câmbio que o Google Cloud de fato cobra: a cotação + IOF/spread do cartão. */
+export function cambioEfetivo(brlPorUsd: number, config: ConfigResumo): number {
+  return brlPorUsd * (1 + config.cambio.acrescimoPct / 100)
+}
+
+/** US$ em centavos de real pelo câmbio efetivo (já com IOF/spread). */
+export function centavosDeUsd(usd: number, brlPorUsdEfetivo: number): number {
+  return Math.round(usd * brlPorUsdEfetivo * 100)
+}
+
+/** Lucro de um período: vendas − reembolsos − gasto com o Gemini (em reais). */
+export function lucroDoPeriodo(p: { vendasCentavos: number; reembolsosCentavos: number; gastoUsd: number; brlPorUsdEfetivo: number }): number {
+  return p.vendasCentavos - p.reembolsosCentavos - centavosDeUsd(p.gastoUsd, p.brlPorUsdEfetivo)
 }
 
 /**
- * Preço ao aluno: (custo estimado + custos diretos) × margem de segurança →
- * reais pelo câmbio com acréscimo (IOF/spread) → × margem comercial → mínimo,
- * máximo e arredondamento. A tabela usada é a vigente NA DATA DA AULA (é quando
- * o custo acontece). null = não dá para vender (modelo sem preço cadastrado).
+ * Preço ao aluno. (custo estimado + custos diretos) × margem de segurança, em
+ * reais pelo câmbio com acréscimo (IOF/spread), é o custo seguro. O preço é o
+ * MAIOR entre:
+ *  - custo seguro + lucro fixo por resumo (`lucroMinimoCentavos`);
+ *  - custo seguro × margem comercial.
+ * Depois vêm o arredondamento para ",90", o mínimo e o máximo. Assim a
+ * plataforma ganha o lucro fixo em toda venda e, quando o custo cresce, a
+ * margem acompanha. A tabela usada é a vigente NA DATA DA AULA (é quando o
+ * custo acontece). null = não dá para vender (modelo sem preço cadastrado).
  */
 export function precoDoResumo(p: { duracaoMin: number; individual: boolean; config: ConfigResumo; brlPorUsd: number; dataDaAula: Date }): PrecoCalculado | null {
   const est = estimarCustoUsd({ duracaoMin: p.duracaoMin, individual: p.individual, config: p.config, data: p.dataDaAula })
   if (!est || !(p.brlPorUsd > 0)) return null
   const c = p.config
   const custoComMargemUsd = (est.usd + c.custosDiretosUsd) * (1 + c.margemSegurancaPct / 100)
-  const brlPorUsdEfetivo = p.brlPorUsd * (1 + c.cambio.acrescimoPct / 100)
-  const bruto = Math.ceil(custoComMargemUsd * brlPorUsdEfetivo * (1 + c.margemComercialPct / 100) * 100)
+  const brlPorUsdEfetivo = cambioEfetivo(p.brlPorUsd, c)
+  const custoSeguro = custoComMargemUsd * brlPorUsdEfetivo * 100
+  const porMargem = custoSeguro * (1 + c.margemComercialPct / 100)
+  const porLucro = custoSeguro + c.lucroMinimoCentavos
+  const regra: PrecoCalculado['regra'] = porLucro >= porMargem ? 'lucro' : 'margem'
+  const bruto = Math.ceil(Math.max(porMargem, porLucro))
   let preco = c.arredondar90 ? arredondarPara90(bruto) : bruto
   let limitado: PrecoCalculado['limitado'] = null
   if (preco < c.precoMinimoCentavos) {
@@ -225,7 +261,21 @@ export function precoDoResumo(p: { duracaoMin: number; individual: boolean; conf
     preco = c.precoMaximoCentavos
     limitado = 'maximo'
   }
-  return { precoCentavos: preco, custoUsd: est.usd, custoComMargemUsd, brlPorUsdEfetivo, tabelaDesde: est.tabelaDesde, limitado }
+  const custoCentavos = centavosDeUsd(est.usd + c.custosDiretosUsd, brlPorUsdEfetivo)
+  const custoSeguroCentavos = Math.ceil(custoSeguro)
+  return {
+    precoCentavos: preco,
+    custoUsd: est.usd,
+    custoComMargemUsd,
+    brlPorUsdEfetivo,
+    tabelaDesde: est.tabelaDesde,
+    limitado,
+    custoCentavos,
+    custoSeguroCentavos,
+    lucroCentavos: preco - custoCentavos,
+    lucroMinimoGarantidoCentavos: preco - custoSeguroCentavos,
+    regra,
+  }
 }
 
 /** Custo real de uma chamada, pelo `usage` da resposta e a tabela do dia. */

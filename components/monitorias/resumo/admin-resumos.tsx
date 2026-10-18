@@ -35,7 +35,8 @@ interface Tarefa {
 
 interface Painel {
   orcamento: { mensalUsd: number; gastoUsd: number; chamadas: number; aulas: number }
-  receitaDoMes: { vendasCentavos: number; reembolsosCentavos: number }
+  receitaDoMes: { vendasCentavos: number; reembolsosCentavos: number; gastoCentavos: number; lucroCentavos: number }
+  lucroTotalCentavos: number
   receitaTotal: Record<string, { n: number; centavos: number }>
   porStatus: Record<string, number>
   tarefas: Tarefa[]
@@ -95,6 +96,7 @@ export function AdminResumosIA({ onMudou }: { onMudou: () => void }) {
   const o = dados.orcamento
   const pct = o.mensalUsd > 0 ? Math.min(100, (o.gastoUsd / o.mensalUsd) * 100) : 0
   const vendidos = (dados.receitaTotal.pago?.centavos || 0) + (dados.receitaTotal.entregue?.centavos || 0)
+  const r = dados.receitaDoMes
 
   return (
     <div className="space-y-5">
@@ -108,17 +110,17 @@ export function AdminResumosIA({ onMudou }: { onMudou: () => void }) {
           <p className="mt-1.5 text-xs text-muted-foreground">de {usd(o.mensalUsd)} · {o.aulas} aula(s) · {o.chamadas} chamada(s)</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Receita do adicional no mês</p>
-          <p className="mt-1 font-heading text-2xl font-semibold">{formatarCentavos(dados.receitaDoMes.vendasCentavos - dados.receitaDoMes.reembolsosCentavos)}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Lucro com IA no mês</p>
+          <p className={cn('mt-1 font-heading text-2xl font-semibold', r.lucroCentavos < 0 && 'text-rose-600')}>{formatarCentavos(r.lucroCentavos)}</p>
           <p className="mt-1.5 text-xs text-muted-foreground">
-            vendas {formatarCentavos(dados.receitaDoMes.vendasCentavos)} · reembolsos {formatarCentavos(dados.receitaDoMes.reembolsosCentavos)}. 100% da plataforma (fora do repasse do monitor).
+            vendas {formatarCentavos(r.vendasCentavos)} − reembolsos {formatarCentavos(r.reembolsosCentavos)} − Gemini {formatarCentavos(r.gastoCentavos)} (pelo câmbio de hoje). 100% da plataforma, fora do repasse do monitor.
           </p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Desde o início</p>
-          <p className="mt-1 font-heading text-2xl font-semibold">{formatarCentavos(vendidos)}</p>
+          <p className="mt-1 font-heading text-2xl font-semibold">{formatarCentavos(dados.lucroTotalCentavos)} <span className="text-sm font-normal text-muted-foreground">de lucro</span></p>
           <p className="mt-1.5 text-xs text-muted-foreground">
-            {dados.receitaTotal.entregue?.n || 0} entregue(s) · {dados.receitaTotal.pago?.n || 0} a entregar · {dados.receitaTotal.reembolsado?.n || 0} reembolsado(s)
+            {formatarCentavos(vendidos)} em adicionais pagos · {dados.receitaTotal.entregue?.n || 0} entregue(s) · {dados.receitaTotal.pago?.n || 0} a entregar · {dados.receitaTotal.reembolsado?.n || 0} reembolsado(s)
           </p>
         </div>
       </div>

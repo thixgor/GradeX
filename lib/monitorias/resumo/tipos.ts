@@ -55,6 +55,12 @@ export interface ConfigResumo {
   /** Margem sobre o custo estimado, para cobrir variação (fala acima da média, reparos). */
   margemSegurancaPct: number
   margemComercialPct: number
+  /**
+   * Lucro da plataforma por resumo, em centavos, somado ao custo com a margem
+   * de segurança. O preço é o maior entre este caminho e o da margem comercial:
+   * aula curta não sai pelo custo do Gemini mais trocados.
+   */
+  lucroMinimoCentavos: number
   /** Custos diretos fixos por aula, em US$ (chamadas de reparo, reenvio). */
   custosDiretosUsd: number
   precoMinimoCentavos: number

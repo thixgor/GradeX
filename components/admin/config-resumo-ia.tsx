@@ -4,8 +4,9 @@
  * Admin → Configurações → "Resumo Inteligente por IA" das monitorias.
  *
  * Tudo o que decide quanto custa e quanto se cobra: modelos, tabela oficial de
- * preços com vigência, parâmetros da estimativa, margens, câmbio, limites e
- * retenção. A prévia recalcula no servidor (mesma função do checkout) ao salvar.
+ * preços com vigência, parâmetros da estimativa, lucro por resumo, margens,
+ * câmbio, limites e retenção. A prévia (custo → preço · lucro) recalcula no
+ * servidor, com a mesma função do checkout, ao salvar.
  */
 
 import { useCallback, useEffect, useState } from 'react'
@@ -24,6 +25,10 @@ interface PrecoCalculado {
   custoUsd: number
   custoComMargemUsd: number
   limitado: 'minimo' | 'maximo' | null
+  custoCentavos: number
+  lucroCentavos: number
+  lucroMinimoGarantidoCentavos: number
+  regra: 'lucro' | 'margem'
 }
 
 interface Dados {
@@ -32,7 +37,8 @@ interface Dados {
   chaveConfigurada: boolean
   cambio: { brlPorUsd: number; fonte: 'ptax' | 'manual'; data: string | null }
   previa: Array<{ duracaoMin: number; individual: PrecoCalculado | null; grupo: PrecoCalculado | null }>
-  uso: { realUsd: number; chamadas: number; aulas: number; vendasCentavos: number; reembolsosCentavos: number }
+  uso: { realUsd: number; chamadas: number; aulas: number; vendasCentavos: number; reembolsosCentavos: number; lucroCentavos: number }
+  split: { configurado: boolean; percentual: number; incluiOResumo: boolean }
 }
 
 const usd = (v: number) => `US$ ${v.toFixed(v < 1 ? 3 : 2)}`
@@ -55,7 +61,7 @@ function Numero({ id, valor, onMudar, passo = 'any', min }: { id: string; valor:
 export function ConfigResumoIA() {
   const [dados, setDados] = useState<Dados | null>(null)
   const [rascunho, setRascunho] = useState<ConfigResumo | null>(null)
-  const [reais, setReais] = useState({ minimo: '', maximo: '' })
+  const [reais, setReais] = useState({ minimo: '', maximo: '', lucro: '' })
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
   const [salvo, setSalvo] = useState(false)
@@ -65,7 +71,7 @@ export function ConfigResumoIA() {
       const d = await api<Dados>('/api/admin/monitorias/resumos-ia/config')
       setDados(d)
       setRascunho(d.config)
-      setReais({ minimo: reaisDe(d.config.precoMinimoCentavos), maximo: reaisDe(d.config.precoMaximoCentavos) })
+      setReais({ minimo: reaisDe(d.config.precoMinimoCentavos), maximo: reaisDe(d.config.precoMaximoCentavos), lucro: reaisDe(d.config.lucroMinimoCentavos) })
     } catch (e) {
       setErro(e instanceof Error ? e.message : 'Não foi possível carregar.')
     }
@@ -96,10 +102,11 @@ export function ConfigResumoIA() {
     setErro('')
     const minimo = interpretarValorEmReais(reais.minimo)
     const maximo = interpretarValorEmReais(reais.maximo)
-    if (minimo == null || maximo == null) return setErro('Preço mínimo e máximo em reais (ex.: 4,90).')
+    const lucro = reais.lucro.trim() === '' ? 0 : interpretarValorEmReais(reais.lucro)
+    if (minimo == null || maximo == null || lucro == null) return setErro('Lucro, preço mínimo e máximo em reais (ex.: 8,00).')
     setSalvando(true)
     try {
-      await api('/api/admin/monitorias/resumos-ia/config', { method: 'PUT', json: { ...c, precoMinimoCentavos: minimo, precoMaximoCentavos: maximo } })
+      await api('/api/admin/monitorias/resumos-ia/config', { method: 'PUT', json: { ...c, lucroMinimoCentavos: lucro, precoMinimoCentavos: minimo, precoMaximoCentavos: maximo } })
       await carregar()
       setSalvo(true)
     } catch (e) {
@@ -131,6 +138,9 @@ export function ConfigResumoIA() {
             <p className="font-semibold">Gasto com IA neste mês</p>
             <p className="font-mono">{usd(dados.uso.realUsd)} de {usd(c.limites.orcamentoMensalUsd)}</p>
           </div>
+          <p className={dados.uso.lucroCentavos < 0 ? 'mt-1 text-sm font-semibold text-rose-600' : 'mt-1 text-sm font-semibold text-emerald-700 dark:text-emerald-400'}>
+            Lucro do mês: {formatarCentavos(dados.uso.lucroCentavos)} <span className="text-xs font-normal text-muted-foreground">(vendas − reembolsos − Gemini, pelo câmbio de hoje)</span>
+          </p>
           <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
             <div className={orcamentoPct >= 100 ? 'h-full bg-rose-500' : orcamentoPct >= 80 ? 'h-full bg-amber-500' : 'h-full bg-emerald-500'} style={{ width: `${orcamentoPct}%` }} />
           </div>
@@ -226,8 +236,14 @@ export function ConfigResumoIA() {
 
         {/* Margens e preço */}
         <div className="space-y-2">
-          <p className="text-sm font-semibold">Margens e preço ao aluno</p>
+          <p className="text-sm font-semibold">Lucro, margens e preço ao aluno</p>
+          <p className="text-xs text-muted-foreground">
+            O preço é o <strong>maior</strong> entre: custo (com a margem de segurança) + lucro por resumo, ou custo × margem comercial. Depois vêm o arredondamento, o mínimo e o máximo.
+          </p>
           <div className="grid gap-3 sm:grid-cols-3">
+            <Campo id="ria-lucro" rotulo="Lucro por resumo (R$)" dica="O que a plataforma ganha em cada venda, além do custo do Gemini. Vale mesmo que a aula gaste o que a margem de segurança prevê.">
+              <Input id="ria-lucro" inputMode="decimal" value={reais.lucro} onChange={(e) => (setSalvo(false), setReais({ ...reais, lucro: e.target.value }))} className="h-9 font-mono text-sm" />
+            </Campo>
             <Campo id="ria-ms" rotulo="Margem de segurança (%)" dica="Sobre o custo estimado: cobre aula mais falada e reparos."><Numero id="ria-ms" valor={c.margemSegurancaPct} onMudar={(n) => mudar({ margemSegurancaPct: n })} /></Campo>
             <Campo id="ria-mc" rotulo="Margem comercial (%)"><Numero id="ria-mc" valor={c.margemComercialPct} onMudar={(n) => mudar({ margemComercialPct: n })} /></Campo>
             <Campo id="ria-cd" rotulo="Custos diretos por aula (US$)"><Numero id="ria-cd" valor={c.custosDiretosUsd} onMudar={(n) => mudar({ custosDiretosUsd: n })} /></Campo>
@@ -276,8 +292,8 @@ export function ConfigResumoIA() {
               <thead className="bg-muted/50 text-xs text-muted-foreground">
                 <tr>
                   <th className="p-2 text-left">Aula</th>
-                  <th className="p-2 text-left">Individual (custo → preço)</th>
-                  <th className="p-2 text-left">Grupo, por aluno (custo → preço)</th>
+                  <th className="p-2 text-left">Individual (custo → preço · lucro)</th>
+                  <th className="p-2 text-left">Grupo, por aluno (custo → preço · lucro)</th>
                 </tr>
               </thead>
               <tbody>
@@ -286,7 +302,13 @@ export function ConfigResumoIA() {
                     <td className="p-2 font-medium">{l.duracaoMin} min</td>
                     {[l.individual, l.grupo].map((x, k) => (
                       <td key={k} className="p-2 font-mono text-xs">
-                        {x ? <>{usd(x.custoUsd)} → <strong className="text-sm">{formatarCentavos(x.precoCentavos)}</strong>{x.limitado ? <span className="ml-1 text-muted-foreground">({x.limitado})</span> : null}</> : <span className="text-rose-600">modelo sem preço</span>}
+                        {x ? (
+                          <>
+                            {formatarCentavos(x.custoCentavos)} → <strong className="text-sm">{formatarCentavos(x.precoCentavos)}</strong>
+                            <span className={x.lucroCentavos < 0 ? 'ml-1 text-rose-600' : 'ml-1 text-emerald-700 dark:text-emerald-400'}>· lucro {formatarCentavos(x.lucroCentavos)} ({Math.round((x.lucroCentavos / x.precoCentavos) * 100)}%)</span>
+                            <span className="ml-1 text-muted-foreground">({x.limitado || (x.regra === 'lucro' ? 'lucro fixo' : 'margem')})</span>
+                          </>
+                        ) : <span className="text-rose-600">modelo sem preço</span>}
                       </td>
                     ))}
                   </tr>
@@ -295,6 +317,12 @@ export function ConfigResumoIA() {
             </table>
           </div>
         </div>
+
+        {dados.split.configurado && dados.split.incluiOResumo && (
+          <CaixaAviso>
+            O split do sócio está configurado ({dados.split.percentual}% da parte comissionável) e o adicional entra nessa parte: de cada resumo, {dados.split.percentual}% vai ao sócio. Para o adicional ficar todo com a DomineAqui, marque &quot;Fora da comissão do sócio&quot; em Limites e privacidade, acima.
+          </CaixaAviso>
+        )}
 
         {erro && <CaixaErro mensagem={erro} />}
         {salvo && <CaixaAviso tom="sucesso">Configuração salva. A prévia acima já usa os valores novos.</CaixaAviso>}

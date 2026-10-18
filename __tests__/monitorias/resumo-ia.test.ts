@@ -10,12 +10,15 @@ import { randomBytes } from 'crypto'
 
 import {
   arredondarPara90,
+  cambioEfetivo,
+  centavosDeUsd,
   CONFIG_RESUMO_PADRAO,
   coberturaDaAula,
   diaDaVigencia,
   janelasDaTranscricao,
   lacunasDaAula,
   linhaDoTempo,
+  lucroDoPeriodo,
   normalizarConfigResumo,
   planoDoAdicionalNoReembolso,
   precoDoResumo,
@@ -49,18 +52,46 @@ const ANTES_DA_VIRADA = new Date('2026-11-10T15:00:00Z')
 const DEPOIS_DA_VIRADA = new Date('2027-02-10T15:00:00Z')
 
 describe('preço do Resumo por IA', () => {
-  it('aula individual de 60 min em 2026 sai no preço mínimo (R$ 4,90)', () => {
+  it('aula individual de 60 min em 2026: custo seguro + R$ 8,00 de lucro, arredondado (R$ 10,90)', () => {
     const p = precoDoResumo({ duracaoMin: 60, individual: true, config: CONFIG_RESUMO_PADRAO, brlPorUsd: 5.5, dataDaAula: ANTES_DA_VIRADA })!
     expect(p.custoUsd).toBeCloseTo(0.205, 3)
-    expect(p.precoCentavos).toBe(490)
     expect(p.tabelaDesde).toBe('2026-09-02')
+    // (0,205 + 0,02) × 1,5 × 5,94 = R$ 2,01 de custo seguro; + R$ 8,00 = 10,01 → 10,90.
+    expect(p.custoSeguroCentavos).toBe(201)
+    expect(p.precoCentavos).toBe(1090)
+    expect(p.regra).toBe('lucro')
+    expect(p.custoCentavos).toBe(134)
+    expect(p.lucroCentavos).toBe(1090 - 134)
+    expect(p.lucroMinimoGarantidoCentavos).toBe(1090 - 201)
   })
 
   it('usa a tabela vigente NA DATA DA AULA (preço padrão do 3.8 a partir de 2027)', () => {
     const p = precoDoResumo({ duracaoMin: 60, individual: true, config: CONFIG_RESUMO_PADRAO, brlPorUsd: 5.5, dataDaAula: DEPOIS_DA_VIRADA })!
     expect(p.custoUsd).toBeCloseTo(0.41, 2)
-    expect(p.precoCentavos).toBe(790)
+    expect(p.precoCentavos).toBe(1190)
     expect(p.tabelaDesde).toBe('2027-01-01')
+  })
+
+  it('a margem comercial vence quando o custo seguro passa do lucro fixo', () => {
+    const longa = precoDoResumo({ duracaoMin: 240, individual: true, config: CONFIG_RESUMO_PADRAO, brlPorUsd: 5.5, dataDaAula: DEPOIS_DA_VIRADA })!
+    expect(longa.regra).toBe('margem')
+    expect(longa.precoCentavos).toBe(2390) // 11,89 × 2 = 23,78 → 23,90
+    expect(longa.lucroMinimoGarantidoCentavos).toBeGreaterThan(CONFIG_RESUMO_PADRAO.lucroMinimoCentavos)
+    const semLucroFixo = precoDoResumo({ duracaoMin: 60, individual: true, config: { ...CONFIG_RESUMO_PADRAO, lucroMinimoCentavos: 0 }, brlPorUsd: 5.5, dataDaAula: ANTES_DA_VIRADA })!
+    expect(semLucroFixo.regra).toBe('margem')
+    expect(semLucroFixo.precoCentavos).toBe(490)
+  })
+
+  it('o lucro fixo vale em toda duração, individual ou grupo, antes e depois da virada', () => {
+    const config = { ...CONFIG_RESUMO_PADRAO, precoMaximoCentavos: 100_000 }
+    for (const dataDaAula of [ANTES_DA_VIRADA, DEPOIS_DA_VIRADA])
+      for (const duracaoMin of [15, 30, 45, 60, 90, 120, 180, 240])
+        for (const individual of [true, false]) {
+          const p = precoDoResumo({ duracaoMin, individual, config, brlPorUsd: 5.5, dataDaAula })!
+          expect(p.lucroMinimoGarantidoCentavos).toBeGreaterThanOrEqual(config.lucroMinimoCentavos)
+          expect(p.lucroCentavos).toBe(p.precoCentavos - p.custoCentavos)
+          expect(p.precoCentavos % 100).toBe(90)
+        }
   })
 
   it('grupo custa menos (só a voz do monitor) e o máximo do admin limita', () => {
@@ -100,6 +131,20 @@ describe('configuração do Resumo por IA', () => {
     expect(c.precoMaximoCentavos).toBe(900)
     expect(c.margemSegurancaPct).toBe(0)
     expect(c.precos).toEqual(CONFIG_RESUMO_PADRAO.precos)
+  })
+
+  it('config gravada antes do lucro fixo recebe R$ 8,00; valor do painel é respeitado e limitado', () => {
+    expect(normalizarConfigResumo({ vendaAtiva: true, nivelPagoConfirmado: true }).lucroMinimoCentavos).toBe(800)
+    expect(normalizarConfigResumo({ lucroMinimoCentavos: 1500 }).lucroMinimoCentavos).toBe(1500)
+    expect(normalizarConfigResumo({ lucroMinimoCentavos: 0 }).lucroMinimoCentavos).toBe(0)
+    expect(normalizarConfigResumo({ lucroMinimoCentavos: -300 }).lucroMinimoCentavos).toBe(0)
+    expect(normalizarConfigResumo({ lucroMinimoCentavos: 'muito' }).lucroMinimoCentavos).toBe(800)
+  })
+
+  it('lucro do período: vendas − reembolsos − gasto com o Gemini em reais', () => {
+    expect(cambioEfetivo(5.5, CONFIG_RESUMO_PADRAO)).toBeCloseTo(5.94, 6)
+    expect(centavosDeUsd(0.5, 5.94)).toBe(297)
+    expect(lucroDoPeriodo({ vendasCentavos: 10_900, reembolsosCentavos: 1_090, gastoUsd: 0.5, brlPorUsdEfetivo: 5.94 })).toBe(10_900 - 1_090 - 297)
   })
 
   it('a venda só liga com a confirmação do nível pago', () => {

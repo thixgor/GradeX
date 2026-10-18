@@ -13,6 +13,7 @@
  */
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MongoClient, ObjectId, type Db } from 'mongodb'
+import { normalizarConfigResumo, precoDoResumo } from '@/lib/monitorias/resumo/regras'
 
 const URI = process.env.MONITORIAS_MONGO_TESTE
 process.env.GEMINI_API_BASE = 'http://gemini.falso'
@@ -134,6 +135,10 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
   const TUTOR = new ObjectId()
   const ANUNCIO = new ObjectId()
   const CONFIG = { vendaAtiva: true, nivelPagoConfirmado: true, cambio: { fonte: 'manual', acrescimoPct: 8, manualBrlPorUsd: 5.5 } }
+  // Aula individual de 60 min daqui a 3 dias, câmbio de R$ 5,50 + 8%. Em 2026:
+  // custo seguro de R$ 2,01 + R$ 8,00 de lucro fixo → R$ 10,90 (a conta está
+  // nos testes puros). Calculado aqui para o teste não vencer na virada da tabela.
+  const PRECO = precoDoResumo({ duracaoMin: 60, individual: true, config: normalizarConfigResumo(CONFIG), brlPorUsd: 5.5, dataDaAula: new Date(Date.now() + 3 * 24 * 3_600_000) })!.precoCentavos
 
   beforeEach(async () => {
     if (!cliente) {
@@ -234,20 +239,20 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
 
   it('checkout com resumo: preço do servidor no pedido, base = aula + resumo, resumo na comissão; repasse do monitor continua R$ 90', async () => {
     const { order, checkout, adicional, assentos, reserva } = await comprarComResumo()
-    expect(checkout.resumo).toEqual({ precoCentavos: 490 })
+    expect(checkout.resumo).toEqual({ precoCentavos: PRECO })
     expect(checkout.valorCentavos).toBe(10000)
-    expect((order.metadata as any).resumoIA.precoCentavos).toBe(490)
-    expect(order.baseAmount).toBe(104.9)
+    expect((order.metadata as any).resumoIA.precoCentavos).toBe(PRECO)
+    expect(order.baseAmount).toBe((10000 + PRECO) / 100)
     // Comissão do sócio: taxa da plataforma (10% de R$ 100) + o resumo inteiro.
-    expect(mp.criados[0].commissionableAmount).toBe(14.9)
+    expect(mp.criados[0].commissionableAmount).toBe((1000 + PRECO) / 100)
     // Repasse: só a aula.
     const repasse = await db.collection('monitorias_repasses').findOne({ participacaoId: String(assentos[0]._id) })
     expect(repasse!.liquidoTutorCentavos).toBe(9000)
     expect(repasse!.taxaPlataformaCentavos).toBe(1000)
     // Registro próprio do adicional, cópia no assento e a tarefa da aula (monitor + aluno).
-    const taxa = Math.round(order.amount * 100) - 10490
-    expect(adicional).toMatchObject({ status: 'pago', precoCentavos: 490, taxaPixCentavos: Math.round((taxa * 490) / 10490) })
-    expect((await assento(assentos[0]._id))!.resumoIA).toEqual({ precoCentavos: 490, paymentOrderId: String(order._id) })
+    const taxa = Math.round(order.amount * 100) - (10000 + PRECO)
+    expect(adicional).toMatchObject({ status: 'pago', precoCentavos: PRECO, taxaPixCentavos: Math.round((taxa * PRECO) / (10000 + PRECO)) })
+    expect((await assento(assentos[0]._id))!.resumoIA).toEqual({ precoCentavos: PRECO, paymentOrderId: String(order._id) })
     const t = await tarefaDe(reserva._id)
     expect(t!.status).toBe('aguardando')
     expect(Object.values(t!.vozes).map((v: any) => v.papel).sort()).toEqual(['aluno', 'monitor'])
@@ -260,7 +265,7 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     await Promise.all([1, 2, 3].map(() => applyPaymentResult(String(order._id), { providerOrderId: pid, status: 'approved', amount: order.amount, currency: 'BRL', paidAt: new Date() })))
     expect(await db.collection('monitorias_resumos_adicionais').countDocuments()).toBe(1)
     const uso = await db.collection('monitorias_resumos_uso').findOne({})
-    expect(uso!.vendasCentavos).toBe(490)
+    expect(uso!.vendasCentavos).toBe(PRECO)
   })
 
   it('aceite desatualizado ou venda desligada: nada é cobrado pelo resumo', async () => {
@@ -281,7 +286,7 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     expect(mp.reembolsos).toEqual([{ id: pid, chave: `refund:${assentos[0]._id}:0`, valor: undefined }])
     expect((await adicionalDe(assentos[0]._id))!.status).toBe('reembolsado')
     expect((await tarefaDe(reserva._id))!.status).toBe('cancelado')
-    expect((await db.collection('monitorias_resumos_uso').findOne({}))!.reembolsosCentavos).toBe(490)
+    expect((await db.collection('monitorias_resumos_uso').findOne({}))!.reembolsosCentavos).toBe(PRECO)
   })
 
   it('reembolso integral DEPOIS da entrega: valor explícito sem o adicional (que fica entregue)', async () => {
@@ -291,11 +296,11 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     const r = await reembolsarParticipacao({ participacaoId: String(assentos[0]._id), valorBaseCentavos: null, motivo: 'Disputa', por: 'admin' })
     expect(r).toEqual({ ok: true, total: true })
     const pago = Math.round(order.amount * 100)
-    expect(mp.reembolsos[0].valor).toBe((pago - 490 - adicional.taxaPixCentavos) / 100)
+    expect(mp.reembolsos[0].valor).toBe((pago - PRECO - adicional.taxaPixCentavos) / 100)
     expect((await adicionalDe(assentos[0]._id))!.status).toBe('entregue')
     const p = await assento(assentos[0]._id)
     expect(p!.status).toBe('reembolsada')
-    expect(p!.reembolsos[0]).toMatchObject({ adicional: 'excluir', valorGatewayCentavos: pago - 490 - adicional.taxaPixCentavos })
+    expect(p!.reembolsos[0]).toMatchObject({ adicional: 'excluir', valorGatewayCentavos: pago - PRECO - adicional.taxaPixCentavos })
   })
 
   it('reembolso parcial da aula não mexe no adicional', async () => {
@@ -314,16 +319,16 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     const dois = await reembolsarAdicionaisDaAula(String(reserva._id), 'Não foi possível gerar o resumo')
     expect(um).toEqual({ ok: 1, falhas: 0 })
     expect(dois).toEqual({ ok: 0, falhas: 0 })
-    expect(mp.reembolsos).toEqual([{ id: pid, chave: `refund:resumo:${adicional._id}`, valor: (490 + adicional.taxaPixCentavos) / 100 }])
+    expect(mp.reembolsos).toEqual([{ id: pid, chave: `refund:resumo:${adicional._id}`, valor: (PRECO + adicional.taxaPixCentavos) / 100 }])
     expect((await assento(assentos[0]._id))!.status).toBe('paga')
     const repasse = await db.collection('monitorias_repasses').findOne({ participacaoId: String(assentos[0]._id) })
     expect(repasse!.liquidoTutorCentavos).toBe(9000)
     expect(repasse!.status).toBe('em_garantia')
     // MP já mostra a devolução do adicional; o integral da aula pede só o resto.
-    mp.estado[pid].raw.transaction_amount_refunded = (490 + adicional.taxaPixCentavos) / 100
+    mp.estado[pid].raw.transaction_amount_refunded = (PRECO + adicional.taxaPixCentavos) / 100
     await reembolsarParticipacao({ participacaoId: String(assentos[0]._id), valorBaseCentavos: null, motivo: 'Cancelamento', por: 'sistema' })
     const pago = Math.round(order.amount * 100)
-    expect(mp.reembolsos[1].valor).toBe((pago - 490 - adicional.taxaPixCentavos) / 100)
+    expect(mp.reembolsos[1].valor).toBe((pago - PRECO - adicional.taxaPixCentavos) / 100)
     expect(mp.reembolsos.reduce((t, r) => t + Math.round((r.valor || 0) * 100), 0)).toBe(pago)
   })
 

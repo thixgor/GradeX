@@ -6,14 +6,19 @@ import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { mesDoUso } from '@/lib/monitorias/sala/config'
 import { cambioAtual } from '@/lib/monitorias/resumo/cambio'
 import { configDoResumo, salvarConfigDoResumo } from '@/lib/monitorias/resumo/config'
-import { CONFIG_RESUMO_PADRAO, precoDoResumo, vendaLiberada } from '@/lib/monitorias/resumo/regras'
+import { CONFIG_RESUMO_PADRAO, cambioEfetivo, lucroDoPeriodo, precoDoResumo, vendaLiberada } from '@/lib/monitorias/resumo/regras'
 import { chaveGeminiDoResumo } from '@/lib/ia/gemini'
+import { getPaymentConfig } from '@/lib/payments/config'
 
 export const dynamic = 'force-dynamic'
 
 const DURACOES = [30, 60, 90, 120, 180]
 
-/** GET — config, câmbio em uso, prévia de preço por duração e consumo do mês. */
+/**
+ * GET — config, câmbio em uso, prévia de preço (com custo e lucro) por
+ * duração, consumo e lucro do mês, e o split do sócio quando configurado (a
+ * parte comissionável inclui o adicional, salvo "fora da comissão do sócio").
+ */
 export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const config = await configDoResumo()
@@ -28,6 +33,10 @@ export async function GET(request: NextRequest) {
       individual: precoDoResumo({ duracaoMin, individual: true, config, brlPorUsd: cambio.brlPorUsd, dataDaAula: agora }),
       grupo: precoDoResumo({ duracaoMin, individual: false, config, brlPorUsd: cambio.brlPorUsd, dataDaAula: agora }),
     }))
+    const vendasCentavos = uso?.vendasCentavos || 0
+    const reembolsosCentavos = uso?.reembolsosCentavos || 0
+    const realUsd = uso?.realUsd || 0
+    const { split } = getPaymentConfig().mp
     return ok({
       config,
       padrao: CONFIG_RESUMO_PADRAO,
@@ -35,7 +44,16 @@ export async function GET(request: NextRequest) {
       chaveConfigurada: !!chave,
       cambio,
       previa,
-      uso: { realUsd: uso?.realUsd || 0, chamadas: uso?.chamadas || 0, aulas: uso?.aulas || 0, vendasCentavos: uso?.vendasCentavos || 0, reembolsosCentavos: uso?.reembolsosCentavos || 0 },
+      uso: {
+        realUsd,
+        chamadas: uso?.chamadas || 0,
+        aulas: uso?.aulas || 0,
+        vendasCentavos,
+        reembolsosCentavos,
+        // Gasto em US$ convertido pelo câmbio efetivo de hoje (o Google cobra na fatura do mês).
+        lucroCentavos: lucroDoPeriodo({ vendasCentavos, reembolsosCentavos, gastoUsd: realUsd, brlPorUsdEfetivo: cambioEfetivo(cambio.brlPorUsd, config) }),
+      },
+      split: { configurado: split.enabled && split.partnerPercent > 0, percentual: split.partnerPercent, incluiOResumo: !config.foraDaComissaoDoSocio },
     })
   })
 }

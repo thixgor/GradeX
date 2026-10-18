@@ -6,6 +6,8 @@ import { colecoes, erro, lerJson } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { mesDoUso } from '@/lib/monitorias/sala/config'
 import { configDoResumo } from '@/lib/monitorias/resumo/config'
+import { cambioAtual } from '@/lib/monitorias/resumo/cambio'
+import { cambioEfetivo, centavosDeUsd, lucroDoPeriodo } from '@/lib/monitorias/resumo/regras'
 import { reembolsarAdicionaisDaAula } from '@/lib/monitorias/resumo/adicional'
 import { dispararProcessador } from '@/lib/monitorias/resumo/disparo'
 import { limparTexto } from '@/lib/monitorias/validacao'
@@ -16,18 +18,22 @@ export const dynamic = 'force-dynamic'
 const STATUS = ['aguardando', 'transcrevendo', 'resumindo', 'pronto', 'falhou', 'cancelado'] as const
 
 /**
- * GET ?status= — painel do Resumo por IA: gasto do mês × orçamento, receita
- * separada (vendas e reembolsos do adicional), tarefas por estado e a lista
- * (com custo estimado × real e os adicionais de cada aula). Nunca a transcrição.
+ * GET ?status= — painel do Resumo por IA: gasto do mês × orçamento, lucro do
+ * mês e desde o início (vendas − reembolsos − gasto com o Gemini, em reais pelo
+ * câmbio efetivo de hoje), tarefas por estado e a lista (com custo estimado ×
+ * real e os adicionais de cada aula). Nunca a transcrição.
  */
 export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const filtro = new URL(request.url).searchParams.get('status')
     const c = colecoes(await getDb())
     const agora = new Date()
-    const [config, uso, porStatus, tarefas, receita] = await Promise.all([
-      configDoResumo(),
+    const [{ config, cambio }, uso, total, porStatus, tarefas, receita] = await Promise.all([
+      configDoResumo().then(async (config) => ({ config, cambio: await cambioAtual(config, agora) })),
       c.resumosUso.findOne({ _id: mesDoUso(agora) }),
+      c.resumosUso
+        .aggregate<{ vendas: number; reembolsos: number; realUsd: number }>([{ $group: { _id: null, vendas: { $sum: '$vendasCentavos' }, reembolsos: { $sum: '$reembolsosCentavos' }, realUsd: { $sum: '$realUsd' } } }])
+        .next(),
       c.resumos.aggregate<{ _id: string; n: number }>([{ $group: { _id: '$status', n: { $sum: 1 } } }]).toArray(),
       c.resumos
         .find(STATUS.includes(filtro as any) ? { status: filtro as any } : {}, { projection: { resultado: 0, parciais: 0, 'custo.chamadas': 0 } })
@@ -39,9 +45,18 @@ export async function GET(request: NextRequest) {
     const adicionais = tarefas.length
       ? await c.resumosAdicionais.find({ reservaId: { $in: tarefas.map((t) => t._id) } }, { projection: { reservaId: 1, status: 1, precoCentavos: 1, alunoId: 1, reembolso: 1, teste: 1 } }).toArray()
       : []
+    const brlPorUsdEfetivo = cambioEfetivo(cambio.brlPorUsd, config)
+    const vendasCentavos = uso?.vendasCentavos || 0
+    const reembolsosCentavos = uso?.reembolsosCentavos || 0
     return jsonComprimido(request, {
       orcamento: { mensalUsd: config.limites.orcamentoMensalUsd, gastoUsd: uso?.realUsd || 0, chamadas: uso?.chamadas || 0, aulas: uso?.aulas || 0 },
-      receitaDoMes: { vendasCentavos: uso?.vendasCentavos || 0, reembolsosCentavos: uso?.reembolsosCentavos || 0 },
+      receitaDoMes: {
+        vendasCentavos,
+        reembolsosCentavos,
+        gastoCentavos: centavosDeUsd(uso?.realUsd || 0, brlPorUsdEfetivo),
+        lucroCentavos: lucroDoPeriodo({ vendasCentavos, reembolsosCentavos, gastoUsd: uso?.realUsd || 0, brlPorUsdEfetivo }),
+      },
+      lucroTotalCentavos: lucroDoPeriodo({ vendasCentavos: total?.vendas || 0, reembolsosCentavos: total?.reembolsos || 0, gastoUsd: total?.realUsd || 0, brlPorUsdEfetivo }),
       receitaTotal: Object.fromEntries(receita.map((r) => [r._id, { n: r.n, centavos: r.centavos }])),
       porStatus: Object.fromEntries(porStatus.map((s) => [s._id, s.n])),
       tarefas: tarefas.map((t) => ({

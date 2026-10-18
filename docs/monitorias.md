@@ -612,12 +612,22 @@ receita é 100% da plataforma e o repasse do monitor não muda.
   - 1,50 / 1,50 / 7,50 a partir de 01/01/2027;
   - `gemini-2.5-flash` como reserva.
   Modelo sem linha na tabela não vende.
-- **Preço** (`precoDoResumo`, tabela vigente **no dia da aula**): (custo
-  estimado + custos diretos) × margem de segurança (50%) → reais pela PTAX do
-  Banco Central (cache de 6 h, `cambio.ts`) + 8% de IOF/spread → × margem
-  comercial (100%) → arredonda para ",90" → mínimo R$ 4,90 e máximo R$ 29,90.
-  Sem PTAX, vale o câmbio manual (R$ 5,60). A estimativa conta 32 tokens por
-  segundo de áudio, 60% de fala do monitor e 25% do aluno.
+- **Preço** (`precoDoResumo`, tabela vigente **no dia da aula**):
+  - **Custo seguro:** (custo estimado + custos diretos) × margem de segurança
+    (50%), em reais pela PTAX do Banco Central (cache de 6 h, `cambio.ts`) + 8%
+    de IOF/spread. Sem PTAX, vale o câmbio manual (R$ 5,60).
+  - **Preço:** o **maior** entre custo seguro + **lucro por resumo (R$ 8,00)**
+    e custo seguro × margem comercial (100%). Depois arredonda para ",90",
+    com mínimo de R$ 4,90 e máximo de R$ 29,90.
+  - A plataforma ganha o lucro fixo em toda venda, mesmo que a aula gaste o
+    que a margem prevê. Em aula longa, a margem comercial assume.
+  - A prévia do painel mostra, para cada duração, custo → preço · lucro e qual
+    regra venceu.
+  - A estimativa conta 32 tokens por segundo de áudio, 60% de fala do monitor
+    e 25% do aluno.
+  - **Split do sócio:** quando está configurado e o adicional entra na parte
+    comissionável, o painel avisa a parte do sócio. A opção "Fora da
+    comissão do sócio" deixa o adicional todo com a DomineAqui.
 - **Limites:** aula de até 240 min, teto de US$ 1,50 por aula (conferido antes
   de cada chamada), orçamento de US$ 50 por mês e 3 tentativas por etapa. Com
   100% do orçamento gasto, a venda para; com 120%, o processamento para e os
@@ -714,8 +724,9 @@ receita é 100% da plataforma e o repasse do monitor não muda.
 - **Disputa:** o admin escolhe "Reembolsar também o Resumo por IA".
 - **Exclusão pelo suporte:** devolve o adicional ainda não entregue.
 - Tudo é idempotente (troca de estado atômica) e **nunca cobra o monitor**.
-- A receita aparece na aba "Resumos por IA" do admin: vendas, reembolsos e
-  gasto com IA no mês (agregado `monitorias_resumos_uso`).
+- O **lucro** aparece na aba "Resumos por IA" do admin (no mês e desde o
+  início): vendas − reembolsos − gasto com o Gemini em reais, pelo câmbio
+  efetivo de hoje (agregado `monitorias_resumos_uso`).
 
 ### Privacidade (LGPD)
 
@@ -753,13 +764,13 @@ receita é 100% da plataforma e o repasse do monitor não muda.
 - Depois do deploy: `npm run db:indexes` (índices dos adicionais, tarefas,
   trechos e uso).
 
-### Custo estimado (padrões, câmbio de R$ 5,60)
+### Custo, preço e lucro estimados (padrões, câmbio de R$ 5,60 + 8%)
 
-| Aula | Custo Gemini (2026) | Preço (2026) | Custo (2027) | Preço (2027) |
-| --- | --- | --- | --- | --- |
-| 60 min, individual | US$ 0,21 | R$ 4,90 | US$ 0,41 | R$ 7,90 |
-| 60 min, grupo | US$ 0,16 | R$ 4,90 | US$ 0,32 | R$ 6,90 |
-| 120 min, individual | US$ 0,36 | R$ 6,90 | US$ 0,71 | R$ 13,90 |
+| Aula | 2026: custo → preço · lucro | 2027: custo → preço · lucro |
+| --- | --- | --- |
+| 60 min, individual | R$ 1,36 → R$ 10,90 · R$ 9,54 | R$ 2,60 → R$ 12,90 · R$ 10,30 |
+| 60 min, grupo | R$ 1,09 → R$ 9,90 · R$ 8,81 | R$ 2,06 → R$ 11,90 · R$ 9,84 |
+| 120 min, individual | R$ 2,27 → R$ 11,90 · R$ 9,63 | R$ 4,42 → R$ 14,90 · R$ 10,48 |
 
 - São estimativas conservadoras: a pausa no silêncio costuma cortar de 40 a 70%
   do áudio, e o custo real de cada chamada (pelo `usage`) fica gravado na
