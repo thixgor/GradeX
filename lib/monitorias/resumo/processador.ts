@@ -33,6 +33,7 @@ import { avisar, avisarEquipe } from '../avisos'
 import { configDoResumo } from './config'
 import { entregarAdicionais, reembolsarAdicionaisDaAula, registrarUso, usoDoMesResumo } from './adicional'
 import { lerJson, validarResumo, validarTranscricao, ESQUEMA_RESUMO, ESQUEMA_TRANSCRICAO } from './esquema'
+import { contatosNaFala, limparContatoDoResumo } from './contato-na-fala'
 import { instrucaoDaParcial, instrucaoDaReducao, instrucaoDeTranscricao, instrucaoDoResumo, pedidoDeReparo, type ContextoDaAula } from './prompts'
 import {
   COBERTURA_MINIMA_PCT,
@@ -42,11 +43,12 @@ import {
   janelasDaTranscricao,
   lacunasDaAula,
   linhaDoTempo,
+  prefixoDoTrecho,
   tabelaVigente,
   tokensDoTexto,
   transcricaoParaPrompt,
 } from './regras'
-import type { ChamadaRegistrada, ConfigResumo, ResumoGerado, SegmentoDeAudio, TarefaResumo } from './tipos'
+import type { ChamadaRegistrada, ConfigResumo, FraseTranscrita, ResumoGerado, SegmentoDeAudio, TarefaResumo } from './tipos'
 
 const LEASE_MS = 5 * 60_000
 const TEMPO_TRANSCRICAO_MS = 240_000
@@ -153,6 +155,21 @@ async function adiarTrecho(seg: SegmentoDeAudio, ms: number, erro: string, conta
   )
 }
 
+/**
+ * Por que o arquivo no Google não é o deste trecho (null = é). O nome aceito é
+ * o de qualquer sessão que o servidor abriu PARA ESTE trecho (o prefixo leva
+ * reserva, voz e número; só o servidor abre sessões com a chave), com o tamanho
+ * declarado: duas aberturas do mesmo trecho ao mesmo tempo não derrubam o envio.
+ */
+export function divergenciaDoArquivo(seg: Pick<SegmentoDeAudio, 'reservaId' | 'userId' | 'seq' | 'bytes' | 'nomeDeExibicao'>, f: { displayName?: string; sizeBytes?: string } | null): string | null {
+  if (!f) return 'o Google não encontrou o arquivo'
+  const nome = f.displayName || ''
+  const doTrecho = nome === seg.nomeDeExibicao || nome.startsWith(prefixoDoTrecho(seg.reservaId, seg.userId, seg.seq))
+  if (seg.nomeDeExibicao && !doTrecho) return `nome no Google ("${nome.slice(0, 80) || '—'}") não é o deste trecho`
+  if (Number(f.sizeBytes) !== seg.bytes) return `tamanho no Google (${f.sizeBytes ?? '—'} bytes) diferente do declarado (${seg.bytes})`
+  return null
+}
+
 /** Áudio que caiu no Blob (o navegador não alcançou o Google): o servidor repassa ao Files API e apaga o Blob. */
 async function garantirArquivoNoGoogle(seg: SegmentoDeAudio, chave: string): Promise<{ nome: string } | null> {
   if (seg.arquivo?.nome) return seg.arquivo
@@ -194,10 +211,10 @@ async function transcreverTrecho(seg: SegmentoDeAudio, agora: Date): Promise<voi
     const arquivo = await garantirArquivoNoGoogle(seg, chave)
     if (!arquivo) return falharTrecho(seg, 'áudio não encontrado', chave)
     const noGoogle = await consultarArquivo(chave, arquivo.nome)
-    // O arquivo precisa ser O deste trecho: nome dado na abertura da sessão e o mesmo tamanho declarado.
-    if (!noGoogle || (seg.nomeDeExibicao && noGoogle.displayName !== seg.nomeDeExibicao) || Number(noGoogle.sizeBytes) !== seg.bytes) {
-      return falharTrecho(seg, 'arquivo no Google não confere com o trecho', chave)
-    }
+    // O arquivo precisa ser O deste trecho: nome dado pelo servidor ao abrir a sessão
+    // (reserva, voz e número do trecho) e o mesmo tamanho declarado.
+    const divergencia = divergenciaDoArquivo(seg, noGoogle)
+    if (divergencia || !noGoogle) return falharTrecho(seg, `arquivo no Google não confere com o trecho: ${divergencia}`, chave)
     // Áudio recém-enviado costuma ficar ACTIVE em segundos: espera um pouco aqui antes de adiar.
     let estado = noGoogle
     for (let i = 0; i < 4 && estado?.state === 'PROCESSING'; i++) {
@@ -218,6 +235,7 @@ async function transcreverTrecho(seg: SegmentoDeAudio, agora: Date): Promise<voi
       { _id: seg._id as any },
       { $set: { status: 'transcrito', frases, updatedAt: new Date() }, $unset: { lease: '', erro: '', proximaTentativaEm: '' } },
     )
+    await verificarContatoNaFala(seg, frases, t).catch((e) => console.error('[resumo-ia] verificação de contato', String(seg._id), e))
     // O áudio sai do Google assim que a transcrição sai (senão ficaria até 48 h).
     if (await apagarArquivo(chave, arquivo.nome)) await c.resumosSegmentos.updateOne({ _id: seg._id as any }, { $unset: { arquivo: '' } })
   } catch (e) {
@@ -225,6 +243,40 @@ async function transcreverTrecho(seg: SegmentoDeAudio, agora: Date): Promise<voi
     console.error('[resumo-ia] transcrição falhou', String(seg._id), erro.status, erro.message.slice(0, 120))
     if (erro.temporario && seg.tentativas < config.limites.tentativasPorEtapa) return adiarTrecho(seg, espera(seg.tentativas), erro.message)
     return falharTrecho(seg, erro.message, chave, !erro.temporario)
+  }
+}
+
+/**
+ * Contato ou pagamento por fora DITO na aula (Termos do Monitor 5.5, aditivo
+ * r2): cada frase vira uma infração na aba "Contato por fora", com a frase e o
+ * minuto — nunca a transcrição inteira. A equipe é avisada uma vez por aula.
+ */
+async function verificarContatoNaFala(seg: SegmentoDeAudio, frases: FraseTranscrita[], t: TarefaResumo): Promise<void> {
+  if (t.teste || !frases.length) return
+  const achados = contatosNaFala(frases, { inicioDoTrecho: new Date(seg.inicio), inicioDaAula: new Date(t.inicio) })
+  if (!achados.length) return
+  const c = await cols()
+  const { registrarInfracao } = await import('../infracoes')
+  for (const a of achados) {
+    await registrarInfracao({
+      reservaId: seg.reservaId,
+      titulo: t.anuncioTitulo,
+      userId: seg.userId,
+      nome: seg.nome,
+      papel: seg.papel,
+      origem: 'resumo_ia',
+      deteccao: a.deteccao,
+      texto: `[min ${a.minuto}] ${a.texto}`,
+    })
+  }
+  const primeira = await c.resumos.updateOne({ _id: t._id, contatoNaFalaEm: { $exists: false } }, { $set: { contatoNaFalaEm: new Date() } })
+  if (primeira.modifiedCount) {
+    const { avisarEquipe } = await import('../avisos')
+    await avisarEquipe(
+      'Contato por fora dito na aula',
+      `A transcrição do Resumo por IA de "${t.anuncioTitulo}" achou ${seg.papel === 'monitor' ? 'o monitor' : 'o aluno'} (${seg.nome}) passando contato ou combinando pagamento por fora (min ${achados[0].minuto}).`,
+      '/admin/monitorias?aba=contato',
+    )
   }
 }
 
@@ -420,6 +472,8 @@ async function resumirTarefa(t: TarefaResumo, agora: Date): Promise<boolean> {
       const notas = [...parciais].sort((a, b) => a.janela - b.janela).map((p) => `### Trecho ${p.janela + 1} de ${janelas.length}\n${p.texto}`).join('\n\n')
       resumo = await gerarResumoValido(t, config, chave, instrucaoDaReducao(ctx), notas)
     }
+    // Rede de segurança: frase com contato que o modelo deixou passar sai do resumo.
+    resumo = limparContatoDoResumo(resumo)
     // As lacunas de áudio entram no resumo mesmo que o modelo as esqueça.
     const semAudio = lacunas.map(([a, b]) => `Sem áudio gravado de ${mmss(a)} a ${mmss(b)}.`)
     resumo.lacunas = Array.from(new Set([...semAudio, ...resumo.lacunas]))

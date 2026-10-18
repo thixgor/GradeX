@@ -66,6 +66,9 @@ export type AuditAction =
   | 'monitoria_resumo_lido'
   | 'monitoria_resumo_suporte'
   | 'monitoria_resumo_reembolsado'
+  | 'monitoria_cancelamento_tardio'
+  | 'monitoria_falta_registrada'
+  | 'monitoria_revisao_cancelamento'
 
 export interface AuditLogEntry {
   action: AuditAction

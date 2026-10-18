@@ -299,6 +299,9 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('monitorias_participacoes').createIndex({ paymentOrderId: 1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ providerPaymentId: 1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ 'reembolsos.status': 1 }),
+    // Cancelamento tardio (v5): fila de liberação do valor retido (varredura 5b).
+    db.collection('monitorias_participacoes').createIndex({ 'cancelamentoTardio.liberarApos': 1 }, { sparse: true }),
+    db.collection('monitorias_participacoes').createIndex({ 'cancelamentoTardio.revisao.em': 1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ 'avaliacao.anuncioId': 1, 'avaliacao.em': -1 }, { sparse: true }),
     db.collection('monitorias_participacoes').createIndex({ tutorId: 1, 'avaliacao.nota': 1 }),
     db.collection('monitorias_bloqueios').createIndex({ tutorId: 1, inicioBloco: 1 }, { unique: true }),

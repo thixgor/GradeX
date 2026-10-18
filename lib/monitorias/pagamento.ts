@@ -42,6 +42,7 @@ import type { UsuarioMonitoria } from './servidor'
 import type { MaterialNaCompra, Participacao, Reserva } from './tipos'
 import { adicionalRevogadoNoGateway, ofertaDoResumo, registrarAdicionalPago, resumoDoPedido, type OfertaDoResumo } from './resumo/adicional'
 import type { ResumoNoPedido } from './resumo/tipos'
+import { contratoComPoliticaV5 } from './documentos/contrato'
 
 export interface RespostaCheckout {
   orderId: string
@@ -382,7 +383,7 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
   // Defesa em profundidade: o pagamento aprovado precisa cobrir o preço do
   // assento. Um valor menor (pagamento adulterado, erro de integração) não
   // confirma aula — devolve e avisa a equipe.
-  const esperado = await c.participacoes.findOne({ _id: partId } as any, { projection: { valorCentavos: 1, alunoId: 1 } })
+  const esperado = await c.participacoes.findOne({ _id: partId } as any, { projection: { valorCentavos: 1, alunoId: 1, contratoId: 1 } })
   if (!esperado) return
 
   // O pagamento é MESMO deste pedido? O MP devolve a referência que mandamos
@@ -457,6 +458,12 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
   // A comissão e o material desta contratação saem do PEDIDO pago (que o
   // servidor montou), gravados uma vez, junto com o "pago" (mesmo compare-and-set).
   const doPedido_ = condicoesDoPedido(order, esperado.valorCentavos)
+  // A política de cancelamento do assento sai do contrato que o aluno assinou
+  // (congelada aqui, junto com o "pago"): contrato v5 → política v5.
+  const contrato = esperado.contratoId && ObjectId.isValid(esperado.contratoId)
+    ? await c.contratos.findOne({ _id: new ObjectId(esperado.contratoId) } as any, { projection: { 'dados.modeloVersao': 1 } })
+    : null
+  const politica = contrato && contratoComPoliticaV5(contrato.dados?.modeloVersao) ? ('v5' as const) : undefined
   const paga = await c.participacoes.findOneAndUpdate(
     { _id: partId, status: 'aguardando_pagamento' } as any,
     {
@@ -469,6 +476,7 @@ export async function aoAprovarPagamento(order: PaymentOrder, result: ProviderOr
         taxaPercent: doPedido_.taxaPercent,
         ...(doPedido_.material ? { materialOficial: doPedido_.material } : {}),
         ...(doPedido_.resumo ? { resumoIA: doPedido_.resumo } : {}),
+        ...(politica ? { politica } : {}),
         updatedAt: agora,
       },
     },
@@ -810,62 +818,74 @@ export async function curarPagamentosDaReserva(reserva: Reserva): Promise<void> 
  * Devolve `false` se o MP não respondeu: a liberação espera a próxima varredura.
  */
 export async function conferirComGateway(reserva: Reserva): Promise<boolean> {
-  const db = await getDb()
-  const c = colecoes(db)
-  const id = idDe(reserva)
+  const c = colecoes(await getDb())
   const pagas = await c.participacoes
-    .find({ reservaId: id, status: { $in: ['paga', 'concluida'] }, providerPaymentId: { $exists: true }, conferidoNoGatewayEm: { $exists: false } } as any)
+    .find({ reservaId: idDe(reserva), status: { $in: ['paga', 'concluida'] }, providerPaymentId: { $exists: true }, conferidoNoGatewayEm: { $exists: false } } as any)
     .toArray()
-  const agora = new Date()
   for (const p of pagas) {
-    const pid = String(p.providerPaymentId)
-    let divergencia: string | null = null
-    if (pid.startsWith('manual-')) {
-      if (process.env.NODE_ENV === 'production') divergencia = 'Pagamento sem confirmação do Mercado Pago (aprovação manual).'
-    } else {
-      let r: ProviderOrder
-      try {
-        r = await getPaymentProvider().getPayment(pid)
-      } catch (err) {
-        console.warn('[monitorias] conferência com o MP indisponível', pid, err)
-        return false
-      }
-      if (r.status === 'refunded' || r.status === 'charged_back') {
-        // Devolvido/contestado direto no MP: registra pelo caminho de sempre.
-        if (p.paymentOrderId && ObjectId.isValid(p.paymentOrderId)) {
-          const { applyPaymentResult } = await import('@/lib/payments/effects')
-          await applyPaymentResult(p.paymentOrderId, r)
-        }
-        continue
-      }
-      const referencia = (r.raw as { external_reference?: unknown } | null | undefined)?.external_reference
-      if (r.status !== 'approved') divergencia = `No Mercado Pago o pagamento está "${r.status}", não aprovado.`
-      else if (p.pagoCentavos != null && r.amount != null && Math.abs(reaisParaCentavos(r.amount) - p.pagoCentavos) > 1) {
-        divergencia = `Valor no Mercado Pago (${formatarCentavos(reaisParaCentavos(r.amount))}) diferente do registrado (${formatarCentavos(p.pagoCentavos)}).`
-      } else if (referencia != null && p.paymentOrderId && String(referencia) !== p.paymentOrderId) {
-        divergencia = 'O pagamento no Mercado Pago pertence a outro pedido.'
-      }
-    }
-    if (!divergencia) {
-      // Isenção da taxa só vale com a venda do material de pé. Estornado por
-      // fora (painel do MP, suporte de materiais)? A aula volta a ter 10%.
-      if (p.taxaPercent === 0 && p.materialOficial && !(await vendaDoMaterialValida(db, p.materialOficial, p.alunoId))) {
-        const { reaplicarTaxaSemMaterial } = await import('./financeiro')
-        if (await reaplicarTaxaSemMaterial(idDe(p), 'o material vendido junto foi estornado')) {
-          await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'isencao_revogada_material_estornado', materialId: p.materialOficial.id } })
-        }
-      }
-      await c.participacoes.updateOne({ _id: p._id as any }, { $set: { conferidoNoGatewayEm: agora } })
-      continue
-    }
-    const reteve = await c.repasses.updateOne(
-      { participacaoId: idDe(p), status: 'em_garantia' },
-      { $set: { status: 'retido', retencao: { motivo: divergencia, em: agora }, updatedAt: agora } },
-    )
-    await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'divergencia_na_conferencia', detalhe: divergencia, providerPaymentId: pid } })
-    if (reteve.modifiedCount) {
-      await avisarEquipe('Repasse retido: divergência com o Mercado Pago', `"${reserva.anuncioTitulo}", assento de ${p.alunoNome}: ${divergencia}`)
-    }
+    if ((await conferirAssentoNoGateway(p, reserva)) === null) return false
   }
   return true
+}
+
+/**
+ * Confere UM assento no Mercado Pago (status, valor e referência) antes de
+ * liberar o repasse dele. `true` = conferido; `false` = divergência (repasse
+ * retido, equipe avisada); `null` = MP indisponível (tentar depois).
+ */
+export async function conferirAssentoNoGateway(p: Participacao, reserva: Pick<Reserva, 'anuncioTitulo'>): Promise<boolean | null> {
+  const db = await getDb()
+  const c = colecoes(db)
+  if (p.conferidoNoGatewayEm) return true
+  if (!p.providerPaymentId) return true
+  const agora = new Date()
+  const pid = String(p.providerPaymentId)
+  let divergencia: string | null = null
+  if (pid.startsWith('manual-')) {
+    if (process.env.NODE_ENV === 'production') divergencia = 'Pagamento sem confirmação do Mercado Pago (aprovação manual).'
+  } else {
+    let r: ProviderOrder
+    try {
+      r = await getPaymentProvider().getPayment(pid)
+    } catch (err) {
+      console.warn('[monitorias] conferência com o MP indisponível', pid, err)
+      return null
+    }
+    if (r.status === 'refunded' || r.status === 'charged_back') {
+      // Devolvido/contestado direto no MP: registra pelo caminho de sempre.
+      if (p.paymentOrderId && ObjectId.isValid(p.paymentOrderId)) {
+        const { applyPaymentResult } = await import('@/lib/payments/effects')
+        await applyPaymentResult(p.paymentOrderId, r)
+      }
+      return false
+    }
+    const referencia = (r.raw as { external_reference?: unknown } | null | undefined)?.external_reference
+    if (r.status !== 'approved') divergencia = `No Mercado Pago o pagamento está "${r.status}", não aprovado.`
+    else if (p.pagoCentavos != null && r.amount != null && Math.abs(reaisParaCentavos(r.amount) - p.pagoCentavos) > 1) {
+      divergencia = `Valor no Mercado Pago (${formatarCentavos(reaisParaCentavos(r.amount))}) diferente do registrado (${formatarCentavos(p.pagoCentavos)}).`
+    } else if (referencia != null && p.paymentOrderId && String(referencia) !== p.paymentOrderId) {
+      divergencia = 'O pagamento no Mercado Pago pertence a outro pedido.'
+    }
+  }
+  if (!divergencia) {
+    // Isenção da taxa só vale com a venda do material de pé. Estornado por
+    // fora (painel do MP, suporte de materiais)? A aula volta a ter 10%.
+    if (p.taxaPercent === 0 && p.materialOficial && !(await vendaDoMaterialValida(db, p.materialOficial, p.alunoId))) {
+      const { reaplicarTaxaSemMaterial } = await import('./financeiro')
+      if (await reaplicarTaxaSemMaterial(idDe(p), 'o material vendido junto foi estornado')) {
+        await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'isencao_revogada_material_estornado', materialId: p.materialOficial.id } })
+      }
+    }
+    await c.participacoes.updateOne({ _id: p._id as any }, { $set: { conferidoNoGatewayEm: agora } })
+    return true
+  }
+  const reteve = await c.repasses.updateOne(
+    { participacaoId: idDe(p), status: 'em_garantia' },
+    { $set: { status: 'retido', retencao: { motivo: divergencia, em: agora }, updatedAt: agora } },
+  )
+  await audit({ action: 'payment_rejected', targetUserId: p.alunoId, resourceType: 'monitoria', resourceId: idDe(p), metadata: { motivo: 'divergencia_na_conferencia', detalhe: divergencia, providerPaymentId: pid } })
+  if (reteve.modifiedCount) {
+    await avisarEquipe('Repasse retido: divergência com o Mercado Pago', `"${reserva.anuncioTitulo}", assento de ${p.alunoNome}: ${divergencia}`)
+  }
+  return false
 }

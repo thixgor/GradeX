@@ -2,10 +2,12 @@
 
 /**
  * Resumo por IA dentro da sala:
- *  - no saguão, o monitor AUTORIZA (ou não) a transcrição da própria voz — sem
- *    decidir não entra; quem comprou vê o que vai acontecer com a voz dele;
- *  - durante a aula, o selo para todo mundo ("transcrevendo a voz de quem
- *    autorizou") e, para quem é gravado, o botão de pausar a própria voz.
+ *  - monitor com os Termos v5+: a voz dele já está autorizada nos Termos (itens
+ *    5.4 a 5.7) — sem cartão no saguão e sem pausa durante a aula;
+ *  - monitor sem os Termos v5 (adicional vendido antes): no saguão ele AUTORIZA
+ *    (ou não) a transcrição da própria voz, como prometido no aditivo r1;
+ *  - durante a aula, o selo para todo mundo e, para o aluno que comprou (aula
+ *    individual), o botão de pausar a própria voz.
  */
 
 import { useState } from 'react'
@@ -20,9 +22,11 @@ import { cn } from '@/lib/utils'
 /** Texto honesto sobre gravação, para o rodapé do saguão. */
 export function textoDePrivacidade(resumo: EstadoDoResumoNaSala | null | undefined): string {
   if (!resumo?.ativo) return 'A aula não é gravada pela DomineAqui. Câmera e microfone só ficam ligados enquanto esta tela estiver aberta.'
+  const monitor = resumo.papel === 'monitor' && resumo.pelosTermos ? 'a voz do monitor' : 'a voz do monitor (se ele autorizar)'
+  const verificacao = ' A transcrição também é verificada automaticamente para combinação de contato ou pagamento por fora.'
   return resumo.individual
-    ? 'O vídeo não é gravado. Nesta aula, o Resumo por IA transcreve a voz do monitor (se ele autorizar) e a do aluno que contratou; o áudio é apagado logo depois da transcrição.'
-    : 'O vídeo não é gravado. Nesta aula, o Resumo por IA transcreve só a voz do monitor (se ele autorizar); o áudio é apagado logo depois da transcrição.'
+    ? `O vídeo não é gravado. Nesta aula, o Resumo por IA transcreve ${monitor} e a do aluno que contratou; o áudio é apagado logo depois da transcrição.${verificacao}`
+    : `O vídeo não é gravado. Nesta aula, o Resumo por IA transcreve só ${monitor}; o áudio é apagado logo depois da transcrição.${verificacao}`
 }
 
 /** Sem decidir, o monitor não entra (a decisão é dele e fica registrada). */
@@ -77,7 +81,9 @@ export function AutorizacaoDoResumo({ reservaId, resumo, onDecidido }: { reserva
       <span>
         {resumo.gravar
           ? resumo.papel === 'monitor'
-            ? 'Resumo por IA: você autorizou. A sua voz será transcrita (dá para pausar lá dentro).'
+            ? resumo.pelosTermos
+              ? 'Resumo por IA: a sua voz será transcrita nesta aula, como autorizado nos Termos do Monitor (itens 5.4 a 5.7). O vídeo nunca é gravado e o resumo leva só o conteúdo da aula.'
+              : 'Resumo por IA: você autorizou. A sua voz será transcrita (dá para pausar lá dentro).'
             : 'Resumo por IA: a sua voz e a do monitor serão transcritas para o seu resumo (dá para pausar a sua lá dentro).'
           : resumo.papel === 'monitor'
             ? 'Resumo por IA: você não autorizou a transcrição nesta aula.'
@@ -87,11 +93,12 @@ export function AutorizacaoDoResumo({ reservaId, resumo, onDecidido }: { reserva
   )
 }
 
-/** O selo durante a aula. Quem é gravado pode pausar a própria voz. */
+/** O selo durante a aula. Quem é gravado pode pausar a própria voz — menos o monitor autorizado pelos Termos. */
 export function SeloDoResumo({ resumo, gravacao, onPausar, className }: { resumo: EstadoDoResumoNaSala | null; gravacao: EstadoDoGravador | null; onPausar: (sim: boolean) => void; className?: string }) {
   if (!resumo?.ativo) return null
   const gravando = !!gravacao && resumo.gravar
   const pausado = !!gravacao?.pausado
+  const podePausar = gravando && !(resumo.papel === 'monitor' && resumo.pelosTermos)
   const texto = gravando
     ? pausado
       ? 'Sua voz está pausada no resumo'
@@ -110,7 +117,7 @@ export function SeloDoResumo({ resumo, gravacao, onPausar, className }: { resumo
       <Brain className="h-3.5 w-3.5 opacity-80" aria-hidden />
       <span className="max-w-[46vw] truncate">{texto}</span>
       {gravacao?.pendentes ? <span className="rounded-full bg-white/15 px-1.5 text-[10px]">{gravacao.pendentes} na fila</span> : null}
-      {gravando ? (
+      {podePausar ? (
         <button
           type="button"
           onClick={() => onPausar(!pausado)}

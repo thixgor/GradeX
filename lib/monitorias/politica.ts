@@ -1,6 +1,25 @@
 /**
  * Política de cancelamento e reembolso — função pura, testada.
  *
+ * Duas políticas convivem, escolhidas POR ASSENTO pela versão do contrato que
+ * o aluno assinou (`Participacao.politica`, congelada na aprovação do
+ * pagamento): quem assinou antes segue a regra antiga, sem mudança.
+ *
+ * POLÍTICA v5 (contrato 2026.10-v5 em diante):
+ *
+ * | Quem cancela | Quando                       | Resultado                                         |
+ * |--------------|------------------------------|---------------------------------------------------|
+ * | Aluno        | ≥ 24h antes                  | 100% (inclui o arrependimento de 7 dias)          |
+ * | Aluno        | < 24h e ≥ 2h antes           | 50% do valor da aula de volta; 50% ao monitor     |
+ * | Aluno        | < 2h antes, ou falta         | 0% de volta; a aula conta como prestada           |
+ * | Monitor      | a qualquer tempo             | 100% para todos + 1 strike (como antes)           |
+ *
+ * Arrependimento (CDC art. 49) só até 24h antes: a aula é serviço com data e
+ * horário reservados a pedido do aluno. PONTO SENSÍVEL — o CDC é de ordem
+ * pública; a decisão foi do produto e deve ser revisada por advogado.
+ *
+ * POLÍTICA LEGADA (contratos até 2026.10-v4):
+ *
  * | Quem cancela              | Quando                                   | Resultado                             |
  * |---------------------------|------------------------------------------|---------------------------------------|
  * | Aluno                     | até 7 dias após pagar, antes da aula     | 100% (direito de arrependimento)      |
@@ -19,9 +38,20 @@
  * reembolso automático. Cancela sexta 20h → faltam 23h → vira pedido ao suporte.
  */
 
+import { percentualGravado } from './comissao'
+import { dividirValor } from './dinheiro'
 import type { StatusReserva } from './tipos'
 
+/** Política congelada no assento: 'v5' ou ausente (legado). */
+export type PoliticaDoAssento = 'v5' | undefined
+
 export const ANTECEDENCIA_REEMBOLSO_HORAS = 24
+/** v5: abaixo disto (antes do início) o aluno que cancela não recebe nada da aula. */
+export const HORAS_SEM_REEMBOLSO = 2
+/** v5: entre 24h e 2h, quanto do valor da aula volta ao aluno. */
+export const PCT_DEVOLVIDO_TARDIO = 50
+/** Tolerância de atraso (contrato, cláusula 2.3): passou disso sem aviso, é falta. */
+export const TOLERANCIA_FALTA_MIN = 15
 export const DIAS_ARREPENDIMENTO = 7
 export const GARANTIA_HORAS = 48
 export const STRIKES_PARA_SUSPENDER = 3
@@ -31,6 +61,8 @@ export type DecisaoCancelamento =
   | { tipo: 'sem_pagamento' }
   | { tipo: 'reembolso_total'; arrependimento?: boolean }
   | { tipo: 'suporte' }
+  /** v5: devolve `pctDevolvido`% do valor da aula (50 ou 0); o resto fica com o monitor. */
+  | { tipo: 'reembolso_parcial'; pctDevolvido: number; horasAntes: number }
   | { tipo: 'proibido'; motivo: string }
 
 export function decidirCancelamento(input: {
@@ -41,6 +73,8 @@ export function decidirCancelamento(input: {
   haPagamento: boolean
   /** Quando o aluno pagou (o mais antigo, num grupo). Conta o prazo de arrependimento. */
   pagoEm?: Date
+  /** Política do assento (congelada pelo contrato). Ausente = legado. */
+  politica?: PoliticaDoAssento
 }): DecisaoCancelamento {
   const { ator, status, inicio, agora, haPagamento, pagoEm } = input
   const cancelaveis: StatusReserva[] = [
@@ -58,9 +92,46 @@ export function decidirCancelamento(input: {
   }
   if (!haPagamento) return { tipo: 'sem_pagamento' }
   if (ator === 'monitor') return { tipo: 'reembolso_total' }
+  if (input.politica === 'v5') {
+    const horas = inicio ? (inicio.getTime() - agora.getTime()) / 3_600_000 : Infinity
+    if (horas >= ANTECEDENCIA_REEMBOLSO_HORAS) return { tipo: 'reembolso_total', arrependimento: dentroDoArrependimento(pagoEm, agora) }
+    return { tipo: 'reembolso_parcial', pctDevolvido: horas >= HORAS_SEM_REEMBOLSO ? PCT_DEVOLVIDO_TARDIO : 0, horasAntes: horas }
+  }
   if (dentroDoArrependimento(pagoEm, agora)) return { tipo: 'reembolso_total', arrependimento: true }
   const horas = inicio ? (inicio.getTime() - agora.getTime()) / 3_600_000 : Infinity
   return horas >= ANTECEDENCIA_REEMBOLSO_HORAS ? { tipo: 'reembolso_total' } : { tipo: 'suporte' }
+}
+
+/**
+ * Quanto volta e quanto fica num cancelamento tardio (v5). Só o valor da AULA
+ * entra na conta (material e Resumo têm regra própria). O que fica é do
+ * monitor, menos a taxa gravada no assento (10%, ou 0% com material).
+ *
+ * Ex.: aula de R$ 100, 10% de taxa, 50% de volta → R$ 50 ao aluno, R$ 45 ao
+ * monitor, R$ 5 à plataforma. Com 0% de volta → R$ 90 ao monitor.
+ */
+export function planoDaMulta(assento: { valorCentavos: number; taxaPercent?: number | null }, pctDevolvido: number): {
+  devolvidoCentavos: number
+  retidoCentavos: number
+  taxaCentavos: number
+  liquidoMonitorCentavos: number
+} {
+  const valor = Math.max(0, Math.round(assento.valorCentavos))
+  const devolvido = Math.round((valor * Math.min(100, Math.max(0, pctDevolvido))) / 100)
+  const retido = valor - devolvido
+  const divisao = dividirValor(retido, percentualGravado(assento.taxaPercent))
+  return { devolvidoCentavos: devolvido, retidoCentavos: retido, taxaCentavos: divisao.taxaPlataformaCentavos, liquidoMonitorCentavos: divisao.liquidoTutorCentavos }
+}
+
+/**
+ * Prazos que a tela mostra antes de pagar e na reserva (v5): até quando o
+ * cancelamento devolve tudo, e até quando devolve metade.
+ */
+export function prazosDoCancelamento(inicio: Date): { integralAte: Date; metadeAte: Date } {
+  return {
+    integralAte: new Date(inicio.getTime() - ANTECEDENCIA_REEMBOLSO_HORAS * 3_600_000),
+    metadeAte: new Date(inicio.getTime() - HORAS_SEM_REEMBOLSO * 3_600_000),
+  }
 }
 
 /** Ainda dentro dos 7 dias do art. 49 do CDC (contados do pagamento)? */

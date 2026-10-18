@@ -17,8 +17,9 @@ import { abrirEnvioDeArquivo, apagarArquivo, chaveGeminiDoResumo, ErroGemini } f
 import { colecoes, idDe } from '../db'
 import { ErroMonitoria } from '../reservas'
 import type { Reserva } from '../tipos'
+import { autorizacaoPelosTermos } from './autorizacao'
 import { configDoResumo } from './config'
-import { AUDIO_MAX_SEGMENTO_MS, BYTES_MAX_SEGMENTO, estimarCustoUsd, VERSAO_ADITIVO_RESUMO, vozTranscrita } from './regras'
+import { AUDIO_MAX_SEGMENTO_MS, BYTES_MAX_SEGMENTO, estimarCustoUsd, prefixoDoTrecho, VERSAO_ADITIVO_RESUMO, vozTranscrita } from './regras'
 import type { EstadoDoResumo, EstadoDoResumoNaSala, ResumoDosTrechos, SegmentoDeAudio, TarefaResumo } from './tipos'
 
 export type { EstadoDoResumoNaSala }
@@ -126,21 +127,38 @@ export async function estadoDoResumoNaSala(reserva: Reserva, userId: string): Pr
   const voz = t.vozes?.[userId]
   const comprou = papel === 'aluno' ? await comprouEAindaVale(id, userId) : false
   const transcrita = vozTranscrita({ papel, individual: t.individual, comprou }) && (papel === 'monitor' || !!voz)
-  const consentimento = papel === 'monitor' ? (voz?.consentimento ? (voz.consentimento.aceito ? 'aceito' : 'recusado') : 'pendente') : null
+  let consentimento: EstadoDoResumoNaSala['consentimento'] = null
+  let pelosTermos = false
+  if (papel === 'monitor') {
+    let decisao = voz?.consentimento
+    if (!decisao) {
+      // Termos v5+: a autorização já está dada. Grava uma vez na tarefa qual base valeu nesta aula.
+      const termos = await autorizacaoPelosTermos(userId)
+      if (termos) {
+        decisao = { aceito: true, em: new Date(), versao: termos.versao, via: 'termos' }
+        await c.resumos.updateOne({ _id: id, [`vozes.${userId}.consentimento`]: { $exists: false } } as any, { $set: { [`vozes.${userId}.consentimento`]: decisao } })
+      }
+    }
+    consentimento = decisao ? (decisao.aceito ? 'aceito' : 'recusado') : 'pendente'
+    pelosTermos = decisao?.via === 'termos'
+  }
   const gravar = transcrita && (papel === 'aluno' || consentimento === 'aceito')
   const ultimo = gravar
     ? await c.resumosSegmentos.find({ reservaId: id, userId }, { projection: { seq: 1 } }).sort({ seq: -1 }).limit(1).toArray()
     : []
-  return { ativo: true, gravar, papel, individual: t.individual, consentimento, proximoSeq: ultimo.length ? ultimo[0].seq + 1 : 0, versao: VERSAO_ADITIVO_RESUMO }
+  return { ativo: true, gravar, papel, individual: t.individual, consentimento, ...(pelosTermos ? { pelosTermos } : {}), proximoSeq: ultimo.length ? ultimo[0].seq + 1 : 0, versao: VERSAO_ADITIVO_RESUMO }
 }
 
 /**
- * Decisão do monitor sobre a voz dele. Recusar é definitivo: os adicionais
- * ainda não entregues são devolvidos (decisão da DomineAqui: o aluno não paga
- * por um resumo que não vai existir) e a tarefa é cancelada.
+ * Decisão do monitor sobre a voz dele (fluxo antigo, monitor sem os Termos
+ * v5). Recusar é definitivo: os adicionais ainda não entregues são devolvidos
+ * (o aluno não paga por um resumo que não vai existir) e a tarefa é cancelada.
  */
 export async function registrarConsentimento(reserva: Reserva, userId: string, aceito: boolean, ip: string): Promise<EstadoDoResumoNaSala | null> {
   if (reserva.tutorUserId !== userId) throw new ErroMonitoria(403, 'Só o monitor autoriza a transcrição da própria voz.')
+  if (!aceito && (await autorizacaoPelosTermos(userId))) {
+    throw new ErroMonitoria(409, 'A transcrição da sua voz nas aulas com Resumo por IA já está autorizada nos Termos do Monitor (itens 5.4 a 5.7).')
+  }
   const c = await cols()
   const id = idDe(reserva)
   const agora = new Date()
@@ -240,8 +258,14 @@ export async function abrirEnvioDeTrecho(
     .aggregate<{ total: number }>([{ $match: { reservaId: id, userId, seq: { $ne: dados.seq }, status: { $ne: 'descartado' } } }, { $group: { _id: null, total: { $sum: '$duracaoAudioMs' } } }])
     .toArray()
   if (total + dados.duracaoAudioMs > (t.duracaoMin + 30) * 60_000) throw new ErroMonitoria(409, 'Limite de áudio desta aula atingido.')
-  const nonce = randomBytes(6).toString('hex')
-  const nomeDeExibicao = `res-${id}-${userId}-${dados.seq}-${nonce}`
+  // O mesmo trecho pedido de novo enquanto o primeiro envio ainda corre (a sala
+  // fechando e a página da reserva abrindo ao mesmo tempo) mantém o MESMO nome:
+  // trocar o nome aqui deixava o arquivo já enviado "não conferindo com o trecho".
+  const nonce =
+    existente?.status === 'enviando' && existente.nomeDeExibicao?.startsWith(prefixoDoTrecho(id, userId, dados.seq))
+      ? existente.nomeDeExibicao.slice(prefixoDoTrecho(id, userId, dados.seq).length)
+      : randomBytes(6).toString('hex')
+  const nomeDeExibicao = `${prefixoDoTrecho(id, userId, dados.seq)}${nonce}`
   const seg: Omit<SegmentoDeAudio, '_id' | 'createdAt'> = {
     reservaId: id,
     userId,

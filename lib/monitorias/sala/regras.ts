@@ -560,3 +560,94 @@ export function resumirPresenca(registro: Array<{ pid: string; papel: PapelNaSal
   }
   return resumo.sort((a, b) => (a.papel === b.papel ? a.primeiraEntrada.getTime() - b.primeiraEntrada.getTime() : a.papel === 'monitor' ? -1 : 1))
 }
+
+// ─── Falta (aluno ou monitor) pela presença na sala ────────────────────
+
+/** Tolerância de atraso (contrato 2.3): quanto o monitor espera e até quando o aluno pode chegar. */
+export const TOLERANCIA_FALTA_MS = 15 * 60_000
+/**
+ * Presença mínima do aluno (contrato 4.5, v5): entrar e sair em seguida não
+ * conta como ter vindo à aula. Abaixo disto, com o monitor tendo esperado, é falta.
+ */
+export const PRESENCA_MINIMA_ALUNO_MS = 5 * 60_000
+/** Buracos menores que isto entre duas conexões da mesma pessoa contam como presença (pulso, recarga da aba). */
+const EMENDA_MS = 2 * 60_000
+
+type EntradaDoRegistro = { pid: string; papel: PapelNaSala; entrou: Date | string; ate: Date | string; saiu?: Date | string }
+
+export interface PresencaDaPessoa {
+  /** Primeira conexão que toca a janela da aula. */
+  entrouEm: Date | null
+  /** Minutos conectado: o monitor conta de [início, fim]; o aluno, de [início − 15 min, fim]. */
+  minutos: number
+}
+
+export interface PresencaNaJanela {
+  monitor: PresencaDaPessoa & {
+    /** Chegou até o fim da tolerância e ficou pelo menos 15 min na aula: esperou o aluno. */
+    esperou: boolean
+  }
+  /**
+   * Por pid de aluno (só os pedidos). `entrou`: qualquer conexão na janela (o
+   * botão do monitor não vale contra quem entrou). `compareceu`: ficou pelo
+   * menos 5 min (o que a varredura usa para registrar a falta no fim da aula).
+   */
+  alunos: Record<string, PresencaDaPessoa & { entrou: boolean; compareceu: boolean }>
+}
+
+function trechosDe(entradas: EntradaDoRegistro[], de: number, ate: number): Array<[number, number]> {
+  const brutos = entradas
+    .map((e) => [new Date(e.entrou).getTime(), new Date(e.saiu ?? e.ate).getTime()] as [number, number])
+    .filter(([a, b]) => Number.isFinite(a) && Number.isFinite(b) && b >= a && b >= de && a <= ate)
+    .sort((x, y) => x[0] - y[0])
+  const unidos: Array<[number, number]> = []
+  for (const [a, b] of brutos) {
+    const ultimo = unidos[unidos.length - 1]
+    if (ultimo && a <= ultimo[1] + EMENDA_MS) ultimo[1] = Math.max(ultimo[1], b)
+    else unidos.push([a, b])
+  }
+  return unidos
+}
+
+function minutosEntre(trechos: Array<[number, number]>, de: number, ate: number): number {
+  const ms = trechos.reduce((t, [a, b]) => t + Math.max(0, Math.min(b, ate) - Math.max(a, de)), 0)
+  return Math.floor(ms / 60_000)
+}
+
+/**
+ * Quem esteve na sala da plataforma na janela da aula, pelo registro mínimo
+ * (`monitorias_salas.registro`). Puro: a varredura e o botão "Aluno não
+ * compareceu" decidem com isto.
+ *
+ *  - Só conta o que toca [início − 15 min, fim]: entradas de antes de um
+ *    reagendamento ficam de fora sozinhas.
+ *  - Monitor "esperou": chegou até início + 15 min e somou ≥ 15 min na aula
+ *    (contrato 2.3 e Termos 7.3).
+ *  - Aluno "compareceu": somou ≥ 5 min na janela (entrar e sair em seguida não
+ *    desfaz a falta); "entrou": qualquer conexão.
+ *  - O tempo é somado com as reconexões emendadas: rede ruim não vira falta.
+ *
+ * `ate` é o fim da conta (o fim da aula, ou "agora" para o botão no meio dela).
+ */
+export function presencaNaJanela(
+  registro: EntradaDoRegistro[],
+  janela: { inicio: Date; fim: Date; ate?: Date },
+  pidsDosAlunos: string[],
+): PresencaNaJanela {
+  const inicio = janela.inicio.getTime()
+  const fim = Math.min(janela.fim.getTime(), (janela.ate ?? janela.fim).getTime())
+  const abre = inicio - TOLERANCIA_FALTA_MS
+  const lista = registro || []
+  const pessoa = (entradas: EntradaDoRegistro[], contaDe: number): PresencaDaPessoa => {
+    const trechos = trechosDe(entradas, abre, fim)
+    return { entrouEm: trechos.length ? new Date(trechos[0][0]) : null, minutos: minutosEntre(trechos, contaDe, fim) }
+  }
+  const monitor = pessoa(lista.filter((e) => e.papel === 'monitor'), inicio)
+  const esperou = !!monitor.entrouEm && monitor.entrouEm.getTime() <= inicio + TOLERANCIA_FALTA_MS && monitor.minutos >= TOLERANCIA_FALTA_MS / 60_000
+  const alunos: PresencaNaJanela['alunos'] = {}
+  for (const pid of pidsDosAlunos) {
+    const p = pessoa(lista.filter((e) => e.papel === 'aluno' && e.pid === pid), abre)
+    alunos[pid] = { ...p, entrou: !!p.entrouEm, compareceu: p.minutos >= PRESENCA_MINIMA_ALUNO_MS / 60_000 }
+  }
+  return { monitor: { ...monitor, esperou }, alunos }
+}

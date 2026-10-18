@@ -42,6 +42,8 @@ export async function GET(request: NextRequest) {
             valorCentavos: a.valorCentavos,
             pagoCentavos: a.pagoCentavos ?? null,
             reembolsos: a.reembolsos,
+            falta: a.falta || null,
+            cancelamentoTardio: a.cancelamentoTardio || null,
           })),
       })),
     })

@@ -19,18 +19,18 @@ import { precoPorPessoaCentavos } from './precos'
 import { blocosDaAula, cabeNaDisponibilidade, DIAS_MAXIMOS_DE_ANTECEDENCIA, duracoesPermitidas, formatarDuracao, inicioNaGrade } from './agenda'
 import { colecoes, ehDuplicada, idDe } from './db'
 import { negociavel, podeTransitar, STATUS_EM_ABERTO } from './estado'
-import { decidirCancelamento, contadoresDaReserva, planoDeExclusao, prazoDePagamento, regraDeAlterarHorario, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
+import { decidirCancelamento, contadoresDaReserva, liberacaoDoValor, planoDaMulta, planoDeExclusao, prazoDePagamento, regraDeAlterarHorario, STRIKES_PARA_SUSPENDER, strikesRecentes, podeReportar } from './politica'
 import { emitirContrato, nomeCivil, rescindirContratosDaReserva } from './contratos'
 import { avisar } from './avisos'
 import { reembolsarReserva, reembolsarParticipacao } from './reembolso'
 import { VERSAO_OFERTA } from './documentos/contrato'
 import { VERSAO_TERMOS } from './documentos/termos'
 import { configDaSala } from './sala/config'
-import { vagasMaximasPelaSala } from './sala/regras'
+import { presencaNaJanela, TOLERANCIA_FALTA_MS, vagasMaximasPelaSala } from './sala/regras'
 import { revogarCredencialTurn } from './sala/turn'
 import { tirarDaSala } from './sala/expulsar'
 import type { UsuarioMonitoria } from './servidor'
-import type { Anuncio, Bloqueio, Contrato, Participacao, Proposta, Reserva, StatusReserva, Tutor } from './tipos'
+import type { Anuncio, Bloqueio, CancelamentoTardio, Contrato, FaltaDoAluno, Participacao, Proposta, Reserva, StatusReserva, Tutor } from './tipos'
 import type { Ticket } from '@/lib/types'
 import { mensagemDoSistema as mensagemDoSistemaDoTicket, novaMensagem, protocoloDoTicket } from '@/lib/tickets'
 
@@ -948,7 +948,7 @@ export async function cancelar(input: {
   ator: UsuarioMonitoria
   papel: Papel
   motivo: string
-}): Promise<{ resultado: 'cancelada' | 'reembolsada' | 'reembolso_em_andamento' | 'suporte'; ticketId?: string }> {
+}): Promise<{ resultado: 'cancelada' | 'reembolsada' | 'reembolso_em_andamento' | 'suporte'; ticketId?: string; multa?: MultaAplicada }> {
   const { reserva, papel, motivo } = input
   const c = await cols()
   const id = idDe(reserva)
@@ -987,8 +987,15 @@ export async function cancelar(input: {
     if (part.cancelamentoPedidoEm) {
       throw new ErroMonitoria(409, 'Seu pedido de cancelamento já está com o suporte. Você recebe a decisão por e-mail.')
     }
-    const decisao = decidirCancelamento({ ator: 'aluno', status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: part.status === 'paga', pagoEm: part.pagoEm })
+    const decisao = decidirCancelamento({ ator: 'aluno', status: reserva.status, inicio: reserva.inicio, agora: new Date(), haPagamento: part.status === 'paga', pagoEm: part.pagoEm, politica: part.politica })
     if (decisao.tipo === 'proibido') throw new ErroMonitoria(409, decisao.motivo)
+    if (decisao.tipo === 'reembolso_parcial') {
+      // v5: sai do grupo com a multa da tabela; os outros assentos seguem.
+      const multa = await cancelarComMulta(c, reserva, part, decisao, motivo, atorId)
+      await depoisDeSairDoGrupo(c, reserva, part.alunoNome, motivo)
+      await avisarMulta(reserva, part, multa)
+      return { resultado: 'cancelada', multa }
+    }
     if (decisao.tipo === 'suporte') {
       // Um pedido por assento (marca atômica) — e o repasse dele fica retido até a decisão.
       const marcou = await c.participacoes.updateOne(
@@ -1022,7 +1029,7 @@ export async function cancelar(input: {
   }
 
   const pagas = await c.participacoes
-    .find({ reservaId: id, status: { $in: ['paga', 'reembolso_processando'] } }, { projection: { pagoEm: 1 } })
+    .find({ reservaId: id, status: { $in: ['paga', 'reembolso_processando'] } })
     .toArray()
   const ator = papel === 'monitor' ? 'monitor' : 'aluno'
   const primeiroPagamento = pagas.map((x) => x.pagoEm).filter(Boolean).sort((a, b) => +a! - +b!)[0]
@@ -1033,8 +1040,32 @@ export async function cancelar(input: {
     agora: new Date(),
     haPagamento: pagas.length > 0,
     pagoEm: primeiroPagamento,
+    // v5 só se todo assento pago assinou o contrato v5 (na individual há um só).
+    politica: pagas.length > 0 && pagas.every((x) => x.politica === 'v5') ? 'v5' : undefined,
   })
   if (decisao.tipo === 'proibido') throw new ErroMonitoria(409, decisao.motivo)
+
+  if (decisao.tipo === 'reembolso_parcial') {
+    // v5, cancelamento tardio do aluno: a aula acaba, o horário volta à agenda
+    // do monitor (pode revender) e cada assento pago sai com a multa da tabela.
+    await transitar(c, reserva, 'cancelada_aluno', { motivoCancelamento: motivo, canceladaPor: atorId })
+    await Promise.all([
+      tirarDaSala(id),
+      liberarBlocos(id),
+      rescindirContratosDaReserva(id),
+      c.cotasGratis.deleteMany({ reservaId: id }),
+      c.participacoes.updateMany(
+        { reservaId: id, status: { $in: ['aguardando_assinatura', 'aguardando_pagamento', 'gratis'] } },
+        { $set: { status: 'cancelada', updatedAt: new Date() } },
+      ),
+    ])
+    let multa: MultaAplicada | undefined
+    for (const p of pagas.filter((x) => x.status === 'paga')) {
+      multa = await cancelarComMulta(c, reserva, p, decisao, motivo, atorId)
+      await avisarMulta(reserva, p, multa)
+    }
+    return { resultado: 'cancelada', multa }
+  }
 
   if (decisao.tipo === 'suporte') {
     const atualizada = await transitar(c, reserva, 'em_disputa', {
@@ -1470,6 +1501,241 @@ async function concluirSaida(
   return { resultado: r.ok ? 'reembolsada' : 'reembolso_em_andamento' }
 }
 
+export interface MultaAplicada {
+  pctDevolvido: number
+  horasAntes: number
+  devolvidoCentavos: number
+  retidoCentavos: number
+  liquidoMonitorCentavos: number
+  liberarApos: Date
+}
+
+/**
+ * Cancelamento tardio de UM assento pago (política v5): devolve `pctDevolvido`%
+ * do valor da aula (estorno parcial idempotente, que também reduz o repasse) e
+ * o resto fica com o monitor, liberado depois da garantia (fim + 48h) se não
+ * houver pedido de revisão. O Resumo por IA do assento volta inteiro; o
+ * material já entregue fica. O assento termina "cancelada" com a marca
+ * `cancelamentoTardio` — inclusive pela retomada da varredura.
+ */
+async function cancelarComMulta(
+  c: Colecoes,
+  reserva: Reserva,
+  part: Participacao,
+  decisao: { pctDevolvido: number; horasAntes: number },
+  motivo: string,
+  atorId: string,
+): Promise<MultaAplicada> {
+  const agora = new Date()
+  const plano = planoDaMulta(part, decisao.pctDevolvido)
+  const liberarApos = liberacaoDoValor(reserva.fim || agora)
+  const horasAntes = Math.max(0, Math.round(decisao.horasAntes * 10) / 10)
+  const marca: CancelamentoTardio = {
+    em: agora,
+    horasAntes,
+    pctDevolvido: decisao.pctDevolvido,
+    devolvidoCentavos: plano.devolvidoCentavos,
+    retidoCentavos: plano.retidoCentavos,
+    liberarApos,
+  }
+  const marcou = await c.participacoes.updateOne(
+    { _id: part._id as any, status: 'paga', cancelamentoTardio: { $exists: false } } as any,
+    { $set: { cancelamentoTardio: marca, updatedAt: agora }, $unset: { cancelamentoPedidoEm: '' } } as any,
+  )
+  if (!marcou.modifiedCount) throw new ErroMonitoria(409, 'Seu assento mudou agora. Recarregue a página.')
+  const partId = idDe(part)
+  if (part.resumoIA) {
+    const { reembolsarAdicional } = await import('./resumo/adicional')
+    await reembolsarAdicional({ participacaoId: partId, motivo: 'Aula cancelada pelo aluno', por: atorId }).catch((e) => console.error('[monitorias] Resumo do assento cancelado', partId, e))
+  }
+  if (plano.devolvidoCentavos > 0) {
+    // Falhou no MP? A intenção ficou gravada ("reembolso_processando") e a varredura conclui; o assento chega a "cancelada".
+    await reembolsarParticipacao({
+      participacaoId: partId,
+      valorBaseCentavos: plano.devolvidoCentavos,
+      motivo: `Cancelamento com ${horasAntes.toLocaleString('pt-BR')} h de antecedência (${decisao.pctDevolvido}% da aula devolvidos): ${motivo}`,
+      por: atorId,
+      statusDepois: 'cancelada',
+    })
+  } else {
+    await c.participacoes.updateOne({ _id: part._id as any, status: 'paga' } as any, { $set: { status: 'cancelada', updatedAt: new Date() } })
+  }
+  await tirarDaSala(idDe(reserva), [part.alunoId])
+  await audit({
+    action: 'monitoria_cancelamento_tardio',
+    actorUserId: atorId,
+    targetUserId: reserva.tutorUserId,
+    resourceType: 'monitoria',
+    resourceId: partId,
+    metadata: { reservaId: idDe(reserva), horasAntes, pctDevolvido: decisao.pctDevolvido, devolvidoCentavos: plano.devolvidoCentavos, retidoCentavos: plano.retidoCentavos },
+  })
+  return { ...marca, liquidoMonitorCentavos: plano.liquidoMonitorCentavos }
+}
+
+/** Avisos do cancelamento tardio: ao monitor (quanto recebe e quando) e ao aluno (quanto volta). */
+async function avisarMulta(reserva: Reserva, part: Participacao, multa: MultaAplicada): Promise<void> {
+  const id = idDe(reserva)
+  const quando = formatarEmBrasilia(multa.liberarApos, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+  const antecedencia = `${multa.horasAntes.toLocaleString('pt-BR')} h`
+  await avisar([
+    {
+      userId: reserva.tutorUserId,
+      titulo: 'Cancelamento em cima da hora: você recebe pelo horário',
+      mensagem: `${part.alunoNome.split(' ')[0]} cancelou "${reserva.anuncioTitulo}" com ${antecedencia} de antecedência. Pela política, você recebe ${formatarCentavos(multa.liquidoMonitorCentavos)}, liberado em ${quando} (Brasília) se não houver revisão. O horário voltou para a sua agenda.`,
+      url: urlReserva(id),
+      email: {
+        assunto: `Cancelamento com ${antecedencia} de antecedência: ${reserva.anuncioTitulo}`,
+        paragrafos: [
+          `${part.alunoNome.split(' ')[0]} cancelou a monitoria "${reserva.anuncioTitulo}" com ${antecedencia} de antecedência.`,
+          `Pela política de cancelamento do contrato, ${100 - multa.pctDevolvido}% do valor da aula fica com você, pelo horário reservado e pela preparação. O horário voltou para a sua agenda.`,
+        ],
+        linhas: [
+          ['Você recebe', formatarCentavos(multa.liquidoMonitorCentavos)],
+          ['Liberado em', `${quando} (Brasília), se não houver revisão`],
+        ],
+        botao: 'Ver detalhes',
+      },
+    },
+    {
+      userId: part.alunoId,
+      titulo: 'Monitoria cancelada',
+      mensagem:
+        multa.devolvidoCentavos > 0
+          ? `Cancelamos "${reserva.anuncioTitulo}". Com ${antecedencia} de antecedência, ${formatarCentavos(multa.devolvidoCentavos)} (${multa.pctDevolvido}% do valor da aula) voltam pelo Mercado Pago; o restante remunera o monitor pelo horário reservado.`
+          : `Cancelamos "${reserva.anuncioTitulo}". Com menos de 2 h de antecedência, o valor da aula não é devolvido (contrato, cláusula 4.4). Se houve motivo de força maior, peça revisão na página da reserva.`,
+      url: urlReserva(id),
+    },
+  ])
+}
+
+/**
+ * Força maior num cancelamento tardio (contrato 4.6): o aluno pede revisão até a
+ * liberação do valor ao monitor. O pedido abre ticket e trava a liberação; sem
+ * decisão do suporte, nada sai (a varredura só libera sem revisão ou com "manter").
+ */
+export async function pedirRevisaoDoCancelamento(input: { reserva: Reserva; autor: UsuarioMonitoria; motivo: string }): Promise<string> {
+  const c = await cols()
+  const part = await c.participacoes.findOne({ reservaId: idDe(input.reserva), alunoId: String(input.autor._id) })
+  const tardio = part?.cancelamentoTardio
+  if (!part || !tardio) throw new ErroMonitoria(404, 'Não há cancelamento com multa no seu assento.')
+  if (tardio.revisao) throw new ErroMonitoria(409, 'Você já pediu revisão deste cancelamento. A resposta do suporte chega pelo ticket.')
+  const agora = new Date()
+  if (tardio.liberadoEm || agora >= new Date(tardio.liberarApos)) throw new ErroMonitoria(409, 'O prazo para pedir revisão terminou (48 horas depois do horário da aula).')
+  const partId = idDe(part)
+  const revisao = { em: agora, motivo: input.motivo }
+  const marcou = await c.participacoes.updateOne(
+    { _id: part._id as any, 'cancelamentoTardio.revisao': { $exists: false }, 'cancelamentoTardio.liberadoEm': { $exists: false } } as any,
+    { $set: { 'cancelamentoTardio.revisao': revisao, updatedAt: agora } } as any,
+  )
+  if (!marcou.modifiedCount) throw new ErroMonitoria(409, 'Seu assento mudou agora. Recarregue a página.')
+  const ticketId = await abrirTicket({
+    reserva: input.reserva,
+    autor: input.autor,
+    motivo: `Pedido de revisão de cancelamento tardio (força maior). Cancelado com ${tardio.horasAntes.toLocaleString('pt-BR')} h de antecedência; devolvidos ${formatarCentavos(tardio.devolvidoCentavos)}, retidos ${formatarCentavos(tardio.retidoCentavos)}. Relato: ${input.motivo}`,
+    participacaoId: partId,
+  })
+  await c.participacoes.updateOne({ _id: part._id as any }, { $set: { 'cancelamentoTardio.revisao.ticketId': ticketId } } as any)
+  await audit({
+    action: 'monitoria_revisao_cancelamento',
+    actorUserId: String(input.autor._id),
+    targetUserId: input.reserva.tutorUserId,
+    resourceType: 'monitoria',
+    resourceId: partId,
+    metadata: { etapa: 'pedido', reservaId: idDe(input.reserva), ticketId, retidoCentavos: tardio.retidoCentavos },
+  })
+  await avisar([
+    {
+      userId: input.reserva.tutorUserId,
+      titulo: 'Aluno pediu revisão de um cancelamento',
+      mensagem: `${part.alunoNome.split(' ')[0]} pediu revisão por força maior do cancelamento de "${input.reserva.anuncioTitulo}". O valor retido fica em garantia até o suporte decidir.`,
+      url: urlReserva(idDe(input.reserva)),
+    },
+  ])
+  return ticketId
+}
+
+/**
+ * Decisão do suporte sobre o pedido de revisão:
+ *  - manter: a multa vale; a varredura libera o retido ao monitor (depois da garantia);
+ *  - devolver: força maior aceita, como um cancelamento no prazo — reembolso
+ *    integral do que ficou (estorno do repasse junto). Se o MP falhar antes de
+ *    registrar o pedido, a mesma decisão pode ser repetida.
+ */
+export async function decidirRevisaoDoCancelamento(input: { participacaoId: string; decisao: 'manter' | 'devolver'; nota: string; adminId: string }): Promise<{ ok: boolean; erro?: string }> {
+  const c = await cols()
+  if (!ObjectId.isValid(input.participacaoId)) throw new ErroMonitoria(400, 'Assento inválido.')
+  const _id = new ObjectId(input.participacaoId)
+  const part = await c.participacoes.findOne({ _id } as any)
+  const revisao = part?.cancelamentoTardio?.revisao
+  if (!part || !revisao) throw new ErroMonitoria(404, 'Não há pedido de revisão neste assento.')
+  const agora = new Date()
+  const pendente = { 'cancelamentoTardio.revisao.decididaEm': { $exists: false } }
+  // "Devolver" que não chegou a registrar o reembolso (MP fora) pode ser repetido.
+  const repetir = { 'cancelamentoTardio.revisao.decisao': 'devolver', status: 'cancelada' }
+  const marcou = await c.participacoes.updateOne(
+    { _id, ...(input.decisao === 'devolver' ? { $or: [pendente, repetir] } : pendente) } as any,
+    {
+      $set: {
+        'cancelamentoTardio.revisao.decididaEm': agora,
+        'cancelamentoTardio.revisao.decisao': input.decisao,
+        'cancelamentoTardio.revisao.por': input.adminId,
+        'cancelamentoTardio.revisao.nota': input.nota,
+        updatedAt: agora,
+      },
+    } as any,
+  )
+  if (!marcou.modifiedCount) throw new ErroMonitoria(409, 'Este pedido já foi decidido.')
+  let resultado: { ok: boolean; erro?: string } = { ok: true }
+  if (input.decisao === 'devolver') {
+    resultado = await reembolsarParticipacao({ participacaoId: input.participacaoId, valorBaseCentavos: null, motivo: `Revisão por força maior aceita: ${input.nota}`, por: input.adminId })
+  }
+  const reserva = await c.reservas.findOne({ _id: new ObjectId(part.reservaId) } as any, { projection: { anuncioTitulo: 1, tutorUserId: 1 } })
+  const titulo = reserva?.anuncioTitulo || 'monitoria'
+  if (revisao.ticketId && ObjectId.isValid(revisao.ticketId)) {
+    const db = await getDb()
+    await db.collection('tickets').updateOne(
+      { _id: new ObjectId(revisao.ticketId) },
+      {
+        $push: { messages: mensagemDoSistemaDoTicket(`Decisão do suporte: ${input.decisao === 'devolver' ? 'força maior aceita, o restante é devolvido ao aluno' : 'cancelamento mantido com a multa do contrato'}. ${input.nota}`) },
+        $set: { updatedAt: agora },
+      } as any,
+    )
+  }
+  await audit({
+    action: 'monitoria_revisao_cancelamento',
+    actorUserId: input.adminId,
+    targetUserId: part.alunoId,
+    resourceType: 'monitoria',
+    resourceId: input.participacaoId,
+    metadata: { etapa: 'decisao', decisao: input.decisao, nota: input.nota, reservaId: part.reservaId, ok: resultado.ok, erro: resultado.erro },
+  })
+  const devolvido = input.decisao === 'devolver'
+  await avisar([
+    {
+      userId: part.alunoId,
+      titulo: devolvido ? 'Revisão aceita: o restante volta para você' : 'Revisão do cancelamento: multa mantida',
+      mensagem: devolvido
+        ? `O suporte aceitou o motivo de força maior em "${titulo}". O restante do valor pago volta pelo Mercado Pago.`
+        : `O suporte analisou o seu pedido em "${titulo}" e manteve a regra de cancelamento do contrato. ${input.nota}`,
+      url: urlReserva(part.reservaId),
+      email: { assunto: `Revisão do cancelamento: ${titulo}`, paragrafos: [devolvido ? 'O suporte aceitou o motivo de força maior. O restante do valor pago volta pelo Mercado Pago.' : 'O suporte manteve a regra de cancelamento do contrato.', input.nota], botao: 'Ver reserva' },
+    },
+    ...(reserva?.tutorUserId
+      ? [
+          {
+            userId: reserva.tutorUserId,
+            titulo: devolvido ? 'Revisão aceita: valor devolvido ao aluno' : 'Revisão do cancelamento: multa mantida',
+            mensagem: devolvido
+              ? `O suporte aceitou o motivo de força maior de ${part.alunoNome.split(' ')[0]} em "${titulo}": o valor retido volta ao aluno.`
+              : `O suporte manteve a multa do cancelamento de "${titulo}". O valor retido é liberado para você depois da garantia.`,
+            url: urlReserva(part.reservaId),
+          },
+        ]
+      : []),
+  ])
+  return resultado
+}
+
 /**
  * Alguém saiu do grupo (assento cancelado ou reembolsado). Os outros assentos
  * NÃO mudam: cada um tem o próprio valor, contrato e repasse. Mas:
@@ -1561,10 +1827,13 @@ export async function reportarProblema(input: { reserva: Reserva; autor: Usuario
     throw new ErroMonitoria(409, 'Problemas podem ser reportados a partir de 15 minutos depois do início e até 48 horas após o fim da aula.')
   }
   const c = await cols()
+  // Quem teve a falta registrada (sala ou monitor) contesta por aqui mesmo.
+  const assento = await c.participacoes.findOne({ reservaId: idDe(reserva), alunoId: String(input.autor._id) }, { projection: { falta: 1 } })
+  const rotulo = assento?.falta ? `Contestação da falta registrada (${assento.falta.fonte === 'sala' ? 'pela sala de aula' : 'pelo monitor'})` : 'Problema reportado'
   const atualizada = await transitar(c, reserva, 'em_disputa', {
-    disputa: { abertaPor: String(input.autor._id), em: new Date(), motivo: input.motivo },
+    disputa: { abertaPor: String(input.autor._id), em: new Date(), motivo: assento?.falta ? `${rotulo}: ${input.motivo}` : input.motivo },
   })
-  const ticketId = await abrirTicket({ reserva: atualizada, autor: input.autor, motivo: `Problema reportado: ${input.motivo}` })
+  const ticketId = await abrirTicket({ reserva: atualizada, autor: input.autor, motivo: `${rotulo}: ${input.motivo}` })
   await c.reservas.updateOne({ _id: reserva._id as any }, { $set: { ticketId } })
   await avisar([
     {
@@ -1581,6 +1850,171 @@ export async function reportarProblema(input: { reserva: Reserva; autor: Usuario
     },
   ])
   return ticketId
+}
+
+// ─── Falta do aluno / do monitor ────────────────────────────────────────
+
+/**
+ * Falta do aluno (contrato 2.3/4.4, Termos do Aluno 6.4): o monitor esperou e
+ * o aluno não veio. A aula segue o caminho normal (realizada → concluída) e o
+ * monitor recebe depois da garantia; o aluno contesta pelo "Reportar problema"
+ * até 48 h após o fim. Na aula individual o Resumo por IA volta inteiro (6.5).
+ * Idempotente: um assento só leva uma marca.
+ */
+export async function registrarFaltaDoAluno(input: {
+  reserva: Reserva
+  part: Participacao
+  fonte: FaltaDoAluno['fonte']
+  evidencia?: FaltaDoAluno['evidencia']
+  motivo?: string
+  por?: string
+}): Promise<boolean> {
+  const { reserva, part } = input
+  const c = await cols()
+  const agora = new Date()
+  const falta: FaltaDoAluno = {
+    em: agora,
+    fonte: input.fonte,
+    ...(input.evidencia ? { evidencia: input.evidencia } : {}),
+    ...(input.motivo ? { motivo: input.motivo } : {}),
+    ...(input.por ? { por: input.por } : {}),
+  }
+  const marcou = await c.participacoes.updateOne(
+    { _id: part._id as any, status: { $in: ['paga', 'gratis'] }, falta: { $exists: false } } as any,
+    { $set: { falta, updatedAt: agora } } as any,
+  )
+  if (!marcou.modifiedCount) return false
+  const id = idDe(reserva)
+  const partId = idDe(part)
+  if (part.resumoIA && (reserva.proposta?.vagas || 1) <= 1) {
+    const { reembolsarAdicional } = await import('./resumo/adicional')
+    await reembolsarAdicional({ participacaoId: partId, motivo: 'O aluno não compareceu à aula individual', por: 'sistema', forcar: true }).catch((e) => console.error('[monitorias] Resumo na falta', partId, e))
+  }
+  await audit({
+    action: 'monitoria_falta_registrada',
+    actorUserId: input.por,
+    targetUserId: part.alunoId,
+    resourceType: 'monitoria',
+    resourceId: partId,
+    metadata: { reservaId: id, fonte: input.fonte, evidencia: input.evidencia, motivo: input.motivo },
+  })
+  const ate = quando(liberacaoDoValor(reserva.fim || agora))
+  const primeiro = part.alunoNome.split(' ')[0]
+  await avisar([
+    {
+      userId: part.alunoId,
+      titulo: 'Registramos sua falta na monitoria',
+      mensagem: `${input.fonte === 'sala' ? 'Você não entrou na sala de aula' : 'O monitor informou que você não compareceu'} em "${reserva.anuncioTitulo}". Pelo contrato, a falta sem aviso conta como aula dada. Esteve na aula ou houve força maior? Conteste em "Reportar problema" até ${ate}.`,
+      url: urlReserva(id),
+      email: {
+        assunto: `Falta registrada: ${reserva.anuncioTitulo}`,
+        paragrafos: [
+          input.fonte === 'sala'
+            ? 'O monitor esperou na sala de aula da plataforma e você não entrou durante a aula.'
+            : 'O monitor informou, pela página da reserva, que você não compareceu à aula.',
+          'Pelo contrato, a falta sem aviso conta como aula dada e o valor da aula não é devolvido.',
+          `Se você esteve na aula, ou houve motivo de força maior (doença, acidente, emergência), conteste pelo botão "Reportar problema" da reserva até ${ate}. O valor fica retido até a decisão do suporte.`,
+        ],
+        botao: 'Ver a reserva',
+      },
+    },
+    {
+      userId: reserva.tutorUserId,
+      titulo: 'Falta do aluno registrada',
+      mensagem: `${primeiro} não compareceu a "${reserva.anuncioTitulo}". A aula conta como dada e o valor é liberado depois da garantia, se o aluno não contestar.`,
+      url: urlReserva(id),
+    },
+  ])
+  return true
+}
+
+/** Botão "Aluno não compareceu" do monitor: de início + 15 min até 24 h depois do fim. */
+export async function informarFaltaDoAluno(input: { reserva: Reserva; papel: Papel; monitorId: string; participacaoId?: string; motivo?: string }): Promise<{ alunoNome: string }> {
+  const { reserva } = input
+  if (input.papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor informa a falta do aluno.')
+  if (reserva.teste) throw new ErroMonitoria(409, 'Sala de teste: não há falta a registrar.')
+  if (!['confirmada', 'realizada'].includes(reserva.status) || !reserva.inicio || !reserva.fim) throw new ErroMonitoria(409, 'Não é possível registrar falta nesta etapa.')
+  const agora = new Date()
+  if (agora.getTime() < reserva.inicio.getTime() + TOLERANCIA_FALTA_MS) throw new ErroMonitoria(409, 'Espere 15 minutos depois do início: é a tolerância de atraso do contrato.')
+  if (agora.getTime() > reserva.fim.getTime() + 24 * 3_600_000) throw new ErroMonitoria(409, 'A falta pode ser informada até 24 horas depois do fim da aula. Depois disso, fale com o suporte.')
+  const c = await cols()
+  const id = idDe(reserva)
+  const pagos = await c.participacoes.find({ reservaId: id, status: { $in: ['paga', 'gratis'] } }).toArray()
+  const part = input.participacaoId ? pagos.find((p) => idDe(p) === input.participacaoId) : pagos.length === 1 ? pagos[0] : undefined
+  if (!part) throw new ErroMonitoria(pagos.length > 1 ? 400 : 404, pagos.length > 1 ? 'Escolha qual aluno não compareceu.' : 'Não há aluno com pagamento confirmado nesta aula.')
+  if (part.falta) throw new ErroMonitoria(409, 'A falta deste aluno já está registrada.')
+  // A sala é a prova: não deixa informar a falta de quem entrou, nem sem ter esperado
+  // quando a aula só podia acontecer na sala da plataforma (sem link externo).
+  const { pidDe } = await import('./sala/token')
+  const sala = await c.salas.findOne({ _id: id } as any, { projection: { registro: 1 } })
+  const pid = pidDe(id, part.alunoId)
+  const presenca = presencaNaJanela(sala?.registro || [], { inicio: reserva.inicio, fim: reserva.fim, ate: agora }, [pid])
+  // Quem entrou na sala, por pouco que seja, não leva falta pelo botão: a varredura decide no fim da aula (presença mínima).
+  if (presenca.alunos[pid]?.entrou) throw new ErroMonitoria(409, `A sala de aula registrou a entrada de ${part.alunoNome.split(' ')[0]}. A presença é conferida pela sala no fim da aula; se houve outro problema, fale com o suporte.`)
+  if (!reserva.linkReuniao && !presenca.monitor.esperou) {
+    throw new ErroMonitoria(409, 'Para registrar a falta, esteja na sala de aula no horário e espere o aluno por 15 minutos (contrato 2.3).')
+  }
+  const ok = await registrarFaltaDoAluno({
+    reserva,
+    part,
+    fonte: 'monitor',
+    ...(presenca.monitor.entrouEm ? { evidencia: { minutosMonitor: presenca.monitor.minutos, monitorEntrouEm: presenca.monitor.entrouEm } } : {}),
+    motivo: input.motivo,
+    por: input.monitorId,
+  })
+  if (!ok) throw new ErroMonitoria(409, 'O assento mudou agora. Recarregue a página.')
+  return { alunoNome: part.alunoNome }
+}
+
+/**
+ * Falta do monitor detectada pela sala (sem punição automática): um aluno
+ * pagante ficou ≥ 15 min na sala e o monitor não entrou, ou ficou menos de 15
+ * min (entrar e sair não conta como dar a aula). Abre a disputa com a
+ * evidência, o repasse fica retido e o suporte decide (strike só por decisão).
+ */
+export async function abrirDisputaPorFaltaDoMonitor(reserva: Reserva, quem: Participacao, minutosAluno: number, minutosMonitor: number | null = null): Promise<boolean> {
+  const c = await cols()
+  const { carregarUsuario } = await import('./servidor')
+  const autor = await carregarUsuario(quem.alunoId)
+  if (!autor) return false
+  const motivo =
+    minutosMonitor === null
+      ? `Monitor não entrou na sala — detectado pela sala de aula: ${quem.alunoNome.split(' ')[0]} esperou ${minutosAluno} min e o monitor não se conectou durante a aula.`
+      : `Monitor ficou só ${minutosMonitor} min na sala — detectado pela sala de aula: ${quem.alunoNome.split(' ')[0]} ficou ${minutosAluno} min.`
+  let atualizada: Reserva
+  try {
+    atualizada = await transitar(c, reserva, 'em_disputa', { disputa: { abertaPor: 'sistema', em: new Date(), motivo } })
+  } catch {
+    return false
+  }
+  const ticketId = await abrirTicket({ reserva: atualizada, autor, motivo })
+  await c.reservas.updateOne({ _id: reserva._id as any }, { $set: { ticketId } })
+  const alunos = await c.participacoes.find({ reservaId: idDe(reserva), status: { $in: ['paga', 'gratis'] } }, { projection: { alunoId: 1 } }).toArray()
+  await avisar([
+    {
+      userId: reserva.tutorUserId,
+      titulo: minutosMonitor === null ? 'Você não entrou na sala da monitoria' : 'Você ficou pouco tempo na sala da monitoria',
+      mensagem: `${minutosMonitor === null ? 'A sala de aula não registrou a sua entrada' : `A sala de aula registrou só ${minutosMonitor} min seus`} em "${reserva.anuncioTitulo}", e o aluno esperou. O valor fica retido até o suporte decidir; responda no chat da reserva com a sua versão.`,
+      url: urlReserva(idDe(reserva)),
+      email: {
+        assunto: `Falta na monitoria: ${reserva.anuncioTitulo}`,
+        paragrafos: [
+          minutosMonitor === null
+            ? 'A sala de aula da plataforma não registrou a sua entrada durante a aula, e o aluno esperou por você.'
+            : `A sala de aula da plataforma registrou só ${minutosMonitor} minutos seus durante a aula, e o aluno ficou esperando.`,
+          'O valor fica retido até a análise do suporte. Se a aula aconteceu de outro jeito, ou houve um problema técnico, responda no chat da reserva com a sua versão.',
+        ],
+        botao: 'Ver reserva',
+      },
+    },
+    ...Array.from(new Set(alunos.map((a) => a.alunoId))).map((userId) => ({
+      userId,
+      titulo: 'O monitor não entrou na sala',
+      mensagem: `Abrimos uma análise de "${reserva.anuncioTitulo}" porque o monitor não entrou na sala de aula. O valor fica retido e o suporte decide o reembolso.`,
+      url: urlReserva(idDe(reserva)),
+    })),
+  ])
+  return true
 }
 
 /** Abre ticket no suporte já existente (`tickets`), apontando para a reserva, e avisa os admins. */

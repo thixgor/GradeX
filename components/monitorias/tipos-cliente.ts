@@ -47,7 +47,7 @@ export interface DetalheReserva {
     negociavel: boolean
     podeReportar: boolean
     /** Resumo por IA: estado da tarefa da aula e o meu adicional (null = não tenho nada a ver com isso). */
-    resumoIA?: { tarefa: string; meu: string | null } | null
+    resumoIA?: { tarefa: string; meu: string | null; pelosTermos?: boolean } | null
     createdAt: string
   }
   monitor: { nome: string; fotoUrl: string | null; titulo: string } | null
@@ -61,12 +61,37 @@ export interface DetalheReserva {
     reembolsos: Array<{ valorCentavos: number; status: string; em: string; motivo: string }>
     avaliacao: { nota: number; comentario: string } | null
     materialOficial?: { id: string; titulo: string } | null
+    /** 'v5' = tabela 100% / 50% / 0% do contrato 2026.10-v5; null = regra antiga. */
+    politica?: 'v5' | null
+    temResumoIA?: boolean
+    cancelamentoTardio?: {
+      horasAntes: number
+      pctDevolvido: number
+      devolvidoCentavos: number
+      retidoCentavos: number
+      liberarApos: string
+      revisao: { em: string; decididaEm: string | null; decisao: 'manter' | 'devolver' | null; nota: string | null } | null
+      podePedirRevisao: boolean
+    } | null
+    falta?: { em: string; fonte: 'sala' | 'monitor' } | null
   } | null
-  meuContrato: { id: string; numero: string; status: string; falta: Array<'contratante' | 'contratado'> } | null
+  meuContrato: { id: string; numero: string; status: string; falta: Array<'contratante' | 'contratado'>; politicaV5?: boolean } | null
   contratosParaAssinar: Array<{ id: string; numero: string }>
   /** Do anúncio (guardados na reserva) + os enviados pelo monitor só para esta aula. */
   materiais: Array<{ titulo: string; url: string; dominio: string; exclusivo: boolean; em: string | null }>
-  assentos: Array<{ alunoNome: string; status: string; eu: boolean; id?: string; contratoId?: string | null; semTaxa?: boolean }>
+  assentos: Array<{
+    alunoNome: string
+    status: string
+    eu: boolean
+    id?: string
+    contratoId?: string | null
+    semTaxa?: boolean
+    /** Só para o monitor. */
+    falta?: { em: string; fonte: 'sala' | 'monitor' } | null
+    cancelamentoTardio?: { horasAntes: number; pctDevolvido: number; retidoCentavos: number; liberarApos: string } | null
+    /** Últimos 90 dias, em outras aulas (só contagens). */
+    historico?: { aulas: number; faltas: number; cancelamentosTardios: number } | null
+  }>
   mensagens: MensagemReserva[]
 }
 

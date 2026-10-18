@@ -850,6 +850,8 @@ export class ControladorDaSala {
 
   /** "Pausar a transcrição da minha voz" (só a minha; a aula segue normal). */
   pausarTranscricao(sim: boolean): void {
+    // Monitor autorizado pelos Termos (v5+) não pausa a própria voz (Termos do Monitor, item 5.5).
+    if (sim && this.estado.resumo?.papel === 'monitor' && this.estado.resumo.pelosTermos) return
     this.gravador?.pausar(sim)
   }
 

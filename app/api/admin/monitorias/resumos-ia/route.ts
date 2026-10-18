@@ -80,6 +80,7 @@ export async function GET(request: NextRequest) {
         prontoEm: t.prontoEm || null,
         teste: !!t.teste,
         monitorAutorizou: t.vozes?.[t.tutorUserId]?.consentimento ? !!t.vozes[t.tutorUserId].consentimento!.aceito : null,
+        monitorPelosTermos: t.vozes?.[t.tutorUserId]?.consentimento?.via === 'termos',
         adicionais: adicionais
           .filter((a) => a.reservaId === t._id)
           .map((a) => ({ status: a.status, precoCentavos: a.precoCentavos, teste: !!a.teste, reembolso: a.reembolso ? { motivo: a.reembolso.motivo, status: a.reembolso.status } : null })),

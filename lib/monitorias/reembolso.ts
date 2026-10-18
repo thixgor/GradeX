@@ -37,6 +37,11 @@ export async function reembolsarParticipacao(input: {
   valorBaseCentavos: number | null
   motivo: string
   por: string
+  /**
+   * Parcial: status do assento depois do reembolso (padrão: o de antes). O
+   * cancelamento tardio usa 'cancelada' — a retomada pela varredura chega no mesmo lugar.
+   */
+  statusDepois?: Participacao['status']
 }): Promise<ResultadoReembolso> {
   const c = colecoes(await getDb())
   if (!ObjectId.isValid(input.participacaoId)) return { ok: false, erro: 'Assento inválido.' }
@@ -59,7 +64,9 @@ export async function reembolsarParticipacao(input: {
   if (pendente) {
     reembolso = pendente
   } else {
-    if (!PODE_REEMBOLSAR.includes(part.status)) return { ok: false, erro: 'Este assento não pode ser reembolsado.' }
+    // Assento cancelado com multa (v5): o suporte ainda pode devolver o retido (revisão por força maior).
+    const canceladoComMulta = part.status === 'cancelada' && !!part.cancelamentoTardio
+    if (!PODE_REEMBOLSAR.includes(part.status) && !canceladoComMulta) return { ok: false, erro: 'Este assento não pode ser reembolsado.' }
     reembolso = {
       chave: `refund:${input.participacaoId}:${part.reembolsos.length}`,
       valorCentavos: valor,
@@ -72,7 +79,7 @@ export async function reembolsarParticipacao(input: {
       { _id, status: part.status, 'reembolsos.status': { $nin: ['processando', 'falhou'] } } as any,
       {
         $push: { reembolsos: reembolso },
-        $set: { status: 'reembolso_processando', statusAntesDoReembolso: part.status, updatedAt: new Date() },
+        $set: { status: 'reembolso_processando', statusAntesDoReembolso: input.statusDepois ?? part.status, updatedAt: new Date() },
       } as any,
     )
     if (cas.matchedCount === 0) return { ok: false, erro: 'Já existe um reembolso em andamento para este assento.' }
@@ -143,7 +150,8 @@ export async function reembolsarParticipacao(input: {
     }
   }
 
-  const statusAntes = ((part as any).statusAntesDoReembolso as Participacao['status']) || 'paga'
+  // Retomada: o status gravado no pedido. Pedido novo: o lido antes da troca (ou o `statusDepois` pedido).
+  const statusAntes = ((pendente ? (part as any).statusAntesDoReembolso : input.statusDepois ?? part.status) as Participacao['status']) || 'paga'
   // Estorno do repasse ANTES de marcar concluído (é idempotente pela chave): se
   // a função cair entre os dois, a próxima tentativa refaz sem descontar duas vezes.
   await estornarRepasse({

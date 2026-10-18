@@ -224,6 +224,43 @@ Como fica seguro:
 
 ## Cancelamento e reembolso (`lib/monitorias/politica.ts`)
 
+Duas políticas convivem, escolhidas **por assento**: na aprovação do PIX o
+assento grava `politica: 'v5'` quando o contrato dele é `2026.10-v5` ou mais
+novo (`contratoComPoliticaV5(contrato.dados.modeloVersao)`). Assento sem a
+marca segue a regra antiga — nada muda para quem já assinou.
+
+**Política v5** (contratos `2026.10-v5`+, cláusula 4ª):
+
+| Quem | Quando | Resultado |
+|---|---|---|
+| Aluno | ≥ 24h antes | 100% automático (o arrependimento do CDC art. 49 vale **só até aqui**) |
+| Aluno | < 24h e ≥ 2h antes | **50% do valor da aula** de volta, automático; 50% ao monitor (menos a taxa) |
+| Aluno | < 2h antes, ou **falta** | 0% de volta; a aula conta como prestada |
+| Monitor | qualquer hora, ou falta | 100% para todos + strike (3 em 90 dias suspende) |
+| Aluno | força maior comprovada | "Pedir revisão" até a liberação; o suporte decide |
+
+- **Cancelamento tardio** (`cancelarComMulta` em `reservas.ts`): estorno
+  parcial idempotente (`reembolsarParticipacao` com `valorBaseCentavos` e
+  `statusDepois: 'cancelada'`), que também reduz o repasse ao retido; o assento
+  fica `cancelada` com `cancelamentoTardio { horasAntes, pctDevolvido,
+  devolvidoCentavos, retidoCentavos, liberarApos = fim + 48h }`. Individual:
+  reserva `cancelada_aluno`, horário volta à agenda, contrato rescindido. Grupo:
+  só o assento sai. O Resumo por IA do assento volta inteiro; o material
+  oficial já entregue fica. `planoDaMulta` faz a conta (ex.: aula de R$ 100,
+  taxa de 10%, 50% → R$ 50 ao aluno, R$ 45 ao monitor).
+- **Liberação do retido** (varredura, passo 5b): passada a garantia, sem
+  revisão (ou com "manter"), confere o assento no Mercado Pago
+  (`conferirAssentoNoGateway`) e libera o repasse (`liberarRepasseDoAssento`).
+- **Revisão por força maior:** o aluno pede na reserva (`acao: 'revisao'`,
+  até `liberarApos`) → ticket, a liberação trava. O admin decide em Disputas →
+  "Revisões de cancelamento" (`/api/admin/monitorias/revisoes`): **manter**
+  (a varredura libera) ou **devolver** (reembolso integral do restante, como
+  um cancelamento no prazo).
+- Telas: prazos "100% até… / 50% até…" no checkout (contrato v5) e na reserva;
+  a confirmação do cancelamento mostra quanto volta.
+
+**Política legada** (assento sem a marca, contratos até `2026.10-v4`):
+
 | Quem | Quando | Resultado |
 |---|---|---|
 | Aluno | até **7 dias após pagar** e antes da aula | 100% automático, inclusive a taxa do PIX — **direito de arrependimento** (CDC art. 49; Decreto 7.962/2013, art. 5º) |
@@ -232,11 +269,34 @@ Como fica seguro:
 | Monitor | qualquer hora | 100% para todos + strike (3 em 90 dias suspende) |
 | Aluno | até 48h após a aula | "Reportar problema" → disputa |
 
-Por que os 7 dias valem mesmo a menos de 24h da aula: contratação pela
-internet é "fora do estabelecimento"; enquanto o serviço não foi prestado,
-nenhuma regra contratual tira esse direito (cláusula assim seria nula, CDC
-art. 51). Exemplo: pagou terça, aula quinta 10h, desistiu quinta 8h → 100%.
-Organizador de grupo que cancela com colegas já pagos sai só do próprio assento.
+⚠️ **Risco jurídico da v5:** o arrependimento só até 24h antes foi decisão do
+produto. O CDC é de ordem pública e o art. 49 não prevê esse corte; o
+argumento é que a aula é serviço com data marcada a pedido do aluno (e o
+horário fica reservado). **Revisar com advogado.** Organizador de grupo que
+cancela com colegas já pagos sai só do próprio assento.
+
+### Falta do aluno e do monitor
+
+- **Pela sala** (varredura, passo 4, aula sem link externo):
+  `presencaNaJanela` (`sala/regras.ts`, puro) lê `monitorias_salas.registro`
+  na janela `[início − 15 min, fim]`, somando as reconexões (buracos de até
+  2 min emendam). **Presença confirmada:** monitor que entrou até início +
+  15 min e ficou ≥ 15 min; aluno que ficou ≥ 5 min (entrar e sair em seguida
+  não conta). Monitor presente e aluno não → `falta { fonte: 'sala',
+  evidencia: { minutosMonitor, minutosAluno } }` no assento. A aula segue `realizada → concluida` e o monitor
+  recebe no fluxo normal; na aula individual o Resumo volta inteiro.
+- **Botão "Aluno não compareceu"** (`acao: 'falta'`, monitor): de início +
+  15 min até fim + 24 h. A sala confere: não vale contra aluno que a sala
+  registrou, por pouco que seja (na sala da plataforma quem decide é a
+  varredura no fim da aula); sem link externo, o monitor precisa ter esperado.
+- **Contestação:** "Contestar falta" (o "Reportar problema" de sempre) →
+  disputa com o rótulo da falta; o admin vê a marca e a evidência.
+- **Falta do monitor:** aluno pagante ficou ≥ 15 min e o monitor não entrou,
+  ou ficou menos de 15 min ("entrar e sair") → disputa automática com a
+  evidência (sem strike automático; o suporte decide).
+- A sala avisa o monitor sozinho na aula individual depois de 15 min; o
+  monitor vê o histórico do aluno (90 dias: aulas, faltas, cancelamentos em
+  cima da hora — só contagens).
 
 Reembolso: intenção gravada com compare-and-set + chave de idempotência
 `refund:<assento>:<n>` enviada ao MP. Falhou? Fica "processando" e o cron
@@ -245,7 +305,7 @@ tenta de novo com a mesma chave.
 ## Contratos e PDFs
 
 - Texto em `lib/monitorias/documentos/` (termos versionados, contrato, oferta).
-  Termos `2026.10-v4`, contrato `2026.10-v3` (oferta `2026.10-v2`): identificação da empresa
+  Termos `2026.10-v5`, contrato `2026.10-v5` (oferta `2026.10-v2`): identificação da empresa
   (Decreto 7.962, art. 2º), arrependimento, ressalva do CDC, mandato (CC 653),
   LGPD (bases, operadores, retenção de 5 anos, direitos, encarregado), conduta,
   imagem/gravação, menores, nulidade parcial, foro do consumidor (CDC 101, I).
@@ -638,10 +698,16 @@ receita é 100% da plataforma e o repasse do monitor não muda.
 - **Aula individual:** o monitor e o aluno que comprou.
 - **Aula em grupo:** **só o monitor**. A voz dos alunos nunca é gravada, nem
   a de quem comprou.
-- Cada um grava só o próprio microfone e só depois de autorizar no saguão. A
-  autorização vale uma vez (versão do aditivo, data e IP em `vozes.<id>.consentimento`).
-- **O monitor não autorizou:** o adicional é reembolsado na hora e a tarefa é
-  cancelada.
+- **Monitor:** a voz dele é autorizada nos **Termos do Monitor** (itens 5.4 a
+  5.7, desde `2026.10-v5`): sem cartão no saguão, **sem pausa** e sem recusa.
+  Ao entrar, a tarefa grava `vozes.<monitor>.consentimento = { aceito, via:
+  'termos', versao }` (`autorizacaoPelosTermos`, `resumo/autorizacao.ts`). O
+  Resumo **só é vendido** se o monitor já aceitou essa versão.
+- **Adicional vendido antes (aditivo r1), monitor ainda sem os Termos v5:** o
+  fluxo antigo continua — ele autoriza (ou não) no saguão; recusa devolve o
+  adicional e cancela a tarefa.
+- O aluno comprador (aula individual) grava só o próprio microfone e pode
+  pausar a própria voz.
 
 ### Fluxo
 
@@ -665,7 +731,8 @@ receita é 100% da plataforma e o repasse do monitor não muda.
      recompor o tempo real.
    - Cada trecho tem até 10 min de fala e fica no IndexedDB até o envio
      confirmar.
-   - Todos veem o selo do resumo. Quem é transcrito pode pausar a própria voz.
+   - Todos veem o selo do resumo. O aluno comprador pode pausar a própria
+     voz; o monitor autorizado pelos Termos, não.
 4. **Envio sem passar mídia pela Vercel:**
    - `POST …/resumo/envio` confere a sequência e o tamanho, e abre no servidor
      uma sessão *resumable* do Files API.
@@ -674,6 +741,13 @@ receita é 100% da plataforma e o repasse do monitor não muda.
    - Se o Google recusar (CORS ou rede), o trecho vai para o Vercel Blob
      privado (`…/resumo/blob`) e o processador repassa ao Google.
    - Trecho que não subiu é reenviado na próxima abertura da sala ou da reserva.
+   - Um envio por reserva de cada vez (fila na aba + Web Locks entre abas), e a
+     segunda abertura do mesmo trecho mantém o nome do arquivo. Antes, a sala
+     fechando e a reserva abrindo ao mesmo tempo trocavam o nome e o processador
+     recusava o arquivo ("arquivo no Google não confere com o trecho"). O
+     processador aceita o nome de qualquer sessão aberta para AQUELE trecho
+     (`res-<reserva>-<voz>-<seq>-…`) com o tamanho declarado, e o erro diz qual
+     conferência falhou (`divergenciaDoArquivo`).
 5. **Processador** (`/api/interno/monitorias/resumos`):
    - Exige `CRON_SECRET`, responde 202 na hora e trabalha em `waitUntil`
      (`@vercel/functions`).
@@ -687,6 +761,10 @@ receita é 100% da plataforma e o repasse do monitor não muda.
      (`esquema.ts`) e o contexto da aula para acertar os termos médicos.
    - O arquivo é apagado do Google logo depois.
    - Um 429 adia o trecho com espera crescente, nunca em laço.
+   - **Contato por fora dito na aula:** as frases passam pelo detector do chat
+     (`contatosNaFala`, `resumo/contato-na-fala.ts`). Nível `bloqueio` vira
+     infração `origem: 'resumo_ia'` com **só a frase e o minuto** (aba "Contato
+     por fora"); a equipe é avisada uma vez por aula.
 7. **Resumo:**
    - Começa só quando todos saíram e todos os trechos chegaram, ou 2 h depois
      do fim.
@@ -699,6 +777,9 @@ receita é 100% da plataforma e o repasse do monitor não muda.
      raciocínio do monitor), dúvidas e respostas, comparações, pontos de
      atenção, revisão rápida, questões com gabarito comentado, lacunas e "a
      verificar".
+   - Só conteúdo da aula: o pedido manda deixar de fora conversa pessoal,
+     contatos, links e pagamento, e `limparContatoDoResumo` tira depois do
+     modelo a frase (ou a questão) que ainda trouxer contato.
    - É gerado uma vez e guardado. Abrir a página nunca chama o modelo.
 8. **Leitura:** `/monitorias/reservas/[id]/resumo` (índice, questões com "ver
    gabarito", PDF pelo jsPDF). Lê o comprador; o admin lê com auditoria
@@ -718,8 +799,9 @@ receita é 100% da plataforma e o repasse do monitor não muda.
     o adicional + a parte dele na taxa PIX;
   - o pedido ao Mercado Pago é parcial, com chave `refund:resumo:<id>`;
   - a varredura repete; depois de 6 falhas, avisa a equipe.
-- **Devolução imediata:** o monitor não autorizou, a aula não aconteceu, ou a
-  cobertura da gravação ficou abaixo de 30% da aula.
+- **Devolução imediata:** a aula não aconteceu (o aluno cancelou, ou faltou
+  na aula individual), a cobertura da gravação ficou abaixo de 30% da aula,
+  ou (só no fluxo antigo, aditivo r1) o monitor não autorizou.
 - **Chargeback ou estorno no Mercado Pago:** o adicional vira `reembolsado`.
 - **Disputa:** o admin escolhe "Reembolsar também o Resumo por IA".
 - **Exclusão pelo suporte:** devolve o adicional ainda não entregue.
@@ -730,8 +812,10 @@ receita é 100% da plataforma e o repasse do monitor não muda.
 
 ### Privacidade (LGPD)
 
-- Aditivo próprio, aceito no checkout e pela pessoa na sala. Os termos gerais
-  não subiram de versão. O aditivo nomeia o Google (Gemini API) como operador.
+- Aditivo próprio (`2026.10-r2`), aceito no checkout. A voz do monitor é
+  autorizada nos Termos do Monitor v5 (seção "Resumo por IA"). O aditivo e os
+  Termos nomeiam o Google (Gemini API) como operador e dizem que a transcrição
+  também é verificada para contato ou pagamento por fora.
 - **Áudio:** fica no IndexedDB do aparelho até o envio. No Google, é apagado
   logo depois da transcrição (no máximo 48 h). No Blob, só no caminho de
   reserva, também apagado depois.
@@ -996,7 +1080,8 @@ monitor. A voz do aluno (aula individual) só entra numa compra de verdade.
   preencha `MONITORIAS_EMPRESA_RAZAO`, `MONITORIAS_EMPRESA_CNPJ`,
   `MONITORIAS_EMPRESA_ENDERECO` e `MONITORIAS_EMPRESA_EMAIL` (entram nos Termos
   e nos contratos; o Decreto 7.962/2013 exige essa identificação).
-- Depois do deploy: `npm run db:indexes` (índices únicos são regra de negócio).
+- Depois do deploy: `npm run db:indexes` (índices únicos são regra de negócio;
+  a rodada 6 criou `cancelamentoTardio.liberarApos` e `cancelamentoTardio.revisao.em`).
 - Cron horário: `/api/cron/monitorias` (em `vercel.json`).
 - Admin: `/admin/monitorias` — moderação, disputas, repasses, denúncias.
 - Repasse manual: criar pagamento → revelar chave → PIX pelo banco → anexar

@@ -295,15 +295,19 @@ export function taxaProporcional(taxaTotalCentavos: number, parteCentavos: numbe
  * Aditivo do Resumo por IA. Versão própria: mudar este texto NÃO obriga
  * ninguém a aceitar de novo os termos gerais das monitorias.
  */
-export const VERSAO_ADITIVO_RESUMO = '2026.10-r1'
+export const VERSAO_ADITIVO_RESUMO = '2026.10-r2'
 
-/** O texto exato mostrado no checkout (o hash do aceite é calculado sobre ele). */
+/**
+ * O texto exato mostrado no checkout (o hash do aceite é calculado sobre ele).
+ * r2: a voz do monitor é autorizada nos Termos do Monitor (sem autorização na
+ * sala); a transcrição também serve para detectar contato por fora.
+ */
 export function textoAditivoResumo(retencaoDias: number): string {
   return [
     'Resumo Inteligente por IA (adicional opcional, pago uma vez, valor fixo informado antes do pagamento).',
-    'Durante a aula, a voz do monitor — e, na aula individual, também a sua — é gravada no próprio navegador e enviada para transcrição pelo Google (Gemini API), operador contratado pela DomineAqui. Em aula em grupo, só a voz do monitor é transcrita. O vídeo nunca é gravado.',
-    `O áudio é apagado no Google logo após a transcrição (no máximo em 48 horas). A transcrição em texto fica guardada por até ${retencaoDias} dia(s), só para gerar o resumo, e não é mostrada a ninguém. O resumo fica disponível para você enquanto a reserva existir.`,
-    'O monitor precisa autorizar a gravação da voz dele. Se ele não autorizar, se não houver áudio suficiente (menos de 30% da aula) ou se a geração falhar depois das novas tentativas, o valor do adicional (com a parte correspondente da taxa do PIX) é devolvido.',
+    'Durante a aula, a voz do monitor — e, na aula individual, também a sua — é gravada no próprio navegador e enviada para transcrição pelo Google (Gemini API), operador contratado pela DomineAqui. Em aula em grupo, só a voz do monitor é transcrita. O vídeo nunca é gravado. A voz do monitor é transcrita com a autorização dada por ele nos Termos do Monitor.',
+    `O áudio é apagado no Google logo após a transcrição (no máximo em 48 horas). A transcrição em texto fica guardada por até ${retencaoDias} dia(s), só para gerar o resumo e para a verificação automática de combinação de contato ou pagamento fora da plataforma, e não é mostrada a ninguém. O resumo traz só o conteúdo da aula e fica disponível para você enquanto a reserva existir.`,
+    'Se não houver áudio suficiente (menos de 30% da aula), se a aula não acontecer (inclusive se você cancelar ou, na aula individual, faltar) ou se a geração falhar depois das novas tentativas, o valor do adicional (com a parte correspondente da taxa do PIX) é devolvido.',
     'Se a monitoria for reembolsada por inteiro antes da entrega do resumo, o adicional volta junto. Depois de entregue, o resumo é um serviço prestado e não é devolvido automaticamente por um reembolso posterior da aula — vale a política de cancelamento e a lei.',
     'O resumo é gerado por IA a partir da transcrição e pode conter erros: confira condutas e doses em fontes oficiais. O monitor não recebe parte deste valor.',
   ].join('\n')
@@ -503,3 +507,8 @@ export function vozTranscrita(p: { papel: 'monitor' | 'aluno'; individual: boole
 export const BYTES_MAX_SEGMENTO = 4 * 1024 * 1024
 /** Fala máxima por trecho (o gravador corta antes). */
 export const AUDIO_MAX_SEGMENTO_MS = 10 * 60_000 + 30_000
+
+/** Nome que o servidor dá ao arquivo do trecho no Google: `res-<reserva>-<voz>-<seq>-<nonce>`. Só o servidor abre essas sessões. */
+export function prefixoDoTrecho(reservaId: string, userId: string, seq: number): string {
+  return `res-${reservaId}-${userId}-${seq}-`
+}

@@ -108,6 +108,17 @@ export async function liberarRepassesDaReserva(reservaId: string, quando: Date):
   return res.modifiedCount
 }
 
+/**
+ * Libera o repasse de UM assento fora do fluxo da aula concluída: o valor
+ * retido de um cancelamento tardio (v5), depois da garantia e da conferência
+ * no Mercado Pago. Só sai de "em_garantia" (retido/estornado ficam como estão).
+ */
+export async function liberarRepasseDoAssento(participacaoId: string, quando: Date): Promise<boolean> {
+  const c = colecoes(await getDb())
+  const res = await c.repasses.updateOne({ participacaoId, status: 'em_garantia' }, { $set: { status: 'liberado', liberaEm: quando, updatedAt: new Date() } })
+  return res.modifiedCount > 0
+}
+
 /** Pendência resolvida depois da conclusão da aula → libera o que ficou retido. */
 export async function liberarSePronta(reservaId: string): Promise<void> {
   const c = colecoes(await getDb())

@@ -145,12 +145,36 @@ async function postar(url: string, corpo: unknown): Promise<Resposta> {
   }
 }
 
+const filaDeEnvio = new Map<string, Promise<{ enviados: number; restam: number }>>()
+
 /**
  * Manda os trechos guardados no aparelho, um por vez. Devolve quantos foram.
  * Recusa definitiva do servidor (voz não transcrita, fora da janela) apaga o
  * trecho do aparelho: nada de áudio esquecido no navegador.
+ *
+ * Um envio por reserva de cada vez: na mesma aba (a sala fechando enquanto a
+ * página da reserva abre) e entre abas (Web Locks). Dois envios do mesmo trecho
+ * ao mesmo tempo subiam dois arquivos e o servidor conferia o errado.
  */
-export async function enviarPendentes(reservaId: string, aoEnviar?: () => void): Promise<{ enviados: number; restam: number }> {
+export function enviarPendentes(reservaId: string, aoEnviar?: () => void): Promise<{ enviados: number; restam: number }> {
+  const rodar = () => enviarPendentesAgora(reservaId, aoEnviar)
+  type Resultado = { enviados: number; restam: number }
+  const comTrava = (): Promise<Resultado> =>
+    typeof navigator !== 'undefined' && navigator.locks?.request
+      ? (navigator.locks.request(`domineaqui-resumo-envio-${reservaId}`, rodar) as unknown as Promise<Resultado>)
+      : rodar()
+  const anterior = filaDeEnvio.get(reservaId)
+  const proxima = (anterior ? anterior.catch(() => null) : Promise.resolve(null)).then(comTrava)
+  filaDeEnvio.set(reservaId, proxima)
+  void proxima
+    .finally(() => {
+      if (filaDeEnvio.get(reservaId) === proxima) filaDeEnvio.delete(reservaId)
+    })
+    .catch(() => {})
+  return proxima
+}
+
+async function enviarPendentesAgora(reservaId: string, aoEnviar?: () => void): Promise<{ enviados: number; restam: number }> {
   const db = await abrirBanco()
   const base = `/api/monitorias/reservas/${reservaId}/resumo`
   let enviados = 0

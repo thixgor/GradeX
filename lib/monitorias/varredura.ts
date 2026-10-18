@@ -10,7 +10,9 @@ import 'server-only'
  *     se não pagou, expira e solta o horário (reembolsando quem pagou num grupo
  *     que não fechou).
  *  3. Aula começou há pouco → lembretes de 24h e 1h antes.
- *  4. Aula acabou → "realizada" (pede avaliação; abre a janela de 48h).
+ *  4. Aula acabou → "realizada" (pede avaliação; abre a janela de 48h). Na
+ *     sala da plataforma, a presença registra a falta do aluno (o monitor
+ *     esperou) ou abre disputa pela falta do monitor (o aluno esperou).
  *  4b. Sala de aula: sinais em trânsito (SDP e candidatos, com endereços de
  *     rede) não ficam guardados depois da aula.
  *  5. 48h depois sem reclamação → confere cada pagamento no Mercado Pago
@@ -31,15 +33,17 @@ import { applyPaymentResult } from '@/lib/payments/effects'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import type { PaymentOrder } from '@/lib/types'
 import { appUrl, colecoes, idDe } from './db'
-import { liberarRepassesDaReserva } from './financeiro'
+import { liberarRepasseDoAssento, liberarRepassesDaReserva } from './financeiro'
 import { avisar } from './avisos'
-import { excluirSalasDeTeste, liberarBlocos } from './reservas'
+import { abrirDisputaPorFaltaDoMonitor, excluirSalasDeTeste, liberarBlocos, registrarFaltaDoAluno } from './reservas'
 import { reembolsarParticipacao, reembolsarReserva, retomarDevolucoesAvulsas } from './reembolso'
-import { conferirComGateway, curarPagamentosDaReserva } from './pagamento'
+import { conferirAssentoNoGateway, conferirComGateway, curarPagamentosDaReserva } from './pagamento'
 import { limparFotosEnviadas, sincronizarRetratos } from './fotos'
 import { rescindirContratosDaReserva } from './contratos'
 import { liberacaoDoValor } from './politica'
 import { configDaSala } from './sala/config'
+import { presencaNaJanela, TOLERANCIA_FALTA_MS } from './sala/regras'
+import { pidDe } from './sala/token'
 import type { Reserva } from './tipos'
 
 const LOTE = 100
@@ -50,6 +54,12 @@ export interface RelatorioVarredura {
   pagamentosExpirados: number
   lembretes: number
   realizadas: number
+  /** Faltas de aluno registradas pela sala. */
+  faltas?: number
+  /** Disputas abertas porque o monitor não entrou na sala e o aluno esperou. */
+  disputasPorFalta?: number
+  /** Cancelamentos tardios cujo valor retido foi liberado ao monitor. */
+  tardiosLiberados?: number
   salasLimpas: number
   concluidas: number
   reembolsosRetomados: number
@@ -105,6 +115,9 @@ export async function varrer(agora = new Date(), origem = appUrl()): Promise<Rel
     pagamentosExpirados: 0,
     lembretes: 0,
     realizadas: 0,
+    faltas: 0,
+    tardiosLiberados: 0,
+    disputasPorFalta: 0,
     salasLimpas: 0,
     concluidas: 0,
     reembolsosRetomados: 0,
@@ -221,10 +234,30 @@ export async function varrer(agora = new Date(), origem = appUrl()): Promise<Rel
     })
   }
 
-  // 4. Aula acabou → realizada.
+  // 4. Aula acabou → realizada. Na sala da plataforma (sem link externo), a
+  // presença registrada decide a falta (contrato 2.3/4.4):
+  //  - monitor esperou ≥ 15 min e o aluno não ficou nem 5 min → falta do aluno (a aula conta como dada);
+  //  - aluno pagante esperou ≥ 15 min e o monitor não entrou, ou ficou menos de 15 min → disputa com a evidência.
   const terminadas = await c.reservas.find({ status: 'confirmada', teste: { $ne: true }, fim: { $lt: agora } } as any).limit(LOTE).toArray()
   for (const reserva of terminadas) {
     await seguro(async () => {
+      const id = idDe(reserva)
+      const [assentos, sala] = await Promise.all([
+        c.participacoes.find({ reservaId: id, status: { $in: ['paga', 'gratis'] } }).toArray(),
+        reserva.linkReuniao || reserva.excluidaEm || !reserva.inicio ? null : c.salas.findOne({ _id: id } as any, { projection: { registro: 1 } }),
+      ])
+      const pidDoAluno = new Map(assentos.map((a) => [idDe(a), pidDe(id, a.alunoId)]))
+      const presenca = sala && reserva.inicio && reserva.fim ? presencaNaJanela(sala.registro || [], { inicio: reserva.inicio, fim: reserva.fim }, Array.from(pidDoAluno.values())) : null
+      if (presenca && presenca.monitor.minutos < TOLERANCIA_FALTA_MS / 60_000) {
+        const esperou = assentos
+          .filter((a) => a.status === 'paga')
+          .map((a) => ({ a, minutos: presenca.alunos[pidDoAluno.get(idDe(a))!]?.minutos || 0 }))
+          .find((x) => x.minutos >= TOLERANCIA_FALTA_MS / 60_000)
+        if (esperou && (await abrirDisputaPorFaltaDoMonitor(reserva, esperou.a, esperou.minutos, presenca.monitor.entrouEm ? presenca.monitor.minutos : null))) {
+          r.disputasPorFalta = (r.disputasPorFalta || 0) + 1
+          return
+        }
+      }
       const res = await c.reservas.updateOne(
         { _id: reserva._id as any, status: 'confirmada', versao: reserva.versao },
         { $set: { status: 'realizada', updatedAt: agora }, $inc: { versao: 1 } },
@@ -233,14 +266,28 @@ export async function varrer(agora = new Date(), origem = appUrl()): Promise<Rel
       r.realizadas++
       // Excluída pelo suporte: o dinheiro segue o caminho normal, mas ninguém é chamado a avaliar.
       if (reserva.excluidaEm) return
-      const alunos = await c.participacoes.find({ reservaId: idDe(reserva), status: { $in: ['paga', 'gratis'] } }).toArray()
+      const faltosos = new Set<string>()
+      if (presenca?.monitor.esperou) {
+        for (const a of assentos) {
+          const doAluno = presenca.alunos[pidDoAluno.get(idDe(a))!]
+          if (a.falta || doAluno?.compareceu) continue
+          faltosos.add(idDe(a))
+          const evidencia = {
+            minutosMonitor: presenca.monitor.minutos,
+            ...(presenca.monitor.entrouEm ? { monitorEntrouEm: presenca.monitor.entrouEm } : {}),
+            ...(doAluno?.entrou ? { minutosAluno: doAluno.minutos } : {}),
+          }
+          if (await registrarFaltaDoAluno({ reserva: { ...reserva, status: 'realizada' }, part: a, fonte: 'sala', evidencia })) r.faltas = (r.faltas || 0) + 1
+        }
+      }
+      const alunos = assentos.filter((a) => !a.falta && !faltosos.has(idDe(a)))
       const ate = formatarEmBrasilia(liberacaoDoValor(reserva.fim!), { dateStyle: 'short', timeStyle: 'short' })
       await avisar(
         alunos.map((a) => ({
           userId: a.alunoId,
           titulo: 'Como foi a monitoria?',
           mensagem: `Avalie "${reserva.anuncioTitulo}". Teve problema? Reporte até ${ate}.`,
-          url: `/monitorias/reservas/${idDe(reserva)}`,
+          url: `/monitorias/reservas/${id}`,
           email: {
             assunto: `Como foi a monitoria "${reserva.anuncioTitulo}"?`,
             paragrafos: [
@@ -285,6 +332,51 @@ export async function varrer(agora = new Date(), origem = appUrl()): Promise<Rel
       if (res.matchedCount === 0) return
       r.concluidas++
       await concluirReserva(reserva, agora)
+    })
+  }
+
+  // 5b. Cancelamento tardio (v5): passada a garantia (fim + 48h) e sem revisão
+  // pendente, o valor retido do assento vai ao monitor — conferido no MP antes.
+  const tardios = await c.participacoes
+    .find({
+      status: 'cancelada',
+      'cancelamentoTardio.liberarApos': { $lte: agora },
+      'cancelamentoTardio.liberadoEm': { $exists: false },
+      'cancelamentoTardio.retidoNaConferenciaEm': { $exists: false },
+      $or: [{ 'cancelamentoTardio.revisao': { $exists: false } }, { 'cancelamentoTardio.revisao.decisao': 'manter' }],
+    } as any)
+    .limit(LOTE)
+    .toArray()
+  for (const p of tardios) {
+    await seguro(async () => {
+      const marcarLiberado = () =>
+        c.participacoes.updateOne({ _id: p._id as any, 'cancelamentoTardio.liberadoEm': { $exists: false } } as any, { $set: { 'cancelamentoTardio.liberadoEm': agora } })
+      if ((p.cancelamentoTardio?.retidoCentavos || 0) <= 0) {
+        await marcarLiberado()
+        return
+      }
+      const reserva = await c.reservas.findOne({ _id: new ObjectId(p.reservaId) } as any, { projection: { anuncioTitulo: 1, tutorUserId: 1 } })
+      const conferido = await conferirAssentoNoGateway(p, { anuncioTitulo: reserva?.anuncioTitulo || '' })
+      if (conferido === null) return // MP fora do ar: na próxima hora
+      if (conferido === false) {
+        // Divergência (repasse retido e equipe avisada) ou estorno direto no MP: sai da fila.
+        await c.participacoes.updateOne({ _id: p._id as any }, { $set: { 'cancelamentoTardio.retidoNaConferenciaEm': agora } })
+        return
+      }
+      await liberarRepasseDoAssento(idDe(p), agora)
+      const marcou = await marcarLiberado()
+      if (!marcou.modifiedCount) return
+      r.tardiosLiberados = (r.tardiosLiberados || 0) + 1
+      if (reserva?.tutorUserId) {
+        await avisar([
+          {
+            userId: reserva.tutorUserId,
+            titulo: 'Valor do cancelamento tardio liberado',
+            mensagem: `O valor retido pelo cancelamento de "${reserva.anuncioTitulo}" (${p.alunoNome.split(' ')[0]}) foi liberado para o seu próximo repasse.`,
+            url: `/monitorias/reservas/${p.reservaId}`,
+          },
+        ])
+      }
     })
   }
 

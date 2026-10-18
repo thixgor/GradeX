@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async () => {
     const c = await obterColecoes()
-    const [emAnalise, revisoes, disputas, liberados, payoutsAbertos, denunciadas, reembolsosFalhos, contatoPorFora, resumosFalhos] = await Promise.all([
+    const [emAnalise, revisoes, disputas, liberados, payoutsAbertos, denunciadas, reembolsosFalhos, contatoPorFora, resumosFalhos, revisoesDeCancelamento] = await Promise.all([
       c.anuncios.countDocuments({ status: 'em_analise' }),
       c.anuncios.countDocuments({ revisaoPendente: { $exists: true } }),
       c.reservas.countDocuments({ status: 'em_disputa' }),
@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
       c.participacoes.countDocuments({ 'reembolsos.status': 'falhou' }),
       c.infracoes.countDocuments({ vistaEm: null, nivel: 'bloqueio' } as any),
       c.resumos.countDocuments({ status: 'falhou' }),
+      // Pedido de revisão de cancelamento tardio (força maior) ainda sem decisão.
+      c.participacoes.countDocuments({ 'cancelamentoTardio.revisao.em': { $exists: true }, 'cancelamentoTardio.revisao.decididaEm': { $exists: false } } as any),
     ])
-    return ok({ emAnalise, revisoes, disputas, liberados, payoutsAbertos, denunciadas, reembolsosFalhos, contatoPorFora, resumosFalhos })
+    return ok({ emAnalise, revisoes, disputas: disputas + revisoesDeCancelamento, revisoesDeCancelamento, liberados, payoutsAbertos, denunciadas, reembolsosFalhos, contatoPorFora, resumosFalhos })
   })
 }

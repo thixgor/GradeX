@@ -349,7 +349,10 @@ export async function entrarNaSala(reservaId: string, sessao: SessaoDaSala, agor
       monitor: nomeVisivel(ctx.nomeDoMonitor, 'monitor', papel),
       // Só o monitor: o link para mandar aos alunos (na sala de teste, o convite que dá o assento).
       ...(papel === 'monitor'
-        ? { convite: ctx.reserva.teste && ctx.reserva.codigoTeste ? `/monitorias/teste/${ctx.reserva.codigoTeste}` : `/monitorias/reservas/${ctx.reservaId}/sala` }
+        ? {
+            convite: ctx.reserva.teste && ctx.reserva.codigoTeste ? `/monitorias/teste/${ctx.reserva.codigoTeste}` : `/monitorias/reservas/${ctx.reservaId}/sala`,
+            ...(!ctx.reserva.teste && ctx.reserva.inicio && (ctx.reserva.proposta?.vagas || 1) <= 1 ? { inicioIndividual: ctx.reserva.inicio.toISOString() } : {}),
+          }
         : {}),
     },
     ...(papel === 'monitor' ? { esperadosNomes: ctx.alunosEsperados } : {}),

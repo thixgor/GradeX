@@ -230,6 +230,7 @@ function Disputas({ onMudou }: { onMudou: () => void }) {
 
   return (
     <div>
+      <RevisoesDeCancelamento onMudou={onMudou} />
       <div className="mb-4 flex gap-2">
         <Button size="sm" variant={filtro === 'em_disputa' ? 'default' : 'outline'} onClick={() => setFiltro('em_disputa')}>Em disputa</Button>
         <Button size="sm" variant={filtro === 'todas' ? 'default' : 'outline'} onClick={() => setFiltro('todas')}>Todas as reservas</Button>
@@ -253,6 +254,14 @@ function Disputas({ onMudou }: { onMudou: () => void }) {
                     <span className="text-muted-foreground">{a.status}</span>
                     <span>{formatarCentavos(a.valorCentavos)}{a.pagoCentavos ? ` (pagou ${formatarCentavos(a.pagoCentavos)})` : ''}</span>
                     {a.reembolsos.some((x: any) => x.status === 'falhou') && <Selo tom="erro">reembolso falhou</Selo>}
+                    {a.falta && (
+                      <Selo tom="alerta">
+                        falta {a.falta.fonte === 'sala' ? 'registrada pela sala' : 'informada pelo monitor'}
+                        {a.falta.evidencia ? ` · monitor ${a.falta.evidencia.minutosMonitor} min na sala` : ''}
+                        {a.falta.evidencia?.minutosAluno != null ? `, aluno ${a.falta.evidencia.minutosAluno} min` : ''}
+                      </Selo>
+                    )}
+                    {a.cancelamentoTardio && <Selo tom="info">cancelou com {a.cancelamentoTardio.horasAntes} h · {a.cancelamentoTardio.pctDevolvido}% devolvido</Selo>}
                   </li>
                 ))}
               </ul>
@@ -267,6 +276,97 @@ function Disputas({ onMudou }: { onMudou: () => void }) {
         {decidindo && <Decisao reserva={decidindo} onFechar={() => setDecidindo(null)} onFeito={() => { setDecidindo(null); carregar(); onMudou() }} />}
       </AnimatePresence>
     </div>
+  )
+}
+
+interface RevisaoDeCancelamento {
+  participacaoId: string
+  reservaId: string
+  anuncioTitulo: string
+  inicio: string | null
+  alunoNome: string
+  status: string
+  valorCentavos: number
+  horasAntes: number
+  pctDevolvido: number
+  devolvidoCentavos: number
+  retidoCentavos: number
+  liberarApos: string
+  revisao: { em: string; motivo: string; ticketId?: string; decididaEm?: string; decisao?: 'manter' | 'devolver'; nota?: string }
+}
+
+/**
+ * Pedidos de revisão de cancelamento tardio (força maior, contrato 4.6). Enquanto
+ * o pedido está aberto, o valor retido não vai ao monitor. "Devolver" = força
+ * maior aceita: o aluno recebe o restante, como num cancelamento no prazo.
+ */
+function RevisoesDeCancelamento({ onMudou }: { onMudou: () => void }) {
+  const [lista, setLista] = useState<RevisaoDeCancelamento[] | null>(null)
+  const [notas, setNotas] = useState<Record<string, string>>({})
+  const [ocupado, setOcupado] = useState('')
+  const [erro, setErro] = useState('')
+  const carregar = useCallback(() => {
+    api<{ revisoes: RevisaoDeCancelamento[] }>('/api/admin/monitorias/revisoes').then((r) => setLista(r.revisoes)).catch(() => setLista([]))
+  }, [])
+  useEffect(() => carregar(), [carregar])
+
+  async function decidir(r: RevisaoDeCancelamento, decisao: 'manter' | 'devolver') {
+    setOcupado(`${r.participacaoId}:${decisao}`)
+    setErro('')
+    try {
+      const out = await api<{ ok: boolean; falha: string | null }>('/api/admin/monitorias/revisoes', { method: 'POST', json: { participacaoId: r.participacaoId, decisao, nota: notas[r.participacaoId] || '' } })
+      if (out.falha) setErro(`${r.alunoNome}: ${out.falha}`)
+      carregar()
+      onMudou()
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Erro')
+    } finally {
+      setOcupado('')
+    }
+  }
+
+  if (!lista?.length) return null
+  return (
+    <section className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/5 p-4" aria-label="Revisões de cancelamento">
+      <h3 className="font-heading text-base font-semibold">Revisões de cancelamento (força maior)</h3>
+      <p className="text-xs text-muted-foreground">Enquanto o pedido está aberto, o valor retido não é liberado ao monitor.</p>
+      {erro && <CaixaErro mensagem={erro} className="mt-2" />}
+      <ul className="mt-3 space-y-3">
+        {lista.map((r) => {
+          const decidida = !!r.revisao.decididaEm
+          const nota = notas[r.participacaoId] || ''
+          return (
+            <li key={r.participacaoId} className="rounded-xl border border-border bg-card p-3 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-semibold">{r.anuncioTitulo}</p>
+                <span className="text-xs text-muted-foreground">{r.alunoNome}{r.inicio ? ` · aula ${formatarEmBrasilia(r.inicio)}` : ''}</span>
+                {decidida ? <Selo tom={r.revisao.decisao === 'devolver' ? 'sucesso' : 'neutro'}>{r.revisao.decisao === 'devolver' ? 'devolvido' : 'multa mantida'}</Selo> : <Selo tom="alerta">aguardando decisão</Selo>}
+                <a href={`/monitorias/reservas/${r.reservaId}`} target="_blank" rel="noreferrer" className="ml-auto text-xs font-semibold text-primary hover:underline">Abrir reserva</a>
+              </div>
+              <p className="mt-1 text-xs">
+                Cancelou com {r.horasAntes.toLocaleString('pt-BR')} h de antecedência: devolvidos {formatarCentavos(r.devolvidoCentavos)} ({r.pctDevolvido}%), retidos {formatarCentavos(r.retidoCentavos)} de {formatarCentavos(r.valorCentavos)}.
+              </p>
+              <p className="mt-2 rounded-lg bg-amber-500/10 p-2 text-xs"><strong>Relato:</strong> {r.revisao.motivo}</p>
+              {decidida ? (
+                r.revisao.nota && <p className="mt-2 text-xs text-muted-foreground"><strong>Decisão:</strong> {r.revisao.nota}</p>
+              ) : (
+                <>
+                  <Textarea value={nota} onChange={(e) => setNotas((n) => ({ ...n, [r.participacaoId]: e.target.value }))} rows={2} className="mt-2" placeholder="Justificativa (vai para aluno e monitor)" />
+                  <div className="mt-2 flex flex-wrap justify-end gap-2">
+                    <Button size="sm" variant="outline" disabled={!!ocupado || nota.trim().length < 5} onClick={() => void decidir(r, 'manter')}>
+                      {ocupado === `${r.participacaoId}:manter` ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Manter a multa'}
+                    </Button>
+                    <Button size="sm" disabled={!!ocupado || nota.trim().length < 5} onClick={() => void decidir(r, 'devolver')}>
+                      {ocupado === `${r.participacaoId}:devolver` ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Aceitar e devolver o restante'}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }
 

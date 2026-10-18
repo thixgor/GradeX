@@ -27,6 +27,7 @@ import { avisar, avisarEquipe } from '../avisos'
 import { centavosParaReais, formatarCentavos, reaisParaCentavos } from '../dinheiro'
 import { mesDoUso } from '../sala/config'
 import type { Participacao, Reserva } from '../tipos'
+import { autorizacaoPelosTermos } from './autorizacao'
 import { cambioAtual } from './cambio'
 import { configDoResumo } from './config'
 import {
@@ -91,7 +92,9 @@ export async function ofertaDoResumo(reserva: Reserva, part: Pick<Participacao, 
   if (!vendaLiberada(config)) return fora('venda desligada')
   if (reserva.teste || !reserva.proposta || reserva.proposta.gratis || !part || part.valorCentavos <= 0) return fora('aula sem cobrança')
   if (duracaoMin <= 0 || duracaoMin > config.limites.duracaoMaxMin) return fora('duração fora do limite')
-  const [chave, gastoUsd, cambio] = await Promise.all([chaveGeminiDoResumo(), usoDoMesResumo(agora), cambioAtual(config, agora)])
+  const [chave, gastoUsd, cambio, termos] = await Promise.all([chaveGeminiDoResumo(), usoDoMesResumo(agora), cambioAtual(config, agora), autorizacaoPelosTermos(reserva.tutorUserId)])
+  // Só vende com a voz do monitor já autorizada nos Termos (v5+): sem recusa na sala, sem reembolso em massa.
+  if (!termos) return fora('monitor ainda sem os Termos que autorizam o Resumo')
   if (!chave) return fora('sem chave do Gemini')
   if (gastoUsd >= config.limites.orcamentoMensalUsd) return fora('orçamento do mês esgotado')
   const dataDaAula = reserva.inicio || reserva.proposta.inicio || agora
@@ -159,7 +162,9 @@ export async function registrarAdicionalPago(paga: Participacao, order: PaymentO
     {
       userId: reserva.tutorUserId,
       titulo: 'Resumo por IA contratado nesta aula',
-      mensagem: `${paga.alunoNome} levou o Resumo Inteligente por IA em "${reserva.anuncioTitulo}". Na sala, autorize a transcrição da sua voz (o vídeo nunca é gravado).`,
+      mensagem: (await autorizacaoPelosTermos(reserva.tutorUserId))
+        ? `${paga.alunoNome} levou o Resumo Inteligente por IA em "${reserva.anuncioTitulo}". Sua voz será transcrita na sala de aula da plataforma, como autorizado nos Termos do Monitor (itens 5.4 a 5.7). O vídeo nunca é gravado.`
+        : `${paga.alunoNome} levou o Resumo Inteligente por IA em "${reserva.anuncioTitulo}". Na sala, autorize a transcrição da sua voz (o vídeo nunca é gravado).`,
       url: `/monitorias/reservas/${idDe(reserva)}`,
     },
   ])

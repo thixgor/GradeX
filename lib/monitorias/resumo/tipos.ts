@@ -150,7 +150,8 @@ export type StatusTarefa = 'aguardando' | 'transcrevendo' | 'resumindo' | 'pront
 export interface Voz {
   papel: 'monitor' | 'aluno'
   nome: string
-  consentimento?: { aceito: boolean; em: Date; versao: string; ip?: string }
+  /** `via: 'termos'` = autorizado nos Termos do Monitor (v5+); sem `via` = decisão na sala (aditivo r1). */
+  consentimento?: { aceito: boolean; em: Date; versao: string; ip?: string; via?: 'termos' }
   /** Último trecho que o navegador gravou (avisado ao sair da sala). */
   ultimoSeq?: number
   saiuEm?: Date
@@ -209,6 +210,8 @@ export interface TarefaResumo {
    * admin continua vendo o que aconteceu.
    */
   trechosNoFim?: ResumoDosTrechos
+  /** Primeira vez que a transcrição achou contato/pagamento por fora nesta aula (a equipe é avisada uma vez). */
+  contatoNaFalaEm?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -321,8 +324,10 @@ export interface EstadoDoResumoNaSala {
   gravar: boolean
   papel: 'monitor' | 'aluno'
   individual: boolean
-  /** Só do monitor: precisa decidir antes de gravar. */
+  /** Só do monitor: precisa decidir antes de gravar (no fluxo antigo). */
   consentimento: 'pendente' | 'aceito' | 'recusado' | null
+  /** Monitor autorizado pelos Termos: grava sem cartão e não pausa a própria voz. */
+  pelosTermos?: boolean
   /** Próximo número de trecho desta voz (o navegador continua dele). */
   proximoSeq: number
   versao: string

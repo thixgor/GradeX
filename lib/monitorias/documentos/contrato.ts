@@ -23,7 +23,22 @@ import { formatarDuracao } from '../agenda'
 import type { DadosContrato } from '../tipos'
 import { identificacaoDaPlataforma, PLATAFORMA, VERSAO_TERMOS, type SecaoDocumento } from './termos'
 
-export const VERSAO_CONTRATO = '2026.10-v4'
+export const VERSAO_CONTRATO = '2026.10-v5'
+/**
+ * Primeira versão com a política de cancelamento tardio e falta (cláusula 4ª
+ * nova) e com a ressalva do Resumo por IA. Contrato de versão anterior é
+ * remontado com o texto antigo (quem já assinou não muda de regra).
+ */
+export const VERSAO_CONTRATO_POLITICA_V5 = '2026.10-v5'
+
+/** O contrato (pela versão do modelo) segue a política v5? As versões são "AAAA.MM-vN". */
+export function contratoComPoliticaV5(modeloVersao: string | null | undefined): boolean {
+  const n = (v: string) => {
+    const m = /^(\d{4})\.(\d{2})-v(\d+)$/.exec(v || '')
+    return m ? Number(m[1]) * 1e6 + Number(m[2]) * 1e3 + Number(m[3]) : 0
+  }
+  return n(modeloVersao || '') >= n(VERSAO_CONTRATO_POLITICA_V5)
+}
 export const VERSAO_OFERTA = '2026.10-v2'
 
 export function sha256(texto: string): string {
@@ -43,6 +58,8 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
   const inter = d.intermediadora || intermediadoraAtual()
   const valor = d.gratis ? 'GRATUITA (R$ 0,00)' : `${formatarCentavos(d.valorCentavos)} por aluno`
   const cpf = (x: string) => maskCpf(x) || 'não informado'
+  // Contrato antigo remontado (sem as seções guardadas) sai com o texto da versão dele.
+  const v5 = contratoComPoliticaV5(d.modeloVersao)
   return [
     {
       titulo: 'Partes',
@@ -58,7 +75,9 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
       paragrafos: [
         `1.1. O CONTRATADO prestará ao CONTRATANTE serviço de monitoria de "${d.anuncio.titulo}" (matéria: ${d.anuncio.materia}).`,
         `1.2. Conteúdos combinados: ${d.conteudos.length ? d.conteudos.join('; ') : 'conforme o anúncio e o chat da reserva'}.`,
-        '1.3. Modalidade: online, por link de reunião fornecido pelo CONTRATADO na página da reserva, ou conforme combinado por escrito no chat da plataforma.',
+        v5
+          ? '1.3. Modalidade: online, na sala de aula da plataforma ou, quando combinado, por link de reunião externo indicado pelo CONTRATADO na página da reserva.'
+          : '1.3. Modalidade: online, por link de reunião fornecido pelo CONTRATADO na página da reserva, ou conforme combinado por escrito no chat da plataforma.',
         d.vagas > 1
           ? `1.4. Monitoria em grupo de até ${d.vagas} alunos. Cada aluno firma o próprio contrato e paga o próprio valor. Alunos que entram pelo convite aderem às mesmas condições, e a assinatura do CONTRATADO no contrato do organizador vale para eles por adesão.`
           : '1.4. Monitoria individual.',
@@ -94,7 +113,7 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
     },
     {
       titulo: 'Cláusula 4ª — Cancelamento e reembolso',
-      paragrafos: [
+      paragrafos: v5 ? clausula4V5() : [
         '4.1. Direito de arrependimento: em até 7 (sete) dias contados do pagamento, e desde que a monitoria não tenha começado, o CONTRATANTE pode desistir sem justificativa e recebe todo o valor pago, inclusive a taxa do PIX (CDC, art. 49; Decreto 7.962/2013, art. 5º).',
         '4.2. Fora desse prazo, cancelamento pelo CONTRATANTE com 24 horas ou mais de antecedência: reembolso integral, automático.',
         '4.3. Fora desse prazo, cancelamento pelo CONTRATANTE com menos de 24 horas: decisão fundamentada do suporte da INTERVENIENTE, considerando a antecedência, a possibilidade de reaproveitamento do horário e a boa-fé (Código Civil, art. 413). O não comparecimento do CONTRATANTE sem aviso, com o CONTRATADO presente, equivale a serviço prestado.',
@@ -106,8 +125,12 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
     {
       titulo: 'Cláusula 5ª — Obrigações das partes',
       paragrafos: [
-        '5.1. O CONTRATADO: comparecer no horário; disponibilizar o link da reunião na página da reserva; prestar a monitoria com o conteúdo e a duração combinados; tratar o CONTRATANTE com respeito; não gravar sem consentimento expresso registrado no chat; cumprir suas obrigações fiscais sobre o que receber.',
-        '5.2. O CONTRATANTE: manter os dados verdadeiros; comparecer no horário; tratar o CONTRATADO com respeito; não gravar sem consentimento expresso registrado no chat; não redistribuir o material recebido; não pedir que o CONTRATADO faça provas ou atividades avaliativas em seu lugar.',
+        v5
+          ? '5.1. O CONTRATADO: comparecer no horário e aguardar o CONTRATANTE por pelo menos 15 minutos; usar a sala de aula da plataforma ou disponibilizar o link da reunião na página da reserva; prestar a monitoria com o conteúdo e a duração combinados; tratar o CONTRATANTE com respeito; não gravar sem consentimento expresso registrado no chat, ressalvada a transcrição de voz do Resumo por IA (item 7.2); cumprir suas obrigações fiscais sobre o que receber.'
+          : '5.1. O CONTRATADO: comparecer no horário; disponibilizar o link da reunião na página da reserva; prestar a monitoria com o conteúdo e a duração combinados; tratar o CONTRATANTE com respeito; não gravar sem consentimento expresso registrado no chat; cumprir suas obrigações fiscais sobre o que receber.',
+        v5
+          ? '5.2. O CONTRATANTE: manter os dados verdadeiros; comparecer no horário ou cancelar com antecedência; tratar o CONTRATADO com respeito; não gravar sem consentimento expresso registrado no chat, ressalvada a transcrição de voz do Resumo por IA, quando contratado (item 7.2); não redistribuir o material recebido; não pedir que o CONTRATADO faça provas ou atividades avaliativas em seu lugar.'
+          : '5.2. O CONTRATANTE: manter os dados verdadeiros; comparecer no horário; tratar o CONTRATADO com respeito; não gravar sem consentimento expresso registrado no chat; não redistribuir o material recebido; não pedir que o CONTRATADO faça provas ou atividades avaliativas em seu lugar.',
       ],
     },
     {
@@ -122,7 +145,9 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
       titulo: 'Cláusula 7ª — Propriedade intelectual, imagem e dados',
       paragrafos: [
         '7.1. O material próprio do CONTRATADO continua de sua titularidade; o CONTRATANTE recebe licença de uso pessoal, não exclusiva e intransferível.',
-        '7.2. A imagem e a voz de cada participante não podem ser gravadas, publicadas ou compartilhadas sem consentimento expresso (Código Civil, art. 20).',
+        v5
+          ? '7.2. A imagem e a voz de cada participante não podem ser gravadas, publicadas ou compartilhadas sem consentimento expresso (Código Civil, art. 20). Ressalva: quando o Resumo por IA for contratado, a voz do CONTRATADO (autorizada nos Termos de Serviço do Monitor) e, na monitoria individual, a do CONTRATANTE que o contratou (autorizada no aditivo aceito no checkout) são transcritas pela INTERVENIENTE para gerar o resumo e para verificar combinação de contato ou pagamento por fora; o vídeo nunca é gravado.'
+          : '7.2. A imagem e a voz de cada participante não podem ser gravadas, publicadas ou compartilhadas sem consentimento expresso (Código Civil, art. 20).',
         '7.3. Cada parte tratará os dados pessoais recebidos da outra apenas para executar este contrato, como controladora autônoma, nos termos da Lei 13.709/2018 (LGPD).',
       ],
     },
@@ -138,6 +163,21 @@ export function secoesDoContrato(d: DadosContrato): SecaoDocumento[] {
         `8.5. Foro: domicílio do CONTRATANTE (CDC, art. 101, I).${inter.foro && !/domic[ií]lio do consumidor/i.test(inter.foro) ? ` Nas questões entre CONTRATADO e INTERVENIENTE, foro da ${inter.foro}.` : ''}`,
       ],
     },
+  ]
+}
+
+/** Cláusula 4ª da política v5 (cancelamento tardio, falta e adicionais). */
+function clausula4V5(): string[] {
+  return [
+    '4.1. Direito de arrependimento: em até 7 (sete) dias contados do pagamento, e desde que faltem 24 (vinte e quatro) horas ou mais para o início da monitoria, o CONTRATANTE pode desistir sem justificativa e recebe todo o valor pago, inclusive a taxa do PIX (CDC, art. 49; Decreto 7.962/2013, art. 5º). Por se tratar de serviço com data e horário reservados a pedido do CONTRATANTE, a partir de 24 horas antes do início a desistência segue os itens 4.3 e 4.4.',
+    '4.2. Cancelamento pelo CONTRATANTE com 24 horas ou mais de antecedência: reembolso integral, automático.',
+    '4.3. Cancelamento pelo CONTRATANTE com menos de 24 horas e pelo menos 2 horas de antecedência: reembolso automático de 50% do valor da monitoria. Os outros 50% remuneram o CONTRATADO pelo horário reservado, que deixou de oferecer a outras pessoas, e pela preparação (Código Civil, art. 413), descontada a remuneração da INTERVENIENTE prevista no item 3.3.',
+    '4.4. Cancelamento com menos de 2 horas, ou não comparecimento do CONTRATANTE (atraso superior a 15 minutos sem aviso no chat, item 2.3): sem reembolso do valor da monitoria, que se considera prestada.',
+    '4.5. A presença é verificada pela sala de aula da plataforma: o CONTRATADO conta como presente se entrar até 15 minutos após o início e permanecer pelo menos 15 minutos; o CONTRATANTE, se permanecer pelo menos 5 minutos durante a aula. Com o CONTRATADO presente e o CONTRATANTE não, a falta do CONTRATANTE é registrada automaticamente; quando a monitoria for por link externo, ela é informada pelo CONTRATADO. Com o CONTRATANTE presente por pelo menos 15 minutos e o CONTRATADO não, a falta do CONTRATADO é analisada pelo suporte (item 4.7). O CONTRATANTE pode contestá-la, ou pedir revisão por motivo de força maior comprovado (doença, acidente, emergência), em até 48 horas após o término previsto; o valor retido não é liberado até a decisão fundamentada do suporte da INTERVENIENTE.',
+    '4.6. Adicionais: o Resumo por IA é devolvido integralmente a quem cancelar e, na monitoria individual, também em caso de falta. O material oficial já entregue não é devolvido nos casos dos itens 4.3 e 4.4.',
+    '4.7. Cancelamento ou falta do CONTRATADO: reembolso integral ao CONTRATANTE, sem prejuízo das penalidades previstas nos Termos de Serviço.',
+    '4.8. Até 48 horas após o término, o CONTRATANTE pode reportar problema na plataforma; o valor fica retido até a decisão do suporte, ouvidas as duas partes.',
+    '4.9. O reembolso é pedido ao Mercado Pago na hora do cancelamento ou da decisão e volta pelo mesmo meio de pagamento.',
   ]
 }
 

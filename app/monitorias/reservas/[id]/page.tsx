@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   AlertTriangle, ArrowLeft, BookOpen, CalendarPlus, Check, CheckCircle2, Clock, Copy, FileText, HeartHandshake, Link2,
-  Loader2, MessagesSquare, Plus, Receipt, Repeat, Send, Star, Trash2, Users, Video, X, XCircle,
+  Loader2, MessagesSquare, Plus, Receipt, Repeat, Scale, Send, Star, Trash2, UserX, Users, Video, X, XCircle,
 } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
@@ -17,16 +17,26 @@ import { CartaoDemanda } from '@/components/monitorias/cartao-demanda'
 import { ProximoPasso } from '@/components/monitorias/proximo-passo'
 import { CartaoDeAnotacoes } from '@/components/monitorias/anotacoes'
 import { CartaoDoResumo } from '@/components/monitorias/resumo/cartao-resumo'
+import { PrazosDoCancelamento } from '@/components/monitorias/prazos-cancelamento'
 import { baixarIcs, type DetalheReserva, type MensagemReserva, type PresencaNaSala } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { ETAPAS_LINHA_DO_TEMPO } from '@/lib/monitorias/estado'
-import { dentroDoArrependimento } from '@/lib/monitorias/politica'
+import { dentroDoArrependimento, HORAS_SEM_REEMBOLSO, PCT_DEVOLVIDO_TARDIO, planoDaMulta, TOLERANCIA_FALTA_MIN } from '@/lib/monitorias/politica'
 import { formatarEmBrasilia, horaEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
 
-type Modal = null | 'cancelar' | 'recusar' | 'reportar' | 'propor'
+type Modal = null | 'cancelar' | 'recusar' | 'reportar' | 'propor' | 'revisao' | 'falta'
+
+const TITULO_DO_MODAL: Record<Exclude<Modal, null>, string> = {
+  propor: 'Nova proposta',
+  cancelar: 'Cancelar monitoria',
+  recusar: 'Recusar pedido',
+  reportar: 'Reportar problema',
+  revisao: 'Pedir revisão do cancelamento',
+  falta: 'Aluno não compareceu',
+}
 
 export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const reduzir = useReducedMotion()
@@ -154,6 +164,16 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
   const assento = d.meuAssento
   const somenteLeitura = d.somenteLeitura
   const podeCancelar = !somenteLeitura && !encerrada && ['solicitada', 'em_negociacao', 'aguardando_assinaturas', 'aguardando_pagamento', 'confirmada'].includes(r.status)
+  // "Aluno não compareceu": de início + 15 min (tolerância) até 24 h depois do fim.
+  const agoraMs = Date.now()
+  const podeInformarFalta =
+    ehMonitor &&
+    ['confirmada', 'realizada'].includes(r.status) &&
+    !!r.inicio &&
+    !!r.fim &&
+    agoraMs >= new Date(r.inicio).getTime() + TOLERANCIA_FALTA_MIN * 60_000 &&
+    agoraMs <= new Date(r.fim).getTime() + 24 * 3_600_000 &&
+    d.assentos.some((a) => ['paga', 'gratis'].includes(a.status) && !a.falta)
 
   return (
     <PageScaffold wide>
@@ -324,7 +344,18 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
 
 
 
-          {r.resumoIA && <CartaoDoResumo reservaId={r.id} tarefa={r.resumoIA.tarefa} meu={r.resumoIA.meu} ehMonitor={ehMonitor} />}
+          {assento?.cancelamentoTardio && <CancelamentoComMulta c={assento.cancelamentoTardio} onRevisao={() => setModal('revisao')} />}
+          {!ehMonitor && assento?.falta && (
+            <CaixaAviso>
+              <strong>Falta registrada</strong> {assento.falta.fonte === 'sala' ? 'pela sala de aula (o monitor esperou e você não entrou).' : 'pelo monitor.'} Pelo contrato, a aula conta como dada.
+              {r.podeReportar ? ' Se você esteve na aula, ou houve força maior, use "Contestar falta".' : ''}
+            </CaixaAviso>
+          )}
+          {!ehMonitor && assento?.politica === 'v5' && assento.status === 'paga' && r.inicio && new Date(r.inicio).getTime() > agoraMs && ['confirmada', 'aguardando_pagamento'].includes(r.status) && (
+            <PrazosDoCancelamento inicio={r.inicio} valorCentavos={assento.valorCentavos} />
+          )}
+
+          {r.resumoIA && <CartaoDoResumo reservaId={r.id} tarefa={r.resumoIA.tarefa} meu={r.resumoIA.meu} ehMonitor={ehMonitor} pelosTermos={!!r.resumoIA.pelosTermos} />}
 
           {['confirmada', 'realizada', 'em_disputa', 'concluida'].includes(r.status) && <CartaoDeAnotacoes reservaId={r.id} />}
 
@@ -353,7 +384,21 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
               <h2 className="flex items-center gap-1.5 text-sm font-semibold"><Users className="h-4 w-4 text-primary" /> Alunos</h2>
               <ul className="mt-2 space-y-1.5 text-sm">
                 {d.assentos.map((a, i) => (
-                  <li key={i} className="flex items-center justify-between"><span>{a.alunoNome}{a.eu ? ' (você)' : ''}</span><span className="text-xs text-muted-foreground">{ROTULO_ASSENTO[a.status] || a.status}</span></li>
+                  <li key={i}>
+                    <div className="flex items-center justify-between gap-2">
+                      <span>{a.alunoNome}{a.eu ? ' (você)' : ''}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {a.falta ? 'faltou' : a.cancelamentoTardio ? `cancelou com ${a.cancelamentoTardio.horasAntes.toLocaleString('pt-BR')} h` : ROTULO_ASSENTO[a.status] || a.status}
+                      </span>
+                    </div>
+                    {a.historico && (a.historico.aulas > 0 || a.historico.faltas > 0) && (
+                      <p className="text-[11px] text-muted-foreground">
+                        Últimos 90 dias: {a.historico.aulas} aula{a.historico.aulas === 1 ? '' : 's'}
+                        {a.historico.faltas ? ` · ${a.historico.faltas} falta${a.historico.faltas === 1 ? '' : 's'}` : ''}
+                        {a.historico.cancelamentosTardios ? ` · ${a.historico.cancelamentosTardios} cancelamento${a.historico.cancelamentosTardios === 1 ? '' : 's'} em cima da hora` : ''}
+                      </p>
+                    )}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -386,7 +431,12 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
           <div className="space-y-2">
             {r.podeReportar && (
               <Button variant="outline" className="w-full rounded-xl" onClick={() => setModal('reportar')}>
-                <AlertTriangle className="mr-2 h-4 w-4" /> Reportar problema
+                <AlertTriangle className="mr-2 h-4 w-4" /> {assento?.falta ? 'Contestar falta' : 'Reportar problema'}
+              </Button>
+            )}
+            {podeInformarFalta && (
+              <Button variant="outline" className="w-full rounded-xl" onClick={() => setModal('falta')}>
+                <UserX className="mr-2 h-4 w-4" /> Aluno não compareceu
               </Button>
             )}
             {ehMonitor && ['solicitada', 'em_negociacao'].includes(r.status) && (
@@ -414,13 +464,26 @@ export default function SalaDaReserva({ params }: { params: { id: string } }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-heading text-lg font-semibold">
-                  {modal === 'propor' ? 'Nova proposta' : modal === 'cancelar' ? 'Cancelar monitoria' : modal === 'recusar' ? 'Recusar pedido' : 'Reportar problema'}
-                </h3>
+                <h3 className="font-heading text-lg font-semibold">{modal === 'reportar' && assento?.falta ? 'Contestar falta' : TITULO_DO_MODAL[modal]}</h3>
                 <Button variant="ghost" size="icon" onClick={() => setModal(null)} aria-label="Fechar"><X className="h-5 w-5" /></Button>
               </div>
               {modal === 'propor' ? (
                 <CompositorProposta d={d} onEnviada={() => { setModal(null); carregar() }} />
+              ) : modal === 'revisao' ? (
+                <FormRevisao
+                  onEnviar={async (motivo) => {
+                    await acao({ acao: 'revisao', motivo })
+                    setModal(null)
+                  }}
+                />
+              ) : modal === 'falta' ? (
+                <FormFalta
+                  d={d}
+                  onEnviar={async (participacaoId, motivo) => {
+                    await acao({ acao: 'falta', ...(participacaoId ? { participacaoId } : {}), ...(motivo ? { motivo } : {}) })
+                    setModal(null)
+                  }}
+                />
               ) : (
                 <FormMotivo
                   tipo={modal}
@@ -490,12 +553,15 @@ function FormMotivo({ tipo, d, onEnviar }: { tipo: 'cancelar' | 'recusar' | 'rep
   if (tipo === 'cancelar') {
     if (!pago) explicacao = 'Ainda não houve pagamento: a reserva só é encerrada.'
     else if (d.papel === 'monitor') explicacao = 'Todos os alunos recebem 100% de volta e você recebe uma advertência (strike). 3 strikes em 90 dias suspendem o perfil.'
+    else if (d.meuAssento?.politica === 'v5') explicacao = explicacaoDaMulta(d.meuAssento, horas)
     else if (dentroDoArrependimento(d.meuAssento?.pagoEm ? new Date(d.meuAssento.pagoEm) : null, new Date()))
       explicacao = 'Você está no prazo de arrependimento (7 dias desde o pagamento, CDC art. 49): recebe 100% de volta, inclusive a taxa do PIX, automaticamente.'
     else if (horas >= 24) explicacao = 'Faltam 24h ou mais: você recebe 100% de volta automaticamente.'
     else explicacao = 'Faltam menos de 24h e já passou o prazo de arrependimento: seu pedido vai para o suporte, que decide o reembolso de forma fundamentada.'
   } else if (tipo === 'reportar') {
-    explicacao = 'O valor fica retido e o suporte analisa (conte o que aconteceu: falta, atraso, aula diferente do combinado...).'
+    explicacao = d.meuAssento?.falta
+      ? 'Conte por que a falta não procede (você esteve na aula, problema técnico) ou o motivo de força maior. O valor fica retido até a decisão do suporte.'
+      : 'O valor fica retido e o suporte analisa (conte o que aconteceu: falta, atraso, aula diferente do combinado...).'
   } else {
     explicacao = 'O aluno é avisado. Seja gentil e explique o motivo.'
   }
@@ -520,6 +586,117 @@ function FormMotivo({ tipo, d, onEnviar }: { tipo: 'cancelar' | 'recusar' | 'rep
         }}
       >
         {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : tipo === 'cancelar' ? 'Confirmar cancelamento' : tipo === 'recusar' ? 'Recusar' : 'Enviar ao suporte'}
+      </Button>
+    </div>
+  )
+}
+
+/** O que acontece se o aluno cancelar agora (política v5: 100% / 50% / 0% do valor da aula). */
+function explicacaoDaMulta(assento: NonNullable<DetalheReserva['meuAssento']>, horas: number): string {
+  const extras = `${assento.temResumoIA ? ' O Resumo por IA volta inteiro.' : ''}${assento.materialOficial && horas < 24 ? ' O material oficial já entregue fica com você.' : ''}`
+  if (horas >= 24) return `Faltam 24h ou mais: você recebe 100% de volta automaticamente.${assento.temResumoIA ? ' O Resumo por IA vai junto.' : ''}`
+  if (horas >= HORAS_SEM_REEMBOLSO) {
+    const volta = planoDaMulta(assento, PCT_DEVOLVIDO_TARDIO).devolvidoCentavos
+    return `Faltam menos de 24h: você recebe ${formatarCentavos(volta)} (${PCT_DEVOLVIDO_TARDIO}% do valor da aula) de volta, automaticamente. Os outros ${100 - PCT_DEVOLVIDO_TARDIO}% remuneram o monitor pelo horário reservado e pela preparação (contrato, cláusula 4.3).${extras}`
+  }
+  return `Faltam menos de ${HORAS_SEM_REEMBOLSO}h: o valor da aula (${formatarCentavos(assento.valorCentavos)}) não é devolvido e remunera o monitor pelo horário reservado (contrato, cláusula 4.4). Se houve motivo de força maior, depois de cancelar você pode pedir revisão.${extras}`
+}
+
+/** Cancelamento com multa (v5): o que voltou, o que ficou com o monitor e a revisão por força maior. */
+function CancelamentoComMulta({ c, onRevisao }: { c: NonNullable<NonNullable<DetalheReserva['meuAssento']>['cancelamentoTardio']>; onRevisao: () => void }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4 text-sm">
+      <h2 className="flex items-center gap-1.5 font-semibold"><Scale className="h-4 w-4 text-primary" /> Cancelamento em cima da hora</h2>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Você cancelou com {c.horasAntes.toLocaleString('pt-BR')} h de antecedência: {c.devolvidoCentavos > 0 ? `${formatarCentavos(c.devolvidoCentavos)} (${c.pctDevolvido}%) voltaram pelo Mercado Pago` : 'o valor da aula não foi devolvido'} e {formatarCentavos(c.retidoCentavos)} remuneram o monitor pelo horário reservado.
+      </p>
+      {c.revisao ? (
+        <CaixaAviso className="mt-2" tom={c.revisao.decisao === 'devolver' ? 'sucesso' : 'info'}>
+          {!c.revisao.decididaEm
+            ? 'Pedido de revisão enviado. O suporte responde pelo ticket; até lá, o valor não é repassado ao monitor.'
+            : c.revisao.decisao === 'devolver'
+              ? 'Revisão aceita: o restante do valor volta para você pelo Mercado Pago.'
+              : `Revisão analisada: a regra do contrato foi mantida.${c.revisao.nota ? ` ${c.revisao.nota}` : ''}`}
+        </CaixaAviso>
+      ) : c.podePedirRevisao ? (
+        <Button variant="outline" size="sm" className="mt-2 w-full" onClick={onRevisao}>Pedir revisão (força maior)</Button>
+      ) : null}
+    </div>
+  )
+}
+
+function FormRevisao({ onEnviar }: { onEnviar: (motivo: string) => Promise<void> }) {
+  const [motivo, setMotivo] = useState('')
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState('')
+  return (
+    <div className="space-y-3">
+      <CaixaAviso tom="info">
+        Para motivo de força maior comprovado (doença, acidente, emergência). Conte o que aconteceu; os comprovantes podem ser enviados no ticket que abrimos na Central de Ajuda. Enquanto o suporte analisa, o valor retido não é repassado ao monitor.
+      </CaixaAviso>
+      <Textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} rows={5} maxLength={2000} placeholder="O que aconteceu" />
+      {erro && <CaixaErro mensagem={erro} />}
+      <Button
+        className="w-full"
+        disabled={ocupado || motivo.trim().length < 20}
+        onClick={async () => {
+          setOcupado(true)
+          setErro('')
+          try {
+            await onEnviar(motivo.trim())
+          } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Erro.')
+          } finally {
+            setOcupado(false)
+          }
+        }}
+      >
+        {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enviar pedido de revisão'}
+      </Button>
+    </div>
+  )
+}
+
+function FormFalta({ d, onEnviar }: { d: DetalheReserva; onEnviar: (participacaoId: string | null, motivo: string) => Promise<void> }) {
+  const candidatos = d.assentos.filter((a) => a.id && ['paga', 'gratis'].includes(a.status) && !a.falta)
+  const [escolhido, setEscolhido] = useState(candidatos.length === 1 ? candidatos[0].id! : '')
+  const [motivo, setMotivo] = useState('')
+  const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState('')
+  return (
+    <div className="space-y-3">
+      <CaixaAviso tom="info">
+        Use depois de esperar {TOLERANCIA_FALTA_MIN} minutos. A aula conta como dada e você recebe normalmente depois da garantia; o aluno é avisado e pode contestar em até 48 h. Na sala da plataforma, a presença registrada confere o seu aviso. Informar falta que não houve é falta grave (Termos do Monitor, 7.3).
+      </CaixaAviso>
+      {candidatos.length > 1 && (
+        <label className="block text-sm">
+          <span className="text-muted-foreground">Quem não compareceu</span>
+          <select value={escolhido} onChange={(e) => setEscolhido(e.target.value)} className="mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-sm">
+            <option value="">Escolha o aluno</option>
+            {candidatos.map((a) => (
+              <option key={a.id} value={a.id}>{a.alunoNome}</option>
+            ))}
+          </select>
+        </label>
+      )}
+      <Textarea value={motivo} onChange={(e) => setMotivo(e.target.value)} rows={3} maxLength={500} placeholder="Observação (opcional): ex. esperei no link combinado e o aluno não respondeu no chat" />
+      {erro && <CaixaErro mensagem={erro} />}
+      <Button
+        className="w-full"
+        disabled={ocupado || !escolhido}
+        onClick={async () => {
+          setOcupado(true)
+          setErro('')
+          try {
+            await onEnviar(escolhido || null, motivo.trim())
+          } catch (e) {
+            setErro(e instanceof Error ? e.message : 'Erro.')
+          } finally {
+            setOcupado(false)
+          }
+        }}
+      >
+        {ocupado ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Registrar falta'}
       </Button>
     </div>
   )

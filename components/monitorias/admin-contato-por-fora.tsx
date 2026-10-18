@@ -25,7 +25,7 @@ interface Item {
   userId: string
   nome: string
   papel: 'monitor' | 'aluno'
-  origem: 'chat' | 'chat_sala' | 'material'
+  origem: 'chat' | 'chat_sala' | 'material' | 'resumo_ia'
   nivel: 'bloqueio' | 'alerta'
   categorias: CategoriaContato[]
   trechos: string[]
@@ -35,7 +35,7 @@ interface Item {
   bloqueios30d: number
 }
 
-const ORIGEM: Record<Item['origem'], string> = { chat: 'chat da reserva', chat_sala: 'chat da sala de aula', material: 'material enviado' }
+const ORIGEM: Record<Item['origem'], string> = { chat: 'chat da reserva', chat_sala: 'chat da sala de aula', material: 'material enviado', resumo_ia: 'dito na aula (Resumo por IA)' }
 
 export function AdminContatoPorFora({ onMudou }: { onMudou: () => void }) {
   const [filtro, setFiltro] = useState<'novas' | 'todas'>('novas')

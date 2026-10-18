@@ -33,6 +33,7 @@ interface Tarefa {
   prontoEm: string | null
   teste: boolean
   monitorAutorizou: boolean | null
+  monitorPelosTermos?: boolean
   adicionais: Array<{ status: string; precoCentavos: number; teste: boolean; reembolso: { motivo: string; status: string } | null }>
 }
 
@@ -163,7 +164,7 @@ export function AdminResumosIA({ onMudou }: { onMudou: () => void }) {
                 </div>
                 <p className="mt-1.5 text-xs text-muted-foreground">
                   Custo {usd(t.custo.realUsd)} (estimado {usd(t.custo.estimadoUsd)}) · cobertura {t.cobertura != null ? `${t.cobertura}%` : '—'} · monitor{' '}
-                  {t.monitorAutorizou === null ? 'ainda não decidiu' : t.monitorAutorizou ? 'autorizou' : 'não autorizou'}
+                  {t.monitorAutorizou === null ? 'ainda não decidiu' : t.monitorPelosTermos ? 'autorizado pelos Termos' : t.monitorAutorizou ? 'autorizou' : 'não autorizou'}
                   {t.tentativas ? ` · ${t.tentativas} tentativa(s)` : ''}
                 </p>
                 {t.erro && <p className="mt-1 rounded-lg bg-rose-500/10 px-2 py-1 text-xs text-rose-700 dark:text-rose-300">{t.erro}</p>}

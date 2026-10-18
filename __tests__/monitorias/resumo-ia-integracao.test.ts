@@ -131,7 +131,10 @@ async function fetchFalso(entrada: RequestInfo | URL, init?: RequestInit): Promi
     let usage: any
     if (audio) {
       const longo = String(audio.uri).includes('longo')
-      const frases = longo
+      const contato = String(audio.uri).includes('contato')
+      const frases = contato
+        ? [{ inicio_s: 2, texto: 'A pré-carga é o estiramento.', incerto: false }, { inicio_s: 130, texto: 'Me chama no zap depois, é 21 98765-4321, que a gente combina por fora.', incerto: false }]
+        : longo
         ? // ~585 mil caracteres ≈ 167 mil tokens: passa do limite de 150 mil da janela única.
           Array.from({ length: 150 }, (_, i) => ({ inicio_s: i * 28, texto: `Explicação longa ${i}. ${'conteúdo '.repeat(430)}`, incerto: false }))
         : [{ inicio_s: 2, texto: 'Vamos falar de insuficiência cardíaca.', incerto: false }, { inicio_s: 40, texto: 'A pré-carga é o estiramento.', incerto: false }]
@@ -179,6 +182,8 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     await db.collection('monitorias_tutores').insertOne({ _id: TUTOR, userId: 'monitor-1', nome: 'Carla Monitora', disponibilidade: { semanal: [], diasBloqueados: [], intervaloMin: 0 } } as any)
     await db.collection('monitorias_anuncios').insertOne({ _id: ANUNCIO, materia: 'Cardiologia', stats: { reservas: 0 } } as any)
     await db.collection('settings').insertOne({ geminiApiKey: 'chave-de-teste-do-gemini' } as any)
+    // O Resumo só é vendido com a voz do monitor autorizada nos Termos (v5+).
+    await db.collection('monitorias_termos_aceites').insertOne({ userId: 'monitor-1', papel: 'monitor', versao: '2026.10-v5', em: new Date() } as any)
     const { salvarConfigDoResumo } = await import('@/lib/monitorias/resumo/config')
     await salvarConfigDoResumo(CONFIG)
     mp.criados = []
@@ -260,6 +265,17 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
   const tarefaDe = (reservaId: ObjectId) => db.collection('monitorias_resumos').findOne({ _id: String(reservaId) } as any)
 
   // ─── Dinheiro ─────────────────────────────────────────────────────────
+
+  it('monitor sem os Termos v5: o Resumo não é oferecido (a voz dele não está autorizada)', async () => {
+    const { ofertaDoResumo } = await import('@/lib/monitorias/resumo/adicional')
+    const { reserva } = await comprarComResumo()
+    const atual = (await db.collection('monitorias_reservas').findOne({ _id: reserva._id })) as any
+    expect((await ofertaDoResumo(atual, { valorCentavos: 10000 })).disponivel).toBe(true)
+    await db.collection('monitorias_termos_aceites').updateOne({ userId: 'monitor-1' }, { $set: { versao: '2026.10-v4' } })
+    const sem = await ofertaDoResumo(atual, { valorCentavos: 10000 })
+    expect(sem.disponivel).toBe(false)
+    expect(sem.interno?.motivo).toMatch(/Termos/)
+  })
 
   it('checkout com resumo: preço do servidor no pedido, base = aula + resumo, resumo na comissão; repasse do monitor continua R$ 90', async () => {
     const { order, checkout, adicional, assentos, reserva } = await comprarComResumo()
@@ -370,6 +386,8 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
   it('monitor recusa a transcrição: adicional devolvido, tarefa cancelada, decisão definitiva', async () => {
     const { registrarConsentimento } = await import('@/lib/monitorias/resumo/tarefa')
     const { reserva, assentos, adicional } = await comprarComResumo()
+    // Adicional vendido no aditivo r1, monitor ainda sem os Termos v5: o fluxo antigo (decide na sala) continua.
+    await db.collection('monitorias_termos_aceites').deleteMany({ userId: 'monitor-1' })
     const atual = await db.collection('monitorias_reservas').findOne({ _id: reserva._id })
     await registrarConsentimento(atual as any, 'monitor-1', false, '2.2.2.2')
     expect((await adicionalDe(assentos[0]._id))!.status).toBe('reembolsado')
@@ -485,6 +503,44 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     expect(gemini.interacoes.length).toBe(antes)
   })
 
+  it('contato dito na aula: vira infração (só a frase e o minuto), a equipe é avisada uma vez e o resumo sai sem contato', async () => {
+    const { reserva, inicio } = await aulaQueTerminou()
+    await trecho(reserva._id, { userId: 'monitor-1', papel: 'monitor', nome: 'Carla', seq: 0, inicio: new Date(inicio.getTime() + 10 * 60_000), min: 40, nomeArquivo: 'files/contato-m0' })
+    await trecho(reserva._id, { userId: 'monitor-1', papel: 'monitor', nome: 'Carla', seq: 1, inicio: new Date(inicio.getTime() + 50 * 60_000), min: 8, nomeArquivo: 'files/contato-m1' })
+    await sairam(reserva._id, { 'monitor-1': 1 })
+    expect(await processarTudo()).toEqual(['trecho', 'trecho', 'resumo'])
+    const infracoes = await db.collection('monitorias_infracoes').find({ reservaId: String(reserva._id) }).toArray()
+    expect(infracoes).toHaveLength(2)
+    expect(infracoes.every((i) => i.origem === 'resumo_ia' && i.papel === 'monitor' && i.nivel === 'bloqueio')).toBe(true)
+    expect(infracoes.map((i) => i.texto).sort()[0]).toMatch(/^\[min 12\] Me chama no zap/)
+    expect(infracoes.every((i) => !i.texto.includes('pré-carga'))).toBe(true)
+    expect(avisos.lista.filter((a) => a.titulo === 'Contato por fora dito na aula')).toHaveLength(1)
+    // O pedido de resumo manda deixar contato de fora; o resultado não traz telefone.
+    const pedidoDoResumo = gemini.interacoes.find((b) => b.response_format && !(Array.isArray(b.input) && b.input.some((c: any) => c.type === 'audio')))
+    expect(pedidoDoResumo.system_instruction).toMatch(/nunca inclua telefones/)
+    const t = await tarefaDe(reserva._id)
+    expect(JSON.stringify(t!.resultado)).not.toMatch(/98765/)
+  })
+
+  it('monitor com os Termos v5: grava sem cartão, sem pausa e sem poder recusar; sem os Termos, o fluxo antigo', async () => {
+    const { estadoDoResumoNaSala, registrarConsentimento } = await import('@/lib/monitorias/resumo/tarefa')
+    const { reserva } = await aulaQueTerminou()
+    await db.collection('monitorias_resumos').updateOne({ _id: String(reserva._id) } as any, { $unset: { 'vozes.monitor-1.consentimento': '' } })
+    const atual = (await db.collection('monitorias_reservas').findOne({ _id: reserva._id })) as any
+    const v5 = await estadoDoResumoNaSala(atual, 'monitor-1')
+    expect(v5).toMatchObject({ gravar: true, consentimento: 'aceito', pelosTermos: true })
+    expect((await tarefaDe(reserva._id))!.vozes['monitor-1'].consentimento).toMatchObject({ aceito: true, via: 'termos', versao: '2026.10-v5' })
+    await expect(registrarConsentimento(atual, 'monitor-1', false, '1.1.1.1')).rejects.toMatchObject({ status: 409 })
+    expect((await tarefaDe(reserva._id))!.status).toBe('transcrevendo')
+    // Outra aula, monitor sem os Termos v5 (adicional do aditivo r1): decide na sala.
+    await db.collection('monitorias_termos_aceites').deleteMany({ userId: 'monitor-1' })
+    const outra = await aulaQueTerminou()
+    await db.collection('monitorias_resumos').updateOne({ _id: String(outra.reserva._id) } as any, { $unset: { 'vozes.monitor-1.consentimento': '' } })
+    const legado = await estadoDoResumoNaSala((await db.collection('monitorias_reservas').findOne({ _id: outra.reserva._id })) as any, 'monitor-1')
+    expect(legado).toMatchObject({ gravar: false, consentimento: 'pendente' })
+    expect(legado!.pelosTermos).toBeUndefined()
+  })
+
   it('nenhum trecho transcrito: o admin vê o erro real do Gemini; o aluno recebe um motivo sem jargão', async () => {
     const { resumoDosTrechos } = await import('@/lib/monitorias/resumo/tarefa')
     gemini.recusarMime = 'audio/webm'
@@ -518,6 +574,43 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     const diag = (await resumoDosTrechos([String(reserva._id)]))[String(reserva._id)]
     expect(diag).toMatchObject({ total: 1, enviando: 1, peloBlob: 1, erroDireto: 'rede ou CORS até o Google (Failed to fetch)' })
     expect(motivoSemTranscricao([seg as any]).detalhe).toBe('O áudio não chegou ao Google: 1 trecho(s) presos no envio do navegador (reserva pelo Blob falhou (Store not found))')
+  })
+
+  it('o mesmo trecho enviado duas vezes ao mesmo tempo (a sala fechando e a reserva abrindo): o nome não muda e o trecho é transcrito', async () => {
+    const { abrirEnvioDeTrecho, concluirEnvioDeTrecho } = await import('@/lib/monitorias/resumo/tarefa')
+    const { executarPasso } = await import('@/lib/monitorias/resumo/processador')
+    const { reserva } = await aulaQueTerminou()
+    await db.collection('monitorias_reservas').updateOne({ _id: reserva._id }, { $set: { fim: new Date(Date.now() + 3_600_000), inicio: new Date(Date.now() - 600_000) } })
+    const atual = (await db.collection('monitorias_reservas').findOne({ _id: reserva._id })) as any
+    const dados = { seq: 0, bytes: 30_000, mime: 'audio/webm;codecs=opus', duracaoAudioMs: 20_000, duracaoRealMs: 30_000, inicio: new Date(Date.now() - 60_000).toISOString(), marcas: [[0, 0]] as Array<[number, number]> }
+    const um = await abrirEnvioDeTrecho(atual, 'monitor-1', dados, 'https://domineaqui.com.br')
+    const dois = await abrirEnvioDeTrecho(atual, 'monitor-1', dados, 'https://domineaqui.com.br')
+    expect(um.modo).toBe('direto')
+    expect(dois.modo).toBe('direto')
+    const nomes = Object.values(gemini.sessoes).map((x) => x.displayName)
+    expect(nomes).toHaveLength(2)
+    expect(nomes[0]).toBe(nomes[1])
+    // O primeiro envio termina e confirma; o segundo chega depois e é ignorado.
+    const f1 = await (await fetchFalso((um as any).url, { method: 'POST', body: new ArrayBuffer(30_000) })).json()
+    const f2 = await (await fetchFalso((dois as any).url, { method: 'POST', body: new ArrayBuffer(30_000) })).json()
+    await concluirEnvioDeTrecho(atual, 'monitor-1', { seq: 0, arquivo: f1.file.name })
+    await concluirEnvioDeTrecho(atual, 'monitor-1', { seq: 0, arquivo: f2.file.name })
+    // Trecho gravado pela versão antiga (nome trocado na segunda abertura): o arquivo da primeira ainda é deste trecho.
+    await db.collection('monitorias_resumos_segmentos').updateOne({ reservaId: String(reserva._id), seq: 0 }, { $set: { nomeDeExibicao: `res-${reserva._id}-monitor-1-0-ffffffffffff` } })
+    expect((await executarPasso()).feito).toBe('trecho')
+    const seg = await db.collection('monitorias_resumos_segmentos').findOne({ reservaId: String(reserva._id), seq: 0 })
+    expect(seg!.status).toBe('transcrito')
+    expect(seg!.arquivo).toBeUndefined() // apagado do Google depois da transcrição
+  })
+
+  it('arquivo de OUTRO trecho, ou de tamanho diferente: não é usado, e o erro diz qual conferência falhou', async () => {
+    const { divergenciaDoArquivo } = await import('@/lib/monitorias/resumo/processador')
+    const seg = { reservaId: 'r1', userId: 'u1', seq: 2, bytes: 1000, nomeDeExibicao: 'res-r1-u1-2-abc' }
+    expect(divergenciaDoArquivo(seg, { displayName: 'res-r1-u1-2-abc', sizeBytes: '1000' })).toBeNull()
+    expect(divergenciaDoArquivo(seg, { displayName: 'res-r1-u1-2-outronome', sizeBytes: '1000' })).toBeNull()
+    expect(divergenciaDoArquivo(seg, { displayName: 'res-r1-u1-3-abc', sizeBytes: '1000' })).toMatch(/não é o deste trecho/)
+    expect(divergenciaDoArquivo(seg, { displayName: 'res-r1-u1-2-abc', sizeBytes: '999' })).toMatch(/tamanho no Google \(999 bytes\) diferente do declarado \(1000\)/)
+    expect(divergenciaDoArquivo(seg, null)).toMatch(/não encontrou/)
   })
 
   it('autoteste: percorre envio, conferência e as duas transcrições; aponta o formato quando o WebM é recusado', async () => {

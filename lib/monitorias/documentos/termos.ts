@@ -16,7 +16,13 @@
  *    I) e ainda contaminaria a credibilidade do resto. Por isso há a ressalva
  *    expressa "nos limites do CDC" para o aluno.
  *  - Direito de arrependimento de 7 dias (CDC art. 49; Decreto 7.962/2013,
- *    art. 5º) preservado até o início da aula.
+ *    art. 5º) exercível até 24 horas antes do início da aula (v5): a aula é
+ *    serviço com data e horário reservados a pedido do aluno. A partir daí
+ *    vale a compensação ao monitor (50% entre 24 h e 2 h; 100% abaixo de 2 h
+ *    ou na falta). PONTO SENSÍVEL: o CDC é de ordem pública — revisar com
+ *    advogado antes de aplicar.
+ *  - Resumo por IA (v5): o monitor autoriza a transcrição da própria voz
+ *    nestes Termos (item 5.4), sem autorização aula a aula.
  *  - Identificação da empresa (Decreto 7.962/2013, art. 2º) vem do ambiente:
  *    MONITORIAS_EMPRESA_RAZAO, MONITORIAS_EMPRESA_CNPJ,
  *    MONITORIAS_EMPRESA_ENDERECO, MONITORIAS_EMPRESA_EMAIL. PREENCHA antes de
@@ -25,7 +31,18 @@
 
 import type { PapelTermos } from '../tipos'
 
-export const VERSAO_TERMOS = '2026.10-v4'
+export const VERSAO_TERMOS = '2026.10-v5'
+/** Primeira versão em que o Monitor autoriza o Resumo por IA nos Termos (item 5.4). */
+export const VERSAO_TERMOS_RESUMO = '2026.10-v5'
+
+/** Estes Termos (versão aceita) já trazem a autorização do Monitor ao Resumo por IA? Compara "AAAA.MM-vN" por número. */
+export function termosAutorizamResumo(versao: string | null | undefined): boolean {
+  const n = (v: string) => {
+    const m = /^(\d{4})\.(\d{2})-v(\d+)$/.exec(v || '')
+    return m ? Number(m[1]) * 1e6 + Number(m[2]) * 1e3 + Number(m[3]) : 0
+  }
+  return n(versao || '') >= n(VERSAO_TERMOS_RESUMO)
+}
 
 function env(nome: string): string {
   return (process.env[nome] || '').trim()
@@ -105,7 +122,7 @@ const MONITOR: SecaoDocumento[] = [
       '4.1. O Monitor responde, de forma exclusiva e integral, pela prestação do serviço: conteúdo ensinado, metodologia, qualidade, pontualidade, comparecimento, duração, conduta e cumprimento do que foi combinado com o Aluno.',
       '4.2. O Monitor responde exclusivamente pelos materiais complementares que indicar ou disponibilizar, inclusive por links externos, garantindo que tem direito de compartilhá-los e que não violam direitos autorais (Lei 9.610/1998), de imagem ou de terceiros. A Plataforma não hospeda, não revisa e não se responsabiliza por material acessado por link.',
       '4.3. O conteúdo da monitoria é exclusivamente educacional. O Monitor não presta, por meio da monitoria, consulta, diagnóstico, prescrição, parecer ou qualquer orientação profissional para caso real (de saúde, jurídico ou outro), e deve recusar pedidos nesse sentido.',
-      '4.4. O Monitor é responsável pelo link de reunião (Zoom, Meet ou similar), pelas configurações de privacidade da sala e por eventuais gravações, que só podem ocorrer com consentimento expresso de todos os participantes, registrado no chat da reserva.',
+      '4.4. O Monitor é responsável pelo link de reunião externo que usar (Zoom, Meet ou similar) e pelas configurações de privacidade dele. Gravações só podem ocorrer com consentimento expresso de todos os participantes, registrado no chat da reserva, ressalvada a transcrição de voz do Resumo por IA (itens 5.4 a 5.7).',
       '4.5. O Monitor é o único responsável pelas obrigações fiscais, tributárias e previdenciárias sobre os valores que recebe (por exemplo, imposto de renda e, se houver, ISS), inclusive emissão de nota fiscal ou recibo ao Aluno quando exigível. A Plataforma emite documento fiscal apenas sobre a sua própria taxa de intermediação, quando aplicável, e pode prestar às autoridades as informações exigidas por lei.',
       '4.6. O Monitor declara que a prestação da monitoria não viola regras da sua instituição de ensino, de conselho profissional ou de contrato de trabalho, estágio ou bolsa, sendo exclusivamente seu o risco de eventual violação.',
       '4.7. É proibido ao Monitor: (a) receber pagamento fora da Plataforma por monitorias combinadas nela, ou induzir o Aluno a isso; (b) realizar provas, trabalhos ou atividades avaliativas no lugar do Aluno, ou ajudar a fraudar avaliações e certames (Código Penal, art. 311-A); (c) ofertar conteúdo ilícito, discriminatório ou de cunho sexual; (d) coletar ou usar dados pessoais do Aluno para finalidade diversa da monitoria; (e) criar contas, avaliações ou perguntas falsas.',
@@ -117,6 +134,10 @@ const MONITOR: SecaoDocumento[] = [
       '5.1. O Monitor trata Alunos com respeito e urbanidade. Assédio moral ou sexual, discriminação de qualquer natureza (Lei 7.716/1989), ameaça, exposição ou intimidação levam à suspensão imediata e podem ser comunicados às autoridades.',
       '5.2. Ao publicar vídeos de demonstração, foto e textos, o Monitor declara ser titular dos direitos ou ter autorização de quem aparece neles (Código Civil, art. 20) e autoriza a Plataforma, gratuitamente e enquanto o anúncio existir, a exibi-los na Plataforma e em sua divulgação.',
       '5.3. Encontros presenciais não são intermediados pela Plataforma. Se as partes os combinarem, fazem-no por sua conta e risco.',
+      '5.4. Resumo Inteligente por IA: quando um Aluno contratar o Resumo por IA de uma monitoria, o Monitor autoriza, por estes Termos, a captura e a transcrição da própria voz durante toda aquela monitoria, sem necessidade de nova autorização a cada aula e sem possibilidade de pausá-la. Só a voz é captada; o vídeo nunca é gravado.',
+      '5.5. Finalidades: gerar o resumo de estudo do Aluno que o contratou e verificar automaticamente se houve combinação de contato ou de pagamento fora da Plataforma (item 4.7, a). Havendo indício, a Plataforma registra o trecho e pode apurá-lo. O resumo entregue ao Aluno contém somente o conteúdo pertinente à monitoria.',
+      '5.6. O áudio é enviado ao Google (Gemini API), operador contratado pela Plataforma, e apagado logo após a transcrição (no máximo em 48 horas). A transcrição em texto é guardada pelo prazo de retenção informado no aditivo do Resumo (no máximo 30 dias) e não é mostrada ao Aluno nem a terceiros, salvo os trechos registrados para a apuração do item 5.5 e as autoridades, quando exigido por lei.',
+      '5.7. O Resumo por IA não altera a remuneração do Monitor: a receita do adicional é da Plataforma, e, se o resumo não puder ser gerado, a Plataforma devolve o adicional ao Aluno sem qualquer custo ao Monitor.',
     ],
   },
   {
@@ -133,10 +154,12 @@ const MONITOR: SecaoDocumento[] = [
   {
     titulo: '7. Cancelamentos, faltas e penalidades do Monitor',
     paragrafos: [
-      '7.1. O Monitor reconhece que o Aluno tem direito de arrependimento de 7 (sete) dias, contados do pagamento, até o início da monitoria (Código de Defesa do Consumidor, art. 49), e que nesse caso o Aluno recebe todo o valor pago de volta, sem remuneração ao Monitor.',
-      '7.2. Se o Monitor cancelar a monitoria a qualquer tempo, ou não comparecer, o Aluno é reembolsado em 100% e o Monitor recebe uma advertência ("strike").',
-      '7.3. Três strikes em 90 (noventa) dias suspendem automaticamente o perfil de Monitor e pausam seus anúncios.',
-      '7.4. Em caso de violação destes Termos, fraude, reclamações reiteradas ou ordem de autoridade, a Plataforma pode suspender anúncios e perfis e reter valores ainda em garantia. A suspensão é comunicada por e-mail com o motivo, e o Monitor pode contestá-la pelo suporte em até 10 (dez) dias; procedente a contestação, o perfil é reativado. Valores que já pertençam ao Monitor por aulas regularmente prestadas são repassados, deduzidos eventuais reembolsos.',
+      '7.1. O Monitor reconhece que o Aluno tem direito de arrependimento de 7 (sete) dias, contados do pagamento, exercível até 24 (vinte e quatro) horas antes do início da monitoria (Código de Defesa do Consumidor, art. 49), e que nesse caso o Aluno recebe todo o valor pago de volta, sem remuneração ao Monitor.',
+      '7.2. Cancelamento tardio ou falta do Aluno: com menos de 24 (vinte e quatro) horas e pelo menos 2 (duas) horas de antecedência, o Aluno recebe de volta 50% (cinquenta por cento) do valor da monitoria, e os outros 50% remuneram o Monitor pelo horário reservado e pela preparação; com menos de 2 (duas) horas, ou se o Aluno não comparecer, nada do valor da monitoria é devolvido e ela conta como prestada (Código Civil, art. 413). Sobre o valor que fica com o Monitor incide a taxa da Plataforma (item 6.2). Esse valor é liberado após a garantia (48 horas após o término previsto), salvo contestação ou pedido de revisão por força maior comprovada, decididos pelo suporte.',
+      '7.3. Para a falta do Aluno ser registrada, o Monitor deve entrar na sala de aula da Plataforma até 15 (quinze) minutos após o início e permanecer nela por pelo menos 15 (quinze) minutos; o Aluno que permanecer pelo menos 5 (cinco) minutos na sala durante a aula conta como presente. Em monitoria por link externo, o Monitor informa a falta pelo botão "Aluno não compareceu" da página da reserva, que não vale contra Aluno que a sala registrou. Se o Aluno permanecer pelo menos 15 (quinze) minutos na sala e o Monitor não entrar, ou ficar menos de 15 (quinze) minutos, o suporte analisa a falta do Monitor (item 7.4). Informar falta inexistente é falta grave (item 7.6).',
+      '7.4. Se o Monitor cancelar a monitoria a qualquer tempo, ou não comparecer, o Aluno é reembolsado em 100% e o Monitor recebe uma advertência ("strike").',
+      '7.5. Três strikes em 90 (noventa) dias suspendem automaticamente o perfil de Monitor e pausam seus anúncios.',
+      '7.6. Em caso de violação destes Termos, fraude, reclamações reiteradas ou ordem de autoridade, a Plataforma pode suspender anúncios e perfis e reter valores ainda em garantia. A suspensão é comunicada por e-mail com o motivo, e o Monitor pode contestá-la pelo suporte em até 10 (dez) dias; procedente a contestação, o perfil é reativado. Valores que já pertençam ao Monitor por aulas regularmente prestadas são repassados, deduzidos eventuais reembolsos.',
     ],
   },
   {
@@ -176,26 +199,28 @@ const ALUNO: SecaoDocumento[] = [
       '4.2. A Plataforma não garante resultado acadêmico (aprovação, nota, desempenho), nem a adequação do conteúdo ao programa de qualquer instituição.',
       '4.3. A monitoria é exclusivamente educacional. Ela não é consulta, diagnóstico, prescrição nem orientação profissional para caso real (de saúde, jurídico ou outro) e não deve ser usada para esse fim.',
       '4.4. Materiais complementares indicados por link são de responsabilidade exclusiva de quem os indicou. A Plataforma não hospeda, não revisa e não responde pelo seu conteúdo, disponibilidade ou segurança.',
-      '4.5. É proibido ao Aluno: (a) pagar o Monitor fora da Plataforma por monitoria combinada nela — pagamentos por fora não têm garantia, contrato, comprovante nem reembolso; (b) gravar a aula sem consentimento expresso do Monitor e dos demais participantes, registrado no chat; (c) redistribuir material do Monitor sem autorização; (d) pedir que o Monitor faça provas ou atividades avaliativas em seu lugar; (e) assediar, discriminar ou ofender o Monitor ou outros alunos.',
+      '4.5. É proibido ao Aluno: (a) pagar o Monitor fora da Plataforma por monitoria combinada nela — pagamentos por fora não têm garantia, contrato, comprovante nem reembolso; (b) gravar a aula sem consentimento expresso do Monitor e dos demais participantes, registrado no chat, ressalvado o Resumo por IA, quando contratado, que transcreve a voz conforme o aditivo aceito no checkout; (c) redistribuir material do Monitor sem autorização; (d) pedir que o Monitor faça provas ou atividades avaliativas em seu lugar; (e) assediar, discriminar ou ofender o Monitor ou outros alunos.',
     ],
   },
   {
     titulo: '5. Pagamento e garantia',
     paragrafos: [
       '5.1. O preço total, já com a taxa do meio de pagamento destacada, é exibido antes do pagamento. O pagamento é feito por PIX, processado pelo Mercado Pago, à Plataforma, que o recebe em nome e por conta do Monitor.',
-      '5.2. O valor fica em garantia até 48 horas após o término da monitoria. Nesse prazo o Aluno pode reportar problema (falta do Monitor, aula não prestada, divergência grave do combinado) e o valor fica retido até a decisão do suporte.',
+      '5.2. O valor fica em garantia até 48 horas após o término da monitoria. Nesse prazo o Aluno pode reportar problema (falta do Monitor, aula não prestada, divergência grave do combinado) ou contestar uma falta registrada em seu nome, e o valor fica retido até a decisão do suporte.',
       '5.3. O Aluno recebe comprovante de pagamento e o Contrato de Monitoria em PDF, disponíveis a qualquer tempo no seu painel, junto com o histórico do chat e os materiais da monitoria.',
     ],
   },
   {
     titulo: '6. Cancelamento e reembolso',
     paragrafos: [
-      '6.1. Direito de arrependimento: em até 7 (sete) dias contados do pagamento, e desde que a monitoria ainda não tenha começado, o Aluno pode desistir sem justificativa e recebe de volta todo o valor pago, inclusive a taxa do PIX (Código de Defesa do Consumidor, art. 49; Decreto 7.962/2013, art. 5º).',
-      '6.2. Fora do prazo de arrependimento, cancelamento pelo Aluno com 24 horas ou mais de antecedência do início: reembolso de 100% do valor pago, automático.',
-      '6.3. Fora do prazo de arrependimento, cancelamento pelo Aluno com menos de 24 horas: a solicitação vai ao suporte, que decide o reembolso de forma fundamentada, considerando a antecedência, a possibilidade de o Monitor reaproveitar o horário e a boa-fé das partes (Código Civil, art. 413). O não comparecimento do Aluno sem aviso, com o Monitor presente, equivale a serviço prestado.',
-      '6.4. Cancelamento ou falta do Monitor: reembolso de 100% ao Aluno.',
-      '6.5. Monitoria em grupo: cada aluno tem o próprio assento, contrato e pagamento. Quem sai é reembolsado conforme estes Termos, e o valor por pessoa de quem fica não muda. Se o grupo não se completar até o prazo de pagamento, todos recebem 100% de volta, salvo se o Monitor confirmar a aula com quem já pagou, pelo mesmo valor por pessoa. Quem saiu de um grupo não volta a ele: pode contratar uma nova aula.',
-      '6.6. Reembolsos são pedidos ao Mercado Pago na hora da decisão e voltam pelo mesmo meio de pagamento; o prazo para aparecer depende do banco do Aluno.',
+      '6.1. Direito de arrependimento: em até 7 (sete) dias contados do pagamento, e desde que faltem 24 (vinte e quatro) horas ou mais para o início da monitoria, o Aluno pode desistir sem justificativa e recebe de volta todo o valor pago, inclusive a taxa do PIX (Código de Defesa do Consumidor, art. 49; Decreto 7.962/2013, art. 5º). A monitoria é serviço com data e horário reservados a pedido do Aluno: a partir de 24 horas antes do início, a desistência segue os itens 6.3 e 6.4.',
+      '6.2. Cancelamento pelo Aluno com 24 horas ou mais de antecedência do início: reembolso de 100% do valor pago, automático.',
+      '6.3. Cancelamento pelo Aluno com menos de 24 horas e pelo menos 2 horas de antecedência: reembolso automático de 50% do valor da monitoria. Os outros 50% remuneram o Monitor pelo horário reservado e pela preparação (Código Civil, art. 413).',
+      '6.4. Cancelamento pelo Aluno com menos de 2 horas, ou não comparecimento (atraso superior a 15 minutos sem aviso no chat): não há reembolso do valor da monitoria, que conta como prestada. A falta é registrada pela sala de aula da Plataforma quando o Monitor esteve presente (entrou até 15 minutos após o início e ficou pelo menos 15 minutos) e o Aluno não permaneceu pelo menos 5 minutos na sala durante a aula; em monitoria por link externo, ela é informada pelo Monitor. Se o Aluno esperar pelo menos 15 minutos na sala e o Monitor não entrar, ou ficar menos de 15 minutos, o suporte analisa a falta do Monitor (item 6.6). O Aluno pode contestá-la, ou pedir revisão por motivo de força maior comprovado (doença, acidente, emergência), em até 48 horas após o término previsto; o valor fica retido até a decisão fundamentada do suporte.',
+      '6.5. Adicionais: o Resumo por IA é devolvido integralmente a quem cancelar e, na monitoria individual, também em caso de falta. O material oficial já entregue não é devolvido nos casos dos itens 6.3 e 6.4.',
+      '6.6. Cancelamento ou falta do Monitor: reembolso de 100% ao Aluno.',
+      '6.7. Monitoria em grupo: cada aluno tem o próprio assento, contrato e pagamento. Quem sai é reembolsado conforme estes Termos, e o valor por pessoa de quem fica não muda. Se o grupo não se completar até o prazo de pagamento, todos recebem 100% de volta, salvo se o Monitor confirmar a aula com quem já pagou, pelo mesmo valor por pessoa. Quem saiu de um grupo não volta a ele: pode contratar uma nova aula.',
+      '6.8. Reembolsos são pedidos ao Mercado Pago na hora da decisão e voltam pelo mesmo meio de pagamento; o prazo para aparecer depende do banco do Aluno.',
     ],
   },
   {
@@ -230,8 +255,8 @@ const COMUNS_FIM = (numero: number, papel: PapelTermos): SecaoDocumento[] => [
   {
     titulo: `${numero + 2}. Dados pessoais (LGPD)`,
     paragrafos: [
-      `${numero + 2}.1. A Plataforma trata nome, CPF, data de nascimento, e-mail, telefone, chave PIX, dados de pagamento, mensagens do chat e registros de acesso para: executar a intermediação e o contrato; emitir contratos e comprovantes; prevenir fraudes e golpes; cumprir obrigações legais; e exercer direitos em processos (Lei 13.709/2018, art. 7º, II, V, VI e IX).`,
-      `${numero + 2}.2. Os dados são compartilhados apenas com quem é necessário: o Mercado Pago (processamento do PIX e reembolsos), provedores de hospedagem, banco de dados e envio de e-mail (que podem estar fora do Brasil, com garantias adequadas — LGPD, art. 33), a outra parte da monitoria (somente o necessário para executá-la) e autoridades, quando exigido por lei.`,
+      `${numero + 2}.1. A Plataforma trata nome, CPF, data de nascimento, e-mail, telefone, chave PIX, dados de pagamento, mensagens do chat, registros de acesso e de presença na sala de aula e, quando o Resumo por IA é contratado, a voz e a transcrição da monitoria para: executar a intermediação e o contrato; emitir contratos e comprovantes; prevenir fraudes e golpes; cumprir obrigações legais; e exercer direitos em processos (Lei 13.709/2018, art. 7º, II, V, VI e IX).`,
+      `${numero + 2}.2. Os dados são compartilhados apenas com quem é necessário: o Mercado Pago (processamento do PIX e reembolsos), o Google (Gemini API), como operador, para a transcrição e o Resumo por IA, provedores de hospedagem, banco de dados e envio de e-mail (que podem estar fora do Brasil, com garantias adequadas — LGPD, art. 33), a outra parte da monitoria (somente o necessário para executá-la) e autoridades, quando exigido por lei.`,
       `${numero + 2}.3. Contratos, comprovantes, mensagens e registros de pagamento são guardados por 5 (cinco) anos após a última monitoria, prazo das ações de consumo e das obrigações fiscais (CDC, art. 27; Código Tributário Nacional, art. 173); registros de acesso, por no mínimo 6 (seis) meses (Marco Civil da Internet, art. 15). Depois disso são apagados ou anonimizados.`,
       `${numero + 2}.4. Telas públicas nunca exibem CPF, e-mail ou telefone. Nos documentos, o CPF aparece mascarado; a qualificação completa fica sob guarda da Plataforma e é fornecida à parte que precisar exercer direitos, ou a autoridades. A chave PIX do Monitor é guardada cifrada.`,
       `${numero + 2}.5. O titular pode pedir confirmação, acesso, correção, portabilidade, informação sobre compartilhamento e eliminação dos dados que não precisem ser guardados por lei (LGPD, art. 18), pelo canal ${canalDeAtendimento()}, que também é o canal do encarregado de dados.`,

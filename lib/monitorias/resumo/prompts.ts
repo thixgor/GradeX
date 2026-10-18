@@ -42,6 +42,7 @@ const REGRAS_DO_RESUMO = [
   '- "raciocinioDoMonitor": o encadeamento que o MONITOR usou (pistas → hipóteses → conclusão), quando houver.',
   '- "questoes": de 3 a 8 questões originais de múltipla escolha, com 4 ou 5 alternativas, só sobre o que foi efetivamente discutido; o comentário explica a correta e por que as outras estão erradas, ligado ao que foi dito na aula. Se a aula teve pouco conteúdo, faça menos questões.',
   '- Seções sem conteúdo ficam com listas vazias. Não invente para preencher.',
+  '- Só conteúdo da aula: ignore conversa pessoal, combinados de horário ou pagamento, e nunca inclua telefones, e-mails, redes sociais, links, chaves PIX ou formas de contato e de pagamento, mesmo que tenham sido ditos.',
 ]
 
 export function instrucaoDoResumo(c: ContextoDaAula): string {
@@ -65,6 +66,7 @@ export function instrucaoDaParcial(c: ContextoDaAula, janela: { de: string; ate:
     '- Seja detalhado e fiel: tópicos, definições, mecanismos, comparações, dúvidas e respostas, alertas e o raciocínio do monitor, sempre dizendo quem falou (MONITOR/ALUNO, pelo rótulo).',
     '- Não acrescente nada que não foi dito. Marque [incerto] o que depende de trecho incerto/inaudível e liste as [LACUNA].',
     '- O começo e o fim do trecho repetem um pouco os vizinhos: anote normalmente; a redução final elimina repetições.',
+    '- Só conteúdo da aula: deixe de fora conversa pessoal, combinados de horário ou pagamento, telefones, e-mails, redes sociais, links, chaves PIX e qualquer forma de contato ou de pagamento.',
     '- Português do Brasil correto. Texto corrido em tópicos (sem JSON).',
   ].join('\n')
 }

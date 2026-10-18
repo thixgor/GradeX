@@ -10,6 +10,7 @@ import { Avatar, CaixaAviso, CaixaErro, Confete, Esqueleto, HoraBrasilia, api } 
 import { TermosAceite } from '@/components/monitorias/termos-aceite'
 import { AssinaturaContrato } from '@/components/monitorias/assinatura-contrato'
 import { PagamentoPix } from '@/components/monitorias/pagamento-pix'
+import { PrazosDoCancelamento } from '@/components/monitorias/prazos-cancelamento'
 import { baixarIcs, type DetalheReserva } from '@/components/monitorias/tipos-cliente'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
@@ -150,6 +151,8 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                         )}
                       </dl>
                     )}
+                    {/* Contrato v5 (ou ainda a emitir, que já sai v5): a tabela de cancelamento antes de pagar. */}
+                    {p && !p.gratis && (!d.meuContrato || d.meuContrato.politicaV5) && <PrazosDoCancelamento inicio={p.inicio} valorCentavos={assento.valorCentavos} className="bg-muted/20" />}
                     {r.prazoPagamento && new Date(r.prazoPagamento).getTime() - Date.now() > 60 * 60_000 && (
                       <CaixaAviso>Este horário está reservado para você até <strong>{formatarEmBrasilia(r.prazoPagamento, { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</strong> (Brasília). Conclua as etapas antes disso.</CaixaAviso>
                     )}
@@ -185,11 +188,19 @@ export default function CheckoutMonitoria({ params }: { params: { reservaId: str
                       <h1 className="font-heading text-xl font-bold">Pague com PIX</h1>
                       <p className="text-sm text-muted-foreground">A confirmação é automática, em segundos.</p>
                     </div>
-                    {r.status === 'aguardando_pagamento' ? (
-                      <PagamentoPix reservaId={r.id} onAprovado={carregar} />
-                    ) : (
-                      <CaixaAviso tom="info"><Loader2 className="mr-1 inline h-3.5 w-3.5 animate-spin" /> Aguardando o monitor assinar o contrato para liberar o pagamento.</CaixaAviso>
+                    {p && !p.gratis && (!d.meuContrato || d.meuContrato.politicaV5) && <PrazosDoCancelamento inicio={p.inicio} valorCentavos={assento?.valorCentavos ?? 0} className="bg-muted/20" />}
+                    {/* Termos atualizados depois da assinatura: o novo aceite fica aqui mesmo (sem ele o PIX recusa). */}
+                    {!termosOk && (
+                      <div className="rounded-2xl border border-border p-4">
+                        <TermosAceite papel="aluno" compacto onAceito={() => setTermosOk(true)} />
+                      </div>
                     )}
+                    {termosOk &&
+                      (r.status === 'aguardando_pagamento' ? (
+                        <PagamentoPix reservaId={r.id} onAprovado={carregar} />
+                      ) : (
+                        <CaixaAviso tom="info"><Loader2 className="mr-1 inline h-3.5 w-3.5 animate-spin" /> Aguardando o monitor assinar o contrato para liberar o pagamento.</CaixaAviso>
+                      ))}
                     {linkConvite && (
                       <ConviteGrupo link={linkConvite} copiado={copiado} onCopiar={() => { navigator.clipboard.writeText(linkConvite); setCopiado(true); setTimeout(() => setCopiado(false), 2000) }} />
                     )}

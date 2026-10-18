@@ -375,6 +375,30 @@ export interface Reembolso {
   alvoGatewayCentavos?: number
 }
 
+export interface CancelamentoTardio {
+  em: Date
+  horasAntes: number
+  pctDevolvido: number
+  devolvidoCentavos: number
+  retidoCentavos: number
+  /** Depois disso (fim previsto + 48h) o retido é liberado ao monitor, sem revisão pendente. */
+  liberarApos: Date
+  liberadoEm?: Date
+  /** A conferência no MP achou divergência (repasse retido para o suporte): sai da fila de liberação. */
+  retidoNaConferenciaEm?: Date
+  /** Pedido de revisão por força maior: trava a liberação até o suporte decidir. */
+  revisao?: { em: Date; motivo: string; ticketId?: string; decididaEm?: Date; decisao?: 'manter' | 'devolver'; por?: string; nota?: string }
+}
+
+export interface FaltaDoAluno {
+  em: Date
+  fonte: 'sala' | 'monitor'
+  /** Evidência da sala: quanto tempo o monitor (e o aluno, se entrou) esteve lá e quando o monitor entrou. */
+  evidencia?: { minutosMonitor: number; monitorEntrouEm?: Date; minutosAluno?: number }
+  motivo?: string
+  por?: string
+}
+
 /** Um assento: um aluno numa reserva. É o que se paga e o que se reembolsa. */
 export interface Participacao {
   _id?: Id
@@ -416,6 +440,15 @@ export interface Participacao {
   materialOficial?: MaterialNaCompra
   /** Resumo por IA comprado junto (retrato; o registro de verdade é `monitorias_resumos_adicionais`). */
   resumoIA?: { precoCentavos: number; paymentOrderId: string }
+  /**
+   * Política de cancelamento DESTE assento, congelada na aprovação do
+   * pagamento pela versão do contrato assinado. Ausente = política legada.
+   */
+  politica?: 'v5'
+  /** Cancelamento tardio (v5): parte do valor da aula fica com o monitor. */
+  cancelamentoTardio?: CancelamentoTardio
+  /** Falta do aluno: registrada pela sala ou informada pelo monitor (v5: a aula conta como dada). */
+  falta?: FaltaDoAluno
   createdAt: Date
   updatedAt: Date
 }
@@ -791,7 +824,8 @@ export interface UsoDaSala {
 }
 
 /** Onde a tentativa de contato apareceu. */
-export type OrigemInfracao = 'chat' | 'chat_sala' | 'material'
+/** `resumo_ia`: dito na aula e achado na transcrição do Resumo por IA (só a frase e o minuto). */
+export type OrigemInfracao = 'chat' | 'chat_sala' | 'material' | 'resumo_ia'
 
 /**
  * Tentativa de passar contato ou combinar por fora (`contato-inteligente.ts`).

@@ -22,7 +22,7 @@ import type { EstadoDoResumo } from '@/lib/monitorias/resumo/tipos'
 
 const PROCESSANDO = ['transcrevendo', 'resumindo']
 
-export function CartaoDoResumo({ reservaId, tarefa, meu, ehMonitor }: { reservaId: string; tarefa: string; meu: string | null; ehMonitor: boolean }) {
+export function CartaoDoResumo({ reservaId, tarefa, meu, ehMonitor, pelosTermos = false }: { reservaId: string; tarefa: string; meu: string | null; ehMonitor: boolean; pelosTermos?: boolean }) {
   const [estado, setEstado] = useState<EstadoDoResumo | null>(null)
 
   const carregar = useCallback(() => {
@@ -47,7 +47,9 @@ export function CartaoDoResumo({ reservaId, tarefa, meu, ehMonitor }: { reservaI
       <Moldura>
         <p className="text-sm text-muted-foreground">
           {tarefa === 'aguardando' || tarefa === 'transcrevendo'
-            ? 'Um aluno contratou o Resumo por IA desta aula. Ao entrar na sala, você decide se autoriza a transcrição da sua voz (o vídeo nunca é gravado).'
+            ? pelosTermos
+              ? 'Um aluno contratou o Resumo por IA desta aula. Na sala de aula da plataforma, a sua voz é transcrita, como autorizado nos Termos do Monitor (itens 5.4 a 5.7). O vídeo nunca é gravado e o resumo leva só o conteúdo da aula.'
+              : 'Um aluno contratou o Resumo por IA desta aula. Ao entrar na sala, você decide se autoriza a transcrição da sua voz (o vídeo nunca é gravado).'
             : tarefa === 'pronto'
               ? 'O resumo desta aula foi entregue a quem contratou.'
               : 'Esta aula não terá resumo por IA.'}

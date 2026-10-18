@@ -106,7 +106,14 @@ export interface CredenciaisDaSala {
   config: { compartilharTela: boolean; chatNaSala: boolean; limiteMalha: number; video: ConfigVideo }
   janela: { inicio: string; fim: string; abreEm: string; fechaEm: string }
   /** Para a marca d'água: id, título e o nome do monitor. `convite`: link para o monitor mandar (só ele recebe). */
-  reserva: { id: string; titulo: string; monitor: string; convite?: string }
+  reserva: {
+    id: string
+    titulo: string
+    monitor: string
+    convite?: string
+    /** Só o monitor, aula individual paga: início, para o aviso "o aluno não chegou em 15 min". */
+    inicioIndividual?: string
+  }
   /** Só o monitor: alunos com assento ativo (para ver quem ainda não chegou). */
   esperadosNomes?: Array<{ pid: string; nome: string }>
   /** Resumo por IA desta aula para esta pessoa (null = a aula não tem). */

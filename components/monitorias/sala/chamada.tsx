@@ -41,6 +41,7 @@ import { EditorDeAnotacoes } from '@/components/monitorias/anotacoes'
 import { useCelularEmPe, useViewportVisivel } from '@/hooks/use-viewport-visivel'
 import { useBrilhoDaVoz } from '@/hooks/use-brilho-da-voz'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
+import { TOLERANCIA_FALTA_MIN } from '@/lib/monitorias/politica'
 import { criarMedidor, podeEscolherSaida } from '@/lib/monitorias/sala/cliente/midia'
 import { copiarLink } from '@/lib/monitorias/sala/cliente/copiar'
 import { EFEITOS_DE_VOZ, espelharPrevia } from '@/lib/monitorias/sala/cliente/efeitos'
@@ -764,6 +765,18 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
   }, [remotos])
   const reconectando = remotos.filter((p) => p.fase === 'instavel' || p.fase === 'reiniciando')
   const nomeDoEsperado = ehMonitor ? 'os alunos' : 'o monitor'
+  // Aula individual com o monitor sozinho: passada a tolerância (contrato 2.3), avisa que a falta será registrada.
+  const inicioIndividual = estado.reserva?.inicioIndividual
+  const [alunoAtrasado, setAlunoAtrasado] = useState(false)
+  useEffect(() => {
+    if (!ehMonitor || !inicioIndividual) return setAlunoAtrasado(false)
+    const limite = new Date(inicioIndividual).getTime() + TOLERANCIA_FALTA_MIN * 60_000
+    const falta = limite - Date.now()
+    if (falta <= 0) return setAlunoAtrasado(true)
+    setAlunoAtrasado(false)
+    const t = setTimeout(() => setAlunoAtrasado(true), falta)
+    return () => clearTimeout(t)
+  }, [ehMonitor, inicioIndividual])
 
   const meuQuadro = (pequeno: boolean) => (
     <Quadro
@@ -869,6 +882,11 @@ export function SalaChamada({ ctrl, estado, titulo, fim }: { ctrl: ControladorDa
                 <Loader2 className="mx-auto h-6 w-6 animate-spin text-white/80" aria-hidden />
                 <p className="mt-3 font-heading text-xl font-semibold">Aguardando {nomeDoEsperado}</p>
                 <p className="mt-1 text-sm text-white/75">{ehMonitor ? 'Os alunos foram avisados de que você entrou.' : 'Assim que o monitor entrar, a aula começa aqui. Você pode deixar esta aba aberta.'}</p>
+                {alunoAtrasado && (
+                  <p className="mt-3 rounded-xl bg-amber-400/15 px-3 py-2 text-xs text-amber-100">
+                    O aluno não chegou em {TOLERANCIA_FALTA_MIN} minutos. Com você {TOLERANCIA_FALTA_MIN} minutos na sala e ele menos de 5 na aula, a falta fica registrada pela sala e a aula conta como dada.
+                  </p>
+                )}
               </>
             )}
           </div>

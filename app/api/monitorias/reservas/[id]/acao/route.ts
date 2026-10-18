@@ -10,8 +10,10 @@ import {
   carregarReserva,
   confirmarComQuemPagou,
   ErroMonitoria,
+  informarFaltaDoAluno,
   papelNaReserva,
   acessoDeLeitura,
+  pedirRevisaoDoCancelamento,
   proporNova,
   reportarProblema,
 } from '@/lib/monitorias/reservas'
@@ -47,6 +49,8 @@ const Corpo = z.discriminatedUnion('acao', [
   z.object({ acao: z.literal('cancelar'), motivo }).strict(),
   z.object({ acao: z.literal('confirmar') }).strict(),
   z.object({ acao: z.literal('reportar'), motivo }).strict(),
+  z.object({ acao: z.literal('falta'), participacaoId: z.string().length(24).optional(), motivo: z.string().max(500).optional() }).strict(),
+  z.object({ acao: z.literal('revisao'), motivo: z.string().min(20, 'Conte o que aconteceu (mínimo 20 caracteres).').max(2000) }).strict(),
   z.object({ acao: z.literal('link'), url: z.string().max(500) }).strict(),
   z.object({ acao: z.literal('material'), titulo: z.string().min(2).max(100), url: z.string().max(500) }).strict(),
   z.object({ acao: z.literal('material_remover'), url: z.string().max(500) }).strict(),
@@ -60,6 +64,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!parsed.success) return erro(400, parsed.error.issues[0]?.message || 'Ação inválida.')
     const corpo = parsed.data
     const reserva = await carregarReserva(params.id)
+    if (corpo.acao === 'revisao') {
+      // Quem cancelou já não tem papel ativo: a revisão é do próprio assento (força maior, contrato 4.6).
+      const autor = await carregarUsuario(sessao.userId)
+      if (!autor || autor.banned) return erro(403, 'Conta indisponível.')
+      const ticketId = await pedirRevisaoDoCancelamento({ reserva, autor, motivo: limparTexto(corpo.motivo) })
+      return ok({ revisao: true, ticketId })
+    }
     const papel = await papelNaReserva(reserva, sessao.userId)
     if (!papel) {
       // Quem já saiu (vê o histórico) recebe o motivo; estranho continua com 404.
@@ -141,6 +152,11 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         if (reserva.teste) throw new ErroMonitoria(409, 'Sala de teste: não há o que reportar.')
         const ticketId = await reportarProblema({ reserva, autor: ator, papel, motivo: seguro(corpo.motivo) })
         return ok({ status: 'em_disputa', ticketId })
+      }
+      case 'falta': {
+        // "Aluno não compareceu" (contrato 2.3/4.4): o aluno contesta pelo "Reportar problema".
+        const r = await informarFaltaDoAluno({ reserva, papel, monitorId: sessao.userId, participacaoId: corpo.participacaoId, motivo: corpo.motivo ? seguro(corpo.motivo) : undefined })
+        return ok({ falta: true, alunoNome: r.alunoNome })
       }
       case 'link': {
         if (papel !== 'monitor') throw new ErroMonitoria(403, 'Só o monitor define o link da reunião.')
