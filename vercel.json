@@ -111,6 +111,9 @@
       "maxDuration": 300,
       "memory": 512
     },
+    "app/api/admin/monitorias/resumos-ia/teste/route.ts": {
+      "maxDuration": 120
+    },
     "app/api/admin/cronogramas/extrair/route.ts": {
       "maxDuration": 300,
       "memory": 1024

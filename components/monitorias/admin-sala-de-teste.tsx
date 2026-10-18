@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { api, CaixaErro } from '@/components/monitorias/base'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
+import type { ResumoDosTrechos } from '@/lib/monitorias/resumo/tipos'
+import { LinhaDosTrechos } from '@/components/monitorias/resumo/linha-trechos'
 
 interface SalaDeTeste {
   id: string
@@ -27,6 +29,8 @@ interface SalaDeTeste {
   resumoIA: string | null
   /** Por que não saiu (cancelado/falhou). */
   resumoMotivo: string | null
+  /** Diagnóstico dos trechos de voz (null = nenhum chegou). */
+  trechos: ResumoDosTrechos | null
 }
 
 /** Estados em que o resumo de teste ainda pode ser gerado agora. */
@@ -166,6 +170,11 @@ export function AdminSalaDeTeste() {
                     </span>
                   )}
                   {s.resumoMotivo && <span className="mt-0.5 block text-xs text-rose-600">{s.resumoMotivo}</span>}
+                  {s.resumoIA && (s.trechos || s.resumoIA !== 'aguardando') && (
+                    <span className="mt-0.5 block">
+                      <LinhaDosTrechos trechos={s.trechos} />
+                    </span>
+                  )}
                 </span>
                 {s.aberta && (
                 <Button size="sm" variant="outline" onClick={() => copiar(s)}>

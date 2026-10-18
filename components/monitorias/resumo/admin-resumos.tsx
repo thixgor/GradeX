@@ -14,6 +14,8 @@ import { api, CaixaAviso, Esqueleto, Selo } from '@/components/monitorias/base'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
 import { cn } from '@/lib/utils'
+import type { ResumoDosTrechos } from '@/lib/monitorias/resumo/tipos'
+import { LinhaDosTrechos } from './linha-trechos'
 
 interface Tarefa {
   reservaId: string
@@ -26,6 +28,7 @@ interface Tarefa {
   custo: { estimadoUsd: number; realUsd: number }
   tentativas: number
   erro: string | null
+  trechos: ResumoDosTrechos | null
   falhouEm: string | null
   prontoEm: string | null
   teste: boolean
@@ -164,6 +167,11 @@ export function AdminResumosIA({ onMudou }: { onMudou: () => void }) {
                   {t.tentativas ? ` · ${t.tentativas} tentativa(s)` : ''}
                 </p>
                 {t.erro && <p className="mt-1 rounded-lg bg-rose-500/10 px-2 py-1 text-xs text-rose-700 dark:text-rose-300">{t.erro}</p>}
+                {(t.trechos || t.status !== 'aguardando') && (
+                  <div className="mt-1">
+                    <LinhaDosTrechos trechos={t.trechos} />
+                  </div>
+                )}
                 <ul className="mt-2 flex flex-wrap gap-1.5 text-xs">
                   {t.adicionais.map((a, i) => (
                     <li key={i} className="rounded-md bg-muted px-2 py-0.5">

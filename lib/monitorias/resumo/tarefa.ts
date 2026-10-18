@@ -19,7 +19,7 @@ import { ErroMonitoria } from '../reservas'
 import type { Reserva } from '../tipos'
 import { configDoResumo } from './config'
 import { AUDIO_MAX_SEGMENTO_MS, BYTES_MAX_SEGMENTO, estimarCustoUsd, VERSAO_ADITIVO_RESUMO, vozTranscrita } from './regras'
-import type { EstadoDoResumo, EstadoDoResumoNaSala, SegmentoDeAudio, TarefaResumo } from './tipos'
+import type { EstadoDoResumo, EstadoDoResumoNaSala, ResumoDosTrechos, SegmentoDeAudio, TarefaResumo } from './tipos'
 
 export type { EstadoDoResumoNaSala }
 
@@ -212,7 +212,16 @@ function validarTrecho(d: DadosDoTrecho, reserva: Reserva, agora: Date): { mime:
  * duração e total de áudio da voz) e abre a sessão no Google. Se o Google não
  * abrir, devolve o caminho no Blob privado (reserva).
  */
-export async function abrirEnvioDeTrecho(reserva: Reserva, userId: string, dados: DadosDoTrecho, origem: string, agora = new Date(), viaBlob = false): Promise<RespostaDoEnvio> {
+export async function abrirEnvioDeTrecho(
+  reserva: Reserva,
+  userId: string,
+  dados: DadosDoTrecho,
+  origem: string,
+  agora = new Date(),
+  viaBlob = false,
+  /** Por que o navegador não conseguiu mandar direto ao Google (vai para o diagnóstico do admin). */
+  erroDireto?: string,
+): Promise<RespostaDoEnvio> {
   if (!reserva.inicio || !reserva.fim) throw new ErroMonitoria(409, 'Aula sem horário.')
   if (agora.getTime() < reserva.inicio.getTime() - 15 * 60_000 || agora.getTime() > reserva.fim.getTime() + JANELA_DE_ENVIO_MS) {
     throw new ErroMonitoria(409, 'Fora da janela de envio do áudio.')
@@ -250,6 +259,7 @@ export async function abrirEnvioDeTrecho(reserva: Reserva, userId: string, dados
     tentativas: 0,
     nomeDeExibicao,
     updatedAt: agora,
+    ...(erroDireto ? { erroDireto: erroDireto.slice(0, 200) } : {}),
   }
   await c.resumosSegmentos.updateOne(
     { reservaId: id, userId, seq: dados.seq, status: { $in: ['enviando', 'falhou'] } } as any,
@@ -262,17 +272,23 @@ export async function abrirEnvioDeTrecho(reserva: Reserva, userId: string, dados
   })
   await c.resumos.updateOne({ _id: id, status: 'aguardando' }, { $set: { status: 'transcrevendo', updatedAt: agora } })
   const chave = viaBlob ? '' : await chaveGeminiDoResumo()
+  let recusaDoGoogle = ''
   if (chave) {
     try {
       const url = await abrirEnvioDeArquivo(chave, { bytes: dados.bytes, mime, nome: nomeDeExibicao, origem })
       return { modo: 'direto', url }
     } catch (e) {
-      if (e instanceof ErroGemini && e.status && e.status >= 400 && e.status < 500 && e.status !== 429) {
-        console.error('[resumo-ia] Files API recusou a sessão', e.status)
-      }
+      const status = e instanceof ErroGemini ? e.status : undefined
+      recusaDoGoogle = `sessão no Google recusada${status ? ` (HTTP ${status})` : ''}: ${e instanceof Error ? e.message : 'erro'}`.slice(0, 200)
+      if (status && status >= 400 && status < 500 && status !== 429) console.error('[resumo-ia] Files API recusou a sessão', status)
     }
+  } else if (!viaBlob) {
+    recusaDoGoogle = 'sem chave padrão do Gemini'
   }
-  await c.resumosSegmentos.updateOne({ reservaId: id, userId, seq: dados.seq, status: 'enviando' }, { $set: { origem: 'blob' } })
+  await c.resumosSegmentos.updateOne(
+    { reservaId: id, userId, seq: dados.seq, status: 'enviando' },
+    { $set: { origem: 'blob', ...(recusaDoGoogle ? { erroDireto: recusaDoGoogle } : {}) } },
+  )
   return { modo: 'blob', caminho: caminhoNoBlob(id, userId, dados.seq, nonce) }
 }
 
@@ -281,13 +297,19 @@ export function caminhoNoBlob(reservaId: string, userId: string, seq: number, no
 }
 
 /** O navegador terminou de enviar: grava onde o áudio está; o processador confere antes de usar. */
-export async function concluirEnvioDeTrecho(reserva: Reserva, userId: string, p: { seq: number; arquivo?: string; blobUrl?: string }): Promise<{ ok: true }> {
+export async function concluirEnvioDeTrecho(reserva: Reserva, userId: string, p: { seq: number; arquivo?: string; blobUrl?: string; falha?: string }): Promise<{ ok: true }> {
   const c = await cols()
   const id = idDe(reserva)
   const seg = await c.resumosSegmentos.findOne({ reservaId: id, userId, seq: p.seq })
   if (!seg) throw new ErroMonitoria(404, 'Trecho não encontrado.')
   if (seg.status !== 'enviando') return { ok: true }
   const agora = new Date()
+  if (p.falha && !p.arquivo && !p.blobUrl) {
+    // O navegador não conseguiu mandar nem ao Google nem ao Blob: o trecho segue no aparelho
+    // (reenvio automático) e o motivo fica para o diagnóstico do admin.
+    await c.resumosSegmentos.updateOne({ _id: seg._id as any, status: 'enviando' }, { $set: { erro: p.falha.slice(0, 200), updatedAt: agora } })
+    return { ok: true }
+  }
   if (p.arquivo) {
     if (!/^files\/[a-z0-9-]{1,64}$/.test(p.arquivo)) throw new ErroMonitoria(400, 'Arquivo inválido.')
     await c.resumosSegmentos.updateOne({ _id: seg._id as any, status: 'enviando' }, { $set: { status: 'enviado', origem: 'direto', arquivo: { nome: p.arquivo }, updatedAt: agora } })
@@ -353,6 +375,42 @@ export async function encerrarTesteEGerarResumo(reservaId: string, agora = new D
   if (!atualizada.modifiedCount) throw new ErroMonitoria(409, 'O resumo desta sala mudou de estado. Atualize a página.')
   if (reserva.fim && reserva.fim > agora) await c.reservas.updateOne({ _id: new ObjectId(reservaId), teste: true } as any, { $set: { fim: agora, updatedAt: agora } })
   return { inicio: primeiro.inicio, fim: agora, trechos }
+}
+
+/**
+ * Diagnóstico dos trechos de várias aulas numa ida só ao banco (índice
+ * `reservaId`): quantos foram transcritos, falharam ou seguem no envio, e o
+ * erro mais recente de cada tipo. Nunca o áudio nem o texto transcrito.
+ */
+export async function resumoDosTrechos(reservaIds: string[]): Promise<Record<string, ResumoDosTrechos>> {
+  if (!reservaIds.length) return {}
+  const c = await cols()
+  const conta = (status: string) => ({ $sum: { $cond: [{ $eq: ['$status', status] }, 1, 0] } })
+  // `$max` de {t, e} pega o erro do trecho atualizado por último entre os que têm erro.
+  const ultimo = (campo: string) => ({ $max: { $cond: [{ $gt: [`$${campo}`, null] }, { t: '$updatedAt', e: `$${campo}` }, null] } })
+  const linhas = await c.resumosSegmentos
+    .aggregate<{ _id: string; total: number; transcritos: number; falharam: number; enviando: number; peloBlob: number; erro: { e: string } | null; direto: { e: string } | null }>([
+      { $match: { reservaId: { $in: reservaIds } } },
+      {
+        $group: {
+          _id: '$reservaId',
+          total: { $sum: 1 },
+          transcritos: conta('transcrito'),
+          falharam: conta('falhou'),
+          enviando: conta('enviando'),
+          peloBlob: { $sum: { $cond: [{ $eq: ['$origem', 'blob'] }, 1, 0] } },
+          erro: ultimo('erro'),
+          direto: ultimo('erroDireto'),
+        },
+      },
+    ])
+    .toArray()
+  return Object.fromEntries(
+    linhas.map((l) => [
+      l._id,
+      { total: l.total, transcritos: l.transcritos, falharam: l.falharam, enviando: l.enviando, peloBlob: l.peloBlob, ultimoErro: l.erro?.e || null, erroDireto: l.direto?.e || null },
+    ]),
+  )
 }
 
 // ─── Fim: cancelar, apagar, mostrar ─────────────────────────────────────

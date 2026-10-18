@@ -374,6 +374,30 @@ export function coberturaDaAula(segmentos: Array<Pick<SegmentoDeAudio, 'inicio' 
 
 export const COBERTURA_MINIMA_PCT = 30
 
+/**
+ * Nenhum trecho ficou transcrito: por quê. `aluno` vai na devolução (aviso ao
+ * comprador, sem jargão); `detalhe` fica na tarefa para o admin, com o erro
+ * real do trecho mais recente (o do Gemini, o da conferência no Google ou o
+ * do envio do navegador).
+ */
+export function motivoSemTranscricao(segs: Array<Pick<SegmentoDeAudio, 'status' | 'erro' | 'erroDireto' | 'updatedAt'>>): { aluno: string; detalhe: string } {
+  if (!segs.length) return { aluno: 'Não houve áudio da aula para transcrever', detalhe: 'Não houve áudio da aula para transcrever' }
+  const aluno = 'Não foi possível transcrever o áudio da aula'
+  const maisRecente = (lista: typeof segs) => [...lista].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0]
+  const falharam = segs.filter((s) => s.status === 'falhou')
+  if (falharam.length) {
+    const ultimo = maisRecente(falharam)
+    return { aluno, detalhe: `Nenhum trecho foi transcrito (${falharam.length} de ${segs.length} falharam): ${ultimo.erro || 'erro sem detalhe'}` }
+  }
+  const presos = segs.filter((s) => s.status === 'enviando')
+  if (presos.length) {
+    const ultimo = maisRecente(presos)
+    const motivo = ultimo.erro || (ultimo.erroDireto ? `envio direto: ${ultimo.erroDireto}` : '')
+    return { aluno, detalhe: `O áudio não chegou ao Google: ${presos.length} trecho(s) presos no envio do navegador${motivo ? ` (${motivo})` : ''}` }
+  }
+  return { aluno, detalhe: `Nenhum trecho foi transcrito (${segs.length} trecho(s) recebidos)` }
+}
+
 export interface LinhaDaAula {
   /** ms desde o início da aula. */
   t: number

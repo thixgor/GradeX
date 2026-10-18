@@ -37,6 +37,7 @@ import { instrucaoDaParcial, instrucaoDaReducao, instrucaoDeTranscricao, instruc
 import {
   COBERTURA_MINIMA_PCT,
   coberturaDaAula,
+  motivoSemTranscricao,
   custoDaChamadaUsd,
   janelasDaTranscricao,
   lacunasDaAula,
@@ -67,7 +68,7 @@ function espera(tentativas: number): number {
   return Math.min(30 * 60_000, 2 ** Math.max(0, tentativas - 1) * 60_000)
 }
 
-function usoDaChamada(u: UsoDaInteracao): { entradaTexto: number; entradaAudio: number; saida: number; raciocinio: number } {
+export function usoDaChamada(u: UsoDaInteracao): { entradaTexto: number; entradaAudio: number; saida: number; raciocinio: number } {
   const audio = (u.input_tokens_by_modality || []).filter((m) => m.modality === 'audio').reduce((t, m) => t + (m.tokens || 0), 0)
   const entrada = u.total_input_tokens || 0
   return { entradaTexto: Math.max(0, entrada - audio), entradaAudio: audio, saida: u.total_output_tokens || 0, raciocinio: u.total_thought_tokens || 0 }
@@ -90,6 +91,23 @@ async function registrarChamada(reservaId: string, etapa: ChamadaRegistrada['eta
 
 function contextoDe(t: TarefaResumo): ContextoDaAula {
   return { materia: t.materia, conteudos: t.conteudos, titulo: t.anuncioTitulo, individual: t.individual }
+}
+
+/**
+ * O pedido de transcrição de um trecho (Interactions, saída JSON com esquema).
+ * Um só lugar: o processador e o autoteste do admin mandam exatamente o mesmo.
+ */
+export function pedidoDeTranscricao(config: ConfigResumo, contexto: ContextoDaAula, voz: { papel: SegmentoDeAudio['papel']; nome: string }, arquivo: { uri: string; mime: string }): CriarInteracao {
+  return {
+    model: config.modeloTranscricao,
+    system_instruction: instrucaoDeTranscricao(contexto, voz),
+    input: [
+      { type: 'text', text: 'Transcreva este áudio seguindo as regras.' },
+      { type: 'audio', uri: arquivo.uri, mime_type: arquivo.mime },
+    ],
+    response_format: { type: 'text', mime_type: 'application/json', schema: ESQUEMA_TRANSCRICAO as unknown as Record<string, unknown> },
+    generation_config: { thinking_level: 'low', max_output_tokens: 32_768 },
+  }
 }
 
 /** O orçamento do mês: em 120% o processamento para (a varredura devolve os pendentes). */
@@ -191,16 +209,7 @@ async function transcreverTrecho(seg: SegmentoDeAudio, agora: Date): Promise<voi
     noGoogle.uri = estado.uri || noGoogle.uri
     if (noGoogle.state === 'FAILED' || !noGoogle.uri) return falharTrecho(seg, 'o Google não conseguiu ler o áudio', chave)
 
-    const pedido: CriarInteracao = {
-      model: config.modeloTranscricao,
-      system_instruction: instrucaoDeTranscricao(contextoDe(t), { papel: seg.papel, nome: seg.nome }),
-      input: [
-        { type: 'text', text: 'Transcreva este áudio seguindo as regras.' },
-        { type: 'audio', uri: noGoogle.uri, mime_type: seg.mime },
-      ],
-      response_format: { type: 'text', mime_type: 'application/json', schema: ESQUEMA_TRANSCRICAO as unknown as Record<string, unknown> },
-      generation_config: { thinking_level: 'low', max_output_tokens: 32_768 },
-    }
+    const pedido = pedidoDeTranscricao(config, contextoDe(t), { papel: seg.papel, nome: seg.nome }, { uri: noGoogle.uri, mime: seg.mime })
     const { texto, uso } = await criarInteracao(chave, pedido, TEMPO_TRANSCRICAO_MS)
     await registrarChamada(seg.reservaId, 'transcricao', config.modeloTranscricao, uso, config, new Date())
     const frases = validarTranscricao(lerJson(texto), seg.duracaoAudioMs)
@@ -279,14 +288,17 @@ async function pegarTarefa(agora: Date, quem: string): Promise<TarefaResumo | nu
   return null
 }
 
-async function cancelarComReembolso(t: TarefaResumo, motivo: string): Promise<void> {
+/** `motivo` vai no aviso da devolução ao comprador; `detalhe` (técnico) fica só na tarefa, para o admin. */
+async function cancelarComReembolso(t: TarefaResumo, motivo: string, detalhe?: string): Promise<void> {
   const c = await cols()
-  await c.resumos.updateOne({ _id: t._id }, { $set: { erro: motivo.slice(0, 200), updatedAt: new Date() }, $unset: { lease: '' } })
+  await c.resumos.updateOne({ _id: t._id }, { $set: { erro: (detalhe || motivo).slice(0, 400), updatedAt: new Date() }, $unset: { lease: '' } })
   const r = await reembolsarAdicionaisDaAula(t._id, motivo)
   // Quem não voltou agora (MP fora) volta pela varredura; a tarefa já não processa.
   const { cancelarTarefaSeSemCompradores } = await import('./tarefa')
   await cancelarTarefaSeSemCompradores(t._id, motivo)
   if (r.falhas) await c.resumos.updateOne({ _id: t._id, status: { $ne: 'cancelado' } }, { $set: { status: 'cancelado', updatedAt: new Date() } })
+  // A devolução grava o motivo do aluno na tarefa: o detalhe técnico volta por último.
+  if (detalhe) await c.resumos.updateOne({ _id: t._id }, { $set: { erro: detalhe.slice(0, 400) } })
 }
 
 function pedidoDeResumo(config: ConfigResumo, instrucao: string, entrada: string): CriarInteracao {
@@ -348,8 +360,21 @@ async function resumirTarefa(t: TarefaResumo, agora: Date): Promise<boolean> {
   const segs = await c.resumosSegmentos.find({ reservaId: t._id, status: 'transcrito' }).sort({ inicio: 1, seq: 1 }).toArray()
   const cobertura = coberturaDaAula(segs, inicio, fim)
   await c.resumos.updateOne({ _id: t._id }, { $set: { cobertura } })
-  if (!segs.length || cobertura.pct < COBERTURA_MINIMA_PCT) {
-    await cancelarComReembolso(t, segs.length ? `Áudio insuficiente: só ${cobertura.pct}% da aula foi gravado` : 'Não houve áudio da aula para transcrever')
+  if (!segs.length) {
+    // Por que nada foi transcrito: o erro real do trecho vai para o admin.
+    const { resumoDosTrechos } = await import('./tarefa')
+    const [todos, retrato] = await Promise.all([
+      c.resumosSegmentos.find({ reservaId: t._id }, { projection: { status: 1, erro: 1, erroDireto: 1, updatedAt: 1 } }).toArray(),
+      resumoDosTrechos([t._id]),
+    ])
+    const { aluno, detalhe } = motivoSemTranscricao(todos)
+    // O cancelamento apaga os trechos: o retrato (sem áudio nem texto) fica para o admin.
+    if (retrato[t._id]) await c.resumos.updateOne({ _id: t._id }, { $set: { trechosNoFim: retrato[t._id] } })
+    await cancelarComReembolso(t, aluno, detalhe)
+    return false
+  }
+  if (cobertura.pct < COBERTURA_MINIMA_PCT) {
+    await cancelarComReembolso(t, `Áudio insuficiente: só ${cobertura.pct}% da aula foi gravado`)
     return false
   }
   const linhas = linhaDoTempo(segs, inicio)

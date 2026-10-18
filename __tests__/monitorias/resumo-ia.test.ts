@@ -19,6 +19,7 @@ import {
   lacunasDaAula,
   linhaDoTempo,
   lucroDoPeriodo,
+  motivoSemTranscricao,
   normalizarConfigResumo,
   planoDoAdicionalNoReembolso,
   precoDoResumo,
@@ -404,5 +405,70 @@ describe('GET /api/admin/settings não vaza chaves de IA', () => {
     expect(corpo.aiKeys.personalExams).toBe('')
     expect(JSON.stringify(corpo)).not.toContain('SEGREDO')
     expect(corpo.iaModelos.principal).toBe('gemini-3.8-flash')
+  })
+})
+
+describe('diagnóstico quando nada foi transcrito', () => {
+  const seg = (status: string, extra: Record<string, unknown> = {}, min = 0) => ({ status, updatedAt: new Date(Date.UTC(2026, 9, 18, 12, min)), ...extra }) as any
+
+  it('sem trecho: a mensagem de sempre', () => {
+    expect(motivoSemTranscricao([])).toEqual({ aluno: 'Não houve áudio da aula para transcrever', detalhe: 'Não houve áudio da aula para transcrever' })
+  })
+
+  it('trechos que falharam: o erro do mais recente vai para o admin; o aluno lê um motivo sem jargão', () => {
+    const r = motivoSemTranscricao([seg('falhou', { erro: 'arquivo no Google não confere com o trecho' }, 1), seg('falhou', { erro: 'Unsupported MIME type: audio/webm' }, 5)])
+    expect(r.aluno).toBe('Não foi possível transcrever o áudio da aula')
+    expect(r.detalhe).toBe('Nenhum trecho foi transcrito (2 de 2 falharam): Unsupported MIME type: audio/webm')
+  })
+
+  it('trechos presos no navegador: o motivo do envio (Blob, ou o envio direto)', () => {
+    expect(motivoSemTranscricao([seg('enviando', { erroDireto: 'rede ou CORS até o Google (Failed to fetch)' })]).detalhe).toBe(
+      'O áudio não chegou ao Google: 1 trecho(s) presos no envio do navegador (envio direto: rede ou CORS até o Google (Failed to fetch))',
+    )
+  })
+})
+
+describe('autoteste do Resumo por IA', () => {
+  const etapas = (ok: Record<string, boolean>) =>
+    (['envio_navegador', 'conferencia', 'transcricao_wav', 'transcricao_webm', 'limpeza'] as const).map((etapa) => ({ etapa, ok: ok[etapa] ?? true, detalhe: '' }))
+
+  it('a conclusão aponta onde está o problema', async () => {
+    const { conclusaoDo } = await import('@/lib/monitorias/resumo/autoteste')
+    expect(conclusaoDo(etapas({}))).toContain('Tudo certo')
+    expect(conclusaoDo(etapas({ transcricao_webm: false }))).toContain('recusa o WebM/Opus')
+    expect(conclusaoDo(etapas({ transcricao_wav: false, transcricao_webm: false }))).toContain('chave, o modelo ou o pedido')
+    expect(conclusaoDo(etapas({ envio_navegador: false }))).toContain('CORS')
+  })
+
+  it('o WAV de teste é PCM 16 bits mono 16 kHz com cabeçalho RIFF válido', async () => {
+    const { wavDeTeste } = await import('@/lib/monitorias/resumo/wav')
+    const b = Buffer.from(wavDeTeste(1_000))
+    expect(b.byteLength).toBe(44 + 32_000)
+    expect(b.toString('ascii', 0, 4)).toBe('RIFF')
+    expect(b.toString('ascii', 8, 12)).toBe('WAVE')
+    expect(b.readUInt32LE(4)).toBe(b.byteLength - 8)
+    expect([b.readUInt16LE(20), b.readUInt16LE(22), b.readUInt32LE(24), b.readUInt16LE(34)]).toEqual([1, 1, 16_000, 16])
+    expect(b.readUInt32LE(40)).toBe(32_000)
+  })
+
+  it('a amostra WebM/Opus é um WebM de verdade (EBML + "webm" + Opus)', async () => {
+    const { AMOSTRA_WEBM } = await import('@/lib/monitorias/resumo/amostras')
+    const b = AMOSTRA_WEBM.bytes()
+    expect(b.subarray(0, 4).toString('hex')).toBe('1a45dfa3')
+    expect(b.includes(Buffer.from('webm'))).toBe(true)
+    expect(b.includes(Buffer.from('A_OPUS'))).toBe(true)
+  })
+
+  it('processador e autoteste mandam o MESMO pedido de transcrição', async () => {
+    const { pedidoDeTranscricao } = await import('@/lib/monitorias/resumo/processador')
+    const p = pedidoDeTranscricao(CONFIG_RESUMO_PADRAO, { materia: 'Cardiologia', conteudos: ['IC'], titulo: 'IC', individual: true }, { papel: 'aluno', nome: 'Bruno' }, { uri: 'https://g/files/x', mime: 'audio/webm' })
+    expect(p.model).toBe('gemini-3.8-flash')
+    expect(p.input).toEqual([
+      { type: 'text', text: 'Transcreva este áudio seguindo as regras.' },
+      { type: 'audio', uri: 'https://g/files/x', mime_type: 'audio/webm' },
+    ])
+    expect(p.response_format).toMatchObject({ type: 'text', mime_type: 'application/json' })
+    expect(p.generation_config).toEqual({ thinking_level: 'low', max_output_tokens: 32_768 })
+    expect(String(p.system_instruction)).toContain('o ALUNO (Bruno)')
   })
 })

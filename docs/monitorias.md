@@ -791,6 +791,42 @@ receita é 100% da plataforma e o repasse do monitor não muda.
    agora"**. O cartão atualiza sozinho até "pronto · ler", em 1 a 2 min. O
    custo real aparece na aba "Resumos por IA".
 
+### Autoteste e diagnóstico (quando o resumo não sai)
+
+- **"Testar o Resumo por IA"** (Configurações → cartão do Resumo,
+  `lib/monitorias/resumo/autoteste.ts`) percorre, contra o Google de verdade, o
+  caminho de um trecho de aula:
+  1. o navegador do admin manda um WAV de 1 s direto ao Files API (o mesmo
+     CORS da sala);
+  2. o arquivo é conferido como no processador (nome, tamanho, `ACTIVE`,
+     `uri`);
+  3. um WAV é transcrito;
+  4. uma gravação WebM/Opus do Chromium (o formato da sala, em
+     `amostras.ts`) é transcrita, com o mesmo pedido da Interactions
+     (`pedidoDeTranscricao`);
+  5. os arquivos são apagados, e o custo, de centavos de dólar, entra no
+     mês.
+- **Leitura do resultado:**
+  - só a etapa 1 falhou → CORS/rede (a sala depende da reserva pelo Blob);
+  - a 4 falhou e a 3 passou → formato do áudio;
+  - a 3 e a 4 falharam → chave, modelo ou pedido. O erro do Google aparece
+    em cada linha.
+- **Mensagem do cancelamento:** quando nenhum trecho é transcrito, a tarefa
+  guarda o motivo real (`motivoSemTranscricao`), por exemplo "Nenhum trecho
+  foi transcrito (2 de 2 falharam): <erro do Gemini>" ou "O áudio não chegou
+  ao Google…".
+- **Retrato dos trechos:** antes de apagar os trechos, a tarefa guarda o
+  retrato deles (`trechosNoFim`: contagens e erros, sem áudio nem texto).
+- **O que o aluno lê:** o aviso de devolução diz só "Não foi possível
+  transcrever o áudio da aula".
+- **Onde o admin vê:** a aba "Resumos por IA" e o cartão da sala de teste
+  mostram "Trechos de voz" (recebidos, transcritos, falharam, no envio, pelo
+  Blob), o erro do trecho e por que o envio direto falhou.
+- **Erros do navegador:** o gravador manda junto o erro do envio direto
+  (`erroDireto`) e o da reserva pelo Blob (`falha`).
+- **Log:** a função `/api/interno/monitorias/resumos` registra
+  `[resumo-ia] transcrição falhou <id> <status> <mensagem>`.
+
 Sem o botão, a sala de teste segue a regra das aulas: espera o fim agendado
 (90 min) e cobertura de 30% da aula. O botão (`encerrarTesteEGerarResumo`,
 só para `teste: true`) encerra o teste naquela hora e mede a cobertura do

@@ -33,6 +33,10 @@ const gemini = vi.hoisted(() => ({
   apagados: [] as string[],
   interacoes: [] as any[],
   falhar429: 0,
+  /** Formato que o "Gemini" recusa na transcrição (ex.: 'audio/webm'), como uma API que não aceita o áudio. */
+  recusarMime: '' as string,
+  /** Sessões de upload resumable abertas (autoteste e reserva pelo Blob). */
+  sessoes: {} as Record<string, { tamanho: number; displayName: string }>,
   /** Transcrição longa (map-reduce) para arquivos cujo nome tem "longo". */
 }))
 
@@ -88,6 +92,21 @@ async function fetchFalso(entrada: RequestInfo | URL, init?: RequestInit): Promi
   if (!url.startsWith('http://gemini.falso')) throw new Error(`rede bloqueada no teste: ${url}`)
   const caminho = url.replace('http://gemini.falso', '')
   const metodo = (init?.method || 'GET').toUpperCase()
+  if (caminho === '/upload/v1beta/files' && metodo === 'POST') {
+    const h = new Headers(init?.headers)
+    const id = `s${Object.keys(gemini.sessoes).length + 1}`
+    gemini.sessoes[id] = { tamanho: Number(h.get('x-goog-upload-header-content-length')), displayName: JSON.parse(String(init?.body || '{}'))?.file?.display_name }
+    return new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json', 'x-goog-upload-url': `http://gemini.falso/upload/v1beta/files?upload_id=${id}` } })
+  }
+  const sessao = caminho.match(/^\/upload\/v1beta\/files\?upload_id=(\w+)$/)
+  if (sessao && metodo === 'POST') {
+    const s = gemini.sessoes[sessao[1]]
+    const corpo = init?.body as ArrayBuffer
+    if (!s || corpo.byteLength !== s.tamanho) return respostaJson({ error: { message: 'tamanho' } }, 400)
+    const nome = `files/up-${sessao[1]}`
+    gemini.arquivos[nome] = { displayName: s.displayName, sizeBytes: String(corpo.byteLength), state: 'ACTIVE' }
+    return respostaJson({ file: { name: nome, displayName: s.displayName, sizeBytes: String(corpo.byteLength), state: 'ACTIVE' } })
+  }
   const arquivo = caminho.match(/^\/v1beta\/(files\/[a-z0-9-]+)$/)
   if (arquivo && metodo === 'GET') {
     const f = gemini.arquivos[arquivo[1]]
@@ -105,6 +124,9 @@ async function fetchFalso(entrada: RequestInfo | URL, init?: RequestInit): Promi
       return respostaJson({ error: { message: 'Resource has been exhausted (e.g. check quota).' } }, 429)
     }
     const audio = Array.isArray(corpo.input) ? corpo.input.find((c: any) => c.type === 'audio') : null
+    if (audio && gemini.recusarMime && audio.mime_type === gemini.recusarMime) {
+      return respostaJson({ error: { message: `Unsupported MIME type: ${audio.mime_type}` } }, 400)
+    }
     let texto: string
     let usage: any
     if (audio) {
@@ -168,6 +190,8 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     gemini.apagados = []
     gemini.interacoes = []
     gemini.falhar429 = 0
+    gemini.recusarMime = ''
+    gemini.sessoes = {}
   })
 
   afterAll(async () => {
@@ -459,6 +483,67 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     const antes = gemini.interacoes.length
     await estadoDoResumoParaComprador(atual as any, 'aluno-0', false)
     expect(gemini.interacoes.length).toBe(antes)
+  })
+
+  it('nenhum trecho transcrito: o admin vê o erro real do Gemini; o aluno recebe um motivo sem jargão', async () => {
+    const { resumoDosTrechos } = await import('@/lib/monitorias/resumo/tarefa')
+    gemini.recusarMime = 'audio/webm'
+    const { reserva, part, inicio } = await aulaQueTerminou()
+    await trecho(reserva._id, { userId: 'monitor-1', papel: 'monitor', nome: 'Carla', seq: 0, inicio, min: 40, nomeArquivo: 'files/m0' })
+    await sairam(reserva._id, { 'monitor-1': 0 })
+    expect(await processarTudo()).toEqual(['trecho', 'resumo'])
+    const t = await tarefaDe(reserva._id)
+    expect(t!.status).toBe('cancelado')
+    expect(t!.erro).toBe('Nenhum trecho foi transcrito (1 de 1 falharam): Unsupported MIME type: audio/webm')
+    const a = await adicionalDe(part._id)
+    expect(a!.status).toBe('reembolsado')
+    expect(a!.reembolso.motivo).toBe('Não foi possível transcrever o áudio da aula')
+    // Os trechos (e o áudio) somem no cancelamento; o retrato do que aconteceu fica na tarefa.
+    expect(await resumoDosTrechos([String(reserva._id)])).toEqual({})
+    expect(t!.trechosNoFim).toMatchObject({ total: 1, transcritos: 0, falharam: 1, enviando: 0, ultimoErro: 'Unsupported MIME type: audio/webm' })
+  })
+
+  it('trecho preso no envio do navegador: o motivo (CORS, Blob) chega ao diagnóstico', async () => {
+    const { abrirEnvioDeTrecho, concluirEnvioDeTrecho, resumoDosTrechos } = await import('@/lib/monitorias/resumo/tarefa')
+    const { motivoSemTranscricao } = await import('@/lib/monitorias/resumo/regras')
+    const { reserva } = await aulaQueTerminou()
+    await db.collection('monitorias_reservas').updateOne({ _id: reserva._id }, { $set: { fim: new Date(Date.now() + 3_600_000), inicio: new Date(Date.now() - 600_000) } })
+    const atual = await db.collection('monitorias_reservas').findOne({ _id: reserva._id })
+    const dados = { seq: 0, bytes: 30_000, mime: 'audio/webm;codecs=opus', duracaoAudioMs: 20_000, duracaoRealMs: 30_000, inicio: new Date(Date.now() - 60_000).toISOString(), marcas: [[0, 0]] as Array<[number, number]> }
+    const r = await abrirEnvioDeTrecho(atual as any, 'monitor-1', dados, 'https://domineaqui.com.br', new Date(), true, 'rede ou CORS até o Google (Failed to fetch)')
+    expect(r.modo).toBe('blob')
+    await concluirEnvioDeTrecho(atual as any, 'monitor-1', { seq: 0, falha: 'reserva pelo Blob falhou (Store not found)' })
+    const seg = await db.collection('monitorias_resumos_segmentos').findOne({ reservaId: String(reserva._id), seq: 0 })
+    expect(seg).toMatchObject({ status: 'enviando', origem: 'blob', erroDireto: 'rede ou CORS até o Google (Failed to fetch)', erro: 'reserva pelo Blob falhou (Store not found)' })
+    const diag = (await resumoDosTrechos([String(reserva._id)]))[String(reserva._id)]
+    expect(diag).toMatchObject({ total: 1, enviando: 1, peloBlob: 1, erroDireto: 'rede ou CORS até o Google (Failed to fetch)' })
+    expect(motivoSemTranscricao([seg as any]).detalhe).toBe('O áudio não chegou ao Google: 1 trecho(s) presos no envio do navegador (reserva pelo Blob falhou (Store not found))')
+  })
+
+  it('autoteste: percorre envio, conferência e as duas transcrições; aponta o formato quando o WebM é recusado', async () => {
+    const { abrirEnvioDoAutoteste, rodarAutoteste } = await import('@/lib/monitorias/resumo/autoteste')
+    const { wavDeTeste } = await import('@/lib/monitorias/resumo/wav')
+    const wav = wavDeTeste()
+    // O "navegador" usa a sessão aberta pelo servidor.
+    const { url, nome } = await abrirEnvioDoAutoteste('https://domineaqui.com.br', wav.byteLength)
+    const enviado = await (await fetchFalso(url, { method: 'POST', body: wav.buffer as ArrayBuffer })).json()
+    const ok = await rodarAutoteste({ arquivo: enviado.file.name, nome, bytes: wav.byteLength })
+    expect(ok.etapas.map((e) => [e.etapa, e.ok])).toEqual([['envio_navegador', true], ['conferencia', true], ['transcricao_wav', true], ['transcricao_webm', true], ['limpeza', true]])
+    expect(ok.conclusao).toContain('Tudo certo')
+    expect(ok.custoUsd).toBeGreaterThan(0)
+    const audios = gemini.interacoes.map((b) => b.input?.find?.((c: any) => c.type === 'audio')?.mime_type)
+    expect(audios).toEqual(['audio/wav', 'audio/webm'])
+    expect(gemini.interacoes.every((b) => b.store === false && b.model === 'gemini-3.8-flash' && b.response_format?.schema)).toBe(true)
+    expect(Object.keys(gemini.arquivos).every((n) => gemini.apagados.includes(n))).toBe(true)
+    // Sem o navegador (CORS) e com o WebM recusado: o servidor segue o teste e aponta as duas coisas.
+    gemini.recusarMime = 'audio/webm'
+    const ruim = await rodarAutoteste({ erro: 'rede ou CORS até o Google (Failed to fetch)' })
+    const porEtapa = Object.fromEntries(ruim.etapas.map((e) => [e.etapa, e]))
+    expect(porEtapa.envio_navegador).toMatchObject({ ok: false, detalhe: 'rede ou CORS até o Google (Failed to fetch)' })
+    expect(porEtapa.conferencia.ok).toBe(true)
+    expect(porEtapa.transcricao_wav.ok).toBe(true)
+    expect(porEtapa.transcricao_webm).toMatchObject({ ok: false, detalhe: 'HTTP 400: Unsupported MIME type: audio/webm' })
+    expect(ruim.conclusao).toContain('recusa o WebM/Opus')
   })
 
   it('sala de teste sozinho: "Gerar resumo agora" resume o período gravado, sem esperar os 90 min', async () => {

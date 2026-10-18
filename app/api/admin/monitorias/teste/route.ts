@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { erro, idDe, lerJson, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { criarSalaDeTeste, excluirSalasDeTeste } from '@/lib/monitorias/reservas'
-import { criarResumoDeTeste, encerrarTesteEGerarResumo } from '@/lib/monitorias/resumo/tarefa'
+import { criarResumoDeTeste, encerrarTesteEGerarResumo, resumoDosTrechos } from '@/lib/monitorias/resumo/tarefa'
 import { dispararProcessador } from '@/lib/monitorias/resumo/disparo'
 
 export const dynamic = 'force-dynamic'
@@ -20,9 +20,10 @@ export async function GET(request: NextRequest) {
       .limit(20)
       .toArray()
     const ids = salas.map((s) => idDe(s))
-    const [alunos, resumos] = await Promise.all([
+    const [alunos, resumos, trechos] = await Promise.all([
       c.participacoes.find({ reservaId: { $in: ids } }, { projection: { reservaId: 1, alunoNome: 1 } }).toArray(),
-      c.resumos.find({ _id: { $in: ids } }, { projection: { status: 1, erro: 1 } }).toArray(),
+      c.resumos.find({ _id: { $in: ids } }, { projection: { status: 1, erro: 1, trechosNoFim: 1 } }).toArray(),
+      resumoDosTrechos(ids),
     ])
     return ok({
       salas: salas.map((s) => {
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
           resumoIA: resumo?.status || null,
           // Por que o resumo de teste não saiu (ex.: "Não houve áudio da aula para transcrever").
           resumoMotivo: resumo && ['cancelado', 'falhou'].includes(resumo.status) ? resumo.erro || null : null,
+          trechos: resumo ? trechos[idDe(s)] || resumo.trechosNoFim || null : null,
         }
       }),
     })

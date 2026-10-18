@@ -171,15 +171,22 @@ export async function enviarPendentes(reservaId: string, aoEnviar?: () => void):
     if (abertura.corpo?.modo === 'ja_enviado') {
       concluido = { ok: true, status: 200, corpo: null }
     } else if (abertura.corpo?.modo === 'direto' && abertura.corpo.url) {
+      // O motivo de cada falha vai junto para o servidor: é o que o admin vê no diagnóstico.
+      let erroDireto = ''
       try {
         const r = await fetch(abertura.corpo.url, { method: 'POST', headers: { 'X-Goog-Upload-Command': 'upload, finalize', 'X-Goog-Upload-Offset': '0' }, body: corpo })
         const dados = await r.json().catch(() => null)
-        if (r.ok && dados?.file?.name) concluido = await postar(`${base}/envio/concluido`, { seq: t.seq, arquivo: dados.file.name })
-      } catch {
-        /* CORS ou rede até o Google: tenta pelo Blob abaixo */
+        if (r.ok && dados?.file?.name) {
+          concluido = await postar(`${base}/envio/concluido`, { seq: t.seq, arquivo: dados.file.name })
+        } else {
+          erroDireto = `Google respondeu HTTP ${r.status}${dados?.error?.message ? `: ${String(dados.error.message)}` : ''}`
+        }
+      } catch (e) {
+        erroDireto = `rede ou CORS até o Google (${e instanceof Error ? e.message || e.name : 'erro'})`
       }
-      if (!concluido) abertura = await postar(`${base}/envio`, { ...meta, viaBlob: true })
+      if (!concluido) abertura = await postar(`${base}/envio`, { ...meta, viaBlob: true, erroDireto: erroDireto.slice(0, 200) || undefined })
     }
+    let falha = ''
     if (!concluido && abertura.ok && abertura.corpo?.modo === 'blob' && abertura.corpo.caminho) {
       try {
         const { upload } = await import('@vercel/blob/client')
@@ -190,10 +197,14 @@ export async function enviarPendentes(reservaId: string, aoEnviar?: () => void):
           clientPayload: JSON.stringify({ reservaId, seq: t.seq }),
         })
         concluido = await postar(`${base}/envio/concluido`, { seq: t.seq, blobUrl: blob.url })
-      } catch {
+      } catch (e) {
         concluido = null
+        falha = `reserva pelo Blob falhou (${e instanceof Error ? e.message || e.name : 'erro'})`
       }
+    } else if (!concluido && !abertura.ok) {
+      falha = `reserva pelo Blob recusada (HTTP ${abertura.status}${abertura.corpo?.error ? `: ${String(abertura.corpo.error)}` : ''})`
     }
+    if (falha) void postar(`${base}/envio/concluido`, { seq: t.seq, falha: falha.slice(0, 200) })
     if (concluido?.ok) {
       await tx(db, 'readwrite', (s) => void s.delete(t.chave))
       enviados++

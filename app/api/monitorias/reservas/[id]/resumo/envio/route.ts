@@ -18,6 +18,8 @@ const Corpo = z
     marcas: z.array(z.tuple([z.number(), z.number()])).max(3000),
     /** O navegador não alcançou o Google: pede o caminho no Blob privado. */
     viaBlob: z.boolean().optional(),
+    /** Por que o envio direto falhou (status HTTP ou rede/CORS), para o diagnóstico do admin. */
+    erroDireto: z.string().max(200).optional(),
   })
   .strict()
 
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     if (!corpo.success) return erro(400, 'Trecho inválido.')
     const reserva = await carregarReserva(params.id)
     const origem = request.headers.get('origin') || new URL(request.url).origin
-    const { viaBlob, ...trecho } = corpo.data
-    return ok(await abrirEnvioDeTrecho(reserva, sessao.userId, trecho, origem, new Date(), !!viaBlob))
+    const { viaBlob, erroDireto, ...trecho } = corpo.data
+    return ok(await abrirEnvioDeTrecho(reserva, sessao.userId, trecho, origem, new Date(), !!viaBlob, erroDireto))
   })
 }

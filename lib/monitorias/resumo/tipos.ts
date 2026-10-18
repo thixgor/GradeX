@@ -203,6 +203,12 @@ export interface TarefaResumo {
    * 90 min agendados.
    */
   encerradoNoTesteEm?: Date
+  /**
+   * Retrato dos trechos (contagens e erros, sem áudio nem texto) guardado no
+   * cancelamento por falta de transcrição: os trechos são apagados ali, e o
+   * admin continua vendo o que aconteceu.
+   */
+  trechosNoFim?: ResumoDosTrechos
   createdAt: Date
   updatedAt: Date
 }
@@ -246,9 +252,27 @@ export interface SegmentoDeAudio {
   proximaTentativaEm?: Date
   lease?: { ate: Date; dono: string }
   frases?: FraseTranscrita[]
+  /** Último erro deste trecho: da transcrição, da conferência no Google ou do envio pelo Blob. */
   erro?: string
+  /** Por que o envio direto do navegador ao Google falhou (o trecho foi pelo Blob). */
+  erroDireto?: string
   createdAt: Date
   updatedAt: Date
+}
+
+/** O que aconteceu com os trechos de voz de uma aula (diagnóstico do admin). */
+export interface ResumoDosTrechos {
+  total: number
+  transcritos: number
+  falharam: number
+  /** Ainda no navegador ou no meio do envio. */
+  enviando: number
+  /** Foram pelo Blob (o envio direto ao Google falhou). */
+  peloBlob: number
+  /** Erro do trecho mais recente que teve erro (transcrição, conferência ou envio pelo Blob). */
+  ultimoErro: string | null
+  /** Por que o envio direto falhou, no trecho mais recente em que falhou. */
+  erroDireto: string | null
 }
 
 /** Consumo do mês ("AAAA-MM", horário de Brasília): o teto do orçamento e o painel. */

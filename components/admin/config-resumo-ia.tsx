@@ -19,6 +19,7 @@ import { Switch } from '@/components/ui/switch'
 import { api, CaixaAviso, CaixaErro, Selo } from '@/components/monitorias/base'
 import { formatarCentavos, interpretarValorEmReais } from '@/lib/monitorias/dinheiro'
 import type { ConfigResumo, PrecoDeModelo } from '@/lib/monitorias/resumo/tipos'
+import { AutotesteDoResumo } from './autoteste-resumo-ia'
 
 interface PrecoCalculado {
   precoCentavos: number
@@ -167,6 +168,8 @@ export function ConfigResumoIA() {
           </label>
           {!dados.chaveConfigurada && <CaixaAviso><AlertTriangle className="mr-1 inline h-4 w-4" /> Nenhuma chave padrão do Gemini configurada. O resumo usa só a chave padrão (nunca as das seções).</CaixaAviso>}
         </div>
+
+        <AutotesteDoResumo />
 
         {/* Modelos */}
         <div className="grid gap-3 sm:grid-cols-2">

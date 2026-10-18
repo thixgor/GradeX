@@ -9,6 +9,7 @@ import { configDoResumo } from '@/lib/monitorias/resumo/config'
 import { cambioAtual } from '@/lib/monitorias/resumo/cambio'
 import { cambioEfetivo, centavosDeUsd, lucroDoPeriodo } from '@/lib/monitorias/resumo/regras'
 import { reembolsarAdicionaisDaAula } from '@/lib/monitorias/resumo/adicional'
+import { resumoDosTrechos } from '@/lib/monitorias/resumo/tarefa'
 import { dispararProcessador } from '@/lib/monitorias/resumo/disparo'
 import { limparTexto } from '@/lib/monitorias/validacao'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
@@ -42,9 +43,13 @@ export async function GET(request: NextRequest) {
         .toArray(),
       c.resumosAdicionais.aggregate<{ _id: string; n: number; centavos: number }>([{ $match: { teste: { $ne: true } } }, { $group: { _id: '$status', n: { $sum: 1 }, centavos: { $sum: '$precoCentavos' } } }]).toArray(),
     ])
-    const adicionais = tarefas.length
-      ? await c.resumosAdicionais.find({ reservaId: { $in: tarefas.map((t) => t._id) } }, { projection: { reservaId: 1, status: 1, precoCentavos: 1, alunoId: 1, reembolso: 1, teste: 1 } }).toArray()
-      : []
+    const ids = tarefas.map((t) => t._id)
+    const [adicionais, trechos] = ids.length
+      ? await Promise.all([
+          c.resumosAdicionais.find({ reservaId: { $in: ids } }, { projection: { reservaId: 1, status: 1, precoCentavos: 1, alunoId: 1, reembolso: 1, teste: 1 } }).toArray(),
+          resumoDosTrechos(ids),
+        ])
+      : [[], {} as Awaited<ReturnType<typeof resumoDosTrechos>>]
     const brlPorUsdEfetivo = cambioEfetivo(cambio.brlPorUsd, config)
     const vendasCentavos = uso?.vendasCentavos || 0
     const reembolsosCentavos = uso?.reembolsosCentavos || 0
@@ -70,6 +75,7 @@ export async function GET(request: NextRequest) {
         custo: { estimadoUsd: t.custo?.estimadoUsd || 0, realUsd: t.custo?.realUsd || 0 },
         tentativas: t.tentativas || 0,
         erro: t.erro || null,
+        trechos: trechos[t._id] || t.trechosNoFim || null,
         falhouEm: t.falhouEm || null,
         prontoEm: t.prontoEm || null,
         teste: !!t.teste,
