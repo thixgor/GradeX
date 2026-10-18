@@ -779,6 +779,24 @@ receita é 100% da plataforma e o repasse do monitor não muda.
   cartão da reserva consulta o estado a cada 60 s só enquanto processa e com a
   aba visível.
 
+### Testar sozinho em produção (sala de teste)
+
+1. Admin → Monitorias → Sala de vídeo → marque "com Resumo por IA (sem
+   cobrança)" → Criar sala de teste → Entrar como monitor. Não precisa da
+   venda ligada, só da chave padrão do Gemini.
+2. No saguão, clique em "Autorizo a transcrição" → Entrar. Fale alguns minutos
+   sobre um tema. O selo mostra "transcrevendo sua voz", e os silêncios não
+   gravam.
+3. Clique em "Sair da aula" → Sair. Volte ao admin e clique em **"Gerar resumo
+   agora"**. O cartão atualiza sozinho até "pronto · ler", em 1 a 2 min. O
+   custo real aparece na aba "Resumos por IA".
+
+Sem o botão, a sala de teste segue a regra das aulas: espera o fim agendado
+(90 min) e cobertura de 30% da aula. O botão (`encerrarTesteEGerarResumo`,
+só para `teste: true`) encerra o teste naquela hora e mede a cobertura do
+primeiro trecho até ali. A sala de teste é em grupo, então transcreve só o
+monitor. A voz do aluno (aula individual) só entra numa compra de verdade.
+
 ### Testes
 
 - `__tests__/monitorias/resumo-ia.test.ts` (unitários): preço, config, vozes,

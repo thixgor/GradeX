@@ -197,6 +197,12 @@ export interface TarefaResumo {
   transcricaoExpiraEm?: Date
   transcricaoApagadaEm?: Date
   teste?: boolean
+  /**
+   * Sala de teste encerrada pelo admin ("Gerar resumo agora"): `inicio`/`fim`
+   * passam a ser o período realmente gravado, e o resumo sai sem esperar os
+   * 90 min agendados.
+   */
+  encerradoNoTesteEm?: Date
   createdAt: Date
   updatedAt: Date
 }

@@ -225,7 +225,9 @@ async function transcreverTrecho(seg: SegmentoDeAudio, agora: Date): Promise<voi
 async function prontaParaResumir(t: TarefaResumo, agora: Date): Promise<boolean> {
   const c = await cols()
   const fim = t.fim.getTime()
-  if (agora.getTime() < fim + 5 * 60_000) return false
+  // Folga para o último trecho chegar. Na sala de teste encerrada pelo admin,
+  // quem estava em envio continua esperado pela regra do `enviandoRecente`.
+  if (agora.getTime() < fim + (t.encerradoNoTesteEm ? 0 : 5 * 60_000)) return false
   const tarde = agora.getTime() >= fim + ESPERA_POR_VOZES_MS
   const [emAndamento, enviandoRecente, vozesComAudio] = await Promise.all([
     c.resumosSegmentos.countDocuments({ reservaId: t._id, status: { $in: ['enviado', 'transcrevendo'] } }, { limit: 1 }),
@@ -339,8 +341,10 @@ async function resumirTarefa(t: TarefaResumo, agora: Date): Promise<boolean> {
   if (!chave) return liberar(30 * 60_000, 'sem chave do Gemini')
   if (await orcamentoEstourado(config, agora)) return liberar(60 * 60_000, 'orçamento do mês esgotado')
 
-  const inicio = reserva.inicio || t.inicio
-  const fim = reserva.fim || t.fim
+  // Sala de teste encerrada pelo admin: conta o período gravado (a tarefa), não
+  // os 90 min agendados. Aula de verdade: a aula marcada inteira.
+  const inicio = t.encerradoNoTesteEm ? t.inicio : reserva.inicio || t.inicio
+  const fim = t.encerradoNoTesteEm ? t.fim : reserva.fim || t.fim
   const segs = await c.resumosSegmentos.find({ reservaId: t._id, status: 'transcrito' }).sort({ inicio: 1, seq: 1 }).toArray()
   const cobertura = coberturaDaAula(segs, inicio, fim)
   await c.resumos.updateOne({ _id: t._id }, { $set: { cobertura } })

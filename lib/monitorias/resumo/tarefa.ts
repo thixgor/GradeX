@@ -321,6 +321,40 @@ export async function registrarFimDaVoz(reserva: Reserva, userId: string, ultimo
   )
 }
 
+/**
+ * "Gerar resumo agora" da sala de teste (só `teste: true`). Uma aula de
+ * verdade espera o fim agendado e mede a cobertura sobre a aula inteira; no
+ * teste, o admin fala alguns minutos sozinho numa sala de 90. Então o teste
+ * termina aqui, e o período que conta é do primeiro trecho gravado até agora.
+ * Quem não saiu pelo botão "Sair" conta como saído agora (um trecho que ainda
+ * estiver só no navegador fica de fora).
+ */
+export async function encerrarTesteEGerarResumo(reservaId: string, agora = new Date()): Promise<{ inicio: Date; fim: Date; trechos: number }> {
+  if (!ObjectId.isValid(reservaId)) throw new ErroMonitoria(404, 'Sala de teste não encontrada.')
+  const c = await cols()
+  const [reserva, tarefa, primeiro, trechos] = await Promise.all([
+    c.reservas.findOne({ _id: new ObjectId(reservaId), teste: true } as any, { projection: { fim: 1 } }),
+    c.resumos.findOne({ _id: reservaId, teste: true }, { projection: { status: 1, vozes: 1 } }),
+    c.resumosSegmentos.find({ reservaId }, { projection: { inicio: 1 } }).sort({ inicio: 1 }).limit(1).next(),
+    c.resumosSegmentos.countDocuments({ reservaId }),
+  ])
+  if (!reserva || !tarefa) throw new ErroMonitoria(404, 'Sala de teste com Resumo por IA não encontrada.')
+  if (!ATIVAS.includes(tarefa.status)) throw new ErroMonitoria(409, `O resumo desta sala já está "${tarefa.status}".`)
+  if (!primeiro) throw new ErroMonitoria(409, 'Nenhum trecho de voz chegou ainda: entre na sala, autorize e fale um pouco antes.')
+  const saidas = Object.fromEntries(
+    Object.entries(tarefa.vozes || {})
+      .filter(([, v]) => !v.saiuEm)
+      .map(([uid]) => [`vozes.${uid}.saiuEm`, agora]),
+  )
+  const atualizada = await c.resumos.updateOne(
+    { _id: reservaId, teste: true, status: { $in: ATIVAS } },
+    { $set: { inicio: primeiro.inicio, fim: agora, encerradoNoTesteEm: agora, updatedAt: agora, ...saidas }, $unset: { proximaTentativaEm: '' } } as any,
+  )
+  if (!atualizada.modifiedCount) throw new ErroMonitoria(409, 'O resumo desta sala mudou de estado. Atualize a página.')
+  if (reserva.fim && reserva.fim > agora) await c.reservas.updateOne({ _id: new ObjectId(reservaId), teste: true } as any, { $set: { fim: agora, updatedAt: agora } })
+  return { inicio: primeiro.inicio, fim: agora, trechos }
+}
+
 // ─── Fim: cancelar, apagar, mostrar ─────────────────────────────────────
 
 /**

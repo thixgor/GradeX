@@ -4,14 +4,16 @@
  * Admin → Monitorias → Sala de vídeo → "Sala de teste": cria uma sala de
  * verdade (WebRTC, TURN, controles, anotações) em que o admin é o monitor,
  * com um link para mandar a um amigo. Sem anúncio, contrato nem pagamento;
- * vale por 90 min e some sozinha em 7 dias.
+ * vale por 90 min e some sozinha em 7 dias. Com o Resumo por IA, o admin testa
+ * sozinho: fala alguns minutos, sai e clica em "Gerar resumo agora".
  */
 
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Brain, Check, Copy, FlaskConical, Loader2, Trash2, Video } from 'lucide-react'
+import { Brain, Check, Copy, FlaskConical, Loader2, Sparkles, Trash2, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { api, CaixaErro } from '@/components/monitorias/base'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { horaEmBrasilia } from '@/lib/fuso-brasilia'
 
 interface SalaDeTeste {
@@ -23,7 +25,14 @@ interface SalaDeTeste {
   alunos: string[]
   /** Estado do Resumo por IA de teste (null = sala sem resumo). */
   resumoIA: string | null
+  /** Por que não saiu (cancelado/falhou). */
+  resumoMotivo: string | null
 }
+
+/** Estados em que o resumo de teste ainda pode ser gerado agora. */
+const PODE_GERAR = ['aguardando', 'transcrevendo']
+/** Estados em que vale atualizar a lista sozinha até sair o resultado. */
+const PROCESSANDO = ['transcrevendo', 'resumindo']
 
 const ESTADO_DO_RESUMO: Record<string, string> = {
   aguardando: 'aguardando a aula',
@@ -41,6 +50,7 @@ export function AdminSalaDeTeste() {
   const [copiado, setCopiado] = useState<string | null>(null)
   const [excluindo, setExcluindo] = useState<string | null>(null)
   const [comResumo, setComResumo] = useState(false)
+  const [gerando, setGerando] = useState<string | null>(null)
 
   const carregar = useCallback(() => {
     api<{ salas: SalaDeTeste[] }>('/api/admin/monitorias/teste')
@@ -48,6 +58,23 @@ export function AdminSalaDeTeste() {
       .catch(() => {})
   }, [])
   useEffect(() => carregar(), [carregar])
+  // Só enquanto algum resumo de teste está andando (e com a aba visível).
+  useIntervaloVisivel(carregar, salas.some((s) => s.resumoIA && PROCESSANDO.includes(s.resumoIA)) ? 15_000 : null)
+
+  async function gerarResumo(s: SalaDeTeste) {
+    if (!window.confirm('Encerrar a sala de teste e gerar o resumo com o que foi gravado? Saia da aula pelo botão Sair antes, para o último trecho entrar.')) return
+    setGerando(s.id)
+    setErro('')
+    try {
+      await api('/api/admin/monitorias/teste', { method: 'PATCH', json: { id: s.id, acao: 'gerar_resumo' } })
+      setSalas((atual) => atual.map((x) => (x.id === s.id ? { ...x, resumoIA: 'resumindo' } : x)))
+      carregar()
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Não deu para gerar o resumo.')
+    } finally {
+      setGerando(null)
+    }
+  }
 
   async function criar() {
     setCriando(true)
@@ -100,6 +127,10 @@ export function AdminSalaDeTeste() {
             Testar com um amigo: a sala é a mesma das aulas (vídeo, TURN, chat, tela, controles, anotações). Você entra como monitor e quem tiver o link entra como aluno. Sem
             anúncio, contrato nem pagamento; vale 90 min. Exclua quando terminar (ou ela some sozinha em 7 dias).
           </p>
+          <p className="mt-1 max-w-[62ch] text-xs leading-relaxed text-muted-foreground">
+            <Brain className="mr-1 inline h-3.5 w-3.5 text-primary" aria-hidden />
+            Testar o Resumo por IA sozinho: marque a caixa, entre, autorize, fale uns minutos sobre um tema, saia pelo botão Sair e clique em &quot;Gerar resumo agora&quot;.
+          </p>
         </div>
         <div className="flex flex-col items-end gap-1.5">
           <Button size="sm" onClick={() => void criar()} disabled={criando}>
@@ -131,13 +162,20 @@ export function AdminSalaDeTeste() {
                           ler
                         </a>
                       )}
+                      {s.resumoIA && PROCESSANDO.includes(s.resumoIA) && <Loader2 className="ml-1 h-3 w-3 animate-spin" aria-hidden />}
                     </span>
                   )}
+                  {s.resumoMotivo && <span className="mt-0.5 block text-xs text-rose-600">{s.resumoMotivo}</span>}
                 </span>
                 {s.aberta && (
                 <Button size="sm" variant="outline" onClick={() => copiar(s)}>
                   {copiado === s.id ? <Check className="mr-1 h-4 w-4 text-primary" /> : <Copy className="mr-1 h-4 w-4" />} {copiado === s.id ? 'Copiado!' : 'Copiar convite'}
                 </Button>
+                )}
+                {s.resumoIA && PODE_GERAR.includes(s.resumoIA) && (
+                  <Button size="sm" variant="outline" onClick={() => void gerarResumo(s)} disabled={gerando === s.id}>
+                    {gerando === s.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Sparkles className="mr-1 h-4 w-4" />} Gerar resumo agora
+                  </Button>
                 )}
                 {/* Navegação completa: a sala carrega com a permissão de microfone. */}
                 {s.aberta && (

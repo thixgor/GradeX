@@ -4,7 +4,8 @@ import { z } from 'zod'
 import { erro, idDe, lerJson, obterColecoes } from '@/lib/monitorias/db'
 import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { criarSalaDeTeste, excluirSalasDeTeste } from '@/lib/monitorias/reservas'
-import { criarResumoDeTeste } from '@/lib/monitorias/resumo/tarefa'
+import { criarResumoDeTeste, encerrarTesteEGerarResumo } from '@/lib/monitorias/resumo/tarefa'
+import { dispararProcessador } from '@/lib/monitorias/resumo/disparo'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,18 +22,23 @@ export async function GET(request: NextRequest) {
     const ids = salas.map((s) => idDe(s))
     const [alunos, resumos] = await Promise.all([
       c.participacoes.find({ reservaId: { $in: ids } }, { projection: { reservaId: 1, alunoNome: 1 } }).toArray(),
-      c.resumos.find({ _id: { $in: ids } }, { projection: { status: 1 } }).toArray(),
+      c.resumos.find({ _id: { $in: ids } }, { projection: { status: 1, erro: 1 } }).toArray(),
     ])
     return ok({
-      salas: salas.map((s) => ({
-        id: idDe(s),
-        codigo: s.codigoTeste,
-        inicio: s.inicio,
-        fim: s.fim,
-        aberta: !!s.fim && s.fim.getTime() + 30 * 60_000 > agora.getTime(),
-        alunos: alunos.filter((a) => a.reservaId === idDe(s)).map((a) => a.alunoNome),
-        resumoIA: resumos.find((r) => r._id === idDe(s))?.status || null,
-      })),
+      salas: salas.map((s) => {
+        const resumo = resumos.find((r) => r._id === idDe(s))
+        return {
+          id: idDe(s),
+          codigo: s.codigoTeste,
+          inicio: s.inicio,
+          fim: s.fim,
+          aberta: !!s.fim && s.fim.getTime() + 30 * 60_000 > agora.getTime(),
+          alunos: alunos.filter((a) => a.reservaId === idDe(s)).map((a) => a.alunoNome),
+          resumoIA: resumo?.status || null,
+          // Por que o resumo de teste não saiu (ex.: "Não houve áudio da aula para transcrever").
+          resumoMotivo: resumo && ['cancelado', 'falhou'].includes(resumo.status) ? resumo.erro || null : null,
+        }
+      }),
     })
   })
 }
@@ -50,6 +56,22 @@ export async function POST(request: NextRequest) {
     if (corpo.data.resumoIA) await criarResumoDeTeste(reserva, sessao.userId)
     await audit({ action: 'monitoria_sala_teste', actorUserId: sessao.userId, resourceType: 'monitoria_reserva', resourceId: idDe(reserva), metadata: { resumoIA: !!corpo.data.resumoIA }, ip })
     return ok({ id: idDe(reserva), codigo: reserva.codigoTeste, inicio: reserva.inicio, fim: reserva.fim }, 201)
+  })
+}
+
+/**
+ * PATCH {id, acao: 'gerar_resumo'} — "Gerar resumo agora": encerra a sala de
+ * teste e dispara o processador com o que já foi gravado (o admin testa
+ * sozinho, sem esperar os 90 min nem cobrir 30% deles). Aula de verdade nunca.
+ */
+export async function PATCH(request: NextRequest) {
+  return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
+    const corpo = z.object({ id: z.string().regex(/^[a-f0-9]{24}$/i), acao: z.literal('gerar_resumo') }).strict().safeParse(await lerJson(request))
+    if (!corpo.success) return erro(400, 'Pedido inválido.')
+    const feito = await encerrarTesteEGerarResumo(corpo.data.id)
+    dispararProcessador(new URL(request.url).origin)
+    await audit({ action: 'monitoria_resumo_suporte', actorUserId: sessao.userId, resourceType: 'monitoria_resumo', resourceId: corpo.data.id, metadata: { acao: 'gerar_teste', trechos: feito.trechos }, ip })
+    return ok({ ok: true, trechos: feito.trechos })
   })
 }
 

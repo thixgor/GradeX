@@ -461,6 +461,44 @@ suite('Resumo por IA (Mongo real, MP e Gemini falsos)', () => {
     expect(gemini.interacoes.length).toBe(antes)
   })
 
+  it('sala de teste sozinho: "Gerar resumo agora" resume o período gravado, sem esperar os 90 min', async () => {
+    const { criarSalaDeTeste } = await import('@/lib/monitorias/reservas')
+    const { criarResumoDeTeste, encerrarTesteEGerarResumo } = await import('@/lib/monitorias/resumo/tarefa')
+    const agora = Date.now()
+    const reserva = await criarSalaDeTeste({ userId: 'admin-1', nome: 'Admin' }, new Date(agora - 10 * 60_000))
+    await criarResumoDeTeste(reserva, 'admin-1')
+    const id = String(reserva._id)
+    // Nada gravado ainda: não há o que resumir.
+    await expect(encerrarTesteEGerarResumo(id)).rejects.toMatchObject({ status: 409 })
+    await db.collection('monitorias_resumos').updateOne({ _id: id } as any, { $set: { 'vozes.admin-1.consentimento': { aceito: true, em: new Date(), versao: 'v' } } })
+    // O admin falou 4 min numa sala de 90 (e não clicou em "Sair").
+    await trecho(reserva._id as any, { userId: 'admin-1', papel: 'monitor', nome: 'Admin', seq: 0, inicio: new Date(agora - 6 * 60_000), min: 4, nomeArquivo: 'files/t0' })
+    // A transcrição anda durante a aula; o resumo espera o fim agendado (daqui a 80 min).
+    expect(await processarTudo()).toEqual(['trecho'])
+    expect((await tarefaDe(reserva._id as any))!.status).not.toBe('pronto')
+    const r = await encerrarTesteEGerarResumo(id)
+    expect(r.trechos).toBe(1)
+    expect((await db.collection('monitorias_reservas').findOne({ _id: reserva._id as any }))!.fim.getTime()).toBeLessThanOrEqual(Date.now())
+    expect(await processarTudo()).toEqual(['resumo'])
+    const t = await tarefaDe(reserva._id as any)
+    expect(t!.status).toBe('pronto')
+    expect(t!.vozes['admin-1'].saiuEm).toBeTruthy()
+    // Cobertura sobre o período gravado (~6 min), não sobre os 90 min da sala.
+    expect(t!.cobertura.aulaMs).toBeLessThan(10 * 60_000)
+    expect(t!.cobertura.pct).toBeGreaterThan(60)
+    // De novo: já está pronto.
+    await expect(encerrarTesteEGerarResumo(id)).rejects.toMatchObject({ status: 409 })
+  })
+
+  it('"Gerar resumo agora" não vale para aula de verdade', async () => {
+    const { encerrarTesteEGerarResumo } = await import('@/lib/monitorias/resumo/tarefa')
+    const { reserva, fim } = await aulaQueTerminou()
+    await expect(encerrarTesteEGerarResumo(String(reserva._id))).rejects.toMatchObject({ status: 404 })
+    const t = await tarefaDe(reserva._id)
+    expect(t!.fim.getTime()).toBe(fim.getTime())
+    expect(t!.encerradoNoTesteEm).toBeUndefined()
+  })
+
   it('o resumo espera o último trecho de cada voz (avisado na saída)', async () => {
     const { reserva, inicio } = await aulaQueTerminou()
     await trecho(reserva._id, { userId: 'monitor-1', papel: 'monitor', nome: 'Carla', seq: 0, inicio, min: 40, nomeArquivo: 'files/m0' })
