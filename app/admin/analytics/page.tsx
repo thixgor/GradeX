@@ -741,84 +741,16 @@ export default function AdminAnalyticsPage() {
     if (!data) return
     setExporting(true)
     try {
-      const { jsPDF } = await import('jspdf')
-      const doc = new jsPDF()
-      const green = '#047857'
-      const gold = '#b45309'
-      doc.setFillColor(4, 120, 87)
-      doc.rect(0, 0, 210, 34, 'F')
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(18)
-      doc.text('DomineAqui Analytics', 14, 16)
-      doc.setFontSize(10)
-      doc.text(`Relatório administrativo gerado em ${formatDate(new Date().toISOString())}`, 14, 25)
-
-      doc.setTextColor(15, 23, 42)
-      doc.setFontSize(12)
-      const metrics = [
-        ['Receita total', formatCurrency(data.cards.totalRevenue)],
-        ['Receita no mês', formatCurrency(data.cards.monthRevenue)],
-        ['Receita na semana', formatCurrency(data.cards.weekRevenue)],
-        ['Vendas', number.format(data.cards.totalSales)],
-        ['Assinaturas ativas', number.format(data.cards.activeSubscriptions)],
-        ['Cancelamentos', number.format(data.cards.cancellations)],
-        ['Taxa de cancelamento', formatPercent(data.cards.cancellationRate)],
-        ['Checkouts abandonados', number.format(data.cards.abandonedCheckouts)],
-        ['Doações aprovadas', formatCurrency(data.donationSummary.totalApproved)],
-      ]
-      let y = 46
-      metrics.forEach(([label, value], index) => {
-        const x = index % 2 === 0 ? 14 : 110
-        if (index > 0 && index % 2 === 0) y += 18
-        doc.setDrawColor(226, 232, 240)
-        doc.roundedRect(x, y - 8, 84, 13, 2, 2)
-        doc.setFontSize(8)
-        doc.setTextColor(100, 116, 139)
-        doc.text(label, x + 4, y - 2)
-        doc.setFontSize(11)
-        doc.setTextColor(15, 23, 42)
-        doc.text(value, x + 4, y + 3)
-      })
-
-      y += 26
-      doc.setFontSize(13)
-      doc.setTextColor(green)
-      doc.text('Receita por período', 14, y)
-      y += 8
-      const chartMax = Math.max(...data.charts.revenueByPeriod.map((item) => item.value), 1)
-      data.charts.revenueByPeriod.slice(-8).forEach((item, index) => {
-        const bar = (item.value / chartMax) * 112
-        doc.setTextColor(71, 85, 105)
-        doc.setFontSize(8)
-        doc.text(item.label, 14, y + index * 8)
-        doc.setFillColor(4, 120, 87)
-        doc.rect(42, y - 4 + index * 8, bar, 4, 'F')
-        doc.setTextColor(180, 83, 9)
-        doc.text(formatCurrency(item.value), 158, y + index * 8)
-      })
-
-      y += 76
-      doc.setFontSize(13)
-      doc.setTextColor(gold)
-      doc.text('Produtos e planos', 14, y)
-      y += 8
-      doc.setTextColor(15, 23, 42)
-      doc.setFontSize(9)
-      doc.text(`Produto mais vendido: ${data.cards.topProduct}`, 14, y)
-      y += 6
-      doc.text(`Plano mais comprado: ${data.cards.topPlan}`, 14, y)
-      y += 6
-      doc.text(`Doações aprovadas: ${formatCurrency(data.donationSummary.totalApproved)} (${data.donationSummary.approvedCount})`, 14, y)
-      y += 10
-      doc.text('Pedidos recentes:', 14, y)
-      y += 7
-      filteredOrders.slice(0, 8).forEach((row) => {
-        doc.setFontSize(8)
-        doc.setTextColor(71, 85, 105)
-        doc.text(`${formatDate(row.createdAt)} · ${row.userName || row.userEmail || '-'} · ${row.product.slice(0, 32)} · ${formatCurrency(row.value)} · ${row.status}`, 14, y)
-        y += 6
-      })
-      doc.save(`domineaqui-analytics-${new Date().toISOString().slice(0, 10)}.pdf`)
+      // O histórico completo só é buscado aqui, na hora do PDF: o painel em si
+      // continua carregando só os últimos 12 meses.
+      const res = await fetch('/api/admin/analytics/relatorio', { cache: 'no-store' })
+      const historico = await res.json()
+      if (!res.ok) throw new Error(historico.error || 'Erro ao montar o relatório')
+      const { gerarPdfDoAnalytics } = await import('@/lib/relatorio-vendas-pdf')
+      const filtrosAtivos = Boolean(query || type || recurrence || status || method || couponFilter || dateFrom || dateTo || minValue || maxValue)
+      await gerarPdfDoAnalytics(data, historico, filteredOrders, filtrosAtivos)
+    } catch (err: any) {
+      window.alert(err?.message || 'Não foi possível gerar o PDF')
     } finally {
       setExporting(false)
     }

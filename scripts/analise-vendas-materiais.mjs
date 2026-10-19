@@ -16,7 +16,8 @@
  * carrinho, o valor do pedido é rateado entre os itens na proporção do preço
  * de cada um (assim cupom/desconto do carrinho cai em todos por igual).
  *
- * Uso:
+ * Uso (Node 22.18+, que lê TypeScript direto; antes disso, acrescente
+ * --experimental-strip-types):
  *   MONGODB_URI="mongodb+srv://..." node scripts/analise-vendas-materiais.mjs
  *   ... [--saida relatorio-vendas] [--banco nome-do-banco]
  *
@@ -28,7 +29,21 @@
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs'
+import { register } from 'node:module'
 import { join } from 'node:path'
+
+// O rateio por item é o mesmo do PDF do /admin/analytics (lib/relatorio-vendas.ts).
+// O gancho resolve os imports sem extensão do TypeScript, como em sincronizar-totais.mjs.
+const gancho = `
+export async function resolve(e, c, n) {
+  try { return await n(e, c) } catch (err) {
+    if (e.startsWith('.') && !/\\.[a-z]+$/.test(e)) return n(e + '.ts', c)
+    throw err
+  }
+}`
+register(`data:text/javascript,${encodeURIComponent(gancho)}`, import.meta.url)
+const { itensDoPedido, ehCombo } = await import('../lib/relatorio-vendas.ts')
+export { itensDoPedido, ehCombo }
 
 // ─── Precificação da licença ────────────────────────────────────────────────
 //
@@ -62,64 +77,6 @@ export function mesBrasilia(data) {
   const ano = partes.find((p) => p.type === 'year').value
   const mes = partes.find((p) => p.type === 'month').value
   return `${ano}-${mes}`
-}
-
-/** Pacote é combo por definição; título com "combo" também conta (material único vendido como combo). */
-export function ehCombo(item) {
-  return item.itemType === 'package' || /\bcombo\b/i.test(item.titulo || '')
-}
-
-/**
- * Quebra um pedido aprovado nos itens que ele vendeu, com o valor de cada um.
- * `fisicoPorPedido` dá o total da parte física (frete incluso) ligada ao
- * pedido, para descontar do valor digital.
- */
-export function itensDoPedido(order, fisicoPorPedido = new Map()) {
-  const meta = order.metadata || {}
-  const cobrado = centavos(order.baseAmount ?? order.amount)
-  const fisico = meta.shopOrderId ? centavos(fisicoPorPedido.get(String(meta.shopOrderId)) || 0) : 0
-  const digital = Math.max(0, centavos(cobrado - fisico))
-
-  let linhas = []
-  if (Array.isArray(meta.serialKeyCart) && meta.serialKeyCart.length > 0) {
-    linhas = meta.serialKeyCart.map((i) => ({
-      itemType: i.grant?.itemType === 'package' ? 'package' : 'material',
-      itemId: i.grant?.itemId ? String(i.grant.itemId) : '',
-      titulo: i.grant?.itemTitle || i.productTitle || '',
-      versao: i.grant?.accessVersionLabel || '',
-      tabela: Number(i.amount) || 0,
-    }))
-  } else if (Array.isArray(meta.cartItems) && meta.cartItems.length > 0) {
-    linhas = meta.cartItems.map((i) => ({
-      itemType: i.itemType === 'package' ? 'package' : 'material',
-      itemId: i.itemId ? String(i.itemId) : '',
-      titulo: i.itemTitle || '',
-      versao: i.accessVersionLabel || '',
-      tabela: Number(i.price) || 0,
-    }))
-  } else if (order.refId) {
-    linhas = [{
-      itemType: meta.itemType === 'package' ? 'package' : 'material',
-      itemId: String(order.refId),
-      titulo: meta.itemTitle || '',
-      versao: meta.accessVersionLabel || '',
-      tabela: digital,
-    }]
-  }
-  linhas = linhas.filter((l) => l.itemId)
-  if (linhas.length === 0) return []
-
-  // Rateio: o pedido manda; a tabela só decide a proporção.
-  const somaTabela = linhas.reduce((s, l) => s + l.tabela, 0)
-  let restante = digital
-  return linhas.map((l, idx) => {
-    const ultimo = idx === linhas.length - 1
-    const valor = ultimo
-      ? restante
-      : centavos(somaTabela > 0 ? (digital * l.tabela) / somaTabela : digital / linhas.length)
-    restante = centavos(restante - valor)
-    return { ...l, valor }
-  })
 }
 
 /**
