@@ -10,7 +10,7 @@
  * certos; símbolos fora dessa tabela (≈, →, emoji) não. Mantenha o texto nela.
  */
 
-import type { RelatorioHistorico, LinhaSimples } from './relatorio-vendas'
+import { LICENCA_MULTIPLO, LICENCA_PISO, type RelatorioHistorico, type LinhaSimples } from './relatorio-vendas'
 
 /** O pedaço do payload de /api/admin/analytics que o PDF usa. */
 export interface DadosDoPainel {
@@ -361,21 +361,26 @@ export async function gerarPdfDoAnalytics(
   barras(mat.ranking.slice(0, 10).map((i) => ({ rotulo: `${i.combo ? '[combo] ' : ''}${i.titulo}`, valor: i.receita })), dinheiro, OURO, 72)
   tabela(
     [
-      { titulo: '#', largura: 7, direita: true },
-      { titulo: 'Item', largura: 62 },
-      { titulo: 'Tipo', largura: 13 },
-      { titulo: 'Receita', largura: 22, direita: true },
-      { titulo: '%', largura: 12, direita: true },
-      { titulo: 'Vendas', largura: 13, direita: true },
-      { titulo: 'Ticket', largura: 18, direita: true },
-      { titulo: '12 meses', largura: 22, direita: true },
-      { titulo: 'Última', largura: 17 },
+      { titulo: '#', largura: 6, direita: true },
+      { titulo: 'Item', largura: 55 },
+      { titulo: 'Tipo', largura: 12 },
+      { titulo: 'Receita', largura: 21, direita: true },
+      { titulo: '%', largura: 11, direita: true },
+      { titulo: 'Vendas', largura: 12, direita: true },
+      { titulo: 'Ticket', largura: 17, direita: true },
+      { titulo: 'Por ano', largura: 21, direita: true },
+      { titulo: 'Licença', largura: 21, direita: true },
+      { titulo: 'Última', largura: 15 },
     ],
     mat.ranking.map((i, idx) => [
       String(idx + 1), i.titulo, i.combo ? 'Combo' : 'Avulso', dinheiro(i.receita), pct(i.participacao),
-      num(i.vendas), dinheiro(i.ticketMedio), dinheiro(i.receita12m), data(i.ultimaVenda),
+      num(i.vendas), dinheiro(i.ticketMedio), dinheiro(i.receitaAnual), dinheiro(i.licenca), data(i.ultimaVenda),
     ]),
-    { tamanho: 7, total: ['', 'Total', '', dinheiro(mat.receita), '100%', num(mat.vendas), '', '', ''] }
+    { tamanho: 7, total: ['', 'Total', '', dinheiro(mat.receita), '100%', num(mat.vendas), '', '', '', ''] }
+  )
+  paragrafo(
+    `Licença = quanto cobrar para OUTRO SITE usar aquele material ou combo por 12 meses, sem exclusividade (a DomineAqui continua vendendo): ${String(LICENCA_MULTIPLO).replace('.', ',')} × o que o item fatura por ano, mínimo de ${dinheiro(LICENCA_PISO)}. "Por ano" = receita dos últimos 12 meses ou, para item com menos de um ano de venda, a média mensal × 12. Licença para sempre: o dobro. Exclusiva (a DomineAqui para de vender): cerca de 3,3 vezes o valor da coluna.`,
+    7.5
   )
 
   // ── 5. Como e quando compram ──────────────────────────────────────────────

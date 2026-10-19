@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { itensDoPedido, montarRelatorioHistorico, type PedidoDoHistorico } from '@/lib/relatorio-vendas'
+import { itensDoPedido, montarRelatorioHistorico, precoDaLicenca, type PedidoDoHistorico } from '@/lib/relatorio-vendas'
 
 const pedido = (extra: Partial<PedidoDoHistorico>): PedidoDoHistorico => ({
   _id: Math.random().toString(36).slice(2),
@@ -130,5 +130,17 @@ describe('montarRelatorioHistorico', () => {
     expect(relatorio.resumo.pedidosEstornados).toBe(1)
     expect(relatorio.resumo.taxaDeEstorno).toBeCloseTo(20)
     expect(relatorio.resumo.taxaDeAprovacao).toBeCloseTo(40)
+  })
+})
+
+describe('precoDaLicenca', () => {
+  it('cobra 1,5 × a receita anual, arredondado para cima de R$ 100', () => {
+    expect(precoDaLicenca(10_000)).toBe(15_000)
+    expect(precoDaLicenca(3_333)).toBe(5_000)
+  })
+
+  it('nunca sai abaixo do piso', () => {
+    expect(precoDaLicenca(0)).toBe(1_500)
+    expect(precoDaLicenca(400)).toBe(1_500)
   })
 })

@@ -71,6 +71,22 @@ export interface ItemVendido {
 
 const centavos = (v: number) => Math.round((Number(v) || 0) * 100) / 100
 
+/**
+ * Preço para OUTRO SITE usar um material ou combo por 12 meses, sem
+ * exclusividade (a DomineAqui continua vendendo).
+ *
+ * O outro site vende para o mesmo público: cada venda dele pode ser uma venda
+ * nossa a menos. 1,5 × a receita anual do item cobre perder até tudo o que ele
+ * faria no ano e deixa 50% por cima. Piso para item que vendeu pouco não sair
+ * de graça — ainda custou para ser produzido. Arredonda para cima de R$ 100.
+ */
+export const LICENCA_MULTIPLO = 1.5
+export const LICENCA_PISO = 1500
+
+export function precoDaLicenca(receitaAnual: number) {
+  return Math.max(LICENCA_PISO, Math.ceil((receitaAnual * LICENCA_MULTIPLO) / 100) * 100)
+}
+
 /** Pacote é combo por definição; material com "combo" no título também. */
 export function ehCombo(item: { itemType: string; titulo?: string }) {
   return item.itemType === 'package' || /\bcombo\b/i.test(item.titulo || '')
@@ -210,6 +226,10 @@ export interface LinhaDeItem {
   ticketMedio: number
   participacao: number
   receita12m: number
+  /** Receita de 12 meses; item com menos de um ano de venda: média mensal × 12. */
+  receitaAnual: number
+  /** Ver `precoDaLicenca`. */
+  licenca: number
   primeiraVenda: string
   ultimaVenda: string
 }
@@ -478,6 +498,8 @@ export function montarRelatorioHistorico(entrada: EntradaDoRelatorio): Relatorio
         ticketMedio: 0,
         participacao: 0,
         receita12m: 0,
+        receitaAnual: 0,
+        licenca: 0,
         primeiraVenda: '',
         ultimaVenda: '',
         quem: new Set(),
@@ -495,14 +517,20 @@ export function montarRelatorioHistorico(entrada: EntradaDoRelatorio): Relatorio
   }
   const receitaDeMateriais = centavos(itens.reduce((s, i) => s + i.valor, 0))
   const ranking: LinhaDeItem[] = [...porItem.values()]
-    .map(({ quem, primeira, ultima, ...a }) => ({
-      ...a,
-      compradores: quem.size,
-      ticketMedio: a.vendas ? centavos(a.receita / a.vendas) : 0,
-      participacao: pct(a.receita, receitaDeMateriais),
-      primeiraVenda: primeira.toISOString(),
-      ultimaVenda: ultima.toISOString(),
-    }))
+    .map(({ quem, primeira, ultima, ...a }) => {
+      const mesesDoItem = Math.max(1, (agora.getTime() - primeira.getTime()) / (30.44 * 86_400_000))
+      const receitaAnual = mesesDoItem >= 12 ? a.receita12m : centavos((a.receita / mesesDoItem) * 12)
+      return {
+        ...a,
+        receitaAnual,
+        licenca: precoDaLicenca(receitaAnual),
+        compradores: quem.size,
+        ticketMedio: a.vendas ? centavos(a.receita / a.vendas) : 0,
+        participacao: pct(a.receita, receitaDeMateriais),
+        primeiraVenda: primeira.toISOString(),
+        ultimaVenda: ultima.toISOString(),
+      }
+    })
     .sort((x, y) => y.receita - x.receita)
   const resumoDe = (lista: LinhaDeItem[]) => ({
     receita: centavos(lista.reduce((s, i) => s + i.receita, 0)),
