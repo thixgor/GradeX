@@ -70,6 +70,9 @@ interface MinhaSolicitacao {
   status: 'pending' | 'approved' | 'rejected' | 'cancelled'
   reviewNotes: string
   createdAt: string | null
+  /** Só vem quando a análise automática não aprovou e a equipe vai revisar. */
+  aiReview?: { outcome: string; reason: string } | null
+  autoApproved?: boolean
   grant: { discountLabel: string; usage: string; expiresAt: string | null } | null
 }
 
@@ -287,7 +290,10 @@ export default function PaginaProuniFies() {
       // Os arquivos já não são nossos: a partir daqui quem os guarda é a
       // solicitação. Manter a lista na tela sugeriria que dá para reenviar.
       setArquivos([])
-      await carregar()
+      // A resposta já traz o desfecho da análise automática (aprovada na hora
+      // ou em revisão) no mesmo formato da consulta — sem segunda ida ao servidor.
+      if (json?.request) setSolicitacao(json.request)
+      else await carregar()
     } catch (e: any) {
       setErro(e?.message || 'Não foi possível enviar a solicitação.')
     } finally {
@@ -397,7 +403,7 @@ export default function PaginaProuniFies() {
               </h2>
               <ol className="space-y-1.5 text-sm text-muted-foreground">
                 <li>1. Envie o comprovante do ProUni ou do FIES (PDF ou foto).</li>
-                <li>2. Nossa equipe confere manualmente — costuma levar até 2 dias úteis.</li>
+                <li>2. A conferência automática analisa o documento na hora. Se restar alguma dúvida, nossa equipe revisa manualmente (até 2 dias úteis).</li>
                 <li>3. Aprovado, o desconto entra sozinho no seu checkout deste item.</li>
               </ol>
               <p className="mt-2 text-xs text-muted-foreground">
@@ -415,6 +421,7 @@ export default function PaginaProuniFies() {
               <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <div>
                 <p className="font-semibold text-emerald-700 dark:text-emerald-300">
+                  {solicitacao?.autoApproved && sucesso ? 'Aprovado na hora! ' : ''}
                   Desconto aprovado{solicitacao?.grant ? ` (${solicitacao.grant.discountLabel})` : ''}
                 </p>
                 <p className="mt-0.5 text-sm text-muted-foreground">
@@ -440,10 +447,24 @@ export default function PaginaProuniFies() {
             <CardContent className="flex items-start gap-3 py-5">
               <Clock className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
               <div>
-                <p className="font-semibold text-amber-700 dark:text-amber-300">Solicitação em análise</p>
-                <p className="mt-0.5 text-sm text-muted-foreground">
-                  Recebemos seus documentos. Você será avisado assim que a conferência terminar.
+                <p className="font-semibold text-amber-700 dark:text-amber-300">
+                  {solicitacao?.aiReview?.reason ? 'Solicitação em revisão manual' : 'Solicitação em análise'}
                 </p>
+                {solicitacao?.aiReview?.reason ? (
+                  <>
+                    <p className="mt-0.5 text-sm text-muted-foreground">
+                      A conferência automática não conseguiu aprovar na hora: {solicitacao.aiReview.reason}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Isso ainda não é uma recusa — nossa equipe vai olhar seus documentos e você recebe a
+                      decisão por e-mail.
+                    </p>
+                  </>
+                ) : (
+                  <p className="mt-0.5 text-sm text-muted-foreground">
+                    Recebemos seus documentos. Você será avisado assim que a conferência terminar.
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -696,8 +717,13 @@ export default function PaginaProuniFies() {
                 ) : (
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                 )}
-                Enviar solicitação
+                {enviando ? 'Analisando seu comprovante…' : 'Enviar solicitação'}
               </Button>
+              {enviando && (
+                <p className="text-center text-xs text-muted-foreground">
+                  Estamos conferindo o documento agora — costuma levar alguns segundos. Não feche esta página.
+                </p>
+              )}
             </CardContent>
           </Card>
         )}

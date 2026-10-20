@@ -111,6 +111,39 @@ desconto):
 - botão **Limpar analisadas** (`POST /api/admin/prouni/limpeza`), que varre em
   lote as solicitações já analisadas. Nunca alcança pendentes.
 
+## Análise automática (IA)
+
+Logo depois de gravar a solicitação, `POST /api/prouni/solicitacoes` manda os
+comprovantes para o Gemini (`lib/prouni-analise-ia.ts`) e espera o parecer
+(~5–20 s; teto de ~30 s, `maxDuration` 60 s). **A IA só tem poder de aprovar:**
+
+| parecer | o que acontece | e-mail da pessoa | e-mail do admin |
+| --- | --- | --- | --- |
+| aprovou | vira `approved` na hora, com a concessão nas condições da oferta (`montarConcessao`, a mesma do admin); `reviewedBy: 'ia'` | **aprovado** | informativo ("aprovado pela IA" — dá para revogar enquanto não for usado) |
+| reprovou | continua `pending`, com o motivo em `aiReview` | **revisão manual**: o motivo e "ainda não é uma recusa" | "IA reprovou — precisa da sua decisão", com parecer e notas |
+| falhou (sem chave, Google fora, arquivo > 13 MB, JSON torto, tempo) | continua `pending`, `aiReview.outcome: 'failed'` | "recebemos" (o de sempre) | o de sempre, com a falha |
+| IA desligada no painel | fluxo de antes, sem `aiReview` | "recebemos" | o de sempre |
+
+Na fila, a solicitação reprovada pela IA aparece com o selo **IA reprovou**, o
+parecer, o tipo de documento identificado e as notas; o admin aprova ou recusa
+como qualquer outra (o botão **Usar motivo da IA** copia o motivo para a recusa).
+As aprovadas pela IA ficam em **Aprovadas** com o selo **IA aprovou**.
+
+**Política tolerante** (decisão do produto): na dúvida, aprova. Foto torta,
+documento antigo, programa trocado, nome abreviado, faculdade diferente —
+aprovam. Só reprova em quatro casos: `nada_a_ver` (arquivo sem relação com
+ProUni/FIES/bolsa), `falsificacao` grosseira, `ilegivel` por completo e
+`outra_pessoa` (nome legível sem nenhum nome/sobrenome em comum). Endurecer ou
+afrouxar é mudar a lista em `montarInstrucoes`.
+
+Liga/desliga em `/admin/prouni` → Solicitações (`GET/PUT
+/api/admin/prouni/config`, documento `prouni_config/analise_ia`). Ligada por
+padrão.
+
+O documento vai inline (nada fica no Files API) com a chave padrão do painel
+primeiro; o prompt leva nome, faculdade, curso e programa — não CPF. Texto
+dentro do comprovante é tratado como dado, não instrução.
+
 ## Avisos por e-mail
 
 A análise é humana e leva dias. Sem aviso, o único jeito de saber o que
@@ -119,8 +152,9 @@ tudo de novo. Quatro e-mails fecham as dúvidas que viram segunda solicitação:
 
 | quando | para quem | o que leva |
 | --- | --- | --- |
-| solicitação enviada | quem pediu | confirmação, prazo estimado e "não precisa enviar de novo" |
-| solicitação enviada | administradores (`ADMIN_EMAILS` / `ADMIN_ALERT_EMAIL`) | item, solicitante, CPF **mascarado**, faculdade, nº de anexos, tamanho da fila e link para a análise |
+| solicitação enviada (IA falhou/desligada) | quem pediu | confirmação, prazo estimado e "não precisa enviar de novo" |
+| IA reprovou | quem pediu | o motivo da IA, "ainda não é uma recusa" e que a equipe vai revisar |
+| solicitação enviada | administradores (`ADMIN_EMAILS` / `ADMIN_ALERT_EMAIL`) | item, solicitante, CPF **mascarado**, faculdade, nº de anexos, tamanho da fila, **parecer da IA** e link para a análise |
 | aprovada | quem pediu | o desconto, que ele entra sozinho no checkout, o prazo (se houver) e botão **Ir para a compra** |
 | recusada | quem pediu | **o motivo escrito pelo admin** e botão **Refazer solicitação** |
 
@@ -165,6 +199,7 @@ O teto diário é o limite real de quanto uma conta pesa na análise.
 | `GET /api/admin/prouni/produtos` | busca de produtos (inclui planos) |
 | `GET /api/admin/prouni/solicitacoes` | fila de análise |
 | `PATCH/DELETE /api/admin/prouni/solicitacoes/[id]` | aprovar/recusar/revogar · apagar anexos |
+| `GET/PUT /api/admin/prouni/config` | liga/desliga da análise automática |
 | `POST /api/admin/prouni/limpeza` | faxina em lote dos anexos |
 
 ## Telas

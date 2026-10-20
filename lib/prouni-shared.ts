@@ -17,6 +17,14 @@ export type ProuniItemType = 'material' | 'package' | 'manual_clinico' | 'plus'
 export type ProuniDiscountType = 'percentage' | 'fixed'
 export type ProuniProgram = 'prouni' | 'fies'
 export type ProuniRequestStatus = 'pending' | 'approved' | 'rejected' | 'cancelled'
+/**
+ * Desfecho da análise automática. Só `approved` decide alguma coisa; os demais
+ * deixam a solicitação na fila manual.
+ */
+export type ProuniAiOutcome = 'approved' | 'rejected' | 'failed'
+/** `reviewedBy` das aprovações feitas pela análise automática. */
+export const PROUNI_AI_REVIEWER_ID = 'ia'
+export const PROUNI_AI_REVIEWER_NAME = 'Análise automática (IA)'
 /** Ciclo de uso da concessão aprovada. Espelha o de resgate de cupom. */
 export type ProuniGrantUsage = 'available' | 'reserved' | 'used' | 'revoked'
 

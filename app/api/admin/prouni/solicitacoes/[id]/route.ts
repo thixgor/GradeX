@@ -14,6 +14,7 @@ import {
 import {
   getProuniBenefit,
   getProuniDiscountLabel,
+  montarConcessao,
   prouniResubmitAvailableAt,
   serializeProuniRequestForAdmin,
   PROUNI_REQUESTS_COLLECTION,
@@ -154,34 +155,22 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       const benefit = await getProuniBenefit(db, solicitacao.itemType, solicitacao.itemId)
       const discountType = data.discountType || benefit?.discountType
       const discountValue = data.discountValue ?? benefit?.discountValue
-      if (!discountType || !discountValue || discountValue <= 0) {
+      if (discountType === 'percentage' && (discountValue || 0) > 100) {
+        return NextResponse.json({ error: 'Percentual máximo é 100%.' }, { status: 400 })
+      }
+
+      // A mesma fotografia que a análise automática grava — ver `montarConcessao`.
+      const grant = montarConcessao(benefit, { id: session.userId, nome: session.name || '' }, agora, {
+        discountType: data.discountType,
+        discountValue: data.discountValue,
+        stackWithTier: data.stackWithTier,
+        validityDays: data.validityDays,
+      })
+      if (!grant) {
         return NextResponse.json(
           { error: 'Defina o desconto: este item não tem mais uma oferta PROUNI/FIES configurada.' },
           { status: 400 }
         )
-      }
-      if (discountType === 'percentage' && discountValue > 100) {
-        return NextResponse.json({ error: 'Percentual máximo é 100%.' }, { status: 400 })
-      }
-
-      const validityDays = data.validityDays !== undefined
-        ? data.validityDays
-        : benefit?.grantValidityDays ?? null
-      const expiresAt = validityDays && validityDays > 0
-        ? new Date(agora.getTime() + validityDays * 86_400_000)
-        : null
-
-      const grant: ProuniGrant = {
-        discountType,
-        discountValue,
-        stackWithTier: data.stackWithTier ?? benefit?.stackWithTier === true,
-        usage: 'available',
-        expiresAt,
-        reservedOrderId: null,
-        reservedOrderIds: [],
-        approvedBy: session.userId,
-        approvedByName: session.name || '',
-        approvedAt: agora,
       }
       set.grant = grant
     } else {

@@ -29,6 +29,8 @@ export type AuditAction =
   | 'plus_claims_restored'
   | 'prouni_request_created'
   | 'prouni_request_reviewed'
+  | 'prouni_request_ai_reviewed'
+  | 'prouni_ai_config_updated'
   | 'prouni_attachments_purged'
   | 'prouni_benefit_updated'
   | 'prouni_benefit_deleted'

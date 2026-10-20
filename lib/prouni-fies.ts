@@ -4,12 +4,14 @@ import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
 import {
   computeProuniDiscount,
   getProuniDiscountLabel,
+  PROUNI_AI_REVIEWER_ID,
   PROUNI_MAX_PENDING_PER_USER,
   PROUNI_MAX_REQUESTS_PER_DAY,
   PROUNI_PROGRAM_LABELS,
   PROUNI_REJECTED_COOLDOWN_HOURS,
   PROUNI_REJECTIONS_BEFORE_COOLDOWN,
   ProuniError,
+  type ProuniAiOutcome,
   type ProuniDiscountType,
   type ProuniGrantUsage,
   type ProuniItemType,
@@ -154,6 +156,28 @@ export interface ProuniGrant {
   approvedAt: Date
 }
 
+/**
+ * Parecer da análise automática (Gemini), gravado junto da solicitação.
+ *
+ * A IA só tem poder de APROVAR. Quando ela reprova — ou falha — a solicitação
+ * continua `pending` e cai na fila do admin como antes; o parecer fica aqui
+ * para quem for decidir ler o motivo em vez de recomeçar do zero.
+ */
+export interface ProuniAiReview {
+  outcome: ProuniAiOutcome
+  /** Reprovada: o motivo, escrito para o aluno. Falha: o resumo técnico. */
+  reason?: string
+  /** O que a IA anotou para quem revisa (nunca vai para o aluno). */
+  adminNotes?: string
+  documentType?: string
+  /** O nome do formulário aparece no documento? */
+  nameMatches?: 'sim' | 'nao' | 'nao_visivel'
+  programDetected?: string
+  model?: string
+  durationMs?: number
+  reviewedAt: Date
+}
+
 export interface ProuniRequest {
   _id?: string | ObjectId
   userId: string
@@ -175,6 +199,8 @@ export interface ProuniRequest {
   reviewedByName?: string
   reviewedAt?: Date
   grant?: ProuniGrant | null
+  /** Ausente quando a análise automática estava desligada no envio. */
+  aiReview?: ProuniAiReview | null
   /** Só para correlacionar abuso; não é exibido em lugar nenhum. */
   requestIp?: string
   createdAt: Date
@@ -629,6 +655,87 @@ export function prouniAnalyticsMetadata(
   }
 }
 
+/**
+ * A concessão que nasce de uma aprovação — do admin ou da análise automática.
+ *
+ * Um lugar só para as duas portas: se a IA montasse a fotografia por conta
+ * própria, "quanto vale e até quando" teria duas respostas, e a divergência só
+ * apareceria no checkout de alguém. Os ajustes (`override`) são do admin; a IA
+ * aprova sempre nas condições da oferta.
+ *
+ * Devolve `null` quando não há desconto definível (oferta apagada e nenhum
+ * ajuste) — quem chama decide o que dizer.
+ */
+export function montarConcessao(
+  benefit: Pick<ProuniBenefit, 'discountType' | 'discountValue' | 'stackWithTier' | 'grantValidityDays'> | null,
+  aprovador: { id: string; nome: string },
+  agora: Date,
+  override: {
+    discountType?: ProuniDiscountType
+    discountValue?: number
+    stackWithTier?: boolean
+    validityDays?: number | null
+  } = {}
+): ProuniGrant | null {
+  const discountType = override.discountType || benefit?.discountType
+  const discountValue = override.discountValue ?? benefit?.discountValue
+  if (!discountType || !discountValue || discountValue <= 0) return null
+  if (discountType === 'percentage' && discountValue > 100) return null
+
+  const validityDays = override.validityDays !== undefined
+    ? override.validityDays
+    : benefit?.grantValidityDays ?? null
+  const expiresAt = validityDays && validityDays > 0
+    ? new Date(agora.getTime() + validityDays * 86_400_000)
+    : null
+
+  return {
+    discountType,
+    discountValue,
+    stackWithTier: override.stackWithTier ?? benefit?.stackWithTier === true,
+    usage: 'available',
+    expiresAt,
+    reservedOrderId: null,
+    reservedOrderIds: [],
+    approvedBy: aprovador.id,
+    approvedByName: aprovador.nome,
+    approvedAt: agora,
+  }
+}
+
+/* =================== ANÁLISE AUTOMÁTICA (liga/desliga) =================== */
+
+export const PROUNI_CONFIG_COLLECTION = 'prouni_config'
+const ID_CONFIG_IA = 'analise_ia'
+
+/**
+ * A análise automática está ligada? Ligada por padrão: sem documento de
+ * configuração, vale o comportamento novo. O admin desliga pelo painel, e aí
+ * tudo volta a ser como antes — fila manual, e-mail de "recebemos".
+ *
+ * Banco fora do ar responde "ligada": a análise em si já cai para a fila
+ * manual quando qualquer coisa falha, então o pior caso é o de antes.
+ */
+export async function prouniIaAtiva(db: Db): Promise<boolean> {
+  try {
+    const doc = await db.collection(PROUNI_CONFIG_COLLECTION).findOne(
+      { _id: ID_CONFIG_IA as any },
+      { projection: { ativa: 1 } }
+    )
+    return doc?.ativa !== false
+  } catch {
+    return true
+  }
+}
+
+export async function definirProuniIaAtiva(db: Db, ativa: boolean, porUserId: string) {
+  await db.collection(PROUNI_CONFIG_COLLECTION).updateOne(
+    { _id: ID_CONFIG_IA as any },
+    { $set: { ativa, updatedAt: new Date(), updatedBy: porUserId } },
+    { upsert: true }
+  )
+}
+
 /* =================== SOLICITAÇÃO =================== */
 
 export function serializeProuniRequestForUser(request: ProuniRequest) {
@@ -644,6 +751,13 @@ export function serializeProuniRequestForUser(request: ProuniRequest) {
     reviewNotes: request.reviewNotes || '',
     createdAt: toIso(request.createdAt),
     reviewedAt: toIso(request.reviewedAt),
+    // Só o desfecho e o motivo da reprovação automática — o que a pessoa
+    // precisa para entender por que a solicitação foi para a revisão manual.
+    // As anotações para o admin e o modelo usado ficam do lado de cá.
+    aiReview: request.aiReview && request.status === 'pending' && request.aiReview.outcome === 'rejected'
+      ? { outcome: request.aiReview.outcome, reason: request.aiReview.reason || '' }
+      : null,
+    autoApproved: request.status === 'approved' && request.reviewedBy === PROUNI_AI_REVIEWER_ID,
     grant: request.grant
       ? {
           // Tipo e valor saem porque a tela de checkout precisa MOSTRAR o preço
@@ -697,6 +811,18 @@ export function serializeProuniRequestForAdmin(request: ProuniRequest) {
     reviewNotes: request.reviewNotes || '',
     reviewedByName: request.reviewedByName || '',
     reviewedAt: toIso(request.reviewedAt),
+    aiReview: request.aiReview
+      ? {
+          outcome: request.aiReview.outcome,
+          reason: request.aiReview.reason || '',
+          adminNotes: request.aiReview.adminNotes || '',
+          documentType: request.aiReview.documentType || '',
+          nameMatches: request.aiReview.nameMatches || null,
+          programDetected: request.aiReview.programDetected || '',
+          model: request.aiReview.model || '',
+          reviewedAt: toIso(request.aiReview.reviewedAt),
+        }
+      : null,
     grant: request.grant
       ? {
           discountType: request.grant.discountType,

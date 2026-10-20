@@ -6,7 +6,11 @@ vi.mock('nodemailer', () => ({
   default: { createTransport: () => ({ sendMail: (...args: any[]) => sendMailMock(...args) }) },
 }))
 
-import { deliverTransactionalEmails } from '@/lib/mail'
+import {
+  deliverTransactionalEmails,
+  sendProuniRequestAdminAlert,
+  sendProuniRequestAiFlaggedEmail,
+} from '@/lib/mail'
 
 /**
  * O que estes testes protegem: o aviso chegar.
@@ -57,5 +61,59 @@ describe('deliverTransactionalEmails', () => {
   it('não espera nada quando não há aviso para mandar', async () => {
     await expect(deliverTransactionalEmails([])).resolves.toBeUndefined()
     expect(sendMailMock).not.toHaveBeenCalled()
+  })
+})
+
+describe('avisos da análise automática', () => {
+  const base = {
+    requestId: 'r1',
+    applicantName: 'Maria',
+    itemTitle: 'Manual',
+    program: 'prouni' as const,
+    attachments: 1,
+  }
+
+  it('admin: reprovação pela IA pede decisão e traz o parecer escapado', async () => {
+    sendMailMock.mockClear()
+    await sendProuniRequestAdminAlert({
+      ...base,
+      aiReview: { outcome: 'rejected', reason: 'Arquivo <script>sem relação</script>', adminNotes: '[nada_a_ver]' },
+    })
+    const [envio] = sendMailMock.mock.calls[0]
+    expect(envio.subject).toContain('IA reprovou')
+    expect(envio.html).toContain('precisa da sua decisão')
+    // O motivo vem do modelo, que leu um arquivo de terceiro: nunca vira HTML.
+    expect(envio.html).not.toContain('<script>sem')
+    expect(envio.html).toContain('&lt;script&gt;')
+  })
+
+  it('admin: aprovação pela IA é só informativa', async () => {
+    sendMailMock.mockClear()
+    await sendProuniRequestAdminAlert({ ...base, aiReview: { outcome: 'approved', discountLabel: '40% OFF' } })
+    const [envio] = sendMailMock.mock.calls[0]
+    expect(envio.subject).toContain('aprovado pela IA')
+    expect(envio.html).toContain('40% OFF')
+  })
+
+  it('admin: sem parecer (IA desligada) mantém o aviso de sempre', async () => {
+    sendMailMock.mockClear()
+    await sendProuniRequestAdminAlert(base)
+    expect(sendMailMock.mock.calls[0][0].subject).toContain('Nova solicitação')
+  })
+
+  it('pessoa: revisão manual explica o motivo e que ainda não é recusa', async () => {
+    sendMailMock.mockClear()
+    await sendProuniRequestAiFlaggedEmail({
+      email: 'maria@example.com',
+      name: 'Maria Souza',
+      itemTitle: 'Manual',
+      program: 'fies',
+      reason: 'Não encontramos o contrato do FIES.',
+    })
+    const [envio] = sendMailMock.mock.calls[0]
+    expect(envio.to).toBe('maria@example.com')
+    expect(envio.subject).toContain('revisão manual')
+    expect(envio.html).toContain('Não encontramos o contrato do FIES.')
+    expect(envio.html).toContain('ainda não é uma recusa')
   })
 })

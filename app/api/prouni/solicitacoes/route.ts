@@ -10,20 +10,30 @@ import { audit } from '@/lib/payments/audit'
 import {
   deliverTransactionalEmails,
   sendProuniRequestAdminAlert,
+  sendProuniRequestAiFlaggedEmail,
+  sendProuniRequestApprovedEmail,
   sendProuniRequestReceivedEmail,
 } from '@/lib/mail'
 import { resolveProuniProduto } from '@/lib/prouni-catalogo'
 import { apagarAnexos, prouniBlobPrefix, verificarAnexos } from '@/lib/prouni-anexos'
+import { analisarComprovantesComIA } from '@/lib/prouni-analise-ia'
 import {
   assertProuniRequestAllowed,
   ensureProuniIndexes,
   getLiveProuniBenefit,
+  getProuniDiscountLabel,
+  montarConcessao,
+  prouniIaAtiva,
   ProuniError,
+  PROUNI_AI_REVIEWER_ID,
+  PROUNI_AI_REVIEWER_NAME,
   PROUNI_MAX_ATTACHMENTS,
   PROUNI_PROGRAMS,
   PROUNI_REQUESTS_COLLECTION,
   PROUNI_TERMS_VERSION,
   serializeProuniRequestForUser,
+  type ProuniAiReview,
+  type ProuniBenefit,
   type ProuniItemType,
   type ProuniRequest,
 } from '@/lib/prouni-fies'
@@ -31,6 +41,9 @@ import type { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+// A análise automática tem orçamento próprio (~30 s, ver
+// `lib/prouni-analise-ia.ts`); o resto da rota cabe com folga no que sobra.
+export const maxDuration = 60
 
 /**
  * Solicitação de desconto PROUNI/FIES.
@@ -200,44 +213,6 @@ export async function POST(request: NextRequest) {
       institution: doc.applicant.institution,
     })
 
-    // Avisos por e-mail — aguardados, e não disparados em segundo plano: ver
-    // `deliverTransactionalEmails`. O destino do aviso da pessoa é o e-mail da
-    // CONTA (é de lá que ela abre `/profile?tab=atendimento`); o do formulário
-    // entra junto quando for outro, porque foi o que ela pediu para usar.
-    const destinatarios = Array.from(
-      new Set([session.email, doc.applicant.email].filter((valor): valor is string => Boolean(valor)))
-    )
-    const pendentes = await db
-      .collection(PROUNI_REQUESTS_COLLECTION)
-      .countDocuments({ status: 'pending' })
-      .catch(() => undefined)
-
-    await deliverTransactionalEmails([
-      ...destinatarios.map((email) =>
-        sendProuniRequestReceivedEmail({
-          email,
-          name: doc.applicant.fullName || session.name,
-          itemTitle: produto.title,
-          itemType,
-          itemId: data.itemId,
-          program: doc.program,
-          attachments: anexos.length,
-        })
-      ),
-      sendProuniRequestAdminAlert({
-        requestId: String(inserido.insertedId),
-        userName: session.name,
-        userEmail: session.email,
-        applicantName: doc.applicant.fullName,
-        applicantCpf: doc.applicant.cpf,
-        institution: doc.applicant.institution,
-        itemTitle: produto.title,
-        program: doc.program,
-        attachments: anexos.length,
-        pendingCount: typeof pendentes === 'number' ? pendentes : undefined,
-      }),
-    ])
-
     await audit({
       action: 'prouni_request_created',
       actorUserId: session.userId,
@@ -253,9 +228,88 @@ export async function POST(request: NextRequest) {
       ip,
     })
 
+    // Daqui para baixo a solicitação JÁ EXISTE: nada pode cair no `catch` de
+    // fora, que apagaria os anexos de um pedido gravado. A análise automática
+    // nunca lança e, se falhar, a solicitação fica na fila manual como antes.
+    const final = await analisarNaHora(db, { ...doc, _id: inserido.insertedId } as ProuniRequest, benefit)
+    const parecer = final.aiReview || null
+
+    // Avisos por e-mail — aguardados, e não disparados em segundo plano: ver
+    // `deliverTransactionalEmails`. O destino do aviso da pessoa é o e-mail da
+    // CONTA (é de lá que ela abre `/profile?tab=atendimento`); o do formulário
+    // entra junto quando for outro, porque foi o que ela pediu para usar.
+    const destinatarios = Array.from(
+      new Set([session.email, doc.applicant.email].filter((valor): valor is string => Boolean(valor)))
+    )
+    const pendentes = await db
+      .collection(PROUNI_REQUESTS_COLLECTION)
+      .countDocuments({ status: 'pending' })
+      .catch(() => undefined)
+
+    const nome = doc.applicant.fullName || session.name
+    const avisosDaPessoa = destinatarios.map((email) => {
+      if (final.status === 'approved' && final.grant) {
+        return sendProuniRequestApprovedEmail({
+          email,
+          name: nome,
+          itemTitle: produto.title,
+          itemType,
+          itemId: data.itemId,
+          program: doc.program,
+          discountLabel: getProuniDiscountLabel(final.grant),
+          stackWithTier: final.grant.stackWithTier === true,
+          expiresAt: final.grant.expiresAt || null,
+          productUrl: produto.href,
+        })
+      }
+      if (parecer?.outcome === 'rejected' && parecer.reason) {
+        return sendProuniRequestAiFlaggedEmail({
+          email,
+          name: nome,
+          itemTitle: produto.title,
+          program: doc.program,
+          reason: parecer.reason,
+        })
+      }
+      return sendProuniRequestReceivedEmail({
+        email,
+        name: nome,
+        itemTitle: produto.title,
+        itemType,
+        itemId: data.itemId,
+        program: doc.program,
+        attachments: anexos.length,
+      })
+    })
+
+    await deliverTransactionalEmails([
+      ...avisosDaPessoa,
+      sendProuniRequestAdminAlert({
+        requestId: String(inserido.insertedId),
+        userName: session.name,
+        userEmail: session.email,
+        applicantName: doc.applicant.fullName,
+        applicantCpf: doc.applicant.cpf,
+        institution: doc.applicant.institution,
+        itemTitle: produto.title,
+        program: doc.program,
+        attachments: anexos.length,
+        pendingCount: typeof pendentes === 'number' ? pendentes : undefined,
+        aiReview: parecer
+          ? {
+              outcome: final.status === 'approved' ? 'approved' : parecer.outcome,
+              reason: parecer.reason,
+              adminNotes: parecer.adminNotes,
+              documentType: parecer.documentType,
+              discountLabel: final.grant ? getProuniDiscountLabel(final.grant) : undefined,
+            }
+          : undefined,
+      }),
+    ])
+
     return NextResponse.json({
       success: true,
-      request: serializeProuniRequestForUser({ ...doc, _id: inserido.insertedId } as ProuniRequest),
+      request: serializeProuniRequestForUser(final),
     })
   } catch (error: any) {
     if (error instanceof ProuniError) {
@@ -264,6 +318,83 @@ export async function POST(request: NextRequest) {
     console.error('[prouni/solicitacoes] erro:', error)
     return await abortar('Não foi possível registrar sua solicitação. Tente novamente.', 500)
   }
+}
+
+/**
+ * Análise automática logo após gravar a solicitação.
+ *
+ * - IA desligada no painel → devolve a solicitação como está (fila manual).
+ * - Aprovou → `approved` com a concessão nas condições da oferta, pelo mesmo
+ *   `montarConcessao` do admin. O filtro `status: 'pending'` é o mesmo guarda
+ *   da aprovação manual: nada aprova duas vezes.
+ * - Reprovou ou falhou → continua `pending`, só ganha o `aiReview` para quem
+ *   for decidir.
+ *
+ * Nunca lança. Erro de banco aqui deixa a solicitação pendente sem parecer —
+ * exatamente o comportamento anterior à IA.
+ */
+async function analisarNaHora(db: Db, solicitacao: ProuniRequest, benefit: ProuniBenefit): Promise<ProuniRequest> {
+  try {
+    if (!(await prouniIaAtiva(db))) return solicitacao
+
+    const resultado = await analisarComprovantesComIA({
+      program: solicitacao.program,
+      applicant: solicitacao.applicant,
+      itemTitle: solicitacao.itemTitle,
+      attachments: solicitacao.attachments,
+    })
+    const agora = new Date()
+    let aiReview: ProuniAiReview = { ...resultado, reviewedAt: agora }
+    const colecao = db.collection<ProuniRequest>(PROUNI_REQUESTS_COLLECTION)
+
+    if (aiReview.outcome === 'approved') {
+      const grant = montarConcessao(benefit, { id: PROUNI_AI_REVIEWER_ID, nome: PROUNI_AI_REVIEWER_NAME }, agora)
+      if (grant) {
+        const set = {
+          status: 'approved' as const,
+          grant,
+          aiReview,
+          reviewNotes: '',
+          reviewedBy: PROUNI_AI_REVIEWER_ID,
+          reviewedByName: PROUNI_AI_REVIEWER_NAME,
+          reviewedAt: agora,
+          updatedAt: agora,
+        }
+        const r = await colecao.updateOne({ _id: solicitacao._id as any, status: 'pending' } as any, { $set: set })
+        await registrarParecer(solicitacao, aiReview, r.matchedCount === 1)
+        return r.matchedCount === 1 ? { ...solicitacao, ...set } : solicitacao
+      }
+      // Oferta sem desconto definível: não há o que conceder sozinho.
+      aiReview = { ...aiReview, outcome: 'failed', reason: 'oferta sem desconto definido; precisa de revisão manual' }
+    }
+
+    await colecao.updateOne({ _id: solicitacao._id as any, status: 'pending' } as any, {
+      $set: { aiReview, updatedAt: agora },
+    })
+    await registrarParecer(solicitacao, aiReview, false)
+    return { ...solicitacao, aiReview, updatedAt: agora }
+  } catch (error) {
+    console.error('[prouni/solicitacoes] análise automática não registrada:', error instanceof Error ? error.message : 'erro')
+    return solicitacao
+  }
+}
+
+async function registrarParecer(solicitacao: ProuniRequest, parecer: ProuniAiReview, aprovou: boolean) {
+  await audit({
+    action: 'prouni_request_ai_reviewed',
+    actorUserId: PROUNI_AI_REVIEWER_ID,
+    targetUserId: solicitacao.userId,
+    resourceType: 'prouni_request',
+    resourceId: String(solicitacao._id),
+    metadata: {
+      outcome: parecer.outcome,
+      approved: aprovou,
+      model: parecer.model,
+      durationMs: parecer.durationMs,
+      itemType: solicitacao.itemType,
+      itemId: solicitacao.itemId,
+    },
+  })
 }
 
 /**

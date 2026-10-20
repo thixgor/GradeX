@@ -6,6 +6,7 @@ import {
   AlertCircle,
   ArrowLeft,
   BadgePercent,
+  Bot,
   Check,
   Eraser,
   ExternalLink,
@@ -86,6 +87,16 @@ interface Solicitacao {
   reviewNotes: string
   reviewedByName: string
   reviewedAt: string | null
+  aiReview: {
+    outcome: 'approved' | 'rejected' | 'failed'
+    reason: string
+    adminNotes: string
+    documentType: string
+    nameMatches: 'sim' | 'nao' | 'nao_visivel' | null
+    programDetected: string
+    model: string
+    reviewedAt: string | null
+  } | null
   grant: {
     discountLabel: string
     discountType: 'percentage' | 'fixed'
@@ -499,6 +510,36 @@ function AbaSolicitacoes() {
   const [carregando, setCarregando] = useState(true)
   const [erro, setErro] = useState('')
   const [limpando, setLimpando] = useState(false)
+  const [iaAtiva, setIaAtiva] = useState<boolean | null>(null)
+  const [salvandoIa, setSalvandoIa] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/admin/prouni/config', { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => setIaAtiva(typeof json?.aiEnabled === 'boolean' ? json.aiEnabled : null))
+      .catch(() => setIaAtiva(null))
+  }, [])
+
+  async function alternarIa() {
+    if (iaAtiva === null) return
+    const nova = !iaAtiva
+    if (!nova && !confirm('Desligar a análise automática? Todas as novas solicitações voltam para a fila manual.')) return
+    setSalvandoIa(true)
+    try {
+      const res = await fetch('/api/admin/prouni/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aiEnabled: nova }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json?.error || 'Falha ao salvar')
+      setIaAtiva(json.aiEnabled === true)
+    } catch (e: any) {
+      setErro(e?.message || 'Falha ao salvar')
+    } finally {
+      setSalvandoIa(false)
+    }
+  }
 
   const carregar = useCallback(async () => {
     setCarregando(true)
@@ -550,6 +591,25 @@ function AbaSolicitacoes() {
           {erro}
         </div>
       )}
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-violet-500/30 bg-violet-500/5 px-3 py-2.5">
+        <div className="flex min-w-0 items-start gap-2">
+          <Bot className="mt-0.5 h-4 w-4 shrink-0 text-violet-600 dark:text-violet-300" />
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">
+              Análise automática por IA: {iaAtiva === null ? '…' : iaAtiva ? 'ligada' : 'desligada'}
+            </span>
+            <br />
+            {iaAtiva === false
+              ? 'Toda solicitação nova vai para a fila manual, como antes.'
+              : 'A IA aprova na hora o que for plausível. O que ela não aprovar (ou não conseguir analisar) fica aqui na fila, com o motivo.'}
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={alternarIa} disabled={salvandoIa || iaAtiva === null}>
+          {salvandoIa && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {iaAtiva ? 'Desligar' : 'Ligar'}
+        </Button>
+      </div>
 
       <div className="flex flex-wrap items-center gap-2">
         {([
@@ -621,6 +681,7 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
   const [erro, setErro] = useState('')
 
   const pendente = solicitacao.status === 'pending'
+  const ia = solicitacao.aiReview
 
   async function decidir(acao: 'approve' | 'reject' | 'revoke') {
     if (acao === 'reject' && !notas.trim()) {
@@ -692,11 +753,25 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
               {solicitacao.createdAt ? new Date(solicitacao.createdAt).toLocaleString('pt-BR') : '—'}
             </p>
           </div>
-          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${cores[solicitacao.status]}`}>
-            {solicitacao.status === 'pending' ? 'Em análise'
-              : solicitacao.status === 'approved' ? 'Aprovada'
-              : solicitacao.status === 'rejected' ? 'Recusada' : 'Cancelada'}
-          </span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            {ia && (
+              <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                ia.outcome === 'approved'
+                  ? 'bg-violet-500/15 text-violet-700 dark:text-violet-300'
+                  : ia.outcome === 'rejected'
+                    ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
+                    : 'bg-muted text-muted-foreground'
+              }`}>
+                <Bot className="h-3 w-3" />
+                {ia.outcome === 'approved' ? 'IA aprovou' : ia.outcome === 'rejected' ? 'IA reprovou' : 'IA falhou'}
+              </span>
+            )}
+            <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${cores[solicitacao.status]}`}>
+              {solicitacao.status === 'pending' ? 'Em análise'
+                : solicitacao.status === 'approved' ? 'Aprovada'
+                : solicitacao.status === 'rejected' ? 'Recusada' : 'Cancelada'}
+            </span>
+          </div>
         </div>
 
         <div className="grid gap-x-4 gap-y-1 text-xs text-muted-foreground sm:grid-cols-2">
@@ -758,6 +833,41 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
               : 'disponível'}
             {solicitacao.grant.expiresAt &&
               ` · vence em ${new Date(solicitacao.grant.expiresAt).toLocaleDateString('pt-BR')}`}
+          </div>
+        )}
+
+        {ia && (
+          <div className={`space-y-1 rounded-lg border px-3 py-2 text-xs ${
+            ia.outcome === 'approved'
+              ? 'border-violet-500/40 bg-violet-500/5'
+              : ia.outcome === 'rejected'
+                ? 'border-rose-500/40 bg-rose-500/5'
+                : 'border-border bg-muted/30'
+          }`}>
+            <p className="font-semibold text-foreground">
+              {ia.outcome === 'approved'
+                ? 'Análise automática: aprovado'
+                : ia.outcome === 'rejected'
+                  ? 'Análise automática: não aprovado — precisa da sua decisão'
+                  : 'Análise automática não concluiu — revisão manual'}
+            </p>
+            {ia.reason && (
+              <p className="text-muted-foreground">
+                <span className="font-medium text-foreground">{ia.outcome === 'failed' ? 'Falha:' : 'Parecer:'}</span> {ia.reason}
+              </p>
+            )}
+            {ia.documentType && (
+              <p className="text-muted-foreground">
+                <span className="font-medium text-foreground">Documento:</span> {ia.documentType}
+                {ia.programDetected && ` · programa: ${ia.programDetected}`}
+                {ia.nameMatches && ` · nome confere: ${ia.nameMatches === 'nao_visivel' ? 'não visível' : ia.nameMatches}`}
+              </p>
+            )}
+            {ia.adminNotes && (
+              <p className="text-muted-foreground">
+                <span className="font-medium text-foreground">Notas:</span> {ia.adminNotes}
+              </p>
+            )}
           </div>
         )}
 
@@ -827,6 +937,12 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
                 <X className="mr-2 h-4 w-4" />
                 Recusar
               </Button>
+              {ia?.outcome === 'rejected' && ia.reason && !notas.trim() && (
+                <Button size="sm" variant="ghost" disabled={processando} onClick={() => setNotas(ia.reason)}>
+                  <Bot className="mr-2 h-4 w-4" />
+                  Usar motivo da IA
+                </Button>
+              )}
             </div>
           </div>
         ) : (

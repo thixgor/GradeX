@@ -1909,6 +1909,18 @@ export async function sendProuniRequestAdminAlert(input: {
   program: 'prouni' | 'fies'
   attachments: number
   pendingCount?: number
+  /**
+   * Parecer da análise automática. Ausente = IA desligada (o aviso de sempre).
+   * Aprovada pela IA o e-mail é só informativo; reprovada ou falha, pede a
+   * decisão do admin.
+   */
+  aiReview?: {
+    outcome: 'approved' | 'rejected' | 'failed'
+    reason?: string
+    adminNotes?: string
+    documentType?: string
+    discountLabel?: string
+  }
 }): Promise<void> {
   const recipients = (process.env.ADMIN_ALERT_EMAIL || ADMIN_EMAILS.join(',')).trim()
   if (!recipients) return
@@ -1919,9 +1931,37 @@ export async function sendProuniRequestAdminAlert(input: {
   const cpf = String(input.applicantCpf || '').replace(/\D/g, '')
   const cpfMasked = cpf.length === 11 ? `***.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-**` : '—'
 
+  const ia = input.aiReview
+  const titulo = ia?.outcome === 'approved'
+    ? 'Aprovada pela análise automática'
+    : ia?.outcome === 'rejected'
+      ? 'IA reprovou — precisa da sua decisão'
+      : 'Nova solicitação PROUNI/FIES'
+  const introducao = ia?.outcome === 'approved'
+    ? `<p>A IA conferiu o comprovante e <strong>aprovou o desconto na hora</strong>${ia.discountLabel ? ` (${escapeHtml(ia.discountLabel)})` : ''}. Nada a fazer — se discordar, dá para revogar no painel enquanto não for usado.</p>`
+    : ia?.outcome === 'rejected'
+      ? '<p>A IA <strong>não aprovou</strong> o comprovante. A solicitação está na fila: você pode aprovar mesmo assim ou recusar.</p>'
+      : ia?.outcome === 'failed'
+        ? '<p>Uma pessoa enviou comprovante. A análise automática não conseguiu concluir, então ela aguarda sua análise manual.</p>'
+        : '<p>Uma pessoa enviou comprovante e aguarda análise.</p>'
+  const parecer = ia && (ia.reason || ia.adminNotes || ia.documentType)
+    ? `
+    <div style="background:${ia.outcome === 'rejected' ? '#fef2f2' : ia.outcome === 'approved' ? '#ecfdf5' : '#f7fafc'};border-left:4px solid ${ia.outcome === 'rejected' ? '#ef4444' : ia.outcome === 'approved' ? '#10b981' : '#a0aec0'};padding:12px 16px;margin:16px 0;border-radius:4px;">
+      ${ia.documentType ? `<p style="margin:0 0 6px 0;color:#4a5568;">Documento identificado: <strong>${escapeHtml(ia.documentType)}</strong></p>` : ''}
+      ${ia.reason ? `<p style="margin:0 0 6px 0;color:#4a5568;">${ia.outcome === 'failed' ? 'Falha' : 'Parecer'}: ${escapeHtml(ia.reason)}</p>` : ''}
+      ${ia.adminNotes ? `<p style="margin:0;color:#4a5568;">Notas da IA: ${escapeHtml(ia.adminNotes)}</p>` : ''}
+    </div>`
+    : ''
+  const assunto = ia?.outcome === 'approved'
+    ? `✅ ${prouniProgramLabel(input.program)} aprovado pela IA — ${input.itemTitle}`
+    : ia?.outcome === 'rejected'
+      ? `⚠️ IA reprovou ${prouniProgramLabel(input.program)} — ${input.itemTitle}`
+      : `🎓 Nova solicitação ${prouniProgramLabel(input.program)} — ${input.itemTitle}`
+
   const content = `
-    <h1 class="h1">Nova solicitação PROUNI/FIES</h1>
-    <p>Uma pessoa enviou comprovante e aguarda análise.</p>
+    <h1 class="h1">${titulo}</h1>
+    ${introducao}
+    ${parecer}
     <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px;margin:20px 0;">
       <p style="margin:0 0 6px 0;color:#4a5568;">Programa: <strong>${prouniProgramLabel(input.program)}</strong></p>
       <p style="margin:0 0 6px 0;color:#4a5568;">Item: <strong>${escapeHtml(input.itemTitle)}</strong></p>
@@ -1935,7 +1975,7 @@ export async function sendProuniRequestAdminAlert(input: {
       ? `<p style="color:#b45309;"><strong>${input.pendingCount} solicitações</strong> aguardando análise no total.</p>`
       : ''}
     <div style="text-align:center;">
-      <a href="${appUrl}/admin/prouni" class="button" target="_blank">Abrir fila de análise</a>
+      <a href="${appUrl}/admin/prouni" class="button" target="_blank">${ia?.outcome === 'approved' ? 'Ver no painel' : 'Abrir fila de análise'}</a>
     </div>
     <p style="margin-top:24px;font-size:0.9em;color:#718096;">Lembre-se de apagar os comprovantes depois
     de decidir — a caixa vem marcada por padrão na tela de análise.</p>
@@ -1945,11 +1985,58 @@ export async function sendProuniRequestAdminAlert(input: {
     await transporter.sendMail({
       from: '"DomineAqui Alertas" <no-reply@domineaqui.com.br>',
       to: recipients,
-      subject: `🎓 Nova solicitação ${prouniProgramLabel(input.program)} — ${input.itemTitle}`,
-      html: getEmailTemplate('Nova solicitação PROUNI/FIES', content),
+      subject: assunto,
+      html: getEmailTemplate(titulo, content),
     })
   } catch (err) {
     console.error('[mail] falha ao alertar admin sobre solicitação PROUNI/FIES:', err)
+  }
+}
+
+/**
+ * A análise automática não aprovou — mas ninguém recusou ainda.
+ *
+ * A solicitação segue na fila e um humano decide; este e-mail existe para a
+ * pessoa saber o porquê já agora, e não dias depois. Se o motivo for algo que
+ * ela consegue consertar (o arquivo errado, uma foto ilegível), ela fica
+ * sabendo enquanto ainda tem o documento certo à mão.
+ */
+export async function sendProuniRequestAiFlaggedEmail(input: {
+  email: string
+  name?: string
+  itemTitle: string
+  program: 'prouni' | 'fies'
+  reason: string
+}): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
+
+  const content = `
+    <h1 class="h1">Sua solicitação foi para revisão manual</h1>
+    <p>Olá, ${firstName}!</p>
+    <p>Recebemos sua solicitação de desconto <strong>${prouniProgramLabel(input.program)}</strong> para
+    <strong>${escapeHtml(input.itemTitle)}</strong>. A conferência automática do comprovante não conseguiu
+    aprovar na hora:</p>
+    <div style="background-color:#fffbeb;border-left:4px solid #f59e0b;padding:15px;margin:20px 0;border-radius:4px;">
+      <p style="margin:0;color:#92400e;"><strong>Motivo:</strong> ${escapeHtml(input.reason)}</p>
+    </div>
+    <p><strong>Isso ainda não é uma recusa.</strong> Nossa equipe vai olhar seus documentos pessoalmente —
+    costuma levar até 2 dias úteis — e você recebe outro e-mail com a decisão final. Não é preciso enviar de
+    novo.</p>
+    <div style="text-align:center;">
+      <a href="${appUrl}/profile?tab=atendimento" class="button" target="_blank">Acompanhar minha solicitação</a>
+    </div>
+  `
+
+  try {
+    await transporter.sendMail({
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: `Sua solicitação ${prouniProgramLabel(input.program)} foi para revisão manual`,
+      html: getEmailTemplate('Solicitação em revisão', content),
+    })
+  } catch (err) {
+    console.error('[mail] falha ao enviar aviso de revisão PROUNI/FIES:', err)
   }
 }
 
