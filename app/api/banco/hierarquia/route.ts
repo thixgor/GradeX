@@ -4,6 +4,7 @@ import { getDb } from '@/lib/mongodb'
 import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import { algoBarrado } from '@/lib/banco/visibilidade'
 import { nosBarradosDoUsuario } from '@/lib/banco/visibilidade-servidor'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -134,7 +135,7 @@ async function montarArvoreDoBanco(): Promise<ArvoreDoBanco> {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getSession()
     if (!session) {
@@ -170,7 +171,7 @@ export async function GET() {
         })()
       : completa
 
-    return NextResponse.json(arvore, {
+    return jsonComprimido(request, arvore, {
       headers: { 'Cache-Control': 'private, max-age=60, stale-while-revalidate=300' },
     })
   } catch (error) {

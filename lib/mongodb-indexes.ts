@@ -52,6 +52,10 @@ export async function ensureIndexes(db: Db): Promise<void> {
      */
     db.collection('submissions').createIndex({ examId: 1 }),
     db.collection('exam_submissions').createIndex({ userId: 1 }),
+    // A contagem do mês e do dia de `/api/bootstrap` (toda página do app)
+    // filtra por `userId` E `createdAt`: só com `userId`, cada chamada lia
+    // todas as entregas que o aluno já fez para descartar as antigas.
+    db.collection('exam_submissions').createIndex({ userId: 1, createdAt: -1 }),
     db.collection('notifications').createIndex({ userId: 1, read: 1 }),
     // ── Suporte / tickets ──
     // A listagem é ordenada por updatedAt e filtrada por dono (usuário) ou por

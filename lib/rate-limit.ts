@@ -61,6 +61,67 @@ export interface ResultadoDeLimite {
 }
 
 /**
+ * ## A cota da instância: o banco só entra quando a conta começa a importar
+ *
+ * Cada chamada aqui era uma ESCRITA no Atlas — inclusive as do `/api/bootstrap`,
+ * a requisição mais frequente do app, e as de polling de pagamento e de rifa. Um
+ * aluno comum faz duas ou três dessas por minuto, contra tetos de 40 a 300: o
+ * banco gravava milhares de contadores por hora para confirmar que ninguém
+ * estava perto do limite.
+ *
+ * Agora cada instância conta na memória e só passa a consultar o banco depois
+ * de gastar um quarto do teto dentro da janela. Na primeira ida, leva junto o
+ * que contou sozinha, então numa instância só a contagem continua exata. Com
+ * várias instâncias, o que escapa é no máximo um quarto do teto por instância
+ * que não chegou a reportar — folga irrelevante para tetos de 20 para cima, que
+ * são de leitura, polling e checkout.
+ *
+ * Tetos abaixo de 20 (login, reenvio de verificação, recuperação de senha,
+ * verificação de conta) são os que defendem contra força bruta, e janelas
+ * acima de um minuto (respostas por dia, envios por hora) são poucas chamadas
+ * cuja contagem não pode morrer com a instância: esses continuam indo ao banco
+ * em TODA chamada, como antes.
+ */
+const TETO_MINIMO_PARA_COTA_LOCAL = 20
+const JANELA_MAXIMA_PARA_COTA_LOCAL_MS = 60_000
+const FRACAO_DA_COTA_LOCAL = 0.25
+
+interface ContagemLocal {
+  contadas: number
+  reportadas: number
+  fim: number
+}
+
+const contagensLocais = new Map<string, ContagemLocal>()
+let ultimaVarredura = 0
+
+function contarNaInstancia(chave: string, windowMs: number, agora: number): ContagemLocal {
+  // Varredura preguiçosa: sem timer, roda no máximo uma vez por minuto.
+  if (agora - ultimaVarredura > 60_000) {
+    ultimaVarredura = agora
+    for (const [k, v] of contagensLocais) if (v.fim <= agora) contagensLocais.delete(k)
+  }
+  let atual = contagensLocais.get(chave)
+  if (!atual || atual.fim <= agora) {
+    atual = { contadas: 0, reportadas: 0, fim: agora + windowMs }
+    contagensLocais.set(chave, atual)
+  }
+  atual.contadas += 1
+  return atual
+}
+
+export function cotaLocal(limit: number, windowMs: number): number {
+  if (limit < TETO_MINIMO_PARA_COTA_LOCAL || windowMs > JANELA_MAXIMA_PARA_COTA_LOCAL_MS) return 0
+  return Math.floor(limit * FRACAO_DA_COTA_LOCAL)
+}
+
+/** Só para testes: zera as contagens desta instância. */
+export function _zerarContagensLocais(): void {
+  contagensLocais.clear()
+  ultimaVarredura = 0
+}
+
+/**
  * Consome uma unidade da cota e diz se a requisição pode seguir.
  *
  * `ip` é o nome histórico do parâmetro e continua aceito, mas o valor pode ser
@@ -77,6 +138,18 @@ export async function checkRateLimit(
   limit: number,
   windowMs: number,
 ): Promise<ResultadoDeLimite> {
+  const local = contarNaInstancia(`${endpoint}|${ip}`, windowMs, Date.now())
+  if (local.contadas <= cotaLocal(limit, windowMs)) {
+    return {
+      success: true,
+      remaining: Math.max(0, limit - local.contadas),
+      resetAt: new Date(local.fim),
+    }
+  }
+  // O que esta instância contou e o banco ainda não sabe, esta inclusa.
+  const incremento = local.contadas - local.reportadas
+  local.reportadas = local.contadas
+
   try {
     const db = await getDb()
     const collection = db.collection(COLECAO)
@@ -98,7 +171,7 @@ export async function checkRateLimit(
             ip,
             endpoint,
             count: {
-              $cond: [janelaViva, { $add: [{ $ifNull: ['$count', 0] }, 1] }, 1],
+              $cond: [janelaViva, { $add: [{ $ifNull: ['$count', 0] }, incremento] }, incremento],
             },
             resetAt: {
               $cond: [janelaViva, '$resetAt', fimDaJanelaNova],
@@ -109,7 +182,7 @@ export async function checkRateLimit(
       { upsert: true, returnDocument: 'after' },
     )
 
-    const contagem = registro?.count ?? 1
+    const contagem = registro?.count ?? incremento
     const resetAt: Date = registro?.resetAt ?? fimDaJanelaNova
 
     if (contagem > limit) {

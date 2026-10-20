@@ -26,6 +26,7 @@ import { COLECAO_DE_ENTRADAS, type EntradaNaProva } from '@/lib/provas/entrada-n
 import { interpretarInstante } from '@/lib/provas/horario-local'
 import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 import { normalizarImagensDasQuestoes } from '@/lib/provas/normalizar-imagens'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -469,7 +470,7 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'application/json',
     })
 
-    return NextResponse.json({ exams: provasParaEntrega }, { headers })
+    return jsonComprimido(request, { exams: provasParaEntrega }, { headers })
   } catch (error) {
     console.error('Get exams error:', error)
     return NextResponse.json(

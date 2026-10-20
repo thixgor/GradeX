@@ -17,6 +17,7 @@ import {
 } from '@/lib/ensino/repositorio'
 import { capasPorNo, herdarCapas, montarArvore, podarVazios } from '@/lib/ensino/taxonomia'
 import { achatarItens, resumirTrilha } from '@/lib/ensino/trilha'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -71,7 +72,7 @@ const NOS_DO_CAMINHO = 6
  * e o percentual — que é a informação que faz o aluno voltar, e não só o nome
  * de um vídeo solto.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const db = await getDb()
     const sessao = await getSession()
@@ -429,7 +430,8 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(
+    return jsonComprimido(
+      request,
       {
         logado: Boolean(usuarioId),
         continuar,

@@ -472,6 +472,77 @@ export async function validateMaterialPdfAccess(
   }
 }
 
+/**
+ * `validateMaterialPdfAccess` com memória curta, para as rotas de PÁGINA
+ * (`/pdf-viewer/page` e `/pdf-viewer/thumb`).
+ *
+ * O leitor pede o PDF uma página por vez — mais as próximas de antemão e as
+ * miniaturas do painel. Cada uma dessas requisições refazia a checagem inteira:
+ * usuário, o documento completo do material, a compra por id, por e-mail
+ * (regex sem distinção de caixa) e por pacote. Quem lia cem páginas pagava
+ * centenas de consultas para ouvir a mesma resposta. A abertura do leitor
+ * (`/pdf-viewer/access`) continua sem memória: é ela que dá o veredito novo.
+ *
+ * - Só o acesso LIBERADO fica guardado. Negado vai ao banco toda vez, para
+ *   quem acabou de comprar não esperar.
+ * - Um minuto por pessoa, por material. Acesso por tempo nunca é guardado além
+ *   do próprio fim. Revogação (estorno, material ocultado, leitor desligado)
+ *   alcança a página em até um minuto.
+ * - A chave leva o id e o papel de quem lê: nada passa de uma conta para outra.
+ */
+const ACESSO_EM_MEMORIA_MS = 60_000
+const ACESSOS_EM_MEMORIA_MAX = 500
+
+type AcessoLiberado = Extract<MaterialPdfAccessResult, { ok: true }>
+const acessosEmMemoria = new Map<string, { acesso: AcessoLiberado; expiraEm: number }>()
+
+export async function validateMaterialPdfAccessComMemoria(
+  materialId: string,
+  session: TokenPayload | null,
+  options: { requireViewerEnabled?: boolean; requirePdf?: boolean; allowPreview?: boolean } = {}
+): Promise<MaterialPdfAccessResult> {
+  const chave = [
+    session ? `${session.userId}:${session.role}` : 'visitante',
+    materialId,
+    options.requireViewerEnabled ?? true,
+    options.requirePdf ?? true,
+    options.allowPreview ?? false,
+  ].join('|')
+  const agora = Date.now()
+
+  const guardado = acessosEmMemoria.get(chave)
+  if (guardado && guardado.expiraEm > agora) return guardado.acesso
+  if (guardado) acessosEmMemoria.delete(chave)
+
+  const resultado = await validateMaterialPdfAccess(materialId, session, options)
+  if (!resultado.ok) return resultado
+
+  const fimDoPrazo = resultado.timedAccess?.isTimed && resultado.timedAccess.expiresAt
+    ? new Date(resultado.timedAccess.expiresAt).getTime()
+    : NaN
+  const expiraEm = Math.min(
+    agora + ACESSO_EM_MEMORIA_MS,
+    Number.isFinite(fimDoPrazo) ? fimDoPrazo : Infinity
+  )
+  if (expiraEm > agora) {
+    if (acessosEmMemoria.size >= ACESSOS_EM_MEMORIA_MAX) {
+      for (const [k, v] of acessosEmMemoria) if (v.expiraEm <= agora) acessosEmMemoria.delete(k)
+      // Ainda cheio: sai o mais antigo (o Map guarda a ordem de inserção).
+      const maisAntiga = acessosEmMemoria.keys().next()
+      if (acessosEmMemoria.size >= ACESSOS_EM_MEMORIA_MAX && !maisAntiga.done) {
+        acessosEmMemoria.delete(maisAntiga.value)
+      }
+    }
+    acessosEmMemoria.set(chave, { acesso: resultado, expiraEm })
+  }
+  return resultado
+}
+
+/** Só para testes: esquece os acessos guardados. */
+export function _esquecerAcessosEmMemoria(): void {
+  acessosEmMemoria.clear()
+}
+
 export async function fetchMaterialPdfBytes(blobUrl: string): Promise<ArrayBuffer> {
   const cacheEnabled = envBoolean('PDF_VIEWER_BLOB_CACHE_ENABLED', true)
   const ttlMs = envNumber('PDF_VIEWER_BLOB_CACHE_TTL_MS', 10 * 60 * 1000, 0, 60 * 60 * 1000)

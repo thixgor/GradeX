@@ -189,6 +189,27 @@ export async function getSession(): Promise<TokenPayload | null> {
 
   // Verificar se o usuário está banido no banco de dados (cache miss)
   try {
+    // Validação de sessão de dispositivo: se este token (jti) corresponde a uma
+    // sessão revogada (pelo admin ou pelo limite de dispositivos), desloga. A
+    // mesma ida carimba a atividade (máx. 1x/min por token, graças à cache de
+    // 60s), com a página em que a pessoa está — deduzida dos cabeçalhos DESTA
+    // requisição, daí ser lida aqui, ainda dentro do escopo dela. `caminho` é
+    // módulo próprio, e não `presence/server`: não vale arrastar o driver do
+    // Mongo junto só para ler dois cabeçalhos. Import dinâmico de `sessions`
+    // evita dependência circular.
+    //
+    // Usuário e sessão saem juntos: eram duas idas ao Atlas em fila, no
+    // caminho de quase toda requisição autenticada.
+    const estadoDaSessao = payload.jti
+      ? Promise.all([import('./sessions'), import('./presence/caminho')]).then(
+          async ([{ carimbarSessaoAtiva }, { currentPagePath }]) =>
+            carimbarSessaoAtiva(payload.jti!, await currentPagePath())
+        )
+      : Promise.resolve('untracked' as const)
+    // Sem dono até o `await` abaixo: se a leitura do usuário falhar antes, a
+    // rejeição desta não pode ficar solta.
+    estadoDaSessao.catch(() => {})
+
     const db = await getDb()
     const usersCollection = db.collection<User>('users')
     const user = await usersCollection.findOne(
@@ -202,30 +223,11 @@ export async function getSession(): Promise<TokenPayload | null> {
       return null
     }
 
-    // Validação de sessão de dispositivo: se este token (jti) corresponde a uma
-    // sessão revogada (pelo admin ou pelo limite de dispositivos), desloga.
-    // Import dinâmico evita dependência circular com lib/sessions.
-    if (payload.jti) {
-      const { getSessionState, touchSession } = await import('./sessions')
-      const state = await getSessionState(payload.jti)
-      if (state === 'revoked') {
-        sessionCache.set(cacheKey, { payload: null, expiresAt: now + SESSION_CACHE_TTL_MS })
-        await removeAuthCookie()
-        return null
-      }
-      if (state === 'active') {
-        // Atualiza atividade. Graças à cache de 60s, roda no máx. 1x/min por
-        // token. Junto vai a página em que a pessoa está, deduzida dos
-        // cabeçalhos DESTA requisição — daí ela ser lida aqui, ainda dentro do
-        // escopo da requisição, e não lá dentro do update.
-        // Módulo próprio, e não `presence/server`: este import roda no
-        // cache-miss de TODA sessão, e não vale arrastar o driver do Mongo
-        // junto só para ler dois cabeçalhos.
-        const { currentPagePath } = await import('./presence/caminho')
-        const path = await currentPagePath()
-        touchSession(payload.jti, path).catch(() => {})
-      }
-      // 'untracked' = login legado (anterior à feature): segue válido sem enforce.
+    // 'untracked' = login legado (anterior à feature): segue válido sem enforce.
+    if ((await estadoDaSessao) === 'revoked') {
+      sessionCache.set(cacheKey, { payload: null, expiresAt: now + SESSION_CACHE_TTL_MS })
+      await removeAuthCookie()
+      return null
     }
 
     const fresh: TokenPayload = {

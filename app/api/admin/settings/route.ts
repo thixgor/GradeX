@@ -19,6 +19,7 @@ import {
   type SidebarGroupDefinition,
   type SidebarSectionGroups,
 } from '@/lib/sidebar-groups'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -121,7 +122,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(semSegredos(DEFAULT_LANDING_SETTINGS as Record<string, any>, admin), { headers: NO_STORE_HEADERS })
     }
 
-    return NextResponse.json(
+    return jsonComprimido(
+      req,
       {
         ...semSegredos({ ...DEFAULT_LANDING_SETTINGS, ...settings }, admin),
         sidebarSections: normalizeSidebarSections(settings.sidebarSections),
@@ -190,6 +192,7 @@ export async function PUT(req: NextRequest) {
     // servidor (ver lib/sidebar-section-access.ts). Descartá-la aqui faz o
     // toggle valer na próxima navegação, e não só quando a janela expirar.
     invalidarCacheDeServidor('sidebar-sections')
+    invalidarCacheDeServidor('bootstrap-sidebar')
     invalidarConfigDeIA()
 
     // Buscar as configurações atualizadas para retornar

@@ -7,6 +7,7 @@ import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
 import { aplicarVinculo, resolverVinculosEmLote } from '@/lib/aulas/resolver-vinculo'
 import { lerProgressoEmLote } from '@/lib/aulas/repositorio-progresso'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -99,7 +100,7 @@ export async function GET(request: Request) {
       'Content-Type': 'application/json',
     })
 
-    return NextResponse.json({
+    return jsonComprimido(request, {
       setores,
       topicos,
       subtopicos,

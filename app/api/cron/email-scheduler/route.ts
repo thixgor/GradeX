@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isCronAuthorized } from '@/lib/cron-auth'
 import { runDueSchedules } from '@/lib/comms/email-scheduler'
-import { drainQueueNow } from '@/lib/comms/process'
 import { hasEligibleMessages } from '@/lib/comms/outbox'
 
 export const dynamic = 'force-dynamic'
@@ -48,8 +47,11 @@ async function handle(request: NextRequest) {
         runDueSchedules(),
         hasEligibleMessages('email'),
     ])
+    // O drain puxa o nodemailer, os templates e os adaptadores de canal. Por
+    // `import()` só aqui, o tick vazio — quase todos — não paga a carga desses
+    // módulos a cada instância fria.
     const delivery = schedules.length > 0 || hasQueued
-        ? await drainQueueNow(['email'], { timeBudgetMs: DRAIN_BUDGET_MS })
+        ? await (await import('@/lib/comms/process')).drainQueueNow(['email'], { timeBudgetMs: DRAIN_BUDGET_MS })
         : []
 
     const email = delivery.find(r => r.channel === 'email')

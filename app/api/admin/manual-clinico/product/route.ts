@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
+import { invalidarCacheDeServidor } from '@/lib/cache-de-servidor'
 import {
   getManualClinicoConfig,
   getManualClinicoCurrentPrice,
@@ -111,6 +112,8 @@ export async function PUT(request: NextRequest) {
 
     const db = await getDb()
     const saved = await upsertManualClinicoConfig(db, parsed.data as any, session)
+    // A vitrine da Semiologia guarda esta configuração por um minuto.
+    invalidarCacheDeServidor('manual-clinico-config')
     return NextResponse.json({
       success: true,
       config: {

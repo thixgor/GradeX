@@ -15,6 +15,7 @@ import { interpretarPeriodoLetivo } from '@/lib/banco/periodo-letivo'
 import { campoTextoPreenchido } from '@/lib/banco/filtros-conteudo'
 import { prepararTermoDeBusca } from '@/lib/utils/escape-regex'
 import { isValidObjectId } from '@/lib/api-security'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -448,7 +449,7 @@ export async function GET(request: NextRequest) {
         : {}),
     }
 
-    return NextResponse.json(response, {
+    return jsonComprimido(request, response, {
       // Resposta personalizada (o que está aberto muda por pessoa).
       headers: { 'Cache-Control': 'private, no-store' },
     })

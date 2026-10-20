@@ -13,6 +13,7 @@ import {
 } from '@/lib/plan-entitlements-server'
 import { gerarConteudoGemini } from '@/lib/ia/gemini'
 import { v4 as uuidv4 } from 'uuid'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -151,7 +152,7 @@ export async function GET(request: NextRequest) {
       'Content-Type': 'application/json',
     })
 
-    return NextResponse.json({ decks: normalizedDecks }, { headers })
+    return jsonComprimido(request, { decks: normalizedDecks }, { headers })
   } catch (error) {
     console.error('Erro ao listar flashcards:', error)
     return NextResponse.json({ error: 'Erro ao listar flashcards' }, { status: 500 })

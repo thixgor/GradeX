@@ -5,13 +5,14 @@ import { revalidatePath } from 'next/cache'
  * do material/pacote.
  *
  * As páginas de catálogo não são renderizadas por requisição: `/materiais/[id]`
- * e `/flashcards/d/[slug]` declaram `dynamic = 'force-static'` com
- * `revalidate = 3600`, e `/pacotes/[id]` é gerada sob demanda e mantida no Full
- * Route Cache. O `generateMetadata` do layout roda junto com esse HTML, então o
- * preço que aparece na `description` e em `product:price:amount` fica congelado
- * no cache. Sem invalidar explicitamente, uma alteração de preço no
- * /admin/materiais só chega aos metatags na próxima revalidação (até 1h — ou
- * nunca, no caso do pacote), e os crawlers continuam lendo o valor antigo.
+ * (`revalidate = 86400`) e `/flashcards/d/[slug]` (`revalidate = 3600`)
+ * declaram `dynamic = 'force-static'`, e `/pacotes/[id]` é gerada sob demanda e
+ * mantida no Full Route Cache. O `generateMetadata` do layout roda junto com
+ * esse HTML, então o preço que aparece na `description` e em
+ * `product:price:amount` fica congelado no cache. Sem invalidar explicitamente,
+ * uma alteração de preço no /admin/materiais só chega aos metatags na próxima
+ * revalidação (até um dia — ou nunca, no caso do pacote), e os crawlers
+ * continuam lendo o valor antigo.
  */
 
 type MaterialLike = {

@@ -17,6 +17,7 @@ import { inicioDoDiaEmBrasilia, offsetDeBrasilia, relogioBrasilia } from '@/lib/
 import { respostaDeLimiteExcedido, secureApiEndpoint } from '@/lib/api-security'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { getDb } from '@/lib/mongodb'
+import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import { ObjectId } from 'mongodb'
 import {
   normalizeSidebarOrder,
@@ -213,17 +214,21 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           },
         }
       ),
-      db.collection('landing_settings').findOne(
-        {},
-        {
-          projection: {
-            sidebarSections: 1,
-            sidebarSectionOrder: 1,
-            sidebarSectionIcons: 1,
-            sidebarGroups: 1,
-            sidebarSectionGroups: 1,
-          },
-        }
+      // Igual para todo mundo: a mesma janela curta de
+      // `lib/sidebar-section-access.ts`, invalidada pelo salvar do admin.
+      memoizarPorTempo('bootstrap-sidebar', 15_000, () =>
+        db.collection('landing_settings').findOne(
+          {},
+          {
+            projection: {
+              sidebarSections: 1,
+              sidebarSectionOrder: 1,
+              sidebarSectionIcons: 1,
+              sidebarGroups: 1,
+              sidebarSectionGroups: 1,
+            },
+          }
+        )
       ),
       db.collection('exam_submissions').aggregate([
         { $match: { userId, createdAt: { $gte: startOfMonth } } },

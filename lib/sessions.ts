@@ -173,26 +173,32 @@ export async function getSessionState(
 }
 
 /**
- * Atualiza lastActiveAt (throttle implícito: chamado no cache-miss do
- * getSession) e, junto, a última página conhecida.
+ * Carimba `lastActiveAt` (throttle implícito: chamado no cache-miss do
+ * `getSession`) e, na mesma ida, diz em que estado a sessão está.
  *
- * O caminho vem de carona: é deduzido dos cabeçalhos da requisição que já ia
- * carimbar a sessão, e entra no MESMO `$set`. Nenhuma escrita, consulta ou
- * requisição a mais — só um campo a mais no update que já existia. É ele que
- * permite o painel dizer "lendo um PDF" em vez de "está no site".
+ * O cache-miss de `getSession` fazia três operações: lia o usuário, DEPOIS lia a
+ * sessão e só então carimbava a atividade. Aqui o carimbo é a própria
+ * verificação: o `updateOne` só acerta uma sessão não revogada, então acertar
+ * significa "ativa". Errar é o caso raro — sessão revogada ou login anterior à
+ * feature — e só ele paga a leitura que distingue os dois.
+ *
+ * A última página conhecida vem de carona no mesmo `$set`: é deduzida dos
+ * cabeçalhos da requisição que já ia carimbar a sessão. É ela que permite o
+ * painel dizer "lendo um PDF" em vez de "está no site".
  */
-export async function touchSession(jti: string, path?: string): Promise<void> {
-  try {
-    const col = await sessionsCollection()
-    const set: Record<string, unknown> = { lastActiveAt: new Date() }
-    // Vazio não sobrescreve: apagaria a última página conhecida.
-    const caminho = normalizarCaminho(path)
-    if (caminho) set.lastPath = caminho
+export async function carimbarSessaoAtiva(
+  jti: string,
+  path?: string
+): Promise<'active' | 'revoked' | 'untracked'> {
+  const col = await sessionsCollection()
+  const set: Record<string, unknown> = { lastActiveAt: new Date() }
+  // Vazio não sobrescreve: apagaria a última página conhecida.
+  const caminho = normalizarCaminho(path)
+  if (caminho) set.lastPath = caminho
 
-    await col.updateOne({ jti, revokedAt: { $exists: false } }, { $set: set })
-  } catch {
-    // best-effort
-  }
+  const { matchedCount } = await col.updateOne({ jti, revokedAt: { $exists: false } }, { $set: set })
+  if (matchedCount > 0) return 'active'
+  return getSessionState(jti)
 }
 
 export async function listUserSessions(userId: string) {

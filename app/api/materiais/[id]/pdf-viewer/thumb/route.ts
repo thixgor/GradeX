@@ -4,7 +4,7 @@ import { checkRateLimitSync } from '@/lib/api-security'
 import {
   getClientIp,
   isPreviewPageAllowed,
-  validateMaterialPdfAccess,
+  validateMaterialPdfAccessComMemoria,
 } from '@/lib/material-pdf-viewer'
 import { responderPaginaMarcada } from '@/lib/material-pdf-leitura'
 
@@ -62,7 +62,7 @@ export async function GET(
       if (!visitante.success) return rateLimited(visitante.retryAfterMs || 60_000)
     }
 
-    const access = await validateMaterialPdfAccess(params.id, session, {
+    const access = await validateMaterialPdfAccessComMemoria(params.id, session, {
       requireViewerEnabled: true,
       requirePdf: true,
       allowPreview: true,

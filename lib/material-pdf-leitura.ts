@@ -255,6 +255,10 @@ export async function responderPaginaMarcada(params: {
   }
 
   if (!cachedPageCount && pagePdf.totalPages > 0) {
+    // O material pode ter vindo da memória de acesso (ver
+    // `validateMaterialPdfAccessComMemoria`): anotar ali também evita repetir
+    // esta escrita a cada página até a memória vencer.
+    if (access.material.pdfFile) access.material.pdfFile.pageCount = pagePdf.totalPages
     access.db
       .collection('materials')
       .updateOne(

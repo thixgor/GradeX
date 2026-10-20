@@ -104,13 +104,25 @@ export default async function VitrineSemiologiaPage({
  * `import` no topo põe esse erro fora do alcance de qualquer `catch` — a
  * página inteira morreria antes de rodar uma linha.
  */
+/** Também descartada pelo salvar do admin (`/api/admin/manual-clinico/product`). */
+const CHAVE_DA_CONFIG = 'manual-clinico-config'
+
 async function lerProduto() {
   try {
-    const [{ getDb }, { getManualClinicoConfig, serializeManualClinicoProduct }] = await Promise.all([
-      import('@/lib/mongodb'),
-      import('@/lib/manual-clinico-product'),
-    ])
-    const config = await getManualClinicoConfig(await getDb())
+    const [{ getDb }, { getManualClinicoConfig, serializeManualClinicoProduct }, { memoizarPorTempo }] =
+      await Promise.all([
+        import('@/lib/mongodb'),
+        import('@/lib/manual-clinico-product'),
+        import('@/lib/cache-de-servidor'),
+      ])
+    // A landing é o que robô e link compartilhado abrem: o mesmo documento de
+    // configuração para todo mundo, então um minuto de memória por instância
+    // poupa uma ida ao Atlas por visita. O preço com promoção continua sendo
+    // calculado agora, por `serializeManualClinicoProduct`; o checkout confere
+    // o valor real de qualquer jeito.
+    const config = await memoizarPorTempo(CHAVE_DA_CONFIG, 60_000, async () =>
+      getManualClinicoConfig(await getDb())
+    )
     const produto = serializeManualClinicoProduct(config)
     return {
       planos: produto.plans ?? [],

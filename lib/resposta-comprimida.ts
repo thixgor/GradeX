@@ -97,12 +97,14 @@ export function corpoComprimido(
  * devolvem listas grandes: JSON costuma cair a 10–20% do tamanho.
  */
 export function jsonComprimido(
-  request: { headers: Headers },
+  request: { headers?: Headers },
   dados: unknown,
   init: { status?: number; headers?: HeadersInit } = {}
 ): NextResponse {
   const texto = new TextEncoder().encode(JSON.stringify(dados))
-  const { corpo, cabecalhos } = corpoComprimido(request.headers, texto)
+  // Sem cabeçalhos (chamada interna, teste com requisição parcial), sem
+  // `Accept-Encoding`: o corpo vai cru, como iria o `NextResponse.json`.
+  const { corpo, cabecalhos } = corpoComprimido(request.headers ?? new Headers(), texto)
   const headers = new Headers(init.headers)
   headers.set('Content-Type', 'application/json; charset=utf-8')
   for (const [nome, valor] of Object.entries(cabecalhos)) headers.set(nome, valor)
