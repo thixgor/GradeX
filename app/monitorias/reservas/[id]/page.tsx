@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, use } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
@@ -38,7 +38,8 @@ const TITULO_DO_MODAL: Record<Exclude<Modal, null>, string> = {
   falta: 'Aluno não compareceu',
 }
 
-export default function SalaDaReserva({ params }: { params: { id: string } }) {
+export default function SalaDaReserva(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const reduzir = useReducedMotion()
   const [d, setD] = useState<DetalheReserva | null>(null)
   const [erro, setErro] = useState('')

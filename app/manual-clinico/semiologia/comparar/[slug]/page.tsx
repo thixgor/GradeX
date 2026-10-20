@@ -8,13 +8,15 @@ export function generateStaticParams() {
   return COMPARADORES.map((comparador) => ({ slug: comparador.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const comparador = comparadorPorSlug(params.slug)
   if (!comparador) return { title: 'Comparador não encontrado | Manual de Semiologia' }
   return { title: `${comparador.titulo} | Manual de Semiologia`, description: comparador.introducao }
 }
 
-export default function ComparadorPage({ params }: { params: { slug: string } }) {
+export default async function ComparadorPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const comparador = comparadorPorSlug(params.slug)
   if (!comparador) notFound()
 

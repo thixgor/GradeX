@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,7 +18,8 @@ interface ExamData {
   questions: any[]
 }
 
-export default function AdminCorrectionsPage({ params }: { params: { id: string } }) {
+export default function AdminCorrectionsPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const { id } = params
   const router = useRouter()
   const [exam, setExam] = useState<ExamData | null>(null)

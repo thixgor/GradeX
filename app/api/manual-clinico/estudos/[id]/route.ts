@@ -26,13 +26,14 @@ export const dynamic = 'force-dynamic'
  * saber o que o primeiro fez.
  */
 
-type Params = { params: { id: string } }
+type Params = { params: Promise<{ id: string }> }
 
-function idDe(params: Params['params']): ObjectId | null {
+function idDe(params: Awaited<Params['params']>): ObjectId | null {
   return ObjectId.isValid(params.id) ? new ObjectId(params.id) : null
 }
 
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, props: Params) {
+  const params = await props.params
   const autorizado = await autorizarEstudo()
   if ('erro' in autorizado) return autorizado.erro
   const { db, userId } = autorizado
@@ -55,7 +56,8 @@ export async function GET(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: Params) {
+export async function PATCH(request: NextRequest, props: Params) {
+  const params = await props.params
   const autorizado = await autorizarEstudo()
   if ('erro' in autorizado) return autorizado.erro
   const { db, userId } = autorizado
@@ -96,7 +98,8 @@ export async function PATCH(request: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(_request: NextRequest, { params }: Params) {
+export async function DELETE(_request: NextRequest, props: Params) {
+  const params = await props.params
   const autorizado = await autorizarEstudo()
   if ('erro' in autorizado) return autorizado.erro
   const { db, userId } = autorizado

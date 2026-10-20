@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { FlaskConical, Loader2, LogIn, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -11,7 +11,8 @@ import { MarcaClara } from '@/components/monitorias/sala/marca'
  * e vai direto para a sala (navegação completa: a sala precisa carregar com a
  * permissão de microfone).
  */
-export default function ConviteDaSalaDeTeste({ params }: { params: { codigo: string } }) {
+export default function ConviteDaSalaDeTeste(props: { params: Promise<{ codigo: string }> }) {
+  const params = use(props.params)
   const reduzir = useReducedMotion()
   const [ocupado, setOcupado] = useState(false)
   const [erro, setErro] = useState('')

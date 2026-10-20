@@ -15,10 +15,8 @@ import { normalizarCargosPermitidos } from '@/lib/restricao-por-cargo'
 export const dynamic = 'force-dynamic'
 
 // PUT - Atualizar grupo
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     // Validar ObjectId primeiro
     if (!isValidObjectId(params.id)) {
@@ -169,10 +167,8 @@ export async function PUT(
 }
 
 // DELETE - Deletar grupo
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     // Validar ObjectId primeiro
     if (!isValidObjectId(params.id)) {

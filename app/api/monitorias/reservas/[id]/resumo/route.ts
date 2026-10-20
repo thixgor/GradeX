@@ -13,7 +13,8 @@ export const dynamic = 'force-dynamic'
  * o adicional, o andamento e, quando entregue, o resumo. A transcrição nunca
  * sai daqui. Lido do banco: abrir a página não chama o modelo.
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'READ' }, async ({ sessao, ip }) => {
     const admin = sessao.role === 'admin'
     const reserva = await carregarReserva(params.id, { incluirExcluida: admin })

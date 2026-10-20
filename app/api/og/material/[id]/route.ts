@@ -13,7 +13,8 @@ function contentTypeFromUrl(url: string) {
   return 'image/jpeg'
 }
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!params?.id || !ObjectId.isValid(params.id)) {
       return NextResponse.redirect(DEFAULT_OG_IMAGE)

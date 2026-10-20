@@ -13,7 +13,8 @@ export function generateStaticParams() {
   return JANELAS_ULTRASSOM.map((janela) => ({ slug: janela.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const janela = janelaPorSlug(params.slug)
   if (!janela) return { title: 'Janela não encontrada | Manual de Semiologia' }
   return {
@@ -22,7 +23,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function JanelaPage({ params }: { params: { slug: string } }) {
+export default async function JanelaPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const encontrada = janelaPorSlug(params.slug)
   if (!encontrada) notFound()
 

@@ -31,7 +31,8 @@ export const runtime = 'nodejs'
  * condição "comprou este material". O aluno nunca precisa entender essa
  * arquitetura comercial — para ele a Trilha simplesmente aparece liberada.
  */
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id)) {
       return NextResponse.json({ aulas: [] })

@@ -9,7 +9,8 @@ import { avisar } from '@/lib/monitorias/avisos'
 export const dynamic = 'force-dynamic'
 
 /** POST {acao: suspender|reativar|cancelar_troca_pix, motivo} — perfil de monitor. */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = z
       .object({ acao: z.enum(['suspender', 'reativar', 'cancelar_troca_pix']), motivo: z.string().min(5).max(1000) })

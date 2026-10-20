@@ -3,7 +3,8 @@ import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { denyDisabledSectionApi } from '@/lib/sidebar-section-access'
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params
     try {
         const disabledResponse = await denyDisabledSectionApi('games')
         if (disabledResponse) return disabledResponse

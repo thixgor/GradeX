@@ -74,7 +74,8 @@ function tokenDoHeader(request: NextRequest): string | null {
 }
 
 /** GET ?desde=<seq>&pulso=1 — sinais novos para mim + quem está na sala. */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const claims = await autenticar(request, params.id, tokenDoHeader(request))
     if (!claims) return falha(401, 'Sua entrada na sala venceu. Entre de novo.', { motivo: 'token' })
@@ -99,7 +100,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * (tirar/liberar alguém, permissões dos alunos) — estes só para o monitor. A saída também chega pelo `sendBeacon` da aba que
  * fecha, com o token no corpo (o beacon não envia header).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!origemConfiavel(request)) return falha(403, 'Origem da requisição não permitida.')
     const texto = await request.text()

@@ -19,7 +19,8 @@ export function generateStaticParams() {
   return ESTUDOS_RAIO_X.map((estudo) => ({ slug: estudo.id }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const estudo = getEstudoRaioX(params.slug)
   if (!estudo) return { title: 'Radiografia não encontrada | Manual de Radiologia' }
   return {
@@ -28,7 +29,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function EstudoRaioXPage({ params }: { params: { slug: string } }) {
+export default async function EstudoRaioXPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const estudo = getEstudoRaioX(params.slug)
   if (!estudo) notFound()
 

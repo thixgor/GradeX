@@ -25,7 +25,8 @@ const Corpo = z
  * emite o contrato já com a assinatura da oferta-padrão do monitor e devolve
  * o id da reserva para o checkout.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 10, windowMs: 10 * 60_000 } }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Escolha um horário e uma duração válidos.')

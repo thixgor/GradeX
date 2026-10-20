@@ -5,9 +5,8 @@ import { DEFAULT_OG_IMAGE, joinSeoParts, publicIndexingRobots, sanitizeSeoText }
 const MANUAIS_DESCRIPTION =
   'Manual Clínico da DomineAqui: fisiopatologia, diagnóstico, tratamento e farmacologia organizados para fixação cognitiva.'
 
-export async function generateMetadata(
-  { params }: { params: { slug: string } }
-): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const fallback: Metadata = {
     title: 'Manual Clínico',
     description: MANUAIS_DESCRIPTION,

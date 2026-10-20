@@ -24,7 +24,8 @@ import { VistaDaSerie } from './vista'
  * como estão devolveria pela serialização o que a mudança acabou de economizar.
  * A vista usa três campos disso, e é o que atravessa.
  */
-export default function SerieTomografiaPage({ params }: { params: { slug: string } }) {
+export default async function SerieTomografiaPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const sub = getSubsecao(params.slug)
   if (!sub) notFound()
 

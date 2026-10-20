@@ -21,9 +21,10 @@ import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoe
 
 export const dynamic = 'force-dynamic'
 
-type Parametros = { params: { doenca: string } }
+type Parametros = { params: Promise<{ doenca: string }> }
 
-export async function generateMetadata({ params }: Parametros) {
+export async function generateMetadata(props: Parametros) {
+  const params = await props.params
   const d = doencaPorId(params.doenca)
   if (!d) return {}
   return metadadosDoModulo({
@@ -33,7 +34,8 @@ export async function generateMetadata({ params }: Parametros) {
   })
 }
 
-export default async function PaginaDaDoenca({ params }: Parametros) {
+export default async function PaginaDaDoenca(props: Parametros) {
+  const params = await props.params
   await exigirAcessoAHistologia()
   const doenca = doencaPorId(params.doenca)
   if (!doenca) notFound()

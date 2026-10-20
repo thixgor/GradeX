@@ -38,7 +38,8 @@ async function turmaExiste(db: any, id: string): Promise<boolean> {
   return n > 0
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const security = await secureApiEndpoint(request, {
     rateLimit: 'WRITE',
     auth: {
@@ -112,7 +113,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const security = await secureApiEndpoint(request, {
     rateLimit: 'WRITE',
     auth: {

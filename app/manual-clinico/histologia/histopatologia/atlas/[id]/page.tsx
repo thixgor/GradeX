@@ -46,13 +46,14 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { id: string }
-  searchParams: { pagina?: string; modalidade?: string; coloracao?: string }
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ pagina?: string; modalidade?: string; coloracao?: string }>
 }
 
 const POR_PAGINA = 24
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const entrada = await obterEntradaCatalogada(decodeURIComponent(params.id))
   if (!entrada) return { title: 'Entrada não encontrada — Histopatologia' }
 
@@ -67,7 +68,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDaEntradaCatalogada({ params, searchParams }: Props) {
+export default async function PaginaDaEntradaCatalogada(props: Props) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const entrada = await obterEntradaCatalogada(decodeURIComponent(params.id))

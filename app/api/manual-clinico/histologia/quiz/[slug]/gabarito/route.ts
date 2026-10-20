@@ -29,7 +29,8 @@ import { obterQuiz } from '@/lib/histologia/repositorio'
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
-export async function GET(_requisicao: Request, { params }: { params: { slug: string } }) {
+export async function GET(_requisicao: Request, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   if (!histologiaHabilitada()) {
     return new NextResponse(null, { status: 404 })
   }

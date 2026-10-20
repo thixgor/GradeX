@@ -43,7 +43,8 @@ export const runtime = 'nodejs'
  * admin despublicou por uma semana, e apagar a referência transformaria uma
  * ausência temporária em perda permanente da montagem.
  */
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const db = await getDb()
     const sessao = await getSession()
@@ -156,7 +157,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
  * impossível salvar uma reordenação, que é uma mudança de estrutura e não de
  * campo.
  */
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const db = await getDb()
     const sessao = await getSession()
@@ -257,7 +259,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
  * a consequência direta de a Trilha ser um caminho e não um pacote: desmontar
  * o caminho não destrói o terreno (§1).
  */
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const db = await getDb()
     const sessao = await getSession()
@@ -306,7 +309,8 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
  * banco, e a própria tela oferece rever as ocultas. Ninguém perde uma Trilha
  * por um toque errado.
  */
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const db = await getDb()
     const sessao = await getSession()

@@ -6,10 +6,8 @@ import { ObjectId } from 'mongodb'
 export const dynamic = 'force-dynamic'
 
 // PATCH — aprovar / rejeitar / editar doação
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {
@@ -59,10 +57,8 @@ export async function PATCH(
 }
 
 // DELETE — remover doação
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(_req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {

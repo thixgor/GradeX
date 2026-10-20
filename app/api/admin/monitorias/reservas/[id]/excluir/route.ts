@@ -16,7 +16,8 @@ const Corpo = z.object({ motivo: z.string().min(5).max(1000) }).strict()
  * (reembolso de quem pagou). Sem dinheiro nenhum, apaga de vez; com dinheiro,
  * some de todas as telas e o registro financeiro e o contrato ficam guardados.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Escreva o motivo da exclusão (fica no registro).')
@@ -37,7 +38,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 }
 
 /** DELETE — desfaz a exclusão (só das que ficaram guardadas). */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     await restaurarMonitoria(reserva)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,7 +21,8 @@ interface User {
   role: 'admin' | 'user'
 }
 
-export default function EditForumPostPage({ params }: { params: { id: string } }) {
+export default function EditForumPostPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const router = useRouter()
   const postId = params.id
   const [user, setUser] = useState<User | null>(null)

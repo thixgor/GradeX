@@ -37,7 +37,8 @@ async function requireManager(params: { id: string }) {
 }
 
 // POST — adiciona colaborador por e-mail (o criador escolhe o e-mail).
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const ctx = await requireManager(params)
     if ('error' in ctx) return ctx.error
@@ -90,7 +91,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 }
 
 // DELETE — remove colaborador por userId.
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const ctx = await requireManager(params)
     if ('error' in ctx) return ctx.error

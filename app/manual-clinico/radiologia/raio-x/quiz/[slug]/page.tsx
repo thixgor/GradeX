@@ -21,7 +21,8 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const quiz = QUIZZES_RAIO_X.find((item) => item.slug === params.slug)
   if (!quiz) return { title: 'Quiz não encontrado | Manual de Radiologia' }
   return {
@@ -61,7 +62,8 @@ function irmaosDoQuiz(quiz: ResumoQuizRaioX): ResumoQuizRaioX[] {
   return QUIZZES_RAIO_X.filter((item) => item.tipo === 'regiao').slice(0, 6)
 }
 
-export default function QuizRaioXPage({ params }: { params: { slug: string } }) {
+export default async function QuizRaioXPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const quiz = getQuizRaioX(params.slug)
   if (!quiz) notFound()
 

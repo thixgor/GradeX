@@ -13,7 +13,8 @@ export const runtime = 'nodejs'
 // 60s de revalidação no edge — o lote atual muda no máximo na virada de semana/dia.
 export const revalidate = 60
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   if (!ObjectId.isValid(params.id)) {
     return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
   }

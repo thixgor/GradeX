@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
@@ -11,7 +11,8 @@ import type { EstadoDoResumo } from '@/lib/monitorias/resumo/tipos'
 type Resposta = EstadoDoResumo & { reserva: { id: string; titulo: string; inicio: string | null } }
 
 /** Página de leitura do Resumo por IA (comprador ou admin). Lida do banco: abrir não chama o modelo. */
-export default function PaginaDoResumo({ params }: { params: { id: string } }) {
+export default function PaginaDoResumo(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const [dados, setDados] = useState<Resposta | null>(null)
   const [erro, setErro] = useState('')
   useEffect(() => {

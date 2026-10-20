@@ -32,7 +32,8 @@ function safeEqual(a: string, b: string): boolean {
   return diff === 0
 }
 
-export async function GET(request: NextRequest, { params }: { params: { orderId: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ orderId: string }> }) {
+  const params = await props.params
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rl = await checkRateLimit(ip, 'serial_key_purchase_poll', 60, 60_000)
   if (!rl.success) {

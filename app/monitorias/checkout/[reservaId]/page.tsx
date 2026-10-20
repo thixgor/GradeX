@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowLeft, CalendarPlus, Check, Clock, Copy, Download, FileText, Hourglass, Loader2, MessagesSquare, PartyPopper, Receipt, Users } from 'lucide-react'
@@ -20,7 +20,8 @@ import { cn } from '@/lib/utils'
 
 const PASSOS = ['Revisar', 'Contrato', 'Pagar', 'Confirmado'] as const
 
-export default function CheckoutMonitoria({ params }: { params: { reservaId: string } }) {
+export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: string }> }) {
+  const params = use(props.params)
   const reduzir = useReducedMotion()
   const [d, setD] = useState<DetalheReserva | null>(null)
   const [erro, setErro] = useState('')

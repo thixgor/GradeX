@@ -6,10 +6,8 @@ import { ExamSubmission } from '@/lib/types'
 export const dynamic = 'force-dynamic'
 
 // POST - Criar submission inicial para tracking de proctoring
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

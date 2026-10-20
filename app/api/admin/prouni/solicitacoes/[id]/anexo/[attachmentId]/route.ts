@@ -32,8 +32,9 @@ export const runtime = 'nodejs'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; attachmentId: string } }
+  props: { params: Promise<{ id: string; attachmentId: string }> }
 ) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })

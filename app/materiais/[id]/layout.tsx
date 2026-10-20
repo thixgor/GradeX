@@ -15,9 +15,8 @@ import { resolveFlashcardMaterialCoverImage } from '@/lib/material-flashcard-cov
 const MATERIAIS_DESCRIPTION =
   'Acesse materiais de estudo da DomineAqui com conteúdos organizados, PDFs, vídeos e recursos para acelerar sua rotina de aprendizado.'
 
-export async function generateMetadata(
-  { params }: { params: { id: string } }
-): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const fallback: Metadata = {
     title: 'Material de estudo',
     description: MATERIAIS_DESCRIPTION,

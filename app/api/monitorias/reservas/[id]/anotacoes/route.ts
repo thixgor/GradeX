@@ -20,7 +20,8 @@ const Corpo = z.object({ texto: z.string().max(ANOTACOES_MAX), versaoBase: z.num
  * para a pessoa reencontrar o texto em outro aparelho. O PDF é feito no
  * navegador: nada de servidor para gerar arquivo.
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, {}, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
     const acesso = await acessoDeLeitura(reserva, sessao.userId)
@@ -57,7 +58,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * PUT {texto, versaoBase} — grava se ninguém gravou depois (outro aparelho).
  * Conflito devolve 409 com o texto do servidor; o navegador junta os dois.
  */
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, `As anotações passam do limite de ${ANOTACOES_MAX.toLocaleString('pt-BR')} caracteres.`)

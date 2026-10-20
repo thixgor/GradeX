@@ -22,10 +22,11 @@ import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { modulo: string }
+  params: Promise<{ modulo: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const modulo = obterModulo(params.modulo)
   if (!modulo) return { title: 'Módulo não encontrado — Manual da Histologia' }
   return metadadosDoModulo({
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDoModulo({ params }: Props) {
+export default async function PaginaDoModulo(props: Props) {
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const modulo = obterModulo(params.modulo)

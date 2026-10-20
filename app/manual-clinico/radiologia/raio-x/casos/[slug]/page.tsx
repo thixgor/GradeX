@@ -14,7 +14,8 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const caso = CASOS_POR_SLUG.get(params.slug)
   if (!caso) return {}
   return {
@@ -29,7 +30,8 @@ const resumir = (caso: { slug: string; titulo: string; categoriaTitulo: string }
   categoriaTitulo: caso.categoriaTitulo,
 })
 
-export default function CasoRaioXPage({ params }: { params: { slug: string } }) {
+export default async function CasoRaioXPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const caso = CASOS_POR_SLUG.get(params.slug)
   if (!caso) notFound()
 

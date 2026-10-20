@@ -35,7 +35,8 @@ export function generateStaticParams() {
   return DOENCAS.map((d) => ({ slug: d.id }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const d = DOENCA_POR_ID.get(params.slug)
   if (!d) return { title: 'Doença não encontrada | DomineAqui Lab' }
   return {
@@ -44,7 +45,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function PaginaDaDoenca({ params }: { params: { slug: string } }) {
+export default async function PaginaDaDoenca(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const doenca = DOENCA_POR_ID.get(params.slug)
   if (!doenca) notFound()
 

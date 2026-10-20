@@ -15,7 +15,8 @@ export const runtime = 'nodejs'
  *  - action: 'resend' → reenvia o e-mail de ativação com QR + comprovante PDF.
  *  - action: 'cancel' → cancela/desativa a serial key.
  */
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })

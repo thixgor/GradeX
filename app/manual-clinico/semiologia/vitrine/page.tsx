@@ -17,11 +17,12 @@ const DESCRICAO_PADRAO =
  * O canônico aponta para o endereço original, e não para `/vitrine`, porque é
  * ele que está na barra e é ele que o sitemap declara.
  */
-export function generateMetadata({
-  searchParams,
-}: {
-  searchParams?: { de?: string | string[] }
-}): Metadata {
+export async function generateMetadata(
+  props: {
+    searchParams?: Promise<{ de?: string | string[] }>
+  }
+): Promise<Metadata> {
+  const searchParams = await props.searchParams
   const de = caminhoOriginal(searchParams?.de)
   const alvo = nomeDoAlvo(de)
   const titulo = alvo
@@ -72,11 +73,12 @@ export const dynamic = 'force-dynamic'
  * então preencher os números seria perder a primeira dobra justamente para
  * quem ainda não sabe o que é isto.
  */
-export default async function VitrineSemiologiaPage({
-  searchParams,
-}: {
-  searchParams?: { de?: string | string[] }
-}) {
+export default async function VitrineSemiologiaPage(
+  props: {
+    searchParams?: Promise<{ de?: string | string[] }>
+  }
+) {
+  const searchParams = await props.searchParams
   const de = caminhoOriginal(searchParams?.de)
   const produto = await lerProduto()
 

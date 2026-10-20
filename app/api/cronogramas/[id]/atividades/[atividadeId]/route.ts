@@ -8,8 +8,9 @@ export const dynamic = 'force-dynamic'
 // PATCH - Atualizar status de atividade
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string; atividadeId: string } }
+  props: { params: Promise<{ id: string; atividadeId: string }> }
 ) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

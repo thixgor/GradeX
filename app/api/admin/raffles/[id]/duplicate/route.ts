@@ -11,7 +11,8 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 /** Duplica uma rifa como rascunho (sem números vendidos nem ganhadores). */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })

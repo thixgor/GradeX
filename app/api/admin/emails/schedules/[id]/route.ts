@@ -13,10 +13,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /** Editar (ex.: ativar/pausar) um agendamento. */
-export async function PATCH(
-    request: NextRequest,
-    { params }: { params: { id: string } },
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {
@@ -43,10 +41,8 @@ export async function PATCH(
     }
 }
 
-export async function DELETE(
-    _request: NextRequest,
-    { params }: { params: { id: string } },
-) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {
@@ -68,10 +64,8 @@ export async function DELETE(
  * "Executar agora": dispara o agendamento fora de hora, sem mexer no
  * calendário dele. Serve para testar o conteúdo antes de deixar rodando.
  */
-export async function POST(
-    _request: NextRequest,
-    { params }: { params: { id: string } },
-) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {

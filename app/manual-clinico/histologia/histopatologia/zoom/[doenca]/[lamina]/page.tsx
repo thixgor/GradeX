@@ -27,9 +27,10 @@ import { absoluteUrl } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 
-type Parametros = { params: { doenca: string; lamina: string } }
+type Parametros = { params: Promise<{ doenca: string; lamina: string }> }
 
-export async function generateMetadata({ params }: Parametros) {
+export async function generateMetadata(props: Parametros) {
+  const params = await props.params
   const l = laminaPatologicaPorSlug(params.lamina)
   if (!l) return {}
   const d = doencaPorId(l.doenca)
@@ -41,7 +42,8 @@ export async function generateMetadata({ params }: Parametros) {
   })
 }
 
-export default async function PaginaDaLaminaPatologica({ params }: Parametros) {
+export default async function PaginaDaLaminaPatologica(props: Parametros) {
+  const params = await props.params
   await exigirAcessoAHistologia()
   const lamina = laminaPatologicaPorSlug(params.lamina)
   if (!lamina) notFound()

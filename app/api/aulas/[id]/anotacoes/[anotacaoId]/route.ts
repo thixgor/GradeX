@@ -25,8 +25,9 @@ function filtroDoDono(anotacaoId: string, usuarioId: string, aulaId: string) {
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string; anotacaoId: string } },
+  props: { params: Promise<{ id: string; anotacaoId: string }> }
 ) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id) || !isValidObjectId(params.anotacaoId)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -62,8 +63,9 @@ export async function PATCH(
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string; anotacaoId: string } },
+  props: { params: Promise<{ id: string; anotacaoId: string }> }
 ) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id) || !isValidObjectId(params.anotacaoId)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

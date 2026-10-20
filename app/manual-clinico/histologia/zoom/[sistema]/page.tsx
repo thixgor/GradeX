@@ -16,7 +16,8 @@ import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 
 export const dynamic = 'force-dynamic'
 
-export async function generateMetadata({ params }: { params: { sistema: string } }) {
+export async function generateMetadata(props: { params: Promise<{ sistema: string }> }) {
+  const params = await props.params
   const sistema = sistemaPorId(params.sistema)
   if (!sistema) return {}
   return metadadosDoModulo({
@@ -26,7 +27,8 @@ export async function generateMetadata({ params }: { params: { sistema: string }
   })
 }
 
-export default async function PaginaDoSistema({ params }: { params: { sistema: string } }) {
+export default async function PaginaDoSistema(props: { params: Promise<{ sistema: string }> }) {
+  const params = await props.params
   await exigirAcessoAHistologia()
   const sistema = sistemaPorId(params.sistema)
   if (!sistema) notFound()

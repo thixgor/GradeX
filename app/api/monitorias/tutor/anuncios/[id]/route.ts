@@ -15,7 +15,8 @@ async function meuAnuncio(id: string, userId: string) {
 }
 
 /** GET — o anúncio para edição (com a revisão pendente, se houver). */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, {}, async ({ sessao }) => {
     const a = await meuAnuncio(params.id, sessao.userId)
     if (!a) return naoEncontrado()
@@ -39,7 +40,8 @@ function mudouCondicoesDiretas(antes: ConteudoAnuncio, depois: ConteudoAnuncio):
  * pausado: vira "revisão pendente" — a versão aprovada continua no ar até o
  * admin aprovar a nova (ninguém troca o anúncio aprovado por outro às escondidas).
  */
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
     const a = await meuAnuncio(params.id, sessao.userId)
     if (!a) return naoEncontrado()
@@ -67,7 +69,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 /** DELETE — só rascunho/rejeitado sem nenhuma reserva. */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     const a = await meuAnuncio(params.id, sessao.userId)
     if (!a) return naoEncontrado()

@@ -6,7 +6,8 @@ import { SLUG_VALIDO } from '@/lib/monitorias/validacao'
 export const dynamic = 'force-dynamic'
 
 /** Perguntas públicas do anúncio, paginadas por data. GET ?antes=<ISO> */
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   return rotaPublica(request, { limit: 60, windowMs: 60_000 }, async () => {
     if (!SLUG_VALIDO.test(params.slug)) return erro(404, 'Anúncio não encontrado.')
     const antes = new URL(request.url).searchParams.get('antes')

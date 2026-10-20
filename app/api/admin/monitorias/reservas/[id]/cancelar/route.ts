@@ -17,7 +17,8 @@ const Corpo = z.object({ motivo: z.string().min(5).max(1000), culpaDoMonitor: z.
  * integral de quem pagou, agenda e contratos liberados, aviso a todos e a sala
  * de vídeo encerrada (quem estiver dentro sai no próximo pulso).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Escreva o motivo (ele vai para o monitor e os alunos).')

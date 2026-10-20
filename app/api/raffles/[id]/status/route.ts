@@ -10,7 +10,8 @@ export const runtime = 'nodejs'
  * Status "ao vivo" leve para polling do front (grid + estado do sorteio).
  * Mantido enxuto para reduzir custo de CPU/transfer no Vercel.
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rl = await checkRateLimit(ip, 'raffles_status', 240, 60_000)
   if (!rl.success) {

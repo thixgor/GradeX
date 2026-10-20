@@ -45,7 +45,8 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const m = marcadorPorId(params.slug)
   if (!m) return { title: 'Marcador não encontrado | DomineAqui Lab' }
   return {
@@ -54,7 +55,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function PaginaDoMarcador({ params }: { params: { slug: string } }) {
+export default async function PaginaDoMarcador(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const marcador = marcadorPorId(params.slug)
   if (!marcador) notFound()
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { motion } from 'framer-motion'
 import { BadgeCheck, ShieldX } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
@@ -19,7 +19,8 @@ interface Verificacao {
 }
 
 /** Página pública de verificação de contrato (QR do PDF). Sem dados pessoais. */
-export default function VerificarDocumento({ params }: { params: { codigo: string } }) {
+export default function VerificarDocumento(props: { params: Promise<{ codigo: string }> }) {
+  const params = use(props.params)
   const [v, setV] = useState<Verificacao | null>(null)
   useEffect(() => {
     api<Verificacao>(`/api/monitorias/publico/documentos/verificar/${params.codigo}`).then(setV).catch(() => setV({ valido: false }))

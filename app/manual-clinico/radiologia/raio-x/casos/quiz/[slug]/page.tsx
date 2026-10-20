@@ -22,7 +22,8 @@ export function generateStaticParams() {
   return QUIZZES_CLINICOS.map((quiz) => ({ slug: quiz.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const quiz = QUIZZES_CLINICOS.find((item) => item.slug === params.slug)
   if (!quiz) return { title: 'Quiz não encontrado | Manual de Radiologia' }
   return {
@@ -46,7 +47,8 @@ function irmaosDoQuiz(quiz: ResumoQuizClinico): ResumoQuizClinico[] {
   return quiz.tipo === 'plantao' ? capitulos.slice(0, 6) : [...capitulos.slice(0, 5), ...plantao]
 }
 
-export default function QuizCasoClinicoPage({ params }: { params: { slug: string } }) {
+export default async function QuizCasoClinicoPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const quiz = getQuizCasoClinico(params.slug)
   if (!quiz) notFound()
 

@@ -216,7 +216,7 @@ describe('envio com análise automática', () => {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ action: 'approve' }),
       }),
-      { params: { id: String(doc._id) } }
+      { params: Promise.resolve({ id: String(doc._id) }) }
     )
     expect(decisao.status).toBe(200)
     expect(doc.status).toBe('approved')

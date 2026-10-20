@@ -12,13 +12,15 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const caso = COLECAO_TC.porSlug.get(params.slug)
   if (!caso) return {}
   return { title: `${caso.titulo} na TC | Casos de Tomografia`, description: caso.resumo }
 }
 
-export default function CasoTCPage({ params }: { params: { slug: string } }) {
+export default async function CasoTCPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const caso = COLECAO_TC.porSlug.get(params.slug)
   const vinheta = COLECAO_TC.vinheta(params.slug)
   if (!caso || !vinheta) notFound()

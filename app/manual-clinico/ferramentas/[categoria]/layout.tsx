@@ -7,7 +7,8 @@ export function generateStaticParams() {
   return IDS_CATEGORIAS.map((categoria) => ({ categoria }))
 }
 
-export function generateMetadata({ params }: { params: { categoria: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ categoria: string }> }): Promise<Metadata> {
+  const params = await props.params
   if (!ehCategoria(params.categoria)) return { title: 'Ferramentas Clínicas | Manual Clínico' }
   const c = CATEGORIA_POR_ID[params.categoria]
   return {
@@ -21,7 +22,13 @@ export function generateMetadata({ params }: { params: { categoria: string } }):
   }
 }
 
-export default function CategoriaLayout({ children, params }: { children: React.ReactNode; params: { categoria: string } }) {
+export default async function CategoriaLayout(
+  props: { children: React.ReactNode; params: Promise<{ categoria: string }> }
+) {
+  const params = await props.params
+
+  const { children } = props
+
   if (!ehCategoria(params.categoria)) notFound()
   return children
 }

@@ -26,7 +26,8 @@ export const runtime = 'nodejs'
  *  2. Caso o MP não confirme (ou não haja providerPaymentId), força a aprovação
  *     como override do admin, registrando quem aprovou.
  */
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })

@@ -11,7 +11,8 @@ export function generateStaticParams() {
   return PRANCHAS.map((prancha) => ({ slug: prancha.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const prancha = getPrancha(params.slug)
   if (!prancha) return { title: 'Prancha não encontrada | Manual de Radiologia' }
   return {
@@ -20,7 +21,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function PranchaPage({ params }: { params: { slug: string } }) {
+export default async function PranchaPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const prancha = getPrancha(params.slug)
   if (!prancha) notFound()
 

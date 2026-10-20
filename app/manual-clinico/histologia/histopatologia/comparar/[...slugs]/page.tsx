@@ -28,7 +28,7 @@ import { metadadosDoModulo } from '@/lib/histopatologia/seo'
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { slugs: string[] }
+  params: Promise<{ slugs: string[] }>
 }
 
 function separar(slugs: string[]) {
@@ -36,7 +36,8 @@ function separar(slugs: string[]) {
   return { slugDaDoenca, caminhoNormal }
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const { slugDaDoenca, caminhoNormal } = separar(params.slugs)
   const fragmento = slugDaDoenca ? await obterDoenca(slugDaDoenca) : null
   if (!fragmento) return { title: 'Comparação não encontrada — Histopatologia' }
@@ -51,7 +52,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDeComparacao({ params }: Props) {
+export default async function PaginaDeComparacao(props: Props) {
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const { slugDaDoenca, caminhoNormal } = separar(params.slugs)

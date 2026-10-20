@@ -18,7 +18,11 @@ export const runtime = 'edge'
 
 const SEGMENTO = /^[A-Za-z0-9_.-]+$/
 
-export async function GET(_req: Request, { params }: { params: { token: string; caminho: string[] } }) {
+export async function GET(
+  _req: Request,
+  props: { params: Promise<{ token: string; caminho: string[] }> }
+) {
+  const params = await props.params
   const origem = await decifrar(params.token)
   if (!origem) return new NextResponse(null, { status: 404 })
 

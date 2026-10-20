@@ -28,7 +28,8 @@ const Corpo = z
  * para o Google (Files API, upload resumable): nenhum byte passa pela função.
  * Se o Google não abrir a sessão, devolve o caminho no Blob privado (reserva).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 40, windowMs: 10 * 60_000 } }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Trecho inválido.')

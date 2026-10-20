@@ -23,11 +23,12 @@ import { BASE, jsonLdDeQuiz, metadadosDoModulo } from '@/lib/histologia/seo'
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { slug: string }
-  searchParams: { modo?: string }
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ modo?: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const quiz = await obterQuiz(params.slug)
   if (!quiz) return { title: 'Quiz não encontrado — Manual da Histologia' }
 
@@ -40,7 +41,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDoQuiz({ params, searchParams }: Props) {
+export default async function PaginaDoQuiz(props: Props) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const quiz = await obterQuiz(params.slug)

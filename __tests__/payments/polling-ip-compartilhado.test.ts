@@ -33,7 +33,7 @@ const pedidos = [new ObjectId(), new ObjectId(), new ObjectId(), new ObjectId()]
 async function consultar(orderId: string, ip = '177.10.20.30') {
   const { GET } = await import('@/app/api/payments/orders/[id]/status/route')
   const res = await GET(new NextRequest(`http://x/api/payments/orders/${orderId}/status`, { headers: { 'x-forwarded-for': ip } }), {
-    params: { id: orderId },
+    params: Promise.resolve({ id: orderId }),
   })
   return res.status
 }

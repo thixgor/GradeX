@@ -22,7 +22,8 @@ const Corpo = z.discriminatedUnion('acao', [
  *  - confirmar: E2E + comprovante já anexado → pago
  *  - cancelar: devolve os repasses para "liberado"
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success || !ObjectId.isValid(params.id)) return erro(400, 'Ação inválida.')

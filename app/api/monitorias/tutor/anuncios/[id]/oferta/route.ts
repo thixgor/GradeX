@@ -34,7 +34,8 @@ async function carregar(id: string, userId: string) {
 }
 
 /** GET — texto da oferta-padrão (o que o monitor vai assinar). */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, {}, async ({ sessao }) => {
     const [a, user] = await Promise.all([carregar(params.id, sessao.userId), carregarUsuario(sessao.userId)])
     if (!a || !user) return naoEncontrado()
@@ -45,7 +46,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 /** POST {codigo, hash} — assina a oferta com o código do e-mail. */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao, ip }) => {
     const corpo = z.object({ codigo: z.string().max(10), hash: z.string().length(64) }).strict().safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Dados inválidos.')

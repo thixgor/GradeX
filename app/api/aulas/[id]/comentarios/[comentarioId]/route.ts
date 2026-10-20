@@ -8,8 +8,9 @@ export const dynamic = 'force-dynamic'
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string; comentarioId: string } }
+  props: { params: Promise<{ id: string; comentarioId: string }> }
 ) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {

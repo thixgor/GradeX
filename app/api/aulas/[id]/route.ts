@@ -34,10 +34,8 @@ export const dynamic = 'force-dynamic'
  * explicando o que falta (§17), e um 403 seco viraria a "página quebrada" que
  * não queremos.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     // Validar ObjectId para prevenir NoSQL injection/DoS
     if (!isValidObjectId(params.id)) {
@@ -169,10 +167,8 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     // Validar ObjectId primeiro
     if (!isValidObjectId(params.id)) {
@@ -422,10 +418,8 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     // Validar ObjectId primeiro
     if (!isValidObjectId(params.id)) {

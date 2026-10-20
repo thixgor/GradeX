@@ -23,7 +23,8 @@ const Corpo = z
   .strict()
 
 /** POST — abre um pedido de monitoria (negociação ou "a combinar"). */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 10, windowMs: 60 * 60_000 } }, async ({ sessao }) => {
     // Por pessoa, somando todos os anúncios: cada pedido manda e-mail ao monitor.
     const lim = await checkRateLimit(`mon-solic:${sessao.userId}`, 'monitorias_solicitar', 15, 60 * 60_000)

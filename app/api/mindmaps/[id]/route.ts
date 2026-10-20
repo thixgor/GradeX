@@ -28,7 +28,8 @@ async function findMap(db: any, idOrSlug: string): Promise<(MindMap & { _id: Obj
 }
 
 // GET /api/mindmaps/[id] — busca um mapa respeitando permissões.
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     const db = await getDb()
@@ -91,7 +92,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PATCH — atualiza metadados e/ou conteúdo (dono ou admin).
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -181,7 +183,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 // DELETE — dono ou admin. Admin pode deletar qualquer mapa.
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })

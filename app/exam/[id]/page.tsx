@@ -1,6 +1,6 @@
 'use client'
 
-import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Suspense, useCallback, useEffect, useRef, useState, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -101,7 +101,8 @@ import {
  * prerenderização — é a mesma casca que /provas usa. A tela em si continua
  * sendo `ConteudoDaProva`.
  */
-export default function ExamPage({ params }: { params: { id: string } }) {
+export default function ExamPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   return (
     <Suspense fallback={<LogoLoading message="Carregando prova..." size="lg" fullscreen />}>
       <ConteudoDaProva params={params} />

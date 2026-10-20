@@ -14,7 +14,8 @@ export const dynamic = 'force-dynamic'
  * GET ?duracao=90&gratis=0
  * Devolve só inícios possíveis — nada sobre quem reservou o resto.
  */
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   return rotaPublica(request, { limit: 60, windowMs: 60_000 }, async () => {
     if (!SLUG_VALIDO.test(params.slug)) return erro(404, 'Anúncio não encontrado.')
     const url = new URL(request.url)

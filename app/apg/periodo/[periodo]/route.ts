@@ -16,6 +16,7 @@ export function generateStaticParams() {
   return PERIODOS_APG.map((periodo) => ({ periodo }))
 }
 
-export function GET(_request: Request, { params }: { params: { periodo: string } }) {
+export async function GET(_request: Request, props: { params: Promise<{ periodo: string }> }) {
+  const params = await props.params
   return respostaApg(Number(params.periodo))
 }

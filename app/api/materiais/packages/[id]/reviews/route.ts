@@ -33,10 +33,8 @@ const EMPTY_SUMMARY = (): ReviewSummary => ({
  * pacote — média, distribuição e a lista paginada — para servir de prova
  * social pública na página /pacotes/<id>. Leitura pública (sem login).
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const { id } = params
     if (!id || !isValidObjectId(id)) {

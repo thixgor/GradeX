@@ -24,7 +24,8 @@ const POR_PAGINA = 100
  * quando a reserva mudou de verdade.
  * GET ?antes=<ISO> — página anterior do histórico ("Ver mensagens anteriores").
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 120, windowMs: 60_000 } }, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
     const acesso = await acessoDeLeitura(reserva, sessao.userId)
@@ -71,7 +72,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * canal ("o zap caiu") passa, mas também fica no registro. Antes do pagamento,
  * o que escapar do detector ainda é mascarado como sempre.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     // Limite ANTES de validar: o limite por conta (não por reserva) segura
     // quem tentasse gastar CPU trocando o id na URL.

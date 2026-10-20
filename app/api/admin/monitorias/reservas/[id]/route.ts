@@ -39,7 +39,8 @@ const Corpo = z
  *  - reembolsar: devolve total/parcial por assento; o resto segue para o monitor.
  * Também serve para reembolsar um assento avulso fora de disputa.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, corpo.error.issues[0]?.message || 'Dados inválidos.')

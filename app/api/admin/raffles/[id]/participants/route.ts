@@ -9,7 +9,8 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 /** Lista participantes com pelo menos uma compra paga e seus números. */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })

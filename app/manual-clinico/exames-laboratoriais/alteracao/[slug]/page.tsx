@@ -41,7 +41,8 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const a = alteracaoPorId(params.slug)
   if (!a) return { title: 'Alteração não encontrada | DomineAqui Lab' }
   const nome = capitalizar(a.termo)
@@ -51,7 +52,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function PaginaDaAlteracao({ params }: { params: { slug: string } }) {
+export default async function PaginaDaAlteracao(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const alteracao = alteracaoPorId(params.slug)
   if (!alteracao) notFound()
 

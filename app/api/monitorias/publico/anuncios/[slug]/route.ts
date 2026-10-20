@@ -13,7 +13,8 @@ import { getDb } from '@/lib/mongodb'
 export const dynamic = 'force-dynamic'
 
 /** Página pública do anúncio: anúncio + monitor + primeiras perguntas + outros anúncios do monitor. */
-export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   return rotaPublica(request, { limit: 120, windowMs: 60_000 }, async () => {
     if (!SLUG_VALIDO.test(params.slug)) return erro(404, 'Anúncio não encontrado.')
     const c = await obterColecoes()

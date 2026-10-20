@@ -35,9 +35,10 @@ import { BASE_PATOZOOM } from '@/lib/histopatologia-zoom/rotas'
 
 export const dynamic = 'force-dynamic'
 
-type Parametros = { params: { sistema: string } }
+type Parametros = { params: Promise<{ sistema: string }> }
 
-export async function generateMetadata({ params }: Parametros) {
+export async function generateMetadata(props: Parametros) {
+  const params = await props.params
   const sistema = SISTEMAS.find((s) => s.id === params.sistema)
   if (!sistema) return {}
   return metadadosDoModulo({
@@ -47,7 +48,8 @@ export async function generateMetadata({ params }: Parametros) {
   })
 }
 
-export default async function PaginaDoSistema({ params }: Parametros) {
+export default async function PaginaDoSistema(props: Parametros) {
+  const params = await props.params
   await exigirAcessoAHistologia()
   const sistema = SISTEMAS.find((s) => s.id === params.sistema)
   if (!sistema) notFound()

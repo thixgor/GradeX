@@ -46,17 +46,18 @@ import { jsonLdDeLamina, jsonLdDeTrilha, metadadosDoModulo, rotaDaPagina } from 
 export const dynamic = 'force-dynamic'
 
 interface Props {
-  params: { slug: string[] }
+  params: Promise<{ slug: string[] }>
   /**
    * `?estrutura=<id>` vem da busca por estrutura: abre a lâmina com a camada
    * correta já ligada e o dossiê aberto. Não prometemos centralizar o campo no
    * marcador — o acervo não fornece a geometria dele, e fingir um enquadramento
    * levaria o aluno ao lugar errado com ar de precisão.
    */
-  searchParams: { estrutura?: string }
+  searchParams: Promise<{ estrutura?: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const pagina = await obterPagina(params.slug)
   if (!pagina) return { title: 'Página não encontrada — Manual da Histologia' }
 
@@ -74,7 +75,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDoCurriculo({ params, searchParams }: Props) {
+export default async function PaginaDoCurriculo(props: Props) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const pagina = await obterPagina(params.slug)

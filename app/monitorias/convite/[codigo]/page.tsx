@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Loader2, Users } from 'lucide-react'
@@ -24,7 +24,8 @@ interface Previa {
   prazoPagamento: string | null
 }
 
-export default function Convite({ params }: { params: { codigo: string } }) {
+export default function Convite(props: { params: Promise<{ codigo: string }> }) {
+  const params = use(props.params)
   const router = useRouter()
   const [previa, setPrevia] = useState<Previa | null>(null)
   const [erro, setErro] = useState('')

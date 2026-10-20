@@ -10,9 +10,8 @@ import {
 const FORM_DESCRIPTION =
   'Responda este formulário da DomineAqui. Leva menos de um minuto.'
 
-export async function generateMetadata(
-  { params }: { params: { id: string } }
-): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const fallback: Metadata = {
     title: 'Formulário',
     description: FORM_DESCRIPTION,

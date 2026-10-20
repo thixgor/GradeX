@@ -22,10 +22,8 @@ export const dynamic = 'force-dynamic'
  * A escrita dupla acontece dentro de `definirConclusaoManual`, para não existir
  * um caminho que atualize só uma das visões.
  */
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session?.userId) {

@@ -26,7 +26,8 @@ const MAX_POR_AULA = 300
  * anotação de outra pessoa.
  */
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -50,7 +51,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

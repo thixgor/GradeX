@@ -32,11 +32,12 @@ export const dynamic = 'force-dynamic'
 const POR_PAGINA = 24
 
 interface Props {
-  params: { capitulo: string }
-  searchParams?: { q?: string; modalidade?: string; pagina?: string; ref?: string }
+  params: Promise<{ capitulo: string }>
+  searchParams?: Promise<{ q?: string; modalidade?: string; pagina?: string; ref?: string }>
 }
 
-export function generateMetadata({ params }: Props): Metadata {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const resumo = resumoDoCapituloWebPathUtah(params.capitulo)
   if (!resumo) return {}
   return metadadosDoModulo({
@@ -46,7 +47,9 @@ export function generateMetadata({ params }: Props): Metadata {
   })
 }
 
-export default async function PaginaDoCapituloWebPathUtah({ params, searchParams = {} }: Props) {
+export default async function PaginaDoCapituloWebPathUtah(props: Props) {
+  const searchParams = (await props.searchParams) ?? {}
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const resumo = resumoDoCapituloWebPathUtah(params.capitulo)

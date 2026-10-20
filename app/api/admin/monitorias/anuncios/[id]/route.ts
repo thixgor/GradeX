@@ -25,7 +25,8 @@ const Corpo = z
  * painel do monitor e da moderação, e as reservas antigas seguem (guardam o
  * título). `restaurar` tira a marca e devolve o anúncio à moderação, suspenso.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success || !ObjectId.isValid(params.id)) return erro(400, 'Ação inválida.')

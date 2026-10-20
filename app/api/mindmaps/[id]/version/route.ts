@@ -8,7 +8,8 @@ export const dynamic = 'force-dynamic'
 // GET /api/mindmaps/[id]/version — resposta minúscula só com updatedAt.
 // Usado pelo polling de tempo real: o cliente busca o mapa completo apenas
 // quando este timestamp muda, reduzindo drasticamente a banda/CPU (Vercel free).
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const db = await getDb()
     const coll = db.collection(MINDMAP_COLLECTIONS.maps)

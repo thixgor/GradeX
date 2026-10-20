@@ -82,7 +82,7 @@ function enviar(reviews: any[]) {
       method: 'POST',
       body: JSON.stringify({ reviews }),
     }),
-    { params: { id: String(DECK) } }
+    { params: Promise.resolve({ id: String(DECK) }) }
   )
 }
 

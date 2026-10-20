@@ -20,7 +20,8 @@ const Corpo = z.discriminatedUnion('acao', [
  * POST {acao} — o suporte encerra/reabre a aula ou tira/libera alguém da sala.
  * Não mexe na reserva (para cancelar com reembolso: `…/cancelar`).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Ação inválida.')

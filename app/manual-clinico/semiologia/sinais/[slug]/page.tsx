@@ -12,7 +12,8 @@ export function generateStaticParams() {
   return []
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const sinal = sinalPorSlug(params.slug)
   if (!sinal) return { title: 'Sinal não encontrado | Manual de Semiologia' }
   return {
@@ -21,7 +22,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function SinalPage({ params }: { params: { slug: string } }) {
+export default async function SinalPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const encontrado = sinalPorSlug(params.slug)
   if (!encontrado) notFound()
   const sinal = comAcervoSinal(encontrado)

@@ -16,7 +16,8 @@ async function loadDeck(db: any, idOrSlug: string) {
 }
 
 // POST — compartilhar deck com um usuário (por email ou userId)
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -81,7 +82,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 }
 
 // GET — lista compartilhamentos do deck (apenas dono)
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })

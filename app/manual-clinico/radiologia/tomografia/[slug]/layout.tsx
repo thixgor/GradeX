@@ -7,11 +7,12 @@ import { getSubsecao, getSecaoDaSubsecao, TODAS_SUBSECOES } from '@/lib/tomograf
  * gerar título e descrição a partir dele — cada série ganha uma página com
  * identidade própria para busca, em vez de vinte páginas com o mesmo título.
  */
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string }>
+  }
+): Promise<Metadata> {
+  const params = await props.params
   const sub = getSubsecao(params.slug)
   if (!sub) {
     return { title: 'Série não encontrada - Manual de Radiologia', robots: { index: false, follow: false } }

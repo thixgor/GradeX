@@ -40,7 +40,8 @@ export const runtime = 'nodejs'
  * Nenhuma regra de acesso é reimplementada aqui: `avaliarAcessoAula` decide, e
  * `ocultarConteudoRestrito` limpa o documento antes de ele entrar na resposta.
  */
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -283,7 +284,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
  * ponta de cá deixaria o resumo sem saber de quem ele é — e a tela dele sem o
  * caminho de volta para a aula completa.
  */
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

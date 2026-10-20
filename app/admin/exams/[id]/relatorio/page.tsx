@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -67,7 +67,8 @@ interface Relatorio {
 
 type Aba = 'presenca' | 'questoes' | 'alunos'
 
-export default function AdminExamReportPage({ params }: { params: { id: string } }) {
+export default function AdminExamReportPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const { id } = params
   const router = useRouter()
   const [dados, setDados] = useState<Relatorio | null>(null)

@@ -41,11 +41,12 @@ export const dynamic = 'force-dynamic'
 const ENTRADAS_POR_PAGINA = 48
 
 interface Props {
-  params: { sistema: string }
-  searchParams: { pagina?: string; capitulo?: string }
+  params: Promise<{ sistema: string }>
+  searchParams: Promise<{ pagina?: string; capitulo?: string }>
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
   const sistema = obterSistemaComContagem(params.sistema)
   if (!sistema) return { title: 'Sistema não encontrado — Histopatologia' }
 
@@ -57,7 +58,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-export default async function PaginaDoSistema({ params, searchParams }: Props) {
+export default async function PaginaDoSistema(props: Props) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   await exigirAcessoAHistologia()
 
   const sistema = obterSistemaComContagem(params.sistema)

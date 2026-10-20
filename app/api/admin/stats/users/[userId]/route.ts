@@ -18,7 +18,8 @@ const HISTORY_LIMIT = 300
  * Ficha completa de um aluno: o que fez, o que abriu, o que largou pela
  * metade e por onde anda. Alimenta o painel lateral de /admin/stats.
  */
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ userId: string }> }) {
+  const params = await props.params
   const guard = await requireAdmin()
   if (!guard.ok || !guard.db) return guard.response!
   const db = guard.db

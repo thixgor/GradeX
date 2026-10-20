@@ -11,7 +11,8 @@ import { avisar } from '@/lib/monitorias/avisos'
 export const dynamic = 'force-dynamic'
 
 /** POST {texto} — pergunta pública no anúncio (5 por dia por pessoa). */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
     if (!ObjectId.isValid(params.id)) return erro(404, 'Anúncio não encontrado.')
     const corpo = SchemaPergunta.safeParse(await lerJson(request))

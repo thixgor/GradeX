@@ -14,7 +14,8 @@ const POR_PAGINA = 200
  * máscara, com quem escreveu e as tentativas de contato bloqueadas (que não
  * entraram no chat). Abrir a conversa fica no registro de auditoria.
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const reserva = await carregarReserva(params.id, { incluirExcluida: true })
     const id = idDe(reserva)

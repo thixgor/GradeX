@@ -31,7 +31,7 @@
  * bloco, visível sem abrir: é a manchete, e ela cabe em duas linhas.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowLeft,
@@ -60,7 +60,8 @@ import { enderecoDoTreino } from '@/lib/provas/treino-pos-termino'
 import type { AnalisePublicaDaTurma, DestaqueDaTurma } from '@/lib/provas/analise-da-turma'
 import { cn } from '@/lib/utils'
 
-export default function ProvaEncerradaPage({ params }: { params: { id: string } }) {
+export default function ProvaEncerradaPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const { id } = params
   const router = useRouter()
 

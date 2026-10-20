@@ -12,10 +12,8 @@ export const dynamic = 'force-dynamic'
  * Restrito a administradores. Combina a busca por userId e por userEmail
  * para cobrir registros antigos onde o vínculo era apenas pelo email.
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ userId: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {

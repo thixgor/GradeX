@@ -31,7 +31,8 @@ export const revalidate = 86400
 
 const POR_PAGINA_MAXIMO = 48
 
-export async function GET(requisicao: Request, { params }: { params: { id: string } }) {
+export async function GET(requisicao: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   if (!histopatologiaHabilitada()) {
     return new NextResponse(null, { status: 404 })
   }

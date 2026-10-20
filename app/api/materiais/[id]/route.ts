@@ -13,10 +13,8 @@ import { resolvePdfDownloadPermission } from '@/lib/material-download-permission
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     const isAuthenticated = !!session

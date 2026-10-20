@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, use } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
@@ -49,7 +49,8 @@ interface Pergunta {
 
 type Folha = null | { tipo: 'agendar'; gratis: boolean } | { tipo: 'pedido'; modo: 'negociacao' | 'a_combinar'; gratis: boolean }
 
-export default function PaginaAnuncio({ params }: { params: { slug: string } }) {
+export default function PaginaAnuncio(props: { params: Promise<{ slug: string }> }) {
+  const params = use(props.params)
   const reduzir = useReducedMotion()
   const [dados, setDados] = useState<Dados | null>(null)
   const [erro, setErro] = useState('')

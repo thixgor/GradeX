@@ -11,13 +11,15 @@ export function generateStaticParams() {
   return QUIZZES_SEMIOLOGIA.map((quiz) => ({ id: quiz.id }))
 }
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const params = await props.params
   const quiz = quizPorId(params.id)
   if (!quiz) return {}
   return { title: `Quiz: ${quiz.titulo} | Manual de Semiologia`, description: quiz.descricao }
 }
 
-export default function QuizSemiologiaPage({ params }: { params: { id: string } }) {
+export default async function QuizSemiologiaPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const quiz = quizPorId(params.id)
   if (!quiz) notFound()
 

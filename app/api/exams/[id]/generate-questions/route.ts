@@ -15,10 +15,8 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 120 // Permitir até 120s para geração de questões com IA
 
 // POST - Gerar questões por IA
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

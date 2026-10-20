@@ -27,9 +27,10 @@ import {
 
 export const dynamic = 'force-dynamic'
 
-type Parametros = { params: { doenca: string; lamina: string }; searchParams: { normal?: string } }
+type Parametros = { params: Promise<{ doenca: string; lamina: string }>; searchParams: Promise<{ normal?: string }> }
 
-export async function generateMetadata({ params }: Parametros) {
+export async function generateMetadata(props: Parametros) {
+  const params = await props.params
   const l = laminaPatologicaPorSlug(params.lamina)
   if (!l) return {}
   return metadadosDoModulo({
@@ -39,7 +40,9 @@ export async function generateMetadata({ params }: Parametros) {
   })
 }
 
-export default async function PaginaDaComparacao({ params, searchParams }: Parametros) {
+export default async function PaginaDaComparacao(props: Parametros) {
+  const searchParams = await props.searchParams
+  const params = await props.params
   await exigirAcessoAHistologia()
   const lamina = laminaPatologicaPorSlug(params.lamina)
   if (!lamina || lamina.doenca !== params.doenca) notFound()

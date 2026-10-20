@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, use } from 'react'
 import Link from 'next/link'
 import { MotionConfig } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
@@ -15,7 +15,8 @@ import type { EstadoDoSaguao } from '@/lib/monitorias/sala/mensagens'
 /** No saguão, quem já está na sala é conferido a cada 20 s, por no máximo 10 min. */
 const ATUALIZACOES_DO_SAGUAO = 30
 
-export default function PaginaDaSala({ params }: { params: { id: string } }) {
+export default function PaginaDaSala(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const [recarregando] = useState(() => precisaRecarregarASala(params.id))
   useEffect(() => {
     if (recarregando) recarregarASala(params.id)

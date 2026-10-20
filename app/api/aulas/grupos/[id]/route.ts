@@ -25,7 +25,8 @@ const PatchSchema = z.object({
 /** Quantos membros a tela resolve por vez. Acima disso, só a contagem. */
 const MEMBROS_POR_PAGINA = 300
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const security = await secureApiEndpoint(request, {
     rateLimit: 'READ',
     auth: {
@@ -90,7 +91,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const security = await secureApiEndpoint(request, {
     rateLimit: 'WRITE',
     auth: {
@@ -131,7 +133,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const security = await secureApiEndpoint(request, {
     rateLimit: 'WRITE',
     auth: {

@@ -6,10 +6,8 @@ import { ObjectId } from 'mongodb'
 export const dynamic = 'force-dynamic'
 
 // PATCH - Marcar cronograma como concluído
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

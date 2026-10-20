@@ -13,7 +13,8 @@ export function generateStaticParams() {
   return VISTAS.map((vista) => ({ slug: vista.slug }))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const vista = vistaPorSlug(params.slug)
   if (!vista) return { title: 'Janela não encontrada | Manual de Semiologia' }
   return {
@@ -22,7 +23,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   }
 }
 
-export default function VistaPage({ params }: { params: { slug: string } }) {
+export default async function VistaPage(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params
   const encontrada = vistaPorSlug(params.slug)
   if (!encontrada) notFound()
 

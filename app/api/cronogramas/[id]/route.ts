@@ -6,10 +6,8 @@ import { ObjectId } from 'mongodb'
 export const dynamic = 'force-dynamic'
 
 // GET - Obter cronograma específico
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {
@@ -45,10 +43,8 @@ export async function GET(
 }
 
 // PUT - Atualizar cronograma
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {
@@ -89,10 +85,8 @@ export async function PUT(
 }
 
 // PATCH - Atualizar cronograma (parcialmente)
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {
@@ -133,10 +127,8 @@ export async function PATCH(
 }
 
 // DELETE - Deletar cronograma
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

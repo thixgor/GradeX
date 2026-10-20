@@ -8,7 +8,8 @@ export function generateStaticParams() {
   return []
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const modelo = getModeloBySlug(params.slug)
   if (!modelo) {
     return {

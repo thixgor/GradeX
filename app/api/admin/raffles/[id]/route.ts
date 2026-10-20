@@ -43,7 +43,8 @@ async function requireAdmin() {
   return session
 }
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   if (!isValidObjectId(params.id)) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -72,7 +73,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   })
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   if (!isValidObjectId(params.id)) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -150,7 +152,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   return NextResponse.json({ ok: true })
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   if (!isValidObjectId(params.id)) return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

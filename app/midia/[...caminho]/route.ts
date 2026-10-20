@@ -33,10 +33,8 @@ const FORMATO = /^[0-9a-f]{2}\/[0-9a-f]{64}\.[a-z0-9]{1,5}$/
 
 const CACHE = 'public, max-age=31536000, s-maxage=31536000, immutable'
 
-export async function GET(
-  _request: Request,
-  { params }: { params: { caminho?: string[] } },
-) {
+export async function GET(_request: Request, props: { params: Promise<{ caminho?: string[] }> }) {
+  const params = await props.params
   const relativo = (params.caminho || []).join('/')
   if (!FORMATO.test(relativo)) {
     return new NextResponse('Not found', { status: 404 })

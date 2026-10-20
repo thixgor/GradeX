@@ -6,10 +6,8 @@ import { ObjectId } from 'mongodb'
 export const dynamic = 'force-dynamic'
 
 // PATCH - Mover prova para um grupo
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) {

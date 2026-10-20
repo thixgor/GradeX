@@ -45,7 +45,8 @@ async function garantirAcesso(db: Db, aulaId: string, session: any) {
   return { aula }
 }
 
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -66,7 +67,8 @@ export async function GET(_request: NextRequest, { params }: { params: { id: str
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!isValidObjectId(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

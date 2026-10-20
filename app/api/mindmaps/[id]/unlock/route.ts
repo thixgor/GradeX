@@ -22,7 +22,8 @@ async function findMap(db: any, idOrSlug: string): Promise<(MindMap & { _id: Obj
 
 // POST /api/mindmaps/[id]/unlock — verifica senha e devolve o conteúdo.
 // Admin e dono recebem o conteúdo sem precisar da senha.
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     const db = await getDb()

@@ -20,7 +20,8 @@ function respostaDaRecusa(r: Recusa): NextResponse {
  * GET — o saguão: se a sala está aberta, quem já está nela e o plano B. Pedido
  * uma vez ao abrir a tela (e de novo só quando a sala abre ou a pessoa volta).
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 30, windowMs: 60_000 } }, async ({ sessao }) => {
     const estado = await estadoDoSaguao(params.id, sessao.userId, new Date())
     if (!estado) return naoEncontrado()
@@ -33,7 +34,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
  * os servidores ICE (STUN + TURN temporário, se ligado) e quem está na sala.
  * POST {acao:'renovar', uso?} — reconfere tudo e troca o token (a cada ~10 min).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
     const parsed = EsquemaAcaoDaSala.safeParse(await lerJson(request))
     if (!parsed.success) return erro(400, 'Ação inválida.')

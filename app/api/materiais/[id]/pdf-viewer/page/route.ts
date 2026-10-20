@@ -36,10 +36,8 @@ function rateLimitedPdfResponse(retryAfterMs: number) {
   )
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   // Declarado fora do try para o catch poder decidir se expõe o erro real
   // (só pra admin — ver comentário no catch abaixo).
   let isAdminCaller = false

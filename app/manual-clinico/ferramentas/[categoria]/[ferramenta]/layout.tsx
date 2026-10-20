@@ -11,7 +11,8 @@ import { CATEGORIA_POR_ID, ehCategoria } from '@/lib/ferramentas-clinicas/catego
  * um péssimo negócio, ainda mais numa página que exige acesso para mostrar
  * qualquer conteúdo.
  */
-export function generateMetadata({ params }: { params: { categoria: string } }): Metadata {
+export async function generateMetadata(props: { params: Promise<{ categoria: string }> }): Promise<Metadata> {
+  const params = await props.params
   if (!ehCategoria(params.categoria)) {
     return { title: 'Ferramentas Clínicas | Manual Clínico' }
   }

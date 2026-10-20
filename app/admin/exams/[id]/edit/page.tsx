@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,7 +38,8 @@ import { normalizarPublico, type PublicoDaProva } from '@/lib/provas/publico-da-
 import { deCampoLocal, paraCampoLocal, paraInstanteLocal } from '@/lib/provas/horario-local'
 import { validarJanelaDoFormulario } from '@/lib/provas/janela-da-prova'
 
-export default function EditExamPage({ params }: { params: { id: string } }) {
+export default function EditExamPage(props: { params: Promise<{ id: string }> }) {
+  const params = use(props.params)
   const { id } = params
   const router = useRouter()
   const [loading, setLoading] = useState(true)

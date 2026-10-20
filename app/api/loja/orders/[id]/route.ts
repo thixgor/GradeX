@@ -34,7 +34,8 @@ const VALID_STATUSES: ShopOrderStatus[] = [
   'out_for_delivery', 'delivered', 'cancelled', 'refunded',
 ]
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -55,7 +56,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PATCH - Admin atualiza status / rastreio de um pedido físico
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {

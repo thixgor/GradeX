@@ -60,7 +60,8 @@ async function carregar(db: any, id: string) {
   return db.collection(PROUNI_REQUESTS_COLLECTION).findOne({ _id: new ObjectId(id) })
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
@@ -314,7 +315,8 @@ async function notificarDecisao(
  * e quando. O que sai é o documento pessoal — que, depois de conferido, só
  * ocupa espaço pago e aumenta o estrago de qualquer vazamento futuro.
  */
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })

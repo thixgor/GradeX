@@ -32,11 +32,12 @@ function first(value: string | string[] | undefined): string | null {
   return value ?? null
 }
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
+export default async function LoginPage(
+  props: {
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+  }
+) {
+  const searchParams = await props.searchParams
   return (
     <LoginView
       redirectTo={safeInternalPath(first(searchParams?.redirect))}

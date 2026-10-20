@@ -18,7 +18,8 @@ const Corpo = z
  * POST {inicio: ISO | 'agora', duracaoMin?} — o suporte muda o horário da
  * monitoria. "agora" abre a sala na hora (adiantar uma aula, testar).
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'ADMIN' }, async ({ sessao, ip }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Horário inválido.')

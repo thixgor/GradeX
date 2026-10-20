@@ -15,7 +15,8 @@ export const dynamic = 'force-dynamic'
  *  - pausar: publicado → pausado (sai da vitrine; reservas existentes seguem)
  *  - retomar: pausado → publicado
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
     const corpo = z.object({ acao: z.enum(['enviar', 'pausar', 'retomar']) }).strict().safeParse(await lerJson(request))
     if (!corpo.success || !ObjectId.isValid(params.id)) return erro(400, 'Ação inválida.')

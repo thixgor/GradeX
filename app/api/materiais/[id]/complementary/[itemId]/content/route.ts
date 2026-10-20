@@ -33,8 +33,9 @@ const HTML_CONTENT_SECURITY_POLICY = [
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; itemId: string } }
+  props: { params: Promise<{ id: string; itemId: string }> }
 ) {
+  const params = await props.params
   try {
     const session = await getSession()
     const fileKindParam = request.nextUrl.searchParams.get('kind')

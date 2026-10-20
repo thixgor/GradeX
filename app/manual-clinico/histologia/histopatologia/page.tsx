@@ -50,10 +50,11 @@ interface Props {
    * digitou um nome de doença num índice que só tem tecido normal, não achou, e
    * chega aqui com o termo já buscado em vez de um campo vazio.
    */
-  searchParams: { q?: string }
+  searchParams: Promise<{ q?: string }>
 }
 
-export default async function HomeDaHistopatologia({ searchParams }: Props) {
+export default async function HomeDaHistopatologia(props: Props) {
+  const searchParams = await props.searchParams
   await exigirAcessoAHistologia()
 
   const doencas = doencasDoCatalogo()

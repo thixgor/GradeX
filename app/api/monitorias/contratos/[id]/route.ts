@@ -22,7 +22,8 @@ async function carregar(id: string, userId: string, admin: boolean) {
 }
 
 /** GET — o texto do contrato, como será assinado (com o hash que a tela deve devolver). */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, {}, async ({ sessao }) => {
     const contrato = await carregar(params.id, sessao.userId, sessao.role === 'admin')
     if (!contrato) return naoEncontrado()
@@ -45,7 +46,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 /** POST {codigo, hash} — assina. Exige os Termos do papel aceitos. */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao, ip }) => {
     const corpo = z.object({ codigo: z.string().max(10), hash: z.string().length(64) }).strict().safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Dados inválidos.')

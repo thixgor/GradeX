@@ -50,7 +50,8 @@ async function historicoDosAlunos(
 const VE_LINK = ['confirmada', 'realizada', 'em_disputa', 'concluida']
 
 /** GET — tudo que a sala da reserva precisa, filtrado pelo papel de quem pede. */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 120, windowMs: 60_000 } }, async ({ sessao }) => {
     const reserva = await carregarReserva(params.id)
     const acesso = await acessoDeLeitura(reserva, sessao.userId)

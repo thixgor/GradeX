@@ -40,7 +40,8 @@ const Schema = z.object({
   payerDocumentNumber: z.string().optional(),
 })
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   const rl = await checkRateLimit(ip, 'raffles_checkout', 15, 60_000)
   if (!rl.success) {

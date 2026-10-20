@@ -23,7 +23,8 @@ const ROSTER_LIMIT = 2000
  * de `score`: a nota final mistura pesos, discursivas e autoavaliação, então
  * ela não responde "quantas questões essa pessoa acertou".
  */
-export async function GET(request: NextRequest, { params }: { params: { examId: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ examId: string }> }) {
+  const params = await props.params
   const guard = await requireAdmin()
   if (!guard.ok || !guard.db) return guard.response!
   const db = guard.db

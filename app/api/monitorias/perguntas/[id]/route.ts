@@ -22,7 +22,8 @@ const Corpo = z.discriminatedUnion('acao', [
  *  - ocultar/mostrar: monitor dono ou admin
  *  - denunciar: qualquer pessoa logada (3 denúncias ocultam até o admin ver)
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE', emailVerificado: true }, async ({ sessao }) => {
     if (!ObjectId.isValid(params.id)) return naoEncontrado()
     const corpo = Corpo.safeParse(await lerJson(request))

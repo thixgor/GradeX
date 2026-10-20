@@ -18,7 +18,8 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 /** Renomear, mover, esconder ou recolorir um nó. */
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
@@ -122,7 +123,8 @@ export async function PATCH(request: Request, { params }: { params: { id: string
  * tela só manda essa flag depois de uma confirmação que mostra os números
  * reais — ver `app/aulas/gerenciar/taxonomia/page.tsx`.
  */
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })

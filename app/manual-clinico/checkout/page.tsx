@@ -21,10 +21,11 @@ function planoDaQuery(value: string | string[] | undefined): PlanKey | null {
   return PLANOS.includes(bruto as PlanKey) ? (bruto as PlanKey) : null
 }
 
-export default function ManualClinicoCheckoutPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined }
-}) {
+export default async function ManualClinicoCheckoutPage(
+  props: {
+    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+  }
+) {
+  const searchParams = await props.searchParams
   return <ManualClinicoCheckoutView planQuery={planoDaQuery(searchParams?.plan)} />
 }

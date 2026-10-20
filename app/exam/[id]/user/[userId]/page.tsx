@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -132,7 +132,8 @@ const CORES: Record<Situacao, { chip: string; borda: string; fundo: string; rotu
   },
 }
 
-export default function UserSubmissionPage({ params }: { params: { id: string; userId: string } }) {
+export default function UserSubmissionPage(props: { params: Promise<{ id: string; userId: string }> }) {
+  const params = use(props.params)
   const { id, userId } = params
   const router = useRouter()
   const [exam, setExam] = useState<Exam | null>(null)

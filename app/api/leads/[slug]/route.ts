@@ -37,10 +37,8 @@ async function isValidEmail(email: string): Promise<boolean> {
     return true
 }
 
-export async function GET(
-    req: NextRequest,
-    { params }: { params: { slug: string } }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params
     try {
         const { slug } = params
 
@@ -102,10 +100,8 @@ export async function GET(
     }
 }
 
-export async function POST(
-    req: NextRequest,
-    { params }: { params: { slug: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params
     try {
         const { slug } = params
         const body = await req.json()

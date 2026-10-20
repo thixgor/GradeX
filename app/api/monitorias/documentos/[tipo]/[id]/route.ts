@@ -64,7 +64,11 @@ function pdf(bytes: Uint8Array, nome: string) {
  *  - termos/<monitor|aluno>      a própria pessoa (com o aceite registrado)
  *  - conversa/<reservaId>        participantes e admin (histórico do chat + materiais)
  */
-export async function GET(request: NextRequest, { params }: { params: { tipo: string; id: string } }) {
+export async function GET(
+  request: NextRequest,
+  props: { params: Promise<{ tipo: string; id: string }> }
+) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 30, windowMs: 60_000 } }, async ({ sessao }) => {
     const admin = sessao.role === 'admin'
     const c = await obterColecoes()

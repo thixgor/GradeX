@@ -19,7 +19,8 @@ export const maxDuration = 30
  * fixado pelo servidor e o texto do aditivo, com versão e hash); e, se já
  * existe um PIX aberto, com quais adicionais ele foi gerado (para reabrir o mesmo).
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'READ' }, async ({ sessao }) => {
     const [reserva, aluno, c] = await Promise.all([carregarReserva(params.id), carregarUsuario(sessao.userId), obterColecoes()])
     if (!aluno) return erro(403, 'Conta indisponível.')
@@ -59,7 +60,8 @@ const Corpo = z
  * propósito: o preço da aula é o do assento, o do material é o oficial e o do
  * Resumo por IA é calculado aqui. Qualquer outro campo: 400.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao, ip }) => {
     const limite = await checkRateLimit(`mon-checkout:${sessao.userId}`, 'monitorias_checkout', 8, 10 * 60_000)
     if (!limite.success) return erro(429, 'Muitas tentativas de pagamento. Aguarde alguns minutos.')

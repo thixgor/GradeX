@@ -5,10 +5,8 @@ import { getSession } from '@/lib/auth'
 import { sendLeadMaterialEmail } from '@/lib/mail'
 
 // POST - Enviar email manualmente para um lead específico
-export async function POST(
-    req: NextRequest,
-    { params }: { params: { id: string } }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<{ id: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {

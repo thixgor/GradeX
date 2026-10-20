@@ -11,7 +11,8 @@ export const dynamic = 'force-dynamic'
 const Corpo = z.object({ ultimoSeq: z.number().int().min(-1).max(400) }).strict()
 
 /** POST {ultimoSeq} — a pessoa saiu da sala: o resumo não precisa esperar mais trechos dela. */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 20, windowMs: 10 * 60_000 } }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Pedido inválido.')

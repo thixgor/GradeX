@@ -29,7 +29,8 @@ async function ensureAdmin() {
 }
 
 // PATCH — atualiza campos do depoimento (link, nome, descrição, ordem, visível).
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const auth = await ensureAdmin()
   if ('error' in auth) return auth.error
 
@@ -87,7 +88,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 // DELETE — remove o depoimento.
-export async function DELETE(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const auth = await ensureAdmin()
   if ('error' in auth) return auth.error
 

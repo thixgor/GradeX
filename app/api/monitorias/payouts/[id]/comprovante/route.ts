@@ -11,7 +11,8 @@ export const maxDuration = 30
  * GET — o comprovante do PIX que o admin anexou ao repasse. Fica no Blob
  * PRIVADO: só sai por aqui, para o monitor dono e para admin.
  */
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 30, windowMs: 60_000 } }, async ({ sessao }) => {
     if (!ObjectId.isValid(params.id)) return naoEncontrado()
     const c = await obterColecoes()

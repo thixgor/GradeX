@@ -14,9 +14,8 @@ import {
 const DECK_FALLBACK_DESCRIPTION =
   'Deck de flashcards da DomineAqui — estude com repetição espaçada e maximize sua fixação.'
 
-export async function generateMetadata(
-  { params }: { params: { slug: string } }
-): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const params = await props.params
   const fallback: Metadata = {
     title: 'Deck de Flashcards',
     description: DECK_FALLBACK_DESCRIPTION,

@@ -22,7 +22,8 @@ const Corpo = z
  * POST — o trecho chegou ao Google (ou ao Blob): registra e dispara a
  * transcrição (ninguém espera por ela). Com `falha`, só registra o motivo.
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { limite: { limit: 40, windowMs: 10 * 60_000 } }, async ({ sessao }) => {
     const corpo = Corpo.safeParse(await lerJson(request))
     if (!corpo.success) return erro(400, 'Pedido inválido.')

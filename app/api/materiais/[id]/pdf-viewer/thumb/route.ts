@@ -47,10 +47,8 @@ function rateLimited(retryAfterMs: number) {
   )
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   try {
     const ip = getClientIp(request)
     const geral = checkRateLimitSync(ip, 'pdf-viewer-thumb', THUMB_RATE_LIMIT_IP)

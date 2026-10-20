@@ -20,7 +20,8 @@ function tipoReal(b: Uint8Array): string | null {
 }
 
 /** POST multipart (arquivo) — anexa o comprovante do PIX ao pagamento em aberto (Blob PRIVADO). */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   return rotaAutenticada(request, { admin: true, limite: 'UPLOAD' }, async ({ sessao, ip }) => {
     if (!ObjectId.isValid(params.id)) return naoEncontrado()
     const c = await obterColecoes()

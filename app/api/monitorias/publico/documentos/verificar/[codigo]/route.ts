@@ -10,7 +10,8 @@ export const dynamic = 'force-dynamic'
  * Mostra só o que prova a autenticidade — número, situação, hash, datas das
  * assinaturas e primeiros nomes. Nada de CPF, e-mail ou valores.
  */
-export async function GET(request: NextRequest, { params }: { params: { codigo: string } }) {
+export async function GET(request: NextRequest, props: { params: Promise<{ codigo: string }> }) {
+  const params = await props.params
   return rotaPublica(request, { limit: 20, windowMs: 60_000 }, async () => {
     const codigo = String(params.codigo || '').toUpperCase()
     if (!/^[A-Z0-9]{10}$/.test(codigo)) return ok({ valido: false })

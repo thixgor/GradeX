@@ -13,10 +13,8 @@ export const maxDuration = 60
  * A UI consulta em polling enquanto houver pendências — é assim que ela
  * consegue dizer QUEM já recebeu em vez de só declarar "enviado".
  */
-export async function GET(
-    _request: NextRequest,
-    { params }: { params: { campaignId: string } },
-) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ campaignId: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {
@@ -38,10 +36,8 @@ export async function GET(
  * "Continuar envio agora": drena mais uma leva da fila sem esperar o cron.
  * Útil para campanhas grandes, em que uma requisição só não dá conta.
  */
-export async function POST(
-    _request: NextRequest,
-    { params }: { params: { campaignId: string } },
-) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ campaignId: string }> }) {
+    const params = await props.params
     try {
         const session = await getSession()
         if (!session || session.role !== 'admin') {
