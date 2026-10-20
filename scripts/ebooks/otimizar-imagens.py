@@ -15,7 +15,8 @@ visitante baixa o mesmo tanto, e quem chega de anúncio está no 4G.
 
 O que faz, imagem a imagem:
 
-  - o logo da marca (idêntico a `public/logo.png`) vai a 256 px no lado maior:
+  - o logo da marca (idêntico ao original em `img/logo.png`) vai a 256 px no
+    lado maior:
     8× o maior tamanho em que é exibido;
   - o resto vai a no máximo 1600 px no lado maior. A maior exibição é uma capa
     de 430 px de altura, então sobram mais de 3× de densidade para tela retina;
@@ -70,7 +71,10 @@ def md5(dados: bytes) -> str:
     return hashlib.md5(dados).hexdigest()
 
 
-MD5_LOGO = md5((PUBLIC / 'logo.png').read_bytes()) if (PUBLIC / 'logo.png').exists() else None
+# O bundler embute o original de 1584 px, que mora em `img/` desde que o
+# `public/logo.png` servido passou a ser a versão enxuta de 512 px.
+LOGO_ORIGINAL = RAIZ / 'img' / 'logo.png'
+MD5_LOGO = md5(LOGO_ORIGINAL.read_bytes()) if LOGO_ORIGINAL.exists() else None
 
 
 def tem_transparencia(imagem: Image.Image) -> bool:
