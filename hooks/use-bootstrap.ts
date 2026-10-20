@@ -16,7 +16,7 @@
  * - Centralized state management
  */
 
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useCallback, useSyncExternalStore } from 'react'
 import { useRouter } from 'next/navigation'
 import { fetchWithTimeout, invalidateCache, clearCache } from '@/lib/api-client'
 import { clearPageCache } from '@/lib/page-cache'
@@ -133,6 +133,8 @@ let globalListeners: Set<() => void> = new Set()
 let lastFetchTime = 0
 let bootstrapGeneration = 0
 let latestBootstrapRequestId = 0
+// Muda a cada notifyListeners — ver subscribeToBootstrap.
+let storeVersion = 0
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 const BOOTSTRAP_TIMEOUT_MS = 15000 // 15s — mobile (3G/4G ruim) precisa de margem maior
@@ -201,7 +203,37 @@ if (typeof window !== 'undefined') {
  * Notify all listeners of data changes
  */
 function notifyListeners() {
+  storeVersion += 1
   globalListeners.forEach(callback => callback())
+}
+
+// ── Estado global como store externo do React ──────────────────────
+// A versão muda a cada `notifyListeners`; é ela o "retrato" que o React
+// compara. Durante a hidratação o retrato é o do servidor (-1): sem sessão,
+// sem dados, `loading` — exatamente o esqueleto que o HTML trouxe. Logo depois
+// de hidratar, o React compara com o retrato real e renderiza de novo com o
+// que veio do localStorage.
+//
+// Antes o hook lia o estado global direto. Como a hidratação síncrona do
+// localStorage (acima) já preenche os dados ao carregar o módulo, a primeira
+// renderização no cliente pintava o app completo sobre um HTML que só tinha o
+// esqueleto: o React acusava #418/#422, jogava fora o HTML e renderizava a
+// página inteira de novo — em toda abertura de página com cache no aparelho.
+const RETRATO_DO_SERVIDOR = -1
+
+function subscribeToBootstrap(callback: () => void) {
+  globalListeners.add(callback)
+  return () => {
+    globalListeners.delete(callback)
+  }
+}
+
+function getStoreVersion() {
+  return storeVersion
+}
+
+function getServerStoreVersion() {
+  return RETRATO_DO_SERVIDOR
 }
 
 /**
@@ -313,26 +345,13 @@ export function useBootstrap(options: {
   } = options
 
   const router = useRouter()
-  const [, forceUpdate] = useState({})
-  const mountedRef = useRef(true)
 
-  // Subscribe to global state changes
-  useEffect(() => {
-    // Rearmar aqui é essencial: o cleanup abaixo zera `mountedRef` e, no
-    // StrictMode (dev), o React monta → desmonta → monta. Sem esta linha o
-    // listener continuava registrado mas silencioso, e toda página protegida
-    // ficava presa em "Carregando..." mesmo com o /api/bootstrap já respondido.
-    mountedRef.current = true
-    const listener = () => {
-      if (mountedRef.current) {
-        forceUpdate({})
-      }
-    }
-    globalListeners.add(listener)
-    return () => {
-      globalListeners.delete(listener)
-    }
-  }, [])
+  // Assina o estado global. No retrato do servidor (só durante a hidratação)
+  // o hook responde como se nada tivesse chegado ainda — ver
+  // subscribeToBootstrap.
+  const hydrating =
+    useSyncExternalStore(subscribeToBootstrap, getStoreVersion, getServerStoreVersion) ===
+    RETRATO_DO_SERVIDOR
 
   // Initial fetch
   useEffect(() => {
@@ -394,13 +413,6 @@ export function useBootstrap(options: {
     )
   }, [skip, refetchInterval])
 
-  // Cleanup
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
-
   // Manual refetch function
   const refetch = useCallback(async () => {
     invalidateCache('/api/bootstrap')
@@ -408,9 +420,9 @@ export function useBootstrap(options: {
   }, [])
 
   // Computed values
-  const loading = !globalBootstrapData && !globalBootstrapError && !skip
-  const error = globalBootstrapError
-  const data = globalBootstrapData
+  const data = hydrating ? null : globalBootstrapData
+  const error = hydrating ? null : globalBootstrapError
+  const loading = !data && !error && !skip
 
   return {
     // Raw data
@@ -423,7 +435,7 @@ export function useBootstrap(options: {
      * O que está no localStorage pode ter até 24h: serve para pintar a tela,
      * não para expulsar alguém de uma seção que o admin já religou.
      */
-    fresh: lastFetchTime > 0,
+    fresh: !hydrating && lastFetchTime > 0,
 
     // User data
     user: data?.user ?? null,

@@ -184,6 +184,16 @@ export function AppShell({
   })
   const [showCreateExamModal, setShowCreateExamModal] = useState(false)
   const [retryingBootstrap, setRetryingBootstrap] = useState(false)
+  // "Entrar" do visitante volta para onde ele estava. O endereço completo (com
+  // a busca) só existe no navegador; montá-lo durante a renderização fazia o
+  // link divergir do HTML do servidor — e, na hidratação, o React fica com o
+  // atributo do servidor, sem o retorno. Por isso entra depois de montar.
+  const [loginHref, setLoginHref] = useState('/auth/login')
+  useEffect(() => {
+    setLoginHref(
+      `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+    )
+  }, [pathname])
 
   // Persist collapsed state to localStorage
   const handleSidebarCollapse = (collapsed: boolean) => {
@@ -375,10 +385,6 @@ export function AppShell({
   }
 
   if (isGuest) {
-    const loginHref = typeof window !== 'undefined'
-      ? `/auth/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
-      : '/auth/login'
-
     return (
       <AppShellContext.Provider value={contextValue}>
         <LiteMotionConfig lite={liteMode}>
