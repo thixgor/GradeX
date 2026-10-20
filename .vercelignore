@@ -17,6 +17,7 @@ public/*.MD
 # Dev config
 *.log
 .eslintrc*
+eslint.config.mjs
 .prettierrc*
 tsconfig.tsbuildinfo
 
