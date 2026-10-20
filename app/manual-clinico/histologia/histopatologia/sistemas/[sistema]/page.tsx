@@ -10,7 +10,6 @@ import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { CAPITULOS_DO_ATLAS, obterCapituloDoAtlas } from '@/lib/histopatologia/catalogacao'
 import {
-  SISTEMAS_COM_CONTAGEM,
   doencasDoSistema,
   obterInventario,
   obterSistemaComContagem,
@@ -56,14 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     caminho: rotaDoSistema(sistema.id),
     estadoDeRevisao: sistema.doencas > 0 ? 'revisao-medica' : 'rascunho',
   })
-}
-
-/**
- * Os 14 sistemas são poucos, estáveis e sempre visitados — o único conjunto do
- * módulo em que pré-renderizar compensa de fato.
- */
-export function generateStaticParams() {
-  return SISTEMAS_COM_CONTAGEM.map((s) => ({ sistema: s.id }))
 }
 
 export default async function PaginaDoSistema({ params, searchParams }: Props) {

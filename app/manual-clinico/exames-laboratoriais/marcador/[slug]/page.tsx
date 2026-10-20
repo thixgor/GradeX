@@ -8,7 +8,6 @@ import { BotaoFavorito, Expansivel, Profundidade } from '@/components/exames-lab
 import { GerarParaPraticar } from '@/components/exames-laboratoriais/laboratorio'
 import { Campo, Lista, Secao, SecaoDeAlteracao } from '@/components/exames-laboratoriais/secoes'
 import {
-  MARCADORES,
   ROTULO_DO_GRUPO,
   alteracoesDoMarcador,
   comparacoesDoMarcador,
@@ -40,8 +39,10 @@ import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoe
  * exames — cada um recebendo conteúdo pronto como `children`.
  */
 
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return MARCADORES.map((m) => ({ slug: m.id }))
+  return []
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

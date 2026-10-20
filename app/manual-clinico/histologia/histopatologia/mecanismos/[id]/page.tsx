@@ -35,11 +35,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   })
 }
 
-/** Catorze mecanismos estáveis: pré-renderizar é barato e todos são visitados. */
-export function generateStaticParams() {
-  return MECANISMOS_PUBLICADOS.map((m) => ({ id: m.id }))
-}
-
 export default async function PaginaDoMecanismo({ params }: Props) {
   await exigirAcessoAHistologia()
 

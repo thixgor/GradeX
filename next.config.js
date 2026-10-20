@@ -51,8 +51,43 @@ const nextConfig = {
   // Compressão automática
   compress: true,
 
+  /**
+   * Páginas sob demanda.
+   *
+   * O build gerava 1.801 páginas, e "Generating static pages" era um terço do
+   * tempo de um build com cache. Quase tudo vinha de oito catálogos em código
+   * com uma página por item: 485 sinais da Semiologia, 248 marcadores e 47
+   * alterações do Lab, 188 casos de Raio-X, 155 de TC, 54 com apontamentos, 98
+   * modelos 3D e 37 quizzes de Raio-X — 283 MB de HTML e RSC refeitos e
+   * reenviados a cada push, para páginas que em boa parte ninguém abre entre
+   * um deploy e o próximo.
+   *
+   * Nesses oito, `generateStaticParams` devolve `[]`: a página é gerada na
+   * primeira visita e fica no cache da Vercel até o próximo deploy (ISR sem
+   * prazo — o conteúdo só muda com código novo). Slug inexistente continua 404,
+   * pelo `notFound()` de cada página. Os catálogos pequenos e centrais (as 28
+   * incidências, as 20 séries de TC, os quizzes curtos) seguem pré-gerados.
+   * Pré-gerar de novo é só devolver a lista.
+   */
   // Habilitar otimização de pacotes pesados
   experimental: {
+    /**
+     * Compilação em processos separados, e o rastreio das funções junto dela.
+     *
+     * Build CPU é cobrado em minuto de relógio × vCPU da máquina. Sem estas
+     * três linhas, o Next 14 compila tudo num processo só (ele desliga o
+     * worker sozinho quando há `webpack` customizado, como aqui) e o rastreio
+     * de arquivos das ~800 rotas (`node-file-trace`, 25 s numa máquina de 4
+     * núcleos) só começa depois da compilação inteira — com os outros núcleos
+     * parados, mas pagos. Com elas, o rastreio sai no fim da compilação do
+     * servidor e corre junto com a do cliente.
+     *
+     * O `webpack()` abaixo só mexe em `resolve` e no cache, então roda igual
+     * dentro do worker.
+     */
+    webpackBuildWorker: true,
+    parallelServerCompiles: true,
+    parallelServerBuildTraces: true,
     /**
      * Catálogo da Histopatologia no bundle das funções que o leem.
      *
@@ -419,16 +454,18 @@ const nextConfig = {
        * `public, max-age=0, must-revalidate`. O navegador guarda e revalida a
        * cada visita, e cada revalidação atravessa a borda até a origem.
        *
-       * O peso está em `logo.png`: 2,7 MB, 1584x1496. Ele não é só o logo do
-       * site — é o `og:image` de `app/layout.tsx` (cada prévia de link no
-       * WhatsApp, Discord e Instagram busca os 2,7 MB) e a imagem embutida em
-       * TODO e-mail transacional, com URL absoluta fixa em `lib/mail.ts` e
-       * `lib/comms/email-render.ts`. Campanha de e-mail e link compartilhado
-       * são exatamente o tráfego que não passa por `next/image`: vai o PNG
-       * inteiro, direto da origem, toda vez.
+       * `logo.png` não é só o logo do site: é o logo do JSON-LD de
+       * `app/layout.tsx`, a imagem embutida em TODO e-mail transacional (URL
+       * absoluta fixa em `lib/mail.ts` e `lib/comms/email-render.ts`) e o
+       * cabeçalho dos PDFs gerados no navegador — que `/provas` e `/exam/[id]`
+       * pré-carregam em toda visita. É tráfego que não passa por `next/image`.
+       * Por isso ele é a versão enxuta: 512 px, paleta de 256 cores, 71 KB (era
+       * o original de 1584 px e 2,7 MB, que agora mora em `img/logo.png`). O
+       * maior tamanho em que aparece é ~160 px. `logo3d.png` (login) seguiu o
+       * mesmo caminho: 768 px, 356 KB, original em `img/logo3d.png`.
        *
-       * `logo3d.png` (2,5 MB) está na tela de login, e `pdf.worker.min.mjs`
-       * (1,4 MB) é baixado sempre que alguém abre um material em PDF.
+       * `pdf.worker.min.mjs` (1,4 MB) é baixado sempre que alguém abre um
+       * material em PDF.
        *
        * Prazo igual ao da marca do PWA, e pelo mesmo motivo: estes podem ser
        * trocados no lugar — um logo redesenhado mantém o nome. `s-maxage` alto

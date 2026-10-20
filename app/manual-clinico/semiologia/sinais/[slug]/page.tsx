@@ -3,12 +3,13 @@ import { notFound } from 'next/navigation'
 import { AreaSemiologia } from '@/components/semiologia/area'
 import { FichaDeSinal } from '@/components/semiologia/ficha-sinal'
 import { comAcervoSinal } from '@/lib/semiologia/acervo'
-import { SINAIS, sinalPorSlug } from '@/lib/semiologia/sinais'
+import { sinalPorSlug } from '@/lib/semiologia/sinais'
 import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
-/** Catálogo estático em código: pré-renderizar tira o servidor do caminho. */
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return SINAIS.map((sinal) => ({ slug: sinal.slug }))
+  return []
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

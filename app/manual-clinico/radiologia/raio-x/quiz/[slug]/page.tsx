@@ -8,8 +8,6 @@ import {
   type ResumoQuizRaioX,
 } from '@/lib/radiologia/quiz-raio-x'
 
-export const dynamicParams = false
-
 /**
  * Um quiz por incidência, um por região e o simulado geral — todos estáticos.
  *
@@ -17,8 +15,10 @@ export const dynamicParams = false
  * HTML pronto. Sortear a rodada é trabalho do navegador (ver `quiz-raio-x.tsx`);
  * a página só precisa entregar as questões já comentadas.
  */
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return QUIZZES_RAIO_X.map((quiz) => ({ slug: quiz.slug }))
+  return []
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

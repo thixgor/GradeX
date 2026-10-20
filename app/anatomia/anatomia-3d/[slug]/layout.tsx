@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { publicIndexingRobots } from '@/lib/seo'
-import { MODELOS, getModeloBySlug, getCategoria, FONTE } from '@/lib/anatomia-3d/modelos'
+import { getModeloBySlug, getCategoria, FONTE } from '@/lib/anatomia-3d/modelos'
 
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return MODELOS.map(m => ({ slug: m.slug }))
+  return []
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {

@@ -11,19 +11,15 @@ import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { buildJsonLd } from '@/lib/seo'
 import type { Modo } from '@/lib/histologia/quiz-engine'
 import { quizParaCliente } from '@/lib/histologia/quiz-engine'
-import { listarSlugsDeQuiz, obterQuiz } from '@/lib/histologia/repositorio'
+import { obterQuiz } from '@/lib/histologia/repositorio'
 import { BASE, jsonLdDeQuiz, metadadosDoModulo } from '@/lib/histologia/seo'
 
 /**
- * São 84 quizzes — 19 do acervo e 65 gerados sobre as lâminas —, e eles não
- * mudam entre deploys: este é o único lugar do módulo onde pré-renderizar tudo
- * faz sentido. (As 1.524 páginas do currículo continuam sob demanda; ver o
- * comentário em `[...slug]/page.tsx`.)
+ * Sem `generateStaticParams`, de propósito. A página lê o cookie de acesso
+ * (`exigirAcessoAHistologia`) e é `force-dynamic`: nada dela é pré-renderizado.
+ * A lista dos 84 slugs só fazia o build visitar cada quiz para descobrir isso —
+ * 4,5% do tempo de "Generating static pages", em todo deploy, sem saída alguma.
  */
-export function generateStaticParams() {
-  return listarSlugsDeQuiz().map((slug) => ({ slug }))
-}
-
 export const dynamic = 'force-dynamic'
 
 interface Props {

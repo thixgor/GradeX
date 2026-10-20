@@ -35,8 +35,10 @@ import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoe
  * caminho para a ficha completa, para quem quiser o marcador inteiro.
  */
 
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return ALTERACOES.map((a) => ({ slug: a.id }))
+  return []
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

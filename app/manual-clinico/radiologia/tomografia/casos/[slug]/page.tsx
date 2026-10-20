@@ -6,10 +6,10 @@ import { COLECAO_TC, LICENCA_CASOS_TC } from '@/lib/radiologia/casos-tc'
 import { urlsDasSeries, vizinhosDoCaso } from '@/lib/radiologia/casos-imagem-paginas'
 import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 
-export const dynamicParams = false
-
+// Gerada na primeira visita e guardada até o próximo deploy, e não no build:
+// ver "Páginas sob demanda" em next.config.js.
 export function generateStaticParams() {
-  return COLECAO_TC.casos.map((caso) => ({ slug: caso.slug }))
+  return []
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

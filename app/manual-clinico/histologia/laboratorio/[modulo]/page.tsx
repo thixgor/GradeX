@@ -14,13 +14,11 @@ import { EstadoEditorial } from '@/components/histologia/marca'
 import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
 import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
 import { COLORACOES } from '@/lib/histologia/glossario'
-import { MODULOS_DE_LABORATORIO, obterModulo } from '@/lib/histologia/laboratorio'
+import { obterModulo } from '@/lib/histologia/laboratorio'
 import { BASE, metadadosDoModulo } from '@/lib/histologia/seo'
 
-export function generateStaticParams() {
-  return MODULOS_DE_LABORATORIO.map((m) => ({ modulo: m.id }))
-}
-
+// Sem `generateStaticParams`: a rota é `force-dynamic` (lê o cookie de acesso),
+// então a lista de módulos só fazia o build visitar cada um à toa.
 export const dynamic = 'force-dynamic'
 
 interface Props {
