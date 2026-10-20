@@ -21,7 +21,13 @@ export type ProuniRequestStatus = 'pending' | 'approved' | 'rejected' | 'cancell
  * Desfecho da análise automática. Só `approved` decide alguma coisa; os demais
  * deixam a solicitação na fila manual.
  */
-export type ProuniAiOutcome = 'approved' | 'rejected' | 'failed'
+export type ProuniAiOutcome = 'processing' | 'approved' | 'rejected' | 'failed'
+/**
+ * Uma análise "em andamento" mais velha que isto morreu junto com a função
+ * (o teto dela é 300 s). Os serializadores a mostram como falha, e o painel
+ * oferece reanalisar.
+ */
+export const PROUNI_AI_PROCESSING_STALE_MS = 6 * 60_000
 /** `reviewedBy` das aprovações feitas pela análise automática. */
 export const PROUNI_AI_REVIEWER_ID = 'ia'
 export const PROUNI_AI_REVIEWER_NAME = 'Análise automática (IA)'

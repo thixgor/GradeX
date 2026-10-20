@@ -113,9 +113,21 @@ desconto):
 
 ## Análise automática (IA)
 
-Logo depois de gravar a solicitação, `POST /api/prouni/solicitacoes` manda os
-comprovantes para o Gemini (`lib/prouni-analise-ia.ts`) e espera o parecer
-(~5–20 s; teto de ~30 s, `maxDuration` 60 s). **A IA só tem poder de aprovar:**
+`POST /api/prouni/solicitacoes` grava a solicitação com
+`aiReview.outcome: 'processing'`, **responde na hora** e entrega a análise ao
+`waitUntil` da mesma invocação (`lib/prouni-processar-ia.ts`, até 300 s;
+orçamento de 100 s por tentativa e 210 s no total). A página do produto e o
+painel se atualizam sozinhos (`useIntervaloVisivel`) até o parecer chegar; os
+e-mails saem do processamento. Antes a análise rodava dentro da requisição, com
+teto de ~30 s, e PDFs escaneados de várias páginas davam "tempo esgotado".
+Um "analisando" com mais de 6 min (a função morreu) aparece como falha.
+
+**Reanalisar com IA** (`POST /api/admin/prouni/solicitacoes/[id]/reanalisar`):
+botão no painel para pendentes com arquivos — a que falhou, a que chegou com a
+IA desligada. Aprovou, a pessoa recebe o "aprovado"; senão o parecer novo fica
+na fila, sem e-mail.
+
+**A IA só tem poder de aprovar:**
 
 | parecer | o que acontece | e-mail da pessoa | e-mail do admin |
 | --- | --- | --- | --- |
@@ -200,6 +212,7 @@ O teto diário é o limite real de quanto uma conta pesa na análise.
 | `GET /api/admin/prouni/solicitacoes` | fila de análise |
 | `PATCH/DELETE /api/admin/prouni/solicitacoes/[id]` | aprovar/recusar/revogar · apagar anexos |
 | `GET/PUT /api/admin/prouni/config` | liga/desliga da análise automática |
+| `POST /api/admin/prouni/solicitacoes/[id]/reanalisar` | roda a análise automática de novo |
 | `POST /api/admin/prouni/limpeza` | faxina em lote dos anexos |
 
 ## Telas

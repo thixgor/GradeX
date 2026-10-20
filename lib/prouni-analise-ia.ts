@@ -46,12 +46,15 @@ import type { ProuniAiReview, ProuniAttachment, ProuniProgram } from '@/lib/prou
 export const PROUNI_IA_MAX_BYTES = 13 * 1024 * 1024
 
 /**
- * Por tentativa e no total. Download (8 s) + modelo (32 s) + e-mails (8 s)
- * cabem no `maxDuration` de 60 s da rota mesmo no pior caso.
+ * Por tentativa e no total. A análise roda em segundo plano
+ * (`lib/prouni-processar-ia.ts`, `waitUntil` de até 300 s), então o teto é o
+ * do documento, não o da requisição: um PDF escaneado de muitas páginas leva
+ * bem mais que os 25 s de antes — era ali que dava "tempo esgotado". Download
+ * (20 s) + modelo (210 s) + e-mails (8 s) cabem nos 300 s com folga.
  */
-const TIMEOUT_POR_TENTATIVA_MS = 25_000
-const PRAZO_TOTAL_MS = 32_000
-const TIMEOUT_DOWNLOAD_MS = 8_000
+const TIMEOUT_POR_TENTATIVA_MS = 100_000
+const PRAZO_TOTAL_MS = 210_000
+const TIMEOUT_DOWNLOAD_MS = 20_000
 
 export interface EntradaDaAnalise {
   program: ProuniProgram
