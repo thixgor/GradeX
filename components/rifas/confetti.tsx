@@ -27,7 +27,7 @@ interface Particle {
  */
 export function Confetti({ active, colors, durationMs = 4000 }: ConfettiProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef = useRef<number>()
+  const rafRef = useRef<number | undefined>(undefined)
   const startedRef = useRef(false)
 
   useEffect(() => {

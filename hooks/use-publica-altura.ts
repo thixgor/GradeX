@@ -29,7 +29,7 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 export function usePublicaAltura<T extends HTMLElement>(
   variavel: string,
   ativo: boolean,
-): React.RefObject<T> {
+): React.RefObject<T | null> {
   const ref = useRef<T>(null)
 
   useIsomorphicLayoutEffect(() => {

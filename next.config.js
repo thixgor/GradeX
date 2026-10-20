@@ -69,46 +69,68 @@ const nextConfig = {
    * incidências, as 20 séries de TC, os quizzes curtos) seguem pré-gerados.
    * Pré-gerar de novo é só devolver a lista.
    */
+  /**
+   * Catálogo da Histopatologia no bundle das funções que o leem.
+   *
+   * `lib/histopatologia/acervo.ts` descompacta os fragmentos `.json.gz` do
+   * catálogo em tempo de requisição, para servir o inventário das 2.892
+   * entradas que ainda não têm curadoria editorial. Arquivos em `public/` são
+   * servidos estaticamente, mas **não entram** no bundle das funções
+   * serverless — sem esta declaração o `readFile` funcionaria em
+   * desenvolvimento e devolveria ENOENT em produção.
+   *
+   * São 5,7 MB de texto comprimido. A alternativa — expandir as 202.593
+   * referências em derivados JSON versionados — custaria dezenas de megabytes
+   * de dado duplicado no repositório.
+   *
+   * As chaves são globs. No Turbopack, `[id]` escrito por extenso é classe de
+   * caracteres (um `i` ou um `d`) e não casa com o segmento da rota — a regra
+   * deixava de valer sem erro nenhum. Por isso o segmento dinâmico vai como
+   * `*`, que casa nos dois empacotadores.
+   */
+  outputFileTracingIncludes: {
+    '/manual-clinico/histologia/histopatologia/atlas/*': [
+      './public/patologia/catalogo/**/*.json.gz',
+    ],
+    '/api/manual-clinico/histopatologia/acervo/*': [
+      './public/patologia/catalogo/**/*.json.gz',
+    ],
+    /**
+     * As bibliotecas nativas do `sharp` nas funções do leitor de PDF.
+     *
+     * O rastreio do Turbopack leva o `sharp-<plataforma>.node`, mas não a
+     * libvips que ele carrega ao abrir (`libvips-cpp.so.*`, num pacote
+     * `@img/sharp-libvips-*` à parte no Linux; DLLs ao lado do `.node` no
+     * Windows). O webpack levava. Sem ela o `import('sharp')` falha na função,
+     * e `lib/material-pdf-enxugar.ts` cai no plano B em silêncio: a página
+     * sai sem regravar as imagens — o leitor funciona, só que entregando a
+     * página gorda que a derivada enxuta existe para evitar.
+     *
+     * O glob pega só o que o `npm install` da máquina baixou (na Vercel, os
+     * pacotes linux-x64).
+     */
+    ...Object.fromEntries(
+      [
+        '/api/materiais/upload',
+        '/api/materiais/*/pdf-viewer/{access,page,thumb}',
+      ].map((rota) => [rota, ['./node_modules/@img/sharp-*/lib/**/*']]),
+    ),
+  },
+
   // Habilitar otimização de pacotes pesados
   experimental: {
     /**
-     * Compilação em processos separados, e o rastreio das funções junto dela.
+     * Cache do roteador no navegador para páginas dinâmicas: 30 s, como era.
      *
-     * Build CPU é cobrado em minuto de relógio × vCPU da máquina. Sem estas
-     * três linhas, o Next 14 compila tudo num processo só (ele desliga o
-     * worker sozinho quando há `webpack` customizado, como aqui) e o rastreio
-     * de arquivos das ~800 rotas (`node-file-trace`, 25 s numa máquina de 4
-     * núcleos) só começa depois da compilação inteira — com os outros núcleos
-     * parados, mas pagos. Com elas, o rastreio sai no fim da compilação do
-     * servidor e corre junto com a do cliente.
-     *
-     * O `webpack()` abaixo só mexe em `resolve` e no cache, então roda igual
-     * dentro do worker.
+     * O Next 14 guardava por 30 s o RSC de uma página dinâmica já visitada; o
+     * 15 baixou o padrão para 0. Com 0, voltar a `/provas` vindo de uma prova
+     * ou alternar entre duas abas do painel refaz a requisição à função toda
+     * vez — invocação e Fast Origin Transfer a mais para mostrar o que o aluno
+     * acabou de ver. Voltar/avançar do navegador reaproveita a cópia de
+     * qualquer jeito; isto vale para o clique num link.
      */
-    webpackBuildWorker: true,
-    parallelServerCompiles: true,
-    parallelServerBuildTraces: true,
-    /**
-     * Catálogo da Histopatologia no bundle das funções que o leem.
-     *
-     * `lib/histopatologia/acervo.ts` descompacta os fragmentos `.json.gz` do
-     * catálogo em tempo de requisição, para servir o inventário das 2.892
-     * entradas que ainda não têm curadoria editorial. Arquivos em `public/` são
-     * servidos estaticamente, mas **não entram** no bundle das funções
-     * serverless — sem esta declaração o `readFile` funcionaria em
-     * desenvolvimento e devolveria ENOENT em produção.
-     *
-     * São 5,7 MB de texto comprimido. A alternativa — expandir as 202.593
-     * referências em derivados JSON versionados — custaria dezenas de megabytes
-     * de dado duplicado no repositório.
-     */
-    outputFileTracingIncludes: {
-      '/manual-clinico/histologia/histopatologia/atlas/[id]': [
-        './public/patologia/catalogo/**/*.json.gz',
-      ],
-      '/api/manual-clinico/histopatologia/acervo/[id]': [
-        './public/patologia/catalogo/**/*.json.gz',
-      ],
+    staleTimes: {
+      dynamic: 30,
     },
     optimizePackageImports: [
       'lucide-react',
@@ -500,52 +522,22 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  // Ignorar erros ESLint durante build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // O lint não roda no build desde o Next 16 (`next lint` e a chave `eslint`
+  // saíram); ele é o `npm run lint`, com o ESLint direto.
 
-  // Otimização de webpack
-  webpack: (config, { isServer, dev }) => {
-    // Não incluir módulos pesados desnecessários no client bundle
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        crypto: false,
-      }
-    }
-
-    // Otimizar resolução de módulos
-    config.resolve.symlinks = false
-
-    /**
-     * Comprimir o cache de filesystem do webpack.
-     *
-     * O cache sem compressão deste projeto ocupava 1,9 GB (1,4 GB só do
-     * `server-production`, que carrega as 429 rotas de API). O cache de build da
-     * Vercel tem teto de 1 GB: acima disso ele simplesmente não é guardado, e
-     * **todo build recomeça do zero** — foi exatamente o que aconteceu o mês
-     * inteiro, com Build CPU respondendo por 69% da fatura.
-     *
-     * `gzip` e não `brotli`: brotli comprime mais, mas o tempo de compressão
-     * entra em todo build, inclusive nos que já estariam rápidos. Gzip corta o
-     * suficiente para caber no teto sem cobrar caro por isso.
-     *
-     * A checagem de tipo existe porque em `next dev` o cache é de memória, e
-     * `compression` não se aplica a ele.
-     */
-    if (!dev && config.cache && typeof config.cache === 'object' && config.cache.type === 'filesystem') {
-      config.cache = {
-        ...config.cache,
-        compression: 'gzip',
-      }
-    }
-
-    return config
-  },
+  /**
+   * Sem `webpack()`: o build é do Turbopack, que o Next 16 usa por padrão (e
+   * que se recusa a buildar com um `webpack()` presente).
+   *
+   * O que a função fazia e onde foi parar:
+   * - `fs`/`net`/`tls`/`crypto` vazios no cliente: nenhum código do cliente
+   *   importa esses módulos (o build passa sem `resolveAlias` e sem polyfill
+   *   no bundle), então não há o que silenciar;
+   * - cache do webpack comprimido para caber no teto de 1 GB do cache de
+   *   build da Vercel: o Turbopack guarda o dele em `.next/cache/turbopack`
+   *   (~620 MB neste projeto), e o build com cache cai de ~110 s para ~40 s
+   *   numa máquina de 4 núcleos.
+   */
 
   // Desabilitar source maps em produção para build mais rápido
   productionBrowserSourceMaps: false,

@@ -14,7 +14,7 @@ import { useEffect, useState, type RefObject } from 'react'
  * observador seria criado com `null` e nunca mais reconstruído.
  */
 export function useEstaNaTela(
-  alvo: RefObject<HTMLElement>,
+  alvo: RefObject<HTMLElement | null>,
   ativo: boolean,
   /**
    * Recorte da janela que conta como "visto".

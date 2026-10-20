@@ -10,7 +10,7 @@ import { useEffect, type RefObject } from 'react'
  *
  * `ler` deve ser estável (useCallback): trocar de função reinicia o laço.
  */
-export function useBrilhoDaVoz(ref: RefObject<HTMLElement>, ler: (() => number) | null): void {
+export function useBrilhoDaVoz(ref: RefObject<HTMLElement | null>, ler: (() => number) | null): void {
   useEffect(() => {
     const el = ref.current
     if (!el) return

@@ -51,7 +51,7 @@ export function BarraDePagamento({
   ativa = true,
 }: {
   /** O bloco do formulário — destino da rolagem e gatilho para a barra sumir. */
-  alvo: RefObject<HTMLElement>
+  alvo: RefObject<HTMLElement | null>
   /** O total, já formatado. `null` esconde o preço e mantém só a ação. */
   valor: string | null
   rotulo?: string

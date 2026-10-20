@@ -167,7 +167,7 @@ export function RichTextArea({ value, onChange, placeholder, minHeight = '160px'
     if (sel.text) searchPatologias(sel.text)
   }
 
-  const searchTimeout = useRef<NodeJS.Timeout>()
+  const searchTimeout = useRef<NodeJS.Timeout | undefined>(undefined)
   function searchPatologias(query: string) {
     setPatologiaBusca(query)
     if (searchTimeout.current) clearTimeout(searchTimeout.current)

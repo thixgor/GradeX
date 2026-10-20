@@ -1730,7 +1730,7 @@ function RailControls({
 }: {
   edges: { start: boolean; end: boolean }
   nudge: (dir: 1 | -1) => void
-  barRef: React.RefObject<HTMLSpanElement>
+  barRef: React.RefObject<HTMLSpanElement | null>
   label: string
 }) {
   const btn =

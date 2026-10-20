@@ -25,6 +25,11 @@ const config: Config = {
     // olha primeiro.
     './lib/**/*.{ts,tsx}',
   ],
+  // Falsos positivos do scanner: texto de código que tem cara de propriedade
+  // arbitrária e vira uma regra de CSS inválida. `[-:.TZ]` é o regex de
+  // `lib/comms/email-campaigns.ts` e gerava `.\[-\:\.TZ\]{-:.TZ}` — o webpack
+  // deixava passar, o parser de CSS do Turbopack recusa o arquivo inteiro.
+  blocklist: ['[-:.TZ]'],
   theme: {
     extend: {
       fontFamily: {

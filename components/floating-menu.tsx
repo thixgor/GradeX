@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 interface FloatingMenuProps {
   open: boolean
   onClose: () => void
-  anchorRef: RefObject<HTMLElement>
+  anchorRef: RefObject<HTMLElement | null>
   align?: 'left' | 'right'
   width?: number
   children: ReactNode

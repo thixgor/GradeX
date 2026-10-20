@@ -2126,7 +2126,7 @@ function annotationLabel(type: AnnotationType) {
   return labels[type]
 }
 
-function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.DependencyList) {
+function useResizeWidth(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList) {
   const [width, setWidth] = useState(0)
   useEffect(() => {
     const element = ref.current
@@ -2193,7 +2193,7 @@ function useResizeWidth(ref: React.RefObject<HTMLElement>, deps: React.Dependenc
 const ROW_ANCHOR_TAIL_MS = 700
 
 function useViewerGestures(
-  ref: React.RefObject<HTMLElement>,
+  ref: React.RefObject<HTMLElement | null>,
   {
     enabled,
     horizontal,
@@ -2215,7 +2215,7 @@ function useViewerGestures(
     /** A caneta também vira página? Só quando ela não estiver escrevendo. */
     allowPen: boolean
     onSwipe: (direction: 1 | -1) => void
-    trackRef?: React.RefObject<HTMLElement>
+    trackRef?: React.RefObject<HTMLElement | null>
   }
 ) {
   const swipeStartRef = useRef<SwipeStart | null>(null)
