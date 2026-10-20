@@ -10,9 +10,9 @@
     "comms:ticker": "node scripts/comms-ticker.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:histologia": "next lint --dir components/histologia --dir lib/histologia --dir app/manual-clinico/histologia --dir app/api/manual-clinico/histologia --dir scripts/histologia --dir __tests__",
-    "lint:histopatologia": "next lint --dir components/histopatologia --dir lib/histopatologia --dir app/manual-clinico/histologia/histopatologia --dir app/api/manual-clinico/histopatologia --dir scripts/histopatologia --dir __tests__/histopatologia",
+    "lint": "eslint app components lib",
+    "lint:histologia": "eslint components/histologia lib/histologia app/manual-clinico/histologia app/api/manual-clinico/histologia scripts/histologia __tests__",
+    "lint:histopatologia": "eslint components/histopatologia lib/histopatologia app/manual-clinico/histologia/histopatologia app/api/manual-clinico/histopatologia scripts/histopatologia __tests__/histopatologia",
     "test": "vitest run",
     "integracao:indice": "GERAR_INDICE_INTEGRACAO=1 vitest run __tests__/manual-clinico/integracao/indice-gerado.test.ts",
     "ferramentas:auditar": "node scripts/auditar-ferramentas.mjs",
@@ -105,8 +105,8 @@
     "@types/uuid": "^9.0.7",
     "@types/ws": "^8.5.10",
     "concurrently": "^8.2.2",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "^14.0.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.2",
     "vitest": "^2.1.9"
   },
   "overrides": {
