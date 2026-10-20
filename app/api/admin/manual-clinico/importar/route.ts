@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { generateSlug } from '@/lib/utils/slug'
+import { patologiaMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 import { Patologia, AREAS_SAUDE, SISTEMAS_FISIOLOGICOS } from '@/lib/types/manual-clinico'
 
 export const dynamic = 'force-dynamic'
@@ -270,6 +271,7 @@ export async function POST(request: NextRequest) {
       await db.collection('patologias').insertOne(patologia)
       salvas.push({ nome: patologia.nome!, slug })
     }
+    revalidateMetadataPaths(patologiaMetadataPaths(...salvas.map((s) => s.slug)))
 
     return NextResponse.json({
       success: true,

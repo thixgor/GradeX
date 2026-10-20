@@ -418,6 +418,12 @@ export function useBootstrap(options: {
     loading,
     error,
     refetch,
+    /**
+     * Os dados vieram da rede nesta abertura do app, e não só do aparelho.
+     * O que está no localStorage pode ter até 24h: serve para pintar a tela,
+     * não para expulsar alguém de uma seção que o admin já religou.
+     */
+    fresh: lastFetchTime > 0,
 
     // User data
     user: data?.user ?? null,

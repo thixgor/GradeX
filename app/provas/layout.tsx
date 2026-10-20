@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
+import { PortaoDeSecao } from '@/components/portao-de-secao'
 import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
 
 const PROVAS_DESCRIPTION =
@@ -34,12 +34,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function ProvasLayout({
+// Casco estático: o portão da seção roda no cliente (ver PortaoDeSecao).
+export default function ProvasLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('provas')
-
-  return children
+  return <PortaoDeSecao secao="provas">{children}</PortaoDeSecao>
 }

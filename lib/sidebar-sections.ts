@@ -204,6 +204,21 @@ export function isSidebarSectionEnabled(
   return normalizeSidebarSections(sections)[key] !== false
 }
 
+/**
+ * A seção está fechada para esta pessoa? É a regra do portão de seção (ver
+ * `components/portao-de-secao.tsx`): admin passa sempre; os demais só entram
+ * no que o admin deixou ligado. Sem usuário não há o que decidir aqui — quem
+ * não tem sessão é barrado antes, pelo middleware.
+ */
+export function isSidebarSectionClosedFor(
+  user: { role?: string } | null | undefined,
+  sections: Partial<SidebarSectionSettings> | undefined | null,
+  key: SidebarSectionKey
+): boolean {
+  if (!user || user.role === 'admin') return false
+  return !isSidebarSectionEnabled(sections, key)
+}
+
 /** Ordem padrão = a ordem em que as seções estão declaradas acima. */
 export const DEFAULT_SIDEBAR_ORDER: SidebarSectionOrder = SIDEBAR_SECTION_DEFINITIONS.map(
   (section) => section.key

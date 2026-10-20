@@ -44,6 +44,21 @@ export function packageMetadataPaths(packageId: unknown): string[] {
 }
 
 /**
+ * Caminho público da patologia (`/manual-clinico/[slug]`, guardado por um dia).
+ * Recebe os slugs de antes e de depois: renomear muda o slug, e os dois
+ * endereços precisam sair do cache.
+ */
+export function patologiaMetadataPaths(...slugs: unknown[]): string[] {
+  return Array.from(new Set(slugs.map(toId).filter(Boolean))).map((slug) => `/manual-clinico/${slug}`)
+}
+
+/** Caminho da aula (`/aulas/[id]`), cujo título no <head> vem do banco. */
+export function aulaMetadataPaths(aulaId: unknown): string[] {
+  const id = toId(aulaId)
+  return id ? [`/aulas/${id}`] : []
+}
+
+/**
  * Revalida os caminhos informados. Uma falha aqui não pode derrubar a escrita
  * que já foi persistida — no pior caso o metatag continua servindo o cache
  * antigo até o `revalidate` natural da rota.

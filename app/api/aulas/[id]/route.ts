@@ -9,6 +9,7 @@ import {
   sanitizeObject
 } from '@/lib/api-security'
 import { excluirAulasComReferencias } from '@/lib/aulas/exclusao'
+import { aulaMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 import { getSession } from '@/lib/auth'
 import { avaliarAcessoAula, ocultarConteudoRestrito } from '@/lib/aulas/acesso'
 import { montarContextoDoUsuario } from '@/lib/aulas/contexto'
@@ -407,6 +408,10 @@ export async function PATCH(
         { status: 404 }
       )
     }
+
+    // O título e a capa da aula vão para o <head> de /aulas/[id], que fica
+    // guardado no cache por um dia.
+    revalidateMetadataPaths(aulaMetadataPaths(params.id))
 
     const aula = await aulasCollection.findOne({
       _id: new ObjectId(params.id)

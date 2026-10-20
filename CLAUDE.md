@@ -23,6 +23,11 @@ provisionada das funções (tempo de parede de cada requisição).
 
 ## Código que sai das funções
 
+- Layout ou página da área logada não lê sessão no servidor (`getSession`,
+  `cookies()`): a árvore inteira vira `ƒ` e cada visita sai da função (60–80
+  KB de HTML sem compressão). O casco é estático, o portão de seção é no
+  cliente (`components/portao-de-secao.tsx`) e quem decide o acesso ao dado é a
+  API. Rota com id (`[id]`) ganha `generateStaticParams` devolvendo `[]`.
 - Resposta grande em JSON: use `jsonComprimido` (`lib/resposta-comprimida.ts`).
   No Vercel o Next não comprime dentro da função, e o CDN não comprime
   `application/pdf`.
