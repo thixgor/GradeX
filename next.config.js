@@ -533,10 +533,9 @@ const nextConfig = {
    * - `fs`/`net`/`tls`/`crypto` vazios no cliente: nenhum código do cliente
    *   importa esses módulos (o build passa sem `resolveAlias` e sem polyfill
    *   no bundle), então não há o que silenciar;
-   * - cache do webpack comprimido para caber no teto de 1 GB do cache de
-   *   build da Vercel: o Turbopack guarda o dele em `.next/cache/turbopack`
-   *   (~620 MB neste projeto), e o build com cache cai de ~110 s para ~40 s
-   *   numa máquina de 4 núcleos.
+   * - cache do webpack comprimido para caber no teto do cache de build da
+   *   Vercel: o Turbopack guarda o dele em `.next/cache/turbopack`, e o
+   *   tamanho é cuidado por `prepararCacheDeBuild`, no fim deste arquivo.
    */
 
   // Desabilitar source maps em produção para build mais rápido
@@ -545,5 +544,62 @@ const nextConfig = {
   // Desabilitar powered by header (micro otimização)
   poweredByHeader: false,
 }
+
+/**
+ * O cache de build que a Vercel guarda de um deploy para o outro.
+ *
+ * Com cache, o build do Turbopack leva ~40 s; sem, ~90 s (4 núcleos). Mas o
+ * cache só é guardado se couber no teto da máquina Standard, 1,5 GB — e esse
+ * teto inclui o `node_modules` (~870 MB). O cache do Turbopack começa em
+ * ~610 MB, não comprime (já vem comprimido) e cresce ~12 MB a cada build com
+ * mudança, porque o coletor de lixo dele ainda é experimental e vem desligado.
+ *
+ * Então, no começo de cada `next build`:
+ * - sai o `.next/cache/webpack`: sobra do empacotador anterior, restaurada
+ *   pela Vercel e nunca mais lida. Sozinha ela tem 520 MB e faria o primeiro
+ *   cache do Turbopack nascer acima do teto;
+ * - acima de 800 MB, o cache do Turbopack recomeça do zero. Esse build sai a
+ *   frio, e o próximo volta a ter um cache do tamanho inicial — um build a
+ *   frio a cada ~16 builds com mudança, em vez de cache nenhum.
+ *
+ * Só no `next build`: o Next carrega este arquivo também no `next dev`, no
+ * `next start` e nos testes, e nenhum deles deve mexer no cache.
+ */
+const TETO_DO_CACHE_DO_TURBOPACK = 800 * 1024 * 1024
+
+function tamanhoDaPasta(pasta) {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  let total = 0
+  let entradas
+  try {
+    entradas = fs.readdirSync(pasta, { withFileTypes: true })
+  } catch {
+    return 0
+  }
+  for (const entrada of entradas) {
+    const caminho = path.join(pasta, entrada.name)
+    if (entrada.isDirectory()) total += tamanhoDaPasta(caminho)
+    else if (entrada.isFile()) total += fs.statSync(caminho).size
+  }
+  return total
+}
+
+function prepararCacheDeBuild() {
+  const fs = require('node:fs')
+  const path = require('node:path')
+  const cache = path.join(__dirname, '.next', 'cache')
+  fs.rmSync(path.join(cache, 'webpack'), { recursive: true, force: true })
+  const turbopack = path.join(cache, 'turbopack')
+  const tamanho = tamanhoDaPasta(turbopack)
+  if (tamanho > TETO_DO_CACHE_DO_TURBOPACK) {
+    fs.rmSync(turbopack, { recursive: true, force: true })
+    console.log(
+      `cache do Turbopack com ${Math.round(tamanho / 1048576)} MB: recomeçando do zero para caber no cache de build da Vercel`,
+    )
+  }
+}
+
+if (process.argv.includes('build')) prepararCacheDeBuild()
 
 module.exports = nextConfig
