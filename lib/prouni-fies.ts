@@ -1,9 +1,11 @@
 import { Db, ObjectId } from 'mongodb'
 import type { ManualClinicoPlanKey } from '@/lib/types'
 import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
+import { invalidarCacheDeServidor, memoizarPorTempo } from '@/lib/cache-de-servidor'
 import {
   computeProuniDiscount,
   getProuniDiscountLabel,
+  PROUNI_AI_PROCESSING_STALE_MS,
   PROUNI_AI_REVIEWER_ID,
   PROUNI_MAX_PENDING_PER_USER,
   PROUNI_MAX_REQUESTS_PER_DAY,
@@ -199,7 +201,10 @@ export interface ProuniRequest {
   reviewedByName?: string
   reviewedAt?: Date
   grant?: ProuniGrant | null
-  /** Ausente quando a análise automática estava desligada no envio. */
+  /**
+   * Ausente quando a análise automática estava desligada no envio.
+   * `processing` = rodando em segundo plano (ver `lib/prouni-processar-ia.ts`).
+   */
   aiReview?: ProuniAiReview | null
   /** Só para correlacionar abuso; não é exibido em lugar nenhum. */
   requestIp?: string
@@ -707,6 +712,24 @@ export function montarConcessao(
 
 export const PROUNI_CONFIG_COLLECTION = 'prouni_config'
 const ID_CONFIG_IA = 'analise_ia'
+const CACHE_CONFIG_IA = 'prouni:ia-ativa'
+
+/** A análise ainda está rodando de verdade (não morreu com a função)? */
+export function prouniIaEmAndamento(review: ProuniAiReview | null | undefined, now = Date.now()): boolean {
+  if (!review || review.outcome !== 'processing') return false
+  const inicio = review.reviewedAt instanceof Date ? review.reviewedAt.getTime() : new Date(review.reviewedAt).getTime()
+  return Number.isFinite(inicio) && now - inicio < PROUNI_AI_PROCESSING_STALE_MS
+}
+
+/** O parecer como deve ser mostrado: "analisando" vencido vira falha. */
+function parecerVigente(request: ProuniRequest): ProuniAiReview | null {
+  const ia = request.aiReview
+  if (!ia) return null
+  if (ia.outcome === 'processing' && !prouniIaEmAndamento(ia)) {
+    return { ...ia, outcome: 'failed', reason: ia.reason || 'a análise automática não terminou' }
+  }
+  return ia
+}
 
 /**
  * A análise automática está ligada? Ligada por padrão: sem documento de
@@ -718,11 +741,13 @@ const ID_CONFIG_IA = 'analise_ia'
  */
 export async function prouniIaAtiva(db: Db): Promise<boolean> {
   try {
-    const doc = await db.collection(PROUNI_CONFIG_COLLECTION).findOne(
-      { _id: ID_CONFIG_IA as any },
-      { projection: { ativa: 1 } }
-    )
-    return doc?.ativa !== false
+    return await memoizarPorTempo(CACHE_CONFIG_IA, 60_000, async () => {
+      const doc = await db.collection(PROUNI_CONFIG_COLLECTION).findOne(
+        { _id: ID_CONFIG_IA as any },
+        { projection: { ativa: 1 } }
+      )
+      return doc?.ativa !== false
+    })
   } catch {
     return true
   }
@@ -734,6 +759,7 @@ export async function definirProuniIaAtiva(db: Db, ativa: boolean, porUserId: st
     { $set: { ativa, updatedAt: new Date(), updatedBy: porUserId } },
     { upsert: true }
   )
+  invalidarCacheDeServidor(CACHE_CONFIG_IA)
 }
 
 /* =================== SOLICITAÇÃO =================== */
@@ -754,9 +780,13 @@ export function serializeProuniRequestForUser(request: ProuniRequest) {
     // Só o desfecho e o motivo da reprovação automática — o que a pessoa
     // precisa para entender por que a solicitação foi para a revisão manual.
     // As anotações para o admin e o modelo usado ficam do lado de cá.
-    aiReview: request.aiReview && request.status === 'pending' && request.aiReview.outcome === 'rejected'
-      ? { outcome: request.aiReview.outcome, reason: request.aiReview.reason || '' }
-      : null,
+    aiReview: (() => {
+      const ia = parecerVigente(request)
+      if (!ia || request.status !== 'pending') return null
+      if (ia.outcome === 'processing') return { outcome: 'processing', reason: '' }
+      if (ia.outcome === 'rejected') return { outcome: 'rejected', reason: ia.reason || '' }
+      return null
+    })(),
     autoApproved: request.status === 'approved' && request.reviewedBy === PROUNI_AI_REVIEWER_ID,
     grant: request.grant
       ? {
@@ -811,18 +841,21 @@ export function serializeProuniRequestForAdmin(request: ProuniRequest) {
     reviewNotes: request.reviewNotes || '',
     reviewedByName: request.reviewedByName || '',
     reviewedAt: toIso(request.reviewedAt),
-    aiReview: request.aiReview
-      ? {
-          outcome: request.aiReview.outcome,
-          reason: request.aiReview.reason || '',
-          adminNotes: request.aiReview.adminNotes || '',
-          documentType: request.aiReview.documentType || '',
-          nameMatches: request.aiReview.nameMatches || null,
-          programDetected: request.aiReview.programDetected || '',
-          model: request.aiReview.model || '',
-          reviewedAt: toIso(request.aiReview.reviewedAt),
-        }
-      : null,
+    aiReview: (() => {
+      const ia = parecerVigente(request)
+      return ia
+        ? {
+            outcome: ia.outcome,
+            reason: ia.reason || '',
+            adminNotes: ia.adminNotes || '',
+            documentType: ia.documentType || '',
+            nameMatches: ia.nameMatches || null,
+            programDetected: ia.programDetected || '',
+            model: ia.model || '',
+            reviewedAt: toIso(ia.reviewedAt),
+          }
+        : null
+    })(),
     grant: request.grant
       ? {
           discountType: request.grant.discountType,

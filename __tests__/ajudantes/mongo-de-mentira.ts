@@ -8,7 +8,7 @@
  * vezes. Testar só a aritmética deixaria de fora exatamente a parte quebrada.
  *
  * Suporta apenas o que o código sob teste usa: caminhos com ponto, `$or`,
- * `$in`, `$nin`, `$exists`, `$set` e `$inc`. Não é um Mongo; é o suficiente
+ * `$in`, `$nin`, `$ne`, `$lt`, `$exists`, `$set` e `$inc`. Não é um Mongo; é o suficiente
  * para que um teste falhe pelo motivo certo.
  */
 
@@ -64,6 +64,9 @@ export function casaComFiltro(doc: Doc, filtro: Doc): boolean {
       if ('$exists' in ops && (atual !== undefined) !== Boolean(ops.$exists)) return false
       if ('$in' in ops && !(ops.$in as any[]).some((valor) => igual(atual, valor))) return false
       if ('$nin' in ops && (ops.$nin as any[]).some((valor) => igual(atual, valor))) return false
+      // Como no Mongo, `$ne` casa também quando o campo nem existe.
+      if ('$ne' in ops && igual(atual, ops.$ne)) return false
+      if ('$lt' in ops && !(atual instanceof Date ? atual < ops.$lt : atual !== undefined && Number(atual) < Number(ops.$lt))) return false
       if ('$regex' in ops) {
         const regex = ops.$regex instanceof RegExp ? ops.$regex : new RegExp(String(ops.$regex))
         if (typeof atual !== 'string' || !regex.test(atual)) return false

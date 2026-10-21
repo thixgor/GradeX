@@ -176,7 +176,9 @@ export function AtendimentoTab() {
                       <p className="mt-1.5 flex items-start gap-1.5 text-xs text-amber-700 dark:text-amber-300">
                         <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
                         <span>
-                          {solicitacao.aiReview?.reason
+                          {solicitacao.aiReview?.outcome === 'processing'
+                            ? 'Analisando seu comprovante agora — o resultado chega por e-mail em instantes.'
+                            : solicitacao.aiReview?.reason
                             ? `Em revisão manual pela equipe (até 2 dias úteis). A conferência automática apontou: ${solicitacao.aiReview.reason}`
                             : 'Conferindo seu comprovante — costuma levar até 2 dias úteis.'}
                         </span>

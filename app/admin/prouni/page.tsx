@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 /**
  * Painel PROUNI/FIES.
@@ -88,7 +89,7 @@ interface Solicitacao {
   reviewedByName: string
   reviewedAt: string | null
   aiReview: {
-    outcome: 'approved' | 'rejected' | 'failed'
+    outcome: 'processing' | 'approved' | 'rejected' | 'failed'
     reason: string
     adminNotes: string
     documentType: string
@@ -563,6 +564,11 @@ function AbaSolicitacoes() {
     return () => clearTimeout(timer)
   }, [carregar, busca])
 
+  // Análise da IA rodando em segundo plano (envio recente ou "Reanalisar"):
+  // a lista se atualiza sozinha até o parecer chegar, só com a aba visível.
+  const algumaAnalisando = solicitacoes.some((s) => s.aiReview?.outcome === 'processing')
+  useIntervaloVisivel(carregar, algumaAnalisando ? 5_000 : null)
+
   async function limpezaEmLote() {
     if (!confirm('Apagar os arquivos de todas as solicitações já analisadas? O histórico das decisões é mantido.')) return
     setLimpando(true)
@@ -713,6 +719,21 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
     }
   }
 
+  async function reanalisar() {
+    setErro('')
+    setProcessando(true)
+    try {
+      const res = await fetch(`/api/admin/prouni/solicitacoes/${solicitacao.id}/reanalisar`, { method: 'POST' })
+      const json = await res.json().catch(() => null)
+      if (!res.ok) throw new Error(json?.error || 'Falha ao reanalisar')
+      onMudou()
+    } catch (e: any) {
+      setErro(e?.message || 'Falha ao reanalisar')
+    } finally {
+      setProcessando(false)
+    }
+  }
+
   async function apagarSomenteArquivos() {
     if (!confirm('Apagar os arquivos desta solicitação?')) return
     setProcessando(true)
@@ -762,8 +783,10 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
                     ? 'bg-rose-500/15 text-rose-700 dark:text-rose-300'
                     : 'bg-muted text-muted-foreground'
               }`}>
-                <Bot className="h-3 w-3" />
-                {ia.outcome === 'approved' ? 'IA aprovou' : ia.outcome === 'rejected' ? 'IA reprovou' : 'IA falhou'}
+                {ia.outcome === 'processing' ? <Loader2 className="h-3 w-3 animate-spin" /> : <Bot className="h-3 w-3" />}
+                {ia.outcome === 'processing' ? 'IA analisando…'
+                  : ia.outcome === 'approved' ? 'IA aprovou'
+                  : ia.outcome === 'rejected' ? 'IA reprovou' : 'IA falhou'}
               </span>
             )}
             <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${cores[solicitacao.status]}`}>
@@ -836,7 +859,7 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
           </div>
         )}
 
-        {ia && (
+        {ia && ia.outcome !== 'processing' && (
           <div className={`space-y-1 rounded-lg border px-3 py-2 text-xs ${
             ia.outcome === 'approved'
               ? 'border-violet-500/40 bg-violet-500/5'
@@ -937,6 +960,12 @@ function CartaoSolicitacao({ solicitacao, onMudou }: { solicitacao: Solicitacao;
                 <X className="mr-2 h-4 w-4" />
                 Recusar
               </Button>
+              {ia?.outcome !== 'processing' && solicitacao.attachments.length > 0 && (
+                <Button size="sm" variant="ghost" disabled={processando} onClick={reanalisar}>
+                  <Bot className="mr-2 h-4 w-4" />
+                  {ia ? 'Reanalisar com IA' : 'Analisar com IA'}
+                </Button>
+              )}
               {ia?.outcome === 'rejected' && ia.reason && !notas.trim() && (
                 <Button size="sm" variant="ghost" disabled={processando} onClick={() => setNotas(ia.reason)}>
                   <Bot className="mr-2 h-4 w-4" />

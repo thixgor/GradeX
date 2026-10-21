@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LogoLoading } from '@/components/logo-loading'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import { formatBrazilPhone, isValidBrazilPhone } from '@/lib/phone'
 
@@ -70,7 +71,10 @@ interface MinhaSolicitacao {
   status: 'pending' | 'approved' | 'rejected' | 'cancelled'
   reviewNotes: string
   createdAt: string | null
-  /** Só vem quando a análise automática não aprovou e a equipe vai revisar. */
+  /**
+   * Só vem com a solicitação pendente: `processing` enquanto a IA analisa;
+   * `rejected` quando ela não aprovou e a equipe vai revisar.
+   */
   aiReview?: { outcome: string; reason: string } | null
   autoApproved?: boolean
   grant: { discountLabel: string; usage: string; expiresAt: string | null } | null
@@ -156,6 +160,13 @@ export default function PaginaProuniFies() {
   }, [itemType, itemId, tipoValido])
 
   useEffect(() => { carregar() }, [carregar])
+
+  // Enquanto a IA analisa (em segundo plano, até uns 2 minutos num PDF
+  // pesado), a tela pergunta de novo a cada 4 s — só com a aba visível. O
+  // servidor transforma um "analisando" vencido em falha, então isto para
+  // sozinho mesmo se a análise morrer no meio.
+  const analisando = solicitacao?.status === 'pending' && solicitacao?.aiReview?.outcome === 'processing'
+  useIntervaloVisivel(carregar, analisando ? 4_000 : null)
 
   // Puxa o que o perfil já tem para a pessoa não redigitar. Continua tudo
   // editável: o cadastro pode estar velho, e o que vale é o que ela confirma
@@ -403,7 +414,7 @@ export default function PaginaProuniFies() {
               </h2>
               <ol className="space-y-1.5 text-sm text-muted-foreground">
                 <li>1. Envie o comprovante do ProUni ou do FIES (PDF ou foto).</li>
-                <li>2. A conferência automática analisa o documento na hora. Se restar alguma dúvida, nossa equipe revisa manualmente (até 2 dias úteis).</li>
+                <li>2. A conferência automática analisa o documento em poucos instantes. Se restar alguma dúvida, nossa equipe revisa manualmente (até 2 dias úteis).</li>
                 <li>3. Aprovado, o desconto entra sozinho no seu checkout deste item.</li>
               </ol>
               <p className="mt-2 text-xs text-muted-foreground">
@@ -442,7 +453,22 @@ export default function PaginaProuniFies() {
           </Card>
         )}
 
-        {emAnalise && !jaAprovado && (
+        {analisando && (
+          <Card className="mt-4 border-sky-500/40 bg-sky-500/5">
+            <CardContent className="flex items-start gap-3 py-5">
+              <Loader2 className="mt-0.5 h-5 w-5 shrink-0 animate-spin text-sky-600 dark:text-sky-300" />
+              <div>
+                <p className="font-semibold text-sky-700 dark:text-sky-300">Analisando seu comprovante…</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Costuma levar alguns segundos — documentos com muitas páginas podem levar até 2 minutos.
+                  Esta tela atualiza sozinha, e você também recebe o resultado por e-mail.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {emAnalise && !jaAprovado && !analisando && (
           <Card className="mt-4 border-amber-500/40 bg-amber-500/5">
             <CardContent className="flex items-start gap-3 py-5">
               <Clock className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
@@ -717,13 +743,8 @@ export default function PaginaProuniFies() {
                 ) : (
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                 )}
-                {enviando ? 'Analisando seu comprovante…' : 'Enviar solicitação'}
+                {enviando ? 'Enviando…' : 'Enviar solicitação'}
               </Button>
-              {enviando && (
-                <p className="text-center text-xs text-muted-foreground">
-                  Estamos conferindo o documento agora — costuma levar alguns segundos. Não feche esta página.
-                </p>
-              )}
             </CardContent>
           </Card>
         )}
