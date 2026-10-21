@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       )
 
       // Enviar e-mail avisando que acabou
-      sendOneTimePaymentEndedEmail(user.email, user.name).catch(err => {
+      await sendOneTimePaymentEndedEmail(user.email, user.name).catch(err => {
         console.error('Erro ao enviar email de fim de plano:', err)
       })
     }

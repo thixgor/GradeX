@@ -226,6 +226,12 @@ export async function applyPaymentResult(
 }
 
 async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
+  // Os e-mails de confirmação dos efeitos abaixo são AGUARDADOS (cada um já
+  // engole o próprio erro). Antes saíam soltos, sem `await`: o webhook
+  // respondia ao Mercado Pago, a instância congelava e o e-mail morria no meio
+  // do SMTP — a compra liberada, a confirmação nunca chegando. Ver
+  // `deliverTransactionalEmails` em lib/mail.ts.
+  //
   // Compra de Serial Key (com ou sem login): a liberação do produto acontece
   // somente na ATIVAÇÃO da key. Aqui apenas geramos a key vinculada à compra e
   // disparamos o e-mail. Não executamos os efeitos de auto-grant abaixo para
@@ -442,7 +448,7 @@ async function applyPlanPurchase(order: PaymentOrder) {
     },
   })
 
-  sendPlanPurchasedEmail(
+  await sendPlanPurchasedEmail(
     user.email,
     user.name,
     planoConfig.nome || 'Plano Plus+',
@@ -526,7 +532,7 @@ async function applyPhysicalOrder(order: PaymentOrder, result?: ProviderOrder) {
 
   // E-mail de confirmação (best-effort)
   if (shopOrder.userEmail) {
-    sendShopOrderConfirmedEmail({
+    await sendShopOrderConfirmedEmail({
       to: shopOrder.userEmail,
       userName: shopOrder.userName,
       orderNumber: shopOrder.orderNumber,
@@ -644,7 +650,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         )
       }
 
-      sendCartPurchasedEmail(
+      await sendCartPurchasedEmail(
         order.payerEmail,
         order.payerName || '',
         cartItems.map(item => ({
@@ -760,7 +766,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
       return { items: [] as PdfEmailItem[], eligible: false }
     })
 
-    sendMaterialPurchasedEmail(
+    await sendMaterialPurchasedEmail(
       order.payerEmail,
       order.payerName || '',
       item.title || 'Material',
@@ -863,7 +869,7 @@ async function applyProductPurchase(order: PaymentOrder, result?: ProviderOrder)
   })
 
   if (order.payerEmail) {
-    sendManualClinicoPurchasedEmail({
+    await sendManualClinicoPurchasedEmail({
       email: order.payerEmail,
       name: order.payerName || '',
       planLabel: plan.label,
@@ -941,7 +947,7 @@ async function applyRafflePurchase(order: PaymentOrder, result?: ProviderOrder) 
   })
 
   if (purchase.participantEmail) {
-    sendRafflePurchaseEmail({
+    await sendRafflePurchaseEmail({
       email: purchase.participantEmail,
       name: purchase.participantName || '',
       raffleName: raffle.name,

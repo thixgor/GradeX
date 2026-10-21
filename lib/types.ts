@@ -536,9 +536,16 @@ export interface User {
   bancoQuestoesLiberadas?: string[]
   // Retenção: último envio do e-mail de revisão espaçada (evita reenvio na janela mínima)
   lastSpacedReviewEmailAt?: Date
-  // Recuperação de senha
+  // Recuperação de senha. `resetPasswordToken`/`resetPasswordExpires` são o
+  // formato antigo (um link por vez); continuam aceitos até expirarem. Os
+  // links novos ficam em `resetPasswordTokens` (ver lib/redefinicao-de-senha.ts).
   resetPasswordToken?: string
   resetPasswordExpires?: Date
+  resetPasswordTokens?: Array<{ hash: string; expiresAt: Date; createdAt: Date }>
+  resetPasswordRequestedAt?: Date
+  /** Última troca de senha (perfil, link de redefinição ou admin). */
+  passwordChangedAt?: Date
+  passwordChangedBy?: 'user' | 'reset' | 'admin'
   // Verificação de Email
   emailVerified?: boolean
   verificationToken?: string

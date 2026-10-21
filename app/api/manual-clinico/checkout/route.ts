@@ -237,7 +237,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (session.email) {
-      sendManualClinicoPurchasedEmail({
+      await sendManualClinicoPurchasedEmail({
         email: session.email,
         name: session.name || '',
         planLabel: plan.label,

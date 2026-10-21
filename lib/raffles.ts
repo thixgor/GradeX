@@ -21,7 +21,7 @@ import type {
   RaffleWinnerEmbedded,
   RaffleDrawMethod,
 } from './types'
-import { sendRaffleWinnerEmail, sendRaffleAdminResultEmail } from './mail'
+import { sendRaffleWinnerEmail, sendRaffleAdminResultEmail, deliverTransactionalEmails } from './mail'
 import { stripHtml } from './api-security'
 import {
   RAFFLE_RESERVATION_MINUTES,
@@ -491,6 +491,9 @@ export async function drawRaffle(
   const now = new Date()
   const newWinners: RaffleWinnerEmbedded[] = []
   const winnerDocsForEmail: { number: number; name?: string; email?: string }[] = []
+  // Avisos aos ganhadores: esperados no fim, antes de a função devolver (em
+  // serverless, e-mail solto morre quando a instância congela).
+  const avisosAosGanhadores: Promise<unknown>[] = []
 
   for (const number of chosen) {
     // Localiza a compra paga que contém este número.
@@ -552,7 +555,7 @@ export async function drawRaffle(
 
     // E-mail ao ganhador (best-effort).
     if (participantEmail) {
-      sendRaffleWinnerEmail({
+      avisosAosGanhadores.push(sendRaffleWinnerEmail({
         email: participantEmail,
         name: participantName || '',
         raffleName: raffle.name,
@@ -567,7 +570,7 @@ export async function drawRaffle(
             { $set: { notifiedAt: new Date() } },
           ),
         )
-        .catch(err => console.error('[raffle] e-mail ganhador falhou:', err))
+        .catch(err => console.error('[raffle] e-mail ganhador falhou:', err)))
     }
   }
 
@@ -591,13 +594,16 @@ export async function drawRaffle(
     },
   )
 
-  // Notifica o admin (best-effort).
-  sendRaffleAdminResultEmail({
-    raffleName: raffle.name,
-    prizeName: raffle.prizeName,
-    winners: winnerDocsForEmail,
-    totalNumbers: raffle.totalNumbers,
-  }).catch(err => console.error('[raffle] e-mail admin falhou:', err))
+  // Notifica o admin (best-effort) junto com os ganhadores.
+  await deliverTransactionalEmails([
+    ...avisosAosGanhadores,
+    sendRaffleAdminResultEmail({
+      raffleName: raffle.name,
+      prizeName: raffle.prizeName,
+      winners: winnerDocsForEmail,
+      totalNumbers: raffle.totalNumbers,
+    }).catch(err => console.error('[raffle] e-mail admin falhou:', err)),
+  ])
 
   return { ok: true, winners: newWinners }
 }

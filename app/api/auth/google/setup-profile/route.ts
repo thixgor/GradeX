@@ -4,7 +4,7 @@ import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
-import { sendWelcomeEmail } from '@/lib/mail'
+import { sendWelcomeEmail, deliverTransactionalEmails } from '@/lib/mail'
 import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
 
 export const dynamic = 'force-dynamic'
@@ -159,9 +159,11 @@ export async function POST(request: NextRequest) {
 
     // Best-effort: e-mail de boas-vindas não trava a criação da conta. (Não há
     // e-mail de verificação — a conta do Google já vem verificada.)
-    sendWelcomeEmail(email, name).catch((mailErr) => {
-      console.error('Erro ao enviar email de boas-vindas (Google):', mailErr)
-    })
+    await deliverTransactionalEmails([
+      sendWelcomeEmail(email, name).catch((mailErr) => {
+        console.error('Erro ao enviar email de boas-vindas (Google):', mailErr)
+      }),
+    ])
 
     return NextResponse.json({
       success: true,

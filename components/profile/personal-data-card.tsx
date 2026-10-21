@@ -8,6 +8,7 @@
  *   Documentos  → nome civil, nascimento e CPF (contratos e pagamentos)
  *   Sobre você  → como te chamamos, contato e formação
  *   E-mail      → endereço, confirmação e troca
+ *   Senha       → troca sem sair da conta, ou link de redefinição
  *
  * Links das pendências chegam com `?campo=` e caem direto no campo certo, já
  * em edição. Documentos conferidos pela Receita ficam travados aqui (o
@@ -16,7 +17,7 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AlertCircle, Check, Loader2, Lock, Mail, Pencil, Send, ShieldCheck } from 'lucide-react'
+import { AlertCircle, Check, Eye, EyeOff, KeyRound, Loader2, Lock, Mail, Pencil, Send, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
@@ -42,7 +43,7 @@ const PROFESSION_LABELS: Record<string, string> = {
   residente: 'Residente',
 }
 
-export type CampoDoPerfil = 'email' | 'dados' | 'cpf' | 'fullName' | 'dateOfBirth' | 'foto'
+export type CampoDoPerfil = 'email' | 'dados' | 'cpf' | 'fullName' | 'dateOfBirth' | 'foto' | 'senha'
 
 export type ProfileFormState = {
   name: string
@@ -68,6 +69,8 @@ type Perfil = ProfileFormState & {
   cpfVerified: boolean
   emailVerified: boolean
   avatar: string
+  /** Conta criada pelo Google não tem senha até a pessoa criar uma. */
+  hasPassword: boolean
 }
 
 const VAZIO: Perfil = {
@@ -90,6 +93,7 @@ const VAZIO: Perfil = {
   cpfVerified: false,
   emailVerified: true,
   avatar: '',
+  hasPassword: true,
 }
 
 const controlClass =
@@ -241,7 +245,7 @@ export function PersonalDataCard({
   useEffect(() => {
     if (carregando || !campo || !primeiraCarga.current) return
     primeiraCarga.current = false
-    const secao = campo === 'fullName' || campo === 'dateOfBirth' || campo === 'cpf' ? 'documentos' : campo === 'foto' ? 'foto' : campo === 'email' ? 'email' : 'dados'
+    const secao = campo === 'fullName' || campo === 'dateOfBirth' || campo === 'cpf' ? 'documentos' : campo === 'foto' ? 'foto' : campo === 'email' ? 'email' : campo === 'senha' ? 'senha' : 'dados'
     requestAnimationFrame(() => {
       document.getElementById(secao)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       setDestaque(secao)
@@ -329,6 +333,15 @@ export function PersonalDataCard({
           onEmailChanged()
           carregar()
         }}
+      />
+
+      <Senha
+        email={userEmail}
+        temSenha={perfil.hasPassword}
+        abrir={campo === 'senha'}
+        destaque={destaque === 'senha'}
+        onToast={onToast}
+        onTrocada={carregar}
       />
     </div>
   )
@@ -977,6 +990,197 @@ function Email({
               {trocando ? 'Trocando' : 'Trocar e-mail'}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </Secao>
+  )
+}
+
+// ─── Senha ───────────────────────────────────────────────────────────────
+
+/**
+ * Troca de senha sem sair da conta. Antes o único caminho era deslogar e usar
+ * "Esqueci minha senha", que dependia de um e-mail chegar. Quem não lembra a
+ * senha atual pede o link daqui mesmo, também sem sair.
+ */
+function Senha({
+  email,
+  temSenha,
+  abrir,
+  destaque,
+  onToast,
+  onTrocada,
+}: {
+  email: string
+  temSenha: boolean
+  abrir: boolean
+  destaque: boolean
+  onToast: (message: string, type?: 'success' | 'error') => void
+  onTrocada: () => void
+}) {
+  const [aberto, setAberto] = useState(abrir)
+  const [atual, setAtual] = useState('')
+  const [nova, setNova] = useState('')
+  const [confirmacao, setConfirmacao] = useState('')
+  const [mostrar, setMostrar] = useState(false)
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState('')
+  const [enviandoLink, setEnviandoLink] = useState(false)
+  const [linkEnviado, setLinkEnviado] = useState(false)
+
+  function limpar() {
+    setAtual('')
+    setNova('')
+    setConfirmacao('')
+    setMostrar(false)
+    setErro('')
+  }
+
+  async function salvar() {
+    setErro('')
+    if (temSenha && !atual) return setErro('Informe sua senha atual.')
+    if (nova.length < 6) return setErro('A nova senha deve ter no mínimo 6 caracteres.')
+    if (nova !== confirmacao) return setErro('A confirmação não bate com a nova senha.')
+
+    setSalvando(true)
+    try {
+      const res = await fetch('/api/user/password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senhaAtual: atual, novaSenha: nova }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Não foi possível trocar a senha.')
+      onToast(
+        data.criada
+          ? 'Senha criada. Agora você também pode entrar com e-mail e senha.'
+          : data.sessoesEncerradas > 0
+            ? 'Senha alterada. Os outros aparelhos conectados foram desconectados.'
+            : 'Senha alterada.',
+      )
+      setAberto(false)
+      limpar()
+      onTrocada()
+    } catch (e: any) {
+      setErro(e.message)
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  async function enviarLink() {
+    setEnviandoLink(true)
+    try {
+      const res = await fetch('/api/user/password/link', { method: 'POST' })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Não foi possível enviar o link.')
+      setLinkEnviado(true)
+      onToast(`Link enviado para ${data.email || email}. Confira a caixa de entrada e o spam.`)
+    } catch (e: any) {
+      onToast(e.message, 'error')
+    } finally {
+      setEnviandoLink(false)
+    }
+  }
+
+  const tipoDoCampo = mostrar ? 'text' : 'password'
+
+  return (
+    <Secao
+      id="senha"
+      titulo="Senha"
+      destaque={destaque}
+      descricao={
+        temSenha
+          ? 'Troque sua senha sem sair da conta.'
+          : 'Você entra com o Google. Crie uma senha para entrar também com e-mail e senha.'
+      }
+      acao={<BotaoEditar onClick={() => setAberto(true)} rotulo={temSenha ? 'Trocar' : 'Criar'} />}
+    >
+      <div className="flex flex-col gap-3 rounded-xl bg-muted/40 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
+          <KeyRound className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="truncate text-sm font-medium">{temSenha ? '••••••••' : 'Nenhuma senha criada'}</span>
+        </div>
+        {temSenha && (
+          <Button size="sm" variant="outline" className="gap-1.5 rounded-xl" onClick={enviarLink} disabled={enviandoLink || linkEnviado}>
+            {enviandoLink ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+            {linkEnviado ? 'Link enviado' : 'Esqueci a senha atual'}
+          </Button>
+        )}
+      </div>
+
+      <Dialog
+        open={aberto}
+        onOpenChange={(open) => {
+          if (salvando) return
+          setAberto(open)
+          if (!open) limpar()
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{temSenha ? 'Trocar senha' : 'Criar senha'}</DialogTitle>
+            <DialogDescription>
+              {temSenha
+                ? 'Os outros aparelhos conectados à sua conta serão desconectados. Este continua logado.'
+                : 'Você continua podendo entrar com o Google.'}
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            className="space-y-4 py-2"
+            onSubmit={(e) => {
+              e.preventDefault()
+              salvar()
+            }}
+          >
+            {/* Campo oculto: ajuda o gerenciador de senhas a saber de qual conta é. */}
+            <input type="email" autoComplete="username" value={email} readOnly hidden />
+            {temSenha && (
+              <div className="space-y-1.5">
+                <Label htmlFor="senhaAtual" className="text-sm font-medium">Senha atual</Label>
+                <Input id="senhaAtual" type={tipoDoCampo} autoComplete="current-password" className="rounded-xl" value={atual} onChange={(e) => setAtual(e.target.value)} disabled={salvando} />
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <Label htmlFor="novaSenha" className="text-sm font-medium">Nova senha</Label>
+              <div className="relative">
+                <Input id="novaSenha" type={tipoDoCampo} autoComplete="new-password" className="rounded-xl pr-10" value={nova} onChange={(e) => setNova(e.target.value)} disabled={salvando} />
+                <button
+                  type="button"
+                  onClick={() => setMostrar((m) => !m)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                  aria-label={mostrar ? 'Ocultar senhas' : 'Mostrar senhas'}
+                >
+                  {mostrar ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-muted-foreground">Mínimo de 6 caracteres.</p>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="confirmacaoSenha" className="text-sm font-medium">Confirmar nova senha</Label>
+              <Input id="confirmacaoSenha" type={tipoDoCampo} autoComplete="new-password" className="rounded-xl" value={confirmacao} onChange={(e) => setConfirmacao(e.target.value)} disabled={salvando} />
+            </div>
+            <ErroDoCampo id="erroSenha" texto={erro} />
+            {temSenha && (
+              <button
+                type="button"
+                onClick={enviarLink}
+                disabled={enviandoLink || linkEnviado}
+                className="text-xs font-semibold text-primary underline-offset-4 hover:underline disabled:opacity-60"
+              >
+                {linkEnviado ? `Link enviado para ${email}` : `Não lembra a senha atual? Enviar link para ${email}`}
+              </button>
+            )}
+            <DialogFooter className="flex-col gap-2 sm:flex-row">
+              <Button type="button" variant="ghost" onClick={() => setAberto(false)} disabled={salvando} className="w-full rounded-xl sm:w-auto">
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={salvando} className="w-full rounded-xl sm:w-auto">
+                {salvando ? 'Salvando' : temSenha ? 'Trocar senha' : 'Criar senha'}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </Secao>

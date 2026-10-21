@@ -34,6 +34,7 @@ import {
 } from './mail'
 import { buildAutoEmailPdfAttachments } from './material-pdf-email'
 import { trimAttachmentsToEmailLimit } from './email-attachment-size'
+import { classificarFalhaSmtp } from './envio-de-email'
 import { formatDuration, formatDurationMinutes, normalizeDuration } from './material-timed-access'
 import type { PaymentOrder, SerialKey, SerialKeyEmailLog } from './types'
 import type { ProviderOrder } from './payments/types'
@@ -113,10 +114,12 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
 
 /**
  * Nº de tentativas de ENVIO imediato (dentro da mesma chamada) antes de desistir
- * e registrar `failed`. Combate falhas transitórias do SMTP (rajada/queda de
- * conexão da Hostinger). O sweeper de fulfillment cuida das falhas persistentes.
+ * e registrar `failed`. Cada tentativa já passa por `enviarEmail`, que repete
+ * sozinho a falha passageira de conexão (lib/envio-de-email.ts) — por isso
+ * poucas aqui: três rodadas de três tentativas estourariam os 60 s do webhook.
+ * O sweeper de fulfillment cuida das falhas persistentes.
  */
-const MAX_EMAIL_SEND_RETRIES = Number(process.env.SERIAL_KEY_EMAIL_RETRIES) || 3
+const MAX_EMAIL_SEND_RETRIES = Number(process.env.SERIAL_KEY_EMAIL_RETRIES) || 2
 
 /**
  * Nº máximo de tentativas de ENVIO (somando webhook + execuções do cron) antes
@@ -128,16 +131,37 @@ export const MAX_FULFILLMENT_EMAIL_ATTEMPTS = Number(process.env.SERIAL_KEY_FULF
 /** A partir de quantas falhas o admin é alertado (uma única vez) por e-mail. */
 export const FULFILLMENT_ALERT_AFTER_ATTEMPTS = Number(process.env.SERIAL_KEY_FULFILLMENT_ALERT_AFTER) || 2
 
-/** Executa `fn` com algumas retentativas e backoff linear. Relança no fim. */
-async function sendWithRetry(label: string, fn: () => Promise<void>): Promise<void> {
+/**
+ * Executa `fn` com retentativa. Relança no fim.
+ *
+ * `fn` recebe `semAnexos`: quando o servidor recusa a mensagem pelo tamanho
+ * (552), a próxima tentativa sai SEM os PDFs do material. A Serial Key e o
+ * link de ativação são o que a pessoa comprou; o PDF ela baixa na plataforma
+ * depois de ativar. Antes, um PDF grande demais para o provedor fazia todas as
+ * tentativas falharem do mesmo jeito — e a key nunca chegava.
+ *
+ * Falha definitiva (caixa inexistente, recusa por política) não é repetida:
+ * repetir só gastaria o tempo da função.
+ */
+async function sendWithRetry(label: string, fn: (semAnexos: boolean) => Promise<void>): Promise<void> {
   let lastErr: any
+  let semAnexos = false
   for (let attempt = 1; attempt <= MAX_EMAIL_SEND_RETRIES; attempt++) {
     try {
-      await fn()
+      await fn(semAnexos)
+      if (semAnexos) console.warn(`[serial-key] ${label} — enviado sem os PDFs do material (mensagem grande demais).`)
       return
     } catch (err) {
       lastErr = err
-      console.error(`[serial-key] ${label} — tentativa ${attempt}/${MAX_EMAIL_SEND_RETRIES} falhou:`, err)
+      const tipo = classificarFalhaSmtp(err)
+      console.error(`[serial-key] ${label} — tentativa ${attempt}/${MAX_EMAIL_SEND_RETRIES} falhou (${tipo}):`, err)
+      if (tipo === 'tamanho' && !semAnexos) {
+        semAnexos = true
+        // Garante a rodada sem anexos mesmo se esta era a última tentativa.
+        if (attempt === MAX_EMAIL_SEND_RETRIES) attempt--
+        continue
+      }
+      if (tipo !== 'conexao' && tipo !== 'temporaria') break
       if (attempt < MAX_EMAIL_SEND_RETRIES) {
         await new Promise(r => setTimeout(r, attempt * 1500)) // 1.5s, 3s, ...
       }
@@ -242,7 +266,7 @@ export async function sendSerialKeyEmail(
       await markKeysRestricted(db, [serial._id])
     }
 
-    await sendWithRetry('envio serial key', () => sendSerialKeyPurchaseEmail({
+    await sendWithRetry('envio serial key', (semAnexos) => sendSerialKeyPurchaseEmail({
       email: serial.buyerEmail!,
       buyerName: serial.buyerName || '',
       buyerPhone: serial.buyerPhone || '',
@@ -260,7 +284,7 @@ export async function sendSerialKeyEmail(
       pdfBuffer,
       qrBuffer,
       kind,
-      materialAttachments: material.attachments,
+      materialAttachments: semAnexos ? [] : material.attachments,
       restrictActivationToBuyerEmail: material.eligible,
     }))
 
@@ -349,7 +373,7 @@ export async function sendSerialKeyCartEmail(
       await markKeysRestricted(db, restrictedKeyIds)
     }
 
-    await sendWithRetry('envio serial key (carrinho)', () => sendSerialKeyCartPurchaseEmail({
+    await sendWithRetry('envio serial key (carrinho)', (semAnexos) => sendSerialKeyCartPurchaseEmail({
       email: first.buyerEmail!,
       buyerName: first.buyerName || '',
       buyerPhone: first.buyerPhone || '',
@@ -360,7 +384,7 @@ export async function sendSerialKeyCartEmail(
       receiptText: buildReceiptText(receipt),
       pdfBuffer,
       kind,
-      materialAttachments,
+      materialAttachments: semAnexos ? [] : materialAttachments,
       restrictActivationToBuyerEmail: restrictedKeyIds.length > 0,
     }))
     ok = true
@@ -525,7 +549,8 @@ async function sendAccountPurchaseEmail(
     const single = applied.length === 1 ? applied[0] : null
     const singleAmount = paid ?? (single?.key.amount || 0)
 
-    await sendWithRetry('confirmação de compra aplicada na conta', async () => {
+    await sendWithRetry('confirmação de compra aplicada na conta', async (semAnexos) => {
+      const pdfs = semAnexos ? [] : fittingPdfs
       if (single?.purchase?.kind === 'plan') {
         await sendPlanPurchasedEmail(
           to,
@@ -557,7 +582,7 @@ async function sendAccountPurchaseEmail(
             ? single.purchase.itemTitle
             : (single.key.productTitle || 'Material'),
           singleAmount,
-          fittingPdfs
+          pdfs
         )
         return
       }
@@ -571,7 +596,7 @@ async function sendAccountPurchaseEmail(
           : (entry.key.productTitle || 'Material'),
         price: entry.key.amount || 0,
       }))
-      await sendCartPurchasedEmail(to, name, items, totalAmount, [], fittingPdfs)
+      await sendCartPurchasedEmail(to, name, items, totalAmount, [], pdfs)
     })
     ok = true
   } catch (err: any) {

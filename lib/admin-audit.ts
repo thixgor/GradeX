@@ -21,6 +21,8 @@ export type AdminSecurityEventType =
   | 'database_reset_challenged'  // alguém pediu o desafio para esvaziar o banco
   | 'database_reset'             // o banco foi esvaziado (coleções movidas para a lixeira)
   | 'database_reset_failed'      // tentativa de esvaziar o banco recusada
+  | 'user_password_reset'        // admin gerou senha provisória para um usuário
+  | 'user_password_link_sent'    // admin mandou o link de redefinição a um usuário
 
 export interface AdminSecurityEvent {
   type: AdminSecurityEventType

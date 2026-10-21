@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
   // Email best-effort
   const user = await db.collection<User>('users').findOne({ _id: new ObjectId(session.userId) as any })
   if (user) {
-    sendSubscriptionCancelledEmail(user.email, user.name).catch(err => {
+    await sendSubscriptionCancelledEmail(user.email, user.name).catch(err => {
       console.error('[cancel-sub] e-mail falhou:', err)
     })
   }

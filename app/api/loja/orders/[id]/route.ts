@@ -179,7 +179,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
 
     // E-mail ao cliente (best-effort) — toda atualização chega ao e-mail.
     if (notifyCustomer && order.userEmail) {
-      sendShopOrderStatusEmail({
+      await sendShopOrderStatusEmail({
         to: order.userEmail,
         userName: order.userName,
         orderNumber: order.orderNumber,

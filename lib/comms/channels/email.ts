@@ -1,12 +1,12 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Adapter do canal de E-mail.
 //
-// Reaproveita o transporter pooled de lib/mail.ts e renderiza a partir do
+// Envia por `enviarEmail` (lib/envio-de-email.ts) e renderiza a partir do
 // template + payload no momento do envio. Falhas são lançadas para o dispatcher
 // tratar o retry/backoff.
 // ────────────────────────────────────────────────────────────────────────────
 
-import { transporter } from '@/lib/mail'
+import { classificarFalhaSmtp, enviarEmail } from '@/lib/envio-de-email'
 import { getMarketingEmailTemplate, personalize } from '../email-render'
 import { PermanentSendError } from '../types'
 import type { ChannelAdapter, OutboxMessage, OutboxTarget, SendResult } from '../types'
@@ -58,7 +58,24 @@ export const emailAdapter: ChannelAdapter = {
             throw new PermanentSendError(`E-mail inválido: ${to ?? '(vazio)'}`)
         }
         const { subject, html } = render(msg)
-        const info = await transporter.sendMail({ from: FROM, to, subject, html })
-        return { providerMessageId: info.messageId }
+        // A outbox já tem retentativa com backoff e histórico próprio
+        // (`email_history`): aqui só uma segunda chance imediata, para o caso
+        // do socket velho no pool, e nada de registro duplicado.
+        try {
+            const info = await enviarEmail(
+                { from: FROM, to, subject, html },
+                { registrar: false, tentativas: 2, categoria: 'campanha' },
+            )
+            return { providerMessageId: info.messageId }
+        } catch (err) {
+            // Caixa inexistente ou mensagem grande demais não melhoram com o
+            // tempo: vai direto para dead-letter em vez de gastar as 5
+            // tentativas da outbox.
+            const tipo = classificarFalhaSmtp(err)
+            if (tipo === 'destinatario' || tipo === 'tamanho') {
+                throw new PermanentSendError(err instanceof Error ? err.message : String(err))
+            }
+            throw err
+        }
     },
 }

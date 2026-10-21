@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
         metadata: { reason: 'period_ended', byCron: true, plusClaimsRevoked: revoked.count },
       })
 
-      sendSubscriptionCancelledEmail(user.email, user.name).catch(() => {})
+      await sendSubscriptionCancelledEmail(user.email, user.name).catch(() => {})
     } catch (err) {
       stats.errors++
       console.error('[cron-subs] expire fail', sub.providerSubscriptionId, err)

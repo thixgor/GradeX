@@ -48,6 +48,8 @@ const EVENT_LABELS: Record<string, { label: string; tone: string }> = {
   gate_rate_limited: { label: 'Tentativas bloqueadas', tone: 'text-red-600 dark:text-red-400' },
   gate_locked: { label: 'Painel trancado', tone: 'text-amber-600 dark:text-amber-400' },
   admins_logged_out: { label: 'Admins desconectados', tone: 'text-amber-600 dark:text-amber-400' },
+  user_password_reset: { label: 'Senha de usuário redefinida', tone: 'text-amber-600 dark:text-amber-400' },
+  user_password_link_sent: { label: 'Link de senha enviado', tone: 'text-muted-foreground' },
 }
 
 function formatDuration(totalSeconds?: number): string {

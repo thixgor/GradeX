@@ -39,6 +39,9 @@ export async function ensureIndexes(db: Db): Promise<void> {
     // base já povoada quebraria a criação do índice se houver duplicata; a
     // API já rejeita CPF repetido antes de gravar.
     db.collection('users').createIndex({ cpf: 1 }, { sparse: true }),
+    // Link de "Esqueci minha senha": a busca pelo hash do token varria a
+    // coleção inteira. Esparso: só quem tem link pendente entra no índice.
+    db.collection('users').createIndex({ 'resetPasswordTokens.hash': 1 }, { sparse: true }),
     db.collection('submissions').createIndex({ userId: 1 }),
     /*
      * Entregas por prova.

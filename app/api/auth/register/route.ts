@@ -6,7 +6,7 @@ import { recordLoginSession } from '@/lib/sessions'
 import { verifyRecaptcha } from '@/lib/recaptcha'
 import { User } from '@/lib/types'
 import { ADMIN_EMAILS } from '@/lib/constants'
-import { sendWelcomeEmail, sendVerificationEmail } from '@/lib/mail'
+import { sendWelcomeEmail, sendVerificationEmail, deliverTransactionalEmails } from '@/lib/mail'
 import crypto from 'crypto'
 import { secureApiEndpoint } from '@/lib/api-security'
 import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
@@ -193,17 +193,15 @@ export async function POST(request: NextRequest) {
       ...getRequestAnalyticsMeta(request),
     })
 
-    // Enviar emails em paralelo para não travar
-    Promise.allSettled([
-      sendWelcomeEmail(email, name),
-      sendVerificationEmail(email, verificationToken, name)
-    ]).then((results) => {
-      results.forEach((result, index) => {
-        if (result.status === 'rejected') {
-          console.error(`Erro ao enviar email ${index === 0 ? 'boas-vindas' : 'verificação'}:`, result.reason)
-        }
-      })
-    })
+    // Esperados antes de responder: em serverless não existe "depois" — o
+    // e-mail de confirmação que saía solto morria com a instância congelada, e
+    // a conta ficava sem como ser confirmada. Ver `deliverTransactionalEmails`.
+    await deliverTransactionalEmails([
+      sendWelcomeEmail(email, name).catch((err) => console.error('Erro ao enviar email boas-vindas:', err)),
+      sendVerificationEmail(email, verificationToken, name).catch((err) =>
+        console.error('Erro ao enviar email verificação:', err)
+      ),
+    ])
 
     return NextResponse.json({
       success: true,

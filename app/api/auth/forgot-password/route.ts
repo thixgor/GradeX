@@ -1,20 +1,17 @@
-
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { normalizeEmail } from '@/lib/auth'
-import { sendPasswordResetEmail } from '@/lib/mail'
 import { checkRateLimit } from '@/lib/rate-limit'
-import crypto from 'crypto'
+import { buscarContaPorEmail, enviarLinkDeRedefinicao, VALIDADE_DO_LINK_MIN } from '@/lib/redefinicao-de-senha'
 import { headers } from 'next/headers'
 import { z } from 'zod'
 
 const forgotPasswordSchema = z.object({
-    email: z.string().email('Email inválido'),
+    email: z.string().trim().email('Email inválido'),
 })
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
+        const body = await req.json().catch(() => ({}))
         const result = forgotPasswordSchema.safeParse(body)
 
         if (!result.success) {
@@ -24,12 +21,10 @@ export async function POST(req: Request) {
             )
         }
 
-        const email = normalizeEmail(result.data.email)
-
         // Rate Limit
         const headersList = await headers()
-        const ip = headersList.get('x-forwarded-for')?.split(',')[0] || 'unknown'
-        const limit = await checkRateLimit(ip, 'forgot-password', 5, 60 * 60 * 1000) // 5 tentativas por hora
+        const ip = headersList.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+        const limit = await checkRateLimit(ip, 'forgot-password', 8, 60 * 60 * 1000) // 8 pedidos por hora
 
         if (!limit.success) {
             return NextResponse.json(
@@ -38,46 +33,38 @@ export async function POST(req: Request) {
             )
         }
 
-        const db = await getDb()
-        const user = await db.collection('users').findOne({ email })
-
-        // Generic response for security
+        // A mesma resposta para conta existente e inexistente: o formulário
+        // não pode servir para descobrir quem tem cadastro.
         const genericResponse = NextResponse.json({
-            message: 'Se um cadastro com este e-mail existir, você receberá um link para redefinir sua senha.'
+            message: 'Se um cadastro com este e-mail existir, você receberá um link para redefinir sua senha.',
+            validadeMin: VALIDADE_DO_LINK_MIN,
         })
 
-        if (!user) {
-            return genericResponse
+        const db = await getDb()
+        const user = await buscarContaPorEmail(db, result.data.email)
+        if (!user) return genericResponse
+
+        const envio = await enviarLinkDeRedefinicao(db, user, { origem: 'esqueci' })
+
+        if (envio.status === 'falhou') {
+            // Antes a falha era engolida e a tela dizia "verifique sua caixa de
+            // entrada" para um e-mail que nunca saiu. Dizer a verdade só revela
+            // que a conta existe enquanto o SMTP estiver fora — e deixa a pessoa
+            // tentar de novo em vez de esperar para sempre.
+            console.error('[forgot-password] envio do link falhou:', envio.erro)
+            return NextResponse.json(
+                {
+                    error:
+                        'Não conseguimos enviar o e-mail agora. Tente novamente em alguns minutos. ' +
+                        'Se continuar, fale com o suporte em contato@domineaqui.com.br.',
+                },
+                { status: 503 }
+            )
         }
 
-        // Generate token
-        const resetToken = crypto.randomBytes(32).toString('hex')
-        const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex')
-        const expiry = new Date(Date.now() + 15 * 60 * 1000) // 15 minutos
-
-        await db.collection('users').updateOne(
-            { _id: user._id },
-            {
-                $set: {
-                    resetPasswordToken: hashedToken,
-                    resetPasswordExpires: expiry
-                }
-            }
-        )
-
-        try {
-            await sendPasswordResetEmail(user.email, resetToken)
-        } catch (emailError) {
-            console.error('Failed to send reset email:', emailError)
-            // Even if email fails, we return success to not leak info? 
-            // Or maybe 500? Security-wise, distinct error might leak user existence (if we only try for existing users).
-            // Given we are inside the "if user" block, failing here implies user exists.
-            // So we should return the generic response or a generic "Service Unavailable".
-            // Let's return generic response but log the error.
-        }
-
+        // 'aguarde': um e-mail acabou de sair para esta conta. Não manda outro,
+        // mas responde igual — o link anterior chega e funciona.
         return genericResponse
-
     } catch (error) {
         console.error('Forgot password error:', error)
         return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })

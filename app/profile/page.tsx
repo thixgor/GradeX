@@ -57,7 +57,7 @@ import { avatarPorId } from '@/lib/monitorias/avatares'
 import { voltarValido } from '@/lib/monitorias/requisitos'
 import type { CampoDoPerfil } from '@/components/profile/personal-data-card'
 
-const CAMPOS: CampoDoPerfil[] = ['email', 'dados', 'cpf', 'fullName', 'dateOfBirth', 'foto']
+const CAMPOS: CampoDoPerfil[] = ['email', 'dados', 'cpf', 'fullName', 'dateOfBirth', 'foto', 'senha']
 
 type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
 

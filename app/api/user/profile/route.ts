@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
 import { getDb } from '@/lib/mongodb'
 import { getSession, verifyPassword, createToken, setAuthCookie, invalidateSessionCache } from '@/lib/auth'
-import { sendVerificationEmail } from '@/lib/mail'
+import { sendVerificationEmail, deliverTransactionalEmails } from '@/lib/mail'
 import { isValidStateUf } from '@/lib/brazil-states'
 import { isValidBrazilPhone } from '@/lib/phone'
 import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
@@ -36,6 +36,8 @@ const PROFILE_PROJECTION = {
   fullName: 1,
   dateOfBirth: 1,
   avatar: 1,
+  // Só para saber SE existe (conta do Google não tem). O hash nunca sai daqui.
+  password: 1,
 } as const
 
 // Dados de perfil que o próprio usuário pode ver/editar em /profile.
@@ -84,6 +86,7 @@ export async function GET() {
       hasCpf: !!user.cpf,
       cpfVerified: !!user.cpfVerified,
       avatar: user.avatar || '',
+      hasPassword: !!user.password,
     },
   })
 }
@@ -247,9 +250,11 @@ export async function PUT(request: NextRequest) {
   )
 
   if (emailChanged) {
-    sendVerificationEmail(newEmail, setFields.verificationToken, currentUser.name).catch((err) => {
-      console.error('Falha ao enviar e-mail de verificação (troca de email):', err)
-    })
+    await deliverTransactionalEmails([
+      sendVerificationEmail(newEmail, setFields.verificationToken, currentUser.name).catch((err) => {
+        console.error('Falha ao enviar e-mail de verificação (troca de email):', err)
+      }),
+    ])
 
     // Reemite o token/cookie com o novo e-mail pra manter a sessão coerente
     // (o payload do JWT carrega o e-mail). Mantém o mesmo jti — não é um

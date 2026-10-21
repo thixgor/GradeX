@@ -21,8 +21,11 @@ export const maxDuration = 60
 /**
  * Cron de reentrega de material/serial key (rede de segurança de fulfillment).
  *
- * Disparado por um agendador EXTERNO (ex.: cron-job.org), já que o Vercel Free
- * não roda cron nativo. Como o cron-job.org corta a conexão em ~30s, este
+ * Agendado no Cron da Vercel (vercel.json, a cada 15 min) — antes dependia só
+ * de um agendador externo, e sem ele configurado a compra cujo e-mail falhou
+ * nunca era reenviada. Um agendador externo (ex.: cron-job.org) ainda pode
+ * chamar a rota: o cooldown abaixo evita reenvio em dobro. Como o cron-job.org
+ * corta a conexão em ~30s, este
  * handler trabalha por LOTES com ORÇAMENTO DE TEMPO: processa poucas ordens por
  * chamada e retorna antes do timeout. Chamado a cada poucos minutos, drena o
  * backlog aos poucos. É idempotente — reprocessar não duplica key nem e-mail.

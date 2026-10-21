@@ -184,7 +184,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (user.email) {
-      sendManualClinicoPurchasedEmail({
+      await sendManualClinicoPurchasedEmail({
         email: user.email,
         name: user.name || '',
         planLabel: plan.label,

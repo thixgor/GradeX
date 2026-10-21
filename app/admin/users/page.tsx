@@ -8,7 +8,7 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { User, BanReason, BanReasonLabels, AccountType, TrialPlanType, PremiumPlanType } from '@/lib/types'
-import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut, Phone, MapPin, Stethoscope, BookOpen, TrendingUp, Wallet, CalendarClock, AlertCircle, Repeat, Sparkles, Infinity as InfinityIcon, Target } from 'lucide-react'
+import { ArrowLeft, Trash2, Ban, CheckCircle, AlertTriangle, Shield, Crown, Timer, Settings, Info, Zap, Activity, Users, UserCheck, Clock, Search, RefreshCw, Mail, CalendarDays, ShoppingBag, FileDown, Package as PackageIcon, FileText as FileTextIcon, Receipt, GraduationCap, MonitorSmartphone, Wifi, LogOut, Phone, MapPin, Stethoscope, BookOpen, TrendingUp, Wallet, CalendarClock, AlertCircle, Repeat, Sparkles, Infinity as InfinityIcon, Target, KeyRound } from 'lucide-react'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
@@ -19,6 +19,7 @@ import { isPlusAccount, normalizeAccountType, PLUS_LABEL, QUEST_LABEL } from '@/
 import { useCargos } from '@/hooks/use-cargos'
 import { SeloDeCargo, iconeDoCargo } from '@/components/cargo-badge'
 import { AdminSecurityPanel } from '@/components/admin/admin-security-panel'
+import { EmailsDoUsuarioDialog, RedefinirSenhaDialog } from '@/components/admin/acesso-do-usuario'
 import {
   buildAdminUserInsights,
   describeAccountRole,
@@ -379,6 +380,9 @@ export default function AdminUsersPage() {
     }>
   } | null>(null)
   const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null)
+  // Acesso: senha provisória / link de redefinição, e o registro de e-mails.
+  const [senhaUser, setSenhaUser] = useState<AdminUserRow | null>(null)
+  const [emailsUser, setEmailsUser] = useState<AdminUserRow | null>(null)
   const [selectedUser, setSelectedUser] = useState<AdminUserRow | null>(null)
   const [banReason, setBanReason] = useState<BanReason>('other')
   const [banDetails, setBanDetails] = useState('')
@@ -1880,6 +1884,28 @@ export default function AdminUsersPage() {
                       Dispositivos
                     </Button>
 
+                    {user.role !== 'admin' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSenhaUser(user)}
+                        title="Gerar senha provisória ou enviar link de redefinição"
+                      >
+                        <KeyRound className="h-4 w-4 mr-2" />
+                        Senha
+                      </Button>
+                    )}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEmailsUser(user)}
+                      title="E-mails que o site enviou para esta pessoa"
+                    >
+                      <Mail className="h-4 w-4 mr-2" />
+                      E-mails
+                    </Button>
+
                     <Button
                       variant="outline"
                       size="sm"
@@ -2996,6 +3022,19 @@ export default function AdminUsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <RedefinirSenhaDialog
+        usuario={senhaUser}
+        open={!!senhaUser}
+        onOpenChange={(open) => !open && setSenhaUser(null)}
+        onToast={(mensagem, tipo) => showToastMessage(mensagem, tipo)}
+      />
+
+      <EmailsDoUsuarioDialog
+        usuario={emailsUser}
+        open={!!emailsUser}
+        onOpenChange={(open) => !open && setEmailsUser(null)}
+      />
 
       <ToastAlert
         open={toastOpen}

@@ -1,14 +1,16 @@
-
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
-import { hashPassword } from '@/lib/auth'
-import crypto from 'crypto'
 import { z } from 'zod'
 import { secureApiEndpoint } from '@/lib/api-security'
+import { sendPasswordChangedEmail, deliverTransactionalEmails } from '@/lib/mail'
+import { buscarContaPeloToken, gravarNovaSenha, SENHA_MAX, SENHA_MIN } from '@/lib/redefinicao-de-senha'
 
 const resetPasswordSchema = z.object({
-    token: z.string(),
-    password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
+    token: z.string().min(1, 'Link de redefinição inválido.'),
+    password: z
+        .string()
+        .min(SENHA_MIN, `A senha deve ter no mínimo ${SENHA_MIN} caracteres`)
+        .max(SENHA_MAX, `A senha deve ter no máximo ${SENHA_MAX} caracteres`),
 })
 
 export async function POST(req: NextRequest) {
@@ -23,7 +25,7 @@ export async function POST(req: NextRequest) {
             return security.errorResponse
         }
 
-        const body = await req.json()
+        const body = await req.json().catch(() => ({}))
         const result = resetPasswordSchema.safeParse(body)
 
         if (!result.success) {
@@ -35,33 +37,23 @@ export async function POST(req: NextRequest) {
 
         const { token, password } = result.data
 
-        const hashedToken = crypto.createHash('sha256').update(token).digest('hex')
-
         const db = await getDb()
-        const user = await db.collection('users').findOne({
-            resetPasswordToken: hashedToken,
-            resetPasswordExpires: { $gt: new Date() }
-        })
+        const user = await buscarContaPeloToken(db, token)
 
         if (!user) {
             return NextResponse.json(
-                { error: 'Link de redefinição inválido ou expirado.' },
+                { error: 'Link de redefinição inválido ou expirado. Peça um novo em "Esqueci minha senha".' },
                 { status: 400 }
             )
         }
 
-        const hashedPassword = await hashPassword(password)
+        // Abrir o link que chegou no e-mail prova que a caixa é da pessoa: a
+        // conta fica com o e-mail confirmado de quebra.
+        await gravarNovaSenha(db, user._id!, password, { por: 'reset', confirmarEmail: true })
 
-        await db.collection('users').updateOne(
-            { _id: user._id },
-            {
-                $set: { password: hashedPassword },
-                $unset: {
-                    resetPasswordToken: "",
-                    resetPasswordExpires: ""
-                }
-            }
-        )
+        await deliverTransactionalEmails([
+            sendPasswordChangedEmail({ email: user.email, nome: user.name, por: 'reset' }),
+        ])
 
         return NextResponse.json({ message: 'Senha redefinida com sucesso!' })
 

@@ -1,24 +1,45 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Logo } from '@/components/logo'
-import { ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, RefreshCw } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
 
+/** Espera antes de liberar o "Reenviar" — o servidor segura 45 s por conta. */
+const ESPERA_PARA_REENVIAR_S = 60
+
 export default function ForgotPasswordPage() {
+    return (
+        <Suspense fallback={null}>
+            <ForgotPasswordView />
+        </Suspense>
+    )
+}
+
+function ForgotPasswordView() {
     const router = useRouter()
-    const [email, setEmail] = useState('')
+    const searchParams = useSearchParams()
+    // O perfil e o painel do admin mandam o e-mail na URL para ninguém redigitar.
+    const [email, setEmail] = useState(() => searchParams?.get('email') || '')
     const [loading, setLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [error, setError] = useState('')
+    const [validadeMin, setValidadeMin] = useState(60)
+    const [espera, setEspera] = useState(0)
+    const [reenviado, setReenviado] = useState(false)
 
-    async function handleSubmit(e: React.FormEvent) {
-        e.preventDefault()
+    useEffect(() => {
+        if (espera <= 0) return
+        const t = setTimeout(() => setEspera((s) => s - 1), 1000)
+        return () => clearTimeout(t)
+    }, [espera])
+
+    async function solicitar(): Promise<boolean> {
         setError('')
         setLoading(true)
 
@@ -26,22 +47,39 @@ export default function ForgotPasswordPage() {
             const res = await fetch('/api/auth/forgot-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email: email.trim() }),
             })
 
-            const data = await res.json()
+            const data = await res.json().catch(() => ({}))
 
             if (!res.ok) {
                 throw new Error(data.error || 'Erro ao processar solicitação')
             }
 
-            setSubmitted(true)
+            if (typeof data.validadeMin === 'number') setValidadeMin(data.validadeMin)
+            setEspera(ESPERA_PARA_REENVIAR_S)
+            return true
         } catch (err: any) {
-            setError(err.message)
+            setError(err.message || 'Erro ao processar solicitação')
+            return false
         } finally {
             setLoading(false)
         }
     }
+
+    async function handleSubmit(e: React.FormEvent) {
+        e.preventDefault()
+        if (await solicitar()) setSubmitted(true)
+    }
+
+    async function reenviar() {
+        if (espera > 0 || loading) return
+        if (await solicitar()) setReenviado(true)
+    }
+
+    const prazo = validadeMin % 60 === 0
+        ? `${validadeMin / 60} hora${validadeMin / 60 > 1 ? 's' : ''}`
+        : `${validadeMin} minutos`
 
     return (
         <div className="relative flex min-h-screen items-center justify-center overflow-hidden surface-page p-4 text-foreground">
@@ -100,14 +138,54 @@ export default function ForgotPasswordPage() {
                                 <p className="text-sm text-muted-foreground">
                                     Se houver uma conta associada ao email{' '}
                                     <strong className="text-foreground">{email}</strong>, você receberá um link para redefinir sua senha em instantes.
-                                </p>
-                                <p className="mt-2 text-xs text-muted-foreground">
-                                    Não esqueça de verificar sua caixa de spam/lixo eletrônico.
+                                    O link vale por {prazo}.
                                 </p>
                             </div>
+                            <ul className="w-full space-y-1.5 rounded-lg border border-border bg-muted/40 p-3 text-left text-xs text-muted-foreground">
+                                <li>• Pode levar alguns minutos para chegar.</li>
+                                <li>• Confira as pastas <strong>Spam</strong>, <strong>Lixo eletrônico</strong> e, no Gmail, a aba <strong>Promoções</strong>.</li>
+                                <li>• Procure por <strong>DomineAqui</strong> ou pelo remetente <strong>no-reply@domineaqui.com.br</strong>.</li>
+                                <li>• Pediu mais de uma vez? Qualquer um dos e-mails recentes funciona.</li>
+                            </ul>
+                            {error && (
+                                <div className="w-full rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-center text-sm text-destructive">
+                                    {error}
+                                </div>
+                            )}
+                            {reenviado && !error && (
+                                <p className="text-center text-xs font-medium text-primary">Pedido reenviado.</p>
+                            )}
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={reenviar}
+                                disabled={espera > 0 || loading}
+                                className="h-11 w-full rounded-lg"
+                            >
+                                <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                                {loading
+                                    ? 'Enviando...'
+                                    : espera > 0
+                                        ? `Não chegou? Reenviar em ${espera}s`
+                                        : 'Não chegou? Reenviar e-mail'}
+                            </Button>
+                            <button
+                                type="button"
+                                onClick={() => { setSubmitted(false); setReenviado(false); setError('') }}
+                                className="text-xs font-medium text-muted-foreground underline-offset-4 hover:underline"
+                            >
+                                Digitei o e-mail errado
+                            </button>
+                            <p className="text-center text-xs text-muted-foreground">
+                                Ainda sem e-mail? Fale com o suporte em{' '}
+                                <a href="mailto:contato@domineaqui.com.br" className="font-medium text-primary underline-offset-4 hover:underline">
+                                    contato@domineaqui.com.br
+                                </a>
+                                .
+                            </p>
                             <Button
                                 onClick={() => router.push('/auth/login')}
-                                className="mt-4 h-11 w-full rounded-lg bg-secondary font-semibold text-secondary-foreground hover:bg-secondary/90"
+                                className="h-11 w-full rounded-lg bg-secondary font-semibold text-secondary-foreground hover:bg-secondary/90"
                             >
                                 Voltar para Login
                             </Button>

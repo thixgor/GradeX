@@ -6,6 +6,9 @@ vi.mock('nodemailer', () => ({
   default: { createTransport: () => ({ sendMail: (...args: any[]) => sendMailMock(...args) }) },
 }))
 
+// Cada envio vira uma linha no registro de e-mails (Mongo); aqui não há banco.
+vi.mock('@/lib/registro-de-emails', () => ({ registrarEnvio: async () => undefined }))
+
 import {
   deliverTransactionalEmails,
   sendProuniRequestAdminAlert,

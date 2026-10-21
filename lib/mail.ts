@@ -1,37 +1,26 @@
 
-import nodemailer from 'nodemailer'
 import { getMarketingEmailTemplate, personalize, renderEmailButton } from '@/lib/comms/email-render'
 import { partirEmNegrito } from '@/lib/provas/pitch-de-vendas'
 import { ADMIN_EMAILS } from '@/lib/constants'
 import { formatPaidSummary, toPaidSummary, type PaidSummary } from '@/lib/payments/receipt'
+import { enviarEmail, type OpcoesDeEmail } from '@/lib/envio-de-email'
 
-// Transporter compartilhado (pooled). O SMTP da Hostinger derruba conexões sob
-// rajada — daí os erros de "auth limit". O pool reaproveita poucas conexões e
-// limita a taxa de saída, eliminando a maior parte das falhas em lote mesmo
-// antes da fila assíncrona (lib/comms) entrar em ação.
-export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-  port: Number(process.env.SMTP_PORT) || 465,
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-  pool: true,
-  maxConnections: Number(process.env.SMTP_MAX_CONNECTIONS) || 2,
-  maxMessages: Number(process.env.SMTP_MAX_MESSAGES) || 50,
-  // No máx. `rateLimit` mensagens por `rateDelta` ms (padrão: 3/seg).
-  rateDelta: 1000,
-  rateLimit: Number(process.env.SMTP_RATE_LIMIT) || 3,
-  // Timeouts explícitos: sem eles, quando a Hostinger derruba/segura a conexão
-  // sob rajada ("auth limit"), o sendMail fica pendurado até o serverless
-  // estourar o maxDuration — o gateway então responde 504 com corpo em texto
-  // ("An error occurred…"), que o front tenta ler como JSON e quebra. Falhar
-  // rápido devolve o erro para o retry/backoff da fila em vez de travar tudo.
-  connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT) || 10_000,
-  greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT) || 10_000,
-  socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT) || 20_000,
-})
+/**
+ * Fachada do envio. Mantém a forma `transporter.sendMail(...)` que todo este
+ * arquivo (e a outbox de campanhas) já usa, mas cada chamada passa por
+ * `enviarEmail`: pool que se renova, retentativa em falha passageira, servidor
+ * de reserva e registro em `email_envios`. Ver `lib/envio-de-email.ts`.
+ */
+export const transporter = {
+  sendMail: (opcoes: OpcoesDeEmail) => enviarEmail(opcoes),
+}
+
+/**
+ * Endereço do site nos links dos e-mails. Sem a variável, os links saíam como
+ * "undefined/auth/reset-password?…" (ou relativos, que o cliente de e-mail não
+ * sabe abrir) — o link de redefinição de senha chegava quebrado.
+ */
+const URL_DO_SITE = (process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br').replace(/\/+$/, '')
 
 /**
  * Entrega avisos transacionais ANTES de a rota responder.
@@ -70,7 +59,6 @@ export async function deliverTransactionalEmails(
 
 // Estilos e Layout Base (Verde: #0f3d2e, Laranja: #f57c00)
 const getEmailTemplate = (title: string, content: string) => {
-  const resetUrl = process.env.NEXT_PUBLIC_APP_URL
   const logoUrl = 'https://www.domineaqui.com.br/logo.png' // Certifique-se que este link existe
 
   return `
@@ -110,7 +98,7 @@ const getEmailTemplate = (title: string, content: string) => {
         <div class="footer">
           <p>Siga-nos no Instagram: <a href="https://instagram.com/domineaqui.br" class="social-link" target="_blank">@domineaqui.br</a></p>
           <p>&copy; ${new Date().getFullYear()} DomineAqui. Todos os direitos reservados.</p>
-          <p style="margin-top: 10px; font-size: 11px; opacity: 0.7;">Este é um e-mail automático, por favor não responda a este endereço.</p>
+          <p style="margin-top: 10px; font-size: 11px; opacity: 0.7;">Precisa de ajuda? É só responder este e-mail ou escrever para contato@domineaqui.com.br.</p>
         </div>
       </div>
     </body>
@@ -118,15 +106,26 @@ const getEmailTemplate = (title: string, content: string) => {
   `
 }
 
-export async function sendPasswordResetEmail(email: string, token: string) {
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password?token=${token}`
+export async function sendPasswordResetEmail(
+  email: string,
+  token: string,
+  opcoes: { nome?: string; validadeMin?: number; origem?: 'esqueci' | 'perfil' | 'admin' } = {}
+) {
+  const resetUrl = `${URL_DO_SITE}/auth/reset-password?token=${token}`
+  const primeiroNome = (opcoes.nome || '').trim().split(' ')[0]
+  const validade = opcoes.validadeMin || 60
+  const prazo = validade % 60 === 0
+    ? `${validade / 60} hora${validade / 60 > 1 ? 's' : ''}`
+    : `${validade} minutos`
+  const pedido = opcoes.origem === 'admin'
+    ? 'Nossa equipe de suporte enviou este link para você criar uma nova senha'
+    : 'Recebemos uma solicitação para redefinir a senha'
 
   const content = `
     <h1 class="h1">Redefinição de Senha</h1>
-    <p>Olá,</p>
-    <p>Recebemos uma solicitação para redefinir a senha da sua conta no <strong>DomineAqui</strong>.</p>
-    <p>Se não foi você quem solicitou, fique tranquilo(a): sua conta continua segura e você pode ignorar este e-mail.</p>
-    <p>Para criar uma nova senha, clique no botão abaixo (o link expira em 15 minutos):</p>
+    <p>Olá${primeiroNome ? `, ${escapeHtml(primeiroNome)}` : ''}!</p>
+    <p>${pedido} da sua conta no <strong>DomineAqui</strong> (<strong>${escapeHtml(email)}</strong>).</p>
+    <p>Para criar uma nova senha, clique no botão abaixo. O link vale por <strong>${prazo}</strong>.</p>
     <div style="text-align: center;">
       <a href="${resetUrl}" class="button" target="_blank">Redefinir Minha Senha</a>
     </div>
@@ -134,20 +133,113 @@ export async function sendPasswordResetEmail(email: string, token: string) {
       Ou copie e cole este link no seu navegador:<br>
       <a href="${resetUrl}" style="color: #0f3d2e; word-break: break-all;">${resetUrl}</a>
     </p>
+    <p style="font-size: 0.9em; color: #718096;">
+      Se você pediu mais de uma vez, qualquer um dos e-mails recentes funciona.
+      Se não foi você quem pediu, ignore este e-mail: sua senha atual continua valendo.
+    </p>
   `
 
   const html = getEmailTemplate('Redefinição de Senha', content)
 
-  await transporter.sendMail({
-    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
-    to: email,
-    subject: 'Redefinição de Senha - DomineAqui',
-    html,
-  })
+  await enviarEmail(
+    {
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: email,
+      subject: 'Redefinição de Senha - DomineAqui',
+      html,
+    },
+    { categoria: 'redefinicao-senha' }
+  )
+}
+
+/**
+ * Aviso de que a senha mudou. É o alarme da pessoa caso a troca não tenha
+ * sido ela — por isso diz como, quando e o que fazer.
+ */
+export async function sendPasswordChangedEmail(input: {
+  email: string
+  nome?: string
+  por: 'user' | 'reset' | 'admin'
+}) {
+  const primeiroNome = (input.nome || '').trim().split(' ')[0]
+  const quando = new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'America/Sao_Paulo',
+  }).format(new Date())
+  const como = input.por === 'admin'
+    ? 'pela nossa equipe de suporte, a seu pedido'
+    : input.por === 'reset'
+      ? 'pelo link de redefinição enviado a este e-mail'
+      : 'nas configurações do seu perfil'
+
+  const content = `
+    <h1 class="h1">Sua senha foi alterada 🔐</h1>
+    <p>Olá${primeiroNome ? `, ${escapeHtml(primeiroNome)}` : ''}!</p>
+    <p>A senha da sua conta no <strong>DomineAqui</strong> (<strong>${escapeHtml(input.email)}</strong>) foi alterada ${como}, em <strong>${quando}</strong> (horário de Brasília).</p>
+    <p>Por segurança, os outros aparelhos conectados à sua conta foram desconectados.</p>
+    <div style="background-color: #fff5f5; border-left: 4px solid #e53e3e; padding: 15px; margin: 25px 0; border-radius: 4px;">
+      <p style="margin: 0; color: #9b2c2c; font-size: 14px;">
+        <strong>Não foi você?</strong> Redefina sua senha agora mesmo e responda este e-mail para falarmos com você.
+      </p>
+    </div>
+    <div style="text-align: center;">
+      <a href="${URL_DO_SITE}/auth/forgot-password" class="button" target="_blank">Redefinir minha senha</a>
+    </div>
+  `
+
+  await enviarEmail(
+    {
+      from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: 'Sua senha foi alterada - DomineAqui',
+      html: getEmailTemplate('Senha alterada', content),
+    },
+    { categoria: 'senha-alterada' }
+  )
+}
+
+/**
+ * Senha provisória definida pelo admin. Só sai quando o admin marca a opção —
+ * o caminho padrão é ele mandar o acesso pelo canal em que já fala com a
+ * pessoa (WhatsApp, Instagram).
+ */
+export async function sendAdminTemporaryPasswordEmail(input: {
+  email: string
+  nome?: string
+  senha: string
+}) {
+  const primeiroNome = (input.nome || '').trim().split(' ')[0]
+  const loginUrl = `${URL_DO_SITE}/auth/login`
+
+  const content = `
+    <h1 class="h1">Seu novo acesso ao DomineAqui</h1>
+    <p>Olá${primeiroNome ? `, ${escapeHtml(primeiroNome)}` : ''}!</p>
+    <p>Nossa equipe de suporte criou uma senha provisória para a sua conta. Use os dados abaixo para entrar:</p>
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 20px 0;">
+      <p style="margin: 0 0 6px 0; font-size: 14px; color: #4a5568;">E-mail: <strong>${escapeHtml(input.email)}</strong></p>
+      <p style="margin: 0; font-size: 14px; color: #4a5568;">Senha provisória: <strong style="font-family: 'Courier New', Courier, monospace; font-size: 18px; color: #0f3d2e; letter-spacing: 1px;">${escapeHtml(input.senha)}</strong></p>
+    </div>
+    <div style="text-align: center;">
+      <a href="${loginUrl}" class="button" target="_blank">Entrar na plataforma</a>
+    </div>
+    <p style="margin-top: 24px; font-size: 0.9em; color: #718096;">
+      Depois de entrar, troque a senha em <strong>Perfil → Configurações → Senha</strong>. Não compartilhe esta senha com ninguém.
+    </p>
+  `
+
+  await enviarEmail(
+    {
+      from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+      to: input.email,
+      subject: 'Seu novo acesso ao DomineAqui',
+      html: getEmailTemplate('Novo acesso', content),
+    },
+    { categoria: 'senha-provisoria' }
+  )
 }
 
 export async function sendWelcomeEmail(email: string, name: string) {
-  const loginUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`
+  const loginUrl = `${URL_DO_SITE}/auth/login`
   const firstName = name.split(' ')[0]
 
   const content = `
@@ -169,12 +261,12 @@ export async function sendWelcomeEmail(email: string, name: string) {
 
   const html = getEmailTemplate('Bem-vindo(a)!', content)
 
-  await transporter.sendMail({
+  await enviarEmail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
     subject: `Bem-vindo(a) ao DomineAqui, ${firstName}!`,
     html,
-  })
+  }, { categoria: 'boas-vindas' })
 }
 
 // E-mail de revisão espaçada / retenção: reengaja quem parou de estudar há
@@ -186,7 +278,7 @@ export async function sendSpacedReviewEmail(input: {
   diasParado: number
 }) {
   const firstName = (input.name || '').split(' ')[0] || 'estudante'
-  const studyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+  const studyUrl = `${URL_DO_SITE}/dashboard`
 
   const streakLine =
     input.streakDays > 0
@@ -224,7 +316,7 @@ export async function sendProfileReminderEmail(input: {
   missing: string[]
 }) {
   const firstName = (input.name || '').split(' ')[0] || 'por aí'
-  const profileUrl = `${process.env.NEXT_PUBLIC_APP_URL}/profile`
+  const profileUrl = `${URL_DO_SITE}/profile`
 
   const itemsHtml = input.missing
     .map((label) => `<li style="margin-bottom: 8px;">${label}</li>`)
@@ -259,7 +351,7 @@ export async function sendProfileReminderEmail(input: {
 }
 
 export async function sendVerificationEmail(email: string, token: string, name: string) {
-  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/auth/verify?token=${token}`
+  const verifyUrl = `${URL_DO_SITE}/auth/verify?token=${token}`
   const firstName = name.split(' ')[0]
 
   const content = `
@@ -279,12 +371,12 @@ export async function sendVerificationEmail(email: string, token: string, name: 
 
   const html = getEmailTemplate('Confirme seu E-mail', content)
 
-  await transporter.sendMail({
+  await enviarEmail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
     subject: 'Confirme seu cadastro - DomineAqui',
     html,
-  })
+  }, { categoria: 'verificacao-email' })
 }
 
 export async function sendLoginCodeEmail(email: string, name: string, code: string) {
@@ -313,12 +405,12 @@ export async function sendLoginCodeEmail(email: string, name: string, code: stri
 
   const html = getEmailTemplate('Código de acesso', content)
 
-  await transporter.sendMail({
+  await enviarEmail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: email,
     subject: `${code} é o seu código de acesso de administrador`,
     html,
-  })
+  }, { categoria: 'codigo-login-admin' })
 }
 
 /**
@@ -434,7 +526,7 @@ export async function sendPlanPurchasedEmail(
     <p>Aproveite ao máximo seus estudos e conte conosco para sua aprovação!</p>
 
     <div style="text-align: center;">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard" class="button" target="_blank">Começar a Estudar</a>
+      <a href="${URL_DO_SITE}/dashboard" class="button" target="_blank">Começar a Estudar</a>
     </div>
   `
 
@@ -456,7 +548,7 @@ export async function sendMaterialPurchasedEmail(
   attachments: MaterialEmailAttachment[] = []
 ) {
   const firstName = name ? name.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const hasPdf = attachments.length > 0
 
   const content = `
@@ -500,7 +592,7 @@ export async function sendManualClinicoPurchasedEmail(input: {
   paymentMethod?: string | null
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const expiresDate = input.expiresAt ? new Date(input.expiresAt) : null
   const expiresStr = expiresDate
     ? expiresDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
@@ -556,7 +648,7 @@ export async function sendManualClinicoExpirationReminderEmail(input: {
   daysRemaining: number
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const expiresDate = new Date(input.expiresAt)
   const expiresStr = expiresDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
   const isCard = input.paymentMethod === 'credit_card' || input.paymentMethod === 'card'
@@ -709,7 +801,7 @@ export async function sendCartPurchasedEmail(
 ) {
   const firstName = name ? name.split(' ')[0] : 'Aluno'
   const hasPdf = attachments.length > 0
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const dateLabel = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
 
   const rows = items.map((item, index) => {
@@ -826,7 +918,7 @@ export async function sendOneTimePaymentEndedEmail(email: string, name: string) 
     <p>Esperamos que os estudos tenham sido produtivos! Para continuar acessando as funcionalidades exclusivas (questões ilimitadas, flashcards, aulas), você pode renovar seu acesso agora mesmo.</p>
 
     <div style="text-align: center;">
-      <a href="${process.env.NEXT_PUBLIC_APP_URL}/buy" class="button" target="_blank">Renovar Acesso Plus+</a>
+      <a href="${URL_DO_SITE}/buy" class="button" target="_blank">Renovar Acesso Plus+</a>
     </div>
 
     <p style="margin-top: 15px;">Se preferir outro método de pagamento ou tiver dúvidas, entre em contato conosco.</p>
@@ -883,7 +975,7 @@ export async function sendMaterialPdfDeliveryEmail(input: {
   items: { title: string; filename: string; buffer: Buffer }[]
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const multiple = input.items.length > 1
 
   const itemsList = input.items
@@ -1029,7 +1121,7 @@ export async function sendMaterialAcquiredEmail(input: {
   activationUrl?: string
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const multiple = input.items.length > 1
   const hasSerial = Boolean(input.serialKey && input.activationUrl)
 
@@ -1233,7 +1325,7 @@ export async function sendRafflePurchaseEmail(input: {
   amount: number | PaidSummary
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Participante'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const numbersStr = formatRaffleNumbers(input.numbers, input.totalNumbers)
 
   const content = `
@@ -1275,7 +1367,7 @@ export async function sendRaffleWinnerEmail(input: {
   totalNumbers: number
 }) {
   const firstName = input.name ? input.name.split(' ')[0] : 'Ganhador(a)'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const numberStr = String(input.number).padStart(String(input.totalNumbers).length, '0')
 
   const content = `
@@ -1483,14 +1575,14 @@ export async function sendSerialKeyPurchaseEmail(input: {
     attachments.push(...toPdfMailAttachments(materialPdfs))
   }
 
-  await transporter.sendMail({
+  await enviarEmail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: input.email,
     subject: `✅ Compra aprovada — sua Serial Key do ${input.productTypeLabel}`,
     html,
     text: input.receiptText,
     attachments,
-  })
+  }, { categoria: 'serial-key' })
 }
 
 /**
@@ -1596,14 +1688,14 @@ export async function sendSerialKeyCartPurchaseEmail(input: {
     attachments.push(...toPdfMailAttachments(materialPdfs))
   }
 
-  await transporter.sendMail({
+  await enviarEmail({
     from: '"DomineAqui" <no-reply@domineaqui.com.br>',
     to: input.email,
     subject: `✅ Compra aprovada — suas ${input.items.length} Serial Keys DomineAqui`,
     html,
     text: input.receiptText,
     attachments,
-  })
+  }, { categoria: 'serial-key' })
 }
 
 // ─── Loja física (produtos físicos / pedidos) ────────────────────────
@@ -1637,7 +1729,7 @@ export async function sendShopOrderConfirmedEmail(input: {
   madeToOrder?: boolean
 }) {
   const firstName = input.userName ? input.userName.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const brl = (n: number) => `R$ ${Number(n).toFixed(2).replace('.', ',')}`
   const eta = input.estimatedDeliveryDate
     ? new Date(input.estimatedDeliveryDate).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
@@ -1712,7 +1804,7 @@ export async function sendShopOrderStatusEmail(input: {
   tracking?: { code?: string; url?: string; carrier?: string }
 }) {
   const firstName = input.userName ? input.userName.split(' ')[0] : 'Aluno'
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || ''
+  const appUrl = URL_DO_SITE
   const statusMeta = SHOP_STATUS_EMAIL[input.status] || { label: input.status, emoji: '📦', blurb: '' }
   // Modo "atualização de informações": nenhuma mudança de status, mas o admin
   // editou dados do pedido (endereço, previsão, rastreio, etc.).
@@ -1785,7 +1877,7 @@ export async function sendFulfillmentFailureAlert(input: {
   const recipients = (process.env.ADMIN_ALERT_EMAIL || ADMIN_EMAILS.join(',')).trim()
   if (!recipients) return
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   const amountStr = typeof input.amount === 'number'
     ? input.amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
     : '—'
@@ -1844,7 +1936,7 @@ function prouniProgramLabel(program: 'prouni' | 'fies') {
 
 /** Endereço da página exclusiva do item — onde se refaz a solicitação. */
 function prouniRequestUrl(itemType: string, itemId: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   return `${appUrl}/prouni-fies/${itemType}/${encodeURIComponent(itemId)}`
 }
 
@@ -1858,7 +1950,7 @@ export async function sendProuniRequestReceivedEmail(input: {
   program: 'prouni' | 'fies'
   attachments: number
 }): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
 
   const content = `
@@ -1925,7 +2017,7 @@ export async function sendProuniRequestAdminAlert(input: {
   const recipients = (process.env.ADMIN_ALERT_EMAIL || ADMIN_EMAILS.join(',')).trim()
   if (!recipients) return
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   // CPF mascarado: o e-mail serve para identificar o pedido na fila, não para
   // transportar documento completo por um canal que ninguém controla.
   const cpf = String(input.applicantCpf || '').replace(/\D/g, '')
@@ -2008,7 +2100,7 @@ export async function sendProuniRequestAiFlaggedEmail(input: {
   program: 'prouni' | 'fies'
   reason: string
 }): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
 
   const content = `
@@ -2054,7 +2146,7 @@ export async function sendProuniRequestApprovedEmail(input: {
   productUrl?: string
   notes?: string
 }): Promise<void> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.domineaqui.com.br'
+  const appUrl = URL_DO_SITE
   const firstName = escapeHtml((input.name || '').split(' ')[0] || 'estudante')
   const productUrl = input.productUrl
     ? `${appUrl}${input.productUrl}`
@@ -2178,7 +2270,7 @@ export async function sendAvaliacaoLembreteEmail(input: {
   corpo: string[]
   cta: string
 }) {
-  const url = `${process.env.NEXT_PUBLIC_APP_URL}/cronogramas`
+  const url = `${URL_DO_SITE}/cronogramas`
 
   const paragrafos = input.corpo.map(p => `<p>${p}</p>`).join('')
 
@@ -2242,7 +2334,7 @@ export async function sendPitchDeVendasEmail(input: {
   /** Envio de conferência do admin — marca o assunto e troca o rodapé. */
   teste?: boolean
 }) {
-  const base = process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br'
+  const base = URL_DO_SITE
   const url = `${base}${input.destino}`
 
   const paragrafos = input.paragrafos
@@ -2426,7 +2518,7 @@ export async function sendTicketReplyEmail(input: {
   perguntaEm?: Date | string
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
-  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const url = `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
   const respostas = input.respostas.filter((r) => r && r.texto)
   if (respostas.length === 0) return
 
@@ -2515,7 +2607,7 @@ export async function sendTicketStatusEmail(input: {
   ultimasRespostas?: { texto: string; data?: Date | string }[]
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
-  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const url = `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
   const respostas = (input.ultimasRespostas || []).filter((r) => r && r.texto)
 
   const textos = {
@@ -2608,7 +2700,7 @@ export async function sendNewTicketAdminEmail(input: {
   const destinatarios = Array.from(new Set(input.destinatarios.filter(Boolean)))
   if (destinatarios.length === 0) return
 
-  const url = `${process.env.NEXT_PUBLIC_APP_URL || ''}/admin/tickets`
+  const url = `${URL_DO_SITE}/admin/tickets`
 
   const content = `
     <h1 class="h1">Novo ticket de suporte 🎫</h1>

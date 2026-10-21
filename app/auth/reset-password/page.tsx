@@ -124,7 +124,7 @@ function ResetPasswordForm() {
                             <CheckCircle2 className="h-10 w-10 text-primary" />
                         </div>
                         <p className="text-center text-sm text-muted-foreground">
-                            Sua senha foi alterada. Você já pode fazer login com a nova senha.
+                            Sua senha foi alterada. Por segurança, os aparelhos conectados foram desconectados: entre de novo com a nova senha.
                         </p>
                         <Button
                             onClick={() => router.push('/auth/login')}
@@ -145,6 +145,7 @@ function ResetPasswordForm() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
+                                    autoComplete="new-password"
                                     className="auth-glass-input h-11 rounded-lg pr-10"
                                 />
                                 <button
@@ -166,6 +167,7 @@ function ResetPasswordForm() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required
+                                autoComplete="new-password"
                                 className="auth-glass-input h-11 rounded-lg"
                             />
                         </div>
@@ -174,6 +176,17 @@ function ResetPasswordForm() {
                             <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-center text-sm text-destructive">
                                 {error}
                             </div>
+                        )}
+
+                        {/expirado|inválido/i.test(error) && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => router.push('/auth/forgot-password')}
+                                className="h-11 w-full rounded-lg"
+                            >
+                                Pedir um novo link
+                            </Button>
                         )}
 
                         <Button
