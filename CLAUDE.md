@@ -20,6 +20,11 @@ provisionada das funções (tempo de parede de cada requisição).
   pré-gere no build o que é pequeno e muito visitado (ver "Páginas sob
   demanda" em `next.config.js`). Página `force-dynamic` não leva
   `generateStaticParams`: o build visitaria cada item à toa.
+- O build é do Turbopack (Next 16): ~40 s com cache, ~90 s sem. O cache de
+  build da Vercel tem teto de 1,5 GB contando o `node_modules`; quem mantém o
+  do Turbopack abaixo disso é `prepararCacheDeBuild`, no fim do
+  `next.config.js`. Não ponha `webpack()` no config: o Next 16 se recusa a
+  buildar com ele.
 
 ## Código que sai das funções
 
@@ -35,6 +40,12 @@ provisionada das funções (tempo de parede de cada requisição).
   (`lib/material-pdf-enxugar.ts`, `lib/material-pdf-pages.ts`); a miniatura é
   outra variante, mais leve. Não sirva a página bruta. Rota chamada por página
   checa o acesso com `validateMaterialPdfAccessComMemoria`.
+- Função que carrega binário nativo ou lê arquivo do disco em execução: confira
+  no `.next/server/**/<rota>.js.nft.json` que o arquivo entrou. O rastreio do
+  Turbopack não segue biblioteca nativa — a libvips do `sharp` só vai junto
+  porque `outputFileTracingIncludes` a declara; sem ela o PDF sai sem as
+  imagens reduzidas, e em silêncio. Nas chaves desse campo, segmento dinâmico
+  vai como `*` (`[id]` é classe de caracteres no glob do Turbopack).
 - Imagem que não passa pelo `next/image` (e-mail, PDF gerado, JSON-LD) vai no
   tamanho em que é exibida: `public/logo.png` tem 512 px e 71 KB; o original
   fica em `img/`.
