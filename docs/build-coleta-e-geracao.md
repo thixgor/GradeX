@@ -128,6 +128,8 @@ mais nada. Duas pistas que não foram medidas aqui:
   entram em nenhuma função, mas são gerados e guardados no cache do Turbopack.
   Desligá-los só no build pode encolher a emissão a frio (~15 s) e o cache que
   a Vercel sobe e desce. Vale também para o `next dev`, então teria de ser
-  condicionado ao `next build`.
+  condicionado ao `next build`. Medido depois em
+  `docs/build-sem-mapas-do-servidor.md`: o cache cai 130 MB, o build a frio
+  ~5 s, e ficou como `serverSourceMaps: false` no `next build`.
 - Compactação do cache do Turbopack: no primeiro build com cache depois de um a
   frio, ela levou 18 s em paralelo com a coleta, disputando os 4 núcleos.

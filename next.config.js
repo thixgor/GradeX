@@ -1,3 +1,7 @@
+// Ver `serverSourceMaps`, em `experimental`.
+const semMapasDoServidor =
+  process.argv.includes('build') && process.env.MAPAS_NO_PRERENDER !== '1'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -146,6 +150,34 @@ const nextConfig = {
      * respeita afinidade e cpuset; fora isso, é o mesmo número do padrão.
      */
     cpus: Math.max(1, require('node:os').availableParallelism() - 1),
+    /**
+     * Sem source maps do servidor no `next build`.
+     *
+     * O Turbopack gera um `.map` para cada chunk do servidor — 5.273 arquivos,
+     * 201 MB — que nenhuma função usa: o trace das funções não os inclui, o
+     * `next start` não liga `--enable-source-maps` e o pré-render já não os lê
+     * (`enablePrerenderSourceMaps`, abaixo). Mas eles são gerados a cada build
+     * e guardados no cache do Turbopack, que a Vercel restaura e sobe de novo
+     * a cada deploy. Sem eles, medido a 4 núcleos com 3 workers:
+     * - cache do Turbopack de 614 para 484 MB (e cresce no mesmo ritmo,
+     *   ~11 MB por build), num teto de 1,5 GB que inclui o `node_modules`;
+     * - build a frio ~5 s mais curto; com cache, ~1 s na compilação;
+     * - o JS das funções, o HTML/RSC pré-gerados e os estáticos do cliente
+     *   saem iguais (ver `docs/build-sem-mapas-do-servidor.md`).
+     *
+     * O que se perde: a Vercel monta o mapa das funções Edge (`middleware.ts`
+     * e as duas rotas Edge) com os `.map` dos chunks; sem eles, uma pilha de
+     * erro dessas funções no log aponta para o código compilado, e não para o
+     * `.ts`. `MAPAS_NO_PRERENDER=1` religa os mapas junto com o uso deles no
+     * pré-render, e o `next build --debug-prerender` também. No `next dev` a
+     * chave nem é definida, e os mapas continuam lá.
+     *
+     * `serverSourceMaps`, e não `turbopackSourceMaps`: no Turbopack as duas
+     * desligam os mapas do servidor, mas a segunda desligaria também os do
+     * navegador, por cima de `productionBrowserSourceMaps`, e não cederia ao
+     * `--debug-prerender`.
+     */
+    ...(semMapasDoServidor ? { serverSourceMaps: false } : {}),
     optimizePackageImports: [
       'lucide-react',
       'date-fns',
@@ -567,8 +599,10 @@ const nextConfig = {
    *
    * O que se perde: se uma página quebrar no pré-render, a pilha do erro no
    * log do build aponta para o chunk compilado, e não para o `.tsx`. Para
-   * depurar, `MAPAS_NO_PRERENDER=1 npm run build` religa. Não afeta as
-   * funções em produção: os `.map` do servidor nem entram no bundle delas.
+   * depurar, `MAPAS_NO_PRERENDER=1 npm run build` religa — e volta a gerar os
+   * `.map` do servidor, que `serverSourceMaps` (em `experimental`) desliga no
+   * build. Não afeta as funções em produção: os `.map` do servidor nem entram
+   * no bundle delas.
    */
   enablePrerenderSourceMaps: process.env.MAPAS_NO_PRERENDER === '1',
 
