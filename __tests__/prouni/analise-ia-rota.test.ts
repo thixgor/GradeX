@@ -290,12 +290,12 @@ describe('envio com análise automática', () => {
     Object.values(mail).forEach((m) => m.mockClear())
     geminiResponde({ decisao: 'APROVAR', motivo: 'Contrato do FIES.' })
     sessao = { userId: ADMIN, name: 'Admin', email: 'adm@x.com', role: 'admin' }
-    const res = await REANALISAR(new NextRequest('http://localhost/x', { method: 'POST' }), { params: { id: String(doc._id) } })
+    const res = await REANALISAR(new NextRequest('http://localhost/x', { method: 'POST' }), { params: Promise.resolve({ id: String(doc._id) }) })
     expect(res.status).toBe(202)
     expect((await res.json()).request.aiReview.outcome).toBe('processing')
 
     // Um segundo clique com a análise em andamento não dispara outra.
-    const repetido = await REANALISAR(new NextRequest('http://localhost/x', { method: 'POST' }), { params: { id: String(doc._id) } })
+    const repetido = await REANALISAR(new NextRequest('http://localhost/x', { method: 'POST' }), { params: Promise.resolve({ id: String(doc._id) }) })
     expect(repetido.status).toBe(409)
 
     await terminarSegundoPlano()

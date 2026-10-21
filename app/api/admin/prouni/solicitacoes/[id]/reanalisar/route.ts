@@ -25,7 +25,8 @@ export const maxDuration = 300
  * aprovou, vira aprovada (com e-mail para a pessoa); reprovou ou falhou, fica
  * na fila com o parecer novo.
  */
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params
   const session = await getSession()
   if (!session || session.role !== 'admin') {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })

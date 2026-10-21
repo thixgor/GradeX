@@ -125,6 +125,12 @@
     "app/api/cron/avaliacoes-lembretes/route.ts": {
       "maxDuration": 60
     },
+    "app/api/prouni/solicitacoes/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/admin/prouni/solicitacoes/[id]/reanalisar/route.ts": {
+      "maxDuration": 300
+    },
     "app/api/admin/banco/exportar/route.ts": {
       "maxDuration": 60,
       "memory": 2048
