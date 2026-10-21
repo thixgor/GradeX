@@ -132,6 +132,20 @@ const nextConfig = {
     staleTimes: {
       dynamic: 30,
     },
+    /**
+     * Workers de "Collecting page data" e "Generating static pages": um a
+     * menos que os núcleos que o processo pode usar de fato.
+     *
+     * O padrão do Next é `os.cpus().length - 1`, e `os.cpus()` conta os
+     * núcleos da máquina, não os que o processo recebeu. Na Vercel dá no mesmo
+     * (máquina Standard: 4 núcleos, 3 workers). Mas preso a 4 núcleos numa
+     * máquina de 20 — o jeito de reproduzir a Vercel aqui —, o Next subia 19
+     * workers, cada um carregando de novo os mesmos chunks do servidor:
+     * 36–40 s de build com cache, contra 22–23 s com 3 workers. A medida
+     * local exagerava em ~13 s estas duas fases. `availableParallelism()`
+     * respeita afinidade e cpuset; fora isso, é o mesmo número do padrão.
+     */
+    cpus: Math.max(1, require('node:os').availableParallelism() - 1),
     optimizePackageImports: [
       'lucide-react',
       'date-fns',
@@ -540,6 +554,23 @@ const nextConfig = {
 
   // Desabilitar source maps em produção para build mais rápido
   productionBrowserSourceMaps: false,
+
+  /**
+   * Sem source maps nos workers do build.
+   *
+   * Ligado (o padrão do Next 16), cada worker roda com `--enable-source-maps`
+   * e `Error.stackTraceLimit = 50`: a cada chunk do servidor que carrega, o
+   * Node lê e indexa o `.map` dele — ~210 MB de mapas para ~130 MB de JS.
+   * Medido com 3 workers, como na Vercel: a CPU dos workers cai de ~36 s para
+   * ~32 s por build, e o build com cache fica ~1,4 s mais curto. O HTML e o
+   * RSC gerados não mudam (ver `docs/build-coleta-e-geracao.md`).
+   *
+   * O que se perde: se uma página quebrar no pré-render, a pilha do erro no
+   * log do build aponta para o chunk compilado, e não para o `.tsx`. Para
+   * depurar, `MAPAS_NO_PRERENDER=1 npm run build` religa. Não afeta as
+   * funções em produção: os `.map` do servidor nem entram no bundle delas.
+   */
+  enablePrerenderSourceMaps: process.env.MAPAS_NO_PRERENDER === '1',
 
   // Desabilitar powered by header (micro otimização)
   poweredByHeader: false,
