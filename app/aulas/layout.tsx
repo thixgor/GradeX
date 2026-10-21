@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { QuadroDeEnsino } from '@/components/ensino/quadro'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
+import { PortaoDeSecao } from '@/components/portao-de-secao'
 import { DEFAULT_OG_IMAGE, absoluteUrl, privateNoIndexRobots } from '@/lib/seo'
 
 const AULAS_DESCRIPTION =
@@ -42,13 +42,19 @@ export const metadata: Metadata = {
  * lugar onde a navegação da área é montada — UMA vez, para todas as rotas
  * abaixo dele. Ver `components/ensino/quadro.tsx`: é a diferença entre uma
  * barra que pisca a cada toque e um fluxo contínuo.
+ *
+ * Casco estático: o portão da seção roda no cliente (ver PortaoDeSecao). A
+ * verificação de certificado fica fora dele — é pública (ver middleware.ts), e
+ * o portão antigo, no servidor, mandava o visitante sem conta para o login.
  */
-export default async function AulasLayout({
+export default function AulasLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('aulas')
-
-  return <QuadroDeEnsino>{children}</QuadroDeEnsino>
+  return (
+    <PortaoDeSecao secao="aulas" livres={['/aulas/certificado/']}>
+      <QuadroDeEnsino>{children}</QuadroDeEnsino>
+    </PortaoDeSecao>
+  )
 }

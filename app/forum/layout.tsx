@@ -1,17 +1,16 @@
 import type { Metadata } from 'next'
-import { requireSidebarSectionAccess } from '@/lib/sidebar-section-access'
+import { PortaoDeSecao } from '@/components/portao-de-secao'
 import { privateNoIndexRobots } from '@/lib/seo'
 
 export const metadata: Metadata = {
   robots: privateNoIndexRobots,
 }
 
-export default async function ForumLayout({
+// Casco estático: o portão da seção roda no cliente (ver PortaoDeSecao).
+export default function ForumLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  await requireSidebarSectionAccess('forum')
-
-  return children
+  return <PortaoDeSecao secao="forum">{children}</PortaoDeSecao>
 }

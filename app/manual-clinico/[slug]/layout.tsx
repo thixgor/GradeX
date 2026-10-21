@@ -5,6 +5,17 @@ import { DEFAULT_OG_IMAGE, joinSeoParts, publicIndexingRobots, sanitizeSeoText }
 const MANUAIS_DESCRIPTION =
   'Manual Clínico da DomineAqui: fisiopatologia, diagnóstico, tratamento e farmacologia organizados para fixação cognitiva.'
 
+// Casco e <head> gerados na primeira visita a cada patologia e guardados por um
+// dia — robôs de busca visitam o acervo inteiro, e cada visita rodava a função.
+// Os metatags são os mesmos para todo mundo; o texto vem da API, que decide
+// prévia ou ficha completa. Salvar a patologia no admin derruba o cache na hora
+// (patologiaMetadataPaths em lib/metadata-revalidate.ts).
+export const revalidate = 86400
+
+export function generateStaticParams() {
+  return []
+}
+
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const params = await props.params
   const fallback: Metadata = {

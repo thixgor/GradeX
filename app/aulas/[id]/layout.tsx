@@ -10,6 +10,16 @@ interface Props {
   children: React.ReactNode
 }
 
+// Casco e <head> gerados na primeira visita a cada aula e guardados por um dia:
+// o título vem do banco, mas é o mesmo para todo mundo, e o conteúdo da aula
+// vem da API, que checa o acesso. Editar a aula derruba o cache na hora (PATCH
+// em app/api/aulas/[id]/route.ts).
+export const revalidate = 86400
+
+export function generateStaticParams() {
+  return []
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const { id } = await params

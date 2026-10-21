@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { generateSlug } from '@/lib/utils/slug'
+import { patologiaMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -91,6 +92,7 @@ export async function PUT(
       { _id: new ObjectId(id) },
       { $set: updateData }
     )
+    revalidateMetadataPaths(patologiaMetadataPaths(existing.slug, slug))
 
     return NextResponse.json({ success: true, slug })
   } catch (error) {
@@ -113,11 +115,15 @@ export async function DELETE(
     const { id } = await params
     const db = await getDb()
 
-    const result = await db.collection('patologias').deleteOne({ _id: new ObjectId(id) })
+    const removida = await db.collection('patologias').findOneAndDelete(
+      { _id: new ObjectId(id) },
+      { projection: { slug: 1 } }
+    )
 
-    if (result.deletedCount === 0) {
+    if (!removida) {
       return NextResponse.json({ error: 'Patologia não encontrada' }, { status: 404 })
     }
+    revalidateMetadataPaths(patologiaMetadataPaths(removida.slug))
 
     return NextResponse.json({ success: true })
   } catch (error) {

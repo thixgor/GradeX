@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { generateSlug } from '@/lib/utils/slug'
+import { patologiaMetadataPaths, revalidateMetadataPaths } from '@/lib/metadata-revalidate'
 import { Patologia } from '@/lib/types/manual-clinico'
 import { buildManualClinicoSearchFilter, rankManualClinicoResults } from '@/lib/manual-clinico-search'
 
@@ -127,6 +128,9 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await db.collection('patologias').insertOne(patologia)
+    // Um endereço visitado antes de a patologia existir ficou no cache com o
+    // título genérico.
+    revalidateMetadataPaths(patologiaMetadataPaths(patologia.slug))
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
@@ -11,9 +10,10 @@ import {
 } from '@/lib/sidebar-sections'
 
 /**
- * 15 segundos. Este `findOne` roda no LAYOUT de cada seção (/aulas,
- * /banco-questoes, /provas, …), ou seja, uma vez por navegação e ANTES de
- * qualquer HTML sair — é tempo que o aluno passa olhando a tela anterior.
+ * 15 segundos. Este `findOne` roda nas APIs que respeitam o interruptor da
+ * seção (as de Games, via `denyDisabledSectionApi`). As PÁGINAS das seções não
+ * passam mais por aqui: o portão delas é no cliente (components/portao-de-secao),
+ * para que o casco seja estático.
  *
  * O documento é o mesmo para todo mundo e muda quando um admin liga ou desliga
  * uma seção, o que acontece raramente. A janela é curta o bastante para a
@@ -52,14 +52,6 @@ export async function canAccessSidebarSection(sectionKey: SidebarSectionKey): Pr
     // Mongo offline in local dev: don't block the page
     if (process.env.NODE_ENV !== 'production') return true
     return false
-  }
-}
-
-export async function requireSidebarSectionAccess(sectionKey: SidebarSectionKey): Promise<void> {
-  const allowed = await canAccessSidebarSection(sectionKey)
-
-  if (!allowed) {
-    redirect('/dashboard')
   }
 }
 
