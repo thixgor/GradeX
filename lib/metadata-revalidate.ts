@@ -27,11 +27,15 @@ function toId(value: unknown): string {
   return /^[A-Za-z0-9_-]+$/.test(id) ? id : ''
 }
 
-/** Caminhos públicos que expõem os metatags de um material. */
+/**
+ * Caminhos públicos que expõem os metatags de um material. O leitor de PDF
+ * (`/materiais/[id]/viewer`) também é casco guardado por um dia, com o título
+ * do material na aba: sai do cache junto com a página do catálogo.
+ */
 export function materialMetadataPaths(material: MaterialLike | null | undefined): string[] {
   const paths: string[] = []
   const id = toId(material?._id)
-  if (id) paths.push(`/materiais/${id}`)
+  if (id) paths.push(`/materiais/${id}`, `/materiais/${id}/viewer`)
   const deckSlug = toId(material?.linkedDeckSlug)
   if (deckSlug) paths.push(`/flashcards/d/${deckSlug}`)
   return paths

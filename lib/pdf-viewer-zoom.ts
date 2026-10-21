@@ -11,7 +11,7 @@
  *
  * A causa é a mesma da rotação de tela (ver `pdf-viewer-relayout.ts`), só que
  * disparada por um toque em vez de um giro. Na pilha vertical, a altura de
- * cada página é `altura da página × zoom`: um passo de +12% engorda TODAS as
+ * cada página é `altura da página × zoom`: um degrau de zoom engorda TODAS as
  * páginas de uma vez, inclusive as centenas que ficam acima da que está sendo
  * lida. O navegador, porém, preserva o deslocamento da rolagem em PIXELS. Com
  * o conteúdo acima mais alto e o deslocamento igual, a faixa central da tela
@@ -36,8 +36,60 @@
  */
 export const READING_ANCHOR_RATIO = 0.28
 
-/** Passo de cada toque nos botões de zoom. */
-export const ZOOM_STEP = 0.12
+/**
+ * Os degraus dos botões de zoom, em RELATIVO ao tamanho normal da página
+ * nesta tela (1 = como ela abre; ver `restingZoomFor` em `pdf-viewer-fit.ts`).
+ *
+ * O passo já foi um acréscimo fixo de 0,12 no zoom ABSOLUTO, e o número na
+ * tela era o zoom absoluto também. Num iPhone, onde uma A4 cabe a ~60%, isso
+ * dava um leitor que abria em "60%", subia para 72, 84, 96 — e a pastilha de
+ * "toque para ajustar", que contava em relação à largura da tela, dizia 119,
+ * 139, 159 para o MESMO tamanho. Dois números diferentes para uma página só, e
+ * nenhum deles redondo.
+ *
+ * Agora 100% é sempre o tamanho em que a página abre, em qualquer aparelho, e
+ * cada toque anda um degrau desta escada. Os números são os de qualquer leitor
+ * de PDF; perto do normal o passo é curto (ajuste fino da letra), longe dele,
+ * largo (ninguém quer seis toques para dobrar).
+ */
+export const ZOOM_LEVELS = [0.4, 0.5, 0.6, 0.75, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3] as const
+
+/**
+ * Folga para decidir que o zoom "já está" num degrau. O zoom anda em três
+ * casas decimais e é arredondado para baixo para não passar da largura: 110%
+ * de um repouso de 0,603 vira 1,0995. Sem folga, o toque seguinte em "+"
+ * levaria a 110% de novo, e pareceria que o botão não respondeu.
+ */
+const ZOOM_LEVEL_TOLERANCE = 0.015
+
+/**
+ * O degrau seguinte ao zoom relativo atual, na direção pedida — ou `null`
+ * quando a escada acabou. Um zoom fora da escada (o "ajustar a página
+ * inteira", por exemplo, dá 87%) sobe ou desce para o degrau mais próximo
+ * naquela direção.
+ */
+export function nextZoomLevel(ratio: number, direction: 1 | -1): number | null {
+  if (!Number.isFinite(ratio) || ratio <= 0) return 1
+  if (direction > 0) {
+    return ZOOM_LEVELS.find((level) => level > ratio + ZOOM_LEVEL_TOLERANCE) ?? null
+  }
+  for (let index = ZOOM_LEVELS.length - 1; index >= 0; index -= 1) {
+    if (ZOOM_LEVELS[index] < ratio - ZOOM_LEVEL_TOLERANCE) return ZOOM_LEVELS[index]
+  }
+  return null
+}
+
+/**
+ * O número que o leitor mostra: quanto a página está do tamanho normal, em %
+ * inteiro. É o MESMO número na barra do computador, na folha do celular e na
+ * pastilha de "toque para ajustar". Antes de o tamanho normal ser conhecido
+ * (a primeira página ainda não chegou), cai no zoom absoluto.
+ */
+export function zoomPercent(zoom: number, resting: number | null | undefined): number {
+  if (!(zoom > 0)) return 100
+  const ratio = resting && resting > 0 ? zoom / resting : zoom
+  return Math.round(ratio * 100)
+}
 
 /**
  * Por quanto tempo a leitura é segurada no lugar depois de um passo de zoom.

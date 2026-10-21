@@ -111,16 +111,16 @@ import {
   traceStroke,
 } from '@/lib/pdf-viewer-ink'
 import {
+  nextZoomLevel,
   readReadingAnchor,
   readingAnchorDrift,
   ZOOM_ANCHOR_HOLD_MS,
-  ZOOM_STEP,
+  zoomPercent,
 } from '@/lib/pdf-viewer-zoom'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
 import {
   clampZoomRatio,
-  isLandscapePage,
   legacyZoomRatio,
   majorityPageSize,
   PAGE_FRAME_EXTRA,
@@ -1850,8 +1850,26 @@ function useViewportHeight() {
   return height
 }
 
+// Três casas decimais, e arredondado DEPOIS de prender. Com duas casas, o
+// zoom de um iPhone (repouso ~0,603) só andava de 1,6% em 1,6% do tamanho
+// normal: 110% virava 109%, e os degraus de zoom não saíam redondos na tela.
 function clampZoom(value: number, min = 0.55, max = 2.6) {
-  return Math.min(max, Math.max(min, Number(value.toFixed(2))))
+  return Number(Math.min(max, Math.max(min, value)).toFixed(3))
+}
+
+/**
+ * Para BAIXO na terceira casa decimal. Os ajustes ("caber na largura", o
+ * repouso) não podem ser arredondados para cima: passariam da largura por 1 a
+ * 5px, e a linha da página ganharia uma rolagem lateral minúscula e a borda da
+ * moldura, um corte.
+ */
+function floorZoom(value: number) {
+  return Math.floor(value * 1000) / 1000
+}
+
+/** Piso do zoom neste aparelho (ver `minZoom` no leitor). */
+function minZoomFor(apiMinZoom: number, resting: number) {
+  return Math.max(0.1, Math.min(apiMinZoom, resting * 0.5))
 }
 
 /**
@@ -2773,9 +2791,6 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     return availableWidth / pageSize.width
   }, [availableWidth, pageSize])
 
-  // O documento é em paisagem? Muda o que é "tamanho normal" (a página cabe
-  // INTEIRA na tela, não só na largura) — ver `lib/pdf-viewer-fit.ts`.
-  const landscapeDocument = isLandscapePage(pageSize)
   // Proporção para as miniaturas — um número (e arredondado), para o `memo`
   // do painel não se desfazer a cada objeto de tamanho novo.
   const thumbAspect = pageSize ? Math.round((pageSize.width / pageSize.height) * 1000) / 1000 : undefined
@@ -2805,15 +2820,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Piso de zoom, também relativo ao aparelho. O piso da API (35%) é absoluto,
   // e um slide exportado grande (1440pt de largura, comum no Keynote) só cabe
   // na tela de um celular a ~25%: preso a 35%, ele nascia mais largo que a
-  // tela e não havia como diminuir. O piso agora nunca fica acima de pouco
-  // mais que a metade do tamanho de repouso.
+  // tela e não havia como diminuir. O piso agora nunca fica acima da metade do
+  // tamanho de repouso — que é o degrau de 50% da escada de zoom. Com 0,6 de
+  // antes, o iPhone parava num "58%" que não era degrau nenhum.
   const minZoom = useMemo(
-    () => (restingZoom ? Math.max(0.1, Math.min(apiMinZoom, restingZoom * 0.6)) : apiMinZoom),
+    () => (restingZoom ? minZoomFor(apiMinZoom, restingZoom) : apiMinZoom),
     [apiMinZoom, restingZoom]
   )
 
   // Está ampliado além do que cabe na tela? É o que o indicador mostra.
   const zoomedIn = fitWidthZoom != null && zoom > fitWidthZoom * 1.02
+  // O tamanho que a tela mostra, em % do normal (ver `zoomPercent`).
+  const zoomLabel = zoomPercent(zoom, restingZoom)
 
   // Ver LARGE_DOCUMENT_PAGES.
   const isLargeDocument = pageCount >= LARGE_DOCUMENT_PAGES
@@ -3459,6 +3477,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
     const step = () => {
       const now = Date.now()
+      // Uma viagem assumiu a leitura (sair de "uma página por vez" pelo
+      // "Largura da tela" faz as duas coisas no mesmo toque): quem segura agora
+      // é o assentamento, que mira a página inteira. As duas correções no mesmo
+      // quadro brigariam, e a página tremeria até uma delas desistir.
+      if (pendingTargetRef.current != null) {
+        window.removeEventListener('pointerdown', abandon, true)
+        return
+      }
       if (abandoned || now > deadline) {
         window.removeEventListener('pointerdown', abandon, true)
         // Folga curta: a última correção ainda gera um evento de rolagem, e ele
@@ -3505,6 +3531,24 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     holdReadingAnchor()
     setZoom(value)
   }, [holdReadingAnchor, maxZoom, minZoom])
+
+  /**
+   * Um toque em "+" ou "−" (e as teclas): um degrau da escada de zoom (ver
+   * `ZOOM_LEVELS`), contado sobre o tamanho normal da página nesta tela. Perto
+   * do fim da escada, o teto ou o piso do aparelho prende o último degrau.
+   */
+  const stepZoom = useCallback((direction: 1 | -1) => {
+    const resting = restingZoomRef.current || 1
+    const level = nextZoomLevel(zoomRef.current / resting, direction)
+    if (level == null) return
+    applyZoom(floorZoom(resting * level))
+  }, [applyZoom])
+
+  /** De volta ao tamanho normal (100%): a pastilha e o número da folha. */
+  const resetZoom = useCallback(() => {
+    const resting = restingZoomRef.current
+    if (resting) applyZoom(floorZoom(resting))
+  }, [applyZoom])
 
   // ── Rotação de tela ─────────────────────────────────────────────────────
   // Girar o iPad piscava e trocava de página em rajada — "um trilhão de trocas
@@ -3653,12 +3697,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const ratio = zoomRatioRef.current ?? 1
     // Piso e teto calculados aqui com o repouso NOVO — os do estado ainda são
     // os da medida anterior.
-    const floor = Math.max(0.1, Math.min(apiMinZoom, resting * 0.6))
+    const floor = minZoomFor(apiMinZoom, resting)
     const ceiling = Math.min(apiMaxZoom, Math.max(1, (availableWidth / pageSize.width) * 2.5))
-    // Para BAIXO na segunda casa decimal: `clampZoom` arredonda, e um ajuste
-    // arredondado para cima passava 1 a 5px da largura — a linha da página
-    // ganhava uma rolagem lateral minúscula e a borda da moldura, um corte.
-    const target = clampZoom(Math.floor(resting * ratio * 100) / 100, floor, Math.max(floor, ceiling))
+    // Para baixo, nunca para cima (ver `floorZoom`).
+    const target = clampZoom(floorZoom(resting * ratio), floor, Math.max(floor, ceiling))
     const firstFit = !restingAppliedRef.current
     restingAppliedRef.current = true
     if (Math.abs(target - zoomRef.current) < 0.005) return
@@ -4013,9 +4055,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!pageSize || !availableWidth) return
     // Mesma âncora dos botões de zoom: "ajustar à largura" também engorda todas
     // as páginas de uma vez, e sem ela a leitura escorregaria do mesmo jeito.
-    // Para baixo na segunda casa: arredondado para cima, "ajustado" passaria
-    // da largura por um ou dois pixels.
-    applyZoom(Math.floor((availableWidth / pageSize.width) * 100) / 100)
+    applyZoom(floorZoom(availableWidth / pageSize.width))
     // No modo "Largura" o repouso É o ajustado à largura — relativo 1. O efeito
     // do repouso confirma o mesmo zoom quando o modo mudar.
     zoomRatioRef.current = 1
@@ -4035,7 +4075,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (!width) return
     const byHeight = height > 0 ? height / pageSize.height : Infinity
     const contained = Math.min(width / pageSize.width, byHeight)
-    const value = clampZoom(Math.floor(contained * 100) / 100, minZoom, maxZoom)
+    const value = clampZoom(floorZoom(contained), minZoom, maxZoom)
     // Relativo ao repouso do modo em que a leitura vai ficar: "uma página por
     // vez" na vertical; na fileira o modo não muda, e pode ser "Largura".
     const resting = restingZoomFor({
@@ -4055,11 +4095,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Troca de modo em um lugar só: "Largura" precisa recalcular o zoom, os
   // outros dois não. Antes essa diferença estava espalhada pelo JSX e o modo
   // nem existia no celular.
+  //
+  // Sair de "uma página por vez" para uma LISTA (contínua ou largura) tem o
+  // mesmo problema da troca de direção logo abaixo: a página única não estava
+  // em posição nenhuma da pilha, a pilha nasce rolada no topo, e o observador
+  // de foco lia a página 1 — a leitura voltava para o começo do material. A
+  // saída é a mesma: a troca reabre na página que estava na tela, pelo
+  // caminho da retomada de leitura. Na fileira horizontal "uma página por
+  // vez" não existe (ver `singlePage`), então não há o que reabrir.
   const applyMode = useCallback((next: ViewerMode) => {
     modeTouchedRef.current = true
+    if (mode === 'single' && next !== 'single' && !horizontalRef.current) {
+      pendingResumeRef.current = currentPageRef.current
+      suppressFocusUntilRef.current = Date.now() + 900
+    }
     if (next === 'width') fitToWidth()
     else setMode(next)
-  }, [fitToWidth])
+  }, [fitToWidth, mode])
 
   // Trocar a direção da rolagem troca o contêiner que rola: o que estava
   // posicionado na pilha vertical não diz nada sobre a fileira horizontal. Em
@@ -4448,10 +4500,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         // edição, Ctrl/Cmd do anti-pirataria, tutorial aberto).
         case '+':
         case '=':
-          event.preventDefault(); applyZoom((z) => z + ZOOM_STEP); break
+          event.preventDefault(); stepZoom(1); break
         case '-':
         case '_':
-          event.preventDefault(); applyZoom((z) => z - ZOOM_STEP); break
+          event.preventDefault(); stepZoom(-1); break
         case '0':
           event.preventDefault(); fitToPage(); break
         case 'f':
@@ -4485,7 +4537,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [
-    access, pageCount, goToPage, stepPage, previewActive, allowedPages, applyZoom,
+    access, pageCount, goToPage, stepPage, previewActive, allowedPages, stepZoom,
     fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary,
     applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation, toggleCompactChrome,
   ])
@@ -4756,7 +4808,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   antes gastava um botão escrito inteiro na faixa de baixo.
                   Ler o tamanho atual e desfazê-lo viraram o mesmo gesto. */}
               <div className="hidden items-center gap-0.5 rounded-lg border border-white/10 bg-white/10 p-0.5 lg:flex" data-tour="viewer-zoom">
-                <ToolbarButton compact subtle onClick={() => applyZoom((z) => z - ZOOM_STEP)} title="Diminuir zoom">
+                <ToolbarButton compact subtle onClick={() => stepZoom(-1)} title="Diminuir zoom">
                   <Minus className="h-4 w-4" />
                 </ToolbarButton>
                 <button
@@ -4767,9 +4819,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                   className="flex h-8 min-w-[3.25rem] items-center justify-center gap-1 rounded-md px-1 text-xs font-semibold text-white/80 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   <Scan className="h-3.5 w-3.5 shrink-0 text-white/45" />
-                  {Math.round(zoom * 100)}%
+                  {zoomLabel}%
                 </button>
-                <ToolbarButton compact subtle onClick={() => applyZoom((z) => z + ZOOM_STEP)} title="Aumentar zoom">
+                <ToolbarButton compact subtle onClick={() => stepZoom(1)} title="Aumentar zoom">
                   <Plus className="h-4 w-4" />
                 </ToolbarButton>
               </div>
@@ -5339,16 +5391,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         {/* Indicador de zoom. Ampliado, a página passa da largura da tela e o
             leitor precisa arrastar para o lado — sem aviso, isso parece defeito
             ("sumiu metade do texto"). A pastilha diz o tamanho atual e volta ao
-            normal num toque. Aparece só quando há zoom de verdade. */}
+            normal num toque. Aparece só quando há zoom de verdade.
+            O número é o mesmo da folha do celular e da barra do computador
+            (100% = como a página abre), e o toque volta exatamente a 100%. Ele
+            já contou em relação à LARGURA da tela: a folha dizia 72% e a
+            pastilha, 119%, para a mesma página; e no celular deitado o
+            "ajustar" levava a página para a largura, acima do tamanho normal.
+            O repouso nunca passa da largura, então voltar a ele sempre tira a
+            página da rolagem lateral — e, em paisagem, a deixa inteira. */}
         {zoomedIn && (
           <button
             type="button"
-            // Em paisagem "ajustar" é a página INTEIRA na tela (o repouso); só
-            // a largura deixaria o slide cortado embaixo num celular deitado.
-            onClick={() => {
-              const target = landscapeDocument && restingZoom ? Math.min(restingZoom, fitWidthZoom ?? restingZoom) : fitWidthZoom
-              if (target) applyZoom(Math.floor(target * 100) / 100)
-            }}
+            onClick={resetZoom}
             // Sobe quando a barra de ferramentas está na tela: os dois moram no
             // mesmo canto, e sobrepostos nenhum dos dois serve para nada.
             className={`pointer-events-auto fixed left-1/2 z-40 -translate-x-1/2 rounded-full border border-white/20 bg-zinc-950/90 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lg backdrop-blur-sm ${
@@ -5357,7 +5411,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 : 'bottom-20 lg:bottom-6'
             }`}
           >
-            {Math.round((fitWidthZoom ? zoom / fitWidthZoom : zoom) * 100)}% · toque para ajustar
+            {zoomLabel}% · toque para ajustar
           </button>
         )}
 
@@ -5635,16 +5689,26 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => applyZoom((z) => z - ZOOM_STEP)}
+                onClick={() => stepZoom(-1)}
                 className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
                 aria-label="Diminuir"
               >
                 <Minus className="h-5 w-5" />
               </button>
-              <span className="min-w-16 text-center text-sm font-semibold text-white">{Math.round(zoom * 100)}%</span>
+              {/* O número é o "voltar ao normal": o mesmo gesto do número na
+                  barra do computador e da pastilha embaixo. */}
               <button
                 type="button"
-                onClick={() => applyZoom((z) => z + ZOOM_STEP)}
+                onClick={resetZoom}
+                disabled={zoomLabel === 100}
+                className="flex h-11 min-w-16 items-center justify-center rounded-xl px-2 text-sm font-semibold text-white transition-colors enabled:hover:bg-white/10 disabled:cursor-default"
+                aria-label={zoomLabel === 100 ? 'Tamanho normal (100%)' : `${zoomLabel}%. Toque para voltar a 100%`}
+              >
+                {zoomLabel}%
+              </button>
+              <button
+                type="button"
+                onClick={() => stepZoom(1)}
                 className="flex h-11 flex-1 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white"
                 aria-label="Aumentar"
               >
@@ -5652,8 +5716,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               </button>
             </div>
             <p className="mt-2 text-xs text-white/45">
-              Ampliado, a página fica mais larga que a tela: arraste para o lado
-              para ler. O aviso embaixo mostra o tamanho e volta ao normal num toque.
+              100% é o tamanho em que a página abre neste aparelho. Ampliado, ela
+              fica mais larga que a tela: arraste para o lado para ler. Toque no
+              número (ou no aviso embaixo) para voltar a 100%.
             </p>
           </div>
         </ViewerSheet>
@@ -6869,11 +6934,14 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // rasterização nítida pode esperar o usuário parar de mexer.
   //
   // A faixa morta era de 0,8x a 1,25x, e era larga demais: dois cliques no
-  // botão de zoom (+12% cada) ficavam dentro dela, então a página passava a
-  // ser exibida 25% maior que o bitmap desenhado — um upscale permanente, que
-  // é exatamente o tipo de perda que aparece primeiro nas imagens. Com 0,9 a
-  // 1,1 o primeiro passo de zoom já redesenha; o debounce de 180ms continua
-  // impedindo que arrastar o zoom dispare um render por passo.
+  // botão de zoom ficavam dentro dela, então a página passava a ser exibida
+  // 25% maior que o bitmap desenhado — um upscale permanente, que é
+  // exatamente o tipo de perda que aparece primeiro nas imagens. Para AMPLIAR
+  // ela agora é de só 2%: o degrau mais curto da escada de zoom é 100% → 110%,
+  // e ele caía justo na borda (1,0995 com o arredondamento para baixo) — a
+  // página ficaria 10% esticada para sempre. Para REDUZIR continua até 0,9x:
+  // o bitmap maior encolhido segue nítido. O debounce de 180ms continua
+  // impedindo que tocar várias vezes seguidas dispare um render por toque.
   useEffect(() => {
     // Antes do primeiro desenho não há bitmap para reescalar nem gesto a
     // esperar: a escala certa entra na hora, e exata. Com o debounce, a
@@ -6885,7 +6953,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       return
     }
     const ratio = zoom / renderScale
-    if (ratio > 0.9 && ratio < 1.1) return
+    if (ratio > 0.9 && ratio < 1.02) return
     const timer = window.setTimeout(() => setRenderScale(zoom), 180)
     return () => window.clearTimeout(timer)
   }, [zoom, renderScale])

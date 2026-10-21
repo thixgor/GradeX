@@ -8,6 +8,7 @@ import {
 } from '@/lib/material-pdf-viewer'
 import { resolvePdfDownloadPermission } from '@/lib/material-download-permission'
 import { chaveDeLeitura, identidadeDoLeitor, versaoDoPdf } from '@/lib/material-pdf-leitura'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -144,7 +145,12 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
       createdAt: now,
     }).catch((error) => console.error('[pdf-viewer/access] Falha ao logar abertura:', error))
 
-    return NextResponse.json(
+    // Comprimida aqui dentro: o sumário de uma apostila longa (centenas de
+    // títulos) e a lista de páginas da prévia são a maior parte do corpo, e o
+    // trecho função → CDN é cobrado pelos bytes crus (ver
+    // `lib/resposta-comprimida.ts`).
+    return jsonComprimido(
+      request,
       {
         material: {
           id: access.materialId,

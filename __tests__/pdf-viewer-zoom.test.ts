@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest'
 import {
   READING_ANCHOR_RATIO,
   ZOOM_ANCHOR_HOLD_MS,
-  ZOOM_STEP,
+  ZOOM_LEVELS,
+  nextZoomLevel,
   readReadingAnchor,
   readingAnchorDrift,
+  zoomPercent,
 } from '@/lib/pdf-viewer-zoom'
 
 /**
@@ -71,7 +73,7 @@ describe('readingAnchorDrift', () => {
     const ratio = anchorOf(before, zoom)!
 
     // O navegador PRESERVA o deslocamento: só as alturas mudam.
-    const zoomed = zoom + ZOOM_STEP
+    const zoomed = zoom * nextZoomLevel(1, 1)!
     const after = pageTop(CURRENT_INDEX, zoomed, scroll)
     const drift = readingAnchorDrift(
       { top: after, height: PAGE_HEIGHT * zoomed, viewport: VIEWPORT },
@@ -91,7 +93,7 @@ describe('readingAnchorDrift', () => {
     const scroll = CURRENT_INDEX * (PAGE_HEIGHT * zoom + GAP) + 640
     const ratio = anchorOf(pageTop(CURRENT_INDEX, zoom, scroll), zoom)!
 
-    const zoomed = zoom - ZOOM_STEP
+    const zoomed = zoom * nextZoomLevel(1, -1)!
     const drift = readingAnchorDrift(
       { top: pageTop(CURRENT_INDEX, zoomed, scroll), height: PAGE_HEIGHT * zoomed, viewport: VIEWPORT },
       ratio
@@ -120,5 +122,80 @@ describe('constantes do zoom', () => {
     // 150ms depois do último passo. Soltar antes disso deixaria a leitura
     // escorregar justamente no último ato.
     expect(ZOOM_ANCHOR_HOLD_MS).toBeGreaterThan(150)
+  })
+})
+
+/**
+ * O número do zoom não fazia sentido no iPhone: a folha dizia o zoom ABSOLUTO
+ * (a página abria em "60%" e subia de 12 em 12) e a pastilha de "toque para
+ * ajustar" contava sobre a LARGURA da tela (119%, 139%…) — dois números para
+ * a mesma página. Agora 100% é o tamanho em que a página abre, e cada toque
+ * anda um degrau redondo.
+ */
+describe('escada de zoom', () => {
+  // Repouso de uma A4 num iPhone de 393px (359px úteis / 595pt).
+  const IPHONE_RESTING = 359 / 595
+  const floor3 = (value: number) => Math.floor(value * 1000) / 1000
+
+  /** Toca "+" ou "−" do jeito que o leitor toca: relativo, arredondado para baixo. */
+  function tap(zoom: number, direction: 1 | -1, resting: number) {
+    const level = nextZoomLevel(zoom / resting, direction)
+    return level == null ? zoom : Number(floor3(resting * level).toFixed(3))
+  }
+
+  it('abre em 100% em qualquer aparelho', () => {
+    expect(zoomPercent(floor3(IPHONE_RESTING), IPHONE_RESTING)).toBe(100)
+    expect(zoomPercent(1, 1)).toBe(100)
+    expect(zoomPercent(floor3(1.25), 1.25)).toBe(100)
+  })
+
+  it('anda em degraus redondos no iPhone, para cima e para baixo', () => {
+    let zoom = floor3(IPHONE_RESTING)
+    const up: number[] = []
+    // O teto do leitor no celular é 2,5x a largura (ver `maxZoom`): 250%.
+    for (let i = 0; i < 6; i += 1) {
+      zoom = tap(zoom, 1, IPHONE_RESTING)
+      up.push(zoomPercent(zoom, IPHONE_RESTING))
+    }
+    expect(up).toEqual([110, 125, 150, 175, 200, 250])
+
+    zoom = floor3(IPHONE_RESTING)
+    const down: number[] = []
+    for (let i = 0; i < 3; i += 1) {
+      zoom = tap(zoom, -1, IPHONE_RESTING)
+      down.push(zoomPercent(zoom, IPHONE_RESTING))
+    }
+    expect(down).toEqual([90, 75, 60])
+  })
+
+  it('um zoom já no degrau não repete o mesmo degrau', () => {
+    // 110% de um repouso de 0,603, arredondado para baixo, é 1,0995.
+    expect(nextZoomLevel(1.0995, 1)).toBe(1.25)
+    expect(nextZoomLevel(1.0995, -1)).toBe(1)
+    expect(nextZoomLevel(0.9995, 1)).toBe(1.1)
+    expect(nextZoomLevel(0.9995, -1)).toBe(0.9)
+  })
+
+  it('um zoom fora da escada vai para o degrau mais próximo na direção pedida', () => {
+    // "Ajustar a página inteira" pode dar, por exemplo, 87%.
+    expect(nextZoomLevel(0.87, 1)).toBe(0.9)
+    expect(nextZoomLevel(0.87, -1)).toBe(0.75)
+  })
+
+  it('a escada termina nas pontas', () => {
+    expect(nextZoomLevel(ZOOM_LEVELS[ZOOM_LEVELS.length - 1], 1)).toBeNull()
+    expect(nextZoomLevel(ZOOM_LEVELS[0], -1)).toBeNull()
+  })
+
+  it('a escada sobe sempre e passa pelo tamanho normal', () => {
+    for (let i = 1; i < ZOOM_LEVELS.length; i += 1) {
+      expect(ZOOM_LEVELS[i]).toBeGreaterThan(ZOOM_LEVELS[i - 1])
+    }
+    expect(ZOOM_LEVELS).toContain(1)
+  })
+
+  it('antes de o tamanho normal ser conhecido, mostra o zoom absoluto', () => {
+    expect(zoomPercent(0.8, null)).toBe(80)
+    expect(zoomPercent(0.8, undefined)).toBe(80)
   })
 })

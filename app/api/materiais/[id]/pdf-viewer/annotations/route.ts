@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
-import { validateMaterialPdfAccess } from '@/lib/material-pdf-viewer'
+import { validateMaterialPdfAccessComMemoria } from '@/lib/material-pdf-viewer'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 
 export const dynamic = 'force-dynamic'
 
@@ -42,11 +43,17 @@ function normalizeAnnotationBody(body: any) {
   }
 }
 
+// Com memória curta, como as rotas de página: cada traço da caneta, cada nota
+// e cada borracha é uma requisição aqui, e cada uma refazia a checagem inteira
+// (usuário, o material completo, a compra por id, por e-mail e por pacote) —
+// cinco idas ao banco em fila para ouvir a mesma resposta durante uma sessão
+// de escrita. A regra da memória (só acesso liberado, um minuto, nunca além do
+// fim do acesso por tempo) está em `validateMaterialPdfAccessComMemoria`.
 async function getAccess(params: { id: string }) {
   const session = await getSession()
   if (!session) return { session: null, response: NextResponse.json({ error: 'Nao autenticado' }, { status: 401 }) }
 
-  const access = await validateMaterialPdfAccess(params.id, session, {
+  const access = await validateMaterialPdfAccessComMemoria(params.id, session, {
     requireViewerEnabled: true,
     requirePdf: true,
   })
@@ -73,7 +80,10 @@ export async function GET(request: NextRequest, props: { params: Promise<{ id: s
       .sort({ pageNumber: 1, updatedAt: -1 })
       .toArray()
 
-    return NextResponse.json({
+    // Comprimida: um traço à mão livre é uma lista de pontos, e quem escreve
+    // muito no material abre o leitor com centenas de KB de JSON que caem a
+    // uma fração disso (ver `lib/resposta-comprimida.ts`).
+    return jsonComprimido(request, {
       annotations: annotations.map((annotation: any) => ({
         ...annotation,
         _id: String(annotation._id),
@@ -106,7 +116,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
 
     const inserted = await result.access.db.collection('material_pdf_annotations').insertOne(annotation)
 
-    return NextResponse.json({
+    return jsonComprimido(request, {
       annotation: {
         ...annotation,
         _id: String(inserted.insertedId),
@@ -150,7 +160,7 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
       return NextResponse.json({ error: 'Anotacao nao encontrada' }, { status: 404 })
     }
 
-    return NextResponse.json({
+    return jsonComprimido(request, {
       annotation: {
         ...updated,
         _id: String(updated._id),

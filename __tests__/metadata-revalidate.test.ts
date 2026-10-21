@@ -19,16 +19,21 @@ beforeEach(() => {
 })
 
 describe('materialMetadataPaths', () => {
-  it('inclui a página do material', () => {
+  it('inclui a página do material e o leitor de PDF', () => {
     expect(materialMetadataPaths({ _id: '507f1f77bcf86cd799439011' })).toEqual([
       '/materiais/507f1f77bcf86cd799439011',
+      '/materiais/507f1f77bcf86cd799439011/viewer',
     ])
   })
 
   it('inclui o deck vinculado, que expõe o mesmo preço', () => {
     expect(
       materialMetadataPaths({ _id: '507f1f77bcf86cd799439011', linkedDeckSlug: 'anatomia-1' })
-    ).toEqual(['/materiais/507f1f77bcf86cd799439011', '/flashcards/d/anatomia-1'])
+    ).toEqual([
+      '/materiais/507f1f77bcf86cd799439011',
+      '/materiais/507f1f77bcf86cd799439011/viewer',
+      '/flashcards/d/anatomia-1',
+    ])
   })
 
   it('ignora id e slug ausentes ou malformados', () => {
