@@ -47,6 +47,23 @@ import {
 const INTERVALO_LISTA = 30_000
 const INTERVALO_CONVERSA = 12_000
 
+/**
+ * A última lista, compartilhada entre as montagens do botão.
+ *
+ * O botão flutuante vive no `AppShell`, que monta de novo a cada página, e cada
+ * montagem pedia a lista só para acender o contador de não lidas — uma
+ * invocação por página vista (882 em 18 h). Com o painel fechado, uma lista de
+ * até dois minutos serve para o contador. Abrir o painel, o polling com ele
+ * aberto e qualquer envio continuam indo ao servidor.
+ */
+const LISTA_FRESCA_MS = 120_000
+let listaEmMemoria: { tickets: TicketSummary[]; currentUserId: string; em: number } | null = null
+
+/** Chamado no logout: a lista em memória é da conta que saiu. */
+export function esquecerTicketsEmMemoria(): void {
+  listaEmMemoria = null
+}
+
 type Estado = 'lista' | 'novo' | 'conversa'
 
 export function SupportChat() {
@@ -105,13 +122,20 @@ export function SupportChat() {
   }, [])
 
   // ── Carregamento ──────────────────────────────────────────────────────
-  const carregarLista = useCallback(async () => {
+  const carregarLista = useCallback(async (forcar = true) => {
+    if (!forcar && listaEmMemoria && Date.now() - listaEmMemoria.em < LISTA_FRESCA_MS) {
+      setTickets(listaEmMemoria.tickets)
+      setCurrentUserId(listaEmMemoria.currentUserId)
+      setCarregandoLista(false)
+      return
+    }
     try {
       const res = await fetch('/api/tickets?limit=30')
       if (!res.ok) return
       const data = await res.json()
       setTickets(data.tickets || [])
       setCurrentUserId(data.currentUserId || '')
+      listaEmMemoria = { tickets: data.tickets || [], currentUserId: data.currentUserId || '', em: Date.now() }
     } catch (error) {
       console.error('Erro ao carregar tickets:', error)
     } finally {
@@ -156,7 +180,7 @@ export function SupportChat() {
   // flutuante antes de alguém abrir o painel) e, daí em diante, polling só
   // enquanto o painel está aberto.
   useEffect(() => {
-    carregarLista()
+    carregarLista(isOpen)
     if (!isOpen) return
     // `document.hidden` corta o polling da aba em segundo plano: ninguém está
     // lendo, e cada volta é uma invocação serverless paga.

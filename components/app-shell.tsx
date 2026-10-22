@@ -6,7 +6,7 @@ import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components/profile-completion-gate'
-import { SupportChat } from '@/components/support-chat'
+import { SupportChat, esquecerTicketsEmMemoria } from '@/components/support-chat'
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
 import { AvisoDePartidaLenta } from '@/components/pwa/aviso-de-partida-lenta'
@@ -253,6 +253,7 @@ export function AppShell({
     clearBootstrapCache()
     resetProfilePromptDismissal()
     clearReadingProgress()
+    esquecerTicketsEmMemoria()
     fetch('/api/auth/logout', { method: 'POST', cache: 'no-store' }).catch(() => {})
     router.replace('/auth/login')
   }

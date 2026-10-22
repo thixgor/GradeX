@@ -131,11 +131,13 @@ export async function applyAttemptPing(
     userId: session.userId,
     userName: (session.name || '').slice(0, 160),
     userEmail: (session.email || '').slice(0, 200),
-    accountType: (session.accountType || 'gratuito').slice(0, 40),
     lastSeenAt: now,
     updatedAt: now,
     device: deviceFromUserAgent(userAgent),
   }
+  // Sem plano informado (heartbeat, saída), o que já está gravado fica. Só uma
+  // tentativa que nasce sem ele recebe o padrão.
+  if (session.accountType) set.accountType = session.accountType.slice(0, 40)
   if (userAgent) set.userAgent = userAgent.slice(0, 300)
   if (ping.examTitle) set.examTitle = ping.examTitle.slice(0, 300)
   if (totalQuestions !== undefined) set.totalQuestions = totalQuestions
@@ -152,6 +154,7 @@ export async function applyAttemptPing(
     awayCount: 0,
     answeredCount: 0,
     furthestQuestion: 0,
+    accountType: 'gratuito',
   }
 
   switch (ping.event) {

@@ -34,8 +34,12 @@ export async function POST(request: NextRequest) {
 
     const db = await getDb()
 
-    let accountType = 'gratuito'
-    if (ObjectId.isValid(session.userId)) {
+    // O plano vai para o documento da tentativa no `open`/`start`/`submit`. O
+    // heartbeat e a saída são a quase totalidade das chamadas e não mudam o
+    // plano: ler o usuário em cada um deles era uma ida ao Atlas a cada sinal
+    // de cada aluno com a prova aberta.
+    let accountType: string | undefined
+    if ((event === 'open' || event === 'start' || event === 'submit') && ObjectId.isValid(session.userId)) {
       const user = await db
         .collection('users')
         .findOne({ _id: new ObjectId(session.userId) }, { projection: { accountType: 1 } })

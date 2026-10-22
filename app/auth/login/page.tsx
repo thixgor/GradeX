@@ -1,47 +1,21 @@
 import LoginView from './login-view'
 
 /**
- * A tela de entrar é renderizada no servidor, com `?redirect=` e `?mode=` já
- * resolvidos.
+ * A tela de entrar, estática — servida pela CDN, sem função.
  *
- * Antes o componente lia os dois com `useSearchParams()`. Esse hook, numa
- * página sem fronteira de Suspense própria, faz o Next desistir de renderizar
- * a rota no servidor: o HTML entregue era só o spinner de tela cheia do
- * `loading.tsx` da raiz, e o formulário nascia depois — quando o navegador
- * terminasse de baixar e executar o JS da página. Lendo os parâmetros aqui,
- * onde eles são simplesmente um argumento da função, o formulário chega
- * pronto, já no modo certo (entrar ou criar conta).
+ * Era `force-dynamic` para ler `?redirect=` e `?mode=` no servidor e entregar
+ * o formulário pronto no modo certo (com `useSearchParams()` o Next desistia
+ * de renderizar a rota no servidor e o HTML era só o spinner). O preço era uma
+ * função por visita e 72 KB de HTML cru saindo dela pelo Fast Origin Transfer:
+ * 817 vezes num dia útil.
  *
- * Ler `searchParams` torna a rota dinâmica, e é o que ela precisa ser: o
- * conteúdo depende da query, então não haveria o que guardar em cache.
+ * Agora as duas coisas saem do servidor sem voltar ao spinner:
+ *
+ * - `?mode=register` é reescrito pelo middleware para `./criar-conta`, a mesma
+ *   tela já no modo de criar conta — o endereço na barra não muda.
+ * - `?redirect=` só importa depois do login, e é lido no navegador na hora de
+ *   desviar (`destinoDepoisDoLogin`, em `login-view.tsx`).
  */
-export const dynamic = 'force-dynamic'
-
-// Só permite redirecionamentos internos (evita open-redirect via ?redirect=).
-// Sem um "?redirect=" explícito, o destino padrão é direto o dashboard — ir
-// para "/" faria essa rota re-renderizar a landing page por um instante antes
-// do desvio para o dashboard, causando um flash visível da landing (com o
-// rodapé) logo após o login.
-function safeInternalPath(target: string | null | undefined): string {
-  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/dashboard'
-  return target
-}
-
-function first(value: string | string[] | undefined): string | null {
-  if (Array.isArray(value)) return value[0] ?? null
-  return value ?? null
-}
-
-export default async function LoginPage(
-  props: {
-    searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
-  }
-) {
-  const searchParams = await props.searchParams
-  return (
-    <LoginView
-      redirectTo={safeInternalPath(first(searchParams?.redirect))}
-      initialMode={first(searchParams?.mode)}
-    />
-  )
+export default function LoginPage() {
+  return <LoginView initialMode={null} />
 }

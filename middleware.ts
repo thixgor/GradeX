@@ -474,6 +474,17 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // ══════════ Entrar / criar conta, as duas estáticas ══════════
+  //
+  // `/auth/login` é HTML estático da CDN. O modo de criar conta é outra página
+  // estática (`/auth/login/criar-conta`), e a reescrita mantém na barra o
+  // endereço que todo link do site usa. Ver app/auth/login/page.tsx.
+  if (pathname === '/auth/login' && request.nextUrl.searchParams.get('mode') === 'register') {
+    const destino = request.nextUrl.clone()
+    destino.pathname = '/auth/login/criar-conta'
+    return NextResponse.rewrite(destino)
+  }
+
   // ══════════ Portão do Manual de Semiologia ══════════
   //
   // Link de sinal compartilhado no grupo de estudo abria no formulário de
@@ -683,7 +694,12 @@ export const config = {
      * - sw.js: o service worker, que precisa ser buscável sem sessão
      * - videos/: vídeos públicos (ex.: anúncio das Monitorias), lidos em
      *   pedaços (Range); cada pedaço passando por aqui seria uma execução
+     * - _vercel/, favicon.png, pdf.min.mjs e pdf.worker.min.mjs: o próprio
+     *   middleware já os deixava passar sem fazer nada (ver o desvio no topo),
+     *   mas cada um ainda era uma execução e um evento de observabilidade
+     *   cobrado. Só o Analytics e o Speed Insights da Vercel davam ~2,8 mil
+     *   num dia útil.
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|favicon\\.jpg|img/|videos/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|atlas-anatomia/|Manual-Histologia/|models/|patologia/|fonts/|pwa/|shortcuts/|icon-|apple-|logo[-0-9_.]|manifest\\.|robots\\.txt|sitemap\\.xml|sw\\.js|logo_manual_tomografia|ldpg-mnclinico).*)',
+    '/((?!_next/static|_next/image|_vercel/|favicon\\.ico|favicon\\.jpg|favicon\\.png|pdf\\.min\\.mjs|pdf\\.worker\\.min\\.mjs|img/|videos/|midia/|TC_ABDOME/|TC_CRANIO/|TC_TORAX/|atlas-anatomia/|Manual-Histologia/|models/|patologia/|fonts/|pwa/|shortcuts/|icon-|apple-|logo[-0-9_.]|manifest\\.|robots\\.txt|sitemap\\.xml|sw\\.js|logo_manual_tomografia|ldpg-mnclinico).*)',
   ],
 }

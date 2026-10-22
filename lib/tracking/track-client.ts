@@ -10,7 +10,7 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import { HEARTBEAT_INTERVAL_MS, type AttemptEvent } from './shared'
+import { HEARTBEAT_INTERVAL_MS, HEARTBEAT_MAX_SILENCE_MS, type AttemptEvent } from './shared'
 
 export interface TrackViewInput {
   kind: string
@@ -83,6 +83,11 @@ export interface ExamAttemptTracker {
   startHeartbeat: (getSnapshot: () => ExamAttemptSnapshot) => () => void
 }
 
+/** O que o painel ao vivo mostra do progresso; mudou, o heartbeat sai já. */
+function retratoDoProgresso(snapshot: ExamAttemptSnapshot): string {
+  return `${snapshot.answeredCount ?? ''}|${snapshot.currentQuestion ?? ''}|${snapshot.totalQuestions ?? ''}`
+}
+
 function newAttemptId(): string {
   try {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -127,14 +132,33 @@ export function createExamAttemptTracker(examId: string, examTitle?: string): Ex
   }
 
   const startHeartbeat = (getSnapshot: () => ExamAttemptSnapshot) => {
+    // Quem chama acabou de mandar o `start` com este mesmo retrato: é o
+    // primeiro sinal, e o relógio do silêncio começa nele.
+    let ultimoEnvio = Date.now()
+    let ultimoRetrato = retratoDoProgresso(getSnapshot())
+
+    const heartbeat = (snapshot: ExamAttemptSnapshot) => {
+      ultimoEnvio = Date.now()
+      ultimoRetrato = retratoDoProgresso(snapshot)
+      send('heartbeat', snapshot)
+    }
+
+    // A conferência é local e barata; o envio só acontece se o progresso mudou
+    // ou se o silêncio passou de HEARTBEAT_MAX_SILENCE_MS (ver `shared.ts`).
     const timer = setInterval(() => {
       if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return
-      send('heartbeat', getSnapshot())
+      const snapshot = getSnapshot()
+      if (
+        retratoDoProgresso(snapshot) !== ultimoRetrato ||
+        Date.now() - ultimoEnvio >= HEARTBEAT_MAX_SILENCE_MS
+      ) {
+        heartbeat(snapshot)
+      }
     }, HEARTBEAT_INTERVAL_MS)
 
     const onHidden = () => {
       if (document.visibilityState === 'hidden') send('leave', getSnapshot())
-      else send('heartbeat', getSnapshot())
+      else heartbeat(getSnapshot())
     }
     const onUnload = () => send('leave', getSnapshot())
 

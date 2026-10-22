@@ -169,4 +169,24 @@ describe('applyAttemptPing', () => {
     expect(update.$set.submissionId).toBe('s1')
     expect(update.$set.score).toBe(84.5)
   })
+
+  it('heartbeat sem plano não sobrescreve o plano gravado', async () => {
+    const { db, updateOne } = fakeDb()
+    const { accountType: _semPlano, ...semPlano } = sessao
+    await applyAttemptPing(db, { attemptId: 'att-1', examId: 'e1', event: 'heartbeat' }, semPlano)
+
+    const [, update] = updateOne.mock.calls[0]
+    expect(update.$set.accountType).toBeUndefined()
+    // Só uma tentativa que nasce agora recebe o padrão.
+    expect(update.$setOnInsert.accountType).toBe('gratuito')
+  })
+
+  it('com plano informado, grava o plano e não o repete no $setOnInsert', async () => {
+    const { db, updateOne } = fakeDb()
+    await applyAttemptPing(db, { attemptId: 'att-1', examId: 'e1', event: 'start' }, sessao)
+
+    const [, update] = updateOne.mock.calls[0]
+    expect(update.$set.accountType).toBe('plus')
+    expect(update.$setOnInsert.accountType).toBeUndefined()
+  })
 })

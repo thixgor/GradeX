@@ -51,19 +51,34 @@ const highlights = [
 /**
  * A tela de entrar/criar conta.
  *
- * `redirect` e `mode` chegam como PROPS, resolvidos no servidor por `page.tsx`
- * — não por `useSearchParams()`. O hook obriga a rota a desistir de renderizar
+ * `mode` chega como PROP — a rota de criar conta é outra página estática, para
+ * onde o middleware reescreve `?mode=register` — e `redirect` é lido do
+ * endereço na hora de desviar (`destinoDepoisDoLogin`); nada disso passa por
+ * `useSearchParams()`. O hook obriga a rota a desistir de renderizar
  * no servidor: o HTML que chegava ao navegador era só o spinner de tela cheia,
  * e o formulário só existia depois de o JS baixar, analisar e montar 1.100
  * linhas de componente. Em celular na rua isso era um "carregando" inteiro
  * entre tocar em "Entrar" e ver onde digitar o e-mail. Com as props, o
  * formulário — no modo certo — vem pronto no HTML.
  */
+// Só permite redirecionamentos internos (evita open-redirect via ?redirect=).
+// Sem um "?redirect=" explícito, o destino padrão é direto o dashboard — ir
+// para "/" faria essa rota re-renderizar a landing page por um instante antes
+// do desvio para o dashboard, causando um flash visível da landing (com o
+// rodapé) logo após o login.
+function safeInternalPath(target: string | null | undefined): string {
+  if (!target || !target.startsWith('/') || target.startsWith('//')) return '/dashboard'
+  return target
+}
+
+/** Para onde ir depois de entrar: o `?redirect=` do endereço, se for interno. */
+function destinoDepoisDoLogin(): string {
+  return safeInternalPath(new URLSearchParams(window.location.search).get('redirect'))
+}
+
 export default function LoginView({
-  redirectTo,
   initialMode,
 }: {
-  redirectTo: string
   initialMode: string | null
 }) {
   const router = useRouter()
@@ -142,7 +157,7 @@ export default function LoginView({
       fetch('/api/auth/me', { cache: 'no-store' })
         .then((r) => {
           if (!cancelled && r.ok) {
-            window.location.replace(redirectTo)
+            window.location.replace(destinoDepoisDoLogin())
           }
         })
         .catch(() => {})
@@ -161,7 +176,7 @@ export default function LoginView({
       cancelled = true
       window.removeEventListener('pageshow', handlePageShow)
     }
-  }, [redirectTo])
+  }, [])
 
   useEffect(() => {
     const script = document.createElement('script')
@@ -439,7 +454,7 @@ export default function LoginView({
         // Navegação completa (não router.push + refresh): o cookie de auth já
         // foi setado, então o destino renderiza do zero no servidor. Evita a
         // tela branca que o push+refresh causava no mobile.
-        window.location.assign(redirectTo)
+        window.location.assign(destinoDepoisDoLogin())
       }
     } catch (err: any) {
       setError(err.message)
@@ -479,7 +494,7 @@ export default function LoginView({
         throw new Error(data.error || 'Código inválido')
       }
       clearBootstrapCache()
-      window.location.assign(redirectTo)
+      window.location.assign(destinoDepoisDoLogin())
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -552,7 +567,7 @@ export default function LoginView({
       }
 
       clearBootstrapCache()
-      window.location.assign(redirectTo)
+      window.location.assign(destinoDepoisDoLogin())
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -596,7 +611,7 @@ export default function LoginView({
       trackMeta('CompleteRegistration', { content_name: 'Cadastro com Google' })
       setShowProfileSetup(false)
       clearBootstrapCache()
-      window.location.assign(redirectTo)
+      window.location.assign(destinoDepoisDoLogin())
     } catch (err: any) {
       setSetupError(err.message)
     } finally {
