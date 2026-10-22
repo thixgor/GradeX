@@ -48,6 +48,13 @@ const nextConfig = {
     // card ocupa em qualquer breakpoint, e fixá-la mantém uma única variante em
     // cache por radiografia em vez de uma por viewport.
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    // Desde o Next 16 o otimizador recusa com 400 todo `q` fora desta lista (o
+    // padrão é só [75]). Estes são os valores que o código pede montando a URL
+    // de `/_next/image` à mão: `urlOtimizada` (lib/histologia/midia.ts),
+    // `urlFilme` e `qualidade` do Raio-X (components/radiologia/) e o PDF de
+    // flashcards (lib/flashcard-manual-pdf.ts). Quem passar a pedir outra
+    // qualidade acrescenta aqui — sem isso a imagem sai quebrada, em silêncio.
+    qualities: [45, 58, 60, 62, 65, 66, 70, 72, 75, 78, 82, 90],
     // Minimizar reprocessamento no build
     minimumCacheTTL: 60 * 60 * 24 * 30, // 30 dias
   },
