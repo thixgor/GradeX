@@ -1,7 +1,5 @@
 import 'server-only'
 
-import { redirect } from 'next/navigation'
-
 import type { TokenPayload } from '@/lib/auth'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
@@ -14,6 +12,7 @@ import {
 } from '@/lib/manual-clinico-product'
 
 import { histologiaEhPrivativa } from './licenca'
+import type { AcessoDaVitrine, ProdutoDaVitrine } from './vitrine-tipos'
 
 /**
  * Portão de assinatura do Manual da Histologia — **o único**.
@@ -33,17 +32,24 @@ import { histologiaEhPrivativa } from './licenca'
  * mostra a vitrine e o `<script>` logo abaixo carrega a lâmina inteira. Foi
  * medido, não deduzido.
  *
- * Então o portão é aplicado **na página**, que é o único lugar onde `redirect()`
- * interrompe a renderização antes de existir o que serializar:
+ * Então o portão é aplicado onde o conteúdo nasce — na **rota de dados**. Toda
+ * página do módulo é um casco estático: não lê sessão nem carrega nada do
+ * acervo, e sai do CDN. O conteúdo vem de uma rota em
+ * `/api/manual-clinico/histologia/…`, que pergunta aqui
+ * (`histologiaLiberadaNaRequisicao`, ou `verificarAcessoAHistologia` na home,
+ * que precisa do motivo para a vitrine) e responde 404 a quem não assina; o
+ * casco então leva à home, onde está a vitrine. Ver
+ * `components/histologia/portao.tsx`.
  *
- * - a home do módulo chama `verificarAcessoAHistologia()` e devolve a vitrine no
- *   lugar do conteúdo, mantendo a landing na URL canônica da seção;
- * - toda outra página da árvore abre com `exigirAcessoAHistologia()`, que manda
- *   quem não assina para essa mesma home — e, portanto, para a vitrine.
+ * O visitante sem sessão nem chega ao casco: o middleware reescreve a home para
+ * a vitrine estática e manda as páginas internas para a home, na borda — quem
+ * não tem sessão certamente não assina. Isso só antecipa o "não"; nenhum "sim"
+ * sai de lá.
  *
- * Uma linha por página é o preço de não vazar. O teste em
- * `__tests__/histologia/acervo.test.ts` falha se alguma página da árvore
- * esquecer a linha, que é o erro que essa forma de portão permite cometer.
+ * O teste em `__tests__/histologia/acervo.test.ts` falha se uma página ler a
+ * sessão ou servir conteúdo sem o portão de cliente, ou se uma rota de dados do
+ * módulo servir sem perguntar aqui — os erros que essa forma de portão permite
+ * cometer.
  *
  * ## Por que o banco não fica no caminho crítico
  *
@@ -110,9 +116,6 @@ export interface AcessoAHistologia {
   /** Produto e planos para a vitrine montar o preço. `null` se o banco falhou. */
   produto: ManualClinicoPublicProduct | null
 }
-
-/** Onde a vitrine mora: a home do módulo, que é a URL canônica da seção. */
-export const ROTA_DA_VITRINE = '/manual-clinico/histologia'
 
 /** Quanto tempo um "sim" vale sem reconsulta. Espelha o cache de sessão. */
 const VEREDITO_TTL_MS = 60 * 1000
@@ -262,27 +265,11 @@ export async function verificarAcessoAHistologia(): Promise<AcessoAHistologia> {
 }
 
 /**
- * Portão das páginas internas do módulo.
- *
- * Chame na **primeira linha** da página, antes de tocar no repositório. Sem
- * acesso, `redirect()` lança e a renderização para ali — nada da lâmina chega a
- * existir, nem no HTML nem no payload RSC.
- *
- * Não devolve o veredito de propósito: página interna não tem o que fazer com
- * "está trancado" além de sair. Quem precisa do veredito para *desenhar* algo é
- * só a home, e ela chama `verificarAcessoAHistologia()` direto.
- */
-export async function exigirAcessoAHistologia(): Promise<void> {
-  if (!histologiaEhPrivativa()) return
-  const acesso = await verificarAcessoAHistologia()
-  if (!acesso.liberado) redirect(ROTA_DA_VITRINE)
-}
-
-/**
  * Mesmo veredito, no recorte que as rotas de dados precisam.
  *
- * As rotas do módulo (índice de busca, busca e gabarito) servem o acervo em
- * JSON. Sem elas fechadas junto, o portão da página seria um muro com a porta
+ * As rotas do módulo (índice de busca, busca, gabarito e o conteúdo de cada
+ * página em casco estático) servem o acervo em JSON. Sem elas fechadas junto,
+ * o portão da página seria um muro com a porta
  * dos fundos aberta: bastaria chamar `/api/manual-clinico/histologia/busca` para
  * varrer os 7.453 rótulos de estrutura sem assinar nada.
  *
@@ -293,4 +280,51 @@ export async function exigirAcessoAHistologia(): Promise<void> {
 export async function histologiaLiberadaNaRequisicao(): Promise<boolean> {
   if (!histologiaEhPrivativa()) return true
   return (await verificarAcessoAHistologia()).liberado
+}
+
+/**
+ * O veredito no recorte que a vitrine desenha: quem está do lado de fora, por
+ * quê, e o preço. Quem recebe isto é a home (`/api/manual-clinico/histologia/inicio`)
+ * quando o portão não abre.
+ */
+export function acessoDaVitrine(acesso: AcessoAHistologia): AcessoDaVitrine {
+  return {
+    autenticado: acesso.autenticado,
+    motivo:
+      acesso.motivo === 'indisponivel' ? 'indisponivel' : acesso.autenticado ? 'locked' : 'guest',
+    produto: acesso.produto ? produtoDaVitrine(acesso.produto) : null,
+  }
+}
+
+/**
+ * Preço e planos do Manual Clínico para a vitrine de quem chega sem sessão.
+ *
+ * É o mesmo produto que `verificarAcessoAHistologia` devolve ao visitante, sem
+ * passar pela sessão: o visitante é resolvido no middleware e recebe a vitrine
+ * estática, que pede só isto. Igual para todo mundo — por isso pode ficar no
+ * cache da borda (ver `/api/manual-clinico/histologia/oferta`).
+ */
+export async function ofertaDaHistologia(): Promise<ProdutoDaVitrine> {
+  const db = await getDb()
+  return produtoDaVitrine(serializeManualClinicoProduct(await getManualClinicoConfig(db)))
+}
+
+function produtoDaVitrine(produto: ManualClinicoPublicProduct): ProdutoDaVitrine {
+  return {
+    label: produto.label,
+    ctaText: produto.ctaText,
+    isActive: produto.isActive,
+    currentPrice: produto.currentPrice,
+    price: produto.price,
+    hasActivePromotion: produto.hasActivePromotion,
+    pricingEventId: produto.pricingEventId ?? null,
+    plans: produto.plans.map((plano) => ({
+      key: plano.key,
+      label: plano.label,
+      durationMonths: plano.durationMonths,
+      price: plano.price,
+      enabled: plano.enabled,
+      pricingEventId: plano.pricingEventId,
+    })),
+  }
 }

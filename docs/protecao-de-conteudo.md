@@ -60,9 +60,10 @@ para quando a decisão de custo for outra.
 1. **Radiologia (Tomografia e Raio-X), Exames Laboratoriais e Semiologia.** As
    páginas são geradas no build e o conteúdo inteiro vai no payload RSC; o
    bloqueio é só visual, no cliente (`AreaRadiologia`, `AreaDosExames`,
-   `AreaSemiologia`). A correção é a da Histologia: portão na página com
-   `redirect()` (`lib/histologia/acesso.ts`) — o que torna cada visita uma
-   invocação.
+   `AreaSemiologia`). A correção é a da Histologia: casco estático sem o
+   conteúdo, e o conteúdo servido por uma rota de dados com o portão
+   (`components/histologia/portao.tsx`, `lib/histologia/acesso.ts`) — cada
+   visita custa uma invocação pequena, de JSON comprimido, em vez de zero.
 2. **Ferramentas Clínicas e ECG.** O conteúdo está no bundle JavaScript; o
    portão é só no cliente. Corrigir exige servir o conteúdo por API.
 3. **`public/TC_*` e `public/atlas-anatomia/`.** Imagens baixáveis direto do

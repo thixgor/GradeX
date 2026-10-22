@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -298,12 +298,15 @@ describe('desempenho e volume', () => {
   })
 
   it('a página de doença carrega apenas o fragmento da doença', () => {
-    const pagina = FONTES.get(
-      'app/manual-clinico/histologia/histopatologia/doencas/[slug]/page.tsx',
-    )!
-    expect(pagina).toContain('obterDoenca')
-    expect(pagina).not.toContain('obterInventario')
-    expect(pagina).not.toContain('busca-servidor')
+    // A página é um casco estático; quem monta o capítulo é o montador que a
+    // rota de dados chama, e o casco só confere se o slug existe.
+    const casco = FONTES.get('app/manual-clinico/histologia/histopatologia/doencas/[slug]/page.tsx')!
+    const capitulo = FONTES.get('lib/histopatologia/capitulo.ts')!
+    expect(capitulo).toContain('obterDoenca')
+    for (const fonte of [casco, capitulo]) {
+      expect(fonte).not.toContain('obterInventario')
+      expect(fonte).not.toContain('busca-servidor')
+    }
   })
 
   it('o índice de servidor só é importado por rota de API', () => {
@@ -333,6 +336,9 @@ describe('desempenho e volume', () => {
     for (const [nome, codigo] of CODIGO) {
       if (!nome.endsWith('page.tsx')) continue
       if (!/export function generateStaticParams/.test(codigo)) continue
+      // Lista vazia é o contrário de pré-renderizar: o casco nasce na primeira
+      // visita a cada endereço e fica no CDN.
+      if (/export function generateStaticParams\(\)\s*\{\s*return \[\]\s*\}/.test(codigo)) continue
       // Só sistemas e mecanismos — conjuntos de 14 itens — são pré-renderizados.
       expect(
         /sistemas\/\[sistema\]|mecanismos\/\[id\]/.test(nome),
@@ -392,17 +398,22 @@ describe('rotas', () => {
   })
 
   it('o comparador recusa pares que a edição não afirmou', () => {
-    const comparar = FONTES.get(
-      'app/manual-clinico/histologia/histopatologia/comparar/[...slugs]/page.tsx',
-    )!
-    expect(comparar).toContain('histologiaNormalDeReferencia.find')
-    expect(comparar).toContain('if (!referencia) notFound()')
+    // Nos dois lugares: o casco responde 404 e a rota de dados não monta o par.
+    const casco = FONTES.get('app/manual-clinico/histologia/histopatologia/comparar/[...slugs]/page.tsx')!
+    expect(casco).toContain('if (!(await comparacaoComNormalExiste(slugs))) notFound()')
+    const paginas = FONTES.get('lib/histopatologia/paginas.ts')!
+    expect(paginas).toContain('histologiaNormalDeReferencia.find')
+    expect(paginas).toContain('if (!referencia) return null')
+    expect(FONTES.get('lib/histopatologia/paginas-existentes.ts')!).toContain('histologiaNormalDeReferencia.some')
   })
 })
 
 describe('integração com a Histologia normal', () => {
+  const ler = (relativo: string) => readFileSync(path.join(RAIZ, relativo), 'utf8')
+  // A home é um casco estático: o catálogo é montado em `lib/histologia/inicio.ts`
+  // (servidor, depois do portão) e desenhado em `components/histologia/catalogo/inicio.tsx`.
   const HOME_DA_HISTOLOGIA = () =>
-    readFileSync(path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx'), 'utf8')
+    [ler('lib/histologia/inicio.ts'), ler('components/histologia/catalogo/inicio.tsx')].join('\n')
 
   /**
    * O relato que originou a reformulação foi "a pessoa não sabe onde clicar —
@@ -422,7 +433,7 @@ describe('integração com a Histologia normal', () => {
     // Sem isto, a porta e as fileiras levariam ao 404 seco do portão do módulo —
     // que o aluno leria como defeito do produto, não como área indisponível.
     expect(home).toContain('const comPatologia = histopatologiaHabilitada()')
-    expect(home).toContain('comPatologia\n              ? {')
+    expect(home).toMatch(/histopatologia: comPatologia\s+\? \{/)
     expect(home.match(/\{comPatologia && \(/g)?.length).toBeGreaterThanOrEqual(2)
   })
 
@@ -441,16 +452,9 @@ describe('integração com a Histologia normal', () => {
   it('a mesma doença é uma entrada só no catálogo, e capítulo e zoom se citam', () => {
     const catalogo = readFileSync(path.join(RAIZ, 'lib/histologia/catalogo.ts'), 'utf8')
     expect(catalogo).toContain('if (usados.has(c.slug)) continue')
-    const capitulo = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/doencas/[slug]/page.tsx'),
-      'utf8',
-    )
-    expect(capitulo).toContain('<LaminasComZoomDaDoenca')
-    const zoom = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/zoom/[doenca]/page.tsx'),
-      'utf8',
-    )
-    expect(zoom).toContain('Ler o capítulo aprofundado')
+    // Os dois são cascos estáticos; o desenho mora nos componentes de cliente.
+    expect(ler('components/histopatologia/capitulo.tsx')).toContain('<LaminasComZoomDaDoenca')
+    expect(ler('components/histopatologia-zoom/paginas/doenca.tsx')).toContain('Ler o capítulo aprofundado')
   })
 
   /**
@@ -477,15 +481,26 @@ describe('integração com a Histologia normal', () => {
       const relativo = path.relative(RAIZ, arquivo).split(path.sep).join('/')
 
       // A home serve a vitrine de vendas na mesma URL: ela monta a barra só no
-      // ramo de quem tem acesso, e diz isso com `naHome`.
+      // ramo de quem tem acesso (o catálogo), e diz isso com `naHome`.
       if (relativo === 'app/manual-clinico/histologia/page.tsx') {
-        expect(fonte).toContain('<NavegacaoDoModulo histopatologiaHabilitada={comPatologia} naHome />')
+        expect(ler('components/histologia/catalogo/inicio.tsx')).toContain(
+          '<NavegacaoDoModulo histopatologiaHabilitada={comPatologia} naHome />',
+        )
         continue
       }
+      // A vitrine estática do visitante é a home vista por quem não assina: sem
+      // barra, como no ramo de vitrine da home.
+      if (relativo === 'app/manual-clinico/histologia/vitrine/page.tsx') continue
       // Rotas que só redirecionam não renderizam nada.
       if (!fonte.includes('<AppShell')) continue
 
-      expect(fonte, `${relativo} não monta <NavegacaoDoModulo>`).toContain('<NavegacaoDoModulo')
+      // Casco estático: quem desenha (e monta a barra) é o componente de cliente
+      // que a página importa.
+      const desenho = [...fonte.matchAll(/from '@\/(components\/histo[^']+)'/g)]
+        .map(([, modulo]) => [`${modulo}.tsx`, `${modulo}.ts`].find((a) => existsSync(path.join(RAIZ, a))))
+        .map((arquivo) => (arquivo ? ler(arquivo) : ''))
+        .join('\n')
+      expect(`${fonte}\n${desenho}`, `${relativo} não monta <NavegacaoDoModulo>`).toContain('<NavegacaoDoModulo')
     }
 
     // Guarda contra o teste passar por vacuidade se a árvore mudar de forma.
@@ -504,20 +519,17 @@ describe('integração com a Histologia normal', () => {
     expect(busca).toContain(`${'${BASE_DA_PATOLOGIA}'}?q=${'${encodeURIComponent(termo)}'}`)
 
     // E o outro lado da ponte recebe o termo já buscado, em vez de campo vazio.
-    const home = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/histopatologia/page.tsx'),
-      'utf8',
-    )
-    expect(home).toContain('searchParams.q')
+    // A home da Histopatologia é casco estático: o `?q=` é lido no navegador.
+    const home = ler('components/histopatologia/inicio.tsx')
+    expect(home).toContain("useSearchParams()?.get('q')")
     expect(home).toContain('termoInicial=')
   })
 
   it('as páginas do currículo normal listam as doenças relacionadas', () => {
-    const pagina = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/[...slug]/page.tsx'),
-      'utf8',
-    )
-    expect(pagina).toContain('doencasRelacionadasA(params.slug)')
+    // A página é casco estático: o vínculo é resolvido no montador do
+    // currículo e desenhado no componente de cliente.
+    expect(ler('lib/histologia/curriculo.ts')).toContain('doencasRelacionadasA(caminho)')
+    const pagina = ler('components/histologia/pagina-do-curriculo.tsx')
     // Nos dois ramos: nó de índice e lâmina.
     expect(pagina.match(/<DoencasRelacionadas/g)?.length).toBe(2)
   })

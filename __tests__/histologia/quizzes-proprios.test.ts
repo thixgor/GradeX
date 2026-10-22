@@ -355,10 +355,8 @@ describe('proveniência e autoria', () => {
   })
 
   it('a página do quiz distingue autoria própria da do acervo', () => {
-    const pagina = readFileSync(
-      path.join(RAIZ, 'app/manual-clinico/histologia/quizzes/[slug]/page.tsx'),
-      'utf8',
-    )
+    // A página é casco estático; o desenho do quiz mora no componente dela.
+    const pagina = readFileSync(path.join(RAIZ, 'components/histologia/pagina-do-quiz.tsx'), 'utf8')
     expect(pagina).toContain("quiz.autoria === 'proprio'")
     expect(pagina).toContain('Digital Histology')
   })

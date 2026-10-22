@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
-import { histologiaHabilitada } from '@/lib/histologia/licenca'
+import { histologiaEhPrivativa, histologiaHabilitada } from '@/lib/histologia/licenca'
 import { isManualClinicoPatologia } from '@/lib/manual-clinico-rotas'
 import {
   ADMIN_GATE_COOKIE,
@@ -95,9 +95,10 @@ const publicRoutes = [
   '/manual-clinico/ferramentas',
   // Manual da Histologia: seção privativa (assinantes do Manual Clínico e
   // Plus+), mas a rota segue pública para que o visitante deslogado veja a
-  // landing de vendas em vez de cair no login. Quem decide o que aparece é o
-  // layout do módulo, via lib/histologia/acesso.ts; quem decide se o módulo
-  // existe é lib/histologia/licenca.ts. Nenhum dos dois é o middleware.
+  // landing de vendas em vez de cair no login. Quem decide o que aparece são as
+  // rotas de dados do módulo, via lib/histologia/acesso.ts; quem decide se o
+  // módulo existe é lib/histologia/licenca.ts. O middleware só adianta o "não"
+  // certo do visitante sem sessão (ver o portão do visitante, mais abaixo).
   '/manual-clinico/histologia',
   // A landing de vendas do Manual de Semiologia. É pública e é SÓ ela: as
   // páginas do módulo seguem exigindo sessão, e o visitante sem conta é
@@ -261,8 +262,8 @@ function isPublicRoute(pathname: string): boolean {
   // Todo o Manual da Histologia — inclusive o currículo, que tem até seis
   // segmentos de profundidade — e as rotas de dados que ele consome. Público
   // aqui significa "não redireciona para o login": o portão de assinatura é
-  // aplicado dentro do módulo (layout) e dentro de cada handler de dados, que
-  // devolvem a landing e 404 respectivamente a quem não assina.
+  // aplicado dentro de cada handler de dados, que devolve 404 a quem não
+  // assina — e o casco da página então leva à home, onde está a landing.
   if (/^\/manual-clinico\/histologia(\/[a-z0-9-]+)*$/.test(pathname)) return true
   if (/^\/api\/manual-clinico\/histologia\//.test(pathname)) return true
   // As rotas de dados da Histopatologia (índice de busca, busca e inventário do
@@ -324,6 +325,16 @@ const secret = new TextEncoder().encode(
 
 /** A landing pública do Manual de Semiologia. */
 const ROTA_VITRINE_SEMIOLOGIA = '/manual-clinico/semiologia/vitrine'
+
+/** A home do Manual da Histologia e a landing estática que o visitante recebe nela. */
+const RAIZ_DA_HISTOLOGIA = '/manual-clinico/histologia'
+const ROTA_VITRINE_HISTOLOGIA = '/manual-clinico/histologia/vitrine'
+
+/** Página do módulo (não rota de dados, não a própria vitrine). */
+function ehPaginaDaHistologia(pathname: string): boolean {
+  if (pathname === RAIZ_DA_HISTOLOGIA) return true
+  return pathname.startsWith(`${RAIZ_DA_HISTOLOGIA}/`) && pathname !== ROTA_VITRINE_HISTOLOGIA
+}
 
 /**
  * Só "existe sessão?", sem tocar no banco.
@@ -413,6 +424,37 @@ export async function middleware(request: NextRequest) {
       status: 404,
       headers: { 'X-Robots-Tag': 'noindex, nofollow' },
     })
+  }
+
+  // ══════════ Visitante do Manual da Histologia, resolvido na borda ══════════
+  //
+  // O módulo é privativo (ADR 0003), e quem chega sem sessão certamente não
+  // assina. Antes, essa conclusão custava uma função: a home renderizava a
+  // vitrine sob demanda (~140 KB de HTML sem compressão), e cada página interna
+  // devolvia um 307 que, por sair de dentro da renderização, carregava ~42 KB
+  // de HTML junto. Os links antigos do currículo, indexados quando o módulo era
+  // gratuito, batem nesse 307 o dia inteiro.
+  //
+  // Aqui, só com `jwtVerify`, sem banco:
+  //  • a home é reescrita para a vitrine estática — a barra continua mostrando
+  //    a home, e o buscador indexa a mesma landing;
+  //  • qualquer outra página vai para a home com o mesmo 307 de antes, agora
+  //    sem corpo.
+  //
+  // Quem tem sessão segue para o casco estático da página, e quem decide se a
+  // assinatura abre o conteúdo continua sendo o servidor, nas rotas de dados
+  // do módulo (lib/histologia/acesso.ts). Este bloco não libera nada: só
+  // antecipa o "não" que é certo.
+  if (
+    ehPaginaDaHistologia(pathname) &&
+    histologiaEhPrivativa() &&
+    !isDevAuthBypass() &&
+    !(await temSessaoValida(request))
+  ) {
+    if (pathname === RAIZ_DA_HISTOLOGIA) {
+      return NextResponse.rewrite(new URL(ROTA_VITRINE_HISTOLOGIA, request.url))
+    }
+    return NextResponse.redirect(new URL(RAIZ_DA_HISTOLOGIA, request.url))
   }
 
   // Checkout de item único do catálogo, visitante: /comprar é quem vende sem

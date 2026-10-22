@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 
@@ -103,15 +103,12 @@ describe('portão de assinatura num único ponto', () => {
     'getManualClinicoAccess',
   ]
 
-  /** Os únicos arquivos autorizados a falar de acesso pago. */
-  const AUTORIZADOS = [
-    'lib/histologia/licenca.ts',
-    'lib/histologia/acesso.ts',
-    'components/histologia/vitrine.tsx',
-    // A home é a única página que precisa do veredito: é ela que troca o
-    // conteúdo pela vitrine. As demais só chamam `exigirAcessoAHistologia()`.
-    'app/manual-clinico/histologia/page.tsx',
-  ]
+  /**
+   * Os únicos arquivos autorizados a falar de acesso pago. As rotas de dados
+   * só perguntam ao portão (`verificarAcessoAHistologia`,
+   * `histologiaLiberadaNaRequisicao`).
+   */
+  const AUTORIZADOS = ['lib/histologia/licenca.ts', 'lib/histologia/acesso.ts', 'components/histologia/vitrine.tsx']
 
   const alvos = [
     'lib/histologia',
@@ -147,60 +144,160 @@ describe('portão de assinatura num único ponto', () => {
     }
   })
 
+  const relativoDe = (completo: string) => path.relative(RAIZ, completo).split(path.sep).join('/')
+
+  async function arquivos(dir: string, nome: string): Promise<string[]> {
+    const { readdirSync, statSync } = await import('node:fs')
+    const saida: string[] = []
+    const varrer = (atual: string) => {
+      for (const item of readdirSync(atual)) {
+        const completo = path.join(atual, item)
+        if (statSync(completo).isDirectory()) varrer(completo)
+        else if (item === nome) saida.push(completo)
+      }
+    }
+    varrer(path.join(RAIZ, dir))
+    return saida
+  }
+
   /**
    * O erro que esta forma de portão permite cometer.
    *
-   * O portão precisa estar **na página**, e não no layout: no App Router a
-   * árvore da página é prop de um componente de cliente, então ela renderiza e
-   * vai serializada no payload RSC mesmo quando o layout devolve outra coisa —
-   * o HTML mostra a vitrine e o `<script>` seguinte entrega a lâmina. Foi
-   * medido. O preço de barrar na página é uma linha por página, e a linha que
-   * alguém esquece na próxima página nova é exatamente o vazamento.
+   * O portão não pode ficar no layout: no App Router a árvore da página é prop
+   * de um componente de cliente, então ela renderiza e vai serializada no
+   * payload RSC mesmo quando o layout devolve outra coisa — o HTML mostra a
+   * vitrine e o `<script>` seguinte entrega a lâmina. Foi medido.
    *
-   * Este teste é essa linha.
+   * Por isso toda página do módulo é um **casco estático**: não lê a sessão,
+   * não carrega nada do acervo, e quem desenha é um componente que passa pelo
+   * portão de cliente (`components/histologia/portao.tsx`) — o conteúdo só
+   * chega de uma rota de dados, que tem o portão (ver o teste seguinte). A
+   * próxima página nova que servir conteúdo de outro jeito é exatamente o
+   * vazamento; a que voltar a ler a sessão é exatamente a conta de volta.
+   *
+   * Exceções declaradas: a vitrine estática (o "não" do portão, só com a
+   * amostra que a landing sempre mostrou ao visitante) e as páginas que só
+   * redirecionam (não servem nada; o portão fica no destino).
    */
-  it('toda página da árvore chama o portão', async () => {
-    const { readdirSync, statSync } = await import('node:fs')
-    const paginas: string[] = []
-    const varrer = (dir: string) => {
-      for (const nome of readdirSync(dir)) {
-        const completo = path.join(dir, nome)
-        if (statSync(completo).isDirectory()) varrer(completo)
-        else if (nome === 'page.tsx') paginas.push(completo)
+  it('toda página da árvore é casco estático com o portão de cliente', async () => {
+    const paginas = await arquivos('app/manual-clinico/histologia', 'page.tsx')
+    expect(paginas.length).toBeGreaterThan(30)
+
+    let cascos = 0
+    for (const pagina of paginas) {
+      const relativo = relativoDe(pagina)
+      const conteudo = readFileSync(pagina, 'utf8')
+
+      expect(conteudo, `${relativo} lê a sessão: a página vira função a cada visita`).not.toMatch(
+        /force-dynamic|getSession|cookies\(|headers\(|verificarAcessoAHistologia|histologiaLiberadaNaRequisicao/,
+      )
+
+      if (relativo === 'app/manual-clinico/histologia/vitrine/page.tsx') {
+        expect(conteudo).toContain('montarVitrine()')
+        expect(conteudo).not.toMatch(/from '@\/lib\/histologia\/(repositorio|catalogo|inicio|curriculo)'/)
+        continue
+      }
+      if (!conteudo.includes('<AppShell')) {
+        expect(conteudo, `${relativo} não desenha nada, mas também não redireciona`).toMatch(/redirect\(/)
+        continue
+      }
+
+      cascos++
+      const desenho = [...conteudo.matchAll(/from '@\/(components\/[^']+)'/g)]
+        .filter(([, modulo]) => modulo !== 'components/app-shell')
+        .map(([, modulo]) => [`${modulo}.tsx`, `${modulo}.ts`].find((a) => existsSync(path.join(RAIZ, a))))
+        .map((arquivo) => (arquivo ? readFileSync(path.join(RAIZ, arquivo), 'utf8') : ''))
+        .join('\n')
+      expect(desenho, `${relativo} serve conteúdo do módulo sem passar pelo portão`).toMatch(
+        /PortaoDaHistologia|useConteudoDaHistologia/,
+      )
+    }
+    // 33 páginas: a vitrine, 2 que só redirecionam (WebPath/Utah) e 30 cascos.
+    expect(cascos).toBeGreaterThanOrEqual(30)
+  })
+
+  /**
+   * As rotas que servem o acervo em JSON — índice, busca, gabarito e o
+   * conteúdo de cada casco — fecham junto com as páginas. Sem elas, o portão
+   * da página seria um muro com a porta dos fundos aberta.
+   *
+   * A oferta é a exceção declarada: é o preço do produto, igual para todo
+   * mundo, e por isso mesmo pode ficar no cache da borda.
+   */
+  it('as rotas de dados do módulo fecham junto com as páginas', async () => {
+    const PUBLICAS = ['app/api/manual-clinico/histologia/oferta/route.ts']
+    const rotas = await arquivos('app/api/manual-clinico/histologia', 'route.ts')
+    expect(rotas.length).toBeGreaterThan(8)
+
+    for (const completo of rotas) {
+      const rota = relativoDe(completo)
+      const conteudo = readFileSync(completo, 'utf8')
+      if (PUBLICAS.includes(rota)) {
+        expect(conteudo, `${rota} é pública e não pode tocar no acervo`).not.toMatch(
+          /repositorio|catalogo|curriculo|paginas/,
+        )
+        continue
+      }
+      if (histologiaEhPrivativa()) {
+        expect(
+          /histologiaLiberadaNaRequisicao\(|verificarAcessoAHistologia\(/.test(conteudo),
+          `${rota} serve o acervo sem consultar o portão`,
+        ).toBe(true)
+      }
+      // Resposta que depende de sessão nunca pode ficar num cache compartilhado.
+      expect(conteudo.includes('public, s-maxage'), `${rota} cacheável na borda`).toBe(false)
+    }
+  })
+
+  /**
+   * O que é desenhado no navegador vai para o JavaScript público do site —
+   * baixável por qualquer um, sem sessão. As tabelas do acervo chegam aos
+   * componentes já recortadas, pelas rotas de dados; importá-las daqui seria
+   * entregá-las inteiras. (Os módulos `server-only`, como os repositórios, o
+   * build já recusa.)
+   */
+  it('componentes do módulo não importam as tabelas do acervo', async () => {
+    const TABELAS = [
+      '@/lib/histologia/resumos',
+      '@/lib/histologia/laminas',
+      '@/lib/histologia-zoom/tecidos',
+      '@/lib/histologia-zoom/especies',
+      '@/lib/histopatologia-zoom/achados',
+      '@/lib/histopatologia/editorial/mecanismos',
+    ]
+    const componentes = (
+      await Promise.all(
+        ['components/histologia', 'components/histologia-zoom', 'components/histopatologia', 'components/histopatologia-zoom'].map(
+          componentesDe,
+        ),
+      )
+    ).flat()
+    expect(componentes.length).toBeGreaterThan(30)
+
+    for (const completo of componentes) {
+      const conteudo = readFileSync(completo, 'utf8')
+      for (const tabela of TABELAS) {
+        // Qualquer `import … from` que não seja `import type`, em uma ou em
+        // várias linhas. `[^'";]` não deixa o casamento atravessar outro import.
+        const valor = new RegExp(`import\\s+(?!type\\s)[^'";]*?from '${tabela}'`)
+        expect(valor.test(conteudo), `${relativoDe(completo)} importa ${tabela}`).toBe(false)
       }
     }
-    varrer(path.join(RAIZ, 'app/manual-clinico/histologia'))
-    expect(paginas.length).toBeGreaterThan(15)
-
-    const home = path.join(RAIZ, 'app/manual-clinico/histologia/page.tsx')
-    for (const pagina of paginas) {
-      const relativo = path.relative(RAIZ, pagina).split(path.sep).join('/')
-      const conteudo = readFileSync(pagina, 'utf8')
-      // A home decide entre conteúdo e vitrine; as outras só exigem acesso.
-      const chamada = pagina === home ? 'verificarAcessoAHistologia(' : 'exigirAcessoAHistologia('
-      expect(
-        conteudo.includes(chamada),
-        `${relativo} serve conteúdo do módulo sem chamar ${chamada})`,
-      ).toBe(histologiaEhPrivativa())
-    }
   })
 
-  it('as rotas de dados do módulo fecham junto com as páginas', async () => {
-    const rotas = [
-      'app/api/manual-clinico/histologia/indice/route.ts',
-      'app/api/manual-clinico/histologia/busca/route.ts',
-      'app/api/manual-clinico/histologia/quiz/[slug]/gabarito/route.ts',
-    ]
-    for (const rota of rotas) {
-      const conteudo = readFileSync(path.join(RAIZ, rota), 'utf8')
-      expect(
-        conteudo.includes('histologiaLiberadaNaRequisicao'),
-        `${rota} serve o acervo sem consultar o portão`,
-      ).toBe(histologiaEhPrivativa())
-      // Resposta que depende de sessão nunca pode ficar num cache compartilhado.
-      expect(conteudo.includes('public, s-maxage')).toBe(false)
+  async function componentesDe(dir: string): Promise<string[]> {
+    const { readdirSync, statSync } = await import('node:fs')
+    const saida: string[] = []
+    const varrer = (atual: string) => {
+      for (const item of readdirSync(atual)) {
+        const completo = path.join(atual, item)
+        if (statSync(completo).isDirectory()) varrer(completo)
+        else if (/\.tsx?$/.test(item)) saida.push(completo)
+      }
     }
-  })
+    varrer(path.join(RAIZ, dir))
+    return saida
+  }
 })
 
 describe('integridade do acervo por ponteiro Git LFS', () => {

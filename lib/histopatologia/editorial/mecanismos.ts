@@ -1,4 +1,4 @@
-import type { MecanismoGeral, MecanismoGeralEntrada } from '../esquemas'
+import type { MecanismoGeralEntrada } from '../esquemas'
 
 /**
  * Mecanismos patológicos gerais.
@@ -250,13 +250,4 @@ export function obterMecanismo(id: string): MecanismoGeralEntrada | undefined {
   return MECANISMOS.find((m) => m.id === id)
 }
 
-export const FAMILIAS_DE_MECANISMO: Array<{ id: MecanismoGeral['familia']; nome: string }> = [
-  { id: 'lesao-celular', nome: 'Lesão e morte celular' },
-  { id: 'inflamacao', nome: 'Inflamação' },
-  { id: 'hemodinamica', nome: 'Distúrbios hemodinâmicos' },
-  { id: 'imunopatologia', nome: 'Imunopatologia' },
-  { id: 'infeccao', nome: 'Infecção' },
-  { id: 'reparo-fibrose', nome: 'Reparo e fibrose' },
-  { id: 'genetica', nome: 'Alterações genéticas' },
-  { id: 'neoplasia', nome: 'Neoplasia' },
-]
+export { FAMILIAS_DE_MECANISMO } from './familias-de-mecanismo'

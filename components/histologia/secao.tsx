@@ -3,7 +3,7 @@ import { ChevronRight, FolderTree, Microscope } from 'lucide-react'
 
 import type { NoCurriculo, Pagina } from '@/lib/histologia/esquemas'
 import { BASE, rotaDaPagina } from '@/lib/histologia/rotas'
-import { type ResumoDeSetor, resumoDoSetor } from '@/lib/histologia/resumos'
+import type { ResumoDeSetor } from '@/lib/histologia/resumos'
 import { destacarTermos } from './destaque'
 import { setorDe, tema } from './tema'
 
@@ -15,20 +15,23 @@ import { setorDe, tema } from './tema'
  * produziria 204 páginas quebradas; renderizá-las como índice dá ao aluno o
  * mapa daquele ramo, que é para o que elas sempre serviram.
  *
- * Componente de servidor: é só composição, não tem interação. Mandar isso para
- * o cliente custaria bundle sem devolver nada.
+ * É só composição, sem interação — mas é desenhado no navegador, com o que a
+ * rota de dados do currículo entrega depois do portão. Por isso o resumo do
+ * setor chega pronto em `resumo`: chamar `resumoDoSetor` daqui levaria a tabela
+ * inteira de resumos para o JavaScript público do site.
  */
 export function SecaoDoCurriculo({
   pagina,
   filhos,
   miniaturas,
+  resumo,
 }: {
-  pagina: Pagina
+  pagina: Pick<Pagina, 'caminho' | 'titulo' | 'trilha'>
   filhos: NoCurriculo[]
   miniaturas: Record<string, string>
+  resumo: ResumoDeSetor | null
 }) {
   const cor = tema(setorDe(pagina.caminho).cor)
-  const resumo = resumoDoSetor(pagina.caminho)
   const laminas = filhos.filter((f) => f.tipo === 'lamina')
   const subsecoes = filhos.filter((f) => f.tipo !== 'lamina')
 

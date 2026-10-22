@@ -1,224 +1,59 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { preload } from 'react-dom'
 
 import { AppShell } from '@/components/app-shell'
-import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
-import { Lamina } from '@/components/histologia/lamina'
-import { descricaoDaLamina } from '@/lib/histologia/laminas'
-import { SecaoDoCurriculo } from '@/components/histologia/secao'
-import { DoencasRelacionadas } from '@/components/histopatologia/doencas-relacionadas'
-import { exigirAcessoAHistologia } from '@/lib/histologia/acesso'
-import { histopatologiaHabilitada } from '@/lib/histopatologia/direitos'
-import { doencasRelacionadasA } from '@/lib/histopatologia/repositorio'
-import { buildJsonLd } from '@/lib/seo'
-import {
-  LARGURA_LAMINA,
-  LARGURA_MINIATURA,
-  LARGURA_PREVIA,
-  urlDaMidia,
-  urlOtimizada,
-} from '@/lib/histologia/midia'
-import {
-  TODOS_OS_QUIZZES,
-  obterFragmento,
-  obterNo,
-  obterPagina,
-  vizinhas,
-} from '@/lib/histologia/repositorio'
-import { jsonLdDeLamina, jsonLdDeTrilha, metadadosDoModulo, rotaDaPagina } from '@/lib/histologia/seo'
+import { PaginaDoCurriculo } from '@/components/histologia/pagina-do-curriculo'
+import { rotaDosDadosDoCurriculo } from '@/lib/histologia/curriculo-tipos'
+import { obterPagina } from '@/lib/histologia/repositorio'
+import { rotaDaPagina } from '@/lib/histologia/seo'
+import { absoluteUrl } from '@/lib/seo'
 
 /**
- * Rota única para as 1.524 páginas do currículo.
+ * Rota única para as 1.524 páginas do currículo — casco estático.
  *
- * **Sem `generateStaticParams`, deliberadamente.** Pré-renderizar 1.524 páginas
- * no primeiro build custaria dezenas de minutos e nada disso muda com
- * frequência. A rota é renderizada sob demanda e revalidada por ISR: a primeira
- * visita paga o custo, todas as outras leem do cache da borda.
+ * A página lia a sessão (o portão de assinatura) e por isso era renderizada a
+ * cada visita: ~80–110 KB de HTML sem compressão saindo da função. Agora:
  *
- * `dynamicParams` fica ligado (padrão) porque não há lista pré-declarada; rota
- * inexistente cai em `notFound()`, não em página vazia.
+ * - **o casco** é gerado na primeira visita a cada endereço e servido do CDN
+ *   daí em diante (`generateStaticParams` vazio: pré-gerar 1.524 páginas no
+ *   build custaria minutos a cada deploy). Ele não carrega nada do acervo — nem
+ *   título, nem descrição, nem imagem;
+ * - **o conteúdo** vem de `/api/manual-clinico/histologia/curriculo/…`, que
+ *   passa pelo portão (`lib/histologia/acesso.ts`) e responde 404 a quem não
+ *   assina — o casco então leva à home, onde está a vitrine;
+ * - **o visitante sem sessão** nem recebe o casco: o middleware o manda para a
+ *   home na borda.
  *
- * A rota também **não** pode ser `force-static`: ela lê `?estrutura=` para abrir
- * a lâmina já com a camada certa ligada, vindo da busca. Com `revalidate` o
- * resultado ainda é cacheado por variante de URL.
+ * Rota inexistente continua em 404, decidido aqui no servidor.
+ * `?estrutura=` (a camada a acender, vinda da busca) é lida no navegador.
  */
 
-export const dynamic = 'force-dynamic'
+export function generateStaticParams() {
+  return []
+}
 
 interface Props {
   params: Promise<{ slug: string[] }>
-  /**
-   * `?estrutura=<id>` vem da busca por estrutura: abre a lâmina com a camada
-   * correta já ligada e o dossiê aberto. Não prometemos centralizar o campo no
-   * marcador — o acervo não fornece a geometria dele, e fingir um enquadramento
-   * levaria o aluno ao lugar errado com ar de precisão.
-   */
-  searchParams: Promise<{ estrutura?: string }>
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params
-  const pagina = await obterPagina(params.slug)
-  if (!pagina) return { title: 'Página não encontrada — Manual da Histologia' }
-
-  const imagem = pagina.base ? urlDaMidia(pagina.base) : null
-  const trilha = pagina.trilha.map((t) => t.titulo).join(' › ')
-
-  return metadadosDoModulo({
-    titulo: pagina.titulo,
-    descricao:
-      pagina.descricaoOriginal ||
-      `${pagina.titulo} no Manual da Histologia. ${trilha}. ` +
-        `${pagina.overlays.filter((o) => o.classe === 'estrutura').length} estruturas marcadas.`,
-    caminho: rotaDaPagina(pagina.caminho),
-    imagem,
-  })
+  const { slug } = await props.params
+  // Título e descrição são os do módulo (o layout): os da lâmina são conteúdo.
+  return { alternates: { canonical: absoluteUrl(rotaDaPagina(slug)) } }
 }
 
-export default async function PaginaDoCurriculo(props: Props) {
-  const searchParams = await props.searchParams
-  const params = await props.params
-  await exigirAcessoAHistologia()
+export default async function CascoDaPaginaDoCurriculo(props: Props) {
+  const { slug } = await props.params
+  if (!(await obterPagina(slug))) notFound()
 
-  const pagina = await obterPagina(params.slug)
-  if (!pagina) notFound()
-
-  const no = obterNo(params.slug)
-
-  /*
-   * Metade "normal → patológico" do vínculo bidirecional.
-   *
-   * Derivada do que cada doença declara como histologia normal de referência, e
-   * não de um segundo mapa mantido à mão — que discordaria do primeiro na
-   * primeira doença nova. Quando nada aponta para esta rota, o bloco não
-   * renderiza nada: sem cabeçalho vazio, sem espaço reservado.
-   */
-  const relacionadas = doencasRelacionadasA(params.slug)
-
-  /* ── Nó de índice: 204 páginas do acervo não são lâminas ── */
-  if (pagina.tipo === 'secao') {
-    return (
-      <AppShell allowGuest showHeader={false} guestNotice={false}>
-        <div className="surface-page min-h-screen">
-          <NavegacaoDoModulo histopatologiaHabilitada={histopatologiaHabilitada()} />
-          <SecaoDoCurriculo
-            pagina={pagina}
-            filhos={no?.filhos ?? []}
-            miniaturas={await miniaturasDe(params.slug)}
-          />
-          <DoencasRelacionadas doencas={relacionadas} />
-          <DadosEstruturados dados={jsonLdDeTrilha(pagina.trilha)} />
-        </div>
-      </AppShell>
-    )
-  }
-
-  /* ── Lâmina ── */
-  const irmas = await obterFragmento(params.slug)
-  const bandeja = irmas
-    .filter((p) => p.tipo === 'lamina' && p.base && ehIrma(p.caminho, pagina.caminho))
-    .slice(0, 24)
-    .map((p) => ({ rota: p.caminho.join('/'), titulo: p.titulo, miniatura: p.base }))
-
-  const { anterior, proxima } = vizinhas(params.slug)
-  /*
-   * As duas pilhas de quiz: o do assunto, vindo do acervo, e o do tema desta
-   * lâmina, montado sobre as marcações dela e das vizinhas. O do tema vem
-   * primeiro — é o mais próximo do que está na tela.
-   */
-  const quizzes = TODOS_OS_QUIZZES.filter((q) => pagina.quizzes.includes(q.slug)).sort(
-    (a, b) => Number(b.autoria === 'proprio') - Number(a.autoria === 'proprio'),
-  )
-  const imagem = pagina.base ? urlDaMidia(pagina.base) : null
-
-  /*
-   * Pré-carregamento da lâmina, emitido pelo servidor.
-   *
-   * O microscópio é `ssr: false` — ele precisa de `ResizeObserver` e das
-   * dimensões naturais da imagem, que só existem no navegador. A consequência é
-   * que, sem isto, a busca da imagem só começava depois de o JavaScript baixar,
-   * o chunk do microscópio chegar e o componente hidratar: uma corrente em
-   * série, e o aluno olhando para um retângulo cinza o tempo todo.
-   *
-   * Estas duas linhas quebram a corrente. O navegador enxerga o `preload` ainda
-   * ao analisar o HTML e busca a imagem **em paralelo** com o JavaScript, de
-   * modo que a prévia já está no cache quando o microscópio finalmente monta.
-   */
-  const preLamina = urlOtimizada(imagem, LARGURA_LAMINA)
-  const prePrevia = urlOtimizada(imagem, LARGURA_PREVIA, 45)
+  // O conteúdo começa a ser buscado junto com o HTML, e não só depois de o
+  // JavaScript hidratar o casco.
+  preload(rotaDosDadosDoCurriculo(slug), { as: 'fetch', crossOrigin: 'anonymous' })
 
   return (
     <AppShell allowGuest showHeader={false} guestNotice={false}>
-      {prePrevia && <link rel="preload" as="image" href={prePrevia} fetchPriority="high" />}
-      {preLamina && <link rel="preload" as="image" href={preLamina} />}
-      <div className="surface-page min-h-screen">
-        <NavegacaoDoModulo
-          histopatologiaHabilitada={histopatologiaHabilitada()}
-          visto={{
-            href: rotaDaPagina(pagina.caminho),
-            titulo: pagina.titulo,
-            categoria: `Histologia · ${pagina.trilha[0]?.titulo ?? 'Atlas por assunto'}`,
-            area: 'histologia',
-            imagem: urlOtimizada(imagem, LARGURA_MINIATURA, 60),
-            zoom: false,
-          }}
-        />
-        <Lamina
-          pagina={pagina}
-          // Resolvido aqui, e não dentro do componente cliente: a tabela
-          // `DESCRICOES` tem 700 KB e a função de busca fecha sobre ela, então
-          // consultá-la do outro lado da fronteira significava enviar as
-          // descrições das 1.318 lâminas ao navegador para exibir uma.
-          descricaoPropria={descricaoDaLamina(pagina.tituloOriginal, pagina.caminho)}
-          vizinhas={{
-            anterior: anterior && { titulo: anterior.titulo, caminho: anterior.caminho },
-            proxima: proxima && { titulo: proxima.titulo, caminho: proxima.caminho },
-          }}
-          bandeja={bandeja}
-          quizzes={quizzes.map((q) => ({ slug: q.slug, titulo: q.titulo, questoes: q.questoes }))}
-          estruturaInicial={
-            // Só aceitamos o parâmetro se ele nomear uma camada que existe nesta
-            // lâmina. Vindo da URL, é entrada não confiável.
-            pagina.overlays.some((o) => o.id === searchParams.estrutura)
-              ? searchParams.estrutura
-              : undefined
-          }
-        />
-        <DoencasRelacionadas doencas={relacionadas} />
-        <DadosEstruturados dados={jsonLdDeLamina(pagina, imagem)} />
-        <DadosEstruturados dados={jsonLdDeTrilha(pagina.trilha)} />
-      </div>
+      <PaginaDoCurriculo caminho={slug} />
     </AppShell>
-  )
-}
-
-/** Lâminas do mesmo pai — é o conjunto que a bandeja do microscópio oferece. */
-function ehIrma(candidata: string[], atual: string[]): boolean {
-  if (candidata.length !== atual.length) return false
-  return candidata.slice(0, -1).join('/') === atual.slice(0, -1).join('/')
-}
-
-async function miniaturasDe(caminho: string[]) {
-  const paginas = await obterFragmento(caminho)
-  const mapa: Record<string, string> = {}
-  for (const p of paginas) {
-    if (!p.base) continue
-    // São miniaturas de índice, exibidas a poucas dezenas de pixels. Servir a
-    // lâmina original de 1 MB em cada uma tornava o índice de setor a página
-    // mais pesada do módulo.
-    const url = urlOtimizada(urlDaMidia(p.base), LARGURA_MINIATURA, 60)
-    if (url) mapa[p.caminho.join('/')] = url
-  }
-  return mapa
-}
-
-function DadosEstruturados({ dados }: { dados: Record<string, unknown> }) {
-  return (
-    <script
-      type="application/ld+json"
-      // `buildJsonLd` escapa `<`, então nada aqui pode fechar a tag e injetar
-      // markup — é a mesma função que o resto do aplicativo usa.
-      dangerouslySetInnerHTML={{ __html: buildJsonLd(dados) }}
-    />
   )
 }

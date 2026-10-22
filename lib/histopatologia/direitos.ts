@@ -351,7 +351,7 @@ export const EXPLICACAO_DE_DIREITOS: Record<EstadoDeDireitos, string> = {
  *
  * A Histopatologia é uma *subárea* do Manual da Histologia: mora dentro da rota
  * dele, passa pelo layout dele e usa o mesmo portão de assinatura
- * (`exigirAcessoAHistologia`). Então o padrão passa a ser o único que não
+ * (`lib/histologia/acesso.ts`). Então o padrão passa a ser o único que não
  * surpreende: **a subárea acompanha o módulo que a contém**. Publicar a
  * Histologia publica a Histopatologia junto.
  *

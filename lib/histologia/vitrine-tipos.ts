@@ -80,3 +80,9 @@ export interface AcessoDaVitrine {
   motivo: 'locked' | 'guest' | 'indisponivel'
   produto: ProdutoDaVitrine | null
 }
+
+/**
+ * Preço do Manual Clínico para a vitrine estática, no cache da borda. A
+ * vitrine pede, e o casco dela pede o pré-carregamento junto com o HTML.
+ */
+export const ROTA_DA_OFERTA = '/api/manual-clinico/histologia/oferta'

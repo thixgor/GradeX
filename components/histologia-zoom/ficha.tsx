@@ -1,15 +1,20 @@
 import { Info, Microscope, Palette, ScanEye, Search, AlertTriangle } from 'lucide-react'
 
 import type { Coloracao } from '@/lib/histologia-zoom/coloracoes'
-import { GRUPOS, ORDEM_DOS_GRUPOS, TECIDOS } from '@/lib/histologia-zoom/tecidos'
-import type { GrupoDeTecido, Orgao } from '@/lib/histologia-zoom/tipos'
+import { GRUPOS, ORDEM_DOS_GRUPOS } from '@/lib/histologia-zoom/grupos-de-tecido'
+import type { DescricaoDeTecido } from '@/lib/histologia-zoom/tecidos'
+import type { GrupoDeTecido, Orgao, TipoDeTecido } from '@/lib/histologia-zoom/tipos'
 
 /**
  * Ficha de características de uma lâmina.
  *
- * Sem estado e sem hooks: a mesma ficha é renderizada no servidor, na página
- * da lâmina, e dentro do visualizador em tela cheia (componente de cliente),
- * sem duplicar marcação.
+ * Sem estado e sem hooks: a mesma ficha é renderizada na página da lâmina e
+ * dentro do visualizador em tela cheia, sem duplicar marcação.
+ *
+ * A classificação dos tecidos chega pronta em `descricoes` — só a dos tecidos
+ * deste órgão (ver `descricoesDosTecidos`). A página é desenhada no navegador,
+ * e importar a tabela `TECIDOS` daqui a mandaria inteira para o JavaScript
+ * público do site.
  *
  * ## As porcentagens
  *
@@ -26,6 +31,7 @@ import type { GrupoDeTecido, Orgao } from '@/lib/histologia-zoom/tipos'
  */
 export function FichaDaLamina({
   orgao,
+  descricoes,
   sistemaNome,
   coloracao,
   notaDaLamina,
@@ -33,6 +39,7 @@ export function FichaDaLamina({
   idBase = 'ficha',
 }: {
   orgao: Orgao
+  descricoes: Partial<Record<TipoDeTecido, DescricaoDeTecido>>
   sistemaNome: string
   coloracao?: Coloracao
   notaDaLamina?: string | null
@@ -47,7 +54,7 @@ export function FichaDaLamina({
   // Composição por grupo, na ordem fixa dos grupos (cor segue a entidade, não o ranking).
   const porGrupo = new Map<GrupoDeTecido, number>()
   for (const t of ficha.tecidos) {
-    const g = TECIDOS[t.tipo].grupo
+    const g = descricoes[t.tipo]!.grupo
     porGrupo.set(g, (porGrupo.get(g) ?? 0) + t.pct)
   }
   const composicao = ORDEM_DOS_GRUPOS.filter((g) => porGrupo.has(g)).map((g) => ({
@@ -230,7 +237,7 @@ export function FichaDaLamina({
                 </thead>
                 <tbody>
                   {tecidos.map((t) => {
-                    const d = TECIDOS[t.tipo]
+                    const d = descricoes[t.tipo]!
                     const g = GRUPOS[d.grupo]
                     return (
                       <tr key={t.tipo} className="border-b border-border/70 align-top last:border-0">

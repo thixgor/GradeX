@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import type { MecanismoGeral } from '@/lib/histopatologia/esquemas'
-import { FAMILIAS_DE_MECANISMO } from '@/lib/histopatologia/editorial/mecanismos'
+import { FAMILIAS_DE_MECANISMO } from '@/lib/histopatologia/editorial/familias-de-mecanismo'
 import { rotaDoMecanismo } from '@/lib/histopatologia/rotas'
 import { CLASSE_DE_FAMILIA } from './tema'
 

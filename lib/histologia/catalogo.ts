@@ -430,3 +430,25 @@ export function laboratoriosDoCatalogo(): ItemDoCatalogo[] {
 
 /** Capas tipográficas da prática: tons da marca, para a fileira não virar um bloco de uma cor só. */
 const CORES_DE_PRATICA = ['#E8763A', '#2E8C6E', '#C9A227', '#B03A7A', '#3E7CB1']
+
+/**
+ * Só o que o cartão desenha, para os itens que viajam em JSON até o navegador
+ * (as páginas do módulo são cascos estáticos; ver `components/histologia/portao.tsx`).
+ * Doenças e sistemas carregam campos a mais — o sistema inteiro, contagens por
+ * área — que nenhum cartão lê; numa página de servidor eles morriam ali.
+ */
+export function cartoes(itens: ItemDoCatalogo[]): ItemDoCatalogo[] {
+  return itens.map(({ id, href, titulo, categoria, area, imagem, mosaico, zoom, detalhe, cor, icone }) => ({
+    id,
+    href,
+    titulo,
+    categoria,
+    area,
+    imagem,
+    zoom,
+    ...(mosaico ? { mosaico } : {}),
+    ...(detalhe ? { detalhe } : {}),
+    ...(cor ? { cor } : {}),
+    ...(icone ? { icone } : {}),
+  }))
+}

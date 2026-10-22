@@ -1,12 +1,7 @@
 import { Dna, HelpCircle, Leaf, PawPrint, UserRound } from 'lucide-react'
 
-import {
-  ROTULO_DA_CATEGORIA,
-  TEXTO_HUMANA,
-  TEXTO_NAO_INFORMADA,
-  type CategoriaDeOrigem,
-  type OrigemDaPeca,
-} from '@/lib/histologia-zoom/especies'
+import type { CategoriaDeOrigem, OrigemDaPeca } from '@/lib/histologia-zoom/especies'
+import { ROTULO_DA_CATEGORIA, TEXTO_HUMANA, TEXTO_NAO_INFORMADA } from '@/lib/histologia-zoom/origem-textos'
 
 /**
  * Origem da peça: humana, não humana, vegetal ou não informada.

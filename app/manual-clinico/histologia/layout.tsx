@@ -18,14 +18,18 @@ import { metadadosDoModulo } from '@/lib/histologia/seo'
  * ## O portão de assinatura NÃO fica aqui
  *
  * O módulo é privativo de assinantes (ADR 0003), mas essa checagem vive nas
- * páginas, via `lib/histologia/acesso.ts`. A razão é técnica e foi medida: um
- * layout que escolhe entre `children` e a vitrine não impede a página de
- * renderizar — no App Router a árvore da página é prop de um componente de
- * cliente e vai serializada no payload RSC de qualquer jeito. O HTML mostrava a
- * landing e o `<script>` seguinte entregava a lâmina.
+ * rotas de dados que alimentam os cascos estáticos das páginas, via
+ * `lib/histologia/acesso.ts`. A razão é
+ * técnica e foi medida: um layout que escolhe entre `children` e a vitrine não
+ * impede a página de renderizar — no App Router a árvore da página é prop de um
+ * componente de cliente e vai serializada no payload RSC de qualquer jeito. O
+ * HTML mostrava a landing e o `<script>` seguinte entregava a lâmina.
  *
  * Licença é diferente: `notFound()` lança aqui e derruba a resposta inteira,
- * então o 404 continua valendo para a árvore toda.
+ * então o 404 continua valendo para a árvore toda. Nas páginas estáticas ele
+ * roda no build — `HISTOLOGIA_HABILITADO` precisa existir no build, como já
+ * precisa para o `sitemap.xml` (estático) listar o módulo; em tempo de execução
+ * quem devolve o 404 é o middleware.
  *
  * Ver `docs/adr/0001-licenca-manual-histologia.md` e
  * `docs/adr/0003-histologia-privativa-assinantes.md`.

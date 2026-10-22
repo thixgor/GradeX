@@ -118,6 +118,30 @@ atribuição não começa depois da compra.
 - **Negativa:** alunos que usavam o módulo gratuitamente perdem o acesso. É a
   consequência direta da decisão, não um efeito colateral.
 
+## Atualização (2026-10-22): cascos estáticos, portão nas rotas de dados
+
+A renderização sob demanda custou mais do que o previsto: cada visita saía da
+função com 80–500 KB de HTML sem compressão (Fast Origin Transfer, cobrado por
+byte), e o 307 que o visitante recebia nas páginas internas carregava ~42 KB de
+HTML junto. O portão continua decidido no servidor, num só lugar
+(`lib/histologia/acesso.ts`), mas mudou de ponto de aplicação:
+
+- **visitante sem sessão** — resolvido no middleware, só com `jwtVerify`: a home
+  é reescrita para a vitrine estática (`/manual-clinico/histologia/vitrine`, com o
+  preço vindo de `/api/manual-clinico/histologia/oferta`, no cache da borda) e as
+  páginas internas recebem o mesmo 307 para a home, sem corpo;
+- **quem tem sessão** — a página é um casco estático, sem nada do acervo, e o
+  conteúdo vem de uma rota em `/api/manual-clinico/histologia/…` que passa pelo
+  portão e responde 404 a quem não assina (o casco então leva à home). A
+  resposta é JSON comprimido dentro da função, `private`, com ETag;
+- não sobra página que leia a sessão: `exigirAcessoAHistologia()` (o portão
+  na página) saiu de `lib/histologia/acesso.ts`.
+
+O teste em `__tests__/histologia/acervo.test.ts` cobra o casco em toda página e
+o portão em toda rota de dados. As consequências "o módulo perdeu a geração
+estática" e "uma leitura de sessão por requisição" acima deixam de valer: a
+leitura acontece só nas rotas de dados, com o JSON comprimido.
+
 ## Referências
 
 - [ADR 0001 — Portão de licença do Manual da Histologia](./0001-licenca-manual-histologia.md)

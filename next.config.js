@@ -91,9 +91,18 @@ const nextConfig = {
    * caracteres (um `i` ou um `d`) e não casa com o segmento da rota — a regra
    * deixava de valer sem erro nenhum. Por isso o segmento dinâmico vai como
    * `*`, que casa nos dois empacotadores.
+   *
+   * A página da entrada do atlas virou casco estático: quem lê os fragmentos
+   * agora é a rota de dados das páginas da Histopatologia
+   * (`/api/manual-clinico/histologia/histopatologia/[...rota]`). A chave casa
+   * por trecho do caminho: `histopatologia/*` pegava também a rota da home e
+   * as pastas irmãs `zoom/` e `doencas/` (5,7 MB a mais em cada função, sem
+   * uso). `*rota*` só casa com o segmento `[...rota]` — o `zoom/[[...rota]]`
+   * fica um nível abaixo e o `*` não atravessa a barra. Conferido no
+   * `.nft.json` de cada rota.
    */
   outputFileTracingIncludes: {
-    '/manual-clinico/histologia/histopatologia/atlas/*': [
+    '/api/manual-clinico/histologia/histopatologia/*rota*': [
       './public/patologia/catalogo/**/*.json.gz',
     ],
     '/api/manual-clinico/histopatologia/acervo/*': [

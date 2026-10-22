@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { BookOpen } from 'lucide-react'
 
 import { SinalDePatologia } from '@/components/histologia-zoom/sinal-de-patologia'
-import { achadoPorId } from '@/lib/histopatologia-zoom/achados'
 import type { DoencaZoom } from '@/lib/histopatologia-zoom/tipos'
 
 const PESO = { criterio: 'Critério', frequente: 'Frequente', ocasional: 'Ocasional' } as const
@@ -13,8 +12,21 @@ const PESO = { criterio: 'Critério', frequente: 'Frequente', ocasional: 'Ocasio
  *
  * `compacto` é a versão do painel lateral do visualizador (tela cheia):
  * o essencial para ler a lâmina, sem o diferencial longo.
+ *
+ * O nome de cada achado chega pronto em `nomesDosAchados` (ver
+ * `nomesDosAchadosDe`): a ficha também é desenhada no navegador, e consultar
+ * `achadoPorId` daqui levaria o catálogo inteiro de achados para o JavaScript
+ * público do site.
  */
-export function FichaDaDoenca({ doenca, compacto = false }: { doenca: DoencaZoom; compacto?: boolean }) {
+export function FichaDaDoenca({
+  doenca,
+  nomesDosAchados,
+  compacto = false,
+}: {
+  doenca: DoencaZoom
+  nomesDosAchados: Record<string, string>
+  compacto?: boolean
+}) {
   const especificos = doenca.achados.filter((a) => a.tipo === 'especifico')
   const gerais = doenca.achados.filter((a) => a.tipo === 'geral')
   return (
@@ -38,8 +50,8 @@ export function FichaDaDoenca({ doenca, compacto = false }: { doenca: DoencaZoom
       </Bloco>
 
       <div className={compacto ? 'space-y-4' : 'grid gap-6 md:grid-cols-2'}>
-        <ListaDeAchados titulo="Achados específicos" itens={especificos} />
-        <ListaDeAchados titulo="Achados gerais" itens={gerais} />
+        <ListaDeAchados titulo="Achados específicos" itens={especificos} nomes={nomesDosAchados} />
+        <ListaDeAchados titulo="Achados gerais" itens={gerais} nomes={nomesDosAchados} />
       </div>
 
       {!compacto && (
@@ -88,7 +100,15 @@ export function FichaDaDoenca({ doenca, compacto = false }: { doenca: DoencaZoom
   )
 }
 
-function ListaDeAchados({ titulo, itens }: { titulo: string; itens: DoencaZoom['achados'] }) {
+function ListaDeAchados({
+  titulo,
+  itens,
+  nomes,
+}: {
+  titulo: string
+  itens: DoencaZoom['achados']
+  nomes: Record<string, string>
+}) {
   if (!itens.length) return null
   return (
     <div>
@@ -98,7 +118,7 @@ function ListaDeAchados({ titulo, itens }: { titulo: string; itens: DoencaZoom['
       <ul className="space-y-2">
         {itens.map((a) => (
           <li key={a.achado} className="text-sm leading-relaxed">
-            <span className="font-semibold">{achadoPorId(a.achado)?.nome ?? a.achado}</span>
+            <span className="font-semibold">{nomes[a.achado] ?? a.achado}</span>
             <span
               className={`ml-1.5 rounded px-1 py-px text-[10px] font-bold uppercase tracking-wide ${
                 a.peso === 'criterio' ? 'bg-rose-600 text-white' : 'bg-muted text-muted-foreground'

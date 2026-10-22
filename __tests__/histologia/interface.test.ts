@@ -38,10 +38,11 @@ describe('rotas declaradas na interface existem no currículo', () => {
   /**
    * A home aponta para trilhas e para uma lâmina de abertura por caminho
    * literal. Se uma reingestão mudar um slug, o link vira 404 silencioso — a
-   * home continua bonita e o botão principal não leva a lugar nenhum.
+   * home continua bonita e o botão principal não leva a lugar nenhum. (A home é
+   * um casco estático; quem monta o catálogo dela é `lib/histologia/inicio.ts`.)
    */
   it('a lâmina de abertura e as trilhas da home existem', () => {
-    const home = FONTES.get('app/manual-clinico/histologia/page.tsx')!
+    const home = FONTES.get('lib/histologia/inicio.ts')!
     const hero = home.match(/ROTA_HERO = \[([^\]]+)\]/)
     expect(hero, 'a home perdeu a lâmina de abertura').toBeTruthy()
     const caminho = hero![1]
@@ -58,10 +59,12 @@ describe('rotas declaradas na interface existem no currículo', () => {
    * que some numa reingestão esvaziaria a fileira em silêncio.
    */
   it('os assuntos citados pelo catálogo existem no currículo', () => {
+    // As páginas são cascos estáticos: os recortes da home e da área normal
+    // moram nos montadores que as rotas de dados chamam.
     const fontes = [
       FONTES.get('lib/histologia/catalogo.ts')!,
-      FONTES.get('app/manual-clinico/histologia/page.tsx')!,
-      FONTES.get('app/manual-clinico/histologia/normal/page.tsx')!,
+      FONTES.get('lib/histologia/inicio.ts')!,
+      FONTES.get('lib/histologia/paginas-do-catalogo.ts')!,
     ].join('\n')
     const prefixos = new Set([...rotas].map((r) => r.split('/').slice(0, 2).join('/')))
     const citados = [...fontes.matchAll(/'((?:histologia-basica|celulas|tecidos|orgaos-e-sistemas)\/[a-z0-9-]+)'/g)].map(
@@ -81,7 +84,8 @@ describe('rotas declaradas na interface existem no currículo', () => {
   })
 
   it('todo módulo de laboratório tem componente correspondente', () => {
-    const pagina = FONTES.get('app/manual-clinico/histologia/laboratorio/[modulo]/page.tsx')!
+    // A página é casco estático; quem escolhe o componente de cada módulo é o desenho dela.
+    const pagina = FONTES.get('components/histologia/pagina-do-laboratorio.tsx')!
     for (const modulo of MODULOS_DE_LABORATORIO) {
       expect(pagina, `módulo sem caso no switch: ${modulo.id}`).toContain(`case '${modulo.id}'`)
     }
