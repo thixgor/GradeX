@@ -5,6 +5,7 @@ import { Home, Link2, Link2Off, ZoomIn, ZoomOut } from 'lucide-react'
 import type OpenSeadragon from 'openseadragon'
 
 import { SinalDePatologia } from '@/components/histologia-zoom/sinal-de-patologia'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { desenharMarcacao, vistaDaMarcacao } from '@/lib/histologia-zoom/desenho-de-marcacoes'
 import { criarFonteDeTiles } from '@/lib/histologia-zoom/fonte-de-tiles'
 import type { PiramideDaLamina } from '@/lib/histologia-zoom/tipos'
@@ -114,6 +115,10 @@ function PainelComparativo({
   selecaoRef.current = selecao
   const onZoomRef = useRef(onZoom)
   onZoomRef.current = onZoom
+  // Mesma regra do visualizador: tile perdido antes do primeiro desenhado é a
+  // origem fora do ar; o próximo tile desenhado tira o aviso.
+  const [fonteFora, setFonteFora] = useState(false)
+  const tileDesenhadoRef = useRef(false)
 
   const redesenhar = () => {
     if (!svgRef.current || !viewerRef.current || !osdRef.current) return
@@ -153,6 +158,13 @@ function PainelComparativo({
       viewerRef.current = viewer
       viewer.addHandler('update-viewport', () => redesenharRef.current())
       viewer.addHandler('zoom', () => onZoomRef.current())
+      viewer.addHandler('tile-drawn', () => {
+        tileDesenhadoRef.current = true
+        setFonteFora(false)
+      })
+      viewer.addHandler('tile-load-failed', () => {
+        if (!tileDesenhadoRef.current) setFonteFora(true)
+      })
       viewer.addHandler('open', () => {
         onPronto({ viewer, OSD, ampliacaoMaxima: lado.ampliacaoMaxima })
       })
@@ -164,6 +176,16 @@ function PainelComparativo({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lado.piramide.base])
+
+  useIntervaloVisivel(
+    () => {
+      const viewer = viewerRef.current
+      const OSD = osdRef.current
+      if (!viewer || !OSD) return
+      viewer.open(criarFonteDeTiles(OSD, lado.piramide) as unknown as OpenSeadragon.TileSourceSpecifier)
+    },
+    fonteFora ? 60_000 : null,
+  )
 
   const escolher = (id: string) => {
     setSelecao(id)
@@ -240,6 +262,15 @@ function PainelComparativo({
       <div className="relative h-[46vh] min-h-[300px] bg-[#0b0f0e] lg:h-[68vh]">
         <div ref={palcoRef} className="absolute inset-0" />
         <svg ref={svgRef} className="pointer-events-none absolute inset-0 z-[5] h-full w-full" aria-hidden />
+        {fonteFora && (
+          <div className="pointer-events-none absolute inset-0 z-[6] flex flex-col items-center justify-center gap-2 p-6 text-center text-white">
+            <p className="text-sm font-semibold">Lâmina temporariamente indisponível.</p>
+            <p className="max-w-sm text-xs text-white/60">
+              O servidor que guarda as imagens desta lâmina não está respondendo. Tentamos de novo sozinhos a
+              cada minuto — ela aparece assim que ele voltar.
+            </p>
+          </div>
+        )}
         <div className="absolute bottom-3 left-3 z-10 flex gap-1 rounded-xl border border-white/10 bg-black/65 p-1 backdrop-blur-md">
           <BotaoDoPainel rotulo="Ampliar" onClick={acao((v) => v.viewport.zoomBy(1.6))}>
             <ZoomIn className="h-5 w-5" />

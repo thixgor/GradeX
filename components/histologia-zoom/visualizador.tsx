@@ -34,6 +34,7 @@ import {
   ZoomOut,
 } from 'lucide-react'
 
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { exitAppFullscreen, onFullscreenChange, requestAppFullscreen } from '@/lib/fullscreen'
 import type { CategoriaDeOrigem } from '@/lib/histologia-zoom/especies'
 import { MARCA_DO_ACERVO, creditoDaLamina, linhaDeCredito } from '@/lib/histologia-zoom/fonte'
@@ -200,7 +201,14 @@ export function Visualizador({
   const [painel, setPainel] = useState<Painel>(null)
   const [telaCheia, setTelaCheia] = useState<TelaCheia>('nao')
   const [carregando, setCarregando] = useState(true)
-  const [erro, setErro] = useState(false)
+  /**
+   * `abrir`: o OpenSeadragon não abriu a lâmina. `fonte`: abriu, mas o servidor
+   * de tiles não entrega nenhum — a pirâmide é descrita por nós, então a lâmina
+   * "abre" mesmo com a origem fora do ar, e sem isto a tela ficaria preta.
+   */
+  const [erro, setErro] = useState<'abrir' | 'fonte' | null>(null)
+  const tileDesenhadoRef = useRef(false)
+  const reabrindoRef = useRef(false)
   const [ampliacao, setAmpliacao] = useState(0)
   const [faixa, setFaixa] = useState({ min: 0, max: 1, posicao: 0 })
   const [rotacao, setRotacao] = useState(0)
@@ -480,10 +488,23 @@ export function Visualizador({
       })
       viewer.addHandler('rotate', () => setRotacao(viewer.viewport.getRotation()))
       viewer.addHandler('open-failed', () => {
-        setErro(true)
+        setErro('abrir')
         setCarregando(false)
       })
-      viewer.addHandler('tile-drawn', () => setCarregando(false))
+      viewer.addHandler('tile-drawn', () => {
+        tileDesenhadoRef.current = true
+        setCarregando(false)
+        setErro(null)
+      })
+      // Um tile perdido no meio do estudo não é motivo de aviso; antes do
+      // primeiro desenhado, é. Numa vista pequena o OpenSeadragon pede um tile
+      // só e não insiste nele, então esperar mais falhas deixaria a tela preta.
+      // Se a falha foi de passagem, o próximo tile desenhado tira o aviso.
+      viewer.addHandler('tile-load-failed', () => {
+        if (tileDesenhadoRef.current) return
+        setErro('fonte')
+        setCarregando(false)
+      })
       viewer.addHandler('canvas-key', (e) => {
         // F e R são atalhos nossos (tela cheia, rotação com estado na interface).
         const codigo = (e.originalEvent as KeyboardEvent).code
@@ -525,8 +546,15 @@ export function Visualizador({
     if (!viewer || !OSD) return
     if (slugAbertoRef.current === lamina.slug) return
     slugAbertoRef.current = lamina.slug
-    setCarregando(true)
-    setErro(false)
+    tileDesenhadoRef.current = false
+    // Na nova tentativa automática o aviso fica na tela até um tile chegar,
+    // em vez de piscar "Carregando" a cada minuto.
+    if (reabrindoRef.current) {
+      reabrindoRef.current = false
+    } else {
+      setCarregando(true)
+      setErro(null)
+    }
     piramideRef.current = lamina.piramide
     escalasRef.current = escalasDosNiveis(lamina.piramide)
     ajusteRef.current.fator = 1
@@ -535,6 +563,17 @@ export function Visualizador({
       criarFonteDeTiles(OSD, lamina.piramide, ajusteRef.current) as unknown as OpenSeadragon.TileSourceSpecifier,
     )
   }, [lamina.slug, lamina.piramide, versao])
+
+  // Com a origem fora, tenta de novo a cada minuto enquanto a aba está à vista:
+  // quando ela volta, o primeiro tile desenhado tira o aviso sozinho.
+  useIntervaloVisivel(
+    () => {
+      reabrindoRef.current = true
+      slugAbertoRef.current = null
+      setVersao((n) => n + 1)
+    },
+    erro === 'fonte' ? 60_000 : null,
+  )
 
   // ─── Preferências aplicadas ao vivo ──────────────────────────────────────
   useEffect(() => {
@@ -1159,10 +1198,22 @@ export function Visualizador({
         )}
         {erro && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center">
-            <p className="text-sm font-semibold">Não foi possível abrir esta lâmina agora.</p>
-            <p className="max-w-sm text-xs text-white/60">
-              Verifique a conexão com a internet e tente de novo.
-            </p>
+            {erro === 'fonte' ? (
+              <>
+                <p className="text-sm font-semibold">Lâmina temporariamente indisponível.</p>
+                <p className="max-w-sm text-xs text-white/60">
+                  O servidor que guarda as imagens desta lâmina não está respondendo. Tentamos de novo
+                  sozinhos a cada minuto — ela aparece assim que ele voltar.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-semibold">Não foi possível abrir esta lâmina agora.</p>
+                <p className="max-w-sm text-xs text-white/60">
+                  Verifique a conexão com a internet e tente de novo.
+                </p>
+              </>
+            )}
             <button
               type="button"
               onClick={() => {
