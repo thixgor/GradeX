@@ -275,20 +275,18 @@ const ADJACENT_ADMIN_EXACT = new Set([
   '/api/loja/settings',
   '/api/loja/upload',
   '/api/forum/settings',
-  '/api/serial-keys/clear-history',
   '/api/proctoring/sessions',
 ])
 
 /**
  * Rotas de leitura compartilhada mas escrita administrativa. Casam no caminho
  * exato ou em `caminho/<objectId>` — o suficiente para cobrir o CRUD do painel
- * sem alcançar sub-rotas de uso geral (ex.: /api/serial-keys/checkout, que é
- * compra pública, ou /api/exams/<id>/submissions, que é fluxo de aluno).
+ * sem alcançar sub-rotas de uso geral (ex.: /api/exams/<id>/submissions, que é
+ * fluxo de aluno).
  */
 const ADJACENT_ADMIN_WRITE = [
   '/api/exams',
   '/api/materiais',
-  '/api/serial-keys',
   '/api/loja/produtos',
   '/api/display-settings',
   '/api/flashcards/themes',

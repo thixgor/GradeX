@@ -10,6 +10,9 @@ import {
   resolvePdfDownloadPermission,
 } from '@/lib/material-download-permission'
 import { resolveMaterialsWithPdf } from '@/lib/material-pdf-email'
+import { getActivationUrl } from '@/lib/serial-keys'
+import { serializarKeyParaAdmin } from '@/lib/serial-key-emissao'
+import type { SerialKey } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -104,16 +107,20 @@ export async function GET(request: NextRequest) {
     // este item. Ao ativar, viram material_purchases (aparecem na lista acima),
     // então aqui listamos apenas as pendentes. O admin pode reenviar o PDF +
     // serial key para o e-mail usado na compra.
-    const guestKeys = await db
-      .collection('serial_keys')
-      .find({
-        origin: 'purchase',
-        status: 'unactivated',
-        'grant.itemId': itemId,
-      })
-      .sort({ generatedAt: -1 })
-      .project({ key: 0, activationToken: 0 })
-      .toArray()
+    // Junto vêm as keys de cortesia (emitidas pelo admin) deste item que
+    // ninguém ativou ainda — para copiar o link e entregar.
+    const [guestKeys, courtesyKeys] = await Promise.all([
+      db.collection('serial_keys')
+        .find({ origin: 'purchase', status: 'unactivated', 'grant.itemId': itemId })
+        .sort({ generatedAt: -1 })
+        .project({ key: 0 })
+        .toArray(),
+      db.collection('serial_keys')
+        .find({ origin: 'admin', status: 'unactivated', used: { $ne: true }, 'grant.itemId': itemId })
+        .sort({ generatedAt: -1 })
+        .limit(100)
+        .toArray(),
+    ])
 
     const guests = guestKeys.map((k: any) => ({
       _id: k._id.toString(),
@@ -123,11 +130,15 @@ export async function GET(request: NextRequest) {
       amount: k.amount ?? k.price ?? 0,
       productTitle: k.productTitle || k.grant?.itemTitle || '',
       purchasedAt: k.generatedAt || k.createdAt || null,
+      activationUrl: k.activationToken ? getActivationUrl(k.activationToken) : null,
     }))
+
+    const courtesy = (courtesyKeys as unknown as SerialKey[]).map(serializarKeyParaAdmin)
 
     return NextResponse.json({
       purchases: enriched,
       guests,
+      courtesy,
       // Contexto do item para o painel: se o download está ligado por padrão e
       // quais PDFs existem (o admin escolhe qual baixar em nome do usuário).
       item: {

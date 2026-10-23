@@ -49,8 +49,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Serial key não encontrada' }, { status: 404 })
   }
   if (!serial.grant) {
-    // Keys legadas (sem `grant`, ex.: geradas manualmente pelo admin em
-    // /admin/keys): apenas informa que existe e se já foi usada. Keys com
+    // Keys legadas (sem `grant`: as Trial/Plus+ que /admin/keys gerava antes
+    // da emissão por produto): apenas informa que existe e se já foi usada. Keys com
     // `grant` (compras E concessões avulsas como entrega de material por
     // formulário) sempre passam pelo fluxo universal abaixo.
     return NextResponse.json({
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     // ── Fluxo universal (compras E concessões avulsas, ex.: prêmio de form) ──
     // Qualquer key com `grant` configurado (independente de `origin`) usa a
     // concessão exata de produto abaixo. Só cai no fluxo legado quem não tem
-    // `grant` (keys manuais antigas de /admin/keys).
+    // `grant` (keys manuais antigas, de antes da emissão por produto).
     if (serialKey.grant) {
       if (serialKey.status === 'cancelled') {
         return NextResponse.json({ error: 'Esta serial key foi cancelada. Fale com o suporte.' }, { status: 400 })

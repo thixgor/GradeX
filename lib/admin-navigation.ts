@@ -310,11 +310,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     title: 'Serial Keys',
-    description: 'Gerar e gerenciar chaves de ativação Trial, Plus+ e personalizadas.',
+    description: 'Gerar keys de cortesia para materiais, pacotes, Manual Clínico e Plus+, com link de ativação.',
     href: '/admin/keys',
     icon: Key,
     group: 'comercial',
-    keywords: ['key', 'chave', 'serial', 'ativacao', 'licenca', 'plus'],
+    keywords: ['key', 'chave', 'serial', 'ativacao', 'licenca', 'plus', 'cortesia', 'material', 'pacote', 'link'],
   },
   {
     title: 'Captura de Leads',

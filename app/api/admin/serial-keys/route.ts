@@ -8,9 +8,53 @@ import {
   getActivationUrl,
 } from '@/lib/serial-keys'
 import type { SerialKey } from '@/lib/types'
+import { emitirSerialKeys, lerPedidoDeEmissao, serializarKeyParaAdmin } from '@/lib/serial-key-emissao'
+import { sendSerialKeyEmail } from '@/lib/serial-key-fulfillment'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
+// O e-mail opcional da emissão gera comprovante em PDF e QR antes de enviar.
+export const maxDuration = 60
+
+/**
+ * Emite serial keys de cortesia para qualquer produto (material, flashcards,
+ * pacote, Manual Clínico ou Plus+). Ver `lib/serial-key-emissao.ts`.
+ *
+ * Body: { produto, quantidade?, destinatario?: { nome, email }, enviarEmail?,
+ *         restringirAoEmail?, nota?, origem? }
+ */
+export async function POST(request: NextRequest) {
+  const session = await getSession()
+  if (!session || session.role !== 'admin') {
+    return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+  }
+
+  const pedido = lerPedidoDeEmissao(await request.json().catch(() => null))
+  if (!pedido.ok) return NextResponse.json({ error: pedido.erro }, { status: 400 })
+
+  const db = await getDb()
+  let keys: SerialKey[]
+  try {
+    keys = await emitirSerialKeys(db, pedido.valor, { userId: session.userId, name: session.name })
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || 'Não foi possível gerar a serial key.' }, { status: 422 })
+  }
+
+  // Só existe destinatário com uma key (ver `lerPedidoDeEmissao`).
+  let emailEnviado: boolean | null = null
+  if (pedido.valor.enviarEmail && keys[0]) {
+    emailEnviado = await sendSerialKeyEmail(db, keys[0], { kind: 'purchase', sentBy: session.userId })
+    // O envio grava o histórico e pode restringir a key ao e-mail: relê.
+    const atual = await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION).findOne({ _id: keys[0]._id as any })
+    if (atual) keys[0] = atual
+  }
+
+  return NextResponse.json({
+    ok: true,
+    keys: keys.map(serializarKeyParaAdmin),
+    emailEnviado,
+  })
+}
 
 /**
  * Painel administrativo de compras via Serial Key: lista com filtros + métricas.

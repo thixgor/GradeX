@@ -717,34 +717,75 @@ export async function createGrantedMaterialSerialKey(
     ...(material.linkedDeckSlug ? { linkedDeckSlug: String(material.linkedDeckSlug) } : {}),
   }
 
-  const col = db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
-  const now = new Date()
   const buyerName = sanitizeName(input.name || '')
+  const serial = await insertAdminSerialKey(db, {
+    type: 'custom',
+    generatedBy: input.generatedBy || 'system',
+    generatedByName: input.generatedByName || 'Entrega automática',
+    grant,
+    productTitle: itemTitle,
+    buyerName,
+    buyerEmail: String(input.email).toLowerCase(),
+    source: input.source || 'grant',
+  })
+  return {
+    serial,
+    materialTitle: itemTitle,
+    activationUrl: getActivationUrl(serial.activationToken!),
+  }
+}
+
+/** O que muda de uma key avulsa (origin === 'admin') para outra. */
+export interface AdminSerialKeyFields {
+  type: SerialKey['type']
+  grant: SerialKeyGrant
+  productTitle: string
+  generatedBy: string
+  generatedByName: string
+  source: string
+  buyerName?: string
+  buyerEmail?: string
+  restrictActivationToBuyerEmail?: boolean
+  batchId?: string
+  adminNote?: string
+}
+
+/**
+ * Insere uma serial key avulsa — sem pagamento por trás, valor zero — já
+ * pronta para ativar (`paymentStatus: 'approved'`, com token de link). Quem
+ * escolhe o produto e monta a `grant` é o caller; aqui só se grava.
+ */
+export async function insertAdminSerialKey(db: Db, fields: AdminSerialKeyFields): Promise<SerialKey> {
+  await ensureSerialKeyIndexes(db)
+  const col = db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
+  const buyerName = sanitizeName(fields.buyerName || '')
+  const buyerEmail = String(fields.buyerEmail || '').trim().toLowerCase()
 
   for (let attempt = 0; attempt < 6; attempt++) {
-    const key = generateSecureSerialKey()
-    const activationToken = generateActivationToken()
     const doc: SerialKey = {
-      key,
-      type: 'custom',
+      key: generateSecureSerialKey(),
+      type: fields.type,
       used: false,
-      generatedBy: input.generatedBy || 'system',
-      generatedByName: input.generatedByName || 'Entrega automática',
-      generatedAt: now,
+      generatedBy: fields.generatedBy,
+      generatedByName: fields.generatedByName,
+      generatedAt: new Date(),
       origin: 'admin',
       status: 'unactivated',
-      grant,
-      productType,
-      productId: String(input.materialId),
-      productTitle: itemTitle,
-      activationToken,
+      grant: fields.grant,
+      productType: fields.grant.productType,
+      productId: fields.grant.itemId || fields.grant.planId || fields.grant.manualClinicoPlanKey,
+      productTitle: fields.productTitle,
+      activationToken: generateActivationToken(),
       paymentStatus: 'approved',
       amount: 0,
       price: 0,
-      buyerName,
-      buyerFirstName: firstNameOf(buyerName),
-      buyerEmail: String(input.email).toLowerCase(),
-      source: input.source || 'grant',
+      // O e-mail de ativação cumprimenta pelo primeiro nome ("Comprador" sem nome).
+      ...(buyerName || buyerEmail ? { buyerName, buyerFirstName: firstNameOf(buyerName) } : {}),
+      ...(buyerEmail ? { buyerEmail } : {}),
+      ...(buyerEmail && fields.restrictActivationToBuyerEmail ? { restrictActivationToBuyerEmail: true } : {}),
+      ...(fields.batchId ? { batchId: fields.batchId } : {}),
+      ...(fields.adminNote ? { adminNote: fields.adminNote } : {}),
+      source: fields.source,
       emailHistory: [],
     }
 
@@ -753,22 +794,25 @@ export async function createGrantedMaterialSerialKey(
       doc._id = res.insertedId
       await audit({
         action: 'material_unlocked',
-        actorUserId: input.generatedBy,
+        actorUserId: fields.generatedBy,
         resourceType: 'serial_key',
         resourceId: String(res.insertedId),
-        metadata: { serialKeyId: String(res.insertedId), productType, itemId: String(input.materialId), origin: 'admin', source: doc.source },
+        metadata: {
+          serialKeyId: String(res.insertedId),
+          productType: fields.grant.productType,
+          itemId: fields.grant.itemId,
+          origin: 'admin',
+          source: fields.source,
+          batchId: fields.batchId,
+        },
       })
-      return {
-        serial: doc,
-        materialTitle: itemTitle,
-        activationUrl: getActivationUrl(activationToken),
-      }
+      return doc
     } catch (err: any) {
       if (err?.code === 11000) continue // colisão de key → tenta outra
       throw err
     }
   }
-  throw new Error('Não foi possível gerar a serial key do material.')
+  throw new Error('Não foi possível gerar uma serial key única.')
 }
 
 // ── Concessão do produto na ativação ─────────────────────────────────────────
@@ -824,9 +868,10 @@ export async function grantSerialKeyProduct(
       const now = new Date()
       const role: AccountType = normalizeAccountType(grant.role || grant.productType)
       let expiresAt: Date | undefined
-      if (grant.durationMonths && grant.durationMonths > 0) {
+      if ((grant.durationMonths && grant.durationMonths > 0) || (grant.durationDays && grant.durationDays > 0)) {
         expiresAt = new Date(now)
-        expiresAt.setMonth(expiresAt.getMonth() + grant.durationMonths)
+        if (grant.durationMonths) expiresAt.setMonth(expiresAt.getMonth() + grant.durationMonths)
+        if (grant.durationDays) expiresAt.setDate(expiresAt.getDate() + grant.durationDays)
       }
       await db.collection<User>('users').updateOne(
         { _id: new ObjectId(target.userId) as any },

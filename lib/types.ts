@@ -863,6 +863,11 @@ export interface SerialKeyGrant {
   planId?: string
   durationMonths?: number
   /**
+   * Dias somados à duração em meses. Só keys emitidas pelo admin usam (ex.:
+   * Plus+ por 7 dias, no lugar das antigas keys Trial).
+   */
+  durationDays?: number
+  /**
    * Versão de acesso por tempo comprada (material/pacote). O prazo só começa a
    * correr quando a key é ativada — por isso a data de fim não é gravada aqui,
    * e sim calculada na ativação a partir de `accessDurationMinutes`.
@@ -950,6 +955,12 @@ export interface SerialKey {
   cancelReason?: string
   // Histórico de e-mails enviados
   emailHistory?: SerialKeyEmailLog[]
+
+  // ── Emissão pelo admin (origin === 'admin') ────────────────────────────────
+  /** Keys geradas juntas, num mesmo pedido de emissão, dividem o lote. */
+  batchId?: string
+  /** Anotação interna do admin (para quem é, por que foi dada). */
+  adminNote?: string
 }
 
 export type ForumType = 'discussion' | 'materials' // Discussão ou Materiais

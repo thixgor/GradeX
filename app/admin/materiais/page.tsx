@@ -79,6 +79,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
 import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
+import { BotaoCopiar, EmitirSerialKeyDialog, type ItemFixo } from '@/components/admin/emitir-serial-key'
 import {
   TimedAccessVersionsEditor,
   type TimedAccessVersionForm,
@@ -467,6 +468,10 @@ function AdminMateriaisContent() {
   const [accessModal, setAccessModal] = useState<{ itemId: string; itemType: 'material' | 'package'; title: string } | null>(null)
   const [accessPurchases, setAccessPurchases] = useState<any[]>([])
   const [accessGuests, setAccessGuests] = useState<any[]>([])
+  // Keys de cortesia deste item ainda não ativadas (para copiar o link).
+  const [accessCourtesy, setAccessCourtesy] = useState<any[]>([])
+  // Item para o qual o formulário de emissão de serial key está aberto.
+  const [emitirKeyPara, setEmitirKeyPara] = useState<ItemFixo | null>(null)
   const [accessLoading, setAccessLoading] = useState(false)
   const [grantEmail, setGrantEmail] = useState('')
   const [grantLoading, setGrantLoading] = useState(false)
@@ -644,6 +649,7 @@ function AdminMateriaisContent() {
     setSelectedUser(null)
     setShowDropdown(false)
     setAccessItem(null)
+    setAccessCourtesy([])
     setAccessLoading(true)
     try {
       const res = await fetch(`/api/materiais/admin-access?itemId=${itemId}&itemType=${itemType}`)
@@ -651,6 +657,7 @@ function AdminMateriaisContent() {
         const data = await res.json()
         setAccessPurchases(data.purchases || [])
         setAccessGuests(data.guests || [])
+        setAccessCourtesy(data.courtesy || [])
         setAccessItem(data.item || null)
       }
     } finally {
@@ -684,6 +691,7 @@ function AdminMateriaisContent() {
         const listData = await listRes.json()
         setAccessPurchases(listData.purchases || [])
         setAccessGuests(listData.guests || [])
+        setAccessCourtesy(listData.courtesy || [])
         setAccessItem(listData.item || null)
       }
     } catch { setGrantError('Erro ao conceder acesso') }
@@ -2261,6 +2269,9 @@ function AdminMateriaisContent() {
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-500 hover:text-violet-600" onClick={() => openAccessModal(material._id, 'material', material.title)} title="Gerenciar acessos">
                     <Users className="h-4 w-4" />
                   </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-500 hover:text-amber-600" onClick={() => setEmitirKeyPara({ kind: 'material', id: material._id, title: material.title })} title="Gerar serial key">
+                    <KeyRound className="h-4 w-4" />
+                  </Button>
                   <Button
                     variant="ghost" size="icon"
                     className={`h-8 w-8 ${copiedId === material._id ? 'text-green-500' : ''}`}
@@ -2380,6 +2391,9 @@ function AdminMateriaisContent() {
                 <div className="flex items-center gap-1 flex-shrink-0">
                   <Button variant="ghost" size="icon" className="h-8 w-8 text-violet-500 hover:text-violet-600" onClick={() => openAccessModal(pkg._id, 'package', pkg.title)} title="Gerenciar acessos">
                     <Users className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-amber-500 hover:text-amber-600" onClick={() => setEmitirKeyPara({ kind: 'package', id: pkg._id, title: pkg.title })} title="Gerar serial key">
+                    <KeyRound className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost" size="icon"
@@ -3270,6 +3284,24 @@ function AdminMateriaisContent() {
         {accessModal && (
           <ModalBackdrop onClose={() => setAccessModal(null)}>
             <ModalCard title={`Acessos — ${accessModal.title}`} onClose={() => setAccessModal(null)}>
+              {/* Serial key de cortesia: para quem ainda não tem conta, ou para
+                  entregar por link (sorteio, turma, parceria). */}
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3 mb-3 flex items-center gap-3">
+                <KeyRound className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">Serial key de cortesia</p>
+                  <p className="text-xs text-muted-foreground">Gere uma ou várias keys deste {accessModal.itemType === 'package' ? 'pacote' : 'material'} e copie o link de ativação.</p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 flex-shrink-0"
+                  onClick={() => setEmitirKeyPara({ kind: accessModal.itemType, id: accessModal.itemId, title: accessModal.title })}
+                >
+                  <Plus className="h-3.5 w-3.5" /> Gerar
+                </Button>
+              </div>
+
               {/* Grant access — searchable user picker */}
               <div className="rounded-xl border p-3 space-y-2.5 mb-4">
                 <p className="text-sm font-medium flex items-center gap-2">
@@ -3617,6 +3649,9 @@ function AdminMateriaisContent() {
                               {new Date(g.purchasedAt).toLocaleDateString('pt-BR')}
                             </span>
                           )}
+                          {g.activationUrl && (
+                            <BotaoCopiar texto={g.activationUrl} rotulo="Link" rotuloCopiado="Copiado!" icone="link" size="xs" />
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -3681,6 +3716,39 @@ function AdminMateriaisContent() {
                 </div>
               )}
 
+              {/* Keys de cortesia ainda não ativadas */}
+              {accessCourtesy.length > 0 && (
+                <div className="mt-5 border-t pt-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 flex-1">
+                      <KeyRound className="h-3.5 w-3.5 text-amber-500" />
+                      {accessCourtesy.length} key{accessCourtesy.length !== 1 ? 's' : ''} de cortesia aguardando ativação
+                    </p>
+                    {accessCourtesy.length > 1 && (
+                      <BotaoCopiar texto={accessCourtesy.map(k => k.link).join('\n')} rotulo="Copiar todos os links" icone="link" size="xs" />
+                    )}
+                  </div>
+                  <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
+                    {accessCourtesy.map(k => (
+                      <div key={k.id} className="p-2.5 rounded-lg border">
+                        <div className="flex items-center gap-2">
+                          <code className="font-mono text-xs font-bold tracking-wider truncate flex-1">{k.key}</code>
+                          <BotaoCopiar texto={k.key} rotulo="Key" size="xs" />
+                          <BotaoCopiar texto={k.link} rotulo="Link" rotuloCopiado="Copiado!" icone="link" size="xs" />
+                        </div>
+                        <p className="text-[10px] text-muted-foreground mt-1 truncate">
+                          {k.acesso}
+                          {k.destinatarioEmail ? ` · para ${k.destinatarioEmail}` : ''}
+                          {k.nota ? ` · ${k.nota}` : ''}
+                          {' · '}{new Date(k.geradaEm).toLocaleDateString('pt-BR')}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  <a href="/admin/keys" className="mt-2 inline-block text-[11px] text-primary hover:underline">Gerenciar em Serial Keys →</a>
+                </div>
+              )}
+
               <div className="mt-4 flex justify-end">
                 <Button variant="outline" onClick={() => setAccessModal(null)}>Fechar</Button>
               </div>
@@ -3688,6 +3756,19 @@ function AdminMateriaisContent() {
           </ModalBackdrop>
         )}
       </AnimatePresence>
+
+      <EmitirSerialKeyDialog
+        open={!!emitirKeyPara}
+        onOpenChange={open => !open && setEmitirKeyPara(null)}
+        origem="admin_materiais"
+        itemFixo={emitirKeyPara}
+        onEmitidas={keys => {
+          // Modal de acessos aberto no mesmo item: as novas entram na lista.
+          if (accessModal && emitirKeyPara?.id === accessModal.itemId) {
+            setAccessCourtesy(prev => [...keys.filter(k => k.estado === 'unactivated'), ...prev])
+          }
+        }}
+      />
     </div>
   )
 }
