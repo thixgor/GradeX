@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Check, KeyRound, Loader2, ShieldCheck, UserCheck } from 'lucide-react'
+import { Check, KeyRound, Loader2, ShieldCheck, Sparkles, UserCheck, UserPlus } from 'lucide-react'
 import { suggestEmailFix } from '@/lib/email-check'
 
 /**
@@ -20,11 +20,18 @@ import { suggestEmailFix } from '@/lib/email-check'
  *
  * O servidor nunca confia nisto: ele procura a conta de novo pelo e-mail da
  * compra e ignora qualquer id que venha do navegador.
+ *
+ * Sem conta com o e-mail, não há pergunta — há um aviso: a Serial Key chega
+ * por e-mail como sempre, e logo depois do pagamento a página da compra
+ * oferece criar a conta com esse e-mail, já com o produto ativado (ver
+ * `components/checkout/conta-pos-compra.tsx`). Dito antes de pagar, para
+ * ninguém achar que precisa sair do checkout para se cadastrar primeiro.
  */
 
 export type DeliveryMode = 'account' | 'serial_key'
 
-type LookupStatus = 'idle' | 'checking' | 'found' | 'none'
+/** `unknown`: a consulta falhou — segue pela Serial Key, sem afirmar nada. */
+type LookupStatus = 'idle' | 'checking' | 'found' | 'none' | 'unknown'
 
 export interface AccountDeliveryState {
   status: LookupStatus
@@ -158,7 +165,7 @@ export function useAccountDeliveryChoice(
         .then((data) => {
           if (id !== requestId.current) return
           setCheckedEmail(normalized)
-          setStatus(data?.exists ? 'found' : 'none')
+          setStatus(data?.exists ? 'found' : data?.unavailable || data?.exists !== false ? 'unknown' : 'none')
           setPlusIncludes(Boolean(data?.exists && data?.plusIncludes))
           setEmailDomain(
             data?.emailDomain === 'ok' || data?.emailDomain === 'undeliverable'
@@ -169,7 +176,7 @@ export function useAccountDeliveryChoice(
         .catch(() => {
           // Sem consulta não há pergunta a fazer: segue pela Serial Key.
           if (id !== requestId.current) return
-          setStatus('none')
+          setStatus('unknown')
         })
     }, 500)
 
@@ -311,6 +318,38 @@ export function AccountDeliveryChoice({
       <div className={`flex items-center gap-2 rounded-2xl border p-3.5 text-sm ${skin.box} ${className}`}>
         <Loader2 className={`h-4 w-4 shrink-0 animate-spin ${skin.icon}`} />
         <span className={`text-xs ${skin.muted}`}>Verificando se este e-mail já tem conta…</span>
+      </div>
+    )
+  }
+
+  if (state.status === 'none') {
+    return (
+      <div className={`rounded-2xl border p-3.5 text-sm ${skin.box} ${className}`}>
+        <div className="flex items-start gap-2.5">
+          <UserPlus className={`mt-0.5 h-4 w-4 shrink-0 ${skin.icon}`} />
+          <div className="min-w-0 flex-1">
+            <p className={`font-bold ${skin.title}`}>Esse e-mail ainda não tem conta aqui — tudo bem</p>
+            <p className={`mt-1 text-xs leading-relaxed ${skin.muted}`}>
+              Pode comprar sem se cadastrar. A Serial Key chega em{' '}
+              <strong className={skin.strong}>{state.email}</strong>, e logo depois do pagamento você
+              cria sua conta com esse e-mail em um passo — o produto já entra{' '}
+              <strong className={skin.strong}>ativado</strong> nela.
+            </p>
+          </div>
+        </div>
+        <ol className="mt-3 grid gap-1.5 sm:grid-cols-3">
+          {[
+            { icon: Check, text: 'Você paga' },
+            { icon: KeyRound, text: 'Recebe a Serial Key' },
+            { icon: Sparkles, text: 'Cria a senha e já usa' },
+          ].map((step, i) => (
+            <li key={step.text} className={`flex items-center gap-2 rounded-xl border px-2.5 py-2 text-[11px] font-semibold ${skin.option} ${skin.title}`}>
+              <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] ${skin.radio}`}>{i + 1}</span>
+              <step.icon className={`h-3.5 w-3.5 shrink-0 ${skin.icon}`} />
+              <span className="min-w-0 truncate">{step.text}</span>
+            </li>
+          ))}
+        </ol>
       </div>
     )
   }

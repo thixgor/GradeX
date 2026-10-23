@@ -169,6 +169,9 @@ const publicPrefixes = [
   // "Essa conta é minha mesmo?" — conferência opcional por CPF + data de
   // nascimento que devolve o nome cadastrado. Valida e limita internamente.
   '/api/serial-keys/account-verify',
+  // Conta criada depois da compra sem login, já com as keys ativadas. Exige o
+  // token da compra (ou da key) e tem rate limit próprio.
+  '/api/serial-keys/conta',
   '/compra/aprovada',
   '/compra',
   '/api/plans',

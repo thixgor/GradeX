@@ -1,10 +1,11 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Loader2, KeyRound, CheckCircle2, Clock, LogIn, UserPlus, ArrowRight, AlertCircle, ShieldCheck,
 } from 'lucide-react'
+import { ContaPosCompra } from '@/components/checkout/conta-pos-compra'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -46,6 +47,8 @@ interface KeyInfo {
   amount?: number
   buyerFirstName?: string
   buyerEmail?: string
+  /** O e-mail da compra já tem conta no site (só vem com a key por ativar). */
+  buyerHasAccount?: boolean
   alreadyActivated?: boolean
   cancelled?: boolean
   restrictActivationToBuyerEmail?: boolean
@@ -62,6 +65,10 @@ function ActivarContent() {
   const token = params.get('token') || ''
   const keyParam = params.get('key') || ''
   const returnTo = `/ativar?${token ? `token=${encodeURIComponent(token)}` : `key=${encodeURIComponent(keyParam)}`}`
+  // Volta do login/cadastro com `auto=1`: a ativação dispara sozinha, sem
+  // pedir um segundo clique a quem acabou de entrar só para isso.
+  const autoAtivar = params.get('auto') === '1'
+  const returnToAuto = `${returnTo}&auto=1`
 
   const [info, setInfo] = useState<KeyInfo | null>(null)
   const [loggedIn, setLoggedIn] = useState<boolean | null>(null)
@@ -92,6 +99,14 @@ function ActivarContent() {
     return () => { active = false }
   }, [token, keyParam])
 
+  const autoDisparado = useRef(false)
+  useEffect(() => {
+    if (!autoAtivar || autoDisparado.current || !loggedIn || !info || info.legacy) return
+    if (info.alreadyActivated || info.status === 'activated' || info.cancelled || info.status === 'cancelled') return
+    autoDisparado.current = true
+    void activate()
+  }, [autoAtivar, loggedIn, info]) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function activate() {
     setActivating(true)
     setError('')
@@ -104,7 +119,7 @@ function ActivarContent() {
       })
       const json = await res.json()
       if (res.status === 401 || json.requiresAuth) {
-        router.push(`/auth/login?redirect=${encodeURIComponent(returnTo)}`)
+        router.push(`/auth/login?redirect=${encodeURIComponent(returnToAuto)}`)
         return
       }
       if (!res.ok) { setError(json.error || 'Falha ao ativar.'); return }
@@ -155,6 +170,36 @@ function ActivarContent() {
 
   const cancelled = info?.cancelled || info?.status === 'cancelled'
   const already = info?.alreadyActivated || info?.status === 'activated'
+
+  // Sem sessão e com a compra por ativar: o cartão que cria a conta com o
+  // e-mail da compra e já entrega o produto ativado.
+  if (loggedIn === false && info && !info.legacy && info.buyerEmail && !cancelled && !already && (token || keyParam)) {
+    return (
+      <div style={{ maxWidth: '560px', width: '100%' }}>
+        <ContaPosCompra
+          compra={token ? { activationToken: token } : { key: keyParam }}
+          email={info.buyerEmail}
+          nomeSugerido={info.buyerFirstName}
+          produtos={[info.productTitle || 'Produto']}
+          sessao={null}
+          contaExiste={info.buyerHasAccount === true}
+          loginRedirect={returnToAuto}
+        />
+        {!info.restrictActivationToBuyerEmail && (
+          <p style={{ marginTop: '14px', textAlign: 'center', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+            Quer usar outro e-mail?{' '}
+            <a href={`/auth/login?mode=register&redirect=${encodeURIComponent(returnToAuto)}`} style={{ color: '#34d399', fontWeight: 600 }}>
+              Criar conta com outro e-mail
+            </a>
+            {' '}ou{' '}
+            <a href={`/auth/login?redirect=${encodeURIComponent(returnToAuto)}`} style={{ color: '#34d399', fontWeight: 600 }}>
+              entrar em outra conta
+            </a>
+          </p>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div style={glassCard}>
@@ -249,8 +294,8 @@ function ActivarContent() {
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: '4px' }}>
               Faça login ou crie sua conta para ativar. É rápido e o produto aparecerá liberado automaticamente.
             </p>
-            <a href={`/auth/login?redirect=${encodeURIComponent(returnTo)}`} style={primaryBtn}><LogIn size={16} /> Entrar e ativar</a>
-            <a href={`/auth/register?redirect=${encodeURIComponent(returnTo)}`} style={ghostBtn}><UserPlus size={16} /> Criar conta</a>
+            <a href={`/auth/login?redirect=${encodeURIComponent(returnToAuto)}`} style={primaryBtn}><LogIn size={16} /> Entrar e ativar</a>
+            <a href={`/auth/login?mode=register&redirect=${encodeURIComponent(returnToAuto)}`} style={ghostBtn}><UserPlus size={16} /> Criar conta</a>
           </div>
         )
       )}

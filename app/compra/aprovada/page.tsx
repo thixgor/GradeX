@@ -1,12 +1,14 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   Loader2, CheckCircle2, Copy, Check, QrCode, KeyRound, ArrowRight,
   ShieldCheck, Mail, Clock, AlertCircle,
 } from 'lucide-react'
+import { ContaPosCompra } from '@/components/checkout/conta-pos-compra'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
@@ -49,6 +51,7 @@ interface Purchase extends TimedAccessInfo {
   isCart?: boolean
   serialKeys?: Array<{
     key: string
+    status?: string
     productTitle?: string
     productTypeLabel?: string
     amount?: number
@@ -65,7 +68,12 @@ interface Purchase extends TimedAccessInfo {
   accountEmail?: string
   /** Só é `true` quando a aplicação na conta realmente aconteceu. */
   appliedToAccount?: boolean
+  /** O e-mail da compra já tem conta no site. */
+  buyerHasAccount?: boolean
 }
+
+/** O cartão "crie sua conta e o produto já entra ativado", pronto para montar. */
+type CartaoDeConta = React.ReactNode
 
 function CopyButton({ text, label = 'Copiar' }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false)
@@ -133,7 +141,7 @@ function SummaryRow({ label, value }: { label: string; value?: string }) {
   )
 }
 
-function ApprovedView({ data }: { data: Purchase }) {
+function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?: CartaoDeConta }) {
   const firstName = data.buyerFirstName || (data.buyerName || 'Comprador').split(' ')[0]
   const dateStr = data.paidAt || data.createdAt
     ? new Date(data.paidAt || data.createdAt!).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -143,6 +151,10 @@ function ApprovedView({ data }: { data: Purchase }) {
   // faria a pessoa procurar um passo que não existe.
   const appliedToAccount = data.appliedToAccount === true
   const accountEmail = data.accountEmail || data.buyerEmail
+  // Ativada depois, pelo cartão de conta ou pelo link: a key vira comprovante.
+  const todasAtivadas = !appliedToAccount
+    && (data.serialKeys || []).length > 0
+    && (data.serialKeys || []).every((sk) => sk.status === 'activated')
 
   return (
     <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -170,6 +182,12 @@ function ApprovedView({ data }: { data: Purchase }) {
               você pediu que o material fosse aplicado direto nela, então não há chave para ativar. Entre com esse
               e-mail e use agora. O comprovante foi enviado para {data.buyerEmail}.
             </>
+          ) : todasAtivadas ? (
+            <>
+              Seu acesso foi aprovado e <strong style={{ color: '#34d399' }}>já está ativado na sua conta</strong>.
+              A Serial Key abaixo fica como comprovante — ela já foi usada. Os detalhes da compra foram enviados para{' '}
+              <strong style={{ color: '#34d399' }}>{data.buyerEmail}</strong>.
+            </>
           ) : (
             <>
               Seu acesso foi aprovado com sucesso. Enviamos todas as informações da compra e ativação para o e-mail{' '}
@@ -178,6 +196,9 @@ function ApprovedView({ data }: { data: Purchase }) {
           )}
         </p>
       </motion.div>
+
+      {/* Sem conta (ou sem sessão): o atalho que cria a conta e ativa tudo. */}
+      {cartaoDeConta}
 
       {/* Acesso já aplicado na conta — nada a ativar. */}
       {appliedToAccount ? (
@@ -274,8 +295,8 @@ function ApprovedView({ data }: { data: Purchase }) {
             )}
           </div>
 
-          {/* QR + ativar */}
-          <div style={{ ...glassCard, padding: '24px', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'center' }}>
+          {/* QR + ativar — some quando o cartão de conta já faz esse papel. */}
+          {!cartaoDeConta && !todasAtivadas && <div style={{ ...glassCard, padding: '24px', display: 'flex', flexWrap: 'wrap', gap: '24px', alignItems: 'center', justifyContent: 'center' }}>
             {data.qrDataUrl && (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '10px', fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
@@ -302,7 +323,7 @@ function ApprovedView({ data }: { data: Purchase }) {
                 </a>
               )}
             </div>
-          </div>
+          </div>}
         </>
       )}
 
@@ -374,45 +395,73 @@ function AprovadaContent() {
   const params = useSearchParams()
   const orderId = params.get('order') || ''
   const token = params.get('token') || ''
+  // Voltou do login pelo "Entrar e ativar": a ativação dispara sozinha.
+  const ativarAoVoltar = params.get('ativar') === '1'
   const [data, setData] = useState<Purchase | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [parar, setParar] = useState(false)
+  const [sessao, setSessao] = useState<{ email: string; name?: string } | null | undefined>(undefined)
+  // Uma vez aberto, o cartão de conta fica — é nele que aparece o "tudo
+  // pronto" depois que as keys mudam para ativadas.
+  const [cartaoAberto, setCartaoAberto] = useState(false)
   // Quantas consultas já esperaram a entrega na conta acontecer. Se a ativação
   // automática falhou, ela nunca vai acontecer — passado o limite mostramos a
   // Serial Key, que é justamente o caminho para onde o servidor voltou.
   const accountWaits = useRef(0)
 
+  const fetchOnce = useCallback(async () => {
+    if (!orderId || !token) return
+    try {
+      const res = await fetch(`/api/serial-keys/purchase/${orderId}?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
+      const json = await res.json()
+      if (!res.ok) { setError(json.error || 'Não foi possível carregar a compra.'); setLoading(false); setParar(true); return }
+      setData(json)
+      setLoading(false)
+      // Para de pollar quando aprovado com key ou em estado de erro terminal.
+      // Na compra que vai direto para a conta existente, a key nasce e é
+      // ativada na mesma passagem do fulfillment: se a consulta pegou o meio
+      // desse caminho, seguimos pollando para não deixar na tela uma Serial
+      // Key que já não tem o que ativar.
+      const terminalError = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back'].includes(json.status)
+      const awaitingAccountDelivery =
+        json.deliveryMode === 'account' && !json.appliedToAccount && accountWaits.current++ < 8
+      if ((json.approved && json.serialKey && !awaitingAccountDelivery) || terminalError) setParar(true)
+    } catch {
+      setLoading(false)
+    }
+  }, [orderId, token])
+
   useEffect(() => {
     if (!orderId || !token) { setError('Link inválido.'); setLoading(false); return }
-    let active = true
-    const fetchOnce = async () => {
-      try {
-        const res = await fetch(`/api/serial-keys/purchase/${orderId}?token=${encodeURIComponent(token)}`, { cache: 'no-store' })
-        const json = await res.json()
-        if (!active) return
-        if (!res.ok) { setError(json.error || 'Não foi possível carregar a compra.'); setLoading(false); return }
-        setData(json)
-        setLoading(false)
-        // Para de pollar quando aprovado com key ou em estado de erro terminal.
-        // Na compra que vai direto para a conta existente, a key nasce e é
-        // ativada na mesma passagem do fulfillment: se a consulta pegou o meio
-        // desse caminho, seguimos pollando para não deixar na tela uma Serial
-        // Key que já não tem o que ativar.
-        const terminalError = ['rejected', 'cancelled', 'expired', 'refunded', 'charged_back'].includes(json.status)
-        const awaitingAccountDelivery =
-          json.deliveryMode === 'account' && !json.appliedToAccount && accountWaits.current++ < 8
-        if ((json.approved && json.serialKey && !awaitingAccountDelivery) || terminalError) {
-          if (timer.current) clearInterval(timer.current)
-        }
-      } catch {
-        if (active) setLoading(false)
-      }
-    }
     fetchOnce()
-    timer.current = setInterval(fetchOnce, 4000)
-    return () => { active = false; if (timer.current) clearInterval(timer.current) }
-  }, [orderId, token])
+  }, [orderId, token, fetchOnce])
+
+  useIntervaloVisivel(fetchOnce, parar || !orderId || !token ? null : 4000)
+
+  useEffect(() => {
+    let ativo = true
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then(async (res) => (res.ok ? (await res.json())?.user : null))
+      .then((user) => { if (ativo) setSessao(user?.email ? { email: String(user.email), name: user.name } : null) })
+      .catch(() => { if (ativo) setSessao(null) })
+    return () => { ativo = false }
+  }, [])
+
+  const pendentes = (data?.serialKeys || []).filter((sk) => sk.status !== 'activated' && sk.status !== 'cancelled')
+  const podeOferecerConta = Boolean(
+    data?.approved && data.serialKey && !data.appliedToAccount && data.buyerEmail && pendentes.length > 0 && sessao !== undefined
+  )
+  // Os títulos ficam guardados do momento em que o cartão abriu: depois da
+  // ativação a lista de pendentes esvazia, e o cartão precisa continuar dizendo
+  // o que foi liberado.
+  const [produtosDoCartao, setProdutosDoCartao] = useState<string[]>([])
+  const titulosPendentes = pendentes.map((sk) => sk.productTitle || data?.productTitle || 'Produto').join('\n')
+  useEffect(() => {
+    if (!podeOferecerConta) return
+    setCartaoAberto(true)
+    setProdutosDoCartao(titulosPendentes.split('\n'))
+  }, [podeOferecerConta, titulosPendentes])
 
   if (loading) {
     return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>
@@ -420,7 +469,22 @@ function AprovadaContent() {
   if (error) {
     return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '28px', color: '#f87171', textAlign: 'center' }}>{error}</div></div>
   }
-  if (data?.approved && data.serialKey) return <ApprovedView data={data} />
+  if (data?.approved && data.serialKey) {
+    const cartaoDeConta = cartaoAberto && data.buyerEmail ? (
+      <ContaPosCompra
+        compra={{ orderId, receiptToken: token }}
+        email={data.buyerEmail}
+        nomeSugerido={data.buyerName}
+        produtos={produtosDoCartao}
+        sessao={sessao}
+        contaExiste={data.buyerHasAccount === true}
+        loginRedirect={`/compra/aprovada?order=${encodeURIComponent(orderId)}&token=${encodeURIComponent(token)}&ativar=1`}
+        autoVincular={ativarAoVoltar}
+        onAtivado={fetchOnce}
+      />
+    ) : null
+    return <ApprovedView data={data} cartaoDeConta={cartaoDeConta} />
+  }
   if (data?.approved && !data.serialKey) {
     return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '28px', textAlign: 'center', color: 'white' }}><Loader2 size={28} style={{ color: '#34d399', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} /><p>Pagamento aprovado! Gerando sua Serial Key…</p></div></div>
   }

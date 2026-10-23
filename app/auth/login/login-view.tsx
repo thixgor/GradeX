@@ -132,6 +132,8 @@ export default function LoginView({
   })
 
   const [isRegistered, setIsRegistered] = useState(false)
+  // O cadastro veio com `?redirect=` interno: a tela de sucesso devolve lá.
+  const [temRedirect, setTemRedirect] = useState(false)
 
   // Verificação de código por email (2FA de administrador)
   const [emailCodeRequired, setEmailCodeRequired] = useState(false)
@@ -442,6 +444,7 @@ export default function LoginView({
         // prometido no anúncio). É o evento que o algoritmo do Meta usa para
         // aprender a encontrar quem se cadastra.
         trackMeta('CompleteRegistration', { content_name: 'Cadastro gratuito' })
+        setTemRedirect(Boolean(new URLSearchParams(window.location.search).get('redirect')))
         setIsRegistered(true)
       } else if (data.requiresEmailCode) {
         // Conta de administrador: exige código enviado por email antes de entrar.
@@ -931,13 +934,26 @@ export default function LoginView({
                   </p>
                 </div>
                 <div className="w-full space-y-2">
-                  <button
-                    onClick={() => router.push('/')}
-                    className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
-                    style={{ background: 'hsl(var(--secondary))' }}
-                  >
-                    Ir para o Início
-                  </button>
+                  {/* O cadastro já deixa a sessão aberta. Quem veio de um
+                      `?redirect=` (ex.: ativar a Serial Key de uma compra)
+                      volta para lá — antes caía no início e perdia o passo. */}
+                  {temRedirect ? (
+                    <button
+                      onClick={() => { clearBootstrapCache(); window.location.assign(destinoDepoisDoLogin()) }}
+                      className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
+                      style={{ background: 'hsl(var(--secondary))' }}
+                    >
+                      Continuar
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => router.push('/')}
+                      className="w-full h-11 rounded-xl font-semibold text-sm text-secondary-foreground flex items-center justify-center gap-2 transition-all hover:opacity-90 hover:scale-[1.01]"
+                      style={{ background: 'hsl(var(--secondary))' }}
+                    >
+                      Ir para o Início
+                    </button>
+                  )}
                   <button
                     onClick={() => setIsLogin(true)}
                     className="w-full h-11 rounded-xl text-sm font-medium text-muted-foreground border border-border bg-card hover:bg-muted transition-all"

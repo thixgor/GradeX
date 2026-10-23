@@ -12,6 +12,7 @@ import {
   productTypeLabel,
   paymentStatusLabel,
   getActivationUrl,
+  findAccountByEmail,
 } from '@/lib/serial-keys'
 import { generateActivationQrDataUrl } from '@/lib/serial-key-receipt'
 import type { PaymentOrder, SerialKey } from '@/lib/types'
@@ -104,11 +105,16 @@ export async function GET(request: NextRequest, props: { params: Promise<{ order
     return NextResponse.json({ ...base, approved: false, serialKey: null })
   }
 
-  // Aprovado → busca a(s) serial key(s) geradas para esta compra.
-  const serials = await db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
-    .find({ orderId })
-    .sort({ cartIndex: 1 })
-    .toArray()
+  // Aprovado → busca a(s) serial key(s) geradas para esta compra e, ao lado,
+  // se o e-mail da compra já tem conta: é o que decide se a página oferece
+  // "crie sua conta e o produto já entra ativado" ou "entre para ativar".
+  const [serials, buyerAccount] = await Promise.all([
+    db.collection<SerialKey>(SERIAL_KEYS_COLLECTION)
+      .find({ orderId })
+      .sort({ cartIndex: 1 })
+      .toArray(),
+    base.deliveryMode === 'account' ? Promise.resolve(null) : findAccountByEmail(db, base.buyerEmail),
+  ])
 
   // Total esperado de keys (1 para compra única; N para carrinho).
   const expected = Array.isArray(current.metadata?.serialKeyCart) && current.metadata.serialKeyCart.length > 0
@@ -155,6 +161,8 @@ export async function GET(request: NextRequest, props: { params: Promise<{ order
     ...base,
     approved: true,
     appliedToAccount,
+    // Só um booleano sobre o e-mail da própria compra, para quem tem o token.
+    buyerHasAccount: base.deliveryMode === 'account' || !!buyerAccount,
     // Compat: campos únicos apontam para a primeira key.
     serialKey: primary.key,
     serialKeyStatus: primary.status,

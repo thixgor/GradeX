@@ -12,6 +12,7 @@ import {
   serializeSerialKeyForActivation,
   logSerialKeySecurity,
   maskSerialKey,
+  findAccountByEmail,
 } from '@/lib/serial-keys'
 import { PLUS_TIER, isPlusAccount } from '@/lib/account-tier'
 import { restorePlusClaims } from '@/lib/plus-claims'
@@ -59,7 +60,19 @@ export async function GET(request: NextRequest) {
       productType: serial.type,
     })
   }
-  return NextResponse.json({ found: true, legacy: false, ...serializeSerialKeyForActivation(serial) })
+  // Key ainda por ativar: a página pergunta "crie sua conta" ou "entre" com
+  // base nisto — um booleano sobre o e-mail da própria compra, para quem tem a
+  // key ou o link dela.
+  const pendente = serial.status !== 'activated' && !serial.used && serial.status !== 'cancelled'
+  const buyerHasAccount = pendente && serial.buyerEmail
+    ? !!(await findAccountByEmail(db, serial.buyerEmail))
+    : undefined
+  return NextResponse.json({
+    found: true,
+    legacy: false,
+    ...serializeSerialKeyForActivation(serial),
+    ...(buyerHasAccount !== undefined ? { buyerHasAccount } : {}),
+  })
 }
 
 /**
