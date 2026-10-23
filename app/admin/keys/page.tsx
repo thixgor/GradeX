@@ -23,7 +23,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { BotaoCopiar, EmitirSerialKeyDialog } from '@/components/admin/emitir-serial-key'
+import { BotaoCopiar, BotaoQr, EmitirSerialKeyDialog } from '@/components/admin/emitir-serial-key'
 import type { KeyDoAdmin } from '@/lib/serial-key-emissao'
 
 type Origem = 'emitidas' | 'compras' | 'todas'
@@ -356,6 +356,7 @@ function LinhaDaKey({ k, ocupado, onLote, onEnviar, onCancelar, onExcluir }: {
             <code className="rounded-md bg-muted px-2 py-1 font-mono text-xs font-bold tracking-wider sm:text-sm">{k.key}</code>
             <BotaoCopiar texto={k.key} rotulo="Key" size="xs" />
             <BotaoCopiar texto={k.link} rotulo="Link de ativação" rotuloCopiado="Link copiado!" icone="link" size="xs" />
+            {k.estado === 'unactivated' && <BotaoQr link={k.link} chave={k.key} titulo={k.productTitle || k.acesso} size="xs" />}
           </div>
 
           <div className="mt-2 grid gap-x-4 gap-y-0.5 text-[11px] text-muted-foreground sm:grid-cols-2">

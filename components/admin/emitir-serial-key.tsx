@@ -10,8 +10,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import {
   BookOpen, Check, Copy, Crown, FileText, Infinity as InfinityIcon, KeyRound, Layers, Link2, Loader2,
-  Mail, Package, Search, Sparkles, Stethoscope, Timer,
+  Mail, Package, QrCode, Search, Sparkles, Stethoscope, Timer,
 } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
+import { Portal } from '@/components/ui/portal'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -72,6 +74,69 @@ export function BotaoCopiar({
       <Icone className={size === 'xs' ? 'h-3 w-3' : 'h-3.5 w-3.5'} />
       {copiado ? rotuloCopiado : rotulo}
     </button>
+  )
+}
+
+// ── QR code ──────────────────────────────────────────────────────────────────
+
+/**
+ * QR do link de ativação, para o admin mostrar a tela e a pessoa escanear com
+ * o celular. Fundo branco sempre: leitor de QR erra com o tema escuro.
+ */
+export function QrDeAtivacao({ link, tamanho = 220 }: { link: string; tamanho?: number }) {
+  return (
+    <div className="inline-flex rounded-2xl bg-white p-3 shadow-sm ring-1 ring-black/5">
+      <QRCodeSVG value={link} size={tamanho} level="M" marginSize={0} />
+    </div>
+  )
+}
+
+/** Botão que abre o QR em tamanho grande, pronto para mostrar a quem vai ativar. */
+export function BotaoQr({ link, chave, titulo, size = 'sm' }: {
+  link: string
+  chave?: string
+  titulo?: string
+  size?: 'sm' | 'xs'
+}) {
+  const [aberto, setAberto] = useState(false)
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setAberto(true)}
+        className={`inline-flex items-center gap-1.5 rounded-md border bg-background font-medium transition-colors hover:bg-muted ${
+          size === 'xs' ? 'px-2 py-1 text-[11px]' : 'px-2.5 py-1.5 text-xs'
+        }`}
+        title="Mostrar QR code para escanear"
+      >
+        <QrCode className={size === 'xs' ? 'h-3 w-3' : 'h-3.5 w-3.5'} /> QR code
+      </button>
+      {/* Fora da árvore: o modal de acessos de /admin/materiais é animado com
+          transform, e um `fixed` lá dentro ficaria preso a ele. */}
+      <Portal>
+        <Dialog open={aberto} onOpenChange={setAberto}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader className="pb-2 text-center">
+              <DialogTitle className="flex items-center justify-center gap-2">
+                <QrCode className="h-5 w-5 text-primary" /> Escaneie para ativar
+              </DialogTitle>
+              {titulo && <DialogDescription className="truncate">{titulo}</DialogDescription>}
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-3 px-6 pb-6">
+              <QrDeAtivacao link={link} tamanho={260} />
+              <p className="text-center text-xs text-muted-foreground">
+                Aponte a câmera do celular: o link abre a página de ativação. Quem não tiver conta cria uma ali mesmo.
+              </p>
+              {chave && <code className="break-all rounded-md bg-muted px-2 py-1 text-center font-mono text-sm font-bold tracking-wider">{chave}</code>}
+              <div className="flex flex-wrap justify-center gap-2">
+                <BotaoCopiar texto={link} rotulo="Copiar link" rotuloCopiado="Link copiado!" icone="link" />
+                {chave && <BotaoCopiar texto={chave} rotulo="Copiar key" />}
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </Portal>
+    </>
   )
 }
 
@@ -626,6 +691,13 @@ function Resultado({ keys, emailEnviado, onOutra, onFechar }: {
         </div>
       )}
 
+      {keys.length === 1 && primeira && (
+        <div className="flex flex-col items-center gap-2 rounded-xl border p-4">
+          <QrDeAtivacao link={primeira.link} />
+          <p className="text-center text-xs text-muted-foreground">Mostre a tela: a pessoa escaneia e cai direto na ativação.</p>
+        </div>
+      )}
+
       <div className="max-h-72 space-y-2 overflow-y-auto">
         {keys.map(k => (
           <div key={k.id} className="rounded-xl border p-3">
@@ -634,6 +706,7 @@ function Resultado({ keys, emailEnviado, onOutra, onFechar }: {
             <div className="mt-2 flex flex-wrap gap-2">
               <BotaoCopiar texto={k.key} rotulo="Copiar key" size="xs" />
               <BotaoCopiar texto={k.link} rotulo="Copiar link de ativação" rotuloCopiado="Link copiado!" icone="link" size="xs" />
+              {keys.length > 1 && <BotaoQr link={k.link} chave={k.key} titulo={k.productTitle} size="xs" />}
             </div>
           </div>
         ))}

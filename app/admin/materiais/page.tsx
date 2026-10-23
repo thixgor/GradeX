@@ -79,7 +79,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { AppShell } from '@/components/app-shell'
 import { PricingEventSelector } from '@/components/pricing-events/PricingEventSelector'
-import { BotaoCopiar, EmitirSerialKeyDialog, type ItemFixo } from '@/components/admin/emitir-serial-key'
+import { BotaoCopiar, BotaoQr, EmitirSerialKeyDialog, type ItemFixo } from '@/components/admin/emitir-serial-key'
 import {
   TimedAccessVersionsEditor,
   type TimedAccessVersionForm,
@@ -3652,6 +3652,9 @@ function AdminMateriaisContent() {
                           {g.activationUrl && (
                             <BotaoCopiar texto={g.activationUrl} rotulo="Link" rotuloCopiado="Copiado!" icone="link" size="xs" />
                           )}
+                          {g.activationUrl && (
+                            <BotaoQr link={g.activationUrl} titulo={g.productTitle || accessModal.title} size="xs" />
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
@@ -3735,6 +3738,7 @@ function AdminMateriaisContent() {
                           <code className="font-mono text-xs font-bold tracking-wider truncate flex-1">{k.key}</code>
                           <BotaoCopiar texto={k.key} rotulo="Key" size="xs" />
                           <BotaoCopiar texto={k.link} rotulo="Link" rotuloCopiado="Copiado!" icone="link" size="xs" />
+                          <BotaoQr link={k.link} chave={k.key} titulo={accessModal.title} size="xs" />
                         </div>
                         <p className="text-[10px] text-muted-foreground mt-1 truncate">
                           {k.acesso}
