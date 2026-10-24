@@ -9,6 +9,11 @@ em qualquer redução numa única requisição:
 com `esq`/`topo` em pixels do nível reduzido. Por isso um recorte é um único
 pedido, e a inspeção em vários aumentos é barata.
 
+O mesmo protocolo serve as lâminas suplementares de outros acervos Aperio
+indexados pelo PathologyBites. O caminho leva o servidor como prefixo:
+`rosai:/sem1127/sem1127-case6.svs` (Rosai Collection), `upmc:/NeuroPathology/…`
+(Pitt/UPMC); sem prefixo, é Leeds.
+
 Coordenadas em fração da LARGURA da lâmina (x de 0 a 1; y de 0 a
 altura/largura) — as mesmas do visualizador e das anotações.
 
@@ -48,9 +53,26 @@ MEDIDAS = CACHE / 'medidas.json'
 ANOTACOES = RAIZ / 'data' / 'histopatologia-zoom' / 'anotacoes'
 SITE = 'https://www.virtualpathology.leeds.ac.uk'
 IMAGENS = 'https://images.virtualpathology.leeds.ac.uk'
+# Mesmos hosts de `SERVIDORES_DE_LAMINAS` em lib/histopatologia-zoom/fonte.ts.
+SERVIDORES = {
+    'leeds': IMAGENS,
+    'rosai': 'https://rosai.secondslide.com/imageserver',
+    'upmc': 'https://image.upmc.edu',
+}
 UA = {'User-Agent': 'DomineAqui-curadoria/1.0 (autorizado)'}
 
 CACHE.mkdir(parents=True, exist_ok=True)
+
+
+def separar(caminho: str) -> tuple[str, str]:
+    """`rosai:/a/b.svs` → ('rosai', '/a/b.svs'); sem prefixo é Leeds."""
+    m = re.match(r'^([a-z]+):(/.*)$', caminho)
+    return (m.group(1), m.group(2)) if m else ('leeds', caminho)
+
+
+def url_do_svs(caminho: str) -> str:
+    servidor, rel = separar(caminho)
+    return f'{SERVIDORES[servidor]}{urllib.parse.quote(rel)}'
 
 
 def _baixar(url: str, tentativas: int = 6) -> bytes:
@@ -72,7 +94,7 @@ def medir(caminho: str) -> dict:
     if caminho in medidas:
         return medidas[caminho]
     # `?INFO` do ImageServer: largura|altura|tileL|tileA||descrição Aperio (AppMag, MPP, Date…).
-    info = _baixar(f'{IMAGENS}{urllib.parse.quote(caminho)}?INFO').decode('utf-8', 'replace')
+    info = _baixar(f'{url_do_svs(caminho)}?INFO').decode('utf-8', 'replace')
     partes = info.split('|')
     if len(partes) < 3 or not partes[0].strip().isdigit():
         raise SystemExit(f'sem dimensões para {caminho}: {info[:120]}')
@@ -111,7 +133,7 @@ def regiao(caminho: str, x0: float, y0: float, x1: float, y1: float, largura_sai
     for by in range(0, alt, B):
         for bx in range(0, larg, B):
             w, h = min(B, larg - bx), min(B, alt - by)
-            url = f'{IMAGENS}{urllib.parse.quote(caminho)}?{esq + bx}+{topo + by}+{w}+{h}+{red}+90'
+            url = f'{url_do_svs(caminho)}?{esq + bx}+{topo + by}+{w}+{h}+{red}+90'
             chave = CACHE / 'recortes' / (re.sub(r'[^A-Za-z0-9]+', '_', caminho)[-80:] + f'_{esq + bx}_{topo + by}_{w}_{h}_{red}.jpg')
             if chave.exists():
                 dados = chave.read_bytes()
@@ -288,7 +310,7 @@ def salvar(slug: str, marcacoes: list, achados: list, conferencias: int = 3, res
         doc['semMarcacoes'] = True
     ANOTACOES.mkdir(parents=True, exist_ok=True)
     arq = ANOTACOES / f'{slug}.json'
-    arq.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
+    arq.write_text(json.dumps(doc, ensure_ascii=False, indent=1) + '\n', encoding='utf-8', newline='\n')
     return arq
 
 

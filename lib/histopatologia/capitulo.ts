@@ -2,7 +2,7 @@ import 'server-only'
 
 import type { AplicacaoDeMecanismoResolvida } from '@/components/histopatologia/tipos'
 import { doencaZoomDoCapitulo } from '@/lib/histologia/catalogo'
-import { laminasDaDoenca, resumirPatologica } from '@/lib/histopatologia-zoom/repositorio'
+import { capaDaDoenca, laminasDaDoenca, resumirPatologica } from '@/lib/histopatologia-zoom/repositorio'
 
 import { LISTA_DE_FONTES } from './direitos'
 import { referenciasVisuaisDaDoenca } from './editorial/referencias-visuais'
@@ -92,6 +92,7 @@ export async function dadosDoCapitulo(slug: string): Promise<DadosDoCapitulo | n
               nome: l.subtitulo ?? l.titulo,
               miniatura: resumo.miniatura,
               achadosPresentes: resumo.achadosPresentes,
+              disponivel: resumo.disponivel,
             }
           }),
         }
@@ -105,7 +106,7 @@ export async function dadosDoCapitulo(slug: string): Promise<DadosDoCapitulo | n
       titulo: doenca.nome,
       categoria: `Histopatologia · ${sistema?.nome ?? 'Doença'}`,
       area: 'histopatologia',
-      imagem: primeiraLamina ? resumirPatologica(primeiraLamina).miniatura : null,
+      imagem: doencaComZoom ? capaDaDoenca(doencaComZoom.id) : null,
       zoom: Boolean(primeiraLamina),
     },
     jsonLd: [jsonLdDeDoenca(doenca), jsonLdDeTrilha(trilha)],

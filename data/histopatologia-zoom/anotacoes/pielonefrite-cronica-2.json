@@ -1,0 +1,187 @@
+{
+ "slug": "pielonefrite-cronica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Pielonefrite crônica em atividade: interstício tomado por faixas densas de linfócitos e plasmócitos, com neutrófilos, fibrose, túbulos atróficos dilatados por cilindros eosinofílicos homogêneos (\"tireoidização\") e artérias de parede espessada.",
+ "marcacoes": [
+  {
+   "id": "tireoidizacao",
+   "estrutura": "tireoidizacao-tubular",
+   "categoria": "patologica",
+   "rotulo": "Túbulos atróficos cheios de cilindros eosinofílicos homogêneos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.17,
+      0.435
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.16,
+    0.425,
+    0.18,
+    0.445
+   ],
+   "nota": "Túbulos de epitélio achatado, dilatados por cilindros rosa, homogêneos e vítreos (proteína de Tamm-Horsfall concentrada), lado a lado — parecem folículos de tireoide com coloide. É a \"tireoidização\" da pielonefrite crônica: néfrons destruídos pela infecção e pela obstrução atrofiam e retêm o material."
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Interstício tomado por linfócitos e plasmócitos, em faixas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.12,
+      0.435
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1,
+    0.42,
+    0.14,
+    0.46
+   ],
+   "nota": "Entre os túbulos, faixas densas de linfócitos e plasmócitos afastam e destroem os néfrons. A inflamação crônica é irregular, em placas, e acompanha as cicatrizes — típico da infecção ascendente recorrente."
+  },
+  {
+   "id": "neutrofilos",
+   "estrutura": "infiltrado-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Neutrófilos no interstício e em túbulos (surto agudo)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.164,
+      0.44
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.16,
+    0.432,
+    0.175,
+    0.445
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Colágeno afastando túbulos atróficos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.47
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.13,
+    0.455,
+    0.17,
+    0.485
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "espessamento-arterial",
+   "categoria": "patologica",
+   "rotulo": "Artéria de parede muito espessada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.11,
+      0.48
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.1,
+    0.46,
+    0.13,
+    0.495
+   ],
+   "nota": "Artérias com a íntima e a média espessadas e a luz reduzida — esclerose vascular que acompanha a cicatriz renal e a hipertensão secundária que a pielonefrite crônica costuma causar."
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos menos acometidos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.18,
+      0.495
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.165,
+    0.48,
+    0.2,
+    0.5
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Infiltrado intersticial denso de linfócitos e plasmócitos, em faixas irregulares."
+  },
+  {
+   "achado": "tireoidizacao-tubular",
+   "status": "presente",
+   "marcacoes": [
+    "tireoidizacao"
+   ],
+   "nota": "Grupos de túbulos atróficos dilatados por cilindros eosinofílicos homogêneos."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Fibrose intersticial entre túbulos atróficos."
+  },
+  {
+   "achado": "espessamento-arterial",
+   "status": "presente",
+   "marcacoes": [
+    "arteria"
+   ],
+   "nota": "Artérias de parede espessada nas áreas cicatriciais."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "presente",
+   "marcacoes": [
+    "neutrofilos"
+   ],
+   "nota": "Neutrófilos no interstício e em luzes tubulares — atividade aguda sobre o processo crônico."
+  }
+ ]
+}

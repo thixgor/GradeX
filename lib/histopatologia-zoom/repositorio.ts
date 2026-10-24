@@ -8,7 +8,7 @@ import type { LaminaZoom, NivelDaPiramide, PiramideDaLamina } from '@/lib/histol
 import { achadoPorId } from './achados'
 import { CURADORIA } from './curadoria'
 import { doencaPorId, DOENCAS } from './doencas'
-import { urlDoSvs } from './fonte'
+import { servidorNoAr, urlDoSvs } from './fonte'
 import type {
   AchadoNaLamina,
   AnotacaoPatologica,
@@ -17,6 +17,7 @@ import type {
   LaminaPatologica,
   LaminaPatologicaResumida,
   MarcacaoExibida,
+  ServidorDeLaminas,
 } from './tipos'
 
 /**
@@ -31,8 +32,14 @@ const TILE = 512
 /** Largura-alvo da miniatura: uma única região pedida ao servidor. */
 const MINIATURA = 640
 
-export function piramideAperio(caminho: string, largura: number, altura: number, objetiva: number): PiramideDaLamina {
-  const base = urlDoSvs(caminho)
+export function piramideAperio(
+  caminho: string,
+  largura: number,
+  altura: number,
+  objetiva: number,
+  servidor: ServidorDeLaminas = 'leeds',
+): PiramideDaLamina {
+  const base = urlDoSvs(caminho, servidor)
   const niveis: NivelDaPiramide[] = []
   for (let r = 1; ; r *= 2) {
     const l = Math.ceil(largura / r)
@@ -69,19 +76,22 @@ function montar(): LaminaPatologica[] {
     if (!doenca) continue
     const n = (contagem.get(c.doenca) ?? 0) + 1
     contagem.set(c.doenca, n)
+    const servidor = c.servidor ?? 'leeds'
     saida.push({
       slug: `${c.doenca}-${n}`,
       doenca: c.doenca,
+      servidor,
       titulo: doenca.nome,
       subtitulo: c.subtitulo,
       coloracao: c.coloracao ?? 'Hematoxilina-eosina (H&E)',
       objetiva: c.objetiva,
       mpp: c.mpp,
       caso: c.caso,
-      piramide: piramideAperio(c.caminho, c.largura, c.altura, c.objetiva),
+      piramide: piramideAperio(c.caminho, c.largura, c.altura, c.objetiva, servidor),
       largura: c.largura,
       altura: c.altura,
       laminaNormal: c.laminaNormal,
+      orgao: c.orgao ?? doenca.orgao,
     })
   }
   return saida
@@ -96,8 +106,29 @@ export function laminaPatologicaPorSlug(slug: string): LaminaPatologica | undefi
   return POR_SLUG.get(slug)
 }
 
+export function laminaDisponivel(l: Pick<LaminaPatologica, 'servidor'>): boolean {
+  return servidorNoAr(l.servidor)
+}
+
+/**
+ * Lâminas da doença, as que abrem primeiro: a de um servidor fora do ar
+ * (`SERVIDORES_FORA_DO_AR`) vai para o fim, sem perder o slug nem a ordem
+ * entre as demais. `[0]` é a capa da doença em todo o módulo.
+ */
 export function laminasDaDoenca(doenca: string): LaminaPatologica[] {
-  return LAMINAS_PATOLOGICAS.filter((l) => l.doenca === doenca)
+  const todas = LAMINAS_PATOLOGICAS.filter((l) => l.doenca === doenca)
+  return [...todas.filter(laminaDisponivel), ...todas.filter((l) => !laminaDisponivel(l))]
+}
+
+/** Miniatura de capa da doença — só de lâmina que abre; `null` se nenhuma abre agora. */
+export function capaDaDoenca(doenca: string): string | null {
+  const l = laminasDaDoenca(doenca)[0]
+  return l && laminaDisponivel(l) ? l.piramide.miniatura.url : null
+}
+
+/** As outras lâminas da mesma doença que abrem agora: o que oferecer quando esta não abre. */
+export function alternativasDaLamina(l: LaminaPatologica): LaminaPatologica[] {
+  return laminasDaDoenca(l.doenca).filter((x) => x.slug !== l.slug && laminaDisponivel(x))
 }
 
 /** Doenças com pelo menos uma lâmina publicada, na ordem de prioridade. */
@@ -144,9 +175,9 @@ export function achadosDaLamina(slug: string, doenca: DoencaZoom): AchadoNaLamin
  * (H&E) e, entre elas, a humana. Comparar H&E com uma impregnação argêntica
  * ensinaria a diferença de coloração, não a da doença.
  */
-export function laminaNormalPara(l: LaminaPatologica, doenca: DoencaZoom): LaminaZoom | null {
+export function laminaNormalPara(l: LaminaPatologica): LaminaZoom | null {
   if (l.laminaNormal) return laminaNormalPorSlug(l.laminaNormal) ?? null
-  const doOrgao = laminasDoOrgao(doenca.orgao)
+  const doOrgao = laminasDoOrgao(l.orgao)
   const pontos = (x: LaminaZoom) => (x.coloracaoId === 'he' ? 2 : 0) + (x.origem.categoria === 'humana' ? 1 : 0)
   return [...doOrgao].sort((a, b) => pontos(b) - pontos(a))[0] ?? null
 }
@@ -171,6 +202,8 @@ export function resumirPatologica(l: LaminaPatologica): LaminaPatologicaResumida
     miniaturaL: l.piramide.miniatura.largura,
     miniaturaA: l.piramide.miniatura.altura,
     achadosPresentes: (a?.achados ?? []).filter((x) => x.status === 'presente').length,
+    servidor: l.servidor,
+    disponivel: laminaDisponivel(l),
   }
 }
 

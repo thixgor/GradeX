@@ -988,4 +988,78 @@ export const ACHADOS_NEOPLASIA: AchadoPatologico[] = [
     ondeOcorre: ['Condrossarcoma (pelve, fêmur, úmero, costelas)', 'Encondroma (atipia mínima)', 'Condrossarcoma desdiferenciado'],
     armadilhas: ['Encondromas de mãos e pés e de pacientes com encondromatose são mais celulares sem ser malignos; a radiologia é essencial.'],
   },
+  {
+    id: 'fasciculos-de-musculo-liso',
+    nome: 'Fascículos entrelaçados de músculo liso',
+    sinonimos: ['padrão fascicular', 'proliferação leiomiomatosa', 'células em charuto'],
+    categoria: 'neoplasia',
+    resumo:
+      'Feixes de células fusiformes de citoplasma eosinofílico fibrilar e núcleo alongado de pontas rombas ("em charuto"), que se cruzam em ângulos variados — a arquitetura dos tumores de músculo liso.',
+    comoReconhecer: [
+      'Pequeno aumento: nódulo bem delimitado, mais rosado e compacto que o miométrio vizinho, com feixes que formam redemoinhos.',
+      'Médio aumento: fascículos cortados longitudinalmente (células alongadas) ao lado de fascículos cortados transversalmente (células redondas, com halo perinuclear).',
+      'Grande aumento: núcleo alongado de pontas rombas, cromatina fina, às vezes com vacúolo claro numa das pontas; citoplasma rosa e fibrilar.',
+      'Conte mitoses, procure atipia e necrose de células tumorais (de borda abrupta, sem hialinização) — os três critérios que separam leiomioma de leiomiossarcoma.',
+    ],
+    mecanismo: [
+      'A maioria dos leiomiomas é um clone de uma única célula muscular lisa, com mutação de MED12 (cerca de 70 %) ou de HMGA2.',
+      'O crescimento depende de estrógeno e progesterona: o tumor aumenta na gestação e regride na menopausa.',
+      'As células produzem muita matriz extracelular (colágeno), o que explica a consistência firme e a tendência à degeneração hialina.',
+    ],
+    significado: [
+      'Leiomioma é o tumor mais comum da mulher (até 70 % aos 50 anos). Benigno, não vira sarcoma; o leiomiossarcoma nasce de novo.',
+      'Atipia difusa, mais de 10 mitoses por 10 campos de grande aumento ou necrose tumoral indicam leiomiossarcoma.',
+    ],
+    ondeOcorre: ['Leiomioma uterino (intramural, submucoso, subseroso)', 'Leiomiomas cutâneos e do trato gastrointestinal', 'Leiomiossarcoma'],
+    armadilhas: [
+      'GIST e schwannoma também são fusocelulares em feixes: no GIST o núcleo é mais fino e há CD117/DOG1; no schwannoma há paliçadas (corpos de Verocay) e S100.',
+      'Leiomiomas tratados com progestágeno ou na gestação podem ter mitoses e infarto hemorrágico sem serem malignos.',
+    ],
+  },
+  {
+    id: 'degeneracao-hialina',
+    nome: 'Degeneração hialina',
+    sinonimos: ['hialinização', 'esclerose hialina'],
+    categoria: 'deposito',
+    resumo:
+      'Substituição do tecido por material eosinofílico homogêneo, vítreo e acelular — colágeno denso e proteína depositados onde as células morreram ou deixaram de receber sangue.',
+    comoReconhecer: [
+      'Áreas róseas, lisas, "de vidro", com poucos núcleos, no meio do tecido celular.',
+      'A transição para o tecido viável é gradual, com células presas no material hialino — diferente da necrose coagulativa tumoral, de borda abrupta e com sombras de células mortas.',
+      'Pode vir acompanhada de edema, hemorragia antiga e calcificação.',
+    ],
+    mecanismo: [
+      'Quando o tumor cresce mais que o seu suprimento de sangue, as regiões centrais sofrem isquemia lenta.',
+      'As células morrem aos poucos e são substituídas por colágeno e proteína plasmática extravasada, que se compactam.',
+    ],
+    significado: [
+      'Achado benigno e muito frequente nos leiomiomas, sobretudo nos grandes e na pós-menopausa.',
+      'Não deve ser confundida com a necrose de células tumorais, que sugere leiomiossarcoma.',
+    ],
+    ondeOcorre: ['Leiomioma uterino', 'Fibroadenoma esclerosado', 'Arteríolas na hipertensão e no diabetes (arteriolosclerose hialina)', 'Glomérulos esclerosados'],
+    armadilhas: ['Infarto hemorrágico do leiomioma (gestação, progestágenos) e necrose coagulativa tumoral têm outro significado — olhe a borda da lesão e a presença de sombras celulares.'],
+  },
+  {
+    id: 'proliferacao-fibroepitelial',
+    nome: 'Proliferação fibroepitelial (estroma e ductos crescendo juntos)',
+    sinonimos: ['padrão intracanalicular', 'padrão pericanalicular', 'tumor fibroepitelial'],
+    categoria: 'neoplasia',
+    resumo:
+      'Nódulo bem delimitado em que estroma intralobular e ductos proliferam juntos: o estroma frouxo ou colágeno envolve os ductos (pericanalicular) ou os comprime em fendas curvas (intracanalicular).',
+    comoReconhecer: [
+      'Pequeno aumento: nódulo redondo, bem delimitado, que empurra o tecido mamário vizinho sem infiltrá-lo.',
+      'Médio aumento: ductos de calibre uniforme, alongados ou comprimidos em fendas, espalhados num estroma abundante e de celularidade baixa e homogênea.',
+      'Grande aumento: os ductos mantêm as duas camadas (epitelial e mioepitelial); o estroma não tem atipia nem mitoses significativas.',
+    ],
+    mecanismo: [
+      'O estroma especializado do lóbulo é o componente neoplásico (mutações de MED12 em boa parte dos casos); os ductos proliferam a reboque.',
+      'Sensível a estrógeno: cresce na adolescência e na gestação e se hialiniza e calcifica depois da menopausa.',
+    ],
+    significado: [
+      'Fibroadenoma: tumor benigno mais comum da mama em mulheres jovens; nódulo móvel, elástico, indolor.',
+      'Estroma hipercelular, com crescimento folhoso, mitoses e bordas infiltrativas sugere tumor filoide, que recidiva e pode ser maligno.',
+    ],
+    ondeOcorre: ['Fibroadenoma da mama', 'Tumor filoide (forma celular e folhosa)', 'Hamartoma mamário'],
+    armadilhas: ['Biópsia por agulha de um tumor filoide pode parecer fibroadenoma — a celularidade do estroma e as frondes "em folha" decidem.'],
+  },
 ]

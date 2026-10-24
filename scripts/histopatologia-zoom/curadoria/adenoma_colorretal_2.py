@@ -1,0 +1,47 @@
+import sys; sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]))
+from leeds import *
+
+# Rosai Collection, seminário 220, caso 5 — "adenomatous polyp".
+salvar('adenoma-colorretal-2', [
+    pat('transicao', 'transicao-abrupta-para-mucosa-normal', seta(0.4830, 0.1610, 135),
+        rotulo='Onde a mucosa normal acaba e começa o adenoma',
+        nota='À esquerda, criptas retas e claras, cheias de células caliciformes; à direita, sem degrau intermediário, glândulas mais escuras, de núcleos alongados e empilhados. A fronteira nítida é típica da neoplasia: o clone displásico substitui o epitélio normal em vez de se misturar a ele.',
+        vista=(0.440, 0.120, 0.530, 0.200)),
+    pat('displasia', 'displasia-epitelial', seta(0.6106, 0.3017, 180),
+        rotulo='Epitélio displásico: núcleos em "lápis", estratificados',
+        nota='O epitélio que forra a glândula tem núcleos alongados, escuros e empilhados até a metade da altura da célula, e quase não há células caliciformes. É displasia de baixo grau — a definição do adenoma: o epitélio é neoplásico desde a superfície, sem que precise invadir nada.',
+        vista=(0.600, 0.280, 0.640, 0.310)),
+    pat('atipia', 'atipia-citologica', seta(0.6258, 0.2906, 135),
+        rotulo='Núcleos maiores e mais escuros que os da mucosa vizinha',
+        vista=(0.615, 0.282, 0.640, 0.300)),
+    pat('frondes', 'arquitetura-vilosa', seta(0.8400, 0.5110, 90),
+        rotulo='Frondes longas com eixo fino: componente viloso',
+        nota='Projeções longas, em dedo de luva, com um eixo estreito de lâmina própria e epitélio displásico de cada lado. Misturadas aos túbulos, fazem deste um adenoma tubuloviloso; quanto maior a fração vilosa, maior o risco de carcinoma.',
+        vista=(0.780, 0.495, 0.900, 0.560)),
+    pat('congestao', 'hiperemia-e-congestao', seta(0.6108, 0.3538, 45),
+        rotulo='Vasos da haste dilatados e cheios de hemácias',
+        nota='A haste do pólipo é submucosa puxada para a luz pelo peristaltismo; os vasos dela ficam congestos e frágeis, e é por eles que o pólipo sangra (sangue oculto nas fezes).',
+        vista=(0.530, 0.300, 0.640, 0.400)),
+    est('criptas-normais', 'cripta-de-lieberkuhn', seta(0.3706, 0.0850, 45),
+        rotulo='Criptas normais: tubos retos, ricos em caliciformes',
+        vista=(0.340, 0.050, 0.420, 0.130)),
+    est('haste', 'submucosa', seta(0.5646, 0.2969, 0),
+        rotulo='Haste: submucosa com vasos, sem glândulas',
+        vista=(0.500, 0.230, 0.640, 0.420)),
+], achados=[
+    achado('displasia-epitelial', 'presente', ['displasia'],
+           'Displasia de baixo grau em toda a cabeça do pólipo: núcleos alongados, hipercromáticos e estratificados, com depleção de caliciformes.'),
+    achado('arquitetura-vilosa', 'presente', ['frondes'],
+           'Frondes longas misturadas a túbulos — adenoma tubuloviloso.'),
+    achado('transicao-abrupta-para-mucosa-normal', 'presente', ['transicao'],
+           'A mucosa colônica normal do pedículo passa ao epitélio adenomatoso de forma abrupta.'),
+    achado('displasia-de-alto-grau', 'ausente', [],
+           'Nos setores examinados os núcleos continuam alongados e na metade basal, sem glândulas cribriformes nem núcleos redondos e vesiculosos até a superfície.'),
+    achado('invasao-estromal', 'ausente', [],
+           'A haste só contém estroma fibromuscular e vasos, sem glândulas; na cabeça, as glândulas displásicas ficam junto a feixes da muscular da mucosa, sem reação desmoplásica.'),
+    achado('atipia-citologica', 'presente', ['atipia'],
+           'Núcleos maiores, mais escuros e empilhados que os das criptas normais do mesmo corte.'),
+    achado('hiperemia-e-congestao', 'presente', ['congestao'],
+           'Vasos da haste dilatados e congestos.'),
+], conferencias=3, resumo='Pólipo colônico pediculado: cabeça de adenoma tubuloviloso com displasia de baixo grau, haste de submucosa com vasos congestos e, ao lado, mucosa colônica normal com transição abrupta para o epitélio adenomatoso. A haste não tem glândulas — não há invasão neste corte.')
+print('ok')

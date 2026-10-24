@@ -1445,4 +1445,95 @@ export const DOENCAS_DIGESTORIO: DoencaZoom[] = [
       'No Barrett, esse epitélio dá lugar a glândulas colunares com células caliciformes, como no intestino.',
     ],
   },
+  {
+    id: 'adenocarcinoma-gastrico',
+    nome: 'Adenocarcinoma gástrico',
+    sinonimos: ['câncer de estômago', 'carcinoma gástrico difuso', 'carcinoma de células pouco coesas'],
+    nomesEmIngles: ['gastric adenocarcinoma', 'signet ring cell carcinoma', 'diffuse gastric cancer'],
+    sistema: 'digestorio',
+    orgao: 'estomago-corpo-fundo',
+    prioridade: 25,
+    resumo:
+      'Carcinoma do epitélio gástrico, de dois tipos de Lauren: intestinal (glândulas, ligado à gastrite crônica por H. pylori) e difuso (células pouco coesas, muitas em anel de sinete, infiltrando a parede inteira).',
+    epidemiologia:
+      'Quinto câncer mais frequente no mundo; alta incidência no Leste Asiático, nos Andes e em partes do Brasil. Pico após os 60 anos, mais em homens. O tipo difuso ocorre também em jovens e em mulheres, e há forma hereditária (mutação germinativa de CDH1).',
+    patogenese: [
+      'Tipo intestinal: infecção crônica por H. pylori → gastrite crônica atrófica → metaplasia intestinal → displasia → carcinoma glandular (sequência de Correa), favorecida por sal, nitrosaminas e tabagismo.',
+      'Tipo difuso: perda da E-caderina (CDH1), a molécula que gruda as células epiteliais; as células se soltam, infiltram isoladamente e não formam glândulas.',
+      'As células pouco coesas acumulam mucina no citoplasma, que empurra o núcleo para a borda (anel de sinete), e induzem fibrose intensa — a parede fica rígida e espessa (linite plástica).',
+    ],
+    roteiro: [
+      'Panorâmico: veja a mucosa gástrica, a submucosa e a muscular própria; no tipo difuso a parede está espessada sem massa nítida.',
+      'Médio aumento: procure onde há glândulas tumorais (componente intestinal) e onde há células soltas entre os feixes da muscular e no estroma fibroso.',
+      'Grande aumento: células isoladas de citoplasma claro ou vacuolado com núcleo deslocado (anel de sinete) e células pouco coesas de núcleo atípico.',
+      'Na mucosa vizinha, procure gastrite crônica, metaplasia intestinal e H. pylori.',
+    ],
+    achados: [
+      {
+        achado: 'celulas-em-anel-de-sinete',
+        tipo: 'especifico',
+        comoAparece: 'Células isoladas e em pequenos grupos, com vacúolo de mucina e núcleo deslocado, infiltrando a lâmina própria e as camadas profundas.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Células tumorais infiltrando a submucosa e o estroma, isoladamente (difuso) ou em glândulas (intestinal).',
+        peso: 'criterio',
+      },
+      {
+        achado: 'infiltracao-da-muscular-propria',
+        tipo: 'especifico',
+        comoAparece: 'Células pouco coesas espalhadas entre os feixes de músculo liso — invasão que espessa a parede (linite plástica).',
+        peso: 'frequente',
+      },
+      {
+        achado: 'glandulas-neoplasicas-complexas',
+        tipo: 'geral',
+        comoAparece: 'Glândulas tubulares irregulares no componente intestinal.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'reacao-desmoplasica',
+        tipo: 'geral',
+        comoAparece: 'Estroma fibroso denso em torno das células infiltrativas.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos aumentados, irregulares, com nucléolos.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'metaplasia-intestinal',
+        tipo: 'geral',
+        comoAparece: 'Células caliciformes na mucosa gástrica vizinha — terreno do tipo intestinal.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Gastrite com histiócitos espumosos ou xantoma gástrico',
+        comoSeparar: 'Macrófagos de citoplasma espumoso e núcleo central sem atipia, CD68 positivos e citoqueratina negativos.',
+      },
+      {
+        nome: 'Linfoma gástrico (MALT, difuso de grandes células B)',
+        comoSeparar: 'Células linfoides monótonas com lesões linfoepiteliais; CD20 positivo e citoqueratina negativa.',
+      },
+      {
+        nome: 'Carcinoma lobular da mama metastático',
+        comoSeparar: 'Também tem células pouco coesas e em anel de sinete; GATA3 e receptores hormonais positivos e história de câncer de mama.',
+      },
+    ],
+    correlacaoClinica: [
+      'Sintomas tardios e inespecíficos: dispepsia, saciedade precoce, emagrecimento, anemia, vômitos (obstrução pilórica). Sinais de doença avançada: linfonodo supraclavicular esquerdo (Virchow), nódulo umbilical (irmã Maria José), tumor de Krukenberg nos ovários.',
+      'Diagnóstico por endoscopia com biópsias múltiplas — no tipo difuso a mucosa pode parecer quase normal e a biópsia superficial falhar.',
+      'Tratamento: gastrectomia com linfadenectomia D2 e quimioterapia perioperatória (FLOT); a erradicação do H. pylori reduz o risco do tipo intestinal.',
+    ],
+    comparacaoComNormal: [
+      'No corpo gástrico normal, a mucosa tem fovéolas curtas e glândulas fúndicas retas, com células parietais e principais, sobre uma muscular da mucosa e submucosa frouxa.',
+      'No carcinoma difuso, células soltas atravessam essas camadas, alargam a submucosa com fibrose e se espalham entre os feixes da muscular própria.',
+    ],
+  },
 ]

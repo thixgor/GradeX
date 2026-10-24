@@ -89,4 +89,83 @@ export const DOENCAS_LINFOIDE: DoencaZoom[] = [
       'No Hodgkin esclerose nodular, a cápsula engrossa, faixas de colágeno cortam o órgão em nódulos e, dentro deles, células grandes com halo (lacunares) aparecem num fundo misto com eosinófilos.',
     ],
   },
+  {
+    id: 'sarcoidose',
+    nome: 'Sarcoidose',
+    sinonimos: ['doença de Besnier-Boeck-Schaumann', 'linfadenite granulomatosa sarcoide'],
+    nomesEmIngles: ['sarcoidosis'],
+    sistema: 'linfoide',
+    orgao: 'linfonodo',
+    prioridade: 24,
+    resumo:
+      'Doença sistêmica de causa desconhecida caracterizada por granulomas epitelioides compactos e não necrosantes em vários órgãos, sobretudo linfonodos hilares e pulmão.',
+    epidemiologia:
+      'Adultos de 20 a 40 anos, mais frequente em mulheres e em pessoas negras. Mais de 90 % têm acometimento torácico (adenomegalia hilar bilateral). Diagnóstico de exclusão: é preciso afastar tuberculose, fungos e reações a corpo estranho.',
+    patogenese: [
+      'Em pessoas geneticamente predispostas (HLA-DRB1), um antígeno ainda não identificado — talvez micobacteriano ou ambiental — ativa linfócitos T CD4 do tipo Th1.',
+      'Os linfócitos produzem interferon-γ e IL-2, que transformam macrófagos em histiócitos epitelioides; estes se agrupam e se fundem em células gigantes.',
+      'O resultado são granulomas compactos, "nus" (com poucos linfócitos em volta) e sem necrose, que podem regredir ou ser substituídos por fibrose hialina.',
+      'Os macrófagos ativados produzem 1-α-hidroxilase (hipercalcemia) e enzima conversora da angiotensina (marcador sérico).',
+    ],
+    roteiro: [
+      'Panorâmico: linfonodo com a arquitetura substituída por nódulos pálidos, redondos e de tamanho parecido, muitas vezes confluentes.',
+      'Médio aumento: granulomas compactos de histiócitos epitelioides, bem delimitados, com coroa fina de linfócitos.',
+      'Grande aumento: células gigantes multinucleadas (Langhans ou tipo corpo estranho), às vezes com corpos asteroides ou de Schaumann; confirme a ausência de necrose caseosa.',
+    ],
+    achados: [
+      {
+        achado: 'granuloma-epitelioide',
+        tipo: 'especifico',
+        comoAparece: 'Granulomas compactos, bem delimitados, não necrosantes, de tamanho uniforme, substituindo o linfonodo.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'celula-gigante-de-langhans',
+        tipo: 'especifico',
+        comoAparece: 'Células gigantes multinucleadas no interior dos granulomas.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'necrose-caseosa',
+        tipo: 'geral',
+        comoAparece: 'Deve faltar: necrose caseosa aponta para tuberculose ou fungo.',
+        peso: 'ocasional',
+      },
+      {
+        achado: 'infiltrado-linfoplasmocitario',
+        tipo: 'geral',
+        comoAparece: 'Linfócitos em coroa fina e no tecido linfoide residual entre os granulomas.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'fibrose-cicatricial',
+        tipo: 'geral',
+        comoAparece: 'Fibrose hialina concêntrica substituindo granulomas antigos (sarcoidose "queimada").',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Tuberculose',
+        comoSeparar: 'Granulomas com necrose caseosa central, mais irregulares e confluentes; Ziehl-Neelsen, cultura e PCR positivos.',
+      },
+      {
+        nome: 'Infecção fúngica (histoplasmose, criptococose)',
+        comoSeparar: 'Necrose e organismos visíveis em Grocott ou PAS.',
+      },
+      {
+        nome: 'Reação sarcoide a tumor (linfoma, carcinoma)',
+        comoSeparar: 'Granulomas no linfonodo de drenagem de uma neoplasia; procure o tumor no próprio linfonodo e no contexto clínico.',
+      },
+    ],
+    correlacaoClinica: [
+      'Muitos casos são achado de radiografia (adenomegalia hilar bilateral). Outros têm tosse, dispneia, eritema nodoso, uveíte, artralgias (síndrome de Löfgren) ou lesões cutâneas (lúpus pérnio).',
+      'Laboratório: enzima conversora da angiotensina sérica elevada, hipercalcemia e hipercalciúria; lavado broncoalveolar com relação CD4/CD8 alta.',
+      'Tratamento: observação nas formas leves (regressão espontânea frequente); corticoide quando há doença pulmonar progressiva, cardíaca, neurológica, ocular ou hipercalcemia.',
+    ],
+    comparacaoComNormal: [
+      'O linfonodo normal tem cápsula, seios, folículos linfoides no córtex, paracórtex e cordões medulares.',
+      'Na sarcoidose, essa arquitetura é substituída por granulomas pálidos e compactos que ocupam o lugar do tecido linfoide.',
+    ],
+  },
 ]

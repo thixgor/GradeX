@@ -3,19 +3,29 @@ import path from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { FONTES_LICENCIADAS } from '@/lib/acervos-licenciados'
+import { FONTES_LICENCIADAS, hostAutorizado } from '@/lib/acervos-licenciados'
 import { estruturaPorId } from '@/lib/histologia-zoom/estruturas'
 import { niveisResolvidos } from '@/lib/histologia-zoom/fonte-de-tiles'
 import { laminasDoOrgao, orgaoPorId } from '@/lib/histologia-zoom/repositorio'
 import { ACHADOS, achadoPorId } from '@/lib/histopatologia-zoom/achados'
 import { CURADORIA } from '@/lib/histopatologia-zoom/curadoria'
 import { DOENCAS } from '@/lib/histopatologia-zoom/doencas'
-import { REFERENCIA_ABNT_LEEDS, RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
+import {
+  REFERENCIA_ABNT_LEEDS,
+  RODAPE_LEEDS,
+  SERVIDORES_DE_LAMINAS,
+  SERVIDORES_FORA_DO_AR,
+  creditosDosServidores,
+} from '@/lib/histopatologia-zoom/fonte'
 import {
   LAMINAS_PATOLOGICAS,
   achadosDaLamina,
+  alternativasDaLamina,
   anotacaoPatologica,
+  capaDaDoenca,
+  laminaDisponivel,
   laminaNormalPara,
+  laminasDaDoenca,
   marcacoesDaLamina,
   piramideAperio,
 } from '@/lib/histopatologia-zoom/repositorio'
@@ -143,11 +153,11 @@ describe('Histopatologia com Zoom — lâminas e marcações', () => {
 describe('Histopatologia com Zoom — comparação com o normal', () => {
   it('toda lâmina tem uma normal do mesmo órgão, em H&E sempre que o órgão tiver uma', () => {
     for (const l of LAMINAS_PATOLOGICAS) {
-      const d = DOENCAS.find((x) => x.id === l.doenca)!
-      const n = laminaNormalPara(l, d)
+      const n = laminaNormalPara(l)
+      expect(orgaoPorId(l.orgao), `${l.slug}: órgão ${l.orgao}`).toBeTruthy()
       expect(n, l.slug).toBeTruthy()
-      expect(n!.orgao, l.slug).toBe(d.orgao)
-      if (laminasDoOrgao(d.orgao).some((x) => x.coloracaoId === 'he')) expect(n!.coloracaoId, l.slug).toBe('he')
+      expect(n!.orgao, l.slug).toBe(l.orgao)
+      if (laminasDoOrgao(l.orgao).some((x) => x.coloracaoId === 'he')) expect(n!.coloracaoId, l.slug).toBe('he')
     }
   })
 })
@@ -171,5 +181,45 @@ describe('Histopatologia com Zoom — tiles e direitos', () => {
     expect(f.dominiosDeMidia).toContain('images.virtualpathology.leeds.ac.uk')
     expect(RODAPE_LEEDS).toContain('Leeds Virtual Pathology (University of Leeds)')
     expect(REFERENCIA_ABNT_LEEDS).toMatch(/^UNIVERSITY OF LEEDS\./)
+  })
+
+  it('servidores suplementares: mesmo protocolo Aperio, host coberto pela autorização registrada', () => {
+    const p = piramideAperio('/sem1/sem1-case1.svs', 2048, 1024, 20, 'rosai')
+    expect(p.base).toBe('https://rosai.secondslide.com/imageserver/sem1/sem1-case1.svs')
+    for (const s of ['rosai', 'upmc'] as const) {
+      expect(hostAutorizado(`${SERVIDORES_DE_LAMINAS[s].host}/x.svs`, FONTES_LICENCIADAS.pathologybites), s).toBe(true)
+    }
+    expect(FONTES_LICENCIADAS.pathologybites.comprovante.hashDeclarado).toBe(
+      '80764d516a23efd148fc23f236c472252290e6167936b9276e398d19d0a59a86',
+    )
+    // Toda lâmina publicada aponta para um servidor conhecido.
+    for (const l of LAMINAS_PATOLOGICAS) expect(SERVIDORES_DE_LAMINAS[l.servidor], l.slug).toBeTruthy()
+  })
+
+  it('fallback: a lâmina que abre vem primeiro, a capa nunca é de servidor fora do ar', () => {
+    for (const d of DOENCAS) {
+      const laminas = laminasDaDoenca(d.id)
+      if (!laminas.length) continue
+      const primeiraFora = laminas.findIndex((l) => !laminaDisponivel(l))
+      if (primeiraFora >= 0) expect(laminas.slice(primeiraFora).every((l) => !laminaDisponivel(l)), d.id).toBe(true)
+      const capa = capaDaDoenca(d.id)
+      if (capa) expect(laminas[0].piramide.miniatura.url, d.id).toBe(capa)
+      else expect(laminas.every((l) => !laminaDisponivel(l)), d.id).toBe(true)
+      for (const l of laminas) {
+        for (const a of alternativasDaLamina(l)) {
+          expect(a.slug, d.id).not.toBe(l.slug)
+          expect(laminaDisponivel(a), a.slug).toBe(true)
+        }
+      }
+    }
+    for (const s of SERVIDORES_FORA_DO_AR) expect(SERVIDORES_DE_LAMINAS[s]).toBeTruthy()
+  })
+
+  it('créditos: um rodapé e uma referência por acervo presente, sem repetir', () => {
+    const c = creditosDosServidores(['rosai', 'leeds', 'rosai'])
+    expect(c).toHaveLength(2)
+    expect(c[0].rodape).toBe(RODAPE_LEEDS)
+    expect(c[1].rodape).toContain('PathologyBites')
+    expect(c[1].referencia).toContain('PATHOLOGY BITES')
   })
 })

@@ -7,10 +7,10 @@ import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { useTituloDaAba } from '@/components/histologia/pagina'
 import { PortaoDaHistologia } from '@/components/histologia/portao'
 import { FichaDaDoenca } from '@/components/histopatologia-zoom/ficha-da-doenca'
+import { MiniaturaIndisponivel } from '@/components/histopatologia-zoom/miniatura-indisponivel'
 import { ConexoesDoManual } from '@/components/manual-clinico/integracao/conexoes-do-manual'
 import { rotaDaLaminaZoom } from '@/lib/histologia-zoom/rotas'
 import { BASE as BASE_PATOLOGIA } from '@/lib/histopatologia/rotas'
-import { REFERENCIA_ABNT_LEEDS, RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
 import { rotaDosDadosDaPatologiaComZoom, type DadosDaDoencaComZoom } from '@/lib/histopatologia-zoom/paginas-tipos'
 import { BASE_PATOZOOM, rotaDaComparacao, rotaDaLaminaPatologica } from '@/lib/histopatologia-zoom/rotas'
 
@@ -70,14 +70,23 @@ function Conteudo({ dados }: { dados: DadosDaDoencaComZoom }) {
             {laminas.map((l) => (
               <li key={l.slug} className="overflow-hidden rounded-xl border border-border bg-card">
                 <Link href={rotaDaLaminaPatologica(doenca.id, l.slug)} className="group block">
-                  <span className="block aspect-[4/3] overflow-hidden bg-white">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={l.miniatura}
-                      alt=""
-                      loading="lazy"
-                      className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                    />
+                  <span className="relative block aspect-[4/3] overflow-hidden bg-white">
+                    {l.disponivel ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={l.miniatura}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <MiniaturaIndisponivel />
+                    )}
+                    {l.suplementar && (
+                      <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                        Suplementar
+                      </span>
+                    )}
                   </span>
                   <span className="block p-3">
                     <span className="flex items-center gap-1 font-semibold group-hover:text-rose-700 dark:group-hover:text-rose-300">
@@ -86,6 +95,10 @@ function Conteudo({ dados }: { dados: DadosDaDoencaComZoom }) {
                     </span>
                     <span className="mt-0.5 block text-xs text-muted-foreground">
                       {l.caso} · {l.achadosPresentes} achados presentes
+                    </span>
+                    <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                      {l.acervo}
+                      {!l.disponivel && ' · servidor fora do ar no momento'}
                     </span>
                   </span>
                 </Link>
@@ -118,8 +131,12 @@ function Conteudo({ dados }: { dados: DadosDaDoencaComZoom }) {
         <ConexoesDoManual refOrigem={`patozoom:${doenca.id}`} titulo={doenca.nome} className="px-0 pb-0" />
 
         <footer className="mt-10 space-y-1.5 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
-          <p>{RODAPE_LEEDS}</p>
-          <p>{REFERENCIA_ABNT_LEEDS}</p>
+          {dados.creditos.map((c) => (
+            <div key={c.rodape} className="space-y-1.5">
+              <p>{c.rodape}</p>
+              <p>{c.referencia}</p>
+            </div>
+          ))}
         </footer>
       </div>
     </div>

@@ -151,10 +151,20 @@ export interface CasoDaLamina {
   diagnosticoOriginal: string
 }
 
+/**
+ * Servidor Aperio de onde vêm os tiles. `leeds` é o acervo original; `rosai`
+ * (Rosai Collection) e `upmc` (neuropatologia de Pittsburgh) são os acervos das
+ * lâminas suplementares, localizadas pelo buscador do PathologyBites. Hosts e
+ * créditos em `fonte.ts`.
+ */
+export type ServidorDeLaminas = 'leeds' | 'rosai' | 'upmc'
+
 /** Entrada da curadoria (append-only por doença: a ordem define o sufixo do slug). */
 export interface CuradoriaDaLamina {
   doenca: string
-  /** Caminho do `.svs` no servidor de imagens de Leeds. */
+  /** Ausente: Leeds. */
+  servidor?: ServidorDeLaminas
+  /** Caminho do `.svs` no servidor de imagens. */
   caminho: string
   largura: number
   altura: number
@@ -166,6 +176,12 @@ export interface CuradoriaDaLamina {
   caso: CasoDaLamina
   /** Lâmina normal preferida para comparação (slug da Histologia com Zoom). */
   laminaNormal?: string
+  /**
+   * Órgão desta lâmina, quando não é o órgão principal da doença — a
+   * tuberculose da ficha é ganglionar, mas uma lâmina pode ser de pulmão. A
+   * comparação com o normal usa este órgão.
+   */
+  orgao?: string
   /** Coloração, quando não é H&E (ex.: imuno-histoquímica que mostra o achado que o H&E não mostra). */
   coloracao?: string
 }
@@ -173,6 +189,7 @@ export interface CuradoriaDaLamina {
 export interface LaminaPatologica {
   slug: string
   doenca: string
+  servidor: ServidorDeLaminas
   subtitulo: string | null
   titulo: string
   coloracao: string
@@ -183,6 +200,8 @@ export interface LaminaPatologica {
   largura: number
   altura: number
   laminaNormal?: string
+  /** Órgão da lâmina (o da curadoria ou, sem ele, o da doença). */
+  orgao: string
 }
 
 /** Versão leve para cartões e busca. */
@@ -195,4 +214,7 @@ export interface LaminaPatologicaResumida {
   miniaturaL: number
   miniaturaA: number
   achadosPresentes: number
+  servidor: ServidorDeLaminas
+  /** Falso quando o servidor dela está em `SERVIDORES_FORA_DO_AR`. */
+  disponivel: boolean
 }

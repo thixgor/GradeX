@@ -1,0 +1,264 @@
+{
+ "slug": "doenca-de-crohn-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Parede de intestino delgado com doença de Crohn: granulomas epitelioides não caseosos na espessura da parede, agregados linfoides da submucosa até a gordura subserosa (inflamação transmural) e submucosa espessada por fibrose. A mucosa tem vilosidades encurtadas e criptas irregulares, sem úlcera neste corte.",
+ "marcacoes": [
+  {
+   "id": "granuloma",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granuloma epitelioide não caseoso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4655,
+      0.258
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.452,
+    0.245,
+    0.478,
+    0.268
+   ],
+   "nota": "Um nódulo compacto de histiócitos epitelioides — núcleos alongados, claros, em \"sola de sapato\", citoplasma rosa-pálido de limites mal definidos — com um colar de linfócitos à direita. O centro não tem necrose: é o granuloma \"sarcoide\" da doença de Crohn, que não precisa estar presente mas, quando está, separa a doença da colite ulcerativa."
+  },
+  {
+   "id": "granuloma-2",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Outro granuloma, na espessura da parede",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.345,
+      0.3526
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.325,
+    0.335,
+    0.352,
+    0.362
+   ],
+   "nota": "Agregado de histiócitos epitelioides pálidos rodeado por linfócitos, entre feixes de colágeno — longe da mucosa, o que mostra que a inflamação é transmural."
+  },
+  {
+   "id": "rosario",
+   "estrutura": "agregados-linfoides-transmurais",
+   "categoria": "patologica",
+   "rotulo": "Agregados linfoides na gordura subserosa (\"rosário de Crohn\")",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.287,
+      0.228
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.16,
+    0.4,
+    0.3
+   ],
+   "nota": "Nódulos linfoides enfileirados ao longo da subserosa e da gordura do mesentério, bem longe da mucosa. A inflamação de toda a espessura da parede é o que explica as fístulas, as aderências e o \"creeping fat\" da doença."
+  },
+  {
+   "id": "rosario-2",
+   "estrutura": "agregados-linfoides-transmurais",
+   "categoria": "patologica",
+   "rotulo": "Folículo linfoide subseroso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.7255,
+      0.2245
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.7,
+    0.2,
+    0.76,
+    0.25
+   ]
+  },
+  {
+   "id": "linfoide-submucosa",
+   "estrutura": "agregados-linfoides-transmurais",
+   "categoria": "patologica",
+   "rotulo": "Submucosa tomada por tecido linfoide com folículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.235
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.47,
+    0.18,
+    0.61,
+    0.29
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-da-submucosa",
+   "categoria": "patologica",
+   "rotulo": "Submucosa espessada por colágeno denso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4707,
+      0.1739
+     ],
+     "angulo": 200
+    }
+   ],
+   "vista": [
+    0.43,
+    0.14,
+    0.54,
+    0.23
+   ],
+   "nota": "Feixes grossos de colágeno substituem a submucosa frouxa. A fibrose de longa duração espessa e endurece a parede — é ela que estreita a luz e produz a estenose (\"sinal do barbante\" no trânsito)."
+  },
+  {
+   "id": "vilosidades",
+   "estrutura": "distorcao-arquitetural-das-criptas",
+   "categoria": "patologica",
+   "rotulo": "Vilosidades curtas e irregulares, criptas desalinhadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6569,
+      0.2308
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.6,
+    0.19,
+    0.72,
+    0.3
+   ],
+   "nota": "Em lugar de vilosidades altas e finas, a mucosa do delgado mostra vilosidades encurtadas e alargadas e criptas de tamanhos diferentes — marca de lesão crônica com regeneração."
+  },
+  {
+   "id": "muscular-propria",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.3
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.33,
+    0.23,
+    0.4,
+    0.4
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Gordura subserosa / mesentérica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.22,
+      0.17
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.18,
+    0.15,
+    0.3,
+    0.24
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "presente",
+   "marcacoes": [
+    "granuloma",
+    "granuloma-2"
+   ],
+   "nota": "Pelo menos dois granulomas epitelioides não caseosos, na submucosa e na espessura da parede."
+  },
+  {
+   "achado": "agregados-linfoides-transmurais",
+   "status": "presente",
+   "marcacoes": [
+    "rosario",
+    "rosario-2",
+    "linfoide-submucosa"
+   ],
+   "nota": "Agregados e folículos linfoides da submucosa até a gordura subserosa — inflamação transmural."
+  },
+  {
+   "achado": "fibrose-da-submucosa",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Submucosa larga e fibrosa, com colágeno denso."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "ausente",
+   "nota": "A mucosa deste corte é contínua, dobrada sobre si mesma; não há úlcera nem fissura no plano examinado."
+  },
+  {
+   "achado": "distorcao-arquitetural-das-criptas",
+   "status": "presente",
+   "marcacoes": [
+    "vilosidades"
+   ],
+   "nota": "Vilosidades encurtadas e criptas irregulares na mucosa do delgado."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "nao-avaliavel",
+   "nota": "A lâmina própria é moderadamente celular, mas nos aumentos conferidos não se separam com segurança plasmócitos de linfócitos para afirmar plasmocitose basal."
+  },
+  {
+   "achado": "abscesso-de-cripta",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificaram neutrófilos em criptas nos campos conferidos; a mucosa não foi varrida inteira em grande aumento."
+  }
+ ]
+}

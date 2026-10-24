@@ -27,6 +27,7 @@ export function LaminaInterativa({
   selecionada: selecionadaExterna,
   onSelecionar,
   visualizadorRef: refExterna,
+  alternativas,
 }: {
   lamina: LaminaDoVisualizador
   caracteristicas: React.ReactNode
@@ -38,6 +39,8 @@ export function LaminaInterativa({
   selecionada?: string | null
   onSelecionar?: (id: string | null) => void
   visualizadorRef?: React.MutableRefObject<HTMLDivElement | null>
+  /** Outras lâminas para oferecer se o servidor desta não responder. */
+  alternativas?: Vizinha[]
 }) {
   const [selecaoInterna, setSelecaoInterna] = useState<string | null>(null)
   const selecionada = selecionadaExterna !== undefined ? selecionadaExterna : selecaoInterna
@@ -68,6 +71,7 @@ export function LaminaInterativa({
       estruturas={estruturas}
       estruturaSelecionada={selecionada}
       onSelecionarEstrutura={selecionar}
+      alternativas={alternativas}
     />
   )
 

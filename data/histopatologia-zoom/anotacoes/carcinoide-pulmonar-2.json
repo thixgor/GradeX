@@ -1,0 +1,145 @@
+{
+ "slug": "carcinoide-pulmonar-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Tumor carcinoide (típico) do pulmão: ninhos e trabéculas de células uniformes, de núcleo redondo e cromatina em sal e pimenta, separados por septos fibrovasculares delicados (padrão organoide), sem necrose. Na borda esquerda, parênquima pulmonar e pleura.",
+ "marcacoes": [
+  {
+   "id": "ninhos",
+   "estrutura": "ninhos-neuroendocrinos-organoides",
+   "categoria": "patologica",
+   "rotulo": "Ninhos de células uniformes separados por septos fibrovasculares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.21,
+      0.255
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.15,
+    0.2,
+    0.25,
+    0.3
+   ],
+   "nota": "O tumor se organiza em ninhos arredondados e trabéculas, cada um contornado por um septo delicado de tecido conjuntivo com capilares — o padrão \"organoide\", que lembra um órgão endócrino em miniatura. A rede capilar fina é o caminho por onde saem as aminas e peptídeos que estas células produzem (serotonina, entre outros)."
+  },
+  {
+   "id": "cromatina",
+   "estrutura": "ninhos-neuroendocrinos-organoides",
+   "categoria": "patologica",
+   "rotulo": "Núcleos redondos a ovais, cromatina em \"sal e pimenta\"",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.211,
+      0.245
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.205,
+    0.24,
+    0.217,
+    0.25
+   ],
+   "nota": "Os núcleos são todos parecidos, de tamanho médio, com a cromatina em grânulos finos e grossos espalhados (sal e pimenta) e nucléolo discreto. O citoplasma é moderado e rosa-claro. Sem mitoses evidentes nem necrose, é carcinoide típico — o atípico tem 2 a 10 mitoses por 2 mm² ou necrose focal."
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Ninhos chegando à pleura e ao tecido fibroso da periferia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.07,
+      0.13
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.1,
+    0.14,
+    0.2
+   ]
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Parênquima pulmonar na borda do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.03,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.15,
+    0.06,
+    0.23
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Vaso de parede muscular dentro do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.045,
+      0.23
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.03,
+    0.215,
+    0.075,
+    0.255
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-neuroendocrinos-organoides",
+   "status": "presente",
+   "marcacoes": [
+    "ninhos",
+    "cromatina"
+   ],
+   "nota": "Ninhos e trabéculas de células uniformes, de cromatina em sal e pimenta, com septos fibrovasculares delicados."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "O tumor se estende até a pleura e o tecido fibroso periférico."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há focos de necrose nos campos conferidos — compatível com carcinoide típico."
+  }
+ ]
+}

@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from leeds import CACHE, IMAGENS, RAIZ, _baixar, _fonte
+from leeds import CACHE, RAIZ, _baixar, _fonte, url_do_svs
 
 ACERVO = RAIZ / 'data' / 'histopatologia-zoom' / 'acervo-leeds.json'
 
@@ -25,7 +25,7 @@ def miniatura(caminho: str) -> Image.Image:
     arq = CACHE / 'miniaturas' / (re.sub(r'[^A-Za-z0-9]+', '_', caminho)[-120:] + '.jpg')
     if not arq.exists():
         arq.parent.mkdir(parents=True, exist_ok=True)
-        arq.write_bytes(_baixar(f'{IMAGENS}{urllib.parse.quote(caminho)}?-1'))
+        arq.write_bytes(_baixar(f'{url_do_svs(caminho)}?-1'))
     return Image.open(io.BytesIO(arq.read_bytes())).convert('RGB')
 
 

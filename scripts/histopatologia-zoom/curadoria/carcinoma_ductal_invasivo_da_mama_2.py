@@ -1,0 +1,45 @@
+import sys; sys.path.insert(0, str(__import__('pathlib').Path(__file__).resolve().parents[1]))
+from leeds import *
+
+# Rosai Collection, seminário 218, caso 10 — "Invasive ductal carcinoma".
+salvar('carcinoma-ductal-invasivo-da-mama-2', [
+    pat('invasao-gordura', 'invasao-estromal', seta(0.2580, 0.5000, 45),
+        rotulo='Glândulas tumorais dentro da gordura mamária',
+        nota='Túbulos neoplásicos soltos entre adipócitos, longe de qualquer ducto ou lóbulo normal. Glândula no meio da gordura não tem como ser estrutura normal deslocada: é invasão. Nenhuma delas tem a camada de células mioepiteliais nem a membrana basal que contornam os ductos normais — é essa ausência que a imuno-histoquímica (p63, calponina) confirma.',
+        vista=(0.200, 0.440, 0.360, 0.560)),
+    pat('invasao-estroma', 'invasao-estromal', seta(0.5030, 0.2960, 135),
+        rotulo='Glândulas angulosas infiltrando o estroma',
+        vista=(0.450, 0.250, 0.550, 0.330)),
+    pat('desmoplasia', 'reacao-desmoplasica', seta(0.4700, 0.2650, 315),
+        rotulo='Estroma desmoplásico: colágeno celular em torno das glândulas',
+        nota='Entre os túbulos, o estroma não é o tecido frouxo do lóbulo nem a gordura: é colágeno denso com fibroblastos ativados, estimulado pelo próprio tumor. É a desmoplasia que deixa o nódulo duro, pouco móvel, e que retrai a pele e o mamilo no exame.',
+        vista=(0.450, 0.250, 0.500, 0.290)),
+    pat('tubulos', 'glandulas-neoplasicas-complexas', seta(0.8700, 0.2950, 225),
+        rotulo='Túbulos e frondes revestidos por epitélio neoplásico',
+        nota='O tumor forma glândulas bem definidas em grande parte da lâmina — no sistema de Nottingham, mais de 75 % de formação tubular pontua 1, o grau mais favorável.',
+        vista=(0.800, 0.240, 0.960, 0.360)),
+    pat('atipia', 'atipia-citologica', seta(0.5000, 0.2740, 225),
+        rotulo='Células colunares com núcleos aumentados e estratificados',
+        nota='As células perderam a polaridade do epitélio ductal normal: núcleos aumentados, ovais, empilhados. A coloração é desbotada (lâmina antiga), o que reduz o contraste nuclear.',
+        vista=(0.494, 0.268, 0.508, 0.280)),
+    est('gordura', 'adipocito-unilocular', seta(0.2400, 0.5400, 315),
+        rotulo='Tecido adiposo da mama',
+        vista=(0.200, 0.500, 0.300, 0.560)),
+    est('arteria', 'arteria-muscular', seta(0.3350, 0.5450, 90),
+        rotulo='Artéria muscular no tecido adiposo',
+        vista=(0.310, 0.520, 0.360, 0.560)),
+], achados=[
+    achado('invasao-estromal', 'presente', ['invasao-gordura', 'invasao-estroma'],
+           'Túbulos neoplásicos infiltram o estroma e chegam à gordura, sem camada mioepitelial.'),
+    achado('reacao-desmoplasica', 'presente', ['desmoplasia'],
+           'Estroma colágeno denso e celular em volta das glândulas invasivas.'),
+    achado('carcinoma-in-situ-comedo', 'ausente', [],
+           'Os ninhos arredondados à direita são componentes invasivos de padrão papilar e cribriforme, sem necrose central do tipo comedo nos campos conferidos.'),
+    achado('atipia-citologica', 'presente', ['atipia'],
+           'Núcleos aumentados e estratificados; pleomorfismo moderado, com contraste reduzido pela coloração desbotada.'),
+    achado('glandulas-neoplasicas-complexas', 'presente', ['tubulos'],
+           'Formação tubular extensa — tumor bem diferenciado.'),
+    achado('invasao-angiolinfatica', 'nao-avaliavel', [],
+           'Não se identificaram êmbolos em vasos peritumorais nos campos examinados; a avaliação exige procurar fora da massa tumoral, em vários cortes.'),
+], conferencias=3, resumo='Carcinoma ductal invasivo (tipo não especial) bem diferenciado: túbulos e frondes neoplásicos infiltram um estroma desmoplásico e chegam ao tecido adiposo da mama. As glândulas não têm camada mioepitelial; a coloração é desbotada, mas a arquitetura invasiva é nítida.')
+print('ok')

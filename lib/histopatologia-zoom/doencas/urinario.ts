@@ -686,4 +686,77 @@ export const DOENCAS_URINARIO: DoencaZoom[] = [
       'No oncocitoma, células semelhantes, carregadas de mitocôndrias, formam uma massa rosada que substitui o parênquima.',
     ],
   },
+  {
+    id: 'carcinoma-urotelial',
+    nome: 'Carcinoma urotelial',
+    sinonimos: ['carcinoma de células transicionais', 'câncer de bexiga'],
+    nomesEmIngles: ['urothelial carcinoma', 'transitional cell carcinoma'],
+    sistema: 'urinario',
+    orgao: 'bexiga',
+    prioridade: 23,
+    resumo:
+      'Carcinoma do epitélio urotelial da bexiga, do ureter e da pelve renal; na forma papilífera, frondes com eixo fibrovascular revestidas por urotélio espessado e atípico.',
+    epidemiologia:
+      'Homens de 60 a 70 anos (3:1). O tabagismo responde por metade dos casos; outros fatores: aminas aromáticas (corantes, borracha), ciclofosfamida, arsênico e, no Egito e na África, esquistossomose (associada ao carcinoma escamoso).',
+    patogenese: [
+      'Carcinógenos inalados ou ingeridos são excretados na urina e ficam em contato prolongado com o urotélio de toda a via urinária ("efeito de campo") — por isso o tumor é multifocal e recidiva.',
+      'Duas vias: a papilífera de baixo grau (mutações de FGFR3 e HRAS), que recidiva mas raramente invade; e a do carcinoma in situ plano de alto grau (TP53, RB), que invade cedo.',
+      'A invasão da lâmina própria e depois da muscular própria (detrusor) define o estadiamento e muda o tratamento.',
+    ],
+    roteiro: [
+      'Panorâmico: lesão exofítica de frondes papilíferas presa à parede; veja onde a base encontra a lâmina própria.',
+      'Médio aumento: papilas com eixo fibrovascular fino, revestidas por urotélio muito mais espesso que as 5 a 7 camadas normais.',
+      'Grande aumento: perda da polaridade e das células em guarda-chuva, núcleos aumentados e irregulares, nucléolos e mitoses acima da camada basal — gradue (baixo × alto grau).',
+      'Na base, procure ninhos ou células isoladas na lâmina própria e se a muscular própria foi amostrada e está invadida.',
+    ],
+    achados: [
+      {
+        achado: 'papilas-com-eixo-fibrovascular',
+        tipo: 'especifico',
+        comoAparece: 'Frondes ramificadas com eixo conjuntivo-vascular, revestidas por urotélio espessado.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Núcleos aumentados, irregulares e desorganizados, com nucléolos e mitoses fora da camada basal; o grau de atipia define baixo ou alto grau.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'invasao-estromal',
+        tipo: 'geral',
+        comoAparece: 'Ninhos e cordões de células uroteliais na lâmina própria (pT1) ou na muscular própria (pT2) — decide entre ressecção endoscópica e cistectomia.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'necrose-coagulativa',
+        tipo: 'geral',
+        comoAparece: 'Necrose nas lesões de alto grau e nas invasivas.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Papiloma urotelial',
+        comoSeparar: 'Papilas delicadas revestidas por urotélio de espessura e citologia normais, com células em guarda-chuva preservadas.',
+      },
+      {
+        nome: 'Cistite polipoide ou papilar',
+        comoSeparar: 'Frondes largas e edematosas, com inflamação no eixo e urotélio reativo sem atipia verdadeira.',
+      },
+      {
+        nome: 'Adenocarcinoma de próstata invadindo a bexiga',
+        comoSeparar: 'Glândulas e células de núcleo redondo com nucléolo central; PSA e NKX3.1 positivos, GATA3 e p63 negativos.',
+      },
+    ],
+    correlacaoClinica: [
+      'Hematúria macroscópica indolor é o sinal clássico; pode haver sintomas irritativos (urgência, disúria), sobretudo no carcinoma in situ.',
+      'Diagnóstico por cistoscopia com ressecção transuretral (RTU) — o patologista precisa receber a muscular própria para estadiar; a citologia urinária detecta melhor o alto grau.',
+      'Tratamento: RTU com BCG intravesical nos não invasivos de alto risco; cistectomia radical com quimioterapia neoadjuvante quando invade o detrusor. Seguimento cistoscópico pela alta recidiva.',
+    ],
+    comparacaoComNormal: [
+      'O urotélio normal tem 5 a 7 camadas organizadas, com células em guarda-chuva grandes na superfície e lâmina própria frouxa logo abaixo.',
+      'No carcinoma papilífero, esse epitélio se dobra sobre eixos vasculares, fica muito mais espesso, perde as células em guarda-chuva e a organização das camadas.',
+    ],
+  },
 ]

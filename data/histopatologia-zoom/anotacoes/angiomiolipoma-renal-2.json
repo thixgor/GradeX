@@ -1,0 +1,153 @@
+{
+ "slug": "angiomiolipoma-renal-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Angiomiolipoma renal clássico (trifásico): feixes de músculo liso fusocelular, ilhas de gordura madura e vasos de parede muito espessa e hialina espalhados pela massa, um deles trombosado. A cápsula fibrosa contorna o tumor à esquerda.",
+ "marcacoes": [
+  {
+   "id": "vasos",
+   "estrutura": "vasos-de-parede-espessa-dismorficos",
+   "categoria": "patologica",
+   "rotulo": "Vaso de parede muito espessa, hialina, com luz excêntrica e pequena",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.305,
+      0.255
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.29,
+    0.24,
+    0.34,
+    0.29
+   ],
+   "nota": "A parede é um anel grosso de músculo liso e colágeno hialino, desproporcional à luz estreita, sem a lâmina elástica bem organizada de uma artéria normal. As células musculares parecem \"descolar\" da parede do vaso para o tecido vizinho — é dali que nasce o componente muscular do tumor (células PEComa, perivasculares epitelioides)."
+  },
+  {
+   "id": "vasos-2",
+   "estrutura": "vasos-de-parede-espessa-dismorficos",
+   "categoria": "patologica",
+   "rotulo": "Grupo de vasos dismórficos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.324,
+      0.263
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.31,
+    0.24,
+    0.34,
+    0.275
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "tecido-adiposo-no-tumor",
+   "categoria": "patologica",
+   "rotulo": "Ilha de adipócitos maduros dentro do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.45
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.36,
+    0.42,
+    0.4,
+    0.47
+   ],
+   "nota": "Lóbulos de células adiposas maduras, iguais às da gordura comum, estão no meio do tumor, sem nenhuma fronteira. Essa gordura é parte da neoplasia (as mesmas células PEComa se diferenciam em adipócitos) e é ela que dá o diagnóstico na tomografia: densidade negativa de gordura dentro de uma massa renal."
+  },
+  {
+   "id": "musculo",
+   "estrutura": "vasos-de-parede-espessa-dismorficos",
+   "categoria": "patologica",
+   "rotulo": "Componente de músculo liso fusocelular, em feixes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.4
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.34,
+    0.38,
+    0.39,
+    0.43
+   ],
+   "nota": "Células fusiformes de citoplasma rosa, em feixes que se cruzam, como num leiomioma — o terceiro componente do tumor."
+  },
+  {
+   "id": "trombo",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Vaso calibroso com trombo e hemorragia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.512,
+      0.486
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.48,
+    0.46,
+    0.54,
+    0.52
+   ],
+   "nota": "Os vasos dismórficos não têm parede elástica bem formada, formam aneurismas e se rompem. Este vaso está ocupado por trombo misto; em tumores maiores que 4 cm a hemorragia pode ser maciça (síndrome de Wunderlich) — razão para tratar os grandes."
+  }
+ ],
+ "achados": [
+  {
+   "achado": "vasos-de-parede-espessa-dismorficos",
+   "status": "presente",
+   "marcacoes": [
+    "vasos",
+    "vasos-2",
+    "musculo"
+   ],
+   "nota": "Vasos de parede espessa e hialina espalhados por toda a massa, com músculo liso que se desprende deles."
+  },
+  {
+   "achado": "tecido-adiposo-no-tumor",
+   "status": "presente",
+   "marcacoes": [
+    "gordura"
+   ],
+   "nota": "Várias ilhas de gordura madura espalhadas pelo tumor."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "trombo"
+   ],
+   "nota": "Vaso calibroso trombosado e focos de hemorragia, inclusive na borda direita."
+  }
+ ]
+}

@@ -1,0 +1,160 @@
+{
+ "slug": "sarcoidose-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Linfonodo com sarcoidose: granulomas epitelioides compactos, redondos, de tamanho uniforme e sem necrose, com células gigantes multinucleadas, substituindo a maior parte do linfonodo e separados por faixas de linfócitos. A ausência de necrose caseosa e de organismos é o que permite o diagnóstico, sempre de exclusão.",
+ "marcacoes": [
+  {
+   "id": "granulomas",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granulomas pálidos, redondos e de tamanho parecido em todo o linfonodo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.4
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.2,
+    0.1,
+    0.95,
+    0.8
+   ],
+   "nota": "A pequeno aumento, o linfonodo parece \"salpicado\": dezenas de nódulos pálidos, redondos, de tamanho uniforme, separados por faixas de linfócitos escuros. Cada nódulo é um granuloma epitelioide compacto. A uniformidade e a ausência de necrose são o desenho típico da sarcoidose."
+  },
+  {
+   "id": "granuloma",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granuloma compacto de histiócitos epitelioides, sem necrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.47
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.5,
+    0.5
+   ],
+   "nota": "Macrófagos ativados de citoplasma rosa-pálido abundante e núcleo oval, encostados uns nos outros como células epiteliais, formando um nódulo bem delimitado. O centro é viável: não há necrose caseosa — o que separa a sarcoidose da tuberculose."
+  },
+  {
+   "id": "gigante",
+   "estrutura": "celula-gigante-de-langhans",
+   "categoria": "patologica",
+   "rotulo": "Célula gigante multinucleada dentro do granuloma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.477,
+      0.41
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.47,
+    0.405,
+    0.49,
+    0.425
+   ],
+   "nota": "Célula enorme de citoplasma eosinofílico com vários núcleos — fusão de histiócitos epitelioides estimulados por interferon-γ. Às vezes contém corpos asteroides ou corpos de Schaumann (inclusões calcificadas lamelares), que não são específicos."
+  },
+  {
+   "id": "linfocitos",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos pequenos entre os granulomas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.485,
+      0.42
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.48,
+    0.41,
+    0.49,
+    0.425
+   ]
+  },
+  {
+   "id": "linfonodo",
+   "estrutura": "linfocito",
+   "rotulo": "Tecido linfoide residual",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.445,
+      0.435
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.42,
+    0.42,
+    0.46,
+    0.45
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "presente",
+   "marcacoes": [
+    "granulomas",
+    "granuloma"
+   ],
+   "nota": "Granulomas epitelioides compactos, não necrosantes, de tamanho uniforme, substituindo grande parte do linfonodo."
+  },
+  {
+   "achado": "celula-gigante-de-langhans",
+   "status": "presente",
+   "marcacoes": [
+    "gigante"
+   ],
+   "nota": "Células gigantes multinucleadas em vários granulomas."
+  },
+  {
+   "achado": "necrose-caseosa",
+   "status": "ausente",
+   "nota": "Nenhum granuloma conferido tem necrose central."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "linfocitos"
+   ],
+   "nota": "Linfócitos em faixas entre os granulomas e em coroa fina ao redor deles."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "ausente",
+   "nota": "Os granulomas estão ativos e celulares; não há fibrose hialina substituindo-os neste corte."
+  }
+ ]
+}

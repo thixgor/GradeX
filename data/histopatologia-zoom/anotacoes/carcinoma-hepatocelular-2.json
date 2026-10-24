@@ -1,0 +1,163 @@
+{
+ "slug": "carcinoma-hepatocelular-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma hepatocelular em cirrose: nódulo de hepatócitos neoplásicos em trabéculas espessas, com atipia e sem espaços-porta, envolto por pseudocápsula fibrosa e cercado por fígado cirrótico com nódulos de regeneração.",
+ "marcacoes": [
+  {
+   "id": "trabeculas",
+   "estrutura": "trabeculas-hepatocelulares-espessas",
+   "categoria": "patologica",
+   "rotulo": "Trabéculas grossas de hepatócitos neoplásicos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2615,
+      0.1515
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.25,
+    0.14,
+    0.28,
+    0.165
+   ],
+   "nota": "As células lembram hepatócitos (poligonais, citoplasma rosa, núcleo central), mas se organizam em placas de várias células de espessura, separadas por sinusoides finos — no fígado normal a placa tem uma ou duas células. Não há espaços-porta nem veias centrais no nódulo: o tecido perdeu a arquitetura lobular."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes, nucléolos evidentes, relação N/C alta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2731,
+      0.1631
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.262,
+    0.152,
+    0.28,
+    0.165
+   ],
+   "nota": "Comparadas aos hepatócitos do fígado cirrótico vizinho, as células tumorais são mais apertadas, com núcleos maiores e mais escuros e algumas células gigantes e pleomórficas. Os vacúolos claros espalhados são gordura e pseudoácinos."
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Faixa fibrosa que encapsula o nódulo tumoral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3431,
+      0.38
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.28,
+    0.3,
+    0.46,
+    0.48
+   ],
+   "nota": "O tumor cresce empurrando o fígado e é envolvido por uma faixa de colágeno com vasos — a pseudocápsula, típica do carcinoma hepatocelular \"nodular\" e visível também na tomografia como anel tardio."
+  },
+  {
+   "id": "cirrose",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Fígado de fundo cirrótico: nódulos e septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.7
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.45,
+    0.55,
+    0.8,
+    0.85
+   ],
+   "nota": "Fora do tumor, todo o fígado é cirrótico — nódulos de regeneração cercados por septos. A cirrose (por vírus B ou C, álcool, MASLD) é o terreno de cerca de 80 % dos carcinomas hepatocelulares."
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos não neoplásicos, do lado cirrótico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.429,
+      0.354
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.4,
+    0.32,
+    0.46,
+    0.38
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trabeculas-hepatocelulares-espessas",
+   "status": "presente",
+   "marcacoes": [
+    "trabeculas"
+   ],
+   "nota": "Padrão trabecular espesso em todo o nódulo, sem espaços-porta."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados e hipercromáticos, nucléolos evidentes e células pleomórficas ocasionais."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Faixa fibrosa larga separa o nódulo tumoral do fígado cirrótico."
+  },
+  {
+   "achado": "nodulos-regenerativos",
+   "status": "presente",
+   "marcacoes": [
+    "cirrose"
+   ],
+   "nota": "O parênquima não tumoral é todo cirrótico, com nódulos e septos."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificou tumor dentro de ramos portais nos setores conferidos; a invasão vascular só se afasta com amostragem da periferia do nódulo inteiro."
+  }
+ ]
+}

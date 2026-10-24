@@ -12,7 +12,7 @@ import { PortaoDaHistologia } from '@/components/histologia/portao'
 import { BuscaDaHistopatologia } from '@/components/histopatologia/busca'
 import { ROTA_DA_HISTOPATOLOGIA, type DadosDaHistopatologia } from '@/lib/histopatologia/inicio-tipos'
 import { rotaDoAtlas, rotaDosCreditos, rotaDosMecanismos } from '@/lib/histopatologia/rotas'
-import { RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
+import { SERVIDORES_DE_LAMINAS } from '@/lib/histopatologia-zoom/fonte'
 import { BASE_PATOZOOM } from '@/lib/histopatologia-zoom/rotas'
 
 /**
@@ -173,7 +173,9 @@ function ConteudoDaHistopatologia({ dados }: { dados: DadosDaHistopatologia }) {
       </div>
 
       <footer className="mx-auto mt-14 max-w-[1600px] space-y-2 border-t border-white/10 px-4 pt-6 text-xs leading-relaxed text-white/50 md:px-10">
-        <p>{RODAPE_LEEDS}</p>
+        {Object.values(SERVIDORES_DE_LAMINAS).map((s) => (
+          <p key={s.acervo}>{s.rodape}</p>
+        ))}
         <Link href={rotaDosCreditos()} className="font-bold underline transition-colors hover:text-white">
           Créditos e fontes das lâminas
         </Link>

@@ -7,7 +7,7 @@ import { IconeDoSistema } from '@/components/histologia-zoom/icone-do-sistema'
 import { SinalDePatologia } from '@/components/histologia-zoom/sinal-de-patologia'
 import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { PortaoDaHistologia } from '@/components/histologia/portao'
-import { REFERENCIA_ABNT_LEEDS, RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
+import { MiniaturaIndisponivel } from '@/components/histopatologia-zoom/miniatura-indisponivel'
 import {
   rotaDosDadosDaPatologiaComZoom,
   type DadosDoCatalogoDaPatologiaComZoom,
@@ -98,8 +98,12 @@ function Conteudo({ dados }: { dados: DadosDoCatalogoDaPatologiaComZoom }) {
                     className="group flex h-full gap-3 overflow-hidden rounded-xl border border-border bg-card p-3 transition-colors hover:border-rose-500/40"
                   >
                     <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={d.miniatura} alt="" loading="lazy" className="h-full w-full object-cover" />
+                      {d.miniatura ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={d.miniatura} alt="" loading="lazy" className="h-full w-full object-cover" />
+                      ) : (
+                        <MiniaturaIndisponivel compacta />
+                      )}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1 font-heading text-[15px] font-semibold leading-snug group-hover:text-rose-700 dark:group-hover:text-rose-300">
@@ -119,8 +123,12 @@ function Conteudo({ dados }: { dados: DadosDoCatalogoDaPatologiaComZoom }) {
         ))}
 
         <footer className="mt-10 space-y-1.5 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
-          <p>{RODAPE_LEEDS}</p>
-          <p>{REFERENCIA_ABNT_LEEDS}</p>
+          {dados.creditos.map((c) => (
+            <div key={c.rodape} className="space-y-1.5">
+              <p>{c.rodape}</p>
+              <p>{c.referencia}</p>
+            </div>
+          ))}
           <p>O texto é autoral do Domine Aqui e está em revisão por patologista.</p>
         </footer>
       </div>

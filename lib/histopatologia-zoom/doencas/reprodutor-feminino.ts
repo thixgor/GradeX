@@ -90,4 +90,78 @@ export const DOENCAS_REPRODUTOR_FEMININO: DoencaZoom[] = [
       'Na NIC 3, essa maturação desaparece: o epitélio inteiro parece camada basal, escuro e cheio de núcleos grandes.',
     ],
   },
+  {
+    id: 'leiomioma-uterino',
+    nome: 'Leiomioma uterino',
+    sinonimos: ['mioma uterino', 'fibroma uterino', 'fibroide'],
+    nomesEmIngles: ['uterine leiomyoma', 'fibroid'],
+    sistema: 'reprodutor-feminino',
+    orgao: 'utero',
+    prioridade: 21,
+    resumo:
+      'Tumor benigno de músculo liso do miométrio, bem delimitado, formado por fascículos entrelaçados de células fusiformes sem atipia — o tumor mais comum da mulher.',
+    epidemiologia:
+      'Até 70 % das mulheres aos 50 anos têm pelo menos um mioma; mais frequente e mais precoce em mulheres negras. Cresce na menacme e regride na menopausa. É a principal indicação de histerectomia.',
+    patogenese: [
+      'Uma única célula muscular lisa do miométrio sofre mutação (MED12 em cerca de 70 %, ou rearranjo de HMGA2) e passa a proliferar como clone.',
+      'O clone depende de estrógeno e progesterona, que estimulam fatores de crescimento locais — por isso o mioma cresce na gestação e encolhe após a menopausa.',
+      'As células produzem matriz extracelular abundante (colágeno), o que deixa o nódulo firme e branco, de superfície de corte em redemoinho.',
+      'Quando o crescimento ultrapassa o suprimento de sangue, o centro sofre degeneração hialina, cística, calcificação ou, na gestação, infarto hemorrágico ("degeneração vermelha").',
+    ],
+    roteiro: [
+      'Panorâmico: nódulo bem delimitado, mais compacto e rosado que o miométrio ao redor, com áreas pálidas e homogêneas de hialinização.',
+      'Médio aumento: fascículos de células fusiformes que se cruzam em ângulos variados, cortados longitudinal e transversalmente.',
+      'Grande aumento: núcleos alongados de pontas rombas ("em charuto"), sem atipia; conte mitoses.',
+      'Procure ativamente os três critérios de malignidade — atipia difusa, mitoses numerosas e necrose de células tumorais — e confirme que estão ausentes.',
+    ],
+    achados: [
+      {
+        achado: 'fasciculos-de-musculo-liso',
+        tipo: 'especifico',
+        comoAparece: 'Fascículos entrelaçados de células musculares lisas fusiformes, de citoplasma rosa e núcleo em charuto, formando um nódulo bem delimitado.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'degeneracao-hialina',
+        tipo: 'geral',
+        comoAparece: 'Áreas róseas, vítreas e pouco celulares no interior do nódulo, com transição gradual para os fascículos viáveis.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'atipia-citologica',
+        tipo: 'geral',
+        comoAparece: 'Deve faltar ou ser apenas focal; atipia difusa moderada a acentuada aponta para leiomiossarcoma.',
+        peso: 'ocasional',
+      },
+      {
+        achado: 'necrose-coagulativa',
+        tipo: 'geral',
+        comoAparece: 'Ausente no leiomioma; necrose de células tumorais, de borda abrupta, é critério de leiomiossarcoma.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Leiomiossarcoma',
+        comoSeparar: 'Pelo menos dois de três: atipia moderada a acentuada difusa, mais de 10 mitoses por 10 campos de grande aumento e necrose de células tumorais. Costuma ser único, grande, mal delimitado e de pós-menopausa.',
+      },
+      {
+        nome: 'Adenomiose',
+        comoSeparar: 'Mal delimitada, sem pseudocápsula; há glândulas e estroma endometrial no meio do miométrio hipertrofiado.',
+      },
+      {
+        nome: 'Tumor do estroma endometrial',
+        comoSeparar: 'Células pequenas, ovais, semelhantes ao estroma endometrial proliferativo, com arteríolas espiraladas e crescimento em língua no miométrio; CD10 positivo.',
+      },
+    ],
+    correlacaoClinica: [
+      'Sangramento uterino aumentado (sobretudo nos submucosos), anemia ferropriva, dor e peso pélvico, aumento do volume abdominal, compressão da bexiga e infertilidade.',
+      'Diagnóstico por ultrassonografia (nódulos hipoecoicos bem delimitados) ou ressonância.',
+      'Tratamento: observação nas assintomáticas; análogos de GnRH, progestágenos e ácido tranexâmico; miomectomia, embolização das artérias uterinas ou histerectomia.',
+    ],
+    comparacaoComNormal: [
+      'O miométrio normal também é feito de feixes de músculo liso, mas organizados em camadas e entremeados por vasos, sem formar nódulo.',
+      'No leiomioma, os mesmos feixes ficam mais densos, em redemoinho, e se separam do miométrio por uma borda nítida (pseudocápsula).',
+    ],
+  },
 ]

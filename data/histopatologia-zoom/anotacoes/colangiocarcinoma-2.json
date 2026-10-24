@@ -1,0 +1,178 @@
+{
+ "slug": "colangiocarcinoma-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Colangiocarcinoma intra-hepático periférico (tipo de pequenos ductos): túbulos, cordões e ninhos de epitélio biliar atípico em estroma desmoplásico denso, crescendo com borda infiltrativa contra o fígado não tumoral (à esquerda, com trabéculas e espaços-porta normais).",
+ "marcacoes": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Túbulos e ninhos de epitélio biliar atípico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.625,
+      0.205
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.58,
+    0.15,
+    0.66,
+    0.23
+   ],
+   "nota": "O tumor é feito de túbulos pequenos, cordões e ninhos de células cúbicas, alguns formando luz — um epitélio que imita o de pequenos ductos biliares. É o colangiocarcinoma periférico de pequenos ductos, que nasce dos dúctulos e canais de Hering, dentro do parênquima."
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma fibroso denso e abundante entre as glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.165
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.58,
+    0.15,
+    0.63,
+    0.19
+   ],
+   "nota": "Entre os grupos tumorais há colágeno denso, pálido, com poucos fibroblastos — a desmoplasia é tão marcante no colangiocarcinoma que o tumor é duro e branco na peça, e uma biópsia pequena pode trazer mais fibrose que tumor."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos redondos a ovais, aumentados, apertados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.175
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.63,
+    0.165,
+    0.65,
+    0.185
+   ]
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Frente do tumor contra o fígado não tumoral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.32
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.15,
+    0.62,
+    0.42
+   ],
+   "nota": "À esquerda da diagonal o parênquima é fígado com trabéculas e espaços-porta normais; à direita, tumor com estroma fibroso. A borda é infiltrativa, sem cápsula — diferente do carcinoma hepatocelular encapsulado."
+  },
+  {
+   "id": "espaco-porta",
+   "estrutura": "espaco-porta",
+   "rotulo": "Espaço-porta do fígado não tumoral",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.49,
+      0.325
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.475,
+    0.31,
+    0.51,
+    0.34
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Trabéculas de hepatócitos normais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.36
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.45,
+    0.34,
+    0.5,
+    0.38
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas"
+   ],
+   "nota": "Túbulos, cordões e ninhos de epitélio biliar atípico na metade direita do corte."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma fibroso denso entre os grupos tumorais."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados e apertados, de atipia moderada."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Borda infiltrativa contra o fígado não tumoral, sem cápsula."
+  }
+ ]
+}

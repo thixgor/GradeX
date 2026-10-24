@@ -1,0 +1,190 @@
+{
+ "slug": "carcinoma-espinocelular-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma espinocelular bem diferenciado da pele: massas e ninhos de epitélio escamoso atípico invadem a derme, com numerosas pérolas córneas, células disqueratóticas e núcleos pleomórficos com nucléolo evidente. A superfície é recoberta por queratina.",
+ "marcacoes": [
+  {
+   "id": "ninhos",
+   "estrutura": "ninhos-escamosos-infiltrativos",
+   "categoria": "patologica",
+   "rotulo": "Massas e línguas de epitélio escamoso atípico descendo para a derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.404,
+      0.265
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.5,
+    0.3
+   ],
+   "nota": "Em vez de uma epiderme com base reta e membrana basal contínua, o epitélio desce em línguas largas e irregulares, de bordas desfiadas, que se ramificam e se separam em ninhos dentro da derme. A célula é escamosa (citoplasma rosa, pontes intercelulares, tendência a queratinizar): é o carcinoma do queratinócito."
+  },
+  {
+   "id": "perola",
+   "estrutura": "perola-cornea",
+   "categoria": "patologica",
+   "rotulo": "Pérola córnea: queratina em lamelas concêntricas no centro do ninho",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.185
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.42,
+    0.16,
+    0.47,
+    0.21
+   ],
+   "nota": "As células do centro do ninho amadurecem até virar queratina, que se acumula em camadas concêntricas cor-de-rosa — como uma cebola cortada. Pérolas abundantes indicam carcinoma bem diferenciado: o tumor ainda \"lembra\" como fazer epiderme, só que no lugar errado."
+  },
+  {
+   "id": "perola-2",
+   "estrutura": "perola-cornea",
+   "categoria": "patologica",
+   "rotulo": "Outra pérola córnea",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.34,
+      0.175
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.32,
+    0.155,
+    0.36,
+    0.195
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos grandes, pleomórficos, com nucléolo; células disqueratóticas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.234
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.405,
+    0.225,
+    0.425,
+    0.24
+   ],
+   "nota": "Os núcleos variam muito de tamanho e forma, são hipercromáticos e têm nucléolos evidentes. Há células queratinizando sozinhas, de citoplasma rosa vivo (disqueratose) — maturação fora de hora, típica da neoplasia escamosa."
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Frente de invasão: ninhos soltos na derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.265
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.32,
+    0.23,
+    0.42,
+    0.29
+   ]
+  },
+  {
+   "id": "epiderme",
+   "estrutura": "epitelio-estratificado-pavimentoso",
+   "rotulo": "Epiderme da borda da lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.03,
+      0.2
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.12,
+    0.08,
+    0.3
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-escamosos-infiltrativos",
+   "status": "presente",
+   "marcacoes": [
+    "ninhos"
+   ],
+   "nota": "Massas e ninhos irregulares de epitélio escamoso atípico ocupam a derme em toda a lesão."
+  },
+  {
+   "achado": "perola-cornea",
+   "status": "presente",
+   "marcacoes": [
+    "perola",
+    "perola-2"
+   ],
+   "nota": "Pérolas córneas numerosas — carcinoma bem diferenciado e queratinizante."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Pleomorfismo nuclear, nucléolos evidentes e disqueratose."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Ninhos destacados do epitélio de superfície, soltos na derme."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "nao-avaliavel",
+   "nota": "O estroma entre os ninhos é escasso e, nos campos conferidos, pouco celular; não se forma um infiltrado avaliável."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "ausente",
+   "nota": "A superfície é coberta por queratina compacta, sem úlcera com fibrina e neutrófilos."
+  }
+ ]
+}

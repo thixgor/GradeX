@@ -1,0 +1,138 @@
+{
+ "slug": "osteoporose-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Osteoporose: osso esponjoso com trabéculas finas, curtas e desconectadas, muito espaçadas, e cortical delgada; o osso que resta é lamelar e normal, com osteócitos, e o espaço perdido é ocupado por medula rica em adipócitos.",
+ "marcacoes": [
+  {
+   "id": "trabeculas",
+   "estrutura": "trabeculas-osseas-afinadas",
+   "categoria": "patologica",
+   "rotulo": "Trabécula fina, curta e solta no meio da medula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.408,
+      0.29
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.38,
+    0.27,
+    0.44,
+    0.32
+   ],
+   "nota": "O osso esponjoso normal é uma rede de trabéculas grossas, ligadas entre si como um andaime. Aqui sobram bastonetes finos e isolados, que não se conectam a nada, separados por grandes áreas de medula. O osso que existe é normal (lamelar, com osteócitos) — falta quantidade, não qualidade: é a perda de massa óssea que define a osteoporose."
+  },
+  {
+   "id": "trabeculas-2",
+   "estrutura": "trabeculas-osseas-afinadas",
+   "categoria": "patologica",
+   "rotulo": "Trabéculas espaçadas, desconectadas, em toda a medula",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.25
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.25,
+    0.18,
+    0.55,
+    0.4
+   ],
+   "nota": "A distância entre as trabéculas é muito maior que o normal. Sem as conexões horizontais, cada trabécula vertical sustenta carga sozinha e se curva ou quebra — daí as fraturas por fragilidade (vértebras, colo do fêmur, punho) com traumas mínimos."
+  },
+  {
+   "id": "cortical",
+   "estrutura": "trabeculas-osseas-afinadas",
+   "categoria": "patologica",
+   "rotulo": "Cortical fina na borda do osso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      0.195
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.35,
+    0.18,
+    0.5,
+    0.22
+   ]
+  },
+  {
+   "id": "medula",
+   "estrutura": "medula-ossea-hematopoetica",
+   "rotulo": "Medula com adipócitos ocupando o espaço deixado pelo osso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.395,
+      0.305
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.385,
+    0.295,
+    0.41,
+    0.315
+   ]
+  },
+  {
+   "id": "osteocitos",
+   "estrutura": "osteocito",
+   "rotulo": "Osteócitos nas lacunas — o osso remanescente é normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.404,
+      0.285
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.398,
+    0.278,
+    0.412,
+    0.292
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trabeculas-osseas-afinadas",
+   "status": "presente",
+   "marcacoes": [
+    "trabeculas",
+    "trabeculas-2",
+    "cortical"
+   ],
+   "nota": "Trabéculas finas, curtas e desconectadas, muito espaçadas em toda a amostra; cortical delgada."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "ausente",
+   "nota": "Não há calo de fratura (tecido fibroso, cartilagem ou osso imaturo) neste corte."
+  }
+ ]
+}

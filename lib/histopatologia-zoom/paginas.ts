@@ -11,10 +11,14 @@ import { absoluteUrl } from '@/lib/seo'
 
 import { achadoPorId, nomesDosAchadosDe } from './achados'
 import { doencaPorId } from './doencas'
+import { SERVIDORES_DE_LAMINAS, creditosDosServidores } from './fonte'
 import {
   LAMINAS_PATOLOGICAS,
   TOTAIS_PATOZOOM,
   achadosDaLamina,
+  alternativasDaLamina,
+  capaDaDoenca,
+  laminaDisponivel,
   anotacaoPatologica,
   doencasPublicadas,
   laminaNormalPara,
@@ -62,12 +66,13 @@ export function dadosDoCatalogoDaPatologiaComZoom(): DadosDoCatalogoDaPatologiaC
             id: d.id,
             nome: d.nome,
             resumo: d.resumo,
-            miniatura: resumirPatologica(laminas[0]).miniatura,
+            miniatura: capaDaDoenca(d.id),
             laminas: laminas.length,
             achados: d.achados.length,
           }
         }),
     })).filter((s) => s.doencas.length),
+    creditos: creditosDosServidores(LAMINAS_PATOLOGICAS.map((l) => l.servidor)),
   }
 }
 
@@ -76,7 +81,7 @@ export function dadosDaDoencaComZoom(id: string): DadosDaDoencaComZoom | null {
   if (!doenca) return null
   const laminas = laminasDaDoenca(doenca.id)
   if (!laminas.length) return null
-  const normal = laminaNormalPara(laminas[0], doenca)
+  const normal = laminaNormalPara(laminas[0])
   const orgao = orgaoPorId(doenca.orgao)
   const capitulo = capituloDaDoencaZoom(doenca)
 
@@ -93,8 +98,12 @@ export function dadosDaDoencaComZoom(id: string): DadosDaDoencaComZoom | null {
         miniatura: resumo.miniatura,
         caso: textoDoCaso(l.caso.sexo, l.caso.idade),
         achadosPresentes: resumo.achadosPresentes,
+        acervo: SERVIDORES_DE_LAMINAS[l.servidor].acervo,
+        suplementar: l.servidor !== 'leeds',
+        disponivel: resumo.disponivel,
       }
     }),
+    creditos: creditosDosServidores(laminas.map((l) => l.servidor)),
     normal: normal
       ? { sistema: normal.sistema, slug: normal.slug, titulo: normal.titulo, subtitulo: normal.subtitulo, coloracao: normal.coloracao }
       : null,
@@ -103,7 +112,7 @@ export function dadosDaDoencaComZoom(id: string): DadosDaDoencaComZoom | null {
       titulo: doenca.nome,
       categoria: `Histopatologia · ${orgao?.nome ?? 'Doença'}`,
       area: 'histopatologia',
-      imagem: resumirPatologica(laminas[0]).miniatura,
+      imagem: capaDaDoenca(doenca.id),
       zoom: true,
     },
   }
@@ -141,7 +150,7 @@ export function dadosDaLaminaPatologica(slug: string): DadosDaLaminaPatologica |
     ]
   })
 
-  const normal = laminaNormalPara(lamina, doenca)
+  const normal = laminaNormalPara(lamina)
   const posicao = LAMINAS_PATOLOGICAS.findIndex((l) => l.slug === lamina.slug)
   const vizinha = (l: LaminaPatologica | undefined) =>
     l ? { href: rotaDaLaminaPatologica(l.doenca, l.slug), rotulo: rotulo(l) } : null
@@ -158,13 +167,19 @@ export function dadosDaLaminaPatologica(slug: string): DadosDaLaminaPatologica |
     normal: normal ? { sistema: normal.sistema, slug: normal.slug, titulo: normal.titulo, coloracao: normal.coloracao } : null,
     anterior: vizinha(LAMINAS_PATOLOGICAS[posicao - 1]),
     proxima: vizinha(LAMINAS_PATOLOGICAS[posicao + 1]),
+    alternativas: alternativasDaLamina(lamina).map((l) => ({
+      href: rotaDaLaminaPatologica(l.doenca, l.slug),
+      rotulo: `${rotulo(l)} · ${SERVIDORES_DE_LAMINAS[l.servidor].acervo}`,
+    })),
     urlDaLamina: absoluteUrl(rotaDaLaminaPatologica(doenca.id, lamina.slug)),
+    acervo: SERVIDORES_DE_LAMINAS[lamina.servidor].acervo,
+    creditos: creditosDosServidores([lamina.servidor]),
     visto: {
       href: rotaDaLaminaPatologica(lamina.doenca, lamina.slug),
       titulo: rotulo(lamina),
       categoria: 'Histopatologia · Lâmina com zoom',
       area: 'histopatologia',
-      imagem: lamina.piramide.miniatura.url,
+      imagem: laminaDisponivel(lamina) ? lamina.piramide.miniatura.url : capaDaDoenca(lamina.doenca),
       zoom: true,
     },
   }
@@ -174,9 +189,9 @@ export function dadosDaComparacaoPatologica(slug: string, normalPedida?: string 
   const lamina = laminaPatologicaPorSlug(slug)
   if (!lamina) return null
   const doenca = doencaPorId(lamina.doenca)!
-  const opcoes = laminasNormaisDoOrgao(doenca.orgao)
+  const opcoes = laminasNormaisDoOrgao(lamina.orgao)
   const pedida = normalPedida ? laminaPorSlug(normalPedida) : undefined
-  const normal = pedida && pedida.orgao === doenca.orgao ? pedida : laminaNormalPara(lamina, doenca)
+  const normal = pedida && pedida.orgao === lamina.orgao ? pedida : laminaNormalPara(lamina)
   if (!normal) return null
 
   return {
@@ -192,6 +207,7 @@ export function dadosDaComparacaoPatologica(slug: string, normalPedida?: string 
           ? FONTES_DO_ACERVO.gtex.creditoLongo
           : `${MARCA_DO_ACERVO}.`,
     },
+    creditoDaLamina: SERVIDORES_DE_LAMINAS[lamina.servidor].rodape,
     doente: {
       titulo: lamina.titulo,
       subtitulo: lamina.subtitulo,
@@ -222,7 +238,6 @@ export function doencaComZoomExiste(id: string): boolean {
 export function comparacaoExiste(doenca: string, slug: string): boolean {
   const lamina = laminaPatologicaPorSlug(slug)
   if (!lamina || lamina.doenca !== doenca) return false
-  const dadosDaDoenca = doencaPorId(lamina.doenca)!
   // `?normal=` só é lido no navegador; aqui basta haver algum normal possível.
-  return Boolean(laminaNormalPara(lamina, dadosDaDoenca)) || laminasNormaisDoOrgao(dadosDaDoenca.orgao).length > 0
+  return Boolean(laminaNormalPara(lamina)) || laminasNormaisDoOrgao(lamina.orgao).length > 0
 }

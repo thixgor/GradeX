@@ -1,0 +1,212 @@
+{
+ "slug": "carcinoma-ductal-invasivo-da-mama-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma ductal invasivo (tipo não especial) bem diferenciado: túbulos e frondes neoplásicos infiltram um estroma desmoplásico e chegam ao tecido adiposo da mama. As glândulas não têm camada mioepitelial; a coloração é desbotada, mas a arquitetura invasiva é nítida.",
+ "marcacoes": [
+  {
+   "id": "invasao-gordura",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Glândulas tumorais dentro da gordura mamária",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.258,
+      0.5
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.44,
+    0.36,
+    0.56
+   ],
+   "nota": "Túbulos neoplásicos soltos entre adipócitos, longe de qualquer ducto ou lóbulo normal. Glândula no meio da gordura não tem como ser estrutura normal deslocada: é invasão. Nenhuma delas tem a camada de células mioepiteliais nem a membrana basal que contornam os ductos normais — é essa ausência que a imuno-histoquímica (p63, calponina) confirma."
+  },
+  {
+   "id": "invasao-estroma",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Glândulas angulosas infiltrando o estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.503,
+      0.296
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.45,
+    0.25,
+    0.55,
+    0.33
+   ]
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma desmoplásico: colágeno celular em torno das glândulas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.47,
+      0.265
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.45,
+    0.25,
+    0.5,
+    0.29
+   ],
+   "nota": "Entre os túbulos, o estroma não é o tecido frouxo do lóbulo nem a gordura: é colágeno denso com fibroblastos ativados, estimulado pelo próprio tumor. É a desmoplasia que deixa o nódulo duro, pouco móvel, e que retrai a pele e o mamilo no exame."
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Túbulos e frondes revestidos por epitélio neoplásico",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.87,
+      0.295
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.8,
+    0.24,
+    0.96,
+    0.36
+   ],
+   "nota": "O tumor forma glândulas bem definidas em grande parte da lâmina — no sistema de Nottingham, mais de 75 % de formação tubular pontua 1, o grau mais favorável."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Células colunares com núcleos aumentados e estratificados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.274
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.494,
+    0.268,
+    0.508,
+    0.28
+   ],
+   "nota": "As células perderam a polaridade do epitélio ductal normal: núcleos aumentados, ovais, empilhados. A coloração é desbotada (lâmina antiga), o que reduz o contraste nuclear."
+  },
+  {
+   "id": "gordura",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Tecido adiposo da mama",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.54
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.2,
+    0.5,
+    0.3,
+    0.56
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Artéria muscular no tecido adiposo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.335,
+      0.545
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.31,
+    0.52,
+    0.36,
+    0.56
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao-gordura",
+    "invasao-estroma"
+   ],
+   "nota": "Túbulos neoplásicos infiltram o estroma e chegam à gordura, sem camada mioepitelial."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma colágeno denso e celular em volta das glândulas invasivas."
+  },
+  {
+   "achado": "carcinoma-in-situ-comedo",
+   "status": "ausente",
+   "nota": "Os ninhos arredondados à direita são componentes invasivos de padrão papilar e cribriforme, sem necrose central do tipo comedo nos campos conferidos."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados e estratificados; pleomorfismo moderado, com contraste reduzido pela coloração desbotada."
+  },
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "tubulos"
+   ],
+   "nota": "Formação tubular extensa — tumor bem diferenciado."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificaram êmbolos em vasos peritumorais nos campos examinados; a avaliação exige procurar fora da massa tumoral, em vários cortes."
+  }
+ ]
+}

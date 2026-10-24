@@ -1,0 +1,128 @@
+{
+ "slug": "carcinoma-renal-cromofobo-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma de células renais cromófobo: lençóis de células grandes de membranas espessas (\"células vegetais\"), citoplasma pálido e floculento, núcleos enrugados com halo perinuclear e binucleação, lobulados por septos fibrosos e entremeados de cistos hemorrágicos com fendas de colesterol.",
+ "marcacoes": [
+  {
+   "id": "vegetais",
+   "estrutura": "membranas-celulares-vegetais",
+   "categoria": "patologica",
+   "rotulo": "Células \"vegetais\": membrana grossa, citoplasma pálido, núcleo enrugado com halo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2035,
+      0.4445
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.201,
+    0.438,
+    0.213,
+    0.45
+   ],
+   "nota": "Células grandes e poligonais cujas membranas espessas e nítidas lembram a parede de uma célula vegetal. O citoplasma é pálido e floculento — não vazio como no carcinoma de células claras —, cheio de microvesículas. Os núcleos são irregulares, enrugados como uva-passa, com um halo claro em volta, e há células binucleadas. É esse conjunto, e não uma célula isolada, que define o cromófobo."
+  },
+  {
+   "id": "lencois",
+   "estrutura": "membranas-celulares-vegetais",
+   "categoria": "patologica",
+   "rotulo": "Lençóis de células pálidas separados por septos vasculares delicados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.53
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.1,
+    0.5,
+    0.16,
+    0.56
+   ]
+  },
+  {
+   "id": "hemorragia",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Cistos hemorrágicos e sangue entre as trabéculas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.23
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.42,
+    0.18,
+    0.54,
+    0.28
+   ],
+   "nota": "Espaços cheios de sangue e líquido proteináceo, com fendas de colesterol na parede — hemorragias antigas que se organizaram em cistos."
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Faixa fibrosa entre os lóbulos do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.208,
+      0.4385
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.2,
+    0.43,
+    0.215,
+    0.442
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "membranas-celulares-vegetais",
+   "status": "presente",
+   "marcacoes": [
+    "vegetais",
+    "lencois"
+   ],
+   "nota": "Lençóis de células de membrana espessa, citoplasma pálido floculento, núcleos enrugados com halo perinuclear e binucleação."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Septos fibrosos lobulam o tumor; a borda com o rim não está neste corte."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "hemorragia"
+   ],
+   "nota": "Cistos hemorrágicos e focos de hemorragia, com fendas de colesterol."
+  }
+ ]
+}

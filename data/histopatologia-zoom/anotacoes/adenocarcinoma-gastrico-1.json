@@ -1,0 +1,202 @@
+{
+ "slug": "adenocarcinoma-gastrico-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Adenocarcinoma gástrico misto: na superfície, componente tubular bem diferenciado (tipo intestinal); na profundidade, lençóis de células pouco coesas, muitas em anel de sinete (tipo difuso), infiltrando a submucosa, envolvendo vasos e dissociando os feixes da muscular própria, com estroma fibroso.",
+ "marcacoes": [
+  {
+   "id": "anel-de-sinete",
+   "estrutura": "celulas-em-anel-de-sinete",
+   "categoria": "patologica",
+   "rotulo": "Células pouco coesas, soltas, de citoplasma claro e vacuolado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.547,
+      0.406
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.54,
+    0.4,
+    0.555,
+    0.413
+   ],
+   "nota": "Células isoladas, que não se unem em glândulas, com citoplasma pálido cheio de mucina e núcleo atípico deslocado para a borda em muitas delas — células em anel de sinete. Elas se soltam porque perderam a E-caderina, a proteína que mantém as células epiteliais grudadas. É o componente difuso (de Lauren) do tumor."
+  },
+  {
+   "id": "infiltracao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Lençóis de células tumorais infiltrando a parede, em volta de vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.56,
+      0.46
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.5,
+    0.4,
+    0.62,
+    0.52
+   ],
+   "nota": "As células pouco coesas se espalham em lençóis pela submucosa e pelas camadas profundas, sem formar massa delimitada, e envolvem vasos. É essa infiltração difusa que torna a parede espessa e rígida."
+  },
+  {
+   "id": "muscular",
+   "estrutura": "infiltracao-da-muscular-propria",
+   "categoria": "patologica",
+   "rotulo": "Células tumorais entre os feixes da muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.62,
+      0.6
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.58,
+    0.56,
+    0.68,
+    0.66
+   ],
+   "nota": "Os feixes rosados de músculo liso estão dissociados por células tumorais isoladas e em cordões. A invasão da muscular própria (pelo menos pT2) acompanha a linite plástica — o estômago \"em garrafa de couro\" da endoscopia e da tomografia."
+  },
+  {
+   "id": "tubular",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Componente tubular bem diferenciado na superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.63,
+      0.19
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.55,
+    0.1,
+    0.7,
+    0.22
+   ],
+   "nota": "Na mucosa, o mesmo tumor forma glândulas tubulares e frondes de epitélio colunar atípico — o componente intestinal. Tumores mistos como este mostram que as duas vias de Lauren podem coexistir."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos aumentados e irregulares, com nucléolo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.41
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.545,
+    0.403,
+    0.555,
+    0.413
+   ]
+  },
+  {
+   "id": "desmoplasia",
+   "estrutura": "reacao-desmoplasica",
+   "categoria": "patologica",
+   "rotulo": "Estroma fibroso em volta das células infiltrativas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.58
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.56,
+    0.68,
+    0.62
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celulas-em-anel-de-sinete",
+   "status": "presente",
+   "marcacoes": [
+    "anel-de-sinete"
+   ],
+   "nota": "Lençóis de células pouco coesas, muitas em anel de sinete, nas camadas profundas."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "infiltracao"
+   ],
+   "nota": "Infiltração difusa da submucosa e da parede, em volta de vasos."
+  },
+  {
+   "achado": "infiltracao-da-muscular-propria",
+   "status": "presente",
+   "marcacoes": [
+    "muscular"
+   ],
+   "nota": "Células tumorais dissociando os feixes da muscular própria."
+  },
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "tubular"
+   ],
+   "nota": "Componente tubular bem diferenciado na mucosa."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "desmoplasia"
+   ],
+   "nota": "Estroma fibroso em torno das células infiltrativas na parede profunda."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados e irregulares, com nucléolos."
+  },
+  {
+   "achado": "metaplasia-intestinal",
+   "status": "nao-avaliavel",
+   "nota": "A mucosa da superfície está tomada pelo componente tubular; não há mucosa não tumoral suficiente no corte para avaliar metaplasia intestinal."
+  }
+ ]
+}

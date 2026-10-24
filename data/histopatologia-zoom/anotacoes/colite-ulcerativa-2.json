@@ -1,0 +1,349 @@
+{
+ "slug": "colite-ulcerativa-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Parede de cólon com colite ulcerativa ativa: criptas distorcidas e ramificadas, lâmina própria abarrotada de linfócitos e plasmócitos, abscessos de cripta, úlcera larga com fundo de granulação e pseudopólipos entre as úlceras. A muscular própria é contínua e não há granulomas nem fissuras.",
+ "marcacoes": [
+  {
+   "id": "abscesso-cripta",
+   "estrutura": "abscesso-de-cripta",
+   "categoria": "patologica",
+   "rotulo": "Abscesso de cripta: neutrófilos na luz da cripta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2852,
+      0.1346
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.272,
+    0.124,
+    0.298,
+    0.15
+   ],
+   "nota": "A luz da cripta está cheia de neutrófilos e restos celulares, e o epitélio que a reveste começa a se desfazer. É a lesão que define a atividade: o abscesso rompe a base da cripta, disseca a mucosa por baixo e o epitélio de cima descama — é assim que nascem as úlceras."
+  },
+  {
+   "id": "abscesso-cripta-2",
+   "estrutura": "abscesso-de-cripta",
+   "categoria": "patologica",
+   "rotulo": "Outro abscesso de cripta, ao lado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2848,
+      0.1454
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.272,
+    0.134,
+    0.298,
+    0.156
+   ]
+  },
+  {
+   "id": "abscesso-cripta-3",
+   "estrutura": "abscesso-de-cripta",
+   "categoria": "patologica",
+   "rotulo": "Cripta com neutrófilos e restos na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6788,
+      0.1722
+     ],
+     "angulo": 200
+    }
+   ],
+   "vista": [
+    0.668,
+    0.162,
+    0.69,
+    0.18
+   ]
+  },
+  {
+   "id": "distorcao",
+   "estrutura": "distorcao-arquitetural-das-criptas",
+   "categoria": "patologica",
+   "rotulo": "Criptas ramificadas, de tamanhos e eixos diferentes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2518,
+      0.1437
+     ],
+     "angulo": 300
+    }
+   ],
+   "vista": [
+    0.235,
+    0.118,
+    0.3,
+    0.16
+   ],
+   "nota": "Em vez de tubos paralelos e iguais, do mesmo calibre, que tocam a muscular da mucosa, as criptas aqui estão ramificadas, dilatadas, encurtadas e desalinhadas. É a cicatriz de surtos anteriores: cada destruição e regeneração deixa a cripta refeita fora do padrão — sinal de cronicidade, que separa a colite ulcerativa de uma colite infecciosa aguda."
+  },
+  {
+   "id": "plasmocitose",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Lâmina própria abarrotada de linfócitos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6671,
+      0.1617
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.658,
+    0.15,
+    0.7,
+    0.18
+   ],
+   "nota": "Entre as criptas, onde a lâmina própria normal é frouxa e esparsa, há um tapete de linfócitos e plasmócitos que chega à base das criptas e afasta uma da outra. A plasmocitose basal é o marcador histológico de doença inflamatória intestinal crônica."
+  },
+  {
+   "id": "ulcera",
+   "estrutura": "ulceracao-da-mucosa",
+   "categoria": "patologica",
+   "rotulo": "Úlcera: a mucosa sumiu, a superfície é exsudato",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3571,
+      0.238
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.3,
+    0.19,
+    0.46,
+    0.29
+   ],
+   "nota": "Neste setor não há criptas nem epitélio: a superfície voltada para a luz é uma camada de fibrina e neutrófilos assentada sobre a submucosa. A margem à direita mostra a mucosa ainda preservada, que pende sobre a úlcera."
+  },
+  {
+   "id": "granulacao",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Fundo da úlcera: capilares novos perpendiculares à superfície",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.364,
+      0.2609
+     ],
+     "angulo": 300
+    }
+   ],
+   "vista": [
+    0.32,
+    0.235,
+    0.41,
+    0.285
+   ],
+   "nota": "Logo abaixo do exsudato, capilares recém-formados e dilatados correm perpendiculares à superfície, entre fibroblastos e células inflamatórias. É o reparo tentando cobrir a perda de mucosa."
+  },
+  {
+   "id": "pseudopolipo",
+   "estrutura": "pseudopolipo-inflamatorio",
+   "categoria": "patologica",
+   "rotulo": "Pseudopólipo: ilha de mucosa em relevo entre úlceras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.521,
+      0.068
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.4,
+    0.03,
+    0.68,
+    0.26
+   ],
+   "nota": "Um monte de mucosa inflamada, com eixo de submucosa edemaciada e vasos congestos, sobra em relevo porque a mucosa ao redor foi destruída. Não é neoplasia: é o que resta da mucosa entre úlceras."
+  },
+  {
+   "id": "congestao",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Capilares da mucosa dilatados e cheios de hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2958,
+      0.1251
+     ],
+     "angulo": 200
+    }
+   ],
+   "vista": [
+    0.28,
+    0.115,
+    0.3,
+    0.14
+   ]
+  },
+  {
+   "id": "congestao-submucosa",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Vasos congestos na submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.556,
+      0.15
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.54,
+    0.12,
+    0.6,
+    0.2
+   ]
+  },
+  {
+   "id": "muscular-propria",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria íntegra — a inflamação não a atravessa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.314
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.4,
+    0.27,
+    0.62,
+    0.36
+   ]
+  },
+  {
+   "id": "submucosa",
+   "estrutura": "submucosa",
+   "rotulo": "Submucosa espessada, edemaciada e com agregados linfoides",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.16
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.02,
+    0.06,
+    0.22,
+    0.24
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "distorcao-arquitetural-das-criptas",
+   "status": "presente",
+   "marcacoes": [
+    "distorcao"
+   ],
+   "nota": "Criptas ramificadas, dilatadas e desalinhadas na mucosa que sobrou entre as úlceras: há cronicidade."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "plasmocitose"
+   ],
+   "nota": "Lâmina própria expandida por linfócitos e plasmócitos em toda a altura da mucosa, inclusive entre a base das criptas e a muscular da mucosa."
+  },
+  {
+   "achado": "abscesso-de-cripta",
+   "status": "presente",
+   "marcacoes": [
+    "abscesso-cripta",
+    "abscesso-cripta-2",
+    "abscesso-cripta-3"
+   ],
+   "nota": "Vários abscessos de cripta espalhados — o seminário de origem classifica este caso justamente como o \"tipo abscesso de cripta\"."
+  },
+  {
+   "achado": "pseudopolipo-inflamatorio",
+   "status": "presente",
+   "marcacoes": [
+    "pseudopolipo"
+   ],
+   "nota": "Montes de mucosa inflamada com eixo de submucosa, separados por úlceras."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "presente",
+   "marcacoes": [
+    "ulcera"
+   ],
+   "nota": "Úlcera larga, que leva a mucosa até a submucosa, com bordas de mucosa pendentes."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "presente",
+   "marcacoes": [
+    "abscesso-cripta",
+    "ulcera"
+   ],
+   "nota": "Neutrófilos na luz e no epitélio das criptas e no exsudato que forra a úlcera: doença ativa."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "presente",
+   "marcacoes": [
+    "granulacao"
+   ],
+   "nota": "Fundo da úlcera com capilares neoformados perpendiculares à superfície."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "congestao",
+    "congestao-submucosa"
+   ],
+   "nota": "Capilares da mucosa e vasos da submucosa dilatados e cheios de hemácias."
+  }
+ ]
+}

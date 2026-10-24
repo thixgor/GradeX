@@ -1,0 +1,155 @@
+{
+ "slug": "dano-alveolar-difuso-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Dano alveolar difuso (substrato da SDRA): membranas hialinas densas moldando as paredes de alvéolos e ductos alveolares em todo o corte, com edema proteináceo, capilares congestos e septos espessados por células inflamatórias e pneumócitos tipo II reativos — fase exsudativa passando à de reparo.",
+ "marcacoes": [
+  {
+   "id": "membranas",
+   "estrutura": "membranas-hialinas",
+   "categoria": "patologica",
+   "rotulo": "Membranas hialinas: placas rosa vítreas moldando as paredes alveolares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.505
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.495,
+    0.495,
+    0.51,
+    0.51
+   ],
+   "nota": "Faixas densas, homogêneas e vítreas de material eosinofílico encostadas nas paredes dos alvéolos e ductos alveolares, acompanhando o contorno do espaço aéreo. São proteínas plasmáticas e fibrina que vazaram pelo endotélio lesado, misturadas aos restos dos pneumócitos tipo I mortos. É a marca da fase exsudativa (primeira semana) da síndrome do desconforto respiratório agudo."
+  },
+  {
+   "id": "membranas-2",
+   "estrutura": "membranas-hialinas",
+   "categoria": "patologica",
+   "rotulo": "Membranas em vários alvéolos vizinhos — o dano é difuso",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.49,
+      0.47
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.45,
+    0.45,
+    0.53,
+    0.53
+   ]
+  },
+  {
+   "id": "edema",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Edema proteináceo e capilares cheios nos septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.51,
+      0.515
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.5,
+    0.5,
+    0.525,
+    0.525
+   ],
+   "nota": "Além das membranas, os alvéolos têm líquido rosa-pálido (edema rico em proteína) e os capilares dos septos estão congestos — o pulmão fica pesado, \"molhado\", e a troca gasosa falha."
+  },
+  {
+   "id": "pneumocitos",
+   "estrutura": "hiperplasia-de-pneumocitos-tipo-ii",
+   "categoria": "patologica",
+   "rotulo": "Septos espessados e celulares, com pneumócitos reativos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.33,
+      0.28
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.36,
+    0.31
+   ],
+   "nota": "Em outras áreas os septos estão espessados por células inflamatórias e pneumócitos tipo II aumentados, cúbicos, que começam a recobrir as paredes desnudadas — o início da fase de reparo."
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Ramo arterial pulmonar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.265,
+      0.195
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.24,
+    0.17,
+    0.29,
+    0.22
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "membranas-hialinas",
+   "status": "presente",
+   "marcacoes": [
+    "membranas",
+    "membranas-2"
+   ],
+   "nota": "Membranas hialinas densas moldando as paredes alveolares em áreas extensas."
+  },
+  {
+   "achado": "hiperplasia-de-pneumocitos-tipo-ii",
+   "status": "presente",
+   "marcacoes": [
+    "pneumocitos"
+   ],
+   "nota": "Pneumócitos tipo II reativos em septos espessados e celulares."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "nao-avaliavel",
+   "nota": "Os septos estão espessados sobretudo por células inflamatórias; nos campos conferidos não se separa com segurança a proliferação fibroblástica mixoide da fase organizante."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "edema"
+   ],
+   "nota": "Edema proteináceo intra-alveolar e capilares congestos."
+  }
+ ]
+}

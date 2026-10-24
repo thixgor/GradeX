@@ -1,0 +1,160 @@
+{
+ "slug": "avc-isquemico-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Infarto cerebral subagudo por vasculite do lúpus: área extensa em que o neurópilo foi destruído e substituído por lençóis de macrófagos espumosos (células grânulo-adiposas) e capilares neoformados, com vasos de parede espessa; o córtex adjacente é mais preservado. Fase de reabsorção da necrose liquefativa, entre a primeira e a terceira semana.",
+ "marcacoes": [
+  {
+   "id": "infarto",
+   "estrutura": "infarto-cerebral-agudo",
+   "categoria": "patologica",
+   "rotulo": "Território infartado: o neurópilo sumiu, sobram células soltas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.14
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.08,
+    0.08,
+    0.2,
+    0.18
+   ],
+   "nota": "Onde deveria haver a trama fina e rosada do neurópilo, com neurônios e glia, há só um tapete de células redondas soltas e vasos. O tecido nervoso morreu por falta de sangue e está sendo digerido — no cérebro a necrose isquêmica é liquefativa, porque o tecido tem pouco colágeno e muita gordura (mielina)."
+  },
+  {
+   "id": "macrofagos",
+   "estrutura": "celulas-espumosas",
+   "categoria": "patologica",
+   "rotulo": "Macrófagos espumosos (\"células grânulo-adiposas\") limpando a área",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.492,
+      0.4
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.485,
+    0.395,
+    0.5,
+    0.408
+   ],
+   "nota": "Células grandes, redondas, de núcleo pequeno e citoplasma espumoso cheio de restos de mielina fagocitada. Chegam a partir do segundo ou terceiro dia e dominam a lesão entre a primeira e a terceira semana — sua presença data o infarto como subagudo. Com meses, o tecido removido deixa uma cavidade (cisto) cercada por gliose."
+  },
+  {
+   "id": "transicao",
+   "estrutura": "infarto-cerebral-agudo",
+   "categoria": "patologica",
+   "rotulo": "Borda do infarto: tecido mais preservado à esquerda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.125,
+      0.15
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.09,
+    0.12,
+    0.16,
+    0.17
+   ]
+  },
+  {
+   "id": "vasos",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Vasos neoformados e congestos no território infartado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.435
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.43,
+    0.41,
+    0.49,
+    0.46
+   ],
+   "nota": "No infarto em reparo surgem muitos capilares novos, que trazem os macrófagos; os vasos maiores mostram paredes espessadas. Neste caso a causa é vasculite do lúpus — a inflamação da parede fecha a luz dos vasos e produz infartos múltiplos."
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Artéria de parede espessa na lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.395
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.42,
+    0.38,
+    0.47,
+    0.41
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infarto-cerebral-agudo",
+   "status": "presente",
+   "marcacoes": [
+    "infarto",
+    "transicao"
+   ],
+   "nota": "Área extensa em que o neurópilo foi destruído e substituído por macrófagos e vasos — infarto em fase subaguda (de reabsorção), não hiperagudo."
+  },
+  {
+   "achado": "neuronios-vermelhos",
+   "status": "ausente",
+   "nota": "Os neurônios do território infartado já foram removidos; não se veem neurônios eosinofílicos retraídos (achado das primeiras 12 a 48 horas)."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "ausente",
+   "nota": "Não há hemorragias petequiais ou perivasculares nos campos conferidos."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "vasos"
+   ],
+   "nota": "Capilares neoformados e vasos congestos na lesão."
+  },
+  {
+   "achado": "celulas-espumosas",
+   "status": "presente",
+   "marcacoes": [
+    "macrofagos"
+   ],
+   "nota": "Lençóis de macrófagos espumosos (células grânulo-adiposas) — marcam a fase subaguda."
+  }
+ ]
+}

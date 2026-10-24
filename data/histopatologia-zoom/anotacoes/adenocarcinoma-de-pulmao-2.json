@@ -1,0 +1,182 @@
+{
+ "slug": "adenocarcinoma-de-pulmao-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Adenocarcinoma mucinoso do pulmão (antigo carcinoma bronquioloalveolar mucinoso): células colunares mucinosas, de atipia discreta, revestem septos alveolares preservados (crescimento lepídico), formam focos de glândulas confluentes e se espalham em ilhas por alvéolos à distância. Entre elas, parênquima com alvéolos de septos finos e macrófagos.",
+ "marcacoes": [
+  {
+   "id": "lepidico",
+   "estrutura": "crescimento-lepidico",
+   "categoria": "patologica",
+   "rotulo": "Células colunares mucinosas forrando septos alveolares preservados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.525,
+      0.1
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.5,
+    0.07,
+    0.56,
+    0.12
+   ],
+   "nota": "As células tumorais — altas, colunares, de núcleo basal e citoplasma cheio de muco claro — revestem as paredes dos alvéolos como um papel de parede, sem destruí-las: é o crescimento lepídico. Os septos finos continuam lá por baixo. Este padrão era chamado de \"carcinoma bronquioloalveolar\"; a forma mucinosa, como esta, é hoje adenocarcinoma mucinoso invasivo e costuma se associar a mutação de KRAS."
+  },
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Foco de glândulas apertadas e confluentes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.78,
+      0.245
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.74,
+    0.2,
+    0.8,
+    0.26
+   ],
+   "nota": "Aqui as células deixam de só forrar septos e formam glândulas aglomeradas, de contornos irregulares, com estroma entre elas — o componente acinar invasivo."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Atipia discreta: núcleos basais, algo aumentados e empilhados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.535,
+      0.108
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.525,
+    0.1,
+    0.545,
+    0.115
+   ],
+   "nota": "No adenocarcinoma mucinoso a atipia é pouca — núcleos pequenos, basais, às vezes empilhados. A suspeita vem da arquitetura (células colunares mucinosas onde deveria haver pneumócitos achatados) mais que do núcleo."
+  },
+  {
+   "id": "aerogena",
+   "estrutura": "crescimento-lepidico",
+   "categoria": "patologica",
+   "rotulo": "Ilhas de tumor espalhadas por alvéolos à distância",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.23
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.28,
+    0.2,
+    0.36,
+    0.3
+   ],
+   "nota": "Grupos de células mucinosas aparecem soltos em alvéolos longe da massa principal: o tumor se espalha pelas vias aéreas (disseminação aerógena), o que explica o aspecto pneumônico, multifocal, na tomografia."
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Alvéolos com septos finos e macrófagos na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.26
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.29,
+    0.24,
+    0.34,
+    0.29
+   ]
+  },
+  {
+   "id": "bronquiolo",
+   "estrutura": "bronquiolo",
+   "rotulo": "Bronquíolo e artéria acompanhante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.61,
+      0.16
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.57,
+    0.12,
+    0.65,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas"
+   ],
+   "nota": "Focos de glândulas aglomeradas e confluentes na metade direita, além do componente lepídico."
+  },
+  {
+   "achado": "crescimento-lepidico",
+   "status": "presente",
+   "marcacoes": [
+    "lepidico",
+    "aerogena"
+   ],
+   "nota": "Crescimento lepídico mucinoso extenso, com ilhas aerógenas à distância."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Atipia discreta, típica da variante mucinosa."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "ausente",
+   "nota": "Os septos alveolares se mantêm finos; não há estroma desmoplásico extenso nos campos conferidos."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "nota": "Pigmento de carvão discreto junto ao foco glandular e nos septos."
+  }
+ ]
+}

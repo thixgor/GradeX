@@ -1,0 +1,210 @@
+{
+ "slug": "pneumonia-bacteriana-3",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Pneumonia lobular estafilocócica parcialmente organizada: alvéolos entupidos de neutrófilos e fibrina com septos preservados (consolidação), áreas em que o exsudato é substituído por tecido conjuntivo jovem (organização), rolhas de fibrina com sangue e antracose discreta. Um vaso pulmonar calibroso atravessa o lobo à direita.",
+ "marcacoes": [
+  {
+   "id": "exsudato",
+   "estrutura": "exsudato-alveolar-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Alvéolos entupidos de neutrófilos: consolidação",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.17,
+      0.27
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.13,
+    0.22,
+    0.25,
+    0.33
+   ],
+   "nota": "Os espaços que deveriam conter ar estão cheios de neutrófilos, fibrina e restos celulares, e os septos alveolares continuam de pé em volta — é a consolidação da pneumonia bacteriana. A cultura deste caso cresceu Staphylococcus aureus. O tom azulado incomum do exsudato é próprio desta lâmina antiga; massas basofílicas assim podem corresponder a colônias bacterianas, o que só um Gram confirma."
+  },
+  {
+   "id": "exsudato-2",
+   "estrutura": "exsudato-alveolar-neutrofilico",
+   "categoria": "patologica",
+   "rotulo": "Outro alvéolo cheio de pus, com septo preservado",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.23,
+      0.265
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.21,
+    0.24,
+    0.25,
+    0.29
+   ]
+  },
+  {
+   "id": "organizacao",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Organização: tecido conjuntivo jovem invadindo os alvéolos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.08
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.1,
+    0.05,
+    0.18,
+    0.12
+   ],
+   "nota": "Em parte do lobo o exsudato não foi removido e está sendo substituído por fibroblastos e colágeno frouxo que crescem dentro dos alvéolos e alargam os septos. Quando a fibrina não é digerida pelas enzimas dos neutrófilos, a pneumonia \"se organiza\" e pode deixar cicatriz — o \"partly organized\" do diagnóstico original."
+  },
+  {
+   "id": "congestao",
+   "estrutura": "hiperemia-e-congestao",
+   "categoria": "patologica",
+   "rotulo": "Rolhas de fibrina e sangue nos alvéolos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.135,
+      0.1
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.12,
+    0.09,
+    0.16,
+    0.115
+   ]
+  },
+  {
+   "id": "antracose",
+   "estrutura": "antracose",
+   "categoria": "patologica",
+   "rotulo": "Pigmento de carvão nos septos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.143,
+      0.08
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.135,
+    0.07,
+    0.15,
+    0.09
+   ]
+  },
+  {
+   "id": "veia",
+   "estrutura": "veia",
+   "rotulo": "Vaso pulmonar calibroso, com sangue e fibrina na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.676,
+      0.33
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.64,
+    0.26,
+    0.74,
+    0.4
+   ]
+  },
+  {
+   "id": "pneumocitos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Septo alveolar revestido por pneumócitos reativos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.128,
+      0.093
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.12,
+    0.085,
+    0.135,
+    0.098
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "exsudato-alveolar-neutrofilico",
+   "status": "presente",
+   "marcacoes": [
+    "exsudato",
+    "exsudato-2"
+   ],
+   "nota": "Alvéolos preenchidos por neutrófilos e fibrina, com septos preservados, em todo o lobo."
+  },
+  {
+   "achado": "hiperemia-e-congestao",
+   "status": "presente",
+   "marcacoes": [
+    "congestao"
+   ],
+   "nota": "Rolhas de fibrina com hemácias e capilares septais cheios."
+  },
+  {
+   "achado": "exsudato-fibrinopurulento",
+   "status": "nao-avaliavel",
+   "nota": "A pleura não está incluída neste corte."
+  },
+  {
+   "achado": "abscesso",
+   "status": "ausente",
+   "nota": "Nos campos conferidos os septos estão preservados; não há cavidade com destruição do parênquima."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "presente",
+   "marcacoes": [
+    "organizacao"
+   ],
+   "nota": "Áreas de organização, com tecido conjuntivo jovem nos alvéolos e septos alargados."
+  },
+  {
+   "achado": "antracose",
+   "status": "presente",
+   "marcacoes": [
+    "antracose"
+   ],
+   "nota": "Pigmento de carvão disperso nos septos."
+  }
+ ]
+}

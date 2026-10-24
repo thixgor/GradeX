@@ -1,0 +1,124 @@
+{
+ "slug": "condrossarcoma-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Condrossarcoma de baixo grau: lóbulos de cartilagem hipercelular, de matriz mixoide azul-pálida, com condrócitos de núcleos aumentados, hipercromáticos e binucleados em lacunas, infiltrando o tecido fibroso da periferia. Sem necrose.",
+ "marcacoes": [
+  {
+   "id": "condrocitos",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Condrócitos atípicos, alguns binucleados, em lacunas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.442,
+      0.288
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.42,
+    0.26,
+    0.46,
+    0.3
+   ],
+   "nota": "As células cartilaginosas são mais numerosas que na cartilagem normal, de núcleos maiores, hipercromáticos e irregulares, várias com dois núcleos na mesma lacuna. A matriz é azul-pálida e mixoide. Em lesão de baixo grau a atipia é discreta — por isso o diagnóstico depende também da imagem (lesão grande, que erode a cortical) e da invasão do osso."
+  },
+  {
+   "id": "lobulos",
+   "estrutura": "condrocitos-atipicos",
+   "categoria": "patologica",
+   "rotulo": "Lóbulos de cartilagem neoplásica",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.27
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.4,
+    0.25,
+    0.46,
+    0.31
+   ]
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Borda do lóbulo contra o tecido fibroso vizinho",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.265
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.4,
+    0.25,
+    0.43,
+    0.29
+   ],
+   "nota": "Os lóbulos tumorais crescem empurrando e infiltrando os tecidos de fora; na peça inteira, o condrossarcoma envolve trabéculas preexistentes e permeia a medula — o que o encondroma não faz."
+  },
+  {
+   "id": "condrocito",
+   "estrutura": "condrocito",
+   "rotulo": "Condrócito em lacuna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.428,
+      0.285
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.422,
+    0.28,
+    0.432,
+    0.29
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "condrocitos-atipicos",
+   "status": "presente",
+   "marcacoes": [
+    "condrocitos",
+    "lobulos"
+   ],
+   "nota": "Lóbulos de cartilagem hipercelular com condrócitos atípicos e binucleados, matriz mixoide — baixo grau."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Lóbulos infiltrando o tecido fibroso da periferia; o osso hospedeiro não está incluído neste corte."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há necrose — compatível com o baixo grau."
+  }
+ ]
+}

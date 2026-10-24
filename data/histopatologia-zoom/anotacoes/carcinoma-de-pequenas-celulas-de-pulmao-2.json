@@ -1,0 +1,157 @@
+{
+ "slug": "carcinoma-de-pequenas-celulas-de-pulmao-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma de pequenas células do pulmão: massa formada por lençóis de células pequenas, de citoplasma mínimo, núcleos ovais e fusiformes com cromatina fina e moldagem, com necrose extensa e artefato de esmagamento, cercada por parênquima pulmonar.",
+ "marcacoes": [
+  {
+   "id": "celulas",
+   "estrutura": "celulas-pequenas-com-moldagem-nuclear",
+   "categoria": "patologica",
+   "rotulo": "Células pequenas, quase só núcleo, que se moldam umas às outras",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.413,
+      0.563
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.55,
+    0.43,
+    0.58
+   ],
+   "nota": "Células do tamanho de dois a três linfócitos, com citoplasma mínimo e núcleo escuro, oval ou fusiforme (\"grão de aveia\"), de cromatina fina e sem nucléolo. Como quase não há citoplasma, um núcleo encosta no outro e se deforma para caber: a moldagem nuclear. É o tumor neuroendócrino de alto grau do pulmão, ligado ao tabagismo pesado."
+  },
+  {
+   "id": "necrose",
+   "estrutura": "necrose-coagulativa",
+   "categoria": "patologica",
+   "rotulo": "Necrose extensa entre os grupos de células",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      0.577
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.4,
+    0.565,
+    0.43,
+    0.58
+   ],
+   "nota": "Lagos de material rosa e poeira nuclear separam as faixas de células viáveis. O tumor cresce tão rápido (Ki-67 perto de 100 %) que ultrapassa o próprio suprimento de sangue."
+  },
+  {
+   "id": "esmagamento",
+   "estrutura": "artefato-de-esmagamento",
+   "categoria": "patologica",
+   "rotulo": "Núcleos estirados em fios (artefato de esmagamento)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.564
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.404,
+    0.557,
+    0.418,
+    0.568
+   ],
+   "nota": "As células são tão frágeis que a pinça e a navalha as esmagam: a cromatina se estira em fios e borrões azulados. O artefato é tão típico que, numa biópsia brônquica, chama atenção para o diagnóstico."
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Massa tumoral substituindo o parênquima, cercada por pulmão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.5
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.1,
+    0.7,
+    0.9
+   ]
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Pulmão ao redor do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.6
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.05,
+    0.5,
+    0.2,
+    0.7
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celulas-pequenas-com-moldagem-nuclear",
+   "status": "presente",
+   "marcacoes": [
+    "celulas"
+   ],
+   "nota": "Lençóis de células pequenas, de citoplasma mínimo e cromatina fina, com moldagem nuclear."
+  },
+  {
+   "achado": "artefato-de-esmagamento",
+   "status": "presente",
+   "marcacoes": [
+    "esmagamento"
+   ],
+   "nota": "Núcleos estirados e borrados em vários pontos."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Massa que substitui o parênquima e infiltra o tecido fibroso, com pulmão ao redor."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "presente",
+   "marcacoes": [
+    "necrose"
+   ],
+   "nota": "Necrose extensa entre faixas de células viáveis."
+  }
+ ]
+}

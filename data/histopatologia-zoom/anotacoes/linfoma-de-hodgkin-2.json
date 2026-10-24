@@ -1,0 +1,160 @@
+{
+ "slug": "linfoma-de-hodgkin-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Linfonodo com linfoma de Hodgkin clássico, subtipo esclerose nodular: faixas de colágeno recortam o órgão em nódulos e espessam a cápsula; nos nódulos, raras células lacunares (variante da célula de Reed-Sternberg) em halo claro, em meio a um fundo de linfócitos pequenos, plasmócitos e histiócitos.",
+ "marcacoes": [
+  {
+   "id": "lacunar",
+   "estrutura": "celula-de-reed-sternberg",
+   "categoria": "patologica",
+   "rotulo": "Célula lacunar: célula grande dentro de um halo claro",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5925,
+      0.3127
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.583,
+    0.307,
+    0.597,
+    0.318
+   ],
+   "nota": "Uma célula muito maior que os linfócitos em volta, de núcleo grande, vesiculoso, com nucléolo nítido, parece \"flutuar\" num espaço vazio. O espaço é artefato de fixação em formol — o citoplasma se retrai — e é justamente essa retração que define a variante lacunar da célula de Reed-Sternberg, típica da esclerose nodular. A célula neoplásica é minoria: menos de 1 % das células do linfonodo."
+  },
+  {
+   "id": "lacunar-2",
+   "estrutura": "celula-de-reed-sternberg",
+   "categoria": "patologica",
+   "rotulo": "Outra célula lacunar",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5893,
+      0.316
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.584,
+    0.311,
+    0.595,
+    0.32
+   ]
+  },
+  {
+   "id": "fundo-reativo",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Fundo de linfócitos pequenos e plasmócitos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.21,
+      0.54
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.52,
+    0.24,
+    0.55
+   ],
+   "nota": "Quase todas as células do tumor são reativas: linfócitos pequenos, plasmócitos, histiócitos e eosinófilos atraídos pelas citocinas que a célula de Reed-Sternberg produz (IL-5, CCL17). É por isso que o \"tumor\" parece inflamação a pequeno aumento."
+  },
+  {
+   "id": "faixas",
+   "estrutura": "faixas-de-esclerose-colagena",
+   "categoria": "patologica",
+   "rotulo": "Colágeno que divide o linfonodo em nódulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.375,
+      0.444
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.34,
+    0.42,
+    0.42,
+    0.48
+   ],
+   "nota": "Faixas largas de colágeno birrefringente atravessam o linfonodo e o recortam em nódulos — o padrão que dá nome ao subtipo. A fibrose é estimulada pelo TGF-β das células neoplásicas; a cápsula do linfonodo também está espessada."
+  },
+  {
+   "id": "capsula",
+   "estrutura": "capsula-do-linfonodo",
+   "rotulo": "Cápsula espessada e fibrosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.155
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.35,
+    0.12,
+    0.6,
+    0.22
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celula-de-reed-sternberg",
+   "status": "presente",
+   "marcacoes": [
+    "lacunar",
+    "lacunar-2"
+   ],
+   "nota": "Células lacunares espalhadas pelos nódulos, sempre raras em meio ao fundo reativo."
+  },
+  {
+   "achado": "faixas-de-esclerose-colagena",
+   "status": "presente",
+   "marcacoes": [
+    "faixas"
+   ],
+   "nota": "Faixas de colágeno recortam o linfonodo em nódulos e a cápsula está espessada."
+  },
+  {
+   "achado": "eosinofilos-teciduais",
+   "status": "nao-avaliavel",
+   "nota": "Nos campos conferidos não se reconheceram eosinófilos com segurança na resolução do scan; a coloração dos grânulos é pouco nítida."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "fundo-reativo"
+   ],
+   "nota": "Linfócitos pequenos e plasmócitos são a maioria das células do linfonodo."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há focos de necrose nos nódulos examinados."
+  }
+ ]
+}

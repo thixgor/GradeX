@@ -96,4 +96,72 @@ export const DOENCAS_MAMA: DoencaZoom[] = [
       'No carcinoma invasivo, a arquitetura lobular se perde: células atípicas formam ninhos e cordões espalhados num estroma denso, sem a camada mioepitelial.',
     ],
   },
+  {
+    id: 'fibroadenoma-da-mama',
+    nome: 'Fibroadenoma da mama',
+    sinonimos: ['fibroadenoma'],
+    nomesEmIngles: ['fibroadenoma of the breast'],
+    sistema: 'reprodutor-feminino',
+    orgao: 'glandula-mamaria',
+    prioridade: 22,
+    resumo:
+      'Tumor fibroepitelial benigno da mama, bem delimitado, em que estroma intralobular e ductos proliferam juntos — o tumor benigno mais comum da mulher jovem.',
+    epidemiologia:
+      'Pico entre 15 e 35 anos; pode ser múltiplo e bilateral. Cresce na gestação e na lactação e regride (hialiniza e calcifica) após a menopausa.',
+    patogenese: [
+      'O componente neoplásico é o estroma especializado do lóbulo, com mutações de MED12 em boa parte dos casos.',
+      'Estrógeno e progesterona estimulam o estroma e, a reboque, os ductos do lóbulo, que crescem juntos num nódulo.',
+      'O estroma envolve os ductos (padrão pericanalicular) ou os comprime em fendas curvas (padrão intracanalicular); com o tempo fica colágeno e hialino.',
+    ],
+    roteiro: [
+      'Panorâmico: nódulo redondo e bem delimitado, que empurra a gordura e o tecido mamário em volta.',
+      'Médio aumento: ductos uniformes, alongados ou comprimidos em fendas, distribuídos homogeneamente em estroma abundante.',
+      'Grande aumento: ductos com duas camadas (luminal e mioepitelial); estroma de celularidade baixa, sem atipia nem mitoses.',
+    ],
+    achados: [
+      {
+        achado: 'proliferacao-fibroepitelial',
+        tipo: 'especifico',
+        comoAparece: 'Ductos e estroma crescendo juntos num nódulo bem delimitado, com padrão peri ou intracanalicular.',
+        peso: 'criterio',
+      },
+      {
+        achado: 'glandulas-com-dupla-camada',
+        tipo: 'geral',
+        comoAparece: 'Os ductos do nódulo mantêm células luminais e mioepiteliais — prova de benignidade do componente epitelial.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'pseudocapsula-fibrosa',
+        tipo: 'geral',
+        comoAparece: 'Borda nítida, empurrando o tecido vizinho, sem infiltração.',
+        peso: 'frequente',
+      },
+      {
+        achado: 'degeneracao-hialina',
+        tipo: 'geral',
+        comoAparece: 'Estroma colágeno, hialino e pouco celular nos fibroadenomas antigos e na pós-menopausa, às vezes com calcificação.',
+        peso: 'ocasional',
+      },
+    ],
+    diferenciais: [
+      {
+        nome: 'Tumor filoide',
+        comoSeparar: 'Estroma hipercelular, sobretudo junto aos ductos, frondes em folha que se projetam em espaços císticos, mitoses estromais e às vezes borda infiltrativa; mulheres mais velhas e tumores maiores.',
+      },
+      {
+        nome: 'Carcinoma invasivo',
+        comoSeparar: 'Glândulas angulosas de camada única, sem mioepitélio, infiltrando estroma desmoplásico e gordura; nódulo irregular e endurecido.',
+      },
+    ],
+    correlacaoClinica: [
+      'Nódulo móvel ("rato da mama"), elástico, indolor, de 1 a 3 cm; na ultrassonografia, oval, circunscrito, mais largo que alto.',
+      'Diagnóstico confirmado por biópsia por agulha grossa quando há dúvida de imagem.',
+      'Tratamento: acompanhamento; exérese se cresce rápido, se é grande (mais de 3 cm) ou por preferência da paciente. O risco de câncer é praticamente o da população geral.',
+    ],
+    comparacaoComNormal: [
+      'Na mama normal, cada lóbulo tem poucos ácinos pequenos num estroma intralobular frouxo, separado do estroma interlobular denso e da gordura.',
+      'No fibroadenoma, esse estroma intralobular se expande como um nódulo e carrega consigo ductos alongados e comprimidos.',
+    ],
+  },
 ]

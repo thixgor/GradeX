@@ -1,0 +1,178 @@
+{
+ "slug": "adenocarcinoma-de-prostata-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Adenocarcinoma acinar de próstata, Gleason 3+3: glândulas pequenas, redondas e rígidas, de camada única, com núcleos aumentados e nucléolos, mucina azulada e cristaloides, infiltrando o estroma fibromuscular entre glândulas benignas maiores com camada basal e corpos amiláceos.",
+ "marcacoes": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-pequenas-infiltrativas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas pequenas, redondas e rígidas, de camada única",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.13,
+      0.18
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.1,
+    0.16,
+    0.17,
+    0.2
+   ],
+   "nota": "Glândulas pequenas, de contorno liso e \"duro\", sem as dobras papilares das benignas, espalhadas entre os feixes de músculo liso. Cada uma é forrada por uma camada só de células: a camada basal sumiu. Glândulas bem formadas e separadas umas das outras são o padrão Gleason 3."
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos aumentados, com nucléolo, e mucina azulada na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1175,
+      0.1705
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.112,
+    0.168,
+    0.124,
+    0.178
+   ],
+   "nota": "Os núcleos das células tumorais são maiores e mais redondos que os das glândulas benignas, com nucléolo visível; na luz há mucina azul-acinzentada e cristaloides rosados — três pistas de malignidade que ajudam muito em biópsias pequenas."
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Glândulas dissecando os feixes do estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.145,
+      0.192
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.12,
+    0.18,
+    0.17,
+    0.2
+   ]
+  },
+  {
+   "id": "benignas",
+   "estrutura": "glandulas-com-dupla-camada",
+   "categoria": "patologica",
+   "rotulo": "Glândula benigna vizinha: grande, com dobras e duas camadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.12
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.08,
+    0.1,
+    0.14,
+    0.14
+   ],
+   "nota": "Logo acima, glândulas benignas maiores, de contorno ondulado e com a camada basal preservada, algumas com corpos amiláceos (concreções lamelares). Estudar as duas lado a lado é a melhor forma de aprender a diferença."
+  },
+  {
+   "id": "corpo-amilaceo",
+   "estrutura": "concrecao-prostatica",
+   "rotulo": "Corpo amiláceo numa glândula benigna",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.12,
+      0.144
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.11,
+    0.135,
+    0.135,
+    0.15
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-fibromuscular",
+   "rotulo": "Estroma fibromuscular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.14,
+      0.13
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.13,
+    0.12,
+    0.17,
+    0.15
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-pequenas-infiltrativas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas"
+   ],
+   "nota": "Glândulas pequenas e separadas, de camada única, infiltrando o estroma — padrão Gleason 3."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos aumentados com nucléolos, mucina azulada e cristaloides na luz."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "As glândulas tumorais se insinuam entre os feixes de músculo liso."
+  },
+  {
+   "achado": "glandulas-com-dupla-camada",
+   "status": "presente",
+   "marcacoes": [
+    "benignas"
+   ],
+   "nota": "Glândulas benignas com camada basal e corpos amiláceos ao lado do tumor."
+  }
+ ]
+}

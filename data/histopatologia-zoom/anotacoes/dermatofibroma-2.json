@@ -1,0 +1,146 @@
+{
+ "slug": "dermatofibroma-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Dermatofibroma (histiocitoma fibroso benigno): nódulo dérmico de células fusiformes em feixes curtos entrelaçados, com colágeno hialino aprisionado na periferia e epiderme espessada de cristas alongadas na borda. O centro do nódulo faz relevo e tem a superfície erodida; folículos e glândulas sudoríparas estão preservados ao lado.",
+ "marcacoes": [
+  {
+   "id": "fusocelular",
+   "estrutura": "proliferacao-fusocelular-com-colageno-aprisionado",
+   "categoria": "patologica",
+   "rotulo": "Nódulo dérmico de células fusiformes em feixes curtos entrelaçados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.12,
+      0.2
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.04,
+    0.05,
+    0.24,
+    0.32
+   ],
+   "nota": "A derme está ocupada por um nódulo mal delimitado de células fusiformes e histiocitoides, em feixes curtos que se cruzam (padrão estoriforme). As células são fibroblastos e histiócitos sem atipia importante — uma proliferação benigna, muitas vezes desencadeada por picada de inseto ou foliculite."
+  },
+  {
+   "id": "colageno-aprisionado",
+   "estrutura": "proliferacao-fusocelular-com-colageno-aprisionado",
+   "categoria": "patologica",
+   "rotulo": "Periferia: células envolvendo feixes de colágeno grossos (\"queloidais\")",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.225,
+      0.23
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.2,
+    0.205,
+    0.25,
+    0.255
+   ],
+   "nota": "Na borda da lesão, as células fusiformes se insinuam entre os feixes de colágeno da derme e os abraçam, isolando bolas de colágeno hialino. Esse \"colágeno aprisionado\" na periferia é o detalhe que mais ajuda a reconhecer o dermatofibroma e a separá-lo do dermatofibrossarcoma, que infiltra a gordura em favo de mel."
+  },
+  {
+   "id": "hiperplasia",
+   "estrutura": "hiperplasia-epidermica-sobrejacente",
+   "categoria": "patologica",
+   "rotulo": "Epiderme sobre a lesão espessada, com cristas alongadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.27,
+      0.15
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.23,
+    0.11,
+    0.31,
+    0.17
+   ],
+   "nota": "A epiderme logo acima do nódulo fica mais grossa e manda cristas longas e de base reta para a derme, às vezes com pigmentação basal. É uma resposta a fatores de crescimento liberados pela lesão dérmica — e explica por que o dermatofibroma é um nódulo acastanhado que \"afunda\" quando apertado (sinal da covinha)."
+  },
+  {
+   "id": "glandulas-sudoriparas",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "rotulo": "Glândulas sudoríparas écrinas na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.215
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.225,
+    0.2,
+    0.25,
+    0.24
+   ]
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-piloso",
+   "rotulo": "Folículo piloso preservado ao lado do nódulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.29,
+      0.205
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.27,
+    0.18,
+    0.31,
+    0.23
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "proliferacao-fusocelular-com-colageno-aprisionado",
+   "status": "presente",
+   "marcacoes": [
+    "fusocelular",
+    "colageno-aprisionado"
+   ],
+   "nota": "Nódulo dérmico fusocelular, com colágeno aprisionado na periferia."
+  },
+  {
+   "achado": "hiperplasia-epidermica-sobrejacente",
+   "status": "presente",
+   "marcacoes": [
+    "hiperplasia"
+   ],
+   "nota": "Epiderme espessada, com cristas alongadas, na borda do nódulo. No centro, a superfície do nódulo está erodida."
+  },
+  {
+   "achado": "celulas-espumosas",
+   "status": "ausente",
+   "nota": "Nos campos conferidos predominam células fusiformes e linfócitos; não há grupos de macrófagos espumosos nem de siderófagos."
+  }
+ ]
+}

@@ -1,0 +1,141 @@
+{
+ "slug": "carcinoma-renal-de-celulas-claras-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma de células renais de células claras: ninhos e ácinos de células poligonais de citoplasma claro e membrana nítida, cada um envolto por capilares delicados (\"tela de galinheiro\"), com septos fibrosos e focos hemorrágicos. Sem necrose tumoral neste corte.",
+ "marcacoes": [
+  {
+   "id": "celulas-claras",
+   "estrutura": "celulas-claras-neoplasicas",
+   "categoria": "patologica",
+   "rotulo": "Células poligonais de citoplasma claro e membrana nítida",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.53,
+      0.215
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.5,
+    0.2,
+    0.56,
+    0.25
+   ],
+   "nota": "Cada célula parece uma caixinha vazia com um núcleo redondo no meio: o citoplasma é transparente porque estava cheio de glicogênio e lipídio, dissolvidos pelo processamento. A membrana celular fica bem marcada, como uma grade. O acúmulo vem da perda do gene VHL — a célula se comporta como se estivesse em hipóxia permanente e reprograma o metabolismo."
+  },
+  {
+   "id": "capilares",
+   "estrutura": "rede-capilar-delicada",
+   "categoria": "patologica",
+   "rotulo": "Capilares finos em volta de cada ninho",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.513,
+      0.212
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.2,
+    0.53,
+    0.23
+   ],
+   "nota": "Os ninhos de células claras são separados só por capilares delicados, quase sem estroma — a \"tela de galinheiro\". É o mesmo defeito do VHL: a falsa hipóxia faz o tumor produzir VEGF sem parar, e ele fica ricamente vascularizado (por isso sangra e por isso responde a antiangiogênicos)."
+  },
+  {
+   "id": "hemorragia",
+   "estrutura": "hemorragia-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Lagos de sangue e cavidades hemorrágicas no tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.655,
+      0.275
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.63,
+    0.23,
+    0.76,
+    0.33
+   ],
+   "nota": "A rede vascular frágil se rompe: o tumor tem focos de hemorragia recente e cavidades cheias de sangue — o aspecto variegado (amarelo, vermelho e branco) da peça macroscópica e a hematúria do paciente."
+  },
+  {
+   "id": "capsula",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Faixas fibrosas espessas cortando o tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.27
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.3,
+    0.15,
+    0.42,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "celulas-claras-neoplasicas",
+   "status": "presente",
+   "marcacoes": [
+    "celulas-claras"
+   ],
+   "nota": "Ninhos e ácinos de células claras de membrana nítida em quase todo o tumor, com núcleos redondos de grau baixo a intermediário."
+  },
+  {
+   "achado": "rede-capilar-delicada",
+   "status": "presente",
+   "marcacoes": [
+    "capilares"
+   ],
+   "nota": "Rede capilar delicada envolvendo cada ninho."
+  },
+  {
+   "achado": "hemorragia-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "hemorragia"
+   ],
+   "nota": "Focos de hemorragia e cavidades hemorrágicas, principalmente na metade direita."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "capsula"
+   ],
+   "nota": "Septos fibrosos largos atravessam a massa; a cápsula periférica não está incluída inteira neste corte."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "Não há áreas de necrose tumoral nos campos conferidos."
+  }
+ ]
+}

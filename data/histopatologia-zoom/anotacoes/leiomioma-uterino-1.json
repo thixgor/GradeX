@@ -1,0 +1,153 @@
+{
+ "slug": "leiomioma-uterino-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Leiomioma uterino: nódulo bem delimitado de fascículos entrelaçados de células musculares lisas de núcleo em charuto, sem atipia, com extensa degeneração hialina e hemorragia antiga no centro e miométrio comprimido em lâminas concêntricas ao redor (pseudocápsula).",
+ "marcacoes": [
+  {
+   "id": "fasciculos",
+   "estrutura": "fasciculos-de-musculo-liso",
+   "categoria": "patologica",
+   "rotulo": "Células musculares lisas em fascículos, de núcleo \"em charuto\"",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.446,
+      0.21
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.44,
+    0.205,
+    0.452,
+    0.215
+   ],
+   "nota": "Células fusiformes de citoplasma rosa e fibrilar, núcleo alongado de pontas rombas e cromatina fina, arrumadas em feixes paralelos. São células musculares lisas iguais às do miométrio — o tumor é benigno e imita fielmente o tecido de origem. Não há atipia difusa nem mitoses numerosas neste campo."
+  },
+  {
+   "id": "redemoinho",
+   "estrutura": "fasciculos-de-musculo-liso",
+   "categoria": "patologica",
+   "rotulo": "Feixes que se cruzam em ângulos variados (redemoinho)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.55,
+      0.15
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.45,
+    0.08,
+    0.7,
+    0.25
+   ],
+   "nota": "A pequeno aumento, os fascículos cortados longitudinal e transversalmente se entrelaçam, dando o aspecto em redemoinho que também se vê na superfície de corte branca e fasciculada do mioma."
+  },
+  {
+   "id": "hialina",
+   "estrutura": "degeneracao-hialina",
+   "categoria": "patologica",
+   "rotulo": "Degeneração hialina: área rósea, vítrea e pouco celular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.245
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.48,
+    0.28
+   ],
+   "nota": "No centro do nódulo, os fascículos dão lugar a material eosinofílico homogêneo, com poucas células presas e sangue extravasado. É a degeneração por isquemia lenta do tumor que cresceu mais que seu suprimento — benigna, com transição gradual, diferente da necrose tumoral do leiomiossarcoma."
+  },
+  {
+   "id": "hialina-2",
+   "estrutura": "degeneracao-hialina",
+   "categoria": "patologica",
+   "rotulo": "Faixa extensa de hialinização e hemorragia antiga",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.28
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.18,
+    0.42,
+    0.4
+   ]
+  },
+  {
+   "id": "miometrio",
+   "estrutura": "miometrio",
+   "rotulo": "Miométrio comprimido em lâminas concêntricas (pseudocápsula)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.52
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.05,
+    0.42,
+    0.95,
+    0.6
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "fasciculos-de-musculo-liso",
+   "status": "presente",
+   "marcacoes": [
+    "fasciculos",
+    "redemoinho"
+   ],
+   "nota": "Nódulo bem delimitado de fascículos entrelaçados de músculo liso, de núcleo em charuto."
+  },
+  {
+   "achado": "degeneracao-hialina",
+   "status": "presente",
+   "marcacoes": [
+    "hialina",
+    "hialina-2"
+   ],
+   "nota": "Área central extensa de degeneração hialina com hemorragia antiga."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "ausente",
+   "nota": "Núcleos regulares, sem pleomorfismo difuso nos campos conferidos."
+  },
+  {
+   "achado": "necrose-coagulativa",
+   "status": "ausente",
+   "nota": "A área central é hialina, de transição gradual, sem a borda abrupta e as sombras celulares da necrose tumoral."
+  }
+ ]
+}

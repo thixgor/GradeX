@@ -156,6 +156,7 @@ export function Visualizador({
   estruturaSelecionada,
   onSelecionarEstrutura,
   logoDoManual = '/img/histologia/logo-manual-da-histologia.svg',
+  alternativas = [],
 }: {
   lamina: LaminaDoVisualizador
   /** Ficha de características renderizada no servidor. */
@@ -170,6 +171,11 @@ export function Visualizador({
   estruturaSelecionada?: string | null
   onSelecionarEstrutura?: (id: string | null) => void
   logoDoManual?: string
+  /**
+   * Lâminas que abrem agora (Histopatologia: a suplementar da mesma doença),
+   * oferecidas no aviso de servidor fora do ar.
+   */
+  alternativas?: Vizinha[]
 }) {
   const router = useRouter()
   const raizRef = useRef<HTMLDivElement | null>(null)
@@ -1205,6 +1211,20 @@ export function Visualizador({
                   O servidor que guarda as imagens desta lâmina não está respondendo. Tentamos de novo
                   sozinhos a cada minuto — ela aparece assim que ele voltar.
                 </p>
+                {alternativas.length > 0 && (
+                  <div className="mt-2 flex max-w-md flex-col items-center gap-1.5">
+                    <p className="text-xs font-semibold text-white/80">Enquanto isso, a mesma doença em outra lâmina:</p>
+                    {alternativas.map((a) => (
+                      <Link
+                        key={a.href}
+                        href={a.href}
+                        className="rounded-lg bg-[#E8763A] px-3 py-2 text-xs font-bold text-white hover:bg-[#d4672e]"
+                      >
+                        {a.rotulo}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </>
             ) : (
               <>

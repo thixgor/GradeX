@@ -1,0 +1,134 @@
+{
+ "slug": "fibroadenoma-da-mama-1",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Fibroadenoma da mama (padrão pericanalicular): ductos pequenos e alongados, com epitélio luminal e camada mioepitelial preservados, distribuídos uniformemente num estroma abundante, frouxo e colágeno, de baixa celularidade e sem atipia, com faixas de hialinização.",
+ "marcacoes": [
+  {
+   "id": "fibroepitelial",
+   "estrutura": "proliferacao-fibroepitelial",
+   "categoria": "patologica",
+   "rotulo": "Ductos espalhados de modo uniforme num estroma abundante",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.37,
+      0.16
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.3,
+    0.1,
+    0.45,
+    0.25
+   ],
+   "nota": "Ductos pequenos e alongados distribuídos por igual num estroma frouxo e colágeno que ocupa a maior parte do nódulo. Estroma e ductos cresceram juntos: o estroma especializado do lóbulo é o componente neoplásico, e os ductos vêm a reboque. Aqui o estroma envolve os ductos sem comprimi-los — padrão pericanalicular."
+  },
+  {
+   "id": "estroma",
+   "estrutura": "proliferacao-fibroepitelial",
+   "categoria": "patologica",
+   "rotulo": "Estroma de baixa celularidade, sem atipia nem mitoses",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.35,
+      0.145
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.345,
+    0.14,
+    0.36,
+    0.153
+   ],
+   "nota": "Fibroblastos fusiformes esparsos, de núcleos pequenos, numa matriz frouxa e colágena. Estroma hipercelular, com atipia e mitoses, levantaria a suspeita de tumor filoide."
+  },
+  {
+   "id": "dupla-camada",
+   "estrutura": "glandulas-com-dupla-camada",
+   "categoria": "patologica",
+   "rotulo": "Ducto com epitélio luminal e camada mioepitelial",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.315,
+      0.145
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.312,
+    0.138,
+    0.326,
+    0.15
+   ],
+   "nota": "O ducto tem células luminais cúbicas por dentro e uma camada de células mioepiteliais de núcleo achatado por fora, sobre a membrana basal — o componente epitelial é benigno."
+  },
+  {
+   "id": "hialino",
+   "estrutura": "degeneracao-hialina",
+   "categoria": "patologica",
+   "rotulo": "Faixas de colágeno hialino e pouco celular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.15
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.36,
+    0.1,
+    0.42,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "proliferacao-fibroepitelial",
+   "status": "presente",
+   "marcacoes": [
+    "fibroepitelial",
+    "estroma"
+   ],
+   "nota": "Ductos e estroma proliferados juntos, em padrão pericanalicular, com estroma de baixa celularidade."
+  },
+  {
+   "achado": "glandulas-com-dupla-camada",
+   "status": "presente",
+   "marcacoes": [
+    "dupla-camada"
+   ],
+   "nota": "Os ductos mantêm a camada mioepitelial."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "nao-avaliavel",
+   "nota": "O corte é um fragmento do nódulo; a borda com o tecido mamário vizinho não está incluída."
+  },
+  {
+   "achado": "degeneracao-hialina",
+   "status": "presente",
+   "marcacoes": [
+    "hialino"
+   ],
+   "nota": "Faixas de colágeno hialino entre os grupos de ductos."
+  }
+ ]
+}

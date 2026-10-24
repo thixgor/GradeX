@@ -1,0 +1,145 @@
+{
+ "slug": "carcinoma-papilifero-da-tireoide-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma papilífero clássico da tireoide: papilas ramificadas com eixo fibrovascular, revestidas por células com núcleos claros em vidro fosco, sobrepostos, com fendas e pseudoinclusões, entremeadas a folículos com coloide.",
+ "marcacoes": [
+  {
+   "id": "nucleos",
+   "estrutura": "nucleos-de-carcinoma-papilifero",
+   "categoria": "patologica",
+   "rotulo": "Núcleos claros, sobrepostos, com fendas e pseudoinclusões",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.46,
+      0.3226
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.452,
+    0.32,
+    0.464,
+    0.33
+   ],
+   "nota": "Os núcleos são maiores que os de um folículo normal, ovais, com a cromatina empurrada para a membrana — o miolo fica claro, em \"vidro fosco\" (olhos da órfã Annie). Eles se sobrepõem como ovos numa cesta, têm sulcos longitudinais (fendas, \"grãos de café\") e alguns mostram uma bolha rosa de citoplasma invaginado (pseudoinclusão). É o núcleo, e não a papila, que faz o diagnóstico."
+  },
+  {
+   "id": "papilas",
+   "estrutura": "papilas-com-eixo-fibrovascular",
+   "categoria": "patologica",
+   "rotulo": "Papilas ramificadas com eixo fibrovascular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.329
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.4,
+    0.3,
+    0.48,
+    0.36
+   ],
+   "nota": "Projeções com um eixo de tecido conjuntivo e vasos no centro, forradas por uma ou poucas camadas de células tumorais. Ramificam-se em várias ordens e preenchem o tumor; muitas têm o eixo edemaciado e hialino."
+  },
+  {
+   "id": "papilas-2",
+   "estrutura": "papilas-com-eixo-fibrovascular",
+   "categoria": "patologica",
+   "rotulo": "Papila cortada em toda a extensão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.465,
+      0.312
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.445,
+    0.3,
+    0.48,
+    0.325
+   ]
+  },
+  {
+   "id": "coloide",
+   "estrutura": "coloide",
+   "rotulo": "Folículos com coloide entre as áreas papilares",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.6
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.22,
+    0.54,
+    0.36,
+    0.66
+   ]
+  },
+  {
+   "id": "capilar",
+   "estrutura": "capilar-sanguineo",
+   "rotulo": "Capilar no eixo da papila",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.421,
+      0.308
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.41,
+    0.3,
+    0.43,
+    0.316
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "nucleos-de-carcinoma-papilifero",
+   "status": "presente",
+   "marcacoes": [
+    "nucleos"
+   ],
+   "nota": "Núcleos claros, sobrepostos, com fendas e pseudoinclusões em toda a lesão."
+  },
+  {
+   "achado": "papilas-com-eixo-fibrovascular",
+   "status": "presente",
+   "marcacoes": [
+    "papilas",
+    "papilas-2"
+   ],
+   "nota": "Papilas verdadeiras, ramificadas, com eixo fibrovascular — padrão clássico."
+  },
+  {
+   "achado": "corpos-psamomatosos",
+   "status": "ausente",
+   "nota": "Nos campos conferidos não se identificaram calcificações lamelares nos eixos das papilas."
+  }
+ ]
+}

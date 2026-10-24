@@ -14,6 +14,8 @@ import { rotaDaDoenca } from '@/lib/histopatologia/rotas'
 import {
   LAMINAS_PATOLOGICAS,
   doencasPublicadas,
+  capaDaDoenca,
+  laminaDisponivel,
   laminasDaDoenca,
   resumirPatologica,
 } from '@/lib/histopatologia-zoom/repositorio'
@@ -211,7 +213,6 @@ export function doencasDoCatalogo(): DoencaDoCatalogo[] {
     const laminas = laminasDaDoenca(d.id)
     const capitulo = capituloDaDoencaZoom(d)
     if (capitulo) usados.add(capitulo)
-    const capa = laminas[0] ? resumirPatologica(laminas[0]) : null
     const sistema = NOME_DO_SISTEMA.get(d.sistema)
     saida.push({
       id: `doenca:${d.id}`,
@@ -219,7 +220,7 @@ export function doencasDoCatalogo(): DoencaDoCatalogo[] {
       titulo: d.nome,
       categoria: `Histopatologia · ${sistema?.nome ?? 'Doença'}`,
       area: 'histopatologia',
-      imagem: capa?.miniatura ?? null,
+      imagem: capaDaDoenca(d.id),
       zoom: laminas.length > 0,
       detalhe: [
         `${laminas.length} ${laminas.length === 1 ? 'lâmina' : 'lâminas'} com zoom`,
@@ -261,10 +262,14 @@ export function doencasDoSistema(sistema: SistemaId): DoencaDoCatalogo[] {
   return doencasDoCatalogo().filter((d) => d.sistema === sistema)
 }
 
-/** Lâminas de doença com zoom, uma por cartão — vão direto ao visualizador. */
+/**
+ * Lâminas de doença com zoom, uma por cartão — vão direto ao visualizador.
+ * Só as que abrem agora: a de servidor fora do ar seria um cartão sem imagem
+ * levando a um visualizador vazio, e continua a um clique pela página da doença.
+ */
 export function laminasPatologicasComZoom(sistema?: SistemaId): ItemDoCatalogo[] {
   const doencas = new Map(doencasPublicadas().map((d) => [d.id, d]))
-  return LAMINAS_PATOLOGICAS.filter((l) => !sistema || doencas.get(l.doenca)?.sistema === sistema).map((l) => {
+  return LAMINAS_PATOLOGICAS.filter((l) => laminaDisponivel(l) && (!sistema || doencas.get(l.doenca)?.sistema === sistema)).map((l) => {
     const d = doencas.get(l.doenca)
     const r = resumirPatologica(l)
     return {

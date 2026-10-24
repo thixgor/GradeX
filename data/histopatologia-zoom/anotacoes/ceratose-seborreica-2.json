@@ -1,0 +1,190 @@
+{
+ "slug": "ceratose-seborreica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Ceratose seborreica acantótica: platô de epiderme muito espessada por células basaloides monótonas, sem atipia, com pseudocistos córneos de queratina lamelar, acima do nível da epiderme vizinha. O corte foi montado de cabeça para baixo — a superfície da pele está embaixo e a gordura subcutânea, em cima.",
+ "marcacoes": [
+  {
+   "id": "acantose",
+   "estrutura": "acantose-basaloide-exofitica",
+   "categoria": "patologica",
+   "rotulo": "Epiderme muito espessada por células basaloides uniformes",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4,
+      0.565
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.05,
+    0.4,
+    0.95,
+    0.65
+   ],
+   "nota": "A lesão é um platô de epiderme espessada que se projeta para fora do nível da pele vizinha (à direita, a epiderme normal é fina). Ela é feita quase só de células basaloides — pequenas, de núcleo oval regular e pouco citoplasma —, todas parecidas entre si. Atenção à orientação: neste corte a superfície da pele está embaixo."
+  },
+  {
+   "id": "basaloides",
+   "estrutura": "acantose-basaloide-exofitica",
+   "categoria": "patologica",
+   "rotulo": "Células basaloides monótonas, sem atipia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.406,
+      0.537
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.395,
+    0.53,
+    0.415,
+    0.545
+   ],
+   "nota": "Núcleos ovais, do mesmo tamanho, cromatina fina, sem nucléolos grandes nem mitoses atípicas. A uniformidade é o que separa a ceratose seborreica (proliferação benigna de queratinócitos) do carcinoma basocelular e do espinocelular."
+  },
+  {
+   "id": "pseudocisto",
+   "estrutura": "pseudocistos-corneos",
+   "categoria": "patologica",
+   "rotulo": "Pseudocisto córneo: queratina lamelar dentro da lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.545
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.28,
+    0.5,
+    0.36,
+    0.58
+   ],
+   "nota": "Um espaço redondo cheio de queratina em lamelas, aprisionado no meio da massa epitelial. Não é cisto verdadeiro: são invaginações da superfície cortadas transversalmente — a queratina que deveria descamar fica presa entre as cristas. É o achado mais característico da lesão."
+  },
+  {
+   "id": "pseudocisto-2",
+   "estrutura": "pseudocistos-corneos",
+   "categoria": "patologica",
+   "rotulo": "Outros pseudocistos córneos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.59,
+      0.47
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.54,
+    0.44,
+    0.68,
+    0.53
+   ]
+  },
+  {
+   "id": "derme",
+   "estrutura": "derme-reticular",
+   "rotulo": "Derme com infiltrado linfocitário discreto e vasos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.35
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.3,
+    0.3,
+    0.6,
+    0.45
+   ]
+  },
+  {
+   "id": "epiderme-normal",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme normal vizinha, fina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.85,
+      0.405
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.78,
+    0.38,
+    0.95,
+    0.43
+   ]
+  },
+  {
+   "id": "gordura",
+   "estrutura": "adipocito-unilocular",
+   "rotulo": "Gordura subcutânea (no alto, por causa da orientação do corte)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.65,
+      0.13
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.5,
+    0.02,
+    0.9,
+    0.25
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "acantose-basaloide-exofitica",
+   "status": "presente",
+   "marcacoes": [
+    "acantose",
+    "basaloides"
+   ],
+   "nota": "Platô de epiderme espessada por células basaloides uniformes, acima do nível da pele vizinha."
+  },
+  {
+   "achado": "pseudocistos-corneos",
+   "status": "presente",
+   "marcacoes": [
+    "pseudocisto",
+    "pseudocisto-2"
+   ],
+   "nota": "Vários pseudocistos córneos de queratina lamelar espalhados pela lesão."
+  },
+  {
+   "achado": "pigmento-melanico",
+   "status": "ausente",
+   "nota": "As células basaloides não mostram melanina visível neste corte (forma não pigmentada)."
+  }
+ ]
+}

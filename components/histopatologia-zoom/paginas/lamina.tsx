@@ -10,7 +10,6 @@ import { PortaoDaHistologia } from '@/components/histologia/portao'
 import { FichaDaDoenca } from '@/components/histopatologia-zoom/ficha-da-doenca'
 import { LaminaPatologicaInterativa } from '@/components/histopatologia-zoom/lamina-patologica'
 import { rotaDaLaminaZoom } from '@/lib/histologia-zoom/rotas'
-import { REFERENCIA_ABNT_LEEDS, RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
 import { rotaDosDadosDaPatologiaComZoom, type DadosDaLaminaPatologica } from '@/lib/histopatologia-zoom/paginas-tipos'
 import { BASE_PATOZOOM, rotaDaComparacao, rotaDaDoencaZoom } from '@/lib/histopatologia-zoom/rotas'
 import { textoDoCaso } from '@/lib/histopatologia-zoom/texto'
@@ -72,6 +71,7 @@ function Conteudo({ dados }: { dados: DadosDaLaminaPatologica }) {
               <span>{textoDoCaso(lamina.caso.sexo, lamina.caso.idade)}</span>
               <span>{lamina.coloracao}</span>
               <span>Scan em {lamina.objetiva}×</span>
+              <span>{dados.acervo}</span>
             </p>
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -133,6 +133,7 @@ function Conteudo({ dados }: { dados: DadosDaLaminaPatologica }) {
           urlDaLamina={dados.urlDaLamina}
           anterior={anterior}
           proxima={proxima}
+          alternativas={dados.alternativas}
         />
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -183,7 +184,7 @@ function Conteudo({ dados }: { dados: DadosDaLaminaPatologica }) {
             )}
 
             <p className="text-[11px] leading-relaxed text-muted-foreground">
-              {RODAPE_LEEDS} {REFERENCIA_ABNT_LEEDS}
+              {dados.creditos.map((c) => `${c.rodape} ${c.referencia}`).join(' ')}
               {anotacao &&
                 (anotacao.semMarcacoes
                   ? ` Achados conferidos em ${anotacao.conferencias} passagens pela lâmina, em vários aumentos.`

@@ -1,0 +1,118 @@
+{
+ "slug": "meningioma-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Meningioma (grau 1, padrão transicional): massa lobulada de células meningoteliais de aspecto sincicial e núcleos ovais regulares, em lóbulos e redemoinhos, separados por septos de colágeno e vasos de parede hialina, aderida à dura-máter na parte inferior do corte. As faixas escuras verticais são dobras do tecido na lâmina.",
+ "marcacoes": [
+  {
+   "id": "lobulos",
+   "estrutura": "espirais-meningoteliais",
+   "categoria": "patologica",
+   "rotulo": "Células meningoteliais em lóbulos e redemoinhos sinciciais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.452,
+      0.165
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.44,
+    0.16,
+    0.458,
+    0.178
+   ],
+   "nota": "Células de limites mal definidos (aspecto sincicial), citoplasma rosa-claro e núcleos ovais, uniformes, de cromatina delicada — algumas com \"buraco\" claro no núcleo (pseudoinclusão). Elas se enrolam em redemoinhos frouxos e lóbulos, imitando as células de capuz aracnoide das quais o tumor nasce. Núcleos regulares e ausência de mitoses indicam grau 1."
+  },
+  {
+   "id": "lobulos-2",
+   "estrutura": "espirais-meningoteliais",
+   "categoria": "patologica",
+   "rotulo": "Lóbulos separados por septos de colágeno e vasos de parede hialina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.18
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.4,
+    0.15,
+    0.46,
+    0.21
+   ],
+   "nota": "Faixas de colágeno e vasos de parede espessa e hialina dividem o tumor em lóbulos — mistura de padrões meningotelial e fibroso (meningioma transicional)."
+  },
+  {
+   "id": "nucleos",
+   "estrutura": "espirais-meningoteliais",
+   "categoria": "patologica",
+   "rotulo": "Núcleos ovais, de cromatina fina, alguns com pseudoinclusão clara",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.447,
+      0.1625
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.442,
+    0.16,
+    0.452,
+    0.168
+   ],
+   "nota": "Os núcleos são todos parecidos, ovais, de cromatina delicada; alguns têm um vacúolo claro (invaginação de citoplasma), detalhe típico das células meningoteliais."
+  },
+  {
+   "id": "dura",
+   "estrutura": "dura-mater",
+   "rotulo": "Dura-máter e tecido fibroso de inserção do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.38
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.25,
+    0.7,
+    0.45
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "espirais-meningoteliais",
+   "status": "presente",
+   "marcacoes": [
+    "lobulos",
+    "lobulos-2",
+    "nucleos"
+   ],
+   "nota": "Lóbulos e redemoinhos de células meningoteliais sinciciais, de núcleos ovais regulares, com septos fibrosos."
+  },
+  {
+   "achado": "corpos-psamomatosos",
+   "status": "ausente",
+   "nota": "Não se identificaram calcificações lamelares nos campos conferidos."
+  }
+ ]
+}

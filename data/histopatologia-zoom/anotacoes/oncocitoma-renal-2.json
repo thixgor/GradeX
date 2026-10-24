@@ -1,0 +1,140 @@
+{
+ "slug": "oncocitoma-renal-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Oncocitoma renal: tumor bem delimitado formado por ninhos e ácinos de oncócitos — células grandes de citoplasma eosinofílico granular e núcleos redondos e regulares — em estroma hialino pálido. À direita, córtex renal normal com corpúsculos e túbulos.",
+ "marcacoes": [
+  {
+   "id": "oncocitos",
+   "estrutura": "metaplasia-oncocitica",
+   "categoria": "patologica",
+   "rotulo": "Oncócitos: citoplasma rosa granular, núcleo redondo e regular",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.231,
+      0.18
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.225,
+    0.175,
+    0.237,
+    0.187
+   ],
+   "nota": "Células grandes, poligonais, de citoplasma eosinofílico finamente granular — o grânulo é mitocôndria, abarrotada no citoplasma (por isso o tumor é castanho-mogno na peça). Os núcleos são redondos, do mesmo tamanho, de cromatina regular, sem a pleomorfia nem os halos perinucleares do carcinoma cromófobo, o principal diferencial."
+  },
+  {
+   "id": "ninhos",
+   "estrutura": "metaplasia-oncocitica",
+   "categoria": "patologica",
+   "rotulo": "Ninhos e ácinos de oncócitos em estroma edemaciado e hialino",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.215,
+      0.165
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.2,
+    0.15,
+    0.26,
+    0.21
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Faixas de estroma hialino entre os ninhos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.24,
+      0.165
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.23,
+    0.155,
+    0.25,
+    0.175
+   ],
+   "nota": "O estroma é escasso, pálido, edematoso e hialino; no centro dos tumores maiores ele forma a cicatriz central estrelada vista na tomografia. Aqui aparecem as faixas que levam a ela."
+  },
+  {
+   "id": "glomerulo",
+   "estrutura": "corpusculo-renal",
+   "rotulo": "Rim normal ao lado: corpúsculos renais",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.16
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.58,
+    0.1,
+    0.72,
+    0.24
+   ]
+  },
+  {
+   "id": "tubulos",
+   "estrutura": "tubulo-contorcido-proximal",
+   "rotulo": "Túbulos contorcidos do córtex normal",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.6,
+      0.2
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.56,
+    0.16,
+    0.66,
+    0.26
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "metaplasia-oncocitica",
+   "status": "presente",
+   "marcacoes": [
+    "oncocitos",
+    "ninhos"
+   ],
+   "nota": "Todo o tumor é formado por oncócitos em ninhos e ácinos, de núcleos redondos e regulares."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "estroma"
+   ],
+   "nota": "Faixas de estroma hialino e edemaciado entre os ninhos; a cicatriz central em si não está no plano deste corte."
+  }
+ ]
+}

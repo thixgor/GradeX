@@ -1,0 +1,150 @@
+{
+ "slug": "esteatose-hepatica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Esteatose hepática intensa e difusa: quase todos os hepatócitos contêm um vacúolo grande de gordura que desloca o núcleo para a periferia (macrovesicular), com gotas pequenas em parte das células; os sinusoides ficam comprimidos. Sem balonização nem neutrófilos — esteatose simples.",
+ "marcacoes": [
+  {
+   "id": "macro",
+   "estrutura": "esteatose-macrovesicular",
+   "categoria": "patologica",
+   "rotulo": "Hepatócitos com um vacúolo grande que empurra o núcleo para a borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.42,
+      0.415
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.4,
+    0.46,
+    0.46
+   ],
+   "nota": "Quase todos os hepatócitos têm uma gota única de gordura que ocupa a célula inteira e achata o núcleo contra a membrana, como um anel de sinete. A gordura (triglicerídeos) foi dissolvida pelo processamento e deixa o vacúolo vazio. Acumula quando chegam mais ácidos graxos ao fígado do que ele consegue oxidar ou exportar como VLDL — álcool, obesidade, diabetes, desnutrição proteica."
+  },
+  {
+   "id": "micro",
+   "estrutura": "esteatose-microvesicular",
+   "categoria": "patologica",
+   "rotulo": "Células com várias gotas pequenas e núcleo ainda central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.44,
+      0.425
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.43,
+    0.415,
+    0.45,
+    0.435
+   ],
+   "nota": "Entre as gotas grandes há hepatócitos com várias gotículas que ainda não se fundiram, com o núcleo no centro. É a mistura habitual: a gota pequena é o estágio anterior da grande."
+  },
+  {
+   "id": "difusa",
+   "estrutura": "esteatose-macrovesicular",
+   "categoria": "patologica",
+   "rotulo": "Esteatose difusa, em todos os lóbulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.2,
+      0.53
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.14,
+    0.48,
+    0.24,
+    0.58
+   ]
+  },
+  {
+   "id": "hepatocito",
+   "estrutura": "hepatocito",
+   "rotulo": "Grupo de hepatócitos com menos gordura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.185,
+      0.545
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.175,
+    0.535,
+    0.195,
+    0.555
+   ]
+  },
+  {
+   "id": "sinusoide",
+   "estrutura": "sinusoide-hepatico",
+   "rotulo": "Sinusoides comprimidos entre células tumefeitas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.452,
+      0.455
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.445,
+    0.448,
+    0.46,
+    0.46
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "esteatose-macrovesicular",
+   "status": "presente",
+   "marcacoes": [
+    "macro",
+    "difusa"
+   ],
+   "nota": "Esteatose macrovesicular difusa e intensa, em quase todos os hepatócitos."
+  },
+  {
+   "achado": "esteatose-microvesicular",
+   "status": "presente",
+   "marcacoes": [
+    "micro"
+   ],
+   "nota": "Componente de gotas pequenas misturado às gotas grandes."
+  },
+  {
+   "achado": "balonizacao-hepatocitaria",
+   "status": "ausente",
+   "nota": "Os hepatócitos sem gordura têm citoplasma granular normal; não se veem células balonizadas de citoplasma claro e rarefeito."
+  },
+  {
+   "achado": "infiltrado-neutrofilico",
+   "status": "ausente",
+   "nota": "Não há neutrófilos em torno de hepatócitos nos campos conferidos — esteatose simples, não esteato-hepatite."
+  }
+ ]
+}

@@ -1,0 +1,213 @@
+{
+ "slug": "carcinoma-basocelular-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Pele com carcinoma basocelular: ninhos de células basaloides que descem da epiderme para a derme ao longo de toda a amostra, com paliçada periférica, estroma mixoide pálido e infiltrado linfocitário em volta. A epiderme está íntegra; glândulas sudoríparas e gordura preservadas na profundidade.",
+ "marcacoes": [
+  {
+   "id": "ninho",
+   "estrutura": "ninhos-basaloides",
+   "categoria": "patologica",
+   "rotulo": "Ninho de células basaloides, contínuo com a epiderme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.39,
+      0.07
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.35,
+    0.035,
+    0.45,
+    0.105
+   ],
+   "nota": "Uma massa de células pequenas, de núcleo oval escuro e quase sem citoplasma — semelhantes às células da camada basal da epiderme e do folículo piloso, das quais o tumor deriva — desce da epiderme para a derme. Os ninhos são vários, unidos à epiderme ao longo de toda a lâmina."
+  },
+  {
+   "id": "palicada",
+   "estrutura": "paliçada-periferica",
+   "categoria": "patologica",
+   "rotulo": "Paliçada: núcleos alinhados como estacas na borda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.377,
+      0.086
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.36,
+    0.075,
+    0.4,
+    0.1
+   ],
+   "nota": "Na periferia de cada ninho os núcleos ficam alongados, perpendiculares à borda, lado a lado como estacas de cerca. É o arranjo que mais ajuda a reconhecer o basocelular: imita a camada basal, que também se organiza assim contra a membrana basal."
+  },
+  {
+   "id": "estroma-mixoide",
+   "estrutura": "fenda-de-retracao",
+   "categoria": "patologica",
+   "rotulo": "Estroma frouxo e pálido entre os lóbulos do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.401,
+      0.078
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.395,
+    0.07,
+    0.415,
+    0.085
+   ],
+   "nota": "O estroma que acompanha os ninhos é frouxo, mixoide, mais claro que a derme vizinha. Ele é produzido junto com o tumor — o basocelular depende desse estroma para crescer, e é por isso que quase nunca dá metástase. No processamento, o estroma mixoide se retrai e abre as fendas que separam ninho e derme."
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos e plasmócitos na derme em volta",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.356,
+      0.07
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.35,
+    0.055,
+    0.37,
+    0.095
+   ]
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Borda inferior do tumor empurrando a derme",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.41,
+      0.099
+     ],
+     "angulo": 270
+    }
+   ],
+   "vista": [
+    0.38,
+    0.085,
+    0.44,
+    0.105
+   ]
+  },
+  {
+   "id": "epiderme",
+   "estrutura": "epiderme",
+   "rotulo": "Epiderme sobre o tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.05
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.35,
+    0.04,
+    0.38,
+    0.06
+   ]
+  },
+  {
+   "id": "glandulas-sudoriparas",
+   "estrutura": "glandula-sudoripara-ecrina",
+   "rotulo": "Glândulas sudoríparas écrinas na derme profunda",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.465,
+      0.14
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.44,
+    0.12,
+    0.5,
+    0.16
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ninhos-basaloides",
+   "status": "presente",
+   "marcacoes": [
+    "ninho"
+   ],
+   "nota": "Ninhos basaloides múltiplos, presos à epiderme ao longo de toda a amostra."
+  },
+  {
+   "achado": "paliçada-periferica",
+   "status": "presente",
+   "marcacoes": [
+    "palicada"
+   ],
+   "nota": "Paliçada nítida na periferia dos ninhos."
+  },
+  {
+   "achado": "fenda-de-retracao",
+   "status": "presente",
+   "marcacoes": [
+    "estroma-mixoide"
+   ],
+   "nota": "Estroma mixoide pálido em torno dos ninhos, com pequenas fendas de retração."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Os ninhos ocupam a derme papilar e o topo da reticular, com bordas arredondadas (padrão nodular/superficial, não infiltrativo)."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "ausente",
+   "nota": "A epiderme sobre o tumor está íntegra, com camada córnea."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Infiltrado linfocitário e plasmocitário na derme ao redor dos ninhos."
+  }
+ ]
+}

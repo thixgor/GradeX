@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowRight, ScanSearch } from 'lucide-react'
 
+import { MiniaturaIndisponivel } from '@/components/histopatologia-zoom/miniatura-indisponivel'
 import { rotaDaDoencaZoom, rotaDaLaminaPatologica } from '@/lib/histopatologia-zoom/rotas'
 
 /**
@@ -22,6 +23,8 @@ export interface LaminaDaDoenca {
   nome: string
   miniatura: string
   achadosPresentes: number
+  /** Falso enquanto o servidor da lâmina estiver fora do ar. */
+  disponivel: boolean
 }
 
 export function LaminasComZoomDaDoenca({
@@ -64,13 +67,17 @@ export function LaminasComZoomDaDoenca({
                 className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8763A]"
               >
                 <span className="relative block aspect-[4/3] overflow-hidden rounded-xl bg-white ring-1 ring-white/10 transition group-hover:ring-[#E8763A]/70">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={l.miniatura}
-                    alt=""
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  {l.disponivel ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={l.miniatura}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <MiniaturaIndisponivel />
+                  )}
                   <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
                     <ScanSearch className="h-3 w-3 text-[#E8763A]" aria-hidden /> Zoom
                   </span>

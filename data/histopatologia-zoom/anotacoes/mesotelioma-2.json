@@ -1,0 +1,150 @@
+{
+ "slug": "mesotelioma-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Mesotelioma maligno da pleura: massa de células mesoteliais atípicas, em lençóis e cordões, crescendo numa pleura muito espessada por colágeno e fibrina organizada e penetrando o tecido fibroso. Por baixo, pulmão com edema e macrófagos com antracose. O diagnóstico definitivo exige imuno-histoquímica (calretinina, WT1, D2-40 positivos; marcadores de adenocarcinoma negativos).",
+ "marcacoes": [
+  {
+   "id": "lencois",
+   "estrutura": "proliferacao-mesotelial-invasiva",
+   "categoria": "patologica",
+   "rotulo": "Massa de células mesoteliais atípicas em lençóis, na pleura espessada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.64,
+      0.15
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.58,
+    0.06,
+    0.7,
+    0.18
+   ],
+   "nota": "Uma massa celular escura ocupa a pleura. São células poligonais e ovais de núcleo grande e hipercromático, coesas, em lençóis e cordões, com pigmento castanho (hemossiderina) espalhado. A proliferação mesotelial forma massa e destrói a arquitetura — não é a camada única e achatada da pleura normal nem a hiperplasia reativa, que fica na superfície."
+  },
+  {
+   "id": "celulas",
+   "estrutura": "proliferacao-mesotelial-invasiva",
+   "categoria": "patologica",
+   "rotulo": "Células de núcleo grande, cromatina grosseira, coesas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.66,
+      0.09
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.655,
+    0.085,
+    0.667,
+    0.095
+   ]
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Tumor penetrando o tecido fibroso da pleura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.525,
+      0.205
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.48,
+    0.18,
+    0.56,
+    0.24
+   ],
+   "nota": "Na borda da massa, grupos de células tumorais entram no colágeno da pleura espessada, em vez de ficar contidos na superfície. A invasão do tecido de baixo é o critério que separa o mesotelioma da proliferação mesotelial reativa."
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Pleura espessada por colágeno e fibrina organizada",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.15
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.1,
+    0.05,
+    0.5,
+    0.25
+   ],
+   "nota": "Uma faixa larga de colágeno hialino e fibrina em organização envolve o pulmão — a \"casca\" pleural que, no mesotelioma, aprisiona o pulmão e restringe a respiração."
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Pulmão subjacente, com edema e macrófagos com antracose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.36,
+      0.35
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.3,
+    0.28,
+    0.42,
+    0.4
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "proliferacao-mesotelial-invasiva",
+   "status": "presente",
+   "marcacoes": [
+    "lencois",
+    "celulas"
+   ],
+   "nota": "Massa de células mesoteliais atípicas em lençóis e cordões na pleura."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Grupos tumorais penetram o colágeno da pleura espessada."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Pleura muito espessada por colágeno hialino e fibrina organizada; não há placa pleural hialina típica de asbesto neste corte."
+  }
+ ]
+}

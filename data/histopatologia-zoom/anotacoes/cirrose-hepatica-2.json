@@ -1,0 +1,185 @@
+{
+ "slug": "cirrose-hepatica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Fígado com cirrose micronodular pigmentar da hemocromatose: nódulos regulares de hepatócitos sem veia central, cercados por septos fibrosos, com grânulos castanho-dourados de hemossiderina nos hepatócitos, no epitélio dos dúctulos e nos macrófagos dos septos. Paciente de 59 anos com pele bronzeada e hiperglicemia — o \"diabetes bronzeado\".",
+ "marcacoes": [
+  {
+   "id": "nodulo",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Nódulo de regeneração: hepatócitos sem veia central",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.33
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.38,
+    0.25,
+    0.5,
+    0.38
+   ],
+   "nota": "Uma ilha redonda de hepatócitos, toda cercada por septo fibroso, sem a veia centrolobular nem os espaços-porta que organizam o lóbulo normal. Os hepatócitos estão carregados de grânulos castanho-dourados: é a hemossiderina da hemocromatose, o ferro que lesa a célula e alimenta a fibrose."
+  },
+  {
+   "id": "nodulo-2",
+   "estrutura": "nodulos-regenerativos",
+   "categoria": "patologica",
+   "rotulo": "Outro nódulo, de tamanho parecido (micronodular)",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.84,
+      0.37
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.78,
+    0.32,
+    0.9,
+    0.43
+   ]
+  },
+  {
+   "id": "septo",
+   "estrutura": "fibrose-intersticial",
+   "categoria": "patologica",
+   "rotulo": "Septo fibroso que envolve e separa os nódulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5038,
+      0.3192
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.46,
+    0.27,
+    0.55,
+    0.36
+   ],
+   "nota": "Faixas de colágeno com fibroblastos, vasos e células inflamatórias ligam os espaços-porta entre si e às veias centrais, cortando o órgão em nódulos. O tamanho regular dos nódulos (quase todos menores que 3 mm) é o padrão micronodular, típico de agressão difusa e contínua — álcool, ferro."
+  },
+  {
+   "id": "ductulos",
+   "estrutura": "reacao-ductular",
+   "categoria": "patologica",
+   "rotulo": "Dúctulo no septo, com pigmento no epitélio",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4995,
+      0.2925
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.485,
+    0.275,
+    0.515,
+    0.3
+   ],
+   "nota": "Pequenos dúctulos biliares brotam na margem dos septos. Aqui o próprio epitélio ductular contém grânulos de pigmento — o ferro da hemocromatose se deposita também nas células biliares, o que não acontece na siderose secundária."
+  },
+  {
+   "id": "inflamacao-septo",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos e macrófagos carregados de pigmento no septo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.505,
+      0.281
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.49,
+    0.27,
+    0.52,
+    0.295
+   ]
+  },
+  {
+   "id": "hepatocitos",
+   "estrutura": "hepatocito",
+   "rotulo": "Hepatócitos em placas, com grânulos de hemossiderina",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.45,
+      0.3
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.42,
+    0.27,
+    0.48,
+    0.33
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "nodulos-regenerativos",
+   "status": "presente",
+   "marcacoes": [
+    "nodulo",
+    "nodulo-2"
+   ],
+   "nota": "O corte inteiro é feito de nódulos de hepatócitos sem veia central, de tamanho regular (micronodular)."
+  },
+  {
+   "achado": "fibrose-intersticial",
+   "status": "presente",
+   "marcacoes": [
+    "septo"
+   ],
+   "nota": "Septos fibrosos contínuos envolvem todos os nódulos."
+  },
+  {
+   "achado": "reacao-ductular",
+   "status": "presente",
+   "marcacoes": [
+    "ductulos"
+   ],
+   "nota": "Dúctulos na periferia dos septos, alguns com pigmento no epitélio."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "inflamacao-septo"
+   ],
+   "nota": "Infiltrado discreto de linfócitos nos septos, com macrófagos cheios de pigmento — cirrose pouco ativa."
+  },
+  {
+   "achado": "esteatose-macrovesicular",
+   "status": "ausente",
+   "nota": "Os hepatócitos dos nódulos têm citoplasma granular e pigmentado, sem vacúolos de gordura."
+  }
+ ]
+}

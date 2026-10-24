@@ -1,0 +1,232 @@
+{
+ "slug": "tuberculose-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Tuberculose pulmonar fibrocaseosa em lobectomia: grandes áreas de necrose caseosa cercadas por granulomas epitelioides confluentes, células gigantes de Langhans, coroa de linfócitos e fibrose, com pulmão preservado em volta. O paciente foi operado com suspeita de carcinoma — a lesão vista na radiografia era a tuberculose.",
+ "marcacoes": [
+  {
+   "id": "caseo",
+   "estrutura": "necrose-caseosa",
+   "categoria": "patologica",
+   "rotulo": "Necrose caseosa: área rosa, granular, sem arquitetura",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.74,
+      0.35
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.7,
+    0.3,
+    0.78,
+    0.38
+   ],
+   "nota": "Uma grande área de material eosinofílico, granular e amorfo — nem células nem contornos de alvéolos sobram. É a necrose caseosa (\"de queijo\"), típica da tuberculose: a resposta imune celular mata os macrófagos infectados e o tecido em volta, e os lipídios da parede da micobactéria deixam o resíduo esbranquiçado e friável na peça. As fendas são artefato de corte do material ressecado."
+  },
+  {
+   "id": "granulomas",
+   "estrutura": "granuloma-epitelioide",
+   "categoria": "patologica",
+   "rotulo": "Granulomas confluentes de histiócitos epitelioides",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.165
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.4,
+    0.14,
+    0.46,
+    0.2
+   ],
+   "nota": "Nódulos de macrófagos ativados, de citoplasma pálido e núcleo alongado (\"epitelioides\" porque se encostam como células de epitélio), cada um com uma coroa de linfócitos. Formam-se quando os linfócitos T CD4 produzem interferon-γ e os macrófagos tentam cercar a micobactéria que não conseguem matar."
+  },
+  {
+   "id": "langhans",
+   "estrutura": "celula-gigante-de-langhans",
+   "categoria": "patologica",
+   "rotulo": "Célula gigante de Langhans: núcleos dispostos na periferia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4155,
+      0.154
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.414,
+    0.15,
+    0.426,
+    0.16
+   ],
+   "nota": "Uma célula enorme, de citoplasma rosa, com muitos núcleos enfileirados na borda em ferradura. É a fusão de vários macrófagos epitelioides — uma \"célula gigante\" que tenta englobar o que um macrófago só não dá conta."
+  },
+  {
+   "id": "langhans-2",
+   "estrutura": "celula-gigante-de-langhans",
+   "categoria": "patologica",
+   "rotulo": "Outra célula gigante no granuloma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.426,
+      0.153
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.415,
+    0.145,
+    0.44,
+    0.165
+   ]
+  },
+  {
+   "id": "linfocitos",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Coroa de linfócitos e fibrose ao redor da lesão",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.625,
+      0.195
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.6,
+    0.16,
+    0.66,
+    0.22
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Faixa fibrosa e granulomatosa que encapsula a necrose",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.71,
+      0.325
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.69,
+    0.29,
+    0.74,
+    0.34
+   ],
+   "nota": "Entre o caseo e o pulmão há uma parede de granulomas e colágeno: a lesão está sendo isolada. A cicatriz fibrosa (às vezes calcificada) é a forma como a tuberculose \"cura\" — e onde o bacilo pode ficar latente por décadas."
+  },
+  {
+   "id": "alveolos",
+   "estrutura": "alveolo-pulmonar",
+   "rotulo": "Pulmão em volta, com alvéolos preservados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.2
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.05,
+    0.1,
+    0.3,
+    0.3
+   ]
+  },
+  {
+   "id": "arteria",
+   "estrutura": "arteria-muscular",
+   "rotulo": "Artéria pulmonar com hemácias na luz",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.69,
+      0.188
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.67,
+    0.17,
+    0.7,
+    0.21
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "necrose-caseosa",
+   "status": "presente",
+   "marcacoes": [
+    "caseo"
+   ],
+   "nota": "Grandes áreas de necrose caseosa no centro da lesão."
+  },
+  {
+   "achado": "granuloma-epitelioide",
+   "status": "presente",
+   "marcacoes": [
+    "granulomas"
+   ],
+   "nota": "Granulomas epitelioides confluentes em volta da necrose e espalhados pelo parênquima."
+  },
+  {
+   "achado": "celula-gigante-de-langhans",
+   "status": "presente",
+   "marcacoes": [
+    "langhans",
+    "langhans-2"
+   ],
+   "nota": "Várias células gigantes multinucleadas, de núcleos periféricos, nos granulomas."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "linfocitos"
+   ],
+   "nota": "Linfócitos em coroa ao redor dos granulomas."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Fibrose em torno das áreas caseosas — lesão fibrocaseosa, antiga e ativa."
+  }
+ ]
+}

@@ -7,7 +7,6 @@ import { NavegacaoDoModulo } from '@/components/histologia/navegacao'
 import { useTituloDaAba } from '@/components/histologia/pagina'
 import { PortaoDaHistologia } from '@/components/histologia/portao'
 import { ComparacaoComNormal } from '@/components/histopatologia-zoom/comparacao'
-import { RODAPE_LEEDS } from '@/lib/histopatologia-zoom/fonte'
 import { rotaDosDadosDaPatologiaComZoom, type DadosDaComparacaoPatologica } from '@/lib/histopatologia-zoom/paginas-tipos'
 import { BASE_PATOZOOM, rotaDaComparacao, rotaDaDoencaZoom, rotaDaLaminaPatologica } from '@/lib/histopatologia-zoom/rotas'
 
@@ -93,7 +92,7 @@ function Conteudo({ dados }: { dados: DadosDaComparacaoPatologica }) {
         />
 
         <p className="mt-6 text-[11px] leading-relaxed text-muted-foreground">
-          Lâmina da doença: {RODAPE_LEEDS} Lâmina normal: {normal.credito}
+          Lâmina da doença: {dados.creditoDaLamina} Lâmina normal: {normal.credito}
         </p>
       </div>
     </div>

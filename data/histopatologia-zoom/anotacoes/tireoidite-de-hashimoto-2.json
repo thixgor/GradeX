@@ -1,0 +1,188 @@
+{
+ "slug": "tireoidite-de-hashimoto-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Tireoidite de Hashimoto (struma lymphomatosa): parênquima tomado por linfócitos e plasmócitos, folículos linfoides com centros germinativos, folículos residuais pequenos revestidos por células de Hürthle e septos fibrosos largos que dividem a glândula em nódulos.",
+ "marcacoes": [
+  {
+   "id": "foliculo-linfoide",
+   "estrutura": "hiperplasia-linfoide-reativa",
+   "categoria": "patologica",
+   "rotulo": "Folículo linfoide com centro germinativo dentro da tireoide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.466,
+      0.33
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.452,
+    0.318,
+    0.484,
+    0.344
+   ],
+   "nota": "Um centro germinativo claro (centroblastos e macrófagos de corpos tingíveis) cercado por uma coroa de linfócitos pequenos — tecido de linfonodo crescendo no meio da glândula. É a assinatura da autoimunidade: linfócitos B que reconhecem tireoperoxidase e tireoglobulina proliferam ali mesmo."
+  },
+  {
+   "id": "infiltrado",
+   "estrutura": "infiltrado-linfoplasmocitario",
+   "categoria": "patologica",
+   "rotulo": "Linfócitos e plasmócitos entre os folículos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.455,
+      0.301
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.44,
+    0.285,
+    0.47,
+    0.31
+   ],
+   "nota": "Os espaços entre os folículos estão tomados por linfócitos e plasmócitos. São eles — e os anticorpos que produzem — que destroem as células foliculares; com o tempo sobra pouco tecido funcionante, e o hipotireoidismo se instala."
+  },
+  {
+   "id": "hurthle",
+   "estrutura": "metaplasia-oncocitica",
+   "categoria": "patologica",
+   "rotulo": "Células de Hürthle: citoplasma rosa granular, núcleo grande",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.4605,
+      0.2895
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.452,
+    0.285,
+    0.47,
+    0.298
+   ],
+   "nota": "As células foliculares que sobram ficam grandes, com citoplasma eosinofílico e granular (abarrotado de mitocôndrias) e núcleo com nucléolo evidente. É a metaplasia oncocítica, resposta da célula à agressão crônica."
+  },
+  {
+   "id": "atrofia",
+   "estrutura": "atrofia-folicular",
+   "categoria": "patologica",
+   "rotulo": "Folículos pequenos, quase sem coloide",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.452,
+      0.299
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.445,
+    0.29,
+    0.465,
+    0.305
+   ]
+  },
+  {
+   "id": "fibrose",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Septos de colágeno dividem a glândula em nódulos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.48,
+      0.3
+     ],
+     "angulo": 180
+    }
+   ],
+   "vista": [
+    0.46,
+    0.26,
+    0.51,
+    0.34
+   ],
+   "nota": "Faixas largas de colágeno hialino separam lóbulos de tecido linfoide e folicular. A fibrose extensa marca a doença avançada (variante fibrosa) e explica a tireoide firme e lobulada à palpação."
+  },
+  {
+   "id": "foliculo",
+   "estrutura": "foliculo-tireoidiano",
+   "rotulo": "Folículo tireoidiano residual",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.456,
+      0.292
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.45,
+    0.286,
+    0.462,
+    0.298
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "presente",
+   "marcacoes": [
+    "infiltrado"
+   ],
+   "nota": "Infiltrado denso de linfócitos e plasmócitos em todo o parênquima."
+  },
+  {
+   "achado": "hiperplasia-linfoide-reativa",
+   "status": "presente",
+   "marcacoes": [
+    "foliculo-linfoide"
+   ],
+   "nota": "Folículos linfoides com centro germinativo espalhados pela glândula."
+  },
+  {
+   "achado": "metaplasia-oncocitica",
+   "status": "presente",
+   "marcacoes": [
+    "hurthle"
+   ],
+   "nota": "Folículos revestidos por células de Hürthle, de citoplasma granular eosinofílico."
+  },
+  {
+   "achado": "atrofia-folicular",
+   "status": "presente",
+   "marcacoes": [
+    "atrofia"
+   ],
+   "nota": "Folículos pequenos, com coloide escasso ou ausente."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "fibrose"
+   ],
+   "nota": "Septos fibrosos largos lobulam a glândula — doença avançada."
+  }
+ ]
+}

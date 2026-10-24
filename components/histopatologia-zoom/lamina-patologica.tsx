@@ -62,6 +62,7 @@ export function LaminaPatologicaInterativa({
   estruturas,
   achados,
   nomeDaDoenca,
+  alternativas,
 }: {
   lamina: LaminaDoVisualizador
   caracteristicas: React.ReactNode
@@ -71,6 +72,7 @@ export function LaminaPatologicaInterativa({
   estruturas: MarcacaoExibida[]
   achados: LinhaDeAchado[]
   nomeDaDoenca: string
+  alternativas?: Vizinha[]
 }) {
   const [selecionada, setSelecionada] = useState<string | null>(null)
   const visualizadorRef = useRef<HTMLDivElement | null>(null)
@@ -114,6 +116,7 @@ export function LaminaPatologicaInterativa({
         selecionada={selecionada}
         onSelecionar={(id) => selecionar(id)}
         visualizadorRef={visualizadorRef}
+        alternativas={alternativas}
       />
 
       <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-muted-foreground">

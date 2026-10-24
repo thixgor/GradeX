@@ -79,6 +79,8 @@ export type FonteLicenciadaId =
   | 'histoviewer'
   // Autorização própria (29/09/2026) — lâminas da Histopatologia com Zoom.
   | 'leeds'
+  // Autorização própria (24/10/2026) — índice das lâminas suplementares.
+  | 'pathologybites'
 
 export interface FonteLicenciada {
   id: FonteLicenciadaId
@@ -581,6 +583,55 @@ export const FONTES_LICENCIADAS: Record<FonteLicenciadaId, FonteLicenciada> = {
       data: '2026-09-29',
       sha256: 'd62bcfe8d63c1545c4b3833ed4a3b7100f065761719f8f2e9343c65e3f35fe5e',
       hashDeclarado: '029232ea620a4345db6a303490d1d6f88d9d0fd2d08a07d57f8fcd59342b7d23',
+    },
+  },
+  /**
+   * PathologyBites — buscador de lâminas virtuais (pathologybites.com/tools/virtual-slides).
+   * Foi por ele que cada doença da Histopatologia com Zoom ganhou uma lâmina
+   * suplementar quando o servidor de Leeds saiu do ar (ver
+   * `lib/histopatologia-zoom/fonte.ts`).
+   *
+   * **O que esta autorização não alcança.** O próprio PathologyBites declara,
+   * na página das lâminas, que não hospeda nem é dono de nenhuma delas: o
+   * índice aponta para repositórios de terceiros, e os direitos de cada lâmina
+   * continuam com o respectivo dono. A autorização cobre o conteúdo *do*
+   * PathologyBites — o índice, os textos, as imagens dele —, não as lâminas
+   * da Rosai Collection nem as da University of Pittsburgh, que são exibidas
+   * pelo visualizador direto dos servidores públicos delas, sem cópia. Para
+   * esses acervos, o que vale é a política de uso educacional de cada um, e a
+   * recomendação é obter a autorização escrita deles como se fez com Leeds.
+   *
+   * O exemplar recebido traz o hash declarado no rodapé, mas os campos de
+   * assinatura, nome e data do autorizante estão em branco.
+   */
+  pathologybites: {
+    id: 'pathologybites',
+    nome: 'PathologyBites — Virtual Slide Search Engine',
+    url: 'https://www.pathologybites.com/tools/virtual-slides',
+    titular: 'PathologyBites (pathologybites.com)',
+    signatarios: ['Representante / proprietário do PathologyBites (campo de assinatura em branco no exemplar recebido)'],
+    licencaBase: 'Conteúdo do PathologyBites (todos os direitos reservados); as lâminas indexadas pertencem aos respectivos repositórios',
+    excecao:
+      'Autorização plena, não exclusiva e irrevogável para utilizar, indexar, catalogar, organizar, traduzir, aprofundar, adaptar e disponibilizar, gratuita ou paga, o conteúdo publicado em pathologybites.com, sem obrigação de crédito.',
+    credito:
+      'Lâminas suplementares localizadas pelo buscador de lâminas virtuais do PathologyBites (pathologybites.com). Crédito dispensado pela cláusula 4, mantido no rodapé da seção como o termo recomenda.',
+    creditoCurto: 'PathologyBites · índice de lâminas virtuais',
+    permissoes: [
+      'Utilizar, indexar, catalogar e organizar o conteúdo do PathologyBites (textos, imagens, vídeos, áudios).',
+      'Traduzir para o português brasileiro e aprofundar o conteúdo.',
+      'Disponibilizar de forma gratuita ou paga na DomineAqui e subdomínios, sem obrigação de crédito (cláusulas 3 e 4).',
+    ],
+    restricoes: [
+      'Não transfere a titularidade dos direitos autorais originais (cláusula 6).',
+      'O PathologyBites declara não hospedar nem deter as lâminas que indexa: os direitos de cada lâmina continuam com o repositório de origem (Rosai Collection, University of Pittsburgh), cuja política de uso se aplica.',
+      'Revogável apenas por comunicação formal escrita entre as partes (cláusula 5).',
+    ],
+    dominiosDeMidia: ['rosai.secondslide.com', 'image.upmc.edu'],
+    comprovante: {
+      arquivo: 'Autorizacao_PathologyBites_DomineAqui.pdf',
+      data: '2026-10-24',
+      sha256: 'c06510eb1a54a072e3bb6a21a88e67c97c0a2d9a09bde4c237df7a44e38d93aa',
+      hashDeclarado: '80764d516a23efd148fc23f236c472252290e6167936b9276e398d19d0a59a86',
     },
   },
 }

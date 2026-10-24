@@ -1,0 +1,158 @@
+{
+ "slug": "carcinoma-renal-papilifero-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Carcinoma de células renais papilífero: papilas e túbulos revestidos por células cúbicas de núcleos ovais, com eixos fibrovasculares, muitos distendidos por macrófagos espumosos, faixas fibrosas espessas e extensa hemorragia na metade inferior do tumor.",
+ "marcacoes": [
+  {
+   "id": "papilas",
+   "estrutura": "papilas-com-eixo-fibrovascular",
+   "categoria": "patologica",
+   "rotulo": "Papilas com eixo fibrovascular, revestidas por células cúbicas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.165,
+      0.058
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.14,
+    0.035,
+    0.2,
+    0.075
+   ],
+   "nota": "Projeções digitiformes com um eixo fino de tecido conjuntivo e capilar, forradas por uma camada de células cúbicas de citoplasma escasso e núcleo regular. Na parte mais compacta do tumor, as papilas ficam tão apertadas que parecem túbulos sólidos."
+  },
+  {
+   "id": "espumosas",
+   "estrutura": "celulas-espumosas",
+   "categoria": "patologica",
+   "rotulo": "Eixo de papila cheio de macrófagos espumosos",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.159,
+      0.057
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.15,
+    0.05,
+    0.17,
+    0.065
+   ],
+   "nota": "Os eixos de várias papilas estão distendidos por macrófagos de citoplasma claro e espumoso, carregados de lipídio. É um achado muito característico do carcinoma papilífero renal — tão típico que ajuda a reconhecê-lo mesmo em biópsia pequena."
+  },
+  {
+   "id": "papilas-compactas",
+   "estrutura": "papilas-com-eixo-fibrovascular",
+   "categoria": "patologica",
+   "rotulo": "Área compacta: papilas e túbulos apertados",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.22,
+      0.33
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.2,
+    0.3,
+    0.26,
+    0.36
+   ]
+  },
+  {
+   "id": "atipia",
+   "estrutura": "atipia-citologica",
+   "categoria": "patologica",
+   "rotulo": "Núcleos ovais, de tamanho moderado, sem grande pleomorfia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.235,
+      0.315
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.225,
+    0.305,
+    0.245,
+    0.325
+   ]
+  },
+  {
+   "id": "septos",
+   "estrutura": "pseudocapsula-fibrosa",
+   "categoria": "patologica",
+   "rotulo": "Faixas fibrosas espessas dividindo o tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.15,
+      0.115
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.08,
+    0.1,
+    0.24,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "papilas-com-eixo-fibrovascular",
+   "status": "presente",
+   "marcacoes": [
+    "papilas",
+    "papilas-compactas"
+   ],
+   "nota": "Padrão papilar e túbulo-papilar em todo o tumor."
+  },
+  {
+   "achado": "celulas-espumosas",
+   "status": "presente",
+   "marcacoes": [
+    "espumosas"
+   ],
+   "nota": "Macrófagos espumosos agrupados nos eixos das papilas."
+  },
+  {
+   "achado": "pseudocapsula-fibrosa",
+   "status": "presente",
+   "marcacoes": [
+    "septos"
+   ],
+   "nota": "Faixas fibrosas espessas atravessam o tumor; a borda com o rim não está neste corte."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "atipia"
+   ],
+   "nota": "Núcleos ovais de tamanho moderado, com nucléolos pouco evidentes — grau baixo a intermediário."
+  }
+ ]
+}

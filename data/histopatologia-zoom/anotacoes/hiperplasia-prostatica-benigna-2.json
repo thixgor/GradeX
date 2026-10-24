@@ -1,0 +1,131 @@
+{
+ "slug": "hiperplasia-prostatica-benigna-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-23",
+  "conferencias": 3
+ },
+ "resumo": "Hiperplasia prostática benigna em fragmentos de ressecção transuretral: nódulos glandulares redondos e bem delimitados, de glândulas apertadas com células luminais colunares e camada basal preservada, em estroma fibromuscular, com glândulas dilatadas e secreção eosinofílica.",
+ "marcacoes": [
+  {
+   "id": "nodulo",
+   "estrutura": "hiperplasia-glandular",
+   "categoria": "patologica",
+   "rotulo": "Nódulo glandular bem delimitado, empurrando o estroma",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.23
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.04,
+    0.12,
+    0.18,
+    0.3
+   ],
+   "nota": "Um nódulo redondo, nítido, feito de dezenas de glândulas apertadas em estroma escasso, cercado por estroma fibromuscular comprimido. É o que define a hiperplasia: o crescimento é nodular e expansivo, não infiltrativo. A di-hidrotestosterona (testosterona convertida pela 5-α-redutase do estroma) estimula estroma e glândulas da zona de transição — por isso a finasterida reduz a próstata."
+  },
+  {
+   "id": "dupla-camada",
+   "estrutura": "glandulas-com-dupla-camada",
+   "categoria": "patologica",
+   "rotulo": "Células luminais colunares e camada basal achatada na periferia",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1048,
+      0.2048
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.1,
+    0.2,
+    0.112,
+    0.21
+   ],
+   "nota": "Cada glândula tem duas populações: células luminais colunares, de citoplasma claro e núcleo basal, voltadas para a luz, e por fora delas uma fileira de células basais de núcleo achatado, encostadas no estroma. A camada basal preservada é o que separa a glândula benigna da glândula de adenocarcinoma, que tem uma camada só."
+  },
+  {
+   "id": "cistica",
+   "estrutura": "dilatacao-cistica-glandular",
+   "categoria": "patologica",
+   "rotulo": "Glândulas dilatadas, com secreção rosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.18,
+      0.44
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.15,
+    0.42,
+    0.2,
+    0.48
+   ]
+  },
+  {
+   "id": "estroma",
+   "estrutura": "estroma-fibromuscular",
+   "rotulo": "Estroma fibromuscular em volta do nódulo",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.17,
+      0.27
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.15,
+    0.24,
+    0.2,
+    0.32
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "hiperplasia-glandular",
+   "status": "presente",
+   "marcacoes": [
+    "nodulo"
+   ],
+   "nota": "Nódulos glandulares redondos e bem delimitados nos fragmentos de ressecção."
+  },
+  {
+   "achado": "glandulas-com-dupla-camada",
+   "status": "presente",
+   "marcacoes": [
+    "dupla-camada"
+   ],
+   "nota": "As glândulas conservam células luminais colunares e a camada basal achatada, sem nucléolos proeminentes."
+  },
+  {
+   "achado": "dilatacao-cistica-glandular",
+   "status": "presente",
+   "marcacoes": [
+    "cistica"
+   ],
+   "nota": "Glândulas dilatadas com secreção eosinofílica em vários fragmentos."
+  },
+  {
+   "achado": "infiltrado-linfoplasmocitario",
+   "status": "nao-avaliavel",
+   "nota": "Nos fragmentos conferidos não se forma um infiltrado inflamatório nítido em volta das glândulas; não foram examinados todos os fragmentos em grande aumento."
+  }
+ ]
+}
