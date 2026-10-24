@@ -1,0 +1,203 @@
+{
+ "slug": "adenocarcinoma-colorretal-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Adenocarcinoma do sigmoide moderadamente diferenciado: glândulas neoplásicas irregulares e aglomeradas substituem a mucosa e infiltram a submucosa e a muscular própria, com mucosa colônica normal e transição abrupta à direita. O seminário de origem registra ovos de Schistosoma em outro nível da peça.",
+ "marcacoes": [
+  {
+   "id": "glandulas",
+   "estrutura": "glandulas-neoplasicas-complexas",
+   "categoria": "patologica",
+   "rotulo": "Glândulas neoplásicas irregulares, ramificadas e aglomeradas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.5,
+      0.32
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.4,
+    0.2,
+    0.6,
+    0.4
+   ],
+   "nota": "Glândulas de tamanhos e formas diferentes, encostadas umas nas outras e ramificadas, revestidas por epitélio colunar alto, escuro e estratificado, sem células caliciformes. Elas substituem as criptas retas e iguais da mucosa normal: é o adenocarcinoma moderadamente diferenciado."
+  },
+  {
+   "id": "muscular",
+   "estrutura": "infiltracao-da-muscular-propria",
+   "categoria": "patologica",
+   "rotulo": "Glândulas tumorais entre os feixes da muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.29,
+      0.35
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.15,
+    0.25,
+    0.35,
+    0.45
+   ],
+   "nota": "Ilhas de glândulas aparecem já dentro e abaixo dos feixes de músculo liso da muscular própria — o tumor atravessou mucosa e submucosa (pelo menos pT2). A profundidade da invasão é o principal dado do estadiamento."
+  },
+  {
+   "id": "invasao",
+   "estrutura": "invasao-estromal",
+   "categoria": "patologica",
+   "rotulo": "Glândulas infiltrando o estroma abaixo da mucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.52,
+      0.23
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.44,
+    0.2,
+    0.58,
+    0.28
+   ]
+  },
+  {
+   "id": "transicao",
+   "estrutura": "transicao-abrupta-para-mucosa-normal",
+   "categoria": "patologica",
+   "rotulo": "Mucosa colônica normal ao lado do tumor",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.76,
+      0.15
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.6,
+    0.1,
+    0.8,
+    0.3
+   ],
+   "nota": "À direita, criptas retas e claras, ricas em caliciformes, passam sem intermediário ao epitélio tumoral escuro."
+  },
+  {
+   "id": "muscular-propria",
+   "estrutura": "muscular-externa",
+   "rotulo": "Muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.1,
+      0.3
+     ],
+     "angulo": 0
+    }
+   ],
+   "vista": [
+    0.0,
+    0.15,
+    0.2,
+    0.45
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "glandulas-neoplasicas-complexas",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas"
+   ],
+   "nota": "Glândulas neoplásicas complexas em toda a massa."
+  },
+  {
+   "achado": "invasao-estromal",
+   "status": "presente",
+   "marcacoes": [
+    "invasao"
+   ],
+   "nota": "Glândulas além da muscular da mucosa, no estroma."
+  },
+  {
+   "achado": "infiltracao-da-muscular-propria",
+   "status": "presente",
+   "marcacoes": [
+    "muscular"
+   ],
+   "nota": "Glândulas tumorais entre e abaixo dos feixes da muscular própria."
+  },
+  {
+   "achado": "necrose-suja",
+   "status": "nao-avaliavel",
+   "nota": "Não conferida em grande aumento nas luzes glandulares deste corte."
+  },
+  {
+   "achado": "transicao-abrupta-para-mucosa-normal",
+   "status": "presente",
+   "marcacoes": [
+    "transicao"
+   ],
+   "nota": "Mucosa normal à direita, com transição abrupta."
+  },
+  {
+   "achado": "mucina-extracelular",
+   "status": "ausente",
+   "nota": "Sem lagos de muco nos campos conferidos."
+  },
+  {
+   "achado": "celulas-em-anel-de-sinete",
+   "status": "ausente",
+   "nota": "Não se veem células isoladas em anel de sinete."
+  },
+  {
+   "achado": "adenoma-residual",
+   "status": "nao-avaliavel",
+   "nota": "A superfície do tumor não foi conferida em grande aumento para restos de adenoma."
+  },
+  {
+   "achado": "atipia-citologica",
+   "status": "presente",
+   "marcacoes": [
+    "glandulas"
+   ],
+   "nota": "Núcleos alongados, hipercromáticos e estratificados até a superfície."
+  },
+  {
+   "achado": "reacao-desmoplasica",
+   "status": "presente",
+   "marcacoes": [
+    "muscular"
+   ],
+   "nota": "Estroma fibroso em volta das glândulas invasivas."
+  },
+  {
+   "achado": "invasao-angiolinfatica",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificaram êmbolos em vasos nos campos conferidos."
+  },
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "nao-avaliavel",
+   "nota": "A superfície do tumor não foi examinada em detalhe."
+  }
+ ]
+}

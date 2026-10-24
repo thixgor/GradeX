@@ -1,0 +1,179 @@
+{
+ "slug": "ulcera-peptica-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Úlcera gástrica crônica: cratera sem mucosa, com as camadas clássicas — exsudato fibrinopurulento na superfície, tecido de granulação abaixo e cicatriz fibrosa que interrompe a muscular própria — e mucosa gástrica preservada na borda. Catalogada na fonte como gastrite.",
+ "marcacoes": [
+  {
+   "id": "exsudato",
+   "estrutura": "exsudato-fibrinopurulento",
+   "categoria": "patologica",
+   "rotulo": "Fundo da úlcera: fibrina e neutrófilos na superfície da cratera",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.295,
+      0.015
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.28,
+    0.0,
+    0.34,
+    0.05
+   ],
+   "nota": "A primeira camada da úlcera ativa é um exsudato de fibrina, neutrófilos e restos necróticos, voltado para a luz. É o que o endoscopista vê como base branco-amarelada da úlcera."
+  },
+  {
+   "id": "ulcera",
+   "estrutura": "ulceracao-da-mucosa",
+   "categoria": "patologica",
+   "rotulo": "Defeito que atravessou mucosa e submucosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.32,
+      0.025
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.2,
+    0.0,
+    0.42,
+    0.1
+   ],
+   "nota": "Neste setor não há mucosa nem muscular da mucosa: o ácido e a pepsina, sobre uma mucosa cuja defesa falhou (H. pylori, anti-inflamatórios), cavaram até a parede profunda. Erosão para na mucosa; úlcera passa da muscular da mucosa."
+  },
+  {
+   "id": "granulacao",
+   "estrutura": "tecido-de-granulacao",
+   "categoria": "patologica",
+   "rotulo": "Tecido de granulação logo abaixo do exsudato",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.31,
+      0.042
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.29,
+    0.03,
+    0.33,
+    0.055
+   ],
+   "nota": "Capilares novos, fibroblastos e células inflamatórias formam a segunda camada — o reparo tentando fechar o defeito."
+  },
+  {
+   "id": "cicatriz",
+   "estrutura": "fibrose-cicatricial",
+   "categoria": "patologica",
+   "rotulo": "Cicatriz fibrosa interrompendo a muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.3,
+      0.15
+     ],
+     "angulo": 90
+    }
+   ],
+   "vista": [
+    0.25,
+    0.1,
+    0.35,
+    0.2
+   ],
+   "nota": "Na base, colágeno substituiu os feixes da muscular própria, que terminam abruptamente nas bordas da cicatriz. É a marca da úlcera crônica, de semanas a meses: cada ciclo de lesão e reparo deixa mais fibrose — e a retração dela pode estenosar o piloro."
+  },
+  {
+   "id": "mucosa",
+   "estrutura": "mucosa-gastrica",
+   "rotulo": "Mucosa gástrica preservada na borda da úlcera",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.9,
+      0.05
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.8,
+    0.0,
+    0.98,
+    0.15
+   ]
+  },
+  {
+   "id": "muscular",
+   "estrutura": "muscular-externa",
+   "rotulo": "Feixes da muscular própria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.27,
+      0.19
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.25,
+    0.15,
+    0.35,
+    0.2
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "ulceracao-da-mucosa",
+   "status": "presente",
+   "marcacoes": [
+    "ulcera"
+   ],
+   "nota": "Defeito profundo, sem mucosa nem muscular da mucosa, chegando à parede."
+  },
+  {
+   "achado": "fibrose-cicatricial",
+   "status": "presente",
+   "marcacoes": [
+    "cicatriz"
+   ],
+   "nota": "Cicatriz fibrosa na base interrompendo a muscular própria — úlcera crônica."
+  },
+  {
+   "achado": "tecido-de-granulacao",
+   "status": "presente",
+   "marcacoes": [
+    "granulacao"
+   ],
+   "nota": "Camada de granulação sob o exsudato."
+  },
+  {
+   "achado": "exsudato-fibrinopurulento",
+   "status": "presente",
+   "marcacoes": [
+    "exsudato"
+   ],
+   "nota": "Fibrina, neutrófilos e restos necróticos na superfície da cratera."
+  }
+ ]
+}

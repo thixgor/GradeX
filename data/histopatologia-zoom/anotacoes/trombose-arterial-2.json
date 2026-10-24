@@ -1,0 +1,129 @@
+{
+ "slug": "trombose-arterial-2",
+ "revisao": {
+  "por": "Curadoria assistida (Claude) — cada marcação conferida em vários aumentos sobre recortes da própria lâmina",
+  "data": "2026-10-24",
+  "conferencias": 3
+ },
+ "resumo": "Trombose em aneurisma arteriosclerótico: artéria dilatada, de parede espessa e hialina, com a luz ocupada por trombo de camadas alternadas de fibrina/plaquetas e hemácias (linhas de Zahn), cercada pelo córtex adrenal.",
+ "marcacoes": [
+  {
+   "id": "trombo",
+   "estrutura": "trombo-com-linhas-de-zahn",
+   "categoria": "patologica",
+   "rotulo": "Trombo enchendo a luz do aneurisma, em camadas",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.41
+     ],
+     "angulo": 225
+    }
+   ],
+   "vista": [
+    0.38,
+    0.37,
+    0.48,
+    0.44
+   ],
+   "nota": "A luz dilatada está ocupada por uma massa de fibrina e plaquetas (zonas rosa-pálidas) alternando com faixas de hemácias (zonas vermelhas) — as linhas de Zahn. Elas só se formam com sangue fluindo: provam que o trombo se depositou em vida, camada por camada, e não é coágulo post mortem (que é gelatinoso e sem camadas)."
+  },
+  {
+   "id": "linhas",
+   "estrutura": "trombo-com-linhas-de-zahn",
+   "categoria": "patologica",
+   "rotulo": "Faixa pálida de fibrina e plaquetas ao lado de faixa de hemácias",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.43,
+      0.425
+     ],
+     "angulo": 315
+    }
+   ],
+   "vista": [
+    0.41,
+    0.41,
+    0.45,
+    0.44
+   ]
+  },
+  {
+   "id": "parede",
+   "estrutura": "espessamento-arterial",
+   "categoria": "patologica",
+   "rotulo": "Parede do aneurisma espessa e fibrosa",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.27,
+      0.44
+     ],
+     "angulo": 45
+    }
+   ],
+   "vista": [
+    0.2,
+    0.4,
+    0.32,
+    0.52
+   ],
+   "nota": "A parede da artéria perdeu a organização em camadas: é um anel de colágeno hialino espesso. A aterosclerose enfraqueceu a média, a parede dilatou (aneurisma), o fluxo ficou turbulento e lento — dois dos três fatores da tríade de Virchow — e o trombo cresceu ali."
+  },
+  {
+   "id": "adrenal",
+   "estrutura": "zona-fasciculada",
+   "rotulo": "Córtex adrenal em volta da artéria",
+   "marcas": [
+    {
+     "tipo": "seta",
+     "ponta": [
+      0.65,
+      0.18
+     ],
+     "angulo": 135
+    }
+   ],
+   "vista": [
+    0.6,
+    0.1,
+    0.75,
+    0.25
+   ]
+  }
+ ],
+ "achados": [
+  {
+   "achado": "trombo-com-linhas-de-zahn",
+   "status": "presente",
+   "marcacoes": [
+    "trombo",
+    "linhas"
+   ],
+   "nota": "Trombo que enche a luz do aneurisma, com faixas alternadas de fibrina/plaquetas e hemácias."
+  },
+  {
+   "achado": "organizacao-do-trombo",
+   "status": "nao-avaliavel",
+   "nota": "Nos campos conferidos não se separa com segurança tecido de granulação invadindo o trombo; a interface trombo-parede tem fendas de retração."
+  },
+  {
+   "achado": "espessamento-arterial",
+   "status": "presente",
+   "marcacoes": [
+    "parede"
+   ],
+   "nota": "Parede arterial espessada por colágeno hialino, dilatada em aneurisma."
+  },
+  {
+   "achado": "fendas-de-colesterol",
+   "status": "nao-avaliavel",
+   "nota": "Não se identificou núcleo lipídico com fendas de colesterol nos campos conferidos; a placa de origem pode estar em outro nível do vaso."
+  }
+ ]
+}
