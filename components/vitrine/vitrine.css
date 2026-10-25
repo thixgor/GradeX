@@ -1,214 +1,643 @@
 /*
  * As vitrines de quem chega sem conta (/provas, /banco-questoes, /exam/[id]).
  *
- * Cada seção é um capítulo de uma cor só, de ponta a ponta, encostado no
- * seguinte sem divisória. As cores são as da marca e querem dizer o capítulo;
- * o tipo é o da marca (Newsreader nos títulos, Source Sans no texto).
+ * A noite da marca (#0B1F1A) com uma aurora verde e âmbar se mexendo devagar
+ * atrás de tudo, e por cima painéis de vidro: a navegação, os cartões e as
+ * telas da prova. A arte dourada da landing (`public/landing/*-3d.png`) flutua
+ * no topo, brilhando.
  *
- * Tudo aqui mora sob `.vitrine`, para não vazar para o resto do app.
+ * Tudo mora sob `.vitrine`. Movimento: só transform e opacity; com "reduzir
+ * movimento" ou no Modo Lite do site, a aurora para, o vidro perde o desfoque
+ * (que é o que pesa num aparelho fraco) e nada fica escondido.
  */
 
 .vitrine {
+  --noite: #07150f;
   --papel: #f4f1ea;
-  --papel-2: #e9e4d8;
-  --tinta: #0b1f1a;
-  --tinta-suave: #3c4d47;
-  --verde-fundo: #153d1f;
+  --papel-suave: rgba(244, 241, 234, 0.74);
+  --papel-fraco: rgba(244, 241, 234, 0.58);
   --verde: #468152;
+  --verde-vivo: #5fb072;
   --ambar: #e2a43e;
-  --ambar-forte: #cf8f27;
-
-  /* Etapas, do mais escuro ao mais claro: a ordem é dita pela cor. */
-  --etapa-1: #153d1f;
-  --etapa-2: #234f2c;
-  --etapa-3: #33633d;
-  --etapa-4: #5e8b66;
-  --etapa-5: #9fbea3;
+  --ambar-vivo: #f2c063;
+  --borda-vidro: rgba(255, 255, 255, 0.12);
+  --borda-vidro-forte: rgba(255, 255, 255, 0.2);
 
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --t-press: 140ms;
-  --t-hover: 180ms;
 
-  background: var(--papel);
-  color: var(--tinta);
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  background: var(--noite);
+  color: var(--papel);
   font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  color-scheme: dark;
 }
 
-/* No tema escuro, o capítulo de papel vira a noite da marca; os de cor ficam. */
-.dark .vitrine {
-  --papel: #0b1f1a;
-  --papel-2: #12302a;
-  --tinta: #f4f1ea;
-  --tinta-suave: #c9d3cc;
+/* ══════════ Aurora ══════════ */
+.vitrine .aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(70, 129, 82, 0.22), transparent 60%),
+    var(--noite);
+}
+.vitrine .aurora span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.5;
+  will-change: transform;
+}
+.vitrine .aurora .a1 {
+  width: 46vw;
+  height: 46vw;
+  left: -10vw;
+  top: -12vw;
+  background: #2f7a45;
+  animation: vitrine-aurora-1 26s ease-in-out infinite alternate;
+}
+.vitrine .aurora .a2 {
+  width: 38vw;
+  height: 38vw;
+  right: -8vw;
+  top: 10vh;
+  background: #b9792a;
+  opacity: 0.34;
+  animation: vitrine-aurora-2 32s ease-in-out infinite alternate;
+}
+.vitrine .aurora .a3 {
+  width: 50vw;
+  height: 50vw;
+  left: 25vw;
+  bottom: -30vw;
+  background: #1d5a3c;
+  animation: vitrine-aurora-3 38s ease-in-out infinite alternate;
+}
+/* Grão: tira o aspecto de "degradê de computador" da aurora. */
+.vitrine .aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes vitrine-aurora-1 {
+  to {
+    transform: translate(18vw, 14vh) scale(1.15);
+  }
+}
+@keyframes vitrine-aurora-2 {
+  to {
+    transform: translate(-16vw, 22vh) scale(0.9);
+  }
+}
+@keyframes vitrine-aurora-3 {
+  to {
+    transform: translate(-14vw, -18vh) scale(1.1);
+  }
 }
 
-.vitrine .display {
+/* ══════════ Vidro ══════════ */
+.vitrine .vidro {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid var(--borda-vidro);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 20px 60px -20px rgba(0, 0, 0, 0.6);
+}
+.vitrine .vidro-forte {
+  background: rgba(255, 255, 255, 0.085);
+  border: 1px solid var(--borda-vidro-forte);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 30px 80px -24px rgba(0, 0, 0, 0.7);
+}
+
+/* ══════════ Tipo ══════════ */
+.vitrine .titulo-display {
   font-family: var(--font-heading), Georgia, serif;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.035em;
-  line-height: 0.92;
+  line-height: 0.98;
+  text-wrap: balance;
 }
-
-/* A escala inteira: 16 (nota), 18 (texto), 20 (destaque), título e display. */
-.vitrine .t-titulo {
-  font-size: clamp(34px, 3.6vw, 52px);
+.vitrine .titulo-secao {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  text-wrap: balance;
 }
-.vitrine .t-display {
-  font-size: clamp(50px, 8.3vw, 128px);
+.vitrine p {
+  text-wrap: pretty;
 }
-
+/* O brilho que corre pela palavra-chave. */
+.vitrine .texto-brilho {
+  background: linear-gradient(100deg, #7fd093 0%, #e2a43e 35%, #f6d38a 50%, #e2a43e 65%, #7fd093 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: vitrine-brilho 6s linear infinite;
+}
+@keyframes vitrine-brilho {
+  to {
+    background-position: -220% 0;
+  }
+}
 .vitrine .num {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Botões: retângulo chapado, um formato para a página inteira ── */
+/* ══════════ Botões ══════════ */
 .vitrine .botao {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 24px;
-  font-weight: 600;
-  font-size: 18px;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 26px;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 16px;
   transition:
-    transform var(--t-press) var(--ease-out),
-    background-color var(--t-hover) ease,
-    color var(--t-hover) ease;
+    transform 180ms var(--ease-out),
+    box-shadow 240ms ease,
+    background-color 240ms ease;
 }
 .vitrine .botao:active {
   transform: scale(0.97);
 }
-.vitrine .botao-ambar {
-  background: var(--ambar);
+.vitrine .botao-principal {
   color: #0b1f1a;
+  background: linear-gradient(135deg, #f2c063, #e2a43e 45%, #d48a2a);
+  box-shadow:
+    0 10px 30px -8px rgba(226, 164, 62, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
-.vitrine .botao-tinta {
-  background: #0b1f1a;
-  color: #f4f1ea;
+/* O reflexo que atravessa o botão de tempos em tempos. */
+.vitrine .botao-principal::after {
+  content: '';
+  position: absolute;
+  inset: -40% auto -40% -30%;
+  width: 30%;
+  transform: skewX(-20deg) translateX(-120%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: vitrine-reflexo 4.5s ease-in-out infinite;
 }
-.vitrine .botao-papel {
-  background: #f4f1ea;
-  color: #0b1f1a;
+@keyframes vitrine-reflexo {
+  0%,
+  60% {
+    transform: skewX(-20deg) translateX(-120%);
+  }
+  100% {
+    transform: skewX(-20deg) translateX(520%);
+  }
+}
+.vitrine .botao-vidro {
+  color: var(--papel);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--borda-vidro-forte);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 .vitrine .elo {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-underline-offset: 0.2em;
-  text-decoration-thickness: 0.07em;
-  transition: text-decoration-color var(--t-hover) ease;
-}
-.vitrine :focus-visible {
-  outline: 3px solid var(--ambar);
-  outline-offset: 3px;
+  transition: color 180ms ease;
 }
 @media (hover: hover) and (pointer: fine) {
-  .vitrine .botao-ambar:hover {
-    background: var(--ambar-forte);
+  .vitrine .botao-principal:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 16px 40px -8px rgba(226, 164, 62, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
   }
-  .vitrine .botao-tinta:hover {
-    background: #153d1f;
-  }
-  .vitrine .botao-papel:hover {
-    background: #ffffff;
+  .vitrine .botao-vidro:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
   }
   .vitrine .elo:hover {
-    text-decoration-color: currentColor;
+    color: var(--ambar-vivo);
   }
-  .vitrine .mosaico-foto:hover img {
-    filter: none;
+  .vitrine .cartao-ergue {
+    transition:
+      transform 400ms var(--ease-out),
+      border-color 300ms ease;
+  }
+  .vitrine .cartao-ergue:hover {
+    transform: translateY(-6px);
+    border-color: rgba(226, 164, 62, 0.35);
   }
 }
-
-/* ── Mosaico do topo: capas em cinza, que ganham cor sob o cursor ── */
-.vitrine .mosaico-foto img {
-  filter: grayscale(1) contrast(1.05);
-  transition: filter 400ms ease;
+.vitrine :focus-visible {
+  outline: 2px solid var(--ambar-vivo);
+  outline-offset: 3px;
 }
 
-/* ── Movimento ──
- * O estado escondido só existe sob `.vitrine-js` (posto por um script de uma
- * linha no topo da página) e sem pedido de movimento reduzido: sem script, ou
- * com o movimento desligado, tudo aparece no primeiro quadro. */
-
-.vitrine .linhas .linha {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.1em;
-  margin-bottom: -0.1em;
+.vitrine .pilula {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--papel-suave);
 }
-.vitrine .linhas [data-linha] {
-  display: block;
+.vitrine .ponto-vivo {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--verde-vivo);
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .vitrine-js .vitrine .linhas [data-linha] {
-    transform: translateY(105%);
-    animation: vitrine-linha 900ms var(--ease-expo) forwards;
-    animation-delay: calc(var(--i, 0) * 110ms + 150ms);
-  }
-  .vitrine-js .vitrine [data-chegada] {
+.vitrine .ponto-vivo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: vitrine-pulso 2s ease-out infinite;
+}
+@keyframes vitrine-pulso {
+  to {
+    transform: scale(3);
     opacity: 0;
-    animation: vitrine-chegada 700ms var(--ease-out) forwards;
-    animation-delay: 420ms;
   }
+}
+
+/* ══════════ Borda de luz girando (o cartão final) ══════════ */
+@property --vitrine-angulo {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.vitrine .borda-viva {
+  position: relative;
+  border-radius: 32px;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--vitrine-angulo),
+    rgba(226, 164, 62, 0.9),
+    rgba(95, 176, 114, 0.12) 25%,
+    rgba(95, 176, 114, 0.9) 50%,
+    rgba(226, 164, 62, 0.12) 75%,
+    rgba(226, 164, 62, 0.9)
+  );
+  animation: vitrine-gira 7s linear infinite;
+}
+@keyframes vitrine-gira {
+  to {
+    --vitrine-angulo: 360deg;
+  }
+}
+
+/* ══════════ Faixa infinita ══════════ */
+.vitrine .faixa-moldura {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.vitrine .faixa {
+  display: flex;
+  width: max-content;
+  gap: 12px;
+  animation: vitrine-faixa 55s linear infinite;
+}
+@keyframes vitrine-faixa {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (hover: hover) {
+  .vitrine .faixa-moldura:hover .faixa {
+    animation-play-state: paused;
+  }
+}
+
+/* ══════════ Flutuar ══════════ */
+.vitrine .flutua {
+  animation: vitrine-flutua 7s ease-in-out infinite;
+}
+.vitrine .flutua-2 {
+  animation: vitrine-flutua 9s ease-in-out -3s infinite;
+}
+.vitrine .flutua-3 {
+  animation: vitrine-flutua 8s ease-in-out -5s infinite;
+}
+@keyframes vitrine-flutua {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+.vitrine .brilho-arte {
+  filter: drop-shadow(0 0 40px rgba(226, 164, 62, 0.35));
+}
+
+/* ══════════ Entradas ══════════
+ * O estado escondido só existe sob `.vitrine-js` (script de uma linha no topo
+ * da página): sem script, tudo aparece no primeiro quadro. */
+@media (prefers-reduced-motion: no-preference) {
   .vitrine-js .vitrine [data-revelar] {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(28px) scale(0.98);
     transition:
-      opacity 700ms var(--ease-out),
-      transform 900ms var(--ease-expo);
-    transition-delay: calc(var(--i, 0) * 80ms);
+      opacity 800ms var(--ease-out),
+      transform 1000ms var(--ease-expo);
+    transition-delay: calc(var(--i, 0) * 90ms);
   }
   .vitrine-js .vitrine [data-revelar].visivel {
     opacity: 1;
     transform: none;
   }
-  /* Um retrato que respira devagar: a única foto que se mexe sozinha. */
-  .vitrine .deriva img {
-    animation: vitrine-deriva 18s ease-in-out infinite alternate;
+  /* As barras e preenchimentos que crescem quando a tela entra na vista. */
+  .vitrine-js .vitrine [data-revelar] [data-cresce-y] {
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 1100ms var(--ease-expo);
+    transition-delay: calc(var(--j, 0) * 60ms + 300ms);
+  }
+  .vitrine-js .vitrine [data-revelar].visivel [data-cresce-y] {
+    transform: none;
+  }
+  .vitrine-js .vitrine [data-revelar] [data-cresce-x] {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1200ms var(--ease-expo);
+    transition-delay: calc(var(--j, 0) * 90ms + 300ms);
+  }
+  .vitrine-js .vitrine [data-revelar].visivel [data-cresce-x] {
+    transform: none;
+  }
+  /* O título do topo: cada palavra sobe de trás da própria linha. */
+  .vitrine-js .vitrine [data-palavra] {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(0.45em) rotate(2deg);
+    filter: blur(8px);
+    animation: vitrine-palavra 900ms var(--ease-expo) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 120ms);
+  }
+  .vitrine-js .vitrine [data-chegada] {
+    opacity: 0;
+    animation: vitrine-chegada 900ms var(--ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 100ms + 500ms);
   }
 }
-
-@keyframes vitrine-linha {
+@keyframes vitrine-palavra {
   to {
+    opacity: 1;
     transform: none;
+    filter: blur(0);
   }
 }
 @keyframes vitrine-chegada {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-@keyframes vitrine-deriva {
-  from {
-    transform: scale(1);
+
+/* O que aparece por causa de um clique (o comentário, a troca de módulo). */
+@media (prefers-reduced-motion: no-preference) {
+  .vitrine .surge {
+    animation: vitrine-chegada 550ms var(--ease-out) both;
   }
-  to {
-    transform: scale(1.07) translate(-1%, -1%);
+  .vitrine .barra-cresce {
+    transform-origin: left;
+    animation: vitrine-barra 1100ms var(--ease-expo) both;
+  }
+}
+@keyframes vitrine-barra {
+  from {
+    transform: scaleX(0);
   }
 }
 
-/* ── Acordeão das etapas ── */
-@media (min-width: 768px) {
-  .vitrine .etapa-nome-aberto {
-    font-family: var(--font-heading), Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.035em;
-    line-height: 0.92;
-    font-size: clamp(34px, 3.6vw, 52px);
+/* ══════════ Fragmentos da interface, em vidro ══════════
+ * As telas da prova e do banco, com os dados que fecham a conta. */
+.vitrine [data-ui] {
+  --ui-borda: rgba(255, 255, 255, 0.12);
+  --ui-regra: rgba(255, 255, 255, 0.08);
+  --ui-controle: rgba(255, 255, 255, 0.22);
+  --ui-texto: #f4f1ea;
+  --ui-suave: rgba(244, 241, 234, 0.64);
+  --ui-dado: #6cc283;
+  --ui-dado-claro: rgba(108, 194, 131, 0.16);
+  --ui-ativo: rgba(255, 255, 255, 0.1);
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--ui-texto);
+  text-align: left;
+}
+.vitrine [data-ui] .ui-cartao {
+  /* Vidro fosco o bastante para o texto não brigar com a arte de trás. */
+  background: rgba(12, 30, 24, 0.8);
+  border: 1px solid var(--ui-borda);
+  border-radius: 20px;
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 60px -20px rgba(0, 0, 0, 0.7);
+}
+.vitrine [data-ui] .ui-rotulo {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ui-suave);
+}
+.vitrine [data-ui] .ui-titulo {
+  font-size: 20px;
+  line-height: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.vitrine [data-ui] .ui-valor {
+  font-size: 26px;
+  line-height: 32px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.vitrine [data-ui] .ui-suave {
+  color: var(--ui-suave);
+}
+.vitrine [data-ui] .ui-regra {
+  border-top: 1px solid var(--ui-regra);
+}
+.vitrine [data-ui] .ui-divisor {
+  border-left: 1px solid var(--ui-borda);
+}
+.vitrine [data-ui] .ui-pilula {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--ui-ativo);
+  color: var(--ui-texto);
+}
+.vitrine [data-ui] .ui-pilula-dado {
+  background: var(--ui-dado-claro);
+  color: #9fe0b0;
+}
+.vitrine [data-ui] .ui-alternativa {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  padding: 11px 12px;
+  border: 1px solid var(--ui-borda);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms var(--ease-out);
+}
+.vitrine [data-ui] .ui-alternativa:active {
+  transform: scale(0.99);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vitrine [data-ui] .ui-alternativa:hover {
+    border-color: var(--ui-controle);
+    background: rgba(255, 255, 255, 0.07);
+    transform: translateX(3px);
   }
 }
-.vitrine .etapa {
-  transition: flex-basis 450ms var(--ease-out), flex-grow 450ms var(--ease-out);
+.vitrine [data-ui] .ui-alternativa[aria-checked='true'] {
+  border-color: var(--ui-dado);
+  background: var(--ui-dado-claro);
 }
+.vitrine [data-ui] .ui-alternativa[data-errada='true'] {
+  border-color: #e5566f;
+  background: rgba(229, 86, 111, 0.14);
+}
+.vitrine [data-ui] .ui-letra {
+  display: inline-flex;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ui-controle);
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.vitrine [data-ui] .ui-alternativa[aria-checked='true'] .ui-letra {
+  border-color: var(--ui-dado);
+  background: var(--ui-dado);
+  color: #07150f;
+}
+.vitrine [data-ui] .ui-barra {
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--ui-regra);
+  overflow: hidden;
+}
+.vitrine [data-ui] .ui-barra > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #468152, #6cc283);
+}
+.vitrine [data-ui] .ui-botao {
+  display: inline-flex;
+  white-space: nowrap;
+  align-items: center;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  border: 1px solid var(--ui-controle);
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 13px;
+  font-weight: 600;
+}
+.vitrine [data-ui] .ui-botao-cheio {
+  border-color: transparent;
+  color: #0b1f1a;
+  background: linear-gradient(135deg, #f2c063, #e2a43e);
+}
+
+/* A troca lenta das telas do topo. A que saiu fica invisível de verdade. */
+.vitrine .troca > * {
+  transition:
+    opacity 1200ms ease,
+    transform 1200ms var(--ease-expo),
+    visibility 0s linear 0s;
+}
+.vitrine .troca > [aria-hidden='true'] {
+  visibility: hidden;
+  transform: translateY(10px) scale(0.98);
+  transition:
+    opacity 1200ms ease,
+    transform 1200ms var(--ease-expo),
+    visibility 0s linear 1200ms;
+}
+
+.vitrine .so-leitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ══════════ Sem movimento, Modo Lite ══════════ */
 @media (prefers-reduced-motion: reduce) {
-  .vitrine .etapa {
-    transition: none;
+  .vitrine .aurora span,
+  .vitrine .texto-brilho,
+  .vitrine .botao-principal::after,
+  .vitrine .borda-viva,
+  .vitrine .faixa,
+  .vitrine .flutua,
+  .vitrine .flutua-2,
+  .vitrine .flutua-3,
+  .vitrine .ponto-vivo::after {
+    animation: none;
   }
+}
+.lite-mode .vitrine .aurora span,
+.lite-mode .vitrine .texto-brilho,
+.lite-mode .vitrine .botao-principal::after,
+.lite-mode .vitrine .borda-viva,
+.lite-mode .vitrine .flutua,
+.lite-mode .vitrine .flutua-2,
+.lite-mode .vitrine .flutua-3 {
+  animation: none;
+}
+.lite-mode .vitrine .vidro,
+.lite-mode .vitrine .vidro-forte,
+.lite-mode .vitrine .botao-vidro,
+.lite-mode .vitrine [data-ui] .ui-cartao {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: #10261e;
 }

@@ -48,49 +48,62 @@ const FILTRO_DE_PROVA_GERAL = {
   isHidden: { $ne: true },
 }
 
-export interface CapaDeProvaPublica {
+export interface ProvaRecentePublica {
   id: string
   titulo: string
-  capa: string
+  /** Só https ou caminho local: `http://` seria bloqueado como conteúdo misto. */
+  capa: string | null
+  questoes: number | null
+  duracao: number | null
+}
+
+function numeroPositivo(v: unknown): number | null {
+  const n = Number(v)
+  return Number.isFinite(n) && n > 0 ? n : null
 }
 
 /**
- * As capas das provas gerais mais recentes, para o mosaico da vitrine.
- *
- * Só capa em https ou caminho local: `http://` seria bloqueado como conteúdo
- * misto, e uma célula vazia no mosaico é pior do que uma célula de cor.
+ * As provas gerais mais recentes — o topo da vitrine troca entre as que têm
+ * capa, e a tabela lista todas. Título, capa, questões e duração: o mesmo que
+ * o cartão do catálogo mostra a quem está logado.
  */
-export async function capasDeProvasPublicas(limite = 6): Promise<CapaDeProvaPublica[]> {
+export async function provasRecentesPublicas(limite = 12): Promise<ProvaRecentePublica[]> {
   try {
     const db = await banco()
     const [provas, gruposFora] = await Promise.all([
       comPrazo(
         db
           .collection('exams')
-          .find(
-            { ...FILTRO_DE_PROVA_GERAL, coverImage: { $regex: '^(https://|/[^/])' } },
-            { projection: { title: 1, coverImage: 1, groupId: 1 } },
-          )
+          .find(FILTRO_DE_PROVA_GERAL, {
+            projection: { title: 1, coverImage: 1, groupId: 1, numberOfQuestions: 1, duration: 1 },
+          })
           .sort({ _id: -1 })
-          .limit(limite * 4)
+          .limit(limite * 3)
           .toArray(),
       ),
       comPrazo(carregarIdsDeGruposOcultos()),
     ])
 
-    const vistas = new Set<string>()
-    const capas: CapaDeProvaPublica[] = []
+    const resultado: ProvaRecentePublica[] = []
     for (const prova of provas) {
       if (prova.groupId && gruposFora.has(String(prova.groupId))) continue
-      const capa = String(prova.coverImage)
-      if (vistas.has(capa)) continue
-      vistas.add(capa)
-      capas.push({ id: String(prova._id), titulo: String(prova.title || ''), capa })
-      if (capas.length >= limite) break
+      const titulo = String(prova.title || '').trim()
+      if (!titulo) continue
+      const capa = typeof prova.coverImage === 'string' && /^(https:\/\/|\/[^/])/.test(prova.coverImage.trim())
+        ? prova.coverImage.trim()
+        : null
+      resultado.push({
+        id: String(prova._id),
+        titulo,
+        capa,
+        questoes: numeroPositivo(prova.numberOfQuestions),
+        duracao: numeroPositivo(prova.duration),
+      })
+      if (resultado.length >= limite) break
     }
-    return capas
+    return resultado
   } catch (erro) {
-    console.error('[vitrine] capas das provas:', erro)
+    console.error('[vitrine] provas recentes:', erro)
     return []
   }
 }

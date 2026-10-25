@@ -1,19 +1,29 @@
 import type { Metadata } from 'next'
-import { AcordeaoDeEtapas } from '@/components/vitrine/acordeao'
 import { CascoDaVitrine, enderecosDeConta } from '@/components/vitrine/casco'
-import { CatalogoDoBanco } from '@/components/vitrine/catalogo'
-import { ChamadaFinal } from '@/components/vitrine/chamada'
-import { HeroiDaVitrine } from '@/components/vitrine/heroi'
-import { PlacaComAbas } from '@/components/vitrine/placa'
-import { RodapeDaVitrine } from '@/components/vitrine/rodape'
-import { ACERVO_SEM_NUMERO, rotuloDoAcervo } from '@/lib/banco/acervo-publico'
+import { Cena, Chip } from '@/components/vitrine/cena'
+import {
+  FragmentoCatalogo,
+  FragmentoDesempenho,
+  FragmentoFiltros,
+  FragmentoSaldo,
+} from '@/components/vitrine/fragmentos'
+import { CatalogoAoVivo, QuestaoAoVivo, TrocaDeTelas } from '@/components/vitrine/fragmentos-vivos'
+import {
+  CabecalhoDeSecao,
+  CartaoBento,
+  ChamadaFinal,
+  FaixaInfinita,
+  Heroi,
+  Secao,
+} from '@/components/vitrine/secoes'
+import { acervoArredondado } from '@/lib/banco/acervo-publico'
 import { LIMITE_GRATUITO } from '@/lib/banco/gratuito'
 import { DEFAULT_OG_IMAGE, absoluteUrl, publicIndexingRobots } from '@/lib/seo'
 import { acervoDoBancoArredondado, catalogoPublicoDoBanco } from '@/lib/vitrines/dados'
-import { AUSCULTA, CAPAS_DO_ATLAS } from '@/lib/vitrines/fotos'
+import { DESEMPENHO_DE_EXEMPLO, FILTROS_DE_EXEMPLO, SALDO_DE_EXEMPLO } from '@/lib/vitrines/exemplos'
 
 const DESCRICAO =
-  'Questões de prova da faculdade separadas por módulo, tópico e semestre, cada uma com a resposta comentada. Crie a conta grátis e escolha as questões que quer abrir.'
+  'As questões das provas da faculdade, separadas por módulo, tópico e semestre, cada uma com o comentário. Crie a conta grátis e escolha as 10 questões que quer abrir.'
 
 export const metadata: Metadata = {
   title: 'Banco de Questões',
@@ -38,91 +48,149 @@ export const revalidate = 21600
  * `/banco-questoes` para quem chega SEM conta — o middleware reescreve para
  * cá, e a barra continua mostrando `/banco-questoes`.
  *
- * O catálogo mostrado é exatamente o que a conta gratuita vê na tela do Banco
- * (módulos, tópicos e contagens, enunciado nenhum), sem os nós ocultos ou
- * restritos a cargo. Ver `catalogoPublicoDoBanco`.
+ * O catálogo mostrado (no topo, na faixa e no explorador) é exatamente o que
+ * a conta gratuita vê na tela do Banco — módulos, tópicos e contagens,
+ * enunciado nenhum —, sem os nós ocultos ou restritos a cargo. Ver
+ * `catalogoPublicoDoBanco`. O que é exemplo mora em lib/vitrines/exemplos.ts.
  */
 export default async function VitrineDoBanco() {
   const [acervo, modulos] = await Promise.all([acervoDoBancoArredondado(), catalogoPublicoDoBanco()])
   const conta = enderecosDeConta('/banco-questoes')
-  const rotulo = rotuloDoAcervo(acervo)
-
-  const apoio = `${rotulo ?? ACERVO_SEM_NUMERO} de prova da faculdade, separadas por módulo, tópico e semestre, cada uma com a resposta comentada.`
-  const [nervoso, , respiratorio, esqueletico, digestorio, muscular, urinario] = CAPAS_DO_ATLAS
+  const mil = acervoArredondado(acervo) / 1000
+  const topicos = modulos.flatMap((m) => m.topicos.map((t) => ({ ...t, modulo: m.nome })))
 
   return (
-    <CascoDaVitrine>
-      <HeroiDaVitrine
-        destino="/banco-questoes"
-        linhas={['Banco de', 'questões']}
-        apoio={apoio}
-        fotos={[AUSCULTA, nervoso, respiratorio, esqueletico]}
-      />
-
-      <PlacaComAbas
-        acoes={conta}
-        abas={[
-          {
-            rotulo: 'Recorte',
-            titulo: 'Só o assunto da sua prova',
-            texto:
-              'Módulo, tópico, subtópico, semestre, dificuldade: o catálogo inteiro fica aberto, com quantas questões cada ramo tem antes do clique.',
-            foto: digestorio,
-          },
-          {
-            rotulo: 'Comentário',
-            titulo: 'O porquê de cada resposta',
-            texto:
-              'Respondeu, conferiu. Cada questão traz a resposta comentada, para você saber por que errou e por que as outras alternativas não servem.',
-            foto: muscular,
-          },
-          {
-            rotulo: 'Grátis',
-            titulo: `${LIMITE_GRATUITO} questões por sua conta`,
-            texto: `Com a conta gratuita você escolhe ${LIMITE_GRATUITO} questões para abrir, com a resposta comentada, e elas ficam liberadas para sempre. Sem sorteio: você abre as do assunto que quer testar.`,
-            foto: urinario,
-          },
+    <CascoDaVitrine destino="/banco-questoes">
+      <Heroi
+        pilula={
+          <span className="vidro pilula">
+            <span className="ponto-vivo" /> {LIMITE_GRATUITO} questões grátis, você escolhe
+          </span>
+        }
+        titulo="O banco de questões da sua próxima prova"
+        destaque={['próxima', 'prova']}
+        apoio={
+          <p>
+            As questões das provas da faculdade, separadas por módulo, tópico e semestre, cada uma com o comentário.
+            Você escolhe o assunto, responde e entende o erro.
+          </p>
+        }
+        acoes={{
+          principal: { href: conta.criar, rotulo: 'Criar conta grátis' },
+          secundaria: { href: '/amostra', rotulo: 'Ver a amostra' },
+        }}
+        numeros={[
+          ...(mil > 0 ? [{ ate: mil, prefixo: '+', sufixo: ' mil', rotulo: 'questões comentadas' }] : []),
+          { ate: LIMITE_GRATUITO, rotulo: 'questões grátis na conta' },
         ]}
+        cena={
+          <Cena
+            arte={{ src: '/landing/hero-front.png', largura: 1024, altura: 1024 }}
+            figura={
+              modulos.length > 0 ? (
+                <TrocaDeTelas telas={modulos.slice(0, 3).map((m) => <FragmentoCatalogo key={m.id} modulo={m} />)} />
+              ) : (
+                <FragmentoDesempenho linhas={DESEMPENHO_DE_EXEMPLO} />
+              )
+            }
+            chips={[
+              <Chip key="comentario" vivo>
+                Comentário em cada questão
+              </Chip>,
+              <Chip key="saldo">3 de {LIMITE_GRATUITO} abertas</Chip>,
+              <Chip key="acertou">✓ Você acertou</Chip>,
+            ]}
+          />
+        }
       />
 
-      <CatalogoDoBanco modulos={modulos} criarConta={conta.criar} />
-
-      <AcordeaoDeEtapas
-        titulo="Do recorte ao seu ponto fraco"
-        introducao="O Banco foi feito para a semana da prova: escolher o assunto, responder, entender o erro e voltar onde ainda dói. Tudo o que você responde fica guardado."
-        etapas={[
-          {
-            nome: 'Recorte',
-            texto: 'Marque módulos, tópicos e semestres na árvore. As pastilhas do filtro ficam à vista enquanto você rola a lista.',
-          },
-          {
-            nome: 'Resposta',
-            texto: 'Responda e veja na hora se acertou, com o comentário da questão logo abaixo.',
-          },
-          {
-            nome: 'Listas',
-            texto: 'Monte listas com o recorte que quiser e refaça quando precisar, inclusive em sorteio.',
-          },
-          {
-            nome: 'Histórico',
-            texto: 'Cada resposta fica registrada, com a data e o acerto, para você revisar o que já fez.',
-          },
-          {
-            nome: 'Desempenho',
-            texto: 'O painel de desempenho mostra onde você mais erra, recorte por recorte, ao lado da lista de questões.',
-          },
-        ]}
+      <FaixaInfinita
+        rotulo="Tópicos do catálogo"
+        itens={topicos.map((t) => (
+          <span key={t.id} className="flex items-center gap-3">
+            <span className="font-semibold">{t.nome}</span>
+            <span className="num text-[var(--papel-fraco)]">
+              {t.modulo} · {t.total.toLocaleString('pt-BR')} questões
+            </span>
+          </span>
+        ))}
       />
+
+      {modulos.length > 0 && (
+        <Secao id="catalogo">
+          <CabecalhoDeSecao
+            id="catalogo"
+            pilula="O catálogo à vista"
+            titulo={
+              <>
+                Escolha o módulo, <span className="texto-brilho">veja o que tem</span>
+              </>
+            }
+            texto="Antes de qualquer clique você sabe quantas questões cada tópico tem. Troque de módulo aqui embaixo: é o catálogo de verdade."
+          />
+          <div className="mx-auto mt-14 max-w-4xl">
+            <CatalogoAoVivo modulos={modulos} />
+          </div>
+        </Secao>
+      )}
+
+      <Secao id="como-funciona">
+        <CabecalhoDeSecao
+          id="como-funciona"
+          pilula="Da escolha ao ponto fraco"
+          titulo={
+            <>
+              Responda, entenda, <span className="texto-brilho">repita</span>
+            </>
+          }
+          texto="Marque uma alternativa na questão abaixo para ver o comentário abrir."
+        />
+        <div className="mt-14 grid gap-5 lg:grid-cols-12">
+          <CartaoBento
+            className="lg:col-span-7 lg:row-span-2"
+            titulo="O porquê de cada resposta"
+            texto="Respondeu, viu na hora se acertou e leu o comentário: por que a certa é certa e por que as outras não servem."
+          >
+            <QuestaoAoVivo modo="comentario" />
+          </CartaoBento>
+          <CartaoBento
+            className="lg:col-span-5"
+            atraso={1}
+            titulo="Só o assunto da sua prova"
+            texto="Módulo, tópico, subtópico e semestre. Os filtros ficam à vista enquanto você rola a lista."
+          >
+            <FragmentoFiltros {...FILTROS_DE_EXEMPLO} />
+          </CartaoBento>
+          <CartaoBento
+            className="lg:col-span-5"
+            atraso={2}
+            titulo={`${LIMITE_GRATUITO} grátis, para sempre`}
+            texto={`Na conta gratuita você escolhe ${LIMITE_GRATUITO} questões para abrir, com o comentário. Nenhuma é sorteada, e elas não voltam a fechar.`}
+          >
+            <FragmentoSaldo abertas={SALDO_DE_EXEMPLO} limite={LIMITE_GRATUITO} />
+          </CartaoBento>
+          <CartaoBento
+            className="lg:col-span-12"
+            titulo="Onde você mais erra"
+            texto="O painel de desempenho mostra o acerto tópico por tópico, ali mesmo na tela do banco."
+          >
+            <div className="mx-auto max-w-2xl">
+              <FragmentoDesempenho linhas={DESEMPENHO_DE_EXEMPLO} />
+            </div>
+          </CartaoBento>
+        </div>
+      </Secao>
 
       <ChamadaFinal
-        titulo="Abra as primeiras questões"
-        texto={`Crie a conta grátis e escolha ${LIMITE_GRATUITO} questões para abrir, com a resposta comentada. Quer ver antes? A amostra tem 10 questões comentadas, sem conta.`}
+        titulo={
+          <>
+            Abra as primeiras <span className="texto-brilho">questões hoje</span>
+          </>
+        }
+        texto={`A conta é grátis: escolha ${LIMITE_GRATUITO} questões para abrir, com o comentário. Depois de entrar, você volta direto para o banco.`}
         criar={conta.criar}
         entrar={conta.entrar}
-        foto={AUSCULTA}
       />
-
-      <RodapeDaVitrine nota="Provas, banco de questões e materiais para quem estuda na faculdade." />
     </CascoDaVitrine>
   )
 }
