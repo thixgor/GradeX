@@ -1,0 +1,429 @@
+/*
+ * Programa de Embaixadores — por cima do vidro das telas logadas
+ * (`components/vitrine/vidro-app.css`). Tudo escopado em `.emb`, que sempre
+ * mora dentro de um `.vidro-app` e herda dele as variáveis `--va-*`: tema
+ * claro e escuro saem de graça, e a aurora é a mesma das Provas.
+ *
+ * Só os painéis únicos desfocam (`backdrop-filter` em dezenas de linhas de
+ * tabela pesa no celular); as listas usam o vidro sem desfoque.
+ */
+
+.emb {
+  --emb-tinta: #0b1f1a;
+  --emb-tinta-suave: rgba(11, 31, 26, 0.68);
+  --emb-tinta-fraca: rgba(11, 31, 26, 0.5);
+  --emb-verde: #2f6b3e;
+  --emb-verde-vivo: #3d8a50;
+  --emb-ambar: #b9771a;
+  --emb-vermelho: #b4372f;
+  --emb-trilho: rgba(11, 31, 26, 0.08);
+  color: var(--emb-tinta);
+  font-variant-numeric: tabular-nums;
+}
+.dark .emb {
+  --emb-tinta: #eef4ef;
+  --emb-tinta-suave: rgba(238, 244, 239, 0.72);
+  --emb-tinta-fraca: rgba(238, 244, 239, 0.5);
+  --emb-verde: #8fd6a0;
+  --emb-verde-vivo: #7fd093;
+  --emb-ambar: #f0c063;
+  --emb-vermelho: #f08a80;
+  --emb-trilho: rgba(255, 255, 255, 0.08);
+}
+
+.emb .emb-suave {
+  color: var(--emb-tinta-suave);
+}
+.emb .emb-fraca {
+  color: var(--emb-tinta-fraca);
+}
+.emb .emb-verde {
+  color: var(--emb-verde);
+}
+.emb .emb-ambar {
+  color: var(--emb-ambar);
+}
+
+/* ── Superfícies ── */
+.emb .emb-vidro {
+  background: var(--va-vidro);
+  border: 1px solid var(--va-borda);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    var(--va-sombra);
+}
+/*
+ * O mesmo vidro, sem desfoque: para os cartões grandes abaixo da dobra.
+ * `backdrop-filter` em muitos painéis altos da mesma página estourava a
+ * composição (o navegador passava a pintar o texto lavado, e no celular fraco
+ * a rolagem engasgava). A cor é um pouco mais densa para compensar a falta
+ * do desfoque sobre a aurora.
+ */
+.emb .emb-painel {
+  background: color-mix(in srgb, var(--va-vidro) 80%, var(--va-chao) 20%);
+  border: 1px solid var(--va-borda);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    var(--va-sombra);
+}
+.emb .emb-lista {
+  background: var(--va-vidro-lista);
+  border: 1px solid var(--va-borda);
+}
+.emb .emb-linha + .emb-linha {
+  border-top: 1px solid var(--va-borda);
+}
+
+.emb .emb-titulo {
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+}
+
+/* ── O cartão do cupom: borda de luz girando ── */
+@property --emb-angulo {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+/* Só o anel gira: o gradiente mora num pseudo-elemento mascarado no miolo,
+   e o vidro do cartão continua limpo por dentro. */
+.emb .emb-borda-viva {
+  position: relative;
+  border-radius: 28px;
+}
+.emb .emb-borda-viva::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--emb-angulo),
+    transparent 0deg,
+    rgba(127, 208, 147, 0.9) 70deg,
+    rgba(240, 192, 99, 0.95) 140deg,
+    transparent 220deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: emb-gira 7s linear infinite;
+}
+.emb .emb-borda-viva > * {
+  border-radius: inherit;
+}
+/* Um anel girando por tela basta; os outros ficam acesos, parados. */
+.emb .emb-borda-viva.emb-parada::before {
+  animation: none;
+  --emb-angulo: 200deg;
+}
+@keyframes emb-gira {
+  to {
+    --emb-angulo: 360deg;
+  }
+}
+
+/* O "bilhete" do cupom: o picote dos dois lados. */
+.emb .emb-bilhete {
+  position: relative;
+  -webkit-mask:
+    radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+  mask:
+    radial-gradient(circle 12px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 12px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+}
+.emb .emb-picote {
+  border-top: 2px dashed var(--va-borda);
+}
+
+/* ── Números ── */
+.emb .emb-numero {
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.emb .emb-dinheiro {
+  background: linear-gradient(120deg, var(--va-brilho-1), var(--va-brilho-2) 60%, var(--va-brilho-3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Abas em vidro ── */
+.emb .emb-abas {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 9999px;
+  background: var(--va-vidro-lista);
+  border: 1px solid var(--va-borda);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.emb .emb-abas::-webkit-scrollbar {
+  display: none;
+}
+.emb .emb-aba {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--emb-tinta-suave);
+  transition:
+    color 160ms ease,
+    background 200ms ease;
+}
+.emb .emb-aba[aria-selected='true'] {
+  color: var(--emb-tinta);
+  background: var(--va-vidro);
+  box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35);
+}
+.emb .emb-aba:focus-visible,
+.emb .emb-foco:focus-visible {
+  outline: 2px solid var(--emb-verde-vivo);
+  outline-offset: 2px;
+}
+
+/* ── Selos ── */
+.emb .emb-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--va-borda);
+  background: var(--va-vidro-lista);
+  white-space: nowrap;
+}
+.emb .emb-selo[data-tom='verde'] {
+  color: var(--emb-verde);
+  border-color: color-mix(in srgb, var(--emb-verde) 35%, transparent);
+  background: color-mix(in srgb, var(--emb-verde) 12%, transparent);
+}
+.emb .emb-selo[data-tom='ambar'] {
+  color: var(--emb-ambar);
+  border-color: color-mix(in srgb, var(--emb-ambar) 40%, transparent);
+  background: color-mix(in srgb, var(--emb-ambar) 12%, transparent);
+}
+.emb .emb-selo[data-tom='vermelho'] {
+  color: var(--emb-vermelho);
+  border-color: color-mix(in srgb, var(--emb-vermelho) 35%, transparent);
+  background: color-mix(in srgb, var(--emb-vermelho) 10%, transparent);
+}
+
+/* ── Campos ── */
+.emb .emb-campo {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background: var(--va-vidro-lista);
+  border: 1px solid var(--va-borda);
+  color: var(--emb-tinta);
+  font-size: 15px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.emb textarea.emb-campo {
+  padding: 12px 14px;
+  min-height: 92px;
+}
+.emb .emb-campo::placeholder {
+  color: var(--emb-tinta-fraca);
+}
+.emb .emb-campo:focus {
+  outline: none;
+  border-color: var(--emb-verde-vivo);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--emb-verde-vivo) 18%, transparent);
+}
+.emb .emb-campo[aria-invalid='true'] {
+  border-color: var(--emb-vermelho);
+}
+
+/* ── Botões ── */
+.emb .emb-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  transition:
+    transform 160ms cubic-bezier(0.22, 1, 0.36, 1),
+    background 200ms ease,
+    opacity 160ms ease;
+}
+.emb .emb-botao:active:not(:disabled) {
+  transform: scale(0.97);
+}
+.emb .emb-botao:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.emb .emb-botao-vidro {
+  background: var(--va-vidro);
+  border: 1px solid var(--va-borda);
+  color: var(--emb-tinta);
+}
+@media (hover: hover) and (pointer: fine) {
+  .emb .emb-botao-vidro:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--va-vidro) 70%, var(--emb-verde-vivo) 12%);
+  }
+  .emb .emb-ergue {
+    transition:
+      transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 240ms ease;
+  }
+  .emb .emb-ergue:hover {
+    transform: translateY(-3px);
+  }
+}
+
+/* ── Barra (meta, funil) ── */
+.emb .emb-trilho {
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--emb-trilho);
+  overflow: hidden;
+}
+.emb .emb-trilho > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--emb-verde-vivo), var(--va-brilho-2));
+  transform-origin: left;
+  animation: emb-enche 1100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes emb-enche {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ── Esqueleto ── */
+.emb .emb-esqueleto {
+  border-radius: 14px;
+  background: linear-gradient(90deg, var(--emb-trilho), color-mix(in srgb, var(--emb-trilho) 40%, transparent), var(--emb-trilho));
+  background-size: 200% 100%;
+  animation: emb-brilho 1.4s ease-in-out infinite;
+}
+@keyframes emb-brilho {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ── Modal: vidro quase opaco, para ler sobre o fundo escurecido ── */
+.emb .emb-modal {
+  background: color-mix(in srgb, var(--va-chao) 90%, transparent);
+  border: 1px solid var(--va-borda);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 40px 100px -30px rgba(0, 0, 0, 0.6);
+}
+
+/* Segmentado (tipo de embaixador, filtros). */
+.emb .emb-segmento {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--va-vidro-lista);
+  border: 1px solid var(--va-borda);
+}
+.emb .emb-segmento > button {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--emb-tinta-suave);
+  transition: background 180ms ease, color 180ms ease;
+}
+.emb .emb-segmento > button[aria-pressed='true'] {
+  color: var(--emb-tinta);
+  background: var(--va-vidro);
+  box-shadow: 0 6px 18px -10px rgba(0, 0, 0, 0.35);
+}
+
+/* Faixa de valor (comissão). */
+.emb input[type='range'].emb-faixa {
+  width: 100%;
+  accent-color: var(--emb-verde-vivo);
+  height: 28px;
+}
+
+/* ── Aviso flutuante (copiado!) ── */
+.emb-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 80;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0b1f1a;
+  background: linear-gradient(135deg, #f2c063, #e2a43e);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.45);
+  animation: emb-aviso 2.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  pointer-events: none;
+}
+@keyframes emb-aviso {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 16px) scale(0.96);
+  }
+  12%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+}
+
+/* ── Sem movimento, Modo Lite ── */
+@media (prefers-reduced-motion: reduce) {
+  .emb .emb-borda-viva,
+  .emb .emb-trilho > span,
+  .emb .emb-esqueleto,
+  .emb-aviso {
+    animation: none;
+  }
+}
+.lite-mode .emb .emb-borda-viva,
+.lite-mode .emb .emb-trilho > span {
+  animation: none;
+}
+.lite-mode .emb .emb-vidro {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}

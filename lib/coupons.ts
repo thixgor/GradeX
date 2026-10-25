@@ -5,7 +5,12 @@ import { pedidosAindaPagaveis } from '@/lib/checkout-reservations'
 import { normalizeInstitutionLabel, normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
 
 export type CouponDiscountType = 'percentage' | 'fixed'
-export type CouponScope = 'all' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
+/**
+ * `tudo` = materiais, flashcards, pacotes, Manual Clínico E a assinatura Plus+.
+ * Nasceu para o cupom do embaixador (lib/embaixadores), que precisa valer em
+ * qualquer coisa que a turma dele compre. `all` continua sem alcançar o Plus+.
+ */
+export type CouponScope = 'all' | 'tudo' | 'materials' | 'flashcards' | 'manual_clinico' | 'plus' | 'specific'
 export type CouponDurationUnit = 'hours' | 'days' | 'weeks' | 'months'
 export type CouponProductType = 'material' | 'package' | 'manual_clinico' | 'plus'
 export type CouponRedemptionStatus = 'reserved' | 'approved' | 'released'
@@ -21,6 +26,8 @@ export interface Coupon {
   _id?: string | ObjectId
   code: string
   codeNormalized: string
+  /** Cupom individual de um embaixador (ver lib/embaixadores). */
+  embaixadorId?: string
   description?: string
   discountType: CouponDiscountType
   discountValue: number
@@ -157,9 +164,9 @@ export function isCouponItemEligible(coupon: Coupon, item: CouponCheckoutItem) {
   // alcançam. Sem esta guarda, um cupom `all` (pensado só para materiais,
   // flashcards e produtos avulsos) passaria a descontar assinaturas também,
   // um alcance que nenhum cupom existente foi criado esperando ter.
-  if (item.itemType === 'plus') return coupon.scope === 'plus'
+  if (item.itemType === 'plus') return coupon.scope === 'plus' || coupon.scope === 'tudo'
   const kind = getCouponItemKind(item)
-  if (coupon.scope === 'all') return true
+  if (coupon.scope === 'all' || coupon.scope === 'tudo') return true
   if (coupon.scope === 'materials') return kind === 'material' || kind === 'package'
   if (coupon.scope === 'flashcards') return kind === 'flashcard'
   if (coupon.scope === 'manual_clinico') return item.itemType === 'manual_clinico'

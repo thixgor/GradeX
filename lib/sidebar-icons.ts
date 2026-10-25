@@ -252,6 +252,7 @@ export const DEFAULT_SECTION_ICONS: Record<SidebarSectionKey, string> = {
   materiais: 'book-open',
   rifas: 'ticket',
   monitorias: 'graduation-cap',
+  embaixadores: 'megaphone',
 }
 
 export type SidebarSectionIcons = Record<SidebarSectionKey, string>

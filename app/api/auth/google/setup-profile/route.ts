@@ -6,6 +6,8 @@ import { User } from '@/lib/types'
 import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
 import { sendWelcomeEmail, deliverTransactionalEmails } from '@/lib/mail'
 import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
+import { vincularIndicacaoNoCadastro } from '@/lib/embaixadores/servidor'
+import { COOKIE_DO_EMBAIXADOR } from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 
@@ -126,6 +128,7 @@ export async function POST(request: NextRequest) {
 
     const result = await usersCollection.insertOne(newUser)
     const userId = result.insertedId.toString()
+    await vincularIndicacaoNoCadastro(db, request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value, { userId, nome: name, email })
 
     const jti = generateSessionId()
     const token = await createToken({

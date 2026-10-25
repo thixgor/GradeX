@@ -1,0 +1,149 @@
+import { describe, expect, it } from 'vitest'
+import {
+  comissaoSobreOProduto,
+  destinoSeguro,
+  dividirVenda,
+  formatarChavePix,
+  linkSeguro,
+  nomeDiscreto,
+  normalizarCodigo,
+  normalizarConfig,
+  saudeDoCupom,
+  semanaDe,
+  sugerirCodigo,
+  ultimasSemanas,
+  validarChavePix,
+} from '@/lib/embaixadores/regras'
+
+describe('a divisão de uma venda', () => {
+  it('segue a fórmula: sócio 30%, embaixador c × 70%, o resto fica conosco', () => {
+    const d = dividirVenda(100, 30, 10)
+    expect(d.valorSocio).toBe(30)
+    expect(d.nossaParteBruta).toBe(70)
+    expect(d.comissao).toBe(7)
+    expect(d.nossaParteLiquida).toBe(63)
+  })
+
+  it('a comissão nunca toca a parte do sócio', () => {
+    for (const c of [0, 5, 12.5, 50, 100]) {
+      expect(dividirVenda(249.9, 30, c).valorSocio).toBe(dividirVenda(249.9, 30, 0).valorSocio)
+    }
+  })
+
+  it('as partes sempre somam o valor do produto, centavo por centavo', () => {
+    for (const valor of [0.01, 9.99, 33.33, 127.45, 1999.9]) {
+      for (const c of [0, 7, 12.5, 33.3]) {
+        const d = dividirVenda(valor, 30, c)
+        expect(Math.round((d.valorSocio + d.comissao + d.nossaParteLiquida) * 100)).toBe(Math.round(valor * 100))
+      }
+    }
+  })
+
+  it('embaixador sem comissão (não-remunerado) recebe zero', () => {
+    expect(dividirVenda(100, 30, 0).comissao).toBe(0)
+  })
+
+  it('não aceita porcentagem fora de 0–100 nem valor negativo', () => {
+    expect(dividirVenda(100, 30, 250).comissao).toBe(70)
+    expect(dividirVenda(-10, 30, 10).valor).toBe(0)
+  })
+
+  it('a comissão vista sobre o valor do produto', () => {
+    expect(comissaoSobreOProduto(30, 10)).toBe(7)
+    expect(comissaoSobreOProduto(30, 15)).toBe(10.5)
+  })
+})
+
+describe('o código do embaixador', () => {
+  it('vira maiúsculas, sem acento e sem símbolo', () => {
+    expect(normalizarCodigo(' joão-10! ')).toBe('JOAO10')
+  })
+
+  it('a sugestão sai do primeiro nome e do desconto', () => {
+    expect(sugerirCodigo('Maria Clara Souza', 10)).toBe('MARIA10')
+    expect(sugerirCodigo('', 10)).toBe('EMBAIXADOR10')
+  })
+})
+
+describe('a chave PIX', () => {
+  it('aceita CPF válido e guarda só os dígitos', () => {
+    const r = validarChavePix({ tipo: 'cpf', chave: '529.982.247-25', titular: 'Fulana de Tal' })
+    expect(r.ok && r.chave.chave).toBe('52998224725')
+  })
+
+  it('recusa CPF com dígito errado', () => {
+    expect(validarChavePix({ tipo: 'cpf', chave: '529.982.247-26', titular: 'Fulana' }).ok).toBe(false)
+  })
+
+  it('telefone vira +55 com DDD', () => {
+    const r = validarChavePix({ tipo: 'telefone', chave: '(11) 91234-5678', titular: 'Fulana' })
+    expect(r.ok && r.chave.chave).toBe('+5511912345678')
+    expect(r.ok && formatarChavePix(r.chave)).toBe('+55 (11) 91234-5678')
+  })
+
+  it('e-mail em minúsculas e chave aleatória no formato UUID', () => {
+    const e = validarChavePix({ tipo: 'email', chave: 'Fulana@Email.com', titular: 'Fulana' })
+    expect(e.ok && e.chave.chave).toBe('fulana@email.com')
+    expect(validarChavePix({ tipo: 'aleatoria', chave: 'nao-e-uuid', titular: 'Fulana' }).ok).toBe(false)
+  })
+
+  it('exige o nome do titular', () => {
+    expect(validarChavePix({ tipo: 'email', chave: 'a@b.com', titular: '' }).ok).toBe(false)
+  })
+})
+
+describe('privacidade e segurança', () => {
+  it('o embaixador vê só primeiro nome e inicial de quem indicou', () => {
+    expect(nomeDiscreto('Ana Beatriz Lima')).toBe('Ana L.')
+    expect(nomeDiscreto('')).toBe('Alguém')
+  })
+
+  it('o link só redireciona para caminho interno', () => {
+    expect(destinoSeguro('/buy', 'ANA10')).toBe('/buy')
+    expect(destinoSeguro('//evil.com', 'ANA10')).toBe('/convite/ANA10')
+    expect(destinoSeguro('https://evil.com', 'ANA10')).toBe('/convite/ANA10')
+    expect(destinoSeguro('/e/OUTRO', 'ANA10')).toBe('/convite/ANA10')
+    expect(destinoSeguro(null, 'ANA10')).toBe('/convite/ANA10')
+  })
+
+  it('o link do formulário não aceita javascript:', () => {
+    expect(linkSeguro('/forms/6aaed6ee00234fc63cf6e9ab')).toBe(true)
+    expect(linkSeguro('https://forms.gle/x')).toBe(true)
+    expect(linkSeguro('javascript:alert(1)')).toBe(false)
+    expect(normalizarConfig({ linkInscricao: 'javascript:alert(1)' }).linkInscricao).toBe('/forms/6aaed6ee00234fc63cf6e9ab')
+  })
+})
+
+describe('a saúde do cupom', () => {
+  const agora = new Date('2026-10-25T12:00:00-03:00')
+  const dias = (n: number) => new Date(agora.getTime() - n * 86_400_000)
+
+  it('sem venda e recém-chegado: estreando, não parado', () => {
+    expect(saudeDoCupom({ entrouEm: dias(5), diasParaParado: 60, agora }).saude).toBe('estreando')
+  })
+
+  it('sem venda há mais que o prazo: parado', () => {
+    expect(saudeDoCupom({ entrouEm: dias(90), diasParaParado: 60, agora }).saude).toBe('parado')
+  })
+
+  it('venda recente gira, a meio caminho esfria', () => {
+    expect(saudeDoCupom({ ultimaVendaEm: dias(3), entrouEm: dias(200), diasParaParado: 60, agora }).saude).toBe('girando')
+    expect(saudeDoCupom({ ultimaVendaEm: dias(40), entrouEm: dias(200), diasParaParado: 60, agora }).saude).toBe('esfriando')
+    expect(saudeDoCupom({ ultimaVendaEm: dias(61), entrouEm: dias(200), diasParaParado: 60, agora }).saude).toBe('parado')
+  })
+})
+
+describe('as semanas do gráfico', () => {
+  it('a semana começa na segunda-feira, em Brasília', () => {
+    // Domingo 25/10/2026 às 23h de Brasília ainda é a semana de 19/10.
+    expect(semanaDe(new Date('2026-10-26T01:30:00Z'))).toBe('2026-10-19')
+    expect(semanaDe(new Date('2026-10-26T12:00:00-03:00'))).toBe('2026-10-26')
+  })
+
+  it('devolve n semanas distintas, da mais antiga para a atual', () => {
+    const s = ultimasSemanas(12, new Date('2026-10-25T12:00:00-03:00'))
+    expect(s).toHaveLength(12)
+    expect(new Set(s).size).toBe(12)
+    expect(s[11]).toBe('2026-10-19')
+  })
+})

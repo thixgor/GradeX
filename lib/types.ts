@@ -469,6 +469,9 @@ export interface User {
   // não preencheram nada ficam sem período (campos ausentes).
   periodoBase?: number // Período definido (1-12)
   periodoBaseRef?: string // Semestre-âncora "AAAA.S" de quando periodoBase foi definido
+  // Embaixador cujo link trouxe esta conta (lib/embaixadores). Gravado uma
+  // vez, no cadastro; compras dentro da janela do programa contam para ele.
+  embaixadorIndicacao?: { embaixadorId: string; codigo: string; em: Date }
   // Lembrete de perfil incompleto (cron /api/cron/profile-reminder)
   profileReminderLastSentAt?: Date
   // Modal de completar perfil: quando o usuário concluiu, e até quando ele

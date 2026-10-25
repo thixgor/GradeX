@@ -24,6 +24,8 @@ import {
   validarSenhaNova,
 } from '@/lib/conta-pos-compra'
 import type { SerialKey, User } from '@/lib/types'
+import { vincularIndicacaoNoCadastro } from '@/lib/embaixadores/servidor'
+import { COOKIE_DO_EMBAIXADOR } from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -159,6 +161,7 @@ export async function POST(request: NextRequest) {
     }
     const inserted = await usersCollection.insertOne(newUser)
     const userId = inserted.insertedId.toString()
+    await vincularIndicacaoNoCadastro(db, request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value, { userId, nome: name, email })
 
     const jti = generateSessionId()
     const token = await createToken({ userId, email, name, role: 'user', emailVerified: false, jti })

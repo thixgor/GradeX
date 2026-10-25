@@ -19,6 +19,7 @@ export type SidebarSectionKey =
   | 'materiais'
   | 'rifas'
   | 'monitorias'
+  | 'embaixadores'
 
 export type SidebarSectionSettings = Record<SidebarSectionKey, boolean>
 
@@ -176,6 +177,13 @@ export const SIDEBAR_SECTION_DEFINITIONS: SidebarSectionDefinition[] = [
     label: 'Monitorias',
     href: '/monitorias',
     description: 'Aulas particulares e em grupo com monitores da comunidade, pagas por PIX com garantia.',
+    defaultEnabled: true,
+  },
+  {
+    key: 'embaixadores',
+    label: 'Embaixadores',
+    href: '/embaixadores',
+    description: 'Programa de Embaixadores DomineAqui: inscrição, link e cupom de divulgação, desempenho e comissões.',
     defaultEnabled: true,
   },
 ]

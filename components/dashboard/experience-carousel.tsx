@@ -25,6 +25,7 @@ import {
   Stethoscope,
   Ticket,
   GraduationCap,
+  Megaphone,
   Video,
   type LucideIcon,
 } from 'lucide-react'
@@ -71,6 +72,7 @@ const VISUALS: Record<SidebarSectionKey, { icon: LucideIcon; color: string; badg
   materiais: { icon: BookOpen, color: '#6366f1', badge: 'Novo' },
   rifas: { icon: Ticket, color: '#d946ef', badge: 'Novo' },
   monitorias: { icon: GraduationCap, color: '#468152', badge: 'Novo' },
+  embaixadores: { icon: Megaphone, color: '#c98a22', badge: 'Novo' },
 }
 
 export interface ExperienceStats {

@@ -140,6 +140,14 @@ const publicRoutes = [
   // visitante deslogado. Só GET é exposto por essa rota; o CRUD de admin vive
   // em /api/admin/testimonials, que já exige sessão de admin internamente.
   '/api/testimonials',
+  // Programa de Embaixadores: a página do programa abre para visitante (é o
+  // convite para se inscrever), e as duas rotas que ela e o convite leem só
+  // devolvem o que é público — regras do programa e o primeiro nome e o cupom
+  // de um embaixador ativo. O painel de quem é embaixador vem de
+  // /api/embaixadores/me, que exige sessão.
+  '/embaixadores',
+  '/api/embaixadores/programa',
+  '/api/embaixadores/convite',
 ]
 
 // Prefixos públicos
@@ -154,6 +162,11 @@ const publicPrefixes = [
   // normal até elas é a reescrita; abrir o endereço direto também precisa
   // funcionar sem login, porque elas são exatamente para quem não tem.
   '/vitrine/',
+  // Programa de Embaixadores: o link de divulgação (`/e/CODIGO`, que grava o
+  // cookie da indicação e redireciona) e o convite que ele abre. São
+  // justamente para quem ainda não tem conta.
+  '/e/',
+  '/convite/',
   '/aulas/certificado/',
   '/api/aulas/certificado',
   '/lead/',

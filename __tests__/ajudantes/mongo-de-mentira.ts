@@ -8,7 +8,7 @@
  * vezes. Testar só a aritmética deixaria de fora exatamente a parte quebrada.
  *
  * Suporta apenas o que o código sob teste usa: caminhos com ponto, `$or`,
- * `$in`, `$nin`, `$ne`, `$lt`, `$exists`, `$set` e `$inc`. Não é um Mongo; é o suficiente
+ * `$in`, `$nin`, `$ne`, `$lt`, `$exists`, `$set`, `$inc` e o upsert com `$setOnInsert`. Não é um Mongo; é o suficiente
  * para que um teste falhe pelo motivo certo.
  */
 
@@ -139,11 +139,25 @@ export function mongoDeMentira(colecoes: Record<string, Doc[]>) {
         async countDocuments(filtro: Doc = {}) {
           return docs.filter((doc) => casaComFiltro(doc, filtro)).length
         },
-        async updateOne(filtro: Doc, atualizacao: Doc) {
+        async updateOne(filtro: Doc, atualizacao: Doc, opcoes: Doc = {}) {
           const alvo = docs.find((doc) => casaComFiltro(doc, filtro))
-          if (!alvo) return { matchedCount: 0, modifiedCount: 0 }
+          if (!alvo) {
+            if (!opcoes.upsert) return { matchedCount: 0, modifiedCount: 0, upsertedCount: 0 }
+            // Upsert: os campos de igualdade do filtro + `$setOnInsert` + o resto.
+            const novo: Doc = {}
+            for (const [chave, valor] of Object.entries(filtro)) {
+              if (!chave.startsWith('$') && !ehObjetoDeOperadores(valor)) definirEm(novo, chave, valor)
+            }
+            for (const [caminho, valor] of Object.entries(atualizacao.$setOnInsert || {})) definirEm(novo, caminho, valor)
+            aplicarAtualizacao(novo, atualizacao)
+            docs.push(novo)
+            return { matchedCount: 0, modifiedCount: 0, upsertedCount: 1 }
+          }
           aplicarAtualizacao(alvo, atualizacao)
-          return { matchedCount: 1, modifiedCount: 1 }
+          return { matchedCount: 1, modifiedCount: 1, upsertedCount: 0 }
+        },
+        async createIndex() {
+          return 'indice'
         },
         async updateMany(filtro: Doc, atualizacao: Doc) {
           const alvos = docs.filter((doc) => casaComFiltro(doc, filtro))

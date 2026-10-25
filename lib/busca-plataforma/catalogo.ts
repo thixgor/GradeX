@@ -63,6 +63,7 @@ const CHAVES_DA_AREA: Record<SidebarSectionKey, string[]> = {
   materiais: ['material', 'materiais', 'apostila', 'resumo', 'pdf', 'ebook', 'biblioteca', 'livro'],
   rifas: ['rifa', 'rifas', 'sorteio', 'sorteios', 'premio', 'numero da sorte'],
   monitorias: ['monitoria', 'monitorias', 'monitor', 'aula particular', 'professor particular', 'tutor', 'reforco', 'aula em grupo'],
+  embaixadores: ['embaixador', 'embaixadores', 'embaixadora', 'divulgar', 'indicacao', 'indicar', 'cupom', 'comissao', 'afiliado', 'parceria'],
 }
 
 /** Ícone de cada área quando o admin não escolheu outro. */
@@ -87,6 +88,7 @@ const ICONE_DA_AREA: Record<SidebarSectionKey, string> = {
   materiais: 'book-open',
   rifas: 'ticket',
   monitorias: 'graduation-cap',
+  embaixadores: 'megaphone',
 }
 
 /**
@@ -388,6 +390,7 @@ const ADMIN: ItemBusca[] = [
   admin('monitorias', 'Monitorias (admin)', '/admin/monitorias', ['monitorias', 'monitores', 'repasses', 'disputas', 'pix'], 'graduation-cap'),
   admin('loja', 'Loja (admin)', '/admin/loja', ['loja', 'produtos', 'pedidos'], 'store'),
   admin('coupons', 'Cupons', '/admin/coupons', ['cupom', 'desconto', 'promocao'], 'tag'),
+  admin('embaixadores', 'Embaixadores (admin)', '/admin/embaixadores', ['embaixadores', 'comissao', 'repasse', 'pix', 'indicacao'], 'megaphone'),
   admin('keys', 'Chaves de acesso', '/admin/keys', ['serial', 'chaves', 'ativacao'], 'key'),
   admin('pricing-events', 'Eventos de preço', '/admin/pricing-events', ['promocao', 'preco', 'campanha'], 'percent'),
   admin('leads', 'Leads', '/admin/leads', ['leads', 'crm', 'contatos'], 'users'),

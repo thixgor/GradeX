@@ -276,6 +276,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     keywords: ['cupom', 'cupons', 'desconto', 'promocao', 'voucher'],
   },
   {
+    title: 'Embaixadores',
+    description: 'Programa de Embaixadores: links e cupons, indicações, vendas, comissões e repasses por PIX.',
+    href: '/admin/embaixadores',
+    icon: Megaphone,
+    group: 'comercial',
+    keywords: ['embaixador', 'embaixadores', 'comissao', 'repasse', 'pix', 'indicacao', 'afiliado', 'divulgacao'],
+  },
+  {
     title: 'Lotes por Evento',
     description: 'Descontos progressivos ligados a uma prova ou evento — quem compra antes paga menos.',
     href: '/admin/pricing-events',

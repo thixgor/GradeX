@@ -32,6 +32,7 @@ import { recordOrderCheckoutEvent } from '../analytics'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { consumeProuniGrant, releaseProuniGrant } from '../prouni-fies'
+import { estornarVendaDoPedido, registrarVendaDoPedido } from '../embaixadores/servidor'
 import {
   grantMaterialCartItems,
   resolveTimedGrantFields,
@@ -173,6 +174,9 @@ export async function applyPaymentResult(
     // deixa de estar disponível. Antes disso ele só estava reservado — um Pix
     // que vence devolve o desconto para a pessoa, ver abaixo.
     await consumeProuniGrant(db, String(order._id))
+    // Venda de embaixador (cupom dele ou indicado pelo link). Só registra o
+    // que é devido — o repasse é manual, no /admin/embaixadores. Nunca lança.
+    await registrarVendaDoPedido(db, updatedOrder)
     await recordOrderCheckoutEvent('payment_approved', updatedOrder)
     // Conversão para o Meta pelo servidor (Conversions API). É o único caminho
     // que captura Pix/boleto, que confirmam aqui no webhook depois que o usuário
@@ -219,6 +223,8 @@ export async function applyPaymentResult(
     // Estorno/chargeback devolve o produto E o benefício: quem não ficou com a
     // compra não pode ficar sem o desconto que conquistou na análise.
     await releaseProuniGrant(db, String(order._id), newStatus)
+    // A comissão do embaixador cai junto com a venda que a gerou.
+    await estornarVendaDoPedido(db, String(order._id), newStatus)
     await runRevocationEffects(order, newStatus)
   }
 

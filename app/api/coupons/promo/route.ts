@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { ObjectId } from 'mongodb'
+import { ObjectId, type Db } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -10,9 +10,12 @@ import {
   type Coupon,
   type CouponCheckoutItem,
   type CouponProductType,
+  type CouponPromoPayload,
 } from '@/lib/coupons'
 import type { ManualClinicoPlanKey, User } from '@/lib/types'
 import { normalizeInstitutionLabel, normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
+import { embaixadorAtivoPorCodigo } from '@/lib/embaixadores/servidor'
+import { COOKIE_DO_EMBAIXADOR } from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -75,6 +78,7 @@ export async function GET(request: NextRequest) {
 
     const db = await getDb()
     const agora = new Date()
+    const temCookieDeEmbaixador = !!request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value
 
     // O filtro fino (escopo, unidade, plano) roda em memória: a coleção de
     // cupons é pequena e as regras já vivem em lib/coupons.ts — duplicá-las
@@ -85,7 +89,10 @@ export async function GET(request: NextRequest) {
       .toArray()
 
     const visiveis = candidatos.filter((cupom) => isCouponPromoVisible(cupom, agora))
-    if (visiveis.length === 0) return NextResponse.json({ promos: [] })
+    if (visiveis.length === 0) {
+      const doEmbaixador = temCookieDeEmbaixador ? await promoDoEmbaixador(db, request, itens, agora) : null
+      return NextResponse.json({ promos: doEmbaixador ? [doEmbaixador] : [] })
+    }
 
     // Unidade da faculdade só é consultada se algum candidato restringir por
     // ela — não vale um SELECT no usuário a cada abertura de checkout.
@@ -125,6 +132,15 @@ export async function GET(request: NextRequest) {
       .slice(0, MAX_PROMOS)
       .map(buildCouponPromoPayload)
 
+    // Chegou pelo link de um embaixador: o cupom dele abre a lista, com o nome
+    // de quem indicou. Mesmas regras de elegibilidade de qualquer cupom.
+    const doEmbaixador = temCookieDeEmbaixador ? await promoDoEmbaixador(db, request, itens, agora) : null
+    if (doEmbaixador) {
+      return NextResponse.json({
+        promos: [doEmbaixador, ...promos.filter((p) => p.couponId !== doEmbaixador.couponId)].slice(0, MAX_PROMOS),
+      })
+    }
+
     return NextResponse.json({ promos })
   } catch (error) {
     // Vitrine não derruba checkout: sem promo, a tela segue igual ao que era
@@ -132,4 +148,36 @@ export async function GET(request: NextRequest) {
     console.error('[coupons/promo] erro:', error)
     return NextResponse.json({ promos: [] })
   }
+}
+
+/**
+ * O cupom do embaixador cujo link trouxe esta pessoa (cookie `da_embaixador`),
+ * como chamativo do checkout — ou `null` se não houver, se ele estiver
+ * pausado, ou se o cupom não alcançar os itens desta tela.
+ */
+async function promoDoEmbaixador(
+  db: Db,
+  request: NextRequest,
+  itens: CouponCheckoutItem[],
+  agora: Date,
+): Promise<CouponPromoPayload | null> {
+  const codigo = request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value
+  if (!codigo) return null
+  const embaixador = await embaixadorAtivoPorCodigo(db, codigo)
+  if (!embaixador?.couponId || !ObjectId.isValid(embaixador.couponId)) return null
+  const cupom = await db.collection<Coupon>('coupons').findOne({ _id: new ObjectId(embaixador.couponId) as any })
+  if (!cupom || cupom.isActive === false) return null
+  if (cupom.expiresAt && new Date(cupom.expiresAt) <= agora) return null
+  if (!itens.some((item) => isCouponItemEligible(cupom, item))) return null
+  const primeiroNome = String(embaixador.nome || '').trim().split(/\s+/)[0] || 'seu embaixador'
+  return buildCouponPromoPayload({
+    ...cupom,
+    promo: {
+      enabled: true,
+      headline: `Cupom de ${primeiroNome}, que te indicou`,
+      subtext: 'Desconto de embaixador DomineAqui, por cima do preço do momento.',
+      showCode: true,
+      tone: 'economia',
+    },
+  })
 }

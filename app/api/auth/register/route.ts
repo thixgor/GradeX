@@ -14,6 +14,8 @@ import { normalizePeriodo, getCurrentSemesterRef } from '@/lib/user-periodo'
 import { isValidStateUf } from '@/lib/brazil-states'
 import { isValidBrazilPhone } from '@/lib/phone'
 import { normalizeInstitutionLabel } from '@/lib/institution-units-legacy'
+import { vincularIndicacaoNoCadastro } from '@/lib/embaixadores/servidor'
+import { COOKIE_DO_EMBAIXADOR } from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 
@@ -158,6 +160,13 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await usersCollection.insertOne(newUser)
+
+    // Chegou pelo link de um embaixador? A conta passa a contar para ele.
+    await vincularIndicacaoNoCadastro(db, request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value, {
+      userId: result.insertedId.toString(),
+      nome: name,
+      email,
+    })
 
     // Cria o token de sessão (ainda permite login, mas verificação pode ser checada no frontend)
     const jti = generateSessionId()
