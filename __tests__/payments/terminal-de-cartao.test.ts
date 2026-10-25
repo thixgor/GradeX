@@ -95,6 +95,24 @@ describe('formatExpiry', () => {
   it('não passa de MM/AA', () => {
     expect(formatExpiry('122934')).toBe('12/29')
   })
+
+  it('validade inteira com ano de 4 dígitos (preenchimento automático, colar) não vira cartão vencido', () => {
+    expect(formatExpiry('08/2029')).toBe('08/29')
+    expect(formatExpiry('08 / 2029')).toBe('08/29')
+    expect(formatExpiry('08-2029')).toBe('08/29')
+    expect(formatExpiry('082029')).toBe('08/29')
+    expect(isExpiryValid(formatExpiry('12/2099'))).toBe(true)
+  })
+
+  it('validade inteira com o mês sem o zero', () => {
+    expect(formatExpiry('8/29')).toBe('08/29')
+    expect(formatExpiry('8/2029')).toBe('08/29')
+  })
+
+  it('digitando tecla a tecla continua igual', () => {
+    const teclas = ['0', '08/', '08/2', '08/29', '08/295']
+    expect(teclas.map(formatExpiry)).toEqual(['0', '08/', '08/2', '08/29', '08/29'])
+  })
 })
 
 describe('isLuhnValid', () => {

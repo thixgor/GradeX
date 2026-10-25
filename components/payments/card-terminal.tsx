@@ -108,8 +108,27 @@ export function formatCardNumber(value: string, brand: CardBrand = detectBrand(v
   return partes.join(' ')
 }
 
+/**
+ * Os 4 dígitos MMAA de uma validade, inclusive quando ela chega INTEIRA de uma
+ * vez — preenchimento automático do navegador, gerenciador de senhas, colar.
+ * Esses costumam trazer o ano com 4 dígitos ("08/2029") ou o mês sem o zero
+ * ("8/29"). Cortar nos 4 primeiros dígitos fazia "08/2029" virar "08/20", e a
+ * tela acusava "Cartão vencido" num cartão bom.
+ *
+ * Digitando, nada disso entra em jogo: o campo já sai formatado a cada tecla e
+ * nunca acumula mais de 5 dígitos.
+ */
+function digitosDaValidade(value: string): string {
+  const inteira = /^\s*(\d{1,2})\s*[/.\-\s]\s*(\d{2}|\d{4})\s*$/.exec(value)
+  if (inteira) return inteira[1].padStart(2, '0') + inteira[2].slice(-2)
+  const d = value.replace(/\D/g, '')
+  // MMAAAA sem separador: só um ano de 4 dígitos começa com "20" ali.
+  if (d.length === 6 && d.slice(2, 4) === '20') return d.slice(0, 2) + d.slice(4)
+  return d.slice(0, 4)
+}
+
 export function formatExpiry(value: string): string {
-  const d = value.replace(/\D/g, '').slice(0, 4)
+  const d = digitosDaValidade(value)
   if (d.length === 0) return ''
   // Um mês que só pode ser 1x já ganha o zero: digitar "3" vira "03/".
   if (d.length === 1) return /[2-9]/.test(d) ? `0${d}/` : d
