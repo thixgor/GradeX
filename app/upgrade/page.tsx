@@ -59,6 +59,7 @@ import {
   type OfertaDeUpgrade,
   type PlanoDaOfertaDeUpgrade,
 } from '@/hooks/use-oferta-de-upgrade'
+import { useAlturaDoRodape } from '@/hooks/use-altura-do-rodape'
 import { apresentarPreco, formatarBRL, rotuloDeCiclo } from '@/lib/buy/pricing'
 import type { ChaveDoItem } from '@/lib/plus-oferta'
 import { cn } from '@/lib/utils'
@@ -156,6 +157,9 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
   // A barra de baixo só sobe quando o botão do painel sai da tela.
   const refDoBotao = useRef<HTMLAnchorElement>(null)
   const [botaoVisivel, setBotaoVisivel] = useState(true)
+  // O "voltar" do iPhone sobe acima da barra enquanto ela está na tela.
+  const refDaBarra = useRef<HTMLDivElement>(null)
+  useAlturaDoRodape(refDaBarra, !botaoVisivel)
   useEffect(() => {
     const alvo = refDoBotao.current
     if (!alvo || typeof IntersectionObserver === 'undefined') return
@@ -427,6 +431,7 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
 
       {/* ── Barra de baixo (celular e tablet) ── */}
       <div
+        ref={refDaBarra}
         className="ios-barra-inferior ios-vidro flex items-center gap-3 p-2 pl-4 lg:hidden"
         data-visivel={botaoVisivel ? 'false' : 'true'}
         aria-hidden={botaoVisivel}

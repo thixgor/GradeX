@@ -62,6 +62,7 @@ import {
 } from '@/lib/buy/pricing'
 import { useProuniGrant, type ProuniConcessaoNaTela } from '@/hooks/use-prouni-grant'
 import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
+import { useAlturaDoRodape } from '@/hooks/use-altura-do-rodape'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { planoEhRecorrente } from '@/lib/payments/subscription-view'
 import { normalizeAccountType, PLUS_TIER, QUEST_TIER } from '@/lib/account-tier'
@@ -883,8 +884,11 @@ function BarraFixa({
   onComprar: () => void
   visivel: boolean
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useAlturaDoRodape(ref, visivel)
   return (
     <div
+      ref={ref}
       className="ios-barra-inferior ios-vidro flex items-center gap-3 p-2 pl-4 lg:hidden"
       data-visivel={visivel ? 'true' : 'false'}
       aria-hidden={!visivel}

@@ -155,8 +155,9 @@ function digitos(valor: unknown, tamanho: number): string | undefined {
 }
 
 /** Remove as chaves sem valor, para o documento ficar enxuto. */
-function semVazios<T extends Record<string, unknown>>(obj: T): T {
-  for (const k of Object.keys(obj)) if (obj[k] === undefined) delete obj[k]
+function semVazios<T extends object>(obj: T): T {
+  const registro = obj as Record<string, unknown>
+  for (const k of Object.keys(registro)) if (registro[k] === undefined) delete registro[k]
   return obj
 }
 
