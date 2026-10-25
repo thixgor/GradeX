@@ -17,7 +17,9 @@ import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
 import { computeSubscriptionCharge, getFeePolicy } from '@/lib/payments/fees'
 import { checkRefundCooldown } from '@/lib/plus-guard'
 import { restorePlusClaims } from '@/lib/plus-claims'
-import { normalizeAccountType } from '@/lib/account-tier'
+import { normalizeAccountType, PLUS_TIER } from '@/lib/account-tier'
+import { questVigente } from '@/lib/upgrade-quest'
+import { questGuardado } from '@/lib/upgrade-quest-server'
 import {
   MESES_DE_RECORRENCIA,
   planoEhRecorrente,
@@ -230,10 +232,21 @@ export async function POST(request: NextRequest) {
 
   // Se já autorizada (cartão aprovado), refletir no usuário imediatamente
   if (sub.status === 'authorized') {
+    // Quest+ vigente assinando o Plus+: o Quest+ já pago fica guardado para
+    // voltar se a assinatura terminar antes dele (lib/upgrade-quest.ts).
+    const anterior = normalizeAccountType(plano.role) === PLUS_TIER
+      ? await db.collection<User>('users').findOne(
+          { _id: new ObjectId(session.userId) as any },
+          { projection: { accountType: 1, premiumExpiresAt: 1, premiumPlanType: 1 } }
+        )
+      : null
     await db.collection<User>('users').updateOne(
       { _id: new ObjectId(session.userId) as any },
       {
         $set: {
+          ...(anterior && questVigente(anterior, now)
+            ? { questAntesDoUpgrade: questGuardado(anterior, `sub:${sub.providerSubscriptionId}`, now) }
+            : {}),
           accountType: normalizeAccountType(plano.role),
           premiumPlanType: planId as any,
           premiumActivatedAt: now,

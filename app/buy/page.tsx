@@ -6,58 +6,54 @@
  * Três decisões de apresentação mandam em quase todo o arquivo:
  *
  * 1. O NÚMERO QUE LIDERA É O MENOR NÚMERO HONESTO. A página não abre com o
- *    total do período ("R$ 397,00", "R$ 327,00"): abre com o equivalente
- *    mensal, e mostra o total logo abaixo, sempre — esconder a cobrança real
- *    seria trocar susto por mentira. A conta toda vive em `lib/buy/pricing.ts`,
- *    com teste.
+ *    total do período ("R$ 397,00"): abre com o equivalente mensal, e mostra o
+ *    total logo abaixo, sempre — esconder a cobrança real seria trocar susto
+ *    por mentira. A conta toda vive em `lib/buy/pricing.ts`, com teste.
  *
- * 2. UMA TELA, UMA DECISÃO. A versão anterior tinha nove seções: abertura com
- *    dois botões, ficha de "a partir de", seletor com o preço inteiro repetido
- *    em cada aba, painel da oferta, comparativo, garantia em três passos,
- *    depoimentos, sete perguntas e um fechamento com o mesmo botão de novo. O
- *    mesmo preço aparecia quatro vezes antes de qualquer clique. Agora existe
- *    UM caminho: manchete curta → pastilhas de plano → painel com preço, botão
- *    e o que entra. Tudo o mais (comparativo, dúvidas) é conteúdo de apoio,
- *    recolhido, para quem for procurar.
+ * 2. UMA TELA, UMA DECISÃO. Manchete → plano → preço → botão. A faixa de
+ *    "checkout seguro", os três selos soltos, a caixa de garantia, a tabela
+ *    comparativa e as linhas de rodapé competiam com o botão; viraram uma
+ *    fileira de três garantias encostada nele e uma lista do que entra. O
+ *    resto (dúvidas, depoimentos) é apoio, para quem for procurar.
  *
- * 3. NO CELULAR, PREÇO E BOTÃO VÊM ANTES DA LISTA. A coluna de compra é a
- *    primeira no DOM e vai para a direita só a partir de `lg`. Antes era
- *    preciso rolar onze benefícios para descobrir quanto custava.
+ * 3. NO CELULAR, PREÇO E BOTÃO VÊM ANTES DA LISTA. O painel de compra é o
+ *    segundo bloco no DOM e só vai para a coluna da direita a partir de `lg`.
+ *
+ * QUEM JÁ PAGA ALGO não esbarra mais num "você já tem um plano, chama no
+ * WhatsApp": o Quest+ vai direto para a oferta de upgrade (/upgrade) quando
+ * ela está no ar, e vê os planos Plus+ quando não está; o trial vê a venda
+ * normal, com o prazo do teste lembrado em cima. Só o Plus+ vê o aviso.
  *
  * Nada nesta página inventa número: preço, preço "de", período e benefícios
  * saem do catálogo do admin; os depoimentos saem de /api/testimonials e a
  * seção some quando não há nenhum cadastrado.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  AlertCircle,
-  ArrowLeft,
   Check,
   ChevronDown,
   ChevronRight,
   Clock,
+  Crown,
   GraduationCap,
   Lock,
   MessageCircle,
-  Minus,
-  Plus,
-  Shield,
   Undo2,
   UserCircle2,
+  Zap,
 } from 'lucide-react'
 import { PlanConfig } from '@/lib/types'
 import { AppShell } from '@/components/app-shell'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { cn } from '@/lib/utils'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import '@/components/upgrade/venda.css'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
-import { PrecoEmDestaque } from '@/components/buy/preco-em-destaque'
 import { DepoimentosDeCompra } from '@/components/buy/depoimentos'
 import {
   apresentarPreco,
-  chaveDeBeneficio,
   formatarBRL,
+  linhaDeApoio,
   normalizarMeses,
   rotuloCurtoDePreco,
   rotuloDeCiclo,
@@ -65,8 +61,10 @@ import {
   type PrecoApresentado,
 } from '@/lib/buy/pricing'
 import { useProuniGrant, type ProuniConcessaoNaTela } from '@/hooks/use-prouni-grant'
+import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import { planoEhRecorrente } from '@/lib/payments/subscription-view'
+import { normalizeAccountType, PLUS_TIER, QUEST_TIER } from '@/lib/account-tier'
 
 const WHATSAPP = '5524992230908'
 
@@ -84,6 +82,8 @@ interface Plan {
   highlighted?: boolean
   badge?: string
   durationMonths?: number
+  /** Cargo que o plano concede (plano sem cargo vale Plus+). */
+  role?: string
 }
 
 /** Fallback exibido enquanto /api/plans não responde (ou se ele falhar). */
@@ -134,13 +134,25 @@ function comPreco(plan: Plan): PlanoComPreco {
   }
 }
 
+/**
+ * "Plano Anual" → "Anual": o segmento não tem espaço para a palavra repetida.
+ * Plano de outro produto (o Quest+) leva o nome curto dele — senão o Quest+
+ * Anual e o Plus+ Anual viravam dois segmentos chamados "Anual".
+ */
+function rotuloDoSegmento(plano: PlanoComPreco): string {
+  if (normalizeAccountType(plano.role || PLUS_TIER) !== PLUS_TIER) {
+    return plano.name.replace(/^domineaqui\s+/i, '').trim() || plano.name
+  }
+  return plano.periodoRotulo.replace(/^plano\s+/i, '') || plano.name
+}
+
 export default function BuyPage() {
   return (
     // `guestNotice={false}`: o aviso flutuante de visitante do AppShell fica
     // fixado no rodapé do celular, exatamente por cima da barra de compra. Aqui
     // ele é dito por dentro do painel, ao lado do botão, que é onde a
     // informação muda a decisão.
-    <AppShell allowGuest guestNotice={false} headerTitle="Planos" headerSubtitle="Assinaturas DomineAqui">
+    <AppShell allowGuest vidro guestNotice={false} headerTitle="Planos" headerSubtitle="Assinaturas DomineAqui">
       <BuyContent />
     </AppShell>
   )
@@ -188,6 +200,7 @@ function BuyContent() {
               highlighted: p.destaque,
               badge: p.badge,
               durationMonths: p.durationMonths,
+              role: p.role,
             }))
         )
       }
@@ -263,7 +276,32 @@ function BuyContent() {
     router.push(`/buy/checkout?plan=${encodeURIComponent(plan.id)}`)
   }
 
-  const catalogo = useMemo(() => plans.map(comPreco), [plans])
+  /*
+   * O que a conta já tem decide o que esta página mostra:
+   *  - Quest+  → a oferta de upgrade (/upgrade); sem ela no ar, os Plus+;
+   *  - trial   → a venda, com o prazo do teste lembrado em cima;
+   *  - Plus+ e cargos pagos do admin → o aviso de plano ativo.
+   */
+  const tipoAtivo = hasActiveSub && sub ? normalizeAccountType(sub.type) : null
+  const ehQuest = tipoAtivo === QUEST_TIER
+  const ehTrial = tipoAtivo === 'trial'
+  const temPlanoQueCobreTudo = hasActiveSub && !!sub && !ehQuest && !ehTrial
+
+  const ofertaDeUpgrade = useOfertaDeUpgrade({ ativo: ehQuest })
+  const vaiParaUpgrade = ehQuest && !!ofertaDeUpgrade?.elegivel
+  useEffect(() => {
+    if (vaiParaUpgrade) router.replace('/upgrade')
+  }, [vaiParaUpgrade, router])
+  const decidindoUpgrade = ehQuest && (ofertaDeUpgrade === undefined || vaiParaUpgrade)
+
+  const catalogo = useMemo(
+    () =>
+      plans
+        // Para quem já é Quest+, vender o próprio Quest+ de novo é ruído.
+        .filter((p) => !ehQuest || normalizeAccountType(p.role || PLUS_TIER) === PLUS_TIER)
+        .map(comPreco),
+    [plans, ehQuest]
+  )
 
   /**
    * O plano que abre por padrão: o que o admin destacou, senão o primeiro da
@@ -299,13 +337,24 @@ function BuyContent() {
     [selecionado, prouniGrant]
   )
 
-  const mostrarVenda = !loadingSub && !hasActiveSub && catalogo.length > 0
+  const mostrarVenda = !loadingSub && !temPlanoQueCobreTudo && !decidindoUpgrade && catalogo.length > 0
+
+  // A barra de baixo só sobe quando o botão do painel sai da tela.
+  const refDoBotao = useRef<HTMLButtonElement>(null)
+  const [botaoVisivel, setBotaoVisivel] = useState(true)
+  useEffect(() => {
+    const alvo = refDoBotao.current
+    if (!alvo || typeof IntersectionObserver === 'undefined') return
+    const obs = new IntersectionObserver(([e]) => setBotaoVisivel(e.isIntersecting), { threshold: 0 })
+    obs.observe(alvo)
+    return () => obs.disconnect()
+  }, [mostrarVenda])
+
+  const fimDoTeste = ehTrial && sub?.expiresAt ? new Date(sub.expiresAt) : null
 
   return (
-    <div className="surface-page min-h-full">
-      <BarraSuperior onVoltar={() => router.back()} />
-
-      <div className="mx-auto w-full max-w-5xl px-4 pb-28 pt-5 sm:px-6 sm:pt-7 lg:pb-16">
+    <FundoIos className="pb-36 lg:pb-16">
+      <div className="mx-auto w-full max-w-5xl px-4 pt-4 sm:px-6 sm:pt-6">
         {paymentSuccess && (
           <AvisoDePagamento
             nomeDoPlano={successPlanName}
@@ -313,7 +362,7 @@ function BuyContent() {
           />
         )}
 
-        {!loadingSub && hasActiveSub && sub && (
+        {!loadingSub && temPlanoQueCobreTudo && (
           <PlanoAtivo
             sub={sub}
             recorrente={hasRecurringSub}
@@ -322,54 +371,46 @@ function BuyContent() {
           />
         )}
 
-        {loadingSub && <EsqueletoDeCarregamento />}
+        {(loadingSub || decidindoUpgrade) && <EsqueletoDeCarregamento />}
 
-        {mostrarVenda && (
-          <>
-            <Abertura />
+        {mostrarVenda && selecionado && (
+          <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_400px] lg:items-start lg:gap-10">
+            <Abertura fimDoTeste={fimDoTeste} quest={ehQuest} />
 
-            {catalogo.length > 1 && (
-              <SeletorDePlanos
+            <aside className="venda-sobe venda-sobe-2 min-w-0 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+              <PainelDeCompra
                 planos={catalogo}
-                selecionadoId={selecionado.id}
-                onEscolher={setEscolhido}
-              />
-            )}
-
-            {selecionado && (
-              <PainelDaOferta
-                key={selecionado.id}
                 plano={selecionado}
+                onEscolher={setEscolhido}
                 preco={oferta.preco ?? selecionado.preco}
                 descontoProuni={oferta.desconto}
                 rotuloProuni={prouniGrant?.discountLabel || ''}
-                emAbas={catalogo.length > 1}
                 visitante={isGuest}
                 comprando={selecting === selecionado.id}
                 onComprar={() => handleSelect(selecionado)}
+                refDoBotao={refDoBotao}
               />
-            )}
+            </aside>
 
-            {catalogo.length > 1 && <Comparativo planos={catalogo} />}
-
-            <DepoimentosDeCompra />
-          </>
+            <div className="venda-sobe venda-sobe-3 min-w-0 space-y-10 lg:col-start-1 lg:row-start-2">
+              <OQueEntra key={selecionado.id} plano={selecionado} />
+              <DepoimentosDeCompra />
+              <Faq plano={selecionado} visitante={isGuest} />
+              <p className="ios-rotulo-2 text-center text-[13px]">
+                Ficou alguma dúvida?{' '}
+                <a
+                  href={`https://wa.me/${WHATSAPP}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ios-tinta font-semibold underline-offset-4 hover:underline"
+                >
+                  Chama no WhatsApp
+                </a>{' '}
+                — responde gente, não robô.
+              </p>
+            </div>
+          </div>
         )}
-
-        {!loadingSub && <Faq plano={selecionado} visitante={isGuest} />}
-
-        <p className="mt-10 text-center text-[13px] text-muted-foreground">
-          Ficou alguma dúvida?{' '}
-          <a
-            href={`https://wa.me/${WHATSAPP}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-primary underline-offset-4 hover:underline"
-          >
-            Chama no WhatsApp
-          </a>
-          {' '}— responde gente, não robô.
-        </p>
       </div>
 
       {mostrarVenda && selecionado && (
@@ -378,195 +419,55 @@ function BuyContent() {
           preco={oferta.preco ?? selecionado.preco}
           comprando={selecting === selecionado.id}
           onComprar={() => handleSelect(selecionado)}
+          visivel={!botaoVisivel}
         />
       )}
-    </div>
-  )
-}
-
-/* ─────────────────────────── Topo ─────────────────────────── */
-
-function BarraSuperior({ onVoltar }: { onVoltar: () => void }) {
-  return (
-    <div className="border-b border-border bg-card/60">
-      <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2.5 sm:px-6">
-        <button
-          type="button"
-          onClick={onVoltar}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-          aria-label="Voltar"
-        >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        {/* O AppShell já escreve "Planos" no cabeçalho; repetir aqui só
-            gastaria a linha. Ela vale mais como selo de segurança, que é a
-            informação que falta bem na hora de decidir pagar. */}
-        <span className="inline-flex min-w-0 flex-1 items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
-          <Lock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-          <span className="truncate">Checkout seguro · Mercado Pago</span>
-        </span>
-        <ThemeToggle className="sm:hidden" />
-      </div>
-    </div>
+    </FundoIos>
   )
 }
 
 /* ─────────────────────────── Abertura ─────────────────────────── */
 
-const SELOS = [
-  { icone: Shield, texto: 'Mercado Pago' },
-  { icone: Clock, texto: 'Acesso na hora' },
-  { icone: Undo2, texto: '7 dias de garantia' },
-]
-
 /**
  * Abertura sem botão: o preço e o "Assinar" estão a um palmo daqui (e, no
- * celular, também na barra fixa). Um botão que só rola a página é um clique
- * cobrado para não entregar nada.
+ * celular, também na barra de baixo). Um botão que só rola a página é um
+ * clique cobrado para não entregar nada.
  */
-function Abertura() {
+function Abertura({ fimDoTeste, quest }: { fimDoTeste: Date | null; quest: boolean }) {
+  const diasDeTeste = fimDoTeste
+    ? Math.max(0, Math.ceil((fimDoTeste.getTime() - Date.now()) / (24 * 60 * 60 * 1000)))
+    : null
+  const testeVitalicio = fimDoTeste !== null && fimDoTeste.getFullYear() >= 9999
+
   return (
-    <section className="pt-4 sm:pt-6">
-      <h1
-        className="max-w-2xl font-heading text-[1.75rem] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-[2.25rem] lg:text-[2.5rem]"
-        style={{ overflowWrap: 'anywhere' }}
-      >
+    <header className="venda-sobe min-w-0 lg:col-start-1 lg:row-start-1 lg:pt-6">
+      {diasDeTeste !== null && !testeVitalicio && (
+        <span className="venda-capsula mb-3">
+          <Clock className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="truncate">
+            {diasDeTeste <= 1 ? 'Seu teste grátis acaba hoje' : `Seu teste grátis acaba em ${diasDeTeste} dias`} —
+            assine e não perca nada
+          </span>
+        </span>
+      )}
+      {quest && (
+        <span className="venda-capsula mb-3">
+          <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+          <span className="truncate">Você é Quest+: o Banco continua no Plus+</span>
+        </span>
+      )}
+      <h1 className="ios-titulo-grande" style={{ overflowWrap: 'anywhere' }}>
         O problema nunca foi falta de material.
       </h1>
-      <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
-        Foi ter tudo espalhado. Aqui os manuais, os resumos, as provas antigas, os
-        flashcards e a IA ficam no mesmo lugar — do jeito que dá pra estudar na véspera.
+      <p className="ios-rotulo-2 mt-3 max-w-xl text-[17px] leading-relaxed">
+        Foi ter tudo espalhado. Aqui os manuais, os resumos, as provas antigas, os flashcards e a IA ficam no mesmo
+        lugar — do jeito que dá pra estudar na véspera.
       </p>
-
-      <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] font-semibold text-muted-foreground sm:text-xs">
-        {SELOS.map(({ icone: Icone, texto }) => (
-          <li key={texto} className="inline-flex items-center gap-1.5">
-            <Icone className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-            {texto}
-          </li>
-        ))}
-      </ul>
-    </section>
+    </header>
   )
 }
 
-/**
- * O CTA. A cor, o gradiente, a varredura de brilho, o halo e o hover moram na
- * classe `.buy-cta` (globals.css) — aqui ficam só forma e tipografia.
- *
- * Nada de `opacity` no texto que vive em cima dele: branco sobre `--secondary`
- * já é o piso de contraste da página, e baixar a opacidade da linha de apoio
- * (era `opacity-85` na barra fixa) derrubava o subtítulo do botão abaixo de
- * qualquer leitura ao sol.
- */
-const BOTAO_PRIMARIO =
-  'buy-cta inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60'
-
-/* ─────────────────────────── Seletor ─────────────────────────── */
-
-/**
- * Pastilhas, não cartões. Cada aba mostra o mínimo para escolher — período,
- * nome e a mensalidade — porque o preço inteiro (total, diário, preço "de")
- * já aparece no painel logo abaixo. Repetir o bloco de preço em cada aba era
- * mostrar o mesmo dinheiro quatro vezes antes do primeiro clique.
- */
-function SeletorDePlanos({
-  planos,
-  selecionadoId,
-  onEscolher,
-}: {
-  planos: PlanoComPreco[]
-  selecionadoId: string
-  onEscolher: (id: string) => void
-}) {
-  const refs = useRef<Record<string, HTMLButtonElement | null>>({})
-
-  /**
-   * Setas navegam entre as abas, como manda o padrão de tablist. Sem isso quem
-   * usa teclado precisa dar Tab por dentro do painel para chegar na aba
-   * seguinte.
-   */
-  function aoTeclar(evento: React.KeyboardEvent, indice: number) {
-    const passo = evento.key === 'ArrowRight' ? 1 : evento.key === 'ArrowLeft' ? -1 : 0
-    if (passo === 0) return
-    evento.preventDefault()
-    const proximo = planos[(indice + passo + planos.length) % planos.length]
-    onEscolher(proximo.id)
-    refs.current[proximo.id]?.focus()
-  }
-
-  return (
-    <div
-      role="tablist"
-      aria-label="Planos disponíveis"
-      className={cn(
-        // Sangria até a borda no celular: o próximo plano fica cortado na
-        // lateral, que é a dica de "dá para arrastar".
-        '-mx-4 mt-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:overflow-visible sm:px-0',
-        planos.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'
-      )}
-    >
-      {planos.map((plano, indice) => {
-        const ativo = plano.id === selecionadoId
-        return (
-          <button
-            key={plano.id}
-            ref={(el) => {
-              refs.current[plano.id] = el
-            }}
-            type="button"
-            role="tab"
-            id={`aba-${plano.id}`}
-            aria-selected={ativo}
-            aria-controls="oferta"
-            tabIndex={ativo ? 0 : -1}
-            onKeyDown={(e) => aoTeclar(e, indice)}
-            onClick={() => onEscolher(plano.id)}
-            className={cn(
-              'group relative w-[62vw] shrink-0 snap-start rounded-xl border px-3.5 py-3 text-left transition sm:w-auto',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-              ativo
-                ? 'border-secondary bg-secondary/[0.14] shadow-md shadow-secondary/20 ring-2 ring-secondary/30'
-                : 'border-border bg-card hover:-translate-y-0.5 hover:border-secondary/45 hover:bg-muted/40 hover:shadow-sm'
-            )}
-          >
-            <span className="flex items-center gap-2">
-              <span
-                className={cn(
-                  'font-clinical text-[10px] font-bold uppercase tracking-[0.14em]',
-                  ativo ? 'text-secondary' : 'text-muted-foreground'
-                )}
-              >
-                {plano.periodoRotulo}
-              </span>
-              {plano.badge && (
-                <span className="truncate rounded bg-secondary/15 px-1.5 py-px text-[9px] font-black uppercase tracking-wide text-secondary">
-                  {plano.badge}
-                </span>
-              )}
-              {ativo && <Check className="ml-auto h-3.5 w-3.5 shrink-0 text-secondary" aria-hidden />}
-            </span>
-            <span className="mt-1 block truncate text-sm font-bold text-foreground">
-              {plano.name}
-            </span>
-            <span className="mt-0.5 flex items-center gap-1.5 font-clinical text-[13px] font-semibold tabular-nums text-muted-foreground">
-              <span className="truncate">{rotuloCurtoDePreco(plano.preco)}</span>
-              {/* O percentual só existe quando o admin cadastrou preço "de":
-                  ele é o que faz a aba certa saltar entre as outras. */}
-              {plano.preco.descontoPercentual !== null && plano.preco.descontoPercentual > 0 && (
-                <span className="shrink-0 rounded bg-emerald-500/15 px-1.5 py-px text-[10px] font-black tracking-tight text-emerald-700 dark:text-emerald-300">
-                  −{plano.preco.descontoPercentual}%
-                </span>
-              )}
-            </span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-/* ─────────────────────────── Oferta ─────────────────────────── */
+/* ─────────────────────────── Compra ─────────────────────────── */
 
 /**
  * O preço do plano já com o benefício PROUNI/FIES desta conta.
@@ -576,8 +477,7 @@ function SeletorDePlanos({
  * quem cobra. Aqui ela só serve para a tela dizer a verdade antes do clique.
  *
  * O "de" passa a ser o preço de tabela do plano, porque é ele que dimensiona o
- * benefício para quem o recebeu. O `precoOriginal` do catálogo continua sendo o
- * âncora nas pastilhas e no comparativo, onde os planos aparecem sem conta.
+ * benefício para quem o recebeu.
  */
 function aplicarDescontoProuni(
   plano: PlanoComPreco | undefined,
@@ -602,34 +502,206 @@ function aplicarDescontoProuni(
   }
 }
 
-function PainelDaOferta({
+function PainelDeCompra({
+  planos,
   plano,
+  onEscolher,
   preco,
   descontoProuni,
   rotuloProuni,
-  emAbas,
   visitante,
   comprando,
   onComprar,
+  refDoBotao,
 }: {
+  planos: PlanoComPreco[]
   plano: PlanoComPreco
+  onEscolher: (id: string) => void
   /** Já com o benefício PROUNI/FIES, quando existe. */
   preco: PrecoApresentado
   descontoProuni: number
   rotuloProuni: string
-  /** Com um plano só não existe seletor — e sem seletor não pode haver
-   *  `role="tabpanel"`, senão o painel aponta `aria-labelledby` para uma aba
-   *  que não está no documento. */
-  emAbas: boolean
   visitante: boolean
   comprando: boolean
   onComprar: () => void
+  refDoBotao: React.RefObject<HTMLButtonElement | null>
 }) {
-  const [tudoAberto, setTudoAberto] = useState(false)
+  const indice = Math.max(0, planos.findIndex((p) => p.id === plano.id))
+  const refs = useRef<Record<string, HTMLButtonElement | null>>({})
 
-  const semanticaDeAba = emAbas
-    ? ({ role: 'tabpanel', 'aria-labelledby': `aba-${plano.id}`, tabIndex: 0 } as const)
-    : {}
+  /**
+   * Setas navegam entre os planos, como manda o padrão de tablist. Sem isso
+   * quem usa teclado precisa dar Tab por dentro do painel para chegar no
+   * plano seguinte.
+   */
+  function aoTeclar(evento: React.KeyboardEvent, i: number) {
+    const passo = evento.key === 'ArrowRight' ? 1 : evento.key === 'ArrowLeft' ? -1 : 0
+    if (passo === 0) return
+    evento.preventDefault()
+    const proximo = planos[(i + passo + planos.length) % planos.length]
+    onEscolher(proximo.id)
+    refs.current[proximo.id]?.focus()
+  }
+
+  const temDesconto = preco.descontoPercentual !== null && preco.descontoPercentual > 0
+
+  return (
+    <section className="venda-painel" aria-labelledby="painel-titulo">
+      {planos.length > 1 && (
+        <div
+          role="tablist"
+          aria-label="Planos disponíveis"
+          className="venda-seg mb-5"
+          style={{ '--n': planos.length, '--i': indice } as CSSProperties}
+        >
+          {planos.map((p, i) => {
+            const ativo = p.id === plano.id
+            return (
+              <button
+                key={p.id}
+                ref={(el) => {
+                  refs.current[p.id] = el
+                }}
+                type="button"
+                role="tab"
+                id={`aba-${p.id}`}
+                aria-selected={ativo}
+                tabIndex={ativo ? 0 : -1}
+                onKeyDown={(e) => aoTeclar(e, i)}
+                onClick={() => onEscolher(p.id)}
+                className={planos.length >= 4 ? 'venda-seg-item text-[13px]' : 'venda-seg-item'}
+              >
+                <span className="max-w-full truncate">{rotuloDoSegmento(p)}</span>
+                {/* O mensal de cada um, sem o "R$": é o número que compara
+                    planos de prazos diferentes, e cabe em quatro segmentos. */}
+                <span className="venda-seg-nota max-w-full truncate">
+                  {p.preco.chamada.unidade === 'unico' ? 'único' : `${formatarBRL(p.preco.chamada.valor)}/mês`}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      <div className="flex items-start justify-between gap-3">
+        <h2 id="painel-titulo" className="min-w-0 text-[17px] font-semibold leading-snug tracking-[-0.015em]">
+          {plano.name}
+          <span className="ios-rotulo-2 block text-[13px] font-medium">{plano.periodoRotulo}</span>
+        </h2>
+        {plano.badge && <span className="ios-selo ios-selo-claro shrink-0">{plano.badge}</span>}
+      </div>
+
+      {/* O menor número honesto na frente; o total, sem escapatória, embaixo. */}
+      <p className="mt-4 flex flex-wrap items-end gap-x-2 gap-y-1">
+        <span className="venda-preco">
+          <span className="venda-preco-moeda">R$</span>
+          {formatarBRL(preco.chamada.valor)}
+        </span>
+        <span className="ios-rotulo-2 pb-1 text-[14px] font-semibold">
+          {preco.chamada.unidade === 'unico' ? 'pagamento único' : '/mês'}
+        </span>
+        {temDesconto && <span className="venda-selo-desconto mb-1">−{preco.descontoPercentual}%</span>}
+      </p>
+      <p className="ios-rotulo-2 mt-2 text-[14px] leading-snug">
+        {preco.diario !== null ? `${linhaDeApoio(preco)} Dá R$ ${formatarBRL(preco.diario)} por dia.` : linhaDeApoio(preco)}
+      </p>
+      {preco.ancora !== null && preco.economia !== null && (
+        <p className="ios-rotulo-2 mt-2 flex flex-wrap items-center gap-2 text-[14px]">
+          De <s className="tabular-nums">R$ {formatarBRL(preco.ancora)}</s>
+          <span className="venda-economia">você economiza R$ {formatarBRL(preco.economia)}</span>
+        </p>
+      )}
+
+      {descontoProuni > 0 && (
+        <p className="ios-tinta mt-2 flex items-start gap-1.5 text-[13px] font-semibold leading-snug">
+          <GraduationCap className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+          <span>
+            Seu desconto ProUni/FIES{rotuloProuni ? ` de ${rotuloProuni}` : ''} já está neste valor
+            {plano.meses > 0 ? ' — o checkout abre no pagamento único, que é onde ele vale' : ''}.
+          </span>
+        </p>
+      )}
+
+      {/* Duas linhas dentro do mesmo botão: a promessa em cima, o dinheiro
+          embaixo. Quem chega rolando do celular decide sem ter que subir a
+          vista até o bloco de preço de novo. */}
+      <button
+        ref={refDoBotao}
+        type="button"
+        onClick={onComprar}
+        disabled={comprando}
+        className="buy-cta buy-cta-halo mt-5 flex w-full flex-col items-center justify-center gap-0.5 rounded-[18px] px-4 py-3.5 text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60"
+      >
+        <span className="flex items-center gap-2 text-[17px] font-extrabold tracking-tight">
+          {comprando ? 'Abrindo checkout…' : 'Quero garantir meu acesso'}
+          {!comprando && <ChevronRight className="buy-cta-seta h-5 w-5" aria-hidden />}
+        </span>
+        {!comprando && (
+          <span className="text-[11px] font-bold uppercase tracking-[0.08em]">
+            {rotuloCurtoDePreco(preco)} · acesso na hora
+          </span>
+        )}
+      </button>
+
+      {/* As três respostas que faltam bem na hora de pagar, encostadas no
+          botão em vez de espalhadas pela página. */}
+      <div className="venda-garantias mt-3">
+        <span>
+          <Zap className="h-4 w-4" aria-hidden />
+          Acesso na hora
+        </span>
+        <span>
+          <Undo2 className="h-4 w-4" aria-hidden />
+          7 dias de garantia
+        </span>
+        <span>
+          <Lock className="h-4 w-4" aria-hidden />
+          Pix, cartão ou boleto
+        </span>
+      </div>
+
+      <ProuniCta itemType="plus" itemId={plano.id} className="mt-3" />
+
+      <p className="ios-rotulo-2 mt-3 text-[12px] leading-relaxed">
+        {/* Mesma regra do checkout: só {1, 3, 12} meses renovam. */}
+        {!visitante && planoEhRecorrente(plano.durationMonths)
+          ? 'Pagamento único por padrão: não renova sozinho.'
+          : plano.meses === 0
+            ? 'Pagamento único: não existe renovação para cancelar.'
+            : `Pagamento único por ${rotuloDeCiclo(plano.meses)} de acesso: não renova sozinho.`}{' '}
+        Não serviu em 7 dias? Devolvemos 100%, sem justificar nada.
+      </p>
+
+      {visitante && (
+        <p className="ios-rotulo-2 mt-2 flex items-start gap-2 text-[12px] leading-relaxed">
+          <UserCircle2 className="ios-tinta mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+          {/*
+            Sem conta, a compra é ÚNICA e não renova, enquanto a página
+            inteira fala em assinatura — a diferença que mais importa.
+          */}
+          <span>
+            Você está como visitante: a compra é única (não renova) e o acesso vai por e-mail.{' '}
+            <a
+              href="/auth/login?redirect=%2Fbuy"
+              className="ios-tinta font-semibold underline-offset-4 hover:underline"
+            >
+              Entrar na conta
+            </a>{' '}
+            {planoEhRecorrente(plano.durationMonths)
+              ? 'para assinar com renovação automática e acesso imediato.'
+              : 'para o acesso cair direto nela, sem Serial Key.'}
+          </span>
+        </p>
+      )}
+    </section>
+  )
+}
+
+/* ─────────────────────────── O que entra ─────────────────────────── */
+
+function OQueEntra({ plano }: { plano: PlanoComPreco }) {
+  const [tudoAberto, setTudoAberto] = useState(false)
+  if (plano.features.length === 0) return null
 
   // Truncar para revelar um item só seria pior do que não truncar.
   const truncavel = plano.features.length > BENEFICIOS_VISIVEIS + 1
@@ -638,296 +710,38 @@ function PainelDaOferta({
   const ocultos = plano.features.length - visiveis.length
 
   return (
-    <div
-      id="oferta"
-      {...semanticaDeAba}
-      className="buy-panel-in mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]"
-    >
-      {/* Coluna da compra. Primeira no DOM: no celular, preço e botão vêm
-          antes da lista. A partir de `lg` ela vai para a direita. */}
-      <div className="border-b border-border bg-muted/30 p-5 sm:p-6 lg:order-2 lg:border-b-0 lg:border-l">
-        <div className="lg:sticky lg:top-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-md bg-primary/10 px-2 py-0.5 font-clinical text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
-              {plano.periodoRotulo}
+    <section aria-labelledby="entra-titulo">
+      <h2 id="entra-titulo" className="ios-titulo-secao mb-1">
+        O que abre no dia do pagamento
+      </h2>
+      {plano.description && <p className="ios-rotulo-2 mb-3 text-[15px] leading-relaxed">{plano.description}</p>}
+      <ul className="ios-lista [--ios-recuo:48px]">
+        {visiveis.map((beneficio, i) => (
+          <li key={`${beneficio}-${i}`} className="ios-linha min-h-[48px]">
+            <span className="venda-icone-linha h-6 w-6 rounded-full">
+              <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden />
             </span>
-            {plano.badge && (
-              <span className="rounded-md border border-secondary/35 bg-secondary/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-secondary">
-                {plano.badge}
-              </span>
-            )}
-          </div>
-
-          <h2 className="mt-2 font-heading text-xl font-semibold leading-tight tracking-tight text-foreground sm:text-2xl">
-            {plano.name}
-          </h2>
-
-          <div className="mt-4">
-            <PrecoEmDestaque preco={preco} />
-          </div>
-
-          {descontoProuni > 0 && (
-            <p className="mt-2 flex items-start gap-1.5 text-[13px] font-semibold leading-snug text-emerald-600 dark:text-emerald-400">
-              <GraduationCap className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <span>
-                Seu desconto ProUni/FIES{rotuloProuni ? ` de ${rotuloProuni}` : ''} já está neste valor
-                {plano.meses > 0 ? ' — o checkout abre no pagamento único, que é onde ele vale' : ''}.
-              </span>
-            </p>
-          )}
-
-          {/* Duas linhas dentro do mesmo botão: a promessa em cima, o dinheiro
-              embaixo. Quem chega rolando do celular decide sem ter que subir a
-              vista até o bloco de preço de novo. */}
-          <button
-            type="button"
-            onClick={onComprar}
-            disabled={comprando}
-            className={cn(
-              BOTAO_PRIMARIO,
-              'buy-cta-halo mt-5 w-full flex-col gap-0.5 rounded-2xl px-4 py-3.5'
-            )}
-          >
-            <span className="flex items-center gap-2 text-[17px] font-extrabold tracking-tight">
-              {comprando ? 'Abrindo checkout…' : 'Quero garantir meu acesso'}
-              {!comprando && <ChevronRight className="buy-cta-seta h-5 w-5" aria-hidden />}
-            </span>
-            {!comprando && (
-              <span className="text-[11px] font-bold uppercase tracking-[0.08em]">
-                {rotuloCurtoDePreco(preco)} · acesso na hora
-              </span>
-            )}
-          </button>
-
-          <ProuniCta itemType="plus" itemId={plano.id} className="mt-3" />
-
-          {/* A garantia deixou de ser uma linha solta embaixo do botão: virou
-              caixa, porque é ela que responde ao último medo antes do clique e
-              precisa ter peso próprio ao lado de um CTA que agora brilha. */}
-          <p className="mt-3 flex items-start gap-2 rounded-xl border border-primary/25 bg-primary/[0.07] px-3 py-2.5 text-[12px] font-semibold leading-snug text-primary">
-            <Undo2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            <span>
-              <strong className="font-extrabold">7 dias para testar.</strong> Não serviu,
-              devolvemos 100% — sem justificar nada.
-            </span>
-          </p>
-
-          {/* Duas linhas, não cinco: o que sai do bolso e o que acontece
-              depois. O resto (criptografia, e-mail de liberação) está nas
-              dúvidas, que é onde alguém vai procurar por isso. */}
-          <p className="mt-3 border-t border-border pt-3 text-[11px] leading-relaxed text-muted-foreground">
-            Pix, cartão ou boleto pelo Mercado Pago.{' '}
-            {/* Mesma regra do checkout: só {1, 3, 12} meses renovam. */}
-            {!visitante && planoEhRecorrente(plano.durationMonths)
-              ? `Renova a cada ${rotuloDeCiclo(plano.meses)} e você cancela quando quiser.`
-              : plano.meses === 0
-                ? 'Pagamento único: não existe renovação para cancelar.'
-                : `Pagamento único por ${rotuloDeCiclo(plano.meses)} de acesso: não renova sozinho.`}
-          </p>
-
-          {visitante && (
-            <p className="mt-2 flex items-start gap-2 text-[11px] leading-relaxed text-muted-foreground">
-              <UserCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
-              {/*
-                O aviso dizia só "o acesso vai por e-mail" — e omitia a
-                diferença que mais importa: sem conta, a compra é ÚNICA e não
-                renova, enquanto a página inteira fala em assinatura.
-              */}
-              <span>
-                Você está como visitante: a compra é única (não renova) e o acesso vai por e-mail.{' '}
-                <a
-                  href="/auth/login?redirect=%2Fbuy"
-                  className="font-semibold text-primary underline-offset-4 hover:underline"
-                >
-                  Entrar na conta
-                </a>{' '}
-                {planoEhRecorrente(plano.durationMonths)
-                  ? 'para assinar com renovação automática e acesso imediato.'
-                  : 'para o acesso cair direto nela, sem Serial Key.'}
-              </span>
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Coluna do valor: o que a pessoa leva. */}
-      <div className="p-5 sm:p-6 lg:order-1">
-        {plano.description && (
-          <p className="text-sm leading-relaxed text-muted-foreground">{plano.description}</p>
-        )}
-
-        {plano.features.length > 0 && (
-          <>
-            <p
-              className={cn(
-                'font-clinical text-[11px] font-bold uppercase tracking-[0.14em] text-muted-foreground',
-                plano.description ? 'mt-5' : ''
-              )}
+            <span className="min-w-0 flex-1 text-[15px] leading-snug tracking-[-0.01em]">{beneficio}</span>
+          </li>
+        ))}
+        {truncavel && (
+          <li>
+            <button
+              type="button"
+              onClick={() => setTudoAberto((v) => !v)}
+              aria-expanded={tudoAberto}
+              className="ios-linha ios-tinta w-full justify-center text-[15px] font-semibold"
             >
-              O que abre no dia do pagamento
-            </p>
-
-            {/* Sem divisórias e em duas colunas no tablet: onze linhas
-                separadas por régua viravam parede. O check à esquerda diz o
-                que a régua não dizia — que tudo ali está incluso. */}
-            <ul className="mt-3 grid gap-x-6 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-1">
-              {visiveis.map((beneficio, i) => (
-                <li key={`${beneficio}-${i}`} className="flex items-start gap-2.5">
-                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
-                  <span className="min-w-0 text-[13px] leading-snug text-foreground sm:text-sm">
-                    {beneficio}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            {truncavel && (
-              <button
-                type="button"
-                onClick={() => setTudoAberto((v) => !v)}
-                aria-expanded={tudoAberto}
-                className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-[13px] font-semibold text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-[0.98]"
-              >
-                {tudoAberto ? (
-                  <>
-                    <Minus className="h-3.5 w-3.5 text-secondary" aria-hidden /> Mostrar menos
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-3.5 w-3.5 text-secondary" aria-hidden />
-                    Ver os outros {ocultos} itens
-                  </>
-                )}
-              </button>
-            )}
-          </>
+              {tudoAberto ? 'Mostrar menos' : `Ver os outros ${ocultos} itens`}
+              <ChevronDown
+                className={tudoAberto ? 'h-4 w-4 rotate-180 transition-transform' : 'h-4 w-4 transition-transform'}
+                aria-hidden
+              />
+            </button>
+          </li>
         )}
-      </div>
-    </div>
-  )
-}
-
-/* ─────────────────────────── Comparativo ─────────────────────────── */
-
-/**
- * Tabela lado a lado, montada a partir da união dos benefícios que o admin
- * digitou. Os textos são normalizados (`chaveDeBeneficio`) antes de casar as
- * linhas, senão uma diferença de caixa ou acento criaria duas linhas para o
- * mesmo benefício.
- *
- * Vem fechada. É conferência, não argumento: quem já escolheu não precisa
- * rolar uma tabela inteira para chegar às dúvidas.
- */
-function Comparativo({ planos }: { planos: PlanoComPreco[] }) {
-  const [aberto, setAberto] = useState(false)
-
-  const linhas = useMemo(() => {
-    const mapa = new Map<string, { rotulo: string; tem: Set<string> }>()
-    for (const plano of planos) {
-      for (const beneficio of plano.features) {
-        const chave = chaveDeBeneficio(beneficio)
-        if (!chave) continue
-        const atual = mapa.get(chave)
-        if (atual) atual.tem.add(plano.id)
-        else mapa.set(chave, { rotulo: beneficio, tem: new Set([plano.id]) })
-      }
-    }
-    return Array.from(mapa.values())
-  }, [planos])
-
-  if (linhas.length === 0) return null
-
-  return (
-    <section className="mt-8">
-      <button
-        type="button"
-        onClick={() => setAberto((v) => !v)}
-        aria-expanded={aberto}
-        aria-controls="comparativo"
-        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3.5 text-left shadow-sm transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:px-5"
-      >
-        <span className="min-w-0">
-          <span className="block text-sm font-bold text-foreground">
-            Comparar os {planos.length} planos, lado a lado
-          </span>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
-            A lista de cada um, empilhada. O que está com traço não entra.
-          </span>
-        </span>
-        <ChevronDown
-          className={cn(
-            'h-4 w-4 shrink-0 text-secondary transition-transform duration-200',
-            aberto && 'rotate-180'
-          )}
-          aria-hidden
-        />
-      </button>
-
-      {aberto && (
-        /* `relative` não é enfeite: os rótulos `sr-only` das células são
-           `position: absolute`, e sem um ancestral posicionado aqui eles se
-           resolvem contra o viewport — escapam do recorte deste contêiner e
-           empurram a página inteira 153px para o lado no celular de 320px. */
-        <div
-          id="comparativo"
-          className="relative mt-3 overflow-x-auto rounded-2xl border border-border bg-card shadow-sm"
-        >
-          <table className="w-full min-w-[520px] border-collapse text-left">
-            <caption className="sr-only">Comparação de benefícios entre os planos</caption>
-            <thead>
-              <tr className="border-b border-border">
-                <th scope="col" className="px-4 py-4 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground sm:px-5">
-                  Benefício
-                </th>
-                {planos.map((plano) => (
-                  <th key={plano.id} scope="col" className="w-32 px-3 py-4 align-bottom sm:w-36">
-                    {/* O período vai no cabeçalho porque o mesmo produto pode
-                        estar à venda em dois prazos: sem ele, duas colunas
-                        vizinhas se chamariam "DomineAqui Plus+". */}
-                    <span className="block font-clinical text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                      {plano.periodoRotulo}
-                    </span>
-                    <span className="mt-0.5 block text-sm font-bold leading-tight text-foreground">
-                      {plano.name}
-                    </span>
-                    <span className="mt-1 block font-clinical text-[11px] tabular-nums text-secondary">
-                      {rotuloCurtoDePreco(plano.preco)}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {linhas.map((linha) => (
-                <tr key={linha.rotulo} className="border-b border-border last:border-b-0">
-                  <th
-                    scope="row"
-                    className="px-4 py-3 text-[13px] font-medium leading-snug text-foreground sm:px-5"
-                  >
-                    {linha.rotulo}
-                  </th>
-                  {planos.map((plano) => {
-                    const incluso = linha.tem.has(plano.id)
-                    return (
-                      // O ícone é decorativo e o estado vai num texto invisível:
-                      // `aria-label` em <svg> não é anunciado de forma confiável,
-                      // e uma célula muda é uma célula sem resposta no leitor.
-                      <td key={plano.id} className="px-3 py-3 text-center">
-                        {incluso ? (
-                          <Check className="mx-auto h-4 w-4 text-primary" aria-hidden />
-                        ) : (
-                          <Minus className="mx-auto h-4 w-4 text-muted-foreground" aria-hidden />
-                        )}
-                        <span className="sr-only">{incluso ? 'Incluso' : 'Não incluso'}</span>
-                      </td>
-                    )
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </ul>
+      <p className="ios-pe-lista">Sem versão capada nem liberação em etapas: entra tudo de uma vez.</p>
     </section>
   )
 }
@@ -935,32 +749,22 @@ function Comparativo({ planos }: { planos: PlanoComPreco[] }) {
 /* ─────────────────────────── Dúvidas ─────────────────────────── */
 
 /**
- * Cinco perguntas, não sete: cada uma responde uma coisa que muda a decisão.
- * As respostas mudam com o plano aberto — dizer "renova a cada 12 meses" numa
+ * Quatro perguntas: cada uma responde uma coisa que muda a decisão. As
+ * respostas mudam com o plano aberto — dizer "renova a cada 12 meses" numa
  * página que está mostrando o plano vitalício é o tipo de detalhe errado que
  * derruba a confiança bem na hora de pagar.
- */
-/**
- * `visitante` muda a resposta sobre cobrança, e não é detalhe.
  *
- * Quem está deslogado e clica em "Assinar" NÃO vai para o checkout de
- * assinatura: vai para /comprar, que vende o mesmo plano como Serial Key de
- * pagamento único, sem renovação nenhuma. O FAQ afirmava "a renovação é
- * automática pelo Mercado Pago" para todo mundo — então quem comprava sem
- * conta ou esperava uma renovação que nunca vinha (e perdia o acesso sem
- * entender por quê), ou saía procurando onde cancelar uma assinatura que não
- * existe. A diferença é favorável ao comprador; o problema era ninguém avisar.
+ * `visitante` muda a resposta sobre cobrança, e não é detalhe: quem está
+ * deslogado e clica em "Assinar" vai para /comprar, que vende o mesmo plano
+ * como Serial Key de pagamento único, sem renovação nenhuma.
  */
 function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
   const nome = plano?.name || 'o plano'
   const preco = plano?.preco
 
   /*
-   * Só {1, 3, 12} meses viram cobrança recorrente. Antes daqui a condição era
-   * "não é vitalício, logo renova", e um plano SEMESTRAL prometia neste
-   * parágrafo "a renovação é automática pelo Mercado Pago" enquanto o checkout
-   * o vendia como pagamento único — /buy/checkout e /api/subscriptions sempre
-   * conferiram {1, 3, 12}, e só este texto discordava.
+   * Só {1, 3, 12} meses viram cobrança recorrente — /buy/checkout e
+   * /api/subscriptions conferem {1, 3, 12}, e este texto tem que concordar.
    */
   const renova = !!plano && !visitante && planoEhRecorrente(plano.durationMonths)
 
@@ -977,11 +781,11 @@ function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
               : ''
           }`
         : renova
-          ? `${nome} é cobrado em R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
+          ? `${nome} sai por R$ ${formatarBRL(preco!.total)} a cada ${rotuloDeCiclo(plano.meses)}${
               preco?.mensal != null
                 ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês de acesso`
                 : ''
-            }. A renovação é automática pelo Mercado Pago e você cancela quando quiser, direto no seu perfil, sem multa e sem ligar para ninguém, mantendo o acesso até o fim do período já pago.`
+            }. O checkout abre no pagamento único (Pix, cartão ou boleto), que não renova. Quando a assinatura no cartão está disponível, você pode escolhê-la: ela renova pelo Mercado Pago e você cancela quando quiser, direto no seu perfil, sem multa, mantendo o acesso até o fim do período já pago.`
           : `${nome} é pagamento único: R$ ${formatarBRL(preco!.total)} uma vez, com acesso por ${rotuloDeCiclo(plano.meses)}${
               preco?.mensal != null ? ` — o que dá R$ ${formatarBRL(preco.mensal)} por mês` : ''
             }. NÃO renova sozinho: quando o prazo acabar, você decide se quer comprar de novo. Nada fica cobrando o seu cartão.`
@@ -1000,10 +804,6 @@ function perguntasDoPlano(plano?: PlanoComPreco, visitante = false) {
       a: 'Pix, cartão ou boleto, tudo pelo Mercado Pago — os dados do cartão não passam pelo nosso servidor. O acesso abre automaticamente assim que o pagamento é aprovado: Pix costuma cair em segundos, boleto depende da compensação bancária.',
     },
     {
-      q: 'Entra tudo de uma vez mesmo?',
-      a: 'Entra. Não existe versão capada nem liberação em etapas: no dia do pagamento você abre todos os itens da lista acima.',
-    },
-    {
       q: 'Dá para testar antes de pagar?',
       a: 'Dá. Novos usuários têm 7 dias gratuitos para conhecer a plataforma antes de decidir qualquer coisa. Bolsista PROUNI ou FIES: quando há benefício ativo para o plano, aparece um botão de solicitação logo abaixo do preço.',
     },
@@ -1015,30 +815,32 @@ function Faq({ plano, visitante }: { plano?: PlanoComPreco; visitante: boolean }
   const perguntas = useMemo(() => perguntasDoPlano(plano, visitante), [plano, visitante])
 
   return (
-    <section className="mt-8">
-      <h2 className="font-heading text-xl font-semibold leading-tight tracking-tight text-foreground sm:text-2xl">
+    <section aria-labelledby="faq-titulo">
+      <h2 id="faq-titulo" className="ios-titulo-secao mb-2.5">
         Dúvidas que chegam antes de assinar
       </h2>
-
-      <div className="mt-4 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="ios-lista">
         {perguntas.map((item, i) => {
           const estaAberta = aberta === i
           return (
-            <div key={item.q} className="border-b border-border last:border-b-0">
+            <div key={item.q}>
+              {/* Separador recuado, como o das listas do sistema. */}
+              {i > 0 && <div aria-hidden className="ml-4 h-px bg-[color:var(--ios-separador)]" />}
               <h3>
                 <button
                   type="button"
                   aria-expanded={estaAberta}
                   aria-controls={`faq-${i}`}
                   onClick={() => setAberta(estaAberta ? null : i)}
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:px-5"
+                  className="flex min-h-[52px] w-full items-center justify-between gap-3 px-4 py-3 text-left"
                 >
-                  <span className="text-sm font-semibold text-foreground">{item.q}</span>
+                  <span className="text-[15px] font-semibold tracking-[-0.01em]">{item.q}</span>
                   <ChevronDown
-                    className={cn(
-                      'h-4 w-4 shrink-0 text-secondary transition-transform duration-200',
-                      estaAberta && 'rotate-180'
-                    )}
+                    className={
+                      estaAberta
+                        ? 'ios-rotulo-3 h-4 w-4 shrink-0 rotate-180 transition-transform duration-200'
+                        : 'ios-rotulo-3 h-4 w-4 shrink-0 transition-transform duration-200'
+                    }
                     aria-hidden
                   />
                 </button>
@@ -1049,9 +851,7 @@ function Faq({ plano, visitante }: { plano?: PlanoComPreco; visitante: boolean }
                 style={{ gridTemplateRows: estaAberta ? '1fr' : '0fr' }}
               >
                 <div className="min-h-0 overflow-hidden">
-                  <p className="px-4 pb-4 text-[13px] leading-relaxed text-muted-foreground sm:px-5 sm:text-sm">
-                    {item.a}
-                  </p>
+                  <p className="ios-rotulo-2 px-4 pb-4 text-[14px] leading-relaxed">{item.a}</p>
                 </div>
               </div>
             </div>
@@ -1065,47 +865,50 @@ function Faq({ plano, visitante }: { plano?: PlanoComPreco; visitante: boolean }
 /* ─────────────────────────── Estados auxiliares ─────────────────────────── */
 
 /**
- * Barra fixa até `lg`: é só a partir daí que a coluna de compra fica grudada
- * na lateral. No tablet em retrato o botão do painel some da tela do mesmo
- * jeito que no celular — e um botão que sumiu é um botão que não converte.
+ * Barra de baixo até `lg`: é só a partir daí que o painel de compra fica
+ * grudado na lateral. Ela só sobe quando o botão do painel sai da tela — dois
+ * botões de comprar visíveis ao mesmo tempo é um botão sobrando.
  */
 function BarraFixa({
   plano,
   preco,
   comprando,
   onComprar,
+  visivel,
 }: {
   plano: PlanoComPreco
   /** O mesmo preço do painel — com o benefício PROUNI/FIES, quando existe. */
   preco: PrecoApresentado
   comprando: boolean
   onComprar: () => void
+  visivel: boolean
 }) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md lg:hidden">
+    <div
+      className="ios-barra-inferior ios-vidro flex items-center gap-3 p-2 pl-4 lg:hidden"
+      data-visivel={visivel ? 'true' : 'false'}
+      aria-hidden={!visivel}
+    >
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[13px] font-semibold">
+          {plano.name} · {rotuloDoSegmento(plano)}
+        </span>
+        <span className="flex items-baseline gap-1.5 text-[15px] font-bold tabular-nums">
+          {rotuloCurtoDePreco(preco)}
+          {preco.descontoPercentual !== null && preco.descontoPercentual > 0 && (
+            <span className="ios-ambar text-[12px] font-extrabold">−{preco.descontoPercentual}%</span>
+          )}
+        </span>
+      </span>
       <button
         type="button"
         onClick={onComprar}
         disabled={comprando}
-        className="buy-cta buy-cta-halo mx-auto flex w-full max-w-5xl items-center justify-between gap-3 rounded-2xl px-4 py-3.5 text-left text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60"
+        tabIndex={visivel ? 0 : -1}
+        className="buy-cta inline-flex h-11 shrink-0 items-center gap-1 rounded-full px-5 text-[15px] font-extrabold text-secondary-foreground disabled:opacity-60"
       >
-        <span className="min-w-0">
-          <span className="block truncate text-[10px] font-black uppercase tracking-[0.08em]">
-            {plano.name}
-          </span>
-          <span className="flex items-baseline gap-1.5 truncate text-base font-extrabold tabular-nums">
-            {rotuloCurtoDePreco(preco)}
-            {preco.descontoPercentual !== null && preco.descontoPercentual > 0 && (
-              <span className="shrink-0 rounded bg-white/20 px-1.5 py-px text-[10px] font-black tabular-nums">
-                −{preco.descontoPercentual}%
-              </span>
-            )}
-          </span>
-        </span>
-        <span className="inline-flex shrink-0 items-center gap-1 rounded-xl bg-white/15 px-3 py-2 text-sm font-extrabold">
-          {comprando ? 'Abrindo…' : 'Assinar agora'}
-          {!comprando && <ChevronRight className="buy-cta-seta h-4 w-4" aria-hidden />}
-        </span>
+        {comprando ? 'Abrindo…' : 'Assinar'}
+        {!comprando && <ChevronRight className="h-4 w-4" aria-hidden />}
       </button>
     </div>
   )
@@ -1119,20 +922,16 @@ function AvisoDePagamento({
   onDashboard: () => void
 }) {
   return (
-    <div className="mt-5 flex items-start gap-3 rounded-2xl border border-primary/30 bg-primary/10 p-4 sm:p-5">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-        <Check className="h-5 w-5" />
-      </div>
+    <div className="ios-lista venda-sobe mb-6 flex items-start gap-3 p-4 sm:p-5">
+      <span className="venda-icone-linha h-10 w-10 rounded-full">
+        <Check className="h-5 w-5" strokeWidth={3} />
+      </span>
       <div className="min-w-0 flex-1">
-        <p className="font-heading text-lg font-semibold text-foreground">Pagamento aprovado</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-[17px] font-semibold tracking-[-0.015em]">Pagamento aprovado</p>
+        <p className="ios-rotulo-2 mt-1 text-[15px]">
           {nomeDoPlano ? `${nomeDoPlano} ativado` : 'Plano ativado'}. Bora dominar.
         </p>
-        <button
-          type="button"
-          onClick={onDashboard}
-          className="mt-3 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-        >
+        <button type="button" onClick={onDashboard} className="ios-botao ios-botao-p mt-3">
           Ir para o dashboard
         </button>
       </div>
@@ -1154,60 +953,56 @@ function PlanoAtivo({
   const vitalicio = new Date(sub.expiresAt).getFullYear() >= 9999
 
   return (
-    <div className="mt-5 flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
-      <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
-      <div className="min-w-0 flex-1">
-        <p className="font-semibold text-foreground">Você já tem um plano ativo</p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {sub.label || (sub.type === 'trial' ? 'Trial' : 'Plus+')}
-          {sub.planType ? ` (${sub.planType})` : ''}
-          {' · '}
-          {vitalicio ? (
-            <strong className="text-foreground">vitalício</strong>
-          ) : (
-            <>
-              até{' '}
-              <strong className="text-foreground">
-                {new Date(sub.expiresAt).toLocaleDateString('pt-BR')}
-              </strong>
-            </>
-          )}
-          {recorrente && <span className="ml-1 text-xs text-primary">· renovação automática</span>}
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onPerfil}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-          >
-            Gerenciar no perfil
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              const msg = encodeURIComponent(
-                `Olá! Sou ${userName} do DomineAqui e quero falar sobre meu plano.`
-              )
-              window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank')
-            }}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring active:scale-95"
-          >
-            <MessageCircle className="h-4 w-4" /> WhatsApp
-          </button>
-        </div>
+    <section className="venda-sobe mx-auto max-w-xl pt-6 text-center">
+      <span className="venda-icone-linha venda-icone-linha-ambar mx-auto h-12 w-12 rounded-2xl">
+        <Crown className="h-6 w-6" aria-hidden />
+      </span>
+      <h1 className="ios-titulo-produto mt-4">Você já tem a plataforma inteira.</h1>
+      <p className="ios-rotulo-2 mt-2 text-[16px] leading-relaxed">
+        {sub.label || 'Plus+'}
+        {' · '}
+        {vitalicio ? (
+          <strong className="text-[color:var(--ios-rotulo)]">vitalício</strong>
+        ) : (
+          <>
+            até{' '}
+            <strong className="text-[color:var(--ios-rotulo)]">
+              {new Date(sub.expiresAt).toLocaleDateString('pt-BR')}
+            </strong>
+          </>
+        )}
+        {recorrente && ' · renovação automática'}
+      </p>
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <button type="button" onClick={onPerfil} className="ios-botao">
+          Gerenciar no perfil
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            const msg = encodeURIComponent(
+              `Olá! Sou ${userName} do DomineAqui e quero falar sobre meu plano.`
+            )
+            window.open(`https://wa.me/${WHATSAPP}?text=${msg}`, '_blank')
+          }}
+          className="ios-botao-cinza"
+        >
+          <MessageCircle className="h-4 w-4" /> WhatsApp
+        </button>
       </div>
-    </div>
+    </section>
   )
 }
 
 function EsqueletoDeCarregamento() {
   return (
-    <div className="pt-4 sm:pt-6" aria-hidden>
-      <div className="space-y-3">
-        <div className="h-8 w-4/5 animate-pulse rounded-lg bg-muted sm:h-10" />
-        <div className="h-14 w-full animate-pulse rounded-lg bg-muted" />
+    <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10" aria-hidden>
+      <div className="space-y-3 lg:pt-6">
+        <div className="ios-esqueleto h-10 w-11/12 rounded-xl" />
+        <div className="ios-esqueleto h-10 w-3/4 rounded-xl" />
+        <div className="ios-esqueleto h-16 w-full rounded-xl" />
       </div>
-      <div className="mt-6 h-[420px] w-full animate-pulse rounded-2xl bg-muted lg:h-[360px]" />
+      <div className="ios-esqueleto h-[440px] w-full rounded-[28px]" />
     </div>
   )
 }

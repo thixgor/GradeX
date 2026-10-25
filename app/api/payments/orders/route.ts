@@ -36,6 +36,8 @@ import {
 } from '@/lib/prouni-fies'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
 import { atribuicaoDeEmbaixador } from '@/lib/embaixadores/atribuicao'
+import { disputarPrecoDoUpgrade, type FonteDoPreco } from '@/lib/upgrade-quest'
+import { upgradeParaACompra, type UpgradeDaCompra } from '@/lib/upgrade-quest-server'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -137,6 +139,7 @@ export async function POST(request: NextRequest) {
   let couponValidation: CouponValidationResult | null = null
   let atribuicaoDoCupom: ReturnType<typeof atribuicaoDeEmbaixador> = {}
   let prouniApplied: { requestId: string; program: ProuniProgram; discountAmount: number } | null = null
+  let upgradeAplicado: (UpgradeDaCompra & { modo: FonteDoPreco }) | null = null
 
   if (data.type === 'plan') {
     const settings = await db.collection('admin_settings').findOne({})
@@ -192,6 +195,38 @@ export async function POST(request: NextRequest) {
         program: prouni.program as ProuniProgram,
         discountAmount: combined.prouniDiscountApplied,
       }
+    }
+
+    // Upgrade Quest+ → Plus+. Disputa com cupom/PROUNI pelo menor preço
+    // (lib/upgrade-quest.ts). Vencendo o upgrade comum, o cupom e o benefício
+    // não são reservados: continuam disponíveis para outra compra. Vencendo o
+    // preço de bolsista, o PROUNI/FIES É usado (ele faz parte do preço) e é
+    // reservado/consumido como sempre; o cupom não. A conta é conferida aqui
+    // de novo; o que a tela mostrou não vale como prova.
+    const upgrade = await upgradeParaACompra(db, {
+      userId: session!.userId,
+      plano,
+      upgradeQuestBruto: settings?.upgradeQuest,
+      prouni,
+    })
+    const disputa = disputarPrecoDoUpgrade({
+      precoAtual: amount,
+      precoUpgrade: upgrade?.precoUpgrade,
+      precoBolsista: upgrade?.precoBolsista,
+    })
+    if (upgrade && disputa.fonte !== 'cupom-ou-prouni') {
+      amount = disputa.preco
+      upgradeAplicado = { ...upgrade, modo: disputa.fonte }
+      couponValidation = null
+      prouniApplied =
+        disputa.fonte === 'bolsista' && prouni && upgrade.precoComProuni != null
+          ? {
+              requestId: prouni.requestId,
+              program: prouni.program as ProuniProgram,
+              discountAmount: Math.round((upgrade.precoBase - upgrade.precoComProuni) * 100) / 100,
+            }
+          : null
+      description = `${description} (upgrade Quest+${disputa.fonte === 'bolsista' ? ' · bolsista' : ''})`
     }
 
     // Esta rota cria pagamento no provedor; ela não sabe liberar plano de
@@ -298,6 +333,7 @@ export async function POST(request: NextRequest) {
       ...couponAnalyticsMetadata(couponValidation),
       ...prouniAnalyticsMetadata(prouniApplied),
       ...chargeMetadata(charge),
+      ...(upgradeAplicado ? { upgradeQuest: upgradeAplicado } : {}),
     },
     createdAt: now,
     updatedAt: now,

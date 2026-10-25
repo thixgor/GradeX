@@ -42,6 +42,7 @@ import {
     X,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
+import { CampanhaUpgradeQuest } from '@/components/admin/campanha-upgrade-quest'
 import { BanChecker } from '@/components/ban-checker'
 import { LogoLoading } from '@/components/logo-loading'
 import { Badge } from '@/components/ui/badge'
@@ -1514,6 +1515,9 @@ export default function AdminEmailsPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Campanha pronta de upgrade Quest+ → Plus+ (um clique, com prévia e teste). */}
+                <CampanhaUpgradeQuest />
 
                 {/* Abas de navegação — só abaixo de xl. As três colunas do desktop
                     empilhavam no celular, e a lista de templates (alta, com scroll

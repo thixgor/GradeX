@@ -139,6 +139,9 @@ export async function grantSubscriptionAccess(
   const expiraEm = data(user.premiumExpiresAt as any)
 
   if (temCargoPago) {
+    // Assinatura de um cargo, conta em outro (o Quest+ de quem já fez upgrade
+    // para o Plus+): ela não estende nem troca o cargo de ninguém.
+    if (sub.role && normalizeAccountType(sub.role) !== normalizeAccountType(user.accountType)) return false
     // Cargo pago sem data = vitalício de outra compra: não se toca.
     if (!expiraEm && !daAssinatura) return false
     // Já vale até lá ou depois (outro plano, ou esta assinatura já em dia).

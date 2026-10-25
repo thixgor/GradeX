@@ -496,6 +496,12 @@ export interface User {
   premiumExpiresAt?: Date // Data de expiração do premium
   premiumActivatedAt?: Date // Data de ativação do premium
   premiumPrice?: number // Preço pago em R$
+  /**
+   * O Quest+ que a conta tinha quando fez upgrade para o Plus+. Se o Plus+
+   * acabar (ou for estornado) com Quest+ ainda pago, a conta volta para ele.
+   * Ver `retornoAoQuest` em lib/upgrade-quest.ts.
+   */
+  questAntesDoUpgrade?: import('./upgrade-quest').QuestAntesDoUpgrade
   // ── Plus+ Guard (antiabuso) ──
   plusRiskScore?: number // Score de risco acumulado (ver lib/plus-guard.ts)
   plusRiskFlaggedAt?: Date // Quando passou do limite e entrou para revisão
@@ -1545,6 +1551,8 @@ export interface AdminSettings {
   _id?: string
   planos: PlanConfig[]
   plusGuard?: PlusGuardSettings
+  /** Upgrade Quest+ → Plus+ (desconto e contagem). Ver lib/upgrade-quest.ts. */
+  upgradeQuest?: import('./upgrade-quest').ConfigDoUpgradeQuest
   criadoEm: Date
   atualizadoEm: Date
 }
