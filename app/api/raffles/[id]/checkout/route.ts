@@ -3,6 +3,7 @@ import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
+import { payerAddressSchema } from '@/lib/payments/payer-address'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -38,6 +39,8 @@ const Schema = z.object({
   cardholderDocumentNumber: cardholderDocumentSchema,
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+  // Endereço do pagador — o Mercado Pago exige para gerar o boleto.
+  payerAddress: payerAddressSchema.optional(),
 })
 
 export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
@@ -258,6 +261,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
+      payerAddress: data.payerAddress,
       metadata: {
         orderId,
         type: 'raffle',

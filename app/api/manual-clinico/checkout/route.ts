@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
+import { payerAddressSchema } from '@/lib/payments/payer-address'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -61,6 +62,8 @@ const Schema = z.object({
   cardholderDocumentNumber: cardholderDocumentSchema,
   payerDocumentType: z.enum(['CPF', 'CNPJ']).optional(),
   payerDocumentNumber: z.string().optional(),
+  // Endereço do pagador — o Mercado Pago exige para gerar o boleto.
+  payerAddress: payerAddressSchema.optional(),
   couponCode: z.string().max(80).optional(),
   planKey: z.enum(['semestral', 'anual', 'vitalicio']).optional(),
 })
@@ -451,6 +454,7 @@ export async function POST(request: NextRequest) {
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
+      payerAddress: data.payerAddress,
       metadata: {
         orderId,
         type: 'product',
