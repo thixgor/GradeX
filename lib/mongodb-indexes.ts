@@ -127,6 +127,7 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('embaixador_vendas').createIndex({ orderId: 1 }, { unique: true }),
     db.collection('embaixador_vendas').createIndex({ embaixadorId: 1, pagoEm: -1 }),
     db.collection('embaixador_repasses').createIndex({ embaixadorId: 1, pagoEm: -1 }),
+    db.collection('embaixador_repasses').createIndex({ idTransacao: 1 }, { unique: true, sparse: true }),
     db.collection('embaixador_cliques').createIndex({ embaixadorId: 1, dia: 1 }, { unique: true }),
     // Pedido em que o cupom de embaixador perdeu para o PROUNI/lote ("Conferir vendas").
     db.collection('payment_orders').createIndex({ 'metadata.embaixadorCupomId': 1 }, { sparse: true }),

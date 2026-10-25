@@ -3,7 +3,11 @@ import {
   comissaoSobreOProduto,
   destinoSeguro,
   dividirVenda,
+  cicloDeRepasse,
+  deslocarMes,
   escopoDoDestino,
+  rotuloDoMes,
+  validarIdDaTransacao,
   itemNoEscopo,
   lerCookieDoCupom,
   valorDoCookieDoCupom,
@@ -196,5 +200,38 @@ describe('link de produto', () => {
   it('a URL do produto carrega o embaixador, trocando um vínculo antigo', () => {
     expect(vincularAoEmbaixador('/buy', 'MARIA10')).toBe('/buy?emb=MARIA10')
     expect(vincularAoEmbaixador('/buy/checkout?plan=anual&emb=JOAO10', 'MARIA10')).toBe('/buy/checkout?plan=anual&emb=MARIA10')
+  })
+})
+
+describe('repasse mensal', () => {
+  it('no dia 5, o próximo repasse paga o mês anterior até o dia 10', () => {
+    const c = cicloDeRepasse(new Date('2026-11-05T12:00:00-03:00'), 10)
+    expect(c.mesFechado).toBe('2026-10')
+    expect(c.mesAtual).toBe('2026-11')
+    expect(c.prazoDoFechado?.toISOString()).toBe(new Date('2026-11-10T23:59:59-03:00').toISOString())
+    expect(c.prazoDoAtual.toISOString()).toBe(new Date('2026-12-10T23:59:59-03:00').toISOString())
+    expect(c.inicioDoMesAtual.toISOString()).toBe(new Date('2026-11-01T00:00:00-03:00').toISOString())
+  })
+
+  it('passado o dia do repasse, o prazo do mês fechado some (está atrasado ou pago)', () => {
+    expect(cicloDeRepasse(new Date('2026-11-15T12:00:00-03:00'), 10).prazoDoFechado).toBeNull()
+  })
+
+  it('o mês vira em Brasília, não em UTC', () => {
+    // 31/10 às 22h em Brasília já é 01/11 em UTC.
+    expect(cicloDeRepasse(new Date('2026-11-01T01:00:00Z'), 10).mesAtual).toBe('2026-10')
+  })
+
+  it('a virada de ano', () => {
+    expect(deslocarMes('2026-12', 1)).toBe('2027-01')
+    expect(deslocarMes('2027-01', -1)).toBe('2026-12')
+    expect(rotuloDoMes('2026-10')).toBe('outubro de 2026')
+  })
+
+  it('o ID da transação PIX (E2E) é validado e normalizado', () => {
+    const ok = validarIdDaTransacao(' e00000000202611101530abc123xyz9z ')
+    expect(ok.ok && ok.id).toBe('E00000000202611101530ABC123XYZ9Z')
+    expect(validarIdDaTransacao('123').ok).toBe(false)
+    expect(validarIdDaTransacao('').ok).toBe(false)
   })
 })

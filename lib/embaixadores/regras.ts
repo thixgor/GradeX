@@ -89,6 +89,8 @@ export interface ConfigDoPrograma {
   linkInscricao: string
   /** Dias sem venda para o cupom ser considerado "parado". */
   diasParaCupomParado: number
+  /** Dia do mês (1–28) até o qual as comissões do mês anterior são pagas. */
+  diaDoRepasse: number
 }
 
 export const CONFIG_PADRAO: ConfigDoPrograma = {
@@ -97,6 +99,7 @@ export const CONFIG_PADRAO: ConfigDoPrograma = {
   comissaoPadrao: 10,
   linkInscricao: '/forms/6aaed6ee00234fc63cf6e9ab',
   diasParaCupomParado: 60,
+  diaDoRepasse: 10,
 }
 
 /** Arredonda para centavos. Nunca devolve negativo de valor de produto. */
@@ -128,6 +131,7 @@ export function normalizarConfig(entrada?: Partial<ConfigDoPrograma> | null): Co
     comissaoPadrao: percentual(e.comissaoPadrao, CONFIG_PADRAO.comissaoPadrao),
     linkInscricao: link && linkSeguro(link) ? link : CONFIG_PADRAO.linkInscricao,
     diasParaCupomParado: inteiro(e.diasParaCupomParado, CONFIG_PADRAO.diasParaCupomParado, 7, 365),
+    diaDoRepasse: inteiro(e.diaDoRepasse, CONFIG_PADRAO.diaDoRepasse, 1, 28),
   }
 }
 
@@ -472,4 +476,80 @@ export function vincularAoEmbaixador(destino: string, codigo: string): string {
   const url = new URL(destino, 'https://domineaqui.com.br')
   url.searchParams.set(PARAMETRO_DO_LINK, codigo)
   return `${url.pathname}${url.search}${url.hash}`
+}
+
+// ─── Repasse mensal ──────────────────────────────────────────────────────────
+
+/**
+ * O repasse é MENSAL: as comissões das vendas de um mês são pagas até o dia
+ * `diaDoRepasse` (10, por padrão) do mês seguinte. Fechar o mês antes de pagar
+ * faz toda venda passar dos 7 dias de arrependimento — ninguém recebe comissão
+ * de uma compra que ainda pode ser devolvida, e não há o que cobrar de volta.
+ *
+ * Datas em Brasília (UTC−3, sem horário de verão desde 2019).
+ */
+export const DIA_DO_REPASSE_PADRAO = 10
+
+/** "AAAA-MM" do mês de uma data, em Brasília. */
+export function mesEmBrasilia(data: Date): string {
+  return data.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' }).slice(0, 7)
+}
+
+export function inicioDoMes(mes: string): Date {
+  return new Date(`${mes}-01T00:00:00-03:00`)
+}
+
+export function deslocarMes(mes: string, delta: number): string {
+  const [a, m] = mes.split('-').map(Number)
+  const total = a * 12 + (m - 1) + delta
+  return `${Math.floor(total / 12)}-${String((total % 12) + 1).padStart(2, '0')}`
+}
+
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro']
+
+/** "outubro de 2026". */
+export function rotuloDoMes(mes: string): string {
+  const [a, m] = mes.split('-').map(Number)
+  return `${MESES[m - 1] || mes} de ${a}`
+}
+
+export interface CicloDeRepasse {
+  /** Começo do mês corrente: vendas antes disto já podem ser repassadas. */
+  inicioDoMesAtual: Date
+  /** O último mês fechado ("AAAA-MM"), que o próximo repasse paga. */
+  mesFechado: string
+  mesAtual: string
+  /** Até quando o mês fechado deve ser pago; `null` se o prazo já passou. */
+  prazoDoFechado: Date | null
+  /** Quando as vendas do mês corrente serão pagas. */
+  prazoDoAtual: Date
+}
+
+export function cicloDeRepasse(agora: Date, diaDoRepasse = DIA_DO_REPASSE_PADRAO): CicloDeRepasse {
+  const mesAtual = mesEmBrasilia(agora)
+  const dia = Math.min(28, Math.max(1, Math.round(diaDoRepasse)))
+  const prazo = (mes: string) => new Date(`${mes}-${String(dia).padStart(2, '0')}T23:59:59-03:00`)
+  const prazoDoFechado = prazo(mesAtual)
+  return {
+    inicioDoMesAtual: inicioDoMes(mesAtual),
+    mesFechado: deslocarMes(mesAtual, -1),
+    mesAtual,
+    prazoDoFechado: agora.getTime() <= prazoDoFechado.getTime() ? prazoDoFechado : null,
+    prazoDoAtual: prazo(deslocarMes(mesAtual, 1)),
+  }
+}
+
+/**
+ * O comprovante do repasse: o ID da transação PIX (o "E2E", que todo banco
+ * mostra no comprovante). É único no Brasil inteiro, e o embaixador encontra o
+ * mesmo número no extrato dele. Formato: `E` + ISPB do banco (8 dígitos) +
+ * data e hora (AAAAMMDDHHMM) + 11 letras ou números = 32 caracteres.
+ */
+export function validarIdDaTransacao(bruto: string): { ok: true; id: string } | { ok: false; erro: string } {
+  const id = String(bruto || '').replace(/\s+/g, '').toUpperCase()
+  if (!id) return { ok: false, erro: 'Informe o ID da transação do PIX (está no comprovante do banco).' }
+  if (!/^E\d{20}[A-Z0-9]{11}$/.test(id)) {
+    return { ok: false, erro: 'ID da transação inválido: são 32 caracteres e começa com "E" (ex.: E00000000202611101530AbC123xYz9).' }
+  }
+  return { ok: true, id }
 }

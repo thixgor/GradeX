@@ -187,6 +187,17 @@
   color: transparent;
   animation: va-brilho 6s linear infinite;
 }
+/*
+ * `vidro-brilho` também é, em globals.css, o REFLEXO dos cartões de vidro: um
+ * `::before` absoluto com um degradê branco de 55%. Aqui a classe é texto, e
+ * aquele pseudo-elemento se esticava até o contêiner posicionado mais próximo
+ * — a página inteira —, lavando de branco todo o topo no tema claro (o título
+ * de /embaixadores e de /provas quase sumia). No texto, o reflexo não existe.
+ */
+.vidro-app .vidro-brilho::before,
+.dark .vidro-app .vidro-brilho::before {
+  content: none;
+}
 @keyframes va-brilho {
   to {
     background-position: -220% 0;

@@ -22,7 +22,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
-import { PARAMETRO_DO_LINK, ROTULO_DO_DESCONTO, escopoDoDestino, type ChavePix } from '@/lib/embaixadores/regras'
+import { PARAMETRO_DO_LINK, ROTULO_DO_DESCONTO, escopoDoDestino, rotuloDoMes, type ChavePix } from '@/lib/embaixadores/regras'
 import { FormularioPix } from './formulario-pix'
 import {
   Abas,
@@ -91,6 +91,7 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
   const e = painel.embaixador
   const t = painel.totais
   const remunerado = e.tipo === 'remunerado'
+  const ciclo = painel.repasse
   const primeiroNome = e.nome.split(/\s+/)[0]
 
   const link = destino ? `${e.link}?para=${encodeURIComponent(destino)}` : e.link
@@ -248,15 +249,27 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
             <div className="flex items-center gap-2">
               <Wallet className="emb-verde h-5 w-5" aria-hidden />
               <h2 id="comissao-titulo" className="text-[15px] font-bold">
-                A receber
+                Próximo repasse
               </h2>
             </div>
-            <p className="emb-numero emb-dinheiro mt-4 text-[clamp(40px,5vw,56px)]">{formatarReais(Math.max(0, t.aReceber))}</p>
-            {t.aReceber < 0 && (
+            <p className="emb-numero emb-dinheiro mt-4 text-[clamp(40px,5vw,56px)]">{formatarReais(Math.max(0, ciclo.liberado))}</p>
+            <p className="emb-suave mt-1 text-[13.5px]">
+              {ciclo.liberado > 0
+                ? `Comissões até ${rotuloDoMes(ciclo.mesFechado)}${ciclo.prazoDoLiberado ? ` · PIX até ${formatarData(ciclo.prazoDoLiberado)}` : ' · a equipe faz o PIX em breve'}`
+                : `Nada pendente das vendas até ${rotuloDoMes(ciclo.mesFechado)}.`}
+            </p>
+            {ciclo.liberado < 0 && (
               <p className="emb-suave mt-2 text-[13.5px]">
-                Um estorno depois do último repasse deixou {formatarReais(Math.abs(t.aReceber))} a compensar no próximo.
+                Um estorno depois do último repasse deixou {formatarReais(Math.abs(ciclo.liberado))} a compensar no próximo.
               </p>
             )}
+            <div className="emb-lista mt-4 flex items-center justify-between gap-3 rounded-2xl p-3.5">
+              <div className="min-w-0">
+                <p className="emb-fraca text-[12.5px] font-semibold">Acumulando em {rotuloDoMes(ciclo.mesAtual)}</p>
+                <p className="emb-fraca text-[12px]">entra no repasse de {formatarData(ciclo.prazoDoMesAtual)}</p>
+              </div>
+              <p className="shrink-0 text-[18px] font-extrabold">{formatarReais(ciclo.acumulandoNoMes)}</p>
+            </div>
             <dl className="mt-5 grid grid-cols-2 gap-3 text-[14px]">
               <div className="emb-lista rounded-2xl p-3">
                 <dt className="emb-fraca text-[12.5px] font-semibold">Comissão total</dt>
@@ -273,8 +286,9 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
                 na prática, <strong>{String(e.comissaoSobreProduto).replace('.', ',')}% do valor pago</strong>.
               </p>
               <p className="emb-suave mt-1.5">
-                Numa compra de R$ 100,00, você recebe {formatarReais(e.comissaoSobreProduto)}. O repasse é feito pela equipe, por PIX, e
-                aparece na aba Repasses.
+                Numa compra de R$ 100,00, você recebe {formatarReais(e.comissaoSobreProduto)}. O repasse é mensal, por PIX: as comissões de
+                um mês são pagas até o dia {painel.programa.diaDoRepasse} do mês seguinte, depois do prazo de 7 dias de arrependimento das
+                compras. Cada PIX aparece na aba Repasses com o ID da transação, para você conferir no extrato.
               </p>
             </div>
           </div>
@@ -439,13 +453,19 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
                       <Banknote className="emb-verde h-[18px] w-[18px]" aria-hidden />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[14.5px] font-semibold">PIX recebido</p>
+                      <p className="text-[14.5px] font-semibold">
+                        {r.referencia ? `Comissões de ${rotuloDoMes(r.referencia)}` : 'PIX recebido'}
+                      </p>
                       <p className="emb-fraca truncate text-[12.5px]">
-                        {formatarData(r.pagoEm)}
+                        PIX em {formatarData(r.pagoEm)}
+                        {r.idTransacao ? ` · ID ${r.idTransacao}` : ''}
                         {r.observacao ? ` · ${r.observacao}` : ''}
                       </p>
                     </div>
                     <p className="emb-verde shrink-0 text-[15px] font-extrabold">{formatarReais(r.valor)}</p>
+                    {r.idTransacao && (
+                      <BotaoCopiar texto={r.idTransacao} rotulo="ID" aviso="ID da transação copiado" avisar={avisar} className="!min-h-[34px] !px-3 !text-[12.5px]" />
+                    )}
                   </li>
                 ))}
               </ul>

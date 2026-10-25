@@ -469,6 +469,7 @@ export function ConfigDoProgramaModal({
           {campoNumero('comissaoPadrao', 'Comissão sugerida', 'Valor inicial ao criar um remunerado.', '%')}
           {campoNumero('descontoCupomPadrao', 'Desconto do cupom', 'Valor inicial do cupom individual.', '%', 1, 100)}
           {campoNumero('diasParaCupomParado', 'Cupom parado após', 'Sem venda por este tempo, o painel acende o alerta.', 'dias', 7, 365)}
+          {campoNumero('diaDoRepasse', 'Repasse mensal até o dia', 'As comissões de um mês são pagas até este dia do mês seguinte, depois dos 7 dias de arrependimento.', 'do mês', 1, 28)}
         </div>
         <label className="block">
           <span className="mb-1.5 block text-[13px] font-semibold">Formulário de inscrição</span>

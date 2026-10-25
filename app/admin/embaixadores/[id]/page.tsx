@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
   ArrowLeft,
@@ -48,7 +48,7 @@ import {
   useAviso,
 } from '@/components/embaixadores/ui'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
-import { ROTULO_DA_CHAVE_PIX, ROTULO_DO_DESCONTO, formatarChavePix, type StatusDoEmbaixador, type TipoDeEmbaixador } from '@/lib/embaixadores/regras'
+import { ROTULO_DA_CHAVE_PIX, ROTULO_DO_DESCONTO, deslocarMes, formatarChavePix, rotuloDoMes, validarIdDaTransacao, type StatusDoEmbaixador, type TipoDeEmbaixador } from '@/lib/embaixadores/regras'
 
 interface Conta {
   accountType: string
@@ -315,12 +315,26 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                       <div className="flex items-center gap-2">
                         <Wallet className="emb-verde h-5 w-5" aria-hidden />
                         <h2 id="repasse-titulo" className="text-[15px] font-bold">
-                          A repassar
+                          Pagar neste ciclo
                         </h2>
                       </div>
-                      <p className="emb-numero emb-dinheiro mt-3 text-[clamp(40px,5vw,54px)]">{formatarReais(t.aReceber)}</p>
+                      <p className="emb-numero emb-dinheiro mt-3 text-[clamp(40px,5vw,54px)]">{formatarReais(Math.max(0, painel.repasse.liberado))}</p>
                       <p className="emb-suave mt-1 text-[13.5px]">
-                        {formatarReais(t.comissaoTotal)} em comissões − {formatarReais(t.repassado)} já repassados
+                        Comissões até {rotuloDoMes(painel.repasse.mesFechado)}
+                        {painel.repasse.prazoDoLiberado
+                          ? ` · PIX até ${formatarData(painel.repasse.prazoDoLiberado)}`
+                          : painel.repasse.liberado > 0
+                            ? ' · prazo do dia ' + painel.programa.diaDoRepasse + ' já passou'
+                            : ''}
+                      </p>
+                      {painel.repasse.liberado < 0 && (
+                        <p className="emb-suave mt-1 text-[13px]">
+                          Um estorno depois do último repasse deixou {formatarReais(Math.abs(painel.repasse.liberado))} a descontar do próximo.
+                        </p>
+                      )}
+                      <p className="emb-fraca mt-2 text-[13px]">
+                        Acumulando em {rotuloDoMes(painel.repasse.mesAtual)}: <strong>{formatarReais(painel.repasse.acumulandoNoMes)}</strong> · entra no
+                        repasse de {formatarData(painel.repasse.prazoDoMesAtual)}
                       </p>
                       <div className="emb-lista mt-5 rounded-2xl p-4">
                         {e.pix ? (
@@ -330,8 +344,8 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                             <p className="emb-suave text-[13px]">{e.pix.titular}</p>
                             <div className="mt-3 flex flex-wrap gap-2">
                               <BotaoCopiar texto={e.pix.chave} rotulo="Copiar chave" aviso="Chave PIX copiada" avisar={avisar} className="!min-h-[38px] !text-[13.5px]" />
-                              {t.aReceber > 0 && (
-                                <BotaoCopiar texto={t.aReceber.toFixed(2).replace('.', ',')} rotulo="Copiar valor" aviso="Valor copiado" avisar={avisar} className="!min-h-[38px] !text-[13.5px]" />
+                              {painel.repasse.liberado > 0 && (
+                                <BotaoCopiar texto={painel.repasse.liberado.toFixed(2).replace('.', ',')} rotulo="Copiar valor" aviso="Valor copiado" avisar={avisar} className="!min-h-[38px] !text-[13.5px]" />
                               )}
                             </div>
                           </>
@@ -523,8 +537,12 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                           <li key={r.id} className="emb-linha flex items-center gap-3 px-4 py-3.5 md:px-5">
                             <Banknote className="emb-verde h-5 w-5 shrink-0" aria-hidden />
                             <div className="min-w-0 flex-1">
-                              <p className="font-semibold">{formatarData(r.pagoEm)}</p>
-                              <p className="emb-fraca truncate text-[12.5px]">{[r.chavePix, r.observacao].filter(Boolean).join(' · ') || 'PIX'}</p>
+                              <p className="font-semibold">
+                                {r.referencia ? `Comissões de ${rotuloDoMes(r.referencia)}` : 'Repasse'} · PIX em {formatarData(r.pagoEm)}
+                              </p>
+                              <p className="emb-fraca truncate text-[12.5px]">
+                                {[r.idTransacao && `ID ${r.idTransacao}`, r.chavePix, r.observacao].filter(Boolean).join(' · ') || 'PIX'}
+                              </p>
                             </div>
                             <p className="emb-verde shrink-0 text-[15px] font-extrabold">{formatarReais(r.valor)}</p>
                             <button
@@ -560,7 +578,8 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                 aberto={repassar}
                 aoFechar={() => setRepassar(false)}
                 id={id}
-                sugestao={Math.max(0, t.aReceber)}
+                sugestao={Math.max(0, painel.repasse.liberado)}
+                mesSugerido={painel.repasse.mesFechado}
                 aoSalvar={async () => {
                   setRepassar(false)
                   avisar('Repasse registrado')
@@ -749,18 +768,24 @@ function RegistrarRepasse({
   aoFechar,
   id,
   sugestao,
+  mesSugerido,
   aoSalvar,
 }: {
   aberto: boolean
   aoFechar: () => void
   id: string
   sugestao: number
+  mesSugerido: string
   aoSalvar: () => void
 }) {
   const hoje = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
   const [valor, setValor] = useState('')
   const [data, setData] = useState(hoje())
+  const [idTransacao, setIdTransacao] = useState('')
+  const [referencia, setReferencia] = useState(mesSugerido)
   const [observacao, setObservacao] = useState('')
+  // Os seis meses até o atual, para escolher a que comissões o PIX se refere.
+  const meses = useMemo(() => Array.from({ length: 6 }, (_, i) => deslocarMes(mesSugerido, 1 - i)), [mesSugerido])
   const [erro, setErro] = useState('')
   const [salvando, setSalvando] = useState(false)
 
@@ -768,20 +793,24 @@ function RegistrarRepasse({
     if (!aberto) return
     setValor(sugestao > 0 ? sugestao.toFixed(2).replace('.', ',') : '')
     setData(hoje())
+    setIdTransacao('')
+    setReferencia(mesSugerido)
     setObservacao('')
     setErro('')
-  }, [aberto, sugestao])
+  }, [aberto, sugestao, mesSugerido])
 
   async function salvar(ev: React.FormEvent) {
     ev.preventDefault()
     const numero = Number(valor.replace(/\./g, '').replace(',', '.'))
     if (!Number.isFinite(numero) || numero <= 0) return setErro('Informe o valor do PIX.')
+    const comprovante = validarIdDaTransacao(idTransacao)
+    if (!comprovante.ok) return setErro(comprovante.erro)
     setSalvando(true)
     setErro('')
     try {
       await pedir(`/api/admin/embaixadores/${id}/repasses`, {
         method: 'POST',
-        body: JSON.stringify({ valor: numero, pagoEm: `${data}T12:00:00-03:00`, observacao }),
+        body: JSON.stringify({ valor: numero, pagoEm: `${data}T12:00:00-03:00`, idTransacao: comprovante.id, referencia, observacao }),
       })
       aoSalvar()
     } catch (err: any) {
@@ -792,12 +821,46 @@ function RegistrarRepasse({
   }
 
   return (
-    <Modal aberto={aberto} aoFechar={aoFechar} titulo="Registrar repasse" descricao="Lance aqui o PIX que você já fez. O valor sai do saldo a repassar." largura="sm:max-w-md">
+    <Modal
+      aberto={aberto}
+      aoFechar={aoFechar}
+      titulo="Registrar repasse"
+      descricao="Lance aqui o PIX que você já fez. O valor sai do saldo, e o embaixador vê o ID da transação para conferir no extrato."
+      largura="sm:max-w-md"
+    >
       <form onSubmit={salvar} className="space-y-4">
         <label className="block">
           <span className="mb-1.5 block text-[13px] font-semibold">Valor (R$)</span>
           <input className="emb-campo text-[20px] font-extrabold" inputMode="decimal" value={valor} onChange={(ev) => setValor(ev.target.value)} placeholder="0,00" autoFocus />
-          {sugestao > 0 && <span className="emb-fraca mt-1 block text-[12px]">Saldo a repassar: {formatarReais(sugestao)}</span>}
+          {sugestao > 0 && <span className="emb-fraca mt-1 block text-[12px]">Liberado neste ciclo: {formatarReais(sugestao)}</span>}
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-[13px] font-semibold">ID da transação do PIX</span>
+          <input
+            className="emb-campo font-mono text-[14px] uppercase"
+            value={idTransacao}
+            onChange={(ev) => {
+              setIdTransacao(ev.target.value)
+              setErro('')
+            }}
+            placeholder="E00000000202611101530AbC123xYz9"
+            maxLength={40}
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <span className="emb-fraca mt-1 block text-[12px]">
+            No comprovante do banco aparece como “ID da transação” ou “E2E”: 32 caracteres, começando com E.
+          </span>
+        </label>
+        <label className="block">
+          <span className="mb-1.5 block text-[13px] font-semibold">Comissões de</span>
+          <select className="emb-campo" value={referencia} onChange={(ev) => setReferencia(ev.target.value)}>
+            {meses.map((m) => (
+              <option key={m} value={m}>
+                {rotuloDoMes(m)}
+              </option>
+            ))}
+          </select>
         </label>
         <label className="block">
           <span className="mb-1.5 block text-[13px] font-semibold">Data do PIX</span>
@@ -805,7 +868,7 @@ function RegistrarRepasse({
         </label>
         <label className="block">
           <span className="mb-1.5 block text-[13px] font-semibold">Observação</span>
-          <input className="emb-campo" value={observacao} onChange={(ev) => setObservacao(ev.target.value)} placeholder="Ex.: comissões de outubro, ID do comprovante" maxLength={300} />
+          <input className="emb-campo" value={observacao} onChange={(ev) => setObservacao(ev.target.value)} placeholder="Opcional" maxLength={300} />
         </label>
         {erro && (
           <p role="alert" className="text-[14px] font-semibold" style={{ color: 'var(--emb-vermelho)' }}>

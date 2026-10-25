@@ -17,6 +17,7 @@ import {
 } from '@/lib/embaixadores/servidor'
 import {
   centavos,
+  cicloDeRepasse,
   codigoValido,
   comissaoSobreOProduto,
   normalizarCodigo,
@@ -57,7 +58,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const [config, resumo] = await Promise.all([lerConfigDoPrograma(db), resumoDeTodos(db)])
+    const config = await lerConfigDoPrograma(db)
+    const ciclo = cicloDeRepasse(new Date(), config.diaDoRepasse)
+    const resumo = await resumoDeTodos(db, ciclo.inicioDoMesAtual)
     const totais = {
       embaixadores: resumo.embaixadores.length,
       ativos: 0,
@@ -70,6 +73,7 @@ export async function GET(request: NextRequest) {
       comissaoTotal: 0,
       repassado: 0,
       aReceber: 0,
+      liberado: 0,
       valorSocio: 0,
       nossaParteLiquida: 0,
     }
@@ -98,6 +102,8 @@ export async function GET(request: NextRequest) {
         comissaoTotal: comissao,
         repassado,
         aReceber: centavos(comissao - repassado),
+        // O que pagar no repasse deste mês: comissões de meses fechados − pagos.
+        liberado: centavos(Number(v.comissaoFechada || 0) - repassado),
         ultimaVendaEm: v.ultimaVenda ? new Date(v.ultimaVenda).toISOString() : null,
         criadoEm: e.criadoEm.toISOString(),
         saude: saudeDoCupom({ ultimaVendaEm: v.ultimaVenda, entrouEm: e.criadoEm, diasParaParado: config.diasParaCupomParado }).saude,
@@ -112,14 +118,16 @@ export async function GET(request: NextRequest) {
       totais.comissaoTotal += linha.comissaoTotal
       totais.repassado += linha.repassado
       totais.aReceber += Math.max(0, linha.aReceber)
+      totais.liberado += Math.max(0, linha.liberado)
       totais.valorSocio += Number(v.valorSocio || 0)
       totais.nossaParteLiquida += Number(v.nossaParteBruta || 0) - comissao
       return linha
     })
-    for (const k of ['receita', 'comissaoTotal', 'repassado', 'aReceber', 'valorSocio', 'nossaParteLiquida'] as const) {
+    for (const k of ['receita', 'comissaoTotal', 'repassado', 'aReceber', 'liberado', 'valorSocio', 'nossaParteLiquida'] as const) {
       totais[k] = centavos(totais[k])
     }
-    return jsonComprimido(request, { embaixadores: linhas, totais, config }, { headers: { 'Cache-Control': 'private, no-store' } })
+    const repasse = { mesFechado: ciclo.mesFechado, prazoDoLiberado: ciclo.prazoDoFechado?.toISOString() || null }
+    return jsonComprimido(request, { embaixadores: linhas, totais, config, repasse }, { headers: { 'Cache-Control': 'private, no-store' } })
   } catch (erro) {
     console.error('[admin/embaixadores] GET', erro)
     return NextResponse.json({ error: 'Erro ao carregar embaixadores' }, { status: 500 })

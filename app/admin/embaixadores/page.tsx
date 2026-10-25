@@ -29,12 +29,13 @@ import {
   SeloStatus,
   SeloTipo,
   Vazio,
+  formatarData,
   formatarInteiro,
   formatarReais,
   haQuanto,
   useAviso,
 } from '@/components/embaixadores/ui'
-import type { ConfigDoPrograma, SaudeDoCupom, StatusDoEmbaixador, TipoDeEmbaixador } from '@/lib/embaixadores/regras'
+import { rotuloDoMes, type ConfigDoPrograma, type SaudeDoCupom, type StatusDoEmbaixador, type TipoDeEmbaixador } from '@/lib/embaixadores/regras'
 
 interface Linha {
   id: string
@@ -56,6 +57,7 @@ interface Linha {
   comissaoTotal: number
   repassado: number
   aReceber: number
+  liberado: number
   ultimaVendaEm: string | null
   criadoEm: string
   saude: SaudeDoCupom
@@ -73,6 +75,7 @@ interface Totais {
   comissaoTotal: number
   repassado: number
   aReceber: number
+  liberado: number
   valorSocio: number
   nossaParteLiquida: number
 }
@@ -81,7 +84,7 @@ type Ordem = 'receita' | 'aReceber' | 'compras' | 'cadastros' | 'recentes'
 
 const ORDENS: Array<{ id: Ordem; rotulo: string }> = [
   { id: 'receita', rotulo: 'Mais vendas (R$)' },
-  { id: 'aReceber', rotulo: 'A repassar' },
+  { id: 'aReceber', rotulo: 'A repassar neste ciclo' },
   { id: 'compras', rotulo: 'Mais compras' },
   { id: 'cadastros', rotulo: 'Mais cadastros' },
   { id: 'recentes', rotulo: 'Entrada mais recente' },
@@ -90,7 +93,12 @@ const ORDENS: Array<{ id: Ordem; rotulo: string }> = [
 export default function AdminEmbaixadoresPage() {
   const router = useRouter()
   const { avisar, elemento: aviso } = useAviso()
-  const [dados, setDados] = useState<{ embaixadores: Linha[]; totais: Totais; config: ConfigDoPrograma } | null>(null)
+  const [dados, setDados] = useState<{
+    embaixadores: Linha[]
+    totais: Totais
+    config: ConfigDoPrograma
+    repasse: { mesFechado: string; prazoDoLiberado: string | null }
+  } | null>(null)
   const [erro, setErro] = useState('')
   const [carregando, setCarregando] = useState(true)
   const [busca, setBusca] = useState('')
@@ -130,7 +138,7 @@ export default function AdminEmbaixadoresPage() {
     })
     const chave: Record<Ordem, (e: Linha) => number> = {
       receita: (e) => e.receita,
-      aReceber: (e) => e.aReceber,
+      aReceber: (e) => e.liberado,
       compras: (e) => e.compras,
       cadastros: (e) => e.cadastros,
       recentes: (e) => new Date(e.criadoEm).getTime(),
@@ -198,7 +206,15 @@ export default function AdminEmbaixadoresPage() {
                 <Kpi indice={1} rotulo="Cadastros pelos links" valor={t.cadastros} icone={<UserPlus className="h-4 w-4" />} detalhe={`${formatarInteiro(t.visitantes)} visitas aos links`} />
                 <Kpi indice={2} rotulo="Compras" valor={t.compras} icone={<ShoppingBag className="h-4 w-4" />} detalhe={`${formatarInteiro(t.compradores)} compradores`} />
                 <Kpi indice={3} rotulo="Vendido pelos embaixadores" valor={t.receita} formato="reais" destaque icone={<Receipt className="h-4 w-4" />} />
-                <Kpi indice={4} rotulo="A repassar" valor={t.aReceber} formato="reais" destaque icone={<Wallet className="h-4 w-4" />} detalhe="soma dos saldos positivos" />
+                <Kpi
+                  indice={4}
+                  rotulo="Pagar neste ciclo"
+                  valor={t.liberado}
+                  formato="reais"
+                  destaque
+                  icone={<Wallet className="h-4 w-4" />}
+                  detalhe={`comissões até ${rotuloDoMes(dados!.repasse.mesFechado)}${dados!.repasse.prazoDoLiberado ? ` · PIX até ${formatarData(dados!.repasse.prazoDoLiberado)}` : ''}`}
+                />
                 <Kpi indice={5} rotulo="Já repassado" valor={t.repassado} formato="reais" icone={<KeyRound className="h-4 w-4" />} detalhe={`de ${formatarReais(t.comissaoTotal)} em comissões`} />
                 <Kpi indice={6} rotulo="Parte do sócio" valor={t.valorSocio} formato="reais" icone={<Landmark className="h-4 w-4" />} detalhe={`${dados!.config.percentualSocio}% de cada venda`} />
                 <Kpi indice={7} rotulo="Fica com a DomineAqui" valor={t.nossaParteLiquida} formato="reais" icone={<Receipt className="h-4 w-4" />} detalhe="depois do sócio e das comissões" />
@@ -299,11 +315,11 @@ export default function AdminEmbaixadoresPage() {
                           ['Cadastros', formatarInteiro(e.cadastros)],
                           ['Compras', formatarInteiro(e.compras)],
                           ['Vendido', formatarReais(e.receita)],
-                          [e.tipo === 'remunerado' ? 'A repassar' : 'Última venda', e.tipo === 'remunerado' ? formatarReais(e.aReceber) : haQuanto(e.ultimaVendaEm)],
+                          [e.tipo === 'remunerado' ? 'Pagar no ciclo' : 'Última venda', e.tipo === 'remunerado' ? formatarReais(Math.max(0, e.liberado)) : haQuanto(e.ultimaVendaEm)],
                         ].map(([rotulo, valor], i) => (
                           <div key={rotulo} className="min-w-0">
                             <dt className="emb-fraca truncate text-[11.5px] font-semibold">{rotulo}</dt>
-                            <dd className={`mt-0.5 truncate text-[14.5px] font-extrabold ${i === 3 && e.tipo === 'remunerado' && e.aReceber > 0 ? 'emb-ambar' : ''}`}>{valor}</dd>
+                            <dd className={`mt-0.5 truncate text-[14.5px] font-extrabold ${i === 3 && e.tipo === 'remunerado' && e.liberado > 0 ? 'emb-ambar' : ''}`}>{valor}</dd>
                           </div>
                         ))}
                       </dl>

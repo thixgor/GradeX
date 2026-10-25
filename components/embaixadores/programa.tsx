@@ -55,7 +55,7 @@ const REGRAS = [
   },
   {
     titulo: 'Vínculo institucional',
-    texto: 'O DomineAqui não tem vínculo com a Afya nem com qualquer instituição de ensino. O embaixador não representa a faculdade.',
+    texto: 'O DomineAqui não tem vínculo com nenhuma instituição de ensino. O embaixador não representa a faculdade.',
   },
   {
     titulo: 'Uso da marca e conduta',
@@ -214,7 +214,7 @@ export function ProgramaDeEmbaixadores({ linkInscricao, descontoCupom }: { linkI
                   <ShieldCheck className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Saldo a receber à vista, venda por venda
                 </li>
                 <li className="flex gap-2.5">
-                  <Coins className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Repasse por PIX, direto na sua chave
+                  <Coins className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Repasse mensal por PIX, direto na sua chave
                 </li>
               </ul>
             </div>

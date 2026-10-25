@@ -14,9 +14,10 @@ import { copiarTexto } from './copiar'
  *   selo "Indicação de Maria · cupom MARIA10 vai aplicado no pagamento". É o
  *   que transforma a URL vinculada em promessa visível — a pessoa sabe que o
  *   desconto está garantido antes de clicar em comprar.
- * - **Para o próprio embaixador**, logado, numa página de produto: o botão
- *   "Meu link desta página". Ele divulga o que está vendo sem voltar ao
- *   painel para montar link nenhum.
+ * - **Para o próprio embaixador**, logado, em qualquer página que faça sentido
+ *   divulgar (materiais, planos, Manual Clínico, provas, a página inicial…):
+ *   o botão "Meu link desta página". Ele divulga o que está vendo sem voltar
+ *   ao painel para montar link nenhum.
  *
  * Leve de propósito: nada de banco nem de sessão. O convite vem de
  * /api/embaixadores/convite (cache do CDN) e "sou embaixador" é a marca que o
@@ -41,31 +42,47 @@ function lerMarca(): { codigo: string; link: string; validoAte: number } | null 
   }
 }
 
+/**
+ * Páginas onde o botão não aparece: o próprio painel e o admin, as telas de
+ * conta e as que só existem para quem já está dentro de uma tarefa (uma prova
+ * em andamento, a sala da monitoria).
+ */
+const SEM_BOTAO = /^\/(admin|embaixadores|auth|convite|e|profile|offline|compra|exam)(\/|$)|^\/monitorias\/reservas\/[^/]+\/sala/
+
+function podeDivulgar(caminho: string): boolean {
+  return !SEM_BOTAO.test(caminho)
+}
+
 export function SeloDoLink() {
   const pathname = usePathname()
   const [convite, setConvite] = useState<(Convite & { codigo: string }) | null>(null)
   const [meuLink, setMeuLink] = useState<string | null>(null)
   const [copiado, setCopiado] = useState(false)
+  const [deProduto, setDeProduto] = useState(false)
 
   useEffect(() => {
     setConvite(null)
     setMeuLink(null)
     const busca = new URLSearchParams(window.location.search)
     const escopo = escopoDoDestino(window.location.pathname + window.location.search)
-    if (!escopo) return
-
     const emb = normalizarCodigo(busca.get(PARAMETRO_DO_LINK) || '')
     const marca = lerMarca()
 
-    // O embaixador vendo a própria página (ou qualquer produto sem vínculo).
-    if (marca && (!emb || emb === marca.codigo)) {
+    // O embaixador logado, em qualquer página que faça sentido divulgar: o
+    // link dele para ela. Em página de produto, quem abrir já encontra o
+    // cupom aplicado; nas outras, o link vale como convite.
+    if (marca && (!emb || emb === marca.codigo) && podeDivulgar(window.location.pathname)) {
       busca.delete(PARAMETRO_DO_LINK)
       const caminho = window.location.pathname + (busca.toString() ? `?${busca.toString()}` : '')
-      setMeuLink(`${marca.link}?para=${encodeURIComponent(caminho)}`)
+      // Início (logado ou não) vira o convite: o painel de quem está logado não
+      // é página para mandar a ninguém.
+      setMeuLink(caminho === '/' || caminho === '/dashboard' ? marca.link : `${marca.link}?para=${encodeURIComponent(caminho)}`)
+      setDeProduto(!!escopo)
       return
     }
 
-    if (!codigoValido(emb)) return
+    // O selo do visitante é só para link de produto.
+    if (!escopo || !codigoValido(emb)) return
     try {
       if (window.sessionStorage.getItem(DISPENSADOS) === emb) return
     } catch {
@@ -127,7 +144,11 @@ export function SeloDoLink() {
             }
           }}
           className="pointer-events-auto inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-[#f2c063] via-[#e2a43e] to-[#d48a2a] px-4 py-2.5 text-[13.5px] font-bold text-[#0b1f1a] shadow-[0_14px_36px_-12px_rgba(226,164,62,0.7)] transition active:scale-95"
-          title="O link desta página com o seu cupom: quem abrir já compra com ele aplicado"
+          title={
+            deProduto
+              ? 'O link desta página com o seu cupom: quem abrir já compra com ele aplicado'
+              : 'O link desta página com o seu código: conta o cadastro e sugere o seu cupom no pagamento'
+          }
         >
           {copiado ? <Check className="h-4 w-4" aria-hidden /> : <Link2 className="h-4 w-4" aria-hidden />}
           {copiado ? 'Link copiado' : 'Meu link desta página'}

@@ -3,6 +3,7 @@ import { invalidarCacheDeServidor, memoizarPorTempo } from '@/lib/cache-de-servi
 import type { PaymentOrder } from '@/lib/types'
 import {
   centavos,
+  cicloDeRepasse,
   comissaoSobreOProduto,
   dividirVenda,
   nomeDiscreto,
@@ -116,6 +117,10 @@ export interface RepasseDoEmbaixador {
   pagoEm: Date
   observacao?: string
   chavePix?: string
+  /** ID da transação PIX (E2E) — o comprovante, que o embaixador confere no extrato. */
+  idTransacao?: string
+  /** Mês das comissões pagas ("AAAA-MM"). */
+  referencia?: string
   registradoPor: string
   registradoPorNome?: string
   criadoEm: Date
@@ -142,6 +147,7 @@ export function garantirIndicesDoPrograma(db: Db) {
       db.collection(COLECAO_VENDAS).createIndex({ orderId: 1 }, { unique: true }),
       db.collection(COLECAO_VENDAS).createIndex({ embaixadorId: 1, pagoEm: -1 }),
       db.collection(COLECAO_REPASSES).createIndex({ embaixadorId: 1, pagoEm: -1 }),
+      db.collection(COLECAO_REPASSES).createIndex({ idTransacao: 1 }, { unique: true, sparse: true }),
       db.collection(COLECAO_CLIQUES).createIndex({ embaixadorId: 1, dia: 1 }, { unique: true }),
       db.collection('payment_orders').createIndex({ 'metadata.embaixadorCupomId': 1 }, { sparse: true }),
     ]).catch(() => {
@@ -486,6 +492,19 @@ export interface PainelDoEmbaixador {
   programa: {
     percentualSocio?: number
     diasParaCupomParado: number
+    diaDoRepasse: number
+  }
+  /**
+   * O repasse mensal: o que está liberado (vendas de meses já fechados, menos
+   * o que foi pago) e o que ainda acumula no mês corrente.
+   */
+  repasse: {
+    liberado: number
+    mesFechado: string
+    prazoDoLiberado: string | null
+    acumulandoNoMes: number
+    mesAtual: string
+    prazoDoMesAtual: string
   }
   totais: {
     cliques: number
@@ -527,7 +546,15 @@ export interface PainelDoEmbaixador {
     comissao: number
     status: StatusDaVenda
   }>
-  repasses: Array<{ id: string; valor: number; pagoEm: string; observacao: string; chavePix: string }>
+  repasses: Array<{
+    id: string
+    valor: number
+    pagoEm: string
+    observacao: string
+    chavePix: string
+    idTransacao: string
+    referencia: string
+  }>
 }
 
 const iso = (d?: Date | string | null) => (d ? new Date(d).toISOString() : null)
@@ -583,6 +610,10 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
   const receita = centavos(confirmadas.reduce((s, v) => s + v.valor, 0))
   const comissaoTotal = centavos(confirmadas.reduce((s, v) => s + v.comissao, 0))
   const repassado = centavos(repasses.reduce((s, r) => s + r.valor, 0))
+  const ciclo = cicloDeRepasse(new Date(), config.diaDoRepasse)
+  const comissaoDeMesesFechados = centavos(
+    confirmadas.filter((v) => new Date(v.pagoEm) < ciclo.inicioDoMesAtual).reduce((s, v) => s + v.comissao, 0),
+  )
   const gastoPorUsuario = new Map<string, number>()
   for (const v of confirmadas) {
     if (v.userId) gastoPorUsuario.set(v.userId, centavos((gastoPorUsuario.get(v.userId) || 0) + v.valor))
@@ -662,6 +693,17 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
     programa: {
       ...(admin ? { percentualSocio: config.percentualSocio } : {}),
       diasParaCupomParado: config.diasParaCupomParado,
+      diaDoRepasse: config.diaDoRepasse,
+    },
+    repasse: {
+      // Pode ficar negativo: um estorno depois do pagamento é compensado no
+      // próximo repasse.
+      liberado: centavos(comissaoDeMesesFechados - repassado),
+      mesFechado: ciclo.mesFechado,
+      prazoDoLiberado: iso(ciclo.prazoDoFechado),
+      acumulandoNoMes: centavos(comissaoTotal - comissaoDeMesesFechados),
+      mesAtual: ciclo.mesAtual,
+      prazoDoMesAtual: iso(ciclo.prazoDoAtual) || '',
     },
     totais: {
       cliques: Number(cliquesTotais[0]?.cliques || 0),
@@ -717,12 +759,15 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
       pagoEm: iso(r.pagoEm) || '',
       observacao: r.observacao || '',
       chavePix: r.chavePix || '',
+      idTransacao: r.idTransacao || '',
+      referencia: r.referencia || '',
     })),
   }
 }
 
 /** Números de todos os embaixadores de uma vez, para a lista do admin. */
-export async function resumoDeTodos(db: Db) {
+/** `inicioDoMesAtual` separa a comissão já liberada (meses fechados) da que ainda acumula. */
+export async function resumoDeTodos(db: Db, inicioDoMesAtual: Date) {
   const [embaixadores, vendas, indicacoes, repasses, cliques] = await Promise.all([
     db.collection<Embaixador>(COLECAO_EMBAIXADORES).find({}).sort({ criadoEm: -1 }).limit(1000).toArray(),
     db
@@ -735,13 +780,14 @@ export async function resumoDeTodos(db: Db) {
             compras: { $sum: 1 },
             receita: { $sum: '$valor' },
             comissao: { $sum: '$comissao' },
+            comissaoFechada: { $sum: { $cond: [{ $lt: ['$pagoEm', inicioDoMesAtual] }, '$comissao', 0] } },
             valorSocio: { $sum: '$valorSocio' },
             nossaParteBruta: { $sum: '$nossaParteBruta' },
             ultimaVenda: { $max: '$pagoEm' },
             compradores: { $addToSet: { $ifNull: ['$userId', '$compradorEmail'] } },
           },
         },
-        { $project: { compras: 1, receita: 1, comissao: 1, valorSocio: 1, nossaParteBruta: 1, ultimaVenda: 1, compradores: { $size: '$compradores' } } },
+        { $project: { compras: 1, receita: 1, comissao: 1, comissaoFechada: 1, valorSocio: 1, nossaParteBruta: 1, ultimaVenda: 1, compradores: { $size: '$compradores' } } },
       ])
       .toArray(),
     db.collection(COLECAO_INDICACOES).aggregate([{ $group: { _id: '$embaixadorId', total: { $sum: 1 } } }]).toArray(),
