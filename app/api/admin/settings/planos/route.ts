@@ -5,6 +5,7 @@ import { PlanConfig } from '@/lib/types'
 import { normalizeAccountType, PLUS_LABEL, PLUS_TIER } from '@/lib/account-tier'
 import { normalizePlanPermissions, sanitizePlanPermissions } from '@/lib/plan-entitlements'
 import { invalidarCatalogoDePlanos } from '@/lib/plan-entitlements-server'
+import { invalidarCatalogoDoUpgrade } from '@/lib/upgrade-quest-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -182,6 +183,7 @@ export async function PUT(req: NextRequest) {
     // a chave aqui, o admin salvaria e a mudança só valeria meio minuto
     // depois — tempo suficiente para ele achar que não salvou.
     invalidarCatalogoDePlanos()
+    invalidarCatalogoDoUpgrade()
 
     return NextResponse.json({
       success: true,

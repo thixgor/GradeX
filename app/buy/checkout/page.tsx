@@ -28,6 +28,7 @@ import {
   X,
   Clock,
   GraduationCap,
+  Crown,
 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
@@ -66,6 +67,8 @@ import {
 import { cn } from '@/lib/utils'
 import { cardTokenError } from '@/lib/payments/card-token-errors'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
+import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
+import { aplicarUpgradeAoPreco } from '@/lib/upgrade-quest'
 
 type PayMode = 'subscription' | 'one_time'
 
@@ -105,6 +108,7 @@ function BuyCheckoutContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const planId = searchParams.get('plan') || ''
+  const veioDoUpgrade = searchParams.get('origem') === 'upgrade'
   const [plan, setPlan] = useState<PlanConfig | null>(null)
   const [publicKey, setPublicKey] = useState('')
   const [loading, setLoading] = useState(true)
@@ -162,6 +166,17 @@ function BuyCheckoutContent() {
    */
   const { concessao: prouniGrant } = useProuniGrant('plus', planId)
   const prouniSupported = payMode === 'one_time'
+
+  /**
+   * Upgrade Quest+ → Plus+: o preço com o desconto de quem já é Quest+.
+   *
+   * Mesma regra do cupom e do PROUNI: só no pagamento único, e disputa com
+   * eles pelo maior desconto (`aplicarUpgradeAoPreco`, a MESMA função que
+   * /api/payments/orders usa para cobrar). A tela espera esta resposta antes
+   * de mostrar o preço — anunciar o cheio e cobrar o de upgrade seria o mesmo
+   * defeito de resumo e botão discordando, só que ao contrário.
+   */
+  const ofertaDeUpgrade = useOfertaDeUpgrade()
 
   const escolherModo = (modo: PayMode) => setPayMode(modo)
 
@@ -253,7 +268,7 @@ function BuyCheckoutContent() {
    */
   const refDoPagamento = useRef<HTMLDivElement>(null)
 
-  if (loading) {
+  if (loading || ofertaDeUpgrade === undefined) {
     return (
       <div className="surface-page flex min-h-[60vh] items-center justify-center px-4 py-6">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -294,9 +309,21 @@ function BuyCheckoutContent() {
     couponDiscountAmount: couponSupported && appliedCoupon ? appliedCoupon.discountAmount : 0,
     prouni: prouniSupported ? prouniGrant : null,
   })
-  const payableAmount = combinado.finalPrice
-  const couponDiscountAmount = combinado.couponDiscountApplied
-  const prouniDiscountAmount = combinado.prouniDiscountApplied
+  const planoDoUpgrade = ofertaDeUpgrade?.elegivel
+    ? ofertaDeUpgrade.planos?.find((p) => p.tipo === plan.tipo) || null
+    : null
+  const disputaDoUpgrade = aplicarUpgradeAoPreco(
+    combinado.finalPrice,
+    payMode === 'one_time' && planoDoUpgrade ? planoDoUpgrade.precoUpgrade : null
+  )
+  const upgradeVenceu = disputaDoUpgrade.upgradeVenceu
+  const payableAmount = disputaDoUpgrade.preco
+  const couponDiscountAmount = upgradeVenceu ? 0 : combinado.couponDiscountApplied
+  const prouniDiscountAmount = upgradeVenceu ? 0 : combinado.prouniDiscountApplied
+  const upgradeDiscountAmount = upgradeVenceu ? Math.round((baseAmount - payableAmount) * 100) / 100 : 0
+  // Quest+ com renovação automática: o MP recusaria uma segunda assinatura
+  // (409). O upgrade é pagamento único, e ele mesmo encerra a do Quest+.
+  const assinaturaBloqueada = !!ofertaDeUpgrade?.quest?.recorrente
 
   /*
    * O TOTAL QUE VAI SER COBRADO — o mesmo do botão de pagar.
@@ -373,15 +400,38 @@ function BuyCheckoutContent() {
       <div className="mx-auto max-w-5xl">
         <button
           type="button"
-          onClick={() => router.push('/buy')}
+          onClick={() => router.push(veioDoUpgrade && planoDoUpgrade ? '/upgrade' : '/buy')}
           className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
         >
-          <ChevronLeft className="h-4 w-4" /> Voltar aos planos
+          <ChevronLeft className="h-4 w-4" /> {veioDoUpgrade && planoDoUpgrade ? 'Voltar à oferta' : 'Voltar aos planos'}
         </button>
 
         <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          Finalizar compra
+          {planoDoUpgrade ? 'Finalizar upgrade' : 'Finalizar compra'}
         </h1>
+
+        {/* O desconto de upgrade dito antes de qualquer número: quem veio do
+            e-mail precisa ver que a oferta seguiu com ele até aqui. */}
+        {planoDoUpgrade && (
+          <p className="mt-3 flex items-start gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] leading-snug text-amber-900 dark:border-amber-300/25 dark:bg-amber-300/10 dark:text-amber-100">
+            <Crown className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <span>
+              {upgradeVenceu ? (
+                <>
+                  <strong className="font-extrabold">Seu desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% já está no preço.</strong>{' '}
+                  O Plus+ começa no pagamento, e o Quest+ que você já pagou não se perde.
+                </>
+              ) : payMode !== 'one_time' ? (
+                <>
+                  O desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% vale no{' '}
+                  <strong className="font-extrabold">Pagamento único</strong>.
+                </>
+              ) : (
+                <>Você está usando um desconto maior que o de upgrade — vale sempre o melhor para você.</>
+              )}
+            </span>
+          </p>
+        )}
 
         {/* Só aparece quando o plano escolhido é o Quest+: aí a conversa é o
             upgrade para o Plus+. Para qualquer ciclo do Plus+ não desenha nada. */}
@@ -457,6 +507,13 @@ function BuyCheckoutContent() {
               </div>
             )}
 
+            {upgradeDiscountAmount > 0 && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
+                <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Desconto de upgrade Quest+ ({ofertaDeUpgrade?.descontoPercentual}%): − {formatBRL(upgradeDiscountAmount)}
+              </p>
+            )}
+
             {prouniDiscountAmount > 0 && (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                 <GraduationCap className="h-3.5 w-3.5 shrink-0" aria-hidden />
@@ -474,13 +531,15 @@ function BuyCheckoutContent() {
               >
                 {couponDiscountAmount > 0
                   ? `Cupom ${appliedCoupon.code}: − ${formatBRL(couponDiscountAmount)}`
-                  : `Cupom ${appliedCoupon.code} registrado na compra — o seu desconto ProUni/FIES, que é maior, é o que vale no preço.`}
+                  : upgradeVenceu
+                    ? `Cupom ${appliedCoupon.code} guardado — o seu desconto de upgrade, que é maior, é o que vale no preço. Os descontos não somam.`
+                    : `Cupom ${appliedCoupon.code} registrado na compra — o seu desconto ProUni/FIES, que é maior, é o que vale no preço.`}
               </p>
             )}
 
             {/* O benefício existe mas a pessoa está na assinatura recorrente:
                 dizer onde ele vale é mais útil que sumir com ele da tela. */}
-            {prouniGrant && !prouniSupported && (
+            {prouniGrant && !prouniSupported && !planoDoUpgrade && (
               <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
                 Seu desconto ProUni/FIES{prouniGrant.discountLabel ? ` de ${prouniGrant.discountLabel}` : ''} vale
                 no “Pagamento único” — a assinatura recorrente cobra sempre o valor cheio, em toda renovação.
@@ -519,7 +578,9 @@ function BuyCheckoutContent() {
               ) : appliedCoupon ? (
                 <div className="flex items-center justify-between gap-2.5 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2">
                   <p className="min-w-0 truncate text-xs font-bold text-primary">
-                    {appliedCoupon.code} aplicado · {formatBRL(appliedCoupon.discountAmount)} de desconto
+                    {upgradeVenceu
+                      ? `${appliedCoupon.code} · não soma com o upgrade`
+                      : `${appliedCoupon.code} aplicado · ${formatBRL(appliedCoupon.discountAmount)} de desconto`}
                   </p>
                   <button
                     type="button"
@@ -600,7 +661,7 @@ function BuyCheckoutContent() {
 
           {/* Pagamento */}
           <div ref={refDoPagamento} className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
-            {isRecurring && (
+            {isRecurring && !assinaturaBloqueada && (
               <div className="mb-4">
                 <p className="mb-2 text-xs font-semibold text-muted-foreground">
                   Como prefere pagar?
@@ -623,7 +684,7 @@ function BuyCheckoutContent() {
                     titulo="Pagamento único"
                     valor={`a partir de ${formatBrl(totalUnicoMaisBarato)}`}
                     detalhe="Pix, cartão ou boleto · cobra uma vez, não renova"
-                    selo={prouniGrant ? 'Com seu desconto' : 'Recomendado'}
+                    selo={planoDoUpgrade ? 'Com seu desconto de upgrade' : prouniGrant ? 'Com seu desconto' : 'Recomendado'}
                   />
                   <OpcaoDePagamento
                     ativo={payMode === 'subscription'}
@@ -632,7 +693,7 @@ function BuyCheckoutContent() {
                     titulo="Assinatura"
                     valor={`${formatBrl(chargeDaAssinatura.totalAmount)} a cada ${cicloLabel}`}
                     detalhe={
-                      prouniGrant
+                      planoDoUpgrade || prouniGrant
                         ? 'Cartão · renova sozinho · sem o seu desconto'
                         : 'Cartão · renova sozinho até você cancelar'
                     }
@@ -643,7 +704,7 @@ function BuyCheckoutContent() {
 
             <CheckoutAccountNotice className="mb-4" />
 
-            {payMode === 'subscription' && isRecurring ? (
+            {payMode === 'subscription' && isRecurring && !assinaturaBloqueada ? (
               <SubscriptionCheckout
                 plan={plan}
                 publicKey={publicKey}

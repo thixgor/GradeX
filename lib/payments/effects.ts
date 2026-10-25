@@ -14,7 +14,7 @@ import { markNumbersSold, releaseReservation } from '../raffles'
 import { paidFieldsFromMercadoPago, paidSummaryOf } from './receipt'
 import type { Raffle, RafflePurchase } from '../types'
 import { getPersonalExamsQuota } from '../tier-limits'
-import { normalizeAccountType } from '../account-tier'
+import { normalizeAccountType, PLUS_TIER, QUEST_TIER } from '../account-tier'
 import type {
   PaymentOrder,
   PaymentRecord,
@@ -45,6 +45,8 @@ import {
   type TimedAccessPurchaseFields,
 } from '../material-timed-access'
 import { restorePlusClaims } from '../plus-claims'
+import { questVigente } from '../upgrade-quest'
+import { devolverQuestAposEstorno, encerrarRecorrenciaDoQuest, questGuardado } from '../upgrade-quest-server'
 import { buildAutoEmailPdfAttachments, type PdfEmailItem } from '../material-pdf-email'
 import { trimAttachmentsToEmailLimit } from '../email-attachment-size'
 import {
@@ -318,6 +320,18 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
         plusClaimsRevoked: clawback.claimsRevoked,
       },
     })
+
+    // Estorno de um upgrade: devolve o Quest+ que a pessoa já tinha pago. A
+    // página de upgrade promete "não gostou, seu Quest+ volta como estava".
+    if (clawback.revoked) {
+      const db = await getDb()
+      // Assinatura: o registro pode ter nascido do primeiro pagamento ou da
+      // própria assinatura (`sub:<preapproval>`), quando ela já saiu autorizada.
+      const ids = [String(order._id), ...(order.type === 'subscription' && order.refId ? [`sub:${order.refId}`] : [])]
+      await devolverQuestAposEstorno(db, order.userId, ids).catch(err =>
+        console.error('[effects] devolver Quest+ após estorno falhou:', err)
+      )
+    }
   }
   if (order.type === 'material' && order.userId && order.refId) {
     const db = await getDb()
@@ -418,6 +432,16 @@ async function applyPlanPurchase(order: PaymentOrder) {
   const user = await usersCol.findOne({ _id: new ObjectId(order.userId) as any })
   if (!user) return
 
+  /*
+   * Quest+ vigente comprando o Plus+ — pela página de upgrade ou não. O Plus+
+   * começa agora; o Quest+ já pago fica guardado para voltar se o Plus+ acabar
+   * antes dele (ou for estornado), e a recorrência do Quest+ é encerrada logo
+   * abaixo. `mercadoPagoPreapprovalId` sai porque o acesso deixou de vir
+   * daquela assinatura: é o que impede o cron de rebaixar a conta quando o
+   * período do Quest+ terminar. Ver lib/upgrade-quest.ts.
+   */
+  const upgradeDoQuest = role === PLUS_TIER && questVigente(user, now)
+
   await usersCol.updateOne(
     { _id: new ObjectId(order.userId) as any },
     {
@@ -430,9 +454,15 @@ async function applyPlanPurchase(order: PaymentOrder) {
         dailyPersonalExamsCreated: 0,
         dailyPersonalExamsRemaining: getPersonalExamsQuota(role),
         lastDailyReset: now,
+        ...(upgradeDoQuest ? { questAntesDoUpgrade: questGuardado(user, String(order._id), now) } : {}),
       },
+      ...(upgradeDoQuest ? { $unset: { mercadoPagoPreapprovalId: '' } } : {}),
     }
   )
+
+  const recorrenciasEncerradas = upgradeDoQuest
+    ? await encerrarRecorrenciaDoQuest(db, order.userId, String(order._id))
+    : 0
 
   // Assinou de novo: devolve os materiais que tinham sido resgatados numa
   // assinatura anterior e foram suspensos quando ela caiu.
@@ -451,6 +481,9 @@ async function applyPlanPurchase(order: PaymentOrder) {
       amount: order.amount,
       expiresAt,
       plusClaimsRestored: restored.count,
+      ...(upgradeDoQuest
+        ? { upgradeDoQuest: true, questExpiresAt: user.premiumExpiresAt || null, recorrenciasEncerradas }
+        : {}),
     },
   })
 
@@ -1019,6 +1052,51 @@ async function applySubscriptionPayment(order: PaymentOrder) {
 
   // Renova cargo no usuário
   const role: AccountType = normalizeAccountType(sub.role)
+
+  /*
+   * Cobrança do Quest+ numa conta que já fez upgrade para o Plus+. Só chega
+   * aqui se o cancelamento no MP falhou e o cron ainda não o refez. Gravar o
+   * cargo por cima rebaixaria quem pagou o Plus+; o que a pessoa pagou a mais
+   * vira prazo do Quest+ guardado, que volta quando o Plus+ acabar.
+   */
+  if (role === QUEST_TIER) {
+    const conta = await db.collection<User>('users').findOne(
+      { _id: new ObjectId(sub.userId) as any },
+      { projection: { accountType: 1, premiumExpiresAt: 1, questAntesDoUpgrade: 1 } }
+    )
+    const plusVigente =
+      normalizeAccountType(conta?.accountType) === PLUS_TIER &&
+      (!conta?.premiumExpiresAt || new Date(conta.premiumExpiresAt) > now)
+    if (conta && plusVigente) {
+      const guardado = conta.questAntesDoUpgrade
+      if (guardado && guardado.expiresAt && new Date(guardado.expiresAt) < newPeriodEnd) {
+        await db.collection<User>('users').updateOne(
+          { _id: conta._id as any },
+          { $set: { 'questAntesDoUpgrade.expiresAt': newPeriodEnd } as any }
+        )
+      }
+      await audit({
+        action: 'subscription_renewed',
+        targetUserId: sub.userId,
+        resourceType: 'subscription',
+        resourceId: sub.providerSubscriptionId,
+        metadata: { orderId: String(order._id), nextBillingAt: newPeriodEnd, contaJaNoPlus: true },
+      })
+      return
+    }
+  }
+
+  // Quest+ vigente que assinou o Plus+ (recorrente, sem o desconto de
+  // upgrade): o Quest+ já pago fica guardado, como no upgrade avulso, para
+  // voltar se a assinatura do Plus+ terminar antes dele.
+  const anterior = role === PLUS_TIER
+    ? await db.collection<User>('users').findOne(
+        { _id: new ObjectId(sub.userId) as any },
+        { projection: { accountType: 1, premiumExpiresAt: 1, premiumPlanType: 1 } }
+      )
+    : null
+  const guardarQuest = !!anterior && questVigente(anterior, now)
+
   await db.collection<User>('users').updateOne(
     { _id: new ObjectId(sub.userId) as any },
     {
@@ -1030,6 +1108,7 @@ async function applySubscriptionPayment(order: PaymentOrder) {
         mercadoPagoPreapprovalId: sub.providerSubscriptionId,
         dailyPersonalExamsRemaining: getPersonalExamsQuota(role),
         lastDailyReset: now,
+        ...(guardarQuest ? { questAntesDoUpgrade: questGuardado(anterior!, String(order._id), now) } : {}),
       },
     }
   )

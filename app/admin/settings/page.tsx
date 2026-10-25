@@ -16,6 +16,7 @@ import { normalizePlanPermissions } from '@/lib/plan-entitlements'
 import { PLUS_LABEL, normalizeAccountType } from '@/lib/account-tier'
 import { useCargos } from '@/hooks/use-cargos'
 import { PlusGuardPanel } from '@/components/admin/plus-guard-panel'
+import { UpgradeQuestPanel } from '@/components/admin/upgrade-quest-panel'
 import { ConfigResumoIA } from '@/components/admin/config-resumo-ia'
 import {
   normalizeSidebarOrder,
@@ -1177,6 +1178,9 @@ export default function SettingsPage() {
 
           {/* Plus+ — cargo único da plataforma */}
           <PlusGuardPanel />
+
+          {/* Upgrade Quest+ → Plus+: desconto, planos e contagem da oferta */}
+          <UpgradeQuestPanel />
 
           {/* Planos Card */}
           <Card>

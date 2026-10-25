@@ -7,6 +7,8 @@ import { ObjectId } from 'mongodb'
 import { sendOneTimePaymentEndedEmail } from '@/lib/mail'
 import { contaEhPaga } from '@/lib/cargos-server'
 import { keepAccessIfSubscribed } from '@/lib/payments/subscription-sync'
+import { retornoAoQuest } from '@/lib/upgrade-quest'
+import type { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -60,7 +62,28 @@ export async function GET(request: NextRequest) {
         ? await keepAccessIfSubscribed(db, String(user._id))
         : false
 
-    if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin' && !assinaturaEmDia) {
+    // Plus+ de upgrade que venceu com Quest+ ainda pago: volta ao Quest+, sem
+    // e-mail de "seu plano acabou" — ele não acabou.
+    const retorno =
+      isPaid && expiresAt && new Date(expiresAt) <= now && session.role !== 'admin' && !assinaturaEmDia
+        ? retornoAoQuest(user as unknown as User, now)
+        : null
+    if (retorno) {
+      accountType = retorno.accountType
+      await usersCollection.updateOne(
+        { _id: new ObjectId(session.userId) },
+        {
+          $set: {
+            accountType: retorno.accountType,
+            premiumExpiresAt: retorno.premiumExpiresAt,
+            premiumPlanType: retorno.premiumPlanType,
+            dailyPersonalExamsCreated: 0,
+            lastDailyReset: now,
+          },
+          $unset: { questAntesDoUpgrade: '' },
+        }
+      )
+    } else if (expiresAt && new Date(expiresAt) <= now && session.role !== 'admin' && !assinaturaEmDia) {
       console.log(`Plano ${accountType} expirou para o usuário ${user._id}. Revertendo para gratuito.`)
       accountType = 'gratuito'
       const updateData: any = {

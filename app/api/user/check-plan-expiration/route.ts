@@ -6,6 +6,7 @@ import { getPersonalExamsQuota } from '@/lib/tier-limits'
 import { ObjectId } from 'mongodb'
 import { contaEhPaga } from '@/lib/cargos-server'
 import { revokePlusClaims } from '@/lib/plus-claims'
+import { retornoAoQuest } from '@/lib/upgrade-quest'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,12 +29,27 @@ export async function GET(request: NextRequest) {
     let updated = false
     let plusExpired = false
     let updateData: Partial<User> = {}
+    // Plus+ de upgrade que acabou com Quest+ ainda pago: volta ao Quest+.
+    let devolveuQuest = false
 
     // Verificar expiração do cargo pago. Vale para qualquer cargo marcado como
     // pago no registro — todos usam `premiumExpiresAt` como prazo.
     const cargoEhPago = await contaEhPaga(user.accountType, db)
     if (cargoEhPago && user.premiumExpiresAt) {
-      if (new Date(user.premiumExpiresAt) <= now) {
+      const retorno = new Date(user.premiumExpiresAt) <= now ? retornoAoQuest(user, now) : null
+      if (retorno) {
+        updateData = {
+          accountType: retorno.accountType,
+          premiumExpiresAt: retorno.premiumExpiresAt as any,
+          premiumPlanType: retorno.premiumPlanType as any,
+          dailyPersonalExamsCreated: 0,
+          dailyPersonalExamsRemaining: getPersonalExamsQuota(retorno.accountType),
+          lastDailyReset: new Date()
+        }
+        updated = true
+        plusExpired = true
+        devolveuQuest = true
+      } else if (new Date(user.premiumExpiresAt) <= now) {
         // Plano expirou, reverter para Gratuito
         const gratuitoQuota = getPersonalExamsQuota('gratuito')
         updateData = {
@@ -73,7 +89,7 @@ export async function GET(request: NextRequest) {
     if (updated) {
       await usersCollection.updateOne(
         { _id: new ObjectId(session.userId) },
-        { $set: updateData }
+        devolveuQuest ? { $set: updateData, $unset: { questAntesDoUpgrade: '' } } : { $set: updateData }
       )
     }
 

@@ -93,6 +93,11 @@ export function MobileFloatingDock() {
     ((trechos.length === 2 && trechos[1] !== 'historico' && trechos[1] !== 'listas') ||
       (trechos.length === 3 && trechos[1] === 'listas'))
   if (isBancoResolucao) return null
+  // Telas de compra: o botão de pagar mora no canto direito (no painel e na
+  // barra de baixo), exatamente onde o "+" nasce. Nessas telas o único toque
+  // que importa é o de comprar.
+  const isTelaDeCompra = pathname === '/buy' || pathname === '/buy/checkout' || pathname === '/upgrade'
+  if (isTelaDeCompra) return null
 
   return (
     <div

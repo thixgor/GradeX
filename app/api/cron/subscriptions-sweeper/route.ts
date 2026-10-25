@@ -9,6 +9,7 @@ import { revokePlusClaims } from '@/lib/plus-claims'
 import { PLUS_ACCOUNT_TYPES } from '@/lib/account-tier'
 import { idsDeCargosPagos } from '@/lib/cargos-server'
 import { reconciliarPagamentosPendentes } from '@/lib/payments/sweep'
+import { retornoAoQuest } from '@/lib/upgrade-quest'
 import type { SubscriptionRecord, User, AccountType } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -81,18 +82,45 @@ export async function GET(request: NextRequest) {
       })
       if (otherActive) continue
 
+      /*
+       * O acesso da conta já não vem desta assinatura (outra compra assumiu —
+       * o caso do upgrade Quest+ → Plus+, que encerra a recorrência do Quest+
+       * e desliga o `mercadoPagoPreapprovalId`) e ainda vale: a assinatura
+       * expira, a conta fica. Quando o prazo dela vencer, o passo 3 cuida.
+       */
+      const sustentadaPorOutraCompra =
+        user.mercadoPagoPreapprovalId !== sub.providerSubscriptionId &&
+        (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > now) &&
+        user.accountType !== 'gratuito' &&
+        user.accountType !== 'trial'
+      if (sustentadaPorOutraCompra) {
+        await subsCol.updateOne({ _id: sub._id as any }, { $set: { status: 'expired', updatedAt: now } })
+        continue
+      }
+
+      const retorno = retornoAoQuest(user, now)
       await usersCol.updateOne(
         { _id: new ObjectId(sub.userId) as any },
-        {
-          $set: {
-            accountType: 'gratuito' as AccountType,
-            premiumPlanType: undefined as any,
-            premiumExpiresAt: undefined as any,
-            premiumActivatedAt: undefined as any,
-            premiumPrice: undefined as any,
-            mercadoPagoPreapprovalId: undefined as any,
-          },
-        }
+        retorno
+          ? {
+              $set: {
+                accountType: retorno.accountType,
+                premiumPlanType: retorno.premiumPlanType as any,
+                premiumExpiresAt: retorno.premiumExpiresAt as any,
+                mercadoPagoPreapprovalId: undefined as any,
+              },
+              $unset: { questAntesDoUpgrade: '' },
+            }
+          : {
+              $set: {
+                accountType: 'gratuito' as AccountType,
+                premiumPlanType: undefined as any,
+                premiumExpiresAt: undefined as any,
+                premiumActivatedAt: undefined as any,
+                premiumPrice: undefined as any,
+                mercadoPagoPreapprovalId: undefined as any,
+              },
+            }
       )
       await subsCol.updateOne(
         { _id: sub._id as any },
@@ -111,7 +139,7 @@ export async function GET(request: NextRequest) {
         targetUserId: sub.userId,
         resourceType: 'subscription',
         resourceId: sub.providerSubscriptionId,
-        metadata: { reason: 'period_ended', byCron: true, plusClaimsRevoked: revoked.count },
+        metadata: { reason: 'period_ended', byCron: true, plusClaimsRevoked: revoked.count, questDevolvido: !!retorno },
       })
 
       await sendSubscriptionCancelledEmail(user.email, user.name).catch(() => {})
@@ -149,18 +177,30 @@ export async function GET(request: NextRequest) {
       })
       if (activeSub) continue
 
+      // Plus+ de upgrade que venceu com Quest+ ainda pago: volta ao Quest+.
+      const retorno = retornoAoQuest(staleUser, now)
       await usersCol.updateOne(
         { _id: staleUser._id as any },
-        {
-          $set: {
-            accountType: 'gratuito' as AccountType,
-            premiumPlanType: undefined as any,
-            premiumExpiresAt: undefined as any,
-            premiumActivatedAt: undefined as any,
-            premiumPrice: undefined as any,
-            mercadoPagoPreapprovalId: undefined as any,
-          },
-        }
+        retorno
+          ? {
+              $set: {
+                accountType: retorno.accountType,
+                premiumPlanType: retorno.premiumPlanType as any,
+                premiumExpiresAt: retorno.premiumExpiresAt as any,
+                mercadoPagoPreapprovalId: undefined as any,
+              },
+              $unset: { questAntesDoUpgrade: '' },
+            }
+          : {
+              $set: {
+                accountType: 'gratuito' as AccountType,
+                premiumPlanType: undefined as any,
+                premiumExpiresAt: undefined as any,
+                premiumActivatedAt: undefined as any,
+                premiumPrice: undefined as any,
+                mercadoPagoPreapprovalId: undefined as any,
+              },
+            }
       )
       const revoked = await revokePlusClaims(userId, 'plan_expired', db)
       stats.expired++
@@ -170,7 +210,7 @@ export async function GET(request: NextRequest) {
         action: 'role_revoked',
         targetUserId: userId,
         resourceType: 'plan',
-        metadata: { reason: 'premium_expired', byCron: true, plusClaimsRevoked: revoked.count },
+        metadata: { reason: 'premium_expired', byCron: true, plusClaimsRevoked: revoked.count, questDevolvido: !!retorno },
       })
     } catch (err) {
       stats.errors++

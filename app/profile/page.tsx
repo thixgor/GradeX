@@ -13,6 +13,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
@@ -48,7 +49,9 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { AccountType } from '@/lib/types'
-import { PLUS_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount } from '@/lib/account-tier'
+import { PLUS_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount, normalizeAccountType } from '@/lib/account-tier'
+import { CartaoDeUpgrade } from '@/components/upgrade/cartao-de-upgrade'
+import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
 import { SeloDeCargo } from '@/components/cargo-badge'
 import { cn } from '@/lib/utils'
 import { Avatar as Retrato } from '@/components/monitorias/base'
@@ -127,6 +130,9 @@ export default function ProfilePage() {
   const [userEmail, setUserEmail] = useState('')
   const [userId, setUserId] = useState('')
   const [accountType, setAccountType] = useState<AccountType>('gratuito')
+  // Sem isto o convite para assinar piscava para quem já é Plus+ enquanto
+  // `/api/auth/me` não respondia (o cargo nasce 'gratuito').
+  const [contaCarregada, setContaCarregada] = useState(false)
   const [trialExpiresAt, setTrialExpiresAt] = useState<Date | null>(null)
   const [userTotals, setUserTotals] = useState({
     totalCronogramasCreated: 0,
@@ -249,6 +255,7 @@ export default function ProfilePage() {
         setUserName(data.user?.name || 'Usuario')
         setUserRole(data.user?.role || 'user')
         setAccountType(data.user?.accountType || 'gratuito')
+        setContaCarregada(true)
         setUserEmail(data.user?.email || '')
         setUserId(data.user?._id || data.user?.id || '')
         setAvatar(data.user?.avatar || null)
@@ -340,6 +347,18 @@ export default function ProfilePage() {
     }
   }
 
+  /*
+   * O convite para o Plus+: Quest+ vê o upgrade com desconto (/upgrade), quem
+   * é gratuito ou trial vê os planos. Plus+, admin e cargos pagos criados no
+   * painel não veem nada — oferecer o que a pessoa já paga é ruído.
+   */
+  const cargo = normalizeAccountType(accountType)
+  const ehQuest = contaCarregada && userRole !== 'admin' && isQuestAccount(accountType)
+  const convidarParaOPlus =
+    contaCarregada && userRole !== 'admin' && (ehQuest || cargo === 'gratuito' || cargo === 'trial')
+  const ofertaDeUpgrade = useOfertaDeUpgrade({ ativo: ehQuest })
+  const upgradeNoAr = ehQuest && !!ofertaDeUpgrade?.elegivel
+
   function getTrialTimeRemaining(): string {
     if (!trialExpiresAt) return ''
     const diffMs = new Date(trialExpiresAt).getTime() - Date.now()
@@ -421,11 +440,18 @@ export default function ProfilePage() {
                   decidiu e precisa ver preço e o botão de pagar. Aparece para
                   quem ainda não tem a plataforma inteira (gratuito, trial e Quest).
                 */}
-                {userRole !== 'admin' && !isPlusAccount(accountType) && (
-                  <Button size="sm" onClick={() => router.push(ROTA_ASSINATURA)} className="h-10 gap-1.5 rounded-xl px-4 font-semibold">
-                    <Sparkles className="h-4 w-4" />
-                    {isQuestAccount(accountType) ? `Migrar para ${PLUS_LABEL}` : `Assinar ${PLUS_LABEL}`}
-                  </Button>
+                {contaCarregada && userRole !== 'admin' && !isPlusAccount(accountType) && (
+                  <Link
+                    href={upgradeNoAr ? '/upgrade' : ROTA_ASSINATURA}
+                    className="buy-cta buy-cta-halo inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-sm font-extrabold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    {upgradeNoAr ? <Sparkles className="h-4 w-4" /> : <Crown className="h-4 w-4" />}
+                    {upgradeNoAr
+                      ? `Upgrade −${ofertaDeUpgrade?.descontoPercentual}%`
+                      : isQuestAccount(accountType)
+                        ? `Migrar para ${PLUS_LABEL}`
+                        : `Assinar ${PLUS_LABEL}`}
+                  </Link>
                 )}
                 {userRole !== 'admin' && (
                   <Button size="sm" variant="outline" onClick={() => setActivateDialogOpen(true)} className="h-10 gap-1.5 rounded-xl px-4 font-semibold">
@@ -473,6 +499,19 @@ export default function ProfilePage() {
               </button>
             ))}
           </nav>
+
+          {tab === 'visao-geral' && convidarParaOPlus && (
+            <CartaoDeUpgrade
+              oferta={ehQuest ? ofertaDeUpgrade : null}
+              quest={ehQuest}
+              sufixoDoTeste={
+                cargo === 'trial' && trialExpiresAt && trialExpiresAt.getTime() > Date.now()
+                  ? getTrialTimeRemaining()
+                  : undefined
+              }
+              className="mb-6"
+            />
+          )}
 
           {tab === 'visao-geral' && (
             <OverviewTab

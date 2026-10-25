@@ -189,7 +189,7 @@ export function PlanLimitsCard({
               className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
             >
               <Crown className="h-4 w-4 mr-2" />
-              Fazer Assinar Plus+
+              {isQuestAccount(accountType) ? 'Fazer upgrade para o Plus+' : 'Assinar o Plus+'}
             </Button>
           </div>
         )}
