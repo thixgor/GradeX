@@ -11,6 +11,10 @@ export interface PlanoDaOfertaDeUpgrade {
   preco: number
   precoOriginal: number | null
   precoUpgrade: number
+  /** Preço só com o PROUNI/FIES desta conta; `null` sem concessão. */
+  precoComProuni: number | null
+  /** PROUNI/FIES + extra de bolsista; `null` sem concessão ou extra desligado. */
+  precoBolsista: number | null
   /** 0 = vitalício. */
   durationMonths: number
   badge: string
@@ -28,11 +32,24 @@ export interface OfertaDeUpgrade {
   /** Quanto falta para a janela fechar quando a resposta saiu; `null` sem contagem. */
   restanteMs?: number | null
   janelaHoras?: number
+  /** Extra do bolsista PROUNI/FIES, em pontos percentuais; `null` desligado. */
+  descontoExtraBolsista?: number | null
   planoPadrao?: string
   planos?: PlanoDaOfertaDeUpgrade[]
   quest?: { expiraEm: string | null; vitalicio: boolean; recorrente: boolean }
   /** `Date.now()` do navegador quando a resposta chegou — base do contador. */
   recebidaEm?: number
+}
+
+/**
+ * O preço que a oferta anuncia para um plano: o de bolsista quando ele existe
+ * e é menor, senão o de upgrade. Mesma regra de `disputarPrecoDoUpgrade` (no
+ * empate, o upgrade — que não gasta a concessão PROUNI/FIES).
+ */
+export function precoAnunciado(plano: PlanoDaOfertaDeUpgrade): { preco: number; bolsista: boolean } {
+  return plano.precoBolsista != null && plano.precoBolsista < plano.precoUpgrade
+    ? { preco: plano.precoBolsista, bolsista: true }
+    : { preco: plano.precoUpgrade, bolsista: false }
 }
 
 /**

@@ -11,13 +11,13 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { AlertCircle, CheckCircle, Crown, ExternalLink, Timer } from 'lucide-react'
+import { AlertCircle, CheckCircle, Crown, ExternalLink, GraduationCap, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { precoDeUpgrade, type ConfigDoUpgradeQuest } from '@/lib/upgrade-quest'
+import { precoDeUpgrade, precoDoBolsista, type ConfigDoUpgradeQuest } from '@/lib/upgrade-quest'
 import { cn } from '@/lib/utils'
 
 interface PlanoPlus {
@@ -32,7 +32,14 @@ interface PlanoPlus {
 interface Resposta {
   config: ConfigDoUpgradeQuest
   padrao: ConfigDoUpgradeQuest
-  limites: { descontoMinimo: number; descontoMaximo: number; horasMinimas: number; horasMaximas: number }
+  limites: {
+    descontoMinimo: number
+    descontoMaximo: number
+    horasMinimas: number
+    horasMaximas: number
+    extraMinimo: number
+    extraMaximo: number
+  }
   planos: PlanoPlus[]
   panorama: { questVigentes: number; upgradesPagos: number; receitaDeUpgrades: number }
 }
@@ -272,6 +279,56 @@ export function UpgradeQuestPanel() {
               value={config.urgencia.horas}
               onChange={(e) => setConfig({ ...config, urgencia: { ...config.urgencia, horas: Number(e.target.value) } })}
             />
+          </div>
+        </div>
+
+        <div className="space-y-3 rounded-xl border p-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <Label htmlFor="upgrade-bolsista" className="flex items-center gap-1.5 text-sm font-semibold">
+                <GraduationCap className="h-4 w-4" /> Extra para bolsista PROUNI/FIES
+              </Label>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Para o Quest+ com PROUNI/FIES aprovado para o plano, o desconto do benefício SOMA com este extra
+                (aplicado sobre o preço já com o PROUNI), e a concessão é usada na compra. Vale sempre o menor preço
+                entre o upgrade comum e o de bolsista. Desligado: o bolsista fica com o maior entre o PROUNI e o
+                upgrade.
+              </p>
+            </div>
+            <Switch
+              id="upgrade-bolsista"
+              checked={config.bolsista.ativo}
+              onCheckedChange={(v) => setConfig({ ...config, bolsista: { ...config.bolsista, ativo: v } })}
+            />
+          </div>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="max-w-[220px] space-y-1.5">
+              <Label htmlFor="upgrade-extra">Extra sobre o preço com PROUNI (%)</Label>
+              <Input
+                id="upgrade-extra"
+                type="number"
+                inputMode="numeric"
+                min={limites.extraMinimo}
+                max={limites.extraMaximo}
+                disabled={!config.bolsista.ativo}
+                value={config.bolsista.descontoExtra}
+                onChange={(e) =>
+                  setConfig({ ...config, bolsista: { ...config.bolsista, descontoExtra: Number(e.target.value) } })
+                }
+              />
+            </div>
+            {config.bolsista.ativo && naOferta[0] && (
+              // Um exemplo com o primeiro plano da oferta e um PROUNI de 50%:
+              // é o jeito mais rápido de ver se o número faz sentido.
+              <p className="pb-2 text-xs text-muted-foreground">
+                Ex.: {naOferta[0].nome} — {naOferta[0].periodo || naOferta[0].tipo} com PROUNI de 50%:{' '}
+                {brl(naOferta[0].preco * 0.5)} →{' '}
+                <strong className="text-foreground">
+                  {brl(precoDoBolsista(Math.round(naOferta[0].preco * 50) / 100, config.bolsista.descontoExtra))}
+                </strong>{' '}
+                (o upgrade comum sairia {brl(precoDeUpgrade(naOferta[0].preco, config.descontoPercentual))}).
+              </p>
+            )}
           </div>
         </div>
 

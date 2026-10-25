@@ -68,7 +68,7 @@ import { cn } from '@/lib/utils'
 import { cardTokenError } from '@/lib/payments/card-token-errors'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
-import { aplicarUpgradeAoPreco } from '@/lib/upgrade-quest'
+import { disputarPrecoDoUpgrade } from '@/lib/upgrade-quest'
 
 type PayMode = 'subscription' | 'one_time'
 
@@ -171,8 +171,10 @@ function BuyCheckoutContent() {
    * Upgrade Quest+ → Plus+: o preço com o desconto de quem já é Quest+.
    *
    * Mesma regra do cupom e do PROUNI: só no pagamento único, e disputa com
-   * eles pelo maior desconto (`aplicarUpgradeAoPreco`, a MESMA função que
-   * /api/payments/orders usa para cobrar). A tela espera esta resposta antes
+   * eles pelo menor preço (`disputarPrecoDoUpgrade`, a MESMA função que
+   * /api/payments/orders usa para cobrar). Bolsista PROUNI/FIES tem um
+   * terceiro preço, o do benefício com o extra de upgrade por cima, que vem
+   * calculado pelo servidor na mesma resposta. A tela espera esta resposta antes
    * de mostrar o preço — anunciar o cheio e cobrar o de upgrade seria o mesmo
    * defeito de resumo e botão discordando, só que ao contrário.
    */
@@ -312,15 +314,26 @@ function BuyCheckoutContent() {
   const planoDoUpgrade = ofertaDeUpgrade?.elegivel
     ? ofertaDeUpgrade.planos?.find((p) => p.tipo === plan.tipo) || null
     : null
-  const disputaDoUpgrade = aplicarUpgradeAoPreco(
-    combinado.finalPrice,
-    payMode === 'one_time' && planoDoUpgrade ? planoDoUpgrade.precoUpgrade : null
-  )
-  const upgradeVenceu = disputaDoUpgrade.upgradeVenceu
+  const unico = payMode === 'one_time'
+  const disputaDoUpgrade = disputarPrecoDoUpgrade({
+    precoAtual: combinado.finalPrice,
+    precoUpgrade: unico && planoDoUpgrade ? planoDoUpgrade.precoUpgrade : null,
+    precoBolsista: unico && planoDoUpgrade ? planoDoUpgrade.precoBolsista : null,
+  })
+  // Upgrade comum ou de bolsista: nos dois o cupom não entra.
+  const upgradeVenceu = disputaDoUpgrade.fonte !== 'cupom-ou-prouni'
+  // De bolsista: o PROUNI/FIES entra inteiro e o extra de upgrade vem por cima.
+  const bolsistaVenceu = disputaDoUpgrade.fonte === 'bolsista'
   const payableAmount = disputaDoUpgrade.preco
   const couponDiscountAmount = upgradeVenceu ? 0 : combinado.couponDiscountApplied
-  const prouniDiscountAmount = upgradeVenceu ? 0 : combinado.prouniDiscountApplied
-  const upgradeDiscountAmount = upgradeVenceu ? Math.round((baseAmount - payableAmount) * 100) / 100 : 0
+  const prouniDiscountAmount = bolsistaVenceu
+    ? Math.round((baseAmount - (planoDoUpgrade?.precoComProuni ?? baseAmount)) * 100) / 100
+    : upgradeVenceu
+      ? 0
+      : combinado.prouniDiscountApplied
+  const upgradeDiscountAmount = upgradeVenceu
+    ? Math.round((baseAmount - prouniDiscountAmount - payableAmount) * 100) / 100
+    : 0
   // Quest+ com renovação automática: o MP recusaria uma segunda assinatura
   // (409). O upgrade é pagamento único, e ele mesmo encerra a do Quest+.
   const assinaturaBloqueada = !!ofertaDeUpgrade?.quest?.recorrente
@@ -416,7 +429,15 @@ function BuyCheckoutContent() {
           <p className="mt-3 flex items-start gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] leading-snug text-amber-900 dark:border-amber-300/25 dark:bg-amber-300/10 dark:text-amber-100">
             <Crown className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
             <span>
-              {upgradeVenceu ? (
+              {bolsistaVenceu ? (
+                <>
+                  <strong className="font-extrabold">
+                    Bolsista PROUNI/FIES: seu desconto + {ofertaDeUpgrade?.descontoExtraBolsista}% extra de upgrade já
+                    estão no preço.
+                  </strong>{' '}
+                  O benefício é usado nesta compra, e o Quest+ que você já pagou não se perde.
+                </>
+              ) : upgradeVenceu ? (
                 <>
                   <strong className="font-extrabold">Seu desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% já está no preço.</strong>{' '}
                   O Plus+ começa no pagamento, e o Quest+ que você já pagou não se perde.
@@ -507,18 +528,21 @@ function BuyCheckoutContent() {
               </div>
             )}
 
-            {upgradeDiscountAmount > 0 && (
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
-                <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                Desconto de upgrade Quest+ ({ofertaDeUpgrade?.descontoPercentual}%): − {formatBRL(upgradeDiscountAmount)}
-              </p>
-            )}
-
             {prouniDiscountAmount > 0 && (
               <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                 <GraduationCap className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 Desconto ProUni/FIES{prouniGrant?.discountLabel ? ` (${prouniGrant.discountLabel})` : ''}: −{' '}
                 {formatBRL(prouniDiscountAmount)}
+              </p>
+            )}
+
+            {upgradeDiscountAmount > 0 && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
+                <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                {bolsistaVenceu
+                  ? `Extra de upgrade para bolsista (${ofertaDeUpgrade?.descontoExtraBolsista}%)`
+                  : `Desconto de upgrade Quest+ (${ofertaDeUpgrade?.descontoPercentual}%)`}
+                : − {formatBRL(upgradeDiscountAmount)}
               </p>
             )}
 

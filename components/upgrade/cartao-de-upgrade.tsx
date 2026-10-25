@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ChevronRight, Crown, Sparkles } from 'lucide-react'
 import { ContagemRegressiva, useContagemDaOferta } from '@/components/upgrade/contagem'
 import '@/components/upgrade/venda.css'
-import type { OfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
+import { precoAnunciado, type OfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
 import { formatarBRL } from '@/lib/buy/pricing'
 import { cn } from '@/lib/utils'
 
@@ -40,6 +40,9 @@ export function CartaoDeUpgrade({
       : null
   const upgrade = quest && !!plano
   const periodo = plano?.periodo.replace(/^plano\s+/i, '').trim()
+  // Bolsista PROUNI/FIES: o preço dele é o do benefício + o extra de upgrade.
+  const anuncio = plano ? precoAnunciado(plano) : null
+  const bolsista = !!anuncio?.bolsista
 
   return (
     <section
@@ -50,7 +53,9 @@ export function CartaoDeUpgrade({
         <span className="inline-flex items-center gap-1.5 rounded-full bg-white/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-[0.08em] dark:bg-white/10">
           <Crown className="h-3.5 w-3.5" aria-hidden />
           {upgrade
-            ? `Upgrade exclusivo · ${oferta!.descontoPercentual}% OFF`
+            ? bolsista
+              ? `Bolsista · PROUNI/FIES + ${oferta!.descontoExtraBolsista}% extra`
+              : `Upgrade exclusivo · ${oferta!.descontoPercentual}% OFF`
             : sufixoDoTeste
               ? `Seu teste acaba em ${sufixoDoTeste}`
               : 'DomineAqui Plus+'}
@@ -62,7 +67,9 @@ export function CartaoDeUpgrade({
         <div className="min-w-0">
           <h2 className="text-[22px] font-bold leading-tight tracking-[-0.02em] sm:text-[24px]">
             {upgrade
-              ? `Leve o DomineAqui inteiro com ${oferta!.descontoPercentual}% de desconto`
+              ? bolsista
+                ? `Seu PROUNI/FIES vale +${oferta!.descontoExtraBolsista}% no upgrade`
+                : `Leve o DomineAqui inteiro com ${oferta!.descontoPercentual}% de desconto`
               : quest
                 ? 'Seu Quest+ é só o começo'
                 : 'Desbloqueie a plataforma inteira'}
@@ -72,7 +79,7 @@ export function CartaoDeUpgrade({
               <>
                 Plus+{periodo ? ` ${periodo}` : ''} de{' '}
                 <s className="tabular-nums">R$ {formatarBRL(plano!.preco)}</s> por{' '}
-                <strong className="tabular-nums text-[color:var(--vk-texto)]">R$ {formatarBRL(plano!.precoUpgrade)}</strong>.
+                <strong className="tabular-nums text-[color:var(--vk-texto)]">R$ {formatarBRL(anuncio!.preco)}</strong>.
                 Manuais, materiais, flashcards e IA — e o Banco de Questões continua.
               </>
             ) : quest ? (

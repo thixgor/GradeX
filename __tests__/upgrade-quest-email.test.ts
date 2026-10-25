@@ -55,6 +55,18 @@ describe('montarEmailDeUpgrade', () => {
   })
 })
 
+describe('bolsista PROUNI/FIES no e-mail', () => {
+  it('com o extra ligado, avisa que o benefício soma', () => {
+    const { conteudo } = montarEmailDeUpgrade({ ...base, extraBolsista: 15 })
+    expect(conteudo).toContain('É bolsista PROUNI/FIES?')
+    expect(conteudo).toContain('+15% extra')
+  })
+
+  it('desligado, não fala de bolsista', () => {
+    expect(montarEmailDeUpgrade({ ...base, extraBolsista: null }).conteudo).not.toContain('PROUNI')
+  })
+})
+
 describe('nomeCurtoDoPlano', () => {
   it('junta a marca e o período sem a palavra "Plano"', () => {
     expect(nomeCurtoDoPlano('DomineAqui Plus+', 'Plano Semestral')).toBe('Plus+ Semestral')

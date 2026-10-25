@@ -64,6 +64,7 @@ async function montar() {
     },
     ganhos,
     janelaHoras: config.urgencia.ativa ? config.urgencia.horas : null,
+    extraBolsista: config.bolsista.ativo ? config.bolsista.descontoExtra : null,
     appUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://domineaqui.com.br',
   })
   return { db, email, config } as const

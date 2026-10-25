@@ -8,10 +8,12 @@ import { invalidarCacheDeServidor, memoizarPorTempo } from './cache-de-servidor'
 import { getPaymentProvider } from './payments'
 import { audit } from './payments/audit'
 import { recordSubscriptionCheckoutEvent } from './analytics'
+import { combineDiscountsWithProuni, type ProuniDiscountType } from './prouni-shared'
 import {
   normalizarConfigDoUpgrade,
   planoElegivelAoUpgrade,
   precoDeUpgrade,
+  precoDoBolsista,
   questVigente,
   retornoAoQuest,
   type ConfigDoUpgradeQuest,
@@ -67,6 +69,38 @@ export interface UpgradeDaCompra {
   precoBase: number
   /** Preço com o desconto de upgrade. */
   precoUpgrade: number
+  /** Extra do bolsista (pontos percentuais); `null` com o extra desligado. */
+  descontoExtraBolsista: number | null
+  /** Preço só com o PROUNI/FIES; `null` sem concessão para este plano. */
+  precoComProuni: number | null
+  /** PROUNI/FIES + extra; `null` sem concessão ou com o extra desligado. */
+  precoBolsista: number | null
+}
+
+/** A concessão PROUNI/FIES como `resolveProuniForCheckout`/`ForCart` devolvem. */
+export interface ConcessaoParaUpgrade {
+  discountType: ProuniDiscountType
+  discountValue: number
+  stackWithTier: boolean
+}
+
+/**
+ * Os preços de bolsista de um plano. A conta é a do checkout:
+ * `combineDiscountsWithProuni` dá o preço com o PROUNI, e o extra incide
+ * sobre ele. Planos não têm lote, então o `stackWithTier` não pesa aqui.
+ */
+export function precosDoBolsista(
+  precoBase: number,
+  concessao: ConcessaoParaUpgrade | null | undefined,
+  descontoExtra: number | null,
+): { precoComProuni: number | null; precoBolsista: number | null } {
+  if (!concessao) return { precoComProuni: null, precoBolsista: null }
+  const comProuni = combineDiscountsWithProuni({ basePrice: precoBase, prouni: concessao })
+  if (comProuni.prouniDiscountApplied <= 0) return { precoComProuni: null, precoBolsista: null }
+  return {
+    precoComProuni: comProuni.finalPrice,
+    precoBolsista: descontoExtra != null ? precoDoBolsista(comProuni.finalPrice, descontoExtra) : null,
+  }
 }
 
 /**
@@ -78,7 +112,13 @@ export interface UpgradeDaCompra {
  */
 export async function upgradeParaACompra(
   db: Db,
-  input: { userId: string; plano: PlanoDoUpgrade; upgradeQuestBruto: unknown },
+  input: {
+    userId: string
+    plano: PlanoDoUpgrade
+    upgradeQuestBruto: unknown
+    /** A concessão PROUNI/FIES deste plano, já resolvida pela rota. */
+    prouni?: ConcessaoParaUpgrade | null
+  },
 ): Promise<UpgradeDaCompra | null> {
   const config = normalizarConfigDoUpgrade(input.upgradeQuestBruto)
   if (!config.ativo || !planoElegivelAoUpgrade(input.plano, config)) return null
@@ -90,10 +130,13 @@ export async function upgradeParaACompra(
   if (!questVigente(user, new Date())) return null
 
   const precoBase = Number(input.plano.preco)
+  const descontoExtraBolsista = config.bolsista.ativo ? config.bolsista.descontoExtra : null
   return {
     descontoPercentual: config.descontoPercentual,
     precoBase,
     precoUpgrade: precoDeUpgrade(precoBase, config.descontoPercentual),
+    descontoExtraBolsista,
+    ...precosDoBolsista(precoBase, input.prouni, descontoExtraBolsista),
   }
 }
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  aplicarUpgradeAoPreco,
+  disputarPrecoDoUpgrade,
   LIMITES_DO_UPGRADE,
   normalizarConfigDoUpgrade,
   planoElegivelAoUpgrade,
@@ -8,6 +8,7 @@ import {
   planosDoUpgrade,
   prazoDaOferta,
   precoDeUpgrade,
+  precoDoBolsista,
   questVigente,
   retornoAoQuest,
   UPGRADE_QUEST_PADRAO,
@@ -28,9 +29,20 @@ const config = (c: Partial<ReturnType<typeof normalizarConfigDoUpgrade>> = {}) =
   normalizarConfigDoUpgrade({ ...UPGRADE_QUEST_PADRAO, ...c })
 
 describe('normalizarConfigDoUpgrade', () => {
-  it('sem nada gravado, devolve o padrão (30%, ligado, 48h)', () => {
+  it('sem nada gravado, devolve o padrão (30%, ligado, 48h, bolsista +15%)', () => {
     expect(normalizarConfigDoUpgrade(undefined)).toEqual(UPGRADE_QUEST_PADRAO)
     expect(UPGRADE_QUEST_PADRAO.descontoPercentual).toBe(30)
+    expect(UPGRADE_QUEST_PADRAO.bolsista).toEqual({ ativo: true, descontoExtra: 15 })
+  })
+
+  it('o extra do bolsista também fica dentro dos limites', () => {
+    expect(normalizarConfigDoUpgrade({ bolsista: { ativo: false, descontoExtra: 90 } }).bolsista).toEqual({
+      ativo: false,
+      descontoExtra: LIMITES_DO_UPGRADE.extraMaximo,
+    })
+    expect(normalizarConfigDoUpgrade({ bolsista: { descontoExtra: 0 } }).bolsista.descontoExtra).toBe(
+      LIMITES_DO_UPGRADE.extraMinimo,
+    )
   })
 
   it('puxa desconto e horas para dentro dos limites', () => {
@@ -65,22 +77,44 @@ describe('precoDeUpgrade', () => {
   })
 })
 
-describe('aplicarUpgradeAoPreco — vence o maior desconto', () => {
+describe('disputarPrecoDoUpgrade — vence o menor preço', () => {
   it('upgrade menor que o preço com cupom: vale o upgrade', () => {
-    expect(aplicarUpgradeAoPreco(357.3, 277.9)).toEqual({ preco: 277.9, upgradeVenceu: true })
+    expect(disputarPrecoDoUpgrade({ precoAtual: 357.3, precoUpgrade: 277.9 })).toEqual({ preco: 277.9, fonte: 'upgrade' })
   })
 
-  it('cupom/PROUNI melhor que o upgrade: vale o cupom', () => {
-    expect(aplicarUpgradeAoPreco(198.5, 277.9)).toEqual({ preco: 198.5, upgradeVenceu: false })
+  it('cupom/PROUNI melhor que o upgrade, sem extra de bolsista: vale o cupom/PROUNI', () => {
+    expect(disputarPrecoDoUpgrade({ precoAtual: 198.5, precoUpgrade: 277.9 })).toEqual({
+      preco: 198.5,
+      fonte: 'cupom-ou-prouni',
+    })
   })
 
-  it('empate fica com o cupom/benefício', () => {
-    expect(aplicarUpgradeAoPreco(277.9, 277.9).upgradeVenceu).toBe(false)
+  it('bolsista: PROUNI de 50% + 15% extra fica abaixo dos dois', () => {
+    const precoBolsista = precoDoBolsista(198.5, 15)
+    expect(precoBolsista).toBe(168.73)
+    expect(disputarPrecoDoUpgrade({ precoAtual: 198.5, precoUpgrade: 277.9, precoBolsista })).toEqual({
+      preco: 168.73,
+      fonte: 'bolsista',
+    })
   })
 
-  it('sem upgrade, nada muda', () => {
-    expect(aplicarUpgradeAoPreco(397, null)).toEqual({ preco: 397, upgradeVenceu: false })
-    expect(aplicarUpgradeAoPreco(397, 0)).toEqual({ preco: 397, upgradeVenceu: false })
+  it('PROUNI pequeno: o upgrade comum ainda é melhor que PROUNI + extra', () => {
+    // PROUNI de 10% → 357,30; + 15% → 303,71; o upgrade de 30% → 277,90.
+    const precoBolsista = precoDoBolsista(357.3, 15)
+    expect(disputarPrecoDoUpgrade({ precoAtual: 357.3, precoUpgrade: 277.9, precoBolsista }).fonte).toBe('upgrade')
+  })
+
+  it('empates: o que já valia ganha de tudo; o upgrade ganha do bolsista (não gasta a concessão)', () => {
+    expect(disputarPrecoDoUpgrade({ precoAtual: 277.9, precoUpgrade: 277.9 }).fonte).toBe('cupom-ou-prouni')
+    expect(disputarPrecoDoUpgrade({ precoAtual: 397, precoUpgrade: 200, precoBolsista: 200 }).fonte).toBe('upgrade')
+  })
+
+  it('sem upgrade nem bolsista, nada muda', () => {
+    expect(disputarPrecoDoUpgrade({ precoAtual: 397 })).toEqual({ preco: 397, fonte: 'cupom-ou-prouni' })
+    expect(disputarPrecoDoUpgrade({ precoAtual: 397, precoUpgrade: 0, precoBolsista: null })).toEqual({
+      preco: 397,
+      fonte: 'cupom-ou-prouni',
+    })
   })
 })
 
@@ -198,5 +232,26 @@ describe('a conta', () => {
     const guardado = { expiresAt: futuro, orderId: 'o1', em: passado }
     expect(retornoAoQuest({ accountType: 'gratuito', questAntesDoUpgrade: guardado }, agora)).toBeNull()
     expect(retornoAoQuest({ accountType: 'plus' }, agora)).toBeNull()
+  })
+})
+
+describe('precosDoBolsista (servidor)', () => {
+  it('PROUNI percentual: preço com o benefício e o extra por cima', async () => {
+    const { precosDoBolsista } = await import('@/lib/upgrade-quest-server')
+    const concessao = { discountType: 'percentage' as const, discountValue: 50, stackWithTier: false }
+    expect(precosDoBolsista(397, concessao, 15)).toEqual({ precoComProuni: 198.5, precoBolsista: 168.73 })
+  })
+
+  it('PROUNI em reais também vale', async () => {
+    const { precosDoBolsista } = await import('@/lib/upgrade-quest-server')
+    const concessao = { discountType: 'fixed' as const, discountValue: 100, stackWithTier: false }
+    expect(precosDoBolsista(397, concessao, 10)).toEqual({ precoComProuni: 297, precoBolsista: 267.3 })
+  })
+
+  it('sem concessão ou com o extra desligado, não há preço de bolsista', async () => {
+    const { precosDoBolsista } = await import('@/lib/upgrade-quest-server')
+    expect(precosDoBolsista(397, null, 15)).toEqual({ precoComProuni: null, precoBolsista: null })
+    const concessao = { discountType: 'percentage' as const, discountValue: 50, stackWithTier: false }
+    expect(precosDoBolsista(397, concessao, null)).toEqual({ precoComProuni: 198.5, precoBolsista: null })
   })
 })

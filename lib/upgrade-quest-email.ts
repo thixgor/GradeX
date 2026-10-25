@@ -26,6 +26,8 @@ export interface DadosDoEmailDeUpgrade {
   ganhos: string[]
   /** Tamanho da janela da oferta; `null` quando a contagem está desligada. */
   janelaHoras: number | null
+  /** Extra do bolsista PROUNI/FIES; `null` quando desligado. */
+  extraBolsista?: number | null
   appUrl: string
 }
 
@@ -88,6 +90,13 @@ export function montarEmailDeUpgrade(d: DadosDoEmailDeUpgrade): { assunto: strin
       <p>${porMes ? `Dá ${brl(porMes)} por mês · ` : ''}você economiza ${brl(economia)} · acesso liberado na hora.</p>
     </div>
     ${lista}
+    ${
+      d.extraBolsista
+        ? `<div class="text-block">
+      <p><strong>É bolsista PROUNI/FIES?</strong> Se você tem o benefício aprovado para o Plus+, o upgrade soma <strong>+${Math.round(d.extraBolsista)}% extra</strong> em cima do seu desconto — o preço aparece na página da oferta.</p>
+    </div>`
+        : ''
+    }
     <div class="text-block">
       <p>E nada do que você já tem sai: o <strong>Banco de Questões completo</strong> e as <strong>provas em PDF</strong> continuam com você.</p>
     </div>

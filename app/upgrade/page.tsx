@@ -43,6 +43,7 @@ import {
   ShieldCheck,
   Sparkles,
   Stethoscope,
+  GraduationCap,
   Undo2,
   Zap,
   type LucideIcon,
@@ -51,7 +52,13 @@ import { AppShell } from '@/components/app-shell'
 import { FundoIos } from '@/components/materiais/fundo-ios'
 import { ContagemRegressiva, useContagemDaOferta } from '@/components/upgrade/contagem'
 import '@/components/upgrade/venda.css'
-import { useOfertaDeUpgrade, type OfertaDeUpgrade, type PlanoDaOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
+import { ProuniCta } from '@/components/prouni/prouni-cta'
+import {
+  precoAnunciado,
+  useOfertaDeUpgrade,
+  type OfertaDeUpgrade,
+  type PlanoDaOfertaDeUpgrade,
+} from '@/hooks/use-oferta-de-upgrade'
 import { apresentarPreco, formatarBRL, rotuloDeCiclo } from '@/lib/buy/pricing'
 import type { ChaveDoItem } from '@/lib/plus-oferta'
 import { cn } from '@/lib/utils'
@@ -130,11 +137,19 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
   const indice = Math.max(0, planos.indexOf(plano))
   const falta = useContagemDaOferta(oferta.restanteMs, oferta.recebidaEm, oferta.janelaHoras)
 
+  // Bolsista PROUNI/FIES com concessão para o plano: o preço anunciado é o do
+  // benefício com o extra de upgrade por cima (o mesmo que o checkout cobra).
+  const anuncio = precoAnunciado(plano)
+  const final = anuncio.preco
+  const bolsista = anuncio.bolsista
+  const extra = oferta.descontoExtraBolsista ?? null
+  // O selo diz o desconto total sobre a tabela — para o bolsista, PROUNI + extra.
+  const pctTotal = bolsista ? Math.round(100 - (final / plano.preco) * 100) : pct
   const preco = useMemo(
-    () => apresentarPreco({ preco: plano.precoUpgrade, durationMonths: plano.durationMonths }),
-    [plano],
+    () => apresentarPreco({ preco: final, durationMonths: plano.durationMonths }),
+    [final, plano.durationMonths],
   )
-  const economia = Math.max(0, Math.round((plano.preco - plano.precoUpgrade) * 100) / 100)
+  const economia = Math.max(0, Math.round((plano.preco - final) * 100) / 100)
   const ganhos = plano.inclusos.filter((i) => !JA_NO_QUEST.includes(i.chave))
   const destino = `/buy/checkout?plan=${encodeURIComponent(plano.tipo)}&origem=upgrade`
 
@@ -158,9 +173,9 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
         productId: plano.tipo,
         productTitle: plano.nome,
         productType: 'subscription',
-        amount: plano.precoUpgrade,
+        amount: final,
         source: 'Upgrade Quest+',
-        metadata: { descontoPercentual: pct, precoBase: plano.preco, durationMonths: plano.durationMonths },
+        metadata: { descontoPercentual: pctTotal, bolsista, precoBase: plano.preco, durationMonths: plano.durationMonths },
       }),
       keepalive: true,
     }).catch(() => {})
@@ -183,11 +198,22 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
         <header className="venda-sobe min-w-0 lg:col-start-1 lg:row-start-1 lg:pt-6">
           <span className="venda-capsula">
             <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-            <span className="truncate">Exclusivo para assinantes Quest+</span>
+            <span className="truncate">
+              {bolsista ? 'Quest+ bolsista PROUNI/FIES · condição especial' : 'Exclusivo para assinantes Quest+'}
+            </span>
           </span>
           <h1 className="ios-titulo-grande mt-3">
-            {oferta.primeiroNome ? `${oferta.primeiroNome}, o` : 'O'} DomineAqui inteiro, com{' '}
-            <span className="ios-ambar">{pct}% de desconto</span>.
+            {bolsista ? (
+              <>
+                {oferta.primeiroNome ? `${oferta.primeiroNome}, seu` : 'Seu'} PROUNI/FIES vale{' '}
+                <span className="ios-ambar">+{extra}% extra</span> no upgrade.
+              </>
+            ) : (
+              <>
+                {oferta.primeiroNome ? `${oferta.primeiroNome}, o` : 'O'} DomineAqui inteiro, com{' '}
+                <span className="ios-ambar">{pct}% de desconto</span>.
+              </>
+            )}
           </h1>
           <p className="ios-rotulo-2 mt-3 max-w-xl text-[17px] leading-relaxed">
             Você já treina no Banco de Questões. O upgrade libera manuais, materiais, flashcards e a IA — e tudo o que
@@ -214,7 +240,7 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
               >
                 {planos.map((p) => {
                   const ativo = p.tipo === plano.tipo
-                  const mensal = p.durationMonths > 0 ? p.precoUpgrade / p.durationMonths : null
+                  const mensal = p.durationMonths > 0 ? precoAnunciado(p).preco / p.durationMonths : null
                   return (
                     <button
                       key={p.tipo}
@@ -243,12 +269,21 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
 
             <p className="ios-rotulo-2 mt-3 flex flex-wrap items-center gap-2 text-[15px]">
               <s className="tabular-nums">R$ {formatarBRL(plano.preco)}</s>
-              <span className="venda-selo-desconto">−{pct}%</span>
+              <span className="venda-selo-desconto">−{pctTotal}%</span>
             </p>
             <p className="venda-preco mt-1.5">
               <span className="venda-preco-moeda">R$</span>
-              {formatarBRL(plano.precoUpgrade)}
+              {formatarBRL(final)}
             </p>
+            {bolsista && plano.precoComProuni != null && (
+              // A conta aberta: o que o PROUNI/FIES já dava, e o extra por cima.
+              <p className="ios-tinta mt-2 flex items-start gap-1.5 text-[13px] font-semibold leading-snug">
+                <GraduationCap className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                <span>
+                  Com o seu PROUNI/FIES sairia R$ {formatarBRL(plano.precoComProuni)}; o upgrade tira mais {extra}%.
+                </span>
+              </p>
+            )}
             <p className="mt-2.5 flex flex-wrap items-center gap-2 text-[14px]">
               {preco.mensal !== null && plano.durationMonths > 1 && (
                 <span className="ios-rotulo-2">
@@ -271,7 +306,7 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
                 <ChevronRight className="buy-cta-seta h-5 w-5" aria-hidden />
               </span>
               <span className="text-[11px] font-bold uppercase tracking-[0.08em]">
-                R$ {formatarBRL(plano.precoUpgrade)} · pagamento único
+                R$ {formatarBRL(final)} · pagamento único
               </span>
             </Link>
 
@@ -289,6 +324,10 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
                 Pix, cartão ou boleto
               </span>
             </div>
+
+            {/* Quem ainda não tem o benefício vê o convite para pedir (o
+                componente some sozinho se o plano não tem PROUNI/FIES). */}
+            {!bolsista && !oferta.previa && <ProuniCta itemType="plus" itemId={plano.tipo} className="mt-3" />}
           </section>
         </aside>
 
@@ -356,6 +395,15 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
                   ? 'A renovação automática do Quest+ é encerrada no momento do upgrade. Nada mais é cobrado dele.'
                   : `É pagamento único${plano.durationMonths > 0 ? `, com ${rotuloDeCiclo(plano.durationMonths)} de Plus+` : ''}: nada fica renovando no seu cartão.`}
               </LinhaDeGarantia>
+              {bolsista ? (
+                <LinhaDeGarantia icone={GraduationCap} titulo="Seu benefício vale mais aqui">
+                  {`Em outras compras o PROUNI/FIES não soma com cupom; no upgrade ele soma com +${extra}% extra. O benefício é usado nesta compra.`}
+                </LinhaDeGarantia>
+              ) : extra != null ? (
+                <LinhaDeGarantia icone={GraduationCap} titulo="Bolsista PROUNI/FIES ganha mais">
+                  {`Com o benefício aprovado para o Plus+, o upgrade soma +${extra}% extra em cima dele.`}
+                </LinhaDeGarantia>
+              ) : null}
               <LinhaDeGarantia icone={Undo2} titulo="7 dias para testar">
                 Não gostou? Devolvemos 100% do valor e seu Quest+ volta exatamente como estava.
               </LinhaDeGarantia>
@@ -385,14 +433,20 @@ function Oferta({ oferta }: { oferta: OfertaDeUpgrade }) {
       >
         <span className="min-w-0 flex-1">
           <span className="block truncate text-[13px] font-semibold">
-            {nomeCurto(plano)} <span className="ios-ambar">−{pct}%</span>
+            {nomeCurto(plano)} <span className="ios-ambar">−{pctTotal}%</span>
           </span>
-          <span className="block text-[15px] font-bold tabular-nums">
+          <span className="block whitespace-nowrap text-[15px] font-bold tabular-nums">
             <span className="ios-rotulo-3 mr-1.5 text-[13px] font-medium line-through">R$ {formatarBRL(plano.preco)}</span>
-            R$ {formatarBRL(plano.precoUpgrade)}
+            R$ {formatarBRL(final)}
           </span>
         </span>
-        {falta !== null && <ContagemRegressiva faltaMs={falta} tamanho="compacto" className="hidden min-[400px]:inline-flex" />}
+        {/* O invólucro esconde: o `display` do próprio contador vem do CSS
+            dele e venceria o `hidden` posto direto nele. */}
+        {falta !== null && (
+          <span className="hidden min-[430px]:inline-flex">
+            <ContagemRegressiva faltaMs={falta} tamanho="compacto" />
+          </span>
+        )}
         <Link
           href={destino}
           onClick={registrarClique}

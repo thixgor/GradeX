@@ -7,7 +7,8 @@ import { contaEhPaga } from '@/lib/cargos-server'
 import { getManualClinicoConfig } from '@/lib/manual-clinico-product'
 import { itensInclusos, type PerfilDoComprador } from '@/lib/plus-oferta'
 import { planoPadraoDoUpgrade, planosDoUpgrade, prazoDaOferta, precoDeUpgrade } from '@/lib/upgrade-quest'
-import { buscarRecorrenciaDoQuest, lerCatalogoDoUpgrade } from '@/lib/upgrade-quest-server'
+import { buscarRecorrenciaDoQuest, lerCatalogoDoUpgrade, precosDoBolsista } from '@/lib/upgrade-quest-server'
+import { resolveProuniForCart } from '@/lib/prouni-fies'
 import type { User } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
@@ -62,10 +63,20 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const [recorrencia, manual] = await Promise.all([
-      perfil === 'quest' && session?.userId ? buscarRecorrenciaDoQuest(db, session.userId) : Promise.resolve(null),
+    const ehQuest = perfil === 'quest' && !!session?.userId
+    const [recorrencia, manual, concessoes] = await Promise.all([
+      ehQuest ? buscarRecorrenciaDoQuest(db, session!.userId) : Promise.resolve(null),
       getManualClinicoConfig(db).catch(() => null),
+      // As concessões PROUNI/FIES da conta para os planos da oferta, numa
+      // consulta só — são elas que fazem o preço de bolsista.
+      ehQuest && config.bolsista.ativo
+        ? resolveProuniForCart(db, {
+            userId: session!.userId,
+            items: daOferta.map((p) => ({ itemType: 'plus' as const, itemId: String(p.tipo) })),
+          }).catch(() => new Map())
+        : Promise.resolve(new Map()),
     ])
+    const extra = config.bolsista.ativo ? config.bolsista.descontoExtra : null
     const manualIncluidoNoPlus = manual?.includedInPlus !== false
     const agora = Date.now()
     const expira = user?.premiumExpiresAt ? new Date(user.premiumExpiresAt) : null
@@ -83,6 +94,8 @@ export async function GET(request: NextRequest) {
         // errado, e o contador tem que bater com o servidor.
         restanteMs: config.urgencia.ativa ? prazoDaOferta(session!.userId, agora, config.urgencia.horas) - agora : null,
         janelaHoras: config.urgencia.horas,
+        // O extra do bolsista PROUNI/FIES; `null` com ele desligado.
+        descontoExtraBolsista: extra,
         planoPadrao: padrao.tipo,
         planos: daOferta.map((p) => ({
           tipo: p.tipo,
@@ -91,6 +104,8 @@ export async function GET(request: NextRequest) {
           preco: Number(p.preco),
           precoOriginal: Number(p.precoOriginal) > Number(p.preco) ? Number(p.precoOriginal) : null,
           precoUpgrade: precoDeUpgrade(Number(p.preco), config.descontoPercentual),
+          // Só existem para quem tem PROUNI/FIES aprovado para este plano.
+          ...precosDoBolsista(Number(p.preco), concessoes.get(`plus:${p.tipo}`), extra),
           durationMonths: Number(p.durationMonths) > 0 ? Number(p.durationMonths) : 0,
           badge: p.badge || '',
           inclusos: itensInclusos(p, { manualIncluidoNoPlus }),

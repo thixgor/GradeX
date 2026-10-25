@@ -51,7 +51,7 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { AccountType } from '@/lib/types'
 import { PLUS_LABEL, ROTA_ASSINATURA, isPlusAccount, isQuestAccount, normalizeAccountType } from '@/lib/account-tier'
 import { CartaoDeUpgrade } from '@/components/upgrade/cartao-de-upgrade'
-import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
+import { precoAnunciado, useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
 import { SeloDeCargo } from '@/components/cargo-badge'
 import { cn } from '@/lib/utils'
 import { Avatar as Retrato } from '@/components/monitorias/base'
@@ -358,6 +358,14 @@ export default function ProfilePage() {
     contaCarregada && userRole !== 'admin' && (ehQuest || cargo === 'gratuito' || cargo === 'trial')
   const ofertaDeUpgrade = useOfertaDeUpgrade({ ativo: ehQuest })
   const upgradeNoAr = ehQuest && !!ofertaDeUpgrade?.elegivel
+  // O percentual do botão é o total do plano anunciado: para o bolsista,
+  // PROUNI/FIES + extra; para os outros, o desconto de upgrade.
+  const planoDaOferta = upgradeNoAr
+    ? ofertaDeUpgrade?.planos?.find((p) => p.tipo === ofertaDeUpgrade.planoPadrao) || ofertaDeUpgrade?.planos?.[0]
+    : undefined
+  const pctDoBotao = planoDaOferta
+    ? Math.round(100 - (precoAnunciado(planoDaOferta).preco / planoDaOferta.preco) * 100)
+    : ofertaDeUpgrade?.descontoPercentual
 
   function getTrialTimeRemaining(): string {
     if (!trialExpiresAt) return ''
@@ -447,7 +455,7 @@ export default function ProfilePage() {
                   >
                     {upgradeNoAr ? <Sparkles className="h-4 w-4" /> : <Crown className="h-4 w-4" />}
                     {upgradeNoAr
-                      ? `Upgrade −${ofertaDeUpgrade?.descontoPercentual}%`
+                      ? `Upgrade −${pctDoBotao}%`
                       : isQuestAccount(accountType)
                         ? `Migrar para ${PLUS_LABEL}`
                         : `Assinar ${PLUS_LABEL}`}
