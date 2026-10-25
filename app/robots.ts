@@ -8,6 +8,9 @@ import { CANONICAL_ORIGIN } from '@/lib/seo'
 const ALLOW = [
   '/',
   '/amostra',
+  // Vitrines públicas (ver `destinoDaVitrine` no middleware).
+  '/provas',
+  '/banco-questoes',
   '/flashcards/',
   '/materiais/',
   '/manual-clinico/',
@@ -18,9 +21,9 @@ const ALLOW = [
 ]
 
 // Bloqueamos áreas logadas, APIs, checkout e páginas de status de pagamento.
-// As rotas do app (banco-questoes, aulas, cronogramas, forum) já ficam fora do
-// índice pelo middleware; quando ganharem versão pública/amostra, entram no
-// ALLOW acima.
+// As rotas do app (aulas, cronogramas, forum) já ficam fora do índice pelo
+// middleware; quando ganharem versão pública/amostra, entram no ALLOW acima —
+// como Provas e Banco de Questões, que ganharam vitrine.
 const DISALLOW = [
   '/api/',
   '/admin/',

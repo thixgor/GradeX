@@ -15,12 +15,14 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
+import { CapaDaProva } from '@/components/exam/capa-da-prova'
+import { CoverImage } from '@/components/cover-image'
 import { ExamTimer } from '@/components/exam-timer'
 import { ExamBrandBadge } from '@/components/exam-brand-badge'
 import { Barcode } from '@/components/barcode'
 import { Exam, UserAnswer, TextHighlight, QuestionAnnotation } from '@/lib/types'
 import { HighlightableText } from '@/components/highlightable-text'
-import { formatDate } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { ProctoringConsent } from '@/components/proctoring-consent'
 import { ProctoringMonitor } from '@/components/proctoring-monitor'
 import { InlineAnnotationCanvas, useAnnotationModeActive } from '@/components/inline-annotation-canvas'
@@ -3794,14 +3796,16 @@ ${respostaAluno}`
 
             <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
               {/* Top accent */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
+              <div className="absolute top-0 left-0 right-0 z-10 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
 
               {/* Cover */}
+              {/*
+                A capa inteira, em proporção, e não uma faixa de altura fixa
+                desbotada por um degradê com o título por cima — ver
+                components/exam/capa-da-prova.tsx.
+              */}
               {exam.coverImage ? (
-                <div className="relative h-48 sm:h-56 overflow-hidden">
-                  <img src={exam.coverImage} alt={exam.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-                </div>
+                <CapaDaProva src={exam.coverImage} titulo={exam.title} />
               ) : (
                 /*
                   Sem capa, esta faixa era um degradê mudo de 80px. Agora ela
@@ -3821,7 +3825,8 @@ ${respostaAluno}`
                 </div>
               )}
 
-              <div className="p-6 sm:p-8 -mt-10 sm:-mt-14 relative space-y-6">
+              {/* O cartão só sobe sobre a faixa da marca; a capa fica inteira à vista. */}
+              <div className={cn('p-6 sm:p-8 relative space-y-6', !exam.coverImage && '-mt-10 sm:-mt-14')}>
                 {/* Title */}
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -4173,7 +4178,9 @@ ${respostaAluno}`
                 são da plataforma. Passa a ser a mesma da tela de entrada:
                 verde e âmbar da marca.
               */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
+              <div className="absolute top-0 left-0 right-0 z-10 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
+
+              {exam.coverImage && <CapaDaProva src={exam.coverImage} titulo={exam.title} />}
 
               <div className="p-6 sm:p-8 space-y-6">
                 <div className="text-center space-y-2.5">
@@ -4507,6 +4514,12 @@ ${respostaAluno}`
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               {examDeadline && <ExamBrandBadge compact className="hidden sm:flex" />}
+              {/* A capa em miniatura, ao lado do título, durante a prova toda. */}
+              {exam.coverImage && (
+                <div className="relative hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-muted sm:block">
+                  <CoverImage src={exam.coverImage} alt="" sizes="40px" priority />
+                </div>
+              )}
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold truncate">{exam.title}</h1>

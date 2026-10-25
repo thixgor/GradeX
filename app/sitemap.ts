@@ -49,6 +49,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    // Para o buscador (que não tem sessão) estas são as vitrines públicas:
+    // o middleware reescreve as duas para app/vitrine/*.
+    {
+      url: canonical('/provas'),
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    {
+      url: canonical('/banco-questoes'),
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
     {
       url: canonical('/instalar'),
       lastModified: now,

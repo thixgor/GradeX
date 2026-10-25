@@ -150,6 +150,10 @@ const publicPrefixes = [
   // A rota devolve só nome, curso, data e percentual; nada de e-mail ou id.
   // A EMISSÃO (POST) na mesma rota continua exigindo sessão — ela valida
   // internamente com `secureApiEndpoint`, como as rotas de serial key.
+  // As vitrines de quem chega sem conta (ver `destinoDaVitrine`). O caminho
+  // normal até elas é a reescrita; abrir o endereço direto também precisa
+  // funcionar sem login, porque elas são exatamente para quem não tem.
+  '/vitrine/',
   '/aulas/certificado/',
   '/api/aulas/certificado',
   '/lead/',
@@ -328,6 +332,20 @@ const secret = new TextEncoder().encode(
 
 /** A landing pública do Manual de Semiologia. */
 const ROTA_VITRINE_SEMIOLOGIA = '/manual-clinico/semiologia/vitrine'
+
+/**
+ * Para onde vai o visitante sem sessão de `/provas`, `/banco-questoes` (e
+ * qualquer página dentro dele) e de uma prova — ou `null` se o caminho não
+ * tem vitrine. Só id de 24 hex: um id inventado iria para o login como antes,
+ * em vez de gerar uma página de vitrine nova no cache para cada chute.
+ */
+function destinoDaVitrine(pathname: string): string | null {
+  if (pathname === '/provas' || pathname === '/provas/') return '/vitrine/provas'
+  if (/^\/banco-questoes(\/|$)/.test(pathname)) return '/vitrine/banco-questoes'
+  const prova = /^\/exam\/([a-fA-F0-9]{24})(\/|$)/.exec(pathname)
+  if (prova) return `/vitrine/prova/${prova[1].toLowerCase()}`
+  return null
+}
 
 /** A home do Manual da Histologia e a landing estática que o visitante recebe nela. */
 const RAIZ_DA_HISTOLOGIA = '/manual-clinico/histologia'
@@ -556,6 +574,23 @@ export async function middleware(request: NextRequest) {
     const destino = new URL(ROTA_VITRINE_SEMIOLOGIA, request.url)
     destino.searchParams.set('de', pathname)
     return NextResponse.rewrite(destino)
+  }
+
+  // ══════════ Vitrines de Provas, do Banco e da prova ══════════
+  //
+  // `/provas`, `/banco-questoes` e o link de uma prova (`/exam/<id>`) mandavam
+  // o visitante sem sessão direto para o formulário de login: quem recebia o
+  // link da prova no grupo da turma não via nem o nome dela, e as duas seções
+  // não tinham página nenhuma para quem ainda não tem conta.
+  //
+  // Mesma saída da Semiologia: reescrita, só com `jwtVerify`, sem banco. A
+  // barra continua mostrando o endereço aberto, e o que chega é uma página
+  // estática do CDN (app/vitrine/*), que convida a entrar ou criar conta e
+  // devolve a pessoa ao mesmo endereço depois do login. As páginas das seções
+  // nem chegam a ser montadas. Quem tem sessão segue o caminho de sempre.
+  const vitrine = destinoDaVitrine(pathname)
+  if (vitrine && !isDevAuthBypass() && !(await temSessaoValida(request))) {
+    return NextResponse.rewrite(new URL(vitrine, request.url))
   }
 
   // Rotas públicas: permitir acesso sem autenticação.

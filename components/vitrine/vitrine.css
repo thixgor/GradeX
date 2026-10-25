@@ -1,0 +1,214 @@
+/*
+ * As vitrines de quem chega sem conta (/provas, /banco-questoes, /exam/[id]).
+ *
+ * Cada seção é um capítulo de uma cor só, de ponta a ponta, encostado no
+ * seguinte sem divisória. As cores são as da marca e querem dizer o capítulo;
+ * o tipo é o da marca (Newsreader nos títulos, Source Sans no texto).
+ *
+ * Tudo aqui mora sob `.vitrine`, para não vazar para o resto do app.
+ */
+
+.vitrine {
+  --papel: #f4f1ea;
+  --papel-2: #e9e4d8;
+  --tinta: #0b1f1a;
+  --tinta-suave: #3c4d47;
+  --verde-fundo: #153d1f;
+  --verde: #468152;
+  --ambar: #e2a43e;
+  --ambar-forte: #cf8f27;
+
+  /* Etapas, do mais escuro ao mais claro: a ordem é dita pela cor. */
+  --etapa-1: #153d1f;
+  --etapa-2: #234f2c;
+  --etapa-3: #33633d;
+  --etapa-4: #5e8b66;
+  --etapa-5: #9fbea3;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-press: 140ms;
+  --t-hover: 180ms;
+
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+/* No tema escuro, o capítulo de papel vira a noite da marca; os de cor ficam. */
+.dark .vitrine {
+  --papel: #0b1f1a;
+  --papel-2: #12302a;
+  --tinta: #f4f1ea;
+  --tinta-suave: #c9d3cc;
+}
+
+.vitrine .display {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+}
+
+/* A escala inteira: 16 (nota), 18 (texto), 20 (destaque), título e display. */
+.vitrine .t-titulo {
+  font-size: clamp(34px, 3.6vw, 52px);
+}
+.vitrine .t-display {
+  font-size: clamp(50px, 8.3vw, 128px);
+}
+
+.vitrine .num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Botões: retângulo chapado, um formato para a página inteira ── */
+.vitrine .botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  font-weight: 600;
+  font-size: 18px;
+  transition:
+    transform var(--t-press) var(--ease-out),
+    background-color var(--t-hover) ease,
+    color var(--t-hover) ease;
+}
+.vitrine .botao:active {
+  transform: scale(0.97);
+}
+.vitrine .botao-ambar {
+  background: var(--ambar);
+  color: #0b1f1a;
+}
+.vitrine .botao-tinta {
+  background: #0b1f1a;
+  color: #f4f1ea;
+}
+.vitrine .botao-papel {
+  background: #f4f1ea;
+  color: #0b1f1a;
+}
+.vitrine .elo {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 0.07em;
+  transition: text-decoration-color var(--t-hover) ease;
+}
+.vitrine :focus-visible {
+  outline: 3px solid var(--ambar);
+  outline-offset: 3px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .vitrine .botao-ambar:hover {
+    background: var(--ambar-forte);
+  }
+  .vitrine .botao-tinta:hover {
+    background: #153d1f;
+  }
+  .vitrine .botao-papel:hover {
+    background: #ffffff;
+  }
+  .vitrine .elo:hover {
+    text-decoration-color: currentColor;
+  }
+  .vitrine .mosaico-foto:hover img {
+    filter: none;
+  }
+}
+
+/* ── Mosaico do topo: capas em cinza, que ganham cor sob o cursor ── */
+.vitrine .mosaico-foto img {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 400ms ease;
+}
+
+/* ── Movimento ──
+ * O estado escondido só existe sob `.vitrine-js` (posto por um script de uma
+ * linha no topo da página) e sem pedido de movimento reduzido: sem script, ou
+ * com o movimento desligado, tudo aparece no primeiro quadro. */
+
+.vitrine .linhas .linha {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.vitrine .linhas [data-linha] {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vitrine-js .vitrine .linhas [data-linha] {
+    transform: translateY(105%);
+    animation: vitrine-linha 900ms var(--ease-expo) forwards;
+    animation-delay: calc(var(--i, 0) * 110ms + 150ms);
+  }
+  .vitrine-js .vitrine [data-chegada] {
+    opacity: 0;
+    animation: vitrine-chegada 700ms var(--ease-out) forwards;
+    animation-delay: 420ms;
+  }
+  .vitrine-js .vitrine [data-revelar] {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 700ms var(--ease-out),
+      transform 900ms var(--ease-expo);
+    transition-delay: calc(var(--i, 0) * 80ms);
+  }
+  .vitrine-js .vitrine [data-revelar].visivel {
+    opacity: 1;
+    transform: none;
+  }
+  /* Um retrato que respira devagar: a única foto que se mexe sozinha. */
+  .vitrine .deriva img {
+    animation: vitrine-deriva 18s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes vitrine-linha {
+  to {
+    transform: none;
+  }
+}
+@keyframes vitrine-chegada {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes vitrine-deriva {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.07) translate(-1%, -1%);
+  }
+}
+
+/* ── Acordeão das etapas ── */
+@media (min-width: 768px) {
+  .vitrine .etapa-nome-aberto {
+    font-family: var(--font-heading), Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    line-height: 0.92;
+    font-size: clamp(34px, 3.6vw, 52px);
+  }
+}
+.vitrine .etapa {
+  transition: flex-basis 450ms var(--ease-out), flex-grow 450ms var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .vitrine .etapa {
+    transition: none;
+  }
+}

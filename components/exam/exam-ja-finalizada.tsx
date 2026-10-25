@@ -48,6 +48,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
+import { CapaDaProva } from '@/components/exam/capa-da-prova'
 import type { Exam, UserAnswer } from '@/lib/types'
 import {
   FORMATOS_DA_FOLHA,
@@ -237,7 +238,11 @@ export function ExamJaFinalizada({
   const podePraticar = permiteTreinoAposTermino(exam)
 
   const cartao = (
-    <Card className="w-full max-w-md shadow-2xl">
+    <Card className="w-full max-w-md overflow-hidden shadow-2xl">
+      {/* A capa também aqui: quem volta pelo link reconhece a prova pela imagem. */}
+      {exam.coverImage && (
+        <CapaDaProva src={exam.coverImage} titulo={exam.title} sizes="(max-width: 448px) 100vw, 448px" />
+      )}
       <CardHeader className="space-y-4 text-center">
         <div className="exam-selo-estoura mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
           <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />

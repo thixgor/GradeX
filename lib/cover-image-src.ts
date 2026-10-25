@@ -31,6 +31,8 @@ function isOptimizableHost(hostname: string): boolean {
  * de escondê-la.
  */
 export function normalizeCoverSrc(src: string): string {
+  const doImgur = imagemDaPaginaDoImgur(src)
+  if (doImgur) return doImgur
   if (!src.startsWith('http://')) return src
   try {
     const url = new URL(src)
@@ -41,6 +43,23 @@ export function normalizeCoverSrc(src: string): string {
   } catch {
     return src
   }
+}
+
+/**
+ * O link da PÁGINA do Imgur (`imgur.com/AbC123`) no lugar do link da imagem.
+ *
+ * É o que se copia da barra do navegador, e o formulário da capa aceita: é uma
+ * URL https válida. Só que ela devolve HTML, não imagem — a capa simplesmente
+ * não aparece, sem erro nenhum. O arquivo mora em `i.imgur.com/<id>.<ext>`, e
+ * o Imgur entrega a imagem por qualquer extensão; sem extensão, vai `.jpg`.
+ *
+ * Álbum e galeria (`/a/…`, `/gallery/…`) ficam de fora: o id deles não é o de
+ * uma imagem, e não há tradução honesta.
+ */
+function imagemDaPaginaDoImgur(src: string): string | null {
+  const achado = /^https?:\/\/(?:www\.|m\.)?imgur\.com\/([A-Za-z0-9]{5,10})(\.[A-Za-z0-9]{3,4})?\/?(?:[?#].*)?$/.exec(src.trim())
+  if (!achado) return null
+  return `https://i.imgur.com/${achado[1]}${achado[2] || '.jpg'}`
 }
 
 /**

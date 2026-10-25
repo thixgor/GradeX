@@ -77,6 +77,12 @@ describe('canUseNextImage', () => {
 })
 
 describe('normalizeCoverSrc', () => {
+  it('troca o link da página do Imgur pelo da imagem', () => {
+    expect(normalizeCoverSrc('https://imgur.com/AbC123x')).toBe('https://i.imgur.com/AbC123x.jpg')
+    expect(normalizeCoverSrc('http://www.imgur.com/AbC123x.png')).toBe('https://i.imgur.com/AbC123x.png')
+    expect(normalizeCoverSrc('https://imgur.com/a/AbC123x')).toBe('https://imgur.com/a/AbC123x')
+  })
+
   it('promove http para https nos hosts conhecidos', () => {
     expect(normalizeCoverSrc('http://i.imgur.com/abc123.png')).toBe('https://i.imgur.com/abc123.png')
   })
