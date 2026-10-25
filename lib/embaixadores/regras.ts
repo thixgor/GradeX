@@ -25,7 +25,12 @@
 export type TipoDeEmbaixador = 'remunerado' | 'nao_remunerado'
 export type StatusDoEmbaixador = 'ativo' | 'pausado' | 'encerrado'
 export type TipoDeChavePix = 'cpf' | 'cnpj' | 'email' | 'telefone' | 'aleatoria'
-export type OrigemDaVenda = 'cupom' | 'link'
+/**
+ * Que desconto o comprador levou numa venda do embaixador. A venda é sempre do
+ * cupom dele; quando outro desconto foi maior (PROUNI/FIES, lote), é esse que
+ * vale no preço, e o cupom fica registrado só para a atribuição.
+ */
+export type DescontoDaVenda = 'cupom' | 'prouni' | 'fies' | 'lote'
 export type StatusDaVenda = 'confirmada' | 'estornada'
 
 export const TIPOS_DE_EMBAIXADOR: TipoDeEmbaixador[] = ['remunerado', 'nao_remunerado']
@@ -43,6 +48,13 @@ export const ROTULO_DO_STATUS: Record<StatusDoEmbaixador, string> = {
   encerrado: 'Encerrado',
 }
 
+export const ROTULO_DO_DESCONTO: Record<DescontoDaVenda, string> = {
+  cupom: 'Cupom',
+  prouni: 'Cupom + ProUni',
+  fies: 'Cupom + Fies',
+  lote: 'Cupom + lote',
+}
+
 export const ROTULO_DA_CHAVE_PIX: Record<TipoDeChavePix, string> = {
   cpf: 'CPF',
   cnpj: 'CNPJ',
@@ -51,10 +63,13 @@ export const ROTULO_DA_CHAVE_PIX: Record<TipoDeChavePix, string> = {
   aleatoria: 'Chave aleatória',
 }
 
-/** Cookie do link de divulgação. Último clique vence. */
+/**
+ * Cookie do link de divulgação. Último clique vence: ele decide de quem é o
+ * cadastro e qual cupom o checkout sugere. Venda, só com o cupom aplicado.
+ */
 export const COOKIE_DO_EMBAIXADOR = 'da_embaixador'
 /** Quanto tempo o clique no link segura a indicação de quem ainda não criou conta. */
-export const DIAS_DO_COOKIE = 60
+export const DIAS_DO_COOKIE = 30
 
 export interface ConfigDoPrograma {
   /** Percentual do sócio sobre o valor do produto (0–100). */
@@ -65,13 +80,6 @@ export interface ConfigDoPrograma {
   comissaoPadrao: number
   /** Endereço do formulário de inscrição (caminho interno ou URL). */
   linkInscricao: string
-  /**
-   * Por quantos dias a compra de quem se cadastrou pelo link continua sendo
-   * do embaixador. Compra com o cupom dele é sempre dele, sem prazo.
-   */
-  janelaAtribuicaoDias: number
-  /** Cobrança recorrente de assinatura de um indicado também gera comissão. */
-  comissionarRenovacoes: boolean
   /** Dias sem venda para o cupom ser considerado "parado". */
   diasParaCupomParado: number
 }
@@ -81,8 +89,6 @@ export const CONFIG_PADRAO: ConfigDoPrograma = {
   descontoCupomPadrao: 10,
   comissaoPadrao: 10,
   linkInscricao: '/forms/6aaed6ee00234fc63cf6e9ab',
-  janelaAtribuicaoDias: 365,
-  comissionarRenovacoes: false,
   diasParaCupomParado: 60,
 }
 
@@ -114,8 +120,6 @@ export function normalizarConfig(entrada?: Partial<ConfigDoPrograma> | null): Co
     descontoCupomPadrao: percentual(e.descontoCupomPadrao, CONFIG_PADRAO.descontoCupomPadrao),
     comissaoPadrao: percentual(e.comissaoPadrao, CONFIG_PADRAO.comissaoPadrao),
     linkInscricao: link && linkSeguro(link) ? link : CONFIG_PADRAO.linkInscricao,
-    janelaAtribuicaoDias: inteiro(e.janelaAtribuicaoDias, CONFIG_PADRAO.janelaAtribuicaoDias, 1, 3650),
-    comissionarRenovacoes: e.comissionarRenovacoes === true,
     diasParaCupomParado: inteiro(e.diasParaCupomParado, CONFIG_PADRAO.diasParaCupomParado, 7, 365),
   }
 }

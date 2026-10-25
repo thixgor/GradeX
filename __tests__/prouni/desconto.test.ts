@@ -144,6 +144,43 @@ describe('combineDiscountsWithProuni', () => {
     expect(r.prouniDiscountApplied).toBe(6.57)
     expect(r.finalPrice).toBe(13.33)
   })
+  // Cupom sobre lote (o cupom de embaixador): o valor dele já vem calculado
+  // sobre o preço com lote. Antes, no Manual Clínico, esse caminho pulava o
+  // PROUNI e o bolsista que digitava o cupom pagava mais caro.
+  describe('cupom empilhado no lote', () => {
+    it('o PROUNI maior vence lote + cupom', () => {
+      // R$ 100, lote 15% (R$ 15), cupom 10% sobre R$ 85 (R$ 8,50) = R$ 23,50 < PROUNI 40%.
+      const r = combineDiscountsWithProuni({
+        basePrice: 100,
+        tierDiscountAmount: 15,
+        couponDiscountAmount: 8.5,
+        couponStacksWithTier: true,
+        prouni: PROUNI_40,
+      })
+      expect(r.appliedSource).toBe('prouni')
+      expect(r.finalPrice).toBe(60)
+      expect(r.couponDiscountApplied).toBe(0)
+    })
+
+    it('lote + cupom vence um PROUNI menor', () => {
+      const r = combineDiscountsWithProuni({
+        basePrice: 100,
+        tierDiscountAmount: 15,
+        couponDiscountAmount: 8.5,
+        couponStacksWithTier: true,
+        prouni: { discountType: 'percentage', discountValue: 20, stackWithTier: false },
+      })
+      expect(r.appliedSource).toBe('coupon_tier')
+      expect(r.finalPrice).toBe(76.5)
+      expect(r.tierDiscountApplied).toBe(15)
+      expect(r.couponDiscountApplied).toBe(8.5)
+    })
+
+    it('sem PROUNI, lote e cupom somam', () => {
+      const r = combineDiscountsWithProuni({ basePrice: 100, tierDiscountAmount: 15, couponDiscountAmount: 8.5, couponStacksWithTier: true })
+      expect(r.finalPrice).toBe(76.5)
+    })
+  })
 })
 
 describe('getProuniDiscountLabel', () => {

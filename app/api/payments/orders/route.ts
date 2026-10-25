@@ -34,6 +34,7 @@ import {
   type ProuniProgram,
 } from '@/lib/prouni-fies'
 import type { PaymentOrder, MaterialPurchase } from '@/lib/types'
+import { atribuicaoDeEmbaixador } from '@/lib/embaixadores/atribuicao'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -131,6 +132,7 @@ export async function POST(request: NextRequest) {
   let commissionExcluded = false
 
   let couponValidation: CouponValidationResult | null = null
+  let atribuicaoDoCupom: ReturnType<typeof atribuicaoDeEmbaixador> = {}
   let prouniApplied: { requestId: string; program: ProuniProgram; discountAmount: number } | null = null
 
   if (data.type === 'plan') {
@@ -177,6 +179,9 @@ export async function POST(request: NextRequest) {
       prouni,
     })
     amount = combined.finalPrice
+    // Cupom de embaixador que perdeu para o PROUNI não desconta, mas a venda
+    // continua sendo de quem indicou (lib/embaixadores/atribuicao.ts).
+    atribuicaoDoCupom = atribuicaoDeEmbaixador(couponValidation)
     if (combined.appliedSource !== 'coupon') couponValidation = null
     if (prouni && combined.prouniDiscountApplied > 0) {
       prouniApplied = {
@@ -286,6 +291,7 @@ export async function POST(request: NextRequest) {
     idempotencyKey: '', // preenchido abaixo
     metadata: {
       itemType: data.itemType,
+      ...atribuicaoDoCupom,
       ...couponAnalyticsMetadata(couponValidation),
       ...prouniAnalyticsMetadata(prouniApplied),
       ...chargeMetadata(charge),

@@ -474,7 +474,7 @@ function BuyCheckoutContent() {
               >
                 {couponDiscountAmount > 0
                   ? `Cupom ${appliedCoupon.code}: − ${formatBRL(couponDiscountAmount)}`
-                  : `Cupom ${appliedCoupon.code} mantido — o seu desconto ProUni/FIES já é maior.`}
+                  : `Cupom ${appliedCoupon.code} registrado na compra — o seu desconto ProUni/FIES, que é maior, é o que vale no preço.`}
               </p>
             )}
 

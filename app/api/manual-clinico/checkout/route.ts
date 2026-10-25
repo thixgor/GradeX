@@ -33,6 +33,7 @@ import {
   type CouponValidationResult,
 } from '@/lib/coupons'
 import { getPricingEventStateById } from '@/lib/pricing-events'
+import { atribuicaoDeEmbaixador } from '@/lib/embaixadores/atribuicao'
 import {
   combineDiscountsWithProuni,
   prouniAnalyticsMetadata,
@@ -166,33 +167,33 @@ export async function POST(request: NextRequest) {
     manualPlanKey: plan.key,
   })
 
-  // Empilhamento (cupom sobre lote) quando o cupom é stackWithTier: aplica o
-  // lote e, por cima, o cupom (já calculado sobre o preço pós-lote). Senão,
-  // vale o "maior dos dois" — agora com o PROUNI como terceiro concorrente.
+  // Empilhamento (cupom sobre lote) quando o cupom é stackWithTier: lote e, por
+  // cima, o cupom (já calculado sobre o preço pós-lote). Senão, vale o "maior
+  // dos dois". Nos dois casos o PROUNI disputa: antes, o cupom empilhado
+  // passava por cima do benefício, e o bolsista que digitava o cupom de um
+  // embaixador pagava mais caro do que pagaria só com o PROUNI.
   const stackCoupon = couponValidation?.coupon.stackWithTier === true
-  let appliedTierDiscount = 0
+  // Cupom de embaixador que perdeu para um desconto maior não desconta, mas a
+  // venda continua sendo de quem indicou (ver lib/embaixadores/servidor.ts).
+  const atribuicaoDoCupom = atribuicaoDeEmbaixador(couponValidation)
   let prouniApplied: { requestId: string; program: ProuniProgram; discountAmount: number } | null = null
-  if (stackCoupon && tierDiscountAmount > 0 && couponValidation) {
-    appliedTierDiscount = tierDiscountAmount
-    amount = Math.max(0, Math.round((amount - tierDiscountAmount - couponValidation.discountAmount) * 100) / 100)
-  } else {
-    const combined = combineDiscountsWithProuni({
-      basePrice: amount,
-      tierDiscountAmount,
-      couponDiscountAmount,
-      prouni,
-    })
-    amount = combined.finalPrice
-    if (combined.appliedSource !== 'coupon') {
-      couponValidation = null
-    }
-    appliedTierDiscount = combined.tierDiscountApplied
-    if (prouni && combined.prouniDiscountApplied > 0) {
-      prouniApplied = {
-        requestId: prouni.requestId,
-        program: prouni.program as ProuniProgram,
-        discountAmount: combined.prouniDiscountApplied,
-      }
+  const combined = combineDiscountsWithProuni({
+    basePrice: amount,
+    tierDiscountAmount,
+    couponDiscountAmount,
+    couponStacksWithTier: stackCoupon,
+    prouni,
+  })
+  amount = combined.finalPrice
+  if (combined.appliedSource !== 'coupon' && combined.appliedSource !== 'coupon_tier') {
+    couponValidation = null
+  }
+  const appliedTierDiscount = combined.tierDiscountApplied
+  if (prouni && combined.prouniDiscountApplied > 0) {
+    prouniApplied = {
+      requestId: prouni.requestId,
+      program: prouni.program as ProuniProgram,
+      discountAmount: combined.prouniDiscountApplied,
     }
   }
 
@@ -342,6 +343,7 @@ export async function POST(request: NextRequest) {
     idempotencyKey: '',
     metadata: {
       ...chargeMetadata(charge),
+      ...atribuicaoDoCupom,
       productType: MANUAL_CLINICO_PRODUCT_TYPE,
       itemTitle: `${config.label} - ${plan.label}`,
       originalPrice: plan.price,

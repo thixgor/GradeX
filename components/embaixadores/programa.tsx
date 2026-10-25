@@ -37,12 +37,17 @@ const ESPERAMOS = [
 
 const BOLETIM = [
   { icone: Megaphone, titulo: 'Você divulga com o seu cupom', texto: 'Nos stories, no grupo, no corredor. O código é seu e ninguém mais usa.' },
-  { icone: Target, titulo: 'Cada uso é contabilizado', texto: 'Compra fechada com o seu código ou pelo seu link vira registro no seu nome, sozinha.' },
+  { icone: Target, titulo: 'Cada uso é contabilizado', texto: 'Compra fechada com o seu cupom vira registro no seu nome, sozinha. Quem abre o seu link já encontra o cupom pronto.' },
   { icone: BookOpenCheck, titulo: 'A equipe avalia pelo cupom', texto: 'Não é seguidor nem esforço declarado. É o número de usos do seu código.' },
   { icone: RefreshCw, titulo: 'Renovado por resultado', texto: 'O Plus+ entra no dia em que você é aprovado e sai no dia em que o cupom para.' },
 ]
 
 const REGRAS = [
+  {
+    titulo: 'Colega bolsista ProUni/Fies',
+    texto:
+      'Peça para ele aplicar o seu cupom mesmo assim. O desconto maior é o que vale no preço — em geral o do ProUni/Fies, e os dois não se somam —, e a compra conta para você do mesmo jeito: o que vale é o seu cupom aplicado no pagamento.',
+  },
   {
     titulo: 'Direito de arrependimento em 7 dias',
     texto:
@@ -203,7 +208,7 @@ export function ProgramaDeEmbaixadores({ linkInscricao, descontoCupom }: { linkI
               <p className="emb-suave mt-2 text-[15.5px]">Tudo do embaixador, e uma porcentagem de cada venda feita com você.</p>
               <ul className="mt-5 space-y-2.5 text-[15px]">
                 <li className="flex gap-2.5">
-                  <Wallet className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Comissão por compra com o seu cupom ou link
+                  <Wallet className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Comissão por compra feita com o seu cupom
                 </li>
                 <li className="flex gap-2.5">
                   <ShieldCheck className="emb-ambar mt-0.5 h-4 w-4 shrink-0" aria-hidden /> Saldo a receber à vista, venda por venda

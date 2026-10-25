@@ -58,6 +58,7 @@ import {
   versionDuration,
   versionDurationMinutes,
 } from '@/lib/material-timed-access'
+import { atribuicaoDeEmbaixador } from '@/lib/embaixadores/atribuicao'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -392,6 +393,10 @@ export async function POST(request: NextRequest) {
   })
   amount = combined.finalPrice
 
+  // Cupom de embaixador que perdeu para o lote/PROUNI não desconta, mas a
+  // venda continua sendo de quem indicou (lib/embaixadores/atribuicao.ts).
+  const atribuicaoDoCupom = atribuicaoDeEmbaixador(couponValidation)
+
   // Se o lote/PROUNI venceu, não reserva o cupom (mantém disponível para o usuário).
   if (combined.appliedSource !== 'coupon') {
     couponValidation = null
@@ -666,6 +671,7 @@ export async function POST(request: NextRequest) {
     metadata: {
       itemType: data.itemType,
       itemTitle: item.title,
+      ...atribuicaoDoCupom,
       ...(timedVersion
         ? {
             accessMode: 'timed',
@@ -973,6 +979,9 @@ async function handleCartCheckout(
   let prouniAppliedItems: Array<{ requestId: string; program: ProuniProgram; itemId: string; discountAmount: number }> = []
   let tierDiscountTotalApplied = 0
 
+  // Antes de o cupom poder perder a disputa: a venda é do embaixador do cupom.
+  const atribuicaoDoCupom = atribuicaoDeEmbaixador(couponValidation)
+
   if (couponDiscountAmount > totalSemCupom && couponValidation) {
     amount = couponValidation.amountAfterCoupon
     payableItemsForOrder = applyCouponDiscountsToItems(resolution.payableItems, couponValidation.items)
@@ -1201,6 +1210,7 @@ async function handleCartCheckout(
     metadata: {
       itemType: 'cart',
       itemTitle: description,
+      ...atribuicaoDoCupom,
       ...(physicalShopOrderId ? { shopOrderId: physicalShopOrderId } : {}),
       cartItems: serializedPayableItemsForOrder,
       freeItems: serializedFreeItems,

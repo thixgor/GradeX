@@ -370,23 +370,23 @@ export default function ManualClinicoCheckoutView({
   // `combineDiscountsWithProuni` — a MESMA função que /api/manual-clinico/
   // checkout usa para cobrar, com lote, cupom e benefício disputando o maior
   // desconto (e o empate favorecendo o benefício).
+  // O cupom empilhado (lote + cupom) também disputa com o PROUNI: o bolsista
+  // nunca paga mais por ter digitado um cupom.
   const stackCoupon = appliedCoupon?.stackWithTier === true && hasActiveTier
   const combinado = combineDiscountsWithProuni({
     basePrice: baseAmount,
     tierDiscountAmount,
     couponDiscountAmount,
+    couponStacksWithTier: stackCoupon,
     prouni: prouniGrant,
   })
-  const effectiveDiscount = stackCoupon
-    ? Math.min(baseAmount, tierDiscountAmount + couponDiscountAmount)
-    : combinado.appliedDiscountAmount
+  const effectiveDiscount = combinado.appliedDiscountAmount
   const payableAmount = Math.max(0, Math.round((baseAmount - effectiveDiscount) * 100) / 100)
 
-  // Que descontos a tela declara. Com o cupom empilhado o PROUNI sai de cena —
-  // igual ao servidor, que nesse caminho nem chega a consultar a concessão.
-  const prouniDiscountAmount = stackCoupon ? 0 : combinado.prouniDiscountApplied
-  const mostrarLote = tierDiscountAmount > 0 && (stackCoupon || combinado.tierDiscountApplied > 0)
-  const mostrarCupom = !!appliedCoupon && (stackCoupon || combinado.couponDiscountApplied > 0)
+  // Que descontos a tela declara — os mesmos que o servidor vai cobrar.
+  const prouniDiscountAmount = combinado.prouniDiscountApplied
+  const mostrarLote = combinado.tierDiscountApplied > 0
+  const mostrarCupom = !!appliedCoupon && combinado.couponDiscountApplied > 0
 
   const lifetimePlan = enabledPlans.find((p) => p.key === 'vitalicio') || null
   const longestTemporary = enabledPlans
@@ -626,8 +626,8 @@ export default function ManualClinicoCheckoutView({
               ) : null}
               {appliedCoupon && !mostrarCupom ? (
                 <p className="mt-1 text-[10px] font-medium text-emerald-200/70">
-                  Cupom {appliedCoupon.code} mantido — o desconto{' '}
-                  {prouniDiscountAmount > 0 ? 'ProUni/FIES' : 'do lote'} já é maior.
+                  Cupom {appliedCoupon.code} registrado na compra — o desconto{' '}
+                  {prouniDiscountAmount > 0 ? 'ProUni/FIES' : 'do lote'}, que é maior, é o que vale no preço.
                 </p>
               ) : null}
             </div>

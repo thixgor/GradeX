@@ -1404,17 +1404,17 @@ export default function MateriaisCheckoutPage() {
                   </div>
                   {appliedCoupon && couponWinsOverTier && (
                     <p style={{ fontSize: '12px', color: '#34d399', marginTop: '5px', fontWeight: 700 }}>
-                      Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)} (vence o lote)
-                    </p>
-                  )}
-                  {appliedCoupon && !couponWinsOverTier && hasTier && (
-                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '5px' }}>
-                      Cupom {appliedCoupon.code} desativado: o desconto do lote é maior.
-                    </p>
-                  )}
-                  {appliedCoupon && !hasTier && (
-                    <p style={{ fontSize: '12px', color: '#34d399', marginTop: '5px', fontWeight: 700 }}>
                       Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                      {hasTier ? ' (vence o lote)' : ''}
+                    </p>
+                  )}
+                  {/* O cupom que perde a disputa NÃO some da compra: ele fica
+                      registrado no pedido (é o que credita a venda ao
+                      embaixador dono dele). "Desativado" fazia a pessoa tirar
+                      o cupom — e a venda deixava de ser de quem indicou. */}
+                  {appliedCoupon && !couponWinsOverTier && (hasTier || hasProuni) && (
+                    <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '5px' }}>
+                      Cupom {appliedCoupon.code} registrado na compra — o desconto {hasProuni ? 'ProUni/FIES' : 'do lote'}, que é maior, é o que vale no preço.
                     </p>
                   )}
                   <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '4px' }}>
@@ -1811,17 +1811,14 @@ export default function MateriaisCheckoutPage() {
                 )}
                 {appliedCoupon && couponWinsOverTier && (
                   <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
-                    Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)} (vence o lote)
-                  </p>
-                )}
-                {appliedCoupon && !couponWinsOverTier && hasTier && (
-                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '4px' }}>
-                    Cupom {appliedCoupon.code} desativado: o desconto do lote é maior.
-                  </p>
-                )}
-                {appliedCoupon && !hasTier && (
-                  <p style={{ fontSize: '12px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
                     Cupom {appliedCoupon.code}: − {formatBRL(appliedCoupon.discountAmount)}
+                    {hasTier ? ' (vence o lote)' : ''}
+                  </p>
+                )}
+                {/* Ver o carrinho: o cupom que perde fica registrado no pedido. */}
+                {appliedCoupon && !couponWinsOverTier && benefitsDiscountAmount > 0 && (
+                  <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', marginTop: '4px' }}>
+                    Cupom {appliedCoupon.code} registrado na compra — o desconto {prouniDiscountAmount > 0 ? 'ProUni/FIES' : 'do lote'}, que é maior, é o que vale no preço.
                   </p>
                 )}
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.35)', marginTop: '6px' }}>

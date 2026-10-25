@@ -65,7 +65,7 @@ describe('venda com o cupom do embaixador', () => {
     expect(await registrarVendaDoPedido(db, p)).toBe('registrada')
     const venda = db.dados.embaixador_vendas[0]
     expect(venda.embaixadorId).toBe(embaixadorId)
-    expect(venda.origem).toBe('cupom')
+    expect(venda.desconto).toBe('cupom')
     expect(venda.valor).toBe(100)
     expect(venda.valorSocio).toBe(30)
     expect(venda.comissao).toBe(7)
@@ -112,27 +112,38 @@ describe('venda com o cupom do embaixador', () => {
   })
 })
 
-describe('venda de quem chegou pelo link', () => {
-  it('é do embaixador que indicou, dentro da janela', async () => {
+describe('só o cupom dá venda', () => {
+  it('quem chegou pelo link e comprou SEM o cupom não gera venda', async () => {
     const { db, embaixadorId } = cenario({ codigo: 'ANALINK' })
     const comprador = new ObjectId()
     db.dados.users.push({ _id: comprador, embaixadorIndicacao: { embaixadorId, codigo: 'ANALINK', em: dias(10) } })
-    expect(await registrarVendaDoPedido(db, pedido({ userId: String(comprador) }))).toBe('registrada')
-    expect(db.dados.embaixador_vendas[0].origem).toBe('link')
-  })
-
-  it('fora da janela (365 dias por padrão) já não é dele', async () => {
-    const { db, embaixadorId } = cenario({ codigo: 'ANAVELHO' })
-    const comprador = new ObjectId()
-    db.dados.users.push({ _id: comprador, embaixadorIndicacao: { embaixadorId, codigo: 'ANAVELHO', em: dias(400) } })
     expect(await registrarVendaDoPedido(db, pedido({ userId: String(comprador) }))).toBe('ignorada')
+    expect(db.dados.embaixador_vendas).toHaveLength(0)
   })
 
-  it('renovação de assinatura só conta se o programa comissionar renovações', async () => {
-    const { db, embaixadorId } = cenario({ codigo: 'ANARENOVA' })
-    const comprador = new ObjectId()
-    db.dados.users.push({ _id: comprador, embaixadorIndicacao: { embaixadorId, codigo: 'ANARENOVA', em: dias(10) } })
-    expect(await registrarVendaDoPedido(db, pedido({ type: 'subscription', userId: String(comprador) }))).toBe('ignorada')
+  it('bolsista: o ProUni venceu o cupom, mas o cupom ficou registrado e a venda é do embaixador', async () => {
+    const { db, embaixadorId, couponId } = cenario({ codigo: 'ANABOLSA' })
+    // O bolsista pagou R$ 70 (ProUni de 30% sobre R$ 100); o cupom de 10% perdeu.
+    const p = pedido({ baseAmount: 70, amount: 72.5, metadata: { itemTitle: 'Plus+', embaixadorCupomId: couponId, prouniProgram: 'prouni' } })
+    expect(await registrarVendaDoPedido(db, p)).toBe('registrada')
+    const venda = db.dados.embaixador_vendas[0]
+    expect(venda.embaixadorId).toBe(embaixadorId)
+    expect(venda.desconto).toBe('prouni')
+    // A comissão é sobre o que o bolsista pagou de fato.
+    expect(venda.valor).toBe(70)
+    expect(venda.comissao).toBe(4.9)
+  })
+
+  it('o cupom que perdeu para o lote também fica com o embaixador', async () => {
+    const { db, couponId } = cenario({ codigo: 'ANALOTE' })
+    await registrarVendaDoPedido(db, pedido({ metadata: { embaixadorCupomId: couponId } }))
+    expect(db.dados.embaixador_vendas[0].desconto).toBe('lote')
+  })
+
+  it('o cupom que descontou é registrado como "cupom"', async () => {
+    const { db, couponId } = cenario({ codigo: 'ANADESCONTO' })
+    await registrarVendaDoPedido(db, pedido({ metadata: { couponId } }))
+    expect(db.dados.embaixador_vendas[0].desconto).toBe('cupom')
   })
 })
 

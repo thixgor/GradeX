@@ -469,26 +469,11 @@ export function ConfigDoProgramaModal({
           {campoNumero('comissaoPadrao', 'Comissão sugerida', 'Valor inicial ao criar um remunerado.', '%')}
           {campoNumero('descontoCupomPadrao', 'Desconto do cupom', 'Valor inicial do cupom individual.', '%', 1, 100)}
           {campoNumero('diasParaCupomParado', 'Cupom parado após', 'Sem venda por este tempo, o painel acende o alerta.', 'dias', 7, 365)}
-          {campoNumero('janelaAtribuicaoDias', 'Janela do link', 'Compras de quem se cadastrou pelo link contam por este tempo.', 'dias', 1, 3650)}
         </div>
         <label className="block">
           <span className="mb-1.5 block text-[13px] font-semibold">Formulário de inscrição</span>
           <input className="emb-campo" value={rascunho.linkInscricao} onChange={(e) => setRascunho((r) => ({ ...r, linkInscricao: e.target.value }))} />
           <span className="emb-fraca mt-1 block text-[12px]">Caminho do site (/forms/…) ou URL https. É o botão &ldquo;Quero ser embaixador&rdquo;.</span>
-        </label>
-        <label className="emb-lista flex cursor-pointer items-start gap-3 rounded-2xl p-4">
-          <input
-            type="checkbox"
-            className="mt-1 h-4 w-4 accent-[var(--emb-verde-vivo)]"
-            checked={rascunho.comissionarRenovacoes}
-            onChange={(e) => setRascunho((r) => ({ ...r, comissionarRenovacoes: e.target.checked }))}
-          />
-          <span>
-            <span className="block text-[14px] font-bold">Comissionar renovações de assinatura</span>
-            <span className="emb-suave block text-[13px]">
-              Cada cobrança recorrente de quem veio pelo link também conta. Compras com o cupom contam sempre.
-            </span>
-          </span>
         </label>
         {erro && (
           <p role="alert" className="text-[14px] font-semibold" style={{ color: 'var(--emb-vermelho)' }}>

@@ -124,7 +124,7 @@ export function computeProuniDiscount(
   return roundMoney(Math.min(base, value))
 }
 
-export type ProuniAppliedSource = 'none' | 'tier' | 'coupon' | 'prouni' | 'prouni_tier'
+export type ProuniAppliedSource = 'none' | 'tier' | 'coupon' | 'coupon_tier' | 'prouni' | 'prouni_tier'
 
 /**
  * Decide qual desconto vale nesta compra.
@@ -139,6 +139,12 @@ export function combineDiscountsWithProuni(input: {
   basePrice: number
   tierDiscountAmount?: number
   couponDiscountAmount?: number
+  /**
+   * O cupom é `stackWithTier` (cupom sobre lote): o valor dele já veio
+   * calculado sobre o preço com o lote, e os dois somam. Ainda assim ele
+   * DISPUTA com o PROUNI — lote + cupom contra o benefício, vence o maior.
+   */
+  couponStacksWithTier?: boolean
   prouni?: { discountType: ProuniDiscountType; discountValue: number; stackWithTier: boolean } | null
 }): {
   finalPrice: number
@@ -182,6 +188,22 @@ export function combineDiscountsWithProuni(input: {
       tierDiscountApplied: tier,
       couponDiscountApplied: 0,
       prouniDiscountApplied: prouniOnTop,
+    }
+  }
+
+  // Cupom sobre lote: a opção do cupom é lote + cupom. Disputa com o PROUNI
+  // pelo maior desconto — o bolsista nunca paga mais que quem só tem o cupom.
+  if (input.couponStacksWithTier && tier > 0 && coupon > 0) {
+    const empilhado = roundMoney(Math.min(base, tier + coupon))
+    if (empilhado > prouniAmount) {
+      return {
+        finalPrice: roundMoney(Math.max(0, base - empilhado)),
+        appliedSource: 'coupon_tier',
+        appliedDiscountAmount: empilhado,
+        tierDiscountApplied: tier,
+        couponDiscountApplied: roundMoney(empilhado - tier),
+        prouniDiscountApplied: 0,
+      }
     }
   }
 

@@ -48,7 +48,7 @@ import {
   useAviso,
 } from '@/components/embaixadores/ui'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
-import { ROTULO_DA_CHAVE_PIX, formatarChavePix, type StatusDoEmbaixador, type TipoDeEmbaixador } from '@/lib/embaixadores/regras'
+import { ROTULO_DA_CHAVE_PIX, ROTULO_DO_DESCONTO, formatarChavePix, type StatusDoEmbaixador, type TipoDeEmbaixador } from '@/lib/embaixadores/regras'
 
 interface Conta {
   accountType: string
@@ -374,7 +374,7 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                 <Kpi indice={0} rotulo="Visitas ao link" valor={t.visitantes} icone={<MousePointerClick className="h-4 w-4" />} detalhe={`${formatarInteiro(t.cliques)} cliques`} />
                 <Kpi indice={1} rotulo="Cadastros" valor={t.cadastros} icone={<UserPlus className="h-4 w-4" />} detalhe={`${String(t.conversaoCadastro).replace('.', ',')}% das visitas`} />
                 <Kpi indice={2} rotulo="Compradores" valor={t.compradores} icone={<Users className="h-4 w-4" />} detalhe={`${String(t.conversaoCompra).replace('.', ',')}% dos indicados`} />
-                <Kpi indice={3} rotulo="Compras" valor={t.compras} icone={<ShoppingBag className="h-4 w-4" />} detalhe={`${formatarInteiro(t.comprasPorCupom)} cupom · ${formatarInteiro(t.comprasPorLink)} link${t.estornos ? ` · ${t.estornos} estornos` : ''}`} />
+                <Kpi indice={3} rotulo="Compras" valor={t.compras} icone={<ShoppingBag className="h-4 w-4" />} detalhe={[`${formatarInteiro(t.comprasComBeneficio)} de bolsistas (ProUni/Fies)`, t.estornos ? `${t.estornos} estornos` : ''].filter(Boolean).join(' · ')} />
                 <Kpi indice={4} rotulo="Vendido" valor={t.receita} formato="reais" destaque icone={<Receipt className="h-4 w-4" />} />
                 <Kpi indice={5} rotulo="Ticket médio" valor={t.ticketMedio} formato="reais" icone={<BadgePercent className="h-4 w-4" />} />
               </section>
@@ -429,7 +429,7 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                 <div className="emb-lista mt-4 overflow-hidden rounded-[24px]">
                   {aba === 'vendas' &&
                     (painel.vendas.length === 0 ? (
-                      <Vazio icone={<ShoppingBag className="emb-fraca h-6 w-6" />} titulo="Nenhuma venda" texto="Compras aprovadas com o cupom ou de indicados pelo link aparecem aqui." />
+                      <Vazio icone={<ShoppingBag className="emb-fraca h-6 w-6" />} titulo="Nenhuma venda" texto="Compras aprovadas com o cupom deste embaixador aparecem aqui — inclusive as de bolsista, em que o ProUni/Fies foi o desconto aplicado." />
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full min-w-[820px] text-left text-[13.5px]">
@@ -438,7 +438,7 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                               <th className="px-4 py-3 font-bold">Data</th>
                               <th className="px-4 py-3 font-bold">Comprador</th>
                               <th className="px-4 py-3 font-bold">Produto</th>
-                              <th className="px-4 py-3 font-bold">Via</th>
+                              <th className="px-4 py-3 font-bold">Desconto</th>
                               <th className="px-4 py-3 text-right font-bold">Valor</th>
                               <th className="px-4 py-3 text-right font-bold">Sócio</th>
                               <th className="px-4 py-3 text-right font-bold">Comissão</th>
@@ -454,7 +454,9 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
                                 </td>
                                 <td className="max-w-[240px] truncate px-4 py-3">{v.produto}</td>
                                 <td className="px-4 py-3">
-                                  <span className="emb-selo">{v.origem === 'cupom' ? 'Cupom' : 'Link'}</span>
+                                  <span className="emb-selo" data-tom={v.desconto === 'cupom' ? undefined : 'ambar'}>
+                                    {ROTULO_DO_DESCONTO[v.desconto]}
+                                  </span>
                                   {v.status === 'estornada' && (
                                     <span className="emb-selo ml-1" data-tom="vermelho">
                                       Estornada
@@ -476,7 +478,7 @@ export default function AdminEmbaixadorPage(props: { params: Promise<{ id: strin
 
                   {aba === 'indicados' &&
                     (painel.indicados.length === 0 ? (
-                      <Vazio icone={<UserPlus className="emb-fraca h-6 w-6" />} titulo="Nenhum cadastro pelo link" texto="Contas criadas por quem abriu o link deste embaixador aparecem aqui." />
+                      <Vazio icone={<UserPlus className="emb-fraca h-6 w-6" />} titulo="Nenhum cadastro pelo link" texto="Contas criadas por quem abriu o link deste embaixador (até 30 dias depois do clique, último link vence) aparecem aqui." />
                     ) : (
                       <div className="overflow-x-auto">
                         <table className="w-full min-w-[640px] text-left text-[13.5px]">

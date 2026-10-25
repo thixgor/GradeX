@@ -22,7 +22,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
-import type { ChavePix } from '@/lib/embaixadores/regras'
+import { ROTULO_DO_DESCONTO, type ChavePix } from '@/lib/embaixadores/regras'
 import { FormularioPix } from './formulario-pix'
 import {
   Abas,
@@ -58,6 +58,7 @@ const CHECKLIST = [
   'Sei a diferença entre material avulso, pacote e flashcard',
   'Sei o que entra no Manual Clínico, no Plus+ e no Quest+, e para quem indicar cada um',
   'Sei explicar a regra de ProUni e Fies e como enviar o documento',
+  'Peço ao colega bolsista que aplique o meu cupom mesmo assim: vale o desconto maior, e a venda conta para mim',
   'Confiro o preço no site antes de falar qualquer valor',
   'Sei explicar o direito de 7 dias sem enrolar',
   'Não prometo nada que não confirmei com a equipe',
@@ -126,7 +127,7 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
           <p className="emb-suave mt-4 max-w-[52ch] text-[17px]">
             {t.compras > 0
               ? `Seu código já fechou ${formatarInteiro(t.compras)} ${t.compras === 1 ? 'compra' : 'compras'} e trouxe ${formatarInteiro(t.cadastros)} ${t.cadastros === 1 ? 'cadastro' : 'cadastros'}. A última venda foi ${haQuanto(painel.saude.ultimaVendaEm)}.`
-              : 'Seu link e seu cupom estão prontos. Cada compra feita com eles cai no seu nome sozinha, sem você precisar avisar ninguém.'}
+              : 'Seu cupom e seu link estão prontos. Cada compra feita com o seu cupom cai no seu nome sozinha — e quem abre o seu link já encontra o cupom pronto na hora de pagar.'}
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <SeloStatus status={e.status} />
@@ -264,8 +265,8 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
       <section aria-label="Seus números" className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-3">
         <Kpi indice={0} rotulo="Visitas ao link" valor={t.visitantes} icone={<MousePointerClick className="h-4 w-4" />} detalhe={`${formatarInteiro(t.cliques)} cliques no total`} />
         <Kpi indice={1} rotulo="Cadastros" valor={t.cadastros} icone={<UserPlus className="h-4 w-4" />} detalhe={`${String(t.conversaoCadastro).replace('.', ',')}% das visitas`} />
-        <Kpi indice={2} rotulo="Compradores" valor={t.compradores} icone={<Users className="h-4 w-4" />} detalhe={`${formatarInteiro(t.indicadosQueCompraram)} vieram do link`} />
-        <Kpi indice={3} rotulo="Compras" valor={t.compras} icone={<ShoppingBag className="h-4 w-4" />} detalhe={`${formatarInteiro(t.comprasPorCupom)} com cupom · ${formatarInteiro(t.comprasPorLink)} pelo link`} />
+        <Kpi indice={2} rotulo="Compradores" valor={t.compradores} icone={<Users className="h-4 w-4" />} detalhe={`${formatarInteiro(t.indicadosQueCompraram)} se cadastraram pelo link`} />
+        <Kpi indice={3} rotulo="Compras" valor={t.compras} icone={<ShoppingBag className="h-4 w-4" />} detalhe={t.comprasComBeneficio ? `com o seu cupom · ${formatarInteiro(t.comprasComBeneficio)} de bolsistas` : 'todas com o seu cupom'} />
         <Kpi indice={4} rotulo="Vendido com você" valor={t.receita} formato="reais" destaque icone={<Receipt className="h-4 w-4" />} detalhe="valor dos produtos" />
         <Kpi indice={5} rotulo="Ticket médio" valor={t.ticketMedio} formato="reais" icone={<BadgePercent className="h-4 w-4" />} />
       </section>
@@ -324,7 +325,7 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
               <Vazio
                 icone={<ShoppingBag className="emb-fraca h-6 w-6" />}
                 titulo="Nenhuma venda ainda"
-                texto="Mande o link no grupo da turma com o cupom. A primeira compra aparece aqui sozinha, minutos depois do pagamento."
+                texto="Mande o link no grupo da turma: ele leva o seu cupom pronto para o pagamento. A primeira compra com o cupom aparece aqui sozinha, minutos depois de paga."
               >
                 <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="emb-botao vidro-botao emb-foco">
                   <MessageCircle className="h-4 w-4" aria-hidden /> Mandar no WhatsApp
@@ -335,12 +336,13 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
                 {painel.vendas.map((v) => (
                   <li key={v.id} className="emb-linha flex items-center gap-3 px-4 py-3.5 md:px-5">
                     <div className="emb-lista grid h-10 w-10 shrink-0 place-items-center rounded-xl">
-                      {v.origem === 'cupom' ? <BadgePercent className="h-[18px] w-[18px]" aria-hidden /> : <Link2 className="h-[18px] w-[18px]" aria-hidden />}
+                      <BadgePercent className="h-[18px] w-[18px]" aria-hidden />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[14.5px] font-semibold">{v.produto}</p>
                       <p className="emb-fraca truncate text-[12.5px]">
-                        {v.comprador} · {formatarData(v.pagoEm)} · {v.origem === 'cupom' ? 'cupom' : 'link'}
+                        {v.comprador} · {formatarData(v.pagoEm)}
+                        {v.desconto !== 'cupom' && ` · ${ROTULO_DO_DESCONTO[v.desconto]}`}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
@@ -362,7 +364,7 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
               <Vazio
                 icone={<UserPlus className="emb-fraca h-6 w-6" />}
                 titulo="Ninguém se cadastrou pelo link ainda"
-                texto="Quem abre o seu link e cria a conta nos 60 dias seguintes entra aqui, com o seu nome."
+                texto="Quem abre o seu link e cria a conta nos 30 dias seguintes entra aqui. A venda conta quando a pessoa compra com o seu cupom — o link já deixa ele pronto no pagamento."
               />
             ) : (
               <ul>

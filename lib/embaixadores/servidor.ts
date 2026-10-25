@@ -15,7 +15,7 @@ import {
   ultimasSemanas,
   type ChavePix,
   type ConfigDoPrograma,
-  type OrigemDaVenda,
+  type DescontoDaVenda,
   type SaudeDoCupom,
   type StatusDaVenda,
   type StatusDoEmbaixador,
@@ -88,7 +88,8 @@ export interface VendaDoEmbaixador {
   _id?: ObjectId
   orderId: string
   embaixadorId: string
-  origem: OrigemDaVenda
+  /** Que desconto o comprador levou (o cupom é sempre o do embaixador). */
+  desconto: DescontoDaVenda
   tipoPedido: string
   produto: string
   userId?: string
@@ -142,6 +143,7 @@ export function garantirIndicesDoPrograma(db: Db) {
       db.collection(COLECAO_VENDAS).createIndex({ embaixadorId: 1, pagoEm: -1 }),
       db.collection(COLECAO_REPASSES).createIndex({ embaixadorId: 1, pagoEm: -1 }),
       db.collection(COLECAO_CLIQUES).createIndex({ embaixadorId: 1, dia: 1 }, { unique: true }),
+      db.collection('payment_orders').createIndex({ 'metadata.embaixadorCupomId': 1 }, { sparse: true }),
     ]).catch(() => {
       indices = null
     })
@@ -273,47 +275,41 @@ function nomeDoProduto(order: PaymentOrder): string {
   return 'Material'
 }
 
-async function couponIdDoPedido(db: Db, order: PaymentOrder): Promise<string | null> {
-  const doMetadata = order.metadata?.couponId
-  if (doMetadata) return String(doMetadata)
+/**
+ * O cupom de embaixador deste pedido, e que desconto o comprador levou.
+ *
+ * A venda é do embaixador SÓ quando o cupom dele foi usado — é o código
+ * digitado que a equipe consegue conferir. Duas formas de o pedido carregar o
+ * cupom:
+ *  - ele descontou: `metadata.couponId` (ou o resgate do cupom);
+ *  - ele foi aplicado, mas outro desconto foi maior e venceu (PROUNI/FIES,
+ *    lote): `metadata.embaixadorCupomId` (lib/embaixadores/atribuicao.ts).
+ *    O bolsista paga o menor preço e a venda continua sendo de quem indicou.
+ *
+ * O link do embaixador não dá venda sozinho: ele conta visita e cadastro e
+ * deixa o cupom pronto no checkout.
+ */
+async function cupomDoPedido(db: Db, order: PaymentOrder): Promise<{ couponId: string; desconto: DescontoDaVenda } | null> {
+  const m = order.metadata || {}
+  if (m.couponId) return { couponId: String(m.couponId), desconto: 'cupom' }
+  if (m.embaixadorCupomId) {
+    const programa = m.prouniProgram === 'fies' ? 'fies' : m.prouniProgram ? 'prouni' : 'lote'
+    return { couponId: String(m.embaixadorCupomId), desconto: programa }
+  }
   const resgate = await db
     .collection('coupon_redemptions')
     .findOne({ orderId: String(order._id), status: { $in: ['approved', 'reserved'] } }, { projection: { couponId: 1 } })
-  return resgate?.couponId ? String(resgate.couponId) : null
+  return resgate?.couponId ? { couponId: String(resgate.couponId), desconto: 'cupom' } : null
 }
 
-/**
- * De quem é este pedido? Cupom do embaixador vence; sem cupom, vale a
- * indicação pelo link de quem comprou, dentro da janela configurada.
- */
 async function atribuirPedido(
   db: Db,
   order: PaymentOrder,
-  config: ConfigDoPrograma,
-): Promise<{ embaixador: Embaixador; origem: OrigemDaVenda } | null> {
-  const embaixadores = db.collection<Embaixador>(COLECAO_EMBAIXADORES)
-  const couponId = await couponIdDoPedido(db, order)
-  if (couponId) {
-    const doCupom = await embaixadores.findOne({ couponId })
-    if (doCupom) return { embaixador: doCupom, origem: 'cupom' }
-  }
-
-  if (!order.userId || !ObjectId.isValid(order.userId)) return null
-  if (order.type === 'subscription' && !config.comissionarRenovacoes) return null
-  const comprador = await db
-    .collection('users')
-    .findOne({ _id: new ObjectId(order.userId) }, { projection: { embaixadorIndicacao: 1 } })
-  const indicacao = comprador?.embaixadorIndicacao as { embaixadorId?: string; em?: Date } | undefined
-  if (!indicacao?.embaixadorId || !ObjectId.isValid(indicacao.embaixadorId)) return null
-
-  const pagoEm = order.paidAt ? new Date(order.paidAt) : new Date()
-  const desde = indicacao.em ? new Date(indicacao.em) : null
-  if (desde) {
-    if (pagoEm.getTime() < desde.getTime()) return null
-    if (pagoEm.getTime() - desde.getTime() > config.janelaAtribuicaoDias * 86_400_000) return null
-  }
-  const doLink = await embaixadores.findOne({ _id: new ObjectId(indicacao.embaixadorId) })
-  return doLink ? { embaixador: doLink, origem: 'link' } : null
+): Promise<{ embaixador: Embaixador; desconto: DescontoDaVenda } | null> {
+  const cupom = await cupomDoPedido(db, order)
+  if (!cupom) return null
+  const embaixador = await db.collection<Embaixador>(COLECAO_EMBAIXADORES).findOne({ couponId: cupom.couponId })
+  return embaixador ? { embaixador, desconto: cupom.desconto } : null
 }
 
 /**
@@ -334,10 +330,10 @@ export async function registrarVendaDoPedido(
     const vendas = db.collection<VendaDoEmbaixador>(COLECAO_VENDAS)
     if (await vendas.findOne({ orderId }, { projection: { _id: 1 } })) return 'ja_existia'
 
-    const config = opcoes.config || (await lerConfigDoPrograma(db))
-    const atribuicao = await atribuirPedido(db, order, config)
+    const atribuicao = await atribuirPedido(db, order)
     if (!atribuicao?.embaixador._id) return 'ignorada'
-    const { embaixador, origem } = atribuicao
+    const { embaixador, desconto } = atribuicao
+    const config = opcoes.config || (await lerConfigDoPrograma(db))
     if (!opcoes.historico && embaixador.status !== 'ativo') return 'ignorada'
     // Compra do próprio embaixador com o próprio cupom não é venda dele.
     if (order.userId && order.userId === embaixador.userId) return 'ignorada'
@@ -359,7 +355,7 @@ export async function registrarVendaDoPedido(
         $setOnInsert: {
           orderId,
           embaixadorId: String(embaixador._id),
-          origem,
+          desconto,
           tipoPedido: order.type,
           produto: nomeDoProduto(order),
           ...(order.userId ? { userId: order.userId } : {}),
@@ -402,31 +398,25 @@ const TETO_DA_SINCRONIA = 3000
 
 /**
  * Refaz a atribuição sobre o histórico de um embaixador: pedidos pagos com o
- * cupom dele e pedidos pagos por quem ele indicou. Usado quando um cupom antigo
- * vira cupom de embaixador, ou para conferir que nada escapou.
+ * cupom dele — os que descontaram e os em que o cupom ficou registrado porque
+ * outro desconto venceu. Usado quando um cupom antigo vira cupom de
+ * embaixador, ou para conferir que nada escapou.
  */
 export async function sincronizarVendas(db: Db, embaixador: Embaixador) {
   const embaixadorId = String(embaixador._id)
   const config = await lerConfigDoPrograma(db)
-  const [resgates, indicados] = await Promise.all([
-    embaixador.couponId
-      ? db
-          .collection('coupon_redemptions')
-          .find({ couponId: embaixador.couponId, status: 'approved', orderId: { $exists: true } }, { projection: { orderId: 1 } })
-          .limit(TETO_DA_SINCRONIA)
-          .toArray()
-      : Promise.resolve([]),
-    db
-      .collection<IndicacaoDoEmbaixador>(COLECAO_INDICACOES)
-      .find({ embaixadorId }, { projection: { userId: 1 } })
-      .limit(TETO_DA_SINCRONIA)
-      .toArray(),
-  ])
+  const resgates = embaixador.couponId
+    ? await db
+        .collection('coupon_redemptions')
+        .find({ couponId: embaixador.couponId, status: 'approved', orderId: { $exists: true } }, { projection: { orderId: 1 } })
+        .limit(TETO_DA_SINCRONIA)
+        .toArray()
+    : []
 
   const idsDoCupom = resgates.map((r) => String(r.orderId)).filter((id) => ObjectId.isValid(id))
   const filtros: any[] = []
   if (idsDoCupom.length > 0) filtros.push({ _id: { $in: idsDoCupom.map((id) => new ObjectId(id)) } })
-  if (indicados.length > 0) filtros.push({ userId: { $in: indicados.map((i) => i.userId) } })
+  if (embaixador.couponId) filtros.push({ 'metadata.embaixadorCupomId': embaixador.couponId })
 
   let registradas = 0
   if (filtros.length > 0) {
@@ -496,7 +486,6 @@ export interface PainelDoEmbaixador {
   programa: {
     percentualSocio?: number
     diasParaCupomParado: number
-    janelaAtribuicaoDias: number
   }
   totais: {
     cliques: number
@@ -505,8 +494,8 @@ export interface PainelDoEmbaixador {
     indicadosQueCompraram: number
     compradores: number
     compras: number
-    comprasPorCupom: number
-    comprasPorLink: number
+    /** Vendas em que o comprador levou PROUNI/FIES (o cupom ficou registrado). */
+    comprasComBeneficio: number
     estornos: number
     receita: number
     ticketMedio: number
@@ -530,7 +519,7 @@ export interface PainelDoEmbaixador {
     comprador: string
     compradorEmail?: string
     produto: string
-    origem: OrigemDaVenda
+    desconto: DescontoDaVenda
     valor: number
     valorSocio?: number
     nossaParteBruta?: number
@@ -673,7 +662,6 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
     programa: {
       ...(admin ? { percentualSocio: config.percentualSocio } : {}),
       diasParaCupomParado: config.diasParaCupomParado,
-      janelaAtribuicaoDias: config.janelaAtribuicaoDias,
     },
     totais: {
       cliques: Number(cliquesTotais[0]?.cliques || 0),
@@ -682,8 +670,7 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
       indicadosQueCompraram,
       compradores: compradores.size,
       compras: confirmadas.length,
-      comprasPorCupom: confirmadas.filter((v) => v.origem === 'cupom').length,
-      comprasPorLink: confirmadas.filter((v) => v.origem === 'link').length,
+      comprasComBeneficio: confirmadas.filter((v) => v.desconto === 'prouni' || v.desconto === 'fies').length,
       estornos: vendas.length - confirmadas.length,
       receita,
       ticketMedio: confirmadas.length ? centavos(receita / confirmadas.length) : 0,
@@ -717,7 +704,8 @@ export async function montarPainel(db: Db, embaixador: Embaixador, visao: VisaoD
       pagoEm: iso(v.pagoEm) || '',
       comprador: admin ? v.compradorNome || v.compradorEmail || 'Comprador' : nomeDiscreto(v.compradorNome),
       produto: v.produto,
-      origem: v.origem,
+      // Vendas gravadas antes de `desconto` existir eram todas de cupom.
+      desconto: v.desconto || 'cupom',
       valor: v.valor,
       comissaoPercent: v.comissaoPercent,
       comissao: v.comissao,
