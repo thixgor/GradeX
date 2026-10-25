@@ -29,6 +29,7 @@ import type {
 import type { PaymentStatus, ProviderOrder } from './types'
 import { audit } from './audit'
 import { recordOrderCheckoutEvent } from '../analytics'
+import { registrarRecusaDoPedido } from './recusa-cartao-log'
 import { sendMetaCapiEvent } from '../meta-capi'
 import { approveCouponRedemption, releaseCouponRedemption } from '../coupons'
 import { consumeProuniGrant, releaseProuniGrant } from '../prouni-fies'
@@ -203,6 +204,12 @@ export async function applyPaymentResult(
     await releaseCouponRedemption(db, String(order._id), newStatus)
     await releaseProuniGrant(db, String(order._id), newStatus)
     await recordOrderCheckoutEvent('payment_failed', updatedOrder)
+    // Recusa de cartão: guarda os dados técnicos para o log do Analytics. Só
+    // recusa/cancelamento (estorno e chargeback são outro assunto) e só cartão;
+    // nunca lança.
+    if (newStatus === 'rejected' || newStatus === 'cancelled') {
+      await registrarRecusaDoPedido(db, updatedOrder, result)
+    }
     if (order.type === 'raffle') {
       await releaseRafflePurchase(order, newStatus)
     }

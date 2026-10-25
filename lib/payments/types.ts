@@ -104,6 +104,11 @@ export interface ProviderOrder {
   statusDetail?: string
   paidAt?: Date
   raw?: unknown
+  /**
+   * O que a nossa chamada levava (cartão): parcelas, emissor, device ID, ambiente...
+   * Só `createPayment` preenche. Serve ao log de recusas — sem token, CPF ou chave.
+   */
+  requisicao?: import('./recusa-cartao').RequisicaoDoCartao
 }
 
 export interface ProviderSubscription {

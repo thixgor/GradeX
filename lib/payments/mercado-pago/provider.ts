@@ -15,6 +15,21 @@ import { getPaymentConfig } from '../config'
 import { getEffectiveMpAuth } from './marketplace-store'
 import { describeMercadoPagoApiError, MercadoPagoPaymentError } from './errors'
 import { payerIdentificationNumber } from '../card-payload'
+import { montarRequisicaoDoCartao, type RequisicaoDoCartao } from '../recusa-cartao'
+
+/**
+ * Pendura no erro o que a chamada levava, para o log de recusas de cartão.
+ * Propriedade NÃO enumerável: não aparece em JSON.stringify nem em log do erro.
+ * Nunca lança — o erro original tem de seguir intacto.
+ */
+function anexarRequisicao(err: unknown, requisicao: RequisicaoDoCartao | undefined) {
+  if (!requisicao || !err || typeof err !== 'object') return
+  try {
+    Object.defineProperty(err, 'mpRequisicao', { value: requisicao, enumerable: false, configurable: true })
+  } catch {
+    /* objeto congelado: segue sem o contexto */
+  }
+}
 
 /**
  * Adapter Mercado Pago para a interface PaymentProvider.
@@ -176,6 +191,30 @@ export class MercadoPagoProvider implements PaymentProvider {
     }
 
     const deviceId = (input.deviceId || '').trim()
+    // Contexto para o log de recusas. Blindado: é só diagnóstico e jamais pode
+    // impedir a cobrança — se por algum motivo não montar, a venda segue sem ele.
+    let requisicao: RequisicaoDoCartao | undefined
+    if (input.cardToken) {
+      try {
+        requisicao = montarRequisicaoDoCartao({
+          paymentMethodId: input.paymentMethodId,
+          parcelas: body.installments,
+          valor: body.transaction_amount,
+          emissor: body.issuer_id ?? null,
+          deviceId,
+          cardholderDocumentNumber: input.cardholderDocumentNumber,
+          documentoTipo: body.payer.identification?.type,
+          splitAtivo: body.application_fee != null,
+          tokenDoMarketplace: auth.source === 'marketplace',
+          ambiente: cfg.mp.env === 'sandbox' ? 'sandbox' : 'producao',
+          timeoutMs: 8000,
+          idempotencyKey: input.idempotencyKey,
+          referencia: input.externalReference,
+        })
+      } catch (err) {
+        console.warn('[mp] não foi possível montar o contexto do log de recusas:', err)
+      }
+    }
     let response: any
     try {
       response = await payment.create({
@@ -190,17 +229,22 @@ export class MercadoPagoProvider implements PaymentProvider {
         },
       })
     } catch (err) {
+      anexarRequisicao(err, requisicao)
       // Erro de validação da API (não é recusa do banco): traduz para algo que
       // o comprador consiga resolver. O detalhe técnico fica no log.
       const amigavel = describeMercadoPagoApiError(err)
       if (amigavel) {
         console.warn('[mp] erro ao criar pagamento:', (err as any)?.message, JSON.stringify((err as any)?.cause ?? null))
-        throw new MercadoPagoPaymentError(amigavel, err)
+        const traduzido = new MercadoPagoPaymentError(amigavel, err)
+        anexarRequisicao(traduzido, requisicao)
+        throw traduzido
       }
       throw err
     }
 
-    return mpPaymentToProviderOrder(response)
+    const criado = mpPaymentToProviderOrder(response)
+    if (requisicao) criado.requisicao = requisicao
+    return criado
   }
 
   async getPayment(providerPaymentId: string): Promise<ProviderOrder> {

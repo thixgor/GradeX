@@ -53,7 +53,8 @@ import {
   type DetectedCardMethod,
 } from '@/lib/payments/card-method'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
-import { cardTokenError } from '@/lib/payments/card-token-errors'
+import { cardTokenError, detalhesDoErroDeToken } from '@/lib/payments/card-token-errors'
+import { relatarFalhaDeCartao, type FalhaDeCartaoDoNavegador } from '@/lib/payments/relatar-falha-cartao'
 import {
   clearPendingCheckout,
   pendingStorageKey,
@@ -842,6 +843,10 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         ...(cpfFilled ? { payerDocumentType: 'CPF', payerDocumentNumber: cpfDigits } : {}),
       }
 
+      // Falha de cartão que só o navegador vê → log de recusas do Analytics.
+      // Dispara e esquece (relatarFalhaDeCartao nunca lança nem espera).
+      let relatarCartao: ((falha: Pick<FalhaDeCartaoDoNavegador, 'etapa' | 'codigos' | 'mensagem' | 'httpStatus' | 'codigoDoServidor'>) => void) | null = null
+
       if (method === 'card') {
         if (!mpInstance) throw new Error('SDK não carregou')
         if (!cardValidation.complete) {
@@ -852,6 +857,19 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         }
         const digitsOnlyCard = card.number.replace(/\D/g, '')
         const { month: cardExpirationMonth, year: cardExpirationYear } = splitExpiry(card.expiry)
+        relatarCartao = falha =>
+          relatarFalhaDeCartao({
+            ...falha,
+            origemDoFormulario: 'checkout',
+            bandeira: detectedCardMethodId || undefined,
+            numeroDoCartao: digitsOnlyCard,
+            parcelas: charge.installments,
+            valor: props.amount,
+            titularDiferente: holderIsOther,
+            deviceIdPresente: !!readDeviceId(),
+            endpoint: props.endpoint,
+            produto: props.analytics?.productTitle || props.description,
+          })
 
         // Tokeniza no client
         const cardToken = await mpInstance
@@ -866,9 +884,13 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
             identificationNumber: holderIsOther ? holderCpfDigits : cpfDigits,
           })
           .catch((err: unknown) => {
+            relatarCartao?.({ etapa: 'tokenizacao', ...detalhesDoErroDeToken(err) })
             throw cardTokenError(err)
           })
-        if (!cardToken?.id) throw cardTokenError(cardToken)
+        if (!cardToken?.id) {
+          relatarCartao?.({ etapa: 'tokenizacao', ...detalhesDoErroDeToken(cardToken) })
+          throw cardTokenError(cardToken)
+        }
 
         // Bandeira: a detecção já rodou enquanto ele digitava; refazemos aqui
         // só quando ela não chegou a valer (digitação rápida, rede lenta).
@@ -943,12 +965,16 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+      }).catch((falhaDeRede: unknown) => {
+        relatarCartao?.({ etapa: 'envio', codigos: [], mensagem: falhaDeRede instanceof Error ? falhaDeRede.message : 'falha de rede ao enviar' })
+        throw falhaDeRede
       })
       // Resposta que não é JSON é a plataforma cortando a função (timeout,
       // 502/504) — e o pagamento pode ter entrado. Mandar "tentar de novo"
       // aqui era receita de cobrança dupla.
       const data = await res.json().catch(() => null)
       if (!data) {
+        relatarCartao?.({ etapa: 'envio', codigos: [], httpStatus: res.status, mensagem: 'resposta sem JSON (função cortada pela plataforma?)' })
         throw new Error(
           'Não recebemos a resposta do pagamento a tempo. Antes de tentar de novo, confira em alguns minutos o seu e-mail ou o app do banco — se a cobrança aparecer, a compra foi concluída.'
         )
@@ -958,6 +984,17 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         return
       }
       if (!res.ok) {
+        // 502 já foi registrado pelo servidor (falha na criação do pagamento):
+        // relatar de novo duplicaria a linha no log.
+        if (res.status !== 502) {
+          relatarCartao?.({
+            etapa: 'envio',
+            codigos: [],
+            httpStatus: res.status,
+            mensagem: typeof data?.error === 'string' ? data.error : undefined,
+            codigoDoServidor: typeof data?.code === 'string' ? data.code : undefined,
+          })
+        }
         const campos = invalidFieldsFrom(data?.details)
         throw new Error(
           campos.length > 0

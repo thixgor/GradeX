@@ -31,6 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { SerialKeysPanel } from '@/components/admin/serial-keys-panel'
+import { RecusasCartaoPanel } from '@/components/admin/recusas-cartao-panel'
 
 type SeriesPoint = { key?: string; label: string; value: number; count?: number; type?: string; revenue?: number }
 
@@ -881,7 +882,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="flex h-auto w-full items-center justify-start gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl scrollbar-hide md:grid md:grid-cols-7 md:justify-center md:overflow-visible">
+          <TabsList className="flex h-auto w-full items-center justify-start gap-1 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.06] p-1.5 backdrop-blur-xl scrollbar-hide md:grid md:grid-cols-8 md:justify-center md:overflow-visible">
             {[
               ['overview', 'Visão geral'],
               ['sales', 'Vendas'],
@@ -890,6 +891,7 @@ export default function AdminAnalyticsPage() {
               ['donations', 'Doações'],
               ['orders', 'Histórico'],
               ['serialkeys', 'Serial Keys'],
+              ['recusas', 'Recusas de cartão'],
             ].map(([value, label]) => (
               <TabsTrigger key={value} value={value} className="shrink-0 whitespace-nowrap rounded-xl py-2 text-white/70 data-[state=active]:bg-emerald-400/20 data-[state=active]:text-white md:shrink md:whitespace-normal">
                 {label}
@@ -1206,6 +1208,11 @@ export default function AdminAnalyticsPage() {
 
           <TabsContent value="serialkeys" className="space-y-6">
             <SerialKeysPanel />
+          </TabsContent>
+
+          {/* Só monta (e só busca os dados) quando a aba é aberta. */}
+          <TabsContent value="recusas" className="space-y-6">
+            <RecusasCartaoPanel />
           </TabsContent>
         </Tabs>
       </main>

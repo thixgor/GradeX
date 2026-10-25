@@ -64,7 +64,8 @@ import {
   type MesesDeRecorrencia,
 } from '@/lib/payments/subscription-view'
 import { cn } from '@/lib/utils'
-import { cardTokenError } from '@/lib/payments/card-token-errors'
+import { cardTokenError, detalhesDoErroDeToken } from '@/lib/payments/card-token-errors'
+import { relatarFalhaDeCartao } from '@/lib/payments/relatar-falha-cartao'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 
 type PayMode = 'subscription' | 'one_time'
@@ -827,6 +828,17 @@ function SubscriptionCheckout({
       if (!mpInstance) throw new Error('O formulário de pagamento ainda está carregando. Tente de novo em instantes.')
 
       const { month, year } = splitExpiry(card.expiry)
+      // Falha na validação do cartão → log de recusas do Analytics (dispara e esquece).
+      const relatarFalhaTokenizacao = (d: { codigos: string[]; mensagem?: string }) =>
+        relatarFalhaDeCartao({
+          etapa: 'tokenizacao',
+          origemDoFormulario: 'assinatura',
+          ...d,
+          numeroDoCartao: card.number,
+          valor: cobranca.totalAmount,
+          produto: plan.nome,
+          endpoint: '/api/subscriptions',
+        })
       const tk = await mpInstance.createCardToken({
         cardNumber: card.number.replace(/\s/g, ''),
         cardholderName: card.holder.trim().replace(/\s+/g, ' '),
@@ -836,10 +848,14 @@ function SubscriptionCheckout({
         identificationType: 'CPF',
         identificationNumber: cpfDigits,
       }).catch((err: unknown) => {
+        relatarFalhaTokenizacao(detalhesDoErroDeToken(err))
         throw cardTokenError(err)
       })
       // Sem token não há o que mandar: seguir daria "Dados inválidos" no servidor.
-      if (!tk?.id) throw cardTokenError(tk)
+      if (!tk?.id) {
+        relatarFalhaTokenizacao(detalhesDoErroDeToken(tk))
+        throw cardTokenError(tk)
+      }
 
       fetch('/api/analytics/checkout-event', {
         method: 'POST',

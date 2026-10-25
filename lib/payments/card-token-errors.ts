@@ -68,6 +68,25 @@ export function describeCardTokenError(err: unknown): string | null {
 }
 
 /**
+ * Os códigos e a mensagem TÉCNICOS do erro (os que o mercadopago.js devolve),
+ * para o log de falhas de cartão — a mensagem amigável de `cardTokenError` não
+ * serve a quem vai diagnosticar.
+ */
+export function detalhesDoErroDeToken(err: unknown): { codigos: string[]; mensagem?: string } {
+  const causes = causesOf(err)
+  const codigos = causes
+    .map(c => c?.code)
+    .filter(c => c != null && String(c).trim() !== '')
+    .map(c => String(c).slice(0, 30))
+    .slice(0, 8)
+  const mensagem =
+    causes
+      .map(c => [c?.message, c?.description].filter(m => typeof m === 'string' && m).join(' '))
+      .find(Boolean) || (err instanceof Error ? err.message : undefined)
+  return { codigos, mensagem: mensagem ? mensagem.slice(0, 300) : undefined }
+}
+
+/**
  * Converte a falha da tokenização num `Error` com mensagem útil — nunca deixa
  * chegar à tela um objeto sem `message`.
  */

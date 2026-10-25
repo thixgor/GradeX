@@ -9,6 +9,8 @@ import { getPaymentProvider } from '@/lib/payments'
 import { audit } from '@/lib/payments/audit'
 import { describeMercadoPagoApiError } from '@/lib/payments/mercado-pago/errors'
 import { isAmbiguousProviderError } from '@/lib/payments/provider-failure'
+import { extrairErroDaApi } from '@/lib/payments/recusa-cartao'
+import { registrarFalhaDeCartao } from '@/lib/payments/recusa-cartao-log'
 import { accessUntilForSubscription } from '@/lib/payments/subscription-sync'
 import { getRequestAnalyticsMeta, recordSubscriptionCheckoutEvent } from '@/lib/analytics'
 import { DEFAULT_PAYMENT_METHODS } from '@/lib/payment-methods'
@@ -170,6 +172,20 @@ export async function POST(request: NextRequest) {
       ? await provider.findPreapprovalByExternalReference?.(externalReference).catch(() => null)
       : null
     if (!encontrada) {
+      // Falha de cartão na assinatura: vai para o log de recusas do Analytics.
+      await registrarFalhaDeCartao(db, {
+        etapa: 'assinatura',
+        origem: 'servidor',
+        tipoDoPedido: 'subscription',
+        userId: session.userId,
+        nome: session.name,
+        email: session.email,
+        produto: `${plano.nome} — ${plano.periodo || 'Assinatura'}`,
+        valorBase: charge.baseAmount,
+        valorCobrado: amount,
+        erro: extrairErroDaApi(err),
+        ...getRequestAnalyticsMeta(request),
+      })
       return NextResponse.json(
         { error: describeSubscriptionError(err) },
         { status: isAmbiguousProviderError(err) ? 502 : 400 }

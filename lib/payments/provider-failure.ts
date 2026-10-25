@@ -8,6 +8,8 @@ import { getPaymentProvider } from './index'
 import { MercadoPagoPaymentError } from './mercado-pago/errors'
 import type { ProviderOrder } from './types'
 import type { PaymentOrder } from '../types'
+import type { RequisicaoDoCartao } from './recusa-cartao'
+import { registrarFalhaNaCriacao } from './recusa-cartao-log'
 
 /**
  * O que fazer quando a criação do pagamento NÃO termina limpa.
@@ -124,15 +126,29 @@ export async function recoverFromProviderFailure(input: {
 }): Promise<CheckoutResultBody | null> {
   const { db, orderId, amount } = input
   let created = input.created
+  // O que a chamada levava (só em pagamento com cartão): ver createPayment.
+  const requisicao = (input.err as { mpRequisicao?: RequisicaoDoCartao } | null | undefined)?.mpRequisicao
 
   if (!created) {
-    if (!isAmbiguousProviderError(input.err)) return null
+    if (!isAmbiguousProviderError(input.err)) {
+      // Resposta definitiva da API (token vencido, parcelas, credencial...): é
+      // uma falha de cartão que o comprador viu. Vai para o log do Analytics.
+      if (requisicao) await registrarFalhaNaCriacao(db, { orderId, err: input.err, requisicao })
+      return null
+    }
     created = await findPaymentForOrder(orderId)
     if (!created) {
       console.warn('[provider-failure] resultado incerto do MP; order aguardando confirmação:', orderId)
-      await holdOrder(db, orderId, { statusDetail: PROVIDER_UNCONFIRMED })
+      // Guarda o que a chamada levava na própria order: se o pagamento nunca
+      // aparecer, quem encerrar o pedido (polling/varredura) não tem mais o erro
+      // em mãos e perderia o contexto da falha.
+      await holdOrder(db, orderId, {
+        statusDetail: PROVIDER_UNCONFIRMED,
+        ...(requisicao ? { 'metadata.cartaoRequisicao': requisicao } : {}),
+      })
       return bodyFrom(orderId, amount, { status: 'in_process', statusDetail: PROVIDER_UNCONFIRMED })
     }
+    if (requisicao) created = { ...created, requisicao }
     // Achou o pagamento que "falhou": aplica como se a chamada tivesse voltado.
     try {
       const applied = await applyPaymentResult(orderId, created)
