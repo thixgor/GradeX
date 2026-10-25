@@ -8,6 +8,7 @@ import { AlertCircle, ArrowRight, FileText, Flame, Loader2, Package, Percent, Sh
 import { Button } from '@/components/ui/button'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { useShopCart } from '@/context/ShopCartContext'
+import { EVENTO_ABRIR_CARRINHO } from '@/lib/abrir-carrinho'
 
 function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
@@ -70,6 +71,13 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
 
   const cartKey = items.map(i => `${i.itemType}:${i.itemId}`).join('|')
+
+  // Quem pede para abrir de fora (cartões "No carrinho", barra flutuante).
+  useEffect(() => {
+    const abrir = () => { setNotice(''); setOpen(true) }
+    window.addEventListener(EVENTO_ABRIR_CARRINHO, abrir)
+    return () => window.removeEventListener(EVENTO_ABRIR_CARRINHO, abrir)
+  }, [])
 
   // Cupom é validado para o conjunto de itens atual — muda o carrinho, invalida o cupom.
   useEffect(() => {

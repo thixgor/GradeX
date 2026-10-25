@@ -4,33 +4,33 @@ import { memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
+  BookOpen,
   Check,
+  Clock,
   Crown,
   Download,
   Eye,
   File,
   FileText,
-  Gift,
   Info,
-  Clock,
   Play,
   ShieldAlert,
-  ShoppingCart,
   Sparkles,
   Star,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PLUS_LABEL } from '@/lib/account-tier'
 import { TimedAccessPill } from './timed-access'
 import {
-  CardPrice,
+  CartButton,
   CopyLinkBtn,
   formatBRL,
   GROUP_META,
   LockedGroupOverlay,
   formatDuration,
+  resolveCardPrice,
   typeIcons,
   typeLabels,
   type Material,
@@ -53,7 +53,7 @@ export interface MaterialCardProps {
   onPreview: () => void
   loading: boolean
   metricSettings: MaterialMetricSettings
-  /** `featured` ganha a faixa de destaque e ocupa um slot maior na grade. */
+  /** `featured` ganha o selo de destaque e o título maior. */
   variant?: 'grid' | 'featured'
   /** Prioriza o carregamento da capa — só nos primeiros cards (LCP). */
   priority?: boolean
@@ -61,22 +61,19 @@ export interface MaterialCardProps {
 
 /** Spinner que herda a cor do botão em que está. */
 function InlineSpinner() {
-  return <span className="mr-1.5 h-3.5 w-3.5 animate-spin rounded-full border-2 border-transparent border-t-current" />
+  return <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
 }
 
 /**
- * Cartão de material. Unifica o antigo `MaterialCard` e `FeaturedCard`, que
- * duplicavam a lógica de acesso, preço, bloqueio por cargo e métricas.
+ * Cartão de material, no desenho de um cartão da App Store: a capa encaixada
+ * com canto próprio dentro do cartão, o título logo abaixo e, no pé, a cápsula
+ * que é ao mesmo tempo o preço e a compra ("R$ 29,90", "Obter", "Ler").
  *
- * Mudanças de UX em relação à versão anterior:
- * - o preço saiu de cima da capa (contraste ruim sobre capas claras, e o
- *   `backdrop-blur` é degradado no mobile pelo globals.css) e foi para o
- *   corpo, junto do CTA;
- * - um CTA primário só — "Carrinho" virou botão-ícone secundário;
- * - a descrição não expande mais no lugar: o "Ver mais" empurrava a linha
- *   inteira da grade. O texto completo está na página do material;
- * - o botão de compartilhar saiu de dentro da âncora (`<button>` dentro de
- *   `<a>` é HTML inválido e quebrava a navegação por teclado).
+ * O que ficou da versão anterior, de propósito:
+ * - o preço fica no corpo, nunca sobre a capa (contraste ruim em capa clara);
+ * - um CTA primário só; o carrinho é o botão-ícone ao lado;
+ * - a descrição não expande no lugar (empurrava a linha inteira da grade);
+ * - os botões de compartilhar e "assistir" são irmãos da âncora, nunca filhos.
  */
 export const MaterialCard = memo(function MaterialCard({
   material,
@@ -96,6 +93,7 @@ export const MaterialCard = memo(function MaterialCard({
   variant = 'grid',
   priority = false,
 }: MaterialCardProps) {
+  const { isInCart } = useMaterialCart()
   const isFree = material.pricing === 'free'
   // isPurchased inclui concessões manuais do admin → sempre libera acesso.
   const canAccess = typeof material._hasAccess === 'boolean'
@@ -112,10 +110,13 @@ export const MaterialCard = memo(function MaterialCard({
   const featured = variant === 'featured'
   const href = `/materiais/${material._id}`
   const hasEvent = !isFree && !!material._pricingEventState?.activeTier && material._pricingEventState.isActive
+  const timedAccess = material._timedAccess?.isTimed ? material._timedAccess : null
   // Versão por tempo mais barata — vira o "ou R$X por 30 dias" abaixo do preço.
   const cheapestTimedVersion = (material._timedAccessVersions || [])
     .slice()
     .sort((a, b) => a.price - b.price)[0] || null
+  const price = resolveCardPrice({ price: material.price, state: material._pricingEventState })
+  const inCart = isInCart('material', material._id)
 
   const metrics: { key: string; node: React.ReactNode }[] = []
   if (metricSettings.showDownloads) {
@@ -125,7 +126,7 @@ export const MaterialCard = memo(function MaterialCard({
     metrics.push({ key: 'views', node: <><Eye className="h-3 w-3" /> {material.viewCount}</> })
   }
   if ((material.type === 'video' || isEmbed) && material.videoDuration) {
-    metrics.push({ key: 'dur', node: <><Play className="h-3 w-3 fill-white/80" /> {formatDuration(material.videoDuration)}</> })
+    metrics.push({ key: 'dur', node: <><Play className="h-3 w-3 fill-current" /> {formatDuration(material.videoDuration)}</> })
   }
   if (material.type === 'flashcard_deck' && material._cardCount != null) {
     metrics.push({ key: 'cards', node: <><Sparkles className="h-3 w-3" /> {material._cardCount} cards</> })
@@ -133,9 +134,25 @@ export const MaterialCard = memo(function MaterialCard({
   if (material.type === 'pdf' && material._hasPdf && material._pageCount) {
     metrics.push({
       key: 'pages',
-      node: <><FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}</>,
+      node: <><FileText className="h-3 w-3" /> {material._pageCount} {material._pageCount === 1 ? 'pág.' : 'págs.'}</>,
     })
   }
+
+  // A ação principal de quem já tem: abrir do jeito que o material se lê.
+  const ownedAction = isEmbed
+    ? { label: 'Assistir', icon: <Play className="h-3.5 w-3.5 fill-current" />, onClick: onDownload }
+    : material.type === 'flashcard_deck'
+      ? { label: 'Estudar', icon: <Sparkles className="h-3.5 w-3.5" />, onClick: onDownload }
+      : canViewPdf
+        ? { label: 'Ler', icon: <BookOpen className="h-3.5 w-3.5" />, onClick: onViewPdf }
+        : pdfDownloadBlocked
+          ? { label: 'Ver detalhes', icon: <Info className="h-3.5 w-3.5" />, onClick: onDownload }
+          : material.type === 'link'
+            ? { label: 'Abrir', icon: null, onClick: onDownload }
+            : { label: 'Baixar', icon: <Download className="h-3.5 w-3.5" />, onClick: onDownload }
+  // O download fica de lado como ícone quando a leitura é a ação principal —
+  // a versão por tempo nunca baixa (o servidor recusa de qualquer forma).
+  const showSideDownload = canViewPdf && !pdfDownloadBlocked && !timedAccess && !isEmbed && material.type !== 'flashcard_deck'
 
   const cover = (
     <>
@@ -144,38 +161,36 @@ export const MaterialCard = memo(function MaterialCard({
           src={material.coverImage}
           alt={material.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           sizes={featured
-            ? '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+            ? '(max-width: 640px) 82vw, (max-width: 1024px) 50vw, 33vw'
             : '(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw'}
           priority={priority}
         />
       ) : (
-        <div className="cover-plate flex h-full w-full items-center justify-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-card/80 text-primary shadow-sm">
-            {typeIcons[material.type] || <File className="h-8 w-8" />}
+        <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+          <span className="ios-tinta flex h-14 w-14 items-center justify-center rounded-[16px] bg-white/70 shadow-sm dark:bg-white/10 [&_svg]:h-7 [&_svg]:w-7">
+            {typeIcons[material.type] || <File />}
           </span>
         </div>
       )}
-      {/* Véu só quando há foto de verdade, e leve: as etiquetas carregam a
-          própria legibilidade (material escuro), então o véu serve apenas
-          para assentar a imagem, não para viabilizar o texto. Sobre a placa
-          clara ele virava uma lavagem cinza suja na metade de baixo. */}
-      {material.coverImage && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
-      )}
 
-      {/* Tipo do arquivo */}
-      <span className="cover-chip absolute left-2 top-2 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold text-white sm:left-3 sm:top-3">
-        {isEmbed && <Play className="h-3 w-3 fill-white" />}
-        {typeLabels[material.type] || 'Arquivo'}
+      <span className="absolute left-2 top-2 z-[1] flex flex-wrap gap-1 sm:left-2.5 sm:top-2.5">
+        <span className="ios-selo">
+          {isEmbed && <Play className="h-3 w-3 fill-current" />}
+          {typeLabels[material.type] || 'Arquivo'}
+        </span>
+        {featured && (
+          <span className="ios-selo ios-selo-claro">
+            <Star className="h-3 w-3 fill-current" /> Destaque
+          </span>
+        )}
       </span>
 
-      {/* Restrição de cargo e lote promocional */}
       {(material.allowedGroups?.length > 0 || hasEvent) && (
-        <span className="absolute right-2 top-2 flex flex-col items-end gap-1 sm:right-3 sm:top-3">
+        <span className="absolute right-2 top-2 z-[1] flex flex-col items-end gap-1 sm:right-2.5 sm:top-2.5">
           {material.allowedGroups?.length > 0 && (
-            <span className="cover-chip inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold text-violet-200">
+            <span className="ios-selo">
               <ShieldAlert className="h-3 w-3" />
               {material.allowedGroups.map(g => GROUP_META[g]?.label).filter(Boolean).join(' / ')}
             </span>
@@ -184,14 +199,10 @@ export const MaterialCard = memo(function MaterialCard({
         </span>
       )}
 
-      {/* Métricas numa etiqueta própria. Antes eram texto branco solto, que só
-          era legível graças a um véu escuro cobrindo a capa inteira — o
-          material carrega a legibilidade sozinho, e a imagem fica limpa.
-          O `max-w` no desktop reserva o canto do botão de compartilhar. */}
       {metrics.length > 0 && (
-        <span className="cover-chip absolute bottom-2 left-2 inline-flex max-w-[calc(100%-1rem)] flex-wrap items-center gap-x-2.5 gap-y-0.5 rounded-md px-2 py-1 text-[10px] font-medium text-white sm:bottom-3 sm:left-3 sm:max-w-[calc(100%-9rem)]">
+        <span className="ios-selo absolute bottom-2 left-2 z-[1] max-w-[calc(100%-1rem)] gap-x-2.5 sm:bottom-2.5 sm:left-2.5 sm:max-w-[calc(100%-3.5rem)]">
           {metrics.map(m => (
-            <span key={m.key} className="inline-flex items-center gap-1">{m.node}</span>
+            <span key={m.key} className="inline-flex items-center gap-1 tabular-nums">{m.node}</span>
           ))}
         </span>
       )}
@@ -202,39 +213,29 @@ export const MaterialCard = memo(function MaterialCard({
     <div
       className={cn(
         'deck-card-rise group relative h-full',
-        isHighlighted && 'rounded-lg ring-2 ring-primary ring-offset-2 ring-offset-background'
+        isHighlighted && 'rounded-[24px] ring-2 ring-[var(--ios-tinta)] ring-offset-2 ring-offset-[var(--ios-chao)]'
       )}
     >
-      {showLocked && <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />}
-
-      <div
+      <article
         className={cn(
-          'surface-lift flex h-full flex-col overflow-hidden rounded-xl border bg-card',
-          featured ? 'border-primary/25 hover:border-primary/45' : 'border-border hover:border-primary/35',
+          'ios-cartao ios-toque relative flex h-full flex-col rounded-[24px] p-2',
           // Com o overlay ativo nenhum link interno é renderizado, então nada
           // do conteúdo bloqueado entra na ordem de tabulação.
           showLocked && 'select-none'
         )}
       >
-        {/* Região da capa. O botão de compartilhar e o de "assistir" são irmãos
-            da âncora, nunca filhos — conteúdo interativo dentro de `<a>` é
-            HTML inválido. */}
+        {showLocked && <LockedGroupOverlay allowedGroups={material.allowedGroups} onPreview={onPreview} />}
+
         <div className="relative">
           {showLocked ? (
-            <div className="relative block aspect-[16/10] overflow-hidden">{cover}</div>
+            <div className="ios-capa block aspect-[16/10] rounded-[18px]">{cover}</div>
           ) : (
             <Link
               href={href}
-              className="relative block aspect-[16/10] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              className="ios-capa block aspect-[16/10] rounded-[18px] focus-visible:outline-offset-[-3px]"
             >
               {cover}
             </Link>
-          )}
-
-          {featured && (
-            <span className="absolute right-0 top-0 inline-flex items-center gap-1 rounded-bl-md bg-accent px-2.5 py-1 text-[10px] font-bold text-accent-foreground">
-              <Star className="h-3 w-3" /> DESTAQUE
-            </span>
           )}
 
           {isEmbed && canAccess && !showLocked && (
@@ -242,10 +243,10 @@ export const MaterialCard = memo(function MaterialCard({
               type="button"
               onClick={onDownload}
               aria-label={`Assistir ${material.title}`}
-              className="group/play absolute inset-0 flex items-center justify-center"
+              className="group/play absolute inset-0 z-[2] flex items-center justify-center rounded-[18px]"
             >
-              <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/40 bg-black/45 transition-transform group-hover/play:scale-110">
-                <Play className="ml-0.5 h-6 w-6 fill-white text-white" />
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/85 text-[#101814] shadow-lg backdrop-blur-md transition-transform duration-300 group-hover/play:scale-110">
+                <Play className="ml-0.5 h-6 w-6 fill-current" />
               </span>
             </button>
           )}
@@ -255,26 +256,22 @@ export const MaterialCard = memo(function MaterialCard({
               id={material._id}
               copiedId={copiedId}
               onClick={e => { e.preventDefault(); e.stopPropagation(); onCopyLink() }}
-              className="absolute bottom-3 right-3 hidden opacity-0 transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100 sm:inline-flex"
+              className="absolute bottom-2.5 right-2.5 z-[3] hidden bg-white/85 text-[#101814] opacity-0 shadow-sm backdrop-blur-md transition-opacity hover:bg-white focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100 dark:bg-black/55 dark:text-white sm:inline-flex"
             />
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-3 sm:p-4">
-          {/* Tracking é específico do tamanho: o título maior do destaque fecha
-              mais que o da grade, e a descrição miúda abre um fio — texto
-              pequeno precisa de mais ar entre as letras, grande precisa de
-              menos. Um `letter-spacing` único estaria errado em algum lugar. */}
+        <div className="flex flex-1 flex-col px-1.5 pb-1 pt-3 sm:px-2">
           {showLocked ? (
-            <h3 className="mb-1 line-clamp-2 font-heading text-sm font-bold leading-snug tracking-[-0.01em] text-foreground">
+            <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug tracking-[-0.015em]">
               {material.title}
             </h3>
           ) : (
             <Link
               href={href}
               className={cn(
-                'mb-1 line-clamp-2 font-heading font-bold leading-snug text-foreground transition-colors hover:text-primary hover:underline',
-                featured ? 'text-base tracking-[-0.015em]' : 'text-sm tracking-[-0.01em]'
+                'line-clamp-2 font-semibold leading-snug tracking-[-0.015em] transition-colors hover:text-[var(--ios-tinta-texto)]',
+                featured ? 'text-[17px]' : 'text-[15px]'
               )}
             >
               {material.title}
@@ -284,7 +281,7 @@ export const MaterialCard = memo(function MaterialCard({
           {material.description && (
             <p
               className={cn(
-                'mb-3 line-clamp-2 text-xs leading-relaxed tracking-[0.005em] text-muted-foreground',
+                'ios-rotulo-2 mt-1 line-clamp-2 text-[13px] leading-snug',
                 // No celular a grade tem 2 colunas: descrição espremida em
                 // ~160px vira ruído, o título já identifica o material.
                 !featured && 'hidden sm:block'
@@ -295,108 +292,115 @@ export const MaterialCard = memo(function MaterialCard({
             </p>
           )}
 
-          {material.tags?.length > 0 && (
-            <div className="mb-3 hidden flex-wrap gap-1 sm:flex">
-              {material.tags.slice(0, 3).map(tag => (
-                <span key={tag} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
-
-          <div className="mt-auto space-y-2">
+          <div className="mt-auto pt-3">
             {showLocked ? (
               <button
                 type="button"
                 onClick={onPreview}
-                className="mx-auto flex items-center gap-1 py-2 text-xs font-medium text-primary hover:underline"
+                className="ios-botao-cinza ios-botao-p w-full"
               >
-                <Info className="h-3 w-3" /> Ver detalhes e fazer upgrade
+                <Info className="h-3.5 w-3.5" /> Ver como liberar
               </button>
             ) : canAccess ? (
               <>
-                {material._timedAccess?.isTimed ? (
-                  // Posse por tempo: o selo vira contagem regressiva — é a
-                  // informação que o usuário precisa antes de abrir o material.
-                  <TimedAccessPill access={material._timedAccess} />
-                ) : isPurchased ? (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                    <Check className="h-3.5 w-3.5" /> Adquirido
-                  </span>
-                ) : null}
-                {canViewPdf && (
-                  <Button onClick={onViewPdf} size="sm" variant="outline" className="h-10 w-full text-xs font-semibold">
-                    <Eye className="mr-1.5 h-3.5 w-3.5" />
-                    Visualizar PDF
-                  </Button>
-                )}
-                {(!canViewPdf || !pdfDownloadBlocked) && !(material._timedAccess?.isTimed && canViewPdf) && (
-                  <Button onClick={onDownload} size="sm" className="cta-raised h-10 w-full text-xs font-semibold">
-                    {isEmbed
-                      ? <><Play className="mr-1.5 h-3.5 w-3.5 fill-current" /> Assistir</>
-                      : material.type === 'flashcard_deck'
-                        ? <><Sparkles className="mr-1.5 h-3.5 w-3.5" /> Acessar deck</>
-                        : pdfDownloadBlocked
-                          ? <><Info className="mr-1.5 h-3.5 w-3.5" /> Ver detalhes</>
-                          : <><Download className="mr-1.5 h-3.5 w-3.5" /> Download</>}
-                  </Button>
-                )}
+                <div className="mb-2 flex min-h-[18px] items-center">
+                  {timedAccess ? (
+                    // Posse por tempo: o selo vira contagem regressiva — é a
+                    // informação que o usuário precisa antes de abrir o material.
+                    <TimedAccessPill access={timedAccess} />
+                  ) : (
+                    <span className="ios-tinta inline-flex items-center gap-1 text-[13px] font-semibold">
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.75} /> {isPurchased ? 'Adquirido' : 'Liberado para você'}
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-1.5">
+                  <button type="button" onClick={ownedAction.onClick} className="ios-botao-suave ios-botao-p flex-1">
+                    {ownedAction.icon}
+                    {ownedAction.label}
+                  </button>
+                  {showSideDownload && (
+                    <button
+                      type="button"
+                      onClick={onDownload}
+                      aria-label={`Baixar ${material.title}`}
+                      title="Baixar PDF"
+                      className="ios-icone-botao"
+                    >
+                      <Download className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
               </>
             ) : includedInPlus ? (
               <>
-                <span className="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
+                <p className="ios-ambar mb-2 flex items-center gap-1 text-[13px] font-semibold">
                   <Crown className="h-3.5 w-3.5" /> Incluído no {PLUS_LABEL}
-                </span>
-                <Button
+                </p>
+                <button
+                  type="button"
                   onClick={onClaimWithPlus}
                   disabled={loading}
-                  size="sm"
-                  className="cta-raised h-10 w-full text-xs font-semibold"
+                  className="ios-botao-ambar ios-botao-p w-full"
                 >
-                  {loading ? <InlineSpinner /> : <Gift className="mr-1.5 h-3.5 w-3.5" />}
+                  {loading ? <InlineSpinner /> : null}
                   Resgatar
-                </Button>
+                </button>
               </>
             ) : isFree ? (
               <>
-                <CardPrice price={material.price} isFree state={material._pricingEventState} />
-                <Button onClick={onAddToCart} disabled={loading} size="sm" className="cta-raised h-10 w-full text-xs font-semibold">
-                  {loading ? <InlineSpinner /> : <Gift className="mr-1.5 h-3.5 w-3.5" />}
-                  Adquirir grátis
-                </Button>
+                <p className="ios-tinta mb-2 text-[13px] font-semibold">Grátis</p>
+                <button
+                  type="button"
+                  onClick={onAddToCart}
+                  disabled={loading}
+                  aria-label={`Obter ${material.title} grátis`}
+                  className="ios-botao-suave ios-botao-p w-full"
+                >
+                  {loading ? <InlineSpinner /> : null}
+                  Obter
+                </button>
               </>
             ) : (
               <>
-                <CardPrice price={material.price} isFree={false} state={material._pricingEventState} />
-                {cheapestTimedVersion && (
-                  <p className="flex items-center gap-1 text-[11px] font-medium text-sky-600 dark:text-sky-400">
-                    <Clock className="h-3 w-3" />
-                    ou {formatBRL(cheapestTimedVersion.price)} por {cheapestTimedVersion.durationLabel}
-                  </p>
-                )}
-                <div className="flex gap-2">
-                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-10 flex-1 text-xs font-semibold">
+                <div className="mb-2 flex min-h-[22px] flex-wrap items-baseline gap-x-1.5">
+                  <span className="text-[17px] font-bold tracking-[-0.02em] tabular-nums">{formatBRL(price.finalPrice)}</span>
+                  {price.strike ? (
+                    <span className="text-[12px]">
+                      <span className="ios-rotulo-3 tabular-nums line-through">{formatBRL(price.strike)}</span>
+                      {price.savingsPct > 0 && <span className="ios-tinta ml-1 font-semibold">−{price.savingsPct}%</span>}
+                    </span>
+                  ) : cheapestTimedVersion ? (
+                    <span className="ios-rotulo-2 inline-flex items-center gap-1 text-[12px] font-medium">
+                      <Clock className="h-3 w-3" />
+                      ou {formatBRL(cheapestTimedVersion.price)}/{cheapestTimedVersion.durationLabel}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="flex gap-1.5">
+                  <CartButton
+                    inCart={inCart}
+                    onAdd={onAddToCart}
+                    disabled={loading}
+                    itemTitle={material.title}
+                    className="sm:flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={onBuyNow}
+                    disabled={loading}
+                    aria-label={`Comprar ${material.title} por ${formatBRL(price.finalPrice)}`}
+                    className="ios-botao ios-botao-p flex-1 px-3"
+                  >
                     {loading ? <InlineSpinner /> : null}
                     Comprar
-                  </Button>
-                  <Button
-                    onClick={onAddToCart}
-                    disabled={loading}
-                    size="sm"
-                    variant="outline"
-                    aria-label={`Adicionar ${material.title} ao carrinho`}
-                    title="Adicionar ao carrinho"
-                    className="h-10 w-10 shrink-0 p-0"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </div>
               </>
             )}
           </div>
         </div>
-      </div>
+      </article>
     </div>
   )
 })

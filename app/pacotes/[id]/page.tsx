@@ -1,16 +1,10 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ArrowLeft,
-  ShoppingCart,
-  Lock,
-  Eye,
-  Shield,
   Gift,
   Crown,
   Zap,
@@ -21,19 +15,16 @@ import {
   Link2,
   Image as ImageIcon,
   File,
-  ChevronDown,
-  ChevronUp,
   Package,
-  ShieldAlert,
   Check,
-  CheckCheck,
-  Share2,
-  Sparkles,
-  TrendingDown,
+  ChevronLeft,
   ChevronRight,
-  Tag,
+  Infinity as InfinityIcon,
+  Share,
+  Sparkles,
+  Star,
+  TrendingDown,
   Clock,
-  Download,
 } from 'lucide-react'
 import { PLUS_LABEL } from '@/lib/account-tier'
 import {
@@ -42,8 +33,11 @@ import {
   type TimedAccessVersionView,
   type TimedAccessView,
 } from '@/components/materiais/timed-access'
-import { Button } from '@/components/ui/button'
 import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { BagPlusIcon, CartButton } from '@/components/materiais/shared'
+import { abrirCarrinho } from '@/lib/abrir-carrinho'
+import { cn } from '@/lib/utils'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
@@ -56,7 +50,6 @@ import {
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PrintedAddon } from '@/components/shop/printed-addon'
 import { PackageReviews } from '@/components/reviews/package-reviews'
-import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 
@@ -179,7 +172,7 @@ export default function PackageDetailPage() {
   const [copied, setCopied] = useState(false)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
-  const { addItem } = useMaterialCart()
+  const { addItem, isInCart } = useMaterialCart()
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -344,6 +337,23 @@ export default function PackageDetailPage() {
     })
   }, [id])
 
+  // A barra de compra do celular só sobe quando os botões do painel saem da
+  // tela — com eles à vista, seria o mesmo botão duas vezes.
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const [ctaVisivel, setCtaVisivel] = useState(true)
+  useEffect(() => {
+    const node = ctaRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      setCtaVisivel(false)
+      return
+    }
+    const observer = new IntersectionObserver(([entry]) => setCtaVisivel(entry.isIntersecting), {
+      rootMargin: '0px 0px -40px 0px',
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [loading, data?.package?._id, data?.access?.hasAccess, data?.access?.includedInPlus])
+
   if (loading) return <LoadingSkeleton />
   if (error || !data) return <ErrorState message={error} onBack={() => router.push('/materiais?tab=packages')} />
 
@@ -369,140 +379,296 @@ export default function PackageDetailPage() {
     ? Math.max(0, Math.round(pricing.effectivePrice * (1 - tierPct / 100) * 100) / 100)
     : pricing.effectivePrice
   const tierSavings = hasTier ? Math.max(0, pricing.effectivePrice - tierFinalPrice) : 0
+  const heroSizes = '(max-width: 1280px) 100vw, 60vw'
+  const reviewCount = reviewSummary?.count ?? 0
+  const isFreePath = isFree || pricing.effectivePrice <= 0
+  const displayPrice = selectedTimedVersion ? Number(selectedTimedVersion.price || 0) : tierFinalPrice
+  const jumpToReviews = () =>
+    document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // Quanto os itens custariam separados — o argumento do pacote, em número.
+  const separateTotal = materials.reduce((sum, m) => sum + (m.pricing === 'paid' ? Number(m.price || 0) : 0), 0)
+  const separateSavings = !isFreePath && !selectedTimedVersion && separateTotal > displayPrice
+    ? separateTotal - displayPrice
+    : 0
+  const separateSavingsPct = separateSavings > 0 ? Math.round((separateSavings / separateTotal) * 100) : 0
+  // O "de" riscado acima do preço: o desconto que vale agora, na ordem em que
+  // o servidor os aplica (itens já seus → lote).
+  const strikePrice = selectedTimedVersion
+    ? null
+    : hasTier
+      ? pricing.effectivePrice
+      : hasDiscount
+        ? pricing.originalPackagePrice
+        : hasStaticDiscount
+          ? pkg.originalPrice
+          : null
+  const totalPages = materials.reduce((sum, m) => sum + (m.type === 'pdf' && m._pageCount ? m._pageCount : 0), 0)
+  const typeCounts = materials.reduce<Record<string, number>>((acc, m) => {
+    const label = TYPE_LABELS[m.type] || 'Arquivo'
+    acc[label] = (acc[label] || 0) + 1
+    return acc
+  }, {})
+  const typeSummary = Object.entries(typeCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([label, count]) => `${count} ${label}${count > 1 && label !== 'PDF' ? 's' : ''}`)
+    .slice(0, 3)
+    .join(', ')
+
+  const infoCells: { key: string; label: string; value: React.ReactNode; note: React.ReactNode }[] = []
+  if (reviewCount > 0 && reviewSummary) {
+    infoCells.push({
+      key: 'reviews',
+      label: `${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'}`,
+      value: reviewSummary.avg.toFixed(1).replace('.', ','),
+      note: <StarRow value={reviewSummary.avg} />,
+    })
+  }
+  infoCells.push({ key: 'items', label: 'No pacote', value: totalItems, note: totalItems === 1 ? 'material' : 'materiais' })
+  if (separateSavingsPct > 0 && !access.hasAccess) {
+    infoCells.push({ key: 'save', label: 'Economia', value: `${separateSavingsPct}%`, note: 'vs. separados' })
+  }
+  if (totalPages > 0) {
+    infoCells.push({ key: 'pages', label: 'Leitura', value: compactNumber(totalPages), note: 'páginas' })
+  }
+  infoCells.push({
+    key: 'access',
+    label: 'Acesso',
+    value: access.hasAccess
+      ? <Check className="h-[22px] w-[22px]" strokeWidth={2.5} />
+      : isFreePath ? 'Grátis' : <InfinityIcon className="h-[25px] w-[25px]" />,
+    note: access.hasAccess
+      ? (timedAccess?.isTimed ? 'por tempo' : 'liberado')
+      : isFreePath ? 'para sempre' : timedVersions.length > 0 ? 'vitalício ou por tempo' : 'vitalício',
+  })
+  if (showMaterialViews) {
+    infoCells.push({ key: 'views', label: 'Visualizações', value: compactNumber(pkg.viewCount), note: 'no total' })
+  }
+  if (showMaterialDownloads) {
+    infoCells.push({ key: 'dl', label: 'Downloads', value: compactNumber(pkg.downloadCount), note: 'no total' })
+  }
+
+  const spinner = <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+
+  const purchaseBody = access.hasAccess ? (
+    <div className="space-y-2.5">
+      <p className="ios-tinta flex items-center gap-1.5 text-[15px] font-semibold">
+        <Check className="h-4 w-4" strokeWidth={2.75} /> Pacote na sua biblioteca
+      </p>
+      <a href="#itens-do-pacote" className="ios-botao ios-botao-g w-full">
+        Ver os {totalItems} {totalItems === 1 ? 'material' : 'materiais'}
+      </a>
+      <p className="ios-rotulo-3 text-center text-[12px]">Cada material abre pela lista do pacote.</p>
+    </div>
+  ) : access.includedInPlus ? (
+    <div className="space-y-2.5">
+      <p className="ios-ambar flex items-center gap-1.5 text-[15px] font-semibold">
+        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+      </p>
+      <div ref={ctaRef}>
+        <button type="button" onClick={handleClaimWithPlus} disabled={checkoutLoading} className="ios-botao-ambar ios-botao-g w-full">
+          {checkoutLoading ? spinner : <Gift className="h-[18px] w-[18px]" />}
+          Resgatar pacote
+        </button>
+      </div>
+      <p className="ios-rotulo-3 text-center text-[12px]">Sem custo — já faz parte da sua assinatura.</p>
+      {cartMessage && (
+        <p role="status" className="ios-tinta rounded-[14px] bg-[var(--ios-tinta-suave)] px-3 py-2.5 text-center text-[13px] font-semibold">
+          {cartMessage}
+        </p>
+      )}
+    </div>
+  ) : (
+    <div className="space-y-3">
+      <div>
+        {isFreePath ? (
+          <p className="ios-preco ios-tinta">Grátis</p>
+        ) : (
+          <>
+            {strikePrice && strikePrice > displayPrice && (
+              <p className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+                <span className="ios-rotulo-3 tabular-nums line-through">{fmtBRL(strikePrice)}</span>
+                <span className="ios-tinta font-semibold">
+                  −{Math.round((1 - displayPrice / strikePrice) * 100)}%
+                  {hasTier ? ` no lote${eventState?.activeTier?.label ? ` ${eventState.activeTier.label}` : ''}` : hasDiscount ? ' pelo que você já tem' : ''}
+                </span>
+                {hasTier && <PricingEventBadge state={eventState} size="xs" />}
+              </p>
+            )}
+            <p className="ios-preco">{displayPrice <= 0 ? 'Grátis' : fmtBRL(displayPrice)}</p>
+            <p className="ios-rotulo-2 mt-1 text-[13px]">
+              {selectedTimedVersion
+                ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
+                : 'Pagamento único · acesso vitalício'}
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Desconto pelo que a pessoa já tem: dizer de onde veio o número. */}
+      {hasDiscount && !selectedTimedVersion && (
+        <p className="ios-tinta flex items-start gap-2 rounded-[14px] bg-[var(--ios-tinta-suave)] px-3.5 py-3 text-[13px] font-medium leading-snug">
+          <TrendingDown className="mt-0.5 h-4 w-4 shrink-0" />
+          Você já tem {pricing.ownedMaterialIds.length} {pricing.ownedMaterialIds.length === 1 ? 'item' : 'itens'} deste pacote, então
+          descontamos {fmtBRL(pricing.discountApplied)}.
+        </p>
+      )}
+
+      {!isFree && timedVersions.length > 0 && (
+        <TimedAccessOptions
+          versions={timedVersions}
+          value={accessVersionId}
+          onChange={setAccessVersionId}
+          fullPrice={hasTier ? tierFinalPrice : pricing.effectivePrice}
+          fullPriceLabel="Pacote completo, para sempre"
+          disabled={checkoutLoading}
+        />
+      )}
+
+      <div ref={ctaRef} className="space-y-2 pt-1">
+        {isFreePath ? (
+          <button type="button" onClick={handleAcquire} disabled={checkoutLoading} className="ios-botao ios-botao-g w-full">
+            {checkoutLoading ? spinner : <Gift className="h-[18px] w-[18px]" />}
+            Obter grátis
+          </button>
+        ) : (
+          <>
+            <button type="button" onClick={handleBuyNow} disabled={checkoutLoading} className="ios-botao ios-botao-g w-full">
+              {checkoutLoading ? spinner : null}
+              Comprar pacote
+            </button>
+            {isInCart('package', id) ? (
+              <button type="button" onClick={abrirCarrinho} className="ios-botao-suave ios-botao-g w-full">
+                <Check className="ios-pop h-[18px] w-[18px]" strokeWidth={3} /> No carrinho · ver carrinho
+              </button>
+            ) : (
+              <button type="button" onClick={handleAcquire} disabled={checkoutLoading} className="ios-botao-suave ios-botao-g w-full">
+                <BagPlusIcon /> Adicionar ao carrinho
+              </button>
+            )}
+          </>
+        )}
+      </div>
+
+      {separateSavings > 0 && (
+        <p className="ios-rotulo-2 text-center text-[13px]">
+          Separados, custariam <span className="tabular-nums line-through">{fmtBRL(separateTotal)}</span> —{' '}
+          <span className="ios-tinta font-semibold">você economiza {fmtBRL(separateSavings)}</span>.
+        </p>
+      )}
+
+      {isInCart('package', id) && (
+        <p className="ios-rotulo-2 text-center text-[13px]">
+          Dá para juntar outros materiais e pagar tudo de uma vez.{' '}
+          <Link href="/materiais" className="ios-tinta font-semibold">Continuar escolhendo</Link>
+        </p>
+      )}
+      {cartMessage && (
+        <p role="status" className="ios-tinta flex items-center justify-center gap-1.5 rounded-[14px] bg-[var(--ios-tinta-suave)] px-3 py-2.5 text-center text-[13px] font-semibold">
+          <Check className="h-4 w-4" strokeWidth={2.75} /> {cartMessage}
+        </p>
+      )}
+      {!isFree && <ProuniCta itemType="package" itemId={id} />}
+    </div>
+  )
 
   return (
-    <AppShell allowGuest headerTitle={pkg.title} headerSubtitle="Pacote">
-      <div className={`surface-page min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
-        {/* Ambient blobs */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute -top-24 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-2xl" />
-          <div className="absolute top-1/2 -right-40 w-[320px] h-[320px] rounded-full bg-accent/8 blur-2xl" />
-        </div>
+    <AppShell allowGuest vidro headerTitle={pkg.title} headerSubtitle="Pacote">
+      <FundoIos
+        capa={pkg.coverImage || null}
+        capaSizes={heroSizes}
+        className={showMobilePurchaseBar ? 'pb-32 xl:pb-16' : 'pb-16'}
+      >
+        <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8">
+          <Link href="/materiais?tab=packages" className="ios-voltar -ml-2.5 mb-3">
+            <ChevronLeft className="h-[22px] w-[22px] shrink-0" strokeWidth={2.5} />
+            Pacotes
+          </Link>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-          {/* Breadcrumb */}
-          <motion.div
-            initial={false}
-            
-            
-            className="flex items-center gap-2 mb-6 flex-wrap"
-          >
-            <Link
-              href="/materiais"
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              <span className="h-7 w-7 rounded-lg bg-card border border-border flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </span>
-              Materiais
-            </Link>
-            <span className="text-muted-foreground/40 text-sm">/</span>
-            <Link
-              href="/materiais?tab=packages"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-            >
-              <Package className="h-3.5 w-3.5" />
-              Pacotes
-            </Link>
-            <span className="text-muted-foreground/40 text-sm">/</span>
-            <span className="text-sm font-medium text-foreground line-clamp-1 max-w-[200px]">
-              {pkg.title}
-            </span>
-          </motion.div>
-
-          {/* Oferta de versão impressa (add-on vinculado ao pacote) */}
-          <PrintedAddon packageId={id} />
-
-          {/* Main layout */}
-          <div className="flex flex-col xl:flex-row gap-6">
-
-            {/* LEFT: Media + Items */}
-            <motion.div
-              initial={false}
-              
-              
-              className="flex-1 min-w-0 space-y-4"
-            >
-              {/* Cover */}
-              <div className="rounded-xl overflow-hidden bg-card border border-border shadow-sm border border-border/40">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+            {/* ── Capa ── */}
+            <div className="min-w-0 xl:col-start-1 xl:row-start-1">
+              <div className="ios-assenta ios-capa relative w-full overflow-hidden rounded-[22px] shadow-[var(--ios-sombra-alta)] sm:rounded-[28px]" style={{ aspectRatio: '16/9' }}>
                 {pkg.coverImage ? (
-                  <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                    <Image
-                      src={pkg.coverImage}
-                      alt={pkg.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1280px) 100vw, 70vw"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2 flex-wrap">
-                      <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-primary/80 border border-primary/40 text-primary-foreground text-sm font-bold flex items-center gap-1.5">
-                        <Package className="h-3.5 w-3.5" />
-                        Pacote · {totalItems} {totalItems === 1 ? 'item' : 'itens'}
-                      </span>
-                      {access.hasAccess && (
-                        <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-50 text-xs font-bold flex items-center gap-1.5">
-                          <Check className="h-3.5 w-3.5" /> Disponível
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                  <Image src={pkg.coverImage} alt={pkg.title} fill className="object-cover" sizes={heroSizes} priority />
                 ) : (
-                  <div className="w-full flex items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-accent/10" style={{ aspectRatio: '16/9' }}>
-                    <Package className="h-20 w-20 text-primary" />
-                  </div>
+                  <PackageCoverMosaic materials={materials} />
                 )}
+              </div>
+            </div>
 
-                {/* Info bar */}
-                <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
-                  {hasInfoMetrics && (
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      {showMaterialViews && (
-                        <span className="flex items-center gap-1.5">
-                          <Eye className="h-3.5 w-3.5" /> {pkg.viewCount}
-                        </span>
-                      )}
-                      {showMaterialDownloads && (
-                        <span className="flex items-center gap-1.5">
-                          <Download className="h-3.5 w-3.5" /> {pkg.downloadCount}
-                        </span>
-                      )}
+            {/* ── Título e compra ── */}
+            <aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+              <div className="space-y-4 xl:sticky xl:top-24">
+                <div className="ios-painel">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h1 className="ios-titulo-produto">{pkg.title}</h1>
+                      <p className="ios-rotulo-2 mt-1 text-[15px]">
+                        Pacote · {totalItems} {totalItems === 1 ? 'material' : 'materiais'}
+                        {typeSummary ? ` · ${typeSummary}` : ''}
+                      </p>
                     </div>
-                  )}
-                  {(reviewSummary?.count ?? 0) > 0 && (
                     <button
                       type="button"
-                      onClick={() =>
-                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                      }
-                      className="transition-opacity hover:opacity-80"
-                      aria-label="Ver avaliações do pacote"
+                      onClick={copyShareLink}
+                      title={copied ? 'Link copiado!' : 'Copiar link'}
+                      aria-label={copied ? 'Link copiado' : 'Copiar link do pacote'}
+                      className="ios-icone-botao ios-icone-botao-g -mr-1"
                     >
-                      <ReviewSummaryBlock summary={reviewSummary} variant="inline" />
+                      {copied ? <Check className="h-[18px] w-[18px]" strokeWidth={2.5} /> : <Share className="h-[18px] w-[18px]" />}
+                    </button>
+                  </div>
+
+                  {reviewCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={jumpToReviews}
+                      className="ios-rotulo-2 mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium"
+                    >
+                      <StarRow value={reviewSummary?.avg ?? 0} />
+                      <span className="tabular-nums">{(reviewSummary?.avg ?? 0).toFixed(1).replace('.', ',')}</span>
+                      <span>· {reviewCount} {reviewCount === 1 ? 'avaliação' : 'avaliações'}</span>
                     </button>
                   )}
-                  <button
-                    onClick={copyShareLink}
-                    className={`ml-auto flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
-                      copied
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                        : 'text-muted-foreground hover:text-foreground bg-muted border border-border border-border/40'
-                    }`}
-                  >
-                    {copied ? <CheckCheck className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
-                    {copied ? 'Copiado!' : 'Compartilhar'}
-                  </button>
-                </div>
-              </div>
 
-              {/* Acesso por tempo limitado — quanto resta e como somar mais */}
+                  <div className="mt-5">{purchaseBody}</div>
+                </div>
+
+                {pkg.allowedGroups?.length > 0 && (
+                  <section className="ios-lista p-4">
+                    <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Acesso por plano</h2>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {pkg.allowedGroups.map(g => {
+                        const meta = GROUP_META[g]
+                        if (!meta) return null
+                        return (
+                          <span
+                            key={g}
+                            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold"
+                            style={{ color: meta.color, background: meta.color + '1f' }}
+                          >
+                            {meta.icon} {meta.label}
+                          </span>
+                        )
+                      })}
+                    </div>
+                    {!access.hasGroupAccess && (
+                      <p className="ios-rotulo-2 mt-2.5 text-[13px] leading-relaxed">
+                        Seu plano atual não inclui este pacote. Faça upgrade para desbloquear.
+                      </p>
+                    )}
+                  </section>
+                )}
+              </div>
+            </aside>
+
+            {/* ── Conteúdo ── */}
+            <div className="min-w-0 space-y-8 xl:col-start-1 xl:row-start-2">
               {access.hasAccess && timedAccess?.isTimed && (
                 <TimedAccessBanner
                   access={timedAccess}
                   itemLabel="pacote"
-                  className="mb-4"
                   versions={timedVersions}
                   selectedVersionId={accessVersionId}
                   onSelectVersion={setAccessVersionId}
@@ -513,326 +679,114 @@ export default function PackageDetailPage() {
                 />
               )}
 
-              {/* Lote dinâmico por evento */}
-              {hasTier && eventState && !access.hasAccess && (
-                <motion.div
-                  initial={false}
-                  
-                  
-                >
-                  <PricingEventCountdown state={eventState} />
-                </motion.div>
-              )}
+              {hasTier && eventState && !access.hasAccess && <PricingEventCountdown state={eventState} />}
 
-              {/* Mobile purchase summary */}
-              <motion.div
-                initial={false}
-                
-                
-                className="rounded-lg border border-border/40 bg-card border border-border p-4 xl:hidden"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[11px] font-medium border border-violet-500/15">
-                        <Package className="h-3 w-3" /> Pacote
-                      </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
-                        {totalItems} {totalItems === 1 ? 'item' : 'itens'}
-                      </span>
-                      {isFree ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
-                          <Gift className="h-3 w-3" /> Gratuito
-                        </span>
-                      ) : hasTier ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
-                          <span className="line-through opacity-60">{fmtBRL(pricing.effectivePrice)}</span>
-                          <span>{fmtBRL(tierFinalPrice)}</span>
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
-                          {fmtBRL(pricing.effectivePrice)}
-                        </span>
-                      )}
-                      {hasTier && <PricingEventBadge state={eventState} size="xs" />}
+              <div className="ios-lista py-3.5">
+                <div className="ios-faixa" role="list" aria-label="Informações do pacote">
+                  {infoCells.map(cell => (
+                    <div key={cell.key} role="listitem">
+                      <span className="ios-faixa-rotulo">{cell.label}</span>
+                      <span className="ios-faixa-valor">{cell.value}</span>
+                      <span className="ios-faixa-nota">{cell.note}</span>
                     </div>
-
-                    <h1 className="font-heading text-lg font-bold leading-snug">
-                      {pkg.title}
-                    </h1>
-
-                    {hasDiscount && !access.hasAccess && (
-                      <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                        <TrendingDown className="h-3.5 w-3.5" />
-                        {fmtBRL(pricing.discountApplied)} descontados por itens já adquiridos
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={copyShareLink}
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
-                      copied
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                        : 'text-muted-foreground hover:text-foreground bg-muted border border-border border-border/40'
-                    }`}
-                    aria-label={copied ? 'Link copiado' : 'Compartilhar pacote'}
-                  >
-                    {copied ? <CheckCheck className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-                  </button>
+                  ))}
                 </div>
+              </div>
 
-                {!isFree && (
-                  <div className="mt-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2.5">
-                    {hasStaticDiscount && !hasDiscount && (
-                      <div className="mb-1 flex items-center justify-between text-xs">
-                        <span className="text-muted-foreground">De</span>
-                        <span className="text-muted-foreground line-through">
-                          {fmtBRL(pkg.originalPrice)}
-                        </span>
-                      </div>
-                    )}
-                    {hasDiscount && (
-                      <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                        <span className="text-muted-foreground">Valor original</span>
-                        <span className="text-muted-foreground line-through">
-                          {fmtBRL(pricing.originalPackagePrice)}
-                        </span>
-                      </div>
-                    )}
-                    {hasTier && (
-                      <>
-                        <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                          <span className="text-muted-foreground">Valor sem lote</span>
-                          <span className="text-muted-foreground line-through">
-                            {fmtBRL(pricing.effectivePrice)}
-                          </span>
-                        </div>
-                        <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                          <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                            <TrendingDown className="h-3 w-3" /> Lote{eventState ? ` · ${eventState.activeTier?.label || ''}` : ''} (−{Math.round(tierPct)}%)
-                          </span>
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                            − {fmtBRL(tierSavings)}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-sm font-semibold">Total</span>
-                      <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                        {tierFinalPrice <= 0 ? 'Grátis' : fmtBRL(tierFinalPrice)}
-                      </span>
-                    </div>
-                    {hasTier && eventState?.activeTier && (
-                      <p className="mt-1 text-[10px] text-emerald-700/80 dark:text-emerald-300/80 leading-snug">
-                        ⚡ Lote ativo: quanto antes comprar, maior o desconto.
-                      </p>
-                    )}
-                  </div>
-                )}
+              {/* Oferta de versão impressa (add-on vinculado ao pacote) */}
+              <PrintedAddon packageId={id} />
 
-                <div className="mt-4 space-y-2">
-                  {!access.hasAccess && !isFree && timedVersions.length > 0 && (
-                    <TimedAccessOptions
-                      versions={timedVersions}
-                      value={accessVersionId}
-                      onChange={setAccessVersionId}
-                      fullPrice={hasTier ? tierFinalPrice : pricing.effectivePrice}
-                      fullPriceLabel="Pacote completo, para sempre"
-                      disabled={checkoutLoading}
-                      className="mb-3"
-                    />
-                  )}
-                  {access.hasAccess ? (
-                    <>
-                      <Button
-                        disabled
-                        className="w-full h-11 rounded-lg font-semibold text-white bg-primary cursor-default"
-                      >
-                        <Check className="h-4 w-4 mr-2" /> Pacote adquirido
-                      </Button>
-                      <p className="text-center text-[10px] text-muted-foreground/70">
-                        Acesse cada material pela lista abaixo.
-                      </p>
-                    </>
-                  ) : access.includedInPlus ? (
-                    <>
-                      <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
-                        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
-                      </span>
-                      <Button
-                        onClick={handleClaimWithPlus}
-                        disabled={checkoutLoading}
-                        className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 active:scale-[0.98]"
-                      >
-                        {checkoutLoading
-                          ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          : <Gift className="h-4 w-4 mr-2" />}
-                        Resgatar pacote
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      {isFree || pricing.effectivePrice <= 0 ? (
-                        <Button
-                          onClick={handleAcquire}
-                          disabled={checkoutLoading}
-                          className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors active:scale-[0.98]"
-                        >
-                          {checkoutLoading
-                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            : <Gift className="h-4 w-4 mr-2" />
-                          }
-                          Adquirir gratuitamente
-                        </Button>
-                      ) : (
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                          <Button
-                            onClick={handleBuyNow}
-                            disabled={checkoutLoading}
-                            className="h-11 rounded-lg bg-secondary font-semibold text-secondary-foreground shadow-sm hover:bg-secondary/90 transition-colors active:scale-[0.98]"
-                          >
-                            Comprar agora
-                          </Button>
-                          <Button
-                            onClick={handleAcquire}
-                            disabled={checkoutLoading}
-                            className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
-                          >
-                            <ShoppingCart className="h-4 w-4 mr-2" />
-                            Adicionar
-                          </Button>
-                        </div>
-                      )}
-                      {!isFree && (
-                        <p className="text-center text-[10px] text-muted-foreground/60">
-                          {selectedTimedVersion
-                            ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
-                            : 'Pagamento único · acesso permanente'}
-                        </p>
-                      )}
-                      {!isFree && <ProuniCta itemType="package" itemId={id} className="mt-1" />}
-                      {cartMessage && (
-                        <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                          {cartMessage}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Description */}
               {pkg.description && (
-                <motion.div
-                  initial={false}
-                  
-                  
-                  className="bg-card border border-border rounded-lg px-5 py-4 border border-border/40"
-                >
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
-                    Sobre o pacote
-                  </h3>
-                  <p className={`text-sm leading-relaxed text-foreground/85 ${descExpanded ? '' : 'line-clamp-4'}`}>
+                <section>
+                  <h2 className="ios-titulo-secao mb-2.5">Sobre o pacote</h2>
+                  <p className={cn('max-w-[68ch] whitespace-pre-line text-[16px] leading-relaxed text-[var(--ios-rotulo)]', !descExpanded && 'line-clamp-5')}>
                     {pkg.description}
                   </p>
                   {descLong && (
                     <button
+                      type="button"
                       onClick={() => setDescExpanded(e => !e)}
-                      className="mt-2 flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                      aria-expanded={descExpanded}
+                      className="ios-tinta mt-1.5 text-[15px] font-semibold"
                     >
-                      {descExpanded
-                        ? <><ChevronUp className="h-3 w-3" /> Ver menos</>
-                        : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                      {descExpanded ? 'menos' : 'mais'}
                     </button>
                   )}
-                </motion.div>
+                  {pkg.tags?.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {pkg.tags.map(tag => (
+                        <span key={tag} className="ios-rotulo-2 rounded-full bg-[var(--ios-preenchimento)] px-3 py-1 text-[13px] font-medium">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </section>
               )}
 
-              {/* Items list */}
-              <motion.div
-                initial={false}
-                
-                transition={{ delay: 0.15 }}
-                className="bg-card border border-border rounded-lg border border-border/40 overflow-hidden"
-              >
-                <div className="px-5 py-3.5 border-b border-border/40 flex items-center justify-between gap-3 flex-wrap">
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                    <Package className="h-3.5 w-3.5" />
-                    Itens incluídos
-                  </h3>
-                  <span className="text-xs text-muted-foreground">
+              <section id="itens-do-pacote" className="scroll-mt-24">
+                <div className="mb-3 flex items-baseline justify-between gap-3">
+                  <h2 className="ios-titulo-secao">Neste pacote</h2>
+                  <span className="ios-rotulo-2 text-[15px] tabular-nums">
                     {totalItems} {totalItems === 1 ? 'material' : 'materiais'}
                   </span>
                 </div>
 
                 {materials.length === 0 ? (
-                  <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+                  <div className="ios-lista ios-rotulo-2 px-5 py-10 text-center text-[15px]">
                     Nenhum material disponível neste pacote.
                   </div>
                 ) : (
-                  <ul className="divide-y divide-border/30">
+                  <ul className="ios-lista [--ios-recuo:104px]">
                     {materials.map((m) => {
                       const owned = m._isPurchased || access.isPurchased
                       const isOwnedExtra = m._isPurchased && !access.isPurchased
+                      const detail = m.type === 'pdf' && m._pageCount
+                        ? `${m._pageCount} ${m._pageCount === 1 ? 'página' : 'páginas'}`
+                        : m.videoDuration
+                          ? formatDuration(m.videoDuration)
+                          : null
                       return (
                         <li key={m._id}>
-                          <Link
-                            href={`/materiais/${m._id}`}
-                            className="group flex items-center gap-3 px-5 py-3 hover:bg-muted/40 transition-colors"
-                          >
-                            {/* Cover thumb */}
-                            <div className="relative h-14 w-20 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                          <Link href={`/materiais/${m._id}`} className="ios-linha group py-3">
+                            <span className="ios-capa relative h-[54px] w-[76px] shrink-0 rounded-[12px]">
                               {m.coverImage ? (
-                                <Image src={m.coverImage} alt="" fill className="object-cover" sizes="80px" />
+                                <Image src={m.coverImage} alt="" fill className="object-cover" sizes="76px" />
                               ) : (
-                                <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/15 to-accent/15 text-primary">
+                                <span className="ios-capa-vazia ios-tinta flex h-full w-full items-center justify-center">
                                   {TYPE_ICONS[m.type] || <File className="h-5 w-5" />}
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Title + meta */}
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-primary/10 text-primary text-[10px] font-medium border border-primary/15">
-                                  {TYPE_ICONS[m.type]}
-                                  {TYPE_LABELS[m.type] || 'Arquivo'}
                                 </span>
-                                {m.pricing === 'free' ? (
-                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold border border-emerald-500/15">
-                                    <Gift className="h-2.5 w-2.5" /> Grátis
-                                  </span>
-                                ) : (
-                                  <span className="px-1.5 py-0.5 rounded-md bg-accent/10 text-amber-700 dark:text-amber-300 text-[10px] font-bold border border-amber-500/15">
-                                    {fmtBRL(m.price)}
-                                  </span>
-                                )}
-                                {isOwnedExtra && (
-                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[10px] font-bold border border-violet-500/15">
-                                    <Check className="h-2.5 w-2.5" /> Já adquirido
-                                  </span>
-                                )}
-                                {m.type === 'pdf' && m._pageCount ? (
-                                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-muted/60 text-muted-foreground text-[10px] font-medium border border-border/40">
-                                    <FileText className="h-2.5 w-2.5" /> {m._pageCount} {m._pageCount === 1 ? 'página' : 'páginas'}
-                                  </span>
-                                ) : null}
-                              </div>
-                              <p className="text-sm font-medium leading-snug line-clamp-1 group-hover:text-primary transition-colors">
+                              )}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="line-clamp-2 block text-[15px] font-semibold leading-snug tracking-[-0.01em]">
                                 {m.title}
-                              </p>
-                            </div>
-
-                            <ChevronRight className="h-4 w-4 text-muted-foreground/60 flex-shrink-0 group-hover:text-primary transition-colors" />
+                              </span>
+                              <span className="ios-rotulo-2 mt-0.5 flex flex-wrap items-center gap-x-1.5 text-[13px]">
+                                <span>{TYPE_LABELS[m.type] || 'Arquivo'}</span>
+                                {detail && <><span aria-hidden>·</span><span>{detail}</span></>}
+                                {isOwnedExtra ? (
+                                  <><span aria-hidden>·</span><span className="ios-tinta font-semibold">Já é seu</span></>
+                                ) : !owned && m.pricing === 'paid' && Number(m.price) > 0 ? (
+                                  <><span aria-hidden>·</span><span className="tabular-nums">{fmtBRL(m.price)} separado</span></>
+                                ) : !owned && m.pricing === 'free' ? (
+                                  <><span aria-hidden>·</span><span>grátis</span></>
+                                ) : null}
+                              </span>
+                            </span>
+                            {owned ? (
+                              <span className="ios-tinta flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--ios-tinta-suave)]">
+                                <Check className="h-4 w-4" strokeWidth={2.75} />
+                              </span>
+                            ) : null}
+                            <ChevronRight className="ios-rotulo-3 h-5 w-5 shrink-0 transition-transform group-hover:translate-x-0.5" />
                           </Link>
                         </li>
                       )
                     })}
                   </ul>
                 )}
-              </motion.div>
+              </section>
 
               {/* Prova social: avaliações agregadas dos materiais do pacote */}
               <PackageReviews
@@ -840,361 +794,168 @@ export default function PackageDetailPage() {
                 packageId={id}
                 onSummaryChange={setReviewSummary}
               />
-            </motion.div>
-
-            {/* RIGHT: Sidebar */}
-            <motion.div
-              initial={false}
-              className="xl:w-[340px] flex-shrink-0 space-y-3"
-            >
-              {/* CTA Card */}
-              <div className="hidden xl:block rounded-xl overflow-hidden border border-border/40 bg-card border border-border">
-                {pkg.coverImage && (
-                  <div className="relative h-32 overflow-hidden">
-                    <Image src={pkg.coverImage} alt="" fill className="object-cover" sizes="340px" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                    <div className="absolute top-3 right-3">
-                      {access.hasAccess ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold">
-                          <Check className="h-3 w-3" /> Disponível
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-black/40 border border-white/15 text-white/80 text-[11px] font-bold">
-                          <Lock className="h-3 w-3" />
-                          {isFree ? 'Gratuito' : fmtBRL(tierFinalPrice)}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-4">
-                  <div className="flex items-center gap-1.5 flex-wrap mb-3">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[11px] font-medium border border-violet-500/15">
-                      <Package className="h-3 w-3" /> Pacote
-                    </span>
-                    {isFree ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
-                        <Gift className="h-3 w-3" /> Gratuito
-                      </span>
-                    ) : hasTier ? (
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
-                        <span className="line-through opacity-60">{fmtBRL(pricing.effectivePrice)}</span>
-                        <span>{fmtBRL(tierFinalPrice)}</span>
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
-                        {fmtBRL(pricing.effectivePrice)}
-                      </span>
-                    )}
-                    {hasTier && <PricingEventBadge state={eventState} size="xs" />}
-                  </div>
-
-                  <h1 className="font-heading font-bold text-base leading-snug mb-3">
-                    {pkg.title}
-                  </h1>
-
-                  {/* Tags */}
-                  {pkg.tags?.length > 0 && (
-                    <div className="mb-3">
-                      <div className="flex flex-wrap gap-1">
-                        {pkg.tags.map(tag => (
-                          <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
-                            <Tag className="inline h-2.5 w-2.5 mr-0.5" /> {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Price breakdown */}
-                  {!isFree && (
-                    <div className="mb-3 rounded-lg border border-border/40 overflow-hidden">
-                      <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                          {hasDiscount ? 'Seu preço com desconto' : 'Valor do pacote'}
-                        </p>
-                      </div>
-                      <div className="px-3 py-2.5 space-y-1.5">
-                        {hasStaticDiscount && !hasDiscount && (
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="text-muted-foreground">De</span>
-                            <span className="text-muted-foreground line-through">
-                              {fmtBRL(pkg.originalPrice)}
-                            </span>
-                          </div>
-                        )}
-                        {hasDiscount && (
-                          <>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Valor do pacote</span>
-                              <span className="text-muted-foreground line-through">
-                                {fmtBRL(pricing.originalPackagePrice)}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                                <TrendingDown className="h-3 w-3" /> Desconto por itens já adquiridos
-                              </span>
-                              <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                − {fmtBRL(pricing.discountApplied)}
-                              </span>
-                            </div>
-                          </>
-                        )}
-                        {hasTier && (
-                          <>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Valor sem lote</span>
-                              <span className="text-muted-foreground line-through">
-                                {fmtBRL(pricing.effectivePrice)}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                                <TrendingDown className="h-3 w-3" /> Lote ativo (−{Math.round(tierPct)}%)
-                              </span>
-                              <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                                − {fmtBRL(tierSavings)}
-                              </span>
-                            </div>
-                          </>
-                        )}
-                        <div className="flex items-center justify-between pt-1">
-                          <span className="text-sm font-semibold">Total</span>
-                          <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                            {tierFinalPrice <= 0 ? 'Grátis' : fmtBRL(tierFinalPrice)}
-                          </span>
-                        </div>
-                        {hasDiscount && (
-                          <p className="text-[10px] text-muted-foreground/80 leading-snug pt-1 border-t border-border/30 mt-1">
-                            Desconto calculado proporcionalmente sobre os materiais
-                            do pacote que você já adquiriu.
-                          </p>
-                        )}
-                        {hasTier && eventState?.activeTier && (
-                          <p className="text-[10px] text-emerald-700/85 dark:text-emerald-300/85 leading-snug pt-1 border-t border-border/30 mt-1">
-                            ⚡ Lote {eventState.activeTier.label}. Quanto antes comprar, maior o desconto.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Formas de acesso — pacote completo ou versão por tempo */}
-                  {!access.hasAccess && !isFree && timedVersions.length > 0 && (
-                    <TimedAccessOptions
-                      versions={timedVersions}
-                      value={accessVersionId}
-                      onChange={setAccessVersionId}
-                      fullPrice={hasTier ? tierFinalPrice : pricing.effectivePrice}
-                      fullPriceLabel="Pacote completo, para sempre"
-                      disabled={checkoutLoading}
-                      className="mb-3"
-                    />
-                  )}
-
-                  {/* CTA */}
-                  <div className="mt-1 space-y-2">
-                    {access.hasAccess ? (
-                      <>
-                        <Button
-                          disabled
-                          className="w-full h-11 rounded-lg font-semibold text-white bg-primary cursor-default"
-                        >
-                          <Check className="h-4 w-4 mr-2" /> Pacote adquirido
-                        </Button>
-                        <p className="text-center text-[10px] text-muted-foreground/70">
-                          Acesse cada material pela lista ao lado.
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {isFree || pricing.effectivePrice <= 0 ? (
-                          <Button
-                            onClick={handleAcquire}
-                            disabled={checkoutLoading}
-                            className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-colors active:scale-[0.98]"
-                          >
-                            {checkoutLoading
-                              ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              : <Gift className="h-4 w-4 mr-2" />
-                            }
-                            Adquirir gratuitamente
-                          </Button>
-                        ) : (
-                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                            <Button
-                              onClick={handleAcquire}
-                              disabled={checkoutLoading}
-                              className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
-                            >
-                              <ShoppingCart className="h-4 w-4 mr-2" />
-                              Adicionar ao carrinho
-                            </Button>
-                            <Button
-                              onClick={handleBuyNow}
-                              disabled={checkoutLoading}
-                              className="h-11 rounded-lg bg-secondary font-semibold text-secondary-foreground shadow-sm hover:bg-secondary/90 transition-colors active:scale-[0.98]"
-                            >
-                              Comprar agora
-                            </Button>
-                          </div>
-                        )}
-                        {!isFree && (
-                          <p className="text-center text-[10px] text-muted-foreground/60">
-                            {selectedTimedVersion
-                              ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
-                              : 'Pagamento único · acesso permanente'}
-                          </p>
-                        )}
-                        {!isFree && <ProuniCta itemType="package" itemId={id} className="mt-1" />}
-                        {cartMessage && (
-                          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                            {cartMessage}
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Group restrictions */}
-              <AnimatePresence>
-                {pkg.allowedGroups?.length > 0 && (
-                  <motion.div
-                    initial={false}
-                    className="bg-card border border-border rounded-lg p-4 border border-border"
-                  >
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="h-6 w-6 rounded-lg bg-violet-500/15 flex items-center justify-center">
-                        <Shield className="h-3 w-3 text-violet-500" />
-                      </div>
-                      <p className="text-[11px] font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
-                        Acesso por plano
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {pkg.allowedGroups.map(g => {
-                        const meta = GROUP_META[g]
-                        if (!meta) return null
-                        return (
-                          <span
-                            key={g}
-                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
-                            style={{ color: meta.color, background: meta.color + '15', borderColor: meta.color + '35' }}
-                          >
-                            {meta.icon} {meta.label}
-                          </span>
-                        )
-                      })}
-                    </div>
-                    {!access.hasGroupAccess && (
-                      <p className="mt-2.5 text-[11px] text-muted-foreground leading-relaxed">
-                        Seu plano atual não inclui este pacote. Faça upgrade para desbloquear.
-                      </p>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Discount info */}
-              {hasDiscount && !access.hasAccess && (
-                <motion.div
-                  initial={false}
-                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-emerald-500/8 border border-emerald-500/20"
-                >
-                  <TrendingDown className="h-4 w-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-emerald-700 dark:text-emerald-300 leading-relaxed">
-                    Você já possui {pricing.ownedMaterialIds.length} {pricing.ownedMaterialIds.length === 1 ? 'item' : 'itens'} deste
-                    pacote. Por isso, descontamos {fmtBRL(pricing.discountApplied)} do valor original.
-                  </p>
-                </motion.div>
-              )}
-            </motion.div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {showMobilePurchaseBar && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl shadow-black/15 backdrop-blur-xl xl:hidden">
-          <div className="mx-auto flex max-w-7xl items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-foreground">{pkg.title}</p>
-              <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {isFree || tierFinalPrice <= 0 ? 'Gratuito' : (
+        {showMobilePurchaseBar && (
+          <div
+            className="ios-barra-inferior ios-vidro flex items-center gap-3 p-2 pl-2.5 xl:hidden"
+            data-visivel={ctaVisivel ? 'false' : 'true'}
+            aria-hidden={ctaVisivel}
+          >
+            <span className="ios-capa relative h-11 w-11 shrink-0 rounded-[12px]">
+              {pkg.coverImage ? (
+                <Image src={pkg.coverImage} alt="" fill sizes="44px" className="object-cover" />
+              ) : (
+                <span className="ios-capa-vazia ios-tinta flex h-full w-full items-center justify-center">
+                  <Package className="h-5 w-5" />
+                </span>
+              )}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[14px] font-semibold tracking-[-0.01em]">{pkg.title}</span>
+              <span className="block text-[13px] font-semibold tabular-nums">
+                {access.includedInPlus ? (
+                  <span className="ios-ambar">Incluído no {PLUS_LABEL}</span>
+                ) : isFreePath || displayPrice <= 0 ? (
+                  <span className="ios-tinta">Grátis</span>
+                ) : (
                   <>
-                    {hasTier && (
-                      <span className="mr-1.5 text-[10px] font-medium text-muted-foreground line-through">
-                        {fmtBRL(pricing.effectivePrice)}
-                      </span>
+                    {strikePrice && strikePrice > displayPrice && (
+                      <span className="ios-rotulo-3 mr-1.5 font-medium line-through">{fmtBRL(strikePrice)}</span>
                     )}
-                    {fmtBRL(tierFinalPrice)}
-                    {hasTier && <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{Math.round(tierPct)}%</span>}
+                    {fmtBRL(displayPrice)}
+                    {selectedTimedVersion && <span className="ios-rotulo-2 ml-1.5 font-medium">{selectedTimedVersion.durationLabel}</span>}
                   </>
                 )}
-              </p>
-            </div>
-            <Button
-              onClick={isFree || pricing.effectivePrice <= 0 ? handleAcquire : handleBuyNow}
+              </span>
+            </span>
+            {!access.includedInPlus && !isFreePath && (
+              <CartButton
+                inCart={isInCart('package', id)}
+                onAdd={handleAcquire}
+                disabled={checkoutLoading}
+                itemTitle={`pacote ${pkg.title}`}
+                className="h-11"
+                tabIndex={ctaVisivel ? -1 : 0}
+              />
+            )}
+            <button
+              type="button"
+              tabIndex={ctaVisivel ? -1 : 0}
+              onClick={access.includedInPlus ? handleClaimWithPlus : isFreePath ? handleAcquire : handleBuyNow}
               disabled={checkoutLoading}
-              className="h-11 min-w-[9rem] rounded-lg bg-secondary px-4 font-bold text-secondary-foreground shadow-md shadow-secondary/20 transition-all active:scale-[0.98]"
+              className={access.includedInPlus ? 'ios-botao-ambar' : 'ios-botao'}
             >
-              {checkoutLoading ? (
-                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : isFree || pricing.effectivePrice <= 0 ? (
-                <Gift className="h-4 w-4 mr-2" />
-              ) : null}
-              {isFree || pricing.effectivePrice <= 0 ? 'Adquirir' : 'Comprar agora'}
-            </Button>
+              {checkoutLoading ? spinner : null}
+              {access.includedInPlus ? 'Resgatar' : isFreePath ? 'Obter' : 'Comprar'}
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </FundoIos>
     </AppShell>
+  )
+}
+
+/**
+ * Capa do pacote que não tem capa própria: as capas do que vem dentro, em
+ * mosaico — o pacote se apresenta pelo próprio conteúdo.
+ */
+function PackageCoverMosaic({ materials }: { materials: PackageMaterial[] }) {
+  const covers = materials.filter(m => m.coverImage).slice(0, 4)
+  if (covers.length < 2) {
+    return (
+      <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+        <span className="ios-tinta flex h-24 w-24 items-center justify-center rounded-[26px] bg-white/70 shadow-sm dark:bg-white/10">
+          <Package className="h-11 w-11" />
+        </span>
+      </div>
+    )
+  }
+  return (
+    <div className={cn('grid h-full w-full gap-[3px] bg-[var(--ios-separador)]', covers.length === 2 ? 'grid-cols-2' : 'grid-cols-2 grid-rows-2')}>
+      {covers.map((m, i) => (
+        <span key={m._id} className={cn('relative', covers.length === 3 && i === 0 && 'row-span-2')}>
+          <Image src={m.coverImage} alt="" fill className="object-cover" sizes="(max-width: 1280px) 50vw, 30vw" />
+        </span>
+      ))}
+    </div>
   )
 }
 
 // ─── Skeleton ─────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <AppShell allowGuest headerTitle="Carregando...">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
-        <div className="flex flex-col xl:flex-row gap-6">
-          <div className="flex-1 space-y-4">
-            <div className="rounded-xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
-            <div className="rounded-lg bg-muted animate-pulse h-28" />
-            <div className="rounded-lg bg-muted animate-pulse h-64" />
-          </div>
-          <div className="xl:w-[340px] space-y-3">
-            <div className="rounded-xl bg-card border border-border p-4 space-y-3">
-              <div className="h-28 w-full rounded-xl bg-muted animate-pulse" />
-              <div className="h-5 w-full bg-muted rounded animate-pulse" />
-              <div className="h-11 w-full bg-muted rounded-lg animate-pulse mt-2" />
+    <AppShell allowGuest vidro headerTitle="Carregando...">
+      <FundoIos className="pb-16">
+        <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8" aria-hidden>
+          <div className="ios-esqueleto mb-4 h-7 w-28 rounded-full" />
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+            <div className="space-y-6">
+              <div className="ios-esqueleto rounded-[22px] sm:rounded-[28px]" style={{ aspectRatio: '16/9' }} />
+              <div className="ios-esqueleto hidden h-64 rounded-[18px] xl:block" />
+            </div>
+            <div className="ios-painel space-y-3">
+              <div className="ios-esqueleto h-8 w-11/12 rounded-full" />
+              <div className="ios-esqueleto h-4 w-1/2 rounded-full" />
+              <div className="ios-esqueleto mt-6 h-9 w-32 rounded-full" />
+              <div className="ios-esqueleto h-[50px] w-full rounded-full" />
+              <div className="ios-esqueleto h-[50px] w-full rounded-full" />
             </div>
           </div>
         </div>
-      </div>
+      </FundoIos>
     </AppShell>
   )
 }
 
 function ErrorState({ message, onBack }: { message: string; onBack: () => void }) {
   return (
-    <AppShell allowGuest headerTitle="Erro">
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <div className="h-20 w-20 rounded-xl bg-card border border-border flex items-center justify-center mb-2">
-          <Package className="h-9 w-9 text-muted-foreground" />
+    <AppShell allowGuest vidro headerTitle="Erro">
+      <FundoIos>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+          <span className="ios-rotulo-2 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ios-preenchimento)]">
+            <Package className="h-7 w-7" />
+          </span>
+          <h2 className="text-[22px] font-bold tracking-[-0.02em]">Pacote não encontrado</h2>
+          <p className="ios-rotulo-2 mt-1.5 max-w-xs text-[15px]">
+            {message || 'Este pacote não existe ou foi removido.'}
+          </p>
+          <button type="button" onClick={onBack} className="ios-botao mt-6">
+            <ChevronLeft className="-ml-1 h-5 w-5" /> Voltar aos pacotes
+          </button>
         </div>
-        <h2 className="font-heading font-bold text-xl">Pacote não encontrado</h2>
-        <p className="text-muted-foreground text-sm text-center max-w-xs">
-          {message || 'Este pacote não existe ou foi removido.'}
-        </p>
-        <Button onClick={onBack} className="mt-2 rounded-xl">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Voltar aos Pacotes
-        </Button>
-      </div>
+      </FundoIos>
     </AppShell>
   )
+}
+
+/** Cinco estrelas, cheias até a média (arredondada para meia). */
+function StarRow({ value }: { value: number }) {
+  const rounded = Math.round(value * 2) / 2
+  return (
+    <span className="inline-flex items-center gap-[1px]" aria-label={`${value.toFixed(1)} de 5 estrelas`}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <Star
+          key={n}
+          className={cn(
+            'h-3 w-3',
+            rounded >= n ? 'fill-current' : rounded >= n - 0.5 ? 'fill-current opacity-60' : 'opacity-35'
+          )}
+        />
+      ))}
+    </span>
+  )
+}
+
+function compactNumber(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(Number(value || 0))
+}
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  if (h > 0) return `${h}h${m > 0 ? ` ${m}min` : ''}`
+  return `${Math.max(1, m)}min`
 }

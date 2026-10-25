@@ -3,15 +3,13 @@
 import { useEffect, useRef, useState } from 'react'
 import {
   ArrowDownWideNarrow,
-  Compass,
+  ChevronDown,
   FileText,
   Gift,
-  Library,
   Package,
   Search,
   ShoppingBag,
   Sparkles,
-  Tag,
   Video,
   X,
 } from 'lucide-react'
@@ -139,7 +137,7 @@ export function MateriaisToolbar({
       ref={rowRef}
       role="tablist"
       aria-label="Seções do catálogo"
-      className="scrollbar-hide fade-scroll-x flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 -mb-0.5 pr-5 lg:pr-0"
+      className="scrollbar-hide fade-scroll-x flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain pr-5 lg:pr-0"
     >
       {BROWSE_TABS.map(id => {
         const meta = BROWSE_TAB_META[id as Exclude<MateriaisTab, 'mine'>]
@@ -160,25 +158,20 @@ export function MateriaisToolbar({
   )
 
   const ownedTypeChips = (
-    <div className="scrollbar-hide fade-scroll-x flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 -mb-0.5">
+    <div className="scrollbar-hide fade-scroll-x flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain">
       {ownedTypeOptions.map(f => (
         <button
           key={f.id}
           type="button"
           aria-pressed={ownedType === f.id}
           onClick={() => onOwnedTypeChange(f.id)}
-          className={cn(
-            'press-scale inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors sm:h-9',
-            ownedType === f.id
-              ? 'border-primary/40 bg-primary/10 text-primary'
-              : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-          )}
+          className="ios-pilula"
           style={{ touchAction: 'manipulation' }}
         >
           {f.icon}
           {f.label}
           {typeof ownedTypeCounts[f.id] === 'number' && (ownedTypeCounts[f.id] as number) > 0 && (
-            <span className="text-[10px] font-bold tabular-nums opacity-70">{ownedTypeCounts[f.id]}</span>
+            <span className="ios-contagem">{ownedTypeCounts[f.id]}</span>
           )}
         </button>
       ))}
@@ -187,33 +180,30 @@ export function MateriaisToolbar({
 
   const renderSearchInput = (showClear: boolean, autoFocus = false) => (
     <div className="relative flex-1">
-      <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+      <Search className="ios-rotulo-2 pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2" aria-hidden />
       <input
         type="search"
         value={search}
         onChange={e => onSearchChange(e.target.value)}
         enterKeyHint="search"
         autoFocus={autoFocus}
-        placeholder={scope === 'mine' ? 'Buscar nos meus materiais...' : 'Buscar materiais...'}
+        placeholder={scope === 'mine' ? 'Buscar nos meus materiais' : 'Buscar materiais'}
         aria-label={scope === 'mine' ? 'Buscar nos meus materiais' : 'Buscar materiais'}
-        // `type=search` dá o teclado certo no celular, mas o WebKit desenha um
-        // "x" próprio que ficava colado no nosso — daí o appearance-none.
-        // 16px reais no mobile: abaixo disso o iOS dá zoom sozinho ao focar o
-        // campo e desalinha a página inteira.
-        className={cn(
-          'h-11 w-full rounded-md border border-border bg-background pl-10 text-base outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/45 focus:ring-2 focus:ring-primary/15 sm:h-10 sm:text-sm',
-          '[&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none',
-          showClear && search ? 'pr-11' : 'pr-3'
-        )}
+        // `type=search` dá o teclado certo no celular; o "x" próprio do WebKit
+        // sai no CSS (ficava colado no nosso). 16px reais no mobile: abaixo
+        // disso o iOS dá zoom sozinho ao focar o campo.
+        className={cn('ios-busca', showClear && search ? 'pr-10' : 'pr-3')}
       />
       {showClear && search && (
         <button
           type="button"
           onClick={() => onSearchChange('')}
           aria-label="Limpar busca"
-          className="absolute right-1 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
+          className="absolute right-1.5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full"
         >
-          <X className="h-4 w-4" />
+          <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[var(--ios-rotulo-3)] text-[var(--ios-chao)]">
+            <X className="h-3 w-3" strokeWidth={3} />
+          </span>
         </button>
       )}
     </div>
@@ -224,14 +214,11 @@ export function MateriaisToolbar({
       type="button"
       onClick={() => setSearchOpen(true)}
       aria-label="Buscar materiais"
-      className={cn(
-        'press-scale relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border transition-colors lg:hidden',
-        search ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-card text-muted-foreground'
-      )}
+      className={cn('ios-icone-botao relative h-9 w-9 lg:hidden', search && 'bg-[var(--ios-tinta-suave)]')}
       style={{ touchAction: 'manipulation' }}
     >
-      <Search className="h-4 w-4" />
-      {search && <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
+      <Search className="h-[17px] w-[17px]" />
+      {search && <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[var(--ios-tinta)] ring-2 ring-[var(--ios-chao)]" />}
     </button>
   )
 
@@ -241,22 +228,19 @@ export function MateriaisToolbar({
   const secondary = scope === 'browse' ? browseTabs : showOwnedTypes ? ownedTypeChips : null
 
   return (
-    // Camada de material flutuante: o conteúdo rola POR BAIXO dela em vez de
-    // ser cortado por uma faixa opaca. O desfoque e a sombra são mais fortes
-    // que os dos chips porque a superfície é maior — material maior lê como
-    // material mais grosso.
-    <div className="material-chrome sticky top-14 z-20 mb-4 rounded-xl p-2.5 sm:top-16 sm:p-3">
+    // Vidro flutuante: o conteúdo rola POR BAIXO dele em vez de ser cortado
+    // por uma faixa opaca.
+    <div className="ios-vidro sticky top-[3.75rem] z-20 mb-6 rounded-[22px] p-2 sm:top-[4.5rem] sm:p-2.5">
       {searchOpen ? (
         <div className="flex items-center gap-2">
-          {/* Um X só: limpa e fecha. Dois botões colados confundiam. */}
-          {renderSearchInput(false, true)}
+          {renderSearchInput(true, true)}
+          {/* "Cancelar" em texto, como a busca do sistema: limpa e fecha. */}
           <button
             type="button"
             onClick={() => { onSearchChange(''); setSearchOpen(false) }}
-            aria-label="Limpar e fechar busca"
-            className="press-scale inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border bg-card text-muted-foreground transition-colors"
+            className="ios-tinta h-10 shrink-0 px-2 text-[16px] font-medium"
           >
-            <X className="h-4 w-4" />
+            Cancelar
           </button>
         </div>
       ) : (
@@ -271,17 +255,12 @@ export function MateriaisToolbar({
             />
             {/* O min-width impede que o resto da barra esprema o campo até
                 virar um cotoco. */}
-            <div className="hidden min-w-[220px] max-w-sm flex-1 lg:flex">{renderSearchInput(true)}</div>
-            {showSort && <div className="hidden lg:block"><SortMenu value={sort} onChange={onSortChange} /></div>}
+            <div className="hidden min-w-[220px] max-w-md flex-1 lg:flex">{renderSearchInput(true)}</div>
+            {showSort && <div className="ml-auto hidden lg:block"><SortMenu value={sort} onChange={onSortChange} /></div>}
           </div>
 
           {/* ── Nível 2 ── */}
-          <div
-            className={cn(
-              'mt-2 flex items-center gap-2 border-t border-border/60 pt-2',
-              !secondary && 'lg:hidden'
-            )}
-          >
+          <div className={cn('mt-2 flex items-center gap-1.5', !secondary && 'lg:hidden')}>
             {searchButton}
             {secondary}
             {/* Sem terceira linha (Loja e Meus materiais não têm filtro de
@@ -298,23 +277,19 @@ export function MateriaisToolbar({
       {/* Filtros de preço + ordenação no mobile. Só aparece nas seções onde o
           filtro realmente muda o resultado. */}
       {showPriceFilters && !searchOpen && (
-        <div className="mt-2 flex items-center gap-1.5 border-t border-border/60 pt-2">
-          <div className="scrollbar-hide flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain">
-            <span className="hidden shrink-0 items-center gap-1 self-center pr-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground sm:inline-flex">
-              <Tag className="h-3 w-3" /> Preço
-            </span>
+        <div className="mt-2 flex items-center gap-1.5">
+          <div
+            role="group"
+            aria-label="Filtrar por preço"
+            className="scrollbar-hide flex min-w-0 flex-1 gap-1.5 overflow-x-auto overscroll-x-contain"
+          >
             {PRICE_FILTERS.map(f => (
               <button
                 key={f.id}
                 type="button"
                 aria-pressed={priceFilter === f.id}
                 onClick={() => onPriceFilterChange(f.id)}
-                className={cn(
-                  'press-scale inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors',
-                  priceFilter === f.id
-                    ? 'border-primary/40 bg-primary/10 text-primary'
-                    : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-                )}
+                className="ios-pilula h-8 px-3 text-[13px]"
                 style={{ touchAction: 'manipulation' }}
               >
                 {f.id === 'free' && <Gift className="h-3.5 w-3.5" />}
@@ -332,8 +307,7 @@ export function MateriaisToolbar({
 
       {/* Filtros ativos: sempre visíveis e removíveis um a um. */}
       {hasActiveFilters && !searchOpen && (
-        <div className="mt-2 flex flex-wrap items-center gap-1.5 border-t border-border/60 pt-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Ativos</span>
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 px-1">
           {search.trim() && (
             <ActiveFilterChip label={`"${search.trim()}"`} onRemove={() => onSearchChange('')} />
           )}
@@ -352,7 +326,7 @@ export function MateriaisToolbar({
           <button
             type="button"
             onClick={() => { onSearchChange(''); onPriceFilterChange('all'); onOwnedTypeChange('all') }}
-            className="ml-1 text-xs font-semibold text-primary hover:underline"
+            className="ios-tinta ml-1 text-[13px] font-semibold"
           >
             Limpar tudo
           </button>
@@ -363,8 +337,9 @@ export function MateriaisToolbar({
 }
 
 /**
- * Chave de nível 1. Duas metades de largura igual — a de "Meus materiais" vem
- * primeiro porque é o destino que o aluno já pagou para ter.
+ * Chave de nível 1: o controle segmentado do sistema, com o polegar
+ * deslizando de uma metade para a outra. "Meus materiais" vem primeiro porque
+ * é o destino que o aluno já pagou para ter.
  */
 function ScopeSwitch({
   scope,
@@ -379,15 +354,14 @@ function ScopeSwitch({
     <div
       role="tablist"
       aria-label="Meus materiais ou catálogo"
+      data-indice={scope === 'mine' ? 0 : 1}
       // No celular ocupa a linha inteira (duas metades iguais, nada fora da
-      // tela); no desktop encolhe para o tamanho do conteúdo e divide a barra
-      // com a busca.
-      className="grid min-w-0 flex-1 grid-cols-2 gap-1 rounded-lg border border-border bg-muted/40 p-1 lg:flex-none"
+      // tela); no desktop tem largura fixa e divide a barra com a busca.
+      className="ios-segmentado min-w-0 flex-1 lg:w-[22rem] lg:flex-none"
     >
       <ScopeButton
         id="mine"
         active={scope === 'mine'}
-        icon={<Library className="h-4 w-4 shrink-0" />}
         count={ownedCount}
         onClick={() => onSelect('mine')}
       >
@@ -396,7 +370,6 @@ function ScopeSwitch({
       <ScopeButton
         id="browse"
         active={scope === 'browse'}
-        icon={<Compass className="h-4 w-4 shrink-0" />}
         onClick={() => onSelect('browse')}
       >
         Explorar
@@ -408,14 +381,12 @@ function ScopeSwitch({
 function ScopeButton({
   id,
   active,
-  icon,
   count,
   onClick,
   children,
 }: {
   id: 'mine' | 'browse'
   active: boolean
-  icon: React.ReactNode
   count?: number
   onClick: () => void
   children: React.ReactNode
@@ -429,28 +400,13 @@ function ScopeButton({
       id={id === 'mine' ? 'materiais-tab-mine' : 'materiais-scope-browse'}
       aria-controls={MATERIAIS_PANEL_ID}
       aria-selected={active}
-      className={cn(
-        'press-scale inline-flex h-11 min-w-0 items-center justify-center gap-1.5 rounded-md px-2.5 text-[13px] font-semibold transition-colors sm:h-10 sm:text-sm lg:px-4',
-        active
-          ? 'cta-raised bg-primary text-primary-foreground'
-          : 'text-muted-foreground hover:bg-card hover:text-foreground'
-      )}
+      className="ios-segmento"
       style={{ touchAction: 'manipulation' }}
       onClick={onClick}
     >
-      {/* Em telas estreitas o ícone sai: "Meus materiais 62" inteiro vale mais
-          que a ilustração — com ele, o rótulo truncava em 360px. */}
-      <span className="hidden shrink-0 sm:inline-flex">{icon}</span>
       <span className="truncate">{children}</span>
       {typeof count === 'number' && count > 0 && (
-        <span
-          className={cn(
-            'shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums',
-            active ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted text-muted-foreground'
-          )}
-        >
-          {count}
-        </span>
+        <span className="ios-rotulo-3 shrink-0 text-[12px] font-semibold tabular-nums">{count}</span>
       )}
     </button>
   )
@@ -480,42 +436,27 @@ function SectionChip({
       aria-selected={active}
       data-active={active ? 'true' : undefined}
       onClick={onClick}
-      className={cn(
-        // h-10 no toque (alvo confortável), h-9 no ponteiro.
-        'press-scale inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border px-3 text-xs font-semibold transition-colors sm:h-9',
-        active
-          ? 'border-primary bg-primary/10 text-primary'
-          : 'border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground'
-      )}
+      className="ios-pilula"
       style={{ touchAction: 'manipulation' }}
     >
       {icon}
       {children}
-      {typeof count === 'number' && count > 0 && (
-        <span
-          className={cn(
-            'min-w-[1.5rem] rounded-full px-1.5 py-0.5 text-center text-[10px] font-bold tabular-nums',
-            active ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'
-          )}
-        >
-          {count}
-        </span>
-      )}
+      {typeof count === 'number' && count > 0 && <span className="ios-contagem">{count}</span>}
     </button>
   )
 }
 
 function ActiveFilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/10 py-0.5 pl-2.5 pr-1 text-xs font-semibold text-primary">
+    <span className="ios-tinta inline-flex h-7 items-center gap-1 rounded-full bg-[var(--ios-tinta-suave)] pl-3 pr-1 text-[13px] font-semibold">
       <span className="max-w-[10rem] truncate">{label}</span>
       <button
         type="button"
         onClick={onRemove}
         aria-label={`Remover filtro ${label}`}
-        className="inline-flex h-5 w-5 items-center justify-center rounded-full transition hover:bg-primary/20"
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full transition hover:bg-[var(--ios-tinta-suave)]"
       >
-        <X className="h-3 w-3" />
+        <X className="h-3 w-3" strokeWidth={2.75} />
       </button>
     </span>
   )
@@ -537,14 +478,14 @@ function SortMenu({
 }) {
   return (
     <div className="relative inline-flex shrink-0 items-center">
-      <ArrowDownWideNarrow className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+      <ArrowDownWideNarrow className="ios-tinta pointer-events-none absolute left-3 h-3.5 w-3.5" aria-hidden />
       <select
         value={value}
         onChange={e => onChange(e.target.value as SortKey)}
         aria-label="Ordenar resultados"
         className={cn(
-          'h-9 cursor-pointer appearance-none rounded-md border border-border bg-card pl-8 pr-3 text-xs font-semibold text-muted-foreground outline-none transition-colors hover:border-primary/30 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/40',
-          compact && 'w-[7.5rem]'
+          'ios-tinta h-9 cursor-pointer appearance-none rounded-full bg-[var(--ios-preenchimento)] pl-8 pr-7 text-[13px] font-semibold outline-none transition-colors hover:bg-[var(--ios-preenchimento-forte)]',
+          compact && 'w-[8.25rem] truncate'
         )}
         style={{ touchAction: 'manipulation' }}
       >
@@ -552,6 +493,7 @@ function SortMenu({
           <option key={key} value={key}>{SORT_LABELS[key]}</option>
         ))}
       </select>
+      <ChevronDown className="ios-tinta pointer-events-none absolute right-2.5 h-3.5 w-3.5" aria-hidden />
     </div>
   )
 }

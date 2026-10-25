@@ -46,41 +46,49 @@ export const FolderCard = memo(function FolderCard({
         onMouseEnter={onPrefetch}
         onPointerEnter={onPrefetch}
         onFocus={onPrefetch}
-        className="surface-lift block h-full overflow-hidden rounded-xl border border-border bg-card p-3 hover:border-primary/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 sm:p-4"
+        className="ios-cartao ios-toque flex h-full items-center gap-3 rounded-[18px] p-2 sm:flex-col sm:items-stretch sm:gap-0 sm:rounded-[22px]"
         style={{ touchAction: 'manipulation' }}
       >
         {folder.coverImage ? (
-          <div className="relative mb-3 h-16 w-full overflow-hidden rounded-md">
+          <div className="ios-capa relative h-12 w-12 shrink-0 rounded-[12px] sm:h-20 sm:w-full sm:rounded-[16px]">
             <Image
               src={folder.coverImage}
               alt=""
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             />
           </div>
         ) : (
+          // A cor da pasta como vidro tingido, não como bloco chapado.
           <div
-            className="mb-3 flex h-16 w-full items-center justify-center rounded-md text-3xl"
-            style={{ backgroundColor: `${accent}1f` }}
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] text-[24px] sm:h-20 sm:w-full sm:rounded-[16px] sm:text-[34px]"
+            style={{
+              background: `radial-gradient(120% 120% at 25% 15%, ${accent}40, ${accent}14 70%)`,
+              boxShadow: `inset 0 0 0 1px ${accent}22`,
+            }}
           >
-            {folder.icon || '📁'}
+            <span className="drop-shadow-sm">{folder.icon || '📁'}</span>
           </div>
         )}
-        <h4 className="truncate font-heading text-sm font-semibold tracking-[-0.01em] text-foreground">{folder.name}</h4>
-        {folder.description && (
-          <p className="mt-1 line-clamp-2 text-xs leading-relaxed tracking-[0.005em] text-muted-foreground">{folder.description}</p>
-        )}
-        {/* Espaço reservado para o botão de compartilhar, que fica fora da
-            âncora (botão dentro de link é HTML inválido). */}
-        <div className="h-7" aria-hidden />
+        <div className="flex min-w-0 flex-1 items-center gap-1 sm:items-start sm:px-1.5 sm:pb-1 sm:pt-2.5">
+          <div className="min-w-0 flex-1">
+            <h4 className="truncate text-[15px] font-semibold tracking-[-0.015em]">{folder.name}</h4>
+            {folder.description && (
+              <p className="ios-rotulo-2 mt-0.5 line-clamp-1 text-[13px] leading-snug sm:line-clamp-2 sm:text-[12px]">{folder.description}</p>
+            )}
+          </div>
+          {/* Espaço do botão de compartilhar, que fica fora da âncora (botão
+              dentro de link é HTML inválido). */}
+          <span className="h-[34px] w-[34px] shrink-0" aria-hidden />
+        </div>
       </Link>
 
       <CopyLinkBtn
         id={folder._id}
         copiedId={copiedId}
         onClick={e => { e.preventDefault(); e.stopPropagation(); onCopyLink() }}
-        className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4"
+        className="absolute right-2.5 top-[calc(50%-17px)] bg-transparent opacity-60 hover:opacity-100 focus-visible:opacity-100 sm:bottom-3 sm:right-3 sm:top-auto"
       />
     </div>
   )

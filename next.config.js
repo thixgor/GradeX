@@ -323,6 +323,13 @@ const nextConfig = {
         destination: '/instalar',
         permanent: true,
       },
+      // Pacotes moram numa aba de /materiais (mesma busca, filtros e carrinho);
+      // `/pacotes` sozinho dava 404 para quem apagava o id do endereço.
+      {
+        source: '/pacotes',
+        destination: '/materiais?tab=packages',
+        permanent: false,
+      },
     ]
   },
 

@@ -42,9 +42,15 @@ interface ContinueReadingProps {
   /** Quantos cartões mostrar. A área é um atalho, não um histórico. */
   limit?: number
   className?: string
+  /**
+   * `ios`: a fileira da loja (`/materiais`, dentro de `.vidro-ios`) — título de
+   * seção e cartões de vidro que deslizam de lado no celular. O padrão é o
+   * cartão do painel inicial.
+   */
+  variant?: 'padrao' | 'ios'
 }
 
-export function ContinueReading({ limit = 3, className = '' }: ContinueReadingProps) {
+export function ContinueReading({ limit = 3, className = '', variant = 'padrao' }: ContinueReadingProps) {
   // `null` = ainda não lemos o localStorage. Renderizar só depois da montagem
   // evita divergência de hidratação (no servidor não existe localStorage).
   const [entries, setEntries] = useState<ReadingProgressEntry[] | null>(null)
@@ -66,6 +72,76 @@ export function ContinueReading({ limit = 3, className = '' }: ContinueReadingPr
   }, [refresh])
 
   if (!entries || entries.length === 0) return null
+
+  if (variant === 'ios') {
+    return (
+      <section aria-label="Continuar lendo" className={className}>
+        <h2 className="ios-titulo-secao mb-3">Continuar lendo</h2>
+        <ul className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 lg:grid-cols-3">
+          {entries.map((entry) => {
+            const percent = readingPercent(entry)
+            const relative = formatRelativeTime(entry.updatedAt)
+            return (
+              <li key={entry.materialId} className="group relative w-[78%] shrink-0 snap-start sm:w-auto">
+                <Link
+                  href={`/materiais/${entry.materialId}/viewer`}
+                  className="ios-cartao ios-toque flex h-full items-center gap-3 rounded-[20px] p-2.5 pr-9"
+                >
+                  <span className="ios-capa relative h-[68px] w-[52px] shrink-0 rounded-[10px]">
+                    {entry.coverImage ? (
+                      <Image src={entry.coverImage} alt="" fill sizes="52px" className="object-cover" />
+                    ) : (
+                      <span className="ios-capa-vazia ios-tinta flex h-full w-full items-center justify-center">
+                        <FileText className="h-5 w-5" />
+                      </span>
+                    )}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-semibold leading-snug tracking-[-0.01em]">
+                      {entry.title}
+                    </span>
+                    <span className="ios-rotulo-2 mt-0.5 block text-[13px]">
+                      {entry.totalPages > 0
+                        ? `Pág. ${entry.page} de ${entry.totalPages}`
+                        : `Página ${entry.page}`}
+                      {relative ? ` · ${relative}` : ''}
+                    </span>
+                    {percent !== null && (
+                      <span
+                        className="mt-2 block h-1 overflow-hidden rounded-full bg-[var(--ios-preenchimento-forte)]"
+                        role="progressbar"
+                        aria-valuenow={percent}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`Progresso de leitura de ${entry.title}: ${percent}%`}
+                      >
+                        <span
+                          className="block h-full rounded-full bg-[var(--ios-tinta)] transition-[width] duration-500"
+                          style={{ width: `${Math.max(percent, 3)}%` }}
+                        />
+                      </span>
+                    )}
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    removeReadingProgress(entry.materialId)
+                    refresh()
+                  }}
+                  title="Remover de Continuar lendo"
+                  aria-label={`Remover ${entry.title} de Continuar lendo`}
+                  className="ios-rotulo-3 absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full transition-colors hover:bg-[var(--ios-preenchimento)] hover:text-[var(--ios-rotulo)]"
+                >
+                  <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      </section>
+    )
+  }
 
   return (
     <section

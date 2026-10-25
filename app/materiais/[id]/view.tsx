@@ -4,16 +4,12 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
-  ArrowLeft,
   Play,
   Download,
-  ShoppingCart,
   Lock,
   Clock,
   Eye,
-  Tag,
   Shield,
   Gift,
   Crown,
@@ -24,25 +20,24 @@ import {
   Link2,
   Image as ImageIcon,
   File,
-  ChevronDown,
-  ChevronUp,
   Package,
   ShieldAlert,
   Check,
-  FolderOpen,
-  Sparkles,
-  Share2,
-  CheckCheck,
+  ChevronLeft,
+  Infinity as InfinityIcon,
+  Share,
+  Star,
   Layers,
-  TrendingDown,
   Code2,
   MonitorPlay,
   Headphones,
   BookOpen,
-  ArrowRight,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { BagPlusIcon, CartButton } from '@/components/materiais/shared'
+import { abrirCarrinho } from '@/lib/abrir-carrinho'
 import { useTrackView } from '@/hooks/use-track-view'
 import { VideoWatermark } from '@/components/video-watermark'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
@@ -65,7 +60,6 @@ import {
 } from '@/lib/display-settings'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
-import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
@@ -189,7 +183,8 @@ const COMPLEMENTARY_TEMPLATE_META: Record<string, { label: string; icon: React.R
   ebook:       { label: 'Ebook',       icon: <BookOpen className="h-4 w-4" />,    cta: 'Ler agora' },
 }
 
-function ComplementaryCard({ item }: { item: ComplementaryItem }) {
+/** Linha de "Você também leva": capa, o que é, e a ação do item. */
+function ComplementaryRow({ item }: { item: ComplementaryItem }) {
   const isMaterial = item.kind === 'material'
   const tmplMeta = !isMaterial ? (COMPLEMENTARY_TEMPLATE_META[item.template || 'experiencia'] || COMPLEMENTARY_TEMPLATE_META.experiencia) : null
   const icon = isMaterial ? (TYPE_ICONS[item.materialType || 'other'] || <File className="h-4 w-4" />) : tmplMeta!.icon
@@ -200,46 +195,35 @@ function ComplementaryCard({ item }: { item: ComplementaryItem }) {
 
   const inner = (
     <>
-      <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-primary/15 to-accent/10">
+      <span className="ios-capa relative h-14 w-14 shrink-0 rounded-[14px]">
         {item.coverImage ? (
-          <Image src={item.coverImage} alt={item.title} fill className="object-cover" sizes="64px" />
+          <Image src={item.coverImage} alt="" fill className="object-cover" sizes="56px" />
         ) : (
-          <span className="flex h-full w-full items-center justify-center text-primary">{icon}</span>
+          <span className="ios-capa-vazia ios-tinta flex h-full w-full items-center justify-center">{icon}</span>
         )}
-      </div>
-      <div className="min-w-0 flex-1">
-        <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
-          {icon}
-          {badgeLabel}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[15px] font-semibold tracking-[-0.01em]">{item.title}</span>
+        <span className="ios-rotulo-2 mt-0.5 line-clamp-2 block text-[13px] leading-snug">
+          {item.description || badgeLabel}
         </span>
-        <p className="mt-1 truncate text-sm font-bold text-foreground group-hover:text-primary transition-colors">
-          {item.title}
-        </p>
-        {item.description ? (
-          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-            {item.description}
-          </p>
-        ) : null}
-      </div>
+      </span>
       {href ? (
-        <span className="ml-1 flex shrink-0 items-center gap-1 self-center rounded-xl bg-gradient-to-r from-emerald-600 to-amber-500 px-3 py-2 text-xs font-bold text-white shadow-md shadow-emerald-500/20 transition-transform group-hover:scale-[1.03]">
-          {ctaLabel}
-          <ArrowRight className="h-3.5 w-3.5" />
-        </span>
+        <span className="ios-botao-suave ios-botao-p shrink-0">{ctaLabel}</span>
       ) : null}
     </>
   )
 
-  const cardClass = "group flex items-center gap-3 rounded-lg border border-border/40 glass-button p-3 transition-all hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10 active:scale-[0.99]"
+  const rowClass = 'ios-linha py-3'
 
   if (!href) {
-    return <div className={cardClass}>{inner}</div>
+    return <div className={rowClass}>{inner}</div>
   }
   if (isInternal) {
-    return <Link href={href} className={cardClass}>{inner}</Link>
+    return <Link href={href} className={rowClass}>{inner}</Link>
   }
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+    <a href={href} target="_blank" rel="noopener noreferrer" className={rowClass}>
       {inner}
     </a>
   )
@@ -275,7 +259,7 @@ export default function MaterialViewPage() {
   // null = acesso vitalício (padrão). Um id = versão por tempo escolhida.
   const [accessVersionId, setAccessVersionId] = useState<string | null>(null)
   const stepTimersRef = useRef<ReturnType<typeof setTimeout>[]>([])
-  const { addItem } = useMaterialCart()
+  const { addItem, isInCart } = useMaterialCart()
 
   // Registra a abertura do material para o painel de estatísticas. Os logs do
   // leitor (`material_pdf_viewer_logs`) só existem para quem abre o PDF — este
@@ -591,6 +575,23 @@ export default function MaterialViewPage() {
   const pricingEventStateData = usePricingEventState(data?.material?.pricingEventId || null)
   const pricingEventState = pricingEventStateData.state
 
+  // A barra de compra do celular só sobe quando os botões do painel saem da
+  // tela — com eles à vista, seria o mesmo botão duas vezes.
+  const ctaRef = useRef<HTMLDivElement>(null)
+  const [ctaVisivel, setCtaVisivel] = useState(true)
+  useEffect(() => {
+    const node = ctaRef.current
+    if (!node || typeof IntersectionObserver === 'undefined') {
+      setCtaVisivel(false)
+      return
+    }
+    const observer = new IntersectionObserver(([entry]) => setCtaVisivel(entry.isIntersecting), {
+      rootMargin: '0px 0px -40px 0px',
+    })
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [loading, data?.material?._id, data?.hasAccess, data?.includedInPlus])
+
   if (loading) return <LoadingSkeleton />
   if (error || !data) return <ErrorState message={error} onBack={() => router.push('/materiais')} />
 
@@ -646,915 +647,347 @@ export default function MaterialViewPage() {
     : material.type === 'flashcard_deck' ? 'Acessar Deck'
     : 'Baixar Material'
   const showMobilePurchaseBar = !hasAccess && data.isAuthenticated
+  const heroSizes = '(max-width: 1280px) 100vw, 60vw'
+  const reviewCount = reviewSummary?.count ?? 0
+  const displayPrice = selectedTimedVersion ? purchasePrice : tierFinalPrice
+  const jumpToReviews = () =>
+    document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  // Linha de baixo do título: o que é, quanto tem, de onde vem.
+  const sizeLabel = isVideo && material.videoDuration
+    ? formatDuration(material.videoDuration)
+    : material.type === 'pdf' && material._hasPdf && material._pageCount
+      ? `${material._pageCount} ${material._pageCount === 1 ? 'página' : 'páginas'}`
+      : material.type === 'flashcard_deck'
+        ? `${material._cardCount ?? 0} ${material._cardCount === 1 ? 'card' : 'cards'}`
+        : null
+  const subtitleParts = [TYPE_LABELS[material.type] || 'Material', sizeLabel, folderName].filter(Boolean)
+
+  // Faixa de informações (App Store): só as células que têm dado de verdade.
+  const infoCells: { key: string; label: string; value: React.ReactNode; note: React.ReactNode }[] = []
+  if (reviewCount > 0 && reviewSummary) {
+    infoCells.push({
+      key: 'reviews',
+      label: `${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'}`,
+      value: reviewSummary.avg.toFixed(1).replace('.', ','),
+      note: <StarRow value={reviewSummary.avg} />,
+    })
+  }
+  infoCells.push({
+    key: 'format',
+    label: 'Formato',
+    value: <span className="flex h-[25px] items-center [&_svg]:h-[22px] [&_svg]:w-[22px]">{TYPE_ICONS[material.type] || <File />}</span>,
+    note: TYPE_LABELS[material.type] || 'Arquivo',
+  })
+  if (isVideo && material.videoDuration) {
+    infoCells.push({ key: 'dur', label: 'Duração', value: formatDuration(material.videoDuration), note: 'de vídeo' })
+  } else if (material.type === 'pdf' && material._hasPdf && material._pageCount) {
+    infoCells.push({ key: 'pages', label: 'Tamanho', value: material._pageCount, note: material._pageCount === 1 ? 'página' : 'páginas' })
+  } else if (material.type === 'flashcard_deck') {
+    infoCells.push({ key: 'cards', label: 'Deck', value: material._cardCount ?? 0, note: material._cardCount === 1 ? 'card' : 'cards' })
+  }
+  infoCells.push({
+    key: 'access',
+    label: 'Acesso',
+    value: hasAccess
+      ? <Check className="h-[22px] w-[22px]" strokeWidth={2.5} />
+      : isFree ? 'Grátis' : <InfinityIcon className="h-[25px] w-[25px]" />,
+    note: hasAccess
+      ? (timedAccess?.isTimed ? 'por tempo' : 'liberado')
+      : isFree ? 'para sempre' : timedVersions.length > 0 ? 'vitalício ou por tempo' : 'vitalício',
+  })
+  if (isPdf && (hasAccess || canPreview)) {
+    infoCells.push({ key: 'wm', label: 'Proteção', value: <Shield className="h-[22px] w-[22px]" />, note: 'marca d’água' })
+  }
+  if (showMaterialViews) {
+    infoCells.push({ key: 'views', label: 'Visualizações', value: compactNumber(material.viewCount), note: 'no total' })
+  }
+  if (showMaterialDownloads) {
+    infoCells.push({ key: 'dl', label: 'Downloads', value: compactNumber(material.downloadCount), note: 'no total' })
+  }
+  infoCells.push({
+    key: 'date',
+    label: 'Publicado',
+    value: new Date(material.createdAt).toLocaleDateString('pt-BR', { month: 'short' }).replace('.', ''),
+    note: new Date(material.createdAt).getFullYear(),
+  })
+
+  const spinner = <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+
+  // Corpo do painel: um só, para o celular (no fluxo) e o desktop (ao lado).
+  const purchaseBody = hasAccess ? (
+    isEmbed ? (
+      <p className="ios-tinta flex items-center gap-2 text-[15px] font-semibold">
+        <Check className="h-4 w-4" strokeWidth={2.75} /> Na sua biblioteca — o vídeo está liberado acima.
+      </p>
+    ) : (
+      <div className="space-y-2.5">
+        <p className="ios-tinta flex items-center gap-1.5 text-[15px] font-semibold">
+          <Check className="h-4 w-4" strokeWidth={2.75} /> Na sua biblioteca
+        </p>
+        {canViewPdf && (
+          <button type="button" onClick={handleOpenPdfViewer} className="ios-botao ios-botao-g w-full">
+            <BookOpen className="h-[18px] w-[18px]" /> Ler agora
+          </button>
+        )}
+        {canDownload && (
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={downloadState.status === 'running'}
+            className={cn(canViewPdf ? 'ios-botao-cinza' : 'ios-botao', 'ios-botao-g w-full')}
+          >
+            {downloadState.status === 'running'
+              ? <>{spinner} Preparando…</>
+              : <><Download className="h-[18px] w-[18px]" /> {downloadLabel}</>}
+          </button>
+        )}
+        {canViewHtml && (
+          <button type="button" onClick={handleOpenHtmlViewer} className="ios-botao ios-botao-g w-full">
+            <MonitorPlay className="h-[18px] w-[18px]" /> Abrir experiência
+          </button>
+        )}
+        {isPdf && !canViewPdf && !canDownload && (
+          <p className="ios-ambar flex items-start gap-2 rounded-[14px] bg-[var(--ios-ambar-suave)] px-3.5 py-3 text-[13px] font-medium">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+            O leitor e o download deste PDF estão indisponíveis no momento.
+          </p>
+        )}
+        {isHtml && !canViewHtml && (
+          <p className="ios-ambar flex items-start gap-2 rounded-[14px] bg-[var(--ios-ambar-suave)] px-3.5 py-3 text-[13px] font-medium">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+            O leitor desta experiência está indisponível no momento.
+          </p>
+        )}
+        {((isPdf && (canViewPdf || canDownload)) || (isHtml && canViewHtml)) && (
+          <p className="ios-rotulo-3 flex items-center justify-center gap-1.5 pt-0.5 text-center text-[12px]">
+            <Shield className="h-3 w-3" /> Com marca d&apos;água exclusiva da sua conta
+          </p>
+        )}
+      </div>
+    )
+  ) : includedInPlus ? (
+    <div className="space-y-2.5">
+      <p className="ios-ambar flex items-center gap-1.5 text-[15px] font-semibold">
+        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+      </p>
+      <div ref={ctaRef}>
+        <button type="button" onClick={handleClaimWithPlus} disabled={checkoutLoading} className="ios-botao-ambar ios-botao-g w-full">
+          {checkoutLoading ? spinner : <Gift className="h-[18px] w-[18px]" />}
+          Resgatar material
+        </button>
+      </div>
+      <p className="ios-rotulo-3 text-center text-[12px]">Sem custo — já faz parte da sua assinatura.</p>
+    </div>
+  ) : (
+    <div className="space-y-3">
+      {/* Preço */}
+      <div>
+        {isFree ? (
+          <p className="ios-preco ios-tinta">Grátis</p>
+        ) : (
+          <>
+            {hasActiveTier && !selectedTimedVersion && (
+              <p className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+                <span className="ios-rotulo-3 tabular-nums line-through">{fmtBRL(originalPrice)}</span>
+                <span className="ios-tinta font-semibold">−{Math.round(tierPct)}% no lote{pricingEventState?.activeTier?.label ? ` ${pricingEventState.activeTier.label}` : ''}</span>
+                <PricingEventBadge state={pricingEventState} size="xs" />
+              </p>
+            )}
+            <p className="ios-preco">{displayPrice <= 0 ? 'Grátis' : fmtBRL(displayPrice)}</p>
+            <p className="ios-rotulo-2 mt-1 text-[13px]">
+              {selectedTimedVersion
+                ? `Pagamento único · acesso por ${selectedTimedVersion.durationLabel}, sem download`
+                : hasActiveTier && tierSavings > 0
+                  ? `Você economiza ${fmtBRL(tierSavings)} · pagamento único, acesso vitalício`
+                  : 'Pagamento único · acesso vitalício'}
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Formas de acesso — vitalício ou versão por tempo */}
+      {timedVersions.length > 0 && !isFree && (
+        <TimedAccessOptions
+          versions={timedVersions}
+          value={accessVersionId}
+          onChange={setAccessVersionId}
+          fullPrice={hasActiveTier ? tierFinalPrice : originalPrice}
+          disabled={checkoutLoading}
+        />
+      )}
+
+      <div ref={ctaRef} className="space-y-2 pt-1">
+        {isFree ? (
+          <button type="button" onClick={() => handleAcquire()} disabled={checkoutLoading} className="ios-botao ios-botao-g w-full">
+            {checkoutLoading ? spinner : <Gift className="h-[18px] w-[18px]" />}
+            Obter grátis
+          </button>
+        ) : (
+          <>
+            <button type="button" onClick={() => handleBuyNow()} disabled={checkoutLoading} className="ios-botao ios-botao-g w-full">
+              {checkoutLoading ? spinner : null}
+              Comprar agora
+            </button>
+            {isInCart('material', id) ? (
+              <button type="button" onClick={abrirCarrinho} className="ios-botao-suave ios-botao-g w-full">
+                <Check className="ios-pop h-[18px] w-[18px]" strokeWidth={3} /> No carrinho · ver carrinho
+              </button>
+            ) : (
+              <button type="button" onClick={() => handleAcquire()} disabled={checkoutLoading} className="ios-botao-suave ios-botao-g w-full">
+                <BagPlusIcon /> Adicionar ao carrinho
+              </button>
+            )}
+          </>
+        )}
+        {canPreview && (
+          <button type="button" onClick={handleOpenPdfViewer} className="ios-botao-suave ios-botao-g w-full">
+            <Eye className="h-[18px] w-[18px]" /> Ler a prévia grátis · págs. {previewLabel}
+          </button>
+        )}
+      </div>
+
+      {isInCart('material', id) && (
+        <p className="ios-rotulo-2 text-center text-[13px]">
+          Dá para juntar outros materiais e pagar tudo de uma vez.{' '}
+          <Link href="/materiais" className="ios-tinta font-semibold">Continuar escolhendo</Link>
+        </p>
+      )}
+      {cartMessage && (
+        <p role="status" className="ios-tinta flex items-center justify-center gap-1.5 rounded-[14px] bg-[var(--ios-tinta-suave)] px-3 py-2.5 text-center text-[13px] font-semibold">
+          <Check className="h-4 w-4" strokeWidth={2.75} /> {cartMessage}
+        </p>
+      )}
+      {!isFree && <ProuniCta itemType="material" itemId={id} />}
+    </div>
+  )
 
   return (
-    <AppShell allowGuest headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
-      <div className={`min-h-full relative ${showMobilePurchaseBar ? 'pb-28 xl:pb-0' : ''}`}>
-
-        {/* Ambient blobs — lighter than before */}
-        <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
-          <div className="absolute -top-24 -left-24 w-[380px] h-[380px] rounded-full bg-primary/10 blur-2xl" />
-          <div className="absolute top-1/2 -right-40 w-[320px] h-[320px] rounded-full bg-accent/8 blur-2xl" />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-          {/* Breadcrumb nav */}
-          <motion.div
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.25 }}
-            className="flex items-center gap-2 mb-6 flex-wrap"
+    <AppShell allowGuest vidro headerTitle={material.title} headerSubtitle={TYPE_LABELS[material.type] || 'Material'}>
+      <FundoIos
+        capa={material.coverImage || null}
+        capaSizes={heroSizes}
+        className={showMobilePurchaseBar ? 'pb-32 xl:pb-16' : 'pb-16'}
+      >
+        <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8">
+          <Link
+            href={folderName && material.folderId ? `/materiais?folder=${material.folderId}` : '/materiais'}
+            className="ios-voltar -ml-2.5 mb-3"
           >
-            <Link
-              href="/materiais"
-              className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              <span className="h-7 w-7 rounded-lg border border-border bg-card rounded-lg flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </span>
-              Materiais
-            </Link>
-            {folderName && (
-              <>
-                <span className="text-muted-foreground/40 text-sm">/</span>
-                <Link
-                  href={`/materiais?folder=${material.folderId}`}
-                  className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
-                >
-                  <FolderOpen className="h-3.5 w-3.5" />
-                  {folderName}
-                </Link>
-              </>
-            )}
-            <span className="text-muted-foreground/40 text-sm">/</span>
-            <span className="text-sm font-medium text-foreground line-clamp-1 max-w-[200px]">
-              {material.title}
-            </span>
-          </motion.div>
+            <ChevronLeft className="h-[22px] w-[22px] shrink-0" strokeWidth={2.5} />
+            <span className="truncate">{folderName || 'Materiais'}</span>
+          </Link>
 
-          {/* Oferta de versão impressa (add-on de produto físico) */}
-          <PrintedAddon materialId={material._id} />
-
-          {/* Main layout */}
-          <div className="flex flex-col xl:flex-row gap-6">
-
-            {/* LEFT: Media panel */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35 }}
-              className="flex-1 min-w-0"
-            >
-              {/* Media area */}
-              <div className="rounded-3xl overflow-hidden border border-border bg-card rounded-lg shadow-2xl shadow-primary/8 border border-border/40">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+            {/* ── Mídia ── */}
+            <div className="min-w-0 xl:col-start-1 xl:row-start-1">
+              <div className="ios-assenta overflow-hidden rounded-[22px] shadow-[var(--ios-sombra-alta)] sm:rounded-[28px]">
                 {isEmbed && hasAccess ? (
                   <VideoWatermark userName={data.watermark.name} userCpf={data.watermark.cpf}>
                     {material.downloadUrl.trim().startsWith('<') ? (
-                      <div dangerouslySetInnerHTML={{ __html: material.downloadUrl }} className="w-full h-full" />
+                      <div dangerouslySetInnerHTML={{ __html: material.downloadUrl }} className="h-full w-full" />
                     ) : (
                       <iframe
                         src={material.downloadUrl}
                         title={material.title}
-                        className="w-full h-full"
+                        className="h-full w-full"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowFullScreen
                       />
                     )}
                   </VideoWatermark>
                 ) : isEmbed && !hasAccess ? (
-                  /* Locked embed placeholder */
-                  <div className="relative w-full bg-black/90" style={{ aspectRatio: '16/9' }}>
+                  <div className="relative w-full bg-black" style={{ aspectRatio: '16/9' }}>
                     {material.coverImage && (
                       <Image
                         src={material.coverImage}
                         alt=""
                         fill
-                        className="object-cover opacity-20 blur-sm scale-105"
-                        sizes="(max-width: 1280px) 100vw, 70vw"
+                        className="scale-105 object-cover opacity-35 blur-md"
+                        sizes={heroSizes}
                       />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/40 to-black/70" />
-                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 z-10">
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, type: 'spring' }}
-                        className="relative"
-                      >
-                        <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl scale-150" />
-                        <div className="relative h-20 w-20 rounded-full border-2 border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center">
-                          <Lock className="h-8 w-8 text-white/80" />
-                        </div>
-                      </motion.div>
-                      <div className="text-center px-6">
-                        <p className="text-white font-heading font-bold text-lg mb-1">Vídeo bloqueado</p>
-                        <p className="text-white/60 text-sm">Adquira este material para assistir</p>
-                      </div>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center text-white">
+                      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.25)] backdrop-blur-xl">
+                        <Lock className="h-7 w-7" />
+                      </span>
+                      <p className="text-[20px] font-bold tracking-[-0.02em]">Vídeo bloqueado</p>
+                      <p className="text-[14px] text-white/70">Adquira este material para assistir</p>
                       {material.videoDuration ? (
-                        <div className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 text-white/80 text-sm font-medium">
-                          <Clock className="h-4 w-4" />
-                          {formatDuration(material.videoDuration)}
-                        </div>
+                        <span className="ios-selo mt-1 h-7 px-3 text-[12px]">
+                          <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
+                        </span>
                       ) : null}
                     </div>
                   </div>
                 ) : material.coverImage ? (
-                  /* Cover image */
-                  <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <div className="ios-capa relative w-full" style={{ aspectRatio: '16/9' }}>
                     <Image
                       src={material.coverImage}
                       alt={material.title}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 1280px) 100vw, 70vw"
+                      sizes={heroSizes}
                       priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                      <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-white/15 border border-white/20 text-white text-sm font-medium flex items-center gap-1.5">
-                        {TYPE_ICONS[material.type]}
-                        {TYPE_LABELS[material.type]}
-                      </span>
-                      {isPdf && hasAccess && (
-                        <span className="px-3 py-1.5 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 text-xs font-medium flex items-center gap-1.5">
-                          <Shield className="h-3.5 w-3.5" /> Marca d'água
-                        </span>
-                      )}
-                    </div>
                   </div>
                 ) : (
-                  /* Gradient placeholder */
-                  <div className="w-full flex items-center justify-center bg-gradient-to-br from-primary/20 via-accent/10 to-secondary/20" style={{ aspectRatio: '16/9' }}>
-                    <div className="h-24 w-24 rounded-3xl glass flex items-center justify-center">
-                      {TYPE_ICONS[material.type] || <File className="h-12 w-12 text-primary" />}
-                    </div>
+                  <div className="ios-capa ios-capa-vazia flex w-full items-center justify-center" style={{ aspectRatio: '16/9' }}>
+                    <span className="ios-tinta flex h-24 w-24 items-center justify-center rounded-[26px] bg-white/70 shadow-sm dark:bg-white/10 [&_svg]:h-11 [&_svg]:w-11">
+                      {TYPE_ICONS[material.type] || <File />}
+                    </span>
                   </div>
                 )}
+              </div>
+            </div>
 
-                {/* Info bar under media */}
-                <div className="px-5 py-3.5 border-t border-border/40 flex items-center gap-4 flex-wrap">
-                  {hasInfoMetrics && (
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-1">
-                      {showMaterialViews && (
-                        <span className="flex items-center gap-1.5">
-                          <Eye className="h-3.5 w-3.5" /> {material.viewCount}
-                        </span>
-                      )}
-                      {showMaterialDownloads && (
-                        <span className="flex items-center gap-1.5">
-                          <Download className="h-3.5 w-3.5" /> {material.downloadCount}
-                        </span>
-                      )}
-                      {isVideo && material.videoDuration ? (
-                        <span className="flex items-center gap-1.5 text-primary font-medium">
-                          <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
-                        </span>
-                      ) : null}
+            {/* ── Título e compra: um painel só (celular no fluxo, desktop ao lado) ── */}
+            <aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+              <div className="space-y-4 xl:sticky xl:top-24">
+                <div className="ios-painel">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h1 className="ios-titulo-produto">{material.title}</h1>
+                      <p className="ios-rotulo-2 mt-1 text-[15px]">{subtitleParts.join(' · ')}</p>
                     </div>
-                  )}
-                  <div className="flex items-center gap-3 ml-auto">
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(material.createdAt).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </span>
-                    {/* Share button */}
                     <button
+                      type="button"
                       onClick={copyShareLink}
-                      className={`flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg transition-all font-medium border ${
-                        copied
-                          ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                          : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
-                      }`}
+                      title={copied ? 'Link copiado!' : 'Copiar link'}
+                      aria-label={copied ? 'Link copiado' : 'Copiar link do material'}
+                      className="ios-icone-botao ios-icone-botao-g -mr-1"
                     >
-                      {copied ? <CheckCheck className="h-3.5 w-3.5" /> : <Share2 className="h-3.5 w-3.5" />}
-                      {copied ? 'Copiado!' : 'Compartilhar'}
+                      {copied ? <Check className="h-[18px] w-[18px]" strokeWidth={2.5} /> : <Share className="h-[18px] w-[18px]" />}
                     </button>
                   </div>
-                </div>
-              </div>
 
-              {/* Acesso por tempo limitado — quanto resta e como somar mais */}
-              {hasAccess && timedAccess?.isTimed && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-4"
-                >
-                  <TimedAccessBanner
-                    access={timedAccess}
-                    itemLabel="material"
-                    versions={timedVersions}
-                    selectedVersionId={accessVersionId}
-                    onSelectVersion={setAccessVersionId}
-                    onRenew={() => handleBuyNow(true)}
-                    renewLoading={checkoutLoading}
-                    fullPrice={originalPrice}
-                  />
-                </motion.div>
-              )}
-
-              {/* Lote dinâmico por evento — banner full */}
-              {hasActiveTier && pricingEventState && !hasAccess && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.05 }}
-                  className="mt-4"
-                >
-                  <PricingEventCountdown state={pricingEventState} />
-                </motion.div>
-              )}
-
-              {/* Mobile purchase summary */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="mt-4 rounded-lg border border-border/40 border border-border bg-card rounded-lg p-4 xl:hidden"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
-                        {TYPE_ICONS[material.type]}
-                        {TYPE_LABELS[material.type]}
-                      </span>
-                      {isFree ? (
-                        <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
-                          <Gift className="h-3 w-3" /> Gratuito
-                        </span>
-                      ) : hasActiveTier ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
-                          <span className="line-through opacity-60">R$ {originalPrice.toFixed(2)}</span>
-                          <span>R$ {tierFinalPrice.toFixed(2)}</span>
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
-                          R$ {material.price?.toFixed(2)}
-                        </span>
-                      )}
-                      {hasActiveTier && <PricingEventBadge state={pricingEventState} size="xs" />}
-                    </div>
-
-                    <h1 className="font-heading text-lg font-bold leading-snug">
-                      {material.title}
-                    </h1>
-
-                    {isVideo && material.videoDuration && (
-                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatDuration(material.videoDuration)}
-                      </p>
-                    )}
-
-                    {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
-                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <FileText className="h-3.5 w-3.5" />
-                        {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
-                      </p>
-                    ) : null}
-
-                    {material.type === 'flashcard_deck' ? (
-                      <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Layers className="h-3.5 w-3.5" />
-                        {material._cardCount ?? 0} {material._cardCount === 1 ? 'card' : 'cards'}
-                      </p>
-                    ) : null}
-                  </div>
-
-                  <button
-                    onClick={copyShareLink}
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition-all ${
-                      copied
-                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                        : 'text-muted-foreground hover:text-foreground glass-button border-border/40'
-                    }`}
-                    aria-label={copied ? 'Link copiado' : 'Compartilhar material'}
-                  >
-                    {copied ? <CheckCheck className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-                  </button>
-                </div>
-
-                {(reviewSummary?.count ?? 0) > 0 && (
-                  <div className="mt-3">
-                    <ReviewSummaryBlock
-                      summary={reviewSummary}
-                      variant="compact"
-                      onJumpToList={() =>
-                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                      }
-                    />
-                  </div>
-                )}
-
-                <div className="mt-4 space-y-2">
-                  {hasAccess ? (
-                    isEmbed ? (
-                      <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-primary/6 border border-primary/15">
-                        <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
-                        <p className="text-xs text-muted-foreground">
-                          O vídeo está disponível acima.
-                        </p>
-                      </div>
-                    ) : (
-                      <>
-                        {canViewPdf && (
-                          <Button
-                            onClick={handleOpenPdfViewer}
-                            className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
-                          >
-                            <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
-                            <span className="relative flex items-center">
-                              <Eye className="h-4 w-4 mr-2" />
-                              Visualizar PDF
-                            </span>
-                          </Button>
-                        )}
-                        {canDownload && (
-                          <Button
-                            onClick={handleDownload}
-                            disabled={downloadState.status === 'running'}
-                            className="w-full h-11 rounded-lg font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                          >
-                            {downloadState.status === 'running' ? (
-                              <>
-                                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                Processando…
-                              </>
-                            ) : (
-                              <>
-                                <Download className="h-4 w-4 mr-2" />
-                                {downloadLabel}
-                              </>
-                            )}
-                          </Button>
-                        )}
-                        {isPdf && (canViewPdf || canDownload) && (
-                          <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
-                            PDF protegido com marca d&apos;água exclusiva para sua conta
-                          </p>
-                        )}
-                        {isPdf && !canViewPdf && !canDownload && (
-                          <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-                            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
-                            O viewer e o download deste PDF estão indisponíveis no momento.
-                          </div>
-                        )}
-                        {canViewHtml && (
-                          <Button
-                            onClick={handleOpenHtmlViewer}
-                            className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
-                          >
-                            <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
-                            <span className="relative flex items-center">
-                              <MonitorPlay className="h-4 w-4 mr-2" />
-                              Abrir Leitor HTML
-                            </span>
-                          </Button>
-                        )}
-                        {isHtml && canViewHtml && (
-                          <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
-                            Experiência protegida com marca d&apos;água exclusiva para sua conta
-                          </p>
-                        )}
-                        {isHtml && !canViewHtml && (
-                          <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-                            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
-                            O leitor desta experiência está indisponível no momento.
-                          </div>
-                        )}
-                      </>
-                    )
-                  ) : includedInPlus ? (
-                    <>
-                      <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
-                        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
-                      </span>
-                      <Button
-                        onClick={handleClaimWithPlus}
-                        disabled={checkoutLoading}
-                        className="h-11 w-full rounded-lg bg-gradient-to-r from-primary to-primary/80 font-semibold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                      >
-                        {checkoutLoading
-                          ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                          : <Gift className="h-4 w-4 mr-2" />}
-                        Resgatar material
-                      </Button>
-                      <p className="text-center text-[10px] text-muted-foreground/70">
-                        Sem custo — já faz parte da sua assinatura.
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      {canPreview && (
-                        <Button
-                          onClick={handleOpenPdfViewer}
-                          variant="outline"
-                          className="mb-1 h-11 w-full rounded-lg border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          Ver prévia grátis (págs. {previewLabel})
-                        </Button>
-                      )}
-                      {timedVersions.length > 0 && !isFree && (
-                        <TimedAccessOptions
-                          versions={timedVersions}
-                          value={accessVersionId}
-                          onChange={setAccessVersionId}
-                          fullPrice={hasActiveTier ? tierFinalPrice : originalPrice}
-                          disabled={checkoutLoading}
-                          className="mb-3"
-                        />
-                      )}
-                      {hasActiveTier && pricingEventState && !selectedTimedVersion && (
-                        <div className="mb-3 rounded-lg border border-border/40 bg-muted/20 px-3 py-2.5">
-                          <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                            <span className="text-muted-foreground">Valor sem lote</span>
-                            <span className="text-muted-foreground line-through">
-                              R$ {originalPrice.toFixed(2)}
-                            </span>
-                          </div>
-                          <div className="mb-1 flex items-center justify-between gap-3 text-xs">
-                            <span className="flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                              <TrendingDown className="h-3 w-3" /> Lote{pricingEventState.activeTier ? ` · ${pricingEventState.activeTier.label || ''}` : ''} (−{Math.round(tierPct)}%)
-                            </span>
-                            <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                              − R$ {tierSavings.toFixed(2)}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="text-sm font-semibold">Total</span>
-                            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                              {tierFinalPrice <= 0 ? 'Grátis' : `R$ ${tierFinalPrice.toFixed(2)}`}
-                            </span>
-                          </div>
-                          <p className="mt-1 text-[10px] text-emerald-700/80 dark:text-emerald-300/80 leading-snug">
-                            ⚡ Lote ativo: quanto antes comprar, maior o desconto.
-                          </p>
-                        </div>
-                      )}
-                      {isFree ? (
-                        <Button
-                          onClick={() => handleAcquire()}
-                          disabled={checkoutLoading}
-                          className="h-11 w-full rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
-                        >
-                          {checkoutLoading
-                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            : <Gift className="h-4 w-4 mr-2" />
-                          }
-                          Adquirir gratuitamente
-                        </Button>
-                      ) : (
-                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                          <Button
-                            onClick={() => handleBuyNow()}
-                            disabled={checkoutLoading}
-                            className="h-11 rounded-lg bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
-                          >
-                            Comprar agora
-                          </Button>
-                          <Button
-                            onClick={() => handleAcquire()}
-                            disabled={checkoutLoading}
-                            className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
-                          >
-                            <ShoppingCart className="h-4 w-4 mr-2" />
-                            Adicionar
-                          </Button>
-                        </div>
-                      )}
-                      {!isFree && (
-                        <p className="text-center text-[10px] text-muted-foreground/60">
-                          Pagamento único · acesso permanente
-                        </p>
-                      )}
-                      {!isFree && <ProuniCta itemType="material" itemId={id} className="mt-1" />}
-                      {cartMessage && (
-                        <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                          {cartMessage}
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              </motion.div>
-
-              {/* Description */}
-              {material.description && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="mt-4 border border-border bg-card rounded-lg rounded-lg px-5 py-4 border border-border/40"
-                >
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
-                    Sobre este material
-                  </h3>
-                  <p className={`text-sm leading-relaxed text-foreground/85 ${descExpanded ? '' : 'line-clamp-4'}`}>
-                    {material.description}
-                  </p>
-                  {descLong && (
+                  {reviewCount > 0 && (
                     <button
-                      onClick={() => setDescExpanded(e => !e)}
-                      className="mt-2 flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                      type="button"
+                      onClick={jumpToReviews}
+                      className="ios-rotulo-2 mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium"
                     >
-                      {descExpanded
-                        ? <><ChevronUp className="h-3 w-3" /> Ver menos</>
-                        : <><ChevronDown className="h-3 w-3" /> Ver mais</>}
+                      <StarRow value={reviewSummary?.avg ?? 0} />
+                      <span className="tabular-nums">{(reviewSummary?.avg ?? 0).toFixed(1).replace('.', ',')}</span>
+                      <span>· {reviewCount} {reviewCount === 1 ? 'avaliação' : 'avaliações'}</span>
                     </button>
                   )}
-                </motion.div>
-              )}
 
-              {/* Você também leva … (materiais complementares) */}
-              {complementaryItems.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.18 }}
-                  className="mt-4 border border-border bg-card rounded-lg rounded-lg px-5 py-4 border border-border/40"
-                >
-                  <div className="mb-3 flex items-center gap-2">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Gift className="h-4 w-4" />
-                    </span>
-                    <h3 className="font-heading text-base font-bold text-foreground">
-                      Você também leva…
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 gap-3">
-                    {complementaryItems.map((item) => (
-                      <ComplementaryCard key={item.id} item={item} />
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Reviews section (full) */}
-              <ReviewsSection
-                id="reviews-section"
-                targetType="material"
-                targetId={id}
-                onSummaryChange={setReviewSummary}
-                purchaseCtaLabel={isFree ? 'Adquirir gratuitamente' : 'Comprar para avaliar'}
-                onPurchaseClick={() => handleAcquire()}
-              />
-            </motion.div>
-
-            {/* RIGHT: Sidebar */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.35, delay: 0.08 }}
-              className="xl:w-[300px] flex-shrink-0 space-y-3"
-            >
-              {/* ── CTA Card ── */}
-              <div className="hidden xl:block rounded-3xl overflow-hidden border border-border/40 border border-border bg-card rounded-lg">
-
-                {/* Card header with cover thumb */}
-                {material.coverImage && !isEmbed && (
-                  <div className="relative h-32 overflow-hidden">
-                    <Image
-                      src={material.coverImage}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="300px"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                    {/* Access state badge */}
-                    <div className="absolute top-3 right-3">
-                      {hasAccess ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-[11px] font-bold">
-                          <Check className="h-3 w-3" /> Disponível
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl backdrop-blur-md bg-black/40 border border-white/15 text-white/80 text-[11px] font-bold">
-                          <Lock className="h-3 w-3" />
-                          {isFree ? 'Gratuito' : `R$ ${tierFinalPrice.toFixed(2)}`}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-4">
-                  {/* Type + price pills */}
-                  <div className="flex items-center gap-1.5 flex-wrap mb-3">
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-primary/10 text-primary text-[11px] font-medium border border-primary/15">
-                      {TYPE_ICONS[material.type]}
-                      {TYPE_LABELS[material.type]}
-                    </span>
-                    {isFree ? (
-                      <span className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold border border-emerald-500/15">
-                        <Gift className="h-3 w-3" /> Gratuito
-                      </span>
-                    ) : hasActiveTier ? (
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
-                        <span className="line-through opacity-60">R$ {originalPrice.toFixed(2)}</span>
-                        <span>R$ {tierFinalPrice.toFixed(2)}</span>
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-lg bg-accent/10 text-amber-700 dark:text-amber-300 text-[11px] font-bold border border-amber-500/15">
-                        R$ {material.price?.toFixed(2)}
-                      </span>
-                    )}
-                    {hasActiveTier && <PricingEventBadge state={pricingEventState} size="xs" />}
-                  </div>
-
-                  <h1 className="font-heading font-bold text-base leading-snug mb-3">
-                    {material.title}
-                  </h1>
-
-                  {/* Reviews summary (compact) — link para a seção completa abaixo */}
-                  {(reviewSummary?.count ?? 0) > 0 && (
-                    <div className="mb-3">
-                      <ReviewSummaryBlock
-                        summary={reviewSummary}
-                        variant="compact"
-                        onJumpToList={() =>
-                          document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                        }
-                      />
-                    </div>
-                  )}
-
-                  {/* Video duration */}
-                  {isVideo && material.videoDuration && (
-                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
-                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-xs font-medium">{formatDuration(material.videoDuration)}</span>
-                    </div>
-                  )}
-
-                  {/* PDF page count */}
-                  {material.type === 'pdf' && material._hasPdf && material._pageCount ? (
-                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
-                      <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-xs font-medium">
-                        {material._pageCount} {material._pageCount === 1 ? 'página' : 'páginas'}
-                      </span>
-                    </div>
-                  ) : null}
-
-                  {/* Flashcard deck card count */}
-                  {material.type === 'flashcard_deck' ? (
-                    <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-xl bg-muted/40 border border-border/30">
-                      <Layers className="h-3.5 w-3.5 text-muted-foreground" />
-                      <span className="text-xs font-medium">
-                        {material._cardCount ?? 0} {material._cardCount === 1 ? 'card' : 'cards'}
-                      </span>
-                    </div>
-                  ) : null}
-
-                  {/* Tags */}
-                  {material.tags?.length > 0 && (
-                    <div className="mb-3">
-                      <div className="flex flex-wrap gap-1">
-                        {material.tags.map(tag => (
-                          <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Formas de acesso — vitalício ou versão por tempo */}
-                  {!hasAccess && !isFree && timedVersions.length > 0 && (
-                    <TimedAccessOptions
-                      versions={timedVersions}
-                      value={accessVersionId}
-                      onChange={setAccessVersionId}
-                      fullPrice={hasActiveTier ? tierFinalPrice : originalPrice}
-                      disabled={checkoutLoading}
-                      className="mb-3"
-                    />
-                  )}
-
-                  {/* Lote dinâmico por evento — desktop sidebar breakdown */}
-                  {hasActiveTier && !hasAccess && !selectedTimedVersion && pricingEventState && (
-                    <div className="mb-3 rounded-lg border border-border/40 overflow-hidden">
-                      <div className="px-3 py-2 border-b border-border/30 bg-muted/20">
-                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                          Seu preço com desconto
-                        </p>
-                      </div>
-                      <div className="px-3 py-2.5 space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">Valor sem lote</span>
-                          <span className="text-muted-foreground line-through">
-                            R$ {originalPrice.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                            <TrendingDown className="h-3 w-3" /> Lote ativo (−{Math.round(tierPct)}%)
-                          </span>
-                          <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                            − R$ {tierSavings.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between pt-1">
-                          <span className="text-sm font-semibold">Total</span>
-                          <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">
-                            {tierFinalPrice <= 0 ? 'Grátis' : `R$ ${tierFinalPrice.toFixed(2)}`}
-                          </span>
-                        </div>
-                        {pricingEventState.activeTier && (
-                          <p className="text-[10px] text-emerald-700/85 dark:text-emerald-300/85 leading-snug pt-1 border-t border-border/30 mt-1">
-                            ⚡ Lote {pricingEventState.activeTier.label}. Quanto antes comprar, maior o desconto.
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* ── CTA area ── */}
-                  <div className="mt-1 space-y-2">
-                    {hasAccess ? (
-                      isEmbed ? (
-                        <div className="flex items-center gap-2 py-2 px-3 rounded-lg bg-primary/6 border border-primary/15">
-                          <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
-                          <p className="text-xs text-muted-foreground">
-                            O vídeo está disponível acima ↑
-                          </p>
-                        </div>
-                      ) : (
-                        <>
-                          {canViewPdf && (
-                            <Button
-                              onClick={handleOpenPdfViewer}
-                              className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
-                            >
-                              <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
-                              <span className="relative flex items-center">
-                                <Eye className="h-4 w-4 mr-2" />
-                                Visualizar PDF
-                              </span>
-                            </Button>
-                          )}
-                          {canDownload && (
-                            <Button
-                              onClick={handleDownload}
-                              disabled={downloadState.status === 'running'}
-                              className="w-full h-11 rounded-lg font-semibold text-white bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                            >
-                              {downloadState.status === 'running' ? (
-                                <>
-                                  <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                  Processando…
-                                </>
-                              ) : (
-                                <>
-                                  <Download className="h-4 w-4 mr-2" />
-                                  {downloadLabel}
-                                </>
-                              )}
-                            </Button>
-                          )}
-                          {isPdf && (canViewPdf || canDownload) && (
-                            <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
-                              PDF protegido com marca d&apos;água exclusiva para sua conta
-                            </p>
-                          )}
-                          {isPdf && !canViewPdf && !canDownload && (
-                            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-                              <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
-                              O viewer e o download deste PDF estao indisponiveis no momento.
-                            </div>
-                          )}
-                          {canViewHtml && (
-                            <Button
-                              onClick={handleOpenHtmlViewer}
-                              className="relative w-full h-12 overflow-hidden rounded-lg font-bold text-white border border-emerald-200/30 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400 shadow-xl shadow-emerald-500/25 transition-all active:scale-[0.98]"
-                            >
-                              <span className="absolute inset-0 bg-white/15 backdrop-blur-sm opacity-40" />
-                              <span className="relative flex items-center">
-                                <MonitorPlay className="h-4 w-4 mr-2" />
-                                Abrir Leitor HTML
-                              </span>
-                            </Button>
-                          )}
-                          {isHtml && canViewHtml && (
-                            <p className="text-center text-[10px] text-muted-foreground/70 leading-relaxed">
-                              Experiência protegida com marca d&apos;água exclusiva para sua conta
-                            </p>
-                          )}
-                          {isHtml && !canViewHtml && (
-                            <div className="flex items-start gap-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
-                              <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" />
-                              O leitor desta experiência está indisponível no momento.
-                            </div>
-                          )}
-                        </>
-                      )
-                    ) : includedInPlus ? (
-                      <>
-                        <span className="flex items-center justify-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
-                          <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
-                        </span>
-                        <Button
-                          onClick={handleClaimWithPlus}
-                          disabled={checkoutLoading}
-                          className="h-11 w-full rounded-lg bg-gradient-to-r from-primary to-primary/80 font-semibold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
-                        >
-                          {checkoutLoading
-                            ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            : <Gift className="h-4 w-4 mr-2" />}
-                          Resgatar material
-                        </Button>
-                        <p className="text-center text-[10px] text-muted-foreground/70">
-                          Sem custo — já faz parte da sua assinatura.
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        {canPreview && (
-                          <Button
-                            onClick={handleOpenPdfViewer}
-                            variant="outline"
-                            className="mb-1 h-11 w-full rounded-lg border-amber-500/40 bg-amber-500/10 font-semibold text-amber-700 hover:bg-amber-500/15 dark:text-amber-300"
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Ver prévia grátis (págs. {previewLabel})
-                          </Button>
-                        )}
-                        {isFree ? (
-                          <Button
-                            onClick={() => handleAcquire()}
-                            disabled={checkoutLoading}
-                            className="h-11 w-full rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all hover:from-emerald-600 hover:to-green-700 active:scale-[0.98]"
-                          >
-                            {checkoutLoading
-                              ? <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                              : <Gift className="h-4 w-4 mr-2" />
-                            }
-                            Adquirir gratuitamente
-                          </Button>
-                        ) : (
-                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                            <Button
-                              onClick={() => handleAcquire()}
-                              disabled={checkoutLoading}
-                              className="h-11 rounded-lg border border-emerald-500/25 bg-emerald-500/10 font-semibold text-emerald-700 shadow-sm transition-all hover:bg-emerald-500/15 active:scale-[0.98] dark:text-emerald-300"
-                            >
-                              <ShoppingCart className="h-4 w-4 mr-2" />
-                              Adicionar ao carrinho
-                            </Button>
-                            <Button
-                              onClick={() => handleBuyNow()}
-                              disabled={checkoutLoading}
-                              className="h-11 rounded-lg bg-gradient-to-r from-accent to-secondary font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:from-accent/90 hover:to-secondary/90 active:scale-[0.98]"
-                            >
-                              Comprar agora
-                            </Button>
-                          </div>
-                        )}
-                        {!isFree && (
-                          <p className="text-center text-[10px] text-muted-foreground/60">
-                            Pagamento único · acesso permanente
-                          </p>
-                        )}
-                        {!isFree && <ProuniCta itemType="material" itemId={id} className="mt-1" />}
-                        {cartMessage && (
-                          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
-                            {cartMessage}
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </div>
+                  <div className="mt-5">{purchaseBody}</div>
                 </div>
-              </div>
 
-              {/* Group restrictions */}
-              <AnimatePresence>
                 {material.allowedGroups?.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="border border-border bg-card rounded-lg rounded-lg p-4 border border-violet-500/20"
-                  >
-                    <div className="flex items-center gap-2 mb-2.5">
-                      <div className="h-6 w-6 rounded-lg bg-violet-500/15 flex items-center justify-center">
-                        <Shield className="h-3 w-3 text-violet-500" />
-                      </div>
-                      <p className="text-[11px] font-semibold text-violet-600 dark:text-violet-400 uppercase tracking-wider">
-                        Acesso por plano
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
+                  <section className="ios-lista p-4">
+                    <h2 className="text-[15px] font-semibold tracking-[-0.01em]">Acesso por plano</h2>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {material.allowedGroups.map(g => {
                         const meta = GROUP_META[g]
                         if (!meta) return null
                         return (
                           <span
                             key={g}
-                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
-                            style={{ color: meta.color, background: meta.color + '15', borderColor: meta.color + '35' }}
+                            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12px] font-semibold"
+                            style={{ color: meta.color, background: meta.color + '1f' }}
                           >
                             {meta.icon} {meta.label}
                           </span>
@@ -1562,82 +995,159 @@ export default function MaterialViewPage() {
                       })}
                     </div>
                     {!hasGroupAccess && (
-                      <p className="mt-2.5 text-[11px] text-muted-foreground leading-relaxed">
+                      <p className="ios-rotulo-2 mt-2.5 text-[13px] leading-relaxed">
                         Seu plano atual não inclui este conteúdo. Faça upgrade para desbloquear.
                       </p>
                     )}
-                  </motion.div>
+                  </section>
                 )}
-              </AnimatePresence>
+              </div>
+            </aside>
 
-              {/* Security/watermark info */}
-              {hasAccess && isPdf && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 }}
-                  className="flex items-start gap-2.5 px-3.5 py-3 rounded-lg bg-muted/30 border border-border/30"
-                >
-                  <ShieldAlert className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Este PDF é gerado com marca d&apos;água exclusiva vinculada à sua conta.
-                  </p>
-                </motion.div>
+            {/* ── Conteúdo ── */}
+            <div className="min-w-0 space-y-8 xl:col-start-1 xl:row-start-2">
+              {hasAccess && timedAccess?.isTimed && (
+                <TimedAccessBanner
+                  access={timedAccess}
+                  itemLabel="material"
+                  versions={timedVersions}
+                  selectedVersionId={accessVersionId}
+                  onSelectVersion={setAccessVersionId}
+                  onRenew={() => handleBuyNow(true)}
+                  renewLoading={checkoutLoading}
+                  fullPrice={originalPrice}
+                />
               )}
-            </motion.div>
-          </div>
-        </div>
-      </div>
 
-      {showMobilePurchaseBar && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/60 bg-background/95 px-3 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-2xl shadow-black/15 backdrop-blur-xl xl:hidden">
-          <div className="mx-auto flex max-w-7xl items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-semibold text-foreground">{material.title}</p>
-              <p className="text-sm font-black text-emerald-700 dark:text-emerald-300">
-                {includedInPlus ? (
-                  <span className="flex items-center gap-1 text-amber-700 dark:text-amber-300">
-                    <Crown className="h-3.5 w-3.5" /> Incluído no {PLUS_LABEL}
-                  </span>
-                ) : isFree ? 'Gratuito' : selectedTimedVersion ? (
-                  <>
-                    R$ {purchasePrice.toFixed(2)}
-                    <span className="ml-1.5 text-[10px] font-bold text-sky-500">
-                      {selectedTimedVersion.durationLabel}
-                    </span>
-                  </>
-                ) : hasActiveTier ? (
-                  <>
-                    <span className="mr-1.5 text-[10px] font-medium text-muted-foreground line-through">
-                      R$ {originalPrice.toFixed(2)}
-                    </span>
-                    R$ {tierFinalPrice.toFixed(2)}
-                    <span className="ml-1.5 text-[10px] font-bold text-emerald-500">−{Math.round(tierPct)}%</span>
-                  </>
-                ) : `R$ ${material.price?.toFixed(2)}`}
-              </p>
+              {hasActiveTier && pricingEventState && !hasAccess && (
+                <PricingEventCountdown state={pricingEventState} />
+              )}
+
+              <div className="ios-lista py-3.5">
+                <div className="ios-faixa" role="list" aria-label="Informações do material">
+                  {infoCells.map(cell => (
+                    <div key={cell.key} role="listitem">
+                      <span className="ios-faixa-rotulo">{cell.label}</span>
+                      <span className="ios-faixa-valor">{cell.value}</span>
+                      <span className="ios-faixa-nota">{cell.note}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Oferta de versão impressa (add-on de produto físico) */}
+              <PrintedAddon materialId={material._id} />
+
+              {material.description && (
+                <section>
+                  <h2 className="ios-titulo-secao mb-2.5">Sobre este material</h2>
+                  <p className={cn('max-w-[68ch] whitespace-pre-line text-[16px] leading-relaxed text-[var(--ios-rotulo)]', !descExpanded && 'line-clamp-5')}>
+                    {material.description}
+                  </p>
+                  {descLong && (
+                    <button
+                      type="button"
+                      onClick={() => setDescExpanded(e => !e)}
+                      aria-expanded={descExpanded}
+                      className="ios-tinta mt-1.5 text-[15px] font-semibold"
+                    >
+                      {descExpanded ? 'menos' : 'mais'}
+                    </button>
+                  )}
+                  {material.tags?.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {material.tags.map(tag => (
+                        <span key={tag} className="ios-rotulo-2 rounded-full bg-[var(--ios-preenchimento)] px-3 py-1 text-[13px] font-medium">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {complementaryItems.length > 0 && (
+                <section>
+                  <h2 className="ios-titulo-secao mb-1">Você também leva</h2>
+                  <p className="ios-rotulo-2 mb-3 text-[15px]">Vem junto com este material, sem custo a mais.</p>
+                  <ul className="ios-lista [--ios-recuo:84px]">
+                    {complementaryItems.map((item) => (
+                      <li key={item.id}>
+                        <ComplementaryRow item={item} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              <ReviewsSection
+                id="reviews-section"
+                targetType="material"
+                targetId={id}
+                onSummaryChange={setReviewSummary}
+                purchaseCtaLabel={isFree ? 'Obter grátis' : 'Comprar para avaliar'}
+                onPurchaseClick={() => handleAcquire()}
+              />
             </div>
-            <Button
-              onClick={
-                includedInPlus
-                  ? handleClaimWithPlus
-                  : isFree
-                    ? () => handleAcquire()
-                    : () => handleBuyNow()
-              }
-              disabled={checkoutLoading}
-              className="h-11 min-w-[9rem] rounded-lg bg-gradient-to-r from-accent to-secondary px-4 font-bold text-white shadow-lg shadow-accent/20 transition-all active:scale-[0.98]"
-            >
-              {checkoutLoading ? (
-                <span className="h-4 w-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : includedInPlus || isFree ? (
-                <Gift className="h-4 w-4 mr-2" />
-              ) : null}
-              {includedInPlus ? 'Resgatar' : isFree ? 'Adquirir' : 'Comprar agora'}
-            </Button>
           </div>
         </div>
-      )}
+
+        {showMobilePurchaseBar && (
+          <div
+            className="ios-barra-inferior ios-vidro flex items-center gap-3 p-2 pl-2.5 xl:hidden"
+            data-visivel={ctaVisivel ? 'false' : 'true'}
+            aria-hidden={ctaVisivel}
+          >
+            <span className="ios-capa relative h-11 w-11 shrink-0 rounded-[12px]">
+              {material.coverImage ? (
+                <Image src={material.coverImage} alt="" fill sizes="44px" className="object-cover" />
+              ) : (
+                <span className="ios-capa-vazia ios-tinta flex h-full w-full items-center justify-center [&_svg]:h-5 [&_svg]:w-5">
+                  {TYPE_ICONS[material.type] || <File />}
+                </span>
+              )}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[14px] font-semibold tracking-[-0.01em]">{material.title}</span>
+              <span className="block text-[13px] font-semibold tabular-nums">
+                {includedInPlus ? (
+                  <span className="ios-ambar">Incluído no {PLUS_LABEL}</span>
+                ) : isFree ? (
+                  <span className="ios-tinta">Grátis</span>
+                ) : (
+                  <>
+                    {hasActiveTier && !selectedTimedVersion && (
+                      <span className="ios-rotulo-3 mr-1.5 font-medium line-through">{fmtBRL(originalPrice)}</span>
+                    )}
+                    {fmtBRL(displayPrice)}
+                    {selectedTimedVersion && <span className="ios-rotulo-2 ml-1.5 font-medium">{selectedTimedVersion.durationLabel}</span>}
+                  </>
+                )}
+              </span>
+            </span>
+            {!includedInPlus && !isFree && (
+              <CartButton
+                inCart={isInCart('material', id)}
+                onAdd={() => handleAcquire()}
+                disabled={checkoutLoading}
+                itemTitle={material.title}
+                className="h-11"
+                tabIndex={ctaVisivel ? -1 : 0}
+              />
+            )}
+            <button
+              type="button"
+              tabIndex={ctaVisivel ? -1 : 0}
+              onClick={includedInPlus ? handleClaimWithPlus : isFree ? () => handleAcquire() : () => handleBuyNow()}
+              disabled={checkoutLoading}
+              className={includedInPlus ? 'ios-botao-ambar' : 'ios-botao'}
+            >
+              {checkoutLoading ? spinner : null}
+              {includedInPlus ? 'Resgatar' : isFree ? 'Obter' : 'Comprar'}
+            </button>
+          </div>
+        )}
+      </FundoIos>
 
       {/* PDF Download Progress modal */}
       <PdfDownloadTermsModal
@@ -1708,25 +1218,22 @@ export default function MaterialViewPage() {
 // ─── Skeleton ─────────────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <AppShell allowGuest headerTitle="Carregando...">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="h-7 w-48 rounded-xl bg-muted animate-pulse mb-6" />
-        <div className="flex flex-col xl:flex-row gap-6">
-          <div className="flex-1">
-            <div className="rounded-3xl bg-muted animate-pulse" style={{ aspectRatio: '16/9' }} />
-            <div className="mt-4 rounded-lg bg-muted animate-pulse h-28" />
-          </div>
-          <div className="xl:w-[300px] space-y-3">
-            <div className="rounded-3xl border border-border bg-card rounded-lg p-4 space-y-3">
-              <div className="h-28 w-full rounded-xl bg-muted animate-pulse" />
-              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
-              <div className="h-5 w-full bg-muted rounded animate-pulse" />
-              <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
-              <div className="h-11 w-full bg-muted rounded-lg animate-pulse mt-2" />
+    <AppShell allowGuest vidro headerTitle="Carregando...">
+      <FundoIos className="pb-16">
+        <div className="mx-auto max-w-7xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8" aria-hidden>
+          <div className="ios-esqueleto mb-4 h-7 w-28 rounded-full" />
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+            <div className="ios-esqueleto rounded-[22px] sm:rounded-[28px]" style={{ aspectRatio: '16/9' }} />
+            <div className="ios-painel space-y-3">
+              <div className="ios-esqueleto h-8 w-11/12 rounded-full" />
+              <div className="ios-esqueleto h-4 w-1/2 rounded-full" />
+              <div className="ios-esqueleto mt-6 h-9 w-32 rounded-full" />
+              <div className="ios-esqueleto h-[50px] w-full rounded-full" />
+              <div className="ios-esqueleto h-[50px] w-full rounded-full" />
             </div>
           </div>
         </div>
-      </div>
+      </FundoIos>
     </AppShell>
   )
 }
@@ -1734,19 +1241,49 @@ function LoadingSkeleton() {
 // ─── Error ────────────────────────────────────────────────────
 function ErrorState({ message, onBack }: { message: string; onBack: () => void }) {
   return (
-    <AppShell allowGuest headerTitle="Erro">
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4 px-4">
-        <div className="h-20 w-20 rounded-3xl border border-border bg-card rounded-lg flex items-center justify-center mb-2">
-          <Package className="h-9 w-9 text-muted-foreground" />
+    <AppShell allowGuest vidro headerTitle="Erro">
+      <FundoIos>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center px-4 text-center">
+          <span className="ios-rotulo-2 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ios-preenchimento)]">
+            <Package className="h-7 w-7" />
+          </span>
+          <h2 className="text-[22px] font-bold tracking-[-0.02em]">Material não encontrado</h2>
+          <p className="ios-rotulo-2 mt-1.5 max-w-xs text-[15px]">
+            {message || 'Este material não existe ou foi removido.'}
+          </p>
+          <button type="button" onClick={onBack} className="ios-botao mt-6">
+            <ChevronLeft className="-ml-1 h-5 w-5" /> Voltar aos materiais
+          </button>
         </div>
-        <h2 className="font-heading font-bold text-xl">Material não encontrado</h2>
-        <p className="text-muted-foreground text-sm text-center max-w-xs">
-          {message || 'Este material não existe ou foi removido.'}
-        </p>
-        <Button onClick={onBack} className="mt-2 rounded-xl">
-          <ArrowLeft className="h-4 w-4 mr-2" /> Voltar aos Materiais
-        </Button>
-      </div>
+      </FundoIos>
     </AppShell>
   )
+}
+
+/** Cinco estrelas, cheias até a média (arredondada para meia). */
+function StarRow({ value }: { value: number }) {
+  const rounded = Math.round(value * 2) / 2
+  return (
+    <span className="inline-flex items-center gap-[1px]" aria-label={`${value.toFixed(1)} de 5 estrelas`}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <Star
+          key={n}
+          className={cn(
+            'h-3 w-3',
+            rounded >= n ? 'fill-current' : rounded >= n - 0.5 ? 'fill-current opacity-60' : 'opacity-35'
+          )}
+        />
+      ))}
+    </span>
+  )
+}
+
+/** 1234 → "1,2 mil". A faixa tem espaço para cinco caracteres. */
+function compactNumber(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(Number(value || 0))
+}
+
+/** `R$ 29,90` — pt-BR usa vírgula decimal. */
+function fmtBRL(value: number): string {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
 }

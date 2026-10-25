@@ -5,21 +5,22 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
   Compass,
   FolderOpen,
   Library,
   Package,
   RefreshCw,
   Search,
+  Share,
   ShoppingBag,
-  Share2,
-  CheckCheck,
   WifiOff,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { AppShell } from '@/components/app-shell'
-import { Breadcrumbs, PageHeader, type Crumb } from '@/components/page-scaffold'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { CarrinhoFlutuante } from '@/components/materiais/carrinho-flutuante'
 import { PackageUpsellModal } from '@/components/materiais/package-upsell-modal'
 import {
   DownloadStepId,
@@ -62,7 +63,6 @@ import {
   DEFAULT_PUBLIC_METRIC_SETTINGS,
   type PublicMetricSettings,
 } from '@/lib/display-settings'
-import { SectionSkeleton } from '@/components/section-skeleton'
 import { useMaterialCart } from '@/context/MaterialCartContext'
 import { Product3DCard, type Product3DCardData } from '@/components/shop/product-3d-card'
 
@@ -974,18 +974,6 @@ function MateriaisContent() {
     return () => observer.disconnect()
   }, [canRevealMore, activeTab])
 
-  const breadcrumbItems: Crumb[] = useMemo(() => {
-    if (activeTab !== 'materials' || folderPath.length === 0) return []
-    return [
-      { label: 'Materiais', href: '/materiais', onClick: () => navigateToPathIndex(-1) },
-      ...folderPath.map((f, i) => ({
-        label: `${f.icon ? `${f.icon} ` : ''}${f.name}`,
-        href: `/materiais?folder=${f._id}`,
-        onClick: () => navigateToPathIndex(i),
-      })),
-    ]
-  }, [activeTab, folderPath, navigateToPathIndex])
-
   // A capa candidata a LCP é a do primeiro bloco que renderiza: os destaques
   // quando existem, senão a grade. Priorizar as duas seções gastaria banda com
   // imagens que nem estão acima da dobra.
@@ -1036,39 +1024,118 @@ function MateriaisContent() {
   ), [checkoutLoading, copiedId, copyPackageLink, handleAcquire, hasGroupAccess, highlightedPackageId, isPurchased])
 
   const browseErrorState = (
-    <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-10 text-center sm:p-12">
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-destructive/25 bg-destructive/10 text-destructive">
-        <WifiOff className="h-6 w-6" />
-      </div>
-      <h3 className="font-heading text-base font-semibold tracking-[-0.01em] text-foreground">Não foi possível carregar os materiais</h3>
-      <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">
-        Verifique sua conexão e tente novamente. Seus materiais adquiridos continuam disponíveis.
-      </p>
-      <Button
-        onClick={() => fetchData(debouncedSearch, activeFilter, { force: true })}
-        variant="outline"
-        className="mt-4"
-      >
-        <RefreshCw className="mr-2 h-4 w-4" /> Tentar novamente
-      </Button>
-    </div>
+    <EmptyCallout
+      icon={<WifiOff />}
+      title="Não foi possível carregar os materiais"
+      hint="Verifique sua conexão e tente novamente. Seus materiais adquiridos continuam disponíveis."
+      cta={
+        <button
+          type="button"
+          onClick={() => fetchData(debouncedSearch, activeFilter, { force: true })}
+          className="ios-botao"
+        >
+          <RefreshCw className="h-4 w-4" /> Tentar novamente
+        </button>
+      }
+    />
   )
 
   const noResultsCta = (
-    <Button onClick={clearFilters} variant="outline" size="sm">Limpar busca e filtros</Button>
+    <button type="button" onClick={clearFilters} className="ios-botao-cinza">Limpar busca e filtros</button>
   )
 
-  return (
-    <div className="surface-page pb-20">
-      <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-        <PageHeader
-          eyebrow="Marketplace"
-          title="Materiais"
-          description="Resumos, apostilas, pacotes e produtos impressos organizados por disciplina."
-        />
+  const revealMoreButton = (remaining: number) => (
+    <div ref={sentinelRef} className="mt-8 flex justify-center">
+      <button type="button" onClick={() => setVisibleCount(c => c + PAGE_SIZE)} className="ios-botao-cinza">
+        Mostrar mais <span className="ios-rotulo-2 tabular-nums">{remaining}</span>
+      </button>
+    </div>
+  )
 
-        {/* Retomada de leitura — some sozinha quando não há leitura no leitor. */}
-        <ContinueReading className="mb-5" />
+  // Título grande do topo: diz onde a pessoa está, como cada aba de um app do
+  // iPhone. Dentro de pasta, a pasta é o título e o "‹" leva para a de cima.
+  const parentFolder = folderPath.length >= 2 ? folderPath[folderPath.length - 2] : null
+  const heading = activeTab === 'materials' && currentFolder
+    ? {
+        title: `${currentFolder.icon ? `${currentFolder.icon} ` : ''}${currentFolder.name}`,
+        subtitle: currentFolder.description || null,
+      }
+    : activeTab === 'packages'
+      ? { title: 'Pacotes', subtitle: 'Materiais reunidos por disciplina, num pacote só.' }
+      : activeTab === 'mine'
+        ? {
+            title: 'Meus materiais',
+            subtitle: !loading && !browseError && isAuthenticated && (ownedMaterials.length > 0 || ownedPackages.length > 0)
+              ? `${ownedMaterials.length} ${ownedMaterials.length === 1 ? 'material' : 'materiais'}${ownedPackages.length > 0 ? ` · ${ownedPackages.length} ${ownedPackages.length === 1 ? 'pacote' : 'pacotes'}` : ''}, prontos para ler ou baixar.`
+              : 'Tudo que você já tem, pronto para ler ou baixar.',
+          }
+        : activeTab === 'loja'
+          ? { title: 'Loja', subtitle: 'Impressos e produtos físicos. Receba em casa ou retire na Unigranrio Barra.' }
+          : { title: 'Materiais', subtitle: 'Resumos, apostilas e flashcards, organizados por disciplina.' }
+
+  // Prateleira: no celular desliza de lado com encaixe (como as da App Store);
+  // do tablet para cima vira grade.
+  const shelfClass = 'scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 scroll-px-4 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3'
+  const shelfItemClass = 'w-[84%] shrink-0 snap-start sm:w-auto'
+
+  return (
+    <FundoIos className="pb-24">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-6 pt-4 sm:px-6 sm:pt-6 lg:px-8">
+        <header className="mb-5 sm:mb-6">
+          {activeTab === 'materials' && currentFolder && (
+            <a
+              href={parentFolder ? `/materiais?folder=${parentFolder._id}` : '/materiais'}
+              onClick={e => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return
+                e.preventDefault()
+                navigateToPathIndex(folderPath.length - 2)
+              }}
+              className="ios-voltar -ml-2.5 mb-1"
+            >
+              <ChevronLeft className="h-[22px] w-[22px] shrink-0" strokeWidth={2.5} />
+              <span className="truncate">{parentFolder ? parentFolder.name : 'Materiais'}</span>
+            </a>
+          )}
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h1 className="ios-titulo-grande">{heading.title}</h1>
+              {heading.subtitle && (
+                <p className="ios-rotulo-2 mt-1.5 max-w-2xl text-[15px] leading-relaxed sm:text-[17px]">{heading.subtitle}</p>
+              )}
+            </div>
+            {activeTab === 'materials' && currentFolder && (
+              <button
+                type="button"
+                onClick={() => copyFolderLink(currentFolder)}
+                title={copiedId === currentFolder._id ? 'Link copiado!' : 'Copiar link desta pasta'}
+                aria-label={copiedId === currentFolder._id ? 'Link copiado' : 'Copiar link desta pasta'}
+                className="ios-icone-botao ios-icone-botao-g mt-1"
+              >
+                {copiedId === currentFolder._id
+                  ? <Check className="h-[18px] w-[18px]" strokeWidth={2.5} />
+                  : <Share className="h-[18px] w-[18px]" />}
+              </button>
+            )}
+          </div>
+          {/* O caminho inteiro só quando há mais de um nível: com um só, o
+              "‹ Materiais" acima já é o caminho. */}
+          {activeTab === 'materials' && folderPath.length >= 2 && (
+            <nav aria-label="Caminho da pasta" className="ios-rotulo-2 mt-2 flex flex-wrap items-center gap-1 text-[13px]">
+              {[{ label: 'Materiais', index: -1 }, ...folderPath.map((f, i) => ({ label: f.name, index: i }))].map((crumb, i, all) => (
+                <span key={crumb.index} className="inline-flex items-center gap-1">
+                  {i > 0 && <ChevronRight className="ios-rotulo-3 h-3 w-3" />}
+                  {i === all.length - 1 ? (
+                    <span aria-current="page" className="font-semibold text-[var(--ios-rotulo)]">{crumb.label}</span>
+                  ) : (
+                    <button type="button" onClick={() => navigateToPathIndex(crumb.index)} className="hover:text-[var(--ios-tinta-texto)]">
+                      {crumb.label}
+                    </button>
+                  )}
+                </span>
+              ))}
+            </nav>
+          )}
+        </header>
 
         <MateriaisToolbar
           search={search}
@@ -1093,31 +1160,23 @@ function MateriaisContent() {
           }}
         />
 
+        {/* Retomada de leitura — some sozinha quando não há leitura no leitor. */}
+        {(activeTab === 'mine' || (activeTab === 'materials' && !currentFolder)) && !hasQuery && (
+          <ContinueReading variant="ios" className="mb-8" />
+        )}
+
         {/* Contexto da consulta. `aria-live` para o leitor de tela confirmar que
-            a busca rodou — antes só existia o chip "Atualizando". */}
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" role="status" aria-live="polite">
-          {activeTab === 'materials' && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
-              <FolderOpen className="h-3.5 w-3.5 text-primary" />
-              {currentFolder ? currentFolder.name : 'Biblioteca principal'}
-            </span>
-          )}
-          {activeTab === 'mine' && !loading && !browseError && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5">
-              <Library className="h-3.5 w-3.5 text-primary" />
-              Tudo que você já tem — {ownedMaterials.length} {ownedMaterials.length === 1 ? 'material' : 'materiais'}
-              {ownedPackages.length > 0 && ` · ${ownedPackages.length} ${ownedPackages.length === 1 ? 'pacote' : 'pacotes'}`}
-            </span>
-          )}
+            a busca rodou. */}
+        <div className="flex flex-wrap items-center gap-2 text-[13px]" role="status" aria-live="polite">
           {!loading && !browseError && hasQuery && activeTab !== 'loja' && (
-            <span className="font-medium text-foreground">
+            <span className="ios-rotulo-2 mb-4 font-medium">
               {activeList.length} {activeList.length === 1 ? 'resultado' : 'resultados'}
               {debouncedSearch.trim() ? ` para "${debouncedSearch.trim()}"` : ''}
             </span>
           )}
           {isSoftLoading && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 font-medium text-primary">
-              <span className="h-3 w-3 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+            <span className="ios-tinta mb-4 inline-flex items-center gap-1.5 font-semibold">
+              <span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
               Atualizando
             </span>
           )}
@@ -1127,31 +1186,12 @@ function MateriaisContent() {
         {/* ─── Aba Materiais ─── */}
         {activeTab === 'materials' && (
           <>
-            {breadcrumbItems.length > 0 && (
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Breadcrumbs items={breadcrumbItems} className="mb-0" />
-                {currentFolder && (
-                  <button
-                    type="button"
-                    onClick={() => copyFolderLink(currentFolder)}
-                    title="Copiar link desta pasta"
-                    aria-label="Copiar link desta pasta"
-                    className="text-muted-foreground transition-colors hover:text-primary"
-                  >
-                    {copiedId === currentFolder._id
-                      ? <CheckCheck className="h-3.5 w-3.5 text-emerald-500" />
-                      : <Share2 className="h-3.5 w-3.5" />}
-                  </button>
-                )}
-              </div>
-            )}
-
             {folders.length > 0 && (
-              <section className="mb-6">
-                <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-                  <FolderOpen className="h-4 w-4" /> Pastas
+              <section className="mb-9">
+                <h2 className="ios-titulo-secao mb-3 flex items-baseline gap-2">
+                  Pastas <span className="ios-rotulo-3 text-[15px] font-semibold tabular-nums">{folders.length}</span>
                 </h2>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
                   {folders.map(folder => (
                     <FolderCard
                       key={folder._id}
@@ -1166,10 +1206,14 @@ function MateriaisContent() {
             )}
 
             {!loading && !browseError && featuredMaterials.length > 0 && !currentFolderId && (
-              <section className="mb-8" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
-                <h2 className="mb-3 font-heading text-lg font-bold tracking-[-0.02em]">Destaques</h2>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
-                  {featuredMaterials.map((material, idx) => renderMaterial(material, idx, 'featured'))}
+              <section className="mb-9" style={{ contentVisibility: 'auto', containIntrinsicSize: '600px' }}>
+                <h2 className="ios-titulo-secao mb-3">Destaques</h2>
+                <div className={shelfClass}>
+                  {featuredMaterials.map((material, idx) => (
+                    <div key={material._id} className={shelfItemClass}>
+                      {renderMaterial(material, idx, 'featured')}
+                    </div>
+                  ))}
                 </div>
               </section>
             )}
@@ -1181,7 +1225,7 @@ function MateriaisContent() {
             ) : visibleMaterials.length === 0 && folders.length === 0 && featuredMaterials.length === 0 ? (
               hasQuery ? (
                 <EmptyCallout
-                  icon={<Search className="h-6 w-6" />}
+                  icon={<Search />}
                   title="Nenhum material com esses critérios"
                   hint={debouncedSearch.trim()
                     ? `Não encontramos nada para "${debouncedSearch.trim()}"${currentFolder ? ` em ${currentFolder.name}` : ''}. Tente outros termos ou limpe os filtros.`
@@ -1190,41 +1234,38 @@ function MateriaisContent() {
                     <>
                       {noResultsCta}
                       {currentFolder && (
-                        <Button onClick={() => navigateToPathIndex(-1)} variant="outline" size="sm">
+                        <button type="button" onClick={() => navigateToPathIndex(-1)} className="ios-botao-suave">
                           Buscar na biblioteca inteira
-                        </Button>
+                        </button>
                       )}
                     </>
                   }
                 />
               ) : (
                 <EmptyCallout
-                  icon={<Package className="h-6 w-6" />}
-                  title="Nenhum material por aqui ainda"
+                  icon={<FolderOpen />}
+                  title={currentFolder ? 'Esta pasta ainda está vazia' : 'Nenhum material por aqui ainda'}
                   hint={currentFolder
-                    ? 'Esta pasta ainda está vazia. Volte para a biblioteca principal para ver o que já está disponível.'
+                    ? 'Volte para a biblioteca principal para ver o que já está disponível.'
                     : 'Novos materiais em breve!'}
                   cta={currentFolder ? (
-                    <Button onClick={() => navigateToPathIndex(-1)} variant="outline" size="sm">
+                    <button type="button" onClick={() => navigateToPathIndex(-1)} className="ios-botao-suave">
                       Voltar à biblioteca
-                    </Button>
+                    </button>
                   ) : undefined}
                 />
               )
-            ) : (
-              <>
+            ) : visibleMaterials.length > 0 ? (
+              <section>
+                {(folders.length > 0 || (featuredMaterials.length > 0 && !currentFolderId)) && (
+                  <h2 className="ios-titulo-secao mb-3">{currentFolder ? 'Nesta pasta' : 'Todos os materiais'}</h2>
+                )}
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
                   {visibleMaterials.slice(0, visibleCount).map((material, idx) => renderMaterial(material, idx))}
                 </div>
-                {canRevealMore && (
-                  <div ref={sentinelRef} className="mt-6 flex justify-center">
-                    <Button onClick={() => setVisibleCount(c => c + PAGE_SIZE)} variant="outline">
-                      Carregar mais ({visibleMaterials.length - visibleCount} restantes)
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
+                {canRevealMore && revealMoreButton(visibleMaterials.length - visibleCount)}
+              </section>
+            ) : null}
           </>
         )}
 
@@ -1232,12 +1273,12 @@ function MateriaisContent() {
         {activeTab === 'packages' && (
           <>
             {loading ? (
-              <MaterialGridSkeleton count={4} columns="packages" />
+              <MaterialGridSkeleton count={3} columns="packages" />
             ) : browseError ? (
               browseErrorState
             ) : filteredPackages.length === 0 ? (
               <EmptyCallout
-                icon={<Package className="h-6 w-6" />}
+                icon={<Package />}
                 title={hasQuery ? 'Nenhum pacote com esses critérios' : 'Nenhum pacote disponível'}
                 hint={hasQuery
                   ? 'Ajuste o filtro de preço ou limpe a busca para ver todos os pacotes.'
@@ -1247,22 +1288,23 @@ function MateriaisContent() {
             ) : (
               <>
                 {featuredPackages.length > 0 && (
-                  <section className="mb-8">
-                    <h2 className="mb-3 font-heading text-lg font-bold tracking-[-0.02em]">Pacotes em destaque</h2>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {featuredPackages.map((pkg, idx) => renderPackage(pkg, idx))}
+                  <section className="mb-9">
+                    <h2 className="ios-titulo-secao mb-3">Em destaque</h2>
+                    <div className={shelfClass}>
+                      {featuredPackages.map((pkg, idx) => (
+                        <div key={pkg._id} className={shelfItemClass}>{renderPackage(pkg, idx)}</div>
+                      ))}
                     </div>
                   </section>
                 )}
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {regularPackages.slice(0, visibleCount).map((pkg, idx) => renderPackage(pkg, idx))}
-                </div>
-                {canRevealMore && (
-                  <div ref={sentinelRef} className="mt-6 flex justify-center">
-                    <Button onClick={() => setVisibleCount(c => c + PAGE_SIZE)} variant="outline">
-                      Carregar mais ({regularPackages.length - visibleCount} restantes)
-                    </Button>
-                  </div>
+                {regularPackages.length > 0 && (
+                  <section>
+                    {featuredPackages.length > 0 && <h2 className="ios-titulo-secao mb-3">Todos os pacotes</h2>}
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {regularPackages.slice(0, visibleCount).map((pkg, idx) => renderPackage(pkg, idx))}
+                    </div>
+                    {canRevealMore && revealMoreButton(regularPackages.length - visibleCount)}
+                  </section>
                 )}
               </>
             )}
@@ -1278,41 +1320,43 @@ function MateriaisContent() {
               browseErrorState
             ) : !isAuthenticated ? (
               <EmptyCallout
-                icon={<Library className="h-6 w-6" />}
+                icon={<Library />}
                 title="Entre para ver seus materiais"
                 hint="Seus materiais adquiridos ficam salvos na sua conta — faça login para acessá-los de qualquer aparelho."
                 cta={
                   <>
-                    <Button onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent('/materiais?tab=mine')}`)} size="sm">
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent('/materiais?tab=mine')}`)}
+                      className="ios-botao"
+                    >
                       Entrar na minha conta
-                    </Button>
-                    <Button onClick={() => handleScopeChange('browse')} variant="outline" size="sm">
+                    </button>
+                    <button type="button" onClick={() => handleScopeChange('browse')} className="ios-botao-cinza">
                       Explorar catálogo
-                    </Button>
+                    </button>
                   </>
                 }
               />
             ) : myMaterials.length === 0 && ownedPackages.length === 0 ? (
               <EmptyCallout
-                icon={<Check className="h-6 w-6" />}
+                icon={hasQuery ? <Search /> : <Library />}
                 title={hasQuery ? 'Nada aqui com esses critérios' : 'Sua biblioteca está vazia'}
                 hint={hasQuery
                   ? 'Nenhum dos seus materiais corresponde à busca ou ao filtro atual.'
                   : 'Assim que você adquirir um material, ele aparece aqui — pronto para ler ou baixar quando quiser.'}
                 cta={hasQuery ? noResultsCta : (
-                  <Button onClick={() => handleScopeChange('browse')} size="sm">
-                    <Compass className="mr-2 h-4 w-4" /> Ver o que posso adquirir
-                  </Button>
+                  <button type="button" onClick={() => handleScopeChange('browse')} className="ios-botao">
+                    <Compass className="h-4 w-4" /> Ver o que posso adquirir
+                  </button>
                 )}
               />
             ) : (
               <>
                 {/* Pacotes primeiro: são a compra que o aluno lembra ter feito. */}
                 {ownedPackages.length > 0 && ownedType === 'all' && (
-                  <section className="mb-8">
-                    <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold tracking-[-0.02em]">
-                      <Package className="h-4 w-4 text-primary" /> Seus pacotes
-                    </h2>
+                  <section className="mb-9">
+                    <h2 className="ios-titulo-secao mb-3">Seus pacotes</h2>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {ownedPackages.map((pkg, idx) => renderPackage(pkg, idx))}
                     </div>
@@ -1322,9 +1366,7 @@ function MateriaisContent() {
                 {myMaterials.length > 0 ? (
                   <section>
                     {ownedPackages.length > 0 && ownedType === 'all' && (
-                      <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-bold tracking-[-0.02em]">
-                        <Library className="h-4 w-4 text-primary" /> Seus materiais
-                      </h2>
+                      <h2 className="ios-titulo-secao mb-3">Seus materiais</h2>
                     )}
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
                       {myMaterials.slice(0, visibleCount).map((material, idx) => renderMaterial(material, idx))}
@@ -1332,34 +1374,35 @@ function MateriaisContent() {
                   </section>
                 ) : (
                   <EmptyCallout
-                    icon={<Search className="h-6 w-6" />}
+                    icon={<Search />}
                     title="Nenhum material com esse recorte"
                     hint="Você tem pacotes adquiridos, mas nenhum material solto corresponde à busca ou ao formato selecionado."
                     cta={noResultsCta}
                   />
                 )}
 
-                {canRevealMore && (
-                  <div ref={sentinelRef} className="mt-6 flex justify-center">
-                    <Button onClick={() => setVisibleCount(c => c + PAGE_SIZE)} variant="outline">
-                      Carregar mais ({myMaterials.length - visibleCount} restantes)
-                    </Button>
-                  </div>
-                )}
+                {canRevealMore && revealMoreButton(myMaterials.length - visibleCount)}
 
                 {/* Saída para o catálogo no fim da lista: quem chegou até aqui
                     já viu tudo que tem e é onde a próxima compra faz sentido. */}
                 {!canRevealMore && (
-                  <div className="mt-8 flex flex-col items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <h3 className="font-heading text-sm font-bold tracking-[-0.01em]">Procurando outro material?</h3>
-                      <p className="text-xs text-muted-foreground">
-                        Veja o que ainda dá para adquirir — materiais avulsos, pacotes com desconto e impressos.
-                      </p>
-                    </div>
-                    <Button onClick={() => handleScopeChange('browse')} size="sm" className="shrink-0">
-                      <Compass className="mr-2 h-4 w-4" /> Explorar catálogo
-                    </Button>
+                  <div className="ios-lista mt-10">
+                    <button
+                      type="button"
+                      onClick={() => handleScopeChange('browse')}
+                      className="ios-linha w-full py-3 text-left"
+                    >
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--ios-tinta)] text-white">
+                        <Compass className="h-[18px] w-[18px]" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[15px] font-semibold tracking-[-0.01em]">Procurando outro material?</span>
+                        <span className="ios-rotulo-2 block text-[13px]">
+                          Materiais avulsos, pacotes e impressos que ainda dá para adquirir.
+                        </span>
+                      </span>
+                      <ChevronRight className="ios-rotulo-3 h-5 w-5 shrink-0" />
+                    </button>
                   </div>
                 )}
               </>
@@ -1370,36 +1413,28 @@ function MateriaisContent() {
         {/* ─── Aba Loja (produtos físicos) ─── */}
         {activeTab === 'loja' && (
           <>
-            <div className="mb-5 flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
-                <ShoppingBag className="h-5 w-5 text-primary" />
-              </span>
-              <div>
-                <h2 className="font-heading text-sm font-bold tracking-[-0.01em]">Materiais impressos &amp; produtos físicos</h2>
-                <p className="text-xs text-muted-foreground">
-                  Receba em casa ou retire na Unigranrio Barra. Entregue por DomineAqui LTDA.
-                </p>
-              </div>
-            </div>
             {!physicalLoaded ? (
               <MaterialGridSkeleton count={4} />
             ) : storeProducts.length === 0 ? (
               <EmptyCallout
-                icon={<ShoppingBag className="h-6 w-6" />}
+                icon={<ShoppingBag />}
                 title="Nenhum produto na loja ainda"
                 hint="Em breve novos materiais impressos por aqui."
                 cta={
-                  <Button onClick={() => handleTabChange('materials')} variant="outline" size="sm">
+                  <button type="button" onClick={() => handleTabChange('materials')} className="ios-botao-suave">
                     Ver materiais digitais
-                  </Button>
+                  </button>
                 }
               />
             ) : (
-              <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
-                {storeProducts.map((p) => (
-                  <Product3DCard key={p._id} product={p} href={`/loja/${p._id}`} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+                  {storeProducts.map((p) => (
+                    <Product3DCard key={p._id} product={p} href={`/loja/${p._id}`} />
+                  ))}
+                </div>
+                <p className="ios-rotulo-3 mt-6 text-center text-[13px]">Entregue por DomineAqui LTDA.</p>
+              </>
             )}
           </>
         )}
@@ -1474,25 +1509,41 @@ function MateriaisContent() {
         }
       />
 
+      <CarrinhoFlutuante acimaDoAviso={!isAuthenticated} />
+
       <ToastAlert
         open={toast.open}
         onOpenChange={(open) => setToast(t => ({ ...t, open }))}
         message={toast.message}
         type={toast.type}
       />
-    </div>
+    </FundoIos>
+  )
+}
+
+/** Esqueleto do conteúdo enquanto a página resolve a URL (Suspense). */
+function MateriaisEsqueleto() {
+  return (
+    <FundoIos className="pb-24">
+      <div className="mx-auto w-full max-w-7xl px-4 pb-6 pt-4 sm:px-6 sm:pt-6 lg:px-8" aria-hidden>
+        <div className="ios-esqueleto mb-3 h-10 w-52 rounded-full" />
+        <div className="ios-esqueleto mb-6 h-4 w-80 max-w-full rounded-full" />
+        <div className="ios-cartao mb-6 h-[104px] rounded-[22px]" />
+        <MaterialGridSkeleton count={8} />
+      </div>
+    </FundoIos>
   )
 }
 
 // ─── Export da página com o AppShell ─────────────────────────
 export default function MateriaisPage() {
   return (
-    <AppShell allowGuest headerTitle="Materiais" headerSubtitle="Pastas, pacotes e loja">
+    <AppShell allowGuest vidro headerTitle="Materiais" headerSubtitle="Pastas, pacotes e loja">
       {/* `MateriaisContent` chama `useSearchParams()`. Sem esta fronteira o
           Next desiste de renderizar a rota no servidor e joga a página inteira
           para o cliente — o casco chegava vazio e a primeira pintura só vinha
           depois do JS. Com o Suspense, o esqueleto é servido de imediato. */}
-      <Suspense fallback={<SectionSkeleton variant="catalog" />}>
+      <Suspense fallback={<MateriaisEsqueleto />}>
         <MateriaisContent />
       </Suspense>
     </AppShell>
