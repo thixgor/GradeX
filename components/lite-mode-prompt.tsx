@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Zap, X, Gauge } from 'lucide-react'
+import { Zap, X } from 'lucide-react'
 import { useLiteMode } from '@/hooks/use-lite-mode'
-import { cn } from '@/lib/utils'
 
 /**
  * Convite (e aviso) do Modo Lite.
@@ -72,23 +71,17 @@ export function LiteModePrompt() {
   if (showAutoNotice) {
     return (
       <Banner
-        tone="info"
-        icon={<Zap className="h-4 w-4 fill-current" />}
-        title="Ativei o Modo Lite pra você"
-        description={
-          reason
-            ? `Detectei ${reason} — desliguei os efeitos pesados pra plataforma não travar.`
-            : 'Seu aparelho pediu leveza, então desliguei os efeitos pesados.'
-        }
+        title="Modo Lite ligado"
+        description={reason ? `Por causa de ${reason}. Melhora o desempenho.` : 'Melhora o desempenho neste aparelho.'}
         primary={{
-          label: 'Entendi',
+          label: 'Ok',
           onClick: () => {
             markAutoNoticeSeen()
             setClosed(true)
           },
         }}
         secondary={{
-          label: 'Quero o visual completo',
+          label: 'Desligar',
           onClick: () => {
             setPreference('off')
             markAutoNoticeSeen()
@@ -105,25 +98,12 @@ export function LiteModePrompt() {
 
   return (
     <Banner
-      tone="suggest"
-      icon={<Gauge className="h-4 w-4" />}
-      title="A plataforma está travando aí?"
-      description={
-        reason
-          ? `Vi ${reason}. O Modo Lite corta animações, sombras e efeitos — a tela responde na hora.`
-          : 'O Modo Lite corta animações, sombras e efeitos pesados — a tela responde na hora.'
-      }
+      title="Travando?"
+      description="O Modo Lite melhora o desempenho."
       primary={{
-        label: 'Ativar Modo Lite',
+        label: 'Ativar Lite',
         onClick: () => {
           setPreference('on')
-          setClosed(true)
-        },
-      }}
-      secondary={{
-        label: 'Agora não',
-        onClick: () => {
-          dismissSuggestion()
           setClosed(true)
         },
       }}
@@ -135,77 +115,57 @@ export function LiteModePrompt() {
   )
 }
 
+/**
+ * A cápsula do aviso: uma linha só, de vidro, com a ação primeiro (à
+ * esquerda, onde o olho começa) e o fechar no fim. No celular fica logo
+ * abaixo do cabeçalho — o rodapé já é do aviso de visitante e das barras de
+ * compra —; no desktop, no canto de baixo à esquerda (ver `.aviso-lite` no
+ * globals.css).
+ */
 function Banner({
-  tone,
-  icon,
   title,
   description,
   primary,
   secondary,
   onClose,
 }: {
-  tone: 'info' | 'suggest'
-  icon: React.ReactNode
   title: string
   description: string
   primary: { label: string; onClick: () => void }
-  secondary: { label: string; onClick: () => void }
+  secondary?: { label: string; onClick: () => void }
   onClose: () => void
 }) {
   return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="pwa-safe-bottom fixed inset-x-3 bottom-3 z-[65] mx-auto max-w-md rounded-lg border border-border bg-card p-3.5 shadow-xl sm:inset-x-auto sm:right-4 sm:bottom-4"
-    >
+    <div role="status" aria-live="polite" className="aviso-lite">
+      <button
+        type="button"
+        onClick={primary.onClick}
+        className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-gradient-to-b from-[#f4c66d] to-[#e2a43e] pl-3 pr-3.5 text-[14px] font-semibold text-[#1d1406] shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_6px_16px_-8px_rgba(226,164,62,0.9)] transition active:scale-95"
+      >
+        <Zap className="h-4 w-4 fill-current" />
+        {primary.label}
+      </button>
+      <p className="line-clamp-2 min-w-0 flex-1 text-[13px] leading-snug sm:truncate sm:text-[14px] sm:leading-tight">
+        <span className="hidden font-semibold sm:inline">{title} </span>
+        <span className="text-[#101814]/60 dark:text-white/60">{description}</span>
+      </p>
+      {secondary && (
+        <button
+          type="button"
+          onClick={secondary.onClick}
+          className="h-9 shrink-0 rounded-full px-2.5 text-[14px] font-semibold text-[#2a7342] transition hover:bg-[#2f7d48]/10 dark:text-[#7fd093] dark:hover:bg-white/10"
+        >
+          {secondary.label}
+        </button>
+      )}
       <button
         type="button"
         onClick={onClose}
         aria-label="Fechar aviso"
-        className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#101814]/50 transition hover:text-[#101814] active:scale-90 dark:bg-white/10 dark:text-white/60 dark:hover:text-white"
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-4 w-4" strokeWidth={2.5} />
       </button>
-
-      <div className="flex items-start gap-3 pr-6">
-        <div
-          className={cn(
-            'mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border',
-            tone === 'info'
-              ? 'border-amber-500/40 bg-amber-500/15 text-amber-600 dark:text-amber-300'
-              : 'border-primary/30 bg-primary/10 text-primary',
-          )}
-        >
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <p className="text-sm font-semibold leading-tight">{title}</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{description}</p>
-        </div>
-      </div>
-
-      <div className="mt-3 flex items-center justify-end gap-2">
-        <button
-          type="button"
-          onClick={secondary.onClick}
-          className="h-8 rounded-md px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-        >
-          {secondary.label}
-        </button>
-        <button
-          type="button"
-          onClick={primary.onClick}
-          className={cn(
-            'inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-bold',
-            tone === 'info'
-              ? 'bg-foreground text-background hover:opacity-90'
-              : 'bg-amber-500 text-white hover:bg-amber-600',
-          )}
-        >
-          {tone === 'suggest' && <Zap className="h-3.5 w-3.5 fill-current" />}
-          {primary.label}
-        </button>
-      </div>
     </div>
   )
 }

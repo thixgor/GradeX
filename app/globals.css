@@ -3624,6 +3624,83 @@ body.has-guest-notice {
       0 18px 44px -18px rgb(0 0 0 / 0.8);
   }
 }
+/* Aviso do Modo Lite: cápsula de uma linha, no mesmo vidro do aviso de
+   visitante. No celular, logo abaixo do cabeçalho (o rodapé é do visitante e
+   das barras de compra); no desktop, canto de baixo à esquerda, subindo
+   quando o cartão de visitante ocupa o canto. Sem `backdrop-filter` no Lite
+   (a regra global já tira). */
+.aviso-lite {
+  position: fixed;
+  z-index: 65;
+  left: 10px;
+  right: 10px;
+  top: calc(4rem + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 auto;
+  max-width: 28rem;
+  padding: 6px;
+  border-radius: 22px;
+  color: #101814;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow:
+    0 1px 2px rgb(16 24 20 / 0.05),
+    0 14px 34px -16px rgb(16 24 20 / 0.38);
+  animation: aviso-lite-entra 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.dark .aviso-lite {
+  color: #f3f4f1;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .aviso-lite {
+    background: rgb(255 255 255 / 0.76);
+    border-color: rgb(255 255 255 / 0.8);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+  }
+  .dark .aviso-lite {
+    background: rgb(26 34 30 / 0.72);
+    border-color: rgb(255 255 255 / 0.1);
+  }
+}
+@media (min-width: 640px) {
+  .aviso-lite {
+    top: auto;
+    right: auto;
+    left: 18px;
+    bottom: 18px;
+    width: max-content;
+    max-width: min(30rem, calc(100vw - 36px));
+    border-radius: 9999px;
+    animation-name: aviso-lite-sobe;
+  }
+  body.has-guest-notice-desktop .aviso-lite {
+    bottom: 200px;
+  }
+}
+@keyframes aviso-lite-entra {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+}
+@keyframes aviso-lite-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aviso-lite {
+    animation: none;
+  }
+}
+.lite-mode .aviso-lite {
+  background: hsl(var(--card)) !important;
+}
+
 .lite-mode .aviso-visitante {
   background: hsl(var(--card)) !important;
 }

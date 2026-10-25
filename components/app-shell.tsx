@@ -681,6 +681,14 @@ function GuestAccessNotice() {
     return () => document.body.classList.remove('has-guest-notice')
   }, [mounted, dismissed, isMobile])
 
+  // No desktop o cartão fica no canto de baixo à esquerda; o aviso de Modo
+  // Lite (mesmo canto) lê esta classe e sobe para não ficar por cima dele.
+  useEffect(() => {
+    if (!mounted || dismissed || isMobile) return
+    document.body.classList.add('has-guest-notice-desktop')
+    return () => document.body.classList.remove('has-guest-notice-desktop')
+  }, [mounted, dismissed, isMobile])
+
   useEffect(() => {
     if (!dragging || isMobile) return
 
