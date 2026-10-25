@@ -1,0 +1,816 @@
+/*
+ * O vidro "de iPhone" da loja: `/materiais`, `/materiais/[id]` e
+ * `/pacotes/[id]`.
+ *
+ * Mora todo sob `.vidro-ios`, que vai junto com o `.vidro-app` do
+ * `FundoDeVidro` (a aurora atrás). Nada fora dessas telas muda.
+ *
+ * A gramática é a do sistema da Apple, nas cores da marca:
+ *  - a fonte do sistema (SF no iPhone e no Mac, Segoe no Windows, Roboto no
+ *    Android), título grande e apertado no topo;
+ *  - uma cor de destaque só (o verde), que pinta o que é tocável;
+ *  - materiais em dois pesos: o vidro de verdade (com desfoque) só nas peças
+ *    únicas que flutuam — barra de busca, painel de compra, barra de baixo — e
+ *    o "cartão" translúcido sem desfoque nas listas, onde dezenas de
+ *    `backdrop-filter` custariam caro;
+ *  - controle segmentado com o polegar deslizando, cápsulas, listas agrupadas
+ *    com separador recuado, toque que afunda e escurece.
+ *
+ * Movimento: só transform/opacity; para com "reduzir movimento". No Modo Lite
+ * o desfoque sai, o vidro vira sólido e a aurora e o fundo da capa somem.
+ */
+
+.vidro-ios {
+  --ios-chao: #f2f1ed;
+  --ios-rotulo: #101814;
+  --ios-rotulo-2: rgba(16, 24, 20, 0.62);
+  --ios-rotulo-3: rgba(16, 24, 20, 0.4);
+  --ios-separador: rgba(16, 24, 20, 0.11);
+  --ios-preenchimento: rgba(110, 122, 114, 0.14);
+  --ios-preenchimento-forte: rgba(110, 122, 114, 0.22);
+  --ios-cartao: rgba(255, 255, 255, 0.74);
+  --ios-cartao-solido: #ffffff;
+  --ios-vidro: rgba(255, 255, 255, 0.64);
+  --ios-vidro-borda: rgba(255, 255, 255, 0.7);
+  --ios-aresta: rgba(16, 24, 20, 0.07);
+  --ios-tinta: #2f7d48;
+  --ios-tinta-texto: #2a7342;
+  --ios-tinta-suave: rgba(47, 125, 72, 0.12);
+  --ios-ambar-texto: #9a6410;
+  --ios-ambar-suave: rgba(226, 164, 62, 0.16);
+  --ios-perigo: #c8372a;
+  --ios-sombra:
+    0 1px 1px rgba(16, 24, 20, 0.04),
+    0 10px 30px -14px rgba(16, 24, 20, 0.22);
+  --ios-sombra-alta:
+    0 2px 4px rgba(16, 24, 20, 0.05),
+    0 24px 50px -22px rgba(16, 24, 20, 0.35);
+  --ios-luz: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --ios-mola: cubic-bezier(0.22, 1, 0.36, 1);
+  --ios-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  color: var(--ios-rotulo);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI Variable Text', 'Segoe UI', Roboto,
+    var(--font-body), system-ui, sans-serif;
+  font-feature-settings: 'kern', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+
+.dark .vidro-ios {
+  --ios-chao: #050c09;
+  --ios-rotulo: #f3f4f1;
+  --ios-rotulo-2: rgba(235, 240, 236, 0.64);
+  --ios-rotulo-3: rgba(235, 240, 236, 0.4);
+  --ios-separador: rgba(255, 255, 255, 0.09);
+  --ios-preenchimento: rgba(140, 150, 144, 0.18);
+  --ios-preenchimento-forte: rgba(140, 150, 144, 0.28);
+  --ios-cartao: rgba(255, 255, 255, 0.055);
+  --ios-cartao-solido: #121a16;
+  --ios-vidro: rgba(26, 34, 30, 0.6);
+  --ios-vidro-borda: rgba(255, 255, 255, 0.1);
+  --ios-aresta: rgba(255, 255, 255, 0.08);
+  --ios-tinta: #2f7d48;
+  --ios-tinta-texto: #7fd093;
+  --ios-tinta-suave: rgba(127, 208, 147, 0.14);
+  --ios-ambar-texto: #f2c063;
+  --ios-ambar-suave: rgba(242, 192, 99, 0.14);
+  --ios-perigo: #ff7a6b;
+  --ios-sombra:
+    0 1px 1px rgba(0, 0, 0, 0.3),
+    0 14px 34px -16px rgba(0, 0, 0, 0.7);
+  --ios-sombra-alta:
+    0 2px 6px rgba(0, 0, 0, 0.35),
+    0 28px 60px -24px rgba(0, 0, 0, 0.85);
+  --ios-luz: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* O chão é do vidro-ios, não da aurora genérica do `.vidro-app`. */
+.vidro-app.vidro-ios {
+  background: var(--ios-chao);
+}
+
+/* O `globals.css` põe a serifa da marca em todo título; aqui o título é do
+   sistema, como o resto. As classes `ios-titulo-*` têm a própria família. */
+.vidro-ios :is(h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+}
+
+/* As superfícies que o navegador desenha também vestem a marca. */
+.vidro-ios ::selection {
+  background: rgba(47, 125, 72, 0.24);
+}
+.vidro-ios :focus-visible {
+  outline: 3px solid rgba(47, 125, 72, 0.45);
+  outline-offset: 2px;
+}
+.dark .vidro-ios :focus-visible {
+  outline-color: rgba(127, 208, 147, 0.55);
+}
+.vidro-ios input {
+  caret-color: var(--ios-tinta-texto);
+}
+
+/* ══════════ Tipografia ══════════ */
+
+.vidro-ios .ios-titulo-grande {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
+    var(--font-body), system-ui, sans-serif;
+  font-size: 34px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -0.026em;
+  text-wrap: balance;
+}
+@media (min-width: 640px) {
+  .vidro-ios .ios-titulo-grande {
+    font-size: 40px;
+  }
+}
+.vidro-ios .ios-titulo-produto {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
+    var(--font-body), system-ui, sans-serif;
+  font-size: 26px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+@media (min-width: 640px) {
+  .vidro-ios .ios-titulo-produto {
+    font-size: 30px;
+  }
+}
+.vidro-ios .ios-titulo-secao {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.vidro-ios .ios-rotulo-2 {
+  color: var(--ios-rotulo-2);
+}
+.vidro-ios .ios-rotulo-3 {
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .ios-tinta {
+  color: var(--ios-tinta-texto);
+}
+.vidro-ios .ios-ambar {
+  color: var(--ios-ambar-texto);
+}
+.vidro-ios .ios-numeros {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ══════════ Materiais ══════════ */
+
+/* Vidro de verdade: só nas peças únicas que flutuam sobre o conteúdo. */
+.vidro-ios .ios-vidro {
+  background: var(--ios-cartao-solido);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-luz), var(--ios-sombra);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-ios .ios-vidro {
+    background: var(--ios-vidro);
+    border-color: var(--ios-vidro-borda);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+  }
+  @media (max-width: 768px) {
+    .vidro-ios .ios-vidro {
+      -webkit-backdrop-filter: blur(18px) saturate(170%);
+      backdrop-filter: blur(18px) saturate(170%);
+    }
+  }
+}
+.dark .vidro-ios .ios-vidro {
+  border-color: var(--ios-vidro-borda);
+}
+
+/* O cartão das listas: translúcido, sem desfoque. Sobre a aurora (já
+   borrada) ele lê como vidro fosco sem pagar o `backdrop-filter` por cartão. */
+.vidro-ios .ios-cartao {
+  background: var(--ios-cartao);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-luz), var(--ios-sombra);
+}
+
+/* Cartão tocável: afunda no toque, sobe um fio sob o mouse. */
+.vidro-ios .ios-toque {
+  transition:
+    transform 0.32s var(--ios-mola),
+    box-shadow 0.32s var(--ios-mola),
+    background-color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-toque:active {
+  transform: scale(0.975);
+  transition-duration: 0.12s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .ios-cartao.ios-toque:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ios-luz), var(--ios-sombra-alta);
+  }
+  .vidro-ios .ios-cartao.ios-toque:active {
+    transform: scale(0.98);
+  }
+}
+
+/* ══════════ Lista agrupada (Ajustes do iPhone) ══════════ */
+
+.vidro-ios .ios-lista {
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--ios-cartao);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-luz), var(--ios-sombra);
+}
+.vidro-ios .ios-linha {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 16px;
+  transition: background-color 0.15s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Separador recuado: começa depois do ícone, como no sistema. */
+.vidro-ios .ios-linha + .ios-linha::before,
+.vidro-ios li + li > .ios-linha::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: var(--ios-recuo, 16px);
+  height: 1px;
+  background: var(--ios-separador);
+}
+.vidro-ios a.ios-linha:active,
+.vidro-ios button.ios-linha:active {
+  background: var(--ios-preenchimento);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios a.ios-linha:hover,
+  .vidro-ios button.ios-linha:hover {
+    background: var(--ios-preenchimento);
+  }
+}
+.vidro-ios .ios-cabeca-lista {
+  padding: 0 16px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ios-rotulo-2);
+}
+.vidro-ios .ios-pe-lista {
+  padding: 8px 16px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ios-rotulo-2);
+}
+
+/* ══════════ Controles ══════════ */
+
+/* Controle segmentado: o polegar desliza para a metade escolhida. Vale para
+   duas metades iguais (`data-indice` 0 ou 1). */
+.vidro-ios .ios-segmentado {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding: 3px;
+  border-radius: 13px;
+  background: var(--ios-preenchimento);
+  isolation: isolate;
+}
+.vidro-ios .ios-segmentado::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 2);
+  border-radius: 10px;
+  background: var(--ios-cartao-solido);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.12),
+    0 3px 1px rgba(0, 0, 0, 0.04);
+  transition: transform 0.38s var(--ios-expo);
+}
+.dark .vidro-ios .ios-segmentado::before {
+  background: #3a423e;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+.vidro-ios .ios-segmentado[data-indice='1']::before {
+  transform: translateX(100%);
+}
+.vidro-ios .ios-segmento {
+  display: inline-flex;
+  min-width: 0;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ios-rotulo-2);
+  transition: color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-segmento[aria-selected='true'] {
+  color: var(--ios-rotulo);
+}
+.vidro-ios .ios-segmento:active {
+  opacity: 0.7;
+}
+
+/* Cápsula de filtro/seção. A escolhida ganha a cor do texto como fundo — o
+   contraste mais alto da tela marca onde você está. */
+.vidro-ios .ios-pilula {
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    transform 0.12s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-pilula:active {
+  transform: scale(0.96);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .ios-pilula:hover {
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .ios-pilula[aria-selected='true'],
+.vidro-ios .ios-pilula[aria-pressed='true'] {
+  color: var(--ios-chao);
+  background: var(--ios-rotulo);
+}
+.vidro-ios .ios-pilula .ios-contagem {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+}
+
+/* Campo de busca do sistema: preenchido, sem borda, lupa à esquerda. */
+.vidro-ios .ios-busca {
+  height: 40px;
+  width: 100%;
+  border-radius: 12px;
+  border: 0;
+  background: var(--ios-preenchimento);
+  padding-left: 38px;
+  font-size: 16px;
+  color: var(--ios-rotulo);
+  outline: none;
+  transition:
+    background-color 0.2s ease-out,
+    box-shadow 0.2s ease-out;
+}
+.vidro-ios .ios-busca::placeholder {
+  color: var(--ios-rotulo-2);
+}
+.vidro-ios .ios-busca:focus {
+  background: var(--ios-cartao-solido);
+  box-shadow: 0 0 0 3px rgba(47, 125, 72, 0.28);
+}
+.vidro-ios .ios-busca::-webkit-search-cancel-button,
+.vidro-ios .ios-busca::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+@media (min-width: 640px) {
+  .vidro-ios .ios-busca {
+    font-size: 15px;
+  }
+}
+
+/* Botão-cápsula. Toque escurece e afunda, como no sistema. */
+.vidro-ios .ios-botao,
+.vidro-ios .ios-botao-suave,
+.vidro-ios .ios-botao-cinza,
+.vidro-ios .ios-botao-ambar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  transition:
+    transform 0.14s ease-out,
+    opacity 0.14s ease-out,
+    background-color 0.2s ease-out,
+    box-shadow 0.25s var(--ios-mola);
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-botao {
+  color: #fff;
+  background: var(--ios-tinta);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 20px -10px rgba(47, 125, 72, 0.75);
+}
+.vidro-ios .ios-botao-suave {
+  color: var(--ios-tinta-texto);
+  background: var(--ios-tinta-suave);
+}
+.vidro-ios .ios-botao-cinza {
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+}
+.vidro-ios .ios-botao-ambar {
+  color: #1d1406;
+  background: linear-gradient(180deg, #f4c66d, #e2a43e);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 8px 20px -10px rgba(226, 164, 62, 0.8);
+}
+.vidro-ios .ios-botao:not(:disabled):active,
+.vidro-ios .ios-botao-suave:not(:disabled):active,
+.vidro-ios .ios-botao-cinza:not(:disabled):active,
+.vidro-ios .ios-botao-ambar:not(:disabled):active {
+  transform: scale(0.97);
+  opacity: 0.82;
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .ios-botao:not(:disabled):hover {
+    background: #2a7041;
+  }
+  .vidro-ios .ios-botao-suave:not(:disabled):hover,
+  .vidro-ios .ios-botao-cinza:not(:disabled):hover {
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .ios-botao:disabled,
+.vidro-ios .ios-botao-suave:disabled,
+.vidro-ios .ios-botao-cinza:disabled,
+.vidro-ios .ios-botao-ambar:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+/* Tamanho de cartão: a cápsula "Obter" da App Store. */
+.vidro-ios .ios-botao-p {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 14px;
+  gap: 5px;
+}
+.vidro-ios .ios-botao-g {
+  height: 50px;
+  font-size: 17px;
+}
+
+.vidro-ios .ios-icone-botao {
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 34px;
+  width: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: var(--ios-tinta-texto);
+  background: var(--ios-preenchimento);
+  transition:
+    transform 0.14s ease-out,
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-icone-botao:not(:disabled):active {
+  transform: scale(0.92);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .ios-icone-botao:not(:disabled):hover {
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .ios-icone-botao:disabled {
+  opacity: 0.45;
+}
+.vidro-ios .ios-icone-botao-g {
+  height: 44px;
+  width: 44px;
+}
+
+/* O "‹ Voltar" do topo, em vidro, flutuando sobre o fundo da capa. */
+.vidro-ios .ios-voltar {
+  display: inline-flex;
+  max-width: 100%;
+  height: 36px;
+  align-items: center;
+  gap: 2px;
+  padding: 0 14px 0 8px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ios-tinta-texto);
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-voltar:active {
+  opacity: 0.6;
+}
+
+/* ══════════ Capa ══════════ */
+
+/* Fio claro por dentro da borda: separa capas claras do fundo claro. */
+.vidro-ios .ios-capa {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--ios-preenchimento);
+}
+.vidro-ios .ios-capa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  pointer-events: none;
+}
+.dark .vidro-ios .ios-capa::after {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+}
+/* Material sem imagem: o ícone sobre um verde fosco da marca, nunca cinza
+   chapado (que lia como imagem quebrada). */
+.vidro-ios .ios-capa-vazia {
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(127, 208, 147, 0.42), transparent 60%),
+    radial-gradient(90% 80% at 90% 100%, rgba(242, 192, 99, 0.34), transparent 60%),
+    #dfe9e1;
+}
+.dark .vidro-ios .ios-capa-vazia {
+  background:
+    radial-gradient(120% 90% at 20% 10%, rgba(47, 122, 69, 0.55), transparent 60%),
+    radial-gradient(90% 80% at 90% 100%, rgba(185, 121, 42, 0.4), transparent 60%),
+    #0d1813;
+}
+
+/* Selos sobre a capa. Sem desfoque (estão em lista): preto translúcido. */
+.vidro-ios .ios-selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  color: #fff;
+  background: rgba(10, 14, 12, 0.58);
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.18);
+}
+.vidro-ios .ios-selo-claro {
+  color: #1d1406;
+  background: rgba(255, 233, 186, 0.95);
+}
+
+/* O fundo que a capa tinge (Apple Music): a própria imagem, ampliada e
+   desfocada no topo da página, sumindo para o chão. */
+.vidro-ios .ios-ambiente {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: min(720px, 90vh);
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 45%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.75) 45%, transparent 100%);
+}
+.vidro-ios .ios-ambiente > div {
+  position: absolute;
+  inset: -12%;
+  filter: blur(64px) saturate(160%);
+  opacity: 0.55;
+  transform: scale(1.1);
+}
+.dark .vidro-ios .ios-ambiente > div {
+  opacity: 0.5;
+  filter: blur(72px) saturate(140%) brightness(0.8);
+}
+
+/* ══════════ Faixa de informações (App Store) ══════════ */
+
+.vidro-ios .ios-faixa {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.vidro-ios .ios-faixa::-webkit-scrollbar {
+  display: none;
+}
+.vidro-ios .ios-faixa > * {
+  position: relative;
+  display: flex;
+  min-width: 104px;
+  flex: 1 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 14px;
+  text-align: center;
+}
+.vidro-ios .ios-faixa > * + *::before {
+  content: '';
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 0;
+  width: 1px;
+  background: var(--ios-separador);
+}
+.vidro-ios .ios-faixa-rotulo {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .ios-faixa-valor {
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ios-rotulo-2);
+  font-variant-numeric: tabular-nums;
+}
+.vidro-ios .ios-faixa-nota {
+  font-size: 12px;
+  color: var(--ios-rotulo-3);
+}
+
+/* ══════════ Barra de compra do celular ══════════ */
+
+.vidro-ios .ios-barra-inferior {
+  position: fixed;
+  left: 10px;
+  right: 10px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 40;
+  border-radius: 22px;
+  transition:
+    transform 0.45s var(--ios-expo),
+    opacity 0.3s ease-out;
+}
+.vidro-ios .ios-barra-inferior[data-degrau='true'] {
+  bottom: calc(78px + env(safe-area-inset-bottom));
+}
+.vidro-ios .ios-barra-inferior[data-visivel='false'] {
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ══════════ Entrada ══════════ */
+
+/* O único momento coreografado da página de produto: a capa assenta. */
+.vidro-ios .ios-assenta {
+  animation: ios-assenta 0.7s var(--ios-expo) both;
+}
+@keyframes ios-assenta {
+  from {
+    opacity: 0;
+    transform: scale(0.965) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Esqueleto: um brilho que passa, no lugar do pulso cinza. */
+.vidro-ios .ios-esqueleto {
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%) 0 0 / 220% 100%,
+    var(--ios-preenchimento);
+  animation: ios-brilho 1.4s linear infinite;
+}
+.dark .vidro-ios .ios-esqueleto {
+  background:
+    linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.06) 50%, transparent 70%) 0 0 / 220% 100%,
+    var(--ios-preenchimento);
+}
+@keyframes ios-brilho {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .ios-assenta,
+  .vidro-ios .ios-esqueleto {
+    animation: none;
+  }
+  .vidro-ios .ios-segmentado::before,
+  .vidro-ios .ios-barra-inferior {
+    transition: none;
+  }
+}
+
+/* ══════════ Modo Lite ══════════ */
+
+.lite-mode .vidro-ios .vidro-app-aurora,
+.lite-mode .vidro-ios .ios-ambiente {
+  display: none;
+}
+.lite-mode .vidro-ios .ios-vidro,
+.lite-mode .vidro-ios .ios-cartao,
+.lite-mode .vidro-ios .ios-lista {
+  background: var(--ios-cartao-solido);
+}
+
+/* ══════════ Painel de compra ══════════ */
+
+/* No celular o título e a compra ficam soltos sobre o fundo (como na App
+   Store); do desktop largo para cima viram um painel de vidro que acompanha a
+   rolagem ao lado da capa. */
+@media (min-width: 1280px) {
+  .vidro-ios .ios-painel {
+    padding: 22px;
+    border-radius: 26px;
+    background: var(--ios-cartao-solido);
+    border: 1px solid var(--ios-aresta);
+    box-shadow: var(--ios-luz), var(--ios-sombra-alta);
+  }
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .vidro-ios .ios-painel {
+      background: var(--ios-vidro);
+      border-color: var(--ios-vidro-borda);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      backdrop-filter: blur(30px) saturate(180%);
+    }
+  }
+}
+.lite-mode .vidro-ios .ios-painel {
+  background: var(--ios-cartao-solido);
+}
+
+/* Preço grande do painel. */
+.vidro-ios .ios-preco {
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* O "✓" que pula quando o item entra no carrinho. */
+.vidro-ios .ios-pop {
+  animation: ios-pop 0.45s var(--ios-expo) both;
+}
+@keyframes ios-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .ios-pop {
+    animation: none;
+  }
+}
+
+@media (min-width: 1280px) {
+  .vidro-ios .ios-painel .ios-titulo-produto {
+    font-size: 26px;
+  }
+}

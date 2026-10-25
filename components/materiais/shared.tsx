@@ -2,6 +2,8 @@
 
 import { useCallback, useState } from 'react'
 import {
+  Check,
+  ChevronRight,
   Clock,
   Crown,
   File,
@@ -9,16 +11,17 @@ import {
   Gift,
   GraduationCap,
   Image as ImageIcon,
-  Info,
   Link2,
   Lock,
   Play,
-  Share2,
-  CheckCheck,
+  Plus,
+  ShoppingBag,
+  Share,
   Sparkles,
   Video,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { abrirCarrinho } from '@/lib/abrir-carrinho'
 import type { PricingEventStatePayload } from '@/components/pricing-events/PricingEventCountdown'
 import type { PublicMetricSettings } from '@/lib/display-settings'
 import type { TimedAccessVersionView, TimedAccessView } from './timed-access'
@@ -187,9 +190,9 @@ export function useCopyLink() {
 }
 
 /**
- * Botão de compartilhar. Fica sobreposto ao card, **fora** da âncora de
- * navegação — `<button>` dentro de `<a>` é HTML inválido e quebrava a
- * navegação por teclado.
+ * Botão de compartilhar: o círculo com o ícone de compartilhar do sistema.
+ * Fica sobreposto ao card, **fora** da âncora de navegação — `<button>` dentro
+ * de `<a>` é HTML inválido e quebrava a navegação por teclado.
  */
 export function CopyLinkBtn({
   id,
@@ -209,17 +212,76 @@ export function CopyLinkBtn({
       onClick={onClick}
       title={copied ? 'Link copiado!' : 'Copiar link'}
       aria-label={copied ? 'Link copiado' : 'Copiar link para compartilhar'}
-      className={cn(
-        'press-scale inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold transition-colors',
-        copied
-          ? 'border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
-          : 'border-border bg-card/95 text-muted-foreground hover:border-primary/40 hover:text-primary',
-        className
-      )}
+      className={cn('ios-icone-botao', className)}
       style={{ touchAction: 'manipulation' }}
     >
-      {copied ? <CheckCheck className="h-3 w-3" /> : <Share2 className="h-3 w-3" />}
-      {copied ? 'Copiado!' : 'Compartilhar'}
+      {copied ? <Check className="h-4 w-4" strokeWidth={2.5} /> : <Share className="h-4 w-4" />}
+    </button>
+  )
+}
+
+/**
+ * Sacola com o "+" — o ícone de "pôr no carrinho", distinto do carrinho do
+ * cabeçalho (que é "ver o carrinho").
+ */
+export function BagPlusIcon({ className }: { className?: string }) {
+  return (
+    <span className={cn('relative mr-1 inline-flex', className)} aria-hidden>
+      <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={2.1} />
+      <span className="absolute -bottom-1 -right-1.5 flex h-[13px] w-[13px] items-center justify-center rounded-full bg-[var(--ios-tinta)] text-white ring-[1.5px] ring-[var(--ios-cartao-solido)]">
+        <Plus className="h-2.5 w-2.5" strokeWidth={3.5} />
+      </span>
+    </span>
+  )
+}
+
+/**
+ * Botão de carrinho dos cartões. Ao adicionar, vira "No carrinho" na hora —
+ * a pessoa vê que o item ficou guardado e que dá para seguir enchendo — e,
+ * já no carrinho, abre a gaveta para fechar a compra de tudo junto.
+ */
+export function CartButton({
+  inCart,
+  onAdd,
+  disabled,
+  itemTitle,
+  className,
+  tabIndex,
+}: {
+  tabIndex?: number
+  inCart: boolean
+  onAdd: () => void
+  disabled?: boolean
+  itemTitle: string
+  className?: string
+}) {
+  if (inCart) {
+    return (
+      <button
+        type="button"
+        onClick={abrirCarrinho}
+        tabIndex={tabIndex}
+        aria-label={`${itemTitle} já está no carrinho. Abrir carrinho`}
+        title="Abrir carrinho"
+        className={cn('ios-botao-suave ios-botao-p min-w-[44px] px-3', className)}
+      >
+        <Check className="ios-pop h-4 w-4" strokeWidth={3} />
+        <span className="hidden sm:inline">No carrinho</span>
+      </button>
+    )
+  }
+  return (
+    <button
+      type="button"
+      onClick={onAdd}
+      disabled={disabled}
+      tabIndex={tabIndex}
+      aria-label={`Adicionar ${itemTitle} ao carrinho`}
+      title="Adicionar ao carrinho"
+      className={cn('ios-botao-suave ios-botao-p min-w-[44px] px-3', className)}
+    >
+      <BagPlusIcon />
+      <span className="hidden sm:inline">Carrinho</span>
     </button>
   )
 }
@@ -229,6 +291,9 @@ export function CopyLinkBtn({
  * card enquanto o bloqueio está ativo — antes o corpo recebia
  * `pointer-events-none` mas os links internos continuavam na ordem de
  * tabulação, deixando o teclado focar algo invisível e inoperante.
+ *
+ * É o único vidro com desfoque dentro da grade: são poucos cartões, e o
+ * desfoque é o que diz "isto está atrás de uma porta".
  */
 export function LockedGroupOverlay({
   allowedGroups,
@@ -244,13 +309,13 @@ export function LockedGroupOverlay({
       type="button"
       onClick={onPreview}
       aria-label={`Conteúdo restrito${labels ? ` a ${labels}` : ''}. Ver detalhes.`}
-      className="group/locked absolute inset-0 z-10 flex w-full flex-col items-center justify-center rounded-xl bg-background/70 p-4 text-center backdrop-blur-md"
+      className="group/locked absolute inset-0 z-10 flex w-full flex-col items-center justify-center rounded-[inherit] bg-[var(--ios-cartao)] p-4 text-center backdrop-blur-xl"
     >
-      <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/30 bg-primary/10 transition-transform group-hover/locked:scale-110">
-        <Lock className="h-6 w-6 text-primary" />
+      <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--ios-preenchimento)] transition-transform duration-300 group-hover/locked:scale-110">
+        <Lock className="h-5 w-5" strokeWidth={2.25} />
       </span>
-      <span className="font-heading text-sm font-bold tracking-[-0.01em] text-foreground">Acesso restrito</span>
-      <span className="mb-3 mt-0.5 text-xs text-muted-foreground">Este conteúdo é exclusivo para:</span>
+      <span className="text-[15px] font-semibold tracking-[-0.01em]">Acesso restrito</span>
+      <span className="ios-rotulo-2 mb-3 mt-0.5 text-[13px]">Exclusivo para</span>
       <span className="mb-3 flex flex-wrap justify-center gap-1.5">
         {allowedGroups.map(g => {
           const meta = GROUP_META[g]
@@ -258,8 +323,8 @@ export function LockedGroupOverlay({
           return (
             <span
               key={g}
-              className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold"
-              style={{ color: meta.color, background: `${meta.color}18`, borderColor: `${meta.color}40` }}
+              className="flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold"
+              style={{ color: meta.color, background: `${meta.color}1f` }}
             >
               {meta.icon} {meta.label}
             </span>
@@ -267,12 +332,30 @@ export function LockedGroupOverlay({
         })}
       </span>
       {onPreview && (
-        <span className="mt-1 flex items-center gap-1 text-[11px] font-medium text-primary underline-offset-2 group-hover/locked:underline">
-          <Info className="h-3 w-3" /> Ver detalhes
+        <span className="ios-tinta flex items-center gap-0.5 text-[13px] font-semibold">
+          Ver detalhes <ChevronRight className="h-3.5 w-3.5" />
         </span>
       )}
     </button>
   )
+}
+
+/** Preço final e o "de" riscado, do jeito que os cartões e o detalhe mostram. */
+export function resolveCardPrice({
+  price,
+  state,
+  crossedPrice,
+}: {
+  price: number
+  state?: PricingEventStatePayload | null
+  crossedPrice?: number | null
+}) {
+  const pct = state?.activeTier?.discountPercent || 0
+  const hasEvent = !!state?.activeTier && state.isActive !== false && pct > 0
+  const finalPrice = hasEvent ? effectivePriceWithEvent(price, state) : Number(price || 0)
+  const strike = hasEvent ? Number(price || 0) : (crossedPrice && crossedPrice > finalPrice ? crossedPrice : null)
+  const savingsPct = strike && strike > 0 ? Math.round((1 - finalPrice / strike) * 100) : 0
+  return { finalPrice, strike, savingsPct, hasEvent }
 }
 
 /**
@@ -302,10 +385,7 @@ export function CardPrice({
     )
   }
 
-  const pct = state?.activeTier?.discountPercent || 0
-  const hasEvent = !!state?.activeTier && state.isActive !== false && pct > 0
-  const finalPrice = hasEvent ? effectivePriceWithEvent(price, state) : Number(price || 0)
-  const strike = hasEvent ? Number(price || 0) : (crossedPrice && crossedPrice > finalPrice ? crossedPrice : null)
+  const { finalPrice, strike, hasEvent } = resolveCardPrice({ price, state, crossedPrice })
 
   return (
     <span className={cn('inline-flex items-baseline gap-1.5', className)}>
@@ -314,7 +394,7 @@ export function CardPrice({
       ) : null}
       <span
         className={cn(
-          'font-heading text-base font-bold tabular-nums',
+          'text-base font-bold tabular-nums',
           hasEvent ? 'text-emerald-600 dark:text-emerald-400' : 'text-foreground'
         )}
       >
@@ -324,7 +404,7 @@ export function CardPrice({
   )
 }
 
-/** Estado vazio acionável — espelha o `EmptyCallout` de `/flashcards`. */
+/** Estado vazio acionável: o ícone num círculo, o título, a saída. */
 export function EmptyCallout({
   icon,
   title,
@@ -337,13 +417,13 @@ export function EmptyCallout({
   cta?: React.ReactNode
 }) {
   return (
-    <div className="rounded-xl border border-dashed border-border bg-muted/30 px-4 py-10 text-center sm:p-12">
-      <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-        {icon || <Sparkles className="h-6 w-6" />}
+    <div className="mx-auto flex max-w-md flex-col items-center px-4 py-14 text-center sm:py-20">
+      <div className="ios-tinta mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ios-tinta-suave)] [&_svg]:h-7 [&_svg]:w-7">
+        {icon || <Sparkles />}
       </div>
-      <h3 className="font-heading text-base font-semibold tracking-[-0.01em] text-foreground">{title}</h3>
-      <p className="mx-auto mt-1 max-w-md text-sm leading-relaxed text-muted-foreground">{hint}</p>
-      {cta && <div className="mt-4 flex flex-wrap justify-center gap-2">{cta}</div>}
+      <h3 className="text-[20px] font-bold tracking-[-0.02em]">{title}</h3>
+      <p className="ios-rotulo-2 mt-1.5 text-[15px] leading-relaxed">{hint}</p>
+      {cta && <div className="mt-5 flex flex-wrap justify-center gap-2">{cta}</div>}
     </div>
   )
 }
@@ -360,20 +440,20 @@ export function MaterialGridSkeleton({
   count?: number
   columns?: 'materials' | 'packages'
 }) {
-  const grid =
-    columns === 'packages'
-      ? 'grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3'
-      : 'grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4'
+  const packages = columns === 'packages'
+  const grid = packages
+    ? 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'
+    : 'grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4'
 
   return (
     <div className={grid} aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="surface-lift overflow-hidden rounded-xl border border-border bg-card">
-          <div className="aspect-[16/10] skeleton-pulse" />
-          <div className="space-y-2 p-3 sm:p-4">
-            <div className="h-4 w-4/5 rounded skeleton-pulse" />
-            <div className="h-3 w-3/5 rounded skeleton-pulse" />
-            <div className="mt-3 h-9 w-full rounded-md skeleton-pulse" />
+        <div key={i} className={cn('ios-cartao p-2', packages ? 'rounded-[26px]' : 'rounded-[24px]')}>
+          <div className={cn('ios-esqueleto', packages ? 'aspect-[16/9] rounded-[20px]' : 'aspect-[16/10] rounded-[18px]')} />
+          <div className="space-y-2 px-2 pb-1.5 pt-3">
+            <div className="ios-esqueleto h-4 w-4/5 rounded-full" />
+            <div className="ios-esqueleto h-3 w-3/5 rounded-full" />
+            <div className="ios-esqueleto mt-4 h-[34px] w-full rounded-full" />
           </div>
         </div>
       ))}

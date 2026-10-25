@@ -17,7 +17,7 @@ import { NotificationsBell } from '@/components/notifications-bell'
 import { Logo } from '@/components/logo'
 import { MaterialCartButton } from '@/components/materiais/material-cart-button'
 import { cn } from '@/lib/utils'
-import { LogIn, Menu, RefreshCw, ShieldAlert, WifiOff, X } from 'lucide-react'
+import { LogIn, Menu, RefreshCw, UserRound, WifiOff, X } from 'lucide-react'
 import { useBootstrap, clearBootstrapCache } from '@/hooks/use-bootstrap'
 import { clearReadingProgress } from '@/lib/material-reading-progress'
 import { FocusSessionProvider } from '@/hooks/use-focus-session'
@@ -392,7 +392,14 @@ export function AppShell({
         <FocusSessionProvider>
           <div className="min-h-screen surface-page">
             {showHeader ? (
-              <header className="pwa-safe-top sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90">
+              <header
+                className={cn(
+                  'pwa-safe-top sticky top-0 z-30',
+                  vidro
+                    ? 'cabecalho-vidro'
+                    : 'border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90',
+                )}
+              >
                 <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
                   <div className="flex items-center gap-3 min-w-0">
                     <Logo variant="icon" size="sm" />
@@ -654,10 +661,11 @@ function GuestAccessNotice() {
       const mobile = window.innerWidth < 640
       setIsMobile(mobile)
       if (mobile) return
-      const width = 320
+      // Canto de baixo à esquerda: o direito é do aviso de Modo Lite, e os dois
+      // empilhados ali viravam um bloco torto.
       setPosition({
-        x: Math.max(12, window.innerWidth - width - 18),
-        y: Math.max(12, window.innerHeight - 174),
+        x: 18,
+        y: Math.max(12, window.innerHeight - 186),
       })
     }
     setInitialPosition()
@@ -677,8 +685,8 @@ function GuestAccessNotice() {
     if (!dragging || isMobile) return
 
     function onPointerMove(event: PointerEvent) {
-      const width = 320
-      const height = 142
+      const width = 340
+      const height = 168
       setPosition({
         x: Math.min(Math.max(12, event.clientX - dragOffset.x), window.innerWidth - width - 12),
         y: Math.min(Math.max(12, event.clientY - dragOffset.y), window.innerHeight - height - 12),
@@ -713,28 +721,30 @@ function GuestAccessNotice() {
   if (isMobile) {
     return (
       <div
-        className="pwa-safe-bottom fixed inset-x-2 bottom-2 z-[60] flex items-center gap-2 rounded-xl border border-white/35 bg-white/85 px-3 py-2 text-slate-900 shadow-lg shadow-emerald-900/15 backdrop-blur-xl dark:border-white/15 dark:bg-slate-950/85 dark:text-white"
+        className="aviso-visitante fixed inset-x-2.5 bottom-[calc(10px+env(safe-area-inset-bottom))] z-[60] flex items-center gap-3 rounded-[20px] py-2 pl-2 pr-2 text-[#101814] dark:text-[#f3f4f1]"
         role="status"
         aria-live="polite"
       >
-        <ShieldAlert className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300" />
-        <p className="min-w-0 flex-1 truncate text-[11px] font-semibold leading-tight">
-          Você está vendo como visitante
-        </p>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2f7d48]/10 text-[#2a7342] dark:bg-[#7fd093]/15 dark:text-[#7fd093]">
+          <UserRound className="h-5 w-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[14px] font-semibold leading-tight tracking-[-0.01em]">Você está como visitante</span>
+          <span className="block truncate text-[12px] leading-snug text-[#101814]/60 dark:text-white/60">Entre para baixar e estudar</span>
+        </span>
         <a
           href={loginHref}
-          className="inline-flex h-7 shrink-0 items-center gap-1 rounded-lg bg-emerald-700 px-2.5 text-[11px] font-bold text-white shadow-sm transition hover:bg-emerald-600"
+          className="inline-flex h-9 shrink-0 items-center rounded-full bg-[#2f7d48] px-4 text-[14px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition active:scale-95 active:opacity-80"
         >
-          <LogIn className="h-3 w-3" />
           Entrar
         </a>
         <button
           type="button"
           onClick={dismiss}
           aria-label="Fechar aviso"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-black/5 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/5 text-[#101814]/50 transition active:scale-90 dark:bg-white/10 dark:text-white/60"
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-4 w-4" strokeWidth={2.5} />
         </button>
       </div>
     )
@@ -742,7 +752,10 @@ function GuestAccessNotice() {
 
   return (
     <div
-      className="fixed z-[60] w-[min(320px,calc(100vw-32px))] touch-none select-none overflow-hidden rounded-2xl border border-white/35 bg-white/55 p-3.5 text-slate-900 shadow-2xl shadow-emerald-900/15 backdrop-blur-2xl dark:border-white/15 dark:bg-slate-950/55 dark:text-white"
+      className={cn(
+        'aviso-visitante fixed z-[60] w-[min(340px,calc(100vw-32px))] touch-none select-none rounded-[22px] px-4 pb-4 pt-2.5 text-[#101814] dark:text-[#f3f4f1]',
+        dragging ? 'cursor-grabbing' : 'cursor-grab'
+      )}
       style={{ left: position.x, top: position.y }}
       onPointerDown={(event) => {
         const rect = event.currentTarget.getBoundingClientRect()
@@ -752,36 +765,35 @@ function GuestAccessNotice() {
       role="status"
       aria-live="polite"
     >
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(255,255,255,0.20)_38%,rgba(245,158,11,0.18)_68%,rgba(20,184,166,0.18))] dark:bg-[linear-gradient(135deg,rgba(22,163,74,0.22),rgba(15,23,42,0.25)_40%,rgba(245,158,11,0.14)_70%,rgba(20,184,166,0.16))]" />
-      <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 h-28 w-28 rounded-full bg-emerald-300/30 blur-2xl" />
-      <button
-        type="button"
-        onClick={dismiss}
-        onPointerDown={(event) => event.stopPropagation()}
-        aria-label="Fechar aviso"
-        className="absolute right-2.5 top-2.5 z-10 flex h-6 w-6 items-center justify-center rounded-lg text-slate-500 transition hover:bg-black/5 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
-      >
-        <X className="h-3.5 w-3.5" />
-      </button>
-      <div className="relative flex items-start gap-3 pr-5">
-        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-300/35 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200">
-          <ShieldAlert className="h-4 w-4" />
-        </div>
+      {/* A alça de folha do sistema: diz "dá para arrastar" sem texto. */}
+      <span aria-hidden className="mx-auto mb-3 block h-1 w-9 rounded-full bg-black/15 dark:bg-white/20" />
+      <div className="flex items-start gap-3">
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f7d48]/10 text-[#2a7342] dark:bg-[#7fd093]/15 dark:text-[#7fd093]">
+          <UserRound className="h-5 w-5" />
+        </span>
         <div className="min-w-0">
-          <p className="text-sm font-bold leading-tight">Você está vendo como visitante</p>
-          <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-            Catálogo e compra liberados — você recebe sua Serial Key por e-mail. Download, viewer e áreas de estudo exigem login.
+          <p className="text-[15px] font-semibold leading-tight tracking-[-0.01em]">Você está como visitante</p>
+          <p className="mt-1 text-[13px] leading-snug text-[#101814]/60 dark:text-white/60">
+            Catálogo e compra liberados — a Serial Key chega por e-mail. Download, leitor e áreas de estudo pedem login.
           </p>
         </div>
       </div>
-      <div className="relative mt-3 flex justify-end">
+      <div className="mt-3.5 flex items-center justify-end gap-1.5">
+        <button
+          type="button"
+          onClick={dismiss}
+          onPointerDown={(event) => event.stopPropagation()}
+          className="h-9 rounded-full px-3.5 text-[14px] font-semibold text-[#2a7342] transition hover:bg-[#2f7d48]/10 dark:text-[#7fd093] dark:hover:bg-white/10"
+        >
+          Agora não
+        </button>
         <a
           href={loginHref}
-          className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-emerald-700 px-3 text-xs font-bold text-white shadow-lg shadow-emerald-700/20 transition hover:bg-emerald-600"
           onPointerDown={(event) => event.stopPropagation()}
+          className="inline-flex h-9 items-center gap-1.5 rounded-full bg-[#2f7d48] px-4 text-[14px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_8px_20px_-10px_rgba(47,125,72,0.75)] transition hover:bg-[#2a7041] active:scale-95"
         >
-          <LogIn className="h-3.5 w-3.5" />
-          Entrar para liberar
+          <LogIn className="h-4 w-4" />
+          Entrar
         </a>
       </div>
     </div>

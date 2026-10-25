@@ -5,36 +5,77 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   Check,
+  ChevronRight,
   Clock,
   Crown,
   File,
-  Gift,
   Info,
   Package,
   ShieldAlert,
-  ShoppingCart,
   Star,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useMaterialCart } from '@/context/MaterialCartContext'
 import { PricingEventBadge } from '@/components/pricing-events/PricingEventBadge'
 import { PLUS_LABEL } from '@/lib/account-tier'
 import { TimedAccessPill } from './timed-access'
 import {
-  CardPrice,
+  CartButton,
   CopyLinkBtn,
   formatBRL,
   GROUP_META,
   LockedGroupOverlay,
+  resolveCardPrice,
   typeIcons,
   typeLabels,
   type MaterialPackage,
 } from './shared'
 
+function InlineSpinner() {
+  return <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+}
+
 /**
- * Cartão de pacote. Mesmas correções do `MaterialCard` (preço no corpo, CTA
- * primário único, botão de compartilhar fora da âncora, sem "Ver mais" que
- * empurra a linha da grade), mantendo o cálculo de desconto próprio do pacote.
+ * Pilha de capas para o pacote sem capa própria: as três primeiras capas do
+ * que vem dentro, em leque — diz "várias coisas juntas" sem precisar de texto.
+ */
+function CoverStack({ materials }: { materials: MaterialPackage['materials'] }) {
+  const withCover = materials.filter(m => m.coverImage).slice(0, 3)
+  if (withCover.length === 0) {
+    return (
+      <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+        <span className="ios-tinta flex h-16 w-16 items-center justify-center rounded-[18px] bg-white/70 shadow-sm dark:bg-white/10">
+          <Package className="h-8 w-8" />
+        </span>
+      </div>
+    )
+  }
+  const turns = withCover.length === 1 ? [0] : withCover.length === 2 ? [-6, 6] : [-9, 0, 9]
+  return (
+    <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+      <div className="relative h-[62%] w-[46%]">
+        {withCover.map((m, i) => (
+          <span
+            key={m._id}
+            className="absolute inset-0 overflow-hidden rounded-[12px] shadow-[0_10px_24px_-10px_rgba(0,0,0,0.45)] ring-1 ring-black/5 transition-transform duration-500 ease-out [transform:var(--leque)] group-hover:[transform:var(--leque-aberto)]"
+            style={{
+              ['--leque' as string]: `rotate(${turns[i]}deg) translateX(${turns[i] * 2.2}%)`,
+              ['--leque-aberto' as string]: `rotate(${turns[i] * 1.5}deg) translateX(${turns[i] * 4}%)`,
+              zIndex: i === Math.floor(withCover.length / 2) ? 3 : 1,
+            }}
+          >
+            <Image src={m.coverImage} alt="" fill className="object-cover" sizes="160px" />
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Cartão de pacote. Mesma gramática do `MaterialCard` (capa encaixada, cápsula
+ * de preço, compartilhar fora da âncora), com o que é próprio do pacote: o que
+ * vem dentro em lista curta e quanto se economiza levando junto.
  */
 export const PackageCard = memo(function PackageCard({
   pkg,
@@ -64,6 +105,7 @@ export const PackageCard = memo(function PackageCard({
   loading: boolean
   priority?: boolean
 }) {
+  const { isInCart } = useMaterialCart()
   const isFree = pkg.pricing === 'free'
   const effectivePrice = Number(pkg._pricing?.effectivePrice ?? pkg.price ?? 0)
   const packagePrice = Number(pkg.price || 0)
@@ -88,6 +130,10 @@ export const PackageCard = memo(function PackageCard({
     !includedInPlus && !groupAccess && !isPurchased && (pkg.allowedGroups?.length ?? 0) > 0
   const hasEvent = !isFree && !!pkg._pricingEventState?.activeTier && pkg._pricingEventState.isActive
   const href = `/pacotes/${pkg._id}`
+  const itemCount = pkg.materialIds?.length || 0
+  const price = resolveCardPrice({ price: effectivePrice, state: pkg._pricingEventState, crossedPrice })
+  const included = pkg.materials || []
+  const inCart = isInCart('package', pkg._id)
 
   const cover = (
     <>
@@ -96,34 +142,29 @@ export const PackageCard = memo(function PackageCard({
           src={pkg.coverImage}
           alt={pkg.title}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+          sizes="(max-width: 768px) 92vw, (max-width: 1024px) 50vw, 33vw"
           priority={priority}
         />
       ) : (
-        <div className="cover-plate flex h-full w-full items-center justify-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-lg border border-border bg-card/80 text-primary shadow-sm">
-            <Package className="h-8 w-8" />
-          </span>
-        </div>
-      )}
-      {pkg.coverImage && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10" />
+        <CoverStack materials={included} />
       )}
 
-      <span className="cover-chip absolute left-3 top-3 inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold text-white">
-        <Package className="h-3 w-3" /> {pkg.materialIds?.length || 0} materiais
+      <span className="absolute left-2.5 top-2.5 z-[4] flex flex-wrap gap-1">
+        <span className="ios-selo">
+          <Package className="h-3 w-3" /> {itemCount} {itemCount === 1 ? 'material' : 'materiais'}
+        </span>
+        {pkg.isFeatured && (
+          <span className="ios-selo ios-selo-claro">
+            <Star className="h-3 w-3 fill-current" /> Destaque
+          </span>
+        )}
       </span>
 
-      {(pkg.allowedGroups?.length > 0 || hasEvent || pkg.isFeatured) && (
-        <span className="absolute right-3 top-3 flex flex-col items-end gap-1">
-          {pkg.isFeatured && (
-            <span className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-1 text-[10px] font-bold text-accent-foreground">
-              <Star className="h-3 w-3" /> DESTAQUE
-            </span>
-          )}
+      {(pkg.allowedGroups?.length > 0 || hasEvent) && (
+        <span className="absolute right-2.5 top-2.5 z-[4] flex flex-col items-end gap-1">
           {pkg.allowedGroups?.length > 0 && (
-            <span className="cover-chip inline-flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-bold text-violet-200">
+            <span className="ios-selo">
               <ShieldAlert className="h-3 w-3" />
               {pkg.allowedGroups.map(g => GROUP_META[g]?.label).filter(Boolean).join(' / ')}
             </span>
@@ -138,25 +179,22 @@ export const PackageCard = memo(function PackageCard({
     <div
       className={cn(
         'deck-card-rise group relative h-full',
-        isHighlighted && 'rounded-lg ring-2 ring-primary ring-offset-2 ring-offset-background'
+        isHighlighted && 'rounded-[26px] ring-2 ring-[var(--ios-tinta)] ring-offset-2 ring-offset-[var(--ios-chao)]'
       )}
     >
-      {showLocked && <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />}
-
-      <div
+      <article
         className={cn(
-          'surface-lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-primary/35',
+          'ios-cartao ios-toque relative flex h-full flex-col rounded-[26px] p-2',
           showLocked && 'select-none'
         )}
       >
+        {showLocked && <LockedGroupOverlay allowedGroups={pkg.allowedGroups} onPreview={onPreview} />}
+
         <div className="relative">
           {showLocked ? (
-            <div className="relative block aspect-[16/10] overflow-hidden">{cover}</div>
+            <div className="ios-capa block aspect-[16/9] rounded-[20px]">{cover}</div>
           ) : (
-            <Link
-              href={href}
-              className="relative block aspect-[16/10] overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
-            >
+            <Link href={href} className="ios-capa block aspect-[16/9] rounded-[20px] focus-visible:outline-offset-[-3px]">
               {cover}
             </Link>
           )}
@@ -166,138 +204,136 @@ export const PackageCard = memo(function PackageCard({
               id={pkg._id}
               copiedId={copiedId}
               onClick={e => { e.preventDefault(); e.stopPropagation(); onCopyLink() }}
-              className="absolute bottom-3 right-3 opacity-0 transition-opacity focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100"
+              className="absolute bottom-2.5 right-2.5 z-[5] bg-white/85 text-[#101814] opacity-0 shadow-sm backdrop-blur-md transition-opacity hover:bg-white focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100 dark:bg-black/55 dark:text-white"
             />
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-4 sm:p-5">
+        <div className="flex flex-1 flex-col px-2 pb-1.5 pt-3.5 sm:px-2.5">
           {showLocked ? (
-            <h3 className="mb-1 line-clamp-2 font-heading text-base font-bold leading-snug tracking-[-0.015em] text-foreground">{pkg.title}</h3>
+            <h3 className="line-clamp-2 text-[18px] font-bold leading-snug tracking-[-0.02em]">{pkg.title}</h3>
           ) : (
             <Link
               href={href}
-              className="mb-1 line-clamp-2 font-heading text-base font-bold leading-snug tracking-[-0.015em] text-foreground transition-colors hover:text-primary hover:underline"
+              className="line-clamp-2 text-[18px] font-bold leading-snug tracking-[-0.02em] transition-colors hover:text-[var(--ios-tinta-texto)]"
             >
               {pkg.title}
             </Link>
           )}
 
           {pkg.description && (
-            <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground" title={pkg.description}>
+            <p className="ios-rotulo-2 mt-1 line-clamp-2 text-[14px] leading-snug" title={pkg.description}>
               {pkg.description}
             </p>
           )}
 
-          {pkg.materials && pkg.materials.length > 0 && (
-            <div className="mb-4">
-              <p className="mb-2 text-xs font-medium text-muted-foreground">Inclui:</p>
-              <ul className="space-y-1.5">
-                {pkg.materials.slice(0, 4).map(m => (
-                  <li key={m._id} className="flex items-center gap-2 rounded-md bg-muted/50 p-1.5 text-xs">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 text-primary">
-                      {typeIcons[m.type] || <File className="h-3 w-3" />}
+          {included.length > 0 && (
+            <ul className="mt-3 overflow-hidden rounded-[14px] bg-[var(--ios-preenchimento)]" aria-label="O que vem no pacote">
+              {included.slice(0, 3).map(m => (
+                <li key={m._id}>
+                  <div className="ios-linha min-h-[40px] gap-2.5 px-3 py-2 [--ios-recuo:44px]">
+                    <span className="ios-tinta flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-[var(--ios-cartao-solido)] [&_svg]:h-3.5 [&_svg]:w-3.5">
+                      {typeIcons[m.type] || <File />}
                     </span>
-                    <span className="flex-1 truncate">{m.title}</span>
-                    <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                      {typeLabels[m.type] || 'Arquivo'}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              {pkg.materials.length > 4 && (
-                <p className="pl-1 pt-1.5 text-xs text-muted-foreground">+{pkg.materials.length - 4} mais</p>
-              )}
-            </div>
-          )}
-
-          {pkg.tags?.length > 0 && (
-            <div className="mb-4 flex flex-wrap gap-1">
-              {pkg.tags.slice(0, 4).map(tag => (
-                <span key={tag} className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                  {tag}
-                </span>
+                    <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{m.title}</span>
+                    <span className="ios-rotulo-3 shrink-0 text-[11px] font-semibold">{typeLabels[m.type] || 'Arquivo'}</span>
+                  </div>
+                </li>
               ))}
-            </div>
+              {included.length > 3 && (
+                <li>
+                  {showLocked ? (
+                    <div className="ios-linha ios-rotulo-2 min-h-[36px] px-3 py-2 text-[12px] font-semibold [--ios-recuo:12px]">
+                      e mais {included.length - 3} {included.length - 3 === 1 ? 'item' : 'itens'}
+                    </div>
+                  ) : (
+                    <Link
+                      href={href}
+                      className="ios-linha ios-tinta min-h-[36px] justify-between px-3 py-2 text-[12px] font-semibold [--ios-recuo:12px]"
+                    >
+                      e mais {included.length - 3} {included.length - 3 === 1 ? 'item' : 'itens'}
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  )}
+                </li>
+              )}
+            </ul>
           )}
 
-          <div className="mt-auto space-y-2">
+          <div className="mt-auto pt-4">
             {showLocked ? (
-              <button
-                type="button"
-                onClick={onPreview}
-                className="mx-auto flex items-center gap-1 py-2 text-sm font-medium text-primary hover:underline"
-              >
-                <Info className="h-3.5 w-3.5" /> Ver detalhes e fazer upgrade
+              <button type="button" onClick={onPreview} className="ios-botao-cinza w-full">
+                <Info className="h-4 w-4" /> Ver como liberar
               </button>
             ) : canAccess ? (
-              pkg._timedAccess?.isTimed ? (
-                <TimedAccessPill access={pkg._timedAccess} className="px-3 py-2 text-sm" />
-              ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                  <Check className="h-4 w-4" /> Adquirido
-                </span>
-              )
+              <div className="flex items-center justify-between gap-3">
+                {pkg._timedAccess?.isTimed ? (
+                  <TimedAccessPill access={pkg._timedAccess} />
+                ) : (
+                  <span className="ios-tinta inline-flex items-center gap-1.5 text-[14px] font-semibold">
+                    <Check className="h-4 w-4" strokeWidth={2.75} /> Adquirido
+                  </span>
+                )}
+                <Link href={href} className="ios-botao-suave ios-botao-p">
+                  Abrir <ChevronRight className="-mr-1 h-4 w-4" />
+                </Link>
+              </div>
             ) : includedInPlus ? (
-              <>
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-300">
+              <div className="flex items-center justify-between gap-3">
+                <span className="ios-ambar inline-flex items-center gap-1.5 text-[14px] font-semibold">
                   <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
                 </span>
-                <Button onClick={onClaimWithPlus} disabled={loading} size="sm" className="cta-raised h-11 w-full font-semibold">
-                  {loading
-                    ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
-                    : <Gift className="mr-2 h-4 w-4 shrink-0" />}
-                  Resgatar pacote
-                </Button>
-              </>
+                <button type="button" onClick={onClaimWithPlus} disabled={loading} className="ios-botao-ambar ios-botao-p">
+                  {loading ? <InlineSpinner /> : null}
+                  Resgatar
+                </button>
+              </div>
             ) : showFreeAcquire ? (
-              <>
-                <CardPrice price={effectivePrice} isFree crossedPrice={crossedPrice} />
-                <Button onClick={onAddToCart} disabled={loading} size="sm" className="cta-raised h-11 w-full font-semibold">
-                  {loading
-                    ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
-                    : <Gift className="mr-2 h-4 w-4 shrink-0" />}
-                  Adquirir grátis
-                </Button>
-              </>
+              <div className="flex items-center justify-between gap-3">
+                <span className="flex flex-col">
+                  {crossedPrice ? <span className="ios-rotulo-3 text-[12px] tabular-nums line-through">{formatBRL(crossedPrice)}</span> : null}
+                  <span className="ios-tinta text-[17px] font-bold">Grátis</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={onAddToCart}
+                  disabled={loading}
+                  aria-label={`Obter o pacote ${pkg.title} grátis`}
+                  className="ios-botao-suave ios-botao-p px-5"
+                >
+                  {loading ? <InlineSpinner /> : null}
+                  Obter
+                </button>
+              </div>
             ) : (
-              <>
-                <CardPrice
-                  price={effectivePrice}
-                  isFree={false}
-                  state={pkg._pricingEventState}
-                  crossedPrice={crossedPrice}
-                />
-                {cheapestTimedVersion && (
-                  <p className="flex items-center gap-1 text-[11px] font-medium text-sky-600 dark:text-sky-400">
-                    <Clock className="h-3 w-3" />
-                    ou {formatBRL(cheapestTimedVersion.price)} por {cheapestTimedVersion.durationLabel}
-                  </p>
-                )}
-                <div className="flex gap-2">
-                  <Button onClick={onBuyNow} disabled={loading} size="sm" className="cta-raised h-11 flex-1 font-semibold">
-                    {loading
-                      ? <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-transparent border-t-current" />
-                      : null}
-                    Comprar pacote
-                  </Button>
-                  <Button
-                    onClick={onAddToCart}
-                    disabled={loading}
-                    size="sm"
-                    variant="outline"
-                    aria-label={`Adicionar pacote ${pkg.title} ao carrinho`}
-                    title="Adicionar ao carrinho"
-                    className="h-11 w-11 shrink-0 p-0"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </Button>
-                </div>
-              </>
+              <div className="flex items-end justify-between gap-3">
+                <span className="flex min-w-0 flex-col">
+                  {price.strike ? (
+                    <span className="flex items-baseline gap-1.5 text-[12px]">
+                      <span className="ios-rotulo-3 tabular-nums line-through">{formatBRL(price.strike)}</span>
+                      {price.savingsPct > 0 && <span className="ios-tinta font-semibold">−{price.savingsPct}%</span>}
+                    </span>
+                  ) : cheapestTimedVersion ? (
+                    <span className="ios-rotulo-2 flex items-center gap-1 text-[12px] font-medium">
+                      <Clock className="h-3 w-3" /> ou {formatBRL(cheapestTimedVersion.price)} / {cheapestTimedVersion.durationLabel}
+                    </span>
+                  ) : null}
+                  <span className="text-[20px] font-bold leading-tight tracking-[-0.02em] tabular-nums">
+                    {formatBRL(price.finalPrice)}
+                  </span>
+                </span>
+                <span className="flex shrink-0 gap-1.5">
+                  <CartButton inCart={inCart} onAdd={onAddToCart} disabled={loading} itemTitle={`pacote ${pkg.title}`} className="h-11 text-[15px]" />
+                  <button type="button" onClick={onBuyNow} disabled={loading} className="ios-botao px-5">
+                    {loading ? <InlineSpinner /> : null}
+                    Comprar
+                  </button>
+                </span>
+              </div>
             )}
           </div>
         </div>
-      </div>
+      </article>
     </div>
   )
 })
