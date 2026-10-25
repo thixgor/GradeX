@@ -49,6 +49,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
 import { CapaDaProva } from '@/components/exam/capa-da-prova'
+import { FundoDeVidro } from '@/components/vitrine/vidro-app'
 import type { Exam, UserAnswer } from '@/lib/types'
 import {
   FORMATOS_DA_FOLHA,
@@ -238,7 +239,7 @@ export function ExamJaFinalizada({
   const podePraticar = permiteTreinoAposTermino(exam)
 
   const cartao = (
-    <Card className="w-full max-w-md overflow-hidden shadow-2xl">
+    <Card className="vidro-cartao vidro-sobe w-full max-w-md overflow-hidden rounded-[28px] border-0">
       {/* A capa também aqui: quem volta pelo link reconhece a prova pela imagem. */}
       {exam.coverImage && (
         <CapaDaProva src={exam.coverImage} titulo={exam.title} sizes="(max-width: 448px) 100vw, 448px" />
@@ -454,7 +455,7 @@ export function ExamJaFinalizada({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/40 p-4 sm:p-6">
+    <FundoDeVidro className="flex min-h-screen items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
         {/* A marca: esta é a tela de quem chega pelo link direto da prova. */}
         <ExamBrandHeader className="mb-3 px-1" />
@@ -462,6 +463,6 @@ export function ExamJaFinalizada({
         {cartao}
         <ExamBrandFooter className="mt-4" />
       </div>
-    </div>
+    </FundoDeVidro>
   )
 }

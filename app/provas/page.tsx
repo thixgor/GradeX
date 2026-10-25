@@ -78,6 +78,7 @@ import { contarProvas, contarQuestoes } from '@/lib/provas/arvore-grupos'
 import { resumirMovimentacao } from '@/lib/provas/mover-provas'
 import { idsDeGruposOcultos, ocultoPorHeranca } from '@/lib/provas/grupos-ocultos'
 import { SeletorDeCargos } from '@/components/seletor-de-cargos'
+import { FundoDeVidro } from '@/components/vitrine/vidro-app'
 
 interface Group {
   _id: string
@@ -1680,27 +1681,34 @@ function ProvasContent() {
     return (
       <div className="relative surface-page overflow-hidden">
         <div className="relative max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-          {/* Header */}
+          {/* Header — o topo das vitrines: pílula viva, título com o brilho
+              correndo e os números em vidro. */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="space-y-3 pt-2 sm:pt-4"
+            className="space-y-5 pt-4 sm:pt-8"
           >
-            <p className="editorial-mark">Simulados</p>
-            <h1 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
-              Provas
+            <span className="vidro-pilula text-foreground/80">
+              <span className="vidro-ponto" />
+              <CountUp value={exams.filter(e => getExamStatus(e).canTake).length} /> disponíveis agora
+            </span>
+            <h1 className="font-heading text-[42px] leading-[1.02] sm:text-6xl font-semibold tracking-tight text-foreground">
+              O que você quer <span className="vidro-brilho">treinar hoje?</span>
             </h1>
-            <p className="text-muted-foreground text-sm sm:text-[15px] max-w-xl">
-              O que você quer treinar hoje?
+            <p className="text-muted-foreground text-[15px] sm:text-[17px] max-w-xl">
+              Provas antigas da faculdade, simulados com a turma e as provas que você monta com a IA.
             </p>
-            <div className="flex items-center gap-2 flex-wrap pt-1">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-md border border-border bg-card text-primary">
-                <CountUp value={exams.filter(e => getExamStatus(e).canTake).length} /> disponíveis agora
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="vidro-chip inline-flex items-center gap-2 rounded-2xl px-4 py-2.5">
+                <Layers className="h-4 w-4 text-[#468152] dark:text-emerald-400" />
+                <span className="text-lg font-bold tabular-nums"><CountUp value={exams.length} /></span>
+                <span className="text-xs text-muted-foreground">provas no total</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2.5 py-1 rounded-md border border-border bg-muted text-muted-foreground">
-                <Layers className="h-3 w-3" />
-                <CountUp value={exams.length} /> totais
+              <span className="vidro-chip inline-flex items-center gap-2 rounded-2xl px-4 py-2.5">
+                <GraduationCap className="h-4 w-4 text-[#c98a22] dark:text-amber-400" />
+                <span className="text-lg font-bold tabular-nums"><CountUp value={faculdadeExamCount} /></span>
+                <span className="text-xs text-muted-foreground">da faculdade</span>
               </span>
             </div>
           </motion.div>
@@ -1929,7 +1937,7 @@ function ProvasContent() {
                   <GraduationCap className="h-5 w-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">Provas da Faculdade</h1>
+                  <h1 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight">Provas da <span className="vidro-brilho">Faculdade</span></h1>
                   <p className="text-xs text-muted-foreground tabular-nums">
                     {faculdadeExamCount} provas · {faculdadeQuestionCount} questões para treinar
                   </p>
@@ -1943,7 +1951,7 @@ function ProvasContent() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="rounded-lg border border-border bg-card p-3 shadow-sm"
+            className="vidro-cartao rounded-2xl p-3"
           >
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -1987,7 +1995,7 @@ function ProvasContent() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.1 + idx * 0.08 }}
-                    className="rounded-lg border border-border bg-card p-3 sm:p-4"
+                    className="vidro-cartao rounded-3xl p-3 sm:p-5"
                   >
                     <div className="flex items-center gap-3 mb-3 flex-wrap">
                       <div className="flex items-center gap-2 min-w-0">
@@ -2085,7 +2093,7 @@ function ProvasContent() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
-                  className="rounded-lg border border-border bg-card p-3 sm:p-4"
+                  className="vidro-cartao rounded-3xl p-3 sm:p-5"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <Layers className="h-4 w-4 text-muted-foreground" />
@@ -2230,7 +2238,7 @@ function ProvasContent() {
                   <BookOpen className="h-5 w-5 text-[#468152]" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold">Provas da Plataforma</h1>
+                  <h1 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight">Provas da <span className="vidro-brilho">Plataforma</span></h1>
                   <p className="text-xs text-muted-foreground">{plataformaExamCount} provas</p>
                 </div>
               </div>
@@ -2240,7 +2248,7 @@ function ProvasContent() {
             onClick={handleCreateExam}
             disabled={tierLimitExceeded}
             size="sm"
-            className="btn-brand-glow text-white rounded-xl text-xs font-semibold"
+            className="vidro-botao rounded-full px-4 text-xs font-semibold"
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
             Nova Prova
@@ -2597,8 +2605,8 @@ function ProvasContent() {
 
         {/* Group header */}
         <div className={cn(
-          'rounded-2xl border bg-card p-4 sm:p-5 transition-all',
-          isHighlighted ? 'border-primary/50 ring-2 ring-primary/25 shadow-lg shadow-primary/10' : 'border-border'
+          'vidro-cartao rounded-3xl p-4 sm:p-6 transition-all',
+          isHighlighted && 'ring-2 ring-primary/25'
         )}>
           <div className="flex items-start gap-4">
             {currentGroup.imageUrl ? (
@@ -3247,9 +3255,12 @@ function ProvasContent() {
 export default function ProvasPage() {
   return (
     <AppShell headerTitle="Provas" headerSubtitle="Simulados e provas">
-      <Suspense fallback={<PageLoading />}>
-        <ProvasContent />
-      </Suspense>
+      {/* O visual das vitrines (aurora + vidro), no tema da pessoa. */}
+      <FundoDeVidro className="min-h-[100svh]">
+        <Suspense fallback={<PageLoading />}>
+          <ProvasContent />
+        </Suspense>
+      </FundoDeVidro>
     </AppShell>
   )
 }

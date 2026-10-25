@@ -1,0 +1,282 @@
+/*
+ * O visual das vitrines (aurora + vidro) dentro do app, para quem está
+ * logado: `/provas` e a tela inicial de `/exam/[id]`.
+ *
+ * Diferente da vitrine, que é sempre noturna, aqui o tema da pessoa manda:
+ * no escuro fica igual à vitrine; no claro, a aurora é suave sobre o papel e
+ * o vidro é fosco e branco.
+ *
+ * Ele se aplica POR CIMA das classes que essas telas já usam
+ * (`surface-page`, `glass-page-card`), escopado em `.vidro-app` — nada fora
+ * dessas telas muda. Listas não levam `backdrop-filter` (caro em dezenas de
+ * cartões): só os painéis únicos desfocam.
+ */
+
+.vidro-app {
+  --va-chao: #f4f1ea;
+  --va-mancha-1: #8cc79b;
+  --va-mancha-2: #f0c27a;
+  --va-mancha-3: #a9d3b3;
+  --va-opacidade: 0.38;
+  --va-vidro: rgba(255, 255, 255, 0.58);
+  --va-vidro-lista: rgba(255, 255, 255, 0.62);
+  --va-borda: rgba(11, 31, 26, 0.09);
+  --va-sombra: 0 24px 60px -28px rgba(11, 31, 26, 0.28);
+  --va-brilho-1: #2f6b3e;
+  --va-brilho-2: #c98a22;
+  --va-brilho-3: #e0a43a;
+
+  position: relative;
+  isolation: isolate;
+  background: var(--va-chao);
+}
+.dark .vidro-app {
+  --va-chao: #07150f;
+  --va-mancha-1: #2f7a45;
+  --va-mancha-2: #b9792a;
+  --va-mancha-3: #1d5a3c;
+  --va-opacidade: 0.5;
+  --va-vidro: rgba(255, 255, 255, 0.06);
+  --va-vidro-lista: rgba(255, 255, 255, 0.045);
+  --va-borda: rgba(255, 255, 255, 0.12);
+  --va-sombra: 0 24px 60px -20px rgba(0, 0, 0, 0.65);
+  --va-brilho-1: #7fd093;
+  --va-brilho-2: #e2a43e;
+  --va-brilho-3: #f6d38a;
+}
+
+/* ── A aurora atrás de tudo ── */
+.vidro-app-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.vidro-app-aurora span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: var(--va-opacidade);
+  will-change: transform;
+}
+.vidro-app-aurora .m1 {
+  width: 42vw;
+  height: 42vw;
+  max-width: 640px;
+  max-height: 640px;
+  /* Dentro do contêiner: começando fora dele, o corte do overflow virava uma
+     linha reta e vertical no meio do brilho. */
+  left: 4%;
+  top: -12vw;
+  background: var(--va-mancha-1);
+  animation: va-mancha-1 26s ease-in-out infinite alternate;
+}
+.vidro-app-aurora .m2 {
+  width: 34vw;
+  height: 34vw;
+  max-width: 520px;
+  max-height: 520px;
+  right: 2%;
+  top: 12rem;
+  background: var(--va-mancha-2);
+  opacity: calc(var(--va-opacidade) * 0.7);
+  animation: va-mancha-2 32s ease-in-out infinite alternate;
+}
+.vidro-app-aurora .m3 {
+  width: 40vw;
+  height: 40vw;
+  max-width: 600px;
+  max-height: 600px;
+  left: 30%;
+  top: 60vh;
+  background: var(--va-mancha-3);
+  animation: va-mancha-3 38s ease-in-out infinite alternate;
+}
+@keyframes va-mancha-1 {
+  to {
+    transform: translate(14vw, 10vh) scale(1.15);
+  }
+}
+@keyframes va-mancha-2 {
+  to {
+    transform: translate(-12vw, 18vh) scale(0.9);
+  }
+}
+@keyframes va-mancha-3 {
+  to {
+    transform: translate(-10vw, -14vh) scale(1.1);
+  }
+}
+
+/* As telas pintavam o próprio fundo; aqui quem pinta é a aurora. */
+.vidro-app .surface-page {
+  background: transparent;
+}
+
+/* ── Vidro ── */
+.vidro-app .vidro-cartao {
+  background: var(--va-vidro);
+  border: 1px solid var(--va-borda);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    var(--va-sombra);
+}
+.vidro-app .vidro-chip {
+  background: var(--va-vidro-lista);
+  border: 1px solid var(--va-borda);
+}
+.vidro-app .vidro-pilula {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--va-vidro);
+  border: 1px solid var(--va-borda);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.vidro-app .vidro-ponto {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 9999px;
+  background: #5fb072;
+}
+.vidro-app .vidro-ponto::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: va-pulso 2s ease-out infinite;
+}
+@keyframes va-pulso {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* Os cartões de prova e de grupo das listas: vidro sem desfoque. */
+.vidro-app .glass-page-card {
+  background: var(--va-vidro-lista) !important;
+  border-color: var(--va-borda) !important;
+  box-shadow: var(--va-sombra);
+}
+
+/* ── O brilho que corre pela palavra-chave ── */
+.vidro-app .vidro-brilho {
+  background: linear-gradient(
+    100deg,
+    var(--va-brilho-1) 0%,
+    var(--va-brilho-2) 35%,
+    var(--va-brilho-3) 50%,
+    var(--va-brilho-2) 65%,
+    var(--va-brilho-1) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: va-brilho 6s linear infinite;
+}
+@keyframes va-brilho {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+/* ── O botão principal: âmbar, com um reflexo atravessando ── */
+.vidro-app .vidro-botao {
+  position: relative;
+  overflow: hidden;
+  color: #0b1f1a !important;
+  background: linear-gradient(135deg, #f2c063, #e2a43e 45%, #d48a2a) !important;
+  box-shadow:
+    0 10px 30px -10px rgba(226, 164, 62, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 240ms ease;
+}
+.vidro-app .vidro-botao::after {
+  content: '';
+  position: absolute;
+  inset: -40% auto -40% -30%;
+  width: 30%;
+  transform: skewX(-20deg) translateX(-120%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  animation: va-reflexo 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.vidro-app .vidro-botao:disabled {
+  filter: grayscale(0.6);
+  opacity: 0.6;
+}
+.vidro-app .vidro-botao:disabled::after {
+  animation: none;
+}
+@keyframes va-reflexo {
+  0%,
+  60% {
+    transform: skewX(-20deg) translateX(-120%);
+  }
+  100% {
+    transform: skewX(-20deg) translateX(520%);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-app .vidro-botao:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 16px 40px -10px rgba(226, 164, 62, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+}
+
+/* ── Entrada: o painel sobe e nítida ── */
+.vidro-app .vidro-sobe {
+  animation: va-sobe 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+@keyframes va-sobe {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ── Sem movimento, Modo Lite ── */
+@media (prefers-reduced-motion: reduce) {
+  .vidro-app-aurora span,
+  .vidro-app .vidro-brilho,
+  .vidro-app .vidro-botao::after,
+  .vidro-app .vidro-ponto::after,
+  .vidro-app .vidro-sobe {
+    animation: none;
+  }
+}
+.lite-mode .vidro-app-aurora span,
+.lite-mode .vidro-app .vidro-brilho,
+.lite-mode .vidro-app .vidro-botao::after,
+.lite-mode .vidro-app .vidro-sobe {
+  animation: none;
+}
+.lite-mode .vidro-app .vidro-cartao,
+.lite-mode .vidro-app .vidro-pilula {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}

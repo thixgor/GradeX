@@ -16,6 +16,7 @@ import { BanChecker } from '@/components/ban-checker'
 import { SignaturePad } from '@/components/signature-pad'
 import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
 import { CapaDaProva } from '@/components/exam/capa-da-prova'
+import { FundoDeVidro } from '@/components/vitrine/vidro-app'
 import { CoverImage } from '@/components/cover-image'
 import { ExamTimer } from '@/components/exam-timer'
 import { ExamBrandBadge } from '@/components/exam-brand-badge'
@@ -3773,8 +3774,8 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
-          <div className="max-w-3xl w-full">
+        <FundoDeVidro className="min-h-screen flex items-center justify-center p-4 sm:p-6">
+          <div className="relative max-w-3xl w-full">
             {/*
               A marca antes da prova. Esta tela é a porta de entrada de quem
               chega pelo link direto — e ela não tinha logo, nome nem endereço:
@@ -3794,7 +3795,13 @@ ${respostaAluno}`
               }
             />
 
-            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
+            {/* O brilho da própria capa, desfocado atrás do cartão — como na vitrine. */}
+            {exam.coverImage && (
+              <div aria-hidden className="pointer-events-none absolute inset-x-8 top-28 h-64 overflow-hidden rounded-[40px] opacity-50 blur-3xl">
+                <CoverImage src={exam.coverImage} alt="" sizes="200px" />
+              </div>
+            )}
+            <div className="vidro-cartao vidro-sobe relative overflow-hidden rounded-[28px]">
               {/* Top accent */}
               <div className="absolute top-0 left-0 right-0 z-10 h-1.5 bg-gradient-to-r from-[#468152] via-emerald-400 to-[#E2A43E]" />
 
@@ -3840,7 +3847,7 @@ ${respostaAluno}`
                       <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400">Proctoring</span>
                     )}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight">{exam.title}</h1>
+                  <h1 className="font-heading text-3xl sm:text-[44px] font-semibold tracking-tight leading-[1.05]">{exam.title}</h1>
                   {exam.description && (
                     <p className="text-sm text-muted-foreground leading-relaxed">{exam.description}</p>
                   )}
@@ -3883,8 +3890,8 @@ ${respostaAluno}`
                     })
 
                   const stats: { label: string; value: React.ReactNode; color: string }[] = [
-                    { label: 'Questões', value: exam.numberOfQuestions, color: 'from-emerald-500/15 to-emerald-500/5 text-emerald-700 dark:text-emerald-400 border-emerald-500/20' },
-                    { label: 'Pontuação', value: exam.scoringMethod === 'tri' ? 'TRI · 1000' : `${exam.totalPoints} pts`, color: 'from-amber-500/15 to-amber-500/5 text-amber-700 dark:text-amber-400 border-amber-500/20' },
+                    { label: 'Questões', value: exam.numberOfQuestions, color: 'text-emerald-700 dark:text-emerald-400' },
+                    { label: 'Pontuação', value: exam.scoringMethod === 'tri' ? 'TRI · 1000' : `${exam.totalPoints} pts`, color: 'text-amber-700 dark:text-amber-400' },
                   ]
 
                   if (exam.duration) {
@@ -3893,14 +3900,14 @@ ${respostaAluno}`
                       value: exam.duration >= 60
                         ? `${Math.floor(exam.duration / 60)}h${exam.duration % 60 ? ` ${String(exam.duration % 60).padStart(2, '0')}min` : ''}`
                         : `${exam.duration} min`,
-                      color: 'from-violet-500/15 to-violet-500/5 text-violet-700 dark:text-violet-400 border-violet-500/20',
+                      color: 'text-foreground',
                     })
                   }
 
                   if (!temPainelDePortoes) {
                     stats.push(
-                      { label: 'Início', value: dataCurta(exam.startTime), color: 'from-blue-500/15 to-blue-500/5 text-blue-700 dark:text-blue-400 border-blue-500/20' },
-                      { label: 'Término', value: dataCurta(exam.endTime), color: 'from-rose-500/15 to-rose-500/5 text-rose-700 dark:text-rose-400 border-rose-500/20' },
+                      { label: 'Início', value: dataCurta(exam.startTime), color: 'text-foreground' },
+                      { label: 'Término', value: dataCurta(exam.endTime), color: 'text-foreground' },
                     )
                   }
 
@@ -3911,9 +3918,9 @@ ${respostaAluno}`
                       }`}
                     >
                       {stats.map((stat, i) => (
-                        <div key={i} className={`rounded-xl border bg-gradient-to-br p-3 ${stat.color}`}>
-                          <p className="text-[10px] uppercase tracking-wider opacity-80 font-semibold">{stat.label}</p>
-                          <p className="text-sm font-bold mt-0.5 tabular-nums">{stat.value}</p>
+                        <div key={i} className="vidro-chip rounded-2xl p-3.5">
+                          <p className="text-[11px] font-semibold text-muted-foreground">{stat.label}</p>
+                          <p className={`text-lg font-bold mt-0.5 tabular-nums ${stat.color}`}>{stat.value}</p>
                         </div>
                       ))}
                     </div>
@@ -4008,7 +4015,7 @@ ${respostaAluno}`
                 */}
                 <Button
                   id={ALVO_DO_BOTAO_INICIAR}
-                  className={`relative w-full overflow-hidden rounded-xl h-12 font-semibold bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white shadow-md shadow-emerald-500/20 disabled:bg-none ${
+                  className={`vidro-botao relative w-full overflow-hidden rounded-full h-12 font-bold ${
                     // A mesma chamada da sala de espera, no botão que a maioria
                     // de fato clica: quem chega com a prova já em andamento
                     // nunca passa pela sala.
@@ -4145,7 +4152,7 @@ ${respostaAluno}`
               </div>
             </div>
           </div>
-        </div>
+        </FundoDeVidro>
       </>
     )
   }
@@ -4156,8 +4163,8 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40 flex items-center justify-center p-4 sm:p-6">
-          <div className="max-w-3xl w-full">
+        <FundoDeVidro className="min-h-screen flex items-center justify-center p-4 sm:p-6">
+          <div className="relative max-w-3xl w-full">
             <ExamBrandHeader
               className="mb-3 px-1"
               acao={
@@ -4172,7 +4179,7 @@ ${respostaAluno}`
               }
             />
 
-            <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-2xl">
+            <div className="vidro-cartao vidro-sobe relative overflow-hidden rounded-[28px]">
               {/*
                 A faixa do topo era azul-violeta-fúcsia — três cores que não
                 são da plataforma. Passa a ser a mesma da tela de entrada:
@@ -4198,14 +4205,14 @@ ${respostaAluno}`
                       <Clock className="h-7 w-7 text-[#468152] dark:text-emerald-400" />
                     </span>
                   </div>
-                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{exam.title}</h1>
+                  <h1 className="font-heading text-3xl sm:text-[40px] font-semibold tracking-tight leading-[1.05]">{exam.title}</h1>
                   <p className="text-sm text-muted-foreground">
                     <span className="font-semibold text-[#468152] dark:text-emerald-400">Sala de Espera</span>
                     {' · '}Bem-vindo(a), <span className="font-semibold text-foreground">{userName}</span>
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-border/50 bg-gradient-to-br from-muted/40 to-background p-6">
+                <div className="vidro-chip rounded-3xl p-6">
                   <Countdown
                     targetDate={new Date(exam.startTime)}
                     onComplete={() => setCanStart(true)}
@@ -4265,10 +4272,8 @@ ${respostaAluno}`
                 <div className="flex gap-2">
                   <Button
                     id={ALVO_DO_BOTAO_INICIAR}
-                    className={`relative flex-1 overflow-hidden rounded-xl h-12 font-semibold transition-all ${
-                      canStart && (!exam.requireSignature || signature)
-                        ? 'exam-botao-chama bg-gradient-to-r from-[#468152] to-[#3a6d44] hover:from-[#3a6d44] hover:to-[#2f5a38] text-white'
-                        : ''
+                    className={`relative flex-1 overflow-hidden rounded-full h-12 font-bold transition-all ${
+                      canStart && (!exam.requireSignature || signature) ? 'vidro-botao exam-botao-chama' : ''
                     }`}
                     size="lg"
                     onClick={handleStartExam}
@@ -4310,7 +4315,7 @@ ${respostaAluno}`
               </div>
             </div>
           </div>
-        </div>
+        </FundoDeVidro>
       </>
     )
   }
