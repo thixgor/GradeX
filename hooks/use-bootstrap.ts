@@ -558,6 +558,13 @@ export function clearBootstrapCache() {
   clearCache()
   // E as páginas de material guardadas no aparelho (ver lib/paginas-guardadas).
   void apagarPaginasGuardadas()
+  // A marca "sou embaixador" (botão "Meu link desta página"): é da conta que
+  // saiu, não do aparelho. Mesmo nome de components/embaixadores/selo-do-link.
+  try {
+    window.localStorage.removeItem('da-embaixador')
+  } catch {
+    // sem storage
+  }
   invalidateCache('/api/bootstrap')
   invalidateCache('/api/auth/me')
   invalidateCache('/api/user/tier-limits')

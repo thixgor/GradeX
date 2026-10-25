@@ -15,7 +15,7 @@ import {
 import type { ManualClinicoPlanKey, User } from '@/lib/types'
 import { normalizeInstitutionLabel, normalizeInstitutionLabels } from '@/lib/institution-units-legacy'
 import { embaixadorAtivoPorCodigo } from '@/lib/embaixadores/servidor'
-import { COOKIE_DO_EMBAIXADOR } from '@/lib/embaixadores/regras'
+import { COOKIE_DA_SUGESTAO, COOKIE_DO_CUPOM, itemNoEscopo, lerCookieDoCupom } from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
 
     const db = await getDb()
     const agora = new Date()
-    const temCookieDeEmbaixador = !!request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value
+    const temCookieDeEmbaixador = !!(request.cookies.get(COOKIE_DA_SUGESTAO)?.value || request.cookies.get(COOKIE_DO_CUPOM)?.value)
 
     // O filtro fino (escopo, unidade, plano) roda em memória: a coleção de
     // cupons é pequena e as regras já vivem em lib/coupons.ts — duplicá-las
@@ -151,9 +151,18 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * O cupom do embaixador cujo link trouxe esta pessoa (cookie `da_embaixador`),
- * como chamativo do checkout — ou `null` se não houver, se ele estiver
- * pausado, ou se o cupom não alcançar os itens desta tela.
+ * O cupom do embaixador para esta tela de checkout, ou `null`.
+ *
+ * Duas situações, de propósito diferentes:
+ *  - **link de produto** (`da_emb_cupom`, gravado por `/e/CODIGO?para=<produto>`
+ *    ou por `?emb=CODIGO` na página do produto): se o item desta tela está no
+ *    alcance do link, o cupom vem com `autoAplicar` e entra sozinho — com ou
+ *    sem login;
+ *  - **convite** (`da_emb_sugestao`, 15 dias depois do clique): o cupom só é
+ *    sugerido, com o botão de aplicar. Quem foi só convidado escolhe.
+ *
+ * Nos dois, valem as mesmas regras de qualquer cupom (ativo, não vencido, no
+ * escopo dos itens) e o embaixador precisa estar ativo.
  */
 async function promoDoEmbaixador(
   db: Db,
@@ -161,7 +170,9 @@ async function promoDoEmbaixador(
   itens: CouponCheckoutItem[],
   agora: Date,
 ): Promise<CouponPromoPayload | null> {
-  const codigo = request.cookies.get(COOKIE_DO_EMBAIXADOR)?.value
+  const vinculo = lerCookieDoCupom(request.cookies.get(COOKIE_DO_CUPOM)?.value)
+  const doProduto = vinculo && itens.some((item) => itemNoEscopo(vinculo.escopo, item)) ? vinculo.codigo : null
+  const codigo = doProduto || request.cookies.get(COOKIE_DA_SUGESTAO)?.value
   if (!codigo) return null
   const embaixador = await embaixadorAtivoPorCodigo(db, codigo)
   if (!embaixador?.couponId || !ObjectId.isValid(embaixador.couponId)) return null
@@ -170,14 +181,17 @@ async function promoDoEmbaixador(
   if (cupom.expiresAt && new Date(cupom.expiresAt) <= agora) return null
   if (!itens.some((item) => isCouponItemEligible(cupom, item))) return null
   const primeiroNome = String(embaixador.nome || '').trim().split(/\s+/)[0] || 'seu embaixador'
-  return buildCouponPromoPayload({
-    ...cupom,
-    promo: {
-      enabled: true,
-      headline: `Cupom de ${primeiroNome}, que te indicou`,
-      subtext: 'Desconto de embaixador DomineAqui, por cima do preço do momento.',
-      showCode: true,
-      tone: 'economia',
-    },
-  })
+  return {
+    ...buildCouponPromoPayload({
+      ...cupom,
+      promo: {
+        enabled: true,
+        headline: doProduto ? `Cupom de ${primeiroNome} aplicado` : `Cupom de ${primeiroNome}, que te indicou`,
+        subtext: 'Desconto de embaixador DomineAqui, por cima do preço do momento.',
+        showCode: true,
+        tone: 'economia',
+      },
+    }),
+    autoAplicar: !!doProduto,
+  }
 }

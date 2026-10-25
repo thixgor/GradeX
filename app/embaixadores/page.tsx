@@ -8,6 +8,7 @@ import { ProgramaDeEmbaixadores } from '@/components/embaixadores/programa'
 import { PainelDoEmbaixadorView } from '@/components/embaixadores/painel'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
 import { CONFIG_PADRAO } from '@/lib/embaixadores/regras'
+import { MARCA_DO_EMBAIXADOR } from '@/components/embaixadores/selo-do-link'
 import '@/components/embaixadores/embaixadores.css'
 
 interface Programa {
@@ -52,6 +53,7 @@ function Conteudo() {
       })
       .then((dados) => {
         if (!vivo) return
+        marcarAparelho(quem !== 'visitante' ? dados.painel || null : undefined)
         setEstado({
           fase: 'pronto',
           painel: dados.painel || null,
@@ -78,6 +80,28 @@ function Conteudo() {
   }
   if (estado.painel) return <PainelDoEmbaixadorView painel={estado.painel} />
   return <ProgramaDeEmbaixadores linkInscricao={estado.programa.linkInscricao} descontoCupom={estado.programa.descontoCupom} />
+}
+
+/**
+ * A marca "sou embaixador" que liga o botão "Meu link desta página" nas
+ * páginas de produto (components/embaixadores/selo-do-link). Vale 30 dias e é
+ * refeita a cada visita ao painel; quem deixou de ser embaixador perde a marca.
+ * `undefined` = visitante, não mexe.
+ */
+function marcarAparelho(painel: PainelDoEmbaixador | null | undefined) {
+  if (painel === undefined) return
+  try {
+    if (painel && painel.embaixador.status === 'ativo') {
+      window.localStorage.setItem(
+        MARCA_DO_EMBAIXADOR,
+        JSON.stringify({ codigo: painel.embaixador.codigo, link: painel.embaixador.link, validoAte: Date.now() + 30 * 86_400_000 }),
+      )
+    } else {
+      window.localStorage.removeItem(MARCA_DO_EMBAIXADOR)
+    }
+  } catch {
+    // sem storage: o botão flutuante simplesmente não aparece
+  }
 }
 
 function Esqueleto() {

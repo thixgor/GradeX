@@ -70,6 +70,13 @@ export const ROTULO_DA_CHAVE_PIX: Record<TipoDeChavePix, string> = {
 export const COOKIE_DO_EMBAIXADOR = 'da_embaixador'
 /** Quanto tempo o clique no link segura a indicação de quem ainda não criou conta. */
 export const DIAS_DO_COOKIE = 30
+/**
+ * Convite: por quanto tempo depois do clique o checkout SUGERE o cupom de
+ * quem convidou. Passado isso, o cadastro ainda conta (30 dias), mas o
+ * checkout deixa de oferecer o cupom.
+ */
+export const COOKIE_DA_SUGESTAO = 'da_emb_sugestao'
+export const DIAS_DA_SUGESTAO = 15
 
 export interface ConfigDoPrograma {
   /** Percentual do sócio sobre o valor do produto (0–100). */
@@ -362,4 +369,107 @@ export function destinoSeguro(para: string | null | undefined, codigo: string): 
   if (limpo.startsWith('/e/') || limpo.startsWith('/api/')) return padrao
   if (limpo.length > 300) return padrao
   return limpo
+}
+
+// ─── Link de produto: o cupom vai aplicado ───────────────────────────────────
+
+/**
+ * Cookie do link de PRODUTO. Diferente do convite: quem chega a um material,
+ * pacote, flashcard, Plus+ ou Manual Clínico pelo link do embaixador encontra
+ * o cupom dele já aplicado no checkout daquele produto — com ou sem login. O
+ * convite genérico só sugere o cupom.
+ *
+ * Valor: `CODIGO.escopo` (ex.: `MARIA10.material:66ab…`, `MARIA10.plus`).
+ */
+export const COOKIE_DO_CUPOM = 'da_emb_cupom'
+/** Parâmetro que vincula a página ao embaixador no endereço: `?emb=MARIA10`. */
+export const PARAMETRO_DO_LINK = 'emb'
+
+const ID_MONGO = /^[a-f0-9]{24}$/i
+
+/**
+ * Que compra um link alcança, a partir da página aonde ele leva. `null` quando
+ * a página não é de produto (início, convite, provas…): aí é só convite.
+ *
+ *  - `/materiais/<id>` e `/materiais/checkout?id=` → aquele material ou pacote
+ *  - `/pacotes/<id>` → aquele pacote
+ *  - `/materiais`, `/apg` → qualquer material ou pacote
+ *  - `/flashcards…` → os decks de flashcard
+ *  - `/buy…` → a assinatura Plus+
+ *  - `/manual-clinico…`, `/ldpg-mnclinico` → o Manual Clínico
+ *  - `/comprar?productType=…` → o que a compra sem login estiver vendendo
+ */
+export function escopoDoDestino(destino: string): string | null {
+  let url: URL
+  try {
+    url = new URL(destino, 'https://domineaqui.com.br')
+  } catch {
+    return null
+  }
+  const caminho = url.pathname.replace(/\/+$/, '') || '/'
+  const q = url.searchParams
+
+  const material = /^\/materiais\/([a-f0-9]{24})(\/|$)/i.exec(caminho)
+  if (material) return `material:${material[1].toLowerCase()}`
+  const pacote = /^\/pacotes\/([a-f0-9]{24})$/i.exec(caminho)
+  if (pacote) return `package:${pacote[1].toLowerCase()}`
+  if (caminho === '/materiais/checkout') {
+    const id = q.get('id') || ''
+    if (ID_MONGO.test(id)) return `${q.get('type') === 'package' ? 'package' : 'material'}:${id.toLowerCase()}`
+    return 'materiais'
+  }
+  if (caminho === '/materiais' || caminho === '/apg' || caminho.startsWith('/apg/')) return 'materiais'
+  if (caminho === '/flashcards' || caminho.startsWith('/flashcards/')) return 'flashcards'
+  if (caminho === '/buy' || caminho.startsWith('/buy/')) return 'plus'
+  if (caminho === '/manual-clinico' || caminho.startsWith('/manual-clinico/') || caminho === '/ldpg-mnclinico') {
+    return 'manual_clinico'
+  }
+  if (caminho === '/comprar') {
+    const tipo = q.get('productType')
+    const id = q.get('productId') || ''
+    if (tipo === 'plus') return 'plus'
+    if (tipo === 'manual_clinico') return 'manual_clinico'
+    if ((tipo === 'material' || tipo === 'package') && ID_MONGO.test(id)) {
+      return `${q.get('itemType') === 'package' || tipo === 'package' ? 'package' : 'material'}:${id.toLowerCase()}`
+    }
+  }
+  return null
+}
+
+/** Este item do checkout está no alcance do link de produto? */
+export function itemNoEscopo(
+  escopo: string,
+  item: { itemType: string; itemId: string; materialType?: string | null },
+): boolean {
+  if (escopo === 'plus') return item.itemType === 'plus'
+  if (escopo === 'manual_clinico') return item.itemType === 'manual_clinico'
+  if (escopo === 'materiais') return item.itemType === 'material' || item.itemType === 'package'
+  if (escopo === 'flashcards') {
+    // Sem o tipo do material (algumas telas não mandam), o deck é material.
+    return item.itemType === 'material' && (!item.materialType || item.materialType === 'flashcard_deck')
+  }
+  const [tipo, id] = escopo.split(':')
+  return !!id && item.itemType === tipo && String(item.itemId).toLowerCase() === id
+}
+
+export function valorDoCookieDoCupom(codigo: string, escopo: string): string {
+  return `${codigo}.${escopo}`
+}
+
+export function lerCookieDoCupom(valor: string | null | undefined): { codigo: string; escopo: string } | null {
+  if (!valor) return null
+  const ponto = valor.indexOf('.')
+  if (ponto < 0) return null
+  const codigo = normalizarCodigo(valor.slice(0, ponto))
+  const escopo = valor.slice(ponto + 1)
+  if (!codigoValido(codigo)) return null
+  if (!/^(plus|manual_clinico|materiais|flashcards|(material|package):[a-f0-9]{24})$/.test(escopo)) return null
+  return { codigo, escopo }
+}
+
+/** O endereço do produto com o embaixador vinculado: `…?emb=MARIA10`. */
+export function vincularAoEmbaixador(destino: string, codigo: string): string {
+  const url = new URL(destino, 'https://domineaqui.com.br')
+  url.searchParams.set(PARAMETRO_DO_LINK, codigo)
+  return `${url.pathname}${url.search}${url.hash}`
 }

@@ -36,6 +36,12 @@ interface Props {
    * código — que é o que funciona em qualquer checkout, sem acoplamento.
    */
   onAplicar?: (code: string) => void
+  /**
+   * Aplica sem clique quando a promo vem com `autoAplicar` (o cupom do
+   * embaixador num link de produto). Sem esta prop, usa `onAplicar`. As telas
+   * cujo cupom mora numa caixa própria passam aqui o "preencha e aplique".
+   */
+  onAutoAplicar?: (code: string) => void
   /** Código já aplicado, para a faixa não insistir no que já está valendo. */
   codigoAplicado?: string | null
   className?: string
@@ -137,6 +143,7 @@ export function CouponPromo({
   planKey,
   aparencia = 'app',
   onAplicar,
+  onAutoAplicar,
   codigoAplicado,
   className,
 }: Props) {
@@ -179,6 +186,18 @@ export function CouponPromo({
       cancelado.current = true
     }
   }, [chaveDosItens, planKey])
+
+  // Link de produto do embaixador: o cupom entra sozinho, uma vez por abertura
+  // do checkout. Não passa por cima de um cupom que já esteja aplicado, e se a
+  // pessoa tirar o cupom ele não volta (a faixa segue oferecendo o botão).
+  const autoAplicado = useRef(false)
+  const aplicarSozinho = onAutoAplicar || onAplicar
+  useEffect(() => {
+    if (!promo?.autoAplicar || !promo.code || autoAplicado.current) return
+    if (codigoAplicado || !aplicarSozinho) return
+    autoAplicado.current = true
+    aplicarSozinho(promo.code)
+  }, [promo, codigoAplicado, aplicarSozinho])
 
   useEffect(() => {
     if (!copiado) return

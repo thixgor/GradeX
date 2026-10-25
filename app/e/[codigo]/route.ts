@@ -3,7 +3,19 @@ import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { diaEmBrasilia } from '@/lib/fuso-brasilia'
 import { embaixadorAtivoPorCodigo, registrarClique } from '@/lib/embaixadores/servidor'
-import { COOKIE_DO_EMBAIXADOR, DIAS_DO_COOKIE, destinoSeguro, normalizarCodigo } from '@/lib/embaixadores/regras'
+import {
+  COOKIE_DA_SUGESTAO,
+  COOKIE_DO_CUPOM,
+  COOKIE_DO_EMBAIXADOR,
+  DIAS_DA_SUGESTAO,
+  DIAS_DO_COOKIE,
+  destinoSeguro,
+  escopoDoDestino,
+  lerCookieDoCupom,
+  normalizarCodigo,
+  valorDoCookieDoCupom,
+  vincularAoEmbaixador,
+} from '@/lib/embaixadores/regras'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -11,10 +23,15 @@ export const runtime = 'nodejs'
 /**
  * O link de divulgação: `domineaqui.com.br/e/CODIGO`.
  *
- * Grava o cookie da indicação (último clique vence, por 60 dias), conta a
+ * Grava o cookie da indicação (último clique vence, por 30 dias), conta a
  * visita e redireciona — para o convite do embaixador ou, com `?para=/caminho`,
  * para qualquer página interna. A resposta é um 307 sem corpo: não custa
  * transferência.
+ *
+ * Convite × produto: o convite só apresenta o embaixador (conta o cadastro
+ * por 30 dias e SUGERE o cupom no checkout por 15). Quando o destino é um produto — material,
+ * pacote, flashcard, Plus+, Manual Clínico —, a página abre vinculada a ele
+ * (`?emb=CODIGO`) e o checkout daquele produto já abre com o cupom aplicado.
  *
  * As prévias de link do WhatsApp, Instagram e afins também abrem o endereço;
  * elas recebem o redirecionamento mas não entram na conta de visitas.
@@ -24,7 +41,9 @@ const ROBO = /bot|crawl|spider|slurp|facebookexternalhit|facebot|whatsapp|telegr
 export async function GET(request: NextRequest, { params }: { params: Promise<{ codigo: string }> }) {
   const { codigo: bruto } = await params
   const codigo = normalizarCodigo(bruto)
-  const destino = new URL(destinoSeguro(request.nextUrl.searchParams.get('para'), codigo), request.url)
+  const caminho = destinoSeguro(request.nextUrl.searchParams.get('para'), codigo)
+  const escopo = escopoDoDestino(caminho)
+  const destino = new URL(escopo ? vincularAoEmbaixador(caminho, codigo) : caminho, request.url)
 
   try {
     const db = await getDb()
@@ -41,6 +60,27 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
     })
+    // O checkout sugere o cupom de quem convidou só nos 15 dias seguintes.
+    resposta.cookies.set(COOKIE_DA_SUGESTAO, embaixador.codigo, {
+      maxAge: DIAS_DA_SUGESTAO * 86_400,
+      path: '/',
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    })
+    if (escopo) {
+      resposta.cookies.set(COOKIE_DO_CUPOM, valorDoCookieDoCupom(embaixador.codigo, escopo), {
+        maxAge: DIAS_DO_COOKIE * 86_400,
+        path: '/',
+        sameSite: 'lax',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      })
+    } else if (lerCookieDoCupom(request.cookies.get(COOKIE_DO_CUPOM)?.value)?.codigo !== embaixador.codigo) {
+      // Último clique vence: o convite de OUTRO embaixador desfaz o vínculo de
+      // produto do anterior, senão o checkout seguiria aplicando o cupom velho.
+      resposta.cookies.delete(COOKIE_DO_CUPOM)
+    }
 
     const agente = request.headers.get('user-agent') || ''
     if (agente && !ROBO.test(agente)) {

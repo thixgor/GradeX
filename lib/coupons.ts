@@ -708,6 +708,11 @@ export interface CouponPromoPayload {
   /** Letras miúdas derivadas das regras reais — não são texto livre. */
   conditions: string[]
   expiresAt: string | null
+  /**
+   * O checkout aplica sozinho, uma vez. Só o cupom de embaixador vindo de um
+   * link de PRODUTO (ver app/api/coupons/promo) traz isto ligado.
+   */
+  autoAplicar?: boolean
 }
 
 /**

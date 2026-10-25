@@ -22,6 +22,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { MetaPixel } from '@/components/meta-pixel'
 import { LiteModeProvider } from '@/context/LiteModeContext'
 import { LiteModePrompt } from '@/components/lite-mode-prompt'
+import { SeloDoLink } from '@/components/embaixadores/selo-do-link'
 import { LITE_BOOTSTRAP_SCRIPT } from '@/lib/lite-mode'
 import { SCRIPT_CAPTURA_INSTALACAO } from '@/lib/pwa/instalacao'
 import {
@@ -325,6 +326,9 @@ export default function RootLayout({
                <InstallPrompt />
                <TactileFeedback />
                <LiteModePrompt />
+               {/* Link de produto do embaixador: o selo do cupom para quem chegou
+                   por ele, e o "meu link desta página" para o embaixador. */}
+               <SeloDoLink />
                <ProtecaoContraInspecao />
              </ImageProtectionProvider>
             </FloatingDockProvider>

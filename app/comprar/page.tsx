@@ -136,6 +136,7 @@ function ManualClinicoCouponBox({
   appliedCoupon,
   onApplied,
   onRemoved,
+  initialCode,
 }: {
   product: ManualClinicoProductInfo
   email: string
@@ -143,13 +144,24 @@ function ManualClinicoCouponBox({
   appliedCoupon: AppliedCoupon | null
   onApplied: (coupon: AppliedCoupon) => void
   onRemoved: () => void
+  /** Cupom que entra sozinho, uma vez (o do embaixador, num link de produto). */
+  initialCode?: string
 }) {
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  async function applyCoupon() {
-    const normalized = code.trim()
+  const aplicouSozinho = useRef(false)
+  useEffect(() => {
+    if (!initialCode || aplicouSozinho.current || appliedCoupon || !product.allowCoupons) return
+    aplicouSozinho.current = true
+    setCode(initialCode.toUpperCase())
+    applyCoupon(initialCode)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCode, appliedCoupon, product.allowCoupons])
+
+  async function applyCoupon(sobrescrever?: string) {
+    const normalized = (sobrescrever ?? code).trim()
     if (!normalized) return
     setLoading(true)
     setError('')
@@ -235,7 +247,7 @@ function ManualClinicoCouponBox({
             />
             <button
               type="button"
-              onClick={applyCoupon}
+              onClick={() => applyCoupon()}
               disabled={loading || !code.trim() || product.currentPrice <= 0}
               className="inline-flex h-10 items-center gap-2 rounded-lg bg-secondary px-4 text-sm font-black text-secondary-foreground transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -256,6 +268,8 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  // Cupom do embaixador vindo de um link de produto (ver CouponPromo).
+  const [cupomAutomatico, setCupomAutomatico] = useState('')
   const [selectedPlanKey, setSelectedPlanKey] = useState<PlanKey>(planKeyParam || 'vitalicio')
 
   const [name, setName] = useState('')
@@ -627,7 +641,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             ) : null}
             {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
               <p className="mt-1 text-[10px] font-medium text-primary/80">
-                Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
+                Cupom {appliedCoupon.code} registrado na compra — o desconto do lote, que é maior, é o que vale no preço.
               </p>
             ) : null}
           </div>
@@ -635,6 +649,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           <CouponPromo
             itens={[{ itemType: 'manual_clinico', itemId: MANUAL_CLINICO_PRODUCT_ID }]}
             planKey={selectedPlanKey}
+            onAutoAplicar={setCupomAutomatico}
             codigoAplicado={appliedCoupon?.code || null}
             className="mt-4"
           />
@@ -662,6 +677,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               appliedCoupon={appliedCoupon}
               onApplied={setAppliedCoupon}
               onRemoved={() => setAppliedCoupon(null)}
+              initialCode={cupomAutomatico}
             />
           </div>
 
@@ -1058,7 +1074,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
               ) : null}
               {appliedCoupon && tierBeatsCoupon && tierDiscountAmount > 0 ? (
                 <p className="mt-1 text-[10px] font-medium text-primary/80">
-                  Cupom {appliedCoupon.code} mantido — o desconto do lote já é maior.
+                  Cupom {appliedCoupon.code} registrado na compra — o desconto do lote, que é maior, é o que vale no preço.
                 </p>
               ) : null}
             </div>

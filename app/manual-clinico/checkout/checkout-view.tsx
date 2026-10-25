@@ -72,19 +72,31 @@ function CouponBox({
   appliedCoupon,
   onApplied,
   onRemoved,
+  initialCode,
 }: {
   product: ProductInfo
   planKey: PlanKey
   appliedCoupon: AppliedCoupon | null
   onApplied: (coupon: AppliedCoupon) => void
   onRemoved: () => void
+  /** Cupom que entra sozinho, uma vez (o do embaixador, num link de produto). */
+  initialCode?: string
 }) {
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  async function applyCoupon() {
-    const normalized = code.trim()
+  const aplicouSozinho = useRef(false)
+  useEffect(() => {
+    if (!initialCode || aplicouSozinho.current || appliedCoupon || !product.allowCoupons) return
+    aplicouSozinho.current = true
+    setCode(initialCode.toUpperCase())
+    applyCoupon(initialCode)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCode, appliedCoupon, product.allowCoupons])
+
+  async function applyCoupon(sobrescrever?: string) {
+    const normalized = (sobrescrever ?? code).trim()
     if (!normalized) return
     setLoading(true)
     setError('')
@@ -169,7 +181,7 @@ function CouponBox({
             />
             <button
               type="button"
-              onClick={applyCoupon}
+              onClick={() => applyCoupon()}
               disabled={loading || !code.trim() || product.currentPrice <= 0}
               className="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-300 px-4 text-sm font-black text-emerald-950 transition hover:bg-emerald-200 disabled:cursor-not-allowed disabled:opacity-50"
             >
@@ -205,6 +217,8 @@ export default function ManualClinicoCheckoutView({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  // Cupom do embaixador vindo de um link de produto (ver CouponPromo).
+  const [cupomAutomatico, setCupomAutomatico] = useState('')
   const [freeLoading, setFreeLoading] = useState(false)
   const [selectedPlanKey, setSelectedPlanKey] = useState<PlanKey>(planQuery || 'vitalicio')
 
@@ -636,6 +650,7 @@ export default function ManualClinicoCheckoutView({
               itens={[{ itemType: 'manual_clinico', itemId: MANUAL_CLINICO_PRODUCT_ID }]}
               planKey={selectedPlanKey}
               aparencia="dark"
+              onAutoAplicar={setCupomAutomatico}
               codigoAplicado={appliedCoupon?.code || null}
               className="mt-3.5"
             />
@@ -658,6 +673,7 @@ export default function ManualClinicoCheckoutView({
                 appliedCoupon={appliedCoupon}
                 onApplied={setAppliedCoupon}
                 onRemoved={() => setAppliedCoupon(null)}
+                initialCode={cupomAutomatico}
               />
             </div>
           </div>

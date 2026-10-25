@@ -37,7 +37,7 @@ const ESPERAMOS = [
 
 const BOLETIM = [
   { icone: Megaphone, titulo: 'Você divulga com o seu cupom', texto: 'Nos stories, no grupo, no corredor. O código é seu e ninguém mais usa.' },
-  { icone: Target, titulo: 'Cada uso é contabilizado', texto: 'Compra fechada com o seu cupom vira registro no seu nome, sozinha. Quem abre o seu link já encontra o cupom pronto.' },
+  { icone: Target, titulo: 'Cada uso é contabilizado', texto: 'Compra fechada com o seu cupom vira registro no seu nome, sozinha. Mande o link de um produto e ele já chega com o cupom aplicado.' },
   { icone: BookOpenCheck, titulo: 'A equipe avalia pelo cupom', texto: 'Não é seguidor nem esforço declarado. É o número de usos do seu código.' },
   { icone: RefreshCw, titulo: 'Renovado por resultado', texto: 'O Plus+ entra no dia em que você é aprovado e sai no dia em que o cupom para.' },
 ]

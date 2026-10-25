@@ -22,7 +22,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import type { PainelDoEmbaixador } from '@/lib/embaixadores/servidor'
-import { ROTULO_DO_DESCONTO, type ChavePix } from '@/lib/embaixadores/regras'
+import { PARAMETRO_DO_LINK, ROTULO_DO_DESCONTO, escopoDoDestino, type ChavePix } from '@/lib/embaixadores/regras'
 import { FormularioPix } from './formulario-pix'
 import {
   Abas,
@@ -70,6 +70,22 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
   const [painel, setPainel] = useState(inicial)
   const { avisar, elemento: aviso } = useAviso()
   const [destino, setDestino] = useState('')
+  const [colado, setColado] = useState('')
+
+  // Endereço de qualquer página do site vira link de produto do embaixador.
+  function colar(texto: string) {
+    setColado(texto)
+    const limpo = texto.trim()
+    if (!limpo) return setDestino('')
+    try {
+      const url = new URL(limpo, window.location.origin)
+      if (!/(^|\.)domineaqui\.com\.br$|^localhost$/.test(url.hostname) && url.origin !== window.location.origin) return
+      url.searchParams.delete(PARAMETRO_DO_LINK)
+      setDestino(`${url.pathname}${url.search}`)
+    } catch {
+      // ainda digitando
+    }
+  }
   const [verQr, setVerQr] = useState(false)
   const [aba, setAba] = useState<Aba>('vendas')
   const e = painel.embaixador
@@ -166,7 +182,10 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
                   <button
                     key={d.para || 'convite'}
                     type="button"
-                    onClick={() => setDestino(d.para)}
+                    onClick={() => {
+                      setDestino(d.para)
+                      setColado('')
+                    }}
                     aria-pressed={destino === d.para}
                     className="emb-selo emb-foco cursor-pointer"
                     data-tom={destino === d.para ? 'verde' : undefined}
@@ -175,6 +194,22 @@ export function PainelDoEmbaixadorView({ painel: inicial }: { painel: PainelDoEm
                   </button>
                 ))}
               </div>
+              <p className="emb-fraca mt-2.5 text-[12.5px] leading-snug">
+                {escopoDoDestino(destino || '/')
+                  ? 'Link de produto: quem abrir já encontra o seu cupom aplicado no pagamento, com ou sem login.'
+                  : 'Convite: apresenta você, conta o cadastro e sugere o seu cupom no pagamento por 15 dias.'}
+              </p>
+              <label className="mt-3 block">
+                <span className="sr-only">Endereço de qualquer página do site</span>
+                <input
+                  className="emb-campo !min-h-[40px] !text-[13.5px]"
+                  placeholder="Ou cole o endereço de um material, pacote…"
+                  value={colado}
+                  onChange={(ev) => colar(ev.target.value)}
+                  aria-invalid={!!colado && !destino}
+                  inputMode="url"
+                />
+              </label>
               <p className="emb-lista mt-3 truncate rounded-xl px-3 py-2.5 text-[14px] font-semibold" title={link}>
                 <Link2 className="emb-fraca mr-1.5 inline h-4 w-4 align-[-3px]" aria-hidden />
                 {link.replace(/^https?:\/\//, '')}

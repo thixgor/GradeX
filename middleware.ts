@@ -13,6 +13,18 @@ import {
   shouldRefreshAdminGate,
   verifyAdminGateToken,
 } from '@/lib/admin-gate'
+import {
+  COOKIE_DA_SUGESTAO,
+  COOKIE_DO_CUPOM,
+  COOKIE_DO_EMBAIXADOR,
+  DIAS_DA_SUGESTAO,
+  DIAS_DO_COOKIE,
+  PARAMETRO_DO_LINK,
+  codigoValido,
+  escopoDoDestino,
+  normalizarCodigo,
+  valorDoCookieDoCupom,
+} from '@/lib/embaixadores/regras'
 
 // Rotas públicas (não precisam de autenticação)
 const publicRoutes = [
@@ -395,9 +407,45 @@ function isDevAuthBypass(): boolean {
   return flag === 'true' || flag === '1'
 }
 
+/**
+ * Página de produto aberta com `?emb=CODIGO` — o link de produto de um
+ * embaixador, ou a mesma URL encaminhada por alguém: grava o vínculo para o
+ * checkout daquele produto abrir com o cupom aplicado (lib/embaixadores).
+ *
+ * Só formato, sem banco: quem confere se o embaixador existe e está ativo é
+ * /api/coupons/promo, na hora de oferecer o cupom. Não conta visita (isso é
+ * do /e/CODIGO, que tem o banco na mão).
+ */
+function vincularAoEmbaixador(request: NextRequest, response: NextResponse) {
+  const bruto = request.nextUrl.searchParams.get(PARAMETRO_DO_LINK)
+  if (!bruto) return
+  const codigo = normalizarCodigo(bruto)
+  if (!codigoValido(codigo)) return
+  const escopo = escopoDoDestino(request.nextUrl.pathname + request.nextUrl.search)
+  if (!escopo) return
+  const opcoes = {
+    maxAge: DIAS_DO_COOKIE * 86_400,
+    path: '/',
+    sameSite: 'lax' as const,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+  }
+  response.cookies.set(COOKIE_DO_CUPOM, valorDoCookieDoCupom(codigo, escopo), opcoes)
+  response.cookies.set(COOKIE_DO_EMBAIXADOR, codigo, opcoes)
+  response.cookies.set(COOKIE_DA_SUGESTAO, codigo, { ...opcoes, maxAge: DIAS_DA_SUGESTAO * 86_400 })
+}
+
+/** O `?emb=` segue junto quando o middleware manda a compra para /comprar. */
+function levarVinculo(request: NextRequest, destino: URL) {
+  const emb = request.nextUrl.searchParams.get(PARAMETRO_DO_LINK)
+  if (emb) destino.searchParams.set(PARAMETRO_DO_LINK, emb)
+  return destino
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const response = NextResponse.next()
+  vincularAoEmbaixador(request, response)
 
   // Skip para assets estáticos
   if (
@@ -515,7 +563,7 @@ export async function middleware(request: NextRequest) {
       comprarUrl.searchParams.set('productType', type === 'package' ? 'package' : 'material')
       comprarUrl.searchParams.set('productId', id)
       comprarUrl.searchParams.set('itemType', type)
-      return withNoIndex(NextResponse.redirect(comprarUrl))
+      return withNoIndex(NextResponse.redirect(levarVinculo(request, comprarUrl)))
     }
   }
 
@@ -646,7 +694,7 @@ export async function middleware(request: NextRequest) {
       comprarUrl.searchParams.set('productType', 'manual_clinico')
       const plan = request.nextUrl.searchParams.get('plan')
       if (plan) comprarUrl.searchParams.set('planKey', plan)
-      return withNoIndex(NextResponse.redirect(comprarUrl))
+      return withNoIndex(NextResponse.redirect(levarVinculo(request, comprarUrl)))
     }
     // Plano Plus+ sem login → mesma ideia: /comprar vende o plano por Serial
     // Key. Sem isto o visitante batia no login, que é justamente o passo que a
@@ -656,7 +704,7 @@ export async function middleware(request: NextRequest) {
       comprarUrl.searchParams.set('productType', 'plus')
       const plan = request.nextUrl.searchParams.get('plan')
       if (plan) comprarUrl.searchParams.set('productId', plan)
-      return withNoIndex(NextResponse.redirect(comprarUrl))
+      return withNoIndex(NextResponse.redirect(levarVinculo(request, comprarUrl)))
     }
     // Demais páginas protegidas redirecionam para login
     const loginUrl = new URL('/auth/login', request.url)

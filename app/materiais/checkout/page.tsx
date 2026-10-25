@@ -438,6 +438,9 @@ export default function MateriaisCheckoutPage() {
   const [freeCheckoutLoading, setFreeCheckoutLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null)
+  // Cupom do embaixador que trouxe a pessoa por um link de produto: a faixa
+  // avisa e a caixa de cupom aplica sozinha (ver CouponPromo).
+  const [cupomAutomatico, setCupomAutomatico] = useState('')
   const [removedAccessibleItems, setRemovedAccessibleItems] = useState<CartSkippedItem[]>([])
 
   // Compra sem login (Serial Key): detectamos visitante e coletamos os dados.
@@ -1428,6 +1431,7 @@ export default function MateriaisCheckoutPage() {
                       itemId: linha.itemId,
                     }))}
                     aparencia="dark"
+                    onAutoAplicar={setCupomAutomatico}
                     codigoAplicado={appliedCoupon?.code || null}
                     className="mb-3"
                   />
@@ -1437,7 +1441,7 @@ export default function MateriaisCheckoutPage() {
                     appliedCoupon={appliedCoupon}
                     onApplied={setAppliedCoupon}
                     onRemoved={() => setAppliedCoupon(null)}
-                    initialCode={couponFromQuery}
+                    initialCode={couponFromQuery || cupomAutomatico}
                   />
                 </div>
               </div>
@@ -1865,6 +1869,7 @@ export default function MateriaisCheckoutPage() {
                   materialType: item.type === 'flashcard_deck' ? 'flashcard_deck' : undefined,
                 }]}
                 aparencia="dark"
+                onAutoAplicar={setCupomAutomatico}
                 codigoAplicado={appliedCoupon?.code || null}
               />
 
@@ -1884,6 +1889,7 @@ export default function MateriaisCheckoutPage() {
                 appliedCoupon={appliedCoupon}
                 onApplied={setAppliedCoupon}
                 onRemoved={() => setAppliedCoupon(null)}
+                initialCode={cupomAutomatico}
               />
 
               {item.description && (

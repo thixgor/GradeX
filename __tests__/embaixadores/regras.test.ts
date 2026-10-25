@@ -3,6 +3,11 @@ import {
   comissaoSobreOProduto,
   destinoSeguro,
   dividirVenda,
+  escopoDoDestino,
+  itemNoEscopo,
+  lerCookieDoCupom,
+  valorDoCookieDoCupom,
+  vincularAoEmbaixador,
   formatarChavePix,
   linkSeguro,
   nomeDiscreto,
@@ -145,5 +150,51 @@ describe('as semanas do gráfico', () => {
     expect(s).toHaveLength(12)
     expect(new Set(s).size).toBe(12)
     expect(s[11]).toBe('2026-10-19')
+  })
+})
+
+describe('link de produto', () => {
+  const id = '66ab0123456789abcdef0123'
+
+  it('cada página de produto alcança a compra certa', () => {
+    expect(escopoDoDestino(`/materiais/${id}`)).toBe(`material:${id}`)
+    expect(escopoDoDestino(`/materiais/${id}/viewer`)).toBe(`material:${id}`)
+    expect(escopoDoDestino(`/pacotes/${id}`)).toBe(`package:${id}`)
+    expect(escopoDoDestino(`/materiais/checkout?id=${id}&type=package`)).toBe(`package:${id}`)
+    expect(escopoDoDestino('/materiais')).toBe('materiais')
+    expect(escopoDoDestino('/flashcards/d/anatomia')).toBe('flashcards')
+    expect(escopoDoDestino('/buy')).toBe('plus')
+    expect(escopoDoDestino('/buy/checkout?plan=semestral')).toBe('plus')
+    expect(escopoDoDestino('/manual-clinico/farmacologia')).toBe('manual_clinico')
+    expect(escopoDoDestino('/comprar?productType=plus&productId=x')).toBe('plus')
+  })
+
+  it('convite e páginas que não vendem nada não aplicam cupom', () => {
+    expect(escopoDoDestino('/convite/MARIA10')).toBeNull()
+    expect(escopoDoDestino('/')).toBeNull()
+    expect(escopoDoDestino('/banco-questoes')).toBeNull()
+    expect(escopoDoDestino('/provas')).toBeNull()
+  })
+
+  it('o cupom só entra no produto que o link alcança', () => {
+    expect(itemNoEscopo(`material:${id}`, { itemType: 'material', itemId: id })).toBe(true)
+    expect(itemNoEscopo(`material:${id}`, { itemType: 'material', itemId: '66ab0123456789abcdef9999' })).toBe(false)
+    expect(itemNoEscopo('plus', { itemType: 'plus', itemId: 'semestral' })).toBe(true)
+    expect(itemNoEscopo('plus', { itemType: 'manual_clinico', itemId: 'x' })).toBe(false)
+    expect(itemNoEscopo('materiais', { itemType: 'package', itemId: id })).toBe(true)
+    expect(itemNoEscopo('flashcards', { itemType: 'material', itemId: id, materialType: 'flashcard_deck' })).toBe(true)
+    expect(itemNoEscopo('flashcards', { itemType: 'material', itemId: id, materialType: 'resumo' })).toBe(false)
+  })
+
+  it('o cookie volta igual e recusa lixo', () => {
+    expect(lerCookieDoCupom(valorDoCookieDoCupom('MARIA10', `material:${id}`))).toEqual({ codigo: 'MARIA10', escopo: `material:${id}` })
+    expect(lerCookieDoCupom('MARIA10.qualquercoisa')).toBeNull()
+    expect(lerCookieDoCupom('semponto')).toBeNull()
+    expect(lerCookieDoCupom(undefined)).toBeNull()
+  })
+
+  it('a URL do produto carrega o embaixador, trocando um vínculo antigo', () => {
+    expect(vincularAoEmbaixador('/buy', 'MARIA10')).toBe('/buy?emb=MARIA10')
+    expect(vincularAoEmbaixador('/buy/checkout?plan=anual&emb=JOAO10', 'MARIA10')).toBe('/buy/checkout?plan=anual&emb=MARIA10')
   })
 })
