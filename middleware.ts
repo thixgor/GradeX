@@ -318,6 +318,9 @@ function isPublicRoute(pathname: string): boolean {
     pathname === '/api/materiais' ||
     pathname === '/api/materiais/folders' ||
     pathname === '/api/materiais/packages' ||
+    // Prateleira de sugestões das páginas de material e pacote (abertas a
+    // visitante). A rota só lê a sessão quando não vem `visitante=1`.
+    pathname === '/api/materiais/recomendacoes' ||
     pathname === '/api/flashcards/manual/store' ||
     pathname === '/api/flashcards/manual/folders' ||
     pathname === '/api/manual-clinico' ||

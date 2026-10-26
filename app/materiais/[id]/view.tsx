@@ -36,6 +36,7 @@ import {
 import { cn } from '@/lib/utils'
 import { AppShell } from '@/components/app-shell'
 import { FundoIos } from '@/components/materiais/fundo-ios'
+import { Recomendacoes } from '@/components/materiais/recomendacoes'
 import { BagPlusIcon, CartButton } from '@/components/materiais/shared'
 import { abrirCarrinho } from '@/lib/abrir-carrinho'
 import { useTrackView } from '@/hooks/use-track-view'
@@ -1090,6 +1091,8 @@ export default function MaterialViewPage() {
               />
             </div>
           </div>
+
+          <Recomendacoes tipo="material" id={id} autenticado={data.isAuthenticated} />
         </div>
 
         {showMobilePurchaseBar && (

@@ -35,6 +35,7 @@ import {
 } from '@/components/materiais/timed-access'
 import { AppShell } from '@/components/app-shell'
 import { FundoIos } from '@/components/materiais/fundo-ios'
+import { Recomendacoes } from '@/components/materiais/recomendacoes'
 import { BagPlusIcon, CartButton } from '@/components/materiais/shared'
 import { abrirCarrinho } from '@/lib/abrir-carrinho'
 import { cn } from '@/lib/utils'
@@ -796,6 +797,8 @@ export default function PackageDetailPage() {
               />
             </div>
           </div>
+
+          <Recomendacoes tipo="package" id={id} autenticado={access.isAuthenticated} />
         </div>
 
         {showMobilePurchaseBar && (
