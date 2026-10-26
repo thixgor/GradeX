@@ -160,7 +160,9 @@ export function auditarQuestao(q: QuestaoAuditavel, alternativasEsperadas: numbe
   }
   if (
     !q.temRecurso &&
-    /\b(tabela|gr[aá]fico|esquema|quadro|figura|fluxograma)\b[^.]{0,30}\b(abaixo|a seguir|acima|apresentad|seguinte|ao lado)/i.test(enunciado)
+    // "quadro clínico a seguir", "esquema vacinal abaixo": só conta a palavra
+    // que é material de apoio de fato, colada no "a seguir".
+    /\b(tabela|gr[aá]fico|fluxograma|figura)\b[^.]{0,15}\b(abaixo|a seguir|acima|ao lado)\b/i.test(enunciado)
   ) {
     alertas.push({ codigo: 'recurso-ausente', gravidade: 'estrutural', detalhe: 'cita material de apoio que não veio' })
   }
