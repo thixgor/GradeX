@@ -7,6 +7,7 @@ import {
   buildCouponPromoPayload,
   isCouponItemEligible,
   isCouponPromoVisible,
+  isCouponRestrictedToUsers,
   type Coupon,
   type CouponCheckoutItem,
   type CouponProductType,
@@ -88,7 +89,9 @@ export async function GET(request: NextRequest) {
       .limit(200)
       .toArray()
 
-    const visiveis = candidatos.filter((cupom) => isCouponPromoVisible(cupom, agora))
+    // Cupom de uma pessoa só (oferta exclusiva) nunca vira vitrine: quem o
+    // recebeu já chega pela página da oferta, com o código aplicado.
+    const visiveis = candidatos.filter((cupom) => isCouponPromoVisible(cupom, agora) && !isCouponRestrictedToUsers(cupom))
     if (visiveis.length === 0) {
       const doEmbaixador = temCookieDeEmbaixador ? await promoDoEmbaixador(db, request, itens, agora) : null
       return NextResponse.json({ promos: doEmbaixador ? [doEmbaixador] : [] })

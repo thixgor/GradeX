@@ -118,6 +118,11 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('coupon_redemptions').createIndex({ userId: 1, createdAt: -1 }),
     db.collection('coupon_redemptions').createIndex({ couponId: 1, userId: 1, status: 1 }),
     db.collection('coupon_redemptions').createIndex({ couponId: 1, userEmail: 1, status: 1 }),
+    // ── Ofertas exclusivas e trocas de produto (lib/ofertas-exclusivas, lib/trocas-de-produto) ──
+    db.collection('ofertas_exclusivas').createIndex({ createdAt: -1 }),
+    db.collection('ofertas_exclusivas').createIndex({ userId: 1, createdAt: -1 }),
+    db.collection('trocas_de_produto').createIndex({ criadoEm: -1 }),
+    db.collection('trocas_de_produto').createIndex({ userId: 1, criadoEm: -1 }),
     // ── Programa de Embaixadores (lib/embaixadores/servidor.ts) ──
     db.collection('embaixadores').createIndex({ codigo: 1 }, { unique: true }),
     db.collection('embaixadores').createIndex({ userId: 1 }, { unique: true }),

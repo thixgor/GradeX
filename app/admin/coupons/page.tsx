@@ -73,6 +73,8 @@ type Coupon = {
   allowedManualPlans: ManualPlanKey[]
   stackWithTier: boolean
   promo: CouponPromo | null
+  exclusiveForEmail: string | null
+  ofertaId: string | null
   usageCount: number
   expiresAt: string | null
   durationValue: number | null
@@ -901,6 +903,11 @@ export default function AdminCouponsPage() {
                           {coupon.isActive ? 'Ativo' : 'Inativo'}
                         </span>
                         <span className="rounded-md border px-2 py-1 text-xs text-muted-foreground">{scopeLabels[coupon.scope]}</span>
+                        {coupon.exclusiveForEmail ? (
+                          <span className="inline-flex items-center gap-1 rounded-md border border-fuchsia-300/30 bg-fuchsia-400/10 px-2 py-1 text-xs font-semibold text-fuchsia-700 dark:text-fuchsia-200" title="Criado por uma oferta exclusiva: só esta conta consegue usar.">
+                            <UserCheck className="h-3 w-3" /> Exclusivo: {coupon.exclusiveForEmail}
+                          </span>
+                        ) : null}
                         {coupon.stackWithTier ? (
                           <span className="rounded-md border border-amber-300/30 bg-amber-400/10 px-2 py-1 text-xs font-semibold text-amber-700 dark:text-amber-200">Empilha com lote</span>
                         ) : null}

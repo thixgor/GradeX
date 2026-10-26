@@ -97,6 +97,9 @@ function serializeCoupon(coupon: Coupon, stats?: any) {
     allowedManualPlans: coupon.allowedManualPlans || [],
     stackWithTier: coupon.stackWithTier === true,
     promo: coupon.promo || null,
+    // Cupom de uma pessoa só, criado por uma oferta exclusiva.
+    exclusiveForEmail: coupon.allowedUserEmails?.[0] || null,
+    ofertaId: coupon.ofertaId || null,
     usageCount: Number(coupon.usageCount || 0),
     expiresAt: serializeDate(coupon.expiresAt),
     durationValue: coupon.durationValue ?? null,

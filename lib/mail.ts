@@ -2787,3 +2787,166 @@ export async function sendMonitoriaEmail(input: {
     return false
   }
 }
+
+/**
+ * Oferta exclusiva: o carrinho que o admin montou para uma pessoa, com o
+ * cupom dela. O tom é de convite pessoal — o nome, o recado do admin e o
+ * prazo do cupom. Preços e escassez saem do servidor (ver
+ * lib/ofertas-exclusivas), nunca de texto livre.
+ */
+export async function sendOfertaExclusivaEmail(input: {
+  email: string
+  name: string
+  titulo: string
+  mensagem?: string
+  itens: { titulo: string; preco: number; precoFinal: number }[]
+  subtotal: number
+  desconto: number
+  total: number
+  cupom?: { codigo: string; rotulo: string } | null
+  /** Fim do cupom (contagem regressiva no e-mail é só a data). */
+  validoAte?: Date | null
+  /** Usos que restam no cupom, quando ele tem limite. */
+  usosRestantes?: number | null
+  link: string
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+
+  const linhas = input.itens
+    .map((item) => {
+      const comDesconto = item.precoFinal < item.preco
+      return `
+        <tr>
+          <td style="padding: 10px 0; border-bottom: 1px solid #edf2f7; color: #0f3d2e; font-weight: 600; font-size: 14px;">${escapeHtml(item.titulo)}</td>
+          <td style="padding: 10px 0; border-bottom: 1px solid #edf2f7; text-align: right; white-space: nowrap; font-size: 14px;">
+            ${comDesconto ? `<span style="color: #a0aec0; text-decoration: line-through; font-size: 12px;">${formatBRLEmail(item.preco)}</span><br>` : ''}
+            <strong style="color: #0f3d2e;">${formatBRLEmail(item.precoFinal)}</strong>
+          </td>
+        </tr>`
+    })
+    .join('')
+
+  const cupomBlock = input.cupom
+    ? `
+    <div style="background: linear-gradient(135deg, #0f3d2e, #1a5c45); border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+      <p style="margin: 0 0 6px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #a7f3d0; font-weight: 700;">Seu cupom exclusivo · ${escapeHtml(input.cupom.rotulo)}</p>
+      <p style="margin: 0; font-family: 'Courier New', Courier, monospace; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: 2px;">${escapeHtml(input.cupom.codigo)}</p>
+      ${input.validoAte ? `<p style="margin: 8px 0 0 0; font-size: 13px; color: #fde68a;">Válido até ${escapeHtml(input.validoAte.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' }))}</p>` : ''}
+      ${typeof input.usosRestantes === 'number' ? `<p style="margin: 4px 0 0 0; font-size: 13px; color: #fde68a;">${input.usosRestantes === 1 ? 'Resta 1 uso' : `Restam ${input.usosRestantes} usos`}</p>` : ''}
+    </div>
+    <p style="font-size: 13px; color: #718096; text-align: center; margin-top: -8px;">O cupom já entra sozinho quando você abre a oferta.</p>
+    `
+    : ''
+
+  const mensagemBlock = input.mensagem
+    ? `<p style="background-color: #fff8e1; border-left: 3px solid #f57c00; padding: 12px 16px; margin: 18px 0; font-size: 15px; color: #4a5568; white-space: pre-line;">${escapeHtml(input.mensagem)}</p>`
+    : ''
+
+  const content = `
+    <h1 class="h1">${escapeHtml(input.titulo)} ✨</h1>
+    <p>Olá, ${escapeHtml(firstName)}!</p>
+    <p>Separamos uma <strong>oferta feita só para você</strong>. Ninguém mais recebeu este carrinho.</p>
+
+    ${mensagemBlock}
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0; border-collapse: collapse;">
+      ${linhas}
+      ${input.desconto > 0 ? `
+      <tr>
+        <td style="padding: 10px 0; color: #43a047; font-size: 14px;">Desconto exclusivo</td>
+        <td style="padding: 10px 0; text-align: right; color: #43a047; font-weight: 700; font-size: 14px;">− ${formatBRLEmail(input.desconto)}</td>
+      </tr>` : ''}
+      <tr>
+        <td style="padding: 12px 0 0 0; font-weight: 700; color: #0f3d2e; font-size: 16px;">Total</td>
+        <td style="padding: 12px 0 0 0; text-align: right; font-weight: 800; color: #f57c00; font-size: 18px;">
+          ${input.desconto > 0 ? `<span style="color: #a0aec0; text-decoration: line-through; font-size: 13px; font-weight: 400;">${formatBRLEmail(input.subtotal)}</span> ` : ''}${formatBRLEmail(input.total)}
+        </td>
+      </tr>
+    </table>
+
+    ${cupomBlock}
+
+    <div style="text-align: center;">
+      <a href="${input.link}" class="button" target="_blank">Ver minha oferta</a>
+    </div>
+
+    <p style="margin-top: 16px; font-size: 13px; color: #718096; text-align: center;">
+      Ou copie e cole este link no seu navegador:<br>
+      <a href="${input.link}" style="color: #0f3d2e; word-break: break-all;">${input.link}</a>
+    </p>
+  `
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: input.cupom
+      ? `${firstName}, uma oferta só sua: ${input.cupom.rotulo}`
+      : `${firstName}, separamos uma oferta só para você`,
+    html: getEmailTemplate('Oferta exclusiva', content),
+  })
+}
+
+/**
+ * Aviso de troca de produto: o que a pessoa tinha, o que passa a ter e como
+ * fica o preço. A frase sobre a diferença vem pronta de
+ * `fraseDaDiferenca` (lib/trocas-de-produto) — o e-mail só a exibe.
+ */
+export async function sendTrocaDeProdutoEmail(input: {
+  email: string
+  name: string
+  de: string
+  para: string
+  precoAntigo: number
+  precoNovo: number
+  fraseDaDiferenca: string
+  observacao?: string
+  link: string
+}) {
+  const firstName = input.name ? input.name.split(' ')[0] : 'Aluno'
+
+  const observacaoBlock = input.observacao
+    ? `<p style="background-color: #f7fafc; border-left: 3px solid #cbd5e0; padding: 10px 14px; margin: 18px 0; font-size: 14px; color: #4a5568; white-space: pre-line;">${escapeHtml(input.observacao)}</p>`
+    : ''
+
+  const content = `
+    <h1 class="h1">Troca realizada ✅</h1>
+    <p>Olá, ${escapeHtml(firstName)}!</p>
+    <p>Confirmamos a troca do seu produto. O novo já está liberado na sua conta.</p>
+
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin: 20px 0; border-collapse: separate; border-spacing: 0 8px;">
+      <tr>
+        <td style="background-color: #f7fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px;">
+          <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #a0aec0; font-weight: 700;">Você tinha</p>
+          <p style="margin: 0; color: #718096; font-weight: 600; text-decoration: line-through;">${escapeHtml(input.de)}</p>
+          <p style="margin: 4px 0 0 0; font-size: 13px; color: #a0aec0;">Valor: ${formatBRLEmail(input.precoAntigo)}</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="background-color: #f0faf4; border: 1px solid #c6f0d8; border-radius: 10px; padding: 14px 16px;">
+          <p style="margin: 0 0 4px 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #43a047; font-weight: 700;">Agora você tem</p>
+          <p style="margin: 0; color: #0f3d2e; font-weight: 700;">${escapeHtml(input.para)}</p>
+          <p style="margin: 4px 0 0 0; font-size: 13px; color: #43a047;">Valor: ${formatBRLEmail(input.precoNovo)}</p>
+        </td>
+      </tr>
+    </table>
+
+    <p>${escapeHtml(input.fraseDaDiferenca)}</p>
+
+    ${observacaoBlock}
+
+    <div style="text-align: center;">
+      <a href="${input.link}" class="button" target="_blank">Acessar meu novo produto</a>
+    </div>
+
+    <p style="font-size: 13px; color: #718096;">
+      O acesso ao produto anterior foi encerrado com a troca. Se algo não estiver certo, é só responder este e-mail.
+    </p>
+  `
+
+  await transporter.sendMail({
+    from: '"DomineAqui" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `Troca realizada: agora você tem ${input.para}`,
+    html: getEmailTemplate('Troca realizada', content),
+  })
+}

@@ -9,6 +9,7 @@ import {
   Database,
   FileText,
   Gamepad2,
+  Gift,
   GraduationCap,
   HeartHandshake,
   HeartPulse,
@@ -274,6 +275,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: BadgePercent,
     group: 'comercial',
     keywords: ['cupom', 'cupons', 'desconto', 'promocao', 'voucher'],
+  },
+  {
+    title: 'Ofertas e Trocas',
+    description: 'Carrinho exclusivo com cupom para uma pessoa e troca de um produto por outro, com aviso por e-mail.',
+    href: '/admin/ofertas',
+    icon: Gift,
+    group: 'comercial',
+    keywords: ['oferta', 'exclusiva', 'carrinho', 'troca', 'trocar', 'substituir', 'upgrade', 'presente'],
   },
   {
     title: 'Embaixadores',

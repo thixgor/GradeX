@@ -1092,6 +1092,10 @@ export interface Notification {
     | 'avaliacao_lembrete'
     /** Monitorias: pedido, proposta, pagamento, repasse... (abre `actionUrl`) */
     | 'monitoria'
+    /** Oferta exclusiva montada pelo admin (abre `actionUrl`, a página da oferta) */
+    | 'oferta'
+    /** O admin trocou um produto da pessoa por outro (abre `actionUrl`) */
+    | 'troca_de_produto'
   /** Título curto e destino do clique (usados pelas notificações de monitoria). */
   title?: string
   actionUrl?: string
@@ -2055,8 +2059,11 @@ export interface MaterialPurchase {
    * `'plus_revoked'`: resgate do Plus+ suspenso porque a assinatura caiu. O
    * registro fica guardado para a renovação devolvê-lo — ver `lib/plus-claims`.
    * Só ocorre em documentos com `source: 'plus'`; compra avulsa nunca chega aqui.
+   *
+   * `'swapped'`: o admin trocou este item por outro (ver lib/trocas-de-produto).
+   * O acesso passou para o registro novo, que aponta de volta para este.
    */
-  status: 'pending' | 'completed' | 'refunded' | 'plus_revoked'
+  status: 'pending' | 'completed' | 'refunded' | 'plus_revoked' | 'swapped'
   purchasedAt: Date
   refundedAt?: Date
   /**
@@ -2065,7 +2072,7 @@ export interface MaterialPurchase {
    * para o item aparecer em "Meus materiais" e para o resgate ser auditável,
    * mas não representa receita e é revogado se a assinatura cair.
    */
-  source?: 'purchase' | 'plus'
+  source?: 'purchase' | 'plus' | 'manual' | 'swap'
   /** Quando o item foi resgatado pela assinatura (source = 'plus'). */
   claimedAt?: Date
   /** Quando o resgate foi suspenso pela queda do Plus+. */
@@ -2074,6 +2081,17 @@ export interface MaterialPurchase {
   plusRevokedReason?: string
   /** Quando o resgate voltou por renovação do Plus+. */
   plusRestoredAt?: Date
+
+  // ── Troca de produto feita pelo admin ─────────────────────────────────────
+  /** No registro novo (`source: 'swap'`): a compra que foi trocada. */
+  swappedFromPurchaseId?: string
+  swappedFromItem?: { itemType: 'material' | 'package'; itemId: string; itemTitle: string }
+  /** No registro antigo (`status: 'swapped'`): para onde o acesso foi. */
+  swappedToPurchaseId?: string
+  swappedToItem?: { itemType: 'material' | 'package'; itemId: string; itemTitle: string }
+  swappedAt?: Date
+  swappedBy?: string
+  swappedByName?: string
 
   // ── Acesso por tempo limitado ──────────────────────────────────────────────
   /** `'timed'` = comprou uma versão com prazo. Ausente/`'lifetime'` = para sempre. */

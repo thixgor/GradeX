@@ -358,6 +358,12 @@ async function runRevocationEffects(order: PaymentOrder, newStatus: PaymentStatu
       { userId: order.userId, itemId: order.refId, providerOrderId: String(order._id) },
       { $set: { status: 'refunded', refundedAt: new Date() } }
     )
+    // Item que o admin trocou depois da compra: o acesso novo herdou o pedido
+    // (ver lib/trocas-de-produto) e cai junto com ele.
+    await db.collection<MaterialPurchase>('material_purchases').updateMany(
+      { userId: order.userId, providerOrderId: String(order._id), source: 'swap', status: 'completed' },
+      { $set: { status: 'refunded', refundedAt: new Date() } }
+    )
   }
   if (order.type === 'product' && order.metadata?.productType === MANUAL_CLINICO_PRODUCT_TYPE) {
     const db = await getDb()

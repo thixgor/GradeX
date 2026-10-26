@@ -44,6 +44,15 @@ export interface Coupon {
    */
   allowedManualPlans?: ManualClinicoPlanKey[] | null
   /**
+   * Cupom de uma pessoa só: a oferta exclusiva que o admin monta para alguém
+   * (ver lib/ofertas-exclusivas). Vazio/ausente = qualquer conta. A conta é
+   * reconhecida pelo id ou, na compra sem login, pelo e-mail do cadastro.
+   */
+  allowedUserIds?: string[] | null
+  allowedUserEmails?: string[] | null
+  /** Oferta exclusiva que criou este cupom. */
+  ofertaId?: string | null
+  /**
    * Se true, o desconto do cupom é aplicado EM CIMA do desconto de lote
    * (pricing event) — cupom sobre cupom. Se false (padrão), vale a regra do
    * "maior dos dois" (lote OU cupom, o que for maior).
@@ -156,6 +165,29 @@ export function isCouponExpired(coupon: Coupon, now = new Date()) {
 
 export function isCouponUsageExhausted(coupon: Coupon) {
   return typeof coupon.usageLimit === 'number' && coupon.usageLimit > 0 && Number(coupon.usageCount || 0) >= coupon.usageLimit
+}
+
+export function isCouponRestrictedToUsers(coupon: Pick<Coupon, 'allowedUserIds' | 'allowedUserEmails'>) {
+  return Boolean(coupon.allowedUserIds?.length || coupon.allowedUserEmails?.length)
+}
+
+/**
+ * A conta pode usar este cupom? Sempre sim para cupom aberto; para o cupom de
+ * uma pessoa só, vale o id da conta ou o e-mail (o checkout sem login só tem o
+ * e-mail digitado).
+ */
+export function isCouponAllowedForUser(
+  coupon: Pick<Coupon, 'allowedUserIds' | 'allowedUserEmails'>,
+  identity: { userId?: string; userEmail?: string }
+) {
+  if (!isCouponRestrictedToUsers(coupon)) return true
+  const userId = String(identity.userId || '')
+  if (userId && (coupon.allowedUserIds || []).includes(userId)) return true
+  const email = String(identity.userEmail || '').trim().toLowerCase()
+  if (email && (coupon.allowedUserEmails || []).some((allowed) => String(allowed).trim().toLowerCase() === email)) {
+    return true
+  }
+  return false
 }
 
 export function isCouponItemEligible(coupon: Coupon, item: CouponCheckoutItem) {
@@ -296,6 +328,10 @@ export async function validateCouponForCheckout(
   }
   if (typeof coupon.minimumCartAmount === 'number' && coupon.minimumCartAmount > 0 && amountBeforeCoupon < coupon.minimumCartAmount) {
     throw new CouponError(`Este cupom exige compra mínima de ${formatMoney(coupon.minimumCartAmount)}.`)
+  }
+
+  if (!isCouponAllowedForUser(coupon, { userId: input.userId, userEmail: input.userEmail })) {
+    throw new CouponError('Este cupom é exclusivo de outra conta.', 403)
   }
 
   if (coupon.firstPurchaseOnly || coupon.allowedAfyaUnits?.length || isCouponPerUserLimitEnabled(coupon)) {

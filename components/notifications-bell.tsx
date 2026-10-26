@@ -149,11 +149,16 @@ export function NotificationsBell() {
       router.push(notification.ticketId ? `/?suporte=${notification.ticketId}` : '/')
     } else if (notification.type === 'order_update') {
       router.push('/profile?tab=pedidos')
-    } else if (notification.type === 'monitoria') {
+    } else if (
+      notification.type === 'monitoria' ||
+      notification.type === 'oferta' ||
+      notification.type === 'troca_de_produto'
+    ) {
       // Só caminho interno: `actionUrl` é gravado pelo servidor, mas não
       // deixamos uma notificação mandar a pessoa para fora do site.
       const destino = notification.actionUrl || ''
-      router.push(destino.startsWith('/') && !destino.startsWith('//') ? destino : '/monitorias/minhas')
+      const reserva = notification.type === 'monitoria' ? '/monitorias/minhas' : '/materiais'
+      router.push(destino.startsWith('/') && !destino.startsWith('//') ? destino : reserva)
     } else {
       router.push(`/exam/${notification.examId}/user/${notification.userId}`)
     }
@@ -222,7 +227,7 @@ export function NotificationsBell() {
                     <p className="text-sm font-medium">
                       {notification.ticketId
                         ? notification.ticketTitle
-                        : notification.examTitle}
+                        : notification.examTitle || notification.title}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       {notification.message}

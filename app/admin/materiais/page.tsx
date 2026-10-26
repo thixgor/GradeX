@@ -3460,7 +3460,11 @@ function AdminMateriaisContent() {
                         : p.price === 0
                           ? <Gift className="h-3.5 w-3.5 text-green-500" />
                           : <CreditCard className="h-3.5 w-3.5 text-blue-500" />
-                      const sourceLabel = p.source === 'manual' ? 'Manual' : p.price === 0 ? 'Grátis' : `R$ ${p.price?.toFixed(2)}`
+                      const sourceLabel = p.source === 'manual'
+                        ? 'Manual'
+                        : p.source === 'swap'
+                          ? `Troca de ${p.swappedFromItem?.itemTitle || 'outro item'}`
+                          : p.price === 0 ? 'Grátis' : `R$ ${p.price?.toFixed(2)}`
                       const planBadge = p.userAccountType
                         ? { plus: { label: 'Plus+', color: '#f59e0b', icon: <Crown className="h-3 w-3" /> },
                             // Legado — contas ainda não migradas.
