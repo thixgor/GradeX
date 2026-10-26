@@ -52,9 +52,9 @@ const FOCOS: { id: Foco; rotulo: string }[] = [
 ]
 
 const NOTAS: { valor: FlashcardDifficultyFeedback; rotulo: string; dica: string; css: string }[] = [
-  { valor: 'porrada', rotulo: 'Errei', dica: 'volta logo', css: 'DIFICIL' },
-  { valor: 'equilibrado', rotulo: 'Com esforço', dica: 'quase', css: 'MEDIO' },
-  { valor: 'facil', rotulo: 'Lembrei', dica: 'fácil', css: 'FACIL' },
+  { valor: 'facil', rotulo: 'Fácil', dica: 'lembrei na hora', css: 'FACIL' },
+  { valor: 'equilibrado', rotulo: 'Médio', dica: 'com esforço', css: 'MEDIO' },
+  { valor: 'porrada', rotulo: 'Difícil', dica: 'errei, volta logo', css: 'DIFICIL' },
 ]
 
 const FRASES_GERANDO = [
