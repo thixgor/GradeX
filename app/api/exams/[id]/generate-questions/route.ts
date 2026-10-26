@@ -99,7 +99,11 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
     const resultado = await gerarLoteDeQuestoes({ vagas, alternativas, contexto, evitar }, 52_000)
     if (resultado.questoes.length === 0) {
       return NextResponse.json(
-        { error: 'A IA não devolveu nenhuma questão aprovada na revisão. Tente de novo.', faltaram: resultado.faltaram },
+        {
+          error: 'A IA não entregou uma questão aprovada na revisão. Tente de novo.',
+          faltaram: resultado.faltaram,
+          motivos: resultado.motivos.slice(0, 6),
+        },
         { status: 502 },
       )
     }
@@ -113,6 +117,8 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
           ? 'A IA está sobrecarregada agora. Tente de novo em instantes.'
           : 'Não foi possível gerar as questões. Verifique a configuração da IA.',
         temporario,
+        // O motivo técnico (sem chave nem conteúdo): tempo esgotado, cota, modelo indisponível.
+        detalhe: erro instanceof Error ? erro.message.slice(0, 240) : undefined,
       },
       { status: temporario ? 503 : 500 },
     )

@@ -225,22 +225,36 @@ export function lerJson(texto: string): any {
     return JSON.parse(t)
   } catch {
     const recorte = t.match(/\{[\s\S]*\}/)
-    return recorte ? JSON.parse(recorte[0]) : null
+    try {
+      return recorte ? JSON.parse(recorte[0]) : null
+    } catch {
+      // JSON cortado (saída truncada): quem chama trata como "não veio".
+      return null
+    }
   }
 }
 
-function lerQuestao(bruta: any, vaga: VagaDaQuestao): QuestaoGerada | null {
+function lerQuestao(bruta: any, vaga: VagaDaQuestao, alternativasPedidas: number): QuestaoGerada | null {
   if (!bruta || typeof bruta !== 'object') return null
   let alternativas: AlternativaGerada[] = (Array.isArray(bruta.alternativas) ? bruta.alternativas : []).slice(0, 6).map((a: any) => ({
     texto: semLetra(limpo(a?.texto, 600)),
-    correta: a?.correta === true,
+    correta: a?.correta === true || a?.correta === 'true',
     comentario: limpo(a?.comentario, 900),
   }))
+  // Alternativa a mais: sai uma distratora do fim, em vez de perder a questão.
+  const esperadas = vaga.formato === 'assertion-reason' ? 5 : alternativasPedidas
+  while (alternativas.length > esperadas) {
+    const k = alternativas.map((a) => a.correta).lastIndexOf(false)
+    if (k < 0) break
+    alternativas.splice(k, 1)
+  }
   if (vaga.formato === 'assertion-reason' && alternativas.length === 5) {
     // Texto canônico sempre: a IA às vezes "melhora" a redação e cria duas certas.
     alternativas = alternativas.map((a, i) => ({ ...a, texto: ALTERNATIVAS_ASSERCAO_RAZAO[i] }))
   }
-  const recurso = vaga.recurso ? sanitizarRecurso(bruta.recurso) : null
+  // Recurso que veio e desenha fica, mesmo sem ter sido pedido: o enunciado
+  // provavelmente o cita, e jogar fora deixaria a questão sem o dado.
+  const recurso = sanitizarRecurso(bruta.recurso)
   return {
     vaga,
     foco: limpo(bruta.foco, 120),
@@ -354,10 +368,17 @@ ${linhas.join('\n')}${evitar}`
  * algo travou e vale mais pular para o próximo modelo do que esperar) e prazo
  * total abaixo do teto da função (60 s em `vercel.json`).
  */
-async function chamar(prompt: string, esquema: unknown, maxSaida: number, prazoMs: number, tentativaMs = 24_000) {
+async function chamar(
+  prompt: string,
+  esquema: unknown,
+  maxSaida: number,
+  prazoMs: number,
+  tentativaMs = 24_000,
+  modelos: string[] = modelosRapidos(),
+) {
   return gerarConteudoGemini({
     secao: 'personalExams',
-    modelos: modelosRapidos(),
+    modelos,
     corpo: {
       systemInstruction: { parts: [{ text: INSTRUCAO_DO_SISTEMA }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -413,38 +434,86 @@ export interface ResultadoDoLote {
   /** Vagas que não viraram questão (descartadas pela auditoria ou não devolvidas). */
   faltaram: VagaDaQuestao[]
   auditoria: { reparadas: number; descartadas: number; alertasRestantes: number }
+  /** Por que alguma vaga não virou questão — vai para o log e para a tela. */
+  motivos: string[]
 }
 
-export async function gerarLoteDeQuestoes(p: PedidoDeLote, prazoMs = 52_000): Promise<ResultadoDoLote> {
-  const inicio = Date.now()
-  const saidaPorQuestao = 2_200
-  // Reserva tempo para o reparo: a geração não pode comer o prazo inteiro.
-  const { texto, dados, modelo } = await chamar(promptDoLote(p), ESQUEMA_LOTE, saidaPorQuestao * p.vagas.length, prazoMs - 12_000, 24_000 + 8_000 * (p.vagas.length - 1))
-  registrarUso(`lote de ${p.vagas.length}`, dados, modelo)
+interface Rodada {
+  aprovadas: { q: QuestaoGerada; alertas: Alerta[] }[]
+  faltaram: VagaDaQuestao[]
+  descartadas: number
+  motivos: string[]
+}
 
+/** Uma chamada para um conjunto de vagas: lê, audita e separa o que presta. */
+async function rodada(p: PedidoDeLote, vagas: VagaDaQuestao[], prazoMs: number, modelos: string[]): Promise<Rodada> {
+  const saidaPorQuestao = 2_400
+  const { texto, dados, modelo } = await chamar(
+    promptDoLote({ ...p, vagas }),
+    ESQUEMA_LOTE,
+    saidaPorQuestao * vagas.length,
+    prazoMs,
+    Math.min(prazoMs, 24_000 + 8_000 * (vagas.length - 1)),
+    modelos,
+  )
+  registrarUso(`${vagas.length} questão(ões)`, dados, modelo)
+  const fim = dados?.candidates?.[0]?.finishReason
   const lido = lerJson(texto)
   const brutas: any[] = Array.isArray(lido?.questoes) ? lido.questoes : []
-  const geradas = p.vagas.map((vaga, i) => lerQuestao(brutas[i], vaga))
-
-  const aprovadas: { q: QuestaoGerada; alertas: Alerta[] }[] = []
-  const faltaram: VagaDaQuestao[] = []
-  let descartadas = 0
-  geradas.forEach((q, i) => {
+  const r: Rodada = { aprovadas: [], faltaram: [], descartadas: 0, motivos: [] }
+  if (!brutas.length) r.motivos.push(`${modelo}: resposta sem questões${fim && fim !== 'STOP' ? ` (${fim})` : ''}`)
+  vagas.forEach((vaga, i) => {
+    const q = lerQuestao(brutas[i], vaga, p.alternativas)
     if (!q) {
-      faltaram.push(p.vagas[i])
+      r.faltaram.push(vaga)
       return
     }
     const alertas = auditar(q, p.alternativas)
     if (precisaDescartar(alertas)) {
-      descartadas++
-      faltaram.push(p.vagas[i])
+      r.descartadas++
+      r.faltaram.push(vaga)
+      r.motivos.push(`${modelo}: ${alertas.filter((a) => a.gravidade === 'estrutural').map((a) => `${a.codigo} (${a.detalhe})`).join(', ')}`)
       return
     }
-    aprovadas.push({ q, alertas })
+    r.aprovadas.push({ q, alertas })
   })
+  return r
+}
+
+/** A escada de modelos com o primeiro passando para o fim: a 2ª tentativa começa por outro. */
+function girar(modelos: string[]): string[] {
+  return modelos.length > 1 ? [...modelos.slice(1), modelos[0]] : modelos
+}
+
+export async function gerarLoteDeQuestoes(p: PedidoDeLote, prazoMs = 52_000): Promise<ResultadoDoLote> {
+  const inicio = Date.now()
+  const resta = () => prazoMs - (Date.now() - inicio)
+  const modelos = modelosRapidos()
+  const aprovadas: Rodada['aprovadas'] = []
+  const motivos: string[] = []
+  let pendentes = p.vagas
+  let descartadas = 0
+  let erro: unknown = null
+
+  // Até duas rodadas dentro da mesma requisição: o que a primeira não
+  // entregou (descartado, JSON cortado, modelo fora do ar) vai de novo,
+  // começando por outro modelo — sem a tela precisar esperar e reenviar.
+  for (let tentativa = 0; tentativa < 2 && pendentes.length && resta() > 18_000; tentativa++) {
+    try {
+      const r = await rodada(p, pendentes, resta() - 10_000, tentativa === 0 ? modelos : girar(modelos))
+      aprovadas.push(...r.aprovadas)
+      descartadas += r.descartadas
+      motivos.push(...r.motivos)
+      pendentes = r.faltaram
+    } catch (e) {
+      erro = e
+      motivos.push(e instanceof Error ? e.message.slice(0, 200) : 'falha ao chamar a IA')
+    }
+  }
+  if (aprovadas.length === 0 && erro) throw erro
 
   const paraReparar = aprovadas.filter((a) => precisaReparar(a.alertas))
-  await repararDistratoras(paraReparar, prazoMs - (Date.now() - inicio))
+  await repararDistratoras(paraReparar, resta())
 
   let alertasRestantes = 0
   const questoes: Question[] = []
@@ -452,12 +521,13 @@ export async function gerarLoteDeQuestoes(p: PedidoDeLote, prazoMs = 52_000): Pr
     const alertas = auditar(q, p.alternativas)
     if (precisaDescartar(alertas)) {
       descartadas++
-      faltaram.push(q.vaga)
+      pendentes = [...pendentes, q.vaga]
       continue
     }
     alertasRestantes += alertas.length
     questoes.push(montarQuestao(q))
   }
+  if (motivos.length) console.warn('[ia/provas] vagas perdidas ou refeitas:', motivos.join(' | ').slice(0, 600))
 
-  return { questoes, faltaram, auditoria: { reparadas: paraReparar.length, descartadas, alertasRestantes } }
+  return { questoes, faltaram: pendentes, auditoria: { reparadas: paraReparar.length, descartadas, alertasRestantes }, motivos }
 }

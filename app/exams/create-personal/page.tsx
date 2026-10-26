@@ -228,9 +228,17 @@ export default function CriarProvaComIaPage() {
     const focos: string[] = []
     let bloqueada: string | null = null
 
+    // Quando a IA reclama de carga (503/429), todos os trabalhadores dão um
+    // respiro juntos em vez de martelar a chave em paralelo.
+    let respiroAte = 0
+    let ultimoErro = ''
+    const TENTATIVAS = 2
+
     const trabalhador = async () => {
       while (fila.length && !sinal.aborted && !bloqueada) {
         const lote = fila.shift()!
+        const aguardar = respiroAte - Date.now()
+        if (aguardar > 0) await espera(aguardar)
         try {
           const r = await fetch('/api/exams/temp-ia/generate-questions', {
             method: 'POST',
@@ -244,9 +252,11 @@ export default function CriarProvaComIaPage() {
             return
           }
           if (!r.ok) {
-            if (lote.tentativas < 1 && (r.status >= 500 || r.status === 429)) {
+            ultimoErro = d?.error || `Erro ${r.status}`
+            if (d?.motivos?.length || d?.detalhe) console.warn('[prova com IA]', r.status, d.detalhe || d.motivos)
+            if (r.status === 503 || r.status === 429 || r.status === 504) respiroAte = Date.now() + (r.status === 429 ? 6000 : 3000)
+            if (lote.tentativas < TENTATIVAS && (r.status >= 500 || r.status === 429)) {
               fila.push({ ...lote, tentativas: lote.tentativas + 1 })
-              await espera(r.status === 429 ? 6000 : 1500)
             } else {
               setProgresso((p) => ({ ...p, falhas: p.falhas + lote.vagas.length }))
             }
@@ -256,17 +266,20 @@ export default function CriarProvaComIaPage() {
           prontas.push(...novas)
           focos.push(...novas.map((q) => q.aiInfo?.foco || '').filter(Boolean))
           const faltaram: VagaDaQuestao[] = Array.isArray(d.faltaram) ? d.faltaram : []
-          if (faltaram.length && lote.tentativas < 1) fila.push({ vagas: faltaram, tentativas: lote.tentativas + 1 })
+          if (d?.motivos?.length) console.warn('[prova com IA] refeitas:', d.motivos)
+          const reenviar = faltaram.length > 0 && lote.tentativas < TENTATIVAS
+          if (reenviar) fila.push({ vagas: faltaram, tentativas: lote.tentativas + 1 })
           setProgresso((p) => ({
             ...p,
             feitas: p.feitas + novas.length,
             reparadas: p.reparadas + (d.auditoria?.reparadas || 0),
             descartadas: p.descartadas + (d.auditoria?.descartadas || 0),
-            falhas: p.falhas + (lote.tentativas >= 1 ? faltaram.length : 0),
+            falhas: p.falhas + (reenviar ? 0 : faltaram.length),
           }))
         } catch (e) {
           if ((e as Error)?.name === 'AbortError') return
-          if (lote.tentativas < 1) fila.push({ ...lote, tentativas: lote.tentativas + 1 })
+          ultimoErro = 'Falha de conexão com o servidor.'
+          if (lote.tentativas < TENTATIVAS) fila.push({ ...lote, tentativas: lote.tentativas + 1 })
           else setProgresso((p) => ({ ...p, falhas: p.falhas + lote.vagas.length }))
         }
       }
@@ -278,6 +291,7 @@ export default function CriarProvaComIaPage() {
       setConta((c) => ({ ...c, liberada: false }))
       throw new Error(bloqueada)
     }
+    if (prontas.length === 0 && ultimoErro) throw new Error(ultimoErro)
     return semTresIguais(prontas)
   }
 
