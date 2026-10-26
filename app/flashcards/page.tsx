@@ -18,7 +18,6 @@ import {
   Eye,
   ChevronRight,
   ChevronDown,
-  Brain,
   CalendarClock,
   Trash2,
   Edit3,
@@ -29,9 +28,20 @@ import {
   BookMarked,
   X,
   Check,
-  ArrowRight,
+  Flame,
+  RotateCcw,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { AnelProgresso } from '@/components/flashcards/pecas-ios'
+import {
+  EVENTO_RITMO,
+  METAS_DIARIAS,
+  lerMetaDiaria,
+  lerSequencia,
+  registrarDiaDeEstudo,
+  salvarMetaDiaria,
+} from '@/lib/flashcard-ritmo'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import {
   DropdownMenu,
@@ -162,6 +172,10 @@ export default function FlashcardsHubPage() {
   // Cards vencidos por deck. É o que transforma a repetição espaçada de
   // recurso escondido dentro do deck em chamado visível na porta de entrada.
   const [dueByDeck, setDueByDeck] = useState<Record<string, number>>({})
+  // Caderno de erros por deck (última nota "Difícil") e o que já foi revisado
+  // hoje — vêm da mesma agregação dos vencidos.
+  const [errorsByDeck, setErrorsByDeck] = useState<Record<string, number>>({})
+  const [reviewedToday, setReviewedToday] = useState<number | null>(null)
   const initialLoadDoneRef = useRef(false)
   const topRef = useRef<HTMLDivElement>(null)
   const mineCacheRef = useRef<Map<string, DeckWithId[]>>(new Map())
@@ -311,6 +325,10 @@ export default function FlashcardsHubPage() {
       if (!res.ok) return
       const json = await res.json()
       setDueByDeck(json.decks || {})
+      setErrorsByDeck(json.errors || {})
+      setReviewedToday(typeof json.reviewedToday === 'number' ? json.reviewedToday : 0)
+      // Estudou hoje em outro aparelho: o dia conta para a sequência daqui.
+      if (json.reviewedToday > 0) registrarDiaDeEstudo()
     } catch {}
   }, [])
 
@@ -487,21 +505,27 @@ export default function FlashcardsHubPage() {
   ]), [pendingShares])
 
   return (
-    <AppShell allowGuest headerTitle="Flashcards" headerSubtitle={SECTION_SUBTITLE[section]}>
-      <div className="surface-page">
-        <div className="mx-auto max-w-6xl px-3 pb-20 pt-3 sm:px-6 sm:pt-5">
+    <AppShell allowGuest vidro headerTitle="Flashcards" headerSubtitle={SECTION_SUBTITLE[section]}>
+      <FundoIos>
+        <div className="mx-auto max-w-6xl px-4 pb-24 pt-4 sm:px-6 sm:pt-6">
+          {/* Título grande do topo: diz em qual dos três destinos a pessoa
+              está, como cada aba de um app do iPhone. */}
+          <header className="mb-5 sm:mb-6">
+            <h1 className="ios-titulo-grande">
+              {section === 'library' ? 'Flashcards' : section === 'store' ? 'Loja de decks' : 'Comunidade'}
+            </h1>
+            <p className="ios-rotulo-2 mt-1.5 max-w-2xl text-[15px] leading-relaxed sm:text-[17px]">
+              {section === 'library'
+                ? 'Revise no dia certo, refaça o que errou e veja a memória crescer.'
+                : section === 'store'
+                  ? 'Decks oficiais da equipe, prontos para estudar com repetição espaçada.'
+                  : 'Decks públicos de outros estudantes.'}
+            </p>
+          </header>
+
           {/* Âncora fora do elemento grudado: medir a barra depois de fixa
               devolveria sempre a posição travada, nunca a original. */}
           <div ref={topRef} aria-hidden className="h-0" />
-
-          {/* O cabeçalho do app nomeia a página a partir do tablet (e sempre,
-              para visitantes); no celular logado ele mostra só o logotipo,
-              então é aqui que o título aparece — uma vez, nunca duas. */}
-          {!isGuest && (
-            <h1 className="mb-2.5 font-heading text-xl font-semibold tracking-[-0.01em] text-foreground sm:hidden">
-              Flashcards
-            </h1>
-          )}
 
           <CommandBar
             sectionItems={sectionItems}
@@ -518,11 +542,17 @@ export default function FlashcardsHubPage() {
               e oferece o login. Repetir o mesmo recado dois blocos acima do
               conteúdo é justamente o excesso que esta tela deixou para trás. */}
 
-          <div className="mt-4 sm:mt-5">
+          <div className="mt-5 sm:mt-6">
             {/* ── Biblioteca ─────────────────────────────────────────────── */}
             {section === 'library' && !isGuest && (
               <div key="library" className="fc-enter">
-                <ReviewTodayStrip decks={libraryAll} dueByDeck={dueByDeck} />
+                <PainelHoje
+                  decks={libraryAll}
+                  dueByDeck={dueByDeck}
+                  errorsByDeck={errorsByDeck}
+                  reviewedToday={reviewedToday}
+                  onExplore={() => selectSection('store')}
+                />
                 {showLibraryTabs && (
                   <FilterRail>
                     <FilterPill active={libraryTab === 'all'} onClick={() => selectLibraryTab('all')}>
@@ -623,6 +653,7 @@ export default function FlashcardsHubPage() {
                         onDelete={deleteDeck}
                         metricSettings={metricSettings.flashcards}
                         dueByDeck={dueByDeck}
+                        errorsByDeck={errorsByDeck}
                       />
                     )}
 
@@ -720,7 +751,7 @@ export default function FlashcardsHubPage() {
             )}
           </div>
         </div>
-      </div>
+      </FundoIos>
 
       {createOpen && (
         <CreateDeckDialog
@@ -765,31 +796,34 @@ function CommandBar({
 
   const searchField = (
     <div className="relative flex-1">
-      <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="ios-rotulo-2 pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2" />
       <input
+        type="search"
         value={search}
         onChange={e => setSearch(e.target.value)}
         enterKeyHint="search"
-        placeholder="Buscar decks…"
+        placeholder="Buscar decks"
         aria-label="Buscar decks"
         // 16px reais no celular: abaixo disso o iOS dá zoom sozinho ao focar.
-        className="h-10 w-full rounded-xl border border-border bg-background pl-10 pr-10 text-base outline-none transition focus:border-primary/50 focus:ring-2 focus:ring-primary/15 sm:text-sm"
+        className={cn('ios-busca', search ? 'pr-10' : 'pr-3')}
       />
       {search && (
         <button
           type="button"
           onClick={() => setSearch('')}
           aria-label="Limpar busca"
-          className="absolute right-1 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition active:scale-95"
+          className="absolute right-1.5 top-1/2 inline-flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full"
         >
-          <X className="h-4 w-4" />
+          <span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-[var(--ios-rotulo-3)] text-[var(--ios-chao)]">
+            <X className="h-3 w-3" strokeWidth={3} />
+          </span>
         </button>
       )}
     </div>
   )
 
   return (
-    <div className="fc-chrome sticky top-14 z-30 rounded-2xl p-2 shadow-sm sm:top-16 sm:p-2.5">
+    <div className="ios-vidro sticky top-[3.75rem] z-30 rounded-[22px] p-2 sm:top-[4.5rem] sm:p-2.5">
       {/* Celular: uma linha só. A busca ocupa o lugar da navegação quando
           aberta — uma segunda faixa permanente comeria tela demais. */}
       <div className="flex items-center gap-1.5 lg:hidden">
@@ -799,7 +833,7 @@ function CommandBar({
             <button
               type="button"
               onClick={() => { setSearch(''); setSearchOpen(false) }}
-              className="inline-flex h-10 shrink-0 items-center rounded-xl px-2.5 text-[13px] font-semibold text-muted-foreground transition active:scale-95"
+              className="ios-tinta h-10 shrink-0 px-2 text-[16px] font-medium"
             >
               Cancelar
             </button>
@@ -810,12 +844,12 @@ function CommandBar({
               <Segmented items={sectionItems} value={section} onChange={onSectionChange} className="min-w-0 flex-1" />
             )}
             {isGuest && (
-              <p className="flex min-w-0 flex-1 items-center gap-1.5 px-1 text-[13px] font-semibold text-foreground">
-                <Crown className="h-4 w-4 shrink-0 text-accent" /> Loja oficial
+              <p className="flex min-w-0 flex-1 items-center gap-1.5 px-2 text-[15px] font-semibold">
+                <Crown className="ios-ambar h-4 w-4 shrink-0" /> Loja oficial
               </p>
             )}
             <IconButton label="Buscar decks" active={!!search} onClick={() => setSearchOpen(true)}>
-              <Search className="h-4 w-4" />
+              <Search className="h-[17px] w-[17px]" />
             </IconButton>
             {!isGuest && <CreateMenu onCreateDeck={onCreateDeck} onCreateFolder={onCreateFolder} />}
           </>
@@ -825,27 +859,21 @@ function CommandBar({
       {/* Desktop: navegação, busca e ações lado a lado, sem estados escondidos. */}
       <div className="hidden items-center gap-3 lg:flex">
         {!isGuest && (
-          <Segmented items={sectionItems} value={section} onChange={onSectionChange} className="w-[372px] shrink-0" />
+          <Segmented items={sectionItems} value={section} onChange={onSectionChange} className="w-[390px] shrink-0" />
         )}
         {isGuest && (
-          <p className="inline-flex shrink-0 items-center gap-2 px-1 text-sm font-semibold text-foreground">
-            <Crown className="h-4 w-4 text-accent" /> Loja oficial
+          <p className="inline-flex shrink-0 items-center gap-2 px-2 text-[15px] font-semibold">
+            <Crown className="ios-ambar h-4 w-4" /> Loja oficial
           </p>
         )}
         {searchField}
         {!isGuest && (
           <div className="flex shrink-0 items-center gap-2">
-            <Link
-              href="/flashcards/ia"
-              className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-background px-3.5 text-sm font-semibold text-foreground transition active:scale-[0.97] hover:bg-muted"
-            >
-              <Wand2 className="h-4 w-4 text-primary" /> IA
+            <Link href="/flashcards/ia" className="ios-botao-suave !h-10 !px-4 !text-[15px]">
+              <Wand2 className="h-4 w-4" /> Gerar com IA
             </Link>
-            <button
-              onClick={onCreateDeck}
-              className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition active:scale-[0.97] hover:bg-primary/90"
-            >
-              <Plus className="h-4 w-4" /> Criar deck
+            <button type="button" onClick={onCreateDeck} className="ios-botao !h-10 !px-4 !text-[15px]">
+              <Plus className="h-4 w-4" strokeWidth={2.5} /> Criar deck
             </button>
           </div>
         )}
@@ -858,14 +886,11 @@ function CreateMenu({ onCreateDeck, onCreateFolder }: { onCreateDeck: () => void
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button
-          aria-label="Criar"
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition active:scale-95"
-        >
-          <Plus className="h-5 w-5" />
+        <button aria-label="Criar" className="ios-botao !h-10 w-10 shrink-0 !p-0">
+          <Plus className="h-5 w-5" strokeWidth={2.5} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 rounded-2xl">
         <DropdownMenuItem onSelect={() => onCreateDeck()} className="gap-2 py-2.5">
           <Plus className="h-4 w-4 text-primary" /> Deck em branco
         </DropdownMenuItem>
@@ -888,8 +913,8 @@ function CreateMenu({ onCreateDeck, onCreateFolder }: { onCreateDeck: () => void
 // ──────────────────────────────────────────────────────────────────────────────
 
 /**
- * Segmentado de larguras iguais: como cada item ocupa a mesma fração, a
- * posição do indicador é aritmética (índice × 100%) — nada é medido no layout,
+ * O controle segmentado do sistema (`.ios-segmentado`): larguras iguais, então
+ * a posição do polegar é aritmética (índice × 100%) — nada é medido no layout,
  * e ele desliza da posição atual para a nova em vez de piscar no destino.
  */
 function Segmented<T extends string>({ items, value, onChange, className }: {
@@ -902,17 +927,9 @@ function Segmented<T extends string>({ items, value, onChange, className }: {
   return (
     <div
       role="tablist"
-      className={cn('relative grid rounded-xl bg-foreground/[0.05] p-1 dark:bg-black/25', className)}
-      style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+      className={cn('ios-segmentado', className)}
+      style={{ ['--segmentos' as string]: items.length, ['--indice' as string]: index }}
     >
-      {/* O indicador precisa ler como uma peça levantada nos dois temas: no
-          claro isso é o branco do cartão sobre a pista; no escuro, um véu
-          claro sobre um fundo mais fundo. */}
-      <span
-        aria-hidden
-        className="fc-seg-thumb pointer-events-none absolute inset-y-1 left-1 rounded-lg bg-card shadow-sm ring-1 ring-border/70 dark:bg-white/[0.09] dark:ring-white/10"
-        style={{ width: `calc((100% - 0.5rem) / ${items.length})`, transform: `translateX(${index * 100}%)` }}
-      />
       {items.map(item => {
         const active = item.value === value
         return (
@@ -921,15 +938,12 @@ function Segmented<T extends string>({ items, value, onChange, className }: {
             role="tab"
             aria-selected={active}
             onClick={() => onChange(item.value)}
-            className={cn(
-              'relative z-[1] inline-flex h-9 min-w-0 items-center justify-center gap-1.5 rounded-lg px-1 text-[11.5px] font-semibold transition-colors duration-200 sm:px-2 sm:text-[13px]',
-              active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-            )}
+            className="ios-segmento !px-1.5 !text-[13.5px] sm:!text-[14px]"
             style={{ touchAction: 'manipulation' }}
           >
-            <span className={cn('hidden shrink-0 sm:inline-flex', active ? 'text-primary' : '')}>{item.icon}</span>
+            <span className={cn('hidden shrink-0 sm:inline-flex', active && 'ios-tinta')}>{item.icon}</span>
             <span className="truncate">{item.label}</span>
-            {item.dot && <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-secondary" />}
+            {item.dot && <span aria-hidden className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#e5484d]" />}
           </button>
         )
       })}
@@ -945,13 +959,10 @@ function IconButton({ children, label, onClick, active }: {
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={cn(
-        'relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition active:scale-95',
-        active ? 'border-primary/40 bg-primary/10 text-primary' : 'border-border bg-background text-muted-foreground hover:text-foreground',
-      )}
+      className={cn('ios-icone-botao relative h-10 w-10', active && 'bg-[var(--ios-tinta-suave)]')}
     >
       {children}
-      {active && <span aria-hidden className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />}
+      {active && <span aria-hidden className="absolute right-1 top-1 h-2 w-2 rounded-full bg-[var(--ios-tinta)] ring-2 ring-[var(--ios-chao)]" />}
     </button>
   )
 }
@@ -959,7 +970,7 @@ function IconButton({ children, label, onClick, active }: {
 /** Uma única faixa de filtros por seção — nunca duas empilhadas. */
 function FilterRail({ children }: { children?: React.ReactNode }) {
   return (
-    <div className="scrollbar-hide fade-scroll-x -my-1 mb-3 flex gap-1.5 overflow-x-auto overscroll-x-contain py-1 pr-4 sm:mb-4 lg:pr-0">
+    <div className="scrollbar-hide fade-scroll-x -my-1 mb-4 flex gap-1.5 overflow-x-auto overscroll-x-contain py-1 pr-4 lg:pr-0">
       {children}
     </div>
   )
@@ -972,17 +983,12 @@ function FilterPill({ active, onClick, badge, children }: {
     <button
       onClick={onClick}
       aria-pressed={active}
-      className={cn(
-        'inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 text-[13px] font-medium transition active:scale-[0.97]',
-        active
-          ? 'border-primary/40 bg-primary/10 font-semibold text-primary'
-          : 'border-border bg-card text-muted-foreground hover:text-foreground',
-      )}
+      className="ios-pilula"
       style={{ touchAction: 'manipulation' }}
     >
       {children}
       {badge ? (
-        <span className="inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-secondary px-1 text-[10px] font-bold text-secondary-foreground">
+        <span className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#e5484d] px-1 text-[11px] font-bold text-white">
           {badge}
         </span>
       ) : null}
@@ -1038,12 +1044,8 @@ function FolderPicker({ label, options, value, onSelect, onCreate, createLabel, 
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className={cn(
-            'inline-flex h-9 max-w-[190px] items-center gap-1.5 rounded-full border px-3 text-[13px] font-medium transition active:scale-[0.97] sm:max-w-[260px]',
-            active
-              ? 'border-primary/40 bg-primary/10 font-semibold text-primary'
-              : 'border-border bg-card text-muted-foreground hover:text-foreground',
-          )}
+          aria-pressed={active}
+          className="ios-pilula !h-9 max-w-[190px] !px-3 !text-[13px] sm:max-w-[260px]"
           style={{ touchAction: 'manipulation' }}
         >
           <Folder className="h-3.5 w-3.5 shrink-0" />
@@ -1051,7 +1053,7 @@ function FolderPicker({ label, options, value, onSelect, onCreate, createLabel, 
           <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-60" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="max-h-[60vh] w-64 overflow-y-auto overscroll-contain">
+      <DropdownMenuContent align="end" className="max-h-[60vh] w-64 overflow-y-auto overscroll-contain rounded-2xl">
         {options.map(option => (
           <DropdownMenuItem
             key={option.id}
@@ -1087,10 +1089,8 @@ function SectionHead({ title, meta, action }: { title: string; meta?: string; ac
   return (
     <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
       <div className="min-w-0">
-        <h2 className="font-heading text-lg font-semibold leading-tight tracking-[-0.01em] text-foreground sm:text-xl">
-          {title}
-        </h2>
-        {meta && <p className="mt-0.5 truncate text-xs text-muted-foreground">{meta}</p>}
+        <h2 className="ios-titulo-secao">{title}</h2>
+        {meta && <p className="ios-rotulo-2 mt-0.5 truncate text-[13px]">{meta}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -1099,11 +1099,7 @@ function SectionHead({ title, meta, action }: { title: string; meta?: string; ac
 
 function PrimaryButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition active:scale-[0.97] hover:bg-primary/90"
-      style={{ touchAction: 'manipulation' }}
-    >
+    <button onClick={onClick} className="ios-botao" style={{ touchAction: 'manipulation' }}>
       {children}
     </button>
   )
@@ -1111,11 +1107,7 @@ function PrimaryButton({ children, onClick }: { children: React.ReactNode; onCli
 
 function GhostButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
   return (
-    <button
-      onClick={onClick}
-      className="inline-flex h-10 items-center gap-2 rounded-xl border border-border bg-card px-4 text-sm font-semibold text-foreground transition active:scale-[0.97] hover:bg-muted"
-      style={{ touchAction: 'manipulation' }}
-    >
+    <button onClick={onClick} className="ios-botao-cinza" style={{ touchAction: 'manipulation' }}>
       {children}
     </button>
   )
@@ -1123,13 +1115,13 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
 
 function EmptyState({ title, hint, action }: { title: string; hint: string; action?: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-dashed border-border bg-card/40 px-5 py-10 text-center">
-      <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Sparkles className="h-5 w-5" />
+    <div className="mx-auto flex max-w-md flex-col items-center px-4 py-14 text-center sm:py-20">
+      <div className="ios-tinta mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ios-tinta-suave)]">
+        <Sparkles className="h-7 w-7" />
       </div>
-      <h3 className="font-heading text-base font-semibold text-foreground">{title}</h3>
-      <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">{hint}</p>
-      {action && <div className="mt-4 flex flex-wrap items-center justify-center gap-2">{action}</div>}
+      <h3 className="text-[20px] font-bold tracking-[-0.02em]">{title}</h3>
+      <p className="ios-rotulo-2 mt-1.5 text-[15px] leading-relaxed">{hint}</p>
+      {action && <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{action}</div>}
     </div>
   )
 }
@@ -1138,11 +1130,11 @@ function DeckGridSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4" aria-hidden>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
-          <div className="aspect-[4/3] skeleton-pulse sm:aspect-[16/10]" />
-          <div className="space-y-2 p-3 sm:p-3.5">
-            <div className="h-4 w-4/5 rounded skeleton-pulse" />
-            <div className="h-3 w-3/5 rounded skeleton-pulse" />
+        <div key={i} className="ios-cartao rounded-[24px] p-2">
+          <div className="ios-esqueleto aspect-[4/3] rounded-[18px] sm:aspect-[16/10]" />
+          <div className="space-y-2 px-1.5 pb-1.5 pt-3">
+            <div className="ios-esqueleto h-4 w-4/5 rounded-full" />
+            <div className="ios-esqueleto h-3 w-3/5 rounded-full" />
           </div>
         </div>
       ))}
@@ -1150,13 +1142,14 @@ function DeckGridSkeleton({ count = 4 }: { count?: number }) {
   )
 }
 
-const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete, metricSettings, dueByDeck }: {
+const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete, metricSettings, dueByDeck, errorsByDeck }: {
   decks: DeckWithId[]
   variant: 'library' | 'store' | 'community'
   editableIds?: Set<string>
   onDelete?: (id: string) => void
   metricSettings: FlashcardMetricSettings
   dueByDeck?: Record<string, number>
+  errorsByDeck?: Record<string, number>
 }) {
   // Duas colunas já no celular: com uma só, cada deck ocupava a tela inteira e
   // folhear a biblioteca virava rolagem infinita.
@@ -1171,13 +1164,14 @@ const DeckGrid = memo(function DeckGrid({ decks, variant, editableIds, onDelete,
           onDelete={onDelete}
           metricSettings={metricSettings}
           due={dueByDeck?.[deck._id] || 0}
+          errors={errorsByDeck?.[deck._id] || 0}
         />
       ))}
     </div>
   )
 })
 
-const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, metricSettings, due = 0 }: {
+const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, metricSettings, due = 0, errors = 0 }: {
   deck: DeckWithId
   variant: 'library' | 'store' | 'community'
   editable?: boolean
@@ -1185,80 +1179,79 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
   metricSettings: FlashcardMetricSettings
   /** Cards vencidos na repetição espaçada. 0 esconde o selo. */
   due?: number
+  /** Cards no caderno de erros (última nota "Difícil"). 0 esconde o selo. */
+  errors?: number
 }) {
   const owned = !!(deck._isPurchased || deck._hasAccess)
 
   // Um selo por capa, e só quando ele muda a decisão de quem está escolhendo.
-  // A versão anterior empilhava até quatro (oficial, destaque, preço, público)
-  // sobre a mesma imagem.
   const badge = variant === 'store'
     ? owned
-      ? { tone: 'ok' as const, icon: <Check className="h-3 w-3" />, label: 'Adquirido' }
+      ? { claro: false, icon: <Check className="h-3 w-3" strokeWidth={3} />, label: 'Adquirido' }
       : deck.pricing === 'paid'
-        ? { tone: 'paid' as const, icon: <Lock className="h-3 w-3" />, label: formatPrice(deck.price) }
-        : { tone: 'free' as const, icon: null, label: 'Grátis' }
+        ? { claro: false, icon: <Lock className="h-3 w-3" />, label: formatPrice(deck.price) }
+        : { claro: false, icon: null, label: 'Grátis' }
     : deck.ownerType === 'admin'
-      ? { tone: 'official' as const, icon: <Crown className="h-3 w-3" />, label: 'Oficial' }
+      ? { claro: true, icon: <Crown className="h-3 w-3" />, label: 'Oficial' }
       : null
-
-  const badgeClass = {
-    ok: 'bg-primary text-primary-foreground',
-    paid: 'bg-foreground/85 text-background',
-    free: 'bg-background/90 text-foreground',
-    official: 'bg-accent text-accent-foreground',
-  }
 
   const showMetrics = variant === 'community' && (metricSettings.showLikes || metricSettings.showViews)
 
   return (
-    <article className="fc-card group relative isolate flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm active:scale-[0.985] hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
-      <Link href={`/flashcards/d/${deck.slug}`} className="flex flex-1 flex-col" style={{ touchAction: 'manipulation' }}>
-        <div className="relative aspect-[4/3] overflow-hidden bg-muted sm:aspect-[16/10]">
+    <article className="deck-card-rise group relative h-full">
+      <Link
+        href={`/flashcards/d/${deck.slug}`}
+        className="ios-cartao ios-toque flex h-full flex-col rounded-[24px] p-2"
+        style={{ touchAction: 'manipulation' }}
+      >
+        <div className="ios-capa relative aspect-[4/3] rounded-[18px] sm:aspect-[16/10]">
           {deck.coverImage ? (
             <Image
               src={deck.coverImage}
               alt=""
               fill
-              className="object-cover transition duration-500 sm:group-hover:scale-105"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             />
           ) : (
-            // Um único desenho de capa ausente em toda a área: fundo neutro e
-            // marca discreta. Placeholders tingidos faziam cada seção parecer
-            // feita de um material diferente.
-            <BookMarked className="absolute inset-0 m-auto h-7 w-7 text-muted-foreground/35" />
+            <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+              <span className="ios-tinta flex h-12 w-12 items-center justify-center rounded-[14px] bg-white/70 shadow-sm dark:bg-white/10">
+                <BookMarked className="h-6 w-6" />
+              </span>
+            </div>
           )}
           {badge && (
-            <span className={cn(
-              'absolute left-2 top-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-bold shadow-sm',
-              badgeClass[badge.tone],
-            )}>
+            <span className={cn('ios-selo absolute left-2 top-2 z-[3]', badge.claro && 'ios-selo-claro')}>
               {badge.icon} {badge.label}
             </span>
           )}
         </div>
 
-        <div className="flex flex-1 flex-col p-3 sm:p-3.5">
-          <h3 className="line-clamp-2 text-[13.5px] font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
+        <div className="flex flex-1 flex-col px-1.5 pb-1 pt-2.5 sm:px-2">
+          <h3 className="line-clamp-2 text-[14px] font-semibold leading-snug tracking-[-0.015em] transition-colors group-hover:text-[var(--ios-tinta-texto)] sm:text-[15px]">
             {deck.title}
           </h3>
-          {/* Uma linha de apoio, não três: quantidade de cartões e autor bastam
-              para escolher; descrição, curtidas e visualizações só entram onde
-              realmente pesam na decisão. */}
-          <p className="mt-1.5 truncate text-[11.5px] text-muted-foreground sm:text-xs">
+          <p className="ios-rotulo-2 mt-1 truncate text-[12px] sm:text-[13px]">
             {deck.cardCount ?? 0} {deck.cardCount === 1 ? 'cartão' : 'cartões'}
             {deck.ownerName ? ` · ${deck.ownerName}` : ''}
           </p>
-          {/* Chamado da repetição espaçada: o deck avisa que tem revisão
-              vencida sem a pessoa precisar abrir um por um para descobrir. */}
-          {due > 0 && (
-            <p className="mt-1.5 inline-flex w-fit items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10.5px] font-bold text-primary">
-              <CalendarClock className="h-3 w-3" />
-              {due} para revisar
-            </p>
+          {/* O deck avisa o que tem para fazer hoje sem precisar ser aberto. */}
+          {(due > 0 || errors > 0) && (
+            <div className="mt-auto flex flex-wrap gap-1 pt-2">
+              {due > 0 && (
+                <span className="ios-tinta inline-flex items-center gap-1 rounded-full bg-[var(--ios-tinta-suave)] px-2 py-0.5 text-[11.5px] font-semibold">
+                  <CalendarClock className="h-3 w-3" /> {due} hoje
+                </span>
+              )}
+              {errors > 0 && (
+                <span className="ios-erro ios-erro-suave inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11.5px] font-semibold">
+                  <RotateCcw className="h-3 w-3" /> {errors} {errors === 1 ? 'erro' : 'erros'}
+                </span>
+              )}
+            </div>
           )}
           {showMetrics && (
-            <p className="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+            <p className="ios-rotulo-2 mt-1 flex items-center gap-3 text-[12px]">
               {metricSettings.showLikes && (
                 <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3" /> {deck.likeCount || 0}</span>
               )}
@@ -1273,11 +1266,11 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
       {editable && (
         // No toque as ações ficam visíveis (não existe hover para revelá-las);
         // com ponteiro, aparecem sob o cursor e a capa fica limpa.
-        <div className="fc-owner-actions absolute right-2 top-2 flex items-center gap-1">
+        <div className="fc-owner-actions absolute right-3.5 top-3.5 z-[4] flex items-center gap-1">
           <Link
             href={`/flashcards/d/${deck.slug}/editar`}
             aria-label={`Editar ${deck.title}`}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-background/90 text-foreground shadow-sm ring-1 ring-border transition active:scale-90"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#101814] shadow-sm backdrop-blur-md transition active:scale-90 dark:bg-black/55 dark:text-white"
             style={{ touchAction: 'manipulation' }}
           >
             <Edit3 className="h-3.5 w-3.5" />
@@ -1286,7 +1279,7 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
             <button
               onClick={(e) => { e.preventDefault(); onDelete(deck._id) }}
               aria-label={`Apagar ${deck.title}`}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-background/90 text-destructive shadow-sm ring-1 ring-border transition active:scale-90"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-[#d93d42] shadow-sm backdrop-blur-md transition active:scale-90 dark:bg-black/55 dark:text-[#ff8589]"
               style={{ touchAction: 'manipulation' }}
             >
               <Trash2 className="h-3.5 w-3.5" />
@@ -1299,104 +1292,237 @@ const DeckCard = memo(function DeckCard({ deck, variant, editable, onDelete, met
 })
 
 /**
- * Faixa "Revisar hoje".
+ * O painel "Hoje" da biblioteca — a porta de entrada do hábito.
  *
- * A repetição espaçada só funciona se a revisão acontecer no dia marcado — e
- * até aqui não havia nada, em nenhuma tela, que avisasse que havia revisão
- * vencida. O aluno tinha que abrir deck por deck para descobrir. Esta faixa é
- * esse aviso: aparece só quando existe trabalho a fazer e leva direto a ele.
+ * Três perguntas, nesta ordem, cada uma com o próprio botão:
+ *  1. quanto já fiz hoje (anel da meta diária + sequência de dias);
+ *  2. o que venceu e precisa de revisão agora;
+ *  3. o que eu errei e ainda não refiz (caderno de erros).
+ * Quando não há nada vencido nem errado, o painel comemora em vez de sumir —
+ * é a recompensa de quem está em dia.
  */
-function ReviewTodayStrip({ decks, dueByDeck }: {
+function PainelHoje({ decks, dueByDeck, errorsByDeck, reviewedToday, onExplore }: {
   decks: DeckWithId[]
   dueByDeck: Record<string, number>
+  errorsByDeck: Record<string, number>
+  reviewedToday: number | null
+  onExplore: () => void
 }) {
-  const pending = useMemo(
-    () => decks
-      .map(deck => ({ deck, due: dueByDeck[deck._id] || 0 }))
-      .filter(item => item.due > 0)
-      .sort((a, b) => b.due - a.due),
-    [decks, dueByDeck],
-  )
-  if (pending.length === 0) return null
+  const [meta, setMeta] = useState(20)
+  const [sequencia, setSequencia] = useState({ dias: 0, estudouHoje: false })
 
-  const total = pending.reduce((sum, item) => sum + item.due, 0)
+  useEffect(() => {
+    const ler = () => {
+      setMeta(lerMetaDiaria())
+      setSequencia(lerSequencia())
+    }
+    ler()
+    window.addEventListener(EVENTO_RITMO, ler)
+    window.addEventListener('focus', ler)
+    return () => {
+      window.removeEventListener(EVENTO_RITMO, ler)
+      window.removeEventListener('focus', ler)
+    }
+  }, [])
+
+  const byId = useMemo(() => new Map(decks.map(deck => [deck._id, deck])), [decks])
+  const pending = useMemo(
+    () => Object.entries(dueByDeck)
+      .map(([id, due]) => ({ deck: byId.get(id), due }))
+      .filter((item): item is { deck: DeckWithId; due: number } => !!item.deck && item.due > 0)
+      .sort((a, b) => b.due - a.due),
+    [byId, dueByDeck],
+  )
+  const wrong = useMemo(
+    () => Object.entries(errorsByDeck)
+      .map(([id, errors]) => ({ deck: byId.get(id), errors }))
+      .filter((item): item is { deck: DeckWithId; errors: number } => !!item.deck && item.errors > 0)
+      .sort((a, b) => b.errors - a.errors),
+    [byId, errorsByDeck],
+  )
+
+  // Sem dados ainda (primeira resposta não chegou) ou sem nada na biblioteca:
+  // nada a mostrar — o painel não pode nascer como um esqueleto vazio.
+  if (reviewedToday === null || decks.length === 0) return null
+
+  const totalDue = pending.reduce((sum, item) => sum + item.due, 0)
+  const totalErrors = wrong.reduce((sum, item) => sum + item.errors, 0)
+  const feitos = reviewedToday
+  const metaBatida = feitos >= meta
+  const emDia = totalDue === 0 && totalErrors === 0
 
   return (
-    <section className="mb-4 rounded-2xl border border-primary/25 bg-primary/5 p-3 sm:p-3.5">
-      <div className="flex items-center gap-2.5">
-        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-          <Brain className="h-4 w-4" />
-        </span>
-        <div className="min-w-0">
-          <p className="text-[13px] font-semibold text-foreground">
-            {total} {total === 1 ? 'card venceu' : 'cards venceram'} hoje
+    <section aria-label="Seu dia nos flashcards" className="ios-lista mb-8">
+      {/* ── Meta e sequência ── */}
+      <div className="flex items-center gap-4 border-b border-[var(--ios-separador)] p-4">
+        <AnelProgresso
+          valor={feitos}
+          total={meta}
+          tamanho={68}
+          rotulo={`${feitos} de ${meta} cards revisados hoje`}
+        >
+          <span className="text-[19px] font-bold leading-none tabular-nums">{Math.min(feitos, 999)}</span>
+          <span className="ios-rotulo-3 mt-0.5 text-[10px] font-semibold tabular-nums">/{meta}</span>
+        </AnelProgresso>
+        <div className="min-w-0 flex-1">
+          <p className="text-[17px] font-bold tracking-[-0.02em]">
+            {metaBatida ? 'Meta do dia batida!' : feitos > 0 ? `Faltam ${meta - feitos} para a meta` : 'Bora começar o dia?'}
           </p>
-          <p className="truncate text-[11.5px] text-muted-foreground">
-            A repetição espaçada marcou {pending.length === 1 ? 'este deck' : `estes ${pending.length} decks`} para agora.
+          <p className="ios-rotulo-2 mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px]">
+            <span className="inline-flex items-center gap-1 font-semibold text-[var(--ios-rotulo)]">
+              <Flame className="ios-chama h-4 w-4" data-acesa={sequencia.estudouHoje ? 'true' : 'false'} />
+              {sequencia.dias} {sequencia.dias === 1 ? 'dia' : 'dias'} seguidos
+            </span>
+            {!sequencia.estudouHoje && sequencia.dias > 0 && <span>· revise 1 card para manter</span>}
           </p>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button type="button" className="ios-pilula !h-8 shrink-0 !px-3 !text-[12px]" aria-label="Mudar a meta diária">
+              Meta {meta} <ChevronDown className="h-3 w-3 opacity-60" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 rounded-2xl">
+            {METAS_DIARIAS.map(valor => (
+              <DropdownMenuItem key={valor} onSelect={() => salvarMetaDiaria(valor)} className="gap-2 py-2">
+                {valor} cards por dia
+                {valor === meta && <Check className="ml-auto h-3.5 w-3.5 text-primary" />}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-      <div className="scrollbar-hide -mx-1 mt-2.5 flex gap-2 overflow-x-auto overscroll-x-contain px-1 pb-0.5">
-        {pending.slice(0, 12).map(({ deck, due }) => (
-          <Link
-            key={deck._id}
-            href={`/flashcards/d/${deck.slug}`}
-            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-[12.5px] font-semibold text-foreground shadow-sm transition active:scale-[0.97] hover:border-primary/40"
-            style={{ touchAction: 'manipulation' }}
-          >
-            <span className="max-w-[11rem] truncate">{deck.title}</span>
-            <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10.5px] font-bold tabular-nums text-primary">
-              {due}
-            </span>
-          </Link>
-        ))}
-      </div>
+
+      {emDia ? (
+        <div className="ios-linha !gap-3 !py-3.5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--ios-tinta)] text-white">
+            <Check className="h-5 w-5" strokeWidth={3} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-semibold">Tudo em dia</span>
+            <span className="ios-rotulo-2 block text-[13px]">Nenhuma revisão vencida e nenhum erro esperando.</span>
+          </span>
+          {!metaBatida && (
+            <button type="button" onClick={onExplore} className="ios-botao-suave ios-botao-p shrink-0">
+              Estudar algo novo
+            </button>
+          )}
+        </div>
+      ) : (
+        <>
+          {pending.length > 0 && (
+            <FilaDoDia
+              icone={<CalendarClock className="h-[18px] w-[18px]" />}
+              tom="tinta"
+              titulo={`${totalDue} ${totalDue === 1 ? 'card para revisar' : 'cards para revisar'}`}
+              subtitulo={pending.length === 1 ? 'A repetição espaçada marcou para hoje.' : `Em ${pending.length} decks, marcados para hoje.`}
+              acao={{ rotulo: 'Revisar', href: `/flashcards/d/${pending[0].deck.slug}` }}
+              itens={pending.map(({ deck, due }) => ({ deck, valor: due, href: `/flashcards/d/${deck.slug}` }))}
+            />
+          )}
+          {wrong.length > 0 && (
+            <FilaDoDia
+              icone={<RotateCcw className="h-[18px] w-[18px]" />}
+              tom="erro"
+              titulo={`Caderno de erros · ${totalErrors} ${totalErrors === 1 ? 'card' : 'cards'}`}
+              subtitulo="O que você travou ou errou. Acertou, sai do caderno."
+              acao={{ rotulo: 'Refazer', href: `/flashcards/d/${wrong[0].deck.slug}?erros=1` }}
+              itens={wrong.map(({ deck, errors }) => ({ deck, valor: errors, href: `/flashcards/d/${deck.slug}?erros=1` }))}
+            />
+          )}
+        </>
+      )}
     </section>
+  )
+}
+
+/** Uma linha do painel "Hoje": o que é, o botão, e os decks em fileira. */
+function FilaDoDia({ icone, tom, titulo, subtitulo, acao, itens }: {
+  icone: React.ReactNode
+  tom: 'tinta' | 'erro'
+  titulo: string
+  subtitulo: string
+  acao: { rotulo: string; href: string }
+  itens: { deck: DeckWithId; valor: number; href: string }[]
+}) {
+  return (
+    <div className="ios-linha !flex-col !items-stretch !gap-2.5 !py-3.5">
+      <div className="flex items-center gap-3">
+        <span
+          className={cn(
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] text-white',
+            tom === 'erro' ? 'bg-[#e5484d]' : 'bg-[var(--ios-tinta)]',
+          )}
+        >
+          {icone}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[15px] font-semibold tracking-[-0.01em]">{titulo}</span>
+          <span className="ios-rotulo-2 block truncate text-[13px]">{subtitulo}</span>
+        </span>
+        <Link href={acao.href} className={cn(tom === 'erro' ? 'ios-botao-erro' : 'ios-botao', '!h-9 shrink-0 !px-4 !text-[15px]')}>
+          {acao.rotulo}
+        </Link>
+      </div>
+      {itens.length > 1 && (
+        <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto overscroll-x-contain px-4 pb-0.5 pl-[64px]">
+          {itens.slice(0, 12).map(({ deck, valor, href }) => (
+            <Link
+              key={deck._id}
+              href={href}
+              className="ios-pilula !h-8 shrink-0 !gap-2 !px-3 !text-[13px]"
+              style={{ touchAction: 'manipulation' }}
+            >
+              <span className="max-w-[11rem] truncate">{deck.title}</span>
+              <span className={cn('text-[12px] font-bold tabular-nums', tom === 'erro' ? 'ios-erro' : 'ios-tinta')}>{valor}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }
 
 /** Fileira rolável da loja no pé da biblioteca — descoberta sem vitrine. */
 function StoreStrip({ decks, onSeeAll }: { decks: DeckWithId[]; onSeeAll: () => void }) {
   return (
-    <section className="mt-10 border-t border-border pt-6">
+    <section className="mt-12">
       <SectionHead
         title="Da loja oficial"
         meta={`${decks.length} ${decks.length === 1 ? 'deck curado' : 'decks curados'} pela equipe`}
         action={
-          <button
-            onClick={onSeeAll}
-            className="group inline-flex h-9 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-[13px] font-semibold text-foreground transition active:scale-[0.97] hover:bg-muted"
-            style={{ touchAction: 'manipulation' }}
-          >
-            Ver tudo <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+          <button onClick={onSeeAll} className="ios-tinta inline-flex h-9 items-center gap-0.5 text-[15px] font-semibold" style={{ touchAction: 'manipulation' }}>
+            Ver tudo <ChevronRight className="h-4 w-4" />
           </button>
         }
       />
-      <div className="scrollbar-hide -mx-3 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-3 pb-1 sm:mx-0 sm:px-0">
+      <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-4 pb-2 scroll-px-4 sm:mx-0 sm:px-0">
         {decks.slice(0, 10).map(deck => (
           <Link
             key={deck._id}
             href={`/flashcards/d/${deck.slug}`}
-            className="fc-card group w-[152px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-lg sm:w-[190px]"
+            className="ios-cartao ios-toque group w-[160px] shrink-0 snap-start rounded-[22px] p-1.5 sm:w-[200px]"
             style={{ touchAction: 'manipulation' }}
           >
-            <div className="relative aspect-[16/10] bg-muted">
+            <div className="ios-capa relative aspect-[16/10] rounded-[16px]">
               {deck.coverImage ? (
-                <Image src={deck.coverImage} alt="" fill className="object-cover" sizes="190px" />
+                <Image src={deck.coverImage} alt="" fill className="object-cover" sizes="200px" />
               ) : (
-                <Crown className="absolute inset-0 m-auto h-6 w-6 text-muted-foreground/35" />
+                <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+                  <Crown className="ios-ambar h-6 w-6" />
+                </div>
               )}
             </div>
-            <div className="p-2.5">
-              <p className="line-clamp-2 text-[12.5px] font-semibold leading-snug text-foreground group-hover:text-primary">
+            <div className="px-1.5 pb-1 pt-2">
+              <p className="line-clamp-2 text-[13px] font-semibold leading-snug tracking-[-0.01em]">
                 {deck.title}
               </p>
-              <p className="mt-1 text-[11px] font-semibold text-muted-foreground">
+              <p className="mt-1 text-[12px] font-semibold">
                 {deck._isPurchased || deck._hasAccess
-                  ? 'Adquirido'
+                  ? <span className="ios-tinta">Adquirido</span>
                   : deck.pricing === 'paid'
-                    ? formatPrice(deck.price)
-                    : 'Grátis'}
+                    ? <span className="tabular-nums">{formatPrice(deck.price)}</span>
+                    : <span className="ios-tinta">Grátis</span>}
               </p>
             </div>
           </Link>
@@ -1405,10 +1531,6 @@ function StoreStrip({ decks, onSeeAll }: { decks: DeckWithId[]; onSeeAll: () => 
     </section>
   )
 }
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Recebidos
-// ──────────────────────────────────────────────────────────────────────────────
 
 function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void }) {
   async function respond(id: string, status: 'accepted' | 'dismissed') {
@@ -1423,50 +1545,42 @@ function SharedList({ shares, onUpdate }: { shares: any[]; onUpdate: () => void 
     return <EmptyState title="Nada recebido ainda" hint="Quando alguém compartilhar um deck com você, ele aparece aqui." />
   }
   return (
-    <ul className="space-y-2.5">
+    <ul className="ios-lista">
       {shares.map(s => (
-        <li key={s._id} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3.5 shadow-sm md:flex-row md:items-center md:gap-4">
-          <div className="min-w-0 flex-1">
-            <p className="text-sm leading-snug text-muted-foreground">
-              <strong className="font-semibold text-foreground">{s.fromUserName}</strong> compartilhou{' '}
-              {/* O próprio título abre o deck: dá para espiar antes de aceitar
-                  sem precisar de um terceiro botão na linha. */}
-              {s.deck?.slug ? (
-                <Link href={`/flashcards/d/${s.deck.slug}`} className="font-semibold text-primary underline-offset-2 hover:underline">
-                  {s.deck?.title || 'um deck'}
-                </Link>
-              ) : (
-                <strong className="font-semibold text-foreground">{s.deck?.title || 'um deck'}</strong>
+        <li key={s._id}>
+          <div className="ios-linha !flex-col !items-stretch !gap-3 !py-3.5 md:flex-row md:!items-center md:!gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="ios-rotulo-2 text-[15px] leading-snug">
+                <strong className="font-semibold text-[var(--ios-rotulo)]">{s.fromUserName}</strong> compartilhou{' '}
+                {/* O próprio título abre o deck: dá para espiar antes de aceitar
+                    sem precisar de um terceiro botão na linha. */}
+                {s.deck?.slug ? (
+                  <Link href={`/flashcards/d/${s.deck.slug}`} className="ios-tinta font-semibold">
+                    {s.deck?.title || 'um deck'}
+                  </Link>
+                ) : (
+                  <strong className="font-semibold text-[var(--ios-rotulo)]">{s.deck?.title || 'um deck'}</strong>
+                )}
+              </p>
+              {s.message && <p className="ios-rotulo-2 mt-1 truncate text-[13px] italic">“{s.message}”</p>}
+            </div>
+            <div className="flex items-center gap-2 md:shrink-0">
+              {s.status === 'pending' && (
+                <>
+                  <button onClick={() => respond(s._id, 'accepted')} className="ios-botao ios-botao-p flex-1 md:flex-none" style={{ touchAction: 'manipulation' }}>
+                    Aceitar
+                  </button>
+                  <button onClick={() => respond(s._id, 'dismissed')} className="ios-botao-cinza ios-botao-p flex-1 md:flex-none" style={{ touchAction: 'manipulation' }}>
+                    Dispensar
+                  </button>
+                </>
               )}
-            </p>
-            {s.message && <p className="mt-1 truncate text-xs italic text-muted-foreground">“{s.message}”</p>}
-          </div>
-          <div className="flex items-center gap-2 md:shrink-0">
-            {s.status === 'pending' && (
-              <>
-                <button
-                  onClick={() => respond(s._id, 'accepted')}
-                  className="inline-flex h-9 flex-1 items-center justify-center rounded-xl bg-primary px-3.5 text-[13px] font-semibold text-primary-foreground transition active:scale-[0.97] md:flex-none"
-                  style={{ touchAction: 'manipulation' }}
-                >
-                  Aceitar
-                </button>
-                <button
-                  onClick={() => respond(s._id, 'dismissed')}
-                  className="inline-flex h-9 flex-1 items-center justify-center rounded-xl border border-border bg-card px-3.5 text-[13px] font-medium text-muted-foreground transition active:scale-[0.97] hover:text-foreground md:flex-none"
-                  style={{ touchAction: 'manipulation' }}
-                >
-                  Dispensar
-                </button>
-              </>
-            )}
-            {s.status !== 'pending' && s.deck?.slug && (
-              <Link href={`/flashcards/d/${s.deck.slug}`} className="flex-1 md:flex-none">
-                <span className="inline-flex h-9 w-full items-center justify-center gap-1 rounded-xl border border-border bg-card px-3.5 text-[13px] font-medium text-foreground transition active:scale-[0.97] hover:bg-muted">
-                  Abrir <ChevronRight className="h-3.5 w-3.5" />
-                </span>
-              </Link>
-            )}
+              {s.status !== 'pending' && s.deck?.slug && (
+                <Link href={`/flashcards/d/${s.deck.slug}`} className="ios-botao-suave ios-botao-p flex-1 md:flex-none">
+                  Abrir <ChevronRight className="-mr-1 h-4 w-4" />
+                </Link>
+              )}
+            </div>
           </div>
         </li>
       ))}

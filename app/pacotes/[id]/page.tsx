@@ -748,7 +748,7 @@ export default function PackageDetailPage() {
                           : null
                       return (
                         <li key={m._id}>
-                          <Link href={`/materiais/${m._id}`} className="ios-linha group py-3">
+                          <Link href={`/materiais/${m._id}`} className="ios-linha group !py-3">
                             <span className="ios-capa relative h-[54px] w-[76px] shrink-0 rounded-[12px]">
                               {m.coverImage ? (
                                 <Image src={m.coverImage} alt="" fill className="object-cover" sizes="76px" />
@@ -837,7 +837,7 @@ export default function PackageDetailPage() {
                 onAdd={handleAcquire}
                 disabled={checkoutLoading}
                 itemTitle={`pacote ${pkg.title}`}
-                className="h-11"
+                className="!h-11"
                 tabIndex={ctaVisivel ? -1 : 0}
               />
             )}

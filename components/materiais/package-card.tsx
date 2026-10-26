@@ -231,7 +231,7 @@ export const PackageCard = memo(function PackageCard({
             <ul className="mt-3 overflow-hidden rounded-[14px] bg-[var(--ios-preenchimento)]" aria-label="O que vem no pacote">
               {included.slice(0, 3).map(m => (
                 <li key={m._id}>
-                  <div className="ios-linha min-h-[40px] gap-2.5 px-3 py-2 [--ios-recuo:44px]">
+                  <div className="ios-linha !min-h-[40px] !gap-2.5 !px-3 !py-2 [--ios-recuo:44px]">
                     <span className="ios-tinta flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-[var(--ios-cartao-solido)] [&_svg]:h-3.5 [&_svg]:w-3.5">
                       {typeIcons[m.type] || <File />}
                     </span>
@@ -243,13 +243,13 @@ export const PackageCard = memo(function PackageCard({
               {included.length > 3 && (
                 <li>
                   {showLocked ? (
-                    <div className="ios-linha ios-rotulo-2 min-h-[36px] px-3 py-2 text-[12px] font-semibold [--ios-recuo:12px]">
+                    <div className="ios-linha ios-rotulo-2 !min-h-[36px] !px-3 !py-2 text-[12px] font-semibold [--ios-recuo:12px]">
                       e mais {included.length - 3} {included.length - 3 === 1 ? 'item' : 'itens'}
                     </div>
                   ) : (
                     <Link
                       href={href}
-                      className="ios-linha ios-tinta min-h-[36px] justify-between px-3 py-2 text-[12px] font-semibold [--ios-recuo:12px]"
+                      className="ios-linha ios-tinta !min-h-[36px] justify-between !px-3 !py-2 text-[12px] font-semibold [--ios-recuo:12px]"
                     >
                       e mais {included.length - 3} {included.length - 3 === 1 ? 'item' : 'itens'}
                       <ChevronRight className="h-3.5 w-3.5" />
@@ -299,7 +299,7 @@ export const PackageCard = memo(function PackageCard({
                   onClick={onAddToCart}
                   disabled={loading}
                   aria-label={`Obter o pacote ${pkg.title} grátis`}
-                  className="ios-botao-suave ios-botao-p px-5"
+                  className="ios-botao-suave ios-botao-p !px-5"
                 >
                   {loading ? <InlineSpinner /> : null}
                   Obter
@@ -323,8 +323,8 @@ export const PackageCard = memo(function PackageCard({
                   </span>
                 </span>
                 <span className="flex shrink-0 gap-1.5">
-                  <CartButton inCart={inCart} onAdd={onAddToCart} disabled={loading} itemTitle={`pacote ${pkg.title}`} className="h-11 text-[15px]" />
-                  <button type="button" onClick={onBuyNow} disabled={loading} className="ios-botao px-5">
+                  <CartButton inCart={inCart} onAdd={onAddToCart} disabled={loading} itemTitle={`pacote ${pkg.title}`} className="!h-11 !text-[15px]" />
+                  <button type="button" onClick={onBuyNow} disabled={loading} className="ios-botao !px-5">
                     {loading ? <InlineSpinner /> : null}
                     Comprar
                   </button>

@@ -200,7 +200,7 @@ export const MaterialCard = memo(function MaterialCard({
       )}
 
       {metrics.length > 0 && (
-        <span className="ios-selo absolute bottom-2 left-2 z-[1] max-w-[calc(100%-1rem)] gap-x-2.5 sm:bottom-2.5 sm:left-2.5 sm:max-w-[calc(100%-3.5rem)]">
+        <span className="ios-selo absolute bottom-2 left-2 z-[1] max-w-[calc(100%-1rem)] !gap-x-2.5 sm:bottom-2.5 sm:left-2.5 sm:max-w-[calc(100%-3.5rem)]">
           {metrics.map(m => (
             <span key={m.key} className="inline-flex items-center gap-1 tabular-nums">{m.node}</span>
           ))}
@@ -390,7 +390,7 @@ export const MaterialCard = memo(function MaterialCard({
                     onClick={onBuyNow}
                     disabled={loading}
                     aria-label={`Comprar ${material.title} por ${formatBRL(price.finalPrice)}`}
-                    className="ios-botao ios-botao-p flex-1 px-3"
+                    className="ios-botao ios-botao-p flex-1 !px-3"
                   >
                     {loading ? <InlineSpinner /> : null}
                     Comprar

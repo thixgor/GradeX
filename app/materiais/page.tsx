@@ -1390,7 +1390,7 @@ function MateriaisContent() {
                     <button
                       type="button"
                       onClick={() => handleScopeChange('browse')}
-                      className="ios-linha w-full py-3 text-left"
+                      className="ios-linha w-full !py-3 text-left"
                     >
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--ios-tinta)] text-white">
                         <Compass className="h-[18px] w-[18px]" />

@@ -58,6 +58,23 @@ export function LiteModePrompt() {
     setClosed(false)
   }, [pathname])
 
+  // Banner do sistema: aparece, fica alguns segundos e sai sozinho — não
+  // pode ficar parado em cima do conteúdo esperando um toque. Sair sozinho
+  // vale como "agora não".
+  const visivel =
+    hydrated && ready && !closed && !isBlockedRoute(pathname) &&
+    ((liteMode && autoEnabled && !autoNoticeSeen) || (!liteMode && shouldSuggest))
+  useEffect(() => {
+    if (!visivel) return
+    const timer = window.setTimeout(() => {
+      if (liteMode) markAutoNoticeSeen()
+      else dismissSuggestion()
+      setClosed(true)
+    }, 12000)
+    return () => window.clearTimeout(timer)
+  }, [visivel]) // eslint-disable-line react-hooks/exhaustive-deps
+
+
   if (!hydrated || !ready || closed) return null
   if (isBlockedRoute(pathname)) return null
 

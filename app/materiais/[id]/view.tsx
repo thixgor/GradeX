@@ -914,7 +914,7 @@ export default function MaterialViewPage() {
                       <p className="text-[20px] font-bold tracking-[-0.02em]">Vídeo bloqueado</p>
                       <p className="text-[14px] text-white/70">Adquira este material para assistir</p>
                       {material.videoDuration ? (
-                        <span className="ios-selo mt-1 h-7 px-3 text-[12px]">
+                        <span className="ios-selo mt-1 !h-7 !px-3 !text-[12px]">
                           <Clock className="h-3.5 w-3.5" /> {formatDuration(material.videoDuration)}
                         </span>
                       ) : null}
@@ -1131,7 +1131,7 @@ export default function MaterialViewPage() {
                 onAdd={() => handleAcquire()}
                 disabled={checkoutLoading}
                 itemTitle={material.title}
-                className="h-11"
+                className="!h-11"
                 tabIndex={ctaVisivel ? -1 : 0}
               />
             )}

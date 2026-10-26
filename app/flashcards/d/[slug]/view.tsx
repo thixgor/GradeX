@@ -12,7 +12,6 @@ import {
   Heart,
   Share2,
   Lock,
-  ShoppingCart,
   CheckCircle2,
   EyeOff,
   Globe,
@@ -25,7 +24,6 @@ import {
   Play,
   ChevronLeft,
   ChevronRight,
-  Folder,
   ChevronDown,
   ChevronUp,
   Trash2,
@@ -40,7 +38,6 @@ import {
   AlertTriangle,
   Download,
   X,
-  Bookmark,
   Maximize2,
   Minimize2,
   Mic,
@@ -52,6 +49,7 @@ import {
   Check,
   CloudOff,
   Timer,
+  Star,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Logo } from '@/components/logo'
@@ -60,7 +58,6 @@ import { ToastAlert } from '@/components/ui/toast-alert'
 import { PackageUpsellModal, UpsellPackage } from '@/components/materiais/package-upsell-modal'
 import { FlashcardCardView } from '@/components/flashcards/flashcard-card'
 import { FlashcardTour } from '@/components/flashcards/flashcard-tour'
-import { GlassHeroSurface } from '@/components/glass-hero-surface'
 import { cn } from '@/lib/utils'
 import {
   describePdfDownloadFailure,
@@ -72,7 +69,6 @@ import {
   type PublicMetricSettings,
 } from '@/lib/display-settings'
 import { ReviewsSection } from '@/components/reviews/reviews-section'
-import { ReviewSummaryBlock } from '@/components/reviews/review-summary'
 import type { ReviewSummary } from '@/lib/reviews-shared'
 import { useConviteDeAvaliacao } from '@/lib/reviews-prompt'
 
@@ -113,6 +109,10 @@ import {
 } from '@/components/materiais/timed-access'
 import { DeckListingNote } from '@/components/flashcards/deck-listing-note'
 import type { DeckListingStatus } from '@/lib/flashcard-manual'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { AnelProgresso, Confete } from '@/components/flashcards/pecas-ios'
+import { lerErrosLocais, marcarErroLocal } from '@/lib/flashcard-caderno-de-erros'
+import { lerMetaDiaria, lerSequencia, registrarDiaDeEstudo } from '@/lib/flashcard-ritmo'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -141,6 +141,21 @@ interface DeckResponse {
 }
 
 type StudyMode = 'normal' | 'spaced'
+
+/** O placar que a tela de fim de sessão mostra. */
+interface SessionSummary {
+  /** Cards distintos avaliados. */
+  rated: number
+  /** Toques em cada nota, contando as voltas da fila. */
+  counts: Record<FlashcardSpacedRating, number>
+  /** Cards que terminaram a sessão ainda errados — vão para o caderno. */
+  errorIds: string[]
+  /** Numa revisão do caderno: quantos saíram dele. */
+  fixedErrors: number
+  durationMs: number
+  bestCombo: number
+  errorsReview: boolean
+}
 
 interface SpacedProgressResponse {
   _id?: string
@@ -274,24 +289,19 @@ const RETENTION_OPTIONS: { value: RetentionPreset; label: string; description: s
 // para eliminar o "salto" de layout e reduzir a percepção de espera.
 function DeckPageSkeleton() {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 animate-pulse">
-      <div className="h-9 w-36 rounded-xl skeleton-pulse mb-4" />
-      <div className="rounded-[2rem] overflow-hidden border border-white/40 dark:border-border mb-6">
-        <div className="min-h-[220px] sm:min-h-[240px] md:min-h-[260px] skeleton-pulse" />
-        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between bg-white/60 dark:bg-slate-900/60">
-          <div className="flex gap-2">
-            <div className="h-9 w-24 rounded-full skeleton-pulse" />
-            <div className="h-9 w-24 rounded-full skeleton-pulse" />
-          </div>
-          <div className="h-12 w-44 rounded-2xl skeleton-pulse" />
+    <div className="mx-auto max-w-6xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8" aria-hidden>
+      <div className="ios-esqueleto mb-4 h-7 w-28 rounded-full" />
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+        <div className="space-y-6">
+          <div className="ios-esqueleto rounded-[22px] sm:rounded-[28px]" style={{ aspectRatio: '16/9' }} />
+          <div className="ios-esqueleto hidden h-24 rounded-[18px] xl:block" />
         </div>
-      </div>
-      <div className="h-28 rounded-3xl skeleton-pulse mb-4" />
-      <div className="h-14 rounded-2xl skeleton-pulse mb-3" />
-      <div className="space-y-2">
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} className="h-14 rounded-2xl skeleton-pulse" />
-        ))}
+        <div className="ios-painel space-y-3">
+          <div className="ios-esqueleto h-8 w-11/12 rounded-full" />
+          <div className="ios-esqueleto h-4 w-1/2 rounded-full" />
+          <div className="ios-esqueleto mt-6 h-[50px] w-full rounded-full" />
+          <div className="ios-esqueleto h-[50px] w-full rounded-full" />
+        </div>
       </div>
     </div>
   )
@@ -365,6 +375,24 @@ export default function DeckPage() {
   const [reviewSummary, setReviewSummary] = useState<ReviewSummary | null>(null)
   const [metricSettings, setMetricSettings] = useState<PublicMetricSettings>(DEFAULT_PUBLIC_METRIC_SETTINGS)
   const [savedProgress, setSavedProgress] = useState<FlashcardProgress | null>(null)
+  // Caderno de erros do modo "ordem do deck" (o do modo espaçado sai do
+  // próprio progresso de cada card). Ver `lib/flashcard-caderno-de-erros.ts`.
+  const [localErrors, setLocalErrors] = useState<Set<string>>(new Set())
+  // A sessão em andamento é a revisão do caderno de erros?
+  const [reviewingErrors, setReviewingErrors] = useState(false)
+  // Placar da sessão: alimenta a sequência de acertos durante o estudo e a
+  // tela de fim. Refs porque o fim pode vir de um timer, depois do último
+  // render — e precisa ver a última nota.
+  const ratingsRef = useRef<Record<string, FlashcardSpacedRating>>({})
+  const sessionRef = useRef({
+    startedAt: 0,
+    counts: { FACIL: 0, MEDIO: 0, DIFICIL: 0 } as Record<FlashcardSpacedRating, number>,
+    errorIds: new Set<string>(),
+    bestCombo: 0,
+  })
+  const [combo, setCombo] = useState(0)
+  const [summary, setSummary] = useState<SessionSummary | null>(null)
+  const errorsParamHandledRef = useRef(false)
 
   const purchaseSuccess = search?.get('purchase') === 'success'
   const userKey = data?.viewer.userId || 'guest'
@@ -394,6 +422,16 @@ export default function DeckPage() {
   )
   const dueNowCount = spacedPreview ? spacedPreview.due + spacedPreview.learning : 0
   const newNowCount = spacedPreview ? spacedPreview.newCards : 0
+
+  // Caderno de erros do deck: todo card cuja última nota foi "Difícil" (no
+  // progresso da repetição espaçada ou, no modo normal, guardado no aparelho).
+  // Acertou depois, saiu — sem botão de "limpar".
+  const errorCards = useMemo<DeckCard[]>(
+    () => ((data?.cards ?? []) as DeckCard[]).filter(card =>
+      card.spacedProgress?.rating === 'DIFICIL' || localErrors.has(String(card._id))
+    ),
+    [data?.cards, localErrors]
+  )
 
   useEffect(() => {
     if (purchaseSuccess) {
@@ -570,6 +608,28 @@ export default function DeckPage() {
     })
   }, [])
 
+  // `?erros=1` (vindo do painel "Hoje" de /flashcards) abre direto a revisão
+  // do caderno, uma vez, e some do endereço.
+  useEffect(() => {
+    if (errorsParamHandledRef.current || !data || studying) return
+    if (search?.get('erros') !== '1') return
+    if (!data.access.hasAccess) return
+    errorsParamHandledRef.current = true
+    try {
+      const url = new URL(window.location.href)
+      url.searchParams.delete('erros')
+      window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`)
+    } catch {}
+    // Espera o caderno local ser lido antes de montar a fila.
+    const timer = setTimeout(() => startErrorsReview(), 60)
+    return () => clearTimeout(timer)
+  }, [data, studying, search]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!data) return
+    setLocalErrors(lerErrosLocais(userKey, slug))
+  }, [data?.deck?._id, userKey, slug]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Detect resumable progress whenever deck data refreshes.
   useEffect(() => {
     if (!data || studying) return
@@ -590,14 +650,16 @@ export default function DeckPage() {
 
   // Persist progress while the user is studying.
   useEffect(() => {
-    if (!studying || !data) return
+    // A revisão do caderno é uma fila avulsa: retomá-la como sessão do deck
+    // abriria o baralho no índice errado.
+    if (!studying || !data || reviewingErrors) return
     saveProgress(slug, userKey, {
       mode: activeStudyMode,
       index: currentIndex,
       total: studyCards.length,
       ratings,
     })
-  }, [studying, currentIndex, ratings, activeStudyMode, data, slug, studyCards.length, userKey])
+  }, [studying, currentIndex, ratings, activeStudyMode, data, slug, studyCards.length, userKey, reviewingErrors])
 
   // A revalidação em segundo plano pode voltar com menos cards (alguém apagou
   // um enquanto a sessão rodava) — o índice não pode ficar fora do baralho.
@@ -667,6 +729,14 @@ export default function DeckPage() {
     }
   }, [studying, fullscreen, fullscreenPref])
 
+  // Durante o estudo, avisos flutuantes do app (Modo Lite) saem da frente do
+  // card — ver `.estudo-em-foco` no globals.css.
+  useEffect(() => {
+    if (!studying) return
+    document.body.classList.add('estudo-em-foco')
+    return () => document.body.classList.remove('estudo-em-foco')
+  }, [studying])
+
   // Garante saída da tela cheia ao encerrar o estudo.
   useEffect(() => {
     if (studying) return
@@ -732,8 +802,22 @@ export default function DeckPage() {
   // Entra no estudo imediatamente: a ordem é calculada aqui e os dados só são
   // revalidados em segundo plano. Antes isso disparava um fetch bloqueante que
   // trocava a página inteira pelo skeleton antes do primeiro card aparecer.
+  function resetSessionScore() {
+    sessionRef.current = {
+      startedAt: Date.now(),
+      counts: { FACIL: 0, MEDIO: 0, DIFICIL: 0 },
+      errorIds: new Set(),
+      bestCombo: 0,
+    }
+    ratingsRef.current = {}
+    setCombo(0)
+    setSummary(null)
+  }
+
   function startStudy(mode: StudyMode, resumeFrom?: FlashcardProgress | null, opts?: { ahead?: boolean }) {
     if (!data || data.cards.length === 0) return
+    resetSessionScore()
+    setReviewingErrors(false)
     const effectiveMode: StudyMode = resumeFrom?.mode ?? mode
     const ahead = !!opts?.ahead
     const queue = buildStudyQueue(data.cards as DeckCard[], effectiveMode, { ahead })
@@ -753,6 +837,7 @@ export default function DeckPage() {
     setStudyOrder(queue.cards.map(card => String(card._id)))
     setActiveStudyMode(effectiveMode)
     setRatings(resumeFrom?.ratings ?? {})
+    ratingsRef.current = { ...(resumeFrom?.ratings ?? {}) }
     // Retomar no modo espaçado começa do zero de propósito: a fila já é
     // exatamente o que falta (o que foi avaliado saiu dela ao ganhar data
     // futura). Pular para o índice antigo saltaria por cima de cards que
@@ -771,10 +856,55 @@ export default function DeckPage() {
     load({ silent: true })
   }
 
-  function exitStudy() {
+  /**
+   * Revisão do caderno de erros: uma sessão só com os cards errados — os do
+   * deck inteiro, ou os de uma sessão que acabou de terminar. Logado, roda na
+   * repetição espaçada: acertar aqui reagenda o card e o tira do caderno.
+   */
+  function startErrorsReview(ids?: string[]) {
+    if (!data) return
+    const byId = new Map((data.cards as DeckCard[]).map(card => [String(card._id), card]))
+    // Relido do aparelho na hora: a chamada pode vir de um timer montado antes
+    // de o caderno local entrar no estado.
+    const locais = lerErrosLocais(userKey, slug)
+    const doCaderno = (data.cards as DeckCard[])
+      .filter(card => card.spacedProgress?.rating === 'DIFICIL' || locais.has(String(card._id)))
+      .map(card => String(card._id))
+    const source = (ids && ids.length > 0 ? ids : doCaderno)
+      .map(id => byId.get(id))
+      .filter((card): card is DeckCard => !!card)
+      // Os que mais recaíram primeiro: é onde a memória está mais frágil.
+      .sort((a, b) => (b.spacedProgress?.lapses || 0) - (a.spacedProgress?.lapses || 0))
+    if (source.length === 0) {
+      setToast({ open: true, message: 'Seu caderno de erros deste deck está vazio.', type: 'info' })
+      return
+    }
+    resetSessionScore()
+    requeueCountRef.current = {}
+    setReviewingErrors(true)
+    setQueueCounts(null)
+    setStudyingAhead(false)
+    setStudyOrder(source.map(card => String(card._id)))
+    setActiveStudyMode(data.viewer.isAuthenticated ? 'spaced' : 'normal')
+    setRatings({})
+    setCurrentIndex(0)
+    setFlipped(false)
+    setShowComment(false)
+    setShowHint(false)
+    setScheduleFeedback(null)
+    setVoiceFeedback(null)
+    setVoiceEnabled(voicePref)
+    autoFullscreenRef.current = false
+    if (fullscreenPref) setFullscreen(true)
+    setStudying(true)
+  }
+
+  function exitStudy(opts?: { semConvite?: boolean }) {
     // Fim do estudo: o melhor (e único) instante em que a opinião sobre o deck
-    // existe de verdade. O convite só aparece se houve estudo suficiente.
-    convidarParaAvaliar()
+    // existe de verdade. O convite só aparece se houve estudo suficiente —
+    // e espera a tela de resultado fechar, quando há uma.
+    if (!opts?.semConvite) convidarParaAvaliar()
+    setReviewingErrors(false)
     setStudying(false)
     setStudyOrder(null)
     setVoiceEnabled(false)
@@ -865,7 +995,30 @@ export default function DeckPage() {
     if (!card) return
     const cardId = String(card._id)
     setRatings(prev => ({ ...prev, [cardId]: value }))
+    ratingsRef.current = { ...ratingsRef.current, [cardId]: value }
     marcarCardAvaliado()
+    registrarDiaDeEstudo()
+
+    // Placar da sessão e a sequência de acertos — o "combo" que sobe a cada
+    // card lembrado e zera no primeiro que travou.
+    const score = sessionRef.current
+    score.counts[value] += 1
+    if (value === 'DIFICIL') {
+      score.errorIds.add(cardId)
+      setCombo(0)
+    } else {
+      setCombo(prev => {
+        const next = prev + 1
+        if (next > score.bestCombo) score.bestCombo = next
+        return next
+      })
+    }
+    // Caderno de erros local: errou entra, acertou sai (vale nos dois modos).
+    setLocalErrors(marcarErroLocal(userKey, slug, cardId, value === 'DIFICIL'))
+    // Um toque leve no celular: a resposta é sentida, não só vista.
+    try {
+      navigator.vibrate?.(value === 'DIFICIL' ? [14, 50, 14] : 9)
+    } catch {}
 
     let requeued = false
 
@@ -930,7 +1083,20 @@ export default function DeckPage() {
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
       advanceTimerRef.current = setTimeout(() => {
         advanceTimerRef.current = null
-        goNext()
+        // Avanço por atualização funcional: o `goNext` deste render ainda vê a
+        // fila de antes do `requeueCard`, e no último card ele achava que não
+        // havia próximo — o card errado voltava para a fila e a tela travava.
+        setCurrentIndex(i => i + 1)
+        resetCardTransientState()
+      }, delay)
+    } else {
+      // Último card avaliado: a sessão termina sozinha, com a tela de
+      // resultado — sem obrigar a procurar o "Concluir".
+      const delay = opts?.source === 'voice' ? VOICE_UNDO_MS : 420
+      if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current)
+      advanceTimerRef.current = setTimeout(() => {
+        advanceTimerRef.current = null
+        void finishSession()
       }, delay)
     }
   }
@@ -1037,14 +1203,15 @@ export default function DeckPage() {
 
   async function finishSession() {
     if (!data) return
-    const ratedCount = Object.keys(ratings).length
+    const finalRatings = ratingsRef.current
+    const ratedCount = Object.keys(finalRatings).length
     try {
       // No modo espaçado cada avaliação já virou uma revisão gravada; mandar
       // as mesmas notas de novo só duplicaria o histórico. O que falta aqui é
       // registrar que o deck foi estudado.
       const entries = activeStudyMode === 'spaced'
         ? []
-        : Object.entries(ratings).map(([cardId, rating]) => ({
+        : Object.entries(finalRatings).map(([cardId, rating]) => ({
             cardId,
             rating: toLegacyRating(rating),
             completedAt: new Date(),
@@ -1052,19 +1219,37 @@ export default function DeckPage() {
       await fetch(`/api/flashcards/manual/${encodeURIComponent(slug)}/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entries, startedAt: new Date() }),
+        body: JSON.stringify({ entries, startedAt: new Date(sessionRef.current.startedAt || Date.now()) }),
       })
     } catch {}
-    clearProgress(slug, userKey)
-    setSavedProgress(null)
-    exitStudy()
-    setToast({
-      open: true,
-      message: ratedCount > 0
-        ? `Sessão concluída · ${ratedCount} ${ratedCount === 1 ? 'card avaliado' : 'cards avaliados'}`
-        : 'Sessão concluída!',
-      type: 'success',
+    if (!reviewingErrors) {
+      clearProgress(slug, userKey)
+      setSavedProgress(null)
+    }
+    const score = sessionRef.current
+    const wasErrorsReview = reviewingErrors
+    exitStudy({ semConvite: ratedCount > 0 })
+    if (ratedCount === 0) {
+      setToast({ open: true, message: 'Sessão encerrada.', type: 'info' })
+      return
+    }
+    // Erros que continuam errados no fim da sessão (um card que travou e
+    // depois foi acertado na volta da fila não conta).
+    const stillWrong = Array.from(score.errorIds).filter(id => finalRatings[id] === 'DIFICIL')
+    setSummary({
+      rated: ratedCount,
+      counts: { ...score.counts },
+      errorIds: stillWrong,
+      fixedErrors: wasErrorsReview ? ratedCount - stillWrong.length : 0,
+      durationMs: Date.now() - (score.startedAt || Date.now()),
+      bestCombo: score.bestCombo,
+      errorsReview: wasErrorsReview,
     })
+  }
+
+  function closeSummary() {
+    setSummary(null)
+    convidarParaAvaliar()
   }
 
   async function toggleLike() {
@@ -1234,20 +1419,29 @@ export default function DeckPage() {
 
   if (loading) {
     return (
-      <AppShell allowGuest>
-        <DeckPageSkeleton />
+      <AppShell allowGuest vidro>
+        <FundoIos>
+          <DeckPageSkeleton />
+        </FundoIos>
       </AppShell>
     )
   }
 
   if (!data) {
     return (
-      <AppShell allowGuest>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-6">
-          <Lock className="h-10 w-10 text-slate-400" />
-          <h1 className="text-xl font-semibold">Deck não encontrado ou indisponível</h1>
-          <Button onClick={() => router.push('/flashcards')}>Voltar para Flashcards</Button>
-        </div>
+      <AppShell allowGuest vidro>
+        <FundoIos>
+          <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
+            <span className="ios-rotulo-2 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--ios-preenchimento)]">
+              <Lock className="h-7 w-7" />
+            </span>
+            <h1 className="text-[22px] font-bold tracking-[-0.02em]">Deck não encontrado</h1>
+            <p className="ios-rotulo-2 mt-1.5 max-w-xs text-[15px]">Ele foi removido ou não está disponível para você.</p>
+            <button type="button" onClick={() => router.push('/flashcards')} className="ios-botao mt-6">
+              <ChevronLeft className="-ml-1 h-5 w-5" /> Voltar aos flashcards
+            </button>
+          </div>
+        </FundoIos>
       </AppShell>
     )
   }
@@ -1266,45 +1460,63 @@ export default function DeckPage() {
     ? Math.max(0, Math.round(originalDeckPrice * (1 - tierPct / 100) * 100) / 100)
     : originalDeckPrice
 
+  // ── Resultado da sessão ────────────────────────────────────────────────────
+  if (summary && !studying) {
+    return (
+      <AppShell allowGuest vidro>
+        <FundoIos capa={deck.coverImage || null} capaSizes={HERO_SIZES}>
+          <SessionResult
+            summary={summary}
+            deckTitle={deck.title}
+            onReviewErrors={() => startErrorsReview(summary.errorIds)}
+            onStudyMore={() => startStudy(studyModeChoice, null)}
+            onClose={closeSummary}
+            studyMoreLabel={
+              studyModeChoice === 'spaced'
+                ? dueNowCount + newNowCount > 0 ? `Continuar · ${dueNowCount + newNowCount} ${dueNowCount + newNowCount === 1 ? 'card' : 'cards'}` : null
+                : 'Estudar de novo'
+            }
+          />
+        </FundoIos>
+        <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
+      </AppShell>
+    )
+  }
+
   if (studying && studyCards.length === 0 && activeStudyMode === 'spaced') {
     // Fim de fila: não sobrou nada vencido para hoje. Em vez de abrir uma
     // sessão vazia (ou pior, o baralho inteiro sem aviso), a tela diz o que
     // aconteceu e oferece as duas saídas possíveis.
     return (
-      <AppShell allowGuest>
-        <div className="mx-auto max-w-xl px-4 py-10">
-          <div className="rounded-3xl border border-emerald-300/40 bg-emerald-500/10 p-6 text-center">
-            <span className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-lime-500 text-white shadow-lg shadow-emerald-700/25">
-              <Check className="h-7 w-7" />
+      <AppShell allowGuest vidro>
+        <FundoIos capa={deck.coverImage || null} capaSizes={HERO_SIZES}>
+          <div className="mx-auto flex min-h-[75vh] max-w-md flex-col items-center justify-center px-6 py-10 text-center">
+            <span className="ios-assenta mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--ios-tinta)] text-white shadow-[var(--ios-sombra-alta)]">
+              <Check className="h-10 w-10" strokeWidth={3} />
             </span>
-            <h1 className="text-lg font-bold text-emerald-950 dark:text-emerald-50">
-              Revisões de hoje em dia
-            </h1>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-emerald-900/80 dark:text-emerald-100/80">
-              Nenhum card deste deck está vencido agora. Voltar antes da hora atrapalha a
-              fixação — o ganho está justamente em revisar no limite do esquecimento.
+            <h1 className="ios-titulo-produto">Revisões de hoje em dia</h1>
+            <p className="ios-rotulo-2 mt-2 text-[15px] leading-relaxed">
+              Nenhum card deste deck venceu agora. O ganho está em revisar no limite do esquecimento —
+              antes disso é esforço com pouco retorno.
               {queueCounts && queueCounts.future > 0 && (
                 <> Os próximos {queueCounts.future} cards já têm data marcada.</>
               )}
             </p>
-            <div className="mt-5 flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
-              <button
-                type="button"
-                onClick={() => startStudy('spaced', null, { ahead: true })}
-                className="inline-flex h-11 items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 px-5 text-sm font-bold text-white shadow-md transition active:scale-95"
-              >
-                <Zap className="h-4 w-4" /> Adiantar revisões
+            <div className="mt-7 flex w-full flex-col gap-2">
+              {errorCards.length > 0 && (
+                <button type="button" onClick={() => startErrorsReview()} className="ios-botao-erro ios-botao-g w-full">
+                  <RotateCcw className="h-[18px] w-[18px]" /> Refazer {errorCards.length} {errorCards.length === 1 ? 'erro' : 'erros'}
+                </button>
+              )}
+              <button type="button" onClick={() => startStudy('spaced', null, { ahead: true })} className="ios-botao-cinza ios-botao-g w-full">
+                <Zap className="h-[18px] w-[18px]" /> Adiantar revisões
               </button>
-              <button
-                type="button"
-                onClick={exitStudy}
-                className="inline-flex h-11 items-center gap-2 rounded-2xl border border-border bg-card px-5 text-sm font-semibold text-foreground transition active:scale-95"
-              >
-                <ArrowLeft className="h-4 w-4" /> Voltar ao deck
+              <button type="button" onClick={() => exitStudy()} className="ios-tinta mt-1 h-11 text-[16px] font-semibold">
+                Voltar ao deck
               </button>
             </div>
           </div>
-        </div>
+        </FundoIos>
         <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
       </AppShell>
     )
@@ -1315,12 +1527,12 @@ export default function DeckPage() {
     const total = studyCards.length
     const progress = total > 0 ? ((currentIndex + 1) / total) * 100 : 0
     return (
-      <AppShell allowGuest>
+      <AppShell allowGuest vidro>
+        <FundoIos>
         <div
           ref={studyRef}
           className={cn(
-            fullscreen &&
-              'surface-page fixed inset-0 z-[60] overflow-y-auto overscroll-contain',
+            fullscreen && 'fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-[var(--ios-chao)]',
           )}
           style={fullscreen ? {
             paddingTop: 'env(safe-area-inset-top)',
@@ -1332,18 +1544,16 @@ export default function DeckPage() {
         <div className={cn(
           // `flashcard-estudo` é o gancho do CSS que aperta o supérfluo quando a
           // tela é baixa e deitada (tablet na horizontal). Ver globals.css.
-          'flashcard-estudo mx-auto px-3 sm:px-4 py-4 sm:py-6',
-          fullscreen ? 'flex min-h-full flex-col max-w-5xl lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
+          'flashcard-estudo mx-auto px-3 py-3 sm:px-4 sm:py-5',
+          fullscreen ? 'flex min-h-full max-w-5xl flex-col lg:max-w-6xl' : 'max-w-3xl lg:max-w-5xl',
         )}>
           <div className={cn(
-            'flashcard-estudo-topo mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-border dark:bg-slate-900',
-            fullscreen && 'mb-3 border-transparent bg-transparent p-0 shadow-none dark:border-transparent dark:bg-transparent',
+            'flashcard-estudo-topo mb-3 rounded-[20px] p-1.5',
+            fullscreen ? '!bg-transparent' : 'ios-vidro',
           )}>
             <div className="relative flex items-center justify-between gap-2">
               {/* Logo DomineAqui — só na tela cheia, onde o cabeçalho do app some.
-                  Centralizada e sem captura de clique para nunca cobrir os botões.
-                  No mobile mostra só o ícone (compacto); em telas maiores, a
-                  logo completa. Alterna entre a versão clara/escura pelo tema. */}
+                  Centralizada e sem captura de clique para nunca cobrir os botões. */}
               {fullscreen && (
                 <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90">
                   <Logo variant="full" size="sm" className="hidden sm:block dark:sm:hidden" />
@@ -1351,26 +1561,37 @@ export default function DeckPage() {
                   <Logo variant="icon" size="sm" className="sm:hidden" />
                 </div>
               )}
-              <Button variant="ghost" onClick={exitStudy} className="h-10 gap-1 px-2 sm:px-3">
-                <ArrowLeft className="h-4 w-4" />Sair
-              </Button>
-              <div className="flex min-w-0 items-center gap-2">
-                {activeStudyMode === 'spaced' && !fullscreen && (
+              <button type="button" onClick={() => exitStudy()} className="ios-voltar">
+                <ChevronLeft className="h-[22px] w-[22px] shrink-0" strokeWidth={2.5} /> Sair
+              </button>
+              <div className="flex min-w-0 items-center gap-1.5">
+                {reviewingErrors ? (
+                  <span className="ios-erro ios-erro-suave hidden items-center gap-1 rounded-full px-2.5 py-1 text-[12px] font-semibold sm:inline-flex">
+                    <RotateCcw className="h-3.5 w-3.5" /> Caderno de erros
+                  </span>
+                ) : activeStudyMode === 'spaced' && !fullscreen ? (
                   <span
-                    className="hidden items-center gap-1 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200 backdrop-blur sm:inline-flex"
-                    title={
-                      queueCounts
-                        ? `${queueCounts.due + queueCounts.learning} para revisar · ${queueCounts.newCards} novos`
-                        : undefined
-                    }
+                    className="ios-tinta hidden items-center gap-1 rounded-full bg-[var(--ios-tinta-suave)] px-2.5 py-1 text-[12px] font-semibold sm:inline-flex"
+                    title={queueCounts ? `${queueCounts.due + queueCounts.learning} para revisar · ${queueCounts.newCards} novos` : undefined}
                   >
                     <Brain className="h-3.5 w-3.5" />
                     Repetição espaçada
                     {studyingAhead && <span className="opacity-70">· adiantando</span>}
                   </span>
+                ) : null}
+                {/* Sequência de acertos: aparece a partir do 3º seguido e pula
+                    a cada card lembrado. Zera no primeiro "Difícil". */}
+                {combo >= 3 && (
+                  <span
+                    key={combo}
+                    className="ios-pulo inline-flex items-center gap-1 rounded-full bg-[#f08a24]/15 px-2.5 py-1 text-[12px] font-bold tabular-nums text-[#c76a10] dark:text-[#ffb15e]"
+                    aria-label={`${combo} acertos seguidos`}
+                  >
+                    <Flame className="h-3.5 w-3.5 fill-current" /> {combo}
+                  </span>
                 )}
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold tabular-nums text-slate-700 dark:bg-muted dark:text-slate-100">
-                  {currentIndex + 1} / {total}
+                <span className="rounded-full bg-[var(--ios-preenchimento)] px-2.5 py-1 text-[13px] font-semibold tabular-nums">
+                  {currentIndex + 1}<span className="ios-rotulo-3">/{total}</span>
                 </span>
                 {/* Modo voz — liga/desliga sem sair do estudo. Some de vez em
                     navegadores sem reconhecimento de fala. */}
@@ -1381,39 +1602,28 @@ export default function DeckPage() {
                     aria-pressed={voiceEnabled}
                     aria-label={voiceEnabled ? 'Desligar modo voz' : 'Ligar modo voz'}
                     title={voiceEnabled ? 'Modo voz ligado' : 'Ligar modo voz'}
-                    className={cn(
-                      'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full shadow-sm transition active:scale-95',
-                      voiceEnabled
-                        ? 'bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-emerald-500/30'
-                        : 'bg-slate-100 text-slate-500 dark:bg-muted dark:text-slate-300',
-                    )}
+                    className={cn('ios-icone-botao h-9 w-9', voiceEnabled && 'bg-[var(--ios-tinta)] text-white')}
                   >
                     {voiceEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
                   </button>
                 )}
-                {/* Botão de tela cheia / foco — sempre visível (mobile, iPad, PC) */}
                 <button
                   type="button"
                   onClick={toggleFullscreen}
-                  className={cn(
-                    'inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold shadow-sm transition active:scale-95',
-                    fullscreen
-                      ? 'bg-slate-900 text-foreground hover:bg-slate-800 dark:bg-white dark:text-slate-900'
-                      : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-amber-500/30 hover:brightness-110',
-                  )}
+                  className="ios-icone-botao !h-9 !w-9"
                   aria-label={fullscreen ? 'Sair da tela cheia' : 'Expandir para tela cheia'}
                   title={fullscreen ? 'Sair da tela cheia (F)' : 'Expandir para tela cheia (F)'}
                 >
                   {fullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                  <span>{fullscreen ? 'Sair' : 'Tela cheia'}</span>
                 </button>
               </div>
             </div>
           </div>
-          <div className="flashcard-estudo-progresso h-1.5 bg-slate-200 dark:bg-muted rounded-full overflow-hidden mb-3">
+          <div className="flashcard-estudo-progresso mb-3 h-1.5 overflow-hidden rounded-full bg-[var(--ios-preenchimento-forte)]">
             <motion.div
-              className={cn('h-full bg-gradient-to-r', activeStudyMode === 'spaced' ? 'from-emerald-500 via-lime-400 to-amber-400' : 'from-emerald-500 to-amber-400')}
+              className={cn('h-full rounded-full', reviewingErrors ? 'bg-[#e5484d]' : 'bg-[var(--ios-tinta)]')}
               animate={{ width: `${progress}%` }}
+              transition={{ type: 'spring', stiffness: 160, damping: 26 }}
             />
           </div>
           <CardPager
@@ -1427,29 +1637,25 @@ export default function DeckPage() {
           {/* Sugestão de tela cheia — some para sempre assim que o usuário
               aceita ou dispensa. O botão de expandir continua no topo. */}
           {fullscreenHint && !fullscreen && (
-            <div className="mb-4 flex flex-col gap-2.5 rounded-2xl border border-amber-400/35 bg-amber-500/10 px-3.5 py-3 sm:flex-row sm:items-center sm:gap-3">
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-sm">
-                <Maximize2 className="h-4 w-4" />
-              </span>
-              <p className="flex-1 text-sm leading-snug text-amber-900 dark:text-amber-100">
-                <strong className="font-semibold">Estude em tela cheia.</strong>{' '}
-                <span className="opacity-80">O card ocupa a tela inteira e o resto da página some.</span>
-              </p>
-              <div className="flex shrink-0 items-center gap-2">
-                <button
-                  type="button"
-                  onClick={toggleFullscreen}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-3.5 text-sm font-bold text-white shadow-sm transition active:scale-95"
-                >
-                  <Maximize2 className="h-3.5 w-3.5" /> Expandir
+            <div className="ios-lista mb-3">
+              <div className="ios-linha !gap-3">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--ios-tinta)] text-white">
+                  <Maximize2 className="h-4 w-4" />
+                </span>
+                <p className="min-w-0 flex-1 text-[14px] leading-snug">
+                  <strong className="font-semibold">Estude em tela cheia.</strong>{' '}
+                  <span className="ios-rotulo-2">Só o card, sem distração.</span>
+                </p>
+                <button type="button" onClick={toggleFullscreen} className="ios-botao-suave ios-botao-p shrink-0">
+                  Expandir
                 </button>
                 <button
                   type="button"
                   onClick={dismissFullscreenHint}
                   aria-label="Dispensar sugestão de tela cheia"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-xl text-amber-800/70 transition hover:bg-amber-500/15 dark:text-amber-100/70"
+                  className="ios-rotulo-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-[var(--ios-preenchimento)]"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
@@ -1457,11 +1663,9 @@ export default function DeckPage() {
 
           {card && (
             /* Em tela cheia, o card cresce e fica centralizado no espaço livre
-               entre o cabeçalho e a barra de ações — evitando o vazio inferior
-               quando o conteúdo é mais curto que a viewport.
-               Troca de card sem animação de wrapper: animar opacity/scale num
-               ancestral do card 3D forçava re-rasterização (flicker) e custo a
-               cada navegação. A troca instantânea é a mais fluida no mobile. */
+               entre o cabeçalho e a barra de ações. Troca de card sem animação
+               de wrapper: animar um ancestral do card 3D forçava
+               re-rasterização (flicker) a cada navegação. */
             <div
               className={cn(fullscreen && 'flex flex-1 flex-col justify-center')}
               onPointerDown={onCardPointerDown}
@@ -1484,23 +1688,16 @@ export default function DeckPage() {
             </div>
           )}
 
-          {/* Barra de ações fixa — sempre acessível sem rolar a página.
-              Quando o card está na frente, mostra "Mostrar resposta"; ao virar,
-              as avaliações (Fácil / Médio / Difícil) aparecem no MESMO lugar,
-              fixadas na base da tela. Sem precisar descer o scroll.
-              Funciona em PC, tablet e celular (com área segura de notch). */}
+          {/* Barra de ações fixa — sempre acessível sem rolar a página. Fundo
+              opaco e camada própria (translateZ): o desfoque recalculado a
+              cada frame fazia o "Mostrar resposta" piscar ao rolar no celular. */}
           <div
-            className={cn(
-              'flashcard-estudo-barra sticky bottom-0 z-30 mt-5 -mx-3 space-y-2.5 border-t border-border bg-background px-3 pt-3 sm:-mx-4 sm:px-4',
-              'shadow-[0_-16px_40px_-28px_rgba(15,23,42,0.55)]',
-            )}
+            className="flashcard-estudo-barra sticky bottom-0 z-30 -mx-3 mt-4 space-y-2.5 bg-[var(--ios-chao)] px-3 pt-3 sm:-mx-4 sm:px-4"
             style={{
               paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))',
-              // Fundo opaco + camada própria de composição (translateZ) elimina
-              // o flicker do "Mostrar resposta" e das avaliações ao rolar no
-              // mobile — antes o backdrop-blur recalculava a cada frame.
               transform: 'translateZ(0)',
               backfaceVisibility: 'hidden',
+              boxShadow: '0 -18px 30px -24px rgba(0,0,0,0.35)',
             }}
           >
             {activeStudyMode === 'spaced' && (
@@ -1512,7 +1709,7 @@ export default function DeckPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.14 }}
-                    className="mx-auto flex max-w-md items-center justify-center gap-1.5 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-4 py-2 text-center text-sm font-medium text-emerald-800 dark:text-emerald-100"
+                    className="ios-tinta mx-auto flex w-fit max-w-md items-center justify-center gap-1.5 rounded-full bg-[var(--ios-tinta-suave)] px-4 py-1.5 text-center text-[13px] font-semibold"
                   >
                     <CalendarClock className="h-3.5 w-3.5 shrink-0" />
                     {scheduleFeedback}
@@ -1521,18 +1718,16 @@ export default function DeckPage() {
               </AnimatePresence>
             )}
 
-            {/* Envio em segundo plano. Em condição normal o usuário nunca vê
-                nada aqui — a faixa só aparece quando a rede falhou e ainda há
-                avaliações esperando, para ninguém achar que perdeu o estudo. */}
+            {/* Envio em segundo plano: a faixa só aparece quando a rede falhou
+                e ainda há avaliações esperando. */}
             {activeStudyMode === 'spaced' && syncStatus === 'error' && pendingReviews > 0 && (
-              <div className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-2xl border border-amber-300/40 bg-amber-500/10 px-3 py-1.5 text-[11px] font-medium text-amber-800 dark:text-amber-100">
+              <div className="ios-ambar mx-auto flex w-fit max-w-md items-center justify-center gap-2 rounded-full bg-[var(--ios-ambar-suave)] px-3 py-1.5 text-[12px] font-medium">
                 <CloudOff className="h-3.5 w-3.5 shrink-0" />
-                Sem conexão · {pendingReviews} {pendingReviews === 1 ? 'avaliação guardada' : 'avaliações guardadas'}. Continue estudando, elas sobem sozinhas.
+                Sem conexão · {pendingReviews} {pendingReviews === 1 ? 'avaliação guardada' : 'avaliações guardadas'}. Elas sobem sozinhas.
               </div>
             )}
 
-            {/* Modo voz: o que o microfone está fazendo agora e o que ele ouviu.
-                Sempre no mesmo lugar, logo acima das avaliações. */}
+            {/* Modo voz: o que o microfone está fazendo e o que ele ouviu. */}
             {voiceEnabled && (
               <AnimatePresence mode="wait" initial={false}>
                 {voiceFeedback ? (
@@ -1542,20 +1737,14 @@ export default function DeckPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.16 }}
-                    className="mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-emerald-300/50 bg-emerald-500/12 px-3 py-2 text-sm"
+                    className="mx-auto flex max-w-md items-center gap-2 rounded-full bg-[var(--ios-tinta-suave)] py-1.5 pl-3 pr-1.5 text-[14px]"
                   >
-                    <Mic className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-300" />
-                    <span className="min-w-0 flex-1 truncate text-emerald-900 dark:text-emerald-100">
+                    <Mic className="ios-tinta h-4 w-4 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">
                       Ouvi “{voiceFeedback.heard}” →{' '}
-                      <strong className="font-bold">
-                        {RATINGS.find(r => r.value === voiceFeedback.rating)?.label}
-                      </strong>
+                      <strong className="font-bold">{RATINGS.find(r => r.value === voiceFeedback.rating)?.label}</strong>
                     </span>
-                    <button
-                      type="button"
-                      onClick={undoVoiceRating}
-                      className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-emerald-400/50 bg-white/70 px-2.5 py-1 text-xs font-bold text-emerald-800 transition active:scale-95 dark:bg-slate-900/70 dark:text-emerald-100"
-                    >
+                    <button type="button" onClick={undoVoiceRating} className="ios-botao-suave ios-botao-p shrink-0 !bg-[var(--ios-cartao-solido)]">
                       <Undo2 className="h-3.5 w-3.5" /> Desfazer
                     </button>
                   </motion.div>
@@ -1566,13 +1755,13 @@ export default function DeckPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.16 }}
-                    className="mx-auto flex max-w-md items-center gap-2 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-3 py-2"
+                    className="mx-auto flex max-w-md items-center gap-2 rounded-full bg-[var(--ios-tinta-suave)] py-1.5 pl-3 pr-1.5"
                   >
                     <span className="relative flex h-2.5 w-2.5 shrink-0">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-70" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-600" />
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--ios-tinta)] opacity-70" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--ios-tinta)]" />
                     </span>
-                    <span className="min-w-0 flex-1 text-xs font-medium leading-snug text-emerald-900 dark:text-emerald-100">
+                    <span className="min-w-0 flex-1 text-[13px] font-medium leading-snug">
                       {voice.status === 'starting'
                         ? 'Abrindo o microfone...'
                         : voice.status === 'error'
@@ -1584,7 +1773,7 @@ export default function DeckPage() {
                       onClick={() => setVoiceEnabled(false)}
                       aria-label="Desligar modo voz"
                       title="Desligar modo voz"
-                      className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-emerald-800/70 transition hover:bg-emerald-500/15 dark:text-emerald-100/70"
+                      className="ios-icone-botao !h-8 !w-8 !bg-transparent"
                     >
                       <MicOff className="h-4 w-4" />
                     </button>
@@ -1595,7 +1784,7 @@ export default function DeckPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="text-center text-[11px] text-slate-400"
+                    className="ios-rotulo-3 text-center text-[12px]"
                   >
                     Modo voz ligado · o microfone abre quando você virar o card
                   </motion.p>
@@ -1603,7 +1792,7 @@ export default function DeckPage() {
               </AnimatePresence>
             )}
 
-            {/* Ação principal: virar o card OU avaliar — troca suavemente */}
+            {/* Ação principal: virar o card OU avaliar — troca no mesmo lugar */}
             <AnimatePresence mode="wait" initial={false}>
               {!flipped ? (
                 <motion.button
@@ -1614,9 +1803,9 @@ export default function DeckPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
-                  className="flashcard-estudo-revelar flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-5 py-3.5 text-base font-bold text-white shadow-lg shadow-amber-500/25 transition active:scale-[0.98]"
+                  className="flashcard-estudo-revelar ios-botao ios-botao-g w-full !text-[17px]"
                 >
-                  <Sparkles className="h-5 w-5" /> Mostrar resposta
+                  Mostrar resposta
                 </motion.button>
               ) : (
                 <motion.div
@@ -1626,32 +1815,26 @@ export default function DeckPage() {
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.16 }}
                 >
-                  <p className="flashcard-estudo-rotulo mb-1.5 text-center text-xs font-medium text-slate-500 dark:text-slate-400">
-                    Como foi lembrar dessa resposta?
+                  <p className="flashcard-estudo-rotulo ios-rotulo-2 mb-2 text-center text-[13px] font-medium">
+                    Como foi lembrar?
                   </p>
-                  {/* Sem estado de espera: a avaliação vale na hora e o registro
-                      sai por uma fila em segundo plano. O que aparece dentro do
-                      botão é quando o card volta se você escolher aquela nota —
-                      a agenda deixa de ser caixa-preta. */}
+                  {/* A avaliação vale na hora e o registro sai por uma fila em
+                      segundo plano. Embaixo de cada nota, quando o card volta. */}
                   <div className="grid grid-cols-3 gap-2">
                     {RATINGS.map(r => (
                       <button
                         key={r.value}
                         onClick={() => rate(r.value)}
                         title={`${r.label} — ${r.hint}`}
-                        className={cn(
-                          'flashcard-estudo-nota flex min-h-[54px] flex-col items-center justify-center gap-0.5 rounded-2xl bg-gradient-to-r px-2 py-2.5 text-sm font-bold leading-tight text-white shadow-md transition active:scale-95',
-                          r.color,
-                          ratings[card?._id] === r.value && 'ring-2 ring-white ring-offset-2 ring-offset-white dark:ring-offset-slate-950',
-                        )}
+                        data-nota={r.value}
+                        data-escolhida={ratings[card?._id] === r.value ? 'true' : 'false'}
+                        className="flashcard-estudo-nota ios-nota"
                       >
                         <span>{r.label}</span>
                         {ratingPreviews?.[r.value] ? (
-                          <span className="text-[10.5px] font-semibold tabular-nums opacity-85">
-                            {ratingPreviews[r.value]}
-                          </span>
+                          <small>{ratingPreviews[r.value]}</small>
                         ) : (
-                          <span className="hidden text-[10px] font-medium opacity-70 sm:block">tecla {r.shortcut}</span>
+                          <small>{r.hint}</small>
                         )}
                       </button>
                     ))}
@@ -1660,40 +1843,36 @@ export default function DeckPage() {
               )}
             </AnimatePresence>
 
-            {/* Navegação compacta — anterior / posição / próximo ou concluir */}
+            {/* Navegação compacta — anterior / próximo ou concluir */}
             <div className="flashcard-estudo-navegacao flex items-center justify-between gap-2">
               <button
                 type="button"
                 onClick={goPrev}
                 disabled={currentIndex === 0}
-                className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:opacity-35 dark:text-slate-300 dark:hover:bg-card"
+                className="ios-tinta inline-flex h-10 items-center gap-0.5 rounded-full px-2 text-[15px] font-semibold disabled:opacity-30"
               >
-                <ChevronLeft className="h-4 w-4" /> Anterior
+                <ChevronLeft className="h-5 w-5" /> Anterior
               </button>
               {currentIndex < total - 1 ? (
                 <button
                   type="button"
                   onClick={goNext}
-                  className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-card"
+                  className="ios-tinta inline-flex h-10 items-center gap-0.5 rounded-full px-2 text-[15px] font-semibold"
                 >
-                  {flipped ? 'Pular' : 'Próximo'} <ChevronRight className="h-4 w-4" />
+                  {flipped ? 'Pular' : 'Próximo'} <ChevronRight className="h-5 w-5" />
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={finishSession}
-                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 px-4 text-sm font-bold text-white shadow-md transition active:scale-95"
-                >
+                <button type="button" onClick={finishSession} className="ios-botao ios-botao-p">
                   <Trophy className="h-4 w-4" /> Concluir
                 </button>
               )}
             </div>
 
-            <p className="text-center text-[11px] text-slate-400 sm:hidden">
-              Deslize ← → para trocar de card · toque para virar
+            <p className="ios-rotulo-3 text-center text-[11px] sm:hidden">
+              Deslize ← → para trocar · toque para virar
               {voiceEnabled && ' · fale fácil / médio / difícil'}
             </p>
-            <p className="flashcard-estudo-atalhos hidden text-center text-[11px] text-slate-400 sm:block">
+            <p className="flashcard-estudo-atalhos ios-rotulo-3 hidden text-center text-[11px] sm:block">
               {fullscreen
                 ? 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · Esc ou F: sair da tela cheia'
                 : 'Espaço: virar · ← →: navegar · 1/2/3: avaliar · F: tela cheia'}
@@ -1702,397 +1881,396 @@ export default function DeckPage() {
           </div>
         </div>
         </div>
+        </FundoIos>
         <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
       </AppShell>
     )
   }
 
-  return (
-    <AppShell allowGuest>
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Button variant="ghost" onClick={() => router.push('/flashcards')} className="gap-1"><ArrowLeft className="h-4 w-4" />Flashcards</Button>
-        </div>
+  // ── Página do deck ─────────────────────────────────────────────────────────
+  const stats = data.spacedRepetition?.stats
+  const reviewCount = reviewSummary?.count ?? 0
+  const primaryLabel = savedProgress
+    ? `Continuar · ${savedProgress.index + 1} de ${savedProgress.total}`
+    : studyModeChoice === 'spaced'
+      ? dueNowCount > 0
+        ? `Revisar ${dueNowCount} ${dueNowCount === 1 ? 'card' : 'cards'}`
+        : newNowCount > 0
+          ? `Estudar ${newNowCount} ${newNowCount === 1 ? 'card novo' : 'cards novos'}`
+          : 'Estudar com repetição espaçada'
+      : 'Estudar na ordem do deck'
 
-        {/* Hero — altura flexível (nunca corta título/tags longos), com acabamento
-            glass iridescente (GlassHeroSurface) sobre a capa. Sem TiltCard: uma
-            superfície desse tamanho seguindo o mouse com spring custa caro e
-            atrapalhava a leitura do próprio título. */}
-        <div className="relative isolate mb-6 overflow-hidden rounded-[2rem] border border-white/40 dark:border-border bg-white dark:bg-slate-900 shadow-xl shadow-slate-900/10 dark:shadow-black/40">
-          <div className="relative bg-gradient-to-br from-emerald-700 via-emerald-600 to-amber-500">
-            {deck.coverImage && (
-              <Image src={deck.coverImage} alt="" fill priority className="object-cover opacity-90" sizes="(max-width: 1024px) 100vw, 1024px" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-black/5" />
-            <GlassHeroSurface className="opacity-70" />
-            <div className="relative z-10 flex min-h-[220px] sm:min-h-[240px] md:min-h-[260px] flex-col justify-end p-5 md:p-7 text-foreground">
-              <div className="flex items-center gap-2 mb-2 text-xs font-medium flex-wrap">
-                <VisibilityBadge visibility={deck.visibility} />
-                {deck.ownerType === 'admin' && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5"><Crown className="h-3 w-3" /> Oficial</span>
-                )}
-                {isPaid && !access.isPurchased && !access.isOwner && (
-                  access.includedInPlus ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/90 px-2.5 py-0.5">
-                      <Crown className="h-3 w-3" /> Incluído no {PLUS_LABEL}
-                    </span>
-                  ) : hasTier ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/90 px-2.5 py-0.5">
-                      <Lock className="h-3 w-3" />
-                      <span className="line-through opacity-70">R$ {originalDeckPrice.toFixed(2)}</span>
-                      <span>R$ {tierDeckPrice.toFixed(2)}</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/90 px-2.5 py-0.5"><Lock className="h-3 w-3" /> R$ {deck.price?.toFixed(2)}</span>
-                  )
-                )}
-                {hasTier && !access.includedInPlus && !access.isPurchased && !access.isOwner && (
-                  <PricingEventBadge state={eventState} size="xs" />
-                )}
-                {access.isPurchased && (
-                  access.timedAccess?.isTimed
-                    ? <TimedAccessPill access={access.timedAccess} className="rounded-full px-2.5 py-0.5" />
-                    : <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5"><CheckCircle2 className="h-3 w-3" /> Adquirido</span>
-                )}
-              </div>
-              {/* O selo acima diz "Público" olhando só a visibilidade. Para quem
-                  administra o deck, esta linha diz se ele está mesmo na lista
-                  de /flashcards — e, quando não está, o que falta. */}
-              {access.canManage && !data.listing?.listedInCommunity && (
-                <DeckListingNote listing={data.listing} onHero className="mb-2 max-w-xl" />
-              )}
-              {folderPath && (
-                <div className="mb-2 flex items-center gap-1.5 text-xs text-foreground/65">
-                  <Folder className="h-3 w-3 shrink-0" />
-                  <span>{folderPath}</span>
-                </div>
-              )}
-              <h1 className="text-2xl md:text-4xl font-bold leading-tight drop-shadow line-clamp-3">{deck.title}</h1>
-              {deck.description && <p className="mt-2 text-sm md:text-base text-foreground/85 line-clamp-2 max-w-3xl">{deck.description}</p>}
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                <span>por <strong className="font-semibold">{deck.ownerName}</strong></span>
-                <span>·</span>
-                <span>{deck.cardCount} cartões</span>
-                {metricSettings.flashcards.showViews && (
-                  <>
-                    <span>·</span>
-                    <span>{deck.viewCount} visualizações</span>
-                  </>
-                )}
-                {(deck.tags || []).slice(0, 4).map(t => (
-                  <span key={t} className="rounded-full bg-white/15 px-2 py-0.5 ring-1 ring-white/20">#{t}</span>
-                ))}
-              </div>
-              {(reviewSummary?.count ?? 0) > 0 && (
-                <div className="mt-3">
-                  <ReviewSummaryBlock
-                    summary={reviewSummary}
-                    variant="compact"
-                    onJumpToList={() =>
-                      document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                    }
-                  />
+  // Faixa de informações (App Store): só o que tem número de verdade.
+  const infoCells: { key: string; label: string; value: React.ReactNode; note: React.ReactNode; tone?: 'erro' | 'tinta' }[] = []
+  if (reviewCount > 0 && reviewSummary) {
+    infoCells.push({
+      key: 'reviews',
+      label: `${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'}`,
+      value: reviewSummary.avg.toFixed(1).replace('.', ','),
+      note: <StarRow value={reviewSummary.avg} />,
+    })
+  }
+  infoCells.push({ key: 'cards', label: 'Deck', value: cards.length || deck.cardCount || 0, note: (cards.length || deck.cardCount) === 1 ? 'cartão' : 'cartões' })
+  if (!isLocked && data.viewer.isAuthenticated) {
+    infoCells.push({ key: 'due', label: 'Hoje', value: dueNowCount, note: dueNowCount === 1 ? 'para revisar' : 'para revisar', tone: dueNowCount > 0 ? 'tinta' : undefined })
+    infoCells.push({ key: 'errors', label: 'Erros', value: errorCards.length, note: 'no caderno', tone: errorCards.length > 0 ? 'erro' : undefined })
+    if (stats) {
+      infoCells.push({ key: 'mastered', label: 'Dominados', value: stats.mastered, note: `de ${cards.length}` })
+    }
+  }
+  if (metricSettings.flashcards.showViews) {
+    infoCells.push({ key: 'views', label: 'Visualizações', value: compactNumber(deck.viewCount || 0), note: 'no total' })
+  }
+  infoCells.push({ key: 'author', label: 'Autor', value: deck.ownerType === 'admin' ? <Crown className="ios-ambar h-[22px] w-[22px]" /> : <Users className="h-[22px] w-[22px]" />, note: deck.ownerType === 'admin' ? 'Equipe' : (deck.ownerName || 'Comunidade') })
+
+  return (
+    <AppShell allowGuest vidro>
+      <FundoIos capa={deck.coverImage || null} capaSizes={HERO_SIZES} className="pb-16">
+      <div className="mx-auto max-w-6xl px-4 pt-3 sm:px-6 sm:pt-5 lg:px-8">
+        <Link href="/flashcards" className="ios-voltar -ml-2.5 mb-3">
+          <ChevronLeft className="h-[22px] w-[22px] shrink-0" strokeWidth={2.5} />
+          <span className="truncate">{folderPath || 'Flashcards'}</span>
+        </Link>
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_380px] xl:gap-8">
+          {/* ── Capa ── */}
+          <div className="min-w-0 xl:col-start-1 xl:row-start-1">
+            <div className="ios-assenta ios-capa relative w-full overflow-hidden rounded-[22px] shadow-[var(--ios-sombra-alta)] sm:rounded-[28px]" style={{ aspectRatio: '16/9' }}>
+              {deck.coverImage ? (
+                <Image src={deck.coverImage} alt="" fill priority className="object-cover" sizes={HERO_SIZES} />
+              ) : (
+                <div className="ios-capa-vazia flex h-full w-full items-center justify-center">
+                  <span className="ios-tinta flex h-24 w-24 items-center justify-center rounded-[26px] bg-white/70 shadow-sm dark:bg-white/10">
+                    <Brain className="h-11 w-11" />
+                  </span>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="p-5 md:p-6 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-            <div className="flex items-center gap-2">
-              {metricSettings.flashcards.showLikes && (
-                <button
-                  onClick={toggleLike}
-                  className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium ring-1',
-                    liked
-                      ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300 ring-rose-500/30'
-                      : 'bg-slate-100 dark:bg-card text-slate-600 dark:text-slate-300 ring-slate-200 dark:ring-white/10 hover:bg-slate-200/70')}
-                >
-                  <Heart className={cn('h-4 w-4', liked && 'fill-current')} /> {likeCount}
-                </button>
-              )}
-              {access.isOwner && (
-                <Button variant="outline" onClick={() => setShareOpen(true)}><Share2 className="h-4 w-4" /> Compartilhar</Button>
-              )}
-              {access.canManage && (
-                <Link href={`/flashcards/d/${deck.slug}/editar`}>
-                  <Button variant="outline"><Edit3 className="h-4 w-4" /> Editar</Button>
-                </Link>
-              )}
-              {canDownloadPdf && (
-                <Button variant="outline" onClick={downloadDeckPdf} disabled={downloadingPdf}>
-                  {downloadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-                  {downloadingPdf ? 'Gerando...' : 'PDF'}
-                </Button>
-              )}
-            </div>
+          {/* ── Título e ação: um painel só (no fluxo no celular, ao lado no desktop) ── */}
+          <aside className="min-w-0 xl:col-start-2 xl:row-span-2 xl:row-start-1">
+            <div className="space-y-4 xl:sticky xl:top-24">
+              <div className="ios-painel">
+                <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                  <VisibilityBadge visibility={deck.visibility} />
+                  {deck.ownerType === 'admin' && (
+                    <span className="ios-selo ios-selo-claro"><Crown className="h-3 w-3" /> Oficial</span>
+                  )}
+                  {access.isPurchased && (
+                    access.timedAccess?.isTimed
+                      ? <TimedAccessPill access={access.timedAccess} className="rounded-full px-2.5 py-0.5" />
+                      : <span className="ios-tinta inline-flex h-6 items-center gap-1 rounded-full bg-[var(--ios-tinta-suave)] px-2.5 text-[11px] font-semibold"><Check className="h-3 w-3" strokeWidth={3} /> Adquirido</span>
+                  )}
+                </div>
 
-            <div className="flex items-center gap-2">
-              {isLocked && isPaid && access.includedInPlus ? (
-                <button
-                  onClick={() => claimWithPlus()}
-                  disabled={claimingPlus}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(180,83,9,0.97) 0%, rgba(217,119,6,0.93) 50%, rgba(245,158,11,0.88) 100%)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(253,230,138,0.45)',
-                    boxShadow: '0 0 28px rgba(217,119,6,0.45), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
-                  }}
-                >
-                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
-                  {claimingPlus ? <Loader2 className="h-4 w-4 flex-shrink-0 animate-spin" /> : <Gift className="h-4 w-4 flex-shrink-0" />}
-                  Resgatar com o {PLUS_LABEL}
-                </button>
-              ) : isLocked && isPaid ? (
-                <button
-                  onClick={() => buy()}
-                  disabled={purchasing}
-                  className="relative overflow-hidden inline-flex items-center gap-2.5 rounded-2xl px-7 py-3.5 text-sm font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(217,119,6,0.97) 0%, rgba(234,88,12,0.93) 50%, rgba(220,38,38,0.88) 100%)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    border: '1px solid rgba(253,230,138,0.45)',
-                    boxShadow: '0 0 28px rgba(234,88,12,0.45), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.20)',
-                  }}
-                >
-                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
-                  <ShoppingCart className="h-4 w-4 flex-shrink-0" />
-                  {hasTier ? (
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="text-[11px] font-medium opacity-70 line-through">R$ {originalDeckPrice.toFixed(2).replace('.', ',')}</span>
-                      <span>Comprar R$ {tierDeckPrice.toFixed(2).replace('.', ',')}</span>
-                      <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[10px] font-bold">−{Math.round(tierPct)}%</span>
-                    </span>
-                  ) : (
-                    `Comprar R$ ${deck.price?.toFixed(2).replace('.', ',')}`
-                  )}
-                </button>
-              ) : isLocked ? (
-                <button
-                  onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)}
-                  className="inline-flex items-center gap-1.5 rounded-2xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
-                >
-                  <Lock className="h-3.5 w-3.5" />
-                  Entrar para acessar
-                </button>
-              ) : (
-                <div className="flex flex-col items-stretch gap-2 sm:items-end">
-                <button
-                  onClick={() => startStudy(studyModeChoice, savedProgress)}
-                  disabled={cards.length === 0}
-                  className="relative overflow-hidden inline-flex items-center justify-center gap-2.5 rounded-2xl px-8 py-3.5 text-base font-bold tracking-wide text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-55"
-                  style={{
-                    background: savedProgress
-                      ? 'linear-gradient(135deg, rgba(217,119,6,1) 0%, rgba(234,88,12,0.95) 50%, rgba(245,158,11,0.90) 100%)'
-                      : 'linear-gradient(135deg, rgba(4,120,87,1) 0%, rgba(5,150,105,0.95) 50%, rgba(16,185,129,0.90) 100%)',
-                    backdropFilter: 'blur(16px)',
-                    WebkitBackdropFilter: 'blur(16px)',
-                    border: savedProgress
-                      ? '1px solid rgba(253,230,138,0.55)'
-                      : '1px solid rgba(52,211,153,0.55)',
-                    boxShadow: savedProgress
-                      ? '0 0 30px rgba(234,88,12,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)'
-                      : '0 0 30px rgba(16,185,129,0.50), 0 8px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.25)',
-                  }}
-                >
-                  <span className="absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/55 to-transparent pointer-events-none" />
-                  {savedProgress ? (
-                    <RotateCcw className="h-4.5 w-4.5 flex-shrink-0" />
-                  ) : (
-                    <Play className="h-4.5 w-4.5 fill-current flex-shrink-0" />
-                  )}
-                  {savedProgress
-                    ? `Continuar (${savedProgress.index + 1}/${savedProgress.total})`
-                    : studyModeChoice === 'spaced'
-                    ? dueNowCount > 0
-                      ? `Revisar ${dueNowCount} ${dueNowCount === 1 ? 'card' : 'cards'}`
-                      : newNowCount > 0
-                        ? `Estudar ${newNowCount} ${newNowCount === 1 ? 'card novo' : 'cards novos'}`
-                        : 'Estudar com repetição espaçada'
-                    : 'Estudar agora'}
-                </button>
-                {/* O botão diz em que modo vai começar, e trocar de modo é um
-                    toque aqui mesmo — sem depender de o usuário descobrir o
-                    seletor mais abaixo na página. */}
-                {cards.length > 0 && !savedProgress && (
-                  <button
-                    type="button"
-                    onClick={() => chooseStudyMode(studyModeChoice === 'spaced' ? 'normal' : 'spaced')}
-                    className="inline-flex items-center justify-center gap-1.5 rounded-xl px-2 py-1 text-xs font-medium text-muted-foreground transition hover:text-foreground"
-                  >
-                    {studyModeChoice === 'spaced' ? (
-                      <><Brain className="h-3.5 w-3.5" /> Repetição espaçada · trocar para a ordem do deck</>
-                    ) : (
-                      <><Play className="h-3.5 w-3.5" /> Ordem do deck · trocar para repetição espaçada</>
-                    )}
-                  </button>
-                )}
-                {/* Sugestão de estudar em tela cheia — fica ao lado do botão de
-                    começar, que é onde a decisão realmente acontece. */}
-                {cards.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={toggleFullscreenPref}
-                    aria-pressed={fullscreenPref}
-                    className={cn(
-                      'inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition',
-                      fullscreenPref
-                        ? 'border-amber-400/50 bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                        : 'border-border bg-card text-muted-foreground hover:text-foreground',
-                    )}
-                  >
-                    <Maximize2 className="h-3.5 w-3.5" />
-                    {fullscreenPref ? 'Começa em tela cheia' : 'Começar em tela cheia'}
-                    {fullscreenPref && <CheckCircle2 className="h-3.5 w-3.5" />}
-                  </button>
-                )}
-                {/* Modo voz — mesma faixa de decisão do "tela cheia": é aqui
-                    que a pessoa escolhe COMO vai estudar, antes de começar. */}
-                {cards.length > 0 && (
-                  <>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <h1 className="ios-titulo-produto">{deck.title}</h1>
+                    <p className="ios-rotulo-2 mt-1 text-[15px]">
+                      por {deck.ownerName} · {cards.length || deck.cardCount || 0} cartões
+                    </p>
+                  </div>
+                  {metricSettings.flashcards.showLikes && (
                     <button
                       type="button"
-                      onClick={toggleVoicePref}
-                      aria-pressed={voicePref}
-                      disabled={!voice.supported}
-                      title={
-                        voice.supported
-                          ? 'Avalie os cards falando: fácil, médio ou difícil'
-                          : 'Seu navegador não reconhece voz. Use Chrome, Edge ou Safari.'
-                      }
-                      className={cn(
-                        'inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition',
-                        !voice.supported
-                          ? 'cursor-not-allowed border-border bg-card text-muted-foreground/60'
-                          : voicePref
-                            ? 'border-emerald-400/50 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
-                            : 'border-border bg-card text-muted-foreground hover:text-foreground',
-                      )}
+                      onClick={toggleLike}
+                      aria-pressed={liked}
+                      aria-label={liked ? 'Descurtir deck' : 'Curtir deck'}
+                      className={cn('ios-icone-botao ios-icone-botao-g -mr-1 flex-col gap-0 text-[10px] font-bold', liked && 'ios-erro ios-erro-suave')}
                     >
-                      {voicePref && voice.supported ? <Mic className="h-3.5 w-3.5" /> : <MicOff className="h-3.5 w-3.5" />}
-                      {!voice.supported
-                        ? 'Modo voz indisponível'
-                        : voicePref ? 'Modo voz ligado' : 'Estudar por voz'}
-                      {voicePref && voice.supported && <CheckCircle2 className="h-3.5 w-3.5" />}
+                      <Heart className={cn('h-[18px] w-[18px]', liked && 'fill-current')} />
                     </button>
-                    {voicePref && voice.supported && (
-                      <p className="max-w-[15rem] text-right text-[11px] leading-snug text-muted-foreground sm:text-right">
-                        O microfone liga sozinho quando o card vira. Diga <strong>fácil</strong>,{' '}
-                        <strong>médio</strong> ou <strong>difícil</strong>.
-                      </p>
-                    )}
-                    {!voice.supported && (
-                      <p className="max-w-[15rem] text-right text-[11px] leading-snug text-muted-foreground">
-                        Ditado por voz precisa de Chrome, Edge ou Safari.
-                      </p>
-                    )}
-                  </>
-                )}
+                  )}
                 </div>
-              )}
+
+                {reviewCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                    className="ios-rotulo-2 mt-2 inline-flex items-center gap-1.5 text-[13px] font-medium"
+                  >
+                    <StarRow value={reviewSummary?.avg ?? 0} />
+                    <span className="tabular-nums">{(reviewSummary?.avg ?? 0).toFixed(1).replace('.', ',')}</span>
+                    <span>· {reviewCount} {reviewCount === 1 ? 'avaliação' : 'avaliações'}</span>
+                  </button>
+                )}
+
+                {/* Para quem administra o deck: se ele está mesmo na lista de
+                    /flashcards e, quando não está, o que falta. */}
+                {access.canManage && !data.listing?.listedInCommunity && (
+                  <DeckListingNote listing={data.listing} className="mt-3" />
+                )}
+
+                <div className="mt-5 space-y-2.5">
+                  {isLocked && isPaid && access.includedInPlus ? (
+                    <>
+                      <p className="ios-ambar flex items-center gap-1.5 text-[15px] font-semibold">
+                        <Crown className="h-4 w-4" /> Incluído no {PLUS_LABEL}
+                      </p>
+                      <button onClick={() => claimWithPlus()} disabled={claimingPlus} className="ios-botao-ambar ios-botao-g w-full">
+                        {claimingPlus ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Gift className="h-[18px] w-[18px]" />}
+                        Resgatar com o {PLUS_LABEL}
+                      </button>
+                    </>
+                  ) : isLocked && isPaid ? (
+                    <>
+                      <div>
+                        {hasTier && (
+                          <p className="mb-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
+                            <span className="ios-rotulo-3 tabular-nums line-through">{fmtBRL(originalDeckPrice)}</span>
+                            <span className="ios-tinta font-semibold">−{Math.round(tierPct)}% no lote{eventState?.activeTier?.label ? ` ${eventState.activeTier.label}` : ''}</span>
+                            <PricingEventBadge state={eventState} size="xs" />
+                          </p>
+                        )}
+                        <p className="ios-preco">{fmtBRL(tierDeckPrice)}</p>
+                        <p className="ios-rotulo-2 mt-1 text-[13px]">
+                          {cards.length || deck.cardCount || 0} cartões com repetição espaçada · pagamento único
+                        </p>
+                      </div>
+                      <button onClick={() => buy()} disabled={purchasing} className="ios-botao ios-botao-g w-full">
+                        {purchasing ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : null}
+                        Comprar deck
+                      </button>
+                    </>
+                  ) : isLocked ? (
+                    <>
+                      <p className="ios-rotulo-2 text-[14px]">Entre na sua conta para estudar este deck e guardar o seu progresso.</p>
+                      <button
+                        onClick={() => router.push(`/auth/login?redirect=${encodeURIComponent(`/flashcards/d/${deck.slug}`)}`)}
+                        className="ios-botao ios-botao-g w-full"
+                      >
+                        Entrar para estudar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => startStudy(studyModeChoice, savedProgress)}
+                        disabled={cards.length === 0}
+                        className="ios-botao ios-botao-g w-full !text-[17px]"
+                      >
+                        {savedProgress ? <RotateCcw className="h-[18px] w-[18px]" /> : <Play className="h-[18px] w-[18px] fill-current" />}
+                        {primaryLabel}
+                      </button>
+                      {errorCards.length > 0 && (
+                        <button type="button" onClick={() => startErrorsReview()} className="ios-botao-cinza ios-erro ios-erro-suave ios-botao-g w-full">
+                          <RotateCcw className="h-[18px] w-[18px]" />
+                          Refazer {errorCards.length} {errorCards.length === 1 ? 'erro' : 'erros'}
+                        </button>
+                      )}
+                      {cards.length > 0 && (
+                        <div className="overflow-hidden rounded-[16px] bg-[var(--ios-preenchimento)]">
+                          {/* Como estudar: modo, tela cheia, voz — a decisão
+                              fica ao lado do botão de começar. */}
+                          {!savedProgress && (
+                            <div className="p-1.5">
+                              <div
+                                className="ios-segmentado !bg-transparent !p-0"
+                                style={{ ['--segmentos' as string]: 2, ['--indice' as string]: studyModeChoice === 'spaced' ? 0 : 1 }}
+                                role="tablist"
+                                aria-label="Modo de estudo"
+                              >
+                                <button type="button" role="tab" aria-selected={studyModeChoice === 'spaced'} onClick={() => chooseStudyMode('spaced')} className="ios-segmento !h-9 !text-[13px]">
+                                  <Brain className="h-3.5 w-3.5" /> Espaçada
+                                </button>
+                                <button type="button" role="tab" aria-selected={studyModeChoice === 'normal'} onClick={() => chooseStudyMode('normal')} className="ios-segmento !h-9 !text-[13px]">
+                                  Ordem do deck
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                          <ToggleRow
+                            icon={<Maximize2 className="h-4 w-4" />}
+                            label="Começar em tela cheia"
+                            on={fullscreenPref}
+                            onToggle={toggleFullscreenPref}
+                          />
+                          <ToggleRow
+                            icon={voicePref && voice.supported ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
+                            label={voice.supported ? 'Avaliar falando' : 'Voz indisponível neste navegador'}
+                            hint={voice.supported && voicePref ? 'Diga fácil, médio ou difícil' : undefined}
+                            on={voicePref && voice.supported}
+                            disabled={!voice.supported}
+                            onToggle={toggleVoicePref}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {isLocked && isPaid && (
+                    <p className="ios-rotulo-3 text-center text-[12px]">Acesso liberado na hora, em qualquer aparelho.</p>
+                  )}
+                </div>
+
+                {/* Ações de quem tem o deck */}
+                {(access.isOwner || access.canManage || canDownloadPdf) && (
+                  <div className="mt-4 flex flex-wrap gap-1.5 border-t border-[var(--ios-separador)] pt-4">
+                    {access.isOwner && (
+                      <button type="button" onClick={() => setShareOpen(true)} className="ios-pilula !h-9 !px-3 !text-[13px]">
+                        <Share2 className="h-3.5 w-3.5" /> Compartilhar
+                      </button>
+                    )}
+                    {access.canManage && (
+                      <Link href={`/flashcards/d/${deck.slug}/editar`} className="ios-pilula !h-9 !px-3 !text-[13px]">
+                        <Edit3 className="h-3.5 w-3.5" /> Editar
+                      </Link>
+                    )}
+                    {canDownloadPdf && (
+                      <button type="button" onClick={downloadDeckPdf} disabled={downloadingPdf} className="ios-pilula !h-9 !px-3 !text-[13px]">
+                        {downloadingPdf ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
+                        {downloadingPdf ? 'Gerando...' : 'PDF'}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
+          </aside>
+
+          {/* ── Conteúdo ── */}
+          <div className="min-w-0 space-y-8 xl:col-start-1 xl:row-start-2">
+            {/* Acesso por tempo limitado: o contador é o aviso. */}
+            {!isLocked && access.timedAccess?.isTimed && (
+              <TimedAccessBanner access={access.timedAccess} itemLabel="deck" />
+            )}
+
+            {hasTier && !access.includedInPlus && isLocked && eventState && (
+              <PricingEventCountdown state={eventState} />
+            )}
+
+            <div className="ios-lista py-3.5">
+              <div className="ios-faixa" role="list" aria-label="Informações do deck">
+                {infoCells.map(cell => (
+                  <div key={cell.key} role="listitem">
+                    <span className="ios-faixa-rotulo">{cell.label}</span>
+                    <span
+                      className="ios-faixa-valor"
+                      style={cell.tone === 'erro' ? { color: '#e5484d' } : cell.tone === 'tinta' ? { color: 'var(--ios-tinta-texto)' } : undefined}
+                    >
+                      {cell.value}
+                    </span>
+                    <span className="ios-faixa-nota max-w-[9rem] truncate">{cell.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {deck.description && (
+              <section>
+                <h2 className="ios-titulo-secao mb-2.5">Sobre o deck</h2>
+                <p className="max-w-[68ch] whitespace-pre-line text-[16px] leading-relaxed">{deck.description}</p>
+                {(deck.tags || []).length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-1.5">
+                    {(deck.tags || []).slice(0, 8).map(t => (
+                      <span key={t} className="ios-rotulo-2 rounded-full bg-[var(--ios-preenchimento)] px-3 py-1 text-[13px] font-medium">#{t}</span>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {isLocked ? (
+              <>
+                <LockedPreview deck={deck} access={access} />
+                {/* Quem ainda não tem acesso vê o estudo funcionando de verdade
+                    num card de demonstração — é o único jeito de saber o que
+                    está comprando. */}
+                <FlashcardTour
+                  variant="locked"
+                  onBuyClick={isPaid ? (access.includedInPlus ? () => claimWithPlus() : () => buy()) : undefined}
+                />
+              </>
+            ) : (
+              <>
+                <AnimatePresence>
+                  {savedProgress && (
+                    <ResumeBanner
+                      progress={savedProgress}
+                      onContinue={() => startStudy(savedProgress.mode, savedProgress)}
+                      onRestart={() => {
+                        discardSavedProgress()
+                        startStudy(savedProgress.mode)
+                      }}
+                      onDismiss={discardSavedProgress}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {errorCards.length > 0 && (
+                  <ErrorNotebook
+                    cards={errorCards}
+                    onReview={() => startErrorsReview()}
+                  />
+                )}
+
+                <StudyModePanel
+                  selected={studyModeChoice}
+                  stats={stats}
+                  cards={cards}
+                  retention={retentionPreset}
+                  onRetentionChange={chooseRetention}
+                  showHint={spacedHint}
+                  onDismissHint={dismissSpacedHint}
+                />
+
+                <FlashcardTour variant="unlocked" />
+
+                <section>
+                  <button
+                    onClick={() => setShowCards(s => !s)}
+                    className="ios-lista ios-linha w-full justify-between text-left"
+                    aria-expanded={showCards}
+                  >
+                    <span className="min-w-0">
+                      <span className="block text-[15px] font-semibold">
+                        {showCards ? 'Ocultar os cartões' : `Ver os ${cards.length} cartões`}
+                      </span>
+                      {!showCards && <span className="ios-rotulo-2 block text-[13px]">Fechado para não dar spoiler das respostas.</span>}
+                    </span>
+                    {showCards ? <ChevronUp className="ios-rotulo-3 h-5 w-5 shrink-0" /> : <ChevronDown className="ios-rotulo-3 h-5 w-5 shrink-0" />}
+                  </button>
+                  <AnimatePresence>
+                    {showCards && (
+                      <motion.div
+                        key="cards-list"
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.18 }}
+                        className="mt-3"
+                      >
+                        <CardsList
+                          cards={cards}
+                          canManage={access.canManage ?? access.isOwner}
+                          slug={deck.slug}
+                          onCardsDeleted={reload}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </section>
+              </>
+            )}
+
+            {access.isOwner && shareOpen && (
+              <ShareDialog deckSlug={deck.slug} onClose={() => setShareOpen(false)} onSuccess={() => setToast({ open: true, message: 'Compartilhado com sucesso', type: 'success' })} />
+            )}
+
+            <ReviewsSection
+              id="reviews-section"
+              targetType="flashcard_deck"
+              targetId={String(deck._id)}
+              onSummaryChange={setReviewSummary}
+              purchaseCtaLabel={isPaid ? 'Comprar para avaliar' : 'Acessar para avaliar'}
+              onPurchaseClick={() => {
+                if (isPaid && isLocked) buy()
+              }}
+            />
           </div>
         </div>
-
-        {/* Acesso por tempo limitado: deck não tem PDF, então aqui a versão só
-            limita o período de uso — o contador é o aviso. */}
-        {!isLocked && access.timedAccess?.isTimed && (
-          <TimedAccessBanner access={access.timedAccess} itemLabel="deck" className="mb-4" />
-        )}
-
-        {hasTier && !access.includedInPlus && isLocked && eventState && (
-          <div className="mb-4">
-            <PricingEventCountdown state={eventState} />
-          </div>
-        )}
-
-        {isLocked ? (
-          <>
-            <LockedPreview deck={deck} access={access} />
-            {/* Quem ainda não tem acesso vê o estudo funcionando de verdade num
-                card de demonstração — é o único jeito de saber o que está
-                comprando. Por isso abre expandido nesse caso. */}
-            <div className="mt-4">
-              <FlashcardTour
-                variant="locked"
-                onBuyClick={isPaid ? (access.includedInPlus ? () => claimWithPlus() : () => buy()) : undefined}
-              />
-            </div>
-          </>
-        ) : (
-          <div>
-            <FlashcardTour variant="unlocked" />
-            <AnimatePresence>
-              {savedProgress && (
-                <ResumeBanner
-                  progress={savedProgress}
-                  onContinue={() => startStudy(savedProgress.mode, savedProgress)}
-                  onRestart={() => {
-                    discardSavedProgress()
-                    startStudy(savedProgress.mode)
-                  }}
-                  onDismiss={discardSavedProgress}
-                />
-              )}
-            </AnimatePresence>
-            <StudyModePanel
-              selected={studyModeChoice}
-              onSelect={chooseStudyMode}
-              stats={data.spacedRepetition?.stats}
-              cards={cards}
-              retention={retentionPreset}
-              onRetentionChange={chooseRetention}
-              showHint={spacedHint}
-              onDismissHint={dismissSpacedHint}
-            />
-            <button
-              onClick={() => setShowCards(s => !s)}
-              className="w-full flex items-center justify-between gap-3 rounded-2xl border border-slate-200 dark:border-border bg-white dark:bg-slate-900 px-5 py-4 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-card transition-colors mb-3"
-            >
-              <span className="flex items-center gap-2">
-                {showCards ? <ChevronUp className="h-4 w-4 text-slate-400" /> : <ChevronDown className="h-4 w-4 text-slate-400" />}
-                {showCards ? 'Ocultar lista de cartões' : `Ver lista de cartões (${cards.length})`}
-              </span>
-              {!showCards && <span className="text-xs text-slate-400">Evite spoiler, expanda quando quiser revisar</span>}
-            </button>
-            <AnimatePresence>
-              {showCards && (
-                <motion.div
-                  key="cards-list"
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <CardsList
-                    cards={cards}
-                    canManage={access.canManage ?? access.isOwner}
-                    slug={deck.slug}
-                    onCardsDeleted={reload}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
-
-        {access.isOwner && shareOpen && (
-          <ShareDialog deckSlug={deck.slug} onClose={() => setShareOpen(false)} onSuccess={() => setToast({ open: true, message: 'Compartilhado com sucesso', type: 'success' })} />
-        )}
-
-        <ReviewsSection
-          id="reviews-section"
-          targetType="flashcard_deck"
-          targetId={String(deck._id)}
-          onSummaryChange={setReviewSummary}
-          purchaseCtaLabel={isPaid ? 'Comprar para avaliar' : 'Acessar para avaliar'}
-          onPurchaseClick={() => {
-            if (isPaid && isLocked) buy()
-          }}
-        />
       </div>
+      </FundoIos>
       <ToastAlert open={toast.open} message={toast.message} type={toast.type} onOpenChange={(open) => setToast(t => ({ ...t, open }))} />
 
       {upsellPkg && data && (
@@ -2120,6 +2298,244 @@ export default function DeckPage() {
         />
       )}
     </AppShell>
+  )
+}
+
+const HERO_SIZES = '(max-width: 1280px) 100vw, 60vw'
+
+/** `R$ 29,90` — pt-BR usa vírgula decimal. */
+function fmtBRL(value: number): string {
+  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
+}
+
+function compactNumber(value: number): string {
+  return new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(Number(value || 0))
+}
+
+/** Cinco estrelas, cheias até a média (arredondada para meia). */
+function StarRow({ value }: { value: number }) {
+  const rounded = Math.round(value * 2) / 2
+  return (
+    <span className="inline-flex items-center gap-[1px]" aria-label={`${value.toFixed(1)} de 5 estrelas`}>
+      {[1, 2, 3, 4, 5].map(n => (
+        <Star
+          key={n}
+          className={cn('h-3 w-3', rounded >= n ? 'fill-current' : rounded >= n - 0.5 ? 'fill-current opacity-60' : 'opacity-35')}
+        />
+      ))}
+    </span>
+  )
+}
+
+/** Linha com interruptor do sistema (tela cheia, voz). */
+function ToggleRow({ icon, label, hint, on, disabled, onToggle }: {
+  icon: React.ReactNode
+  label: string
+  hint?: string
+  on: boolean
+  disabled?: boolean
+  onToggle: () => void
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      disabled={disabled}
+      onClick={onToggle}
+      className="flex w-full items-center gap-3 border-t border-[var(--ios-separador)] px-3.5 py-2.5 text-left disabled:opacity-50"
+    >
+      <span className="ios-rotulo-2 shrink-0">{icon}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[14px] font-medium">{label}</span>
+        {hint && <span className="ios-rotulo-2 block text-[12px]">{hint}</span>}
+      </span>
+      <span
+        aria-hidden
+        className={cn(
+          'relative h-[26px] w-[44px] shrink-0 rounded-full transition-colors duration-200',
+          on ? 'bg-[#34a853]' : 'bg-[var(--ios-preenchimento-forte)]',
+        )}
+      >
+        <span
+          className={cn(
+            'absolute top-[2px] h-[22px] w-[22px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.25)] transition-transform duration-200',
+            on ? 'translate-x-[20px]' : 'translate-x-[2px]',
+          )}
+        />
+      </span>
+    </button>
+  )
+}
+
+/**
+ * Caderno de erros do deck: os cards que travaram, do mais recaído ao menos,
+ * com o botão que transforma a lista numa sessão. Mostra só a pergunta — a
+ * resposta é o que a pessoa vai tentar lembrar.
+ */
+function ErrorNotebook({ cards, onReview }: { cards: DeckCard[]; onReview: () => void }) {
+  const [aberto, setAberto] = useState(false)
+  const ordenados = useMemo(
+    () => [...cards].sort((a, b) => (b.spacedProgress?.lapses || 0) - (a.spacedProgress?.lapses || 0)),
+    [cards]
+  )
+  const visiveis = aberto ? ordenados : ordenados.slice(0, 4)
+  return (
+    <section aria-label="Caderno de erros">
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <div>
+          <h2 className="ios-titulo-secao flex items-center gap-2">
+            Caderno de erros
+            <span className="ios-erro ios-erro-suave rounded-full px-2 py-0.5 text-[13px] font-bold tabular-nums">{cards.length}</span>
+          </h2>
+          <p className="ios-rotulo-2 mt-0.5 text-[13px]">Tudo que você travou ou errou. Acertou, sai daqui.</p>
+        </div>
+        <button type="button" onClick={onReview} className="ios-botao-erro !h-9 shrink-0 !px-4 !text-[15px]">
+          Refazer
+        </button>
+      </div>
+      <ul className="ios-lista [--ios-recuo:52px]">
+        {visiveis.map(card => {
+          const lapses = card.spacedProgress?.lapses || 0
+          const next = card.spacedProgress?.nextReviewAt ? new Date(card.spacedProgress.nextReviewAt) : null
+          return (
+            <li key={card._id}>
+              <div className="ios-linha !gap-3 !py-3">
+                <span className="ios-erro ios-erro-suave flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+                  <X className="h-4 w-4" strokeWidth={3} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="line-clamp-2 block text-[15px] font-medium leading-snug">
+                    {card.kind === 'hidden_word' && card.hiddenWord ? card.hiddenWord.phrase : (card.front?.text || 'Card com imagem')}
+                  </span>
+                  <span className="ios-rotulo-2 mt-0.5 block text-[12px]">
+                    {lapses > 0 ? `${lapses} ${lapses === 1 ? 'recaída' : 'recaídas'}` : 'Errado na última vez'}
+                    {next ? ` · volta ${next.getTime() <= Date.now() ? 'agora' : next.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}` : ''}
+                  </span>
+                </span>
+              </div>
+            </li>
+          )
+        })}
+        {ordenados.length > 4 && (
+          <li>
+            <button type="button" onClick={() => setAberto(v => !v)} className="ios-linha ios-tinta w-full justify-center !py-2.5 text-[14px] font-semibold">
+              {aberto ? 'Mostrar menos' : `Ver os ${ordenados.length}`}
+            </button>
+          </li>
+        )}
+      </ul>
+    </section>
+  )
+}
+
+/**
+ * A tela de resultado. É a recompensa da sessão: o acerto num anel que enche,
+ * o confete, a sequência de dias, e — logo abaixo — o que ficou errado, com o
+ * botão para refazer agora, enquanto a resposta está fresca.
+ */
+function SessionResult({ summary, deckTitle, onReviewErrors, onStudyMore, onClose, studyMoreLabel }: {
+  summary: SessionSummary
+  deckTitle: string
+  onReviewErrors: () => void
+  onStudyMore: () => void
+  onClose: () => void
+  studyMoreLabel: string | null
+}) {
+  const [sequencia, setSequencia] = useState({ dias: 0, estudouHoje: false })
+  const [meta, setMeta] = useState(20)
+  useEffect(() => {
+    setSequencia(lerSequencia())
+    setMeta(lerMetaDiaria())
+  }, [])
+  const totalNotes = summary.counts.FACIL + summary.counts.MEDIO + summary.counts.DIFICIL
+  const acertos = summary.counts.FACIL + summary.counts.MEDIO
+  const pct = totalNotes > 0 ? Math.round((acertos / totalNotes) * 100) : 0
+  const minutos = Math.max(1, Math.round(summary.durationMs / 60000))
+  const erros = summary.errorIds.length
+  const titulo = summary.errorsReview
+    ? summary.fixedErrors > 0
+      ? `${summary.fixedErrors} ${summary.fixedErrors === 1 ? 'erro corrigido' : 'erros corrigidos'}!`
+      : 'Revisão feita'
+    : pct >= 90
+      ? 'Mandou muito bem!'
+      : pct >= 70
+        ? 'Boa sessão!'
+        : 'Sessão concluída'
+
+  return (
+    <div className="relative mx-auto max-w-lg px-4 pb-16 pt-6 sm:pt-10">
+      {pct >= 70 && <Confete />}
+      <div className="flex flex-col items-center text-center">
+        <div className="ios-assenta">
+          <AnelProgresso valor={acertos} total={totalNotes} tamanho={148} espessura={12} rotulo={`${pct}% de acerto`}>
+            <span className="text-[38px] font-bold leading-none tracking-[-0.03em] tabular-nums">{pct}%</span>
+            <span className="ios-rotulo-2 mt-1 text-[12px] font-semibold">de acerto</span>
+          </AnelProgresso>
+        </div>
+        <h1 className="ios-titulo-produto mt-6">{titulo}</h1>
+        <p className="ios-rotulo-2 mt-1.5 max-w-sm text-[15px]">
+          {summary.rated} {summary.rated === 1 ? 'card' : 'cards'} em {minutos} min · {deckTitle}
+        </p>
+      </div>
+
+      {/* Placar por nota */}
+      <div className="mt-7 grid grid-cols-3 gap-2">
+        {([
+          ['FACIL', 'Fácil', 'text-[#2f8a4f] dark:text-[#7fd093]'],
+          ['MEDIO', 'Médio', 'text-[#b8730c] dark:text-[#f2c063]'],
+          ['DIFICIL', 'Difícil', 'ios-erro'],
+        ] as const).map(([key, label, cor]) => (
+          <div key={key} className="ios-cartao rounded-[18px] px-2 py-3 text-center">
+            <p className={cn('text-[26px] font-bold leading-none tabular-nums', cor)}>{summary.counts[key]}</p>
+            <p className="ios-rotulo-2 mt-1.5 text-[12px] font-semibold">{label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Ritmo */}
+      <div className="ios-lista mt-3">
+        <div className="ios-linha !gap-3">
+          <Flame className="ios-chama h-6 w-6 shrink-0" data-acesa={sequencia.estudouHoje ? 'true' : 'false'} />
+          <span className="min-w-0 flex-1">
+            <span className="block text-[15px] font-semibold">
+              {sequencia.dias} {sequencia.dias === 1 ? 'dia seguido' : 'dias seguidos'}
+            </span>
+            <span className="ios-rotulo-2 block text-[13px]">Volte amanhã para a chama crescer. Meta do dia: {meta} cards.</span>
+          </span>
+        </div>
+        {summary.bestCombo >= 3 && (
+          <div className="ios-linha !gap-3">
+            <Zap className="h-6 w-6 shrink-0 fill-current text-[#e2a43e]" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold">{summary.bestCombo} acertos seguidos</span>
+              <span className="ios-rotulo-2 block text-[13px]">Sua melhor sequência nesta sessão.</span>
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* O que ficou errado: o próximo passo mais valioso */}
+      <div className="mt-6 space-y-2">
+        {erros > 0 ? (
+          <>
+            <p className="ios-rotulo-2 text-center text-[14px]">
+              {erros} {erros === 1 ? 'card foi' : 'cards foram'} para o caderno de erros. Refazer agora, com a resposta fresca, fixa muito mais.
+            </p>
+            <button type="button" onClick={onReviewErrors} className="ios-botao-erro ios-botao-g w-full">
+              <RotateCcw className="h-[18px] w-[18px]" /> Refazer {erros} {erros === 1 ? 'erro' : 'erros'} agora
+            </button>
+          </>
+        ) : studyMoreLabel ? (
+          <button type="button" onClick={onStudyMore} className="ios-botao ios-botao-g w-full">
+            <Play className="h-[18px] w-[18px] fill-current" /> {studyMoreLabel}
+          </button>
+        ) : null}
+        <button type="button" onClick={onClose} className={cn(erros > 0 || studyMoreLabel ? 'ios-botao-cinza' : 'ios-botao', 'ios-botao-g w-full')}>
+          Voltar ao deck
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -2162,13 +2578,12 @@ function CardPager({
 }) {
   if (total <= 1) return null
   const items = buildPagerItems(current, total)
-  const stepClass =
-    'inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition hover:border-emerald-400 hover:text-emerald-600 disabled:pointer-events-none disabled:opacity-30'
+  const stepClass = 'ios-icone-botao h-8 w-8 disabled:pointer-events-none'
 
   return (
     <nav
       aria-label="Navegação de cards"
-      className="flashcard-estudo-pager mb-4 flex items-center justify-center gap-1.5"
+      className="flashcard-estudo-pager mb-3 flex items-center justify-center gap-1.5"
     >
       <button
         type="button"
@@ -2185,7 +2600,7 @@ function CardPager({
           return (
             <span
               key={`gap-${i}`}
-              className="select-none px-0.5 text-sm font-semibold text-muted-foreground/50"
+              className="ios-rotulo-3 select-none px-0.5 text-sm font-semibold"
             >
               …
             </span>
@@ -2201,12 +2616,12 @@ function CardPager({
             aria-current={selected ? 'true' : undefined}
             aria-label={`Ir para card ${item + 1}`}
             className={cn(
-              'inline-flex h-9 min-w-9 items-center justify-center rounded-xl border px-2.5 text-sm font-bold tabular-nums transition',
+              'inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2.5 text-[13px] font-semibold tabular-nums transition',
               selected
-                ? 'scale-105 border-transparent bg-gradient-to-br from-emerald-600 to-emerald-500 text-white shadow-md shadow-emerald-500/30'
+                ? 'bg-[var(--ios-rotulo)] text-[var(--ios-chao)]'
                 : rated
-                  ? 'border-emerald-300/60 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200'
-                  : 'border-border bg-card text-foreground/70 hover:border-emerald-400 hover:text-emerald-600',
+                  ? 'ios-tinta bg-[var(--ios-tinta-suave)]'
+                  : 'bg-[var(--ios-preenchimento)] hover:bg-[var(--ios-preenchimento-forte)]',
             )}
           >
             {item + 1}
@@ -2239,7 +2654,6 @@ function CardPager({
  */
 function StudyModePanel({
   selected,
-  onSelect,
   stats,
   cards,
   retention,
@@ -2248,7 +2662,6 @@ function StudyModePanel({
   onDismissHint,
 }: {
   selected: StudyMode
-  onSelect: (mode: StudyMode) => void
   stats?: SpacedRepetitionStats
   cards: (FlashcardManualCard & { _id: string; spacedProgress?: SpacedProgressResponse | null })[]
   retention: RetentionPreset
@@ -2265,276 +2678,193 @@ function StudyModePanel({
     () => buildStudyQueue(cards as DeckCard[], 'spaced').counts,
     [cards]
   )
-  const sessionTotal = preview.due + preview.learning + preview.newCards
   const hasProgress = cards.some(card => !!card.spacedProgress)
+  // A escolha do modo mora no painel de cima; aqui ficam os ajustes e o
+  // desempenho, que só existem na repetição espaçada.
+  if (selected !== 'spaced') return null
 
   return (
-    <section className="mb-4 overflow-hidden rounded-3xl border border-emerald-200/50 bg-white/70 p-4 shadow-[0_18px_70px_-35px_rgba(4,120,87,0.45)] backdrop-blur-2xl dark:border-emerald-300/15 dark:bg-slate-950/55">
-      {/* Apresentação do recurso para quem nunca reparou nele. Some para
-          sempre no primeiro "entendi" — e nem aparece para quem já estuda
-          com repetição espaçada neste deck. */}
+    <section aria-label="Repetição espaçada">
+      <h2 className="ios-titulo-secao mb-1">Sua memória neste deck</h2>
+      <p className="ios-rotulo-2 mb-3 text-[13px]">
+        Cada card volta no dia em que você ia esquecê-lo — o mesmo método do Anki.
+      </p>
+
+      {/* Apresentação do recurso para quem nunca reparou nele. */}
       {showHint && !hasProgress && (
-        <div className="mb-3 flex flex-col gap-2.5 rounded-2xl border border-emerald-300/40 bg-emerald-500/10 px-3.5 py-3 sm:flex-row sm:items-center">
-          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-sm">
-            <Brain className="h-4 w-4" />
-          </span>
-          <p className="flex-1 text-sm leading-snug text-emerald-900 dark:text-emerald-100">
-            <strong className="font-semibold">Este deck tem repetição espaçada.</strong>{' '}
-            <span className="opacity-85">
-              Em vez de reler tudo, você revisa cada card no dia em que estava prestes a
-              esquecê-lo. Escolha aqui embaixo como quer estudar.
+        <div className="ios-lista mb-3">
+          <div className="ios-linha !gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-[var(--ios-tinta)] text-white">
+              <Brain className="h-[18px] w-[18px]" />
             </span>
-          </p>
-          <button
-            type="button"
-            onClick={onDismissHint}
-            aria-label="Dispensar explicação"
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-xl text-emerald-800/70 transition hover:bg-emerald-500/15 dark:text-emerald-100/70 sm:self-auto"
-          >
-            <X className="h-4 w-4" />
-          </button>
+            <p className="min-w-0 flex-1 text-[14px] leading-snug">
+              <strong className="font-semibold">Em vez de reler tudo,</strong>{' '}
+              <span className="ios-rotulo-2">você revisa só o que está prestes a esquecer. Dez minutos por dia rendem mais que uma maratona.</span>
+            </p>
+            <button
+              type="button"
+              onClick={onDismissHint}
+              aria-label="Dispensar explicação"
+              className="ios-rotulo-3 flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-[var(--ios-preenchimento)]"
+            >
+              <X className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          </div>
         </div>
       )}
 
-      <p className="mb-2 px-0.5 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-        Como você quer estudar?
-      </p>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-        <button
-          type="button"
-          onClick={() => onSelect('normal')}
-          aria-pressed={selected === 'normal'}
-          className={cn(
-            'flex-1 rounded-2xl border p-3.5 text-left transition',
-            selected === 'normal'
-              ? 'border-slate-300 bg-white text-slate-900 shadow-sm dark:border-white/15 dark:bg-muted dark:text-foreground'
-              : 'border-white/50 bg-white/45 text-slate-600 hover:bg-white/75 dark:border-border dark:bg-card dark:text-slate-300'
-          )}
-        >
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-white dark:bg-white dark:text-slate-950">
-              <Play className="h-4 w-4 fill-current" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="text-sm font-bold">Estudo normal</h2>
-              <p className="mt-0.5 text-xs opacity-75">
-                Os {cards.length} cards na ordem do deck.
-              </p>
-            </div>
-            {selected === 'normal' && <Check className="ml-auto h-4 w-4 shrink-0 opacity-70" />}
-          </div>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => onSelect('spaced')}
-          aria-pressed={selected === 'spaced'}
-          className={cn(
-            'relative flex-1 overflow-hidden rounded-2xl border p-3.5 text-left transition',
-            selected === 'spaced'
-              ? 'border-emerald-300/60 bg-emerald-500/15 text-emerald-950 shadow-lg shadow-emerald-900/10 dark:text-emerald-50'
-              : 'border-emerald-200/40 bg-emerald-50/55 text-slate-700 hover:bg-emerald-50 dark:border-emerald-300/15 dark:bg-emerald-500/10 dark:text-slate-200'
-          )}
-        >
-          <span className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-white/70 to-transparent" />
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 via-lime-500 to-amber-400 text-white shadow-lg shadow-emerald-700/25">
-              <Brain className="h-4 w-4" />
-            </span>
-            <div className="min-w-0">
-              <h2 className="flex flex-wrap items-center gap-1.5 text-sm font-bold">
-                Repetição espaçada
-                <span className="rounded-full bg-emerald-600/90 px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wide text-white">
-                  Recomendado
-                </span>
-              </h2>
-              <p className="mt-0.5 text-xs opacity-80">
-                {sessionTotal > 0
-                  ? `${sessionTotal} ${sessionTotal === 1 ? 'card' : 'cards'} para hoje. O que você erra volta antes.`
-                  : 'Revisa cada card no dia em que você ia esquecê-lo.'}
-              </p>
-            </div>
-            {selected === 'spaced' && <Check className="ml-auto h-4 w-4 shrink-0 opacity-70" />}
-          </div>
-        </button>
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <StatTile icon={<CalendarClock className="h-4 w-4" />} label="Vencidos hoje" value={safeStats.dueToday} tone="emerald" />
+        <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
+        <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
+        <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
       </div>
 
-      {selected === 'spaced' && (
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-3 rounded-2xl border border-emerald-200/55 bg-white/60 p-3.5 backdrop-blur-xl dark:border-emerald-300/15 dark:bg-card"
-        >
-          {/* Os números primeiro; a explicação completa fica atrás de um toque
-              para quem ainda não conhece o método. */}
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            <StatTile icon={<CalendarClock className="h-4 w-4" />} label="Vencidos hoje" value={safeStats.dueToday} tone="emerald" />
-            <StatTile icon={<Sparkles className="h-4 w-4" />} label="Novos" value={safeStats.newCards} tone="sky" />
-            <StatTile icon={<BarChart3 className="h-4 w-4" />} label="Dominados" value={safeStats.mastered} tone="lime" />
-            <StatTile icon={<Flame className="h-4 w-4" />} label="Difíceis" value={safeStats.difficult} tone="rose" />
-          </div>
-
-          {sessionTotal > 0 && (
-            <p className="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-600 dark:text-slate-300">
-              <Timer className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-300" />
-              <span>
-                Próxima sessão:{' '}
-                <strong className="font-semibold">
-                  {preview.due + preview.learning} para revisar
-                </strong>
-                {preview.newCards > 0 && <> e <strong className="font-semibold">{preview.newCards} novos</strong></>}
-                {preview.heldBack > 0 && (
-                  <span className="opacity-70"> · {preview.heldBack} inéditos ficam para a próxima</span>
-                )}
-              </span>
-            </p>
-          )}
-
-          {/* Intensidade: o único parâmetro do algoritmo na mão do usuário.
-              É o botão de "estou de boa" versus "a prova é sexta". */}
-          <div className="mt-3">
-            <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
-              <Gauge className="h-3.5 w-3.5" /> Intensidade das revisões
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {RETENTION_OPTIONS.map(option => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => onRetentionChange(option.value)}
-                  aria-pressed={retention === option.value}
-                  title={option.description}
-                  className={cn(
-                    'rounded-xl border px-2 py-2 text-center transition',
-                    retention === option.value
-                      ? 'border-emerald-400/60 bg-emerald-500/15 text-emerald-800 shadow-sm dark:text-emerald-100'
-                      : 'border-white/50 bg-white/55 text-slate-600 hover:bg-white dark:border-border dark:bg-card dark:text-slate-300'
-                  )}
-                >
-                  <span className="block text-xs font-bold">{option.label}</span>
-                  <span className="mt-0.5 block text-[10px] tabular-nums opacity-70">
-                    {Math.round(RETENTION_PRESETS[option.value] * 100)}% de acerto
-                  </span>
-                </button>
-              ))}
-            </div>
-            <p className="mt-1.5 text-[11px] leading-snug text-slate-500 dark:text-slate-400">
-              {RETENTION_OPTIONS.find(o => o.value === retention)?.description}
+      <div className="ios-lista mt-3">
+        {preview.due + preview.learning + preview.newCards > 0 && (
+          <div className="ios-linha !gap-3">
+            <Timer className="ios-tinta h-5 w-5 shrink-0" />
+            <p className="min-w-0 flex-1 text-[14px]">
+              Próxima sessão:{' '}
+              <strong className="font-semibold">{preview.due + preview.learning} para revisar</strong>
+              {preview.newCards > 0 && <> e <strong className="font-semibold">{preview.newCards} novos</strong></>}
+              {preview.heldBack > 0 && (
+                <span className="ios-rotulo-2"> · {preview.heldBack} inéditos ficam para depois</span>
+              )}
             </p>
           </div>
+        )}
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => setExplained(v => !v)}
-              className="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-500/20 dark:text-emerald-200"
-            >
-              <Leaf className="h-3.5 w-3.5" />
-              {explained ? 'Ocultar explicação' : 'Como funciona?'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setOpen(v => !v)}
-              className="inline-flex items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-white dark:border-border dark:bg-card dark:text-slate-300 dark:hover:bg-muted"
-            >
-              {open ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-              {open ? 'Ocultar desempenho' : 'Desempenho por card'}
-            </button>
-          </div>
-
-          <AnimatePresence>
-            {explained && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
+        {/* Intensidade: o único parâmetro do algoritmo na mão do usuário. */}
+        <div className="ios-linha !flex-col !items-stretch !gap-2 !py-3">
+          <p className="flex items-center gap-2 text-[14px] font-medium">
+            <Gauge className="ios-rotulo-2 h-4 w-4" /> Intensidade das revisões
+          </p>
+          <div
+            className="ios-segmentado"
+            role="radiogroup"
+            aria-label="Intensidade das revisões"
+            style={{ ['--segmentos' as string]: 3, ['--indice' as string]: Math.max(0, RETENTION_OPTIONS.findIndex(o => o.value === retention)) }}
+          >
+            {RETENTION_OPTIONS.map(option => (
+              <button
+                key={option.value}
+                type="button"
+                role="radio"
+                onClick={() => onRetentionChange(option.value)}
+                aria-checked={retention === option.value}
+                title={option.description}
+                className="ios-segmento !h-auto flex-col !gap-0 py-1.5"
               >
-                <p className="mt-3 text-sm leading-relaxed text-slate-700 dark:text-slate-200">
-                  Cada card guarda quanto tempo a sua memória dele aguenta. Depois de cada
-                  resposta esse prazo é recalculado e o card volta no dia em que você
-                  estaria prestes a esquecê-lo — nem antes (desperdício), nem depois
-                  (esquecimento). É o mesmo modelo usado pelo Anki.
+                <span className="text-[13px]">{option.label}</span>
+                <span className="ios-rotulo-3 text-[10.5px] font-medium tabular-nums">
+                  {Math.round(RETENTION_PRESETS[option.value] * 100)}% de acerto
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="ios-rotulo-2 text-[12px] leading-snug">
+            {RETENTION_OPTIONS.find(o => o.value === retention)?.description}
+          </p>
+        </div>
+
+        <button type="button" onClick={() => setExplained(v => !v)} className="ios-linha w-full justify-between text-left" aria-expanded={explained}>
+          <span className="flex items-center gap-3 text-[14px] font-medium">
+            <Leaf className="ios-rotulo-2 h-4 w-4" /> Como funciona
+          </span>
+          {explained ? <ChevronUp className="ios-rotulo-3 h-4 w-4" /> : <ChevronDown className="ios-rotulo-3 h-4 w-4" />}
+        </button>
+        <AnimatePresence>
+          {explained && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="px-4 pb-4">
+                <p className="text-[14px] leading-relaxed">
+                  Cada card guarda quanto tempo a sua memória dele aguenta. Depois de cada resposta esse prazo
+                  é recalculado e o card volta no dia em que você estaria prestes a esquecê-lo — nem antes
+                  (desperdício), nem depois (esquecimento).
                 </p>
                 <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                  <RatingExplain label={FLASHCARD_RATING_LABELS.FACIL} tone="emerald" text="Você lembrou na hora. O prazo estica bastante e o card sai da frente." />
-                  <RatingExplain label={FLASHCARD_RATING_LABELS.MEDIO} tone="amber" text="Você lembrou com esforço. O prazo cresce menos e o card volta antes." />
-                  <RatingExplain label={FLASHCARD_RATING_LABELS.DIFICIL} tone="rose" text="Travou ou errou. O card volta em minutos, ainda nesta sessão." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.FACIL} tone="emerald" text="Lembrou na hora. O prazo estica bastante." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.MEDIO} tone="amber" text="Lembrou com esforço. O prazo cresce menos." />
+                  <RatingExplain label={FLASHCARD_RATING_LABELS.DIFICIL} tone="rose" text="Travou ou errou. Volta em minutos e vai para o caderno de erros." />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-          <div className="mt-1">
-
-            <AnimatePresence>
-              {open && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="overflow-hidden"
-                >
-                  <div className="mt-3 max-h-72 overflow-auto rounded-2xl border border-white/50 bg-white/45 backdrop-blur-xl dark:border-border dark:bg-card">
-                    {cards.length === 0 ? (
-                      <p className="p-4 text-sm text-slate-500">Esse deck ainda não tem cartões.</p>
-                    ) : (
-                      <ul className="divide-y divide-slate-200/60 dark:divide-white/10">
-                        {cards.map((card, index) => (
-                          <li key={card._id} className="grid gap-2 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr),auto] sm:items-center">
-                            <div className="min-w-0">
-                              <p className="truncate font-medium text-slate-800 dark:text-slate-100">
-                                {index + 1}. {card.kind === 'hidden_word' && card.hiddenWord ? card.hiddenWord.phrase : (card.front?.text || '(sem texto)')}
-                              </p>
-                              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                                {formatProgressLine(card.spacedProgress)}
-                              </p>
-                            </div>
-                            <ProgressBadge progress={card.spacedProgress} />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </motion.div>
+        <button type="button" onClick={() => setOpen(v => !v)} className="ios-linha w-full justify-between text-left" aria-expanded={open}>
+          <span className="flex items-center gap-3 text-[14px] font-medium">
+            <BarChart3 className="ios-rotulo-2 h-4 w-4" /> Desempenho por card
+          </span>
+          {open ? <ChevronUp className="ios-rotulo-3 h-4 w-4" /> : <ChevronDown className="ios-rotulo-3 h-4 w-4" />}
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              {cards.length === 0 ? (
+                <p className="ios-rotulo-2 p-4 text-[14px]">Esse deck ainda não tem cartões.</p>
+              ) : (
+                <ul className="max-h-80 overflow-auto border-t border-[var(--ios-separador)]">
+                  {cards.map((card, index) => (
+                    <li key={card._id}>
+                      <div className="ios-linha !gap-3 !py-2.5">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-[14px] font-medium">
+                            {index + 1}. {card.kind === 'hidden_word' && card.hiddenWord ? card.hiddenWord.phrase : (card.front?.text || '(sem texto)')}
+                          </p>
+                          <p className="ios-rotulo-2 mt-0.5 truncate text-[12px]">{formatProgressLine(card.spacedProgress)}</p>
+                        </div>
+                        <ProgressBadge progress={card.spacedProgress} />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </section>
   )
 }
 
 function RatingExplain({ label, text, tone }: { label: string; text: string; tone: 'emerald' | 'amber' | 'rose' }) {
-  const colors = {
-    emerald: 'border-emerald-300/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-100',
-    amber: 'border-amber-300/40 bg-amber-500/10 text-amber-800 dark:text-amber-100',
-    rose: 'border-rose-300/40 bg-rose-500/10 text-rose-800 dark:text-rose-100',
-  }
+  const cor = { emerald: 'bg-[#2f8a4f]', amber: 'bg-[#d98a12]', rose: 'bg-[#e5484d]' }
   return (
-    <div className={cn('rounded-2xl border px-3 py-2 backdrop-blur-md', colors[tone])}>
-      <div className="text-xs font-bold">{label}</div>
-      <p className="mt-1 text-[11px] leading-snug opacity-85">{text}</p>
+    <div className="rounded-[14px] bg-[var(--ios-preenchimento)] px-3 py-2.5">
+      <div className="flex items-center gap-1.5 text-[13px] font-semibold">
+        <span className={cn('h-2 w-2 rounded-full', cor[tone])} /> {label}
+      </div>
+      <p className="ios-rotulo-2 mt-1 text-[12px] leading-snug">{text}</p>
     </div>
   )
 }
 
 function StatTile({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: number; tone: 'emerald' | 'sky' | 'lime' | 'rose' }) {
-  const colors = {
-    emerald: 'from-emerald-500/20 to-emerald-500/5 text-emerald-800 dark:text-emerald-100',
-    sky: 'from-sky-500/20 to-sky-500/5 text-sky-800 dark:text-sky-100',
-    lime: 'from-lime-500/25 to-lime-500/5 text-lime-800 dark:text-lime-100',
-    rose: 'from-rose-500/20 to-rose-500/5 text-rose-800 dark:text-rose-100',
+  const cor = {
+    emerald: 'ios-tinta',
+    sky: 'text-[#2f74d0] dark:text-[#7cb4ff]',
+    lime: 'text-[#5b8a1f] dark:text-[#b4dd6b]',
+    rose: 'ios-erro',
   }
   return (
-    <div className={cn('rounded-2xl border border-white/55 bg-gradient-to-br p-3 backdrop-blur-xl dark:border-border', colors[tone])}>
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-current opacity-75">{icon}</span>
-        <span className="text-xl font-black tabular-nums">{value}</span>
+    <div className="ios-cartao rounded-[18px] p-3">
+      <div className={cn('flex items-center justify-between gap-2', cor[tone])}>
+        <span className="opacity-80">{icon}</span>
+        <span className="text-[24px] font-bold leading-none tabular-nums">{value}</span>
       </div>
-      <p className="mt-2 text-xs font-semibold opacity-80">{label}</p>
+      <p className="ios-rotulo-2 mt-2 text-[12px] font-semibold">{label}</p>
     </div>
   )
 }
@@ -2560,32 +2890,17 @@ function formatProgressLine(progress?: SpacedProgressResponse | null): string {
 }
 
 function ProgressBadge({ progress }: { progress?: SpacedProgressResponse | null }) {
+  const base = 'inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11.5px] font-semibold'
   if (!progress) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/10 px-2.5 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-300/40 dark:text-sky-200">
-        <Sparkles className="h-3 w-3" /> Novo
-      </span>
-    )
+    return <span className={cn(base, 'bg-[#2f74d0]/12 text-[#2f74d0] dark:text-[#7cb4ff]')}><Sparkles className="h-3 w-3" /> Novo</span>
   }
   if (progress.rating === 'DIFICIL' || (progress.lapses || 0) >= 2 || (progress.difficulty || 0) >= 7.5) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-semibold text-rose-700 ring-1 ring-rose-300/40 dark:text-rose-200">
-        <AlertTriangle className="h-3 w-3" /> Difícil
-      </span>
-    )
+    return <span className={cn(base, 'ios-erro ios-erro-suave')}><AlertTriangle className="h-3 w-3" /> Difícil</span>
   }
   if ((progress.stability || 0) >= 21) {
-    return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-lime-500/15 px-2.5 py-1 text-xs font-semibold text-lime-700 ring-1 ring-lime-300/40 dark:text-lime-200">
-        <CheckCircle2 className="h-3 w-3" /> Dominado
-      </span>
-    )
+    return <span className={cn(base, 'bg-[#5b8a1f]/14 text-[#4f7a18] dark:text-[#b4dd6b]')}><CheckCircle2 className="h-3 w-3" /> Dominado</span>
   }
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-300/40 dark:text-emerald-200">
-      <CalendarClock className="h-3 w-3" /> Revisar
-    </span>
-  )
+  return <span className={cn(base, 'ios-tinta bg-[var(--ios-tinta-suave)]')}><CalendarClock className="h-3 w-3" /> Revisar</span>
 }
 
 function ResumeBanner({
@@ -2608,137 +2923,43 @@ function ResumeBanner({
   const isSpaced = progress.mode === 'spaced'
 
   return (
-    <motion.div
+    <motion.section
+      aria-label="Sessão pendente"
       initial={{ opacity: 0, y: -12, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -8, scale: 0.98 }}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="relative mb-4 overflow-hidden rounded-3xl"
-      style={{
-        background:
-          'linear-gradient(135deg, rgba(6,78,59,0.60) 0%, rgba(4,120,87,0.48) 40%, rgba(180,83,9,0.42) 100%)',
-        backdropFilter: 'blur(22px) saturate(160%)',
-        WebkitBackdropFilter: 'blur(22px) saturate(160%)',
-        border: '1px solid rgba(167,243,208,0.30)',
-        boxShadow:
-          '0 0 35px rgba(16,185,129,0.28), 0 18px 50px -20px rgba(6,78,59,0.55), inset 0 1px 0 rgba(255,255,255,0.18)',
-      }}
+      className="ios-lista relative p-4"
     >
-      {/* Decorative glow blobs */}
-      <div className="pointer-events-none absolute -top-16 -left-12 h-56 w-56 rounded-full bg-amber-500/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -right-10 h-60 w-60 rounded-full bg-emerald-500/30 blur-3xl" />
-      <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-
       <button
         type="button"
         onClick={onDismiss}
         aria-label="Descartar progresso salvo"
-        className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground ring-1 ring-white/20 transition hover:bg-white/20 hover:text-foreground"
+        className="ios-rotulo-3 absolute right-2.5 top-2.5 flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--ios-preenchimento)]"
       >
-        <X className="h-4 w-4" />
+        <X className="h-4 w-4" strokeWidth={2.5} />
       </button>
-
-      <div className="relative grid gap-5 p-5 sm:p-6 md:grid-cols-[1.2fr,1fr] md:items-center">
-        <div>
-          <div className="flex items-center gap-2">
-            <span
-              className="inline-flex h-9 w-9 items-center justify-center rounded-2xl text-foreground shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, rgba(52,211,153,0.95), rgba(245,158,11,0.95))',
-                boxShadow: '0 6px 18px rgba(16,185,129,0.45), inset 0 1px 0 rgba(255,255,255,0.30)',
-              }}
-            >
-              <Bookmark className="h-4 w-4 fill-current" />
-            </span>
-            <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-wider text-emerald-100/85">
-                Sessão pendente
-              </p>
-              <h3 className="text-lg font-bold leading-tight text-foreground">
-                Você parou no card {safeIndex + 1} de {safeTotal}
-              </h3>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-emerald-100/80">
-              <span>Progresso</span>
-              <span className="tabular-nums">{percent}%</span>
-            </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted ring-1 ring-white/15">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${percent}%` }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                className="h-full rounded-full"
-                style={{
-                  background:
-                    'linear-gradient(90deg, rgba(52,211,153,1) 0%, rgba(163,230,53,1) 55%, rgba(245,158,11,1) 100%)',
-                  boxShadow: '0 0 16px rgba(245,158,11,0.55)',
-                }}
-              />
-            </div>
-            <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-medium text-foreground/85">
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
-                {isSpaced ? (
-                  <>
-                    <Brain className="h-3 w-3" /> Repetição espaçada
-                  </>
-                ) : (
-                  <>
-                    <Play className="h-3 w-3 fill-current" /> Estudo normal
-                  </>
-                )}
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
-                <CheckCircle2 className="h-3 w-3" /> {ratedCount} avaliados
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
-                <ChevronRight className="h-3 w-3" /> {remaining} restantes
-              </span>
-              {savedAgo && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 ring-1 ring-white/15 backdrop-blur">
-                  <CalendarClock className="h-3 w-3" /> {savedAgo}
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2.5 sm:flex-row md:flex-col md:items-stretch">
-          <button
-            type="button"
-            onClick={onContinue}
-            className="group relative inline-flex flex-1 items-center justify-center gap-2 overflow-hidden rounded-2xl px-5 py-3 text-sm font-bold text-foreground transition-all duration-200 active:scale-[0.97] hover:brightness-110"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(217,119,6,1) 0%, rgba(234,88,12,0.95) 50%, rgba(245,158,11,0.90) 100%)',
-              border: '1px solid rgba(253,230,138,0.55)',
-              boxShadow:
-                '0 0 24px rgba(234,88,12,0.55), 0 8px 22px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.25)',
-            }}
-          >
-            <span className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-            <RotateCcw className="h-4 w-4" />
-            Continuar de onde parei
-          </button>
-          <button
-            type="button"
-            onClick={onRestart}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold text-foreground transition-all duration-200 active:scale-[0.97]"
-            style={{
-              background: 'rgba(255,255,255,0.10)',
-              border: '1px solid rgba(255,255,255,0.22)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
-            }}
-          >
-            <Play className="h-4 w-4 fill-current" />
-            Recomeçar do zero
-          </button>
+      <div className="flex items-center gap-3 pr-8">
+        <AnelProgresso valor={safeIndex + 1} total={safeTotal} tamanho={52} espessura={6} rotulo={`${percent}% da sessão feita`}>
+          <span className="text-[13px] font-bold tabular-nums">{percent}%</span>
+        </AnelProgresso>
+        <div className="min-w-0">
+          <h3 className="text-[17px] font-bold tracking-[-0.02em]">Você parou no card {safeIndex + 1} de {safeTotal}</h3>
+          <p className="ios-rotulo-2 mt-0.5 text-[13px]">
+            {isSpaced ? 'Repetição espaçada' : 'Ordem do deck'} · {ratedCount} avaliados · {remaining} restantes
+            {savedAgo ? ` · ${savedAgo}` : ''}
+          </p>
         </div>
       </div>
-    </motion.div>
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        <button type="button" onClick={onContinue} className="ios-botao">
+          <RotateCcw className="h-4 w-4" /> Continuar
+        </button>
+        <button type="button" onClick={onRestart} className="ios-botao-cinza">
+          Recomeçar
+        </button>
+      </div>
+    </motion.section>
   )
 }
 
@@ -2758,34 +2979,33 @@ function formatRelativeTime(timestamp: number): string {
 
 function VisibilityBadge({ visibility }: { visibility: string }) {
   if (visibility === 'public') {
-    return <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-0.5 text-foreground"><Globe className="h-3 w-3" /> Público</span>
+    return <span className="ios-selo"><Globe className="h-3 w-3" /> Público</span>
   }
   if (visibility === 'unlisted') {
-    return <span className="inline-flex items-center gap-1 rounded-full bg-sky-500/90 px-2.5 py-0.5 text-foreground"><LinkIcon className="h-3 w-3" /> Não-listado</span>
+    return <span className="ios-selo"><LinkIcon className="h-3 w-3" /> Não listado</span>
   }
-  return <span className="inline-flex items-center gap-1 rounded-full bg-slate-700/80 px-2.5 py-0.5 text-foreground"><EyeOff className="h-3 w-3" /> Privado</span>
+  return <span className="ios-selo"><EyeOff className="h-3 w-3" /> Privado</span>
 }
 
 function LockedPreview({ deck, access }: { deck: any; access: AccessFlags }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-      className="rounded-3xl border border-white/40 dark:border-border bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm p-8 text-center"
-    >
-      <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500/15 to-amber-500/15">
-        <Lock className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+    <div className="ios-lista">
+      <div className="ios-linha !gap-3 !py-4">
+        <span className="ios-rotulo-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--ios-preenchimento)]">
+          <Lock className="h-5 w-5" />
+        </span>
+        <p className="min-w-0 flex-1 text-[14px] leading-snug">
+          <strong className="block text-[15px] font-semibold">Os cartões estão fechados</strong>
+          <span className="ios-rotulo-2">
+            {access.includedInPlus
+              ? `Este deck faz parte do ${PLUS_LABEL}. Resgate para estudar todos os cartões.`
+              : deck.pricing === 'paid'
+                ? 'Adquira o deck para estudar todos os cartões com repetição espaçada.'
+                : (deck.allowedGroups?.length ? 'Este deck é restrito a grupos específicos.' : 'Você ainda não tem acesso a este deck.')}
+          </span>
+        </p>
       </div>
-      <h2 className="text-xl font-semibold text-slate-800 dark:text-foreground">Conteúdo restrito</h2>
-      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-        {access.includedInPlus
-          ? `Este deck está incluído no ${PLUS_LABEL}. Resgate para acessar todos os cartões.`
-          : deck.pricing === 'paid'
-          ? 'Adquira este deck para acessar todos os cartões.'
-          : (deck.allowedGroups?.length ? 'Este deck é restrito a grupos específicos.' : 'Você ainda não tem acesso a este deck.')}
-      </p>
-    </motion.div>
+    </div>
   )
 }
 
@@ -2836,7 +3056,7 @@ function CardsList({
 
   if (!cards.length) {
     return (
-      <div className="rounded-3xl border border-dashed border-emerald-300/50 dark:border-white/15 bg-white/40 dark:bg-card backdrop-blur-md p-10 text-center">
+      <div className="ios-lista p-10 text-center">
         <Sparkles className="h-8 w-8 mx-auto text-slate-400 mb-3" />
         <p className="text-slate-500 dark:text-slate-400">Esse deck ainda não tem cartões.</p>
         {canManage && (
@@ -2850,7 +3070,7 @@ function CardsList({
 
   return (
     <>
-      <div className="rounded-3xl border border-white/40 dark:border-border bg-white/70 dark:bg-slate-900/40 backdrop-blur-xl shadow-sm overflow-hidden">
+      <div className="ios-lista">
         {/* Header */}
         <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 dark:border-border">
           {canManage && (

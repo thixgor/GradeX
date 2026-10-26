@@ -289,7 +289,7 @@ export function MateriaisToolbar({
                 type="button"
                 aria-pressed={priceFilter === f.id}
                 onClick={() => onPriceFilterChange(f.id)}
-                className="ios-pilula h-8 px-3 text-[13px]"
+                className="ios-pilula !h-8 !px-3 !text-[13px]"
                 style={{ touchAction: 'manipulation' }}
               >
                 {f.id === 'free' && <Gift className="h-3.5 w-3.5" />}

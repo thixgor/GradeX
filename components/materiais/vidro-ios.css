@@ -19,7 +19,6 @@
  * Movimento: só transform/opacity; para com "reduzir movimento". No Modo Lite
  * o desfoque sai, o vidro vira sólido e a aurora e o fundo da capa somem.
  */
-
 .vidro-ios {
   --ios-chao: #f2f1ed;
   --ios-rotulo: #101814;
@@ -113,7 +112,6 @@
 }
 
 /* ══════════ Tipografia ══════════ */
-
 .vidro-ios .ios-titulo-grande {
   font-family:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
@@ -223,7 +221,6 @@
 }
 
 /* ══════════ Lista agrupada (Ajustes do iPhone) ══════════ */
-
 .vidro-ios .ios-lista {
   overflow: hidden;
   border-radius: 18px;
@@ -282,7 +279,7 @@
 .vidro-ios .ios-segmentado {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--segmentos, 2), minmax(0, 1fr));
   padding: 3px;
   border-radius: 13px;
   background: var(--ios-preenchimento);
@@ -295,7 +292,7 @@
   top: 3px;
   bottom: 3px;
   left: 3px;
-  width: calc((100% - 6px) / 2);
+  width: calc((100% - 6px) / var(--segmentos, 2));
   border-radius: 10px;
   background: var(--ios-cartao-solido);
   box-shadow:
@@ -307,8 +304,14 @@
   background: #3a423e;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
 }
+.vidro-ios .ios-segmentado::before {
+  transform: translateX(calc(100% * var(--indice, 0)));
+}
 .vidro-ios .ios-segmentado[data-indice='1']::before {
   transform: translateX(100%);
+}
+.vidro-ios .ios-segmentado[data-indice='2']::before {
+  transform: translateX(200%);
 }
 .vidro-ios .ios-segmento {
   display: inline-flex;
@@ -326,7 +329,8 @@
   transition: color 0.2s ease-out;
   -webkit-tap-highlight-color: transparent;
 }
-.vidro-ios .ios-segmento[aria-selected='true'] {
+.vidro-ios .ios-segmento[aria-selected='true'],
+.vidro-ios .ios-segmento[aria-checked='true'] {
   color: var(--ios-rotulo);
 }
 .vidro-ios .ios-segmento:active {
@@ -621,7 +625,6 @@
 }
 
 /* ══════════ Faixa de informações (App Store) ══════════ */
-
 .vidro-ios .ios-faixa {
   display: flex;
   overflow-x: auto;
@@ -672,7 +675,6 @@
 }
 
 /* ══════════ Barra de compra do celular ══════════ */
-
 .vidro-ios .ios-barra-inferior {
   position: fixed;
   left: 10px;
@@ -740,7 +742,6 @@
 }
 
 /* ══════════ Modo Lite ══════════ */
-
 .lite-mode .vidro-ios .vidro-app-aurora,
 .lite-mode .vidro-ios .ios-ambiente {
   display: none;
@@ -813,4 +814,201 @@
   .vidro-ios .ios-painel .ios-titulo-produto {
     font-size: 26px;
   }
+}
+
+/* ══════════ Flashcards ══════════ */
+
+/* Botão do caderno de erros: o vermelho do sistema, só onde o assunto é erro. */
+.vidro-ios .ios-botao-erro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  white-space: nowrap;
+  color: #fff;
+  background: #e5484d;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 8px 20px -10px rgba(229, 72, 77, 0.8);
+  transition:
+    transform 0.14s ease-out,
+    opacity 0.14s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-botao-erro:not(:disabled):active {
+  transform: scale(0.97);
+  opacity: 0.82;
+}
+.vidro-ios .ios-erro {
+  color: #d93d42;
+}
+.dark .vidro-ios .ios-erro {
+  color: #ff8589;
+}
+.vidro-ios .ios-erro-suave {
+  background: rgba(229, 72, 77, 0.12);
+}
+
+/* As três notas do estudo: cores do sistema, texto branco, o intervalo embaixo. */
+.vidro-ios .ios-nota {
+  display: flex;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: 18px;
+  padding: 8px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.012em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition:
+    transform 0.14s ease-out,
+    opacity 0.14s ease-out,
+    box-shadow 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .ios-nota:active {
+  transform: scale(0.95);
+  opacity: 0.85;
+}
+.vidro-ios .ios-nota[data-nota='FACIL'] {
+  background: #2f8a4f;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 22px -12px rgba(47, 138, 79, 0.85);
+}
+.vidro-ios .ios-nota[data-nota='MEDIO'] {
+  background: #d98a12;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 10px 22px -12px rgba(217, 138, 18, 0.85);
+}
+.vidro-ios .ios-nota[data-nota='DIFICIL'] {
+  background: #e5484d;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 22px -12px rgba(229, 72, 77, 0.85);
+}
+.vidro-ios .ios-nota[data-escolhida='true'] {
+  outline: 3px solid var(--ios-rotulo);
+  outline-offset: 2px;
+}
+.vidro-ios .ios-nota small {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Anel de progresso (meta do dia, acerto da sessão): SVG com traço animado. */
+.vidro-ios .ios-anel circle {
+  fill: none;
+  stroke-linecap: round;
+}
+.vidro-ios .ios-anel .trilho {
+  stroke: var(--ios-preenchimento-forte);
+}
+.vidro-ios .ios-anel .traco {
+  stroke: var(--ios-tinta);
+  transition: stroke-dashoffset 1.1s var(--ios-expo);
+}
+.dark .vidro-ios .ios-anel .traco {
+  stroke: #5fb072;
+}
+.vidro-ios .ios-anel[data-completo='true'] .traco {
+  stroke: #e2a43e;
+}
+
+/* A chama da sequência: um balanço lento, só enquanto o dia está garantido. */
+.vidro-ios .ios-chama {
+  color: #f08a24;
+  transform-origin: 50% 90%;
+}
+.vidro-ios .ios-chama[data-acesa='true'] {
+  animation: ios-chama 2.4s ease-in-out infinite;
+}
+.vidro-ios .ios-chama[data-acesa='false'] {
+  color: var(--ios-rotulo-3);
+}
+@keyframes ios-chama {
+  0%,
+  100% {
+    transform: rotate(-4deg) scale(1);
+  }
+  50% {
+    transform: rotate(4deg) scale(1.08);
+  }
+}
+
+/* Selo que pula quando o número muda (sequência de acertos no estudo). */
+.vidro-ios .ios-pulo {
+  animation: ios-pulo 0.5s var(--ios-expo) both;
+}
+@keyframes ios-pulo {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Confete do fim de sessão: poucas peças, só transform/opacity, uma vez. */
+.vidro-ios .ios-confete {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.vidro-ios .ios-confete i {
+  position: absolute;
+  top: -12px;
+  left: var(--x);
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--c);
+  opacity: 0;
+  animation: ios-confete 1.9s cubic-bezier(0.2, 0.7, 0.3, 1) var(--d) both;
+}
+@keyframes ios-confete {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--dx), 520px, 0) rotate(var(--r));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .ios-chama[data-acesa='true'],
+.vidro-ios .ios-pulo,
+.vidro-ios .ios-confete i {
+    animation: none;
+  }
+  .vidro-ios .ios-confete {
+    display: none;
+  }
+  .vidro-ios .ios-anel .traco {
+    transition: none;
+  }
+}
+.lite-mode .vidro-ios .ios-confete {
+  display: none;
 }

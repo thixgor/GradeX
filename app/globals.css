@@ -3697,6 +3697,10 @@ body.has-guest-notice {
     animation: none;
   }
 }
+/* Estudando flashcards: nada flutua por cima do card e da barra de notas. */
+body.estudo-em-foco .aviso-lite {
+  display: none;
+}
 .lite-mode .aviso-lite {
   background: hsl(var(--card)) !important;
 }

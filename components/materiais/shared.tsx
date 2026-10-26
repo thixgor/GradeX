@@ -263,7 +263,7 @@ export function CartButton({
         tabIndex={tabIndex}
         aria-label={`${itemTitle} já está no carrinho. Abrir carrinho`}
         title="Abrir carrinho"
-        className={cn('ios-botao-suave ios-botao-p min-w-[44px] px-3', className)}
+        className={cn('ios-botao-suave ios-botao-p min-w-[44px] !px-3', className)}
       >
         <Check className="ios-pop h-4 w-4" strokeWidth={3} />
         <span className="hidden sm:inline">No carrinho</span>
@@ -278,7 +278,7 @@ export function CartButton({
       tabIndex={tabIndex}
       aria-label={`Adicionar ${itemTitle} ao carrinho`}
       title="Adicionar ao carrinho"
-      className={cn('ios-botao-suave ios-botao-p min-w-[44px] px-3', className)}
+      className={cn('ios-botao-suave ios-botao-p min-w-[44px] !px-3', className)}
     >
       <BagPlusIcon />
       <span className="hidden sm:inline">Carrinho</span>
