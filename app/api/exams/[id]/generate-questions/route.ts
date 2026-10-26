@@ -10,17 +10,18 @@ import { planejarProva, sanitizarVaga, type VagaDaQuestao } from '@/lib/ia/estud
 import { ErroGemini } from '@/lib/ia/gemini'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 120
+// O teto que vale na Vercel é o de `vercel.json` (60 s para esta rota).
+export const maxDuration = 60
 
-/** Vagas por requisição: um lote de até seis cabe com folga nos 120 s. */
-const MAXIMO_DE_VAGAS = 6
+/** Vagas por requisição: a tela manda uma; duas ainda cabem no prazo. */
+const MAXIMO_DE_VAGAS = 2
 
 /**
  * POST — gera as questões de um lote da prova pessoal.
  *
- * A tela (`/exams/create-personal`) monta o plano da prova inteira e manda as
- * vagas aos poucos, três por vez, mostrando o progresso; cada requisição é uma
- * chamada à IA, não quarenta. Para quem ainda manda o corpo antigo (`themes`,
+ * A tela (`/exams/create-personal`) monta o plano da prova inteira e manda uma
+ * vaga por requisição, cinco requisições ao mesmo tempo, mostrando o
+ * progresso questão a questão. Para quem ainda manda o corpo antigo (`themes`,
  * `numberOfQuestions`…), o plano é montado aqui com o mesmo `planejarProva`.
  *
  * Só Quest+ e Plus+ (e admin) geram — ver `lib/ia/estudo/acesso.ts`.
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
     return NextResponse.json(corpoDeIaBloqueada('provas'), { status: 403 })
   }
 
-  const limite = await checkRateLimit(session.userId, 'provas_ia_lote', 20, 60_000)
+  const limite = await checkRateLimit(session.userId, 'provas_ia_lote', 60, 60_000)
   if (!limite.success) {
     return NextResponse.json({ error: 'Muitas gerações seguidas. Aguarde um minuto e tente de novo.' }, { status: 429 })
   }
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
   if (vagas.length === 0) return NextResponse.json({ error: 'Escolha pelo menos um tema' }, { status: 400 })
 
   try {
-    const resultado = await gerarLoteDeQuestoes({ vagas, alternativas, contexto, evitar }, 100_000)
+    const resultado = await gerarLoteDeQuestoes({ vagas, alternativas, contexto, evitar }, 52_000)
     if (resultado.questoes.length === 0) {
       return NextResponse.json(
         { error: 'A IA não devolveu nenhuma questão aprovada na revisão. Tente de novo.', faltaram: resultado.faltaram },

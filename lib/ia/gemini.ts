@@ -128,7 +128,30 @@ export async function modelosGemini(): Promise<string[]> {
   return (await lerConfig()).modelos
 }
 
-export type NivelDeRaciocinio = 'baixo' | 'medio' | 'alto'
+export type NivelDeRaciocinio = 'minimo' | 'baixo' | 'medio' | 'alto'
+
+/**
+ * Modelos para o que precisa sair RÁPIDO (provas e flashcards com IA): o aluno
+ * está olhando a tela. O 3.5 Flash-Lite é o mais rápido da família (~350
+ * tokens/s, raciocínio `minimal` por padrão); o 3.8 Flash entra de reserva e o
+ * 2.5 Flash por último. `GEMINI_MODELOS_RAPIDOS` (vírgulas) troca a escada sem
+ * deploy de código. Não segue o modelo do painel de propósito: o painel pode
+ * apontar um modelo grande, ótimo para o Resumo da monitoria e lento demais
+ * para uma prova gerada ao vivo.
+ */
+export function modelosRapidos(): string[] {
+  const doAmbiente = String(process.env.GEMINI_MODELOS_RAPIDOS || '')
+    .split(',')
+    .map((m) => m.trim())
+    .filter(Boolean)
+  const base = doAmbiente.length ? doAmbiente : ['gemini-3.5-flash-lite', MODELO_FLASH_PADRAO, MODELO_FLASH_RESERVA]
+  return Array.from(new Set(base)).filter((m) => !modeloDesligado(m)).slice(0, 3)
+}
+
+/** Só a linha Flash-Lite aceita `thinkingLevel: minimal`; nos outros 3.x é erro. */
+function aceitaRaciocinioMinimo(modelo: string): boolean {
+  return /flash-lite/.test(modelo)
+}
 
 function geracao3(modelo: string): boolean {
   return /^gemini-([3-9]|\d{2,})/.test(modelo) || modelo === 'gemini-flash-latest'
@@ -149,9 +172,18 @@ export function configDeGeracao(modelo: string, base: Record<string, unknown> = 
     delete config.topP
     delete config.topK
     delete config.candidateCount
-    config.thinkingConfig = { thinkingLevel: raciocinio === 'alto' ? 'high' : raciocinio === 'medio' ? 'medium' : 'low' }
+    config.thinkingConfig = {
+      thinkingLevel:
+        raciocinio === 'alto'
+          ? 'high'
+          : raciocinio === 'medio'
+            ? 'medium'
+            : raciocinio === 'minimo' && aceitaRaciocinioMinimo(modelo)
+              ? 'minimal'
+              : 'low',
+    }
   } else if (modelo.startsWith('gemini-2.5')) {
-    config.thinkingConfig = { thinkingBudget: raciocinio === 'baixo' ? 0 : -1 }
+    config.thinkingConfig = { thinkingBudget: raciocinio === 'baixo' || raciocinio === 'minimo' ? 0 : -1 }
   }
   const teto = Number(config.maxOutputTokens) || 0
   if (teto && teto < 8192 && 'thinkingConfig' in config) config.maxOutputTokens = 8192

@@ -9,11 +9,12 @@ import 'server-only'
  * mil tokens que estourava o limite de saída e se perdia inteira.
  *
  * Agora: regras fixas em `systemInstruction` (prefixo reaproveitado pelo cache
- * implícito), saída em `responseSchema`, raciocínio baixo, no máximo
- * `MAXIMO_DE_CARTOES` por deck e cartões repetidos descartados aqui.
+ * implícito), saída em `responseSchema`, modelo rápido com raciocínio mínimo
+ * (`modelosRapidos`), o deck em pedaços paralelos de até oito cartões, no
+ * máximo `MAXIMO_DE_CARTOES` por deck e cartões repetidos descartados aqui.
  */
 
-import { gerarConteudoGemini } from '@/lib/ia/gemini'
+import { gerarConteudoGemini, modelosRapidos } from '@/lib/ia/gemini'
 import { lerJson } from './gerador-de-provas'
 
 export const MAXIMO_DE_CARTOES = 40
@@ -113,8 +114,19 @@ export function lerCartoes(texto: string, quantidade: number): CartaoGerado[] {
   return cartoes
 }
 
-export async function gerarFlashcards(p: PedidoDeFlashcards): Promise<CartaoGerado[]> {
-  const quantidade = Math.max(1, Math.min(MAXIMO_DE_CARTOES, Math.round(p.quantidade)))
+/** Cartões por chamada: cada pedaço sai em poucos segundos e todos correm juntos. */
+const CARTOES_POR_PEDACO = 8
+
+/** Ângulos dos pedaços paralelos: cada chamada cobre uma face do tema e não repete as outras. */
+const ANGULOS = [
+  'definições, classificações e critérios',
+  'fisiopatologia e mecanismos',
+  'achados, diagnóstico e diagnóstico diferencial',
+  'tratamento, condutas e complicações',
+  'números, valores de referência e exceções que caem em prova',
+]
+
+async function gerarPedaco(p: PedidoDeFlashcards, quantidade: number, angulo: string | null): Promise<CartaoGerado[]> {
   const nivel =
     p.dificuldade === null
       ? 'misture fácil, médio e difícil'
@@ -125,26 +137,27 @@ export async function gerarFlashcards(p: PedidoDeFlashcards): Promise<CartaoGera
           : 'difícil'
   const prompt = `Deck: ${p.titulo}
 Tema: ${p.tema}${p.observacoes ? `\nOrientação do aluno: ${p.observacoes}` : ''}
-Foco: ${FOCO_NO_PROMPT[p.foco]}
+Foco: ${FOCO_NO_PROMPT[p.foco]}${angulo ? `\nNesta parte, cubra só: ${angulo}.` : ''}
 Dificuldade: ${nivel}
 Gere exatamente ${quantidade} cartões.`
 
   const { texto, dados, modelo } = await gerarConteudoGemini({
     secao: 'flashcards',
+    modelos: modelosRapidos(),
     corpo: {
       systemInstruction: { parts: [{ text: INSTRUCAO }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.8,
         // ~110 tokens por cartão + folga.
-        maxOutputTokens: Math.max(2_048, 160 * quantidade),
+        maxOutputTokens: Math.max(1_536, 180 * quantidade),
         responseMimeType: 'application/json',
         responseSchema: ESQUEMA,
       },
     },
-    raciocinio: 'baixo',
-    timeoutMs: 24_000,
-    prazoMs: 27_000,
+    raciocinio: 'minimo',
+    timeoutMs: 20_000,
+    prazoMs: 45_000,
   })
   const u = dados?.usageMetadata
   if (u) {
@@ -152,7 +165,39 @@ Gere exatamente ${quantidade} cartões.`
       `[ia/flashcards] ${quantidade} cartões ${modelo}: entrada ${u.promptTokenCount ?? '?'} (cache ${u.cachedContentTokenCount ?? 0}), saída ${u.candidatesTokenCount ?? '?'}, raciocínio ${u.thoughtsTokenCount ?? 0}`,
     )
   }
-  const cartoes = lerCartoes(texto, quantidade)
-  if (cartoes.length === 0) throw new Error('A IA não devolveu cartões válidos. Tente de novo.')
-  return cartoes
+  return lerCartoes(texto, quantidade)
+}
+
+/**
+ * O deck sai em pedaços de até oito cartões, todos ao mesmo tempo: quarenta
+ * cartões numa chamada só eram ~6 mil tokens de saída em fila (e o teto da
+ * função de 30 s, então, cortava o deck no meio). Com os pedaços paralelos, o
+ * deck inteiro leva o tempo de um pedaço. Repetidos entre pedaços saem aqui.
+ */
+export async function gerarFlashcards(p: PedidoDeFlashcards): Promise<CartaoGerado[]> {
+  const quantidade = Math.max(1, Math.min(MAXIMO_DE_CARTOES, Math.round(p.quantidade)))
+  const pedacos = Math.ceil(quantidade / CARTOES_POR_PEDACO)
+  const tamanhos = Array.from({ length: pedacos }, (_, i) =>
+    Math.floor(quantidade / pedacos) + (i < quantidade % pedacos ? 1 : 0),
+  )
+  const resultados = await Promise.allSettled(
+    tamanhos.map((n, i) => gerarPedaco(p, n, pedacos > 1 ? ANGULOS[i % ANGULOS.length] : null)),
+  )
+  const vistos = new Set<string>()
+  const cartoes: CartaoGerado[] = []
+  for (const r of resultados) {
+    if (r.status !== 'fulfilled') continue
+    for (const c of r.value) {
+      const k = chave(c.front)
+      if (vistos.has(k)) continue
+      vistos.add(k)
+      cartoes.push(c)
+    }
+  }
+  if (cartoes.length === 0) {
+    const falha = resultados.find((r): r is PromiseRejectedResult => r.status === 'rejected')
+    if (falha) throw falha.reason
+    throw new Error('A IA não devolveu cartões válidos. Tente de novo.')
+  }
+  return cartoes.slice(0, quantidade)
 }

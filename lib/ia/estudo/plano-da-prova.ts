@@ -61,7 +61,14 @@ export const NIVEIS: { id: NivelDaQuestao | 'misto'; rotulo: string }[] = [
 
 /** Tetos de custo. Uma questão completa (com resposta comentada) sai por ~1.300 tokens. */
 export const MAXIMO_DE_QUESTOES_IA = 40
-export const QUESTOES_POR_LOTE = 3
+/**
+ * Uma questão por requisição: cada uma sai em ~5–10 s e várias correm em
+ * paralelo (`EM_PARALELO`). Três numa chamada só levavam mais que o teto da
+ * função e se perdiam inteiras.
+ */
+export const QUESTOES_POR_LOTE = 1
+/** Requisições de geração ao mesmo tempo, na tela. */
+export const EM_PARALELO = 5
 export const MAXIMO_DE_TEMAS = 12
 
 const NIVEIS_VALIDOS: NivelDaQuestao[] = ['facil', 'medio', 'dificil']

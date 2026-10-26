@@ -12,13 +12,17 @@ import 'server-only'
  * tokens de entrada repetida, mais as novas tentativas de cada falha.
  *
  * Agora:
- *  - UMA chamada por lote de até três questões, já com a resposta comentada;
+ *  - UMA chamada por questão, já com a resposta comentada, e várias questões
+ *    ao mesmo tempo (a tela dispara cinco requisições em paralelo): a prova
+ *    de dez sai em ~20 s, não em minutos. O lote de três numa chamada só
+ *    passava dos 30 s que a função tinha e morria no meio;
  *  - as regras moram em `systemInstruction`, idênticas em toda chamada: é o
  *    prefixo que o cache implícito do Gemini reaproveita entre lotes (paga-se
  *    ~25% do preço pelos tokens em cache);
  *  - saída com `responseSchema`: JSON puro, sem markdown nem texto em volta,
  *    sem exemplo nenhum no prompt;
- *  - raciocínio no nível baixo — quem segura a qualidade é a auditoria
+ *  - modelo rápido (`modelosRapidos`: 3.5 Flash-Lite → 3.8 Flash → 2.5
+ *    Flash) com raciocínio mínimo — quem segura a qualidade é a auditoria
  *    (`auditoria-de-questoes.ts`), não tokens de pensamento;
  *  - só a questão que a auditoria reprova volta para a IA, numa chamada de
  *    reparo que leva apenas o comando e as alternativas.
@@ -29,7 +33,7 @@ import 'server-only'
 
 import { v4 as uuidv4 } from 'uuid'
 
-import { gerarConteudoGemini } from '@/lib/ia/gemini'
+import { gerarConteudoGemini, modelosRapidos } from '@/lib/ia/gemini'
 import type { Alternative, Question } from '@/lib/types'
 
 import {
@@ -344,9 +348,16 @@ Gere ${p.vagas.length} questão(ões), nesta ordem:
 ${linhas.join('\n')}${evitar}`
 }
 
-async function chamar(prompt: string, esquema: unknown, maxSaida: number, prazoMs: number) {
+/**
+ * Uma chamada com tempo de quem está esperando na tela: tentativa curta (o
+ * modelo rápido responde uma questão em ~5–10 s; se passou de `tentativaMs`,
+ * algo travou e vale mais pular para o próximo modelo do que esperar) e prazo
+ * total abaixo do teto da função (60 s em `vercel.json`).
+ */
+async function chamar(prompt: string, esquema: unknown, maxSaida: number, prazoMs: number, tentativaMs = 24_000) {
   return gerarConteudoGemini({
     secao: 'personalExams',
+    modelos: modelosRapidos(),
     corpo: {
       systemInstruction: { parts: [{ text: INSTRUCAO_DO_SISTEMA }] },
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -357,8 +368,8 @@ async function chamar(prompt: string, esquema: unknown, maxSaida: number, prazoM
         responseSchema: esquema,
       },
     },
-    raciocinio: 'baixo',
-    timeoutMs: Math.min(prazoMs - 2_000, 75_000),
+    raciocinio: 'minimo',
+    timeoutMs: Math.max(5_000, Math.min(prazoMs - 1_000, tentativaMs)),
     prazoMs,
   })
 }
@@ -369,7 +380,8 @@ async function chamar(prompt: string, esquema: unknown, maxSaida: number, prazoM
  * mesmo), então o comentário e o gabarito continuam valendo.
  */
 async function repararDistratoras(itens: { q: QuestaoGerada; alertas: Alerta[] }[], prazoMs: number): Promise<void> {
-  if (itens.length === 0 || prazoMs < 12_000) return
+  // Reparo é melhoria: só entra se ainda couber na função com folga.
+  if (itens.length === 0 || prazoMs < 14_000) return
   const blocos = itens.map(({ q, alertas }, indice) => {
     const recurso = q.recurso ? `\nRecurso: ${recursoEmTexto(q.recurso).slice(0, 500)}` : ''
     const alts = q.alternativas.map((a, i) => `  ${i}. [${a.correta ? 'CORRETA' : 'distratora'}] ${a.texto}`).join('\n')
@@ -378,7 +390,7 @@ async function repararDistratoras(itens: { q: QuestaoGerada; alertas: Alerta[] }
   })
   const prompt = `Revise as alternativas das questões abaixo. Corrija os problemas apontados mantendo o conteúdo correto e o gabarito: devolva TODAS as alternativas de cada questão na MESMA ordem (a de índice da CORRETA continua correta; as distratoras continuam erradas, agora com erros conceituais plausíveis), cada uma com o comentário de por que está certa ou errada. Siga as regras da questão.\n\n${blocos.join('\n\n')}`
   try {
-    const { texto, dados, modelo } = await chamar(prompt, ESQUEMA_REPARO, 4096, prazoMs)
+    const { texto, dados, modelo } = await chamar(prompt, ESQUEMA_REPARO, 1_500 * itens.length, prazoMs - 2_000, 14_000)
     registrarUso(`reparo de ${itens.length}`, dados, modelo)
     const lido = lerJson(texto)
     for (const reparo of Array.isArray(lido?.reparos) ? lido.reparos : []) {
@@ -403,10 +415,11 @@ export interface ResultadoDoLote {
   auditoria: { reparadas: number; descartadas: number; alertasRestantes: number }
 }
 
-export async function gerarLoteDeQuestoes(p: PedidoDeLote, prazoMs = 85_000): Promise<ResultadoDoLote> {
+export async function gerarLoteDeQuestoes(p: PedidoDeLote, prazoMs = 52_000): Promise<ResultadoDoLote> {
   const inicio = Date.now()
-  const saidaPorQuestao = 1_900
-  const { texto, dados, modelo } = await chamar(promptDoLote(p), ESQUEMA_LOTE, Math.max(4_096, saidaPorQuestao * p.vagas.length), prazoMs)
+  const saidaPorQuestao = 2_200
+  // Reserva tempo para o reparo: a geração não pode comer o prazo inteiro.
+  const { texto, dados, modelo } = await chamar(promptDoLote(p), ESQUEMA_LOTE, saidaPorQuestao * p.vagas.length, prazoMs - 12_000, 24_000 + 8_000 * (p.vagas.length - 1))
   registrarUso(`lote de ${p.vagas.length}`, dados, modelo)
 
   const lido = lerJson(texto)

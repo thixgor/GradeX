@@ -80,3 +80,24 @@ describe('leitura dos flashcards', () => {
     expect(cartoes[1].back).toBe('Resistência à ejeção.')
   })
 })
+
+describe('modelo rápido para estudo', () => {
+  it('Flash-Lite primeiro e raciocínio mínimo só onde o modelo aceita', async () => {
+    const { configDeGeracao, modelosRapidos } = await import('@/lib/ia/gemini')
+    expect(modelosRapidos()[0]).toBe('gemini-3.5-flash-lite')
+    expect((configDeGeracao('gemini-3.5-flash-lite', {}, 'minimo').thinkingConfig as any).thinkingLevel).toBe('minimal')
+    // No 3.8 Flash `minimal` é erro: cai para `low`.
+    expect((configDeGeracao('gemini-3.8-flash', {}, 'minimo').thinkingConfig as any).thinkingLevel).toBe('low')
+    expect((configDeGeracao('gemini-2.5-flash', {}, 'minimo').thinkingConfig as any).thinkingBudget).toBe(0)
+  })
+
+  it('GEMINI_MODELOS_RAPIDOS troca a escada e descarta modelo desligado', async () => {
+    const { modelosRapidos } = await import('@/lib/ia/gemini')
+    process.env.GEMINI_MODELOS_RAPIDOS = 'gemini-2.0-flash, gemini-3.6-flash'
+    try {
+      expect(modelosRapidos()).toEqual(['gemini-3.6-flash'])
+    } finally {
+      delete process.env.GEMINI_MODELOS_RAPIDOS
+    }
+  })
+})

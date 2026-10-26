@@ -31,6 +31,7 @@ import { FILTROS_VAZIOS, FiltrosDoBancoIos, parametrosDoBanco, type FiltrosDoBan
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
 import {
+  EM_PARALELO,
   FORMATOS,
   MAXIMO_DE_QUESTOES_IA,
   MAXIMO_DE_TEMAS,
@@ -53,8 +54,9 @@ import type { CustomContext, Question } from '@/lib/types'
  * modelos antigos e uma única requisição que gerava a prova inteira — se ela
  * passasse de 120 s, tudo se perdia. Agora:
  *
- *  - a tela monta o plano da prova (`planejarProva`) e pede à IA em lotes de
- *    três, dois lotes por vez, com progresso real e reenvio do que faltar;
+ *  - a tela monta o plano da prova (`planejarProva`) e pede à IA uma questão
+ *    por requisição, cinco ao mesmo tempo, com progresso real e reenvio do que
+ *    faltar;
  *  - os temas vêm da ementa dos `/cronogramas` (`SeletorDeTemas`);
  *  - cada lote volta auditado (anti-padrão: correta mais longa, distratora
  *    banal, termos absolutos…) e a tela mostra o placar dessa revisão;
@@ -269,7 +271,9 @@ export default function CriarProvaComIaPage() {
         }
       }
     }
-    await Promise.all([trabalhador(), trabalhador()])
+    // Uma questão por requisição, várias ao mesmo tempo: a primeira aparece em
+    // segundos e a prova inteira leva o tempo de poucas questões, não a soma.
+    await Promise.all(Array.from({ length: EM_PARALELO }, () => trabalhador()))
     if (bloqueada) {
       setConta((c) => ({ ...c, liberada: false }))
       throw new Error(bloqueada)
@@ -288,29 +292,29 @@ export default function CriarProvaComIaPage() {
     setFase('gerando')
     setProgresso({ total: totalQuestoes, feitas: 0, reparadas: 0, descartadas: 0, falhas: 0 })
     try {
-      let todas: Question[] = []
-      if (usaBanco) {
-        const banco = await buscarBanco(quantidadeBanco)
-        if (banco.length === 0 && modo === 'banco') throw new Error('Nenhuma questão do Banco com esses filtros.')
-        todas = banco
-        setProgresso((p) => ({ ...p, feitas: p.feitas + banco.length }))
-      }
-      if (usaIa) {
-        const ia = await gerarComIa(listaDeTemas, controle.signal)
-        if (controle.signal.aborted) return
-        if (ia.length === 0) throw new Error('A IA não conseguiu gerar questões agora. Tente de novo em instantes.')
-        // Na mista, intercala: a prova não vira "bloco do banco, bloco da IA".
-        if (todas.length) {
-          const misturadas: Question[] = []
-          const max = Math.max(todas.length, ia.length)
-          for (let i = 0; i < max; i++) {
-            if (ia[i]) misturadas.push(ia[i])
-            if (todas[i]) misturadas.push(todas[i])
-          }
-          todas = misturadas
-        } else {
-          todas = ia
+      // Banco e IA ao mesmo tempo: o sorteio do Banco não espera a IA nem o contrário.
+      const [banco, ia] = await Promise.all([
+        usaBanco
+          ? buscarBanco(quantidadeBanco).then((b) => {
+              setProgresso((p) => ({ ...p, feitas: p.feitas + b.length }))
+              return b
+            })
+          : Promise.resolve([] as Question[]),
+        usaIa ? gerarComIa(listaDeTemas, controle.signal) : Promise.resolve([] as Question[]),
+      ])
+      if (controle.signal.aborted) return
+      if (modo === 'banco' && banco.length === 0) throw new Error('Nenhuma questão do Banco com esses filtros.')
+      if (usaIa && ia.length === 0) throw new Error('A IA não conseguiu gerar questões agora. Tente de novo em instantes.')
+      let todas: Question[] = ia
+      // Na mista, intercala: a prova não vira "bloco do banco, bloco da IA".
+      if (banco.length && ia.length) {
+        todas = []
+        for (let i = 0; i < Math.max(banco.length, ia.length); i++) {
+          if (ia[i]) todas.push(ia[i])
+          if (banco[i]) todas.push(banco[i])
         }
+      } else if (banco.length) {
+        todas = banco
       }
       if (controle.signal.aborted) return
       const numeradas = todas.map((q, i) => ({ ...q, number: i + 1 }))

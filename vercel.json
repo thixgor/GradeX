@@ -30,6 +30,10 @@
       "maxDuration": 10,
       "memory": 512
     },
+    "app/api/flashcards/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
     "app/api/materiais/[id]/pdf-viewer/access/route.ts": {
       "maxDuration": 60,
       "memory": 512
