@@ -191,18 +191,21 @@ describe('a resposta comentada não imprime marcação nem escape', () => {
 })
 
 describe('formatos de PDF oferecidos ao admin', () => {
-  it('oferece a prova em branco, o gabarito comentado, o gabarito e o pacote', () => {
+  it('oferece a prova em branco, o gabarito comentado, o caderno de estudo, o gabarito e o pacote', () => {
     expect(FORMATOS_DE_PDF_DA_PROVA.map((opcao) => opcao.chave)).toEqual([
       'exam',
       'with-answers',
+      'estudo',
       'gabarito',
       'pacote',
     ])
   })
 
-  it('o pacote é o único que junta mais de um documento', () => {
+  it('só o pacote e o caderno de estudo juntam mais de um documento', () => {
     expect(opcaoDePdf('pacote').partes).toEqual(['exam', 'with-answers', 'gabarito'])
-    for (const opcao of FORMATOS_DE_PDF_DA_PROVA.filter((o) => o.chave !== 'pacote')) {
+    // As respostas comentadas vão no FIM: a prova primeiro, sem gabarito à vista.
+    expect(opcaoDePdf('estudo').partes).toEqual(['exam', 'respostas-comentadas'])
+    for (const opcao of FORMATOS_DE_PDF_DA_PROVA.filter((o) => o.chave !== 'pacote' && o.chave !== 'estudo')) {
       expect(opcao.partes).toHaveLength(1)
     }
   })

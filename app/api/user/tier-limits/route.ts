@@ -9,6 +9,7 @@ import { contaEhPaga } from '@/lib/cargos-server'
 import { keepAccessIfSubscribed } from '@/lib/payments/subscription-sync'
 import { retornoAoQuest } from '@/lib/upgrade-quest'
 import type { User } from '@/lib/types'
+import { iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
 
 export const dynamic = 'force-dynamic'
 
@@ -141,6 +142,7 @@ export async function GET(request: NextRequest) {
         questionsRemaining: limits.questionsPerExam,
         accountType,
         isAdmin,
+        iaLiberada: iaDeEstudoLiberada(accountType, isAdmin),
         cronogramasLimit,
         flashcardsLimit,
         personalExamsLifetimeLimit,
@@ -172,6 +174,7 @@ export async function GET(request: NextRequest) {
       questionsUsedToday,
       accountType,
       isAdmin,
+      iaLiberada: iaDeEstudoLiberada(accountType, isAdmin),
       cronogramasLimit,
       flashcardsLimit,
       personalExamsLifetimeLimit,

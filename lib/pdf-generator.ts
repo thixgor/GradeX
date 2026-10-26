@@ -30,6 +30,7 @@ import {
   medirLinhasDeImagens,
 } from './pdf/imagens-de-questao'
 import { desenharCaixaDeRespostaComentada } from './pdf/caixa-de-resposta-comentada'
+import { desenharRecursoNoPdf } from './pdf/recurso-visual-pdf'
 import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
 import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
 // Reexportado: o módulo saiu daqui (ver lib/provas/resposta-comentada.ts), e
@@ -818,6 +819,24 @@ export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
 
     // Imagens do enunciado
     y = desenharImagens(blocoDoEnunciado(question), y, 'Prova com Gabarito')
+    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
+    if (question.supportMaterial) {
+      y = desenharRecursoNoPdf(
+        {
+          doc,
+          fonte: FONT,
+          x: margin,
+          largura: pageWidth - 2 * margin,
+          y,
+          limiteInferior: pageHeight - 25,
+          novaPagina: () => {
+            doc.addPage()
+            return addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
+          },
+        },
+        question.supportMaterial,
+      )
+    }
 
     // Comando
     if (question.command) {
@@ -1163,6 +1182,24 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
 
     // Imagens do enunciado
     y = desenharImagens(blocoDoEnunciado(question), y, 'Prova')
+    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
+    if (question.supportMaterial) {
+      y = desenharRecursoNoPdf(
+        {
+          doc,
+          fonte: FONT,
+          x: margin,
+          largura: pageWidth - 2 * margin,
+          y,
+          limiteInferior: pageHeight - 25,
+          novaPagina: () => {
+            doc.addPage()
+            return addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
+          },
+        },
+        question.supportMaterial,
+      )
+    }
 
     // Comando
     if (question.command) {
@@ -1371,6 +1408,24 @@ export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[
 
     // Imagens do enunciado
     y = desenharImagens(blocoDoEnunciado(question), y, 'Relatório de Respostas')
+    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
+    if (question.supportMaterial) {
+      y = desenharRecursoNoPdf(
+        {
+          doc,
+          fonte: FONT,
+          x: margin,
+          largura: pageWidth - 2 * margin,
+          y,
+          limiteInferior: pageHeight - 25,
+          novaPagina: () => {
+            doc.addPage()
+            return addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
+          },
+        },
+        question.supportMaterial,
+      )
+    }
 
     if (question.command) {
       checkPage(12)
@@ -1756,12 +1811,13 @@ export async function generateFormResponsePDF(
 // Group PDF: cover pages + merge using pdf-lib
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type GroupPDFType = 'exam' | 'with-answers' | 'gabarito'
+export type GroupPDFType = 'exam' | 'with-answers' | 'gabarito' | 'respostas-comentadas'
 
 const TYPE_LABELS: Record<GroupPDFType, { title: string; subtitle: string; accent: readonly [number, number, number] }> = {
   'exam':         { title: 'CADERNO DE PROVAS',          subtitle: 'Questões',                        accent: VERDE_MEDIO },
   'with-answers': { title: 'CADERNO COM GABARITO',       subtitle: 'Questões + Respostas Comentadas', accent: [70, 110, 180] as const },
   'gabarito':     { title: 'CADERNO DE GABARITOS',       subtitle: 'Gabarito Oficial',                accent: [180, 120, 30] as const },
+  'respostas-comentadas': { title: 'RESPOSTAS COMENTADAS', subtitle: 'Explicação de cada questão',     accent: VERDE_MEDIO },
 }
 
 /**
@@ -1908,6 +1964,141 @@ async function generateExamCoverBlob(
 /**
  * Merges an interleaved array of [cover, exam, cover, exam, …] Blobs into one PDF.
  */
+/**
+ * As respostas comentadas, sozinhas, para ir no FIM do caderno: a pessoa faz a
+ * prova no papel sem ver o gabarito e, ao virar a última página, encontra a
+ * aula de cada questão — gabarito, por que a certa é certa, por que cada
+ * errada erra e o "para fixar". É o caderno de estudo que a prova com IA
+ * oferece (`generateExamStudyPDF`).
+ */
+export async function generateCommentedAnswersAppendixPDF(exam: Exam): Promise<Blob> {
+  const questoes = questoesDaProva(exam)
+  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const doc = new jsPDF()
+  await registerFonts(doc)
+  const pageWidth = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const margin = 20
+  const SUBTITULO = 'Respostas Comentadas'
+  let y = addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
+  const checkPage = (needed: number) => {
+    if (y + needed > pageHeight - 25) {
+      doc.addPage()
+      y = addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
+    }
+  }
+  const medirImagens = criarMedidaDeImagens(doc, imageMap, pageWidth, margin)
+
+  doc.setFillColor(...LARANJA_CLARO)
+  doc.setDrawColor(...VERDE_MEDIO)
+  doc.roundedRect(margin, y, pageWidth - 2 * margin, 24, 3, 3, 'FD')
+  doc.setTextColor(...VERDE_ESCURO)
+  doc.setFont(FONT, 'bold')
+  doc.setFontSize(15)
+  doc.text('Respostas comentadas', pageWidth / 2, y + 10, { align: 'center' })
+  doc.setFont(FONT, 'normal')
+  doc.setFontSize(9)
+  doc.text(sanitizeForPdf(`${exam.title} — leia depois de responder`), pageWidth / 2, y + 17.5, { align: 'center' })
+  y += 32
+
+  questoes.forEach((question, idx) => {
+    checkPage(40)
+    const correta = (question.alternatives || []).find((a) => a.isCorrect)
+    doc.setFillColor(...VERDE_MEDIO)
+    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFont(FONT, 'bold')
+    doc.setFontSize(11)
+    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
+    if (correta) {
+      doc.setFontSize(10)
+      doc.text(`Gabarito: ${correta.letter}`, pageWidth - margin - 5, y + 7, { align: 'right' })
+    }
+    y += 15
+
+    if (correta) {
+      doc.setFont(FONT, 'bold')
+      doc.setFontSize(9.5)
+      const linhas = wrapText(doc, `${correta.letter}) ${correta.text}`, pageWidth - 2 * margin - 10)
+      const altura = linhas.length * 5.5 + 4
+      checkPage(altura + 4)
+      doc.setFillColor(220, 245, 225)
+      doc.setDrawColor(70, 129, 82)
+      doc.setLineWidth(0.4)
+      doc.roundedRect(margin, y - 3.5, pageWidth - 2 * margin, altura, 1.5, 1.5, 'FD')
+      doc.setTextColor(26, 71, 42)
+      linhas.forEach((linha: string) => {
+        drawRichLine(doc, linha, margin + 5, y + 2.2, 'bold')
+        y += 5.5
+      })
+      y += 5
+    }
+
+    const respostaComentada = montarRespostaComentada(question)
+    const recuoDaCaixa = 4
+    doc.setFontSize(9)
+    doc.setFont(FONT, 'normal')
+    const linhasDoComentario = respostaComentada
+      ? wrapText(doc, respostaComentada, pageWidth - 2 * margin - 2 * recuoDaCaixa - 6)
+      : []
+    const linhasDeImagens = medirImagens(blocoDaResposta(question), {
+      recuo: recuoDaCaixa,
+      alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
+    })
+    if (linhasDoComentario.length > 0 || linhasDeImagens.length > 0) {
+      y = desenharCaixaDeRespostaComentada({
+        doc,
+        fonte: FONT,
+        x: margin,
+        largura: pageWidth - 2 * margin,
+        y,
+        limiteInferior: pageHeight - 25,
+        yAposQuebra: Y_APOS_CABECALHO,
+        novaPagina: () => {
+          doc.addPage()
+          addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
+        },
+        linhas: linhasDoComentario,
+        imagens: linhasDeImagens,
+        titulo: 'Resposta comentada:',
+        cores: { fundo: [245, 250, 246], borda: [70, 129, 82], titulo: VERDE_ESCURO, texto: CINZA_TEXTO },
+        medidas: {
+          alturaDaLinha: 6,
+          alturaDoTitulo: 14,
+          respiroDeContinuacao: 4,
+          respiroInferior: 5,
+          recuo: recuoDaCaixa,
+          corpoDoTitulo: 8.5,
+          baseDoTitulo: 9,
+          corpoDoTexto: 9,
+        },
+        desenharLinha: (texto, x, yDaLinha) => drawRichLine(doc, texto, x, yDaLinha),
+      })
+    } else {
+      doc.setFont(FONT, 'italic')
+      doc.setFontSize(9)
+      doc.setTextColor(110, 110, 110)
+      doc.text('Sem comentário cadastrado para esta questão.', margin, y)
+      y += 6
+    }
+    y += 8
+  })
+
+  const totalPages = doc.getNumberOfPages()
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i)
+    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, exam.title)
+  }
+  return doc.output('blob')
+}
+
+/** Caderno de estudo: a prova em branco e, no fim, as respostas comentadas. */
+export async function generateExamStudyPDF(exam: Exam): Promise<Blob> {
+  await Promise.all([prewarmFontsCache(), loadLogo()])
+  const [prova, respostas] = await Promise.all([generateExamPDF(exam), generateCommentedAnswersAppendixPDF(exam)])
+  return mergeBlobs([prova, respostas])
+}
+
 async function mergeBlobs(blobs: Blob[]): Promise<Blob> {
   const { PDFDocument } = await import('pdf-lib')
   const merged = await PDFDocument.create()
@@ -2015,6 +2206,7 @@ export async function generateExamPackagePDF(
 function gerarPorTipo(exam: Exam, tipo: GroupPDFType): Promise<Blob> {
   if (tipo === 'gabarito') return generateGabaritoPDF(exam)
   if (tipo === 'with-answers') return generateExamWithAnswersPDF(exam)
+  if (tipo === 'respostas-comentadas') return generateCommentedAnswersAppendixPDF(exam)
   return generateExamPDF(exam)
 }
 

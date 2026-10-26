@@ -13,6 +13,7 @@ const DOWNLOAD_TYPE_LABELS: Record<string, string> = {
   exam_pdf: 'Prova (PDF)',
   gabarito_pdf: 'Gabarito',
   exam_answers_pdf: 'Prova + Gabarito',
+  exam_study_pdf: 'Prova + Respostas comentadas',
   group_pdf: 'Grupo (PDF)',
   patologia_pdf: 'Patologia (PDF)',
   manual_completo_pdf: 'Manual Completo',

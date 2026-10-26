@@ -33,15 +33,10 @@ const FLASHCARD_LIMITS: Record<AccountType | 'admin', FlashcardTierLimits> = {
     totalCardsLifetime: Infinity,
     totalDecksLifetime: Infinity,
   },
-  // Quest paga pelo Banco de Questões, não pelo gerador de IA: mesmo teto do
-  // gratuito.
-  quest: {
-    dailyDecks: Infinity,
-    maxActiveDecks: 10,
-    cardsPerDeck: 5,
-    totalCardsLifetime: Infinity,
-    totalDecksLifetime: 5,
-  },
+  // Flashcards com IA são exclusivos de Quest+ e Plus+ (lib/ia/estudo/acesso.ts)
+  // e, entre os dois, sem diferença de teto. O freio de custo de uma chamada é
+  // `MAXIMO_DE_CARTOES` no gerador, não esta tabela.
+  quest: PLUS_FLASHCARD_LIMITS,
   plus: PLUS_FLASHCARD_LIMITS,
   essential: PLUS_FLASHCARD_LIMITS,
   premium: PLUS_FLASHCARD_LIMITS,

@@ -55,19 +55,22 @@ export const TIER_LIMITS: Record<AccountType | 'admin', TierLimits> = {
     personalExamsTotal: Infinity,
   },
   /*
-   * Quest é o Banco de Questões avulso: dentro do Banco não há teto, fora dele
-   * a conta vale exatamente o que vale uma gratuita. Copiar os tetos do
-   * gratuito (em vez de deixar campos soltos) é o que garante que um recurso
-   * novo nasça fechado para o Quest até alguém decidir incluí-lo.
+   * Quest é o Banco de Questões avulso, mais as duas ferramentas de estudo com
+   * IA que andam junto com ele: provas e flashcards gerados (ver
+   * `lib/ia/estudo/acesso.ts`). Nessas três frentes não há teto de cargo; no
+   * resto (cronogramas, provas públicas por dia) a conta vale o que vale uma
+   * gratuita. Copiar os tetos do gratuito no resto (em vez de deixar campos
+   * soltos) é o que garante que um recurso novo nasça fechado para o Quest
+   * até alguém decidir incluí-lo.
    */
   quest: {
     examsPerDay: 3,
-    questionsPerExam: 5,
+    questionsPerExam: Infinity,
     personalExamsPerDay: Infinity,
     bancoQuestoes: true,
     cronogramasTotal: 5,
-    flashcardsTotal: 5,
-    personalExamsTotal: 5,
+    flashcardsTotal: Infinity,
+    personalExamsTotal: Infinity,
   },
   plus: PLUS_LIMITS,
   // Legado — mesmo teto do Plus+.

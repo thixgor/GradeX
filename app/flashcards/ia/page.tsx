@@ -1,1384 +1,689 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
 import {
-  ArrowLeft,
-  Sparkles,
-  Flame,
-  Wand2,
-  Target,
-  CheckCircle,
-  Loader2,
-  Brain,
-  Layers,
-  BookMarked,
-  CircleDot,
-  PlayCircle,
-  Trophy,
-  Zap,
-  BarChart3,
-  Feather,
-  ShieldCheck,
-  Trash2,
-  Plus,
-  ChevronDown,
+  CalendarRange,
+  ChevronLeft,
   Download,
+  Lightbulb,
+  Loader2,
+  MoreHorizontal,
+  Play,
+  RotateCcw,
+  Sparkles,
+  Trash2,
+  Wand2,
+  X,
 } from 'lucide-react'
-import { PageLoading } from '@/components/page-loading'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Switch } from '@/components/ui/switch'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
-import { ToastAlert } from '@/components/ui/toast-alert'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { cn } from '@/lib/utils'
-import { AccountType, FlashcardDeck, FlashcardCard, FlashcardDifficultyFeedback } from '@/lib/types'
-import { TopicItem, MedicinaPeriodo, PsicologiaPeriodo, BiomedicinaPeriodo, OdontologiaPeriodo, TEMPLATES } from '@/lib/cronograma-types'
-import { getMedicinaTopicos } from '@/lib/medicina-periodos-helper'
-import { getPsicologiaTopicos } from '@/lib/psicologia-periodos-helper'
-import { getBiomedicinaTopicos } from '@/lib/biomedicina-periodos-helper'
-import { getOdontologiaTopicos } from '@/lib/odontologia-periodos-helper'
-import { AppShell as LayoutShell } from '@/components/app-shell'
+
+import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { AnelProgresso, Confete } from '@/components/flashcards/pecas-ios'
 import { MarcaDaguaFlashcard } from '@/components/flashcards/marca-dagua-flashcard'
-import { FocusSessionButton } from '@/components/focus-session-button'
-import { NotificationsBell } from '@/components/notifications-bell'
-import { PLUS_LABEL, QUEST_LABEL } from '@/lib/account-tier'
+import { Campo, FolhaModal, NoCorpo, Rascunho, Segmentado, Stepper, VitrineIa, useFraseRotativa } from '@/components/estudo-ia/pecas'
+import { SeletorDeTemas } from '@/components/estudo-ia/seletor-de-temas'
+import { ToastAlert } from '@/components/ui/toast-alert'
+import { Dialog } from '@/components/ui/dialog'
+import { iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
+import type { FlashcardCard, FlashcardDeck, FlashcardDifficultyFeedback } from '@/lib/types'
 
-interface DeckWithId extends FlashcardDeck {
-  _id: string
-}
+type DeckComId = FlashcardDeck & { _id: string }
 
-interface FlashcardSessionEntryPayload {
-  cardId: string
-  difficulty: FlashcardDifficultyFeedback
-  objectivesStruggled: string[]
-  completedAt: Date
-}
-
-interface ThemeWithId {
+interface Modelo {
   _id: string
   title: string
   description?: string
-  tags?: string[]
   defaultDifficulty?: number
   suggestedCardCount?: number
   contextHint?: string
 }
 
-/** Plus+ não tem teto — é o mesmo arsenal para todos os planos pagos. */
-const PLUS_TIER_LIMITS = {
-  daily: '∞',
-  active: 'Ilimitado',
-  cards: '∞',
-  summary: `Arsenal completo do ${PLUS_LABEL}: decks e cartões ilimitados, sem teto diário.`,
-}
+type Nivel = 'facil' | 'medio' | 'dificil' | 'misto'
+type Foco = 'misto' | 'conceitos' | 'mecanismos' | 'clinica'
 
-const tierLimits: Record<AccountType | 'admin', { daily: number | string; active: string; cards: number | string; summary: string }> = {
-  gratuito: {
-    daily: 5,
-    active: '10 decks ativos',
-    cards: 5,
-    summary: 'Modo sobrevivência: 5 decks no total da conta, 5 cartões cada. Gestão cirúrgica.',
-  },
-  trial: {
-    daily: 10,
-    active: '10 decks ativos',
-    cards: 10,
-    summary: 'Test drive com nitro: 10 decks por dia, 10 cartões cada, 10 decks ativos.',
-  },
-  // Quest paga pelo Banco de Questões; aqui ele vale o mesmo que o gratuito.
-  quest: {
-    daily: 5,
-    active: '10 decks ativos',
-    cards: 5,
-    summary: `O ${QUEST_LABEL} cobre o Banco de Questões — aqui valem os limites do plano gratuito.`,
-  },
-  plus: PLUS_TIER_LIMITS,
-  // Legado — contas ainda não migradas veem o mesmo do Plus+.
-  essential: PLUS_TIER_LIMITS,
-  premium: PLUS_TIER_LIMITS,
-  admin: {
-    daily: '∞',
-    active: 'Ilimitado',
-    cards: '∞',
-    summary: 'Modo deus: decks ilimitados, cartões ilimitados, sem restrições.',
-  },
-}
+const NIVEL_EM_NUMERO: Record<Exclude<Nivel, 'misto'>, number> = { facil: 0.3, medio: 0.6, dificil: 0.85 }
 
-const difficultyLegend = [
-  { label: 'Fácil', description: 'Lembrei na hora', value: 'facil' as FlashcardDifficultyFeedback, color: 'from-emerald-400 to-emerald-600' },
-  { label: 'Médio', description: 'Lembrei com esforço', value: 'equilibrado' as FlashcardDifficultyFeedback, color: 'from-amber-400 to-amber-600' },
-  { label: 'Difícil', description: 'Travei e precisa voltar', value: 'porrada' as FlashcardDifficultyFeedback, color: 'from-rose-500 to-orange-600' },
+const FOCOS: { id: Foco; rotulo: string }[] = [
+  { id: 'misto', rotulo: 'Equilibrado' },
+  { id: 'conceitos', rotulo: 'Conceitos' },
+  { id: 'mecanismos', rotulo: 'Mecanismos' },
+  { id: 'clinica', rotulo: 'Aplicação' },
 ]
 
-function LiquidGlassPanel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div
-      className={cn(
-        'rounded-3xl border border-slate-200 dark:border-white/20 bg-slate-50 dark:bg-white/5 backdrop-blur-xl shadow-[0_25px_80px_-35px_rgba(15,23,42,0.1)] dark:shadow-[0_25px_80px_-35px_rgba(15,23,42,0.45)]',
-        'transition-all hover:shadow-[0_35px_100px_-40px_rgba(15,23,42,0.15)] dark:hover:shadow-[0_35px_100px_-40px_rgba(15,23,42,0.65)]',
-        className
-      )}
-    >
-      {children}
-    </div>
-  )
+const NOTAS: { valor: FlashcardDifficultyFeedback; rotulo: string; dica: string; css: string }[] = [
+  { valor: 'porrada', rotulo: 'Errei', dica: 'volta logo', css: 'DIFICIL' },
+  { valor: 'equilibrado', rotulo: 'Com esforço', dica: 'quase', css: 'MEDIO' },
+  { valor: 'facil', rotulo: 'Lembrei', dica: 'fácil', css: 'FACIL' },
+]
+
+const FRASES_GERANDO = [
+  'Lendo o tema e o que cai em prova…',
+  'Escolhendo os pontos que mais confundem…',
+  'Escrevendo as perguntas…',
+  'Explicando cada resposta do zero…',
+  'Tirando cartões repetidos…',
+]
+
+const BENEFICIOS = [
+  'Decks de até 40 cartões a partir de um tema ou do seu cronograma',
+  'Verso com a resposta e o porquê, explicado do zero',
+  'Dica que puxa o raciocínio sem entregar a resposta',
+  'Relatório do que você errou, com um deck focado nos pontos fracos',
+]
+
+function escaparHtml(s: string) {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
 }
 
-export default function FlashcardsPage() {
-  const router = useRouter()
-  const [decks, setDecks] = useState<DeckWithId[]>([])
-  const [themes, setThemes] = useState<ThemeWithId[]>([])
-  const [loadingDecks, setLoadingDecks] = useState(true)
-  const [loadingThemes, setLoadingThemes] = useState(true)
-  const [creating, setCreating] = useState(false)
-  const [accountType, setAccountType] = useState<AccountType>('gratuito')
-  const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
-  const [realLimits, setRealLimits] = useState({ daily: 3, active: 10, cards: 5 })
+function dataCurta(d: Date | string) {
+  try {
+    return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+  } catch {
+    return ''
+  }
+}
+
+export default function FlashcardsIaPage() {
+  // ── Conta ──
+  const [conta, setConta] = useState<{ carregada: boolean; liberada: boolean }>({ carregada: false, liberada: false })
+
+  // ── Decks ──
+  const [decks, setDecks] = useState<DeckComId[]>([])
+  const [carregandoDecks, setCarregandoDecks] = useState(true)
+  const [modelos, setModelos] = useState<Modelo[]>([])
+  const [recemCriado, setRecemCriado] = useState<string | null>(null)
+
+  // ── Composição ──
+  const [tema, setTema] = useState('')
+  const [titulo, setTitulo] = useState('')
+  const [notas, setNotas] = useState('')
+  const [quantidade, setQuantidade] = useState(15)
+  const [nivel, setNivel] = useState<Nivel>('medio')
+  const [foco, setFoco] = useState<Foco>('misto')
+  const [modeloId, setModeloId] = useState<string | null>(null)
+  const [cronogramaAberto, setCronogramaAberto] = useState(false)
+  const [gerando, setGerando] = useState(false)
+  const frase = useFraseRotativa(FRASES_GERANDO, gerando)
+  const temaRef = useRef<HTMLInputElement>(null)
+
   const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'error' | 'success' | 'info' }>({ open: false, message: '' })
-  const [showCreationForm, setShowCreationForm] = useState(false)
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{ open: boolean; deckId: string; deckTitle: string }>({ open: false, deckId: '', deckTitle: '' })
-  const [deleting, setDeleting] = useState(false)
-  const [criticalObjectives, setCriticalObjectives] = useState<string[]>([])
-  const [showCreateFromObjectives, setShowCreateFromObjectives] = useState(false)
+  const avisar = (message: string, type: 'error' | 'success' | 'info' = 'info') => setToast({ open: true, message, type })
 
-  // Cronograma states
-  const [showCronogramaSelector, setShowCronogramaSelector] = useState(false)
-  const [selectedCronogramaType, setSelectedCronogramaType] = useState<'enem' | 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'uerj' | null>(null)
-  const [selectedMedicinaPeriodo, setSelectedMedicinaPeriodo] = useState<MedicinaPeriodo>(1)
-  const [selectedPsicologiaPeriodo, setSelectedPsicologiaPeriodo] = useState<PsicologiaPeriodo>(1)
-  const [selectedBiomedicinaPeriodo, setSelectedBiomedicinaPeriodo] = useState<BiomedicinaPeriodo>(1)
-  const [selectedOdontologiaPeriodo, setSelectedOdontologiaPeriodo] = useState<OdontologiaPeriodo>(1)
-  const [cronogramaTopicos, setCronogramaTopicos] = useState<TopicItem[]>([])
-  const [selectedTopicos, setSelectedTopicos] = useState<string[]>([])
-  const [selectedSubtopicos, setSelectedSubtopicos] = useState<string[]>([])
-  const [showPeriodoSelector, setShowPeriodoSelector] = useState(false)
+  // ── Estudo ──
+  const [deckAberto, setDeckAberto] = useState<DeckComId | null>(null)
+  const [cartoes, setCartoes] = useState<FlashcardCard[]>([])
+  const [indice, setIndice] = useState(0)
+  const [virado, setVirado] = useState(false)
+  const [dicaVisivel, setDicaVisivel] = useState(false)
+  const [notasDadas, setNotasDadas] = useState<Record<string, { nota: FlashcardDifficultyFeedback; objetivos: string[] }>>({})
+  const [salvando, setSalvando] = useState(false)
+  const [relatorio, setRelatorio] = useState<{ objetivos: string[]; acertos: number; total: number } | null>(null)
+  const [paraApagar, setParaApagar] = useState<DeckComId | null>(null)
+  const [apagando, setApagando] = useState(false)
+  const [menuDeck, setMenuDeck] = useState<string | null>(null)
 
-  // Creation form state
-  const [title, setTitle] = useState('')
-  const [theme, setTheme] = useState('')
-  const [difficulty, setDifficulty] = useState(0.65)
-  const [randomDifficulty, setRandomDifficulty] = useState(false)
-  const [cardsRequested, setCardsRequested] = useState(5)
-  const [notes, setNotes] = useState('')
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
-
-  // Study modal
-  const [studyOpen, setStudyOpen] = useState(false)
-  const [reportOpen, setReportOpen] = useState(false)
-  const [selectedDeck, setSelectedDeck] = useState<DeckWithId | null>(null)
-  const [cards, setCards] = useState<FlashcardCard[]>([])
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [flipped, setFlipped] = useState(false)
-  const [showHint, setShowHint] = useState(false)
-  const [entries, setEntries] = useState<Record<string, FlashcardSessionEntryPayload>>({})
-  const [sessionSaving, setSessionSaving] = useState(false)
-  const [sessionResult, setSessionResult] = useState<string[]>([])
-
-  useEffect(() => {
-    loadDecks()
-    loadThemes()
-    loadAccountType()
+  const carregarDecks = useCallback(async () => {
+    try {
+      const r = await fetch('/api/flashcards', { cache: 'no-store' })
+      if (!r.ok) throw new Error()
+      const d = await r.json()
+      setDecks((d.decks || []).map((x: DeckComId) => ({ ...x, _id: String(x._id) })))
+    } catch {
+      avisar('Não foi possível carregar seus decks.', 'error')
+    } finally {
+      setCarregandoDecks(false)
+    }
   }, [])
 
   useEffect(() => {
-    const limits = tierLimits[accountType]
-    const maxCards = typeof limits.cards === 'number' ? limits.cards : Infinity
-    setCardsRequested(Math.min(cardsRequested, maxCards))
-  }, [accountType])
+    void carregarDecks()
+    fetch('/api/auth/me')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setConta({ carregada: true, liberada: iaDeEstudoLiberada(d?.user?.accountType, d?.user?.role === 'admin') }))
+      .catch(() => setConta({ carregada: true, liberada: false }))
+    fetch('/api/flashcards/themes')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setModelos((d?.themes || []).map((t: Modelo) => ({ ...t, _id: String(t._id) }))))
+      .catch(() => {})
+  }, [carregarDecks])
 
-  const isAdmin = userRole === 'admin'
-  const currentLimits = tierLimits[isAdmin ? 'admin' : accountType]
-
-  const displayAccountType = isAdmin ? 'admin' : accountType
-
-  async function loadAccountType() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (res.ok) {
-        const data = await res.json()
-        setUserRole(data.user?.role || 'user')
-        setAccountType(data.user?.accountType || 'gratuito')
-      }
-    } catch (error) {
-      console.error('Erro ao buscar conta:', error)
-    }
+  function aplicarModelo(m: Modelo) {
+    setModeloId(m._id)
+    setTema(m.title)
+    if (m.contextHint) setNotas(m.contextHint)
+    if (m.suggestedCardCount) setQuantidade(Math.max(5, Math.min(40, Math.round(m.suggestedCardCount / 5) * 5)))
+    if (m.defaultDifficulty) setNivel(m.defaultDifficulty < 0.4 ? 'facil' : m.defaultDifficulty < 0.7 ? 'medio' : 'dificil')
+    temaRef.current?.focus()
   }
 
-  async function loadThemes() {
-    try {
-      setLoadingThemes(true)
-      const res = await fetch('/api/flashcards/themes')
-      if (!res.ok) throw new Error('Erro ao listar temas')
-      const data = await res.json()
-      setThemes((data.themes || []).map((t: any) => ({ ...t, _id: t._id })))
-    } catch (error: any) {
-      console.error('Erro ao carregar temas:', error)
-    } finally {
-      setLoadingThemes(false)
-    }
-  }
-
-  async function loadDecks() {
-    try {
-      setLoadingDecks(true)
-      const res = await fetch('/api/flashcards')
-      if (!res.ok) {
-        throw new Error('Erro ao listar flashcards')
-      }
-      const data = await res.json()
-      setDecks((data.decks || []).map((deck: FlashcardDeck & { _id: string }) => ({ ...deck, _id: deck._id })))
-    } catch (error: any) {
-      setToast({ open: true, message: error.message || 'Erro ao carregar flashcards', type: 'error' })
-    } finally {
-      setLoadingDecks(false)
-    }
-  }
-
-  function applyTemplate(tmpl: ThemeWithId) {
-    setSelectedTemplateId(tmpl._id)
-    setTheme(tmpl.title)
-    if (tmpl.defaultDifficulty) setDifficulty(tmpl.defaultDifficulty)
-    if (tmpl.suggestedCardCount) setCardsRequested(Math.min(tmpl.suggestedCardCount, realLimits.cards))
-    if (tmpl.contextHint) setNotes(tmpl.contextHint)
-  }
-
-  async function handleCreateDeck() {
-    if (!title.trim() || !theme.trim()) {
-      setToast({ open: true, message: 'Título e tema são obrigatórios', type: 'error' })
+  async function gerar() {
+    const t = tema.trim()
+    if (!t) {
+      avisar('Escreva o tema ou escolha do cronograma.', 'error')
+      temaRef.current?.focus()
       return
     }
-
-    setCreating(true)
+    setGerando(true)
     try {
-      const res = await fetch('/api/flashcards', {
+      const r = await fetch('/api/flashcards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: title.trim(),
-          theme: `${theme.trim()}${notes ? ` | ${notes.trim()}` : ''}`,
-          difficulty,
-          randomDifficulty,
-          cardsRequested,
-          templateId: selectedTemplateId,
+          title: (titulo.trim() || t).slice(0, 100),
+          theme: t,
+          notes: notas.trim(),
+          difficulty: nivel === 'misto' ? 0.6 : NIVEL_EM_NUMERO[nivel],
+          randomDifficulty: nivel === 'misto',
+          cardsRequested: quantidade,
+          foco,
+          templateId: modeloId,
         }),
       })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Erro ao criar flashcards')
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) {
+        if (d?.requiresUpgrade) setConta((c) => ({ ...c, liberada: false }))
+        throw new Error(d?.error || 'Não foi possível gerar o deck.')
       }
-
-      setToast({ open: true, message: 'Deck criado com sucesso! 💥', type: 'success' })
-      setTitle('')
-      setTheme('')
-      setNotes('')
-      setDifficulty(0.65)
-      setRandomDifficulty(false)
-      const maxCards = typeof currentLimits.cards === 'number' ? currentLimits.cards : Infinity
-      setCardsRequested(Math.min(5, maxCards))
-      setShowCreationForm(false)
-      loadDecks()
-    } catch (error: any) {
-      setToast({ open: true, message: error.message || 'Erro ao criar deck', type: 'error' })
+      setRecemCriado(d.deckId)
+      setTema('')
+      setTitulo('')
+      setNotas('')
+      setModeloId(null)
+      await carregarDecks()
+      avisar('Deck pronto. Bora revisar?', 'success')
+    } catch (e) {
+      avisar((e as Error).message, 'error')
     } finally {
-      setCreating(false)
+      setGerando(false)
     }
   }
 
-  function handleCronogramaTypeSelect(type: 'enem' | 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'uerj') {
-    setSelectedCronogramaType(type as any)
-    if (type === 'medicina' || type === 'psicologia' || type === 'biomedicina' || type === 'odontologia') {
-      setShowPeriodoSelector(true)
-    } else if (type === 'enem' || type === 'uerj') {
-      const topicos = TEMPLATES[type].topicos
-      setCronogramaTopicos(topicos)
-    }
-  }
-
-  function handleMedicinaPeriodoChange(periodo: MedicinaPeriodo) {
-    setSelectedMedicinaPeriodo(periodo)
-    const topicos = getMedicinaTopicos(periodo)
-    setCronogramaTopicos(topicos)
-    setShowPeriodoSelector(false)
-  }
-
-  function handlePsicologiaPeriodoChange(periodo: PsicologiaPeriodo) {
-    setSelectedPsicologiaPeriodo(periodo)
-    const topicos = getPsicologiaTopicos(periodo)
-    setCronogramaTopicos(topicos)
-    setShowPeriodoSelector(false)
-  }
-
-  function handleBiomedicinaPeriodoChange(periodo: BiomedicinaPeriodo) {
-    setSelectedBiomedicinaPeriodo(periodo)
-    const topicos = getBiomedicinaTopicos(periodo)
-    setCronogramaTopicos(topicos)
-    setShowPeriodoSelector(false)
-  }
-
-  function handleOdontologiaPeriodoChange(periodo: OdontologiaPeriodo) {
-    setSelectedOdontologiaPeriodo(periodo)
-    const topicos = getOdontologiaTopicos(periodo)
-    setCronogramaTopicos(topicos)
-    setShowPeriodoSelector(false)
-  }
-
-  function handleTopicoSelect(topicoId: string) {
-    setSelectedTopicos(prev =>
-      prev.includes(topicoId)
-        ? prev.filter(id => id !== topicoId)
-        : [...prev, topicoId]
-    )
-  }
-
-  function handleSubtopicoSelect(subtopicId: string) {
-    setSelectedSubtopicos(prev =>
-      prev.includes(subtopicId)
-        ? prev.filter(id => id !== subtopicId)
-        : [...prev, subtopicId]
-    )
-  }
-
-  function applySelectedTopicos() {
-    // Coletar tópicos e subtópicos selecionados
-    const selectedTopicosData = cronogramaTopicos.filter(t => selectedTopicos.includes(t.id))
-    const selectedSubtopicosData: any[] = []
-
-    selectedTopicosData.forEach(topico => {
-      topico.subtopicos.forEach(subtopico => {
-        if (selectedSubtopicos.includes(subtopico.id)) {
-          selectedSubtopicosData.push({ topico: topico.nome, subtopico: subtopico.nome })
-        }
-      })
-    })
-
-    // Se nenhum subtópico foi selecionado, usar todos os subtópicos dos tópicos selecionados
-    let itemsText = ''
-    if (selectedSubtopicosData.length === 0) {
-      itemsText = selectedTopicosData.map(t => t.nome).join(', ')
-    } else {
-      itemsText = selectedSubtopicosData.map(s => `${s.topico} - ${s.subtopico}`).join(', ')
-    }
-
-    // Coletar todos os submódulos dos tópicos/subtópicos selecionados
-    const submodulos: string[] = []
-    if (selectedSubtopicosData.length === 0) {
-      // Se nenhum subtópico foi selecionado, usar todos os submódulos dos tópicos
-      selectedTopicosData.forEach(topico => {
-        topico.subtopicos.forEach(subtopico => {
-          subtopico.modulos.forEach(modulo => {
-            const moduloWithSubmodules = modulo as any
-            if (moduloWithSubmodules.submodulos) {
-              moduloWithSubmodules.submodulos.forEach((submod: any) => {
-                submodulos.push(submod.nome)
-              })
-            }
-          })
-        })
-      })
-    } else {
-      // Usar apenas os submódulos dos subtópicos selecionados
-      selectedSubtopicosData.forEach(item => {
-        const topico = cronogramaTopicos.find(t => t.nome === item.topico)
-        if (topico) {
-          const subtopico = topico.subtopicos.find(s => s.nome === item.subtopico)
-          if (subtopico) {
-            subtopico.modulos.forEach(modulo => {
-              const moduloWithSubmodules = modulo as any
-              if (moduloWithSubmodules.submodulos) {
-                moduloWithSubmodules.submodulos.forEach((submod: any) => {
-                  submodulos.push(submod.nome)
-                })
-              }
-            })
-          }
-        }
-      })
-    }
-
-    const submodulosText = submodulos.length > 0 ? submodulos.join('; ') : ''
-
-    setTheme(itemsText)
-    setNotes(submodulosText)
-    setShowCronogramaSelector(false)
-    setSelectedTopicos([])
-    setSelectedSubtopicos([])
-  }
-
-  function downloadDeckPDF() {
-    if (!selectedDeck || cards.length === 0) return
-
-    const printWindow = window.open('', '', 'width=1200,height=800')
-    if (!printWindow) {
-      alert('Por favor, desabilite o bloqueador de pop-ups')
-      return
-    }
-
-    const html = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>${selectedDeck.title}</title>
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { 
-              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-              background: #f5f5f5;
-              padding: 40px 20px;
-            }
-            .container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-            .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #468152; padding-bottom: 20px; }
-            .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }
-            .header p { color: #666; font-size: 14px; }
-            .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
-            .stat-box { background: linear-gradient(135deg, #468152 0%, #5a9a63 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
-            .stat-box .label { font-size: 12px; opacity: 0.9; margin-bottom: 5px; }
-            .stat-box .value { font-size: 24px; font-weight: bold; }
-            .cards-container { display: grid; grid-template-columns: 1fr; gap: 20px; }
-            .card { 
-              background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%);
-              border: 2px solid #468152;
-              border-radius: 8px;
-              padding: 20px;
-              page-break-inside: avoid;
-            }
-            .card-number { 
-              color: #468152; 
-              font-weight: 600; 
-              font-size: 12px; 
-              margin-bottom: 10px;
-              text-transform: uppercase;
-            }
-            .card-question { 
-              background: white;
-              border-left: 4px solid #468152;
-              padding: 15px;
-              margin-bottom: 15px;
-              border-radius: 4px;
-              font-weight: 600;
-              color: #333;
-              font-size: 14px;
-              line-height: 1.5;
-            }
-            .card-answer { 
-              background: #e8f5e9;
-              border-left: 4px solid #2e7d32;
-              padding: 15px;
-              margin-bottom: 15px;
-              border-radius: 4px;
-              color: #1b5e20;
-              font-size: 13px;
-              line-height: 1.5;
-            }
-            .card-objectives { 
-              background: #fff3e0;
-              border-left: 4px solid #e65100;
-              padding: 12px;
-              margin-bottom: 10px;
-              border-radius: 4px;
-              font-size: 12px;
-              color: #e65100;
-              line-height: 1.4;
-            }
-            .card-hint { 
-              background: #f3e5f5;
-              border-left: 4px solid #7b1fa2;
-              padding: 12px;
-              border-radius: 4px;
-              font-size: 12px;
-              color: #4a148c;
-              font-style: italic;
-              line-height: 1.4;
-            }
-            .card-label { 
-              font-weight: 600; 
-              font-size: 11px; 
-              text-transform: uppercase; 
-              margin-bottom: 5px;
-              opacity: 0.8;
-            }
-            @media print {
-              body { padding: 0; background: white; }
-              .container { box-shadow: none; padding: 20px; }
-              .card { page-break-inside: avoid; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>${selectedDeck.title}</h1>
-              <p>Tema: ${selectedDeck.theme}</p>
-            </div>
-            
-            <div class="stats">
-              <div class="stat-box">
-                <div class="label">Total de Cartões</div>
-                <div class="value">${cards.length}</div>
-              </div>
-              <div class="stat-box">
-                <div class="label">Tema</div>
-                <div class="value">${selectedDeck.theme.substring(0, 15)}...</div>
-              </div>
-              <div class="stat-box">
-                <div class="label">Data de Geração</div>
-                <div class="value">${new Date().toLocaleDateString('pt-BR')}</div>
-              </div>
-            </div>
-
-            <div class="cards-container">
-              ${cards.map((card, index) => `
-                <div class="card">
-                  <div class="card-number">Cartão ${index + 1} de ${cards.length}</div>
-                  
-                  <div class="card-label">Pergunta</div>
-                  <div class="card-question">${card.front}</div>
-                  
-                  <div class="card-label">Resposta</div>
-                  <div class="card-answer">${card.back}</div>
-                  
-                  ${card.objectives && card.objectives.length > 0 ? `
-                    <div class="card-label">Objetivos</div>
-                    <div class="card-objectives">
-                      ${card.objectives.map(o => `• ${o.text}`).join('<br>')}
-                    </div>
-                  ` : ''}
-                  
-                  ${card.hint ? `
-                    <div class="card-label">Dica</div>
-                    <div class="card-hint">${card.hint}</div>
-                  ` : ''}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-
-    printWindow.document.write(html)
-    printWindow.document.close()
-
-    setTimeout(() => {
-      printWindow.print()
-    }, 250)
-  }
-
-  function openDeleteConfirmation(deckId: string, deckTitle: string) {
-    setDeleteConfirmation({ open: true, deckId, deckTitle })
-  }
-
-  async function confirmDeleteDeck() {
-    if (!deleteConfirmation.deckId) return
-
-    setDeleting(true)
+  // ── Estudo ──
+  async function abrirDeck(deck: DeckComId) {
+    setDeckAberto(deck)
+    setCartoes([])
+    setIndice(0)
+    setVirado(false)
+    setDicaVisivel(false)
+    setNotasDadas({})
     try {
-      const res = await fetch(`/api/flashcards/${deleteConfirmation.deckId}`, { method: 'DELETE' })
-      if (!res.ok) throw new Error('Erro ao deletar deck')
-      setToast({ open: true, message: 'Deck deletado com sucesso!', type: 'success' })
-      setDeleteConfirmation({ open: false, deckId: '', deckTitle: '' })
-      loadDecks()
-    } catch (error: any) {
-      setToast({ open: true, message: error.message || 'Erro ao deletar deck', type: 'error' })
-    } finally {
-      setDeleting(false)
+      const r = await fetch(`/api/flashcards/${deck._id}/cards`)
+      if (!r.ok) throw new Error()
+      const d = await r.json()
+      setCartoes(d.cards || [])
+    } catch {
+      avisar('Não foi possível abrir os cartões.', 'error')
+      setDeckAberto(null)
     }
   }
 
-  async function openDeck(deck: DeckWithId) {
-    setSelectedDeck(deck)
-    setStudyOpen(true)
-    setFlipped(false)
-    setShowHint(false)
-    setCurrentIndex(0)
-    setSessionResult([])
-    setEntries({})
+  const cartao = cartoes[indice]
 
+  async function concluir(todas: typeof notasDadas) {
+    if (!deckAberto) return
+    setSalvando(true)
+    const entries = cartoes
+      .filter((c) => todas[c.id])
+      .map((c) => ({ cardId: c.id, difficulty: todas[c.id].nota, objectivesStruggled: todas[c.id].objetivos, completedAt: new Date() }))
+    const acertos = entries.filter((e) => e.difficulty === 'facil').length
     try {
-      const res = await fetch(`/api/flashcards/${deck._id}/cards`)
-      if (!res.ok) throw new Error('Erro ao carregar cartões')
-      const data = await res.json()
-      setCards(data.cards || [])
-    } catch (error: any) {
-      setToast({ open: true, message: error.message || 'Erro ao carregar cartões', type: 'error' })
-    }
-  }
-
-  function handleDifficultySelect(cardId: string, difficulty: FlashcardDifficultyFeedback, objectivesStruggled: string[]) {
-    setEntries(prev => ({
-      ...prev,
-      [cardId]: {
-        cardId,
-        difficulty,
-        objectivesStruggled,
-        completedAt: new Date(),
-      },
-    }))
-  }
-
-  async function handleCompleteDeck() {
-    if (!selectedDeck) return
-    const payload = Object.values(entries)
-    if (payload.length !== cards.length) {
-      setToast({ open: true, message: 'Marca a dificuldade de todos os cartões antes de finalizar', type: 'error' })
-      return
-    }
-
-    setSessionSaving(true)
-    try {
-      const res = await fetch(`/api/flashcards/${selectedDeck._id}/sessions`, {
+      const r = await fetch(`/api/flashcards/${deckAberto._id}/sessions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entries: payload }),
+        body: JSON.stringify({ entries }),
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erro ao registrar sessão')
-
-      const objectives = data.dominantObjectives || []
-      setSessionResult(objectives)
-      setCriticalObjectives(objectives)
-      setReportOpen(true)
-      loadDecks()
-      setStudyOpen(false)
-    } catch (error: any) {
-      setToast({ open: true, message: error.message || 'Erro ao salvar sessão', type: 'error' })
+      const d = await r.json().catch(() => ({}))
+      setRelatorio({ objetivos: r.ok ? d.dominantObjectives || [] : [], acertos, total: entries.length })
+    } catch {
+      setRelatorio({ objetivos: [], acertos, total: entries.length })
     } finally {
-      setSessionSaving(false)
+      setSalvando(false)
     }
   }
 
-  const currentCard = cards[currentIndex]
-  const currentEntry = currentCard ? entries[currentCard.id] : undefined
-
-  const objectivesSelection = currentCard
-    ? (currentEntry?.objectivesStruggled || [])
-    : []
-
-  function toggleObjective(objId: string) {
-    if (!currentCard) return
-    const cardId = currentCard.id
-    const prev = entries[cardId]
-    const nextObjectives = objectivesSelection.includes(objId)
-      ? objectivesSelection.filter(o => o !== objId)
-      : [...objectivesSelection, objId]
-    handleDifficultySelect(cardId, prev?.difficulty || 'equilibrado', nextObjectives)
-  }
-
-  function handleDifficultyChange(value: FlashcardDifficultyFeedback) {
-    if (!currentCard) return
-
-    // Se nenhum objetivo foi selecionado, seleciona todos automaticamente
-    let objectivesToUse = objectivesSelection
-    if (objectivesSelection.length === 0 && currentCard.objectives.length > 0) {
-      objectivesToUse = currentCard.objectives.map(obj => obj.id)
-    }
-
-    handleDifficultySelect(currentCard.id, value, objectivesToUse)
-  }
-
-  function goNextCard() {
-    if (!currentCard) return
-    if (!entries[currentCard.id]) {
-      setToast({ open: true, message: 'Escolha a dificuldade antes de avançar', type: 'error' })
+  function darNota(nota: FlashcardDifficultyFeedback) {
+    if (!cartao) return
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) navigator.vibrate?.(8)
+    // Errou ou suou: os objetivos do cartão entram como pontos fracos.
+    const objetivos = nota === 'facil' ? [] : cartao.objectives.map((o) => o.id)
+    const todas = { ...notasDadas, [cartao.id]: { nota, objetivos } }
+    setNotasDadas(todas)
+    if (indice >= cartoes.length - 1) {
+      void concluir(todas)
       return
     }
-    if (currentIndex === cards.length - 1) {
-      handleCompleteDeck()
-      return
-    }
-    setCurrentIndex(prev => prev + 1)
-    setFlipped(false)
-    setShowHint(false)
+    setVirado(false)
+    setDicaVisivel(false)
+    window.setTimeout(() => setIndice((i) => i + 1), 140)
   }
 
-  const gradientBackground = useMemo(() => {
-    return 'bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.25),_transparent_50%),_linear-gradient(135deg,_#020617,_#0f172a,_#020617)] dark:bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.25),_transparent_50%),_linear-gradient(135deg,_#020617,_#0f172a,_#020617)] bg-white dark:bg-slate-950'
-  }, [])
+  function fecharEstudo() {
+    setDeckAberto(null)
+    setRelatorio(null)
+    void carregarDecks()
+  }
+
+  function deckDosPontosFracos() {
+    if (!relatorio || !deckAberto) return
+    setTema(deckAberto.theme)
+    setTitulo(`${deckAberto.title} · reforço`)
+    setNotas(`Foque nos pontos em que errei: ${relatorio.objetivos.join(', ')}`.slice(0, 400))
+    fecharEstudo()
+    window.setTimeout(() => temaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 200)
+  }
+
+  async function apagar() {
+    if (!paraApagar) return
+    setApagando(true)
+    try {
+      const r = await fetch(`/api/flashcards/${paraApagar._id}`, { method: 'DELETE' })
+      if (!r.ok) throw new Error()
+      setDecks((ds) => ds.filter((d) => d._id !== paraApagar._id))
+      avisar('Deck apagado.', 'success')
+      setParaApagar(null)
+    } catch {
+      avisar('Não foi possível apagar o deck.', 'error')
+    } finally {
+      setApagando(false)
+    }
+  }
+
+  function baixarPdf() {
+    if (!deckAberto || cartoes.length === 0) return
+    const janela = window.open('', '', 'width=1000,height=800')
+    if (!janela) {
+      avisar('Libere as janelas pop-up para baixar o PDF.', 'error')
+      return
+    }
+    const e = escaparHtml
+    janela.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${e(deckAberto.title)}</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:32px;font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#101814;background:#fff}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px}p.sub{color:#5b655f;margin:0 0 24px}
+.c{border:1px solid #e3e6e2;border-radius:14px;padding:16px 18px;margin:0 0 12px;page-break-inside:avoid}
+.n{font-size:11px;font-weight:700;color:#2f7d48;letter-spacing:.06em;text-transform:uppercase}
+.f{font-size:16px;font-weight:700;margin:6px 0 10px}.b{background:#f2f7f3;border-radius:10px;padding:10px 12px}
+.h{color:#9a6410;font-size:12.5px;margin-top:8px}
+</style></head><body><h1>${e(deckAberto.title)}</h1><p class="sub">${e(deckAberto.theme)} · ${cartoes.length} cartões · DomineAqui</p>
+${cartoes
+  .map(
+    (c, i) =>
+      `<div class="c"><div class="n">Cartão ${i + 1}</div><div class="f">${e(c.front)}</div><div class="b">${e(c.back)}</div>${c.hint ? `<div class="h">Dica: ${e(c.hint)}</div>` : ''}</div>`,
+  )
+  .join('')}
+</body></html>`)
+    janela.document.close()
+    window.setTimeout(() => janela.print(), 250)
+  }
+
+  const progresso = cartoes.length ? (indice + (notasDadas[cartao?.id ?? ''] ? 1 : 0)) / cartoes.length : 0
+  const deckNovo = useMemo(() => decks.find((d) => d._id === recemCriado) || null, [decks, recemCriado])
 
   return (
-    <LayoutShell showHeader={false}>
-      <div className={cn('min-h-screen text-slate-900 dark:text-white', gradientBackground)}>
-        {/* Header */}
-        <header className="sticky top-0 z-50 w-full backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-slate-200 dark:border-white/10">
-          <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
-            <div className="flex items-center justify-between gap-2 sm:gap-4 min-h-[56px] sm:min-h-[64px]">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-slate-600 hover:text-slate-900 dark:text-white/80 dark:hover:text-white h-8 w-8 sm:h-9 sm:w-9 shrink-0"
-                onClick={() => router.push('/')}
-              >
-                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
+    <AppShell vidro headerTitle="Flashcards com IA" headerSubtitle="Decks gerados do seu tema">
+      <FundoIos>
+        <div className="mx-auto max-w-3xl px-4 pb-28 pt-3 sm:px-6 sm:pt-5">
+          <Link href="/flashcards" className="ios-voltar -ml-2">
+            <ChevronLeft className="h-5 w-5" strokeWidth={2.5} /> Flashcards
+          </Link>
 
-              <div className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base font-semibold text-slate-900 dark:text-white min-w-0 flex-1">
-                <Brain className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
-                <span className="hidden sm:inline">Flashcards</span>
-                <span className="sm:hidden">Flashcards</span>
-              </div>
+          <header className="mb-6 mt-2">
+            <h1 className="ios-titulo-grande">Flashcards com IA</h1>
+            <p className="ios-rotulo-2 mt-1.5 max-w-xl text-[16px] leading-relaxed sm:text-[17px]">
+              Diga o tema — ou escolha do seu cronograma. A IA escreve o deck, você revisa no dia certo.
+            </p>
+          </header>
 
-              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-slate-600 dark:text-white/80 border-slate-300 dark:border-white/20 hover:bg-slate-100 dark:hover:bg-white/10 h-8 w-8 sm:h-9 sm:w-9 hidden sm:flex"
-                  onClick={() => router.push('/cronogramas')}
-                  title="Cronogramas"
-                >
-                  <BookMarked className="h-4 w-4 sm:h-5 sm:w-5" />
-                </Button>
-                <FocusSessionButton />
-                <NotificationsBell />
-                <ThemeToggle />
-              </div>
+          {!conta.carregada ? (
+            <div className="ia-folha space-y-4 p-6">
+              <div className="ios-esqueleto h-14 rounded-2xl" />
+              <div className="ios-esqueleto h-10 w-2/3 rounded-2xl" />
+              <div className="ios-esqueleto h-12 rounded-full" />
             </div>
-          </div>
-        </header>
-
-        <div className="container mx-auto px-4 py-6">
-          <LiquidGlassPanel className="p-6 sm:p-8 mb-8">
-            <div className="flex flex-col lg:flex-row gap-10 items-center">
-              <div className="flex-1 space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 dark:bg-white/20 text-slate-700 dark:text-white text-sm uppercase tracking-wide">
-                  <Sparkles className="h-4 w-4" /> Novo laboratório de Flashcards
-                </div>
-                <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-slate-900 dark:text-white">
-                  Flashcards
-                </h1>
-                <p className="text-lg text-slate-700 dark:text-white/80 max-w-3xl">
-                  Enquanto os outros repetem como papagaio, tu martela com nossos flashcards até a matéria virar reflexo.
-                </p>
-                <div className="grid sm:grid-cols-3 gap-4">
-                  <div className="rounded-2xl bg-slate-100 dark:bg-white/10 border border-slate-300 dark:border-white/20 p-4">
-                    <p className="text-sm text-slate-600 dark:text-white/70">
-                      {accountType === 'gratuito' ? 'Decks totais' : 'Decks hoje'}
+          ) : !conta.liberada ? (
+            <VitrineIa recurso="flashcards" beneficios={BENEFICIOS} />
+          ) : (
+            <section className="ia-folha relative overflow-hidden" aria-busy={gerando}>
+              {gerando ? (
+                <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 px-6 py-12 text-center">
+                  <div className="ia-orbe" aria-hidden />
+                  <div>
+                    <p className="text-[19px] font-bold tracking-tight">Gerando {quantidade} cartões</p>
+                    <p key={frase} className="ia-status ios-rotulo-2 mt-1 text-[15px]" aria-live="polite">
+                      {frase}
                     </p>
-                    <p className="text-3xl font-semibold text-slate-900 dark:text-white">{tierLimits[accountType].daily}</p>
                   </div>
-                  <div className="rounded-2xl bg-slate-100 dark:bg-white/10 border border-slate-300 dark:border-white/20 p-4">
-                    <p className="text-sm text-slate-600 dark:text-white/70">Cartões por deck</p>
-                    <p className="text-3xl font-semibold text-slate-900 dark:text-white">{tierLimits[accountType].cards}</p>
-                  </div>
-                  <div className="rounded-2xl bg-slate-100 dark:bg-white/10 border border-slate-300 dark:border-white/20 p-4">
-                    <p className="text-sm text-slate-600 dark:text-white/70">Decks ativos</p>
-                    <p className="text-3xl font-semibold text-slate-900 dark:text-white">{tierLimits[accountType].active}</p>
-                  </div>
+                  <Rascunho linhas={4} className="w-full max-w-sm" />
+                  <p className="ios-rotulo-3 text-[13px]">Leva uns 10 a 20 segundos.</p>
                 </div>
-                <Button
-                  className="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
-                  onClick={() => setShowCreationForm(!showCreationForm)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {showCreationForm ? 'Cancelar' : 'Criar novo deck'}
-                </Button>
-              </div>
-              {showCreationForm && (
-                <div className="flex-1 w-full">
-                  <LiquidGlassPanel className="p-6 bg-slate-100 dark:bg-white/10 border-slate-300 dark:border-white/30">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Wand2 className="h-6 w-6 text-slate-900 dark:text-white" />
-                      <div>
-                        <p className="text-slate-900 dark:text-white font-semibold">Criar flashcards com IA</p>
-                        <p className="text-slate-600 dark:text-white/70 text-sm">Escolha o tema, definimos o resto</p>
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-slate-700 dark:text-white/80">Título do deck</Label>
-                        <Input value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex: Neurocirurgia de Guerra" className="bg-white dark:bg-white/10 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-slate-700 dark:text-white/80">Tema foco</Label>
-                        <div className="flex gap-2">
-                          <Input value={theme} onChange={e => setTheme(e.target.value)} placeholder="Tema específico" className="flex-1 bg-white dark:bg-white/10 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40" />
-                          <Button
-                            type="button"
-                            className="bg-emerald-500 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-700 text-white h-10"
-                            onClick={() => setShowCronogramaSelector(true)}
-                          >
-                            <ChevronDown className="h-4 w-4 mr-1" />
-                            Cronograma
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-slate-700 dark:text-white/80">Briefing agressivo (opcional)</Label>
-                        <Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Contexto ou instruções específicas para a IA" rows={3} className="bg-white dark:bg-white/10 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-white/40" />
-                      </div>
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1">
-                          <Label className="text-slate-700 dark:text-white/80 flex items-center justify-between">
-                            <span>Dificuldade alvo</span>
-                            <span className="text-slate-900 dark:text-white font-semibold">{Math.round(difficulty * 100)}%</span>
-                          </Label>
-                          <input
-                            type="range"
-                            min={0.1}
-                            max={1}
-                            step={0.05}
-                            value={difficulty}
-                            onChange={e => setDifficulty(parseFloat(e.target.value))}
-                            disabled={randomDifficulty}
-                            className="w-full"
-                          />
-                          <div className="flex items-center gap-2 mt-2">
-                            <Switch checked={randomDifficulty} onCheckedChange={setRandomDifficulty} />
-                            <span className="text-sm text-slate-600 dark:text-white/70">Misturar níveis automaticamente</span>
-                          </div>
-                        </div>
-                        <div className="w-full sm:w-36">
-                          <Label className="text-slate-700 dark:text-white/80">Cartões</Label>
-                          <Input
-                            type="number"
-                            min={1}
-                            max={currentLimits.cards}
-                            value={cardsRequested}
-                            onChange={e => setCardsRequested(Number(e.target.value))}
-                            className="bg-white dark:bg-white/10 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white"
-                          />
-                          <p className="text-xs text-slate-600 dark:text-white/60 mt-1">{currentLimits.cards} máx por deck</p>
-                        </div>
-                      </div>
-                      <Button className="w-full bg-slate-200 hover:bg-slate-300 dark:bg-white/20 dark:hover:bg-white/30 text-slate-900 dark:text-white" onClick={handleCreateDeck} disabled={creating}>
-                        {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                        {creating ? 'Gerando...' : 'Gerar flashcards agora'}
-                      </Button>
-                    </div>
-                  </LiquidGlassPanel>
-                </div>
-              )}
-            </div>
-          </LiquidGlassPanel>
-
-
-          {/* Meus Decks Section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Layers className="h-5 w-5" /> Meus Decks
-            </h2>
-
-            {loadingDecks ? (
-              <PageLoading variant="minimal" message="Carregando seus decks..." />
-            ) : decks.length > 0 ? (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {decks.map((deck) => (
-                  <div
-                    key={deck._id}
-                    className="group relative rounded-3xl border border-slate-300 dark:border-white/20 bg-slate-50 dark:bg-white/5 p-5 transition-all hover:shadow-lg hover:border-emerald-500/50 dark:hover:border-emerald-500/50"
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="space-y-1 cursor-pointer flex-1" onClick={() => openDeck(deck)}>
-                        <h3 className="font-semibold text-lg text-slate-900 dark:text-white line-clamp-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                          {deck.title}
-                        </h3>
-                        <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-white/60">
-                          <span className="line-clamp-1">{deck.theme}</span>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 -mr-2 -mt-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          openDeleteConfirmation(deck._id, deck.title)
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-
-                    <div className="flex items-center gap-2 mt-4">
-                      <Button
-                        className="flex-1 bg-white hover:bg-emerald-500 hover:text-white dark:bg-white/10 dark:hover:bg-emerald-600 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 transition-all h-9 text-sm shadow-sm"
-                        onClick={() => openDeck(deck)}
-                      >
-                        <PlayCircle className="h-4 w-4 mr-2" />
-                        Estudar
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 border-2 border-dashed border-slate-300 dark:border-white/10 rounded-3xl bg-slate-50/50 dark:bg-white/5">
-                <Layers className="h-12 w-12 mx-auto text-slate-300 dark:text-white/20 mb-3" />
-                <p className="text-slate-500 dark:text-white/50">Você ainda não criou nenhum deck.</p>
-                <Button
-                  variant="link"
-                  className="text-emerald-600 dark:text-emerald-400"
-                  onClick={() => setShowCreationForm(true)}
-                >
-                  Criar meu primeiro deck
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {!loadingThemes && themes.length > 0 && (
-            <div className="mb-10">
-              <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                <Sparkles className="h-5 w-5" /> Templates Disponíveis
-              </h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 overflow-x-auto pb-2">
-                {themes.map(tmpl => (
-                  <button
-                    key={tmpl._id}
-                    onClick={() => applyTemplate(tmpl)}
-                    className={cn(
-                      'rounded-3xl border border-slate-300 dark:border-white/20 bg-slate-100 dark:bg-white/5 backdrop-blur-xl shadow-[0_25px_80px_-35px_rgba(15,23,42,0.1)] dark:shadow-[0_25px_80px_-35px_rgba(15,23,42,0.45)]',
-                      'transition-all hover:shadow-[0_35px_100px_-40px_rgba(15,23,42,0.15)] dark:hover:shadow-[0_35px_100px_-40px_rgba(15,23,42,0.65)] hover:bg-slate-200 dark:hover:bg-white/15',
-                      'p-4 cursor-pointer flex flex-col justify-between min-w-[200px] text-left'
-                    )}
-                  >
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-white truncate">{tmpl.title}</p>
-                      {tmpl.description && <p className="text-xs text-slate-600 dark:text-white/70 line-clamp-2 mt-1">{tmpl.description}</p>}
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {tmpl.defaultDifficulty && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-white/80">
-                          {Math.round(tmpl.defaultDifficulty * 100)}%
-                        </span>
-                      )}
-                      {tmpl.suggestedCardCount && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-white/80">
-                          {tmpl.suggestedCardCount} cards
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          <div className="mb-20"></div> {/* Espaço extra no final */}
-        </div>
-
-
-        <Dialog open={showCronogramaSelector} onOpenChange={setShowCronogramaSelector}>
-          <DialogContent className="w-[95vw] max-w-2xl h-[85vh] max-h-[85vh] rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-slate-900/95 backdrop-blur-xl text-white border border-white/10 shadow-2xl animate-in fade-in duration-300 flex flex-col p-4 sm:p-6">
-            <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="text-white flex items-center gap-2 text-xl sm:text-2xl">
-                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400 flex-shrink-0" />
-                <span className="truncate">Tópicos do Cronograma</span>
-              </DialogTitle>
-              <DialogDescription className="text-white/70 text-xs sm:text-sm line-clamp-2">
-                Selecione o tipo e os tópicos que deseja estudar
-              </DialogDescription>
-            </DialogHeader>
-
-            {!selectedCronogramaType ? (
-              <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('enem')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">ENEM</p>
-                    <p className="text-xs text-white/70 mt-1">Preparação</p>
-                  </button>
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('medicina')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Médicas</p>
-                    <p className="text-xs text-white/70 mt-1">Ciências Médicas</p>
-                  </button>
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('psicologia')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Psicossociais</p>
-                    <p className="text-xs text-white/70 mt-1">Ciências Psicossociais</p>
-                  </button>
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('biomedicina')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Biomédicas</p>
-                    <p className="text-xs text-white/70 mt-1">Ciências Biomédicas</p>
-                  </button>
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('odontologia')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">Ciências Odontológicas</p>
-                    <p className="text-xs text-white/70 mt-1">Ciências Odontológicas</p>
-                  </button>
-                  <button
-                    onClick={() => handleCronogramaTypeSelect('uerj')}
-                    className="p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:border-blue-500 hover:bg-blue-500/10 transition-all text-center"
-                  >
-                    <p className="font-semibold text-white text-sm sm:text-base">UERJ</p>
-                    <p className="text-xs text-white/70 mt-1">Vestibular</p>
-                  </button>
-                </div>
-              </div>
-            ) : showPeriodoSelector ? (
-              <div className="flex-1 flex flex-col justify-center space-y-4">
-                <div>
-                  <Label className="text-white/80 text-sm sm:text-base">Selecione o Período</Label>
-                  <div className="grid grid-cols-5 gap-2 mt-3">
-                    {(selectedCronogramaType === 'psicologia' || selectedCronogramaType === 'odontologia'
-                      ? [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-                      : selectedCronogramaType === 'biomedicina'
-                      ? [1, 2, 3, 4, 5, 6, 7]
-                      : [1, 2, 3, 4, 5]
-                    ).map(p => (
-                      <button
-                        key={p}
-                        onClick={() => {
-                          if (selectedCronogramaType === 'psicologia') {
-                            handlePsicologiaPeriodoChange(p as PsicologiaPeriodo)
-                          } else if (selectedCronogramaType === 'biomedicina') {
-                            handleBiomedicinaPeriodoChange(p as BiomedicinaPeriodo)
-                          } else if (selectedCronogramaType === 'odontologia') {
-                            handleOdontologiaPeriodoChange(p as OdontologiaPeriodo)
-                          } else {
-                            handleMedicinaPeriodoChange(p as MedicinaPeriodo)
-                          }
-                        }}
-                        className={cn(
-                          'p-3 rounded-xl border-2 transition-all font-semibold text-sm',
-                          (selectedCronogramaType === 'psicologia'
-                            ? selectedPsicologiaPeriodo === p
-                            : selectedCronogramaType === 'biomedicina'
-                            ? selectedBiomedicinaPeriodo === p
-                            : selectedCronogramaType === 'odontologia'
-                            ? selectedOdontologiaPeriodo === p
-                            : selectedMedicinaPeriodo === p)
-                            ? 'border-blue-500 bg-blue-500/30 text-blue-200'
-                            : 'border-white/20 bg-white/5 text-white hover:border-blue-500'
-                        )}
-                      >
-                        {p}º
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-2">
-                <Label className="text-white/80 text-sm sm:text-base">Selecione Tópicos e Subtópicos</Label>
-                {cronogramaTopicos.map(topico => (
-                  <div key={topico.id} className="space-y-2">
-                    <button
-                      onClick={() => handleTopicoSelect(topico.id)}
-                      className={cn(
-                        'w-full p-3 sm:p-4 rounded-2xl border-2 transition-all text-left',
-                        selectedTopicos.includes(topico.id)
-                          ? 'border-blue-500 bg-blue-500/20 text-white'
-                          : 'border-white/20 bg-white/5 text-white hover:border-blue-500'
-                      )}
-                    >
-                      <p className="font-semibold text-sm sm:text-base">{topico.nome}</p>
-                      <p className="text-xs sm:text-sm text-white/70 mt-1">
-                        {topico.subtopicos.length} subtópicos
-                      </p>
-                    </button>
-
-                    {selectedTopicos.includes(topico.id) && (
-                      <div className="ml-4 space-y-1 border-l-2 border-blue-500/30 pl-3">
-                        {topico.subtopicos.map(subtopico => (
-                          <button
-                            key={subtopico.id}
-                            onClick={() => handleSubtopicoSelect(subtopico.id)}
-                            className={cn(
-                              'w-full p-2 rounded-lg border-2 transition-all text-left text-xs sm:text-sm',
-                              selectedSubtopicos.includes(subtopico.id)
-                                ? 'border-purple-500 bg-purple-500/20 text-white'
-                                : 'border-white/10 bg-white/5 text-white/80 hover:border-purple-500'
-                            )}
-                          >
-                            {subtopico.nome}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex-shrink-0 flex gap-2 mt-4">
-              {selectedCronogramaType && !showPeriodoSelector && (
-                <Button
-                  variant="outline"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 sm:h-12 text-xs sm:text-sm"
-                  onClick={() => {
-                    setSelectedCronogramaType(null)
-                    setCronogramaTopicos([])
-                    setSelectedTopicos([])
-                    setSelectedSubtopicos([])
-                    setShowPeriodoSelector(false)
-                  }}
-                >
-                  Voltar
-                </Button>
-              )}
-              {showPeriodoSelector && (
-                <Button
-                  variant="outline"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 sm:h-12 text-xs sm:text-sm"
-                  onClick={() => {
-                    setSelectedCronogramaType(null)
-                    setShowPeriodoSelector(false)
-                  }}
-                >
-                  Voltar
-                </Button>
-              )}
-              {(selectedTopicos.length > 0 || selectedSubtopicos.length > 0) && (
-                <Button
-                  className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white h-10 sm:h-12 text-xs sm:text-sm"
-                  onClick={applySelectedTopicos}
-                >
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  Aplicar
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20 h-10 sm:h-12 text-xs sm:text-sm"
-                onClick={() => setShowCronogramaSelector(false)}
-              >
-                Fechar
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={deleteConfirmation.open} onOpenChange={(open) => !open && setDeleteConfirmation({ open: false, deckId: '', deckTitle: '' })}>
-          <DialogContent className="bg-white dark:bg-slate-950 text-slate-900 dark:text-white border-slate-300 dark:border-white/10">
-            <DialogHeader>
-              <DialogTitle className="text-slate-900 dark:text-white">Deletar deck?</DialogTitle>
-              <DialogDescription className="text-slate-600 dark:text-white/70">
-                Tem certeza que deseja deletar o deck <span className="font-semibold">"{deleteConfirmation.deckTitle}"</span>? Esta ação não pode ser desfeita.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className="gap-2">
-              <Button
-                variant="outline"
-                className="bg-white dark:bg-slate-900 border-slate-300 dark:border-white/20 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-                onClick={() => setDeleteConfirmation({ open: false, deckId: '', deckTitle: '' })}
-                disabled={deleting}
-              >
-                Cancelar
-              </Button>
-              <Button
-                className="bg-red-500 hover:bg-red-600 text-white"
-                onClick={confirmDeleteDeck}
-                disabled={deleting}
-              >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
-                {deleting ? 'Deletando...' : 'Deletar'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={studyOpen} onOpenChange={setStudyOpen}>
-          <DialogContent className="w-[95vw] max-w-2xl h-[90vh] max-h-[90vh] rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-slate-900/95 backdrop-blur-xl text-white border border-white/10 shadow-2xl animate-in fade-in duration-300 flex flex-col p-4 sm:p-6">
-            <div className="flex-shrink-0 flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <DialogHeader>
-                  <DialogTitle className="flex items-center gap-2 text-white text-xl sm:text-2xl line-clamp-2">
-                    <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-orange-400 animate-pulse flex-shrink-0" />
-                    <span className="truncate">{selectedDeck?.title}</span>
-                  </DialogTitle>
-                  <DialogDescription className="text-white/70 text-sm sm:text-base line-clamp-2">
-                    {selectedDeck?.theme}
-                  </DialogDescription>
-                </DialogHeader>
-              </div>
-              <Button
-                variant="ghost"
-                className="text-white/80 hover:text-white hover:bg-white/10 h-10 px-3 flex-shrink-0"
-                onClick={downloadDeckPDF}
-                title="Baixar PDF"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {currentCard ? (
-              <div className="flex-1 overflow-y-auto space-y-4 sm:space-y-6 pr-2">
-                <div className="flex flex-col gap-2">
-                  <div className="flex justify-between text-xs sm:text-sm text-white/60">
-                    <span>Cartão {currentIndex + 1} / {cards.length}</span>
-                    <span>{Math.round((currentIndex + 1) * 100 / cards.length)}%</span>
-                  </div>
-                  <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300"
-                      style={{ width: `${(currentIndex + 1) * 100 / cards.length}%` }}
+              ) : (
+                <div className="space-y-5 p-5 sm:p-7">
+                  <Campo rotulo="Tema" nota={modeloId ? 'modelo aplicado' : undefined}>
+                    <input
+                      ref={temaRef}
+                      value={tema}
+                      onChange={(e) => {
+                        setTema(e.target.value)
+                        setModeloId(null)
+                      }}
+                      onKeyDown={(e) => e.key === 'Enter' && void gerar()}
+                      maxLength={300}
+                      placeholder="Ex.: Insuficiência cardíaca"
+                      className="ia-campo ia-campo-grande"
+                      aria-label="Tema do deck"
                     />
-                  </div>
-                </div>
-                <div
-                  className={cn(
-                    'relative overflow-hidden rounded-2xl border p-4 sm:p-6 min-h-[200px] sm:min-h-[240px] cursor-pointer transition-all duration-300 flex flex-col justify-center',
-                    flipped
-                      ? 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border-emerald-400/50 shadow-lg shadow-emerald-500/20'
-                      : 'bg-gradient-to-br from-white/5 to-white/10 border-white/20 shadow-lg shadow-white/10'
-                  )}
-                  onClick={() => setFlipped(prev => !prev)}
-                >
-                  <p className="text-xs uppercase tracking-widest text-white/50 mb-2 font-semibold">{flipped ? '← RESPOSTA' : 'PERGUNTA →'}</p>
-                  <p className="text-lg sm:text-2xl font-bold text-white leading-relaxed break-words">
-                    {flipped ? currentCard.back : currentCard.front}
-                  </p>
-                  <MarcaDaguaFlashcard sobreFundoEscuro />
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm">
-                  <Button variant="ghost" className="text-white/80 h-8 px-2" onClick={() => setShowHint(prev => !prev)}>
-                    <Feather className="h-3 w-3 sm:h-4 sm:w-4 mr-1" /> Dica
-                  </Button>
-                  <div className="text-white/60 text-center">Clique no card para virar</div>
-                </div>
-
-                {showHint && (
-                  <div className="rounded-2xl border border-orange-400/40 bg-orange-500/10 p-3 text-xs sm:text-sm text-orange-100 break-words">
-                    {currentCard.hint}
-                  </div>
-                )}
-
-                {flipped && (
-                  <div className="space-y-2">
-                    <p className="text-white font-semibold text-sm sm:text-base">Objetivos</p>
-                    <div className="flex flex-wrap gap-1 sm:gap-2">
-                      {currentCard.objectives.map(obj => (
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <button type="button" onClick={() => setCronogramaAberto(true)} className="ios-botao-suave ios-botao-p">
+                        <CalendarRange className="h-4 w-4" /> Do meu cronograma
+                      </button>
+                      {modelos.slice(0, 6).map((m) => (
                         <button
-                          key={obj.id}
-                          onClick={() => toggleObjective(obj.id)}
-                          className={cn(
-                            'px-2 py-1 rounded-full border text-xs sm:text-sm transition-all',
-                            objectivesSelection.includes(obj.id)
-                              ? 'border-orange-400 bg-orange-500/20 text-orange-100'
-                              : 'border-white/20 text-white/70'
-                          )}
+                          key={m._id}
+                          type="button"
+                          aria-pressed={modeloId === m._id}
+                          onClick={() => aplicarModelo(m)}
+                          className="ios-pilula !h-[34px] !text-[13px]"
+                          title={m.description}
                         >
-                          {obj.text}
+                          {m.title}
                         </button>
                       ))}
                     </div>
-                  </div>
-                )}
+                  </Campo>
 
-                <div className="space-y-2">
-                  <p className="text-white font-semibold text-sm sm:text-base">Impacto?</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {difficultyLegend.map(option => (
+                  <div className="grid gap-5 sm:grid-cols-[auto_1fr]">
+                    <Campo rotulo="Cartões">
+                      <Stepper rotulo="Cartões" valor={quantidade} onChange={setQuantidade} min={5} max={40} passo={5} />
+                    </Campo>
+                    <Campo rotulo="Dificuldade">
+                      <Segmentado<Nivel>
+                        rotulo="Dificuldade"
+                        valor={nivel}
+                        onChange={setNivel}
+                        opcoes={[
+                          { id: 'facil', rotulo: 'Fácil' },
+                          { id: 'medio', rotulo: 'Médio' },
+                          { id: 'dificil', rotulo: 'Difícil' },
+                          { id: 'misto', rotulo: 'Misto' },
+                        ]}
+                      />
+                    </Campo>
+                  </div>
+
+                  <Campo rotulo="O que treinar">
+                    <div className="flex flex-wrap gap-2" role="group" aria-label="Foco dos cartões">
+                      {FOCOS.map((f) => (
+                        <button key={f.id} type="button" aria-pressed={foco === f.id} onClick={() => setFoco(f.id)} className="ios-pilula">
+                          {f.rotulo}
+                        </button>
+                      ))}
+                    </div>
+                  </Campo>
+
+                  <details className="group">
+                    <summary className="ios-tinta flex cursor-pointer list-none items-center gap-1 text-[14px] font-semibold [&::-webkit-details-marker]:hidden">
+                      <Wand2 className="h-4 w-4" /> Nome do deck e orientação para a IA
+                    </summary>
+                    <div className="mt-4 space-y-4">
+                      <Campo rotulo="Nome do deck" nota="opcional">
+                        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} maxLength={100} placeholder={tema.trim() || 'Usa o tema se ficar vazio'} className="ia-campo" />
+                      </Campo>
+                      <Campo rotulo="Orientação" nota={`${notas.length}/400`}>
+                        <textarea
+                          value={notas}
+                          onChange={(e) => setNotas(e.target.value.slice(0, 400))}
+                          placeholder="Ex.: foque em critérios diagnósticos e doses; minha prova é na sexta"
+                          className="ia-campo"
+                          rows={3}
+                        />
+                      </Campo>
+                    </div>
+                  </details>
+
+                  <button type="button" onClick={() => void gerar()} disabled={!tema.trim()} className="ios-botao ios-botao-g w-full">
+                    <Sparkles className="h-[18px] w-[18px]" /> Gerar {quantidade} cartões
+                  </button>
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* ── Recém-criado ── */}
+          {deckNovo && (
+            <div className="ios-vidro ios-assenta mt-5 flex items-center gap-4 rounded-[22px] p-4">
+              <div className="min-w-0 flex-1">
+                <p className="ios-tinta text-[13px] font-semibold">Acabou de sair</p>
+                <p className="truncate text-[17px] font-bold tracking-tight">{deckNovo.title}</p>
+                <p className="ios-rotulo-2 text-[13px]">{deckNovo.cardsGenerated} cartões</p>
+              </div>
+              <button type="button" className="ios-botao" onClick={() => void abrirDeck(deckNovo)}>
+                <Play className="h-4 w-4" fill="currentColor" /> Estudar
+              </button>
+            </div>
+          )}
+
+          {/* ── Decks ── */}
+          <section className="mt-9" aria-labelledby="decks-ia">
+            <div className="mb-3 flex items-baseline justify-between px-1">
+              <h2 id="decks-ia" className="ios-titulo-secao">
+                Seus decks com IA
+              </h2>
+              {!carregandoDecks && decks.length > 0 && <span className="ios-rotulo-2 text-[14px] ios-numeros">{decks.length}</span>}
+            </div>
+            {carregandoDecks ? (
+              <div className="ios-lista">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="ios-linha">
+                    <div className="ios-esqueleto h-10 flex-1 rounded-xl" />
+                  </div>
+                ))}
+              </div>
+            ) : decks.length === 0 ? (
+              <div className="ios-cartao rounded-[22px] px-6 py-10 text-center">
+                <p className="text-[17px] font-semibold">Nenhum deck ainda</p>
+                <p className="ios-rotulo-2 mx-auto mt-1 max-w-xs text-[14px]">
+                  {conta.liberada ? 'O primeiro sai em segundos: escreva um tema lá em cima.' : 'Assine para gerar o primeiro.'}
+                </p>
+              </div>
+            ) : (
+              <ul className="ios-lista">
+                {decks.map((deck) => (
+                  <li key={deck._id} className="relative">
+                    <div className="ios-linha">
+                      <button type="button" onClick={() => void abrirDeck(deck)} className="min-w-0 flex-1 text-left">
+                        <span className="block truncate text-[16px] font-semibold tracking-tight">{deck.title}</span>
+                        <span className="ios-rotulo-2 block truncate text-[13px]">
+                          {deck.cardsGenerated} cartões · {dataCurta(deck.createdAt)}
+                          {deck.status === 'concluido' ? ' · revisado' : ''}
+                        </span>
+                      </button>
+                      <button type="button" onClick={() => void abrirDeck(deck)} className="ios-botao-suave ios-botao-p">
+                        <Play className="h-3.5 w-3.5" fill="currentColor" /> Estudar
+                      </button>
                       <button
-                        key={option.value}
-                        className={cn(
-                          'rounded-xl border p-2 sm:p-3 text-left transition-all duration-300',
-                          currentEntry?.difficulty === option.value
-                            ? `border-white bg-gradient-to-br ${option.color} shadow-lg`
-                            : 'border-white/20 bg-white/5 hover:border-white/40'
-                        )}
-                        onClick={() => handleDifficultyChange(option.value)}
+                        type="button"
+                        aria-label={`Mais opções de ${deck.title}`}
+                        onClick={() => setMenuDeck(menuDeck === deck._id ? null : deck._id)}
+                        className="ios-icone-botao !text-[color:var(--ios-rotulo-2)]"
                       >
-                        <p className="font-bold text-white text-xs sm:text-sm">{option.label}</p>
-                        <p className="text-xs text-white/80 mt-0.5 line-clamp-2">{option.description}</p>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </div>
+                    {menuDeck === deck._id && (
+                      <div className="flex justify-end gap-2 px-4 pb-3">
+                        <button
+                          type="button"
+                          className="ios-botao-cinza ios-botao-p !text-[color:var(--ios-perigo)]"
+                          onClick={() => {
+                            setMenuDeck(null)
+                            setParaApagar(deck)
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" /> Apagar deck
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+
+        <SeletorDeTemas
+          aberto={cronogramaAberto}
+          onFechar={() => setCronogramaAberto(false)}
+          maximo={4}
+          onAplicar={(temas) => {
+            setTema(temas.join('; ').slice(0, 300))
+            setModeloId(null)
+            if (!titulo.trim() && temas[0]) setTitulo(temas[0].split(' — ')[0].slice(0, 100))
+          }}
+        />
+
+        {/* ── Estudo ── */}
+        <FolhaModal
+          aberta={!!deckAberto}
+          onFechar={fecharEstudo}
+          titulo={deckAberto?.title ?? ''}
+          subtitulo={relatorio ? 'Sessão concluída' : cartoes.length ? `Cartão ${Math.min(indice + 1, cartoes.length)} de ${cartoes.length}` : 'Abrindo…'}
+        >
+          {relatorio ? (
+            <div className="relative pb-2 pt-2 text-center">
+              {relatorio.total > 0 && relatorio.acertos / relatorio.total >= 0.7 && <Confete />}
+              <div className="flex justify-center">
+                <AnelProgresso valor={relatorio.acertos} total={Math.max(1, relatorio.total)} tamanho={128} espessura={11} rotulo={`${relatorio.acertos} de ${relatorio.total} lembrados`}>
+                  <span className="text-[30px] font-bold tracking-tight ios-numeros">
+                    {relatorio.total ? Math.round((relatorio.acertos / relatorio.total) * 100) : 0}%
+                  </span>
+                  <span className="ios-rotulo-2 text-[12px]">de primeira</span>
+                </AnelProgresso>
+              </div>
+              <p className="mt-4 text-[19px] font-bold tracking-tight">
+                {relatorio.objetivos.length === 0 ? 'Nenhum ponto fraco nesta rodada.' : 'Aqui você ainda tropeça'}
+              </p>
+              {relatorio.objetivos.length > 0 && (
+                <ul className="mx-auto mt-3 max-w-sm space-y-2 text-left">
+                  {relatorio.objetivos.slice(0, 6).map((o) => (
+                    <li key={o} className="ios-erro-suave rounded-2xl px-4 py-2.5 text-[14px] font-medium">
+                      {o}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <div className="mt-6 flex flex-col gap-2.5">
+                {relatorio.objetivos.length > 0 && conta.liberada && (
+                  <button type="button" onClick={deckDosPontosFracos} className="ios-botao ios-botao-g">
+                    <Sparkles className="h-[18px] w-[18px]" /> Gerar deck dos pontos fracos
+                  </button>
+                )}
+                <button type="button" onClick={() => deckAberto && void abrirDeck(deckAberto)} className="ios-botao-cinza ios-botao-g">
+                  <RotateCcw className="h-[18px] w-[18px]" /> Revisar de novo
+                </button>
+              </div>
+            </div>
+          ) : !cartao ? (
+            <div className="space-y-3 py-6">
+              <div className="ios-esqueleto h-[260px] rounded-3xl" />
+            </div>
+          ) : (
+            <div className="space-y-4 pb-2">
+              <div className="ia-progresso" aria-hidden>
+                <i style={{ transform: `scaleX(${progresso})` }} />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setVirado((v) => !v)}
+                className="ia-cartao-estudo block w-full text-left"
+                data-virado={virado ? 'true' : 'false'}
+                aria-label={virado ? 'Mostrar a pergunta' : 'Mostrar a resposta'}
+              >
+                <div>
+                  <div className="ia-face" aria-hidden={virado}>
+                    <span className="ios-rotulo-3 text-[12px] font-semibold uppercase tracking-[0.08em]">Pergunta</span>
+                    <p className="text-[21px] font-bold leading-snug tracking-tight sm:text-[23px]">{cartao.front}</p>
+                    <span className="ios-rotulo-3 mt-auto text-[13px]">Toque para ver a resposta</span>
+                    <MarcaDaguaFlashcard />
+                  </div>
+                  <div className="ia-face ia-face-verso" aria-hidden={!virado}>
+                    <span className="ios-tinta text-[12px] font-semibold uppercase tracking-[0.08em]">Resposta</span>
+                    <p className="text-[17px] leading-relaxed">{cartao.back}</p>
+                    <MarcaDaguaFlashcard />
+                  </div>
+                </div>
+              </button>
+
+              {!virado ? (
+                <div className="flex items-center gap-2">
+                  {cartao.hint && (
+                    <button type="button" onClick={() => setDicaVisivel((v) => !v)} className="ios-botao-cinza ios-botao-p" aria-expanded={dicaVisivel}>
+                      <Lightbulb className="h-4 w-4" /> Dica
+                    </button>
+                  )}
+                  <button type="button" onClick={() => setVirado(true)} className="ios-botao ml-auto">
+                    Ver resposta
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="ios-rotulo-2 mb-2 text-center text-[13px]">Como foi?</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {NOTAS.map((n) => (
+                      <button key={n.valor} type="button" className="ios-nota" data-nota={n.css} onClick={() => darNota(n.valor)} disabled={salvando}>
+                        {n.rotulo}
+                        <small>{n.dica}</small>
                       </button>
                     ))}
                   </div>
                 </div>
-
-                <Button
-                  className="w-full bg-gradient-to-r from-orange-500 to-pink-600 text-white hover:opacity-90 h-10 sm:h-12 text-sm sm:text-base flex-shrink-0"
-                  onClick={goNextCard}
-                  disabled={sessionSaving}
-                >
-                  {currentIndex === cards.length - 1 ? 'Encerrar' : 'Próximo'}
-                </Button>
-              </div>
-            ) : (
-              <div className="flex justify-center items-center flex-1">
-                <PageLoading variant="minimal" background="transparent" />
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={reportOpen} onOpenChange={setReportOpen}>
-          <DialogContent className="w-[95vw] max-w-2xl h-[85vh] max-h-[85vh] rounded-3xl bg-gradient-to-br from-slate-900/95 via-slate-950/95 to-slate-900/95 backdrop-blur-xl text-white border border-white/10 shadow-2xl animate-in fade-in duration-300 flex flex-col p-4 sm:p-6">
-            <DialogHeader className="flex-shrink-0">
-              <DialogTitle className="text-white flex items-center gap-2 text-xl sm:text-2xl">
-                <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-purple-400 flex-shrink-0" />
-                <span className="truncate">Relatório</span>
-              </DialogTitle>
-              <DialogDescription className="text-white/70 text-xs sm:text-sm line-clamp-2">
-                {sessionResult.length === 0
-                  ? 'Parabéns! Você dominou todos os objetivos.'
-                  : 'Objetivos que exigiram repetição.'}
-              </DialogDescription>
-            </DialogHeader>
-
-            {sessionResult.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center space-y-3 sm:space-y-4">
-                <div className="text-5xl sm:text-6xl">🎉</div>
-                <p className="text-white/70 text-center text-sm sm:text-base">Nenhum objetivo crítico!</p>
-                <p className="text-white/50 text-xs sm:text-sm text-center">Você está indo muito bem!</p>
-              </div>
-            ) : (
-              <div className="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pr-2">
-                {sessionResult.map((objective, idx) => (
-                  <div
-                    key={objective}
-                    className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 to-orange-500/10 p-3 sm:p-4 hover:border-red-500/50 transition-all"
-                  >
-                    <div className="flex items-start gap-2 sm:gap-3">
-                      <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-sm sm:text-lg font-bold flex-shrink-0">
-                        {idx + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white text-sm sm:text-base break-words">{objective}</p>
-                        <p className="text-xs sm:text-sm text-white/60 mt-1">Criar novo deck focado</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex-shrink-0 flex gap-2 mt-4">
-              {sessionResult.length > 0 && (
-                <Button
-                  className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white h-10 sm:h-12 text-xs sm:text-sm"
-                  onClick={() => {
-                    setNotes(`Foque nos seguintes objetivos: ${sessionResult.join(', ')}`)
-                    setReportOpen(false)
-                    setShowCreationForm(true)
-                  }}
-                >
-                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                  <span className="hidden sm:inline">Criar Deck</span>
-                  <span className="sm:hidden">Criar</span>
-                </Button>
               )}
-              <Button
-                className="flex-1 bg-white/20 hover:bg-white/30 text-white h-10 sm:h-12 text-xs sm:text-sm"
-                onClick={() => setReportOpen(false)}
-              >
-                Fechar
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
 
-        <ToastAlert open={toast.open} onOpenChange={open => setToast(prev => ({ ...prev, open }))} message={toast.message} type={toast.type} />
-      </div >
-    </LayoutShell>
+              {dicaVisivel && !virado && cartao.hint && (
+                <p className="ios-ambar rounded-2xl bg-[color:var(--ios-ambar-suave)] px-4 py-3 text-[14px] font-medium">{cartao.hint}</p>
+              )}
+
+              {salvando && (
+                <p className="ios-rotulo-2 flex items-center justify-center gap-2 text-[13px]">
+                  <Loader2 className="h-4 w-4 animate-spin" /> Salvando a sessão…
+                </p>
+              )}
+
+              <div className="flex justify-center pt-1">
+                <button type="button" onClick={baixarPdf} className="ios-rotulo-2 inline-flex items-center gap-1.5 text-[13px] font-semibold">
+                  <Download className="h-3.5 w-3.5" /> Imprimir o deck
+                </button>
+              </div>
+            </div>
+          )}
+        </FolhaModal>
+
+        {/* ── Apagar ── */}
+        <NoCorpo>
+        <Dialog open={!!paraApagar} onOpenChange={(v) => !v && setParaApagar(null)}>
+          <div role="alertdialog" aria-modal="true" className="vidro-ios ia-folha-modal !min-h-0 !rounded-[24px] p-6 sm:w-[420px]">
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="text-[19px] font-bold tracking-tight">Apagar “{paraApagar?.title}”?</h2>
+              <button type="button" aria-label="Fechar" onClick={() => setParaApagar(null)} className="ios-icone-botao !text-[color:var(--ios-rotulo-2)]">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="ios-rotulo-2 mt-2 text-[15px]">Os cartões e o histórico deste deck somem. Não dá para desfazer.</p>
+            <div className="mt-5 flex gap-2">
+              <button type="button" onClick={() => setParaApagar(null)} className="ios-botao-cinza flex-1" disabled={apagando}>
+                Cancelar
+              </button>
+              <button type="button" onClick={() => void apagar()} className="ios-botao-erro flex-1" disabled={apagando}>
+                {apagando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />} Apagar
+              </button>
+            </div>
+          </div>
+        </Dialog>
+        </NoCorpo>
+
+        <ToastAlert open={toast.open} onOpenChange={(open) => setToast((t) => ({ ...t, open }))} message={toast.message} type={toast.type} />
+      </FundoIos>
+    </AppShell>
   )
 }

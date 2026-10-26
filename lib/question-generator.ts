@@ -138,7 +138,10 @@ function buildMultipleChoicePrompt(params: QuestionGenerationParams): string {
    - As incorretas devem ser plausíveis (distratores bem construídos)
    - Evite alternativas absurdas ou obviamente erradas
    - Mantenha paralelismo gramatical e estrutural
-   - Varie o tamanho das alternativas para não dar pistas
+   - Todas com tamanho parecido (±20%): a correta NÃO pode ser a mais longa
+   - Se uma alternativa tem parênteses, travessão ou explicação, todas têm (de preferência nenhuma)
+   - Distratoras sem termos absolutos (sempre, nunca, apenas, exclusivamente, totalmente, advérbios em -mente): cada uma é um erro conceitual plausível
+   - Sem "todas/nenhuma das anteriores"
    - Distribua aleatoriamente a posição da resposta correta
 `
   }

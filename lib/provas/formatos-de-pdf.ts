@@ -19,7 +19,7 @@ import type { Exam, Question } from '@/lib/types'
  * sufixo de arquivo um do outro, e o que cada opção promete pode ser testado
  * sem montar tela nenhuma.
  */
-export type FormatoDePdfDaProva = 'exam' | 'with-answers' | 'gabarito' | 'pacote'
+export type FormatoDePdfDaProva = 'exam' | 'with-answers' | 'estudo' | 'gabarito' | 'pacote'
 
 export interface OpcaoDePdfDaProva {
   chave: FormatoDePdfDaProva
@@ -63,6 +63,16 @@ export const FORMATOS_DE_PDF_DA_PROVA: OpcaoDePdfDaProva[] = [
     partes: ['with-answers'],
     sufixo: 'gabarito-comentado',
     rastreio: 'exam_answers_pdf',
+    revelaGabarito: true,
+  },
+  {
+    chave: 'estudo',
+    titulo: 'Prova com respostas comentadas no final',
+    descricao:
+      'O caderno em branco para resolver e, depois da última questão, a resposta comentada de cada uma — para estudar sem ver o gabarito antes da hora.',
+    partes: ['exam', 'respostas-comentadas'],
+    sufixo: 'respostas-comentadas',
+    rastreio: 'exam_study_pdf',
     revelaGabarito: true,
   },
   {

@@ -989,14 +989,14 @@ function ProvasContent() {
   }
 
   /** O veredito do arquivo que cada opção do diálogo produz. */
-  function vereditoDoFormato(exam: Exam, tipo: 'exam' | 'with-answers' | 'gabarito') {
+  function vereditoDoFormato(exam: Exam, tipo: 'exam' | 'with-answers' | 'gabarito' | 'estudo') {
     const veredito = downloadsDaProva(exam)
     // Gabarito comentado e folha de gabarito revelam a resposta: os dois seguem
     // a regra do gabarito, que espera o término e não tem exceção de plano.
     return tipo === 'exam' ? veredito.prova : veredito.gabarito
   }
 
-  async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito') {
+  async function handleDownloadPDF(exam: Exam, type: 'exam' | 'with-answers' | 'gabarito' | 'estudo') {
     /*
      * Duas regras, e só uma delas se resolve assinando.
      *
@@ -1036,7 +1036,7 @@ function ProvasContent() {
       // propósito (ver `loadExamsAndGroups`). Buscar aqui custa uma requisição
       // no clique de quem realmente quer o PDF, em vez de custar o banco de
       // questões de todas as provas na abertura da tela, para todo mundo.
-      const [{ generateExamPDF, generateExamWithAnswersPDF, generateGabaritoPDF, downloadPDF }, completa] =
+      const [{ generateExamPDF, generateExamWithAnswersPDF, generateExamStudyPDF, generateGabaritoPDF, downloadPDF }, completa] =
         await Promise.all([
           import('@/lib/pdf-generator'),
           carregarProvaCompleta(exam),
@@ -1047,6 +1047,9 @@ function ProvasContent() {
       if (type === 'exam') {
         const blob = await generateExamPDF(completa)
         downloadPDF(blob, `prova-${slug}.pdf`, { type: 'exam_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
+      } else if (type === 'estudo') {
+        const blob = await generateExamStudyPDF(completa)
+        downloadPDF(blob, `prova-respostas-comentadas-${slug}.pdf`, { type: 'exam_study_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
       } else if (type === 'with-answers') {
         const blob = await generateExamWithAnswersPDF(completa)
         downloadPDF(blob, `prova-gabarito-comentado-${slug}.pdf`, { type: 'exam_answers_pdf', resourceId: (completa as any)._id, resourceTitle: completa.title })
@@ -2521,7 +2524,7 @@ function ProvasContent() {
           <div>
             <p className="text-sm font-semibold text-foreground">Gerando PDF…</p>
             <p className="text-xs text-muted-foreground">
-              {pdfLoading === 'exam' ? 'Prova sem gabarito' : pdfLoading === 'with-answers' ? 'Prova com gabarito comentado' : 'Gabarito'}
+              {pdfLoading === 'exam' ? 'Prova sem gabarito' : pdfLoading === 'with-answers' ? 'Prova com gabarito comentado' : pdfLoading === 'estudo' ? 'Prova com respostas comentadas' : 'Gabarito'}
             </p>
           </div>
         </div>
@@ -2879,6 +2882,15 @@ function ProvasContent() {
         badge: 'Completo',
         gradient: 'from-blue-500/10 to-blue-600/5',
         border: 'border-blue-500/20 hover:border-blue-500/50',
+      },
+      {
+        key: 'estudo' as const,
+        icon: <BookOpenCheck className="h-7 w-7 text-emerald-600 dark:text-emerald-400" />,
+        title: 'Prova + Respostas Comentadas no final',
+        description: 'Faça a prova sem ver o gabarito; no fim, a explicação de cada questão, do zero.',
+        badge: 'Para estudar',
+        gradient: 'from-emerald-500/10 to-emerald-600/5',
+        border: 'border-emerald-500/20 hover:border-emerald-500/50',
       },
       {
         key: 'gabarito' as const,

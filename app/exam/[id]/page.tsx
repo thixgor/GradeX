@@ -80,6 +80,8 @@ import {
 } from '@/lib/provas/aviso-de-inicio'
 import { EscudoAntiCola, ProvedorAntiCola } from '@/components/exam/escudo-anti-cola'
 import { ImagensDaQuestao } from '@/components/questoes/imagens-da-questao'
+import { RecursoVisualDaQuestao } from '@/components/provas/recurso-visual'
+import { TextoComentado } from '@/components/provas/texto-comentado'
 import type { ImagemDeQuestao, LayoutDeImagens } from '@/lib/questoes/imagens'
 import {
   imagensDaResposta,
@@ -2571,19 +2573,6 @@ ${respostaAluno}`
   // Helper: replace \nl with actual newlines
   const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
-  // Helper: render text with **bold** and *italic* inline markdown as React nodes
-  const renderRichText = (text: string): React.ReactNode => {
-    const processed = formatText(text)
-    const parts = processed.split(/(\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g)
-    return parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**'))
-        return <strong key={i}>{part.slice(2, -2)}</strong>
-      if (part.startsWith('*') && part.endsWith('*'))
-        return <em key={i}>{part.slice(1, -1)}</em>
-      return part
-    })
-  }
-
   // Tela de conclusão após submissão
   if (submitted) {
     // Calcular resultados para provas práticas/pessoais
@@ -3098,7 +3087,7 @@ ${respostaAluno}`
                               {q.explanation && (
                                 <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
                                   <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Resposta Comentada</h4>
-                                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{formatText(q.explanation)}</p>
+                                  <TextoComentado texto={q.explanation} />
                                 </div>
                               )}
 
@@ -3172,7 +3161,7 @@ ${respostaAluno}`
                               {q.explanation && (
                                 <div className="bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-800/30">
                                   <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">Resposta Comentada</h4>
-                                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{formatText(q.explanation)}</p>
+                                  <TextoComentado texto={q.explanation} />
                                 </div>
                               )}
 
@@ -3681,9 +3670,7 @@ ${respostaAluno}`
                         <h4 className="font-semibold text-xs text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                           Resposta Comentada
                         </h4>
-                        {question.explanation && (
-                          <p className="text-sm whitespace-pre-wrap leading-relaxed">{formatText(question.explanation)}</p>
-                        )}
+                        {question.explanation && <TextoComentado texto={question.explanation} />}
                         {/* As imagens do comentário — o esquema, o fluxograma, a
                             lâmina com o achado. Só chegam ao navegador depois do
                             término (ver lib/provas/sanitizar-prova.ts). */}
@@ -4768,6 +4755,9 @@ ${respostaAluno}`
                       onAmpliar={(src) => setExamImageModal({ src })}
                     />
 
+                    {/* Tabela, gráfico, esquema ou citação da questão gerada por IA. */}
+                    <RecursoVisualDaQuestao recurso={question.supportMaterial} />
+
                     {/* Comando */}
                     <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
                       <HighlightableText
@@ -4880,9 +4870,7 @@ ${respostaAluno}`
                             </button>
                             {revealedExplanations.has(question.id) && (
                               <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10 space-y-3">
-                                <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
-                                  {question.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
-                                </p>
+                                <TextoComentado texto={question.explanation} className="text-amber-900/85 dark:text-amber-100/75" />
                                 <ImagensDaQuestao
                                   imagens={imagensDaResposta(question)}
                                   layout={layoutDaResposta(question)}
@@ -5148,6 +5136,8 @@ ${respostaAluno}`
               onAmpliar={(src) => setExamImageModal({ src })}
             />
 
+            <RecursoVisualDaQuestao recurso={currentQuestion.supportMaterial} />
+
             {/* Comando */}
             <div className="rounded-xl border border-primary/15 border-l-4 border-l-primary/40 bg-primary/5 p-4">
               <HighlightableText
@@ -5276,9 +5266,7 @@ ${respostaAluno}`
                     </button>
                     {revealedExplanations.has(currentQuestion.id) && (
                       <div className="px-4 py-4 border-t border-amber-200/50 dark:border-amber-700/30 bg-amber-50/30 dark:bg-amber-950/10 space-y-3">
-                        <p className="text-sm text-amber-900/85 dark:text-amber-100/75 whitespace-pre-wrap leading-relaxed">
-                          {currentQuestion.explanation.replace(/\\nl/g, '\n').replace(/\\n/g, '\n')}
-                        </p>
+                        <TextoComentado texto={currentQuestion.explanation} className="text-amber-900/85 dark:text-amber-100/75" />
                         <ImagensDaQuestao
                           imagens={imagensDaResposta(currentQuestion)}
                           layout={layoutDaResposta(currentQuestion)}
@@ -5802,9 +5790,7 @@ ${respostaAluno}`
                 <section className="space-y-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 sm:p-4">
                   <h4 className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">Resposta comentada</h4>
                   {feedbackData.explanation && (
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-amber-950 dark:text-amber-50">
-                      {renderRichText(feedbackData.explanation)}
-                    </div>
+                    <TextoComentado texto={feedbackData.explanation} className="text-amber-950 dark:text-amber-50" />
                   )}
                   <ImagensDaQuestao
                     imagens={feedbackData.imagensDaResposta || []}

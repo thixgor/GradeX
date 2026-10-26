@@ -11,7 +11,10 @@ import {
   registrarUsoDoPlano,
   resolverPermissoes,
 } from '@/lib/plan-entitlements-server'
-import { gerarConteudoGemini } from '@/lib/ia/gemini'
+import { ErroGemini } from '@/lib/ia/gemini'
+import { corpoDeIaBloqueada, iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
+import { FOCOS_DOS_CARTOES, MAXIMO_DE_CARTOES, gerarFlashcards, type FocoDosCartoes } from '@/lib/ia/estudo/gerador-de-flashcards'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { v4 as uuidv4 } from 'uuid'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 
@@ -33,70 +36,6 @@ export const dynamic = 'force-dynamic'
  */
 function needsDailyReset(lastReset: Date | null): boolean {
   return !lastReset || !mesmoDiaEmBrasilia(new Date(), lastReset)
-}
-
-async function fetchFlashcardPrompt(
-  theme: string,
-  title: string,
-  difficulty: number,
-  randomDifficulty: boolean,
-  cards: number,
-): Promise<any[]> {
-  const difficultyPct = Math.round(difficulty * 100)
-
-  const prompt = `Você é um treinador de flashcards agressivo e direto. Gere ${cards} flashcards sobre o tema "${theme}" com o título "${title}".
-
-RETORNE APENAS UM ARRAY JSON VÁLIDO, SEM MARKDOWN, SEM BACKTICKS, SEM EXPLICAÇÕES.
-
-Formato exato (array de objetos):
-[{"front":"Pergunta curta e cruel com até 25 palavras","back":"Resposta exata + explicação curta e agressiva (até 80 palavras)","hint":"Dica de fogo direta para desbloquear o raciocínio","objectives":["Objetivo 1","Objetivo 2","Objetivo 3"]},...]
-
-Regras:
-- FRONT: máxima tensão, linguagem ativa, sem rodeios. Máximo 25 palavras.
-- BACK: resposta exata + explicação curta e agressiva. Máximo 80 palavras.
-- HINT: dica de fogo direta para desbloquear o raciocínio.
-- OBJECTIVES: até 3 metas específicas por cartão (strings simples).
-- Dificuldade alvo: ${randomDifficulty ? 'misture fácil/médio/difícil' : difficultyPct + '%'}.
-- Não repita objetivos entre cartões.
-- RESPONDA APENAS COM O JSON ARRAY, NADA MAIS. SEM MARKDOWN. SEM BACKTICKS.`
-
-  // Modelo, chave (seção Flashcards → padrão → env) e raciocínio vêm do
-  // helper único; o prazo cabe nos 30 s da função.
-  const { texto: generatedText } = await gerarConteudoGemini({
-    secao: 'flashcards',
-    corpo: {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.9,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 4096,
-      },
-    },
-    timeoutMs: 24_000,
-    prazoMs: 27_000,
-  })
-
-  let parsed: any
-  try {
-    // Tentar remover markdown se existir
-    let cleanedText = generatedText.trim()
-    if (cleanedText.startsWith('```json')) {
-      cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '')
-    } else if (cleanedText.startsWith('```')) {
-      cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '')
-    }
-    parsed = JSON.parse(cleanedText)
-  } catch (parseError) {
-    console.error('Erro ao parsear JSON do Gemini:', generatedText)
-    throw new Error('Resposta da IA em formato inválido')
-  }
-
-  if (!Array.isArray(parsed)) {
-    throw new Error('Resposta inválida da IA')
-  }
-
-  return parsed
 }
 
 async function resetFlashcardLimitsIfNeeded(usersCollection: any, user: WithId<User>): Promise<WithId<User>> {
@@ -168,8 +107,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const title = String(body.title || '').slice(0, 100).trim()
-    const theme = String(body.theme || '').slice(0, 100).trim()
-    const { difficulty, randomDifficulty, cardsRequested, templateId } = body
+    // O tema pode vir do cronograma ("Tópico › Subtópico › Módulo"): cabe mais que 100.
+    const theme = String(body.theme || '').replace(/\s+/g, ' ').slice(0, 300).trim()
+    const notes = String(body.notes || '').replace(/\s+/g, ' ').slice(0, 400).trim()
+    const { templateId } = body
+    const randomDifficulty = body.randomDifficulty === true
+    const difficulty = Math.min(1, Math.max(0, Number(body.difficulty) || 0.6))
+    const cardsRequested = Math.max(1, Math.min(MAXIMO_DE_CARTOES, Math.round(Number(body.cardsRequested) || 10)))
+    const foco: FocoDosCartoes = FOCOS_DOS_CARTOES.some((f) => f.id === body.foco) ? body.foco : 'misto'
 
     if (!title || !theme) {
       return NextResponse.json({ error: 'Título e tema são obrigatórios' }, { status: 400 })
@@ -186,9 +131,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    user = await resetFlashcardLimitsIfNeeded(usersCollection, user)
-
     const isAdmin = session.role === 'admin'
+
+    // Flashcards com IA: só Quest+ e Plus+ (lib/ia/estudo/acesso.ts).
+    if (!iaDeEstudoLiberada(user.accountType, isAdmin)) {
+      return NextResponse.json(corpoDeIaBloqueada('flashcards'), { status: 403 })
+    }
+    const ritmo = await checkRateLimit(session.userId, 'flashcards_ia', 20, 60_000)
+    if (!ritmo.success) {
+      return NextResponse.json({ error: 'Muitas gerações seguidas. Aguarde um minuto.' }, { status: 429 })
+    }
+
+    user = await resetFlashcardLimitsIfNeeded(usersCollection, user)
     const limits = getFlashcardLimits(user.accountType, isAdmin)
 
     // Regra do plano assinado para "Flashcards por IA". Quando ela vale, os
@@ -261,8 +215,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Gerar flashcards via IA
-    const generatedCards = await fetchFlashcardPrompt(theme, title, difficulty, randomDifficulty, cardsRequested)
+    // Gerar flashcards via IA (uma chamada, JSON estruturado, teto de cartões).
+    let generatedCards
+    try {
+      generatedCards = await gerarFlashcards({
+        tema: theme,
+        titulo: title,
+        quantidade: Math.min(cardsRequested, limits.cardsPerDeck),
+        dificuldade: randomDifficulty ? null : difficulty,
+        foco,
+        observacoes: notes || template?.contextHint || undefined,
+      })
+    } catch (erro) {
+      const temporario = erro instanceof ErroGemini ? erro.temporario : false
+      console.error('[flashcards/ia] falha ao gerar:', erro instanceof Error ? erro.message.slice(0, 200) : erro)
+      return NextResponse.json(
+        { error: temporario ? 'A IA está sobrecarregada agora. Tente de novo em instantes.' : (erro as Error)?.message || 'Erro ao gerar flashcards' },
+        { status: temporario ? 503 : 502 },
+      )
+    }
 
     const deck: FlashcardDeck = {
       userId: session.userId,

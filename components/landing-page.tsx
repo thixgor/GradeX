@@ -3692,7 +3692,7 @@ function Plans() {
   // é contra a conta gratuita, não contra um segundo plano pago.
   const gratuito = [
     'Conta grátis, sem cartão',
-    'Provas e flashcards por IA na sua ementa',
+    'Flashcards manuais e decks da comunidade',
     'Amostra do Banco de Questões',
     'Patologias liberadas do Manual Clínico',
     'Cronograma básico',
@@ -4021,7 +4021,7 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
     ],
     [
       'Qual a diferença entre o grátis e o Plus+?',
-      'O grátis é para conhecer a plataforma e começar a estudar: amostra do banco, patologias liberadas do Manual, cronograma básico e provas e flashcards por IA na sua ementa. O Plus+ é a plataforma inteira sem trava — Manual Clínico completo, todos os materiais, banco ilimitado, aulas, mapas mentais e cronogramas.',
+      'O grátis é para conhecer a plataforma e começar a estudar: amostra do banco, patologias liberadas do Manual, cronograma básico e flashcards manuais. Provas e flashcards gerados por IA são dos assinantes Quest+ e Plus+. O Plus+ é a plataforma inteira sem trava — Manual Clínico completo, todos os materiais, banco ilimitado, aulas, mapas mentais e cronogramas.',
     ],
     [
       'É só para aluno da minha faculdade?',

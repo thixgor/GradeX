@@ -59,6 +59,9 @@ export function sanitizarQuestaoParaAluno(questao: Question): QuestaoSanitizada 
     // o endereço delas viajava no mesmo JSON.
     explanationImages: _explanationImages,
     explanationImagesLayout: _explanationImagesLayout,
+    // O "foco" que a IA anotou ("mecanismo do edema cardiogênico") pode dizer
+    // a resposta antes da hora.
+    aiInfo: _aiInfo,
     ...resto
   } = questao
 

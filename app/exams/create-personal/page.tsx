@@ -1,563 +1,828 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
-  ArrowLeft,
-  ArrowRight,
+  BarChart3,
+  CalendarRange,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  GitBranch,
   Loader2,
+  Play,
+  Plus,
+  Quote,
+  RotateCcw,
+  ShieldCheck,
   Sparkles,
-  Clock,
-  ListChecks,
-  Zap,
-  MessageSquare,
-  CheckCircle2,
-  Crown,
-  Info,
-  Database,
-  Combine,
+  Table2,
+  X,
 } from 'lucide-react'
-import { PageLoading } from '@/components/page-loading'
-import { isPlusAccount } from '@/lib/account-tier'
 
-interface User {
-  id: string
-  email: string
-  name: string
-  role: 'admin' | 'user'
-  accountType?: 'gratuito' | 'trial' | 'premium'
+import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { AnelProgresso } from '@/components/flashcards/pecas-ios'
+import { Campo, ChipAlternar, Rascunho, Segmentado, Stepper, VitrineIa, useFraseRotativa } from '@/components/estudo-ia/pecas'
+import { SeletorDeTemas } from '@/components/estudo-ia/seletor-de-temas'
+import { FILTROS_VAZIOS, FiltrosDoBancoIos, parametrosDoBanco, type FiltrosDoBanco } from '@/components/estudo-ia/filtros-do-banco'
+import { ToastAlert } from '@/components/ui/toast-alert'
+import { iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
+import {
+  FORMATOS,
+  MAXIMO_DE_QUESTOES_IA,
+  MAXIMO_DE_TEMAS,
+  emLotes,
+  formatosPossiveis,
+  planejarProva,
+  type EstiloDaQuestao,
+  type NivelDaQuestao,
+  type VagaDaQuestao,
+} from '@/lib/ia/estudo/plano-da-prova'
+import type { FormatoDeQuestao } from '@/lib/ia/estudo/auditoria-de-questoes'
+import { TIPOS_DE_RECURSO, type TipoDeRecurso } from '@/lib/ia/estudo/recursos-visuais'
+import type { CustomContext, Question } from '@/lib/types'
+
+/**
+ * Prova com IA — um fluxo só, do tema à prova pronta.
+ *
+ * Eram duas telas (ajustes da prova → `/exams/personal/[id]/generate-questions`)
+ * com estado passado por `sessionStorage`, um modal de cronograma com os
+ * modelos antigos e uma única requisição que gerava a prova inteira — se ela
+ * passasse de 120 s, tudo se perdia. Agora:
+ *
+ *  - a tela monta o plano da prova (`planejarProva`) e pede à IA em lotes de
+ *    três, dois lotes por vez, com progresso real e reenvio do que faltar;
+ *  - os temas vêm da ementa dos `/cronogramas` (`SeletorDeTemas`);
+ *  - cada lote volta auditado (anti-padrão: correta mais longa, distratora
+ *    banal, termos absolutos…) e a tela mostra o placar dessa revisão;
+ *  - a prova é salva sozinha ao fim, com a resposta comentada de cada questão.
+ */
+
+type Modo = 'ai' | 'banco' | 'misto'
+type Contexto = 'medicina' | 'psicologia' | 'biomedicina' | 'odontologia' | 'enem' | 'uerj' | 'outro'
+
+const CONTEXTOS: { id: Contexto; rotulo: string; prompt: string }[] = [
+  { id: 'medicina', rotulo: 'Medicina', prompt: 'Medicina — padrão de residência médica, casos clínicos e raciocínio aplicado' },
+  { id: 'psicologia', rotulo: 'Psicologia', prompt: 'Psicologia — situações clínicas e raciocínio psicológico aplicado' },
+  { id: 'biomedicina', rotulo: 'Biomedicina', prompt: 'Biomedicina — contextualização laboratorial e raciocínio biomédico' },
+  { id: 'odontologia', rotulo: 'Odontologia', prompt: 'Odontologia — casos clínicos e raciocínio odontológico aplicado' },
+  { id: 'enem', rotulo: 'ENEM', prompt: 'ENEM — interdisciplinar, interpretativa, com texto-base e situação-problema' },
+  { id: 'uerj', rotulo: 'UERJ', prompt: 'Vestibular UERJ — analítica, crítica, com ênfase em raciocínio' },
+  { id: 'outro', rotulo: 'Outro', prompt: '' },
+]
+
+const ICONE_RECURSO: Record<TipoDeRecurso, typeof Table2> = {
+  tabela: Table2,
+  grafico: BarChart3,
+  esquema: GitBranch,
+  citacao: Quote,
 }
 
-interface AccountLimits {
-  dailyExams: number
-  aiQuestionsPerExam: number
+const FRASES = [
+  'Montando os casos clínicos…',
+  'Escrevendo distratoras que fazem pensar…',
+  'Conferindo se enunciado, comando e alternativas casam…',
+  'Caçando a alternativa mais longa e o "exclusivamente"…',
+  'Escrevendo a resposta comentada, do zero…',
+]
+
+interface Progresso {
+  total: number
+  feitas: number
+  reparadas: number
+  descartadas: number
+  falhas: number
 }
 
-export default function CreatePersonalExamPage() {
+const espera = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+const letraCorreta = (q: Question) => q.alternatives?.find((a) => a.isCorrect)?.letter ?? ''
+
+/** A ordem final evita três corretas na mesma letra em sequência (os lotes chegam fora de ordem). */
+function semTresIguais(questoes: Question[]): Question[] {
+  const q = questoes.slice()
+  for (let i = 2; i < q.length; i++) {
+    const l = letraCorreta(q[i])
+    if (l && l === letraCorreta(q[i - 1]) && l === letraCorreta(q[i - 2])) {
+      const j = q.findIndex((x, k) => k > i && letraCorreta(x) !== l)
+      if (j > 0) [q[i], q[j]] = [q[j], q[i]]
+    }
+  }
+  return q
+}
+
+export default function CriarProvaComIaPage() {
   const router = useRouter()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [creating, setCreating] = useState(false)
+  const [conta, setConta] = useState<{ carregada: boolean; liberada: boolean }>({ carregada: false, liberada: false })
 
-  // Mode state
-  const [examMode, setExamMode] = useState<'ai' | 'banco' | 'misto'>('ai')
+  const [modo, setModo] = useState<Modo>('ai')
+  const [temas, setTemas] = useState<string[]>([])
+  const [temaDigitado, setTemaDigitado] = useState('')
+  const [cronogramaAberto, setCronogramaAberto] = useState(false)
+  const [contexto, setContexto] = useState<Contexto>('medicina')
+  const [contextoLivre, setContextoLivre] = useState('')
+  const [contextosSalvos, setContextosSalvos] = useState<CustomContext[]>([])
 
-  // Form state
-  const [title, setTitle] = useState('')
-  const [numberOfAlternatives, setNumberOfAlternatives] = useState(5)
-  const [scoringMethod, setScoringMethod] = useState<'normal' | 'tri'>('normal')
-  const [totalPoints, setTotalPoints] = useState(100)
-  const [navigationMode, setNavigationMode] = useState<'paginated' | 'scroll'>('paginated')
-  const [timePerQuestion, setTimePerQuestion] = useState(0)
-  const [feedbackMode, setFeedbackMode] = useState<'immediate' | 'end'>('end')
+  const [quantidade, setQuantidade] = useState(10)
+  const [alternativas, setAlternativas] = useState<4 | 5>(5)
+  const [nivel, setNivel] = useState<NivelDaQuestao | 'misto'>('misto')
+  const [estilo, setEstilo] = useState<EstiloDaQuestao | 'misto'>('misto')
+  const [formatos, setFormatos] = useState<FormatoDeQuestao[]>(['standard', 'multiple-affirmative', 'assertion-reason'])
+  const [recursos, setRecursos] = useState<TipoDeRecurso[]>(['tabela', 'grafico', 'esquema'])
+
+  const [filtros, setFiltros] = useState<FiltrosDoBanco>(FILTROS_VAZIOS)
+  const [quantidadeBanco, setQuantidadeBanco] = useState(10)
+
+  const [titulo, setTitulo] = useState('')
+  const [navegacao, setNavegacao] = useState<'paginated' | 'scroll'>('paginated')
+  const [feedback, setFeedback] = useState<'end' | 'immediate'>('end')
+  const [minutosPorQuestao, setMinutosPorQuestao] = useState(0)
+  const [pontuacao, setPontuacao] = useState<'normal' | 'tri'>('normal')
+  const [pontos, setPontos] = useState(100)
+
+  const [fase, setFase] = useState<'config' | 'gerando' | 'pronta'>('config')
+  const [progresso, setProgresso] = useState<Progresso>({ total: 0, feitas: 0, reparadas: 0, descartadas: 0, falhas: 0 })
+  const [questoes, setQuestoes] = useState<Question[]>([])
+  const [provaId, setProvaId] = useState<string | null>(null)
+  const [baixando, setBaixando] = useState(false)
+  const abortar = useRef<AbortController | null>(null)
+  const frase = useFraseRotativa(FRASES, fase === 'gerando', 2800)
+
+  const [toast, setToast] = useState<{ open: boolean; message: string; type?: 'error' | 'success' | 'info' }>({ open: false, message: '' })
+  const avisar = (message: string, type: 'error' | 'success' | 'info' = 'error') => setToast({ open: true, message, type })
 
   useEffect(() => {
-    checkAuth()
-  }, [])
+    fetch('/api/auth/me')
+      .then((r) => {
+        if (r.status === 401) router.push('/auth/login?redirect=/exams/create-personal')
+        return r.ok ? r.json() : null
+      })
+      .then((d) => setConta({ carregada: true, liberada: iaDeEstudoLiberada(d?.user?.accountType, d?.user?.role === 'admin') }))
+      .catch(() => setConta({ carregada: true, liberada: false }))
+    fetch('/api/admin/settings')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (s?.personalExamsEnabled === false) router.push('/')
+      })
+      .catch(() => {})
+    fetch('/api/contexts')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d?.success && setContextosSalvos(d.contexts || []))
+      .catch(() => {})
+    return () => abortar.current?.abort()
+  }, [router])
 
-  async function checkAuth() {
-    try {
-      const res = await fetch('/api/auth/me')
-      if (!res.ok) {
-        router.push('/auth/login')
-        return
+  // Asserção-razão tem cinco alternativas fixas.
+  useEffect(() => {
+    if (alternativas === 4) setFormatos((f) => (f.includes('assertion-reason') ? formatosPossiveis(f, 4) : f))
+  }, [alternativas])
+  useEffect(() => {
+    if (navegacao === 'scroll') setFeedback('end')
+  }, [navegacao])
+
+  const usaIa = modo !== 'banco'
+  const usaBanco = modo !== 'ai'
+  const totalQuestoes = (usaIa ? quantidade : 0) + (usaBanco ? quantidadeBanco : 0)
+  const textoDoContexto =
+    contexto === 'outro' ? contextoLivre.trim() || 'Prova de estudo' : CONTEXTOS.find((c) => c.id === contexto)!.prompt
+  const tituloFinal = titulo.trim() || (temas[0] ? `Prova · ${temas[0].split(' — ')[0]}` : 'Minha prova')
+
+  function adicionarTemas(novos: string[]) {
+    setTemas((atual) => {
+      const todos = [...atual]
+      for (const t of novos.map((x) => x.replace(/\s+/g, ' ').trim().slice(0, 160)).filter(Boolean)) {
+        if (!todos.some((y) => y.toLowerCase() === t.toLowerCase()) && todos.length < MAXIMO_DE_TEMAS) todos.push(t)
       }
-      const data = await res.json()
-      setUser(data.user)
+      return todos
+    })
+  }
 
-      const settingsRes = await fetch('/api/admin/settings')
-      if (settingsRes.ok) {
-        const settings = await settingsRes.json()
-        if (settings.personalExamsEnabled === false) {
-          router.push('/')
-          return
+  function teclaNoTema(e: KeyboardEvent<HTMLInputElement>) {
+    if ((e.key === 'Enter' || e.key === ',' || e.key === ';') && temaDigitado.trim()) {
+      e.preventDefault()
+      adicionarTemas([temaDigitado])
+      setTemaDigitado('')
+    } else if (e.key === 'Backspace' && !temaDigitado && temas.length) {
+      setTemas((t) => t.slice(0, -1))
+    }
+  }
+
+  const podeGerar = conta.liberada && totalQuestoes > 0 && (!usaIa || temas.length > 0 || temaDigitado.trim().length > 0) && formatos.length > 0
+
+  async function buscarBanco(n: number): Promise<Question[]> {
+    const r = await fetch(`/api/banco/questoes/random?${parametrosDoBanco(filtros, n)}`)
+    const d = await r.json().catch(() => ({}))
+    if (!r.ok) throw new Error(d?.error || 'Não foi possível buscar questões do Banco.')
+    return (d.questions || []).map((q: Question) => ({ ...q, origin: 'banco' }))
+  }
+
+  async function gerarComIa(listaDeTemas: string[], sinal: AbortSignal): Promise<Question[]> {
+    const plano = planejarProva({ temas: listaDeTemas, quantidade, alternativas, nivel, estilo, formatos, recursos })
+    const fila: { vagas: VagaDaQuestao[]; tentativas: number }[] = emLotes(plano).map((vagas) => ({ vagas, tentativas: 0 }))
+    const prontas: Question[] = []
+    const focos: string[] = []
+    let bloqueada: string | null = null
+
+    const trabalhador = async () => {
+      while (fila.length && !sinal.aborted && !bloqueada) {
+        const lote = fila.shift()!
+        try {
+          const r = await fetch('/api/exams/temp-ia/generate-questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vagas: lote.vagas, alternativas, contexto: textoDoContexto, evitar: focos }),
+            signal: sinal,
+          })
+          const d = await r.json().catch(() => ({}))
+          if (r.status === 403) {
+            bloqueada = d?.error || 'Sem permissão para gerar.'
+            return
+          }
+          if (!r.ok) {
+            if (lote.tentativas < 1 && (r.status >= 500 || r.status === 429)) {
+              fila.push({ ...lote, tentativas: lote.tentativas + 1 })
+              await espera(r.status === 429 ? 6000 : 1500)
+            } else {
+              setProgresso((p) => ({ ...p, falhas: p.falhas + lote.vagas.length }))
+            }
+            continue
+          }
+          const novas: Question[] = (d.questoes || []).map((q: Question) => ({ ...q, origin: 'ia' }))
+          prontas.push(...novas)
+          focos.push(...novas.map((q) => q.aiInfo?.foco || '').filter(Boolean))
+          const faltaram: VagaDaQuestao[] = Array.isArray(d.faltaram) ? d.faltaram : []
+          if (faltaram.length && lote.tentativas < 1) fila.push({ vagas: faltaram, tentativas: lote.tentativas + 1 })
+          setProgresso((p) => ({
+            ...p,
+            feitas: p.feitas + novas.length,
+            reparadas: p.reparadas + (d.auditoria?.reparadas || 0),
+            descartadas: p.descartadas + (d.auditoria?.descartadas || 0),
+            falhas: p.falhas + (lote.tentativas >= 1 ? faltaram.length : 0),
+          }))
+        } catch (e) {
+          if ((e as Error)?.name === 'AbortError') return
+          if (lote.tentativas < 1) fila.push({ ...lote, tentativas: lote.tentativas + 1 })
+          else setProgresso((p) => ({ ...p, falhas: p.falhas + lote.vagas.length }))
         }
       }
-    } catch (error) {
-      console.error('Erro ao verificar autenticação:', error)
-      router.push('/auth/login')
-    } finally {
-      setLoading(false)
     }
+    await Promise.all([trabalhador(), trabalhador()])
+    if (bloqueada) {
+      setConta((c) => ({ ...c, liberada: false }))
+      throw new Error(bloqueada)
+    }
+    return semTresIguais(prontas)
   }
 
-  const getAccountLimits = (): AccountLimits => {
-    const accountType = user?.accountType || 'gratuito'
-    const limits = {
-      gratuito: { dailyExams: 5, aiQuestionsPerExam: 5 },
-      trial: { dailyExams: 10, aiQuestionsPerExam: 10 },
-      premium: { dailyExams: 25, aiQuestionsPerExam: 20 },
+  async function gerar() {
+    const listaDeTemas = temaDigitado.trim() ? [...temas, temaDigitado.trim()] : temas
+    if (temaDigitado.trim()) {
+      adicionarTemas([temaDigitado])
+      setTemaDigitado('')
     }
-    return limits[accountType]
-  }
-
-  const getAccountTypeLabel = () => {
-    const accountType = user?.accountType || 'gratuito'
-    const labels = {
-      gratuito: { label: 'Gratuito', color: 'text-gray-600 bg-gray-100 dark:bg-gray-800' },
-      trial: { label: 'Trial', color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/50' },
-      premium: { label: 'Plus+', color: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/50' },
-    }
-    return labels[accountType]
-  }
-
-  const handleCreateExam = async () => {
-    if (!title.trim()) {
-      alert('Digite um título para a prova')
-      return
-    }
-
-    if (numberOfAlternatives < 2 || numberOfAlternatives > 5) {
-      alert('Quantidade de alternativas deve estar entre 2 e 5')
-      return
-    }
-
-    if (feedbackMode === 'immediate' && navigationMode !== 'paginated') {
-      alert('Feedback imediato só funciona em modo de navegação paginada')
-      return
-    }
-
-    setCreating(true)
+    const controle = new AbortController()
+    abortar.current = controle
+    setFase('gerando')
+    setProgresso({ total: totalQuestoes, feitas: 0, reparadas: 0, descartadas: 0, falhas: 0 })
     try {
-      const examData = {
-        title,
-        numberOfAlternatives,
-        scoringMethod,
-        totalPoints: scoringMethod === 'tri' ? 1000 : totalPoints,
-        navigationMode,
-        duration: timePerQuestion ? 60 * timePerQuestion : undefined,
-        isPracticeExam: true,
-        isPersonalExam: true,
-        feedbackMode,
-        examMode,
+      let todas: Question[] = []
+      if (usaBanco) {
+        const banco = await buscarBanco(quantidadeBanco)
+        if (banco.length === 0 && modo === 'banco') throw new Error('Nenhuma questão do Banco com esses filtros.')
+        todas = banco
+        setProgresso((p) => ({ ...p, feitas: p.feitas + banco.length }))
       }
+      if (usaIa) {
+        const ia = await gerarComIa(listaDeTemas, controle.signal)
+        if (controle.signal.aborted) return
+        if (ia.length === 0) throw new Error('A IA não conseguiu gerar questões agora. Tente de novo em instantes.')
+        // Na mista, intercala: a prova não vira "bloco do banco, bloco da IA".
+        if (todas.length) {
+          const misturadas: Question[] = []
+          const max = Math.max(todas.length, ia.length)
+          for (let i = 0; i < max; i++) {
+            if (ia[i]) misturadas.push(ia[i])
+            if (todas[i]) misturadas.push(todas[i])
+          }
+          todas = misturadas
+        } else {
+          todas = ia
+        }
+      }
+      if (controle.signal.aborted) return
+      const numeradas = todas.map((q, i) => ({ ...q, number: i + 1 }))
+      setQuestoes(numeradas)
 
-      sessionStorage.setItem('pendingExamData', JSON.stringify(examData))
-
-      const tempId = 'temp-' + Date.now()
-      router.push(`/exams/personal/${tempId}/generate-questions`)
-    } catch (error) {
-      console.error('Erro ao preparar prova:', error)
-      alert('Erro ao preparar prova')
-    } finally {
-      setCreating(false)
+      const r = await fetch('/api/exams', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: tituloFinal.slice(0, 140),
+          numberOfAlternatives: alternativas,
+          scoringMethod: pontuacao,
+          totalPoints: pontuacao === 'tri' ? 1000 : pontos,
+          navigationMode: navegacao,
+          duration: minutosPorQuestao ? minutosPorQuestao * numeradas.length : undefined,
+          isPracticeExam: true,
+          isPersonalExam: true,
+          feedbackMode: feedback,
+          examMode: modo,
+          numberOfQuestions: numeradas.length,
+          aiQuestionsCount: numeradas.filter((q) => (q as any).origin === 'ia').length,
+          questions: numeradas,
+        }),
+      })
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) {
+        if (d?.requiresUpgrade && d?.motivo === 'ia-exclusiva-pagantes') setConta((c) => ({ ...c, liberada: false }))
+        throw new Error(d?.error || 'Não foi possível salvar a prova.')
+      }
+      setProvaId(d.examId)
+      setFase('pronta')
+    } catch (e) {
+      if ((e as Error)?.name === 'AbortError' || controle.signal.aborted) return
+      avisar((e as Error).message)
+      setFase('config')
     }
   }
 
-  if (loading) {
-    return <PageLoading variant="fullscreen" />
+  function cancelar() {
+    abortar.current?.abort()
+    setFase('config')
   }
 
-  const limits = getAccountLimits()
-  const accountType = getAccountTypeLabel()
+  async function baixarPdf() {
+    if (!questoes.length) return
+    setBaixando(true)
+    try {
+      const { generateExamStudyPDF, downloadPDF } = await import('@/lib/pdf-generator')
+      const blob = await generateExamStudyPDF({
+        title: tituloFinal,
+        numberOfQuestions: questoes.length,
+        numberOfAlternatives: alternativas,
+        scoringMethod: pontuacao,
+        questions: questoes,
+      } as any)
+      downloadPDF(blob, `${tituloFinal.replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}-com-respostas-comentadas.pdf`)
+    } catch {
+      avisar('Não foi possível gerar o PDF agora.')
+    } finally {
+      setBaixando(false)
+    }
+  }
+
+  const porLetra = useMemo(() => {
+    const contagem: Record<string, number> = {}
+    for (const q of questoes) {
+      const l = letraCorreta(q)
+      if (l) contagem[l] = (contagem[l] || 0) + 1
+    }
+    return contagem
+  }, [questoes])
+
+  // ── Telas ──────────────────────────────────────────────────────────────
+
+  const cabecalho = (
+    <>
+      <Link href="/provas" className="ios-voltar -ml-2">
+        <ChevronLeft className="h-5 w-5" strokeWidth={2.5} /> Provas
+      </Link>
+      <header className="mb-6 mt-2">
+        <h1 className="ios-titulo-grande">Prova com IA</h1>
+        <p className="ios-rotulo-2 mt-1.5 max-w-xl text-[16px] leading-relaxed sm:text-[17px]">
+          Do seu cronograma a uma prova de verdade — tabelas, gráficos, esquemas e resposta comentada que ensina do zero.
+        </p>
+      </header>
+    </>
+  )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-purple-500/5">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-lg border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
+    <AppShell vidro headerTitle="Prova com IA" headerSubtitle="Provas pessoais">
+      <FundoIos>
+        <div className="mx-auto max-w-3xl px-4 pb-10 pt-3 sm:px-6 sm:pt-5">
+          {cabecalho}
 
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${accountType.color}`}>
-              {isPlusAccount(user?.accountType) && <Crown className="h-4 w-4" />}
-              {accountType.label}
+          {!conta.carregada ? (
+            <div className="ia-folha space-y-4 p-6">
+              <div className="ios-esqueleto h-10 rounded-2xl" />
+              <div className="ios-esqueleto h-14 rounded-2xl" />
+              <div className="ios-esqueleto h-24 rounded-2xl" />
             </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Title Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white mb-4 shadow-lg shadow-purple-500/30">
-            <Sparkles className="h-8 w-8" />
-          </div>
-          <h1 className="text-3xl font-bold mb-2">Criar Prova Pessoal</h1>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Configure sua prova personalizada
-          </p>
-        </div>
-
-        {/* Account Limits Info */}
-        <Card className="mb-8 border-purple-200 dark:border-purple-800 bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-950/30 dark:to-transparent">
-          <CardContent className="py-4">
-            <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
-                  <ListChecks className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">
-                    {user?.accountType === 'gratuito' ? 'Limite Total' : 'Provas por dia'}
-                  </p>
-                  <p className="font-semibold">{limits.dailyExams}</p>
-                </div>
+          ) : !conta.liberada ? (
+            <VitrineIa
+              recurso="provas"
+              beneficios={[
+                'Temas direto da ementa do seu cronograma',
+                'Questões com tabelas, gráficos, esquemas e citações',
+                'Distratoras que fazem pensar — revisadas contra os vícios de IA',
+                'Resposta comentada que ensina do zero, também no PDF',
+              ]}
+            />
+          ) : fase === 'gerando' ? (
+            <section className="ia-folha flex min-h-[460px] flex-col items-center justify-center gap-6 px-6 py-12 text-center" aria-busy="true">
+              <AnelProgresso valor={progresso.feitas} total={Math.max(1, progresso.total)} tamanho={132} espessura={11} rotulo={`${progresso.feitas} de ${progresso.total} questões`}>
+                <span className="text-[30px] font-bold tracking-tight ios-numeros">{progresso.feitas}</span>
+                <span className="ios-rotulo-2 text-[12px] ios-numeros">de {progresso.total}</span>
+              </AnelProgresso>
+              <div>
+                <p className="text-[19px] font-bold tracking-tight">Escrevendo sua prova</p>
+                <p key={frase} className="ia-status ios-rotulo-2 mt-1 text-[15px]" aria-live="polite">
+                  {frase}
+                </p>
               </div>
-              <div className="h-8 w-px bg-border hidden sm:block" />
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
-                  <Zap className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Questões IA por prova</p>
-                  <p className="font-semibold">até {limits.aiQuestionsPerExam}</p>
-                </div>
+              <Rascunho linhas={3} className="w-full max-w-sm" />
+              <div className="ios-rotulo-2 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[13px]">
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck className="ios-tinta h-4 w-4" /> Revisão anti-padrão ativa
+                </span>
+                {progresso.reparadas > 0 && <span className="ios-numeros">{progresso.reparadas} reescritas</span>}
+                {progresso.descartadas > 0 && <span className="ios-numeros">{progresso.descartadas} refeitas</span>}
               </div>
-              {!isPlusAccount(user?.accountType) && (
-                <>
-                  <div className="h-8 w-px bg-border hidden sm:block" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => router.push('/buy')}
-                    className="gap-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20"
-                  >
-                    <Crown className="h-4 w-4" />
-                    Fazer Upgrade
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Mode Selection */}
-        <div className="mb-8">
-          <Label className="text-sm font-medium mb-3 block">Modo de Criacao</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {([
-              {
-                value: 'ai' as const,
-                label: 'Apenas IA',
-                description: 'Questoes geradas por inteligencia artificial',
-                icon: Sparkles,
-                gradient: 'from-violet-500 to-purple-600',
-                glowColor: 'shadow-violet-500/20',
-                borderActive: 'border-violet-500',
-                bgActive: 'bg-violet-500/5',
-              },
-              {
-                value: 'banco' as const,
-                label: 'Banco de Questoes',
-                description: 'Questoes do banco com filtros avancados',
-                icon: Database,
-                gradient: 'from-emerald-500 to-green-600',
-                glowColor: 'shadow-emerald-500/20',
-                borderActive: 'border-emerald-500',
-                bgActive: 'bg-emerald-500/5',
-              },
-              {
-                value: 'misto' as const,
-                label: 'Misto (IA + Banco)',
-                description: 'Combine questoes de IA e do banco',
-                icon: Combine,
-                gradient: 'from-amber-500 to-orange-600',
-                glowColor: 'shadow-amber-500/20',
-                borderActive: 'border-amber-500',
-                bgActive: 'bg-amber-500/5',
-              },
-            ] as const).map((mode) => {
-              const Icon = mode.icon
-              const isSelected = examMode === mode.value
-              return (
-                <button
-                  key={mode.value}
-                  type="button"
-                  onClick={() => setExamMode(mode.value)}
-                  disabled={creating}
-                  className={`relative p-5 rounded-2xl border-2 text-left transition-all duration-300 group ${
-                    isSelected
-                      ? `${mode.borderActive} ${mode.bgActive} shadow-lg ${mode.glowColor}`
-                      : 'border-muted hover:border-primary/30 bg-background hover:shadow-md'
-                  }`}
-                >
-                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br ${mode.gradient} text-white mb-3 shadow-lg ${mode.glowColor} group-hover:scale-105 transition-transform`}>
-                    <Icon className="h-5 w-5" />
+              <button type="button" onClick={cancelar} className="ios-botao-cinza ios-botao-p">
+                Cancelar
+              </button>
+            </section>
+          ) : fase === 'pronta' ? (
+            <section className="ios-assenta space-y-5">
+              <div className="ia-folha p-6 sm:p-8">
+                <p className="ios-tinta flex items-center gap-1.5 text-[13px] font-bold">
+                  <Check className="h-4 w-4" strokeWidth={3} /> Prova pronta e salva
+                </p>
+                <h2 className="ios-titulo-produto mt-1.5">{tituloFinal}</h2>
+                <div className="ios-faixa -mx-2 mt-5">
+                  <div>
+                    <span className="ios-faixa-rotulo">Questões</span>
+                    <span className="ios-faixa-valor">{questoes.length}</span>
                   </div>
-                  <p className="font-semibold text-sm mb-1">{mode.label}</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">{mode.description}</p>
-                  {isSelected && (
-                    <div className={`absolute top-3 right-3 w-5 h-5 rounded-full bg-gradient-to-br ${mode.gradient} flex items-center justify-center`}>
-                      <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                  <div>
+                    <span className="ios-faixa-rotulo">Com recurso</span>
+                    <span className="ios-faixa-valor">{questoes.filter((q) => q.supportMaterial).length}</span>
+                  </div>
+                  <div>
+                    <span className="ios-faixa-rotulo">Revisadas</span>
+                    <span className="ios-faixa-valor">{progresso.reparadas + progresso.descartadas}</span>
+                    <span className="ios-faixa-nota">pela auditoria</span>
+                  </div>
+                  {minutosPorQuestao > 0 && (
+                    <div>
+                      <span className="ios-faixa-rotulo">Tempo</span>
+                      <span className="ios-faixa-valor">{minutosPorQuestao * questoes.length}</span>
+                      <span className="ios-faixa-nota">min</span>
                     </div>
                   )}
-                </button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Main Form */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {/* Left Column - Basic Settings */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-primary" />
-                  </div>
-                  Informações Básicas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Title */}
-                <div className="space-y-2">
-                  <Label htmlFor="title" className="text-sm font-medium">
-                    Título da Prova <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="title"
-                    placeholder="Ex: Simulado de Fisiologia Cardíaca"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    disabled={creating}
-                    className="h-11"
-                  />
                 </div>
-
-                {/* Alternatives */}
-                <div className="space-y-2">
-                  <Label htmlFor="alternatives" className="text-sm font-medium">
-                    Alternativas por Questão
-                  </Label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[2, 3, 4, 5].map((num) => (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => setNumberOfAlternatives(num)}
-                        disabled={creating}
-                        className={`h-11 rounded-lg border-2 font-semibold transition-all ${numberOfAlternatives === num
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-muted hover:border-primary/50 bg-background'
-                          }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Scoring Method */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Método de Pontuação</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setScoringMethod('normal')}
-                      disabled={creating}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'normal'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        }`}
-                    >
-                      <p className="font-semibold text-sm">Normal</p>
-                      <p className="text-xs text-muted-foreground">Pontuação simples</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setScoringMethod('tri')}
-                      disabled={creating}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${scoringMethod === 'tri'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        }`}
-                    >
-                      <p className="font-semibold text-sm">TRI</p>
-                      <p className="text-xs text-muted-foreground">1000 pontos</p>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Total Points (only for normal) */}
-                {scoringMethod === 'normal' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="points" className="text-sm font-medium">
-                      Pontuação Total
-                    </Label>
-                    <Input
-                      id="points"
-                      type="number"
-                      min="1"
-                      value={totalPoints}
-                      onChange={(e) => setTotalPoints(parseInt(e.target.value) || 100)}
-                      disabled={creating}
-                      className="h-11"
-                    />
+                {Object.keys(porLetra).length > 1 && (
+                  <div className="mt-5">
+                    <p className="ios-rotulo-2 mb-2 text-[13px] font-semibold">Gabarito distribuído por igual — sem “na dúvida, C”</p>
+                    <div className="flex gap-2">
+                      {Object.keys(porLetra)
+                        .sort()
+                        .map((l) => (
+                          <div key={l} className="ia-letra">
+                            <b>{porLetra[l]}</b>
+                            <span>{l}</span>
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Column - Advanced Settings */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Clock className="h-4 w-4 text-primary" />
-                  </div>
-                  Configurações Avançadas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Navigation Mode */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Modo de Navegação</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setNavigationMode('paginated')}
-                      disabled={creating || feedbackMode === 'immediate'}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'paginated'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        }`}
-                    >
-                      <p className="font-semibold text-sm">Paginada</p>
-                      <p className="text-xs text-muted-foreground">Uma por vez</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setNavigationMode('scroll')}
-                      disabled={creating || feedbackMode === 'immediate'}
-                      className={`p-3 rounded-lg border-2 text-left transition-all ${navigationMode === 'scroll'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        } ${feedbackMode === 'immediate' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    >
-                      <p className="font-semibold text-sm">Scroll</p>
-                      <p className="text-xs text-muted-foreground">Todas visíveis</p>
-                    </button>
-                  </div>
+                {progresso.falhas > 0 && (
+                  <p className="ios-ambar mt-4 text-[14px]">
+                    {progresso.falhas} {progresso.falhas === 1 ? 'questão não saiu' : 'questões não saíram'} a tempo — a prova ficou com {questoes.length}.
+                  </p>
+                )}
+                <div className="mt-6 flex flex-col gap-2.5 sm:flex-row">
+                  <button type="button" className="ios-botao ios-botao-g flex-1" onClick={() => provaId && router.push(`/exam/${provaId}`)}>
+                    <Play className="h-[18px] w-[18px]" fill="currentColor" /> Começar a prova
+                  </button>
+                  <button type="button" className="ios-botao-suave ios-botao-g flex-1" onClick={() => void baixarPdf()} disabled={baixando}>
+                    {baixando ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Download className="h-[18px] w-[18px]" />} PDF com respostas comentadas
+                  </button>
                 </div>
+              </div>
 
-                {/* Time per Question */}
-                <div className="space-y-2">
-                  <Label htmlFor="time" className="text-sm font-medium flex items-center gap-2">
-                    Tempo por Questão (minutos)
-                    <span className="text-xs text-muted-foreground font-normal">(0 = sem limite)</span>
-                  </Label>
-                  <Input
-                    id="time"
-                    type="number"
-                    min="0"
-                    max="60"
-                    placeholder="0"
-                    value={timePerQuestion || ''}
-                    onChange={(e) => setTimePerQuestion(parseInt(e.target.value) || 0)}
-                    disabled={creating}
-                    className="h-11"
-                  />
-                </div>
-
-                {/* Feedback Mode */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    Modo de Feedback
-                  </Label>
-                  <div className="grid grid-cols-1 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setFeedbackMode('end')}
-                      disabled={creating}
-                      className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'end'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        }`}
-                    >
-                      <CheckCircle2 className={`h-5 w-5 mt-0.5 ${feedbackMode === 'end' ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <div>
-                        <p className="font-semibold text-sm">Ao Finalizar</p>
-                        <p className="text-xs text-muted-foreground">Respostas reveladas após terminar a prova</p>
+              <div>
+                <h3 className="ios-titulo-secao mb-3 px-1">O que caiu</h3>
+                <ul className="ios-lista">
+                  {questoes.map((q) => (
+                    <li key={q.id} className="ios-linha !items-start !py-3">
+                      <span className="ios-rotulo-3 w-6 shrink-0 pt-0.5 text-[13px] font-bold ios-numeros">{q.number}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-[14.5px] leading-snug">{q.statement}</p>
+                        <p className="ios-rotulo-2 mt-1 flex flex-wrap gap-x-2 text-[12px]">
+                          {(q as any).origin === 'banco' ? <span>Banco</span> : <span>{FORMATOS.find((f) => f.id === q.alternativeType)?.rotulo || 'Clássica'}</span>}
+                          {q.supportMaterial && <span>· {TIPOS_DE_RECURSO.find((r) => r.id === q.supportMaterial!.tipo)?.rotulo.replace(/s$/, '')}</span>}
+                          {q.aiInfo?.tema && <span className="truncate">· {q.aiInfo.tema}</span>}
+                        </p>
                       </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFeedbackMode('immediate')
-                        setNavigationMode('paginated')
-                      }}
-                      disabled={creating}
-                      className={`p-3 rounded-lg border-2 text-left transition-all flex items-start gap-3 ${feedbackMode === 'immediate'
-                        ? 'border-primary bg-primary/5'
-                        : 'border-muted hover:border-primary/50'
-                        }`}
-                    >
-                      <Zap className={`h-5 w-5 mt-0.5 ${feedbackMode === 'immediate' ? 'text-primary' : 'text-muted-foreground'}`} />
-                      <div>
-                        <p className="font-semibold text-sm">Feedback Imediato</p>
-                        <p className="text-xs text-muted-foreground">Saber resposta após cada questão (requer paginada)</p>
-                      </div>
-                    </button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            {/* Info Card */}
-            <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-950/20">
-              <CardContent className="py-4">
-                <div className="flex gap-3">
-                  <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-                  <div className="text-sm">
-                    <p className="font-medium text-blue-700 dark:text-blue-300 mb-1">Dica</p>
-                    <p className="text-blue-600/80 dark:text-blue-400/80">
-                      {examMode === 'ai' && 'Na próxima etapa, você poderá definir o tema e gerar questões com nossa IA avançada.'}
-                      {examMode === 'banco' && 'Na próxima etapa, você poderá filtrar e selecionar questões do banco de questões.'}
-                      {examMode === 'misto' && 'Na próxima etapa, você configurará a quantidade de questões de IA e do banco.'}
+              <button
+                type="button"
+                className="ios-botao-cinza mx-auto flex"
+                onClick={() => {
+                  setFase('config')
+                  setQuestoes([])
+                  setProvaId(null)
+                }}
+              >
+                <RotateCcw className="h-4 w-4" /> Montar outra prova
+              </button>
+            </section>
+          ) : (
+            <div className="space-y-6">
+              <Segmentado<Modo>
+                rotulo="De onde vêm as questões"
+                valor={modo}
+                onChange={setModo}
+                opcoes={[
+                  { id: 'ai', rotulo: 'IA' },
+                  { id: 'misto', rotulo: 'IA + Banco' },
+                  { id: 'banco', rotulo: 'Banco' },
+                ]}
+              />
+
+              {usaIa && (
+                <section className="ia-folha space-y-6 p-5 sm:p-7" aria-labelledby="sec-conteudo">
+                  <h2 id="sec-conteudo" className="sr-only">
+                    Conteúdo
+                  </h2>
+                  <Campo rotulo="Temas" nota={`${temas.length}/${MAXIMO_DE_TEMAS}`}>
+                    <div className="ia-campo flex min-h-[56px] flex-wrap items-center gap-2 !py-2.5" onClick={(e) => (e.currentTarget.querySelector('input') as HTMLInputElement | null)?.focus()}>
+                      {temas.map((t) => (
+                        <span key={t} className="ia-tag">
+                          <span>{t}</span>
+                          <button type="button" aria-label={`Tirar ${t}`} onClick={() => setTemas((ts) => ts.filter((x) => x !== t))}>
+                            <X className="h-3 w-3" strokeWidth={3} />
+                          </button>
+                        </span>
+                      ))}
+                      <input
+                        value={temaDigitado}
+                        onChange={(e) => setTemaDigitado(e.target.value)}
+                        onKeyDown={teclaNoTema}
+                        onBlur={() => {
+                          if (temaDigitado.trim()) {
+                            adicionarTemas([temaDigitado])
+                            setTemaDigitado('')
+                          }
+                        }}
+                        placeholder={temas.length ? 'Mais um tema…' : 'Ex.: Síndrome nefrótica — Enter para adicionar'}
+                        className="min-w-[180px] flex-1 bg-transparent text-[16px] font-medium outline-none placeholder:text-[color:var(--ios-rotulo-3)]"
+                        aria-label="Adicionar tema"
+                        maxLength={160}
+                      />
+                    </div>
+                    <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                      <button type="button" onClick={() => setCronogramaAberto(true)} className="ios-botao-suave ios-botao-p" disabled={temas.length >= MAXIMO_DE_TEMAS}>
+                        <CalendarRange className="h-4 w-4" /> Escolher do cronograma
+                      </button>
+                      {temaDigitado.trim() && (
+                        <button
+                          type="button"
+                          className="ios-botao-cinza ios-botao-p"
+                          onClick={() => {
+                            adicionarTemas([temaDigitado])
+                            setTemaDigitado('')
+                          }}
+                        >
+                          <Plus className="h-4 w-4" /> Adicionar
+                        </button>
+                      )}
+                    </div>
+                  </Campo>
+
+                  <Campo rotulo="Estilo de banca">
+                    <div className="flex flex-wrap gap-2" role="group" aria-label="Estilo de banca">
+                      {CONTEXTOS.map((c) => (
+                        <button key={c.id} type="button" aria-pressed={contexto === c.id} onClick={() => setContexto(c.id)} className="ios-pilula">
+                          {c.rotulo}
+                        </button>
+                      ))}
+                    </div>
+                    {contexto === 'outro' && (
+                      <div className="mt-3 space-y-2">
+                        <input
+                          value={contextoLivre}
+                          onChange={(e) => setContextoLivre(e.target.value)}
+                          placeholder="Ex.: Residência SUS-SP, prova de clínica médica"
+                          className="ia-campo"
+                          maxLength={200}
+                        />
+                        {contextosSalvos.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {contextosSalvos.map((c) => (
+                              <button key={c.id} type="button" className="ios-pilula !h-[32px] !text-[13px]" aria-pressed={contextoLivre === c.name} onClick={() => setContextoLivre(c.name)}>
+                                {c.name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </Campo>
+
+                  <div className="ia-divisor" />
+
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <Campo rotulo="Questões da IA">
+                      <Stepper rotulo="Questões" valor={quantidade} onChange={setQuantidade} min={1} max={MAXIMO_DE_QUESTOES_IA} passo={quantidade < 5 ? 1 : 5} />
+                    </Campo>
+                    <Campo rotulo="Alternativas">
+                      <Segmentado<4 | 5>
+                        rotulo="Alternativas por questão"
+                        valor={alternativas}
+                        onChange={setAlternativas}
+                        opcoes={[
+                          { id: 4, rotulo: 'A–D' },
+                          { id: 5, rotulo: 'A–E' },
+                        ]}
+                      />
+                    </Campo>
+                  </div>
+
+                  <Campo rotulo="Dificuldade">
+                    <Segmentado<NivelDaQuestao | 'misto'>
+                      rotulo="Dificuldade"
+                      valor={nivel}
+                      onChange={setNivel}
+                      opcoes={[
+                        { id: 'facil', rotulo: 'Fácil' },
+                        { id: 'medio', rotulo: 'Médio' },
+                        { id: 'dificil', rotulo: 'Difícil' },
+                        { id: 'misto', rotulo: 'Misto' },
+                      ]}
+                    />
+                  </Campo>
+
+                  <Campo rotulo="Enunciado">
+                    <Segmentado<EstiloDaQuestao | 'misto'>
+                      rotulo="Estilo do enunciado"
+                      valor={estilo}
+                      onChange={setEstilo}
+                      opcoes={[
+                        { id: 'contextualizada', rotulo: 'Com caso' },
+                        { id: 'direta', rotulo: 'Direto' },
+                        { id: 'misto', rotulo: 'Misto' },
+                      ]}
+                    />
+                  </Campo>
+
+                  <Campo rotulo="Formatos de questão" nota="escolha um ou mais">
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {FORMATOS.map((f) => {
+                        const bloqueado = !!f.exige5 && alternativas < 5
+                        return (
+                          <ChipAlternar
+                            key={f.id}
+                            ativo={formatos.includes(f.id)}
+                            desabilitado={bloqueado}
+                            titulo={bloqueado ? 'Asserção-razão precisa de 5 alternativas' : undefined}
+                            descricao={bloqueado ? 'precisa de A–E' : f.descricao}
+                            onClick={() =>
+                              setFormatos((atual) =>
+                                atual.includes(f.id) ? (atual.length > 1 ? atual.filter((x) => x !== f.id) : atual) : [...atual, f.id],
+                              )
+                            }
+                          >
+                            {f.rotulo}
+                          </ChipAlternar>
+                        )
+                      })}
+                    </div>
+                  </Campo>
+
+                  <Campo rotulo="Além do texto" nota={recursos.length ? 'em ~60% das questões' : 'só texto'}>
+                    <div className="grid grid-cols-2 gap-2">
+                      {TIPOS_DE_RECURSO.map((r) => {
+                        const Icone = ICONE_RECURSO[r.id]
+                        return (
+                          <ChipAlternar
+                            key={r.id}
+                            ativo={recursos.includes(r.id)}
+                            icone={<Icone className="h-3 w-3" />}
+                            descricao={r.descricao}
+                            onClick={() => setRecursos((atual) => (atual.includes(r.id) ? atual.filter((x) => x !== r.id) : [...atual, r.id]))}
+                          >
+                            {r.rotulo}
+                          </ChipAlternar>
+                        )
+                      })}
+                    </div>
+                  </Campo>
+                </section>
+              )}
+
+              {usaBanco && (
+                <section className="ia-folha p-5 sm:p-7" aria-labelledby="sec-banco">
+                  <h2 id="sec-banco" className="ios-titulo-secao mb-1">
+                    Do Banco de Questões
+                  </h2>
+                  <p className="ios-rotulo-2 mb-5 text-[14px]">Questões reais de prova, sorteadas pelos filtros.</p>
+                  <FiltrosDoBancoIos filtros={filtros} onChange={setFiltros} quantidade={quantidadeBanco} onQuantidade={setQuantidadeBanco} />
+                </section>
+              )}
+
+              <details className="ia-folha group" open={false}>
+                <summary className="flex cursor-pointer list-none items-center gap-3 p-5 sm:px-7 [&::-webkit-details-marker]:hidden">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[16px] font-semibold tracking-tight">Ajustes da prova</p>
+                    <p className="ios-rotulo-2 truncate text-[13px]">
+                      {navegacao === 'paginated' ? 'Uma por vez' : 'Rolagem'} · correção {feedback === 'end' ? 'no final' : 'a cada questão'} ·{' '}
+                      {minutosPorQuestao ? `${minutosPorQuestao} min/questão` : 'sem tempo'}
                     </p>
                   </div>
+                  <ChevronRight className="ios-rotulo-3 h-5 w-5 transition-transform group-open:rotate-90" />
+                </summary>
+                <div className="space-y-6 px-5 pb-6 sm:px-7">
+                  <Campo rotulo="Título" nota="opcional">
+                    <input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder={tituloFinal} maxLength={140} className="ia-campo" />
+                  </Campo>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <Campo rotulo="Navegação">
+                      <Segmentado
+                        rotulo="Navegação"
+                        valor={navegacao}
+                        onChange={setNavegacao}
+                        opcoes={[
+                          { id: 'paginated', rotulo: 'Uma por vez' },
+                          { id: 'scroll', rotulo: 'Rolagem' },
+                        ]}
+                      />
+                    </Campo>
+                    <Campo rotulo="Correção" nota={navegacao === 'scroll' ? 'imediata só em “uma por vez”' : undefined}>
+                      <Segmentado
+                        rotulo="Correção"
+                        valor={feedback}
+                        onChange={setFeedback}
+                        opcoes={[
+                          { id: 'end', rotulo: 'No final' },
+                          { id: 'immediate', rotulo: 'A cada uma', desabilitado: navegacao === 'scroll' },
+                        ]}
+                      />
+                    </Campo>
+                  </div>
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <Campo rotulo="Tempo por questão">
+                      <Stepper rotulo="Minutos por questão" valor={minutosPorQuestao} onChange={setMinutosPorQuestao} min={0} max={10} formatar={(v) => (v ? `${v} min` : 'Livre')} />
+                    </Campo>
+                    <Campo rotulo="Pontuação">
+                      <Segmentado
+                        rotulo="Pontuação"
+                        valor={pontuacao}
+                        onChange={setPontuacao}
+                        opcoes={[
+                          { id: 'normal', rotulo: 'Acertos' },
+                          { id: 'tri', rotulo: 'TRI' },
+                        ]}
+                      />
+                    </Campo>
+                  </div>
+                  {pontuacao === 'normal' && (
+                    <Campo rotulo="Nota máxima">
+                      <Stepper rotulo="Nota máxima" valor={pontos} onChange={setPontos} min={10} max={1000} passo={10} />
+                    </Campo>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </details>
+            </div>
+          )}
+
+          {/* Barra de ação: o que vai sair e o botão, sempre ao alcance do polegar. */}
+          {conta.liberada && fase === 'config' && (
+            <div className="sticky bottom-0 z-30 -mx-1 mt-6 pb-[max(12px,env(safe-area-inset-bottom))]">
+              <div className="ios-vidro flex items-center gap-3 rounded-[22px] p-3 pl-5">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-bold tracking-tight ios-numeros">
+                    {totalQuestoes} {totalQuestoes === 1 ? 'questão' : 'questões'}
+                  </p>
+                  <p className="ios-rotulo-2 truncate text-[12.5px]">
+                    {usaIa && temas.length === 0 && !temaDigitado.trim() ? 'Adicione pelo menos um tema' : 'com resposta comentada que ensina'}
+                  </p>
+                </div>
+                <button type="button" className="ios-botao" disabled={!podeGerar} onClick={() => void gerar()}>
+                  <Sparkles className="h-4 w-4" /> Gerar prova
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 mt-8 pt-6 border-t">
-          <Button
-            variant="outline"
-            onClick={() => router.back()}
-            disabled={creating}
-            className="sm:flex-1 h-12"
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleCreateExam}
-            disabled={creating || !title.trim()}
-            className="sm:flex-1 h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg shadow-purple-500/30"
-          >
-            {creating ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Preparando...
-              </>
-            ) : (
-              <>
-                {examMode === 'ai' ? 'Próximo: Gerar Questões' : examMode === 'banco' ? 'Próximo: Selecionar Questões' : 'Próximo: Configurar Prova'}
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-    </div>
+        <SeletorDeTemas
+          aberto={cronogramaAberto}
+          onFechar={() => setCronogramaAberto(false)}
+          maximo={MAXIMO_DE_TEMAS}
+          jaEscolhidos={temas.length}
+          onAplicar={adicionarTemas}
+        />
+        <ToastAlert open={toast.open} onOpenChange={(open) => setToast((t) => ({ ...t, open }))} message={toast.message} type={toast.type} />
+      </FundoIos>
+    </AppShell>
   )
 }

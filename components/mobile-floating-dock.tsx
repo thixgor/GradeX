@@ -98,6 +98,9 @@ export function MobileFloatingDock() {
   // que importa é o de comprar.
   const isTelaDeCompra = pathname === '/buy' || pathname === '/buy/checkout' || pathname === '/upgrade'
   if (isTelaDeCompra) return null
+  // Prova com IA: a barra "N questões · Gerar prova" mora no rodapé, e o
+  // padrão de rota do resolvedor (`/exams/<x>`) também a pegava.
+  if (pathname === '/exams/create-personal') return null
 
   return (
     <div

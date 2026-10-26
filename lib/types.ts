@@ -82,6 +82,14 @@ export interface Question {
   /** As imagens que acompanham a resposta comentada. */
   explanationImages?: ImagemDeQuestao[]
   explanationImagesLayout?: LayoutDeImagens
+  /**
+   * Material de apoio desenhado (tabela, gráfico, esquema, citação) entre o
+   * enunciado e o comando — ver `lib/ia/estudo/recursos-visuais.ts`. Vem das
+   * provas geradas por IA; é dado, não imagem.
+   */
+  supportMaterial?: import('./ia/estudo/recursos-visuais').RecursoVisual
+  /** O que a IA cobrou nesta questão (tema do plano, foco, nível). Só informativo. */
+  aiInfo?: { tema: string; foco: string; nivel: 'facil' | 'medio' | 'dificil' }
   command: string
   timePerQuestionSeconds?: number // Tempo máximo em segundos para responder esta questão (opcional)
   explanation?: string // Resposta comentada (para provas pessoais)

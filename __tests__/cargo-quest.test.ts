@@ -81,19 +81,20 @@ describe('cargo Quest+', () => {
     expect(canDownloadExamPdf(null, true)).toBe(true)
   })
 
-  it('vale uma conta gratuita fora do Banco e das provas em PDF', () => {
+  it('vale uma conta gratuita fora do Banco, do PDF e das ferramentas de IA', () => {
     const quest = getTierLimits(QUEST_TIER)
     const gratuito = getTierLimits('gratuito')
     expect(quest.cronogramasTotal).toBe(gratuito.cronogramasTotal)
-    expect(quest.personalExamsTotal).toBe(gratuito.personalExamsTotal)
-    expect(quest.questionsPerExam).toBe(gratuito.questionsPerExam)
-    expect(getFlashcardLimits(QUEST_TIER)).toEqual(getFlashcardLimits('gratuito'))
+    // Provas e flashcards com IA entraram no Quest+, sem teto de cargo.
+    expect(quest.personalExamsTotal).toBe(Infinity)
+    expect(quest.questionsPerExam).toBe(Infinity)
+    expect(getFlashcardLimits(QUEST_TIER)).toEqual(getFlashcardLimits('plus'))
     expect(getFlashcardManualLimits(QUEST_TIER)).toEqual(getFlashcardManualLimits('gratuito'))
   })
 
-  it('nasce, no editor de planos, com o Banco e o PDF abertos e o resto fechado', () => {
+  it('nasce, no editor de planos, com o Banco, o PDF e a IA de estudo abertos e o resto fechado', () => {
     const permissoes = permissoesPadraoParaCargo(QUEST_TIER)
-    const abertas: PlanFeatureKey[] = ['bancoQuestoes', 'provasPdf']
+    const abertas: PlanFeatureKey[] = ['bancoQuestoes', 'provasPdf', 'provasIa', 'flashcardsIa']
     for (const key of abertas) {
       expect(regraDaArea(permissoes, key).liberado, key).toBe(true)
       // Sem teto no que foi vendido: quem paga o Quest+ paga por ele inteiro.

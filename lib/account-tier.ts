@@ -35,9 +35,10 @@ export const PLUS_LABEL = 'Plus+'
  * Questões liberado por completo (questões ilimitadas, listas, histórico e
  * desempenho) mais o download em PDF das provas — prova em branco, gabarito e
  * resposta comentada, que é o par que a venda promete a quem quer estudar no
- * papel (`canDownloadExamPdf()` em `lib/tier-limits.ts`). Fora disso, a conta
+ * papel (`canDownloadExamPdf()` em `lib/tier-limits.ts`) — e as provas e os
+ * flashcards gerados por IA (`lib/ia/estudo/acesso.ts`). Fora disso, a conta
  * Quest+ vale o mesmo que uma conta gratuita — quem quiser Manual Clínico,
- * materiais, aulas ou provas por IA continua precisando do Plus+.
+ * materiais ou aulas continua precisando do Plus+.
  *
  * É um cargo pago de verdade (tem prazo, vence e é rebaixado pelo cron), então
  * ele NUNCA passa em `isPlusAccount()`. O teste certo depende da pergunta:

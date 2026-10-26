@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpenCheck, Download, FileDown, FileText, ListChecks, Package, type LucideIcon } from 'lucide-react'
+import { BookOpenCheck, Download, GraduationCap, FileDown, FileText, ListChecks, Package, type LucideIcon } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -29,6 +29,7 @@ import { cn } from '@/lib/utils'
 const ICONES: Record<FormatoDePdfDaProva, LucideIcon> = {
   exam: FileText,
   'with-answers': BookOpenCheck,
+  estudo: GraduationCap,
   gabarito: ListChecks,
   pacote: Package,
 }
@@ -37,6 +38,8 @@ const CORES: Record<FormatoDePdfDaProva, string> = {
   exam: 'from-emerald-500/10 to-emerald-600/5 border-emerald-500/30 hover:border-emerald-500/60 text-emerald-600 dark:text-emerald-400',
   'with-answers':
     'from-blue-500/10 to-blue-600/5 border-blue-500/30 hover:border-blue-500/60 text-blue-600 dark:text-blue-400',
+  estudo:
+    'from-teal-500/10 to-teal-600/5 border-teal-500/30 hover:border-teal-500/60 text-teal-600 dark:text-teal-400',
   gabarito:
     'from-amber-500/10 to-amber-600/5 border-amber-500/30 hover:border-amber-500/60 text-amber-600 dark:text-amber-400',
   pacote:

@@ -395,8 +395,9 @@ export function permissoesPadraoParaCargo(role?: AccountType | string | null): P
    * cobrar por um download que ele mesmo recusa depois.
    *
    * Planos Quest+ que já existem no banco guardam o bloco antigo: se estiverem
-   * com `ativo: true`, é preciso ligar `provasPdf` no editor de planos — o
-   * padrão daqui só vale para o que nasce a partir de agora.
+   * com `ativo: true`, é preciso ligar `provasPdf`, `provasIa` e
+   * `flashcardsIa` no editor de planos — o padrão daqui só vale para o que
+   * nasce a partir de agora.
    */
   if (cargo === QUEST_TIER) {
     for (const key of PLAN_FEATURE_KEYS) {
@@ -404,6 +405,9 @@ export function permissoesPadraoParaCargo(role?: AccountType | string | null): P
     }
     base.regras.bancoQuestoes = regra(true, 0, 'dia')
     base.regras.provasPdf = regra(true, 0, 'dia')
+    // Provas e flashcards com IA entraram no Quest+ (lib/ia/estudo/acesso.ts).
+    base.regras.provasIa = regra(true, 0, 'dia')
+    base.regras.flashcardsIa = regra(true, 0, 'dia')
     base.manualClinicoModulos = todosOsModulosDoManual(false)
     return base
   }

@@ -4,6 +4,8 @@ import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { Exam } from '@/lib/types'
 import { getPersonalExamsLifetimeLimit, getPersonalExamsQuota } from '@/lib/tier-limits'
+import { corpoDeIaBloqueada, iaDeEstudoLiberada } from '@/lib/ia/estudo/acesso'
+import { MAXIMO_DE_QUESTOES_IA } from '@/lib/ia/estudo/plano-da-prova'
 import {
   avaliarUsoDoPlano,
   corpoDeRecusa,
@@ -598,9 +600,9 @@ export async function POST(request: NextRequest) {
       // Novos campos
       isPersonalExam = false,
       groupId,
-      aiQuestionsCount = 0,
       feedbackMode = 'end',
     } = body
+    let aiQuestionsCount = Number(body.aiQuestionsCount) || 0
 
     // Numeric validation
     const numQuestions = Math.min(Math.max(0, Number(numberOfQuestions) || 0), 1000)
@@ -681,6 +683,21 @@ export async function POST(request: NextRequest) {
 
       const accountType = tempUser.accountType || 'gratuito'
 
+      /*
+       * Questões de IA numa prova pessoal: só Quest+ e Plus+. A geração já é
+       * barrada na rota de geração; aqui a contagem sai das próprias questões
+       * (marcadas com `aiInfo`/`origin: 'ia'`), não do número que o navegador
+       * declara — o formulário nunca mandava `aiQuestionsCount`, e o teto por
+       * prova não valia para ninguém.
+       */
+      const questoesDeIa = Array.isArray(questions)
+        ? questions.filter((q: any) => q?.aiInfo || q?.origin === 'ia').length
+        : 0
+      aiQuestionsCount = Math.max(Number(aiQuestionsCount) || 0, questoesDeIa)
+      if (aiQuestionsCount > 0 && !iaDeEstudoLiberada(accountType, false)) {
+        return NextResponse.json(corpoDeIaBloqueada('provas'), { status: 403 })
+      }
+
       permissoesDoPlano = await resolverPermissoes(db, {
         userId: session.userId,
         role: session.role,
@@ -708,19 +725,11 @@ export async function POST(request: NextRequest) {
       const dailyExamsUsed = user.dailyPersonalExamsCreated || 0
       const dailyAiQuestionsUsed = user.dailyAiQuestionsUsed || 0
 
-      // Calcular limites baseado no tipo de conta
-      const dailyExamsLimits: Record<string, number> = {
-        gratuito: 3,
-        trial: 10,
-        premium: 20,
-      }
-      const aiQuestionsLimits: Record<string, number> = {
-        gratuito: 5,
-        trial: 10,
-        premium: 20,
-      }
-      const dailyExamsLimit = dailyExamsLimits[accountType] || 3
-      const aiQuestionsPerExamLimit = aiQuestionsLimits[accountType] || 5
+      // Limites do cargo, da mesma tabela que a tela lê (lib/tier-limits.ts).
+      // O mapa literal que morava aqui só conhecia 'premium': o Plus+ caía no
+      // fallback de 3 provas por dia.
+      const dailyExamsLimit = getPersonalExamsQuota(accountType)
+      const aiQuestionsPerExamLimit = iaDeEstudoLiberada(accountType, false) ? MAXIMO_DE_QUESTOES_IA : 0
 
       // Validar limite vitalício de provas pessoais para usuários gratuitos
       const personalExamsLifetimeLimit = getPersonalExamsLifetimeLimit(accountType)
