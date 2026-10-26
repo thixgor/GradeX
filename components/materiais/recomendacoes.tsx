@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Check, File, Package, Sparkles } from 'lucide-react'
@@ -27,6 +27,9 @@ interface Sugestao {
  * login, a busca vai com `visitante=1` e é servida do CDN; com login, a
  * resposta tira o que a pessoa já tem. Enquanto a página não sabe, a
  * prateleira espera — pedir antes seria pedir a versão errada.
+ *
+ * A busca só sai quando a prateleira chega perto da tela: quem compra direto
+ * ou fecha a página sem rolar não aciona a função.
  */
 export function Recomendacoes({
   tipo,
@@ -40,13 +43,37 @@ export function Recomendacoes({
   const [itens, setItens] = useState<Sugestao[] | null>(null)
   const [personalizado, setPersonalizado] = useState(false)
   const { isInCart } = useMaterialCart()
+  const ancora = useRef<HTMLElement>(null)
+  const [perto, setPerto] = useState(false)
 
   useEffect(() => {
-    if (autenticado === null || !id) return
+    const alvo = ancora.current
+    if (!alvo || perto) return
+    if (typeof IntersectionObserver === 'undefined') {
+      setPerto(true)
+      return
+    }
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        if (entradas.some((e) => e.isIntersecting)) {
+          setPerto(true)
+          observador.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' }
+    )
+    observador.observe(alvo)
+    return () => observador.disconnect()
+  }, [perto])
+
+  useEffect(() => {
+    if (!perto || autenticado === null || !id) return
     let vivo = true
     const query = new URLSearchParams({ tipo, id })
     if (!autenticado) query.set('visitante', '1')
-    fetch(`/api/materiais/recomendacoes?${query.toString()}`, autenticado ? { cache: 'no-store' } : undefined)
+    // Sem `no-store`: o navegador reaproveita a resposta pelo tempo que o
+    // servidor mandar (2 min para quem está logado, privado).
+    fetch(`/api/materiais/recomendacoes?${query.toString()}`)
       .then((r) => (r.ok ? r.json() : { itens: [] }))
       .then((corpo) => {
         if (!vivo) return
@@ -55,12 +82,12 @@ export function Recomendacoes({
       })
       .catch(() => { if (vivo) setItens([]) })
     return () => { vivo = false }
-  }, [tipo, id, autenticado])
+  }, [perto, tipo, id, autenticado])
 
   if (itens !== null && itens.length === 0) return null
 
   return (
-    <section className="mt-10" aria-labelledby="titulo-recomendacoes">
+    <section ref={ancora} className="mt-10" aria-labelledby="titulo-recomendacoes">
       <div className="mb-3 flex items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 id="titulo-recomendacoes" className="ios-titulo-secao flex items-center gap-2">

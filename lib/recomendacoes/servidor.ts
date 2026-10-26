@@ -17,7 +17,7 @@ import { ObjectId } from 'mongodb'
 import { memoizarPorTempo } from '../cache-de-servidor'
 import { chaveDe, construirModelo, type Cesta, type ItemDoCatalogo, type ModeloDeRecomendacao } from './motor'
 
-export const TTL_DO_MODELO_MS = 10 * 60_000
+export const TTL_DO_MODELO_MS = 30 * 60_000
 
 async function montarModelo(db: Db): Promise<ModeloDeRecomendacao> {
   const [materiais, pacotes, cestas] = await Promise.all([

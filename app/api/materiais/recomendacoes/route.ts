@@ -38,18 +38,22 @@ export async function GET(request: NextRequest) {
 
   try {
     const db = await getDb()
-    const modelo = await carregarModelo(db)
+    const [modelo, session] = await Promise.all([
+      carregarModelo(db),
+      visitante ? Promise.resolve(null) : getSession(),
+    ])
     const semente = chaveDe(tipo, id)
 
-    const session = visitante ? null : await getSession()
     const contexto = session?.userId ? await contextoDaPessoa(db, modelo, session.userId) : null
 
-    const itens = recomendar(modelo, semente, {
+    const sugestoes = recomendar(modelo, semente, {
       limite: LIMITE,
       possuidos: contexto?.possuidos,
       materiaisPossuidos: contexto?.materiaisPossuidos,
       grupos: contexto?.grupos,
     })
+    // A pontuação serve ao motor e aos testes; o cliente não a usa.
+    const itens = sugestoes.map(({ pontuacao: _pontuacao, ...item }) => item)
 
     return NextResponse.json(
       { itens, personalizado: !!contexto },
@@ -57,7 +61,9 @@ export async function GET(request: NextRequest) {
         headers: {
           'Cache-Control': visitante
             ? 'public, max-age=300, s-maxage=900, stale-while-revalidate=3600'
-            : 'private, no-store',
+            // Só no navegador desta pessoa: reabrir a página não chama a
+            // função de novo, e a compra recém-feita some em até 2 min.
+            : 'private, max-age=120',
         },
       }
     )
