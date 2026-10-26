@@ -1,0 +1,1438 @@
+/*
+ * A prova (`/exam/[id]`) no vidro iOS da loja (`components/materiais/vidro-ios.css`):
+ * mesmos tokens, mesma mola, mesma fonte do sistema. Aqui só o que é da prova
+ * — a barra de cima, a folha da questão, a alternativa, a barra do polegar, as
+ * folhas que sobem (modais) e o resultado.
+ *
+ * Três regras guiam as medidas:
+ *  - todo alvo de toque tem 44 px ou mais (a alternativa inteira é o alvo; o
+ *    "riscar" é um alvo próprio, ao lado, nunca dentro);
+ *  - o vidro com desfoque fica só nas peças que flutuam (barra de cima, barra
+ *    de baixo, folhas); a questão é cartão translúcido sem desfoque;
+ *  - o texto da questão é o protagonista: 17 px no celular, linha de 1,65 e
+ *    medida de leitura limitada no desktop.
+ *
+ * Movimento só em transform/opacity, parado com "reduzir movimento". No Modo
+ * Lite o vidro vira sólido, como no resto.
+ */
+
+/* ══════════ Barra de cima ══════════ */
+.vidro-ios .pv-topo {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding-top: env(safe-area-inset-top);
+  background: var(--ios-cartao-solido);
+  border-bottom: 1px solid var(--ios-separador);
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-ios .pv-topo {
+    background: var(--ios-vidro);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+  }
+}
+.vidro-ios .pv-topo-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 58px;
+}
+@media (min-width: 768px) {
+  .vidro-ios .pv-topo-linha {
+    gap: 12px;
+    height: 64px;
+  }
+}
+.vidro-ios .pv-topo-titulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.012em;
+  line-height: 1.2;
+}
+@media (min-width: 768px) {
+  .vidro-ios .pv-topo-titulo {
+    font-size: 16px;
+  }
+}
+.vidro-ios .pv-topo-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ios-rotulo-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* O filete de progresso sob a barra: informa sem roubar altura. */
+.vidro-ios .pv-filete {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  overflow: hidden;
+}
+.vidro-ios .pv-filete > span {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--ios-tinta);
+  transform-origin: left center;
+  transform: scaleX(var(--pv-progresso, 0));
+  transition: transform 0.5s var(--ios-expo);
+}
+.dark .vidro-ios .pv-filete > span {
+  background: #5fb072;
+}
+
+/* Botão redondo da barra (fechar, menu, PDF). 40 px de alvo. */
+.vidro-ios .pv-redondo {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 40px;
+  width: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+  transition:
+    transform 0.14s ease-out,
+    background-color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-redondo:not(:disabled):active {
+  transform: scale(0.9);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-redondo:not(:disabled):hover {
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .pv-redondo:disabled {
+  opacity: 0.4;
+}
+.vidro-ios .pv-redondo .pv-contador {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  color: #1d1406;
+  background: #f2c063;
+  box-shadow: 0 0 0 2px var(--ios-cartao-solido);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Cápsula de estado (salvo, sequência, não respondidas). */
+.vidro-ios .pv-capsula {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+  font-variant-numeric: tabular-nums;
+  -webkit-tap-highlight-color: transparent;
+}
+button.pv-capsula {
+  transition:
+    transform 0.14s ease-out,
+    background-color 0.2s ease-out;
+}
+.vidro-ios button.pv-capsula:active {
+  transform: scale(0.95);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios button.pv-capsula:hover {
+    background: var(--ios-preenchimento-forte);
+    color: var(--ios-rotulo);
+  }
+}
+.vidro-ios .pv-ponto {
+  height: 7px;
+  width: 7px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: currentColor;
+}
+.vidro-ios .pv-ponto[data-estado='salvo'] {
+  background: #34a853;
+}
+.vidro-ios .pv-ponto[data-estado='salvando'] {
+  background: #e2a43e;
+  animation: pv-respira 1.2s ease-in-out infinite;
+}
+.vidro-ios .pv-ponto[data-estado='erro'] {
+  background: #e5484d;
+}
+@keyframes pv-respira {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* O cronômetro: neutro enquanto sobra tempo, âmbar perto do fim, vermelho no
+   final. Só o ponto pulsa — o número parado é legível. */
+.vidro-ios .pv-relogio {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 13px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+  transition:
+    background-color 0.3s ease-out,
+    color 0.3s ease-out;
+}
+.vidro-ios .pv-relogio small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ios-rotulo-2);
+}
+.vidro-ios .pv-relogio[data-nivel='atencao'] {
+  color: var(--ios-ambar-texto);
+  background: var(--ios-ambar-suave);
+}
+.vidro-ios .pv-relogio[data-nivel='urgente'] {
+  color: #fff;
+  background: #e5484d;
+}
+.vidro-ios .pv-relogio[data-nivel='urgente'] small {
+  color: rgba(255, 255, 255, 0.85);
+}
+.vidro-ios .pv-relogio[data-nivel='urgente'] .pv-ponto {
+  background: #fff;
+  animation: pv-respira 1s ease-in-out infinite;
+}
+
+/* Menu "…" do celular: uma lista que cai da barra. */
+.vidro-ios .pv-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 60;
+  width: min(280px, calc(100vw - 24px));
+  overflow: hidden;
+  border-radius: 18px;
+  /* Sólido: dentro da barra (que já desfoca) um segundo desfoque não pega o
+     conteúdo de trás, e o menu ficava transparente sobre o enunciado. */
+  background: var(--ios-cartao-solido);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-sombra-alta);
+  transform-origin: top right;
+  animation: pv-menu-abre 0.28s var(--ios-expo) both;
+}
+@keyframes pv-menu-abre {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-6px);
+  }
+}
+
+/* ══════════ A folha da questão ══════════ */
+.vidro-ios .pv-questao {
+  border-radius: 24px;
+  background: var(--ios-cartao);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-luz), var(--ios-sombra);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-questao {
+    border-radius: 28px;
+  }
+}
+.vidro-ios .pv-questao-cabeca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 16px 0 20px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-questao-cabeca {
+    padding: 22px 22px 0 32px;
+  }
+}
+.vidro-ios .pv-questao-numero {
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.022em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.vidro-ios .pv-questao-numero small {
+  margin-left: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .pv-questao-corpo {
+  padding: 16px 20px 22px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-questao-corpo {
+    padding: 20px 32px 32px;
+  }
+}
+
+/* Etiqueta pequena (tipo da questão, "Pessoal", "Treino"). */
+.vidro-ios .pv-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+}
+.vidro-ios .pv-etiqueta[data-tom='tinta'] {
+  color: var(--ios-tinta-texto);
+  background: var(--ios-tinta-suave);
+}
+.vidro-ios .pv-etiqueta[data-tom='ambar'] {
+  color: var(--ios-ambar-texto);
+  background: var(--ios-ambar-suave);
+}
+.vidro-ios .pv-etiqueta[data-tom='erro'] {
+  color: #c8372a;
+  background: rgba(229, 72, 77, 0.12);
+}
+.dark .vidro-ios .pv-etiqueta[data-tom='erro'] {
+  color: #ff8589;
+}
+
+/* O código individual: presente em toda questão (identifica o print), mas
+   discreto — uma faixa fina, não um bloco no alto do enunciado. */
+.vidro-ios .pv-codigo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 2px 14px 2px 4px;
+  color: #101814;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--ios-separador);
+}
+.dark .vidro-ios .pv-codigo {
+  background: rgba(255, 255, 255, 0.92);
+}
+.vidro-ios .pv-codigo > div {
+  width: 200px;
+  max-width: 55%;
+  flex-shrink: 0;
+}
+.vidro-ios .pv-codigo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.vidro-ios .pv-codigo p {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(16, 24, 20, 0.62);
+}
+.vidro-ios .pv-codigo p strong {
+  display: block;
+  font-weight: 650;
+  color: #101814;
+}
+
+/* O texto da questão. */
+.vidro-ios .pv-enunciado {
+  max-width: 72ch;
+  font-size: 17px;
+  line-height: 1.65;
+  letter-spacing: -0.003em;
+  color: var(--ios-rotulo);
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1024px) {
+  .vidro-ios .pv-enunciado {
+    font-size: 18px;
+  }
+}
+.vidro-ios .pv-fonte {
+  margin-top: 8px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--ios-rotulo-3);
+}
+/* O comando: o que a questão pede, lido duas vezes. */
+.vidro-ios .pv-comando {
+  max-width: 72ch;
+  border-radius: 16px;
+  padding: 14px 16px;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: -0.008em;
+  color: var(--ios-rotulo);
+  background: var(--ios-tinta-suave);
+  box-shadow: inset 3px 0 0 var(--ios-tinta);
+  overflow-wrap: anywhere;
+}
+@media (min-width: 1024px) {
+  .vidro-ios .pv-comando {
+    font-size: 18px;
+  }
+}
+
+/* ══════════ Alternativa ══════════ */
+.vidro-ios .pv-alts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vidro-ios .pv-alt {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border-radius: 18px;
+  background: var(--ios-cartao-solido);
+  box-shadow:
+    inset 0 0 0 1px var(--ios-separador),
+    0 1px 2px rgba(16, 24, 20, 0.04);
+  transition:
+    background-color 0.2s ease-out,
+    box-shadow 0.25s var(--ios-mola),
+    opacity 0.2s ease-out;
+}
+.dark .vidro-ios .pv-alt {
+  background: rgba(255, 255, 255, 0.04);
+}
+.vidro-ios .pv-alt-escolher {
+  display: flex;
+  min-width: 0;
+  min-height: 60px;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 4px 14px 14px;
+  border-radius: 18px 0 0 18px;
+  text-align: left;
+  color: inherit;
+  transition: transform 0.14s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-alt-escolher:not(:disabled):active {
+  transform: scale(0.985);
+}
+.vidro-ios .pv-alt-escolher:disabled {
+  cursor: not-allowed;
+}
+/* Leitura (feedback, gabarito): a mesma linha, sem toque e sem o "riscar". */
+.vidro-ios .pv-alt-leitura {
+  padding-right: 14px;
+  border-radius: 18px;
+  cursor: default;
+}
+.vidro-ios div.pv-alt-escolher:active {
+  transform: none;
+}
+.vidro-ios .pv-alt-letra {
+  display: inline-flex;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ios-rotulo-2);
+  box-shadow: inset 0 0 0 1.5px var(--ios-rotulo-3);
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    box-shadow 0.2s ease-out,
+    transform 0.3s var(--ios-expo);
+}
+.vidro-ios .pv-alt-texto {
+  min-width: 0;
+  padding-top: 4px;
+  font-size: 16px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+@media (min-width: 1024px) {
+  .vidro-ios .pv-alt-texto {
+    font-size: 17px;
+  }
+}
+.vidro-ios .pv-alt-riscar {
+  display: inline-flex;
+  width: 48px;
+  flex-shrink: 0;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 14px;
+  border-radius: 0 18px 18px 0;
+  color: var(--ios-rotulo-3);
+  transition:
+    color 0.2s ease-out,
+    background-color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-alt-riscar > span {
+  display: inline-flex;
+  height: 32px;
+  width: 32px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  transition:
+    background-color 0.2s ease-out,
+    transform 0.14s ease-out;
+}
+.vidro-ios .pv-alt-riscar:active > span {
+  transform: scale(0.88);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-alt:not([data-trancada='true']):hover {
+    box-shadow:
+      inset 0 0 0 1px var(--ios-rotulo-3),
+      0 6px 16px -10px rgba(16, 24, 20, 0.3);
+  }
+  .vidro-ios .pv-alt-riscar:hover {
+    color: var(--ios-rotulo);
+  }
+  .vidro-ios .pv-alt-riscar:hover > span {
+    background: var(--ios-preenchimento);
+  }
+}
+/* Escolhida: o verde da marca contorna e preenche a letra. */
+.vidro-ios .pv-alt[data-escolhida='true'] {
+  background: var(--ios-tinta-suave);
+  box-shadow:
+    inset 0 0 0 2px var(--ios-tinta),
+    0 8px 20px -14px rgba(47, 125, 72, 0.7);
+}
+.dark .vidro-ios .pv-alt[data-escolhida='true'] {
+  box-shadow: inset 0 0 0 2px #5fb072;
+}
+.vidro-ios .pv-alt[data-escolhida='true'] .pv-alt-letra {
+  color: #fff;
+  background: var(--ios-tinta);
+  box-shadow: none;
+  transform: scale(1.06);
+}
+/* Riscada: some para trás, sem sumir. */
+.vidro-ios .pv-alt[data-riscada='true'] {
+  opacity: 0.5;
+  background: transparent;
+}
+.vidro-ios .pv-alt[data-riscada='true'] .pv-alt-texto {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--ios-rotulo-2);
+}
+.vidro-ios .pv-alt[data-riscada='true'] .pv-alt-letra {
+  text-decoration: line-through;
+}
+.vidro-ios .pv-alt[data-riscada='true'] .pv-alt-riscar {
+  color: var(--ios-perigo);
+}
+.vidro-ios .pv-alt[data-trancada='true'] .pv-alt-escolher {
+  cursor: not-allowed;
+}
+.vidro-ios .pv-alt[data-trancada='true']:not([data-escolhida='true']) {
+  opacity: 0.6;
+}
+/* Correção (feedback, gabarito): certa em verde, a marcada errada em vermelho. */
+.vidro-ios .pv-alt[data-correcao='certa'] {
+  background: rgba(52, 168, 83, 0.1);
+  box-shadow: inset 0 0 0 1.5px rgba(52, 168, 83, 0.55);
+}
+.vidro-ios .pv-alt[data-correcao='certa'] .pv-alt-letra {
+  color: #fff;
+  background: #2f8a4f;
+  box-shadow: none;
+}
+.vidro-ios .pv-alt[data-correcao='errada'] {
+  background: rgba(229, 72, 77, 0.08);
+  box-shadow: inset 0 0 0 1.5px rgba(229, 72, 77, 0.5);
+}
+.vidro-ios .pv-alt[data-correcao='errada'] .pv-alt-letra {
+  color: #fff;
+  background: #e5484d;
+  box-shadow: none;
+}
+
+/* A dica de atalhos, só para quem tem teclado. */
+.vidro-ios .pv-atalhos {
+  display: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-atalhos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+    font-size: 12px;
+    color: var(--ios-rotulo-3);
+  }
+}
+.vidro-ios kbd {
+  display: inline-flex;
+  min-width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+  box-shadow: inset 0 -1px 0 var(--ios-separador);
+}
+
+/* ══════════ Blocos dentro da questão ══════════ */
+
+/* Seção com rótulo, sem caixa: separa pelo espaço e pelo rótulo, não por um
+   cartão dentro do cartão. */
+.vidro-ios .pv-rotulo {
+  font-size: 13px;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  color: var(--ios-rotulo-2);
+}
+.vidro-ios .pv-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 16px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ios-ambar-texto);
+  background: var(--ios-ambar-suave);
+}
+.vidro-ios .pv-aviso[data-tom='tinta'] {
+  color: var(--ios-tinta-texto);
+  background: var(--ios-tinta-suave);
+}
+.vidro-ios .pv-aviso[data-tom='neutro'] {
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+}
+.vidro-ios .pv-aviso[data-tom='erro'] {
+  color: #b42318;
+  background: rgba(229, 72, 77, 0.1);
+}
+.dark .vidro-ios .pv-aviso[data-tom='erro'] {
+  color: #ff8589;
+}
+
+/* Campo de resposta (discursiva, redação). */
+.vidro-ios .pv-campo {
+  display: block;
+  width: 100%;
+  min-height: 220px;
+  border: 0;
+  border-radius: 18px;
+  padding: 16px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ios-rotulo);
+  background: var(--ios-cartao-solido);
+  box-shadow: inset 0 0 0 1px var(--ios-separador);
+  outline: none;
+  resize: vertical;
+  transition: box-shadow 0.2s ease-out;
+}
+.dark .vidro-ios .pv-campo {
+  background: rgba(255, 255, 255, 0.04);
+}
+.vidro-ios .pv-campo::placeholder {
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .pv-campo:focus {
+  box-shadow:
+    inset 0 0 0 2px var(--ios-tinta),
+    0 0 0 4px rgba(47, 125, 72, 0.14);
+}
+.vidro-ios .pv-campo:disabled {
+  opacity: 0.6;
+}
+.vidro-ios .pv-campo-redacao {
+  min-height: 60vh;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  font-size: 18px;
+  line-height: 1.75;
+}
+.vidro-ios .pv-contagem {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 6px 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ios-rotulo-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Disclosure (resposta comentada revelável, linhas do gabarito). */
+.vidro-ios .pv-revela {
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--ios-ambar-suave);
+}
+.vidro-ios .pv-revela-botao {
+  display: flex;
+  width: 100%;
+  min-height: 56px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-revela-botao:active {
+  opacity: 0.7;
+}
+.vidro-ios .pv-revela-corpo {
+  padding: 4px 16px 16px;
+  animation: pv-desce 0.35s var(--ios-expo) both;
+}
+@keyframes pv-desce {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+.vidro-ios .pv-seta {
+  flex-shrink: 0;
+  color: var(--ios-rotulo-3);
+  transition: transform 0.3s var(--ios-expo);
+}
+.vidro-ios [aria-expanded='true'] > .pv-seta,
+.vidro-ios [aria-expanded='true'] .pv-seta {
+  transform: rotate(90deg);
+}
+
+/* Régua de autoavaliação: 0 a 100 em passos de 10, num trilho só. */
+.vidro-ios .pv-regua {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-regua {
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+  }
+}
+.vidro-ios .pv-regua button {
+  height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+  transition:
+    transform 0.14s ease-out,
+    background-color 0.2s ease-out,
+    color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-regua button:active {
+  transform: scale(0.92);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-regua button:hover {
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .pv-regua button[aria-pressed='true'] {
+  color: #fff;
+}
+.vidro-ios .pv-regua button[aria-pressed='true'][data-faixa='alta'] {
+  background: #2f8a4f;
+}
+.vidro-ios .pv-regua button[aria-pressed='true'][data-faixa='media'] {
+  background: #d98a12;
+}
+.vidro-ios .pv-regua button[aria-pressed='true'][data-faixa='baixa'] {
+  background: #e5484d;
+}
+
+/* ══════════ Barra do polegar (rodapé) ══════════ */
+.vidro-ios .pv-barra {
+  position: fixed;
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  width: calc(100% - 20px);
+  max-width: 720px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 9999px;
+  transform: translateX(-50%);
+  transition:
+    transform 0.45s var(--ios-expo),
+    opacity 0.3s ease-out;
+}
+.vidro-ios .pv-barra[data-escondida='true'] {
+  transform: translate(-50%, calc(100% + 24px));
+  opacity: 0;
+  pointer-events: none;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-barra {
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    gap: 10px;
+  }
+}
+/* O meio da barra: posição e progresso; abre o mapa de questões. */
+.vidro-ios .pv-barra-mapa {
+  display: flex;
+  min-width: 0;
+  height: 48px;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s ease-out,
+    transform 0.14s ease-out;
+}
+.vidro-ios .pv-barra-mapa:active {
+  transform: scale(0.97);
+  background: var(--ios-preenchimento);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-barra-mapa:hover {
+    background: var(--ios-preenchimento);
+  }
+}
+.vidro-ios .pv-barra-mapa strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.vidro-ios .pv-barra-mapa small {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--ios-rotulo-2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* O anel pequeno do progresso, ao lado da posição. */
+.vidro-ios .pv-mini-anel {
+  height: 30px;
+  width: 30px;
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+.vidro-ios .pv-mini-anel circle {
+  fill: none;
+  stroke-width: 3.5;
+}
+.vidro-ios .pv-mini-anel .trilho {
+  stroke: var(--ios-preenchimento-forte);
+}
+.vidro-ios .pv-mini-anel .traco {
+  stroke: var(--ios-tinta);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s var(--ios-expo);
+}
+.dark .vidro-ios .pv-mini-anel .traco {
+  stroke: #5fb072;
+}
+.vidro-ios .pv-barra .pv-redondo {
+  height: 48px;
+  width: 48px;
+}
+.vidro-ios .pv-barra .ios-botao,
+.vidro-ios .pv-barra .pv-botao-verificar {
+  height: 48px;
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-barra .ios-botao,
+  .vidro-ios .pv-barra .pv-botao-verificar {
+    padding: 0 26px;
+  }
+}
+/* "Verificar" é âmbar: é uma ação diferente de avançar. */
+.vidro-ios .pv-botao-verificar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 650;
+  color: #1d1406;
+  background: linear-gradient(180deg, #f4c66d, #e2a43e);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 8px 20px -10px rgba(226, 164, 62, 0.8);
+  transition:
+    transform 0.14s ease-out,
+    opacity 0.14s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-botao-verificar:active {
+  transform: scale(0.97);
+  opacity: 0.85;
+}
+
+/* ══════════ Folhas (modais) ══════════ */
+.vidro-ios .pv-veu,
+.pv-veu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(8, 12, 10, 0.38);
+  animation: pv-veu 0.25s ease-out both;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-ios .pv-veu {
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-veu {
+    align-items: center;
+    padding: 24px;
+  }
+}
+@keyframes pv-veu {
+  from {
+    opacity: 0;
+  }
+}
+.vidro-ios .pv-folha {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-height: calc(100dvh - 24px);
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  background: var(--ios-cartao-solido);
+  box-shadow: var(--ios-sombra-alta);
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: pv-folha-sobe 0.5s var(--ios-expo) both;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vidro-ios .pv-folha {
+    background: color-mix(in srgb, var(--ios-cartao-solido) 88%, transparent);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    backdrop-filter: blur(30px) saturate(180%);
+  }
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-folha {
+    max-height: calc(100dvh - 48px);
+    border-radius: 28px;
+    padding-bottom: 0;
+    border: 1px solid var(--ios-vidro-borda);
+    animation-name: pv-folha-assenta;
+  }
+}
+@keyframes pv-folha-sobe {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes pv-folha-assenta {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+}
+/* A alça do topo, só onde a folha nasce no rodapé. */
+.vidro-ios .pv-alca {
+  margin: 8px auto 0;
+  height: 5px;
+  width: 38px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--ios-preenchimento-forte);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-alca {
+    display: none;
+  }
+}
+.vidro-ios .pv-folha-cabeca {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px 12px 20px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-folha-cabeca {
+    padding: 22px 22px 14px 28px;
+  }
+}
+.vidro-ios .pv-folha-titulo {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.vidro-ios .pv-folha-corpo {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 20px 20px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-folha-corpo {
+    padding: 4px 28px 24px;
+  }
+}
+.vidro-ios .pv-folha-pe {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--ios-separador);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-folha-pe {
+    padding: 14px 28px 22px;
+  }
+}
+
+/* Mapa de questões: a grade de números. */
+.vidro-ios .pv-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+}
+.vidro-ios .pv-grade button {
+  position: relative;
+  display: inline-flex;
+  aspect-ratio: 1;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+  transition:
+    transform 0.14s ease-out,
+    background-color 0.2s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-grade button:active {
+  transform: scale(0.92);
+}
+.vidro-ios .pv-grade button[data-respondida='true'] {
+  color: var(--ios-tinta-texto);
+  background: var(--ios-tinta-suave);
+}
+.vidro-ios .pv-grade button[aria-current='true'] {
+  color: var(--ios-chao);
+  background: var(--ios-rotulo);
+}
+.vidro-ios .pv-grade button:disabled {
+  opacity: 0.4;
+}
+.vidro-ios .pv-grade button .pv-marca {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  height: 7px;
+  width: 7px;
+  border-radius: 9999px;
+}
+
+/* ══════════ Resultado ══════════ */
+
+/* O anel da nota: SVG com traço que preenche uma vez. */
+.vidro-ios .pv-anel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.vidro-ios .pv-anel > svg {
+  transform: rotate(-90deg);
+}
+.vidro-ios .pv-anel circle {
+  fill: none;
+}
+.vidro-ios .pv-anel .trilho {
+  stroke: var(--ios-preenchimento-forte);
+}
+.vidro-ios .pv-anel .traco {
+  stroke-linecap: round;
+  animation: pv-anel-preenche 1.3s var(--ios-expo) 0.2s both;
+}
+@keyframes pv-anel-preenche {
+  from {
+    stroke-dashoffset: var(--pv-anel-total);
+  }
+}
+.vidro-ios .pv-anel-centro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.vidro-ios .pv-nota-grande {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
+    var(--font-body), system-ui, sans-serif;
+  font-size: 40px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Linha do gabarito: número colorido + resumo + seta. */
+.vidro-ios .pv-num {
+  display: inline-flex;
+  height: 36px;
+  min-width: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  border-radius: 11px;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  background: var(--ios-rotulo-3);
+}
+.vidro-ios .pv-num[data-tom='certa'] {
+  background: #2f8a4f;
+}
+.vidro-ios .pv-num[data-tom='errada'] {
+  background: #e5484d;
+}
+.vidro-ios .pv-num[data-tom='ambar'] {
+  background: #d98a12;
+}
+.vidro-ios .pv-num[data-tom='neutro'] {
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento-forte);
+}
+
+/* Ícone de linha da lista (Ajustes): um círculo de cor com o glifo branco. */
+.vidro-ios .pv-icone-linha {
+  display: inline-flex;
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--ios-tinta);
+}
+.vidro-ios .pv-icone-linha[data-tom='ambar'] {
+  background: #d98a12;
+}
+.vidro-ios .pv-icone-linha[data-tom='cinza'] {
+  background: #7b857f;
+}
+.vidro-ios .pv-icone-linha[data-tom='azul'] {
+  background: #2f6fb0;
+}
+
+/* Contagem regressiva da sala de espera, em números grandes. */
+.vidro-ios .pv-contagem-grande {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+}
+.vidro-ios .pv-contagem-grande > div {
+  display: flex;
+  min-width: 64px;
+  flex-direction: column;
+  align-items: center;
+}
+.vidro-ios .pv-contagem-grande strong {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI Variable Display', 'Segoe UI', Roboto,
+    var(--font-body), system-ui, sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-contagem-grande > div {
+    min-width: 84px;
+  }
+  .vidro-ios .pv-contagem-grande strong {
+    font-size: 64px;
+  }
+}
+.vidro-ios .pv-contagem-grande span {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .pv-contagem-grande i {
+  padding-top: 4px;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ios-rotulo-3);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-contagem-grande i {
+    font-size: 52px;
+  }
+}
+
+/* A entrada da página: os blocos assentam em sequência. */
+.vidro-ios .pv-entra {
+  animation: pv-entra 0.6s var(--ios-expo) both;
+  animation-delay: calc(var(--pv-ordem, 0) * 70ms);
+}
+@keyframes pv-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+/* A questão nova entra de leve, no lugar da anterior. */
+.vidro-ios .pv-troca {
+  animation: pv-troca 0.4s var(--ios-expo) both;
+}
+@keyframes pv-troca {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .pv-entra,
+  .vidro-ios .pv-troca,
+  .vidro-ios .pv-folha,
+  .vidro-ios .pv-veu,
+  .vidro-ios .pv-menu,
+  .vidro-ios .pv-revela-corpo,
+  .vidro-ios .pv-anel .traco,
+  .vidro-ios .pv-ponto {
+    animation: none;
+  }
+  .vidro-ios .pv-barra,
+  .vidro-ios .pv-filete > span {
+    transition: none;
+  }
+}
+
+/* ══════════ Modo Lite ══════════ */
+.lite-mode .vidro-ios .pv-topo,
+.lite-mode .vidro-ios .pv-folha,
+.lite-mode .vidro-ios .pv-questao {
+  background: var(--ios-cartao-solido);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.lite-mode .vidro-ios .pv-veu {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ══════════ Entrada e sala de espera ══════════ */
+
+/* Campo de uma linha (nome), no padrão dos Ajustes: preenchido, sem borda. */
+.vidro-ios .pv-entrada {
+  display: block;
+  width: 100%;
+  height: 52px;
+  border: 0;
+  border-radius: 14px;
+  padding: 0 16px;
+  font-size: 17px;
+  color: var(--ios-rotulo);
+  background: var(--ios-preenchimento);
+  outline: none;
+  transition:
+    background-color 0.2s ease-out,
+    box-shadow 0.2s ease-out;
+}
+.vidro-ios .pv-entrada::placeholder {
+  color: var(--ios-rotulo-3);
+}
+.vidro-ios .pv-entrada:focus {
+  background: var(--ios-cartao-solido);
+  box-shadow: 0 0 0 3px rgba(47, 125, 72, 0.28);
+}
+.vidro-ios .pv-entrada:disabled {
+  color: var(--ios-rotulo-2);
+  cursor: not-allowed;
+}
+.vidro-ios textarea.pv-entrada {
+  height: auto;
+  min-height: 96px;
+  padding: 14px 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* O painel de começar: no desktop acompanha a rolagem ao lado da capa. */
+.vidro-ios .pv-painel {
+  border-radius: 26px;
+  background: var(--ios-cartao);
+  border: 1px solid var(--ios-aresta);
+  box-shadow: var(--ios-luz), var(--ios-sombra);
+}
+@media (min-width: 1024px) {
+  .vidro-ios .pv-painel {
+    background: var(--ios-cartao-solido);
+    box-shadow: var(--ios-luz), var(--ios-sombra-alta);
+  }
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .vidro-ios .pv-painel {
+      background: var(--ios-vidro);
+      border-color: var(--ios-vidro-borda);
+      -webkit-backdrop-filter: blur(30px) saturate(180%);
+      backdrop-filter: blur(30px) saturate(180%);
+    }
+  }
+}
+.lite-mode .vidro-ios .pv-painel {
+  background: var(--ios-cartao-solido);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* ══════════ Configuração do treino ══════════ */
+
+/* A chave do sistema (Ajustes): trilho que acende, bolinha que desliza. */
+.vidro-ios .pv-chave {
+  position: relative;
+  display: inline-flex;
+  height: 31px;
+  width: 51px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--ios-preenchimento-forte);
+  transition: background-color 0.25s ease-out;
+}
+.vidro-ios .pv-chave::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 27px;
+  width: 27px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.15),
+    0 1px 1px rgba(0, 0, 0, 0.16);
+  transition: transform 0.35s var(--ios-expo);
+}
+.vidro-ios [aria-checked='true'] > .pv-chave,
+.vidro-ios .pv-chave[aria-checked='true'] {
+  background: #34c759;
+}
+.vidro-ios [aria-checked='true'] > .pv-chave::after,
+.vidro-ios .pv-chave[aria-checked='true']::after {
+  transform: translateX(20px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .pv-chave::after {
+    transition: none;
+  }
+}
+
+/* Barra do botão de começar, presa ao rodapé no celular. */
+.vidro-ios .pv-rodape-fixo {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  margin: 0 -16px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent, var(--ios-chao) 38%);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-rodape-fixo {
+    position: static;
+    margin: 0;
+    padding: 0;
+    background: none;
+  }
+}
+/* A cápsula escolhida num grupo de rádio (o tempo do treino). */
+.vidro-ios .ios-pilula[aria-checked='true'] {
+  color: var(--ios-chao);
+  background: var(--ios-rotulo);
+}

@@ -34,22 +34,23 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeft,
   BarChart3,
   BookOpenCheck,
-  CheckCircle2,
+  Check,
+  ChevronLeft,
+  ChevronRight,
   ClipboardList,
   Clock,
   Dumbbell,
   FileDown,
   FileText,
+  Loader2,
   Trophy,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ExamBrandFooter, ExamBrandHeader } from '@/components/exam/exam-brand-header'
 import { CapaDaProva } from '@/components/exam/capa-da-prova'
-import { FundoDeVidro } from '@/components/vitrine/vidro-app'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { AnelDeNota } from '@/components/exam/pecas-da-prova'
 import type { Exam, UserAnswer } from '@/lib/types'
 import {
   FORMATOS_DA_FOLHA,
@@ -238,231 +239,228 @@ export function ExamJaFinalizada({
   const girando = (chave: string) => gerando === chave
   const podePraticar = permiteTreinoAposTermino(exam)
 
+  /*
+   * As linhas de ação, à moda dos Ajustes: ícone de cor, título, a dica do que
+   * o arquivo contém e o giro enquanto o PDF é montado.
+   */
+  const linha = ({
+    chave,
+    icone,
+    tom,
+    titulo,
+    detalhe,
+    onClick,
+    seta = false,
+  }: {
+    chave: string
+    icone: React.ReactNode
+    tom?: 'ambar' | 'cinza' | 'azul'
+    titulo: string
+    detalhe?: string
+    onClick: () => void
+    seta?: boolean
+  }) => (
+    <li key={chave}>
+      <button
+        type="button"
+        className="ios-linha w-full text-left disabled:opacity-55"
+        disabled={!seta && !!gerando}
+        onClick={onClick}
+      >
+        <span className="pv-icone-linha" data-tom={tom}>
+          {icone}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-[16px] leading-snug">{titulo}</span>
+          {detalhe && <span className="mt-0.5 block text-[12.5px] leading-snug ios-rotulo-2">{detalhe}</span>}
+        </span>
+        {girando(chave) ? (
+          <Loader2 className="h-[18px] w-[18px] shrink-0 animate-spin ios-rotulo-2" aria-label="Gerando" />
+        ) : seta ? (
+          <ChevronRight className="h-5 w-5 shrink-0 ios-rotulo-3" />
+        ) : (
+          <FileDown className="h-[18px] w-[18px] shrink-0 ios-rotulo-3" />
+        )}
+      </button>
+    </li>
+  )
+
   const cartao = (
-    <Card className="vidro-cartao vidro-sobe w-full max-w-md overflow-hidden rounded-[28px] border-0">
+    <div className="w-full space-y-6">
       {/* A capa também aqui: quem volta pelo link reconhece a prova pela imagem. */}
       {exam.coverImage && (
-        <CapaDaProva src={exam.coverImage} titulo={exam.title} sizes="(max-width: 448px) 100vw, 448px" />
+        <div className="ios-capa ios-assenta overflow-hidden rounded-[24px] shadow-[var(--ios-sombra-alta)]">
+          <CapaDaProva src={exam.coverImage} titulo={exam.title} sizes="(max-width: 560px) 100vw, 560px" />
+        </div>
       )}
-      <CardHeader className="space-y-4 text-center">
-        <div className="exam-selo-estoura mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-500/5">
-          <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
-        </div>
-        <div>
-          <CardTitle className="text-2xl">Você finalizou essa prova</CardTitle>
-          <CardDescription className="mt-2">
-            {/*
-              "Não é possível refazê-la" continua verdadeiro sobre a ENTREGA, e
-              vira meia verdade quando o treino está liberado: a pessoa lê que
-              não dá para refazer e logo abaixo encontra um botão "Praticar". A
-              frase passa a dizer as duas coisas.
-            */}
-            {podePraticar
-              ? 'Sua entrega está registrada e não pode ser refeita — mas a prova está liberada para treino, e treinar não altera a sua nota.'
-              : 'Sua entrega está registrada. Não é possível refazê-la.'}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="rounded-lg bg-muted p-4">
-          <p className="text-center text-sm text-muted-foreground">
-            {downloads.gabarito.esperandoOFim
-              ? 'Seu resumo já está disponível. O gabarito é liberado quando a prova termina.'
-              : 'Veja seu resumo com as respostas e a correção, ou baixe o gabarito da prova.'}
-          </p>
-        </div>
 
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col items-center text-center">
+        <AnelDeNota percentual={100} tamanho={96} espessura={8} cor="var(--ios-tinta)" rotulo="Prova entregue">
+          <Check className="h-9 w-9 ios-tinta" strokeWidth={2.5} />
+        </AnelDeNota>
+        <h1 className="ios-titulo-produto mt-4">Você finalizou esta prova</h1>
+        <p className="mt-1 text-[15px] ios-rotulo-2">{exam.title}</p>
+        <p className="mt-3 max-w-md text-[15px] leading-relaxed ios-rotulo-2">
           {/*
-            Sem o id não há endereço de relatório — e o botão nasceria apontando
-            para `/exam/<id>/user/`, que não é a página de ninguém. Ele chega
-            junto com o resto da sessão, num piscar; até lá o botão espera.
+            "Não é possível refazê-la" continua verdadeiro sobre a ENTREGA, e
+            vira meia verdade quando o treino está liberado: a pessoa lê que
+            não dá para refazer e logo abaixo encontra um botão "Praticar". A
+            frase passa a dizer as duas coisas.
           */}
-          <Button
-            onClick={() => router.push(`/exam/${examId}/user/${userId}`)}
-            disabled={!userId}
-            className="exam-botao-chama relative w-full overflow-hidden bg-gradient-to-r from-[#468152] to-[#3a6d44] font-semibold text-white hover:from-[#3a6d44] hover:to-[#2f5a38] disabled:bg-none"
-            size="lg"
-          >
-            <BarChart3 className="mr-2 h-4 w-4" />
-            Quero ver meu resumo
-          </Button>
+          {podePraticar
+            ? 'Sua entrega está registrada e não pode ser refeita — mas a prova está liberada para treino, e treinar não altera a sua nota.'
+            : 'Sua entrega está registrada. Não é possível refazê-la.'}
+        </p>
+      </div>
 
+      {/*
+        Sem o id não há endereço de relatório — e o botão nasceria apontando
+        para `/exam/<id>/user/`, que não é a página de ninguém. Ele chega
+        junto com o resto da sessão, num piscar; até lá o botão espera.
+      */}
+      <button
+        type="button"
+        onClick={() => router.push(`/exam/${examId}/user/${userId}`)}
+        disabled={!userId}
+        className="ios-botao ios-botao-g exam-botao-chama relative w-full overflow-hidden"
+      >
+        <BarChart3 className="h-[18px] w-[18px]" />
+        Ver meu resumo
+      </button>
+
+      {(encerrada || podePraticar) && (
+        <ul className="ios-lista" style={{ '--ios-recuo': '60px' } as React.CSSProperties}>
           {/*
             A classificação da turma só existe depois do término — antes disso o
             botão levaria a uma tela que recusa a entrada.
           */}
-          {encerrada && (
-            <Button
-              onClick={() => router.push(`/exam/${examId}/results`)}
-              variant="outline"
-              className="w-full"
-              size="lg"
-            >
-              <Trophy className="mr-2 h-4 w-4" />
-              Ver resultados da turma
-            </Button>
-          )}
-
+          {encerrada &&
+            linha({
+              chave: 'resultados',
+              icone: <Trophy className="h-4 w-4" />,
+              tom: 'ambar',
+              titulo: 'Resultados da turma',
+              seta: true,
+              onClick: () => router.push(`/exam/${examId}/results`),
+            })}
           {/*
-            Refazer como treino, quando o admin libera. Fica logo abaixo do
-            resultado porque é a mesma pergunta em ordem: primeiro como eu fui,
+            Refazer como treino, quando o admin libera: primeiro como eu fui,
             depois o que eu faço com isso. Ver lib/provas/treino-pos-termino.ts.
           */}
-          {podePraticar && (
-            <Button
-              onClick={() => router.push(enderecoDoTreino(examId))}
-              variant="outline"
-              className="w-full border-emerald-500/40 text-emerald-700 dark:text-emerald-400"
-              size="lg"
-              title="Refazer as mesmas questões com correção na hora — não altera a sua nota nem a classificação"
-            >
-              <Dumbbell className="mr-2 h-4 w-4" />
-              Praticar esta prova
-            </Button>
+          {podePraticar &&
+            linha({
+              chave: 'treino',
+              icone: <Dumbbell className="h-4 w-4" />,
+              titulo: 'Praticar esta prova',
+              detalhe: 'Correção na hora — não altera a sua nota nem a classificação',
+              seta: true,
+              onClick: () => router.push(enderecoDoTreino(examId)),
+            })}
+        </ul>
+      )}
+
+      {/*
+        Os dois cadernos da prova e as folhas de respostas.
+
+        Some da tela só o que ainda NÃO EXISTE — o arquivo cuja liberação espera
+        o término, numa prova que não terminou. Depois disso as linhas ficam,
+        mesmo para quem não pode baixar: sumir sem dizer nada faz o aluno
+        concluir que "não dá para baixar o PDF desta prova" quando o que falta é
+        o plano dele. O toque conta qual das duas recusas é — a de tempo vira um
+        aviso, a de plano abre o convite de assinatura.
+
+        As folhas: a mesma informação em dois formatos, com o enunciado junto
+        ou só as letras. Nenhuma diz o que era certo. Ver `FORMATOS_DA_FOLHA`.
+      */}
+      <section className="space-y-2">
+        <h2 className="ios-cabeca-lista">Downloads</h2>
+        <ul className="ios-lista" style={{ '--ios-recuo': '60px' } as React.CSSProperties}>
+          {!downloads.prova.esperandoOFim &&
+            linha({
+              chave: 'branco',
+              icone: <FileText className="h-4 w-4" />,
+              tom: 'cinza',
+              titulo: 'Prova em branco',
+              detalhe: 'Enunciados e alternativas, sem gabarito',
+              onClick: () => baixarCadernoDaProva('branco'),
+            })}
+          {!downloads.gabarito.esperandoOFim &&
+            linha({
+              chave: 'comentado',
+              icone: <BookOpenCheck className="h-4 w-4" />,
+              tom: 'ambar',
+              titulo: 'Resposta comentada',
+              detalhe: 'A correta e o comentário de cada questão',
+              onClick: () => baixarCadernoDaProva('comentado'),
+            })}
+          {FORMATOS_DA_FOLHA.filter((formato) => downloads[formato.liberacao].permitido).map((formato) =>
+            linha({
+              chave: formato.chave,
+              icone: <ClipboardList className="h-4 w-4" />,
+              tom: 'azul',
+              titulo:
+                formato.chave === 'com-questoes' ? 'Minhas respostas com as questões' : 'Minhas respostas (A, B, C…)',
+              detalhe: formato.chave === 'com-questoes' ? 'O que você marcou, questão por questão' : 'Só as letras',
+              onClick: () => baixarFolha(formato.chave),
+            }),
           )}
-
-          {/*
-            Os dois cadernos da prova.
-
-            Some da tela só o que ainda NÃO EXISTE — o arquivo cuja liberação
-            espera o término, numa prova que não terminou. Depois disso os dois
-            botões ficam, mesmo para quem não pode baixar: sumir sem dizer nada
-            é o que faz o aluno concluir que "não dá para baixar o PDF desta
-            prova" quando o que falta é o plano dele. O clique conta qual das
-            duas recusas é — a de tempo vira um aviso, a de plano abre o convite
-            de assinatura.
-          */}
-          {!downloads.prova.esperandoOFim && (
-            <Button
-              onClick={() => baixarCadernoDaProva('branco')}
-              disabled={!!gerando}
-              variant="outline"
-              className="w-full"
-              size="lg"
-              title="Os enunciados e as alternativas, sem gabarito"
-            >
-              {girando('branco') ? (
-                <>
-                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Gerando…
-                </>
-              ) : (
-                <>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Prova em branco (PDF)
-                </>
-              )}
-            </Button>
-          )}
-
-          {!downloads.gabarito.esperandoOFim && (
-            <Button
-              onClick={() => baixarCadernoDaProva('comentado')}
-              disabled={!!gerando}
-              variant="outline"
-              className="w-full"
-              size="lg"
-              title="A prova inteira com a alternativa correta e o comentário de cada questão"
-            >
-              {girando('comentado') ? (
-                <>
-                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Gerando…
-                </>
-              ) : (
-                <>
-                  <BookOpenCheck className="mr-2 h-4 w-4" />
-                  Resposta comentada (PDF)
-                </>
-              )}
-            </Button>
-          )}
-
-          {/*
-            As duas folhas de respostas — a mesma informação em dois formatos:
-            com o enunciado junto, ou só as letras. Nenhuma diz o que era certo.
-            A que imprime o enunciado leva o caderno da prova junto, e por isso
-            segue a espera do relatório; a de letras sai na entrega. Ver
-            `FORMATOS_DA_FOLHA`.
-          */}
-          {FORMATOS_DA_FOLHA.filter((formato) => downloads[formato.liberacao].permitido).map(
-            (formato) => (
-              <Button
-                key={formato.chave}
-                onClick={() => baixarFolha(formato.chave)}
-                disabled={!!gerando}
-                variant="outline"
-                className="w-full"
-                size="lg"
-                title={formato.descricao}
-              >
-                {girando(formato.chave) ? (
-                  <>
-                    <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                    Gerando…
-                  </>
-                ) : (
-                  <>
-                    <ClipboardList className="mr-2 h-4 w-4" />
-                    {formato.chave === 'com-questoes'
-                      ? 'Minhas respostas com as questões'
-                      : 'Minhas respostas (A, B, C…)'}
-                  </>
-                )}
-              </Button>
-            ),
-          )}
-
-          {!downloads.gabarito.esperandoOFim ? (
-            <Button onClick={baixarGabarito} disabled={!!gerando} variant="outline" className="w-full" size="lg">
-              {girando('gabarito') ? (
-                <>
-                  <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Gerando…
-                </>
-              ) : (
-                <>
-                  <FileDown className="mr-2 h-4 w-4" />
-                  Baixar Gabarito (PDF)
-                </>
-              )}
-            </Button>
+          {!downloads.gabarito.esperandoOFim &&
+            linha({
+              chave: 'gabarito',
+              icone: <FileDown className="h-4 w-4" />,
+              titulo: 'Gabarito',
+              detalhe: 'As letras certas de cada questão',
+              onClick: baixarGabarito,
+            })}
+        </ul>
+        <p className="ios-pe-lista">
+          {downloads.gabarito.esperandoOFim ? (
+            <span className="inline-flex items-start gap-1.5 ios-ambar">
+              <Clock className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              {downloads.gabarito.motivo || 'O gabarito é liberado quando a prova termina.'}
+            </span>
           ) : (
-            <div className="w-full rounded-lg border border-orange-200 bg-orange-50 p-3 dark:border-orange-800 dark:bg-orange-950">
-              <p className="text-center text-sm text-orange-800 dark:text-orange-200">
-                <Clock className="mr-2 inline h-4 w-4" />
-                {downloads.gabarito.motivo}
-              </p>
-            </div>
+            'Veja seu resumo com as respostas e a correção, ou baixe os arquivos da prova.'
           )}
+        </p>
+      </section>
 
-          <Button onClick={() => router.push('/provas')} variant="ghost" className="w-full">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar para as provas
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      <button type="button" onClick={() => router.push('/provas')} className="ios-botao-cinza w-full">
+        Voltar para as provas
+      </button>
+    </div>
   )
 
   if (variante === 'modal') {
     return (
-      <div className="animate-in fade-in fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm duration-200">
-        {cartao}
+      <div className="pv-veu" style={{ zIndex: 100 }}>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Você finalizou esta prova"
+          className="pv-folha sm:max-w-lg"
+        >
+          <div className="pv-alca" aria-hidden />
+          <div className="pv-folha-corpo pt-5 sm:pt-7">{cartao}</div>
+        </div>
       </div>
     )
   }
 
   return (
-    <FundoDeVidro className="flex min-h-screen items-center justify-center p-4 sm:p-6">
-      <div className="w-full max-w-md">
+    <FundoIos capa={exam.coverImage} capaSizes="(max-width: 560px) 100vw, 560px" className="min-h-screen">
+      <div className="mx-auto w-full max-w-xl px-4 pb-16 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6">
         {/* A marca: esta é a tela de quem chega pelo link direto da prova. */}
-        <ExamBrandHeader className="mb-3 px-1" />
-        <p className="mb-3 truncate px-1 text-sm font-medium text-muted-foreground">{exam.title}</p>
-        {cartao}
-        <ExamBrandFooter className="mt-4" />
+        <nav className="flex items-center justify-between gap-3 py-2">
+          <button type="button" className="ios-voltar ios-vidro" onClick={() => router.push('/provas')}>
+            <ChevronLeft className="h-5 w-5" />
+            Provas
+          </button>
+          <ExamBrandHeader />
+        </nav>
+        <div className="mt-6 sm:mt-10">{cartao}</div>
+        <ExamBrandFooter className="mt-6" />
       </div>
-    </FundoDeVidro>
+    </FundoIos>
   )
 }

@@ -1,13 +1,18 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
 interface CountdownProps {
   targetDate: Date
   onComplete?: () => void
+  /**
+   * `ios`: números grandes separados por dois-pontos, para a sala de espera da
+   * prova (estilo em components/exam/prova-ios.css, dentro do `.vidro-ios`).
+   */
+  variante?: 'padrao' | 'ios'
 }
 
-export function Countdown({ targetDate, onComplete }: CountdownProps) {
+export function Countdown({ targetDate, onComplete, variante = 'padrao' }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState<{
     days: number
     hours: number
@@ -66,6 +71,28 @@ export function Countdown({ targetDate, onComplete }: CountdownProps) {
   }, [alvoEmMs])
 
   if (!timeLeft) return null
+
+  if (variante === 'ios') {
+    const blocos = [
+      ...(timeLeft.days > 0 ? [{ valor: String(timeLeft.days), rotulo: timeLeft.days === 1 ? 'dia' : 'dias' }] : []),
+      { valor: String(timeLeft.hours).padStart(2, '0'), rotulo: 'horas' },
+      { valor: String(timeLeft.minutes).padStart(2, '0'), rotulo: 'min' },
+      { valor: String(timeLeft.seconds).padStart(2, '0'), rotulo: 'seg' },
+    ]
+    return (
+      <div className="pv-contagem-grande" role="timer" aria-live="off">
+        {blocos.map((b, i) => (
+          <Fragment key={b.rotulo}>
+            {i > 0 && <i aria-hidden>:</i>}
+            <div>
+              <strong>{b.valor}</strong>
+              <span>{b.rotulo}</span>
+            </div>
+          </Fragment>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="flex items-center justify-center gap-4">

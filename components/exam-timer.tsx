@@ -73,23 +73,22 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
   const isUrgent = timeLeft.total < 5 * 60 * 1000 // Menos de 5 minutos
   const isWarning = timeLeft.total < 15 * 60 * 1000 // Menos de 15 minutos
 
+  // Desenhado dentro do escopo `.vidro-ios` da prova: `.pv-relogio` em
+  // components/exam/prova-ios.css. Neutro enquanto sobra tempo, âmbar nos
+  // últimos 15 minutos, vermelho nos últimos 5 — e só o ponto pulsa: um
+  // número que pisca inteiro é mais difícil de ler justamente quando importa.
   return (
     <div
       // O prazo por extenso, e em que fuso ele está: quem confere a contagem
       // contra o relógio do próprio celular precisa saber qual dos dois é a
       // referência da prova.
       title={`A prova termina às ${horaDeBrasilia(endMs)} (horário de Brasília)`}
-      // No celular o cronômetro divide a linha do cabeçalho com os controles
-      // e a marca, então encolhe: menos respiro nas laterais e um corpo menor.
-      className={`flex shrink-0 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg font-mono text-xs sm:text-sm font-semibold whitespace-nowrap ${
-        isUrgent
-          ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 animate-pulse'
-          : isWarning
-          ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
-          : 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
-      }`}
+      role="timer"
+      aria-label={`Tempo restante da prova: ${timeLeft.horas} h ${timeLeft.minutos} min`}
+      className="pv-relogio"
+      data-nivel={isUrgent ? 'urgente' : isWarning ? 'atencao' : 'normal'}
     >
-      <Clock className="h-4 w-4" />
+      {isUrgent ? <span className="pv-ponto" aria-hidden /> : <Clock className="h-4 w-4 opacity-70" aria-hidden />}
       <span>
         {timeLeft.horas > 0 && `${String(timeLeft.horas).padStart(2, '0')}:`}
         {String(timeLeft.minutos).padStart(2, '0')}:
@@ -99,9 +98,9 @@ export function ExamTimer({ endTime, desvioDoRelogio, onTimeUp }: ExamTimerProps
           pontos entre os números já dizem que aquilo é uma contagem. O aviso
           de tempo esgotado aparece em qualquer largura — aí a palavra é a
           informação, não o enfeite. */}
-      <span className={`text-xs opacity-75 ${timeLeft.total === 0 ? '' : 'hidden sm:inline'}`}>
-        {timeLeft.total === 0 ? 'Tempo esgotado!' : 'restante'}
-      </span>
+      <small className={timeLeft.total === 0 ? '' : 'hidden lg:inline'}>
+        {timeLeft.total === 0 ? 'Tempo esgotado' : 'restante'}
+      </small>
     </div>
   )
 }

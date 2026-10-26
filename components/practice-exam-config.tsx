@@ -1,23 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import {
-  Play,
-  Scroll,
-  LayoutGrid,
-  MessageCircle,
-  CheckCircle2,
-  Shuffle,
-  Timer,
-  TimerOff,
-  Zap,
-  Clock
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { ChevronLeft, Play, Shuffle } from 'lucide-react'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { ExamBrandHeader } from '@/components/exam/exam-brand-header'
 import { Exam } from '@/lib/types'
+import '@/components/exam/prova-ios.css'
 
 interface PracticeExamConfigProps {
   exam: Exam
@@ -44,15 +32,21 @@ export interface PracticeExamSettings {
 }
 
 const TIME_OPTIONS = [
-  { value: null, label: 'Sem limite', sublabel: 'Relaxado', icon: TimerOff },
-  { value: 10, label: '10 min', sublabel: 'Rápido', icon: Zap },
-  { value: 20, label: '20 min', sublabel: 'Curto', icon: Timer },
-  { value: 30, label: '30 min', sublabel: 'Breve', icon: Timer },
-  { value: 90, label: '1h30', sublabel: 'Médio', icon: Clock },
-  { value: 120, label: '2 horas', sublabel: 'Padrão', icon: Clock },
-  { value: 240, label: '4 horas', sublabel: 'Longo', icon: Clock },
+  { value: null, label: 'Sem limite' },
+  { value: 10, label: '10 min' },
+  { value: 20, label: '20 min' },
+  { value: 30, label: '30 min' },
+  { value: 90, label: '1h30' },
+  { value: 120, label: '2 h' },
+  { value: 240, label: '4 h' },
 ]
 
+/**
+ * A configuração do treino, no padrão dos Ajustes do iPhone: grupos com
+ * rótulo em cima e explicação embaixo, controle segmentado para as escolhas de
+ * dois lados, chave para o liga/desliga e o botão de começar preso ao polegar
+ * no celular. Estilo em components/exam/prova-ios.css.
+ */
 export function PracticeExamConfig({ exam, onStart, onBack, rotulo, aviso }: PracticeExamConfigProps) {
   const [navigationMode, setNavigationMode] = useState<'paginated' | 'scroll'>(
     exam.navigationMode || 'paginated'
@@ -73,263 +67,155 @@ export function PracticeExamConfig({ exam, onStart, onBack, rotulo, aviso }: Pra
   const questionCount = exam.questions?.length || 0
   const hasDiscursive = exam.questions?.some(q => q.type === 'discursive')
   const hasMultipleChoice = exam.questions?.some(q => q.type === 'multiple-choice')
+  const tipos = [hasMultipleChoice && 'objetivas', hasDiscursive && 'discursivas'].filter(Boolean).join(' e ')
+
+  const segmentado = <T extends string>(
+    rotuloDoGrupo: string,
+    valor: T,
+    opcoes: { valor: T; rotulo: string }[],
+    aoEscolher: (v: T) => void,
+  ) => (
+    <div
+      className="ios-segmentado"
+      role="radiogroup"
+      aria-label={rotuloDoGrupo}
+      style={{ '--segmentos': opcoes.length, '--indice': opcoes.findIndex(o => o.valor === valor) } as React.CSSProperties}
+    >
+      {opcoes.map(o => (
+        <button
+          key={o.valor}
+          type="button"
+          role="radio"
+          aria-checked={valor === o.valor}
+          className="ios-segmento h-10"
+          onClick={() => aoEscolher(o.valor)}
+        >
+          {o.rotulo}
+        </button>
+      ))}
+    </div>
+  )
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background com efeito */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#468152]/5 via-background to-[#E2A43E]/5" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#468152]/10 via-transparent to-transparent" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-[#E2A43E]/10 via-transparent to-transparent" />
+    <FundoIos className="min-h-screen">
+      <div className="mx-auto w-full max-w-xl px-4 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6 sm:pb-16">
+        <nav className="flex items-center justify-between gap-3 py-2">
+          <button type="button" className="ios-voltar ios-vidro" onClick={onBack}>
+            <ChevronLeft className="h-5 w-5" />
+            Voltar
+          </button>
+          <ExamBrandHeader />
+        </nav>
 
-      <div className="relative z-10 w-full max-w-2xl space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        {/* Header da prova */}
-        <div className="text-center space-y-3">
-          <Badge className="bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white border-0 px-4 py-1.5 text-sm">
-            {rotulo || 'Prova Prática'}
-          </Badge>
-          <h1 className="text-3xl font-bold tracking-tight">{exam.title}</h1>
+        <header className="ios-assenta space-y-3 pb-2 pt-6 sm:pt-10">
+          <span className="pv-etiqueta" data-tom="tinta">
+            {rotulo || 'Prova de treino'}
+          </span>
+          <h1 className="ios-titulo-grande">{exam.title}</h1>
+          <p className="text-[16px] ios-rotulo-2">
+            {questionCount} {questionCount === 1 ? 'questão' : 'questões'}
+            {tipos ? ` ${tipos}` : ''}. Ajuste como quer treinar e comece.
+          </p>
+          {exam.description && (
+            <p className="whitespace-pre-line text-[15px] leading-relaxed ios-rotulo-2">{exam.description}</p>
+          )}
           {aviso && (
-            <p className="mx-auto max-w-lg rounded-xl border border-emerald-500/25 bg-emerald-500/5 px-4 py-2.5 text-sm leading-relaxed text-emerald-800 dark:text-emerald-300">
+            <p className="pv-aviso" data-tom="tinta">
               {aviso}
             </p>
           )}
-          {exam.description && (
-            <p className="text-muted-foreground max-w-lg mx-auto">{exam.description}</p>
-          )}
-          <div className="flex items-center justify-center gap-3 text-sm text-muted-foreground">
-            <span>{questionCount} {questionCount === 1 ? 'questão' : 'questões'}</span>
-            {hasMultipleChoice && <Badge variant="outline" className="text-xs">Objetivas</Badge>}
-            {hasDiscursive && <Badge variant="outline" className="text-xs">Discursivas</Badge>}
-          </div>
-        </div>
+        </header>
 
-        {/* Card principal - glassmorphism */}
-        <Card className="backdrop-blur-xl bg-background/60 border-white/20 dark:border-white/10 shadow-2xl shadow-black/5">
-          <CardContent className="p-6 space-y-6">
-            {/* Modo de navegação */}
-            <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
-                Navegação
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setNavigationMode('paginated')}
-                  className={cn(
-                    "relative p-4 rounded-xl border-2 transition-all duration-200 text-left group",
-                    navigationMode === 'paginated'
-                      ? "border-[#468152] bg-[#468152]/5 shadow-lg shadow-[#468152]/10"
-                      : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg transition-colors",
-                      navigationMode === 'paginated' ? "bg-[#468152]/10 text-[#468152]" : "bg-muted text-muted-foreground"
-                    )}>
-                      <LayoutGrid className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm">Paginada</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">Uma questão por vez</div>
-                    </div>
-                  </div>
-                  {navigationMode === 'paginated' && (
-                    <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#468152]" />
-                    </div>
-                  )}
-                </button>
+        <div className="mt-6 space-y-7">
+          <section>
+            <h2 className="ios-cabeca-lista">Navegação</h2>
+            {segmentado(
+              'Navegação',
+              navigationMode,
+              [
+                { valor: 'paginated', rotulo: 'Uma por vez' },
+                { valor: 'scroll', rotulo: 'Todas em sequência' },
+              ],
+              setNavigationMode,
+            )}
+            <p className="ios-pe-lista">
+              {navigationMode === 'paginated'
+                ? 'Uma questão por tela, com anterior e próxima ao alcance do polegar.'
+                : 'Todas as questões numa página só, para rolar e responder na ordem que quiser.'}
+            </p>
+          </section>
 
-                <button
-                  onClick={() => setNavigationMode('scroll')}
-                  className={cn(
-                    "relative p-4 rounded-xl border-2 transition-all duration-200 text-left group",
-                    navigationMode === 'scroll'
-                      ? "border-[#468152] bg-[#468152]/5 shadow-lg shadow-[#468152]/10"
-                      : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg transition-colors",
-                      navigationMode === 'scroll' ? "bg-[#468152]/10 text-[#468152]" : "bg-muted text-muted-foreground"
-                    )}>
-                      <Scroll className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm">Scroll</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">Todas em sequência</div>
-                    </div>
-                  </div>
-                  {navigationMode === 'scroll' && (
-                    <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#468152]" />
-                    </div>
-                  )}
-                </button>
-              </div>
-            </div>
+          <section>
+            <h2 className="ios-cabeca-lista">Correção</h2>
+            {segmentado(
+              'Correção',
+              feedbackMode,
+              [
+                { valor: 'immediate', rotulo: 'Na hora' },
+                { valor: 'end', rotulo: 'No final' },
+              ],
+              setFeedbackMode,
+            )}
+            <p className="ios-pe-lista">
+              {feedbackMode === 'immediate'
+                ? 'Você confere cada objetiva logo depois de responder, com o comentário.'
+                : 'O gabarito comentado aparece só quando você finalizar.'}
+            </p>
+          </section>
 
-            {/* Modo de feedback */}
-            <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
-                Feedback
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setFeedbackMode('immediate')}
-                  className={cn(
-                    "relative p-4 rounded-xl border-2 transition-all duration-200 text-left",
-                    feedbackMode === 'immediate'
-                      ? "border-[#E2A43E] bg-[#E2A43E]/5 shadow-lg shadow-[#E2A43E]/10"
-                      : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg transition-colors",
-                      feedbackMode === 'immediate' ? "bg-[#E2A43E]/10 text-[#E2A43E]" : "bg-muted text-muted-foreground"
-                    )}>
-                      <MessageCircle className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm">Imediato</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">Após cada questão</div>
-                    </div>
-                  </div>
-                  {feedbackMode === 'immediate' && (
-                    <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E2A43E]" />
-                    </div>
-                  )}
-                </button>
-
-                <button
-                  onClick={() => setFeedbackMode('end')}
-                  className={cn(
-                    "relative p-4 rounded-xl border-2 transition-all duration-200 text-left",
-                    feedbackMode === 'end'
-                      ? "border-[#E2A43E] bg-[#E2A43E]/5 shadow-lg shadow-[#E2A43E]/10"
-                      : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                  )}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "p-2 rounded-lg transition-colors",
-                      feedbackMode === 'end' ? "bg-[#E2A43E]/10 text-[#E2A43E]" : "bg-muted text-muted-foreground"
-                    )}>
-                      <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-sm">No Final</div>
-                      <div className="text-xs text-muted-foreground mt-0.5">Gabarito ao terminar</div>
-                    </div>
-                  </div>
-                  {feedbackMode === 'end' && (
-                    <div className="absolute top-2 right-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#E2A43E]" />
-                    </div>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Embaralhar questões */}
-            <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
-                Ordem das Questões
-              </label>
+          <section>
+            <h2 className="ios-cabeca-lista">Ordem</h2>
+            <div className="ios-lista">
               <button
+                type="button"
+                role="switch"
+                aria-checked={shuffleQuestions}
+                className="ios-linha w-full text-left"
                 onClick={() => setShuffleQuestions(!shuffleQuestions)}
-                className={cn(
-                  "w-full relative p-4 rounded-xl border-2 transition-all duration-200 text-left flex items-center gap-3",
-                  shuffleQuestions
-                    ? "border-violet-500 bg-violet-500/5 shadow-lg shadow-violet-500/10"
-                    : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                )}
               >
-                <div className={cn(
-                  "p-2 rounded-lg transition-colors",
-                  shuffleQuestions ? "bg-violet-500/10 text-violet-500" : "bg-muted text-muted-foreground"
-                )}>
-                  <Shuffle className="h-5 w-5" />
-                </div>
-                <div className="flex-1">
-                  <div className="font-semibold text-sm">Embaralhar Questões</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
-                    {shuffleQuestions ? 'Questões em ordem aleatória' : 'Questões na ordem original'}
-                  </div>
-                </div>
-                <div className={cn(
-                  "w-12 h-7 rounded-full transition-all duration-300 flex items-center px-1",
-                  shuffleQuestions ? "bg-violet-500" : "bg-muted"
-                )}>
-                  <div className={cn(
-                    "w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300",
-                    shuffleQuestions ? "translate-x-5" : "translate-x-0"
-                  )} />
-                </div>
+                <span className="pv-icone-linha" data-tom="azul">
+                  <Shuffle className="h-4 w-4" />
+                </span>
+                <span className="flex-1 text-[16px]">Embaralhar questões</span>
+                <span className="pv-chave" aria-hidden />
               </button>
             </div>
+            <p className="ios-pe-lista">
+              {shuffleQuestions ? 'As questões vêm em ordem aleatória.' : 'As questões vêm na ordem original da prova.'}
+            </p>
+          </section>
 
-            {/* Limite de tempo */}
-            <div className="space-y-3">
-              <label className="text-sm font-semibold text-foreground/80 uppercase tracking-wider">
-                Limite de Tempo
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                {TIME_OPTIONS.map((opt) => {
-                  const Icon = opt.icon
-                  const isSelected = timeLimitMinutes === opt.value
-                  return (
-                    <button
-                      key={opt.label}
-                      onClick={() => setTimeLimitMinutes(opt.value)}
-                      className={cn(
-                        "p-3 rounded-xl border-2 transition-all duration-200 text-center",
-                        isSelected
-                          ? "border-blue-500 bg-blue-500/5 shadow-lg shadow-blue-500/10"
-                          : "border-muted hover:border-muted-foreground/30 hover:bg-muted/50"
-                      )}
-                    >
-                      <Icon className={cn(
-                        "h-4 w-4 mx-auto mb-1",
-                        isSelected ? "text-blue-500" : "text-muted-foreground"
-                      )} />
-                      <div className={cn(
-                        "font-semibold text-xs",
-                        isSelected && "text-blue-500"
-                      )}>
-                        {opt.label}
-                      </div>
-                      <div className="text-[10px] text-muted-foreground">{opt.sublabel}</div>
-                    </button>
-                  )
-                })}
-              </div>
+          <section>
+            <h2 className="ios-cabeca-lista">Tempo</h2>
+            <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Limite de tempo">
+              {TIME_OPTIONS.map(opt => (
+                <button
+                  key={opt.label}
+                  type="button"
+                  role="radio"
+                  aria-checked={timeLimitMinutes === opt.value}
+                  className="ios-pilula h-11 px-4"
+                  onClick={() => setTimeLimitMinutes(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
-          </CardContent>
-        </Card>
+            <p className="ios-pe-lista">
+              {timeLimitMinutes === null
+                ? 'Sem cronômetro: no seu ritmo.'
+                : 'Um cronômetro corre no topo e a prova é entregue sozinha quando o tempo acaba.'}
+            </p>
+          </section>
+        </div>
 
-        {/* Botões de ação */}
-        <div className="flex flex-col gap-3">
-          <Button
-            size="lg"
-            onClick={handleStart}
-            className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-[#468152] to-[#E2A43E] hover:from-[#468152]/90 hover:to-[#E2A43E]/90 shadow-lg shadow-[#468152]/20 transition-all duration-200 hover:shadow-xl hover:shadow-[#468152]/30 hover:scale-[1.01]"
-          >
-            <Play className="h-5 w-5 mr-2" />
-            Iniciar Prova
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={onBack}
-            className="text-muted-foreground"
-          >
-            Voltar
-          </Button>
+        <div className="pv-rodape-fixo mt-8">
+          <button type="button" className="ios-botao ios-botao-g w-full" onClick={handleStart}>
+            <Play className="h-4 w-4 fill-current" />
+            Começar o treino
+          </button>
         </div>
       </div>
-    </div>
+    </FundoIos>
   )
 }
