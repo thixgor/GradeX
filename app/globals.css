@@ -781,96 +781,6 @@
   }
 }
 
-/* ============================================
-   Focus Session Animations
-   ============================================ */
-
-/* Subtle pulse for active session indicator dot */
-@keyframes focus-pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.4);
-  }
-}
-
-.focus-session-pulse {
-  animation: focus-pulse 2s ease-in-out infinite;
-}
-
-/* Subtle glow on the icon when session is active */
-@keyframes focus-icon-glow {
-  0%, 100% {
-    filter: drop-shadow(0 0 2px rgba(70, 129, 82, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 6px rgba(70, 129, 82, 0.5));
-  }
-}
-
-.dark .focus-session-icon-glow {
-  animation: focus-icon-glow-dark 3s ease-in-out infinite;
-}
-
-.focus-session-icon-glow {
-  animation: focus-icon-glow 3s ease-in-out infinite;
-}
-
-@keyframes focus-icon-glow-dark {
-  0%, 100% {
-    filter: drop-shadow(0 0 2px rgba(226, 164, 62, 0.3));
-  }
-  50% {
-    filter: drop-shadow(0 0 6px rgba(226, 164, 62, 0.5));
-  }
-}
-
-/* Active button subtle gradient animation */
-@keyframes focus-active-bg {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.focus-session-active {
-  background-size: 200% 200%;
-  animation: focus-active-bg 4s ease-in-out infinite;
-}
-
-/* Blinking effect for paused timer */
-@keyframes focus-blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-.focus-session-blink {
-  animation: focus-blink 1.5s ease-in-out infinite;
-}
-
-/* Colon blink for active stopwatch separator */
-@keyframes focus-colon-blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
-.focus-session-colon-blink {
-  animation: focus-colon-blink 1s steps(1) infinite;
-}
-
 /* Slide-in from bottom for popover */
 @keyframes slide-in-from-bottom-4 {
   from {
@@ -933,91 +843,451 @@
     0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  /* Vidro de verdade só no painel da sessão de foco: é o painel curto, sem
-     lista rolando por trás, onde o efeito lê bem sem custar legibilidade. */
-  .focus-session-panel {
-    background: hsl(var(--card) / 0.72);
-    -webkit-backdrop-filter: blur(26px) saturate(180%);
-    backdrop-filter: blur(26px) saturate(180%);
-    border-color: hsl(var(--border) / 0.7);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.5),
-      0 18px 50px -20px hsl(var(--foreground) / 0.35);
-  }
-
-  .dark .focus-session-panel {
-    background: hsl(var(--card) / 0.62);
-    border-color: hsl(0 0% 100% / 0.1);
-    box-shadow:
-      inset 0 1px 0 hsl(0 0% 100% / 0.08),
-      0 24px 60px -20px rgba(0, 0, 0, 0.7);
-  }
-}
-
-/* Modo Lite / sem suporte: cartão sólido, sem desfoque. O `!important` do
-   bloco do Modo Lite já zera o backdrop-filter; aqui garantimos o fundo
-   opaco para o texto não ficar por cima do conteúdo da página. */
-.lite-mode .focus-session-panel {
-  background: hsl(var(--card)) !important;
-}
-
-/* ---- Botão da sessão de foco (gatilho no cabeçalho) ---- */
-.focus-session-trigger {
+/* ============================================
+   Sessão de foco (components/foco/painel-de-foco.tsx)
+   --------------------------------------------
+   Peças no idioma do iOS — controle segmentado, fichas, anel — com as cores
+   da marca. Vivem aqui, e não em vidro-ios.css, porque o gatilho está no
+   cabeçalho de todas as páginas.
+   ============================================ */
+.foco-gatilho {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
   background: hsl(var(--card) / 0.7);
   border: 1px solid hsl(var(--border));
-  color: hsl(var(--foreground));
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+  touch-action: manipulation;
 }
-
 @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .focus-session-trigger {
+  .foco-gatilho {
     background: hsl(var(--card) / 0.55);
     -webkit-backdrop-filter: blur(14px) saturate(170%);
     backdrop-filter: blur(14px) saturate(170%);
-    border-color: hsl(var(--border) / 0.8);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.35);
-  }
-
-  .dark .focus-session-trigger {
-    background: hsl(var(--card) / 0.45);
-    border-color: hsl(0 0% 100% / 0.12);
-    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.07);
   }
 }
-
-.focus-session-trigger:hover {
-  border-color: hsl(var(--primary) / 0.45);
+.foco-gatilho:hover {
+  border-color: rgba(47, 125, 72, 0.45);
 }
-
-.focus-session-trigger-open {
-  border-color: hsl(var(--primary) / 0.55);
-  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+.foco-gatilho:active {
+  transform: scale(0.96);
 }
-
-/* Sessão rolando: o botão vira o gradiente da marca, para a pessoa enxergar
-   de relance que o cronômetro está correndo. */
-.focus-session-trigger-active {
-  background: linear-gradient(
-    100deg,
-    rgba(70, 129, 82, 0.28),
-    rgba(226, 164, 62, 0.28),
-    rgba(70, 129, 82, 0.28)
-  );
-  border-color: rgba(70, 129, 82, 0.5);
+.foco-gatilho:focus-visible {
+  outline: 3px solid rgba(47, 125, 72, 0.45);
+  outline-offset: 2px;
 }
-
-.dark .focus-session-trigger-active {
-  background: linear-gradient(
-    100deg,
-    rgba(70, 129, 82, 0.42),
-    rgba(226, 164, 62, 0.38),
-    rgba(70, 129, 82, 0.42)
-  );
-  border-color: rgba(226, 164, 62, 0.5);
+.foco-gatilho-aberto {
+  border-color: rgba(47, 125, 72, 0.55);
+  box-shadow: 0 0 0 3px rgba(47, 125, 72, 0.14);
 }
-
-.lite-mode .focus-session-trigger {
+.foco-gatilho:is([data-estado='ativo'], [data-estado='meta']) {
+  padding-left: 9px;
+  color: #24663a;
+  background: rgba(47, 125, 72, 0.12);
+  border-color: rgba(47, 125, 72, 0.4);
+}
+.dark .foco-gatilho:is([data-estado='ativo'], [data-estado='meta']) {
+  color: #8fd6a2;
+  background: rgba(127, 208, 147, 0.14);
+  border-color: rgba(127, 208, 147, 0.35);
+}
+.foco-gatilho[data-estado='pausado'] {
+  padding-left: 9px;
+  color: #8a5a0c;
+  background: rgba(226, 164, 62, 0.16);
+  border-color: rgba(226, 164, 62, 0.45);
+}
+.dark .foco-gatilho[data-estado='pausado'] {
+  color: #f0c477;
+}
+.foco-gatilho-relogio {
+  min-width: 2.9em;
+  font-variant-numeric: tabular-nums;
+}
+.lite-mode .foco-gatilho {
   background: hsl(var(--card)) !important;
+}
+
+/* Anel: enche até a meta; âmbar quando bate. Sem meta, um arco curto gira. */
+.foco-anel-trilho {
+  stroke: hsl(var(--foreground) / 0.1);
+}
+.foco-anel-traco {
+  stroke: #2f7d48;
+  transition:
+    stroke-dashoffset 0.9s linear,
+    stroke 0.3s ease;
+}
+.dark .foco-anel-traco {
+  stroke: #7fd093;
+}
+.foco-anel[data-estado='meta'] .foco-anel-traco {
+  stroke: #e2a43e;
+}
+.foco-anel[data-estado='pausado'] .foco-anel-traco {
+  stroke: #d39a35;
+  opacity: 0.75;
+}
+@keyframes foco-gira {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+.foco-anel[data-livre='true'] svg {
+  animation: foco-gira 4s linear infinite;
+}
+.foco-anel[data-livre='true'][data-estado='pausado'] svg {
+  animation-play-state: paused;
+}
+
+.foco-painel {
+  border-radius: 22px;
+}
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .foco-painel {
+    background: hsl(var(--card) / 0.8);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(180%);
+    border-color: hsl(var(--border) / 0.7);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.5),
+      0 24px 60px -24px hsl(var(--foreground) / 0.4);
+  }
+  .dark .foco-painel {
+    background: hsl(var(--card) / 0.72);
+    border-color: hsl(0 0% 100% / 0.1);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.07),
+      0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+}
+.lite-mode .foco-painel {
+  background: hsl(var(--card)) !important;
+}
+.foco-corpo {
+  padding: 18px;
+}
+.foco-corpo-cartao {
+  padding: 0;
+}
+
+.foco-hoje {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: hsl(var(--foreground) / 0.045);
+}
+.foco-numero {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.foco-numero-grande {
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+}
+.foco-relogio {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.foco-relogio-p {
+  font-size: 23px;
+}
+
+/* Semana: série única em colunas finas, ponta arredondada, hoje mais forte. */
+.foco-semana {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.foco-semana li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.foco-semana-trilho {
+  display: flex;
+  align-items: flex-end;
+  width: 10px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: hsl(var(--foreground) / 0.07);
+}
+.foco-semana-coluna {
+  width: 100%;
+  border-radius: 4px;
+  background: rgba(47, 125, 72, 0.5);
+}
+.foco-semana-coluna[data-hoje='true'] {
+  background: #2f7d48;
+}
+.dark .foco-semana-coluna {
+  background: rgba(127, 208, 147, 0.45);
+}
+.dark .foco-semana-coluna[data-hoje='true'] {
+  background: #7fd093;
+}
+.foco-semana-dia {
+  font-size: 10px;
+  color: hsl(var(--muted-foreground));
+}
+
+.foco-campo {
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font-size: 16px;
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.06);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+@media (min-width: 640px) {
+  .foco-campo {
+    font-size: 15px;
+  }
+}
+.foco-campo::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+.foco-campo:focus {
+  outline: none;
+  border-color: rgba(47, 125, 72, 0.5);
+  background: hsl(var(--card));
+  box-shadow: 0 0 0 3px rgba(47, 125, 72, 0.14);
+}
+
+.foco-ficha {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.06);
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.foco-ficha:hover {
+  background: hsl(var(--foreground) / 0.1);
+}
+.foco-ficha[aria-pressed='true'] {
+  color: #24663a;
+  background: rgba(47, 125, 72, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(47, 125, 72, 0.35);
+}
+.dark .foco-ficha[aria-pressed='true'] {
+  color: #8fd6a2;
+  background: rgba(127, 208, 147, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(127, 208, 147, 0.3);
+}
+
+.foco-segmentado {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 3px;
+  border-radius: 11px;
+  background: hsl(var(--foreground) / 0.07);
+}
+.foco-segmentado::before {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 4);
+  border-radius: 8px;
+  background: hsl(var(--card));
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transform: translateX(calc(100% * var(--indice, 0)));
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dark .foco-segmentado::before {
+  background: hsl(var(--foreground) / 0.16);
+}
+.foco-segmento {
+  position: relative;
+  z-index: 1;
+  height: 32px;
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.2s ease;
+}
+.foco-segmento[aria-checked='true'] {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.foco-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition:
+    transform 0.12s ease,
+    background-color 0.2s ease,
+    filter 0.2s ease;
+}
+.foco-botao:active {
+  transform: scale(0.97);
+}
+.foco-botao:focus-visible,
+.foco-ficha:focus-visible,
+.foco-segmento:focus-visible,
+.foco-icone-botao:focus-visible {
+  outline: 3px solid rgba(47, 125, 72, 0.45);
+  outline-offset: 2px;
+}
+.foco-botao-g {
+  height: 50px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+.foco-botao-primario {
+  color: #fff;
+  background: #2f7d48;
+  box-shadow: 0 6px 18px -8px rgba(47, 125, 72, 0.7);
+}
+.foco-botao-primario:hover {
+  filter: brightness(1.07);
+}
+.dark .foco-botao-primario {
+  background: #3b9a5a;
+}
+.foco-botao-cinza {
+  color: hsl(var(--foreground));
+  background: hsl(var(--foreground) / 0.07);
+}
+.foco-botao-cinza:hover {
+  background: hsl(var(--foreground) / 0.11);
+}
+.foco-botao-suave {
+  color: #24663a;
+  background: rgba(47, 125, 72, 0.12);
+}
+.dark .foco-botao-suave {
+  color: #8fd6a2;
+  background: rgba(127, 208, 147, 0.14);
+}
+.foco-botao-perigo {
+  color: #fff;
+  background: #c8372a;
+}
+.foco-icone-botao {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: hsl(var(--muted-foreground));
+  transition: background-color 0.15s ease;
+}
+.foco-icone-botao:hover {
+  background: hsl(var(--foreground) / 0.07);
+}
+
+.foco-selo {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  color: #2f7d48;
+  background: rgba(47, 125, 72, 0.14);
+}
+.foco-selo[data-tom='meta'] {
+  color: #9a6410;
+  background: rgba(226, 164, 62, 0.2);
+}
+.dark .foco-selo {
+  color: #8fd6a2;
+}
+.dark .foco-selo[data-tom='meta'] {
+  color: #f0c477;
+}
+
+.foco-faixa {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0;
+  border-radius: 14px;
+  background: hsl(var(--foreground) / 0.045);
+}
+.foco-faixa > div {
+  padding: 10px 12px;
+}
+.foco-faixa > div + div {
+  border-left: 1px solid hsl(var(--border) / 0.7);
+}
+.foco-faixa dt {
+  font-size: 11.5px;
+  color: hsl(var(--muted-foreground));
+}
+.foco-faixa dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foco-anel-traco,
+  .foco-segmentado::before {
+    transition: none;
+  }
+  .foco-anel[data-livre='true'] svg {
+    animation: none;
+  }
 }
 
 /* ============================================
@@ -3841,6 +4111,15 @@ body.estudo-em-foco .aviso-lite {
 
   --viz-series-1: #367946;
   --viz-series-2: #c28403;
+  /* Séries 3–5: as frentes de estudo do perfil (flashcards, materiais,
+     anatomia). A ordem 1→5 é a do empilhamento e passou no validador nos
+     dois modos (CVD ΔE ≥ 8,4; contraste ≥ 3:1 sobre a superfície). */
+  --viz-series-3: #2a78d6;
+  --viz-series-4: #e2634a;
+  --viz-series-5: #7a5bd6;
+  /* Minutos de foco: grandeza à parte, num gráfico à parte — tinta neutra
+     para não se confundir com nenhuma das frentes. */
+  --viz-foco: #56615a;
 
   --viz-good: #367946;
   --viz-bad: #d03b3b;
@@ -3868,6 +4147,10 @@ body.estudo-em-foco .aviso-lite {
 
   --viz-series-1: #5ba66a;
   --viz-series-2: #c28403;
+  --viz-series-3: #3987e5;
+  --viz-series-4: #e66767;
+  --viz-series-5: #9085e9;
+  --viz-foco: #a7b3ab;
 
   --viz-good: #5ba66a;
   --viz-bad: #d03b3b;

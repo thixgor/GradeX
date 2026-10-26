@@ -8,6 +8,7 @@ import { temAcessoAoBanco } from '@/lib/account-tier'
 import { nosBarrados } from '@/lib/banco/visibilidade-servidor'
 import { questaoBarrada } from '@/lib/banco/visibilidade'
 import { areaLiberada, resolverPermissoes } from '@/lib/plan-entitlements-server'
+import { esquecerResumoDeEstudo } from '@/lib/estudo/resumo-de-estudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -102,6 +103,7 @@ export async function POST(
       }
 
       await db.collection('banco_resolucoes').insertOne(resolucao)
+      esquecerResumoDeEstudo(session.userId)
 
       // Atualizar estatísticas da questão
       await db.collection('banco_questoes').updateOne(
@@ -137,6 +139,7 @@ export async function POST(
       }
 
       await db.collection('banco_resolucoes').insertOne(resolucao)
+      esquecerResumoDeEstudo(session.userId)
 
       // Atualizar estatísticas da questão
       await db.collection('banco_questoes').updateOne(

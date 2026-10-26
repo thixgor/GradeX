@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
+import { formatarRelogio } from '@/lib/foco/ritmo-de-foco'
 
 // ============================================================
 // Types
@@ -14,6 +16,8 @@ export interface FocusSession {
   totalPausedMs: number     // accumulated paused time
   finishedAt?: string       // ISO string
   status: 'active' | 'paused' | 'finished'
+  /** Meta da sessão em minutos (25, 50, 90…). Sem meta, é cronômetro livre. */
+  targetMinutes?: number
 }
 
 export interface FocusSessionHistory {
@@ -23,6 +27,7 @@ export interface FocusSessionHistory {
   finishedAt: string
   totalTimeMs: number       // net study time (excluding pauses)
   syncedToServer: boolean
+  targetMinutes?: number
 }
 
 interface FocusSessionContextType {
@@ -31,7 +36,7 @@ interface FocusSessionContextType {
   elapsedMs: number         // real-time elapsed (excluding pauses)
 
   // Actions
-  startSession: (objective: string) => void
+  startSession: (objective: string, targetMinutes?: number) => void
   pauseSession: () => void
   resumeSession: () => void
   finishSession: () => void
@@ -45,6 +50,13 @@ interface FocusSessionContextType {
   // Sync
   syncToServer: () => Promise<void>
   pendingSyncCount: number
+
+  /** Há conta: o histórico sobe para o desempenho do perfil. */
+  isAuthenticated: boolean
+
+  /** A sessão que acabou de terminar — alimenta a tela de resumo. */
+  lastFinished: FocusSessionHistory | null
+  dismissLastFinished: () => void
 
   // Modal
   isModalOpen: boolean
@@ -117,16 +129,24 @@ function calcElapsedMs(session: FocusSession): number {
   return Math.max(0, now - start - session.totalPausedMs)
 }
 
+
 // ============================================================
 // Provider
 // ============================================================
 
-export function FocusSessionProvider({ children }: { children: ReactNode }) {
+export function FocusSessionProvider({
+  children,
+  isAuthenticated = true,
+}: {
+  children: ReactNode
+  /** Visitante: nada é enviado, o histórico fica só no aparelho. */
+  isAuthenticated?: boolean
+}) {
   const [currentSession, setCurrentSession] = useState<FocusSession | null>(null)
   const [history, setHistory] = useState<FocusSessionHistory[]>([])
   const [elapsedMs, setElapsedMs] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [lastFinished, setLastFinished] = useState<FocusSessionHistory | null>(null)
   const initialized = useRef(false)
 
   // --- Initialize from localStorage ---
@@ -155,20 +175,52 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // --- Timer tick ---
+  // Só com a aba visível: o tempo é calculado a partir do início, então nada
+  // se perde enquanto ela está escondida — ao voltar, o relógio já acerta.
+  const isRunning = currentSession?.status === 'active'
+  const tick = useCallback(() => {
+    if (currentSession) setElapsedMs(calcElapsedMs(currentSession))
+  }, [currentSession])
+  useIntervaloVisivel(tick, isRunning ? 1000 : null)
+
+  // --- Título da aba ---
+  // O cronômetro no título é o que mantém a sessão presente com a pessoa em
+  // outra aba (o PDF, o banco). Escondida, a aba mostra só que há foco em
+  // andamento: um minuto parado no título seria um número errado.
+  const originalTitle = useRef<string | null>(null)
   useEffect(() => {
-    if (currentSession?.status === 'active') {
-      timerRef.current = setInterval(() => {
-        setElapsedMs(calcElapsedMs(currentSession))
-      }, 1000)
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-        timerRef.current = null
+    if (typeof document === 'undefined') return
+    if (!currentSession) {
+      if (originalTitle.current !== null) {
+        document.title = originalTitle.current
+        originalTitle.current = null
+      }
+      return
+    }
+    // Sem o prefixo, quem escreveu o título foi a navegação (o Next troca o
+    // título a cada página): ele passa a ser a base.
+    if (originalTitle.current === null || !/^[⏱⏸] /.test(document.title)) {
+      originalTitle.current = document.title.replace(/^[⏱⏸] [^·]+ · /, '')
+    }
+    const base = originalTitle.current
+    const paused = currentSession.status === 'paused'
+    const visible = document.visibilityState === 'visible'
+    document.title = paused
+      ? `⏸ ${formatarRelogio(elapsedMs)} · ${base}`
+      : visible
+        ? `⏱ ${formatarRelogio(elapsedMs)} · ${base}`
+        : `⏱ Foco · ${base}`
+  }, [currentSession, elapsedMs])
+
+  useEffect(() => {
+    if (currentSession?.status !== 'active') return
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden' && originalTitle.current !== null) {
+        document.title = `⏱ Foco · ${originalTitle.current}`
       }
     }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
-    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => document.removeEventListener('visibilitychange', onVisibility)
   }, [currentSession])
 
   // --- Persist current session on change ---
@@ -216,16 +268,18 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
 
   // --- Actions ---
 
-  const startSession = useCallback((objective: string) => {
+  const startSession = useCallback((objective: string, targetMinutes?: number) => {
     const session: FocusSession = {
       id: generateId(),
-      objective: objective.trim() || 'Sessao de Foco',
+      objective: objective.trim() || 'Sessão de foco',
       startedAt: new Date().toISOString(),
       totalPausedMs: 0,
       status: 'active',
+      targetMinutes: targetMinutes && targetMinutes > 0 ? Math.round(targetMinutes) : undefined,
     }
     setCurrentSession(session)
     setElapsedMs(0)
+    setLastFinished(null)
   }, [])
 
   const pauseSession = useCallback(() => {
@@ -274,7 +328,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
         finishedAt,
         totalTimeMs: Math.max(0, totalTimeMs),
         syncedToServer: false,
+        targetMinutes: prev.targetMinutes,
       }
+      setLastFinished(entry)
 
       // Deduplicate by id to prevent StrictMode double-fire
       setHistory(h => {
@@ -287,11 +343,19 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const deleteSession = useCallback((id: string) => {
-    setHistory(h => h.filter(s => s.id !== id))
+    setHistory(h => {
+      const target = h.find(s => s.id === id)
+      // Já estava na conta: apagar só daqui deixaria o tempo contando no perfil.
+      if (target?.syncedToServer) {
+        void fetch(`/api/focus-sessions/sync?sessionId=${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {})
+      }
+      return h.filter(s => s.id !== id)
+    })
   }, [])
 
   const renameSession = useCallback((id: string, newObjective: string) => {
-    setHistory(h => h.map(s => s.id === id ? { ...s, objective: newObjective } : s))
+    // Volta para a fila de sincronização: o upsert leva o nome novo.
+    setHistory(h => h.map(s => s.id === id ? { ...s, objective: newObjective, syncedToServer: false } : s))
   }, [])
 
   const clearHistory = useCallback(() => {
@@ -300,10 +364,13 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
 
   // --- Server sync (batch, on-demand) ---
 
+  const syncing = useRef(false)
   const syncToServer = useCallback(async () => {
-    const unsynced = history.filter(s => !s.syncedToServer)
-    if (unsynced.length === 0) return
+    // Sessão de menos de um minuto é clique por engano, não estudo.
+    const unsynced = history.filter(s => !s.syncedToServer && s.totalTimeMs >= 60_000).slice(0, 50)
+    if (!isAuthenticated || unsynced.length === 0 || syncing.current) return
 
+    syncing.current = true
     try {
       const res = await fetch('/api/focus-sessions/sync', {
         method: 'POST',
@@ -311,14 +378,28 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ sessions: unsynced }),
       })
       if (res.ok) {
-        setHistory(h => h.map(s => ({ ...s, syncedToServer: true })))
+        const sent = new Set(unsynced.map(s => `${s.id}|${s.objective}`))
+        setHistory(h => h.map(s => (sent.has(`${s.id}|${s.objective}`) ? { ...s, syncedToServer: true } : s)))
       }
     } catch {
-      // Silently fail — will retry next time
+      // Silencioso: a próxima mudança no histórico tenta de novo.
+    } finally {
+      syncing.current = false
     }
-  }, [history])
+  }, [history, isAuthenticated])
 
-  const pendingSyncCount = history.filter(s => !s.syncedToServer).length
+  // Antes, a sincronização só acontecia quando a pessoa abria o perfil — e o
+  // tempo de foco não entrava no desempenho de quem nunca abria. Agora vai
+  // sozinha: ao terminar, renomear, ou ao abrir o site com algo pendente.
+  // Visitante não envia: o histórico fica só no aparelho, como antes.
+  const pendingSyncCount = history.filter(s => !s.syncedToServer && s.totalTimeMs >= 60_000).length
+  useEffect(() => {
+    if (pendingSyncCount === 0) return
+    const timer = window.setTimeout(() => void syncToServer(), 1500)
+    return () => window.clearTimeout(timer)
+  }, [pendingSyncCount, syncToServer])
+
+  const dismissLastFinished = useCallback(() => setLastFinished(null), [])
 
   const openModal = useCallback(() => setIsModalOpen(true), [])
   const closeModal = useCallback(() => setIsModalOpen(false), [])
@@ -337,6 +418,9 @@ export function FocusSessionProvider({ children }: { children: ReactNode }) {
       clearHistory,
       syncToServer,
       pendingSyncCount,
+      isAuthenticated,
+      lastFinished,
+      dismissLastFinished,
       isModalOpen,
       openModal,
       closeModal,

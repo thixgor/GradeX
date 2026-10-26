@@ -27,6 +27,8 @@ export const ACTIVITY_KINDS = [
   'aula_open',
   'flashcards_open',
   'ferramenta_open',
+  'anatomia_open',
+  'anatomia_quiz',
 ] as const
 
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number] | (string & {})
@@ -42,6 +44,8 @@ export const ACTIVITY_KIND_LABELS: Record<string, string> = {
   aula_open: 'Abriu aula',
   flashcards_open: 'Abriu flashcards',
   ferramenta_open: 'Abriu ferramenta clínica',
+  anatomia_open: 'Estudou anatomia',
+  anatomia_quiz: 'Fez quiz de anatomia',
 }
 
 /** Agrupamento macro usado nos rankings de conteúdo do painel. */
@@ -55,6 +59,8 @@ export const ACTIVITY_KIND_AREA: Record<string, string> = {
   aula_open: 'Ensino',
   flashcards_open: 'Flashcards',
   ferramenta_open: 'Ferramentas',
+  anatomia_open: 'Anatomia',
+  anatomia_quiz: 'Anatomia',
 }
 
 export interface ActivityEvent {

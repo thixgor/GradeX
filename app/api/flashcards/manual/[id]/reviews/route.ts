@@ -19,6 +19,7 @@ import {
   type SpacedReviewResult,
 } from '@/lib/flashcard-spaced-repetition'
 import type { FlashcardManualDeck, FlashcardSpacedProgress, FlashcardSpacedRating } from '@/lib/types'
+import { esquecerResumoDeEstudo } from '@/lib/estudo/resumo-de-estudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -240,6 +241,7 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
         mode: 'spaced_repetition',
       }),
     ])
+    esquecerResumoDeEstudo(session.userId)
 
     // O progresso devolvido é o que acabou de ser gravado, montado em memória.
     // Reler do banco era mais uma ida ao Atlas para ler de volta exatamente o

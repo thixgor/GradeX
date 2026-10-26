@@ -12,6 +12,8 @@
  * simplesmente não mostra o atalho.
  */
 
+import { trackView } from '@/lib/tracking/track-client'
+
 const CHAVE = 'gradex:anatomia:ultima-visita'
 
 export interface UltimaVisita {
@@ -32,6 +34,9 @@ const VALIDADE = 1000 * 60 * 60 * 24 * 30
 
 export function registrarVisita(visita: Omit<UltimaVisita, 'quando'>) {
   if (typeof window === 'undefined') return
+  // A mesma visita alimenta o desempenho da conta (perfil e painel): é o que
+  // faz "anatomia estudada" existir fora deste aparelho.
+  trackView({ kind: 'anatomia_open', resourceId: visita.href, resourceTitle: visita.titulo, meta: { tipo: visita.tipo } })
   try {
     window.localStorage.setItem(CHAVE, JSON.stringify({ ...visita, quando: Date.now() }))
   } catch {

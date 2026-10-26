@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { holdScrollAtTop } from '@/components/scroll-to-top'
+import { trackView } from '@/lib/tracking/track-client'
 import { comentar, montarQuiz, type Comentario, type QuestaoQuiz } from '@/lib/atlas-anatomia/quiz'
 import type { Ocorrencia } from '@/lib/atlas-anatomia/recorte-quiz'
 import {
@@ -138,6 +139,24 @@ export default function Rodada({
     )
     return () => window.cancelAnimationFrame(id)
   }, [respondida, atual])
+
+  // O fim da rodada entra no desempenho da conta (perfil e painel). A semente
+  // identifica a rodada: o efeito duplo do modo estrito não conta duas vezes,
+  // e "refazer" — que sorteia outra semente — conta de novo, como deve.
+  useEffect(() => {
+    if (!encerrado || questoes.length === 0) return
+    trackView({
+      kind: 'anatomia_quiz',
+      resourceId: `quiz:${semente}`,
+      resourceTitle: 'Quiz do Atlas de Anatomia',
+      meta: {
+        acertos: Object.values(respostas).filter(item => item.acertou).length,
+        total: Object.keys(respostas).length,
+      },
+    })
+    // Só o fim da rodada interessa; as respostas já estão fechadas nesse ponto.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [encerrado])
 
   if (questoes.length === 0) {
     return (

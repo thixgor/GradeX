@@ -15,30 +15,24 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
 import {
   ArrowLeft,
-  BarChart3,
   Crown,
   KeyRound,
-  Package as PackageIcon,
   Phone,
-  Settings,
   Sparkles,
-  LifeBuoy,
-  Target,
   Ticket,
-  Timer,
   AlertTriangle,
   CheckCircle2,
-  User as UserIcon,
   XCircle,
 } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
+import { FundoIos } from '@/components/materiais/fundo-ios'
+import { RitmoDoPerfil } from '@/components/profile/ritmo-do-perfil'
 import { BanChecker } from '@/components/ban-checker'
 import { ActivationSuccessDialog } from '@/components/activation-success-dialog'
 import { OrdersPanel } from '@/components/shop/orders-panel'
-import { OverviewTab, type OverviewStats } from '@/components/profile/overview-tab'
+import { OverviewTab, type ResumoDoPerfil } from '@/components/profile/overview-tab'
 import { PerformanceTab } from '@/components/profile/performance-tab'
 import { PurchaseHistory } from '@/components/profile/purchase-history'
 import { AtendimentoTab } from '@/components/profile/atendimento-tab'
@@ -46,6 +40,7 @@ import { SettingsTab } from '@/components/profile/settings-tab'
 import type { RecurringSubscription } from '@/components/profile/subscription-card'
 import type { UserSubmission } from '@/components/profile/submissions-list'
 import { Button } from '@/components/ui/button'
+import '@/components/profile/perfil.css'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ToastAlert } from '@/components/ui/toast-alert'
 import { AccountType } from '@/lib/types'
@@ -65,15 +60,15 @@ const CAMPOS: CampoDoPerfil[] = ['email', 'dados', 'cpf', 'fullName', 'dateOfBir
 type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
 
 const TABS = [
-  { id: 'visao-geral', label: 'Visão geral', short: 'Visão', icon: UserIcon },
-  { id: 'desempenho', label: 'Desempenho', short: 'Desemp.', icon: BarChart3 },
-  { id: 'pedidos', label: 'Pedidos', short: 'Pedidos', icon: PackageIcon },
+  { id: 'visao-geral', label: 'Visão geral', short: 'Geral' },
+  { id: 'desempenho', label: 'Desempenho', short: 'Gráficos' },
+  { id: 'pedidos', label: 'Pedidos', short: 'Pedidos' },
   // "Atendimento" reúne o que a pessoa PEDIU e espera resposta: solicitações de
   // desconto e tickets de suporte. As duas eram conversas com a mesma equipe
   // sem endereço fixo — o ticket só existia dentro do balão flutuante, e a
   // solicitação só aparecia na página do produto.
-  { id: 'atendimento', label: 'Atendimento', short: 'Atend.', icon: LifeBuoy },
-  { id: 'config', label: 'Configurações', short: 'Config.', icon: Settings },
+  { id: 'atendimento', label: 'Atendimento', short: 'Ajuda' },
+  { id: 'config', label: 'Ajustes', short: 'Ajustes' },
 ] as const
 
 /** Aceita também os valores antigos da URL (`?tab=pedidos`, `?tab=perfil`). */
@@ -95,15 +90,6 @@ function parseTab(value: string | null | undefined): ProfileTab {
   }
 }
 
-const EMPTY_STATS: OverviewStats = {
-  questionsAnswered: 0,
-  examsCompleted: 0,
-  questionsAnsweredBank: 0,
-  bankAccuracyRate: 0,
-  streakDays: 0,
-  longestStreak: 0,
-}
-
 export default function ProfilePage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -123,7 +109,7 @@ export default function ProfilePage() {
 
   const [submissions, setSubmissions] = useState<UserSubmission[]>([])
   const [submissionsLoading, setSubmissionsLoading] = useState(true)
-  const [stats, setStats] = useState<OverviewStats>(EMPTY_STATS)
+  const [resumo, setResumo] = useState<ResumoDoPerfil | null>(null)
 
   const [userName, setUserName] = useState('')
   const [userRole, setUserRole] = useState<'admin' | 'user'>('user')
@@ -276,14 +262,7 @@ export default function ProfilePage() {
       const res = await fetch('/api/user/statistics')
       if (res.ok) {
         const data = await res.json()
-        setStats({
-          questionsAnswered: data.questionsAnswered || 0,
-          examsCompleted: data.examsCompleted || 0,
-          questionsAnsweredBank: data.questionsAnsweredBank || 0,
-          bankAccuracyRate: data.bankAccuracyRate || 0,
-          streakDays: data.streakDays || 0,
-          longestStreak: data.longestStreak || 0,
-        })
+        if (data.resumo) setResumo(data.resumo)
       }
     } catch (error) {
       console.error('Erro ao carregar estatisticas:', error)
@@ -380,96 +359,88 @@ export default function ProfilePage() {
   }
 
   return (
-    <AppShell headerTitle="Meu Perfil" headerSubtitle={userName || 'Conta'}>
+    <AppShell vidro headerTitle="Meu perfil" headerSubtitle={userName || 'Conta'}>
       <BanChecker />
-      <div className={cn('surface-page', escopoMonitorias)}>
-        <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <FundoIos className={escopoMonitorias}>
+        <div className="mx-auto max-w-5xl px-4 pb-16 pt-5 sm:px-6 sm:pt-8">
           {voltar && (
             <div
               className={cn(
-                'sticky top-2 z-20 mb-4 flex items-center justify-between gap-3 rounded-2xl border p-3 pl-4 shadow-sm backdrop-blur transition-colors',
-                salvouAlgo ? 'border-primary/40 bg-primary/10' : 'border-border bg-card/95',
+                'ios-vidro sticky top-[4.5rem] z-20 mb-4 flex items-center justify-between gap-3 rounded-[18px] p-2.5 pl-4',
+                salvouAlgo && '!bg-[var(--ios-tinta-suave)]',
               )}
             >
               <p className="min-w-0 text-sm">
                 {salvouAlgo ? 'Salvo. Pode voltar e continuar de onde parou.' : 'Você veio das Monitorias. Complete aqui e volte.'}
               </p>
-              <a
-                href={voltar}
-                className={cn(
-                  'inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-                  salvouAlgo ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border border-border bg-background hover:bg-muted',
-                )}
-              >
+              <a href={voltar} className={cn('ios-botao-p shrink-0', salvouAlgo ? 'ios-botao' : 'ios-botao-cinza')}>
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </a>
             </div>
           )}
 
-          {/* ====== Cabeçalho da conta ====== */}
-          <section className="mb-5 rounded-2xl border border-border bg-card p-5 sm:p-6">
-            <div className="grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center">
-              <div className="flex items-center gap-4 sm:contents">
-                <button
-                  type="button"
-                  onClick={irParaFoto}
-                  className="group relative shrink-0 rounded-[32%] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  aria-label={avatar ? 'Trocar foto do perfil' : 'Escolher foto do perfil'}
-                >
-                  <Retrato nome={userName || '?'} url={avatarPorId(avatar)?.url || null} tamanho={76} />
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-border bg-card px-2 py-0.5 text-[11px] font-semibold text-foreground shadow-sm transition group-hover:border-primary group-hover:text-primary">
-                    {avatar ? 'Trocar' : 'Escolher foto'}
-                  </span>
-                </button>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Sua conta</p>
-                  <h1 className="mt-0.5 truncate font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-                    {userName || <span className="inline-block h-7 w-40 animate-pulse rounded-lg bg-muted align-middle" />}
-                  </h1>
-                  {userEmail && <p className="mt-0.5 truncate text-sm text-muted-foreground">{userEmail}</p>}
-                  {/*
-                    O selo vem do registro de cargos (`/admin/cargos`). A versão
-                    anterior era um `switch` com um ramo por cargo, e quem
-                    assinasse um cargo que ele não conhecesse via "Gratuito"
-                    logo depois de pagar.
-                  */}
-                  <SeloDeCargo
-                    className="mt-2"
-                    accountType={accountType}
-                    ehAdmin={userRole === 'admin'}
-                    sufixo={accountType === 'trial' ? getTrialTimeRemaining() : undefined}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2 sm:justify-end">
-                {/*
-                  O botão leva à vitrine de planos: quem clica em "Assinar" já
-                  decidiu e precisa ver preço e o botão de pagar. Aparece para
-                  quem ainda não tem a plataforma inteira (gratuito, trial e Quest).
-                */}
-                {contaCarregada && userRole !== 'admin' && !isPlusAccount(accountType) && (
-                  <Link
-                    href={upgradeNoAr ? '/upgrade' : ROTA_ASSINATURA}
-                    className="buy-cta buy-cta-halo inline-flex h-10 items-center gap-1.5 rounded-xl px-4 text-sm font-extrabold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  >
-                    {upgradeNoAr ? <Sparkles className="h-4 w-4" /> : <Crown className="h-4 w-4" />}
-                    {upgradeNoAr
-                      ? `Upgrade −${pctDoBotao}%`
-                      : isQuestAccount(accountType)
-                        ? `Migrar para ${PLUS_LABEL}`
-                        : `Assinar ${PLUS_LABEL}`}
-                  </Link>
-                )}
-                {userRole !== 'admin' && (
-                  <Button size="sm" variant="outline" onClick={() => setActivateDialogOpen(true)} className="h-10 gap-1.5 rounded-xl px-4 font-semibold">
-                    <KeyRound className="h-4 w-4" />
-                    Ativar key
-                  </Button>
-                )}
-              </div>
+          {/* ====== Cabeçalho da conta ======
+              Sem cartão em volta: no iOS a identidade é o título da tela. O
+              retrato abre a galeria em Ajustes; abaixo, o ritmo de estudo —
+              a primeira coisa que alguém quer ver quando abre o próprio perfil. */}
+          <header className="perfil-cabeca">
+            <button
+              type="button"
+              onClick={irParaFoto}
+              className="group relative shrink-0 rounded-[32%]"
+              aria-label={avatar ? 'Trocar foto do perfil' : 'Escolher foto do perfil'}
+            >
+              <Retrato nome={userName || '?'} url={avatarPorId(avatar)?.url || null} tamanho={84} />
+              <span className="perfil-trocar-foto">{avatar ? 'Trocar' : 'Foto'}</span>
+            </button>
+            <div className="min-w-0 flex-1">
+              <h1 className="ios-titulo-grande truncate">
+                {userName || <span className="ios-esqueleto inline-block h-9 w-48 rounded-lg align-middle" />}
+              </h1>
+              {userEmail && <p className="mt-0.5 truncate text-[15px] ios-rotulo-2">{userEmail}</p>}
+              {/*
+                O selo vem do registro de cargos (`/admin/cargos`). A versão
+                anterior era um `switch` com um ramo por cargo, e quem
+                assinasse um cargo que ele não conhecesse via "Gratuito"
+                logo depois de pagar.
+              */}
+              <SeloDeCargo
+                className="mt-2"
+                accountType={accountType}
+                ehAdmin={userRole === 'admin'}
+                sufixo={accountType === 'trial' ? getTrialTimeRemaining() : undefined}
+              />
             </div>
-          </section>
+            <div className="perfil-acoes">
+              {/*
+                O botão leva à vitrine de planos: quem clica em "Assinar" já
+                decidiu e precisa ver preço e o botão de pagar. Aparece para
+                quem ainda não tem a plataforma inteira (gratuito, trial e Quest).
+              */}
+              {contaCarregada && userRole !== 'admin' && !isPlusAccount(accountType) && (
+                <Link
+                  href={upgradeNoAr ? '/upgrade' : ROTA_ASSINATURA}
+                  className="buy-cta buy-cta-halo inline-flex h-11 items-center gap-1.5 rounded-full px-5 text-[15px] font-extrabold text-secondary-foreground"
+                >
+                  {upgradeNoAr ? <Sparkles className="h-4 w-4" /> : <Crown className="h-4 w-4" />}
+                  {upgradeNoAr
+                    ? `Upgrade −${pctDoBotao}%`
+                    : isQuestAccount(accountType)
+                      ? `Migrar para ${PLUS_LABEL}`
+                      : `Assinar ${PLUS_LABEL}`}
+                </Link>
+              )}
+              {userRole !== 'admin' && (
+                <button type="button" onClick={() => setActivateDialogOpen(true)} className="ios-botao-cinza">
+                  <KeyRound className="h-4 w-4" />
+                  Ativar key
+                </button>
+              )}
+            </div>
+          </header>
+
+          <RitmoDoPerfil resumo={resumo} onAbrirDesempenho={() => changeTab('desempenho')} />
 
           {purchaseSuccess && (
             <AvisoDeCompraAprovada
@@ -479,33 +450,29 @@ export default function ProfilePage() {
           )}
 
           {/* ====== Navegação entre seções ======
-              Grade de cinco colunas, sem rolagem lateral: "Configurações" fica
-              sempre à vista no celular. Até o `lg` o ícone vai em cima do
-              rótulo; a pílula ativa desliza entre as abas. */}
-          <nav aria-label="Seções do perfil" className="mb-6 grid w-full grid-cols-5 gap-1 rounded-2xl border border-border bg-muted/40 p-1">
-            {TABS.map(({ id, label, short, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                aria-current={tab === id ? 'page' : undefined}
-                onClick={() => changeTab(id)}
-                className={cn(
-                  'relative flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-0.5 py-2.5 text-[11px] font-semibold leading-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-xs lg:flex-row lg:gap-2 lg:px-3 lg:text-sm',
-                  tab === id ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {tab === id && (
-                  <motion.span
-                    layoutId="aba-perfil"
-                    className="absolute inset-0 rounded-xl border border-border bg-card shadow-sm"
-                    transition={{ type: 'spring', stiffness: 420, damping: 36 }}
-                  />
-                )}
-                <Icon className={cn('relative h-5 w-5 shrink-0 lg:h-4 lg:w-4', tab === id && 'text-primary')} />
-                <span className="relative hidden max-w-full truncate sm:inline">{label}</span>
-                <span className="relative max-w-full truncate sm:hidden">{short}</span>
-              </button>
-            ))}
+              Controle segmentado do sistema, cinco partes iguais, sem rolagem
+              lateral: "Ajustes" fica sempre à vista no celular. Gruda sob o
+              cabeçalho para trocar de seção sem voltar ao topo. */}
+          <nav aria-label="Seções do perfil" className="perfil-navegacao">
+            <div
+              className="ios-segmentado"
+              role="tablist"
+              style={{ ['--segmentos' as string]: TABS.length, ['--indice' as string]: TABS.findIndex(t => t.id === tab) }}
+            >
+              {TABS.map(({ id, label, short }) => (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={tab === id}
+                  onClick={() => changeTab(id)}
+                  className="ios-segmento !px-1 !text-[13px] sm:!text-[14px]"
+                >
+                  <span className="hidden truncate sm:inline">{label}</span>
+                  <span className="truncate sm:hidden">{short}</span>
+                </button>
+              ))}
+            </div>
           </nav>
 
           {tab === 'visao-geral' && convidarParaOPlus && (
@@ -523,7 +490,7 @@ export default function ProfilePage() {
 
           {tab === 'visao-geral' && (
             <OverviewTab
-              stats={stats}
+              resumo={resumo}
               accountType={accountType}
               isAdmin={userRole === 'admin'}
               userTotals={userTotals}
@@ -548,13 +515,13 @@ export default function ProfilePage() {
           )}
 
           {tab === 'pedidos' && (
-            <div className="space-y-8">
+            <div className="space-y-9">
               <section>
-                <h2 className="editorial-mark mb-3">Pedidos da loja</h2>
+                <h2 className="ios-titulo-secao mb-3">Pedidos da loja</h2>
                 <OrdersPanel />
               </section>
               <section>
-                <h2 className="editorial-mark mb-3">Compras digitais</h2>
+                <h2 className="ios-titulo-secao mb-3">Compras digitais</h2>
                 <PurchaseHistory userId={userId} userName={userName} userEmail={userEmail} onError={showError} />
               </section>
             </div>
@@ -691,7 +658,7 @@ export default function ProfilePage() {
             </DialogContent>
           </Dialog>
         </div>
-      </div>
+      </FundoIos>
     </AppShell>
   )
 }
@@ -718,11 +685,11 @@ function AvisoDeCompraAprovada({
   return (
     <div
       role="status"
-      className="mb-5 flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/10 p-4 shadow-sm sm:p-5"
+      className="ios-cartao mb-6 flex items-start gap-3 rounded-[22px] p-4 sm:p-5"
     >
-      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden />
+      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 ios-tinta" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="font-heading text-base font-semibold tracking-tight text-foreground">
+        <p className="text-[16px] font-semibold tracking-tight">
           {tipo === 'subscription' ? 'Assinatura confirmada!' : 'Pagamento aprovado!'}
         </p>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">

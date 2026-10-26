@@ -130,6 +130,7 @@ export function ChartCard({
   children,
   className,
   empty,
+  tom = 'padrao',
 }: {
   title: string
   caption?: string
@@ -138,12 +139,20 @@ export function ChartCard({
   children: React.ReactNode
   className?: string
   empty?: React.ReactNode
+  /** `ios`: o cartão agrupado do vidro-ios (perfil), sem borda. */
+  tom?: 'padrao' | 'ios'
 }) {
   const [showTable, setShowTable] = useState(false)
   const tableId = useId()
 
   return (
-    <figure className={cn('viz min-w-0 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5', className)}>
+    <figure
+      className={cn(
+        'viz min-w-0 p-4 sm:p-5',
+        tom === 'ios' ? 'ios-cartao rounded-[22px]' : 'rounded-xl border border-border bg-card shadow-sm',
+        className,
+      )}
+    >
       <figcaption className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="font-heading text-base font-semibold tracking-tight text-foreground">{title}</h3>
@@ -422,28 +431,157 @@ export function AccuracyMeter({
 // Colunas empilhadas — atividade diária
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface DailyPoint {
-  date: string
-  banco: number
-  provas: number
+export interface SerieEmpilhada {
+  /** Rótulo curto da série no tooltip: "no banco", "cartas". */
+  label: string
+  color: string
 }
 
 /**
- * Atividade diária do perfil: banco embaixo, provas em cima.
+ * Colunas empilhadas por dia com N séries (de baixo para cima na ordem dada).
  *
- * É um caso particular de `StackedDayColumns` — as duas séries e os rótulos já
- * escolhidos. Manter a assinatura antiga evita mexer na aba de desempenho, e
- * manter UMA implementação evita que os dois gráficos empilhados da plataforma
- * divirjam no vão entre segmentos ou na regra dos rótulos do eixo.
+ * A ordem das séries é a ordem da paleta categórica validada — e é também a
+ * ordem de empilhamento, então os pares vizinhos no gráfico são os mesmos
+ * pares que o validador mediu. Só o segmento de cima leva ponta arredondada;
+ * entre segmentos fica o vão de 2px.
  */
-export function ActivityColumns({ data }: { data: DailyPoint[] }) {
+export function MultiStackedDayColumns({
+  data,
+  series,
+  ariaLabel,
+  unidade,
+  altura = 200,
+  rotuloACada = 7,
+}: {
+  data: Array<{ date: string; values: number[] }>
+  series: SerieEmpilhada[]
+  ariaLabel: string
+  /** Como se lê o total no tooltip: ["ação", "ações"]. */
+  unidade?: [string, string]
+  altura?: number
+  /** Um rótulo de data a cada N dias. */
+  rotuloACada?: number
+}) {
+  const { ref, width } = useChartWidth<HTMLDivElement>()
+  const [hover, setHover] = useState<number | null>(null)
+
+  const padding = { top: 12, right: 8, bottom: 24, left: 30 }
+  const height = altura
+  const plotW = Math.max(1, width - padding.left - padding.right)
+  const plotH = height - padding.top - padding.bottom
+
+  const totals = data.map((d) => d.values.reduce((soma, v) => soma + (v || 0), 0))
+  const max = niceMax(Math.max(...totals, 1))
+  const band = plotW / Math.max(1, data.length)
+  const barW = Math.min(24, Math.max(3, band * 0.62))
+  const GAP = 2
+
+  const ticks = [0, max / 2, max]
+  const y = (v: number) => padding.top + plotH - (v / max) * plotH
+
+  const point = hover != null ? data[hover] : null
+  const pointTotal = hover != null ? totals[hover] : 0
+
   return (
-    <StackedDayColumns
-      data={data.map((d) => ({ date: d.date, base: d.banco, topo: d.provas }))}
-      base={{ label: 'no banco', color: 'var(--viz-series-1)' }}
-      topo={{ label: 'em provas', color: 'var(--viz-series-2)' }}
-      ariaLabel="Questões respondidas por dia nos últimos 30 dias"
-    />
+    <div ref={ref} className={PLOT_BOX} style={{ minHeight: height }}>
+      <svg width={width} height={height} role="img" aria-label={ariaLabel}>
+        {ticks.map((t) => (
+          <g key={t}>
+            <line x1={padding.left} x2={width - padding.right} y1={y(t)} y2={y(t)} stroke="var(--viz-grid)" strokeWidth={1} />
+            <text x={padding.left - 8} y={y(t) + 4} textAnchor="end" className="fill-muted-foreground text-[10px] tabular-nums">
+              {Math.round(t)}
+            </text>
+          </g>
+        ))}
+
+        {data.map((d, i) => {
+          const x = padding.left + i * band + (band - barW) / 2
+          const total = totals[i]
+          const topo = d.values.reduce((ultimo, v, idx) => (v > 0 ? idx : ultimo), -1)
+          let acumulado = 0
+          return (
+            <g
+              key={d.date}
+              tabIndex={total > 0 ? 0 : -1}
+              role={total > 0 ? 'button' : undefined}
+              aria-label={
+                total > 0
+                  ? `${fullDate(d.date)}: ${series
+                      .map((s, idx) => (d.values[idx] ? `${d.values[idx]} ${s.label}` : null))
+                      .filter(Boolean)
+                      .join(', ')}`
+                  : undefined
+              }
+              onFocus={() => setHover(i)}
+              onBlur={() => setHover(null)}
+              className="outline-none"
+            >
+              <rect
+                x={padding.left + i * band}
+                y={padding.top}
+                width={band}
+                height={plotH}
+                fill="transparent"
+                onPointerEnter={() => setHover(i)}
+                onPointerLeave={() => setHover(null)}
+              />
+              {hover === i && total > 0 && (
+                <rect x={padding.left + i * band} y={padding.top} width={band} height={plotH} fill="var(--viz-grid)" opacity={0.45} pointerEvents="none" />
+              )}
+              {d.values.map((v, idx) => {
+                if (!v) return null
+                acumulado += v
+                const yTop = y(acumulado)
+                const altura = (v / max) * plotH
+                // O vão sai da parte de cima de cada segmento que tem outro por cima.
+                const vao = idx === topo ? 0 : GAP
+                const h = Math.max(1, altura - vao)
+                return idx === topo ? (
+                  <path key={idx} d={roundedTop(x, yTop, barW, Math.max(2, altura), 4)} fill={series[idx]?.color} pointerEvents="none" />
+                ) : (
+                  <rect key={idx} x={x} y={yTop + vao} width={barW} height={h} fill={series[idx]?.color} pointerEvents="none" />
+                )
+              })}
+            </g>
+          )
+        })}
+
+        <line x1={padding.left} x2={width - padding.right} y1={y(0)} y2={y(0)} stroke="var(--viz-axis)" strokeWidth={1} />
+
+        {data.map((d, i) => {
+          const isLast = i === data.length - 1
+          const lastPeriodic = Math.floor((data.length - 1) / rotuloACada) * rotuloACada
+          const tooCloseToEnd = data.length - 1 - i < 3
+          if (isLast ? lastPeriodic === data.length - 1 : i % rotuloACada !== 0 || tooCloseToEnd) return null
+          return (
+            <text
+              key={`t-${d.date}`}
+              x={padding.left + i * band + band / 2}
+              y={height - 6}
+              textAnchor={isLast ? 'end' : 'middle'}
+              className="fill-muted-foreground text-[10px]"
+            >
+              {shortDate(d.date)}
+            </text>
+          )
+        })}
+      </svg>
+
+      {point && pointTotal > 0 && (
+        <Tooltip
+          x={padding.left + (hover as number) * band + band / 2}
+          y={y(pointTotal)}
+          width={width}
+          height={height}
+          title={unidade && series.length > 1 ? `${fullDate(point.date)} · ${pointTotal} ${pointTotal === 1 ? unidade[0] : unidade[1]}` : fullDate(point.date)}
+          rows={series
+            .map((s, idx) => ({ label: s.label, value: String(point.values[idx] || 0), color: s.color, v: point.values[idx] || 0 }))
+            .filter((row) => row.v > 0)
+            .reverse()
+            .map(({ v: _v, ...row }) => row)}
+        />
+      )}
+    </div>
   )
 }
 
@@ -637,7 +775,13 @@ export function StackedDayColumns({
 
 const WEEKDAY_INITIALS = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
-export function ConsistencyHeatmap({ data }: { data: Array<{ date: string; total: number }> }) {
+export function ConsistencyHeatmap({
+  data,
+  unidade = ['questão', 'questões'],
+}: {
+  data: Array<{ date: string; total: number }>
+  unidade?: [string, string]
+}) {
   const { ref, width } = useChartWidth<HTMLDivElement>()
   const [hover, setHover] = useState<{ index: number; x: number; y: number } | null>(null)
 
@@ -707,7 +851,7 @@ export function ConsistencyHeatmap({ data }: { data: Array<{ date: string; total
               onPointerEnter={() => setHover({ index: i, x: x + cell / 2, y })}
               onPointerLeave={() => setHover(null)}
             >
-              <title>{`${fullDate(d.date)}: ${d.total} ${d.total === 1 ? 'questão' : 'questões'}`}</title>
+              <title>{`${fullDate(d.date)}: ${d.total} ${d.total === 1 ? unidade[0] : unidade[1]}`}</title>
             </rect>
           )
         })}
@@ -720,7 +864,7 @@ export function ConsistencyHeatmap({ data }: { data: Array<{ date: string; total
           width={width}
           height={height}
           title={fullDate(point.date)}
-          rows={[{ label: point.total === 1 ? 'questão' : 'questões', value: String(point.total) }]}
+          rows={[{ label: point.total === 1 ? unidade[0] : unidade[1], value: String(point.total) }]}
         />
       )}
     </div>
@@ -815,7 +959,22 @@ export function AccuracyBars({
 // Linha — evolução das notas
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }> }) {
+export function ScoreTrend({
+  data,
+  rotulo = 'nota TRI',
+  sufixo = '',
+  teto,
+  ariaLabel = 'Evolução da nota TRI ao longo do tempo',
+}: {
+  data: Array<{ date: string; valor: number }>
+  /** Nome do valor no tooltip: "de acerto", "nota TRI". */
+  rotulo?: string
+  /** Vai colado ao número: "%". */
+  sufixo?: string
+  /** Topo fixo do eixo (100 para porcentagem); sem ele, a escala acompanha o dado. */
+  teto?: number
+  ariaLabel?: string
+}) {
   const { ref, width } = useChartWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
 
@@ -828,12 +987,12 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
   const tMin = Math.min(...times)
   const tMax = Math.max(...times)
   const span = tMax - tMin || 1
-  const max = niceMax(Math.max(...data.map((d) => d.tri), 100))
+  const max = teto ?? niceMax(Math.max(...data.map((d) => d.valor), 100))
 
   const x = (i: number) => (data.length === 1 ? padding.left + plotW / 2 : padding.left + ((times[i] - tMin) / span) * plotW)
   const y = (v: number) => padding.top + plotH - (v / max) * plotH
 
-  const path = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.tri).toFixed(1)}`).join(' ')
+  const path = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.valor).toFixed(1)}`).join(' ')
   const areaPath = `${path} L${x(data.length - 1).toFixed(1)},${y(0)} L${x(0).toFixed(1)},${y(0)} Z`
   const ticks = [0, max / 2, max]
   const last = data.length - 1
@@ -865,7 +1024,7 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
         width={width}
         height={height}
         role="img"
-        aria-label="Evolução da nota TRI ao longo do tempo"
+        aria-label={ariaLabel}
         onPointerMove={onMove}
         onPointerLeave={() => setHover(null)}
       >
@@ -896,7 +1055,7 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
           <circle
             key={`${d.date}-${i}`}
             cx={x(i)}
-            cy={y(d.tri)}
+            cy={y(d.valor)}
             r={hover === i ? 5.5 : 4}
             fill="var(--viz-series-1)"
             stroke="var(--viz-surface)"
@@ -907,10 +1066,10 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
         {/* Rótulo direto só na ponta — nunca um número em cada ponto. */}
         <text
           x={x(last) + 10}
-          y={y(data[last].tri) + 4}
+          y={y(data[last].valor) + 4}
           className="fill-foreground text-[11px] font-semibold tabular-nums"
         >
-          {data[last].tri}
+          {data[last].valor}{sufixo}
         </text>
 
         <line x1={padding.left} x2={width - padding.right} y1={y(0)} y2={y(0)} stroke="var(--viz-axis)" strokeWidth={1} />
@@ -927,11 +1086,11 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
       {point && (
         <Tooltip
           x={x(hover as number)}
-          y={y(point.tri)}
+          y={y(point.valor)}
           width={width}
           height={height}
           title={new Date(point.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })}
-          rows={[{ label: 'nota TRI', value: String(point.tri), color: 'var(--viz-series-1)' }]}
+          rows={[{ label: rotulo, value: `${point.valor}${sufixo}`, color: 'var(--viz-series-1)' }]}
         />
       )}
     </div>
@@ -944,7 +1103,14 @@ export function ScoreTrend({ data }: { data: Array<{ date: string; tri: number }
 
 const WEEKDAY_LABELS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
-export function WeekdayColumns({ data }: { data: Array<{ weekday: number; total: number }> }) {
+export function WeekdayColumns({
+  data,
+  unidade = 'questões',
+}: {
+  data: Array<{ weekday: number; total: number }>
+  /** Plural da unidade, para o rótulo acessível. */
+  unidade?: string
+}) {
   const { ref, width } = useChartWidth<HTMLDivElement>()
   const [hover, setHover] = useState<number | null>(null)
 
@@ -959,7 +1125,7 @@ export function WeekdayColumns({ data }: { data: Array<{ weekday: number; total:
 
   return (
     <div ref={ref} className={PLOT_BOX} style={{ minHeight: height }}>
-      <svg width={width} height={height} role="img" aria-label="Questões respondidas por dia da semana">
+      <svg width={width} height={height} role="img" aria-label={`${unidade[0].toUpperCase()}${unidade.slice(1)} por dia da semana`}>
         {data.map((d, i) => {
           const x = padding.left + i * band + (band - barW) / 2
           const h = (d.total / max) * plotH
@@ -971,7 +1137,7 @@ export function WeekdayColumns({ data }: { data: Array<{ weekday: number; total:
               key={d.weekday}
               tabIndex={0}
               role="button"
-              aria-label={`${WEEKDAY_LABELS[d.weekday]}: ${d.total} questões`}
+              aria-label={`${WEEKDAY_LABELS[d.weekday]}: ${d.total} ${unidade}`}
               onFocus={() => setHover(i)}
               onBlur={() => setHover(null)}
               onPointerEnter={() => setHover(i)}

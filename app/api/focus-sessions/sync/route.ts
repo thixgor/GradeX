@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
+import { esquecerResumoDeEstudo } from '@/lib/estudo/resumo-de-estudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,10 +36,8 @@ export async function POST(request: NextRequest) {
     const db = await getDb()
     const collection = db.collection('focus-sessions')
 
-    // Ensure index exists
-    await collection.createIndex({ userId: 1, sessionId: 1 }, { unique: true, background: true })
-    await collection.createIndex({ userId: 1, startedAt: -1 }, { background: true })
-
+    // Os índices desta coleção ficam em lib/mongodb-indexes.ts — criá-los aqui
+    // era uma ida ao Atlas a mais em cada sincronização.
     // Batch upsert
     const ops = sessions
       .filter(s => s && typeof s === 'object' && s.id && typeof s.id === 'string')
@@ -74,6 +73,7 @@ export async function POST(request: NextRequest) {
     }
 
     await collection.bulkWrite(ops)
+    esquecerResumoDeEstudo(session.userId)
 
     return NextResponse.json({ synced: sessions.length })
   } catch (error) {
@@ -136,6 +136,7 @@ export async function DELETE(request: NextRequest) {
     const collection = db.collection('focus-sessions')
 
     await collection.deleteOne({ userId: session.userId, sessionId })
+    esquecerResumoDeEstudo(session.userId)
 
     return NextResponse.json({ deleted: true })
   } catch (error) {

@@ -1,0 +1,125 @@
+/*
+ * /profile no vidro iOS. As peças genéricas (cartão, lista, segmentado,
+ * faixa) vêm de components/materiais/vidro-ios.css; aqui só o que é do perfil.
+ */
+.vidro-ios .perfil-cabeca {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px 18px;
+  margin-bottom: 20px;
+}
+.vidro-ios .perfil-acoes {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media (min-width: 768px) {
+  .vidro-ios .perfil-cabeca {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .vidro-ios .perfil-acoes {
+    grid-column: auto;
+    justify-content: flex-end;
+  }
+}
+.vidro-ios .perfil-trocar-foto {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ios-rotulo);
+  background: var(--ios-cartao-solido);
+  box-shadow: var(--ios-sombra);
+  transition: color 0.15s ease-out;
+}
+.vidro-ios button:hover > .perfil-trocar-foto {
+  color: var(--ios-tinta-texto);
+}
+
+.vidro-ios .perfil-ritmo {
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 22px;
+  text-align: inherit;
+}
+/* Quatro colunas que cabem até no celular estreito: o placar não rola. */
+.vidro-ios .perfil-placar.ios-faixa {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: visible;
+}
+.vidro-ios .perfil-placar.ios-faixa > * {
+  min-width: 0;
+  padding: 2px 4px;
+}
+.vidro-ios .perfil-placar .ios-faixa-nota {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .vidro-ios .perfil-placar .ios-faixa-valor {
+    font-size: 18px;
+  }
+  .vidro-ios .perfil-placar .ios-faixa-nota {
+    font-size: 11px;
+  }
+  .vidro-ios .perfil-placar .ios-faixa-rotulo {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+}
+
+/* A navegação gruda logo abaixo do cabeçalho de vidro do app. */
+.vidro-ios .perfil-navegacao {
+  position: sticky;
+  top: calc(3.5rem + env(safe-area-inset-top, 0px) + 8px);
+  z-index: 15;
+  margin-bottom: 24px;
+}
+@media (min-width: 640px) {
+  .vidro-ios .perfil-navegacao {
+    top: calc(4rem + env(safe-area-inset-top, 0px) + 8px);
+  }
+}
+.vidro-ios .perfil-navegacao .ios-segmentado {
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: var(--ios-sombra);
+}
+.lite-mode .vidro-ios .perfil-navegacao .ios-segmentado {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--ios-cartao-solido);
+}
+
+/* Frente de estudo: ícone na cor da série, número grande, caminho de volta. */
+.vidro-ios .perfil-frente {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 88px;
+  padding: 14px 14px 14px 16px;
+  border-radius: 20px;
+}
+.vidro-ios .perfil-frente-icone {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--cor);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}

@@ -389,7 +389,7 @@ export function AppShell({
     return (
       <AppShellContext.Provider value={contextValue}>
         <LiteMotionConfig lite={liteMode}>
-        <FocusSessionProvider>
+        <FocusSessionProvider isAuthenticated={false}>
           <div className="min-h-screen surface-page">
             {showHeader ? (
               <header

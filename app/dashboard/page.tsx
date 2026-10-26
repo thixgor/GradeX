@@ -37,6 +37,8 @@ import { ComunidadeWhatsAppCard } from '@/components/comunidade-whatsapp'
 import { ExperienceCarousel } from '@/components/dashboard/experience-carousel'
 import { TourTrigger } from '@/components/dashboard/tour-trigger'
 import { usePlatformTour } from '@/hooks/use-platform-tour'
+import { CartaoDeFocoDoPainel, PainelDeDesempenho, type DiaDoPainel } from '@/components/dashboard/painel-de-desempenho'
+import type { ResumoDoPerfil } from '@/components/profile/overview-tab'
 
 // O overlay carrega o acervo completo de frases; fora do chunk inicial.
 const PhrasesOverlay = dynamic(() => import('@/components/dashboard/phrases-overlay'), { ssr: false })
@@ -46,75 +48,6 @@ const PlatformTour = dynamic(
   () => import('@/components/dashboard/platform-tour').then(m => m.PlatformTour),
   { ssr: false },
 )
-
-// ─── Circular Progress Ring ─────────────────────────────────────
-function ProgressRing({
-  value,
-  max,
-  size = 48,
-  strokeWidth = 4,
-  color = '#468152',
-}: {
-  value: number
-  max: number
-  size?: number
-  strokeWidth?: number
-  color?: string
-}) {
-  const radius = (size - strokeWidth) / 2
-  const circumference = radius * 2 * Math.PI
-  const percent = max > 0 ? Math.min(value / max, 1) : 0
-  const offset = circumference - percent * circumference
-
-  return (
-    <svg width={size} height={size} className="progress-ring">
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={strokeWidth}
-        className="text-muted/30"
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        className="progress-ring-circle"
-      />
-    </svg>
-  )
-}
-
-// ─── Animated Counter ───────────────────────────────────────────
-function AnimatedNumber({ value, delay = 0 }: { value: number; delay?: number }) {
-  const [display, setDisplay] = useState(0)
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const duration = 1000
-      const start = Date.now()
-      const step = () => {
-        const elapsed = Date.now() - start
-        const progress = Math.min(elapsed / duration, 1)
-        const eased = 1 - Math.pow(1 - progress, 3) // easeOutCubic
-        setDisplay(Math.round(eased * value))
-        if (progress < 1) requestAnimationFrame(step)
-      }
-      requestAnimationFrame(step)
-    }, delay)
-    return () => clearTimeout(timeout)
-  }, [value, delay])
-
-  return <span>{display.toLocaleString('pt-BR')}</span>
-}
 
 // ─── Motivational Phrases ───────────────────────────────────────
 // Semente mínima para a primeira pintura. O acervo completo (~43 KB) é
@@ -137,8 +70,11 @@ const DASHBOARD_MATERIALS_CACHE_KEY = 'dashboard:materials'
 interface DashboardStats {
   questionsAnswered: number
   examsCompleted: number
+  /** Acerto nas questões objetivas de todas as fontes (banco, provas, quiz). */
   accuracyRate: number
   streakDays: number
+  resumo?: ResumoDoPerfil
+  ultimos14?: DiaDoPainel[]
 }
 
 // ─── Dashboard Content ──────────────────────────────────────────
@@ -165,9 +101,6 @@ function DashboardContent() {
   const [stats, setStats] = useState<DashboardStats>({
     questionsAnswered: 0,
     examsCompleted: 0,
-    // Aproveitamento no banco de questões. Antes esse cartão mostrava
-    // "Flashcards Estudados", um campo que /api/user/statistics nunca
-    // devolveu — ou seja, um zero permanente na cara de todo mundo.
     accuracyRate: 0,
     streakDays: 0,
   })
@@ -246,8 +179,10 @@ function DashboardContent() {
         const proximo: DashboardStats = {
           questionsAnswered: data.questionsAnswered || 0,
           examsCompleted: data.examsCompleted || 0,
-          accuracyRate: Math.round(data.bankAccuracyRate || 0),
+          accuracyRate: Math.round(data.accuracyRate || 0),
           streakDays: data.streakDays || 0,
+          resumo: data.resumo,
+          ultimos14: data.ultimos14,
         }
         setStats(proximo)
         writePageCache(DASHBOARD_STATS_CACHE_KEY, proximo)
@@ -297,49 +232,6 @@ function DashboardContent() {
     [setSidebarOpen],
   )
 
-  // ─── Stats Config ──────────────────────────────────────────────
-  // `ring` só onde a porcentagem é real: para contagens não existe teto, e o
-  // anel antigo (max = Math.max(valor, 100)) ficava cheio a partir de 100 —
-  // parecia meta cumprida sem medir nada.
-  const quickStats = [
-    {
-      label: 'Questões respondidas',
-      value: stats.questionsAnswered,
-      icon: FileText,
-      color: '#468152',
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      ring: false,
-      suffix: '',
-    },
-    {
-      label: 'Provas realizadas',
-      value: stats.examsCompleted,
-      icon: Trophy,
-      color: '#E2A43E',
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      ring: false,
-      suffix: '',
-    },
-    {
-      label: 'Aproveitamento no banco',
-      value: stats.accuracyRate,
-      icon: Target,
-      color: '#8b5cf6',
-      iconBg: 'bg-violet-500/10 dark:bg-violet-500/20',
-      ring: true,
-      suffix: '%',
-    },
-    {
-      label: 'Dias de estudo',
-      value: stats.streakDays,
-      icon: Flame,
-      color: '#f97316',
-      iconBg: 'bg-orange-500/10 dark:bg-orange-500/20',
-      ring: false,
-      suffix: '',
-    },
-  ]
-
   // ─── Smart study insights ─────────────────────────────────────
   // Só o que vem de dado real do usuário. A dica genérica fixa ("revise antes
   // de dormir") saiu: aparecia para todo mundo, todo dia, sem nunca mudar.
@@ -369,7 +261,7 @@ function DashboardContent() {
               icon: Target,
               color: '#8b5cf6',
               title: `${stats.accuracyRate}% de acerto`,
-              description: 'Bom domínio no banco de questões. Avance para os assuntos que ainda evita.',
+              description: 'Bom domínio nas questões. Avance para os assuntos que ainda evita.',
             }
           : {
               icon: Target,
@@ -553,44 +445,18 @@ function DashboardContent() {
         <ComunidadeWhatsAppCard className="dash-rise" />
 
         {/* ═══════════════════════════════════════════════════════
-            2. PERFORMANCE OVERVIEW CARDS
+            2. DESEMPENHO + SESSÃO DE FOCO
+            Todas as frentes de estudo, as duas últimas semanas e o
+            caminho para os gráficos e o perfil; ao lado, o cronômetro —
+            é aqui que o dia de estudo começa.
            ═══════════════════════════════════════════════════════ */}
-        <section data-tour="stats" className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-          {quickStats.map((stat, index) => {
-            const Icon = stat.icon
-            return (
-              <div
-                key={stat.label}
-                // Entrada em CSS: eram quatro `motion.div` com spring próprio
-                // só para aparecer. E saiu o `stat-card-glow`, cujo brilho
-                // rodava `infinite` — composição contínua numa tela parada.
-                className="glass-stat dash-rise hover-glow-brand hover-lift group relative cursor-default rounded-2xl p-4 transition-all duration-300 sm:p-5"
-                style={{ animationDelay: `${index * 60}ms` }}
-              >
-                <div
-                  className="absolute left-0 right-0 top-0 h-[3px] rounded-t-2xl opacity-70 transition-opacity duration-300 group-hover:opacity-100"
-                  style={{ background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)` }}
-                />
-                <div className="mb-3 flex items-start justify-between">
-                  <div className={`rounded-xl p-2.5 ${stat.iconBg} transition-transform duration-300 group-hover:scale-110`}>
-                    <Icon className="h-5 w-5" style={{ color: stat.color }} />
-                  </div>
-                  {/* Anel só onde 0-100% significa alguma coisa. */}
-                  {stat.ring && (
-                    <ProgressRing value={stat.value} max={100} size={36} strokeWidth={3} color={stat.color} />
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <p className="text-2xl font-bold tracking-tight sm:text-3xl">
-                    <AnimatedNumber value={stat.value} delay={150 + index * 80} />
-                    {stat.suffix}
-                  </p>
-                  <p className="text-xs leading-tight text-muted-foreground">{stat.label}</p>
-                </div>
-              </div>
-            )
-          })}
-        </section>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
+          <PainelDeDesempenho
+            resumo={stats.resumo ?? null}
+            ultimos14={stats.ultimos14 ?? (loading ? null : [])}
+          />
+          <CartaoDeFocoDoPainel />
+        </div>
 
         {/* ═══════════════════════════════════════════════════════
             3. EXPERIÊNCIAS DO SITE (carrossel deslizável)

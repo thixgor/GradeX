@@ -11,6 +11,7 @@ import { COLECAO_DE_PROGRESSO, contarRespondidas } from '@/lib/provas/retomada'
 import { avaliarEntrega } from '@/lib/provas/entrega-da-prova'
 import { corrigirPorGabarito, temGabaritoFlexivel } from '@/lib/provas/resposta-flexivel'
 import { MOTIVO_NOTA_PRESA, resolverNotaDaProva } from '@/lib/provas/nota-da-prova'
+import { esquecerResumoDeEstudo } from '@/lib/estudo/resumo-de-estudo'
 
 export const dynamic = 'force-dynamic'
 
@@ -311,6 +312,7 @@ export async function POST(
     }
 
     const result = await submissionsCollection.insertOne(submission)
+    esquecerResumoDeEstudo(session.userId)
 
     /*
      * A nota é GRAVADA sempre; o que espera o término é a viagem dela até o

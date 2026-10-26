@@ -134,6 +134,13 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('flashcardSpacedProgress').createIndex({ userId: 1, cardId: 1 }, { unique: true }),
     db.collection('flashcardSpacedProgress').createIndex({ userId: 1, deckId: 1, nextReviewAt: 1 }),
     db.collection('flashcardSpacedProgress').createIndex({ deckId: 1, cardId: 1 }),
+    // Histórico de revisões por pessoa — o desempenho do perfil e do painel
+    // (lib/estudo/resumo-de-estudo.ts) lê todas as sessões de quem pede.
+    db.collection('flashcardManualSessions').createIndex({ userId: 1, finishedAt: -1 }),
+    // Sessões de foco: o upsert da sincronização e a leitura por pessoa.
+    // Moravam num `createIndex` dentro da rota, que rodava a cada POST.
+    db.collection('focus-sessions').createIndex({ userId: 1, sessionId: 1 }, { unique: true }),
+    db.collection('focus-sessions').createIndex({ userId: 1, startedAt: -1 }),
     db.collection('flashcardManualDecks').createIndex({ slug: 1 }, { unique: true }),
     db.collection('flashcardManualDecks').createIndex({ ownerId: 1, updatedAt: -1 }),
     // Comunidade: público, não escondido e gratuito, ordenado por curtidas.
