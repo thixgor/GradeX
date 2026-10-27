@@ -3,8 +3,13 @@ import 'server-only'
 import type { Db } from 'mongodb'
 
 import { getPaymentProvider } from './index'
-import { applyPaymentResult } from './effects'
-import { PROVIDER_UNCONFIRMED, resolveUnconfirmedOrder } from './provider-failure'
+import {
+  applyPaymentResult,
+  concluirEfeitosInterrompidos,
+  EFEITOS_INTERROMPIDOS_APOS_MS,
+  filtroDeEfeitosInterrompidos,
+} from './effects'
+import { PROVIDER_UNCONFIRMED, findPaymentForOrder, resolveUnconfirmedOrder } from './provider-failure'
 import type { PaymentOrder } from '../types'
 
 export interface ResultadoDaVarredura {
@@ -12,7 +17,29 @@ export interface ResultadoDaVarredura {
   reconciled: number
   approved: number
   errors: number
+  /** Pedidos sem id de pagamento achados no MP pela referência. */
+  foundByReference?: number
+  /** Pedidos aprovados cujos efeitos (acesso, impresso, e-mail) foram terminados. */
+  effectsResumed?: number
 }
+
+/** De onde a varredura foi chamada — aparece no painel ("última verificação"). */
+export type OrigemDaVarredura = 'cron' | 'cron_assinaturas' | 'admin'
+
+/** Documento único com a última execução, lido pelo painel de verificação. */
+export const COLECAO_DE_VARREDURAS = 'payment_sweeps'
+
+/**
+ * Pedido pendente SEM id de pagamento: a função caiu entre gravar o pedido e
+ * ouvir a resposta do Mercado Pago (o prazo de 30 s esgotou, por exemplo). Se
+ * o MP cobrou mesmo assim, só o webhook salvava — e, sem o id, nem a varredura
+ * nem a tela consultavam nada. Busca pelo id do pedido (`external_reference`)
+ * a partir de alguns minutos, por até dois dias, no máximo uma vez por hora.
+ */
+const SEM_ID_A_PARTIR_DE_MS = 5 * 60_000
+const SEM_ID_ATE_MS = 48 * 60 * 60_000
+const SEM_ID_INTERVALO_MS = 60 * 60_000
+const SEM_ID_POR_EXECUCAO = 40
 
 /**
  * Reconcilia pedidos únicos (Pix, cartão, boleto — doações, rifas, materiais,
@@ -41,7 +68,26 @@ export interface ResultadoDaVarredura {
  */
 export async function reconciliarPagamentosPendentes(
   db: Db,
-  opcoes: { limite?: number; prazo?: number } = {},
+  opcoes: { limite?: number; prazo?: number; origem?: OrigemDaVarredura } = {},
+): Promise<ResultadoDaVarredura> {
+  const inicio = new Date()
+  const stats = await varrer(db, opcoes)
+  // Registro da execução para o painel ("o cron está rodando?"). Nunca derruba
+  // a varredura.
+  await db
+    .collection(COLECAO_DE_VARREDURAS)
+    .updateOne(
+      { _id: 'ultima' as any },
+      { $set: { iniciadaEm: inicio, terminadaEm: new Date(), origem: opcoes.origem || 'cron', stats } },
+      { upsert: true }
+    )
+    .catch((err) => console.error('[payments-sweep] registro da execução falhou:', err))
+  return stats
+}
+
+async function varrer(
+  db: Db,
+  opcoes: { limite?: number; prazo?: number },
 ): Promise<ResultadoDaVarredura> {
   const limite = Math.min(300, opcoes.limite ?? 300)
   const prazo = opcoes.prazo ?? Date.now() + 4 * 60_000
@@ -114,6 +160,71 @@ export async function reconciliarPagamentosPendentes(
     } catch (err) {
       stats.errors++
       console.error('[payments-sweep] unconfirmed fail', String(order._id), err)
+    }
+  }
+
+  // Pedidos pendentes que nunca receberam o id do pagamento — ver
+  // SEM_ID_A_PARTIR_DE_MS acima.
+  const agora = Date.now()
+  const semId = await ordersCol
+    .find({
+      status: 'pending',
+      statusDetail: { $nin: [PROVIDER_UNCONFIRMED] },
+      providerPaymentId: { $in: [null, ''] },
+      createdAt: { $gte: new Date(agora - SEM_ID_ATE_MS), $lte: new Date(agora - SEM_ID_A_PARTIR_DE_MS) },
+      $or: [
+        { buscaPorReferenciaEm: { $exists: false } },
+        { buscaPorReferenciaEm: { $lt: new Date(agora - SEM_ID_INTERVALO_MS) } },
+      ],
+    } as any)
+    .sort({ createdAt: -1 })
+    .limit(SEM_ID_POR_EXECUCAO)
+    .toArray()
+
+  for (const order of semId) {
+    if (Date.now() > prazo) break
+    stats.checked++
+    try {
+      await ordersCol.updateOne({ _id: order._id as any }, { $set: { buscaPorReferenciaEm: new Date() } })
+      const found = await findPaymentForOrder(String(order._id))
+      if (!found) continue
+      stats.foundByReference = (stats.foundByReference || 0) + 1
+      const applied = await applyPaymentResult(String(order._id), found)
+      const newStatus = applied.order?.status || found.status
+      if (newStatus !== order.status) {
+        stats.reconciled++
+        if (newStatus === 'approved') stats.approved++
+      }
+    } catch (err) {
+      stats.errors++
+      console.error('[payments-sweep] busca por referência falhou', String(order._id), err)
+    }
+  }
+
+  // Aprovados cujos efeitos morreram no meio (acesso, impresso, e-mail).
+  const interrompidos = await ordersCol
+    .find({
+      ...filtroDeEfeitosInterrompidos(),
+      effectsStartedAt: { $gte: since, $lt: new Date(Date.now() - EFEITOS_INTERROMPIDOS_APOS_MS) },
+      // Só os que dá para repetir (ver efeitosRepetiveis) e que não esgotaram
+      // as tentativas — sem isso os mesmos ocupariam o lote toda vez.
+      type: { $in: ['material', 'physical'] },
+      effectsRetries: { $not: { $gte: 3 } },
+    } as any)
+    .project({ _id: 1 })
+    .sort({ effectsStartedAt: -1 })
+    .limit(20)
+    .toArray()
+
+  for (const order of interrompidos) {
+    if (Date.now() > prazo) break
+    try {
+      if ((await concluirEfeitosInterrompidos(String(order._id))) === 'concluidos') {
+        stats.effectsResumed = (stats.effectsResumed || 0) + 1
+      }
+    } catch (err) {
+      stats.errors++
+      console.error('[payments-sweep] retomada de efeitos falhou', String(order._id), err)
     }
   }
 

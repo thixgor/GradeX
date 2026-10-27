@@ -239,6 +239,7 @@ export async function GET(request: NextRequest) {
     const pagamentos = await reconciliarPagamentosPendentes(db, {
       limite: 100,
       prazo: now.getTime() + 4 * 60_000,
+      origem: 'cron_assinaturas',
     })
     Object.assign(stats, {
       paymentsChecked: pagamentos.checked,

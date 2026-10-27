@@ -2499,6 +2499,19 @@ export interface PaymentOrder {
    * disparado aos admins — evita alertas duplicados a cada execução do sweeper.
    */
   fulfillmentAlertSentAt?: Date
+  /**
+   * Efeitos da aprovação (liberar acesso, pedido físico, e-mail): quando
+   * começaram e quando terminaram. Começou e não terminou = a função caiu no
+   * meio (tempo esgotado, erro) — ver `concluirEfeitosInterrompidos` em
+   * lib/payments/effects.ts, que a varredura e o admin usam para terminar.
+   */
+  effectsStartedAt?: Date
+  effectsCompletedAt?: Date
+  /** Última retomada dos efeitos interrompidos e quantas já houve. */
+  effectsRetryAt?: Date
+  effectsRetries?: number
+  /** Última busca do pagamento no MP pelo id do pedido (pedido sem id de pagamento). */
+  buscaPorReferenciaEm?: Date
 }
 
 export interface PaymentRecord {

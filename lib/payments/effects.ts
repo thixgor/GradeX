@@ -122,6 +122,11 @@ export async function applyPaymentResult(
     ...paidFields,
     updatedAt: new Date(),
   }
+  // Primeira aprovação: carimba o início dos efeitos junto da transição. Se a
+  // função cair no meio deles, o pedido fica "aprovado" sem `effectsCompletedAt`
+  // — e é por essa diferença que a varredura acha o que terminar.
+  const aprovandoAgora = TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)
+  if (aprovandoAgora) update.effectsStartedAt = new Date()
   // Compare-and-set no status lido: webhook e polling da tela chegam juntos
   // com frequência (é o caminho rápido do Pix). Sem a condição, os dois viam
   // `pending`, os dois "venciam" a transição e os efeitos (liberar acesso,
@@ -171,7 +176,7 @@ export async function applyPaymentResult(
   }
 
   // Disparar efeito apenas em transição para approved (1ª vez)
-  if (TERMINAL_APPROVED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
+  if (aprovandoAgora) {
     await approveCouponRedemption(db, String(order._id))
     // O benefício PROUNI/FIES é de uso único: quando o pagamento entra, ele
     // deixa de estar disponível. Antes disso ele só estava reservado — um Pix
@@ -200,6 +205,7 @@ export async function applyPaymentResult(
     // Os efeitos recebem a order com o status ANTERIOR (como sempre), mas já
     // com o total pago lido do MP — é dele que saem os valores dos e-mails.
     await runApprovedEffects({ ...order, ...paidFields }, result)
+    await orders.updateOne({ _id: order._id as any }, { $set: { effectsCompletedAt: new Date() } })
   }
 
   if (TERMINAL_FAILED.includes(newStatus) && !TERMINAL_APPROVED.includes(prevStatus)) {
@@ -240,6 +246,111 @@ export async function applyPaymentResult(
   return { applied: true, order: updatedOrder }
 }
 
+/**
+ * Pedidos cujos efeitos podem rodar de novo sem dar nada em dobro: a liberação
+ * do material é upsert por pedido e o pedido físico só avança se ainda estava
+ * "aguardando pagamento". Plano, rifa, monitoria e afins estendem prazo, vendem
+ * número ou pagam repasse — repetir seria errado; esses só aparecem no painel.
+ */
+const TIPOS_COM_EFEITO_REPETIVEL: PaymentOrder['type'][] = ['material', 'physical']
+
+/** Quanto esperar antes de concluir que os efeitos morreram (e não estão rodando). */
+export const EFEITOS_INTERROMPIDOS_APOS_MS = 10 * 60_000
+/** No clique do admin: nenhuma função vive mais que 60 s, então 2 min já é certeza. */
+const EFEITOS_INTERROMPIDOS_FORCADO_APOS_MS = 2 * 60_000
+const MAX_RETOMADAS_DE_EFEITOS = 3
+
+/** Filtro dos pedidos aprovados cujos efeitos começaram e não terminaram. */
+export function filtroDeEfeitosInterrompidos(agora = Date.now()) {
+  return {
+    status: 'approved',
+    effectsStartedAt: { $lt: new Date(agora - EFEITOS_INTERROMPIDOS_APOS_MS) },
+    effectsCompletedAt: { $exists: false },
+    // Serial Key tem a própria rede de segurança (cron fulfillment-sweeper).
+    'metadata.serialKeyPurchase': { $ne: true },
+  }
+}
+
+export function efeitosRepetiveis(order: Pick<PaymentOrder, 'type' | 'metadata'>): boolean {
+  return TIPOS_COM_EFEITO_REPETIVEL.includes(order.type) && !order.metadata?.serialKeyPurchase
+}
+
+/**
+ * Termina os efeitos de um pedido aprovado que ficaram pela metade.
+ *
+ * O status vira `approved` ANTES dos efeitos (é o compare-and-set que impede
+ * rodá-los duas vezes). Se a função cai depois disso — tempo esgotado montando
+ * os PDFs de um carrinho, SMTP pendurado —, nenhum caminho os retomava: o
+ * webhook reentregue e a varredura viam "status inalterado" e paravam. O
+ * comprador ficava com o pagamento aprovado e o pedido físico (ou o acesso)
+ * pendente. Chamado pela varredura e pela verificação manual do admin.
+ *
+ * `forcar` (clique do admin) encurta a espera para 2 min e ignora o limite de
+ * tentativas.
+ */
+export async function concluirEfeitosInterrompidos(
+  orderId: string,
+  opcoes: { forcar?: boolean } = {}
+): Promise<'concluidos' | 'nao_repetiveis' | 'nada_a_fazer'> {
+  const db = await getDb()
+  const orders = db.collection<PaymentOrder>('payment_orders')
+  const agora = new Date()
+  const filtro: Record<string, unknown> = opcoes.forcar
+    ? {
+        status: 'approved',
+        effectsStartedAt: { $lt: new Date(agora.getTime() - EFEITOS_INTERROMPIDOS_FORCADO_APOS_MS) },
+        effectsCompletedAt: { $exists: false },
+      }
+    : {
+        ...filtroDeEfeitosInterrompidos(agora.getTime()),
+        $and: [
+          { $or: [{ effectsRetries: { $exists: false } }, { effectsRetries: { $lt: MAX_RETOMADAS_DE_EFEITOS } }] },
+          { $or: [{ effectsRetryAt: { $exists: false } }, { effectsRetryAt: { $lt: new Date(agora.getTime() - EFEITOS_INTERROMPIDOS_APOS_MS) } }] },
+        ],
+      }
+
+  const atual = await orders.findOne({ _id: new ObjectId(orderId) as any, ...filtro } as any)
+  if (!atual) return 'nada_a_fazer'
+  if (!efeitosRepetiveis(atual)) return 'nao_repetiveis'
+
+  // Reserva a retomada: duas varreduras (ou varredura + clique) ao mesmo tempo
+  // não podem rodar os efeitos juntas.
+  const reserva = await orders.updateOne(
+    { _id: atual._id as any, effectsCompletedAt: { $exists: false }, effectsRetryAt: atual.effectsRetryAt ?? { $exists: false } } as any,
+    { $set: { effectsRetryAt: agora }, $inc: { effectsRetries: 1 } }
+  )
+  if (reserva.matchedCount === 0) return 'nada_a_fazer'
+
+  const id = String(atual._id)
+  // Os passos anteriores aos efeitos são idempotentes (atualizam por pedido) e
+  // podem ter sido os que morreram. Evento de analytics e Meta CAPI ficam de
+  // fora: contariam a venda duas vezes.
+  await approveCouponRedemption(db, id)
+  await consumeProuniGrant(db, id)
+  await registrarVendaDoPedido(db, atual)
+
+  const result: ProviderOrder = {
+    providerOrderId: atual.providerPaymentId || atual.providerOrderId || '',
+    status: 'approved',
+    amount: atual.amount,
+    currency: atual.currency || 'BRL',
+    paymentMethod: atual.paymentMethod || 'unknown',
+    statusDetail: atual.statusDetail,
+    paidAt: atual.paidAt,
+    raw: null,
+  }
+  await runApprovedEffects(atual, result)
+  await orders.updateOne({ _id: atual._id as any }, { $set: { effectsCompletedAt: new Date() } })
+  await audit({
+    action: 'order_effects_resumed',
+    targetUserId: atual.userId,
+    resourceType: atual.type,
+    resourceId: id,
+    metadata: { effectsStartedAt: atual.effectsStartedAt, retries: (atual.effectsRetries || 0) + 1, forced: !!opcoes.forcar },
+  })
+  return 'concluidos'
+}
+
 async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
   // Os e-mails de confirmação dos efeitos abaixo são AGUARDADOS (cada um já
   // engole o próprio erro). Antes saíam soltos, sem `await`: o webhook
@@ -261,14 +372,23 @@ async function runApprovedEffects(order: PaymentOrder, result: ProviderOrder) {
     case 'plan':
       await applyPlanPurchase(order)
       break
-    case 'material':
-      await applyMaterialPurchase(order, result)
+    case 'material': {
       // Checkout unificado: quando há uma parte física paga junto (add-on/produto
       // impresso), finaliza também o pedido físico ligado por metadata.shopOrderId.
-      if (order.metadata?.shopOrderId) {
-        await applyPhysicalOrder(order, result)
-      }
+      // Ele entra logo depois de liberar o digital e ANTES dos e-mails: montar os
+      // PDFs de um carrinho inteiro leva tempo, e quando a função esgotava o
+      // prazo ali o impresso ficava "aguardando pagamento" com a compra paga.
+      let fisicoFeito = false
+      const marcarFisico = order.metadata?.shopOrderId
+        ? async () => {
+            fisicoFeito = true
+            await applyPhysicalOrder(order, result)
+          }
+        : undefined
+      await applyMaterialPurchase(order, result, marcarFisico)
+      if (marcarFisico && !fisicoFeito) await marcarFisico()
       break
+    }
     case 'donation':
       await applyDonationApproved(order, result)
       break
@@ -604,7 +724,15 @@ async function applyPhysicalOrder(order: PaymentOrder, result?: ProviderOrder) {
   }
 }
 
-async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder) {
+/**
+ * @param aposLiberar  roda assim que o acesso está gravado, antes de montar
+ *   PDFs e mandar o e-mail (a parte lenta) — ver o caso 'material' acima.
+ */
+async function applyMaterialPurchase(
+  order: PaymentOrder,
+  result?: ProviderOrder,
+  aposLiberar?: () => Promise<void>
+) {
   if (!order.userId || !order.refId) return
   const db = await getDb()
 
@@ -665,6 +793,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         auditMetadata: { orderId: String(order._id), cart: true },
       }
     )
+    await aposLiberar?.()
 
     if (order.payerEmail) {
       const skippedItems = Array.isArray(order.metadata?.skippedItems)
@@ -798,6 +927,7 @@ async function applyMaterialPurchase(order: PaymentOrder, result?: ProviderOrder
         : {}),
     },
   })
+  await aposLiberar?.()
 
   if (order.payerEmail) {
     // Envio automático do PDF por e-mail (quando o material tem a opção

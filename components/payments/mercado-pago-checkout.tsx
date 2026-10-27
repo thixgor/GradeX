@@ -191,6 +191,12 @@ export interface MercadoPagoCheckoutProps {
   publicKey: string
   amount: number
   description: string
+  /**
+   * Distingue a retomada do pagamento pendente (Pix/boleto) quando a descrição
+   * não basta: "Carrinho DomineAqui - 2 itens" é igual para QUALQUER carrinho de
+   * dois itens, e a tela reabria o QR de um carrinho antigo no lugar do atual.
+   */
+  resumeKey?: string
   /** Endpoint que cria a Order. Recebe os campos abaixo no body. */
   endpoint: string
   /** Body extra a ser enviado ao endpoint (type, refId, etc.) */
@@ -576,7 +582,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   // Retomada: o Android descarta a aba enquanto a pessoa paga no app do banco.
   // Sem isto, ao voltar a página recarregava no formulário — sem o QR e sem
   // acompanhar a aprovação.
-  const pendingKey = pendingStorageKey(props.endpoint, props.description)
+  const pendingKey = pendingStorageKey(props.endpoint, props.resumeKey ? `${props.description}:${props.resumeKey}` : props.description)
   const sessao = () => (typeof window === 'undefined' ? null : (() => { try { return window.sessionStorage } catch { return null } })())
   useEffect(() => {
     const snap = readPendingCheckout<CheckoutOrderResponse, Method>(sessao(), pendingKey)

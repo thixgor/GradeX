@@ -49,6 +49,22 @@
     "app/api/webhooks/mercadopago/route.ts": {
       "maxDuration": 60
     },
+    "app/api/materiais/checkout/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
+    "app/api/payments/orders/[id]/status/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
+    "app/api/admin/payments/[id]/verificar/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
+    "app/api/admin/payments/verificar-pendentes/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
+    },
     "app/api/cron/subscriptions-sweeper/route.ts": {
       "maxDuration": 300
     },
