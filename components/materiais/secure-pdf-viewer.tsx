@@ -1,7 +1,7 @@
 'use client'
 
 import type * as React from 'react'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   ArrowDownUp,
@@ -117,6 +117,12 @@ import {
   ZOOM_ANCHOR_HOLD_MS,
   zoomPercent,
 } from '@/lib/pdf-viewer-zoom'
+import {
+  DEFAULT_PAN_RATIO,
+  PAN_DRAG_THRESHOLD,
+  panScrollFor,
+  readPanRatio,
+} from '@/lib/pdf-viewer-pan'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
 import {
@@ -1748,12 +1754,13 @@ async function fetchWithDeadline(url: string, timeoutMs: number, attempts = 1): 
  * volta dela. A conta antiga era `largura da área - 24` para tudo, e errava
  * pelos dois lados: no celular a página "ajustada" passava 8px da coluna (a
  * borda da moldura ficava cortada e a linha rolava de lado por 4px); num
- * monitor largo ignorava o `max-w-6xl` da coluna, e "ajustar à largura"
- * criava uma página mais larga que a própria coluna.
+ * monitor largo "ajustar à largura" criava uma página de letra de cartaz.
  *
  * Os números espelham as classes do JSX: a seção tem `px-2 sm:px-4` (px-0 na
- * fileira horizontal), a coluna `max-w-6xl`, a linha da página `sm:px-2` (a
- * casa da fileira, `px-2.5`), e a moldura `p-2` + borda.
+ * fileira horizontal), a linha da página `sm:px-2` (a casa da fileira,
+ * `px-2.5`), e a moldura `p-2` + borda. O teto de 1152px (o antigo
+ * `max-w-6xl` da coluna) vale só para o tamanho normal: a coluna em si ocupa a
+ * área inteira, para a página AMPLIADA usar a sobra antes de rolar de lado.
  */
 function pageAvailableWidth(contentWidth: number, horizontal: boolean) {
   if (!(contentWidth > 0)) return 0
@@ -1889,20 +1896,27 @@ function minZoomFor(apiMinZoom: number, resting: number) {
  */
 function scrollReadingBy(delta: number, from: HTMLElement | null) {
   if (!Number.isFinite(delta) || delta === 0) return
-  let element = from?.parentElement ?? null
-  while (element) {
-    const style = window.getComputedStyle(element)
-    const scrolls = style.overflowY === 'auto' || style.overflowY === 'scroll'
-    if (scrolls && element.scrollHeight - element.clientHeight > 1) {
-      element.scrollTop += delta
-      return
-    }
-    element = element.parentElement
+  const element = findReadingScroller(from)
+  if (element) {
+    element.scrollTop += delta
+    return
   }
   // `instant` e não `auto`: `auto` obedeceria a um `scroll-behavior: smooth` do
   // CSS, e uma correção de posição animada é exatamente o solavanco que ela
   // existe para evitar.
   window.scrollTo({ top: window.scrollY + delta, behavior: 'instant' })
+}
+
+/** Quem rola a leitura na vertical a partir de `from` — `null` é a janela. */
+function findReadingScroller(from: HTMLElement | null): HTMLElement | null {
+  let element = from?.parentElement ?? null
+  while (element) {
+    const style = window.getComputedStyle(element)
+    const scrolls = style.overflowY === 'auto' || style.overflowY === 'scroll'
+    if (scrolls && element.scrollHeight - element.clientHeight > 1) return element
+    element = element.parentElement
+  }
+  return null
 }
 
 function clamp01(value: number) {
@@ -2203,6 +2217,140 @@ function useResizeWidth(ref: React.RefObject<HTMLElement | null>, deps: React.De
 //
 // As medidas e a decisão do gesto moram em `lib/pdf-viewer-swipe.ts` (sem DOM,
 // testável sozinho). Aqui fica só a ponte com os eventos de ponteiro.
+
+/**
+ * Arrastar a página com o mouse (a "mãozinha").
+ *
+ * O dedo nunca precisou disto: a linha de cada página rola de lado e o
+ * documento rola para baixo, os dois nativos. O mouse só tinha a roda e a
+ * barra de rolagem lateral — que mora no PÉ da página, e numa página ampliada
+ * o pé está uma tela abaixo do que se está lendo.
+ *
+ * Sem estado do React no caminho: cada movimento escreve direto no
+ * `scrollLeft` da linha e no `scrollTop` de quem rola a leitura, que é o que o
+ * navegador faria com o dedo. Um clique que não andou (menos de
+ * PAN_DRAG_THRESHOLD) continua sendo clique — seleciona anotação, fecha o
+ * editor; o que andou engole o clique que o navegador manda no fim.
+ */
+function useMousePan(
+  ref: React.RefObject<HTMLElement | null>,
+  {
+    enabled,
+    ready,
+  }: {
+    /** O botão esquerdo arrasta? (Só com "Navegar"; o do meio, sempre.) */
+    enabled: boolean
+    /** As páginas estão na tela — o contêiner só existe depois de carregar. */
+    ready: boolean
+  }
+) {
+  const enabledRef = useRef(enabled)
+  enabledRef.current = enabled
+
+  useEffect(() => {
+    const element = ref.current
+    if (!element) return
+
+    let drag: {
+      pointerId: number
+      x: number
+      y: number
+      row: HTMLElement
+      scroller: HTMLElement | null
+      left: number
+      top: number
+      moved: boolean
+    } | null = null
+
+    const rowFor = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null
+      const row = target?.closest?.('[data-pdf-page-row]') as HTMLElement | null
+      if (!row || !element.contains(row)) return null
+      // Campo de texto (editor de nota, de texto) é do teclado e da seleção.
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return null
+      return row
+    }
+
+    const swallowClick = (event: MouseEvent) => {
+      event.stopPropagation()
+      event.preventDefault()
+    }
+
+    const stop = () => {
+      if (!drag) return
+      if (drag.moved) {
+        // O `click` chega na mesma tarefa do `pointerup`; o timeout limpa a
+        // guarda se ele não vier (soltou fora da janela).
+        window.addEventListener('click', swallowClick, { capture: true, once: true })
+        window.setTimeout(() => window.removeEventListener('click', swallowClick, true), 0)
+      }
+      drag = null
+      element.classList.remove('pdf-panning')
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onUp)
+      window.removeEventListener('blur', stop)
+    }
+
+    const onMove = (event: PointerEvent) => {
+      if (!drag || event.pointerId !== drag.pointerId) return
+      const dx = event.clientX - drag.x
+      const dy = event.clientY - drag.y
+      if (!drag.moved) {
+        if (Math.hypot(dx, dy) < PAN_DRAG_THRESHOLD) return
+        drag.moved = true
+        element.classList.add('pdf-panning')
+      }
+      drag.row.scrollLeft = drag.left - dx
+      if (drag.scroller) drag.scroller.scrollTop = drag.top - dy
+      else window.scrollTo({ top: drag.top - dy, behavior: 'instant' })
+    }
+
+    const onUp = (event: PointerEvent) => {
+      if (drag && event.pointerId === drag.pointerId) stop()
+    }
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'mouse' || drag) return
+      const middle = event.button === 1
+      if (!middle && (event.button !== 0 || !enabledRef.current)) return
+      const row = rowFor(event)
+      if (!row) return
+      // Botão do meio: sem a rolagem automática do Windows por cima do arrasto.
+      if (middle) event.preventDefault()
+      const scroller = findReadingScroller(row)
+      drag = {
+        pointerId: event.pointerId,
+        x: event.clientX,
+        y: event.clientY,
+        row,
+        scroller,
+        left: row.scrollLeft,
+        top: scroller ? scroller.scrollTop : window.scrollY,
+        moved: false,
+      }
+      window.addEventListener('pointermove', onMove, { passive: true })
+      window.addEventListener('pointerup', onUp, { passive: true })
+      window.addEventListener('pointercancel', onUp, { passive: true })
+      window.addEventListener('blur', stop)
+    }
+
+    // A rolagem automática do botão do meio nasce no `mousedown`, não no
+    // `pointerdown`.
+    const onMouseDown = (event: MouseEvent) => {
+      if (event.button === 1 && rowFor(event)) event.preventDefault()
+    }
+
+    element.addEventListener('pointerdown', onPointerDown)
+    element.addEventListener('mousedown', onMouseDown)
+    return () => {
+      element.removeEventListener('pointerdown', onPointerDown)
+      element.removeEventListener('mousedown', onMouseDown)
+      stop()
+      window.removeEventListener('click', swallowClick, true)
+    }
+  }, [ref, ready])
+}
 
 // Quanto tempo a fileira horizontal fica presa depois de o dedo sair. Cobre a
 // inércia do toque, que é onde o encaixe mudava de página sozinho; curto o
@@ -4186,6 +4334,76 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     trackRef: pagesTrackRef,
   })
 
+  // ── Panorâmica da página ampliada ───────────────────────────────────────
+  // O ponto da página que está no meio da tela, em fração da largura dela (a
+  // conta e o porquê estão em `lib/pdf-viewer-pan.ts`). O zoom e a página
+  // seguinte reabrem nesse ponto, em vez de cada linha voltar à esquerda.
+  const panRatioRef = useRef(DEFAULT_PAN_RATIO)
+  // `scrollLeft` que o próprio leitor escreveu em cada linha: o evento de
+  // rolagem que essa escrita gera não é o leitor arrastando.
+  const panWritesRef = useRef(new WeakMap<HTMLElement, number>())
+  // Linhas que já nasceram — só importa na fileira horizontal (ver abaixo).
+  const seenRowsRef = useRef(new WeakSet<HTMLElement>())
+
+  const alignPageRow = useCallback((row: HTMLElement) => {
+    const seen = seenRowsRef.current.has(row)
+    seenRowsRef.current.add(row)
+    // Na fileira horizontal cada casa é uma folha: a próxima começa do começo,
+    // como se vira a página de um caderno. Lá só o ZOOM segura o ponto.
+    if (horizontalRef.current && !seen) return
+    const target = panScrollFor(panRatioRef.current, row)
+    if (Math.abs(row.scrollLeft - target) < 1) return
+    panWritesRef.current.set(row, target)
+    row.scrollLeft = target
+  }, [])
+
+  // Arrastou uma linha (dedo, barra de rolagem, mouse): guarda o ponto e, na
+  // pilha vertical, leva as outras páginas vivas junto — descer para a próxima
+  // página continua na mesma coluna. Um ouvinte só, em captura (rolagem não
+  // borbulha), e no máximo uma sincronização por quadro. As páginas vivas são
+  // poucas (ver liveRadiusForZoom), então isso é barato.
+  useEffect(() => {
+    const element = contentRef.current
+    if (!element) return
+    let frame = 0
+    let source: HTMLElement | null = null
+    const syncRows = () => {
+      frame = 0
+      const track = pagesTrackRef.current
+      if (!track || horizontalRef.current) return
+      track.querySelectorAll<HTMLElement>('[data-pdf-page-row]').forEach((row) => {
+        if (row !== source) alignPageRow(row)
+      })
+    }
+    const onScroll = (event: Event) => {
+      const row = event.target
+      if (!(row instanceof HTMLElement) || !row.hasAttribute('data-pdf-page-row')) return
+      const written = panWritesRef.current.get(row)
+      if (written != null) {
+        panWritesRef.current.delete(row)
+        if (Math.abs(row.scrollLeft - written) <= 1) return
+      }
+      const ratio = readPanRatio(row)
+      if (ratio == null) return
+      panRatioRef.current = ratio
+      source = row
+      if (!frame && !horizontalRef.current) frame = window.requestAnimationFrame(syncRows)
+    }
+    element.addEventListener('scroll', onScroll, { capture: true, passive: true })
+    return () => {
+      element.removeEventListener('scroll', onScroll, true)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [loading, error, access, alignPageRow])
+
+  // A mãozinha: com "Navegar", arrastar com o mouse move a página nos dois
+  // eixos, como no GoodNotes. O botão do meio arrasta com qualquer ferramenta.
+  // O dedo já fazia isso sozinho (é a rolagem nativa).
+  useMousePan(contentRef, {
+    enabled: previewActive || tool === 'cursor',
+    ready: !loading && !error && !!access,
+  })
+
   // Com o swipe vertical, o mesmo movimento que vira página no topo da leitura
   // é o "puxar para atualizar" do Android/PWA — que recarregaria o material no
   // meio do gesto. `overscroll-behavior` precisa estar em quem ROLA (o
@@ -4663,6 +4881,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         }
         @media (prefers-reduced-motion: reduce) {
           .pdf-page-fade { animation: none; }
+        }
+        /* Mãozinha fechada enquanto arrasta (ver useMousePan). O \`!important\`
+           vence o cursor que cada página põe no próprio estilo. */
+        .pdf-panning, .pdf-panning * {
+          cursor: grabbing !important;
         }
         /* Em tela cheia o elemento raiz vira o próprio viewport: sem rolagem
            própria o modo contínuo (e o "largura") não conseguiam passar da
@@ -5301,16 +5524,21 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
             }`}
           >
-            {/* Na horizontal a coluna vira fileira e o `max-w-6xl` sai de cena:
-                a largura da casa é a largura visível da área, e um limite no
-                meio do caminho quebraria a conta do encaixe. O respiro entre as
-                páginas vem do padding de cada casa, não de `gap` (ver
-                pageSlotWidth). */}
+            {/* Na horizontal a coluna vira fileira: a largura da casa é a
+                largura visível da área, e um limite no meio do caminho
+                quebraria a conta do encaixe. O respiro entre as páginas vem do
+                padding de cada casa, não de `gap` (ver pageSlotWidth).
+
+                Na vertical a coluna também ocupa a área inteira. Ela já teve
+                `max-w-6xl`, e num monitor largo isso fazia a página ampliada
+                rolar de lado dentro de 1152px com duas faixas vazias em volta.
+                O teto continua valendo para o tamanho NORMAL da página (ver
+                pageAvailableWidth); só a ampliada usa a sobra. */}
             <div
               ref={pagesTrackRef}
               className={horizontal
                 ? 'flex w-max flex-row items-start'
-                : 'mx-auto flex w-full max-w-6xl flex-col items-center gap-5'}
+                : 'flex w-full flex-col items-center gap-5'}
             >
               {fillerStartSize > 0 && (
                 <div
@@ -5363,6 +5591,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                     onDeleteAnnotation={deleteAnnotation}
                     onErase={applyEraserResult}
                     onTouchRejected={warnPenOnly}
+                    onRowLayout={alignPageRow}
                   />
                 )
               })}
@@ -6538,8 +6767,8 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
   const frameHeight = Math.ceil(size.height + PAGE_FRAME_EXTRA)
   // Precisa reservar a MESMA altura que a página real ocupa; se o espaçador
   // fosse clampado à largura do container (como era, com `max-w-full`) e a
-  // página real não, o scroll saltaria toda vez que um virasse o outro.
-  const overflowing = containerWidth > 0 && frameWidth > containerWidth
+  // página real não, o scroll saltaria toda vez que um virasse o outro. A
+  // centralização é a mesma da página real: margem automática (ver lá).
 
   return (
     <div
@@ -6551,7 +6780,6 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
       // material de milhares de páginas, milhares deles. `clip` recorta sem
       // criar contêiner nenhum.
       style={{
-        justifyContent: overflowing && !horizontal ? 'flex-start' : 'center',
         overflowX: 'clip',
         // A casa da fileira tem a largura da área visível — a mesma conta da
         // página real, senão a rolagem horizontal desalinharia ao trocar um
@@ -6560,7 +6788,7 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
       }}
     >
       <div
-        className="relative flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
+        className="relative mx-auto flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
         style={{
           width: frameWidth,
           height: frameHeight,
@@ -6601,6 +6829,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   onDeleteAnnotation,
   onErase,
   onTouchRejected,
+  onRowLayout,
 }: {
   materialId: string
   pageNumber: number
@@ -6641,6 +6870,11 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
     replaced: Array<{ annotation: PdfAnnotation; segments: Array<Partial<PdfAnnotation>> }>
   }) => void
   onTouchRejected: () => void
+  /**
+   * A linha desta página mudou de largura (nasceu, ou o zoom mudou): o leitor
+   * a devolve ao ponto da panorâmica (ver `lib/pdf-viewer-pan.ts`).
+   */
+  onRowLayout: (row: HTMLElement) => void
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -7220,7 +7454,13 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // borrada — e a altura real 2px maior que a do espaçador, erro que se
   // somava página a página na posição estimada da rolagem.
   const frameOuterWidth = Math.ceil(pageFrameSize.width + PAGE_FRAME_EXTRA)
-  const overflowing = containerWidth > 0 && frameOuterWidth > containerWidth
+
+  // Antes da pintura, senão o quadro do zoom novo sai na panorâmica velha e
+  // a página dá um pulo de lado antes de voltar ao lugar.
+  useLayoutEffect(() => {
+    const row = wrapperRef.current
+    if (row) onRowLayout(row)
+  }, [frameOuterWidth, containerWidth, onRowLayout])
 
   // ── Medida da página ────────────────────────────────────────────────────
   // `getBoundingClientRect` é uma leitura de LAYOUT: o navegador precisa ter
@@ -8360,9 +8600,17 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       data-pdf-page-row="true"
       // A linha de cada página é o container de rolagem horizontal. Sem isso a
       // moldura era clampada em `max-w-full` e ampliar o zoom não mudava nada.
-      // `justify-center` num container com overflow deixa a borda esquerda
-      // inalcançável (armadilha clássica do flexbox), por isso alternamos para
-      // `flex-start` quando a página passa da largura disponível.
+      //
+      // A página é centralizada pela MARGEM automática da moldura, nunca por
+      // `justify-content: center`. Num container que rola, `center` empurra a
+      // sobra para os dois lados e a da esquerda fica inalcançável (armadilha
+      // clássica do flexbox). Já se tentou alternar para `flex-start` quando a
+      // página passasse da largura — só que a conta comparava com a largura
+      // da SEÇÃO, e a linha era mais estreita (a coluna tinha `max-w-6xl`): a
+      // 250% num monitor largo a regra dizia "cabe", centralizava, e o começo
+      // de cada linha ficava cortado com a rolagem toda à esquerda. A margem
+      // automática não faz conta: quando não sobra espaço ela vale zero, e a
+      // página encosta no começo sozinha.
       //
       // Na fileira horizontal esta mesma linha vira a CASA da página: largura
       // fixa (a da área visível), encaixe no centro e `scrollSnapStop: always`,
@@ -8374,7 +8622,6 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         ? 'pdf-page-fade flex shrink-0 scroll-mt-36 overflow-x-auto px-2.5'
         : 'pdf-page-fade flex w-full scroll-mt-36 overflow-x-auto px-0 sm:px-2'}
       style={{
-        justifyContent: overflowing ? 'flex-start' : 'center',
         // Página sozinha na tela: centralizada na altura útil (ver
         // `pageStageHeight` no leitor). Página maior que a tela cresce
         // normalmente — `minHeight` nunca corta nada.
@@ -8392,7 +8639,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // Sem `backdrop-blur`: o blur fica atrás de um canvas opaco, ou seja,
         // não aparece — mas o navegador recalcula a camada desfocada a cada
         // quadro de pinça e de rolagem. Num celular isso é caro de graça.
-        className="relative shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35"
+        className="relative mx-auto shrink-0 overflow-hidden rounded-xl border border-white/15 bg-white/10 p-2 shadow-2xl shadow-black/35"
         // `isolation: isolate` fecha a moldura como grupo de mistura: o que o
         // marca-texto multiplica é a PÁGINA embaixo dele, e nada além. Sem
         // isso o grupo é o que o navegador tiver escolhido como camada — e a
@@ -8449,8 +8696,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             onPointerCancel={handlePointerEnd}
             onLostPointerCapture={handleLostPointerCapture}
             style={{
+              // "Navegar" é a mãozinha: arrastar com o mouse move a página
+              // (ver useMousePan no leitor).
               cursor: tool === 'cursor'
-                ? 'default'
+                ? 'grab'
                 : tool === 'eraser'
                   ? eraserCursor(eraserRadius)
                   : (tool === 'drawing' || tool === 'laser') ? 'crosshair' : 'copy',
