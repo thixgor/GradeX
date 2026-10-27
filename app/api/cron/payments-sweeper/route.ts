@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 
   const db = await getDb()
-  const stats = await reconciliarPagamentosPendentes(db)
+  const stats = await reconciliarPagamentosPendentes(db, { origem: 'cron' })
 
   return NextResponse.json({ ok: true, ...stats })
 }

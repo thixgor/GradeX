@@ -29,6 +29,7 @@ export function UnifiedCheckoutPayment({
   purchasePackageIds,
   includeStandalone,
   description,
+  resumeKey,
   payerNameHint,
   onSuccess,
   fallback,
@@ -40,6 +41,8 @@ export function UnifiedCheckoutPayment({
   purchasePackageIds?: string[]
   includeStandalone: boolean
   description: string
+  /** Ver MercadoPagoCheckoutProps.resumeKey. */
+  resumeKey?: string
   payerNameHint?: string
   onSuccess: (resp: any) => void
   fallback: ReactNode
@@ -221,6 +224,7 @@ export function UnifiedCheckoutPayment({
           publicKey={publicKey}
           amount={combined}
           description={description}
+          resumeKey={resumeKey}
           endpoint="/api/materiais/checkout"
           extraBody={{ ...digitalBody, physical: physicalPayload }}
           payerNameHint={payerNameHint}

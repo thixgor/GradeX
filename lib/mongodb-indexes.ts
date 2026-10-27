@@ -103,6 +103,11 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('donation_payments').createIndex({ status: 1, createdAt: -1 }),
     db.collection('webhook_events').createIndex({ provider: 1, eventId: 1 }, { unique: true }),
     db.collection('webhook_events').createIndex({ processedAt: 1 }),
+    // Verificação manual do pedido e painel de saúde do webhook (lib/payments/verificacao.ts).
+    db.collection('webhook_events').createIndex({ resourceId: 1, createdAt: -1 }),
+    db.collection('webhook_events').createIndex({ provider: 1, createdAt: -1 }),
+    // Varredura: aprovados com a liberação parada no meio (lib/payments/sweep.ts).
+    db.collection('payment_orders').createIndex({ effectsStartedAt: 1 }, { sparse: true }),
     db.collection('audit_logs').createIndex({ ts: -1 }),
     db.collection('audit_logs').createIndex({ action: 1, ts: -1 }),
     db.collection('audit_logs').createIndex({ targetUserId: 1, ts: -1 }),

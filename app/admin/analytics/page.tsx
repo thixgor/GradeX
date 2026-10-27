@@ -32,6 +32,8 @@ import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { SerialKeysPanel } from '@/components/admin/serial-keys-panel'
 import { RecusasCartaoPanel } from '@/components/admin/recusas-cartao-panel'
+import { VerificacaoPagamentosPanel } from '@/components/admin/verificacao-pagamentos-panel'
+import type { RelatorioDaVerificacao } from '@/lib/payments/verificacao'
 
 type SeriesPoint = { key?: string; label: string; value: number; count?: number; type?: string; revenue?: number }
 
@@ -47,8 +49,14 @@ type SeriesPoint = { key?: string; label: string; value: number; count?: number;
 type TipoDeCobranca = 'recorrente' | 'avulso'
 type FunnelStep = { key: string; label: string; count: number; conversionFromPrevious: number; conversionFromStart: number }
 
+type OrderItem = { title: string; kind: string; amount: number; quantity: number; free?: boolean }
+
 type OrderRow = {
   id: string
+  /** Itens do pedido: carrinho, impresso junto, frete. */
+  items: OrderItem[]
+  /** Aprovado, mas a liberação parou no meio (a função caiu). */
+  effectsPending: boolean
   userName: string
   userEmail: string
   product: string
@@ -526,9 +534,90 @@ function Funnel({ steps, failed }: { steps: FunnelStep[]; failed?: number }) {
   )
 }
 
+function OrderItems({ row }: { row: OrderRow }) {
+  // Um item só (o próprio título já diz): nada a detalhar.
+  if (row.items.length <= 1) return null
+  return (
+    <ul className="mt-1.5 space-y-0.5 text-[11px] text-white/45">
+      {row.items.map((item, index) => (
+        <li key={`${item.title}-${index}`} className="flex justify-between gap-3">
+          <span className="truncate">
+            {item.quantity > 1 ? `${item.quantity}× ` : ''}
+            {item.title} <span className="text-white/30">· {item.kind}</span>
+          </span>
+          <span className="shrink-0">{item.free ? 'grátis' : formatCurrency(item.amount)}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+const ROTULO_DO_STATUS: Record<string, string> = {
+  pending: 'pendente',
+  in_process: 'em análise',
+  approved: 'aprovado',
+  rejected: 'recusado',
+  cancelled: 'cancelado',
+  expired: 'expirado',
+  refunded: 'estornado',
+  charged_back: 'contestado',
+}
+
+function VerificacaoDoPedido({ relatorio }: { relatorio: RelatorioDaVerificacao }) {
+  const mp = relatorio.mercadoPago
+  return (
+    <div className="mt-1 max-w-[280px] space-y-1 rounded-lg border border-white/10 bg-black/20 p-2 text-[11px] leading-snug text-white/65">
+      <p className="text-white/85">{relatorio.mensagem}</p>
+      {mp ? (
+        <p>
+          MP: <strong className="text-white">{mp.status}</strong>
+          {mp.statusDetail ? ` (${mp.statusDetail})` : ''} · {formatCurrency(mp.valor)}
+          {mp.parcelas && mp.parcelas > 1 ? ` em ${mp.parcelas}x` : ''}
+          {mp.aprovadoEm ? ` · aprovado ${formatDate(mp.aprovadoEm)}` : ''}
+          {relatorio.encontradoPor === 'referencia_do_pedido' ? ' · achado pelo id do pedido' : ''}
+        </p>
+      ) : null}
+      <p>
+        Webhook:{' '}
+        {relatorio.webhook.recebidos === 0
+          ? 'nenhum aviso recebido para este pagamento'
+          : `${relatorio.webhook.recebidos} aviso(s), último ${formatDate(relatorio.webhook.ultimoEm)}${
+              relatorio.webhook.assinaturaInvalida ? ` · ${relatorio.webhook.assinaturaInvalida} com assinatura inválida` : ''
+            }${relatorio.webhook.ultimoErro ? ` · erro: ${relatorio.webhook.ultimoErro}` : ''}`}
+      </p>
+      <p>
+        Site: {ROTULO_DO_STATUS[relatorio.antes.status] || relatorio.antes.status}
+        {relatorio.antes.status !== relatorio.depois.status
+          ? ` → ${ROTULO_DO_STATUS[relatorio.depois.status] || relatorio.depois.status}`
+          : ''}
+      </p>
+    </div>
+  )
+}
+
 function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () => void }) {
   const [approvingId, setApprovingId] = useState('')
   const [feedback, setFeedback] = useState<{ id: string; ok: boolean; msg: string } | null>(null)
+  const [verifyingId, setVerifyingId] = useState('')
+  const [relatorios, setRelatorios] = useState<Record<string, RelatorioDaVerificacao | { falha: string }>>({})
+
+  async function verify(row: OrderRow) {
+    if (verifyingId) return
+    setVerifyingId(row.id)
+    try {
+      const res = await fetch(`/api/admin/payments/${row.id}/verificar`, { method: 'POST' })
+      const payload = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(payload.error || 'Falha ao verificar')
+      setRelatorios((prev) => ({ ...prev, [row.id]: payload as RelatorioDaVerificacao }))
+      const relatorio = payload as RelatorioDaVerificacao
+      // Mudou alguma coisa no banco: recarrega a tabela para refletir.
+      if (relatorio.antes.status !== relatorio.depois.status || relatorio.efeitos === 'retomados') onApproved()
+    } catch (err: any) {
+      setRelatorios((prev) => ({ ...prev, [row.id]: { falha: err?.message || 'Falha ao verificar' } }))
+    } finally {
+      setVerifyingId('')
+    }
+  }
 
   async function approve(row: OrderRow) {
     if (approvingId) return
@@ -571,7 +660,10 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
                 <div className="font-semibold text-white">{row.userName || '-'}</div>
                 <div className="text-xs text-white/40">{row.userEmail || '-'}</div>
               </td>
-              <td className="max-w-[220px] truncate px-3 py-3">{row.product}</td>
+              <td className="max-w-[260px] px-3 py-3">
+                <div className="truncate">{row.product}</div>
+                <OrderItems row={row} />
+              </td>
               <td className="px-3 py-3">{row.productType}</td>
               <td className="px-3 py-3"><SeloDeCobranca tipo={row.recurrence} /></td>
               <td className="px-3 py-3 font-bold text-emerald-200">{formatCurrency(row.value)}</td>
@@ -583,7 +675,14 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
                   </div>
                 ) : '-'}
               </td>
-              <td className="px-3 py-3"><StatusPill status={row.status} /></td>
+              <td className="px-3 py-3">
+                <StatusPill status={row.status} />
+                {row.effectsPending ? (
+                  <div className="mt-1 whitespace-nowrap text-[11px] font-bold text-amber-200" title="Pagamento aprovado, mas a liberação (acesso, impresso, e-mail) parou no meio">
+                    Liberação parada
+                  </div>
+                ) : null}
+              </td>
               <td className="px-3 py-3">{row.paymentMethod}</td>
               <td className="max-w-[150px] truncate px-3 py-3 font-mono text-xs">{row.mercadoPagoPaymentId || '-'}</td>
               <td className="max-w-[150px] truncate px-3 py-3 font-mono text-xs">{row.mercadoPagoPreferenceId || '-'}</td>
@@ -591,8 +690,19 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
               <td className="px-3 py-3">{formatDate(row.paidAt)}</td>
               <td className="px-3 py-3">{row.origin}</td>
               <td className="px-3 py-3">
-                {PENDING.includes(row.status) ? (
-                  <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1">
+                  {/* Conferir no MP serve para qualquer pedido: pendente que já foi
+                      pago, recusado que o MP aprovou depois, aprovado com a
+                      liberação parada. Não força nada — aplica o que o MP disser. */}
+                  <button
+                    type="button"
+                    onClick={() => verify(row)}
+                    disabled={verifyingId === row.id}
+                    className="whitespace-nowrap rounded-lg border border-sky-300/25 bg-sky-400/10 px-3 py-1.5 text-xs font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {verifyingId === row.id ? 'Conferindo…' : 'Verificar no MP'}
+                  </button>
+                  {PENDING.includes(row.status) ? (
                     <button
                       type="button"
                       onClick={() => approve(row)}
@@ -601,13 +711,17 @@ function OrdersTable({ rows, onApproved }: { rows: OrderRow[]; onApproved: () =>
                     >
                       {approvingId === row.id ? 'Aprovando…' : 'Aprovar manualmente'}
                     </button>
-                    {feedback && feedback.id === row.id ? (
-                      <span className={`text-[11px] ${feedback.ok ? 'text-emerald-300' : 'text-rose-300'}`}>{feedback.msg}</span>
-                    ) : null}
-                  </div>
-                ) : (
-                  <span className="text-xs text-white/30">-</span>
-                )}
+                  ) : null}
+                  {feedback && feedback.id === row.id ? (
+                    <span className={`text-[11px] ${feedback.ok ? 'text-emerald-300' : 'text-rose-300'}`}>{feedback.msg}</span>
+                  ) : null}
+                  {(() => {
+                    const relatorio = relatorios[row.id]
+                    if (!relatorio) return null
+                    if ('falha' in relatorio) return <span className="text-[11px] text-rose-300">{relatorio.falha}</span>
+                    return <VerificacaoDoPedido relatorio={relatorio} />
+                  })()}
+                </div>
               </td>
             </tr>
           ))}
@@ -651,8 +765,12 @@ export default function AdminAnalyticsPage() {
     load()
   }, [])
 
-  async function load() {
-    setLoading(true)
+  /**
+   * `silencioso`: recarrega sem trocar a página pelo carregamento — é o que
+   * mantém na tela o resultado de "Verificar no MP" depois de atualizar.
+   */
+  async function load(opcoes: { silencioso?: boolean } = {}) {
+    if (!opcoes.silencioso) setLoading(true)
     setError('')
     try {
       const auth = await fetch('/api/auth/me')
@@ -680,7 +798,7 @@ export default function AdminAnalyticsPage() {
     if (!data) return []
     const q = normalize(query)
     return data.orders.filter((row) => {
-      const hay = normalize(`${row.userName} ${row.userEmail} ${row.product}`)
+      const hay = normalize(`${row.userName} ${row.userEmail} ${row.product} ${row.items.map((item) => item.title).join(' ')}`)
       const created = row.createdAt ? new Date(row.createdAt) : null
       if (q && !hay.includes(q)) return false
       if (type && row.productType !== type) return false
@@ -765,7 +883,7 @@ export default function AdminAnalyticsPage() {
         <div className="mx-auto max-w-3xl rounded-2xl border border-rose-300/20 bg-rose-400/10 p-6">
           <p className="font-bold">Não foi possível carregar o analytics</p>
           <p className="mt-1 text-sm text-white/60">{error}</p>
-          <Button className="mt-4" onClick={load}>Tentar novamente</Button>
+          <Button className="mt-4" onClick={() => load()}>Tentar novamente</Button>
         </div>
       </div>
     )
@@ -793,7 +911,7 @@ export default function AdminAnalyticsPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex" onClick={load}>
+            <Button variant="outline" className="hidden border-white/15 bg-white/5 text-white hover:bg-white/10 sm:inline-flex" onClick={() => load()}>
               <RefreshCw className="mr-2 h-4 w-4" />
               Atualizar
             </Button>
@@ -1150,6 +1268,13 @@ export default function AdminAnalyticsPage() {
 
           <TabsContent value="orders" className="space-y-6">
             <GlassPanel
+              title="Verificação de pagamentos"
+              description="Webhook do Mercado Pago, varredura agendada e pedidos parados — e a conferência manual de todos os pendentes"
+            >
+              <VerificacaoPagamentosPanel onAtualizado={() => load({ silencioso: true })} />
+            </GlassPanel>
+
+            <GlassPanel
               title="Histórico detalhado de pedidos"
               description="Filtre por nome, email, produto, tipo, status, período, valor e método"
               action={<div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/10 px-3 py-1 text-xs text-white/50"><Filter className="h-3.5 w-3.5" /> {filteredOrders.length} registros</div>}
@@ -1178,7 +1303,7 @@ export default function AdminAnalyticsPage() {
                 <FilterInput label="Valor mínimo" type="number" value={minValue} onChange={setMinValue} />
                 <FilterInput label="Valor máximo" type="number" value={maxValue} onChange={setMaxValue} />
               </div>
-              <OrdersTable rows={filteredOrders} onApproved={load} />
+              <OrdersTable rows={filteredOrders} onApproved={() => load({ silencioso: true })} />
             </GlassPanel>
 
             <GlassPanel title="Cancelamentos" description="Quem cancelou, origem, tempo como assinante, motivo e valor pago">

@@ -1,10 +1,12 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
+import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { formatarEmBrasilia, horaEmBrasilia, offsetDeBrasilia } from '@/lib/fuso-brasilia'
 import { ObjectId } from 'mongodb'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import type { AdminSettings, DonationPayment, Material, MaterialPackage, PaymentOrder, SubscriptionRecord, User } from '@/lib/types'
 import type { CheckoutEventRecord } from '@/lib/analytics'
+import { itensDoPedido, type PedidoFisico } from '@/lib/payments/itens-do-pedido'
 import type { Coupon, CouponRedemption } from '@/lib/coupons'
 import { PLUS_TIER, getAccountTypeLabel, isPaidAccount, normalizeAccountType } from '@/lib/account-tier'
 import {
@@ -168,6 +170,21 @@ function inferOrderProduct(
   }
 
   if (order.type === 'material') {
+    // Carrinho: um pedido, vários itens. O `refId` é só o PRIMEIRO item — ler
+    // por ele fazia o carrinho inteiro aparecer como a compra direta de um
+    // material só, e não havia como saber que tinham sido vários.
+    if (order.metadata?.itemType === 'cart') {
+      const itens = Array.isArray(order.metadata?.cartItems) ? order.metadata.cartItems.length : 0
+      const comImpressos = !!order.metadata?.shopOrderId
+      return {
+        title: `Carrinho · ${itens} ${itens === 1 ? 'item' : 'itens'}${comImpressos ? ' + impressos' : ''}`,
+        type: 'Carrinho',
+        typeKey: 'cart',
+        origin: comImpressos ? 'Carrinho (digital + impressos)' : 'Carrinho',
+        recurrence: 'avulso' as TipoDeCobranca,
+      }
+    }
+
     if (order.metadata?.itemType === 'package') {
       const pkg = order.refId ? packagesById.get(order.refId) : undefined
       return {
@@ -239,7 +256,7 @@ function inferDonationSource(donation: any): DonationSource {
   return 'unknown'
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getSession()
     if (!session || session.role !== 'admin') {
@@ -291,6 +308,28 @@ export async function GET() {
       } as any).sort({ approvedAt: -1, createdAt: -1 }).limit(5000).toArray(),
     ])
 
+    // Parte impressa dos pedidos (checkout unificado e loja): uma ida só, pelos
+    // ids que aparecem nos pedidos do período.
+    const idsDosFisicos = [
+      ...new Set(
+        orders
+          .map((order) => order.metadata?.shopOrderId || (order.type === 'physical' ? order.refId : undefined))
+          .filter((id): id is string => !!id && ObjectId.isValid(String(id)))
+          .map(String)
+      ),
+    ]
+    const pedidosFisicos = new Map<string, PedidoFisico>(
+      idsDosFisicos.length > 0
+        ? (
+            await db
+              .collection('shop_orders')
+              .find({ _id: { $in: idsDosFisicos.map((id) => new ObjectId(id)) } })
+              .project({ total: 1, freight: 1, 'items.title': 1, 'items.versionName': 1, 'items.quantity': 1, 'items.unitPrice': 1 })
+              .toArray()
+          ).map((doc: any) => [String(doc._id), doc as PedidoFisico])
+        : []
+    )
+
     const usersById = new Map(users.map((user) => [String(user._id), user]))
     const materialsById = new Map(materials.map((item: any) => [String(item._id), item as Material]))
     const packagesById = new Map(packages.map((item: any) => [String(item._id), item as MaterialPackage]))
@@ -324,7 +363,11 @@ export async function GET() {
     const revenueItems = [
       ...approvedNonRecurring.map((order) => {
         const product = inferOrderProduct(order, materialsById, packagesById, settings)
+        const itens = itensDoPedido(order, product, materialsById, pedidosFisicos)
         return {
+          // Carrinho ou digital + impresso: cada parte conta no ranking de
+          // produtos pelo próprio nome, e não como o primeiro item do pedido.
+          parts: itens.length > 1 ? itens.filter((item) => !item.free && item.kind !== 'Frete') : undefined,
           id: String(order._id),
           amount: order.amount,
           createdAt: order.paidAt || order.updatedAt || order.createdAt,
@@ -351,11 +394,16 @@ export async function GET() {
     const productStats = new Map<string, { label: string; type: string; sales: number; revenue: number }>()
     const typeStats = new Map<string, { label: string; value: number; count: number }>()
     for (const item of revenueItems) {
-      const productKey = `${item.productType}:${item.productTitle}`
-      const product = productStats.get(productKey) || { label: item.productTitle, type: item.productType, sales: 0, revenue: 0 }
-      product.sales += 1
-      product.revenue += item.amount
-      productStats.set(productKey, product)
+      const partes = 'parts' in item && item.parts
+        ? item.parts.map((parte) => ({ title: parte.title, type: parte.kind, amount: parte.amount }))
+        : [{ title: item.productTitle, type: item.productType, amount: item.amount }]
+      for (const parte of partes) {
+        const productKey = `${parte.type}:${parte.title}`
+        const product = productStats.get(productKey) || { label: parte.title, type: parte.type, sales: 0, revenue: 0 }
+        product.sales += 1
+        product.revenue += parte.amount
+        productStats.set(productKey, product)
+      }
 
       const type = typeStats.get(item.productType) || { label: item.productType, value: 0, count: 0 }
       type.value += item.amount
@@ -531,11 +579,25 @@ export async function GET() {
       createdAt: serializeDate(event.createdAt),
     }))
 
+    const efeitosParadosAntesDe = now.getTime() - 10 * 60_000
     const orderRows = orders.map((order) => {
       const product = inferOrderProduct(order, materialsById, packagesById, settings)
       const user = getUser(usersById, order.userId)
+      const items = itensDoPedido(order, product, materialsById, pedidosFisicos)
       return {
         id: String(order._id),
+        /** Itens do pedido (carrinho, impresso junto, frete). */
+        items,
+        /**
+         * Aprovado, mas a liberação (acesso, impresso, e-mail) começou e não
+         * terminou — a função caiu no meio. Ver concluirEfeitosInterrompidos.
+         */
+        effectsPending:
+          order.status === 'approved' &&
+          !!order.effectsStartedAt &&
+          !order.effectsCompletedAt &&
+          !order.metadata?.serialKeyPurchase &&
+          new Date(order.effectsStartedAt).getTime() < efeitosParadosAntesDe,
         userName: order.payerName || user?.name || '',
         userEmail: order.payerEmail || user?.email || '',
         product: product.title,
@@ -750,7 +812,9 @@ export async function GET() {
       leadToSaleRate,
     }
 
-    return NextResponse.json({
+    // Pedidos com os itens de cada um (carrinho, impressos): JSON grande, que a
+    // Vercel não comprime dentro da função.
+    return jsonComprimido(request, {
       updatedAt: now.toISOString(),
       cards: {
         totalRevenue,

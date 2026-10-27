@@ -7,10 +7,18 @@ import { ObjectId } from 'mongodb'
 
 // Configuracoes de segurança da sessao
 const JWT_CONFIG = {
-  // Duracao do token de acesso (7 dias em prod e dev)
-  ACCESS_TOKEN_EXPIRY: process.env.NODE_ENV === 'production' ? '7d' : '7d',
+  // Sessão DESLIZANTE de 7 dias: cada uso renova o prazo (ver
+  // `renovarSessaoSeVelha`). Antes eram 7 dias contados do login, sem
+  // renovação — quem usava a plataforma todo dia era deslogado toda semana,
+  // e a queixa era "tem que entrar na plataforma toda vez". Agora só pede login
+  // de novo quem passa 7 dias sem abrir o site (ou sai, troca a senha, é
+  // derrubado pelo limite de aparelhos).
+  ACCESS_TOKEN_EXPIRY: '7d',
   // Duracao maxima do cookie
-  COOKIE_MAX_AGE: process.env.NODE_ENV === 'production' ? 60 * 60 * 24 * 7 : 60 * 60 * 24 * 7, // 7d em prod e dev
+  COOKIE_MAX_AGE: 60 * 60 * 24 * 7,
+  // Reemite o token quando ele tem mais de um dia: renova o prazo sem gravar
+  // cookie a cada requisição.
+  RENOVAR_APOS_S: 60 * 60 * 24,
   // 'lax' em vez de 'strict': no PWA instalado na tela de início do iPhone
   // (display: standalone), o WebKit trata o app como um container de
   // armazenamento à parte do Safari normal e é notoriamente inconsistente em
@@ -214,7 +222,7 @@ export async function getSession(): Promise<TokenPayload | null> {
     const usersCollection = db.collection<User>('users')
     const user = await usersCollection.findOne(
       { _id: new ObjectId(payload.userId) },
-      { projection: { banned: 1, emailVerified: 1 } } // projection reduz I/O
+      { projection: { banned: 1, emailVerified: 1, role: 1 } } // projection reduz I/O
     )
 
     if (!user || user.banned) {
@@ -233,14 +241,41 @@ export async function getSession(): Promise<TokenPayload | null> {
     const fresh: TokenPayload = {
       ...payload,
       emailVerified: !!user.emailVerified,
+      // O cargo vem do banco: com a sessão deslizante, o do token poderia
+      // sobreviver indefinidamente a um rebaixamento de admin.
+      ...(user.role === 'admin' || user.role === 'user' ? { role: user.role } : {}),
     }
     sessionCache.set(cacheKey, { payload: fresh, expiresAt: now + SESSION_CACHE_TTL_MS })
+    await renovarSessaoSeVelha(fresh, payload)
     return fresh
   } catch (error) {
     console.error('Error checking user ban status:', error)
     // Em caso de erro de DB, devolve payload do JWT sem cachear
     // (fail-safe: usuário não fica deslogado por intermitência)
     return payload
+  }
+}
+
+/**
+ * Renovação da sessão deslizante (ver JWT_CONFIG). Roda no caminho em que o
+ * banco já confirmou a conta (não banida, sessão de aparelho não revogada),
+ * no máximo uma vez por minuto por token graças à cache de sessão. Mantém o
+ * `jti`: é a mesma sessão de aparelho, não um login novo — e o portão do
+ * painel admin, preso ao jti, continua valendo.
+ *
+ * Em Server Component o Next não deixa gravar cookie; ali a renovação fica
+ * para a próxima chamada de API (o `/api/auth/me` de toda página já basta).
+ */
+async function renovarSessaoSeVelha(fresh: TokenPayload, original: TokenPayload): Promise<void> {
+  const emitidoEm = Number(original.iat || 0)
+  const idade = Math.floor(Date.now() / 1000) - emitidoEm
+  const cargoMudou = fresh.role !== original.role
+  if (!cargoMudou && emitidoEm > 0 && idade < JWT_CONFIG.RENOVAR_APOS_S) return
+  try {
+    const { iat: _iat, exp: _exp, nbf: _nbf, ...claims } = fresh
+    await setAuthCookie(await createToken(claims as TokenPayload))
+  } catch {
+    // Contexto sem escrita de cookie (Server Component): tenta na próxima.
   }
 }
 

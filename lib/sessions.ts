@@ -16,7 +16,7 @@ import { normalizarCaminho } from './presence/atividade'
 // limita a pirataria de material. Ajustável por env sem novo deploy.
 export const DEFAULT_MAX_DEVICES = (() => {
   const value = Number(process.env.MAX_DEVICES_PER_USER)
-  if (!Number.isInteger(value) || value < 1 || value > 20) return 3
+  if (!Number.isInteger(value) || value < 1 || value > 20) return 4
   return value
 })()
 

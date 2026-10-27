@@ -1554,6 +1554,7 @@ export default function MateriaisCheckoutPage() {
                       publicKey={publicKey}
                       amount={payableAmount}
                       description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                      resumeKey={cartPayloadKey}
                       endpoint="/api/serial-keys/checkout"
                       extraBody={{ cart: cartPayload, buyerName: buyer.name, buyerEmail: buyer.email, buyerPhone: buyer.phone, couponCode: appliedCoupon?.code, ...accountDelivery.checkoutBody }}
                       payerEmailHint={buyer.email}
@@ -1577,6 +1578,7 @@ export default function MateriaisCheckoutPage() {
                   purchasePackageIds={cartPreview.items.filter(i => i.itemType === 'package').map(i => i.itemId)}
                   includeStandalone={true}
                   description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                  resumeKey={cartPayloadKey}
                   onSuccess={(resp) => {
                     clearCart()
                     setTimeout(() => {
@@ -1589,6 +1591,7 @@ export default function MateriaisCheckoutPage() {
                       publicKey={publicKey}
                       amount={payableAmount}
                       description={`Carrinho DomineAqui - ${cartPreview.payableItems.length} itens`}
+                      resumeKey={cartPayloadKey}
                       endpoint="/api/materiais/checkout"
                       extraBody={{ items: cartPayload, couponCode: appliedCoupon?.code }}
                       analytics={{
