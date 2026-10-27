@@ -62,6 +62,12 @@ export interface RequisicaoDoCartao {
   timeoutMs: number
   idempotencyKey: string
   referencia: string
+  /** Modo do 3DS pedido ao MP (`optional`), ou `null` se foi sem 3DS. */
+  tresDs?: string | null
+  /** Dados de apoio ao antifraude que foram junto (`additional_info`). */
+  ipEnviado?: boolean
+  telefoneEnviado?: boolean
+  cadastroEnviado?: boolean
 }
 
 export function montarRequisicaoDoCartao(input: {
@@ -78,6 +84,10 @@ export function montarRequisicaoDoCartao(input: {
   timeoutMs: number
   idempotencyKey?: string
   referencia?: string
+  tresDs?: string | null
+  ipEnviado?: boolean
+  telefoneEnviado?: boolean
+  cadastroEnviado?: boolean
 }): RequisicaoDoCartao {
   const deviceId = (input.deviceId || '').trim()
   return {
@@ -95,6 +105,10 @@ export function montarRequisicaoDoCartao(input: {
     timeoutMs: input.timeoutMs,
     idempotencyKey: input.idempotencyKey || '',
     referencia: input.referencia || '',
+    ...(input.tresDs !== undefined ? { tresDs: input.tresDs } : {}),
+    ...(input.ipEnviado !== undefined ? { ipEnviado: input.ipEnviado } : {}),
+    ...(input.telefoneEnviado !== undefined ? { telefoneEnviado: input.telefoneEnviado } : {}),
+    ...(input.cadastroEnviado !== undefined ? { cadastroEnviado: input.cadastroEnviado } : {}),
   }
 }
 
@@ -933,6 +947,21 @@ function derivarSinais(e: EntradaDaAnalise, entrada: Entrada): Sinal[] {
       })
     } else {
       sinais.push({ nivel: 'info', texto: `Device ID enviado (${r.deviceIdTamanho} caracteres): o antifraude recebeu a identificação do aparelho.` })
+    }
+  }
+
+  if (r && (e.etapa === 'resultado' || e.etapa === 'criacao') && entrada.responsavel === 'antifraude') {
+    if (r.tresDs === null) {
+      sinais.push({
+        nivel: 'atencao',
+        texto: 'Foi sem 3DS: o Mercado Pago não pôde pedir ao comprador a confirmação no app do banco, que é o que costuma salvar uma compra marcada como de risco.',
+      })
+    }
+    if (r.ipEnviado === false) {
+      sinais.push({ nivel: 'atencao', texto: 'O IP do comprador não foi enviado ao Mercado Pago (additional_info.ip_address).' })
+    }
+    if (r.telefoneEnviado === false) {
+      sinais.push({ nivel: 'info', texto: 'Sem telefone do comprador no cadastro: o antifraude recebeu menos dados para reconhecer a pessoa.' })
     }
   }
 

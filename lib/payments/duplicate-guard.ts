@@ -59,6 +59,10 @@ export async function pagamentoEmCartaoJaAberto(
       // Só o próprio cartão é o risco de dupla captura; Pix/boleto pendentes
       // não impedem uma nova tentativa de cartão.
       $or: [{ paymentMethod: 'credit_card' }, { paymentMethod: 'debit_card' }, { paymentMethod: { $exists: false } }],
+      // Cartão parado no desafio do 3DS só é cobrado se o comprador confirmar
+      // no banco; quem fechou o desafio e tenta de novo (outro cartão, outra
+      // hora) não pode ficar travado até o MP cancelar o anterior.
+      statusDetail: { $ne: 'pending_challenge' },
     },
     { sort: { createdAt: -1 } },
   )

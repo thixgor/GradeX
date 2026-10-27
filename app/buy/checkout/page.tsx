@@ -67,6 +67,7 @@ import {
 import { cn } from '@/lib/utils'
 import { cardTokenError, detalhesDoErroDeToken } from '@/lib/payments/card-token-errors'
 import { relatarFalhaDeCartao } from '@/lib/payments/relatar-falha-cartao'
+import { carregarScriptAntifraude, esperarDeviceId } from '@/lib/payments/device-id'
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 import { useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrade'
 import { disputarPrecoDoUpgrade } from '@/lib/upgrade-quest'
@@ -884,6 +885,12 @@ function SubscriptionCheckout({
         ? 'filling'
         : 'idle'
 
+  // Script de segurança do Mercado Pago (device ID do antifraude). Sem ele a
+  // assinatura chegava sem identificação do aparelho e caía mais em high_risk.
+  useEffect(() => {
+    carregarScriptAntifraude()
+  }, [])
+
   useEffect(() => {
     if (typeof window === 'undefined') return
     const init = () => {
@@ -924,6 +931,9 @@ function SubscriptionCheckout({
           produto: plan.nome,
           endpoint: '/api/subscriptions',
         })
+      // Com autopreenchimento dá para chegar aqui antes de o script gerar o
+      // device ID: espera um pouco por ele.
+      const deviceId = await esperarDeviceId()
       const tk = await mpInstance.createCardToken({
         cardNumber: card.number.replace(/\s/g, ''),
         cardholderName: card.holder.trim().replace(/\s+/g, ' '),
@@ -967,7 +977,7 @@ function SubscriptionCheckout({
       const res = await fetch('/api/subscriptions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId: plan.tipo, cardTokenId: tk.id }),
+        body: JSON.stringify({ planId: plan.tipo, cardTokenId: tk.id, ...(deviceId ? { deviceId } : {}) }),
       })
       // Resposta que não é JSON é a plataforma cortando a função — a assinatura
       // pode ter sido criada. Não mandar "tentar de novo" no escuro.

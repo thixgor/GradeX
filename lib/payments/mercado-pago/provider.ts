@@ -7,6 +7,7 @@ import type {
   ProviderSubscription,
   PayerAddress,
   RefundOptions,
+  DadosAntifraudeDoPagamento,
 } from '../types'
 import { getMpPaymentWithToken, getMpPreApprovalWithToken } from './client'
 import { mapMpPaymentStatus, mapMpPreapprovalStatus, mapMpPaymentMethod } from './status-mapper'
@@ -16,6 +17,15 @@ import { getEffectiveMpAuth } from './marketplace-store'
 import { describeMercadoPagoApiError, MercadoPagoPaymentError } from './errors'
 import { payerIdentificationNumber } from '../card-payload'
 import { montarRequisicaoDoCartao, type RequisicaoDoCartao } from '../recusa-cartao'
+import {
+  categoriaDoPedido,
+  desafioTresDS,
+  erroDoCampoTresDS,
+  ipDoComprador,
+  itensParaMercadoPago,
+  modoTresDS,
+  telefoneParaMercadoPago,
+} from '../antifraude'
 
 /**
  * Pendura no erro o que a chamada levava, para o log de recusas de cartão.
@@ -51,7 +61,7 @@ export class MercadoPagoProvider implements PaymentProvider {
       payerDocumentType?: 'CPF' | 'CNPJ'
       payerDocumentNumber?: string
       payerAddress?: PayerAddress
-    }
+    } & DadosAntifraudeDoPagamento
   ): Promise<ProviderOrder> {
     const cfg = getPaymentConfig()
     const isBoleto =
@@ -137,22 +147,57 @@ export class MercadoPagoProvider implements PaymentProvider {
       const issuerId = Number(input.issuer)
       if (input.issuer && Number.isFinite(issuerId) && issuerId > 0) body.issuer_id = issuerId
       body.capture = true
-      // Dados do item para o antifraude. É das recomendações de "qualidade da
-      // integração" do Mercado Pago que mais pesam na aprovação do cartão —
-      // sem nada disso a transação chega "anônima" e cai mais em high_risk.
+      // Sem binary_mode o pagamento pode ficar pendente — é o que permite ao
+      // MP pedir o 3DS ou mandar para revisão em vez de recusar de cara.
+      body.binary_mode = false
+      // 3DS 2.0: com "optional", uma compra que o motor de risco recusaria como
+      // `cc_rejected_high_risk` pode, em vez disso, ser confirmada pelo
+      // comprador no app/SMS do banco (`pending_challenge`). Recomendação do MP.
+      const tresDs = modoTresDS()
+      if (tresDs) body.three_d_secure_mode = tresDs
+      // Dados do pedido e do comprador para o antifraude — das recomendações
+      // de "qualidade da integração" do MP, as que mais pesam na aprovação do
+      // cartão. Sem elas a transação chega "anônima" e cai mais em high_risk.
+      // Ver lib/payments/antifraude.ts.
+      const categoria = categoriaDoPedido(input.metadata?.type)
+      const ip = ipDoComprador(input.payerIp)
+      const telefone = telefoneParaMercadoPago(input.payerProfile?.phone)
+      const cadastro = input.payerProfile?.registeredAt
+      const entrega = input.shippingAddress
+      const zipEntrega = (entrega?.zipCode || '').replace(/\D/g, '')
+      const enderecoDoPagador =
+        zipEntrega && entrega?.streetName
+          ? { zip_code: zipEntrega, street_name: entrega.streetName.trim(), street_number: (entrega.streetNumber || '').trim() || 'S/N' }
+          : undefined
+      const payerInfo: Record<string, any> = {}
+      if (body.payer.first_name) {
+        payerInfo.first_name = body.payer.first_name
+        payerInfo.last_name = body.payer.last_name
+      }
+      if (telefone) payerInfo.phone = telefone
+      if (cadastro && !Number.isNaN(cadastro.getTime())) payerInfo.registration_date = cadastro.toISOString()
+      if (enderecoDoPagador) payerInfo.address = enderecoDoPagador
       body.additional_info = {
-        items: [
-          {
-            id: input.externalReference,
-            title: String(input.description || 'Compra').slice(0, 250),
-            description: String(input.description || 'Compra').slice(0, 250),
-            category_id: 'services',
-            quantity: 1,
-            unit_price: round2(input.amount),
-          },
-        ],
-        ...(body.payer.first_name
-          ? { payer: { first_name: body.payer.first_name, last_name: body.payer.last_name } }
+        items: itensParaMercadoPago({
+          referencia: input.externalReference,
+          descricao: input.description,
+          valor: body.transaction_amount,
+          categoria,
+          itens: input.items,
+        }),
+        ...(Object.keys(payerInfo).length > 0 ? { payer: payerInfo } : {}),
+        ...(ip ? { ip_address: ip } : {}),
+        ...(enderecoDoPagador
+          ? {
+              shipments: {
+                receiver_address: {
+                  ...enderecoDoPagador,
+                  ...(entrega?.complement ? { apartment: entrega.complement.trim().slice(0, 60) } : {}),
+                  ...(entrega?.city ? { city_name: entrega.city.trim() } : {}),
+                  ...(entrega?.federalUnit ? { state_name: entrega.federalUnit.trim().toUpperCase() } : {}),
+                },
+              },
+            }
           : {}),
       }
       const descriptor = (process.env.MERCADOPAGO_STATEMENT_DESCRIPTOR || '').trim()
@@ -210,17 +255,20 @@ export class MercadoPagoProvider implements PaymentProvider {
           timeoutMs: 8000,
           idempotencyKey: input.idempotencyKey,
           referencia: input.externalReference,
+          tresDs: body.three_d_secure_mode ?? null,
+          ipEnviado: !!body.additional_info?.ip_address,
+          telefoneEnviado: !!body.additional_info?.payer?.phone,
+          cadastroEnviado: !!body.additional_info?.payer?.registration_date,
         })
       } catch (err) {
         console.warn('[mp] não foi possível montar o contexto do log de recusas:', err)
       }
     }
-    let response: any
-    try {
-      response = await payment.create({
-        body,
+    const criar = (corpo: Record<string, any>, idempotencyKey: string) =>
+      payment.create({
+        body: corpo as any,
         requestOptions: {
-          idempotencyKey: input.idempotencyKey,
+          idempotencyKey,
           // 8s por tentativa (o SDK refaz uma vez em timeout/5xx, com a mesma
           // idempotency key): mesmo no pior caso a rota termina dentro dos 30s
           // da função, com tempo de procurar o pagamento se a resposta sumir.
@@ -228,6 +276,20 @@ export class MercadoPagoProvider implements PaymentProvider {
           ...(deviceId ? { meliSessionId: deviceId } : {}),
         },
       })
+    let response: any
+    try {
+      try {
+        response = await criar(body, input.idempotencyKey)
+      } catch (err) {
+        // Conta sem 3DS habilitado: o MP recusa o CAMPO (erro 4xx, nenhum
+        // pagamento criado). Refaz sem ele — com outra chave, porque a mesma
+        // devolveria o mesmo erro — para a venda não depender do 3DS.
+        if (!body.three_d_secure_mode || !erroDoCampoTresDS(err)) throw err
+        console.warn('[mp] 3DS recusado pela conta; refazendo o pagamento sem 3DS:', (err as any)?.message)
+        delete body.three_d_secure_mode
+        if (requisicao) requisicao = { ...requisicao, tresDs: null }
+        response = await criar(body, `${input.idempotencyKey}-sem3ds`)
+      }
     } catch (err) {
       anexarRequisicao(err, requisicao)
       // Erro de validação da API (não é recusa do banco): traduz para algo que
@@ -329,7 +391,8 @@ export class MercadoPagoProvider implements PaymentProvider {
       body.status = 'authorized' // tenta autorizar imediatamente com o cartão
     }
 
-    const response = await pre.create({ body })
+    const deviceId = (input.deviceId || '').trim()
+    const response = await pre.create({ body, ...(deviceId ? { requestOptions: { meliSessionId: deviceId } } : {}) })
     return mpPreapprovalToProviderSub(response)
   }
 
@@ -413,6 +476,7 @@ function mpPaymentToProviderOrder(p: any): ProviderOrder {
     boleto,
     statusDetail: p?.status_detail ? String(p.status_detail) : undefined,
     paidAt: p?.date_approved ? new Date(p.date_approved) : undefined,
+    threeDs: desafioTresDS(p),
     raw: p,
   }
 }

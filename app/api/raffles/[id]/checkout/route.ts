@@ -3,6 +3,7 @@ import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { randomUUID } from 'crypto'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
+import { perfilAntifraudeDoComprador } from '@/lib/payments/perfil-do-comprador'
 import { payerAddressSchema } from '@/lib/payments/payer-address'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
@@ -258,6 +259,9 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
       installments: charge.installments,
       issuer: data.issuer,
       deviceId: data.deviceId,
+      // Dados de apoio ao antifraude (cartão): IP, telefone, cadastro.
+      payerIp: ip,
+      payerProfile: await perfilAntifraudeDoComprador(session?.userId, { hasCardToken: !!data.cardToken }),
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
@@ -297,6 +301,8 @@ export async function POST(request: NextRequest, props: { params: Promise<{ id: 
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
+      // Cartão com 3DS: o banco pediu confirmação; o checkout abre o desafio.
+      threeDs: result.threeDs ?? null,
       amount: chargedAmount,
       baseAmount: amount,
       feeAmount: charge.feeAmount,

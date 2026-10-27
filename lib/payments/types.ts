@@ -86,6 +86,8 @@ export interface CreatePreapprovalInput {
   /** Vira `auto_recurring.frequency` com `frequency_type: 'months'`. */
   frequencyMonths: 1 | 3 | 6 | 12
   cardTokenId?: string
+  /** Device ID do antifraude (`MP_DEVICE_SESSION_ID`), no header `X-meli-session-id`. */
+  deviceId?: string
   backUrl: string
   metadata?: Record<string, string>
 }
@@ -109,6 +111,26 @@ export interface ProviderOrder {
    * Só `createPayment` preenche. Serve ao log de recusas — sem token, CPF ou chave.
    */
   requisicao?: import('./recusa-cartao').RequisicaoDoCartao
+  /**
+   * Cartão com 3DS: o banco pediu que o comprador confirme a compra
+   * (`pending_challenge`). O checkout abre o desafio com estes dados.
+   */
+  threeDs?: import('./antifraude').DesafioTresDS
+}
+
+/**
+ * Dados de apoio ao antifraude do Mercado Pago no cartão (ver
+ * lib/payments/antifraude.ts). Todos opcionais: faltando, o pagamento segue.
+ */
+export interface DadosAntifraudeDoPagamento {
+  /** IP do comprador, como chegou na rota (`x-forwarded-for`). */
+  payerIp?: string
+  /** Telefone e data de cadastro do comprador logado. */
+  payerProfile?: import('./antifraude').PerfilAntifraude
+  /** Itens reais do pedido (carrinho, impressos). */
+  items?: import('./antifraude').ItemAntifraude[]
+  /** Endereço de entrega, quando há (impressos). */
+  shippingAddress?: import('./antifraude').EnderecoDeEntrega
 }
 
 export interface ProviderSubscription {
@@ -141,7 +163,7 @@ export interface PaymentProvider {
     payerDocumentType?: 'CPF' | 'CNPJ'
     payerDocumentNumber?: string
     payerAddress?: PayerAddress
-  }): Promise<ProviderOrder>
+  } & DadosAntifraudeDoPagamento): Promise<ProviderOrder>
 
   getPayment(providerPaymentId: string): Promise<ProviderOrder>
   /**

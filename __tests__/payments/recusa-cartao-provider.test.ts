@@ -77,7 +77,9 @@ describe('MercadoPagoProvider.createPayment — requisicao para o log de recusas
     await new MercadoPagoProvider().createPayment(base)
     const { body } = create.mock.calls[0][0]
     expect(Object.keys(body).sort()).toEqual(
-      ['additional_info', 'capture', 'description', 'external_reference', 'installments', 'issuer_id', 'metadata', 'notification_url', 'payer', 'payment_method_id', 'token', 'transaction_amount'].sort()
+      // binary_mode e three_d_secure_mode: 3DS opcional contra high_risk (ver
+      // __tests__/payments/antifraude.test.ts). O log de recusas não acrescenta nada.
+      ['additional_info', 'binary_mode', 'capture', 'description', 'external_reference', 'installments', 'issuer_id', 'metadata', 'notification_url', 'payer', 'payment_method_id', 'three_d_secure_mode', 'token', 'transaction_amount'].sort()
     )
     expect(JSON.stringify(body)).not.toContain('requisicao')
   })

@@ -3,6 +3,7 @@ import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
+import { perfilAntifraudeDoComprador } from '@/lib/payments/perfil-do-comprador'
 import { payerAddressSchema } from '@/lib/payments/payer-address'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
@@ -360,6 +361,26 @@ export async function POST(request: NextRequest) {
       installments: charge.installments,
       issuer: data.issuer,
       deviceId: data.deviceId,
+      // Dados de apoio ao antifraude (cartão): IP, telefone, cadastro.
+      payerIp: ip,
+      payerProfile: await perfilAntifraudeDoComprador(session.userId, { hasCardToken: !!data.cardToken, telefoneInformado: data.shippingAddress?.phone }),
+      items: orderItems.map(it => ({
+        id: it.productId,
+        title: it.versionName ? `${it.title} — ${it.versionName}` : it.title,
+        quantity: it.quantity,
+        unitPrice: it.unitPrice,
+      })),
+      shippingAddress:
+        data.deliveryType === 'shipping' && data.shippingAddress
+          ? {
+              zipCode: data.shippingAddress.cep,
+              streetName: data.shippingAddress.street,
+              streetNumber: data.shippingAddress.number,
+              complement: data.shippingAddress.complement,
+              city: data.shippingAddress.city,
+              federalUnit: data.shippingAddress.uf,
+            }
+          : undefined,
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: payerCpf ? 'CPF' : undefined,
       payerDocumentNumber: payerCpf || undefined,
@@ -395,6 +416,8 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
+      // Cartão com 3DS: o banco pediu confirmação; o checkout abre o desafio.
+      threeDs: result.threeDs ?? null,
       amount: chargedTotal,
       baseAmount: total,
       feeAmount: charge.feeAmount,

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { deviceIdSchema } from '@/lib/payments/card-payload'
 import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { ObjectId } from 'mongodb'
 import { z } from 'zod'
@@ -60,6 +61,8 @@ function describeSubscriptionError(err: any): string {
 const Schema = z.object({
   planId: z.string().min(1),
   cardTokenId: z.string().min(1),
+  // Device ID do antifraude do Mercado Pago (MP_DEVICE_SESSION_ID).
+  deviceId: deviceIdSchema,
 })
 
 export async function POST(request: NextRequest) {
@@ -79,7 +82,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return invalidCheckoutPayload('subscriptions', parsed.error)
   }
-  const { planId, cardTokenId } = parsed.data
+  const { planId, cardTokenId, deviceId } = parsed.data
 
   const db = await getDb()
 
@@ -159,6 +162,7 @@ export async function POST(request: NextRequest) {
       reason: `${plano.nome} — ${plano.periodo || 'Assinatura'}`,
       frequencyMonths: months as MesesDeRecorrencia,
       cardTokenId,
+      deviceId,
       backUrl: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/profile?subscription=success`,
       metadata: { userId: session.userId, planId },
     })

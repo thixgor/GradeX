@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { invalidCheckoutPayload } from '@/lib/payments/invalid-payload'
 import { z } from 'zod'
 import { cardholderDocumentSchema, deviceIdSchema, issuerIdSchema } from '@/lib/payments/card-payload'
+import { perfilAntifraudeDoComprador } from '@/lib/payments/perfil-do-comprador'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -521,6 +522,9 @@ export async function POST(request: NextRequest) {
       installments: charge.installments,
       issuer: data.issuer,
       deviceId: data.deviceId,
+      // Dados de apoio ao antifraude (cartão): IP, telefone, cadastro.
+      payerIp: ip,
+      payerProfile: await perfilAntifraudeDoComprador(session?.userId, { hasCardToken: !!data.cardToken, telefoneInformado: buyer.phone }),
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
@@ -556,6 +560,8 @@ export async function POST(request: NextRequest) {
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
+      // Cartão com 3DS: o banco pediu confirmação; o checkout abre o desafio.
+      threeDs: result.threeDs ?? null,
       amount: chargedAmount,
       baseAmount,
       feeAmount: charge.feeAmount,
@@ -852,6 +858,9 @@ async function handleCartCheckout(
       installments: charge.installments,
       issuer: data.issuer,
       deviceId: data.deviceId,
+      // Dados de apoio ao antifraude (cartão): IP, telefone, cadastro.
+      payerIp: ip,
+      payerProfile: await perfilAntifraudeDoComprador(session?.userId, { hasCardToken: !!data.cardToken, telefoneInformado: buyer.phone }),
       cardholderDocumentNumber: data.cardholderDocumentNumber,
       payerDocumentType: cpfResult.cpf ? 'CPF' : undefined,
       payerDocumentNumber: cpfResult.cpf || undefined,
@@ -880,6 +889,8 @@ async function handleCartCheckout(
       pix: result.pix || null,
       boleto: result.boleto || null,
       statusDetail: result.statusDetail,
+      // Cartão com 3DS: o banco pediu confirmação; o checkout abre o desafio.
+      threeDs: result.threeDs ?? null,
       amount: chargedAmount,
       baseAmount,
       feeAmount: charge.feeAmount,

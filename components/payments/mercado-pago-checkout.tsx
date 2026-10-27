@@ -55,6 +55,8 @@ import {
 import { invalidFieldsFrom } from '@/lib/payments/invalid-fields'
 import { cardTokenError, detalhesDoErroDeToken } from '@/lib/payments/card-token-errors'
 import { relatarFalhaDeCartao, type FalhaDeCartaoDoNavegador } from '@/lib/payments/relatar-falha-cartao'
+import { carregarScriptAntifraude, esperarDeviceId, lerDeviceId } from '@/lib/payments/device-id'
+import { DesafioTresDS } from '@/components/payments/desafio-3ds'
 import {
   clearPendingCheckout,
   pendingStorageKey,
@@ -76,8 +78,6 @@ import {
 declare global {
   interface Window {
     MercadoPago?: any
-    /** Device ID do antifraude, gerado pelo script de segurança do Mercado Pago. */
-    MP_DEVICE_SESSION_ID?: string
   }
 }
 
@@ -111,7 +111,7 @@ const REJECTION_MESSAGES: Record<string, string> = {
   cc_rejected_card_disabled: 'O cartão está bloqueado ou não foi ativado. Ative-o com o banco ou use outro cartão.',
   cc_rejected_duplicated_payment: 'Você já fez um pagamento com esse valor há pouco. Se precisar pagar de novo, use outro cartão ou o Pix.',
   cc_rejected_high_risk:
-    'O pagamento foi recusado pela análise de segurança do Mercado Pago. Tente com outro cartão ou pague com Pix — é aprovado na hora.',
+    'O pagamento foi recusado pela análise de segurança do Mercado Pago (não foi o seu banco). Confira se o CPF informado é o do titular do cartão e se o nome está como impresso nele; se persistir, use outro cartão ou pague com Pix — é aprovado na hora.',
   cc_rejected_insufficient_amount: 'O cartão não tem limite suficiente. Tente menos parcelas, outro cartão ou Pix.',
   cc_rejected_invalid_installments: 'O cartão não aceita esse número de parcelas. Escolha outra opção.',
   cc_rejected_max_attempts: 'Você atingiu o limite de tentativas com este cartão. Use outro cartão ou o Pix.',
@@ -144,6 +144,8 @@ export function describeRejection(statusDetail?: string | null): string | null {
  * responder, e cobrar de novo no escuro é o que gera cobrança dupla.
  */
 const PENDING_MESSAGES: Record<string, string> = {
+  pending_challenge:
+    'O seu banco pediu uma confirmação desta compra (3DS) e ela não foi concluída nesta tela. Aguarde: se não for confirmada em alguns minutos, o pagamento é cancelado sem cobrança e você pode tentar de novo.',
   pending_review_manual:
     'Seu cartão está em análise de segurança do Mercado Pago — pode levar até 2 dias úteis. Não é preciso pagar de novo: esta tela atualiza sozinha assim que sair o resultado.',
   pending_contingency:
@@ -158,12 +160,11 @@ export function describePending(statusDetail?: string | null): string {
   return (statusDetail && PENDING_MESSAGES[statusDetail]) || 'Processando o pagamento... esta tela atualiza sozinha.'
 }
 
-/** Device ID do antifraude, se o script de segurança já tiver gerado. */
-function readDeviceId(): string | undefined {
-  if (typeof window === 'undefined') return undefined
-  const id = window.MP_DEVICE_SESSION_ID
-  return typeof id === 'string' && id.trim() ? id.trim() : undefined
-}
+/**
+ * Pede ao polling do checkout uma consulta imediata do pagamento — o desafio
+ * do 3DS acabou de ser concluído no banco.
+ */
+const EVENTO_VERIFICAR_PAGAMENTO = 'checkout:verificar-pagamento'
 
 type Method = 'card' | 'pix' | 'boleto'
 
@@ -185,6 +186,8 @@ export interface CheckoutOrderResponse {
   statusDetail?: string
   amount: number
   successRedirect?: string
+  /** Cartão com 3DS: o banco pediu confirmação (`pending_challenge`). */
+  threeDs?: { url: string; creq: string } | null
 }
 
 export interface MercadoPagoCheckoutProps {
@@ -480,14 +483,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
   // que o antifraude usa para reconhecer o aparelho. Sem ele, cartões bons caem
   // bem mais em "cc_rejected_high_risk". Falhar aqui não trava o checkout.
   useEffect(() => {
-    if (typeof window === 'undefined' || readDeviceId()) return
-    if (document.querySelector('script[data-mp-security]')) return
-    const s = document.createElement('script')
-    s.src = 'https://www.mercadopago.com/v2/security.js'
-    s.async = true
-    s.setAttribute('view', 'checkout')
-    s.setAttribute('data-mp-security', '1')
-    document.head.appendChild(s)
+    carregarScriptAntifraude()
   }, [])
 
   // Carregar mp.js v2
@@ -566,9 +562,11 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     const aoVoltar = () => {
       if (visivel()) void consultar()
     }
+    const agora = () => void consultar()
     document.addEventListener('visibilitychange', aoVoltar)
     window.addEventListener('focus', aoVoltar)
     window.addEventListener('pageshow', aoVoltar)
+    window.addEventListener(EVENTO_VERIFICAR_PAGAMENTO, agora)
     agendar()
     return () => {
       parado = true
@@ -576,6 +574,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
       document.removeEventListener('visibilitychange', aoVoltar)
       window.removeEventListener('focus', aoVoltar)
       window.removeEventListener('pageshow', aoVoltar)
+      window.removeEventListener(EVENTO_VERIFICAR_PAGAMENTO, agora)
     }
   }, [order?.orderId, order?.status, method])
 
@@ -588,7 +587,8 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
     const snap = readPendingCheckout<CheckoutOrderResponse, Method>(sessao(), pendingKey)
     if (snap && allowed.includes(snap.method)) {
       setMethod(snap.method)
-      setOrder(snap.order)
+      // O desafio do 3DS não é reaberto ao recarregar: o `creq` vale uma vez.
+      setOrder(snap.order?.threeDs ? { ...snap.order, threeDs: null } : snap.order)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingKey])
@@ -872,10 +872,15 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
             parcelas: charge.installments,
             valor: props.amount,
             titularDiferente: holderIsOther,
-            deviceIdPresente: !!readDeviceId(),
+            deviceIdPresente: !!lerDeviceId(),
             endpoint: props.endpoint,
             produto: props.analytics?.productTitle || props.description,
           })
+
+        // O script de segurança é assíncrono: com autopreenchimento dá para
+        // chegar aqui antes de ele gerar o device ID. Espera um pouco — sem o
+        // device ID o antifraude recusa bem mais cartão bom (high_risk).
+        await esperarDeviceId()
 
         // Tokeniza no client
         const cardToken = await mpInstance
@@ -923,7 +928,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         if (parcelas > 1 && !payerCosts?.some(pc => pc.installments === parcelas)) {
           throw new Error('Não conseguimos confirmar o parcelamento deste cartão. Tente de novo em instantes ou pague à vista.')
         }
-        const deviceId = readDeviceId()
+        const deviceId = lerDeviceId()
 
         body = {
           ...body,
@@ -1521,6 +1526,7 @@ function TrocarForma({ onReset }: { onReset: () => void }) {
 
 function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse; method: Method; onReset: () => void }) {
   const [copied, setCopied] = useState(false)
+  const [desafioConcluido, setDesafioConcluido] = useState(false)
 
   if (order.status === 'approved') {
     return (
@@ -1684,6 +1690,37 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
    * polling) quando resolver — sem o comprador precisar pagar de novo.
    */
   const detalhe = describePending(order.statusDetail)
+
+  // Cartão com 3DS: o banco pediu que o comprador confirme a compra. O polling
+  // segue rodando e troca esta tela pelo resultado assim que o MP decidir.
+  if (order.statusDetail === 'pending_challenge') {
+    if (order.threeDs && !desafioConcluido) {
+      return (
+        <div style={{ ...glassCard, padding: '20px' }}>
+          <DesafioTresDS
+            url={order.threeDs.url}
+            creq={order.threeDs.creq}
+            onConcluido={() => {
+              setDesafioConcluido(true)
+              window.dispatchEvent(new Event(EVENTO_VERIFICAR_PAGAMENTO))
+            }}
+          />
+        </div>
+      )
+    }
+    return (
+      <div style={{ ...glassCard, padding: '28px', textAlign: 'center' }}>
+        <Loader2 size={36} style={{ color: 'hsl(var(--primary))', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} />
+        <h3 style={{ fontSize: '17px', fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: '6px' }}>
+          {desafioConcluido ? 'Confirmando com o banco...' : STATUS_LABELS[order.status]}
+        </h3>
+        <p style={{ fontSize: '13px', color: 'hsl(var(--muted-foreground))', marginBottom: desafioConcluido ? 0 : '16px' }}>
+          {desafioConcluido ? 'Recebemos a sua confirmação. Esta tela atualiza sozinha em instantes.' : detalhe}
+        </p>
+        {!desafioConcluido && <TrocarForma onReset={onReset} />}
+      </div>
+    )
+  }
 
   // Generic pending
   return (
