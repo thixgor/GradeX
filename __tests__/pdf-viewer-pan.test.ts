@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { DEFAULT_PAN_RATIO, panScrollFor, readPanRatio } from '@/lib/pdf-viewer-pan'
+import { DEFAULT_PAN_RATIO, panScrollFor, readPanRatio, touchMidpoint } from '@/lib/pdf-viewer-pan'
 
 /**
  * A página ampliada rola de lado dentro da sua linha. O que estes testes
@@ -56,5 +56,16 @@ describe('panScrollFor', () => {
       const metrics = { scrollLeft, clientWidth: VIEW, scrollWidth: 1800 }
       expect(panScrollFor(readPanRatio(metrics)!, metrics)).toBe(scrollLeft)
     }
+  })
+})
+
+describe('touchMidpoint', () => {
+  it('é o meio dos dedos', () => {
+    expect(touchMidpoint([{ x: 0, y: 0 }, { x: 100, y: 40 }])).toEqual({ x: 50, y: 20 })
+  })
+
+  it('sem dedos válidos não há ponto', () => {
+    expect(touchMidpoint([])).toBeNull()
+    expect(touchMidpoint([{ x: Number.NaN, y: 0 }])).toBeNull()
   })
 })

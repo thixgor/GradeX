@@ -60,3 +60,34 @@ export function panScrollFor(ratio: number, { clientWidth, scrollWidth }: Omit<P
   const target = ratio * scrollWidth - clientWidth / 2
   return Math.round(Math.min(room, Math.max(0, target)))
 }
+
+/**
+ * Dois dedos movem a página quando o DEDO desenha.
+ *
+ * Com o dedo liberado para escrever, a página não rola com toque nenhum (o
+ * dedo é do traço). Como no GoodNotes, dois dedos juntos são o "mover": o
+ * primeiro dedo já começou um traço quando o segundo encosta, e esse traço de
+ * um instante é descartado. Só vale se os dois encostarem quase juntos — um
+ * segundo dedo que chega no meio de uma escrita longa é a mão apoiada, e o
+ * traço em curso não pode sumir por causa dela.
+ */
+export const TWO_FINGER_PAN_WINDOW_MS = 300
+
+export interface PanPoint {
+  x: number
+  y: number
+}
+
+/** O ponto médio dos dedos — é ele que a página acompanha. */
+export function touchMidpoint(points: Iterable<PanPoint>): PanPoint | null {
+  let x = 0
+  let y = 0
+  let count = 0
+  for (const point of points) {
+    if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) continue
+    x += point.x
+    y += point.y
+    count += 1
+  }
+  return count > 0 ? { x: x / count, y: y / count } : null
+}

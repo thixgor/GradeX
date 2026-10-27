@@ -122,6 +122,8 @@ import {
   PAN_DRAG_THRESHOLD,
   panScrollFor,
   readPanRatio,
+  touchMidpoint,
+  TWO_FINGER_PAN_WINDOW_MS,
 } from '@/lib/pdf-viewer-pan'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
@@ -203,7 +205,7 @@ type PenMode = 'auto' | 'pen' | 'any'
 const PEN_MODE_OPTIONS: Array<{ value: PenMode; label: string; shortLabel: string; hint: string }> = [
   { value: 'auto', label: 'Automático', shortLabel: 'Auto', hint: 'Se você usa caneta neste aparelho, o dedo para de desenhar' },
   { value: 'pen', label: 'Só caneta', shortLabel: 'Caneta', hint: 'A mão apoiada nunca desenha; o dedo rola e vira página' },
-  { value: 'any', label: 'Dedo e caneta', shortLabel: 'Ambos', hint: 'Os dois desenham' },
+  { value: 'any', label: 'Dedo e caneta', shortLabel: 'Ambos', hint: 'Os dois desenham; dois dedos movem a página' },
 ]
 
 interface EraserStyle {
@@ -6939,6 +6941,17 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const laserPointerIdRef = useRef<number | null>(null)
   const laserRafRef = useRef<number | null>(null)
   const ignoreNextClickRef = useRef(false)
+  // Dedos na página enquanto o DEDO desenha, e o arrasto de dois dedos em
+  // curso (ver "Dois dedos movem a página" nos manipuladores).
+  const touchPointsRef = useRef(new Map<number, { x: number; y: number }>())
+  const firstTouchAtRef = useRef(0)
+  const twoFingerPanRef = useRef<{
+    x: number
+    y: number
+    left: number
+    top: number
+    scroller: HTMLElement | null
+  } | null>(null)
   const horizontal = axis === 'horizontal'
   // A borracha varre esta lista a cada movimento, de dentro de um callback
   // estável — daí o espelho.
@@ -8191,10 +8204,85 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const inkTool = tool === 'drawing' || tool === 'highlight' || tool === 'laser' || tool === 'eraser'
   inkToolRef.current = inkTool
 
+  // ── Dois dedos movem a página ───────────────────────────────────────────
+  // Com o dedo liberado para escrever, a página tem `touchAction: none`: o
+  // navegador não rola com toque nenhum, e quem anotava com o dedo no iPad
+  // ficava preso na parte da página que estava na tela. Como no GoodNotes, um
+  // dedo escreve e dois movem. A regra de quando o segundo dedo vale está em
+  // `lib/pdf-viewer-pan.ts` (TWO_FINGER_PAN_WINDOW_MS). Com a caneta (modo
+  // "só caneta") nada disto entra: lá o dedo já rola nativo.
+  const fingerInk = inkTool && allowTouchDrawing
+
+  // O traço que o primeiro dedo começou seria um risco no lugar do arrasto.
+  const abortTouchInk = () => {
+    const interaction = interactionRef.current
+    if (interaction) {
+      // A borracha já tirou da tela o que pegou: fechar é mais honesto que
+      // fazer reaparecer. Em alguns milissegundos ela quase nunca pegou nada.
+      if (interaction.kind === 'eraser') finishErasing()
+      interactionRef.current = null
+      clearDraftCanvas()
+    }
+    if (laserDrawingRef.current) {
+      laserDrawingRef.current = false
+      laserPointerIdRef.current = null
+      laserStrokesRef.current.pop()
+      ensureLaserLoop()
+    }
+    setInkActive(false)
+  }
+
+  const startTwoFingerPan = (event: React.PointerEvent<HTMLDivElement>) => {
+    const touches = touchPointsRef.current
+    if (touches.size !== 2 || twoFingerPanRef.current) return false
+    if (Date.now() - firstTouchAtRef.current > TWO_FINGER_PAN_WINDOW_MS) return false
+    // Traço da CANETA em curso: o segundo toque é a mão apoiada.
+    const interaction = interactionRef.current
+    if (interaction && !touches.has(interaction.pointerId)) return false
+    if (laserDrawingRef.current && laserPointerIdRef.current != null && !touches.has(laserPointerIdRef.current)) return false
+    const row = wrapperRef.current
+    const mid = touchMidpoint(touches.values())
+    if (!row || !mid) return false
+    event.preventDefault()
+    capturePointer(event)
+    abortTouchInk()
+    const scroller = findReadingScroller(row)
+    twoFingerPanRef.current = {
+      x: mid.x,
+      y: mid.y,
+      left: row.scrollLeft,
+      top: scroller ? scroller.scrollTop : window.scrollY,
+      scroller,
+    }
+    return true
+  }
+
+  /** Um dedo saiu. Devolve `true` quando o evento era do arrasto. */
+  const releaseTouch = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType !== 'touch') return false
+    const touches = touchPointsRef.current
+    const tracked = touches.delete(event.pointerId)
+    if (!twoFingerPanRef.current || !tracked) return false
+    // Levantou um dos dois: o arrasto acaba, e o dedo que ficou não escreve —
+    // ele não encostou de novo, só sobrou.
+    if (touches.size < 2) twoFingerPanRef.current = null
+    ignoreNextClickRef.current = true
+    window.setTimeout(() => { ignoreNextClickRef.current = false }, 0)
+    return true
+  }
+
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (event.pointerType === 'pen') penDownAtRef.current = Date.now()
     if (!renderSize || editor) return
     if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return
+    if (event.pointerType === 'touch' && fingerInk) {
+      const touches = touchPointsRef.current
+      if (touches.size === 0) firstTouchAtRef.current = Date.now()
+      touches.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      if (startTwoFingerPan(event)) return
+      // Terceiro dedo durante o arrasto: nem escreve, nem atrapalha.
+      if (twoFingerPanRef.current) return
+    }
     // UM gesto de cada vez. Sem isto, a mão que encosta na tela no meio de um
     // traço (ou o segundo dedo de uma pinça) começava um gesto novo por cima do
     // que estava em curso: a caneta largava o traço no meio e a tinta pulava
@@ -8308,6 +8396,21 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (event.pointerType === 'touch' && touchPointsRef.current.has(event.pointerId)) {
+      touchPointsRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY })
+      const pan = twoFingerPanRef.current
+      if (pan) {
+        event.preventDefault()
+        const row = wrapperRef.current
+        const mid = touchMidpoint(touchPointsRef.current.values())
+        if (!row || !mid) return
+        // Direto na rolagem, como faria o navegador: sem estado, sem render.
+        row.scrollLeft = pan.left - (mid.x - pan.x)
+        if (pan.scroller) pan.scroller.scrollTop = pan.top - (mid.y - pan.y)
+        else window.scrollTo({ top: pan.top - (mid.y - pan.y), behavior: 'instant' })
+        return
+      }
+    }
     if (tool === 'laser' && laserDrawingRef.current) {
       event.preventDefault()
       const stroke = laserStrokesRef.current[laserStrokesRef.current.length - 1]
@@ -8384,6 +8487,10 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   }
 
   const handlePointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (releaseTouch(event)) {
+      try { event.currentTarget.releasePointerCapture(event.pointerId) } catch {}
+      return
+    }
     if (laserDrawingRef.current && (laserPointerIdRef.current === null || laserPointerIdRef.current === event.pointerId)) {
       event.preventDefault()
       laserDrawingRef.current = false
@@ -8430,6 +8537,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
    * traço.
    */
   const handleLostPointerCapture = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (releaseTouch(event)) return
     if (laserDrawingRef.current && laserPointerIdRef.current === event.pointerId) {
       laserDrawingRef.current = false
       laserPointerIdRef.current = null
