@@ -7,16 +7,15 @@ import { ObjectId } from 'mongodb'
 
 // Configuracoes de segurança da sessao
 const JWT_CONFIG = {
-  // Sessão DESLIZANTE de 30 dias: cada uso renova o prazo (ver
+  // Sessão DESLIZANTE de 7 dias: cada uso renova o prazo (ver
   // `renovarSessaoSeVelha`). Antes eram 7 dias contados do login, sem
   // renovação — quem usava a plataforma todo dia era deslogado toda semana,
   // e a queixa era "tem que entrar na plataforma toda vez". Agora só pede login
-  // de novo quem passa 30 dias sem abrir o site (ou sai, troca a senha, é
-  // derrubado pelo limite de aparelhos). Os 30 dias batem com o TTL das
-  // sessões de aparelho (lib/sessions.ts).
-  ACCESS_TOKEN_EXPIRY: '30d',
+  // de novo quem passa 7 dias sem abrir o site (ou sai, troca a senha, é
+  // derrubado pelo limite de aparelhos).
+  ACCESS_TOKEN_EXPIRY: '7d',
   // Duracao maxima do cookie
-  COOKIE_MAX_AGE: 60 * 60 * 24 * 30,
+  COOKIE_MAX_AGE: 60 * 60 * 24 * 7,
   // Reemite o token quando ele tem mais de um dia: renova o prazo sem gravar
   // cookie a cada requisição.
   RENOVAR_APOS_S: 60 * 60 * 24,

@@ -8,7 +8,7 @@ import { decodeJwt } from 'jose'
  *
  * O token valia 7 dias contados do LOGIN e nunca era renovado: quem usava a
  * plataforma todo dia era deslogado toda semana. Agora a sessão é deslizante —
- * 30 dias desde o último uso, renovada quando o token passa de um dia.
+ * 7 dias desde o último uso, renovada quando o token passa de um dia.
  */
 
 const cookiesGravados: Array<{ nome: string; valor: string; opcoes: any }> = []
@@ -63,10 +63,10 @@ async function loginEm(data: Date, extra: Record<string, unknown> = {}) {
 }
 
 describe('sessão deslizante', () => {
-  it('o login dura 30 dias, não 7', async () => {
+  it('o login dura 7 dias', async () => {
     await loginEm(new Date('2026-10-01T12:00:00Z'))
     const { exp, iat } = decodeJwt(tokenNoNavegador)
-    expect((exp! - iat!) / 86_400).toBe(30)
+    expect((exp! - iat!) / 86_400).toBe(7)
   })
 
   it('quem volta depois de um dia ganha o prazo renovado, com a MESMA sessão de aparelho', async () => {
@@ -80,8 +80,8 @@ describe('sessão deslizante', () => {
     expect(cookiesGravados).toHaveLength(1)
     const novo = decodeJwt(cookiesGravados[0].valor)
     expect(novo.jti).toBe('sessao-do-celular')
-    expect(new Date(novo.exp! * 1000).toISOString()).toBe('2026-11-05T12:00:00.000Z')
-    expect(cookiesGravados[0].opcoes).toMatchObject({ httpOnly: true, maxAge: 30 * 86_400, path: '/' })
+    expect(new Date(novo.exp! * 1000).toISOString()).toBe('2026-10-13T12:00:00.000Z')
+    expect(cookiesGravados[0].opcoes).toMatchObject({ httpOnly: true, maxAge: 7 * 86_400, path: '/' })
   })
 
   it('usando todo dia, a pessoa nunca é deslogada (era deslogada no 8º dia)', async () => {
@@ -126,9 +126,9 @@ describe('sessão deslizante', () => {
     expect(await getSession()).not.toBeNull()
   })
 
-  it('passados 30 dias sem uso, pede login de novo', async () => {
+  it('passados 7 dias sem uso, pede login de novo', async () => {
     await loginEm(new Date('2026-10-01T12:00:00Z'))
-    vi.setSystemTime(new Date('2026-11-01T12:00:01Z'))
+    vi.setSystemTime(new Date('2026-10-08T12:00:01Z'))
     const { getSession } = await import('@/lib/auth')
 
     expect(await getSession()).toBeNull()
