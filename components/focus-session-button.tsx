@@ -7,6 +7,7 @@ import { useFocusSession } from '@/hooks/use-focus-session'
 import { useAnchoredPanel } from '@/hooks/use-anchored-panel'
 import { AnelDeFoco, PainelDeFoco } from '@/components/foco/painel-de-foco'
 import { formatarRelogio } from '@/lib/foco/ritmo-de-foco'
+import { getFullscreenElement } from '@/lib/fullscreen'
 import { cn } from '@/lib/utils'
 
 /**
@@ -87,7 +88,9 @@ export function FocusSessionButton() {
           >
             <PainelDeFoco onFechar={closePanel} />
           </div>,
-          document.body,
+          // Em tela cheia (o leitor de PDF no computador) só o elemento em
+          // tela cheia aparece: um portal no <body> abriria o painel invisível.
+          (getFullscreenElement() as HTMLElement | null) ?? document.body,
         )}
     </div>
   )

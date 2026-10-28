@@ -2,6 +2,7 @@
 
 import type * as React from 'react'
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import {
   ArrowDownUp,
@@ -19,6 +20,7 @@ import {
   Clock,
   Eraser,
   Eye,
+  EyeOff,
   Hand,
   HelpCircle,
   Highlighter,
@@ -55,6 +57,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { FocusSessionButton } from '@/components/focus-session-button'
 import { useRemainingTime, type TimedAccessView } from '@/components/materiais/timed-access'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
 import {
@@ -125,6 +128,30 @@ import {
   touchMidpoint,
   TWO_FINGER_PAN_WINDOW_MS,
 } from '@/lib/pdf-viewer-pan'
+import {
+  anchorDrift,
+  clampScale,
+  distanceToRect,
+  fingerDistance,
+  followFocal,
+  fractionInRect,
+  IDENTITY_PINCH,
+  lerpRect,
+  mapRect,
+  PINCH_ANCHOR_HOLD_MS,
+  PINCH_MIN_FINGER_DISTANCE,
+  PINCH_SETTLE_ANIMATION_MS,
+  pinchPercentLabel,
+  rubberBandScale,
+  settleEase,
+  transformBetween,
+  unmapPoint,
+  WHEEL_PINCH_IDLE_MS,
+  wheelScaleFactor,
+  type PinchPoint,
+  type PinchRect,
+  type PinchTransform,
+} from '@/lib/pdf-viewer-pinch'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
 import {
@@ -1440,12 +1467,23 @@ function createSharedObserver(rootMargin: string) {
 // sabendo. Mesmo padrão dos ouvintes de pinça mais acima.
 const inkListeners = new Set<(active: boolean) => void>()
 let inkActive = false
+// Quando o traço em curso começou. A pinça usa a mesma regra do arrasto de dois
+// dedos (TWO_FINGER_PAN_WINDOW_MS): segundo dedo que chega logo depois do
+// primeiro é pinça; o que chega no meio de uma escrita longa é a mão apoiada.
+let inkActiveSince = 0
 
 function setInkActive(active: boolean) {
   if (inkActive === active) return
   inkActive = active
+  if (active) inkActiveSince = Date.now()
   for (const listener of inkListeners) listener(active)
 }
+
+// ─── Pinça em curso ─────────────────────────────────────────────────────────
+// O swipe de virar página e o arrasto de dois dedos da página (quando o dedo
+// desenha) leem isto para sair da frente: durante a pinça quem move a coluna é
+// ela, e dois donos do mesmo gesto era exatamente o defeito da pinça antiga.
+let pagePinchActive = false
 
 function subscribeInkActivity(listener: (active: boolean) => void) {
   inkListeners.add(listener)
@@ -2207,6 +2245,12 @@ function useResizeWidth(ref: React.RefObject<HTMLElement | null>, deps: React.De
 // Para ler com letra maior de verdade existem os botões de zoom, que mexem no
 // zoom real e redesenham nítido.
 //
+// ATUALIZAÇÃO: a pinça agora é própria de novo, e SÓ nas páginas — ver
+// `usePagePinch` logo abaixo e o topo de `lib/pdf-viewer-pinch.ts`, que conta
+// por que este desenho não tem os dois defeitos da tentativa revertida: o
+// `touch-action` é fixo (`pan-x pan-y`, nada muda no meio do gesto) e o zoom
+// do React só entra uma vez, quando o último dedo sai.
+//
 // Sobrou só o swipe para virar página: um dedo, sem disputa com o pinch, e
 // apenas com a ferramenta "navegar" ativa — desenhar não pode virar página.
 //
@@ -2502,7 +2546,8 @@ function useViewerGestures(
       const now = Date.now()
       dropStalePointers(now)
       activePointers.set(event.pointerId, now)
-      if (activePointers.size > 1) {
+      // O dedo que sobrou de uma pinça (ou que encosta durante ela) é da pinça.
+      if (activePointers.size > 1 || pagePinchActive) {
         // Dois dedos = pinça do navegador. Nada de swipe.
         swipeStartRef.current = null
         pointerIdRef.current = null
@@ -2566,6 +2611,10 @@ function useViewerGestures(
       if (!isGesturePointer(event)) return
       const start = swipeStartRef.current
       if (!start || start.dropped || pointerIdRef.current !== event.pointerId) return
+      if (pagePinchActive) {
+        start.dropped = true
+        return
+      }
 
       const dx = event.clientX - start.x
       const dy = event.clientY - start.y
@@ -2664,6 +2713,523 @@ function useViewerGestures(
       activePointers.clear()
     }
   }, [enabled, ref, trackRef])
+}
+
+// ─── Pinça de dois dedos nas páginas ────────────────────────────────────────
+// Como no GoodNotes: os dedos ampliam e arrastam a página na hora (um
+// `transform` na coluna, sem render), e quando o último dedo sai o zoom de
+// verdade entra e a página re-rasteriza nítida no tamanho novo. O ponto do
+// material que estava entre os dedos continua entre os dedos — durante o
+// gesto, quando ele vira arrasto de um dedo só e depois que o layout se refaz.
+//
+// Três entradas, um motor só:
+//  - dedos (eventos de toque): iPad, tablet Android, celular, notebook com tela
+//    de toque;
+//  - Ctrl + roda: é como o trackpad entrega a pinça no Chrome, Edge e Firefox
+//    (e a roda do mouse com Ctrl, que antes ampliava a PÁGINA DO SITE inteira);
+//  - eventos `gesture*` do Safari: a pinça do trackpad no Mac e no iPad com
+//    teclado. No toque do iOS eles também chegam, e aí só servem para barrar o
+//    zoom nativo do Safari.
+//
+// O que fica de fora de propósito:
+//  - a caneta: toque com `touchType: 'stylus'` nunca conta como dedo, e um
+//    traço em curso há mais de TWO_FINGER_PAN_WINDOW_MS segura a pinça (o
+//    segundo toque é a mão apoiada, não um gesto);
+//  - toques fora da coluna de páginas (cabeçalho, barras, folhas): ali a pinça
+//    não faz nada, como num app.
+//
+// A matemática mora em `lib/pdf-viewer-pinch.ts`, com testes.
+interface PinchFrameRef {
+  /** `id` da linha da página (`pdf-page-N`): a linha pode ser trocada no render. */
+  id: string
+  rect: PinchRect
+}
+
+interface PinchSession {
+  source: 'touch' | 'wheel' | 'gesture'
+  /** Canto de cima à esquerda da coluna, sem transform, no começo do gesto. */
+  origin: PinchPoint
+  baseZoom: number
+  resting: number | null
+  minScale: number
+  maxScale: number
+  /** Escala que os dedos pediram, antes do elástico. */
+  raw: number
+  transform: PinchTransform
+  /** Começo do trecho atual: muda quando um dedo entra ou sai. */
+  ref: { point: PinchPoint; distance: number; raw: number; transform: PinchTransform; count: number }
+  last: PinchPoint
+  frames: PinchFrameRef[]
+}
+
+/** A moldura da página (o que escala com o zoom), ou a linha inteira num espaçador. */
+function pinchFrameOf(row: HTMLElement): HTMLElement {
+  const frame = row.firstElementChild
+  return frame instanceof HTMLElement ? frame : row
+}
+
+function toPinchRect(rect: DOMRect): PinchRect {
+  return { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+}
+
+function writePinchTransform(track: HTMLElement, transform: PinchTransform | null) {
+  if (!transform || (Math.abs(transform.scale - 1) < 1e-4 && Math.abs(transform.tx) < 0.05 && Math.abs(transform.ty) < 0.05)) {
+    track.style.transform = ''
+    return
+  }
+  track.style.transformOrigin = '0 0'
+  track.style.transform = `translate3d(${transform.tx}px, ${transform.ty}px, 0) scale(${transform.scale})`
+}
+
+function usePagePinch(
+  contentRef: React.RefObject<HTMLElement | null>,
+  trackRef: React.RefObject<HTMLElement | null>,
+  hudRef: React.RefObject<HTMLElement | null>,
+  options: {
+    enabled: boolean
+    /** Zoom e limites no começo do gesto. */
+    readZoom: () => { zoom: number; min: number; max: number; resting: number | null }
+    /**
+     * Aplica o zoom final de forma SÍNCRONA (o DOM sai daqui já no tamanho
+     * novo). `false` quando o zoom não mudou.
+     */
+    commit: (zoom: number) => boolean
+    /** Enquanto a página é segurada no lugar, o foco por rolagem fica parado. */
+    holdFocus: (untilMs: number) => void
+    /** Uma viagem (sumário, retomada, rotação) manda na rolagem agora. */
+    isTraveling: () => boolean
+  }
+) {
+  const optionsRef = useRef(options)
+  optionsRef.current = options
+
+  useEffect(() => {
+    const content = contentRef.current
+    if (!content || !options.enabled) return
+
+    let session: PinchSession | null = null
+    let writeFrame = 0
+    let settleFrame = 0
+    let settleAbandoned = false
+    let wheelIdle = 0
+    let hudTimer = 0
+    let lastTouchAt = 0
+    const hudAtMount = hudRef.current
+
+    const showHud = (label: string) => {
+      const hud = hudRef.current
+      if (!hud) return
+      if (hudTimer) {
+        window.clearTimeout(hudTimer)
+        hudTimer = 0
+      }
+      if (hud.textContent !== label) hud.textContent = label
+      hud.dataset.visible = 'true'
+    }
+
+    const hideHud = (delay: number) => {
+      if (hudTimer) window.clearTimeout(hudTimer)
+      hudTimer = window.setTimeout(() => {
+        hudTimer = 0
+        const hud = hudRef.current
+        if (hud) hud.dataset.visible = 'false'
+      }, delay)
+    }
+
+    const hudLabel = (active: PinchSession) =>
+      pinchPercentLabel(active.baseZoom * clampScale(active.transform.scale, active.minScale, active.maxScale), active.resting)
+
+    const flushWrite = () => {
+      writeFrame = 0
+      const track = trackRef.current
+      if (!track || !session) return
+      writePinchTransform(track, session.transform)
+      showHud(hudLabel(session))
+    }
+
+    const scheduleWrite = () => {
+      if (!writeFrame) writeFrame = window.requestAnimationFrame(flushWrite)
+    }
+
+    // Acomodação em curso e um gesto novo: o layout já está no zoom novo, só
+    // falta tirar o transform — a página vai direto para onde ela já estava
+    // indo.
+    const stopSettle = () => {
+      if (settleFrame) {
+        window.cancelAnimationFrame(settleFrame)
+        settleFrame = 0
+      }
+      const track = trackRef.current
+      if (track) {
+        track.style.transform = ''
+        track.style.willChange = ''
+      }
+    }
+
+    const begin = (point: PinchPoint, distance: number, count: number, source: PinchSession['source']) => {
+      const track = trackRef.current
+      if (!track) return false
+      const { zoom, min, max, resting } = optionsRef.current.readZoom()
+      if (!(zoom > 0) || !(max >= min)) return false
+      stopSettle()
+      // Sobra de um swipe que estava começando: a medida tem que ser da coluna
+      // parada, senão o gesto inteiro fica deslocado por esse resto.
+      track.style.transition = ''
+      track.style.transform = ''
+      const trackRect = track.getBoundingClientRect()
+      const viewport = window.innerHeight || document.documentElement.clientHeight || 0
+      const frames: PinchFrameRef[] = []
+      track.querySelectorAll<HTMLElement>('[data-pdf-page-row]').forEach((row) => {
+        const rowRect = row.getBoundingClientRect()
+        // Só o que está perto da tela: num material de mil páginas medir todas
+        // custaria um layout inteiro no começo do gesto.
+        if (rowRect.bottom < -viewport || rowRect.top > viewport * 2) return
+        if (!row.id) return
+        frames.push({ id: row.id, rect: toPinchRect(pinchFrameOf(row).getBoundingClientRect()) })
+      })
+      session = {
+        source,
+        origin: { x: trackRect.left, y: trackRect.top },
+        baseZoom: zoom,
+        resting,
+        minScale: min / zoom,
+        maxScale: max / zoom,
+        raw: 1,
+        transform: IDENTITY_PINCH,
+        ref: { point, distance, raw: 1, transform: IDENTITY_PINCH, count },
+        last: point,
+        frames,
+      }
+      pagePinchActive = true
+      track.style.willChange = 'transform'
+      showHud(hudLabel(session))
+      return true
+    }
+
+    /** Um dedo entrou ou saiu: o trecho novo começa de onde a tela está. */
+    const rebase = (point: PinchPoint, distance: number, count: number) => {
+      if (!session) return
+      session.ref = { point, distance, raw: session.raw, transform: session.transform, count }
+      session.last = point
+    }
+
+    const follow = (point: PinchPoint, raw: number) => {
+      if (!session) return
+      session.raw = raw
+      const scale = rubberBandScale(raw, session.minScale, session.maxScale)
+      session.transform = followFocal({
+        transform: session.ref.transform,
+        origin: session.origin,
+        from: session.ref.point,
+        to: point,
+        scale,
+      })
+      session.last = point
+      scheduleWrite()
+    }
+
+    /**
+     * Depois do zoom: a página sob os dedos é segurada no lugar enquanto o
+     * layout termina de se ajeitar, e o transform leva a página, em ~1/4 de
+     * segundo, de onde ela estava na tela (talvez além do limite, no elástico)
+     * até onde ela de fato ficou. É a técnica FLIP: medir o layout novo,
+     * desenhar por cima dele a posição velha, e animar a diferença até zero.
+     * Medindo de novo a cada quadro — os espaçadores ainda vão mudar de altura
+     * (150 ms depois), e a animação não pode correr atrás de uma foto velha.
+     */
+    const settle = ({
+      id,
+      fraction,
+      point,
+      from,
+      changed,
+    }: {
+      id: string
+      fraction: PinchPoint
+      point: PinchPoint
+      from: PinchRect
+      changed: boolean
+    }) => {
+      const startedAt = performance.now()
+      const holdUntil = startedAt + (changed ? PINCH_ANCHOR_HOLD_MS : PINCH_SETTLE_ANIMATION_MS)
+      settleAbandoned = false
+
+      const step = (now: number) => {
+        settleFrame = 0
+        const track = trackRef.current
+        const row = document.getElementById(id)
+        if (!track || !row) {
+          stopSettle()
+          return
+        }
+        track.style.transform = ''
+        const frame = pinchFrameOf(row)
+        let rect = toPinchRect(frame.getBoundingClientRect())
+        // Vale também sem zoom: dois dedos que só ARRASTARAM levaram a página
+        // para outro lugar, e é a rolagem que tem de ficar lá — senão a página
+        // voltaria ao ponto de partida quando os dedos saem.
+        if (!settleAbandoned && !optionsRef.current.isTraveling()) {
+          optionsRef.current.holdFocus(Date.now() + 320)
+          const drift = anchorDrift(rect, fraction, point)
+          let moved = false
+          if (Math.abs(drift.y) > 0.5) {
+            scrollReadingBy(drift.y, row)
+            moved = true
+          }
+          if (Math.abs(drift.x) > 0.5 && row.scrollWidth - row.clientWidth > 1) {
+            row.scrollLeft += drift.x
+            moved = true
+          }
+          if (moved) rect = toPinchRect(frame.getBoundingClientRect())
+        }
+        const progress = (now - startedAt) / PINCH_SETTLE_ANIMATION_MS
+        if (progress < 1) {
+          const trackRect = track.getBoundingClientRect()
+          const target = lerpRect(from, rect, settleEase(progress))
+          writePinchTransform(track, transformBetween(rect, target, { x: trackRect.left, y: trackRect.top }))
+        }
+        if (progress >= 1 && (now >= holdUntil || settleAbandoned)) {
+          stopSettle()
+          return
+        }
+        settleFrame = window.requestAnimationFrame(step)
+      }
+
+      // O primeiro passo é síncrono: o DOM acabou de mudar de tamanho e a tela
+      // não pode pintar um quadro sequer no layout novo sem o transform.
+      step(performance.now())
+    }
+
+    const end = () => {
+      const active = session
+      if (!active) return
+      session = null
+      pagePinchActive = false
+      if (writeFrame) {
+        window.cancelAnimationFrame(writeFrame)
+        writeFrame = 0
+      }
+      if (wheelIdle) {
+        window.clearTimeout(wheelIdle)
+        wheelIdle = 0
+      }
+      const track = trackRef.current
+      if (!track) return
+      writePinchTransform(track, active.transform)
+
+      const scale = clampScale(active.transform.scale, active.minScale, active.maxScale)
+      // O ponto do material sob os dedos, e a página em que ele está (ou a mais
+      // perto: os dedos podem ter terminado no respiro entre duas páginas).
+      const point = active.last
+      const content = unmapPoint(active.transform, active.origin, point)
+      let best: PinchFrameRef | null = null
+      let bestDistance = Infinity
+      for (const frame of active.frames) {
+        const gap = distanceToRect(frame.rect, content)
+        if (gap < bestDistance) {
+          best = frame
+          bestDistance = gap
+        }
+      }
+      showHud(pinchPercentLabel(active.baseZoom * scale, active.resting))
+      hideHud(650)
+      if (!best) {
+        track.style.transform = ''
+        track.style.willChange = ''
+        optionsRef.current.commit(active.baseZoom * scale)
+        return
+      }
+      const fraction = fractionInRect(best.rect, content)
+      const from = mapRect(active.transform, active.origin, best.rect)
+      const changed = Math.abs(scale - 1) > 0.004 && optionsRef.current.commit(active.baseZoom * scale)
+      settle({ id: best.id, fraction, point, from, changed })
+    }
+
+    // ── Dedos ────────────────────────────────────────────────────────────
+    const fingersOf = (event: TouchEvent) => {
+      const points: PinchPoint[] = []
+      for (const touch of Array.from(event.touches)) {
+        if ((touch as Touch & { touchType?: string }).touchType === 'stylus') continue
+        const target = touch.target as Node | null
+        if (!target || !content.contains(target)) continue
+        points.push({ x: touch.clientX, y: touch.clientY })
+      }
+      return points
+    }
+
+    const shapeOf = (points: PinchPoint[]) => {
+      if (points.length >= 2) {
+        return {
+          point: { x: (points[0].x + points[1].x) / 2, y: (points[0].y + points[1].y) / 2 },
+          distance: fingerDistance(points[0], points[1]),
+          count: 2,
+        }
+      }
+      return { point: points[0], distance: 0, count: 1 }
+    }
+
+    const rawFor = (active: PinchSession, distance: number, count: number) => {
+      const ref = active.ref
+      if (count < 2 || ref.count < 2) return ref.raw
+      if (ref.distance < PINCH_MIN_FINGER_DISTANCE || distance < PINCH_MIN_FINGER_DISTANCE) return ref.raw
+      return ref.raw * (distance / ref.distance)
+    }
+
+    // Um traço da caneta (ou do dedo) que já dura mais que a janela do segundo
+    // dedo é escrita de verdade: o toque que chega agora é a mão apoiada.
+    const inkBlocksPinch = () => inkActive && Date.now() - inkActiveSince > TWO_FINGER_PAN_WINDOW_MS
+
+    const onTouchStart = (event: TouchEvent) => {
+      lastTouchAt = Date.now()
+      // Todos os toques são novos: o gesto anterior acabou, mesmo que o seu
+      // `touchend` tenha se perdido (elemento que saiu do DOM no meio).
+      if (session?.source === 'touch' && event.touches.length === event.changedTouches.length) end()
+      settleAbandoned = true
+      const points = fingersOf(event)
+      if (session) {
+        if (session.source !== 'touch' || points.length === 0) return
+        if (event.cancelable) event.preventDefault()
+        const shape = shapeOf(points)
+        rebase(shape.point, shape.distance, shape.count)
+        return
+      }
+      if (points.length < 2 || inkBlocksPinch()) return
+      // Não cancelável = o navegador já está rolando com o primeiro dedo. Não
+      // dá para tomar o gesto no meio sem a página andar duas vezes; o arrasto
+      // de dois dedos continua sendo dele, e a próxima pinça funciona.
+      if (!event.cancelable) return
+      const shape = shapeOf(points)
+      if (!begin(shape.point, shape.distance, shape.count, 'touch')) return
+      event.preventDefault()
+    }
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (session?.source !== 'touch') return
+      if (event.cancelable) event.preventDefault()
+      const points = fingersOf(event)
+      if (points.length === 0) return
+      const shape = shapeOf(points)
+      if (shape.count !== session.ref.count) rebase(shape.point, shape.distance, shape.count)
+      follow(shape.point, rawFor(session, shape.distance, shape.count))
+    }
+
+    const onTouchEnd = (event: TouchEvent) => {
+      if (session?.source !== 'touch') return
+      const points = fingersOf(event)
+      if (points.length === 0) {
+        end()
+        return
+      }
+      // Sobrou um dedo: a pinça vira arrasto, do ponto em que a tela está.
+      const shape = shapeOf(points)
+      rebase(shape.point, shape.distance, shape.count)
+    }
+
+    // ── Trackpad / Ctrl + roda ───────────────────────────────────────────
+    const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey) {
+        // Rolagem comum logo depois da pinça: a posição passa a ser de quem
+        // lê, e segurar a página contra a roda seria brigar com ela.
+        settleAbandoned = true
+        return
+      }
+      // A pinça do Safari já chega pelos eventos `gesture*`: os dois juntos
+      // contariam o mesmo gesto duas vezes.
+      if (session && session.source !== 'wheel') {
+        event.preventDefault()
+        return
+      }
+      event.preventDefault()
+      settleAbandoned = true
+      const point = { x: event.clientX, y: event.clientY }
+      if (!session && !begin(point, 0, 1, 'wheel')) return
+      const active = session
+      if (!active) return
+      // Cada evento é um trecho: a escala anda em torno do cursor de agora.
+      rebase(point, 0, 1)
+      // O elástico da roda é curto: sem o teto, rolar muito além do limite
+      // exigiria rolar outro tanto de volta para ver a página mudar.
+      const raw = Math.min(active.maxScale * 1.4, Math.max(active.minScale / 1.4, active.raw * wheelScaleFactor(event.deltaY, event.deltaMode)))
+      follow(point, raw)
+      if (wheelIdle) window.clearTimeout(wheelIdle)
+      wheelIdle = window.setTimeout(() => {
+        wheelIdle = 0
+        if (session?.source === 'wheel') end()
+      }, WHEEL_PINCH_IDLE_MS)
+    }
+
+    // ── Safari: gesturestart / gesturechange / gestureend ────────────────
+    type SafariGesture = Event & { scale: number; clientX: number; clientY: number }
+    const fromTouch = () => session?.source === 'touch' || Date.now() - lastTouchAt < 800
+
+    const onGestureStart = (event: Event) => {
+      event.preventDefault()
+      if (fromTouch() || session) return
+      const gesture = event as SafariGesture
+      settleAbandoned = true
+      begin({ x: gesture.clientX, y: gesture.clientY }, 0, 1, 'gesture')
+    }
+
+    const onGestureChange = (event: Event) => {
+      event.preventDefault()
+      if (session?.source !== 'gesture') return
+      const gesture = event as SafariGesture
+      const point = { x: gesture.clientX, y: gesture.clientY }
+      const active = session
+      // `scale` do Safari é acumulado desde o começo do gesto.
+      const raw = Number.isFinite(gesture.scale) && gesture.scale > 0 ? gesture.scale : active.raw
+      rebase(active.last, 0, 1)
+      follow(point, Math.min(active.maxScale * 1.4, Math.max(active.minScale / 1.4, raw)))
+    }
+
+    const onGestureEnd = (event: Event) => {
+      event.preventDefault()
+      if (session?.source === 'gesture') end()
+    }
+
+    // Aba escondida ou janela sem foco no meio do gesto: os `touchend` não vêm.
+    const onInterrupt = () => {
+      if (session) end()
+    }
+
+    // Encostou de novo (mouse, caneta, dedo) durante a acomodação: dali em
+    // diante a posição é de quem lê.
+    const onPointerDown = () => {
+      settleAbandoned = true
+    }
+
+    content.addEventListener('touchstart', onTouchStart, { passive: false, capture: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true })
+    window.addEventListener('touchend', onTouchEnd, { passive: true, capture: true })
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true, capture: true })
+    content.addEventListener('wheel', onWheel, { passive: false })
+    content.addEventListener('gesturestart', onGestureStart, { passive: false })
+    content.addEventListener('gesturechange', onGestureChange, { passive: false })
+    content.addEventListener('gestureend', onGestureEnd, { passive: false })
+    window.addEventListener('blur', onInterrupt)
+    document.addEventListener('visibilitychange', onInterrupt)
+    window.addEventListener('pointerdown', onPointerDown, { passive: true, capture: true })
+    return () => {
+      window.removeEventListener('pointerdown', onPointerDown, true)
+      content.removeEventListener('touchstart', onTouchStart, true)
+      window.removeEventListener('touchmove', onTouchMove, true)
+      window.removeEventListener('touchend', onTouchEnd, true)
+      window.removeEventListener('touchcancel', onTouchEnd, true)
+      content.removeEventListener('wheel', onWheel)
+      content.removeEventListener('gesturestart', onGestureStart)
+      content.removeEventListener('gesturechange', onGestureChange)
+      content.removeEventListener('gestureend', onGestureEnd)
+      window.removeEventListener('blur', onInterrupt)
+      document.removeEventListener('visibilitychange', onInterrupt)
+      if (writeFrame) window.cancelAnimationFrame(writeFrame)
+      if (wheelIdle) window.clearTimeout(wheelIdle)
+      if (hudTimer) window.clearTimeout(hudTimer)
+      stopSettle()
+      session = null
+      pagePinchActive = false
+      if (hudAtMount) hudAtMount.dataset.visible = 'false'
+    }
+  }, [contentRef, trackRef, hudRef, options.enabled])
 }
 
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
@@ -2785,6 +3351,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [viewMenuOpen, setViewMenuOpen] = useState(false)
   const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const [compactChrome, setCompactChrome] = useState(false)
+  // "Só a página" (o botão de olho): cabeçalho, barra de baixo, painéis e
+  // avisos saem; ficam a página, a barra da caneta e uma pastilha para voltar.
+  // Não é salvo de propósito: abrir o material de novo sem barra nenhuma e sem
+  // lembrar do olho seria um leitor que "sumiu com tudo".
+  const [immersive, setImmersive] = useState(false)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showDownloadInfo, setShowDownloadInfo] = useState(false)
   const [tourSteps, setTourSteps] = useState<TourStep[]>([])
@@ -2865,6 +3436,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const [annotationsPinned, setAnnotationsPinned] = useState(false)
   const annotationsAutoHidden = !annotationsRoomy && !annotationsPinned && !(annotationsAtOpen != null && annotationsAtOpen > 0)
   const annotationsVisible = showAnnotations && !previewActive && !annotationsAutoHidden
+  // O que de fato ocupa coluna agora. No "só a página" os dois painéis saem sem
+  // mexer na escolha de quem lê: o olho de novo devolve tudo como estava.
+  const annotationsShown = annotationsVisible && !immersive
+  const sidePanelShown = showThumbs && !immersive
   const toggleAnnotationsPanel = useCallback(() => {
     if (annotationsVisible) {
       setShowAnnotations(false)
@@ -2925,7 +3500,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // callback a cada troca de página no modo página única).
   const pagesRef = useRef<number[]>(pages)
   pagesRef.current = pages
-  const contentWidth = useResizeWidth(contentRef, [loading, annotationsVisible, showThumbs])
+  const contentWidth = useResizeWidth(contentRef, [loading, annotationsVisible, showThumbs, immersive])
   const viewportHeight = useViewportHeight()
   // Largura útil de verdade para a página (ver pageAvailableWidth).
   const availableWidth = useMemo(
@@ -3863,7 +4438,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     zoomRef.current = target
     setZoom(target)
   }, [
-    pageSize, availableWidth, viewportHeight, mode, singlePage, horizontal, compactChrome,
+    pageSize, availableWidth, viewportHeight, mode, singlePage, horizontal, compactChrome, immersive,
     apiMinZoom, apiMaxZoom, holdReadingAnchor,
   ])
 
@@ -4406,6 +4981,57 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     ready: !loading && !error && !!access,
   })
 
+  // ── Pinça de dois dedos (e do trackpad) nas páginas ─────────────────────
+  // Ver usePagePinch. O zoom final entra por aqui, com o mesmo cuidado do
+  // `applyZoom`: o relativo ao repouso é o que sobrevive a girar a tela. A
+  // âncora NÃO é a linha de leitura dos botões — é o ponto entre os dedos, e
+  // quem segura esse ponto é a própria pinça.
+  const pinchHudRef = useRef<HTMLDivElement>(null)
+  const pinchLimitsRef = useRef({ min: minZoom, max: maxZoom })
+  pinchLimitsRef.current = { min: minZoom, max: maxZoom }
+  const commitPinchZoom = useCallback((target: number) => {
+    const { min, max } = pinchLimitsRef.current
+    const value = clampZoom(target, min, max)
+    const resting = restingZoomRef.current
+    const ratio = resting ? zoomRatioFor(value, resting) : null
+    if (ratio != null) zoomRatioRef.current = ratio
+    if (Math.abs(value - zoomRef.current) < 0.002) return false
+    zoomRef.current = value
+    // Síncrono: a pinça mede o layout novo logo na linha seguinte, antes de a
+    // tela pintar (ver `settle` em usePagePinch).
+    flushSync(() => setZoom(value))
+    return true
+  }, [])
+  usePagePinch(contentRef, pagesTrackRef, pinchHudRef, {
+    enabled: !loading && !error && !!access,
+    readZoom: () => ({
+      zoom: zoomRef.current,
+      min: pinchLimitsRef.current.min,
+      max: pinchLimitsRef.current.max,
+      resting: restingZoomRef.current,
+    }),
+    commit: commitPinchZoom,
+    holdFocus: (until) => {
+      suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, until)
+    },
+    isTraveling: () => pendingTargetRef.current != null,
+  })
+
+  // O zoom nativo do Safari (a página do site inteira) fica de fora do leitor:
+  // quem amplia aqui é a pinça das páginas. `touch-action` já barra isso no iOS
+  // atual; `gesturestart` cobre o Safari que ainda o ignora e o trackpad do Mac.
+  useEffect(() => {
+    const shell = viewerRef.current
+    if (!shell) return
+    const block = (event: Event) => event.preventDefault()
+    shell.addEventListener('gesturestart', block, { passive: false })
+    shell.addEventListener('gesturechange', block, { passive: false })
+    return () => {
+      shell.removeEventListener('gesturestart', block)
+      shell.removeEventListener('gesturechange', block)
+    }
+  }, [loading, error, access])
+
   // Com o swipe vertical, o mesmo movimento que vira página no topo da leitura
   // é o "puxar para atualizar" do Android/PWA — que recarregaria o material no
   // meio do gesto. `overscroll-behavior` precisa estar em quem ROLA (o
@@ -4435,6 +5061,18 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   // Recolher/abrir as faixas de baixo do cabeçalho. Recolher não pode custar
   // as ferramentas: quem já estava marcando a página leva a barra flutuante
   // junto, que faz o mesmo trabalho POR CIMA do material em vez de acima dele.
+  // Entrar e sair do "só a página". O cabeçalho que some empurra a leitura
+  // para cima (e o que volta, para baixo), então a página lida fica segura no
+  // lugar pelo mesmo motor dos botões de zoom — e o tamanho de repouso, que
+  // depende da altura livre, se refaz sozinho (ver o efeito do repouso).
+  const toggleImmersive = useCallback(() => {
+    holdReadingAnchor()
+    setImmersive((value) => !value)
+    setViewMenuOpen(false)
+    setMoreMenuOpen(false)
+    setMobileSheet(null)
+  }, [holdReadingAnchor])
+
   const toggleCompactChrome = useCallback(() => {
     setCompactChrome((value) => !value)
     if (!compactChrome && !previewActive && tool !== 'cursor') {
@@ -4750,6 +5388,10 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         case 'b':
         case 'B':
           event.preventDefault(); toggleCompactChrome(); break
+        // Só a página: some tudo menos a página e a caneta (o botão de olho).
+        case 'h':
+        case 'H':
+          event.preventDefault(); toggleImmersive(); break
         case '?':
           event.preventDefault(); setShowShortcuts(true); break
       }
@@ -4760,6 +5402,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     access, pageCount, goToPage, stepPage, previewActive, allowedPages, stepZoom,
     fitToPage, toggleFullScreen, openSidePanel, applyMode, hasSummary,
     applyScrollAxis, scrollAxis, undoAnnotation, redoAnnotation, toggleCompactChrome,
+    toggleImmersive,
   ])
 
   // Escolher uma ferramenta é dizer "vou marcar": a barra flutuante aparece
@@ -4874,6 +5517,89 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   return (
     <ViewerShell>
       <style jsx global>{`
+        /* Material das barras do leitor. Opaco de propósito (ver o comentário
+           do cabeçalho: vidro com desfoque numa faixa presa sobre a rolagem é
+           reborrado a cada quadro); o "vidro" aqui é o do iOS sem o custo — um
+           degradê de dois tons e um fio de luz na aresta. O desfoque de
+           verdade fica só nas peças pequenas que flutuam (doca da caneta,
+           pastilha do "só a página"). */
+        .pdf-cabecalho {
+          background: linear-gradient(180deg, #141917 0%, #0b0e0d 100%);
+        }
+        .pdf-barra-de-baixo {
+          background: linear-gradient(0deg, #0b0e0d 0%, #141917 100%);
+          box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        /* O mostrador da pinça. Sem desfoque: durante a pinça o que está
+           atrás dele muda a cada quadro, que é exatamente o caso caro. */
+        .pdf-hud-pinca {
+          background: rgba(14, 16, 15, 0.86);
+          border: 1px solid rgba(255, 255, 255, 0.14);
+          box-shadow: 0 14px 34px -12px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          opacity: 0;
+          transform: translate3d(-50%, -6px, 0) scale(0.94);
+          transition: opacity 0.16s cubic-bezier(0.16, 1, 0.3, 1), transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pdf-hud-pinca[data-visible='true'] {
+          opacity: 1;
+          transform: translate3d(-50%, 0, 0) scale(1);
+        }
+        @keyframes pdfImersivoEntra {
+          from { opacity: 0; transform: translate3d(0, -8px, 0) scale(0.96); }
+          to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+        .pdf-imersivo {
+          animation: pdfImersivoEntra 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pdf-imersivo { animation: none; }
+          .pdf-hud-pinca { transition: none; }
+        }
+        /* A sessão de foco dentro do leitor. O gatilho é o do site inteiro
+           (globals.css), que segue o tema claro/escuro; o leitor é sempre
+           escuro, então aqui ele veste o vidro escuro das outras peças. */
+        .pdf-viewer-shell .pdf-foco .foco-gatilho {
+          color: #fff;
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.12);
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+        }
+        .pdf-viewer-shell .pdf-foco .foco-gatilho:hover {
+          background: rgba(255, 255, 255, 0.15);
+          border-color: rgba(127, 208, 147, 0.45);
+        }
+        .pdf-viewer-shell .pdf-foco .foco-gatilho:is([data-estado='ativo'], [data-estado='meta']) {
+          color: #8fd6a2;
+          background: rgba(127, 208, 147, 0.14);
+          border-color: rgba(127, 208, 147, 0.35);
+        }
+        .pdf-viewer-shell .pdf-foco .foco-gatilho[data-estado='pausado'] {
+          color: #f0c477;
+          background: rgba(226, 164, 62, 0.16);
+          border-color: rgba(226, 164, 62, 0.45);
+        }
+        .lite-mode .pdf-viewer-shell .pdf-foco .foco-gatilho {
+          background: rgba(255, 255, 255, 0.1) !important;
+        }
+        .pdf-viewer-shell .pdf-foco .foco-anel-trilho { stroke: rgba(255, 255, 255, 0.14); }
+        .pdf-viewer-shell .pdf-foco .foco-anel-traco { stroke: #7fd093; }
+        .pdf-viewer-shell .pdf-foco .foco-anel[data-estado='meta'] .foco-anel-traco { stroke: #e2a43e; }
+        .pdf-viewer-shell .pdf-foco .foco-anel[data-estado='pausado'] .foco-anel-traco { stroke: #d39a35; }
+        @media (min-width: 1024px) {
+          .pdf-viewer-shell .pdf-foco .foco-gatilho { height: 36px; border-radius: 10px; }
+        }
+        /* Na pastilha de vidro o gatilho é um item dela, não um botão por cima. */
+        .pdf-viewer-shell .pdf-foco-compacto .foco-gatilho,
+        .lite-mode .pdf-viewer-shell .pdf-foco-compacto .foco-gatilho {
+          height: 40px;
+          border-radius: 999px;
+          border-color: transparent;
+          background: transparent !important;
+        }
+        .pdf-viewer-shell .pdf-foco-compacto .foco-gatilho:hover {
+          background: rgba(255, 255, 255, 0.1) !important;
+        }
         @keyframes pdfPageFade {
           from { opacity: 0; transform: translateY(6px); }
           to { opacity: 1; transform: translateY(0); }
@@ -4947,7 +5673,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       <div
         ref={viewerRef}
         className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
-        style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y pinch-zoom' }}
+        // Sem `pinch-zoom` no leitor inteiro: pinçar o cabeçalho ampliava o
+        // site todo, e a pinça agora é só das páginas (ver usePagePinch).
+        style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y' }}
       >
         {/* Fundo OPACO e sem `backdrop-blur`, pela mesma razão já documentada na
             barra inferior do celular: `backdrop-filter` num elemento STICKY é
@@ -4963,7 +5691,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             nenhuma, e o cabeçalho ficava sem fundo sobre página branca.) */}
         <header
           ref={headerRef}
-          className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950 shadow-xl shadow-black/25 transition-transform duration-200 ease-out motion-reduce:transition-none"
+          className={`pdf-cabecalho sticky top-0 z-40 border-b border-white/10 shadow-xl shadow-black/25 transition-transform duration-200 ease-out motion-reduce:transition-none ${
+            immersive ? 'hidden' : ''
+          }`}
           style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden' }}
         >
           {/* Progresso de leitura. Uma linha fina no topo responde à pergunta
@@ -5219,6 +5949,25 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 </div>
               </ToolbarPopover>
 
+              {/* Sessão de foco: o mesmo cronômetro do resto do site, aqui
+                  dentro. Estudar um PDF é exatamente o tipo de bloco que se
+                  quer cronometrar, e sair do leitor para ligar o relógio era
+                  perder o lugar da leitura. */}
+              <div className="pdf-foco hidden lg:block">
+                <FocusSessionButton />
+              </div>
+
+              {/* Só a página: o olho esconde tudo o que não é página ou caneta.
+                  Para voltar, a pastilha de vidro no canto (ou a tecla H). */}
+              <ToolbarButton
+                compact
+                className="hidden lg:inline-flex"
+                onClick={toggleImmersive}
+                title="Só a página — esconder barras e painéis (tecla H)"
+              >
+                <Eye className="h-4 w-4" />
+              </ToolbarButton>
+
               {/* Recolher o cabeçalho. É a válvula de escape do tablet: num
                   toque as duas faixas de baixo somem e a leitura ganha de volta
                   a altura que elas ocupavam. As ferramentas continuam a um
@@ -5235,8 +5984,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
                 {compactChrome ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
               </ToolbarButton>
 
-              {/* ── Único controle extra do celular: tudo o mais mora nas
+              {/* ── Controles do celular: foco, "só a página" e o resto nas
                   folhas de baixo, para o cabeçalho caber em uma linha. ── */}
+              <div className="pdf-foco lg:hidden">
+                <FocusSessionButton />
+              </div>
+              <button
+                type="button"
+                onClick={toggleImmersive}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/10 text-white transition-colors hover:bg-white/15 active:scale-95 lg:hidden"
+                title="Só a página — esconder as barras"
+                aria-label="Só a página — esconder as barras"
+              >
+                <Eye className="h-5 w-5" />
+              </button>
               <button
                 type="button"
                 onClick={() => setMobileSheet('more')}
@@ -5411,7 +6172,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
         {/* Acesso por tempo limitado: a contagem fica fixa abaixo do cabeçalho,
             no mesmo lugar onde a prévia avisa o seu limite. */}
-        {timedAccess?.isTimed && (
+        {timedAccess?.isTimed && !immersive && (
           <div className="border-b border-sky-300/25 bg-sky-500/10 px-3 py-2">
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 text-center sm:flex-row sm:justify-between sm:text-left">
               <p className="flex items-center gap-2 text-xs font-semibold text-sky-100 sm:text-[13px]">
@@ -5433,7 +6194,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           </div>
         )}
 
-        {previewActive && (
+        {previewActive && !immersive && (
           <div className="border-b border-amber-300/30 bg-gradient-to-r from-amber-500/95 via-amber-400/95 to-amber-500/95 px-3 py-2 text-amber-950 shadow-lg">
             <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 sm:flex-row sm:justify-between">
               <div className="flex items-center gap-2 text-center sm:text-left">
@@ -5462,7 +6223,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
         <main
           className={`grid grid-cols-1 gap-0 ${
-            showThumbs && sidePanelTab === 'summary'
+            sidePanelShown && sidePanelTab === 'summary'
               ? 'lg:grid-cols-[19rem_minmax(0,1fr)_22rem] xl:grid-cols-[21rem_minmax(0,1fr)_22rem]'
               : 'lg:grid-cols-[11.5rem_minmax(0,1fr)_22rem]'
           }`}
@@ -5472,7 +6233,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               borrar e ainda assim obrigava a recompor a coluna inteira a cada
               rolagem da lista de miniaturas/sumário. Um preto um pouco mais
               fechado dá o mesmo resultado na tela. */}
-          {showThumbs && (
+          {sidePanelShown && (
             <aside className="hidden border-r border-white/10 bg-black/30 p-3 lg:sticky lg:top-[var(--viewer-header-h,132px)] lg:col-start-1 lg:block lg:h-[calc(100vh_-_var(--viewer-header-h,132px))] lg:overflow-hidden">
               <SidePanel
                 tab={sidePanelTab}
@@ -5492,10 +6253,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
           <section
             ref={contentRef}
-            // A pinça é a do NAVEGADOR. Uma pinça própria foi tentada e
-            // revertida (ver o comentário em useViewerGestures): alternar o
-            // `touchAction` no meio do gesto cancelava os ponteiros e produzia
-            // saltos absurdos de zoom.
+            // A pinça é a do LEITOR (ver usePagePinch): `pan-x pan-y` fixo,
+            // sem `pinch-zoom`, para o navegador rolar mas nunca ampliar o site
+            // inteiro por baixo da pinça das páginas. Fixo é a palavra-chave —
+            // a pinça antiga, revertida, alternava o `touchAction` no meio do
+            // gesto, e era isso que cancelava os ponteiros.
             //
             // Na horizontal esta seção vira o contêiner de rolagem da fileira,
             // com encaixe obrigatório. `scrollSnapStop: always` mora em cada
@@ -5507,23 +6269,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             // e voltar de página não pode significar sair do material.
             style={horizontal
               ? {
-                  touchAction: 'pan-x pan-y pinch-zoom',
+                  touchAction: 'pan-x pan-y',
                   overflowX: 'auto',
                   scrollSnapType: 'x mandatory',
                   overscrollBehaviorX: 'contain',
                   scrollbarWidth: 'none',
                 }
-              : { touchAction: 'pan-x pan-y pinch-zoom' }}
+              : { touchAction: 'pan-x pan-y' }}
             // Sem `overflow-hidden`: junto com o `max-w-full` da moldura ele
             // impedia a página de passar da largura do container, então
             // aumentar o zoom não mudava nada na tela. Cada página agora rola
             // na horizontal por conta própria (ver PdfCanvasPage).
-            className={`min-w-0 py-4 sm:py-7 ${horizontal ? 'px-0' : 'px-2 sm:px-4'} ${
-              showThumbs ? 'lg:col-start-2' : 'lg:col-start-1'
+            className={`min-w-0 ${immersive ? 'py-3 sm:py-4' : 'py-4 sm:py-7'} ${horizontal ? 'px-0' : 'px-2 sm:px-4'} ${
+              sidePanelShown ? 'lg:col-start-2' : 'lg:col-start-1'
             } ${
-              annotationsVisible
-                ? showThumbs ? '' : 'lg:col-span-2'
-                : showThumbs ? 'lg:col-span-2' : 'lg:col-span-3'
+              annotationsShown
+                ? sidePanelShown ? '' : 'lg:col-span-2'
+                : sidePanelShown ? 'lg:col-span-2' : 'lg:col-span-3'
             }`}
           >
             {/* Na horizontal a coluna vira fileira: a largura da casa é a
@@ -5607,7 +6369,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             </div>
           </section>
 
-          {annotationsVisible && (
+          {annotationsShown && (
             <AnnotationsPanel
               annotations={annotations}
               currentPage={currentPage}
@@ -5630,7 +6392,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             "ajustar" levava a página para a largura, acima do tamanho normal.
             O repouso nunca passa da largura, então voltar a ele sempre tira a
             página da rolagem lateral — e, em paisagem, a deixa inteira. */}
-        {zoomedIn && (
+        {zoomedIn && !immersive && (
           <button
             type="button"
             onClick={resetZoom}
@@ -5661,7 +6423,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             de ser padding vazio e virou a assinatura da casa — ver abaixo. */}
         <div
           ref={bottomBarRef}
-          className="sticky bottom-0 z-40 border-t border-white/15 bg-zinc-950 transition-transform duration-200 ease-out motion-reduce:transition-none lg:hidden"
+          className={`pdf-barra-de-baixo sticky bottom-0 z-40 border-t border-white/15 transition-transform duration-200 ease-out motion-reduce:transition-none lg:hidden ${
+            immersive ? 'hidden' : ''
+          }`}
           style={{
             transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
@@ -6073,8 +6837,32 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
             onUndo={undoAnnotation}
             onRedo={redoAnnotation}
             options={inkOptions}
+            lowered={immersive}
           />
         )}
+
+        {/* "Só a página": a única peça que fica no ar além da caneta. */}
+        {immersive && (
+          <ImmersiveBar
+            currentPage={currentPage}
+            pageCount={pageCount}
+            zoomLabel={zoomedIn ? `${zoomLabel}%` : null}
+            onResetZoom={resetZoom}
+            onExit={toggleImmersive}
+          />
+        )}
+
+        {/* Mostrador da pinça: o tamanho enquanto os dedos ampliam, como no
+            GoodNotes. Escrito direto no DOM pela pinça (ver usePagePinch) —
+            um estado aqui re-renderizaria o leitor a cada quadro do gesto. */}
+        <div
+          ref={pinchHudRef}
+          aria-hidden
+          data-visible="false"
+          className={`pdf-hud-pinca pointer-events-none fixed left-1/2 z-[60] rounded-full px-3.5 py-1.5 text-[13px] font-semibold tabular-nums text-white ${
+            immersive ? 'top-[calc(env(safe-area-inset-top)+0.9rem)]' : 'top-[calc(env(safe-area-inset-top)+4.5rem)]'
+          }`}
+        />
 
         {showDeleteAllConfirm && (
           <ConfirmDialog
@@ -8401,6 +9189,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
       const pan = twoFingerPanRef.current
       if (pan) {
         event.preventDefault()
+        // A pinça do leitor tomou os dois dedos (ver usePagePinch): ela move e
+        // amplia a coluna inteira. Rolar aqui também andaria a página duas vezes.
+        if (pagePinchActive) return
         const row = wrapperRef.current
         const mid = touchMidpoint(touchPointsRef.current.values())
         if (!row || !mid) return
@@ -9353,6 +10144,7 @@ const InkDock = memo(function InkDock({
   onUndo,
   onRedo,
   options,
+  lowered = false,
 }: {
   state: Exclude<InkDockState, 'off'>
   onStateChange: (next: InkDockState) => void
@@ -9364,8 +10156,13 @@ const InkDock = memo(function InkDock({
   onUndo: () => void
   onRedo: () => void
   options: React.ComponentProps<typeof ToolOptionsBar>
+  /** Sem a barra de baixo do celular ("só a página"): a doca desce até a borda. */
+  lowered?: boolean
 }) {
   const [showOptions, setShowOptions] = useState(false)
+  const dockBottom = lowered
+    ? 'bottom-[calc(env(safe-area-inset-bottom)+1rem)] lg:bottom-6'
+    : 'bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] lg:bottom-6'
   const [showExtra, setShowExtra] = useState(false)
   // Enquanto a caneta escreve, a barra sai da frente. Sem estado no leitor:
   // só este componente re-renderiza (ver subscribeInkActivity).
@@ -9426,7 +10223,7 @@ const InkDock = memo(function InkDock({
 
   if (state === 'mini') {
     return (
-      <div className="pointer-events-none fixed left-1/2 z-40 -translate-x-1/2 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] lg:bottom-6">
+      <div className={`pointer-events-none fixed left-1/2 z-40 -translate-x-1/2 ${dockBottom}`}>
         <button
           type="button"
           onClick={() => onStateChange('open')}
@@ -9444,7 +10241,7 @@ const InkDock = memo(function InkDock({
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 z-40 flex justify-center px-3 bottom-[calc(env(safe-area-inset-bottom)+5.25rem)] lg:bottom-6">
+    <div className={`pointer-events-none fixed inset-x-0 z-40 flex justify-center px-3 ${dockBottom}`}>
       <div
         // Enquanto a caneta trabalha a barra sai de vista E sai do caminho: sem
         // `pointer-events-none` a mão apoiada perto dela apertaria um botão
@@ -9532,6 +10329,74 @@ const InkDock = memo(function InkDock({
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  )
+})
+
+/**
+ * A pastilha do "só a página".
+ *
+ * Tudo o que sobra no ar quando o resto some: onde estou, o relógio do foco
+ * (se houver sessão) e o olho para voltar. Vidro de verdade aqui, pelo mesmo
+ * motivo da doca da caneta — é uma peça pequena e flutuante, com camada
+ * própria, e não uma faixa de tela inteira (ver INK_DOCK_GLASS). Enquanto a
+ * caneta escreve ela vira fantasma e sai do caminho da mão, como a doca.
+ */
+const ImmersiveBar = memo(function ImmersiveBar({
+  currentPage,
+  pageCount,
+  zoomLabel,
+  onResetZoom,
+  onExit,
+}: {
+  currentPage: number
+  pageCount: number
+  /** O zoom, quando a página está ampliada além da tela; `null` no tamanho normal. */
+  zoomLabel: string | null
+  onResetZoom: () => void
+  onExit: () => void
+}) {
+  const [inking, setInking] = useState(false)
+  useEffect(() => subscribeInkActivity(setInking), [])
+
+  return (
+    <div
+      className={`pdf-imersivo pointer-events-none fixed right-3 z-50 transition-all duration-200 motion-reduce:transition-none top-[calc(env(safe-area-inset-top)+0.75rem)] sm:right-4 ${
+        inking ? 'translate-y-[-4px] opacity-15' : 'opacity-100'
+      }`}
+    >
+      <div
+        className={`flex items-center gap-1 rounded-full p-1 ${inking ? 'pointer-events-none' : 'pointer-events-auto'}`}
+        style={inking ? INK_DOCK_GLASS_WRITING : INK_DOCK_GLASS}
+      >
+        <span className="px-2.5 text-[13px] font-semibold tabular-nums text-white/90" aria-label={`Página ${currentPage} de ${pageCount}`}>
+          {currentPage}
+          <span className="text-white/40"> / {pageCount || '—'}</span>
+        </span>
+        {zoomLabel && (
+          <button
+            type="button"
+            onClick={onResetZoom}
+            title="Voltar ao tamanho normal"
+            className="flex h-9 items-center rounded-full px-2.5 text-[12px] font-semibold tabular-nums text-white/80 transition-colors hover:bg-white/10 hover:text-white active:scale-95"
+          >
+            {zoomLabel}
+          </button>
+        )}
+        <div className="pdf-foco pdf-foco-compacto">
+          <FocusSessionButton />
+        </div>
+        <button
+          type="button"
+          onClick={onExit}
+          title="Mostrar as barras de novo (tecla H)"
+          aria-label="Mostrar as barras de novo"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15 active:scale-95"
+          style={{ background: 'rgba(255,255,255,0.16)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35)' }}
+        >
+          <EyeOff className="h-[18px] w-[18px]" />
+        </button>
       </div>
     </div>
   )
@@ -10081,11 +10946,13 @@ function ShortcutsDialog({ onClose }: { onClose: () => void }) {
       title: 'Ver',
       items: [
         ['+  /  −', 'Aumentar / diminuir o tamanho'],
+        ['Ctrl + roda  ou  pinça', 'Ampliar onde está o cursor (trackpad: pinça)'],
         ['0', 'Ajustar a página à tela'],
         ['F', 'Tela cheia'],
         ['1  /  2  /  3', 'Rolagem contínua / uma página / largura'],
         ['V', 'Alternar rolagem vertical / horizontal'],
         ['B', 'Recolher / mostrar as barras de ferramentas'],
+        ['H', 'Só a página: esconder tudo / mostrar de novo'],
         ['?', 'Abrir esta lista'],
       ],
     },
