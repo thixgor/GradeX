@@ -7,11 +7,14 @@ import {
   fingerDistance,
   followFocal,
   fractionInRect,
+  glideOffset,
   IDENTITY_PINCH,
   lerpRect,
   mapPoint,
   mapRect,
   pinchPercentLabel,
+  pushSample,
+  releaseVelocity,
   rubberBandScale,
   settleEase,
   transformBetween,
@@ -189,5 +192,35 @@ describe('fingerDistance / pinchPercentLabel', () => {
     expect(fingerDistance({ x: 0, y: 0 }, { x: 3, y: 4 })).toBe(5)
     expect(pinchPercentLabel(1.2, 0.6)).toBe('200%')
     expect(pinchPercentLabel(0, 0.6)).toBe('100%')
+  })
+})
+
+describe('inércia: releaseVelocity / glideOffset / pushSample', () => {
+  it('mede só o lance final', () => {
+    const samples: Array<{ x: number; y: number; t: number }> = []
+    // Começa devagar, termina rápido: 2px/ms nos últimos 100ms.
+    for (let t = 0; t <= 300; t += 16) pushSample(samples, { x: 0, y: t <= 200 ? t * 0.1 : 20 + (t - 200) * 2, t })
+    const v = releaseVelocity(samples, 300)
+    expect(v.y).toBeGreaterThan(1.5)
+    expect(samples[samples.length - 1].t - samples[0].t).toBeLessThanOrEqual(100)
+  })
+
+  it('dedos que pararam antes de sair não deslizam', () => {
+    const samples = [{ x: 0, y: 0, t: 0 }, { x: 0, y: 100, t: 50 }]
+    expect(releaseVelocity(samples, 50 + 61)).toEqual({ x: 0, y: 0 })
+  })
+
+  it('ajuste fino não desliza; lance desliza na mesma direção, com teto', () => {
+    expect(glideOffset({ x: 0.1, y: 0.1 })).toEqual({ x: 0, y: 0 })
+    const g = glideOffset({ x: 0, y: -2 })
+    expect(g.x).toBeCloseTo(0)
+    expect(g.y).toBeCloseTo(-280)
+    const far = glideOffset({ x: 30, y: 40 })
+    expect(Math.hypot(far.x, far.y)).toBeCloseTo(600)
+  })
+
+  it('amostra única ou intervalo curto demais não vira velocidade', () => {
+    expect(releaseVelocity([{ x: 0, y: 0, t: 0 }], 10)).toEqual({ x: 0, y: 0 })
+    expect(releaseVelocity([{ x: 0, y: 0, t: 0 }, { x: 0, y: 50, t: 5 }], 5)).toEqual({ x: 0, y: 0 })
   })
 })

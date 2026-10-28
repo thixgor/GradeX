@@ -135,6 +135,8 @@ import {
   fingerDistance,
   followFocal,
   fractionInRect,
+  GLIDE_SETTLE_MS,
+  glideOffset,
   IDENTITY_PINCH,
   lerpRect,
   mapRect,
@@ -142,6 +144,8 @@ import {
   PINCH_MIN_FINGER_DISTANCE,
   PINCH_SETTLE_ANIMATION_MS,
   pinchPercentLabel,
+  pushSample,
+  releaseVelocity,
   rubberBandScale,
   settleEase,
   transformBetween,
@@ -150,6 +154,7 @@ import {
   wheelScaleFactor,
   type PinchPoint,
   type PinchRect,
+  type PinchSample,
   type PinchTransform,
 } from '@/lib/pdf-viewer-pinch'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
@@ -2798,6 +2803,14 @@ interface PinchSession {
   ref: { point: PinchPoint; distance: number; raw: number; transform: PinchTransform; count: number }
   last: PinchPoint
   frames: PinchFrameRef[]
+  /** O ponto entre os dedos nos últimos quadros: a velocidade da inércia. */
+  samples: PinchSample[]
+  /**
+   * A velocidade do trecho que acabou quando um dedo saiu, e quando. Os dois
+   * dedos quase nunca saem no mesmo instante: o último sai uns milissegundos
+   * depois, já sem histórico próprio — e o lance era perdido.
+   */
+  handoff: { velocity: PinchPoint; at: number } | null
 }
 
 /**
@@ -2970,6 +2983,8 @@ function usePagePinch(
         ref: { point, distance, raw: 1, transform: IDENTITY_PINCH, count },
         last: point,
         frames,
+        samples: [{ x: point.x, y: point.y, t: performance.now() }],
+        handoff: null,
       }
       pagePinchActive = true
       pagePinchFrozen = true
@@ -2983,6 +2998,13 @@ function usePagePinch(
       if (!session) return
       session.ref = { point, distance, raw: session.raw, transform: session.transform, count }
       session.last = point
+      // Um dedo saiu (ou entrou): o ponto acompanhado pula do meio dos dois
+      // para um dedo só. Medir a velocidade através desse pulo daria um lance
+      // que ninguém fez — então o trecho velho entrega a velocidade dele e o
+      // novo começa do zero.
+      const now = performance.now()
+      session.handoff = { velocity: releaseVelocity(session.samples, now), at: now }
+      session.samples = [{ x: point.x, y: point.y, t: now }]
     }
 
     const follow = (point: PinchPoint, raw: number) => {
@@ -2997,6 +3019,7 @@ function usePagePinch(
         scale,
       })
       session.last = point
+      if (session.source === 'touch') pushSample(session.samples, { x: point.x, y: point.y, t: performance.now() })
       scheduleWrite()
     }
 
@@ -3103,6 +3126,7 @@ function usePagePinch(
       point,
       from,
       scale,
+      glide,
     }: {
       track: HTMLElement
       active: PinchSession
@@ -3111,7 +3135,15 @@ function usePagePinch(
       point: PinchPoint
       from: PinchRect
       scale: number
+      /** Quanto o ponto ainda anda por inércia (ver `glideOffset`). */
+      glide: PinchPoint
     }) => {
+      // A página assenta onde o ponto entre os dedos IRIA parar se ninguém o
+      // segurasse: o deslize da inércia entra no alvo, e a transição (que já
+      // desacelera) faz o resto.
+      const gliding = glide.x !== 0 || glide.y !== 0
+      const anchorPoint = { x: point.x + glide.x, y: point.y + glide.y }
+      const duration = gliding ? GLIDE_SETTLE_MS : PINCH_SETTLE_ANIMATION_MS
       const scroller = findReadingScroller(track)
       const readScroll = () => (scroller ? scroller.scrollTop : window.scrollY)
       const maxScroll = () => scroller
@@ -3147,7 +3179,7 @@ function usePagePinch(
       const row = document.getElementById(focusId)
       let frameRect = row ? toPinchRect(pinchFrameOf(row).getBoundingClientRect()) : null
       if (row && frameRect && row.scrollWidth - row.clientWidth > 1) {
-        const drift = anchorDrift(frameRect, fraction, point)
+        const drift = anchorDrift(frameRect, fraction, anchorPoint)
         if (Math.abs(drift.x) > 0.5) {
           row.scrollLeft += drift.x
           frameRect = toPinchRect(pinchFrameOf(row).getBoundingClientRect())
@@ -3157,7 +3189,7 @@ function usePagePinch(
       let target = readScroll()
       if (frameRect && !optionsRef.current.isTraveling()) {
         const offset = frameRect.top - rect.top
-        target = base + offset + fraction.y * frameRect.height - point.y
+        target = base + offset + fraction.y * frameRect.height - anchorPoint.y
         target = Math.round(Math.min(Math.max(0, maxScroll()), Math.max(0, target)))
         if (Math.abs(target - readScroll()) > 0.5) {
           if (scroller) scroller.scrollTop = target
@@ -3175,18 +3207,25 @@ function usePagePinch(
       if (settled) {
         writePinchTransform(track, transformBetween(settled, from, { x: rect.left, y: finalTop }))
         void track.offsetWidth
-        style.transition = `transform ${PINCH_SETTLE_ANIMATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`
+        // Com deslize, a página tem de SAIR na velocidade em que o dedo saiu —
+        // nem mais rápido (seria um empurrão ao soltar), nem mais devagar (um
+        // tranco). A `easeOutCubic` começa com inclinação 3; o deslize anda
+        // GLIDE_PROJECTION_MS de velocidade; então a duração que casa as duas
+        // é 3 × GLIDE_PROJECTION_MS = GLIDE_SETTLE_MS.
+        style.transition = gliding
+          ? `transform ${duration}ms cubic-bezier(0.33, 1, 0.68, 1)`
+          : `transform ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`
         style.transform = ''
       }
 
       // 6. De volta ao fluxo depois da transição, com folga para o Safari já
       //    ter aplicado a rolagem pedida no passo 4.
-      optionsRef.current.holdFocus(Date.now() + PINCH_SETTLE_ANIMATION_MS + 600)
+      optionsRef.current.holdFocus(Date.now() + duration + 600)
       frozen.timer = window.setTimeout(() => {
         unfreeze()
         pagePinchFrozen = false
         pagePinchFocusRow = null
-      }, Math.max(PINCH_SETTLE_ANIMATION_MS, PINCH_FREEZE_MIN_MS) + 40)
+      }, Math.max(duration, PINCH_FREEZE_MIN_MS) + 40)
     }
 
     const end = () => {
@@ -3238,7 +3277,16 @@ function usePagePinch(
       // contêiner que rola de lado, e prendê-la zeraria essa rolagem; ali fica
       // a acomodação quadro a quadro.
       if (!optionsRef.current.isHorizontal()) {
-        freezeAndSettle({ track, active, focusId: best.id, fraction, point, from, scale })
+        // Inércia só do dedo: no trackpad e na roda quem desliza é o sistema.
+        const now = performance.now()
+        let velocity = releaseVelocity(active.samples, now)
+        // O último dedo saiu logo depois do penúltimo, sem trecho próprio para
+        // medir: vale o lance dos dois.
+        if (velocity.x === 0 && velocity.y === 0 && active.samples.length < 3 && active.handoff && now - active.handoff.at < 120) {
+          velocity = active.handoff.velocity
+        }
+        const glide = active.source === 'touch' ? glideOffset(velocity) : { x: 0, y: 0 }
+        freezeAndSettle({ track, active, focusId: best.id, fraction, point, from, scale, glide })
         return
       }
       // O transform sai ANTES do zoom do React, na mesma tarefa: quem mede
@@ -3466,6 +3514,19 @@ function usePagePinch(
 export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const router = useRouter()
   const viewerRef = useRef<HTMLDivElement>(null)
+  // Em aparelho de toque a leitura rola DENTRO do leitor (o shell), e não a
+  // janela. É por causa do Safari do iOS: a rolagem da JANELA feita por
+  // JavaScript chega à tela alguns quadros depois do layout — e até elementos
+  // `position: fixed` são posicionados pela rolagem nova enquanto a tela ainda
+  // mostra a velha. Era o vazio de quatro quadros depois de cada pinça, que os
+  // vídeos de tela do iPhone mostraram. A rolagem de um ELEMENTO vai para a
+  // tela no mesmo pacote que o layout. Mesmo arranjo do PDF.js, e o mesmo modo
+  // em que o leitor já rodava em tela cheia (ver `.pdf-viewer-shell:fullscreen`).
+  // Decidido uma vez, na montagem: trocar o contêiner de rolagem no meio da
+  // leitura perderia o lugar.
+  const [ownScroll] = useState(() =>
+    typeof navigator !== 'undefined' && (navigator.maxTouchPoints ?? 0) > 0
+  )
   const contentRef = useRef<HTMLElement>(null)
   // Coluna das páginas. Só o gesto de swipe escreve nela (transform), para a
   // página acompanhar o dedo sem passar por re-render a cada quadro.
@@ -4862,7 +4923,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // Em modo página única, sobe suavemente para o topo da nova página.
       requestAnimationFrame(() => {
         const top = contentRef.current?.getBoundingClientRect().top ?? 0
-        if (top < 0) window.scrollTo({ top: window.scrollY + top - 12, behavior: 'smooth' })
+        // Quem rola a leitura: a janela ou o próprio leitor (ver `ownScroll`).
+        if (top < 0) (findReadingScroller(contentRef.current) ?? window).scrollBy({ top: top - 12, behavior: 'smooth' })
       })
     }
   }, [mode, horizontal, pageCount, previewActive, allowedPages, settleToPage])
@@ -4937,8 +4999,12 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     const bar = bottomBarRef.current
     const query = window.matchMedia?.('(orientation: landscape) and (max-height: 520px) and (pointer: coarse)')
     if (!header || !query) return
+    // A leitura rola no próprio leitor em aparelho de toque (ver `ownScroll`).
+    const scroller = ownScroll ? viewerRef.current : null
+    const readY = () => (scroller ? scroller.scrollTop : window.scrollY)
+    const scrollTarget: HTMLElement | Window = scroller ?? window
     let hidden = false
-    let lastY = window.scrollY
+    let lastY = readY()
     let turnY = lastY
     let frame = 0
     const apply = (next: boolean) => {
@@ -4949,18 +5015,20 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     }
     const reveal = () => {
       apply(false)
-      lastY = turnY = window.scrollY
+      lastY = turnY = readY()
     }
     const read = () => {
       frame = 0
-      const y = window.scrollY
+      const y = readY()
       // Viagem programada (sumário, retomada, rotação) não é leitura: as
       // barras não somem porque o leitor PEDIU para ir a algum lugar.
       if (!query.matches || pendingTargetRef.current != null) {
         reveal()
         return
       }
-      const end = document.documentElement.scrollHeight - window.innerHeight
+      const end = scroller
+        ? scroller.scrollHeight - scroller.clientHeight
+        : document.documentElement.scrollHeight - window.innerHeight
       if (y < 48 || y > end - 24) {
         reveal()
         return
@@ -4977,17 +5045,17 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       if (!frame) frame = window.requestAnimationFrame(read)
     }
     revealChromeRef.current = reveal
-    window.addEventListener('scroll', onScroll, { passive: true })
+    scrollTarget.addEventListener('scroll', onScroll, { passive: true })
     query.addEventListener?.('change', reveal)
     return () => {
-      window.removeEventListener('scroll', onScroll)
+      scrollTarget.removeEventListener('scroll', onScroll)
       query.removeEventListener?.('change', reveal)
       if (frame) window.cancelAnimationFrame(frame)
       revealChromeRef.current = () => {}
       header.style.transform = 'translateZ(0)'
       if (bar) bar.style.transform = 'translateZ(0)'
     }
-  }, [loading])
+  }, [loading, ownScroll])
 
   // Folha aberta ou ferramenta trocada: as barras voltam — é por elas que se
   // fecha a folha e se vê a ferramenta ativa.
@@ -5863,6 +5931,23 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         @media (prefers-reduced-motion: reduce) {
           .pdf-bitmap { transition: none; }
         }
+        /* Rolagem própria (ver \`ownScroll\`): o shell ocupa a tela e rola por
+           dentro. \`100dvh\` é a altura VISÍVEL no iOS (com ou sem a barra do
+           Safari); o \`100vh\` antes dele é para o navegador que não conhece
+           dvh. A raiz acompanha, senão o documento ganharia uns pixels de
+           rolagem própria por baixo do leitor. */
+        .pdf-viewer-shell.pdf-rolagem-propria {
+          height: 100vh;
+          height: 100dvh;
+          min-height: 0;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
+        }
+        div.pdf-viewer-raiz {
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
         @keyframes pdfPageFade {
           from { opacity: 0.4; }
           to { opacity: 1; }
@@ -5935,7 +6020,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
           (desktop) usa o `:fullscreen` já definido no <style> acima. */}
       <div
         ref={viewerRef}
-        className="pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none"
+        className={`pdf-viewer-shell min-h-screen overflow-x-clip text-white select-none ${ownScroll ? 'pdf-rolagem-propria' : ''}`}
         // Sem `pinch-zoom` no leitor inteiro: pinçar o cabeçalho ampliava o
         // site todo, e a pinça agora é só das páginas (ver usePagePinch).
         style={{ WebkitUserSelect: 'none', userSelect: 'none', touchAction: 'pan-x pan-y' }}
@@ -7727,7 +7812,7 @@ const PdfThumbnail = memo(function PdfThumbnail({
 
 function ViewerShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="pdf-viewer-raiz min-h-screen bg-zinc-950">
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(135deg,#061411_0%,#13251f_44%,#09090b_100%)]" />
       <div className="relative">{children}</div>
     </div>

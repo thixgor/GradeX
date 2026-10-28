@@ -269,3 +269,67 @@ export function pinchPercentLabel(zoom: number, resting: number | null | undefin
   const ratio = resting && resting > 0 ? zoom / resting : zoom
   return `${Math.round(ratio * 100)}%`
 }
+
+// ─── Inércia ────────────────────────────────────────────────────────────────
+// Soltar os dedos ainda em movimento faz a página continuar deslizando e
+// desacelerar, como no iOS e no GoodNotes — parar seco no lugar em que o dedo
+// saiu é a diferença que se sente entre "app" e "página".
+
+export interface PinchSample {
+  x: number
+  y: number
+  /** `performance.now()` da amostra. */
+  t: number
+}
+
+/** Só as últimas amostras contam: é o lance final, não a média do gesto. */
+export const GLIDE_SAMPLE_WINDOW_MS = 100
+
+/** Dedos parados por mais que isto antes de sair: soltou parado, sem deslize. */
+export const GLIDE_STALE_MS = 60
+
+/** Abaixo disto (px/ms) o movimento é ajuste fino, não um lance. */
+export const GLIDE_MIN_SPEED = 0.25
+
+/**
+ * Quanto o deslize anda, em ms de velocidade. Mais curto que o da rolagem do
+ * iOS de propósito: na leitura um lance de dois dedos é para reposicionar a
+ * página, não para atravessar o material.
+ */
+export const GLIDE_PROJECTION_MS = 140
+
+/** Teto do deslize, em px. */
+export const GLIDE_MAX_DISTANCE = 600
+
+/**
+ * Duração da acomodação quando há deslize (a sem deslize é
+ * PINCH_SETTLE_ANIMATION_MS). Não é gosto: com a curva `easeOutCubic`
+ * (inclinação 3 no começo), 3 × GLIDE_PROJECTION_MS faz a página começar o
+ * deslize exatamente na velocidade em que o dedo saiu.
+ */
+export const GLIDE_SETTLE_MS = 3 * GLIDE_PROJECTION_MS
+
+/** Guarda a amostra nova e descarta as velhas demais para medir o lance. */
+export function pushSample(samples: PinchSample[], sample: PinchSample) {
+  samples.push(sample)
+  while (samples.length > 2 && sample.t - samples[0].t > GLIDE_SAMPLE_WINDOW_MS) samples.shift()
+}
+
+/** Velocidade do fim do gesto, em px/ms — zero se os dedos pararam antes de sair. */
+export function releaseVelocity(samples: PinchSample[], now: number): PinchPoint {
+  if (samples.length < 2) return { x: 0, y: 0 }
+  const first = samples[0]
+  const last = samples[samples.length - 1]
+  if (now - last.t > GLIDE_STALE_MS) return { x: 0, y: 0 }
+  const span = last.t - first.t
+  if (!(span >= 16)) return { x: 0, y: 0 }
+  return { x: (last.x - first.x) / span, y: (last.y - first.y) / span }
+}
+
+/** Quanto o ponto entre os dedos ainda anda depois de solto. */
+export function glideOffset(velocity: PinchPoint): PinchPoint {
+  const speed = Math.hypot(velocity.x, velocity.y)
+  if (!Number.isFinite(speed) || speed < GLIDE_MIN_SPEED) return { x: 0, y: 0 }
+  const distance = Math.min(GLIDE_MAX_DISTANCE, speed * GLIDE_PROJECTION_MS)
+  return { x: (velocity.x / speed) * distance, y: (velocity.y / speed) * distance }
+}
