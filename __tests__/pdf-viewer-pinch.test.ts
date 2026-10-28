@@ -5,74 +5,18 @@ import {
   clampScale,
   distanceToRect,
   fingerDistance,
-  followFocal,
   fractionInRect,
-  IDENTITY_PINCH,
-  lerpRect,
-  mapPoint,
-  mapRect,
   pinchPercentLabel,
   rubberBandScale,
   settleEase,
-  transformBetween,
-  unmapPoint,
   wheelScaleFactor,
 } from '@/lib/pdf-viewer-pinch'
 
 /**
  * O que estes testes protegem: o ponto do material que está sob os dedos fica
- * sob os dedos — durante a pinça, quando ela vira arrasto de um dedo só, e
- * depois que o zoom de verdade entra e o layout se refaz.
+ * sob os dedos (a fração da página e quanto rolar para devolvê-la), e o zoom
+ * nunca salta nem passa do limite mais que o elástico.
  */
-
-const ORIGIN = { x: 40, y: 120 }
-
-describe('mapPoint / unmapPoint', () => {
-  it('são inversos um do outro', () => {
-    const transform = { scale: 1.8, tx: -35, ty: 60 }
-    const point = { x: 300, y: 500 }
-    const back = unmapPoint(transform, ORIGIN, mapPoint(transform, ORIGIN, point))
-    expect(back.x).toBeCloseTo(point.x)
-    expect(back.y).toBeCloseTo(point.y)
-  })
-
-  it('a identidade não move nada', () => {
-    expect(mapPoint(IDENTITY_PINCH, ORIGIN, { x: 10, y: 20 })).toEqual({ x: 10, y: 20 })
-  })
-})
-
-describe('followFocal', () => {
-  it('mantém o ponto sob o meio dos dedos ao ampliar', () => {
-    const mid = { x: 400, y: 600 }
-    const next = followFocal({ transform: IDENTITY_PINCH, origin: ORIGIN, from: mid, to: mid, scale: 2 })
-    const seen = mapPoint(next, ORIGIN, mid)
-    expect(seen.x).toBeCloseTo(mid.x)
-    expect(seen.y).toBeCloseTo(mid.y)
-    expect(next.scale).toBe(2)
-  })
-
-  it('acompanha os dedos que andam junto com a pinça', () => {
-    const from = { x: 400, y: 600 }
-    const to = { x: 460, y: 540 }
-    const next = followFocal({ transform: IDENTITY_PINCH, origin: ORIGIN, from, to, scale: 1.5 })
-    const seen = mapPoint(next, ORIGIN, from)
-    expect(seen.x).toBeCloseTo(to.x)
-    expect(seen.y).toBeCloseTo(to.y)
-  })
-
-  it('encadeia trechos: re-basear no meio do gesto não dá salto', () => {
-    // Trecho 1: dois dedos ampliam 2x em torno de (400, 600).
-    const first = followFocal({ transform: IDENTITY_PINCH, origin: ORIGIN, from: { x: 400, y: 600 }, to: { x: 400, y: 600 }, scale: 2 })
-    // Trecho 2: um dedo saiu, o outro arrasta 50 px para a esquerda.
-    const held = { x: 380, y: 610 }
-    const second = followFocal({ transform: first, origin: ORIGIN, from: held, to: { x: 330, y: 610 }, scale: first.scale })
-    const content = unmapPoint(first, ORIGIN, held)
-    const seen = mapPoint(second, ORIGIN, content)
-    expect(seen.x).toBeCloseTo(330)
-    expect(seen.y).toBeCloseTo(610)
-    expect(second.scale).toBe(2)
-  })
-})
 
 describe('rubberBandScale', () => {
   it('dentro dos limites é a própria escala', () => {
@@ -115,22 +59,6 @@ describe('clampScale', () => {
   })
 })
 
-describe('transformBetween', () => {
-  it('leva o retângulo do layout exatamente para onde ele aparecia', () => {
-    const layout = { left: 100, top: 300, width: 800, height: 1100 }
-    const visual = { left: 60, top: 250, width: 820, height: 1127.5 }
-    const transform = transformBetween(layout, visual, ORIGIN)
-    const seen = mapRect(transform, ORIGIN, layout)
-    expect(seen.left).toBeCloseTo(visual.left)
-    expect(seen.top).toBeCloseTo(visual.top)
-    expect(seen.width).toBeCloseTo(visual.width)
-  })
-
-  it('retângulo sem largura não vira transform', () => {
-    expect(transformBetween({ left: 0, top: 0, width: 0, height: 0 }, { left: 5, top: 5, width: 10, height: 10 }, ORIGIN)).toEqual(IDENTITY_PINCH)
-  })
-})
-
 describe('fractionInRect / anchorDrift', () => {
   const page = { left: 100, top: 200, width: 600, height: 800 }
 
@@ -158,12 +86,8 @@ describe('distanceToRect', () => {
   })
 })
 
-describe('lerpRect / settleEase', () => {
-  it('vai do começo ao fim', () => {
-    const a = { left: 0, top: 0, width: 100, height: 100 }
-    const b = { left: 100, top: 50, width: 200, height: 300 }
-    expect(lerpRect(a, b, 0)).toEqual(a)
-    expect(lerpRect(a, b, 1)).toEqual(b)
+describe('settleEase', () => {
+  it('vai do começo ao fim, rápido no começo', () => {
     expect(settleEase(0)).toBe(0)
     expect(settleEase(1)).toBe(1)
     expect(settleEase(0.5)).toBeGreaterThan(0.5)

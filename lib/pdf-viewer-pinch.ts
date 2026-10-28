@@ -18,21 +18,27 @@
  *     `pan-x pan-y` o tempo todo (o navegador rola, mas nunca dá zoom ali), e
  *     quem segura a rolagem durante a pinça é o `preventDefault` do próprio
  *     `touchmove` — que vale no mesmo evento, sem esperar render nenhum.
- *  2. **Nada de zoom do React durante o gesto.** Os dedos movem um `transform`
- *     na coluna das páginas (o bitmap já desenhado estica, como no GoodNotes);
- *     o zoom de verdade — que re-rasteriza nítido — entra UMA vez, quando o
- *     último dedo sai. É também o que mantém o orçamento de memória dos
- *     canvases intacto: re-rasterizar no meio do gesto já derrubou a aba.
+ *  2. **Nada de React durante o gesto.** Os dedos escrevem uma variável CSS
+ *     que multiplica o tamanho das páginas (o bitmap já desenhado estica, como
+ *     no GoodNotes), e a rolagem é corrigida no mesmo quadro; o zoom de
+ *     verdade — que re-rasteriza nítido — entra UMA vez, quando o último dedo
+ *     sai. É também o que mantém o orçamento de memória dos canvases intacto:
+ *     re-rasterizar no meio do gesto já derrubou a aba.
+ *
+ * ## Por que variável CSS e não `transform: scale()`
+ *
+ * A versão com `transform` era exata no Chromium e piscava branco no iPad: o
+ * WebKit re-rasteriza uma camada com escala a cada quadro e, ao promover e
+ * desfazer a camada da coluna, o canvas da página aparecia por instantes sem o
+ * desenho. Com a variável é layout comum — o mesmo caminho do botão de zoom —
+ * e nenhuma camada nasce, morre ou muda de escala.
  *
  * ## O modelo
  *
- * O `transform` tem origem no canto de cima à esquerda da coluna (`R`), e o
- * ponto `p` da coluna (em coordenadas da tela, sem transform) aparece em
- *
- *     tela = R + t + s · (p − R)
- *
- * Toda a pinça é escolher `s` (escala) e `t` (deslocamento) de modo que o ponto
- * do material que estava sob os dedos continue sob os dedos.
+ * O gesto guarda QUE ponto da página está entre os dedos (a página e a fração
+ * dela, `fractionInRect`). A cada quadro a página muda de tamanho e a rolagem
+ * anda o que for preciso (`anchorDrift`) para aquela fração voltar a ficar
+ * entre os dedos — que podem ter se movido: é assim que a pinça também arrasta.
  */
 
 export interface PinchPoint {
@@ -46,15 +52,6 @@ export interface PinchRect {
   width: number
   height: number
 }
-
-/** Escala e deslocamento do `transform`, com origem em `R` (ver o topo). */
-export interface PinchTransform {
-  scale: number
-  tx: number
-  ty: number
-}
-
-export const IDENTITY_PINCH: PinchTransform = { scale: 1, tx: 0, ty: 0 }
 
 /**
  * Distância mínima entre os dedos para a razão valer. Abaixo disso um tremor de
@@ -70,7 +67,7 @@ export const PINCH_MIN_FINGER_DISTANCE = 24
  */
 export const PINCH_RUBBER_BAND = 0.18
 
-/** Duração da acomodação depois que os dedos saem. */
+/** Duração da volta do elástico quando os dedos soltam além do limite. */
 export const PINCH_SETTLE_ANIMATION_MS = 260
 
 /**
@@ -111,77 +108,6 @@ export function clampScale(scale: number, min: number, max: number) {
   return Math.min(max, Math.max(min, scale))
 }
 
-/** Onde o ponto `p` (sem transform) aparece na tela. */
-export function mapPoint(transform: PinchTransform, origin: PinchPoint, p: PinchPoint): PinchPoint {
-  return {
-    x: origin.x + transform.tx + transform.scale * (p.x - origin.x),
-    y: origin.y + transform.ty + transform.scale * (p.y - origin.y),
-  }
-}
-
-/** O inverso: que ponto da coluna (sem transform) está em `q` na tela. */
-export function unmapPoint(transform: PinchTransform, origin: PinchPoint, q: PinchPoint): PinchPoint {
-  const scale = transform.scale > 0 ? transform.scale : 1
-  return {
-    x: origin.x + (q.x - origin.x - transform.tx) / scale,
-    y: origin.y + (q.y - origin.y - transform.ty) / scale,
-  }
-}
-
-export function mapRect(transform: PinchTransform, origin: PinchPoint, rect: PinchRect): PinchRect {
-  const corner = mapPoint(transform, origin, { x: rect.left, y: rect.top })
-  return {
-    left: corner.x,
-    top: corner.y,
-    width: rect.width * transform.scale,
-    height: rect.height * transform.scale,
-  }
-}
-
-/**
- * O `transform` em que o ponto do material que estava em `from` (com
- * `transform` aplicado) passa a ficar em `to`, já na escala `scale`.
- *
- * É a regra da pinça inteira: com dois dedos, `from` é o meio deles no começo
- * do trecho e `to` é o meio agora; com um dedo só (o outro saiu), a escala não
- * muda e a mesma conta vira um arrasto.
- */
-export function followFocal({
-  transform,
-  origin,
-  from,
-  to,
-  scale,
-}: {
-  transform: PinchTransform
-  origin: PinchPoint
-  from: PinchPoint
-  to: PinchPoint
-  scale: number
-}): PinchTransform {
-  const content = unmapPoint(transform, origin, from)
-  return {
-    scale,
-    tx: to.x - origin.x - scale * (content.x - origin.x),
-    ty: to.y - origin.y - scale * (content.y - origin.y),
-  }
-}
-
-/**
- * O `transform` que faz um retângulo que está em `layout` (sem transform)
- * aparecer em `visual`. A escala vem da largura: o `transform` é uniforme.
- */
-export function transformBetween(layout: PinchRect, visual: PinchRect, origin: PinchPoint): PinchTransform {
-  if (!(layout.width > 0)) return IDENTITY_PINCH
-  const scale = visual.width / layout.width
-  if (!Number.isFinite(scale) || scale <= 0) return IDENTITY_PINCH
-  return {
-    scale,
-    tx: visual.left - origin.x - scale * (layout.left - origin.x),
-    ty: visual.top - origin.y - scale * (layout.top - origin.y),
-  }
-}
-
 /**
  * Em que fração da página está o ponto. Pode passar um pouco de 0..1 (o meio
  * dos dedos no respiro entre duas páginas); preso a uma margem curta, porque
@@ -212,16 +138,6 @@ export function distanceToRect(rect: PinchRect, point: PinchPoint) {
   const dx = Math.max(rect.left - point.x, 0, point.x - (rect.left + rect.width))
   const dy = Math.max(rect.top - point.y, 0, point.y - (rect.top + rect.height))
   return Math.hypot(dx, dy)
-}
-
-export function lerpRect(a: PinchRect, b: PinchRect, t: number): PinchRect {
-  const k = Math.min(1, Math.max(0, t))
-  return {
-    left: a.left + (b.left - a.left) * k,
-    top: a.top + (b.top - a.top) * k,
-    width: a.width + (b.width - a.width) * k,
-    height: a.height + (b.height - a.height) * k,
-  }
 }
 
 /** A curva da acomodação: sai rápido e assenta devagar, como o iOS. */

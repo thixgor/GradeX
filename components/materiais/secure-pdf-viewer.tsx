@@ -133,24 +133,17 @@ import {
   clampScale,
   distanceToRect,
   fingerDistance,
-  followFocal,
   fractionInRect,
-  IDENTITY_PINCH,
-  lerpRect,
-  mapRect,
   PINCH_ANCHOR_HOLD_MS,
   PINCH_MIN_FINGER_DISTANCE,
   PINCH_SETTLE_ANIMATION_MS,
   pinchPercentLabel,
   rubberBandScale,
   settleEase,
-  transformBetween,
-  unmapPoint,
   WHEEL_PINCH_IDLE_MS,
   wheelScaleFactor,
   type PinchPoint,
   type PinchRect,
-  type PinchTransform,
 } from '@/lib/pdf-viewer-pinch'
 import { fitToCanvasBudget } from '@/lib/pdf-viewer-canvas-budget'
 import { guardarPagina, lerPaginaGuardada, validadeDaResposta } from '@/lib/paginas-guardadas'
@@ -1484,6 +1477,16 @@ function setInkActive(active: boolean) {
 // desenha) leem isto para sair da frente: durante a pinça quem move a coluna é
 // ela, e dois donos do mesmo gesto era exatamente o defeito da pinça antiga.
 let pagePinchActive = false
+// Gesto + acomodação. Enquanto a pinça mexe no tamanho das páginas (ver
+// `pinchSized`), a âncora da virtualização por rolagem não pode medir nada: a
+// casa de cada página está mudando a cada quadro e a conta daria uma página
+// qualquer — e um re-render no meio do gesto.
+let pagePinchFrozen = false
+// A página que a pinça está segurando no lugar (o `id` da linha). O
+// alinhamento lateral automático das linhas (`alignPageRow`) não toca nela
+// enquanto a pinça está congelada: os dois escrevendo `scrollLeft` na mesma
+// linha, em quadros alternados, era um tranco lateral visível no fim do gesto.
+let pagePinchFocusRow: string | null = null
 
 function subscribeInkActivity(listener: (active: boolean) => void) {
   inkListeners.add(listener)
@@ -2716,11 +2719,34 @@ function useViewerGestures(
 }
 
 // ─── Pinça de dois dedos nas páginas ────────────────────────────────────────
-// Como no GoodNotes: os dedos ampliam e arrastam a página na hora (um
-// `transform` na coluna, sem render), e quando o último dedo sai o zoom de
-// verdade entra e a página re-rasteriza nítida no tamanho novo. O ponto do
-// material que estava entre os dedos continua entre os dedos — durante o
-// gesto, quando ele vira arrasto de um dedo só e depois que o layout se refaz.
+// Como no GoodNotes: os dedos ampliam e arrastam a página na hora, e quando o
+// último dedo sai o zoom de verdade entra e a página re-rasteriza nítida no
+// tamanho novo. O ponto do material que estava entre os dedos continua entre
+// os dedos — durante o gesto, quando ele vira arrasto de um dedo só e depois
+// que o layout se refaz.
+//
+// COMO a página cresce no meio do gesto, e por que assim:
+//
+// A primeira versão desta pinça esticava a coluna inteira com
+// `transform: scale()`. No Chromium era perfeito; no iPad piscava branco. O
+// WebKit re-rasteriza uma camada com `transform` a cada escala nova e, ao
+// promover a coluna a camada própria no começo do gesto (e desfazer no fim),
+// re-parenteia as camadas dos canvases — e nesse meio-tempo o canvas aparece
+// sem o desenho, só com a folha branca por baixo.
+//
+// Agora nada é escalado por transform. A pinça escreve uma variável CSS
+// (`--pdf-pinca`) na coluna, e o tamanho REAL de cada moldura, espaçador e
+// bloco de preenchimento é `calc(var × tamanho + moldura)` (ver
+// `pinchSized`). É layout de verdade, sem React no caminho: o canvas só tem a
+// caixa CSS aumentada — o bitmap já desenhado estica pela GPU, como no botão
+// de zoom — e nenhuma camada nasce, morre ou muda de escala. A cada quadro a
+// rolagem é corrigida para o ponto entre os dedos voltar para baixo deles.
+// É o mesmo desenho da pinça do PDF.js (o leitor do Firefox) no iPad.
+//
+// No fim, o zoom do React entra de forma SÍNCRONA (flushSync) e a variável
+// volta a 1 no mesmo quadro: o tamanho em px que o React escreve é o mesmo
+// que a variável vinha produzindo, então a tela não muda — só o bitmap é
+// redesenhado nítido logo depois.
 //
 // Três entradas, um motor só:
 //  - dedos (eventos de toque): iPad, tablet Android, celular, notebook com tela
@@ -2739,27 +2765,54 @@ function useViewerGestures(
 //    não faz nada, como num app.
 //
 // A matemática mora em `lib/pdf-viewer-pinch.ts`, com testes.
-interface PinchFrameRef {
+
+/** Multiplicador do tamanho das páginas durante a pinça (ver acima). */
+const PINCH_SCALE_VAR = '--pdf-pinca'
+
+/**
+ * Tamanho em CSS que acompanha a pinça: a parte que escala com o zoom
+ * (a página) multiplicada pela variável, mais a parte fixa (padding e borda da
+ * moldura, respiro entre páginas). Sem pinça a variável não existe e o valor é
+ * exatamente `scalable + fixed` px.
+ */
+function pinchSized(scalable: number, fixed: number) {
+  return `calc(var(${PINCH_SCALE_VAR}, 1) * ${scalable}px + ${fixed}px)`
+}
+
+interface PinchFocus {
   /** `id` da linha da página (`pdf-page-N`): a linha pode ser trocada no render. */
   id: string
-  rect: PinchRect
+  /** Que ponto da página está entre os dedos, em fração dela. */
+  fraction: PinchPoint
 }
 
 interface PinchSession {
   source: 'touch' | 'wheel' | 'gesture'
-  /** Canto de cima à esquerda da coluna, sem transform, no começo do gesto. */
-  origin: PinchPoint
   baseZoom: number
   resting: number | null
   minScale: number
   maxScale: number
   /** Escala que os dedos pediram, antes do elástico. */
   raw: number
-  transform: PinchTransform
+  /** Escala na tela (com o elástico). */
+  scale: number
   /** Começo do trecho atual: muda quando um dedo entra ou sai. */
-  ref: { point: PinchPoint; distance: number; raw: number; transform: PinchTransform; count: number }
-  last: PinchPoint
-  frames: PinchFrameRef[]
+  ref: { distance: number; raw: number; count: number }
+  focus: PinchFocus | null
+  point: PinchPoint
+}
+
+interface PinchSettle {
+  focus: PinchFocus | null
+  point: PinchPoint
+  baseZoom: number
+  /** Escala em que os dedos soltaram (pode estar além do limite, no elástico). */
+  from: number
+  /** Escala que vira zoom: a de `from`, presa aos limites. */
+  to: number
+  startedAt: number
+  committed: boolean
+  holdUntil: number
 }
 
 /** A moldura da página (o que escala com o zoom), ou a linha inteira num espaçador. */
@@ -2770,15 +2823,6 @@ function pinchFrameOf(row: HTMLElement): HTMLElement {
 
 function toPinchRect(rect: DOMRect): PinchRect {
   return { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
-}
-
-function writePinchTransform(track: HTMLElement, transform: PinchTransform | null) {
-  if (!transform || (Math.abs(transform.scale - 1) < 1e-4 && Math.abs(transform.tx) < 0.05 && Math.abs(transform.ty) < 0.05)) {
-    track.style.transform = ''
-    return
-  }
-  track.style.transformOrigin = '0 0'
-  track.style.transform = `translate3d(${transform.tx}px, ${transform.ty}px, 0) scale(${transform.scale})`
 }
 
 function usePagePinch(
@@ -2808,7 +2852,8 @@ function usePagePinch(
     if (!content || !options.enabled) return
 
     let session: PinchSession | null = null
-    let writeFrame = 0
+    let settling: PinchSettle | null = null
+    let gestureFrame = 0
     let settleFrame = 0
     let settleAbandoned = false
     let wheelIdle = 0
@@ -2837,71 +2882,162 @@ function usePagePinch(
     }
 
     const hudLabel = (active: PinchSession) =>
-      pinchPercentLabel(active.baseZoom * clampScale(active.transform.scale, active.minScale, active.maxScale), active.resting)
+      pinchPercentLabel(active.baseZoom * clampScale(active.scale, active.minScale, active.maxScale), active.resting)
 
-    const flushWrite = () => {
-      writeFrame = 0
+    const setScale = (scale: number) => {
       const track = trackRef.current
-      if (!track || !session) return
-      writePinchTransform(track, session.transform)
+      if (!track) return
+      if (Math.abs(scale - 1) < 1e-4) track.style.removeProperty(PINCH_SCALE_VAR)
+      else track.style.setProperty(PINCH_SCALE_VAR, scale.toFixed(4))
+    }
+
+    /** A página sob o ponto (ou a mais perto) e em que fração dela ele está. */
+    const focusAt = (point: PinchPoint): PinchFocus | null => {
+      const track = trackRef.current
+      if (!track) return null
+      const viewport = window.innerHeight || document.documentElement.clientHeight || 0
+      let best: { id: string; rect: PinchRect } | null = null
+      let bestGap = Infinity
+      track.querySelectorAll<HTMLElement>('[data-pdf-page-row]').forEach((row) => {
+        if (!row.id) return
+        const rowRect = row.getBoundingClientRect()
+        // Só o que está perto da tela: num material de mil páginas medir todas
+        // custaria um layout inteiro.
+        if (rowRect.bottom < -viewport || rowRect.top > viewport * 2) return
+        const rect = toPinchRect(pinchFrameOf(row).getBoundingClientRect())
+        const gap = distanceToRect(rect, point)
+        if (gap < bestGap) {
+          best = { id: row.id, rect }
+          bestGap = gap
+        }
+      })
+      const found = best as { id: string; rect: PinchRect } | null
+      return found ? { id: found.id, fraction: fractionInRect(found.rect, point) } : null
+    }
+
+    /** Rola até a fração `focus` da página voltar a ficar em `point`. */
+    const anchor = (focus: PinchFocus | null, point: PinchPoint) => {
+      if (!focus || optionsRef.current.isTraveling()) return
+      const row = document.getElementById(focus.id)
+      if (!row) return
+      // Cada correção gera um evento de rolagem, e é ele que o observador de
+      // foco leria como "o leitor mudou de página".
+      optionsRef.current.holdFocus(Date.now() + 320)
+      const rect = toPinchRect(pinchFrameOf(row).getBoundingClientRect())
+      const drift = anchorDrift(rect, focus.fraction, point)
+      if (Math.abs(drift.y) > 0.5) scrollReadingBy(drift.y, row)
+      if (Math.abs(drift.x) > 0.5 && row.scrollWidth - row.clientWidth > 1) row.scrollLeft += drift.x
+    }
+
+    // ── O gesto: um quadro por vez ────────────────────────────────────────
+    const flushGesture = () => {
+      gestureFrame = 0
+      if (!session) return
+      setScale(session.scale)
+      anchor(session.focus, session.point)
       showHud(hudLabel(session))
     }
 
-    const scheduleWrite = () => {
-      if (!writeFrame) writeFrame = window.requestAnimationFrame(flushWrite)
+    const scheduleGesture = () => {
+      if (!gestureFrame) gestureFrame = window.requestAnimationFrame(flushGesture)
     }
 
-    // Acomodação em curso e um gesto novo: o layout já está no zoom novo, só
-    // falta tirar o transform — a página vai direto para onde ela já estava
-    // indo.
-    const stopSettle = () => {
+    // ── Depois do gesto: o elástico volta, o zoom entra, a página fica ────
+    const commitSettle = (active: PinchSettle) => {
+      active.committed = true
+      // A variável volta a 1 ANTES do zoom do React, na mesma tarefa: quem mede
+      // durante o commit (os efeitos de layout das linhas) já vê o tamanho
+      // final, e não o zoom novo multiplicado de novo pela pinça. Nada é
+      // pintado entre as duas linhas — o commit é síncrono.
+      if (Math.abs(active.to - 1) > 0.002) {
+        setScale(1)
+        const changed = optionsRef.current.commit(active.baseZoom * active.to)
+        anchor(active.focus, active.point)
+        // Segurar mais um pouco: a página pode mudar de tamanho de novo quando
+        // as vizinhas montam (o raio de páginas vivas depende do zoom).
+        active.holdUntil = performance.now() + (changed ? PINCH_ANCHOR_HOLD_MS : 0)
+        return
+      }
+      setScale(1)
+      anchor(active.focus, active.point)
+      active.holdUntil = performance.now()
+    }
+
+    const endSettle = () => {
       if (settleFrame) {
         window.cancelAnimationFrame(settleFrame)
         settleFrame = 0
       }
-      const track = trackRef.current
-      if (track) {
-        track.style.transform = ''
-        track.style.willChange = ''
+      settling = null
+      pagePinchFrozen = false
+      pagePinchFocusRow = null
+    }
+
+    const settleStep = (now: number) => {
+      settleFrame = 0
+      const active = settling
+      if (!active) return
+      if (!active.committed) {
+        const progress = (now - active.startedAt) / PINCH_SETTLE_ANIMATION_MS
+        if (progress < 1) {
+          setScale(active.from + (active.to - active.from) * settleEase(progress))
+          anchor(active.focus, active.point)
+          settleFrame = window.requestAnimationFrame(settleStep)
+          return
+        }
+        setScale(active.to)
+        commitSettle(active)
+      } else if (!settleAbandoned) {
+        anchor(active.focus, active.point)
       }
+      if (settleAbandoned || now >= active.holdUntil) {
+        endSettle()
+        return
+      }
+      settleFrame = window.requestAnimationFrame(settleStep)
+    }
+
+    /** Gesto novo no meio da acomodação: termina ela agora, sem animar. */
+    const finishSettleNow = () => {
+      const active = settling
+      if (!active) return
+      if (settleFrame) {
+        window.cancelAnimationFrame(settleFrame)
+        settleFrame = 0
+      }
+      if (!active.committed) {
+        setScale(active.to)
+        commitSettle(active)
+      }
+      endSettle()
     }
 
     const begin = (point: PinchPoint, distance: number, count: number, source: PinchSession['source']) => {
       const track = trackRef.current
       if (!track) return false
+      finishSettleNow()
       const { zoom, min, max, resting } = optionsRef.current.readZoom()
       if (!(zoom > 0) || !(max >= min)) return false
-      stopSettle()
-      // Sobra de um swipe que estava começando: a medida tem que ser da coluna
-      // parada, senão o gesto inteiro fica deslocado por esse resto.
+      // Sobra de um swipe que estava começando: a coluna volta para o lugar
+      // antes de a página sob os dedos ser medida.
       track.style.transition = ''
       track.style.transform = ''
-      const trackRect = track.getBoundingClientRect()
-      const viewport = window.innerHeight || document.documentElement.clientHeight || 0
-      const frames: PinchFrameRef[] = []
-      track.querySelectorAll<HTMLElement>('[data-pdf-page-row]').forEach((row) => {
-        const rowRect = row.getBoundingClientRect()
-        // Só o que está perto da tela: num material de mil páginas medir todas
-        // custaria um layout inteiro no começo do gesto.
-        if (rowRect.bottom < -viewport || rowRect.top > viewport * 2) return
-        if (!row.id) return
-        frames.push({ id: row.id, rect: toPinchRect(pinchFrameOf(row).getBoundingClientRect()) })
-      })
       session = {
         source,
-        origin: { x: trackRect.left, y: trackRect.top },
         baseZoom: zoom,
         resting,
         minScale: min / zoom,
         maxScale: max / zoom,
         raw: 1,
-        transform: IDENTITY_PINCH,
-        ref: { point, distance, raw: 1, transform: IDENTITY_PINCH, count },
-        last: point,
-        frames,
+        scale: 1,
+        ref: { distance, raw: 1, count },
+        focus: focusAt(point),
+        point,
       }
       pagePinchActive = true
-      track.style.willChange = 'transform'
+      pagePinchFrozen = true
+      pagePinchFocusRow = session.focus?.id ?? null
+      optionsRef.current.holdFocus(Date.now() + 400)
       showHud(hudLabel(session))
       return true
     }
@@ -2909,95 +3045,23 @@ function usePagePinch(
     /** Um dedo entrou ou saiu: o trecho novo começa de onde a tela está. */
     const rebase = (point: PinchPoint, distance: number, count: number) => {
       if (!session) return
-      session.ref = { point, distance, raw: session.raw, transform: session.transform, count }
-      session.last = point
+      // A tela pode estar um quadro atrás do gesto; mede depois de alcançá-lo.
+      if (gestureFrame) {
+        window.cancelAnimationFrame(gestureFrame)
+        flushGesture()
+      }
+      session.ref = { distance, raw: session.raw, count }
+      session.focus = focusAt(point)
+      session.point = point
+      pagePinchFocusRow = session.focus?.id ?? null
     }
 
     const follow = (point: PinchPoint, raw: number) => {
       if (!session) return
       session.raw = raw
-      const scale = rubberBandScale(raw, session.minScale, session.maxScale)
-      session.transform = followFocal({
-        transform: session.ref.transform,
-        origin: session.origin,
-        from: session.ref.point,
-        to: point,
-        scale,
-      })
-      session.last = point
-      scheduleWrite()
-    }
-
-    /**
-     * Depois do zoom: a página sob os dedos é segurada no lugar enquanto o
-     * layout termina de se ajeitar, e o transform leva a página, em ~1/4 de
-     * segundo, de onde ela estava na tela (talvez além do limite, no elástico)
-     * até onde ela de fato ficou. É a técnica FLIP: medir o layout novo,
-     * desenhar por cima dele a posição velha, e animar a diferença até zero.
-     * Medindo de novo a cada quadro — os espaçadores ainda vão mudar de altura
-     * (150 ms depois), e a animação não pode correr atrás de uma foto velha.
-     */
-    const settle = ({
-      id,
-      fraction,
-      point,
-      from,
-      changed,
-    }: {
-      id: string
-      fraction: PinchPoint
-      point: PinchPoint
-      from: PinchRect
-      changed: boolean
-    }) => {
-      const startedAt = performance.now()
-      const holdUntil = startedAt + (changed ? PINCH_ANCHOR_HOLD_MS : PINCH_SETTLE_ANIMATION_MS)
-      settleAbandoned = false
-
-      const step = (now: number) => {
-        settleFrame = 0
-        const track = trackRef.current
-        const row = document.getElementById(id)
-        if (!track || !row) {
-          stopSettle()
-          return
-        }
-        track.style.transform = ''
-        const frame = pinchFrameOf(row)
-        let rect = toPinchRect(frame.getBoundingClientRect())
-        // Vale também sem zoom: dois dedos que só ARRASTARAM levaram a página
-        // para outro lugar, e é a rolagem que tem de ficar lá — senão a página
-        // voltaria ao ponto de partida quando os dedos saem.
-        if (!settleAbandoned && !optionsRef.current.isTraveling()) {
-          optionsRef.current.holdFocus(Date.now() + 320)
-          const drift = anchorDrift(rect, fraction, point)
-          let moved = false
-          if (Math.abs(drift.y) > 0.5) {
-            scrollReadingBy(drift.y, row)
-            moved = true
-          }
-          if (Math.abs(drift.x) > 0.5 && row.scrollWidth - row.clientWidth > 1) {
-            row.scrollLeft += drift.x
-            moved = true
-          }
-          if (moved) rect = toPinchRect(frame.getBoundingClientRect())
-        }
-        const progress = (now - startedAt) / PINCH_SETTLE_ANIMATION_MS
-        if (progress < 1) {
-          const trackRect = track.getBoundingClientRect()
-          const target = lerpRect(from, rect, settleEase(progress))
-          writePinchTransform(track, transformBetween(rect, target, { x: trackRect.left, y: trackRect.top }))
-        }
-        if (progress >= 1 && (now >= holdUntil || settleAbandoned)) {
-          stopSettle()
-          return
-        }
-        settleFrame = window.requestAnimationFrame(step)
-      }
-
-      // O primeiro passo é síncrono: o DOM acabou de mudar de tamanho e a tela
-      // não pode pintar um quadro sequer no layout novo sem o transform.
-      step(performance.now())
+      session.scale = rubberBandScale(raw, session.minScale, session.maxScale)
+      session.point = point
+      scheduleGesture()
     }
 
     const end = () => {
@@ -3005,44 +3069,34 @@ function usePagePinch(
       if (!active) return
       session = null
       pagePinchActive = false
-      if (writeFrame) {
-        window.cancelAnimationFrame(writeFrame)
-        writeFrame = 0
+      if (gestureFrame) {
+        window.cancelAnimationFrame(gestureFrame)
+        gestureFrame = 0
       }
       if (wheelIdle) {
         window.clearTimeout(wheelIdle)
         wheelIdle = 0
       }
-      const track = trackRef.current
-      if (!track) return
-      writePinchTransform(track, active.transform)
-
-      const scale = clampScale(active.transform.scale, active.minScale, active.maxScale)
-      // O ponto do material sob os dedos, e a página em que ele está (ou a mais
-      // perto: os dedos podem ter terminado no respiro entre duas páginas).
-      const point = active.last
-      const content = unmapPoint(active.transform, active.origin, point)
-      let best: PinchFrameRef | null = null
-      let bestDistance = Infinity
-      for (const frame of active.frames) {
-        const gap = distanceToRect(frame.rect, content)
-        if (gap < bestDistance) {
-          best = frame
-          bestDistance = gap
-        }
-      }
-      showHud(pinchPercentLabel(active.baseZoom * scale, active.resting))
+      // O último quadro do gesto, se ele ainda não tinha saído.
+      setScale(active.scale)
+      anchor(active.focus, active.point)
+      const target = clampScale(active.scale, active.minScale, active.maxScale)
+      showHud(pinchPercentLabel(active.baseZoom * target, active.resting))
       hideHud(650)
-      if (!best) {
-        track.style.transform = ''
-        track.style.willChange = ''
-        optionsRef.current.commit(active.baseZoom * scale)
-        return
+      settleAbandoned = false
+      settling = {
+        focus: active.focus,
+        point: active.point,
+        baseZoom: active.baseZoom,
+        from: active.scale,
+        to: target,
+        startedAt: performance.now(),
+        committed: false,
+        holdUntil: 0,
       }
-      const fraction = fractionInRect(best.rect, content)
-      const from = mapRect(active.transform, active.origin, best.rect)
-      const changed = Math.abs(scale - 1) > 0.004 && optionsRef.current.commit(active.baseZoom * scale)
-      settle({ id: best.id, fraction, point, from, changed })
+      // Dentro dos limites não há elástico para voltar: o zoom entra já.
+      if (Math.abs(active.scale - target) < 0.002) commitSettle(settling)
+      settleFrame = window.requestAnimationFrame(settleStep)
     }
 
     // ── Dedos ────────────────────────────────────────────────────────────
@@ -3145,8 +3199,11 @@ function usePagePinch(
       if (!session && !begin(point, 0, 1, 'wheel')) return
       const active = session
       if (!active) return
-      // Cada evento é um trecho: a escala anda em torno do cursor de agora.
-      rebase(point, 0, 1)
+      // Cursor parado: o ponto de antes continua sendo o alvo. Re-medir a cada
+      // evento aceitaria como alvo novo o desvio dos primeiros eventos — com a
+      // página ainda mais estreita que a coluna, ela cresce pelo centro e o
+      // ponto escapa do cursor até a linha ganhar rolagem para devolvê-lo.
+      if (Math.hypot(point.x - active.point.x, point.y - active.point.y) > 2) rebase(point, 0, 1)
       // O elástico da roda é curto: sem o teto, rolar muito além do limite
       // exigiria rolar outro tanto de volta para ver a página mudar.
       const raw = Math.min(active.maxScale * 1.4, Math.max(active.minScale / 1.4, active.raw * wheelScaleFactor(event.deltaY, event.deltaMode)))
@@ -3174,12 +3231,10 @@ function usePagePinch(
       event.preventDefault()
       if (session?.source !== 'gesture') return
       const gesture = event as SafariGesture
-      const point = { x: gesture.clientX, y: gesture.clientY }
       const active = session
       // `scale` do Safari é acumulado desde o começo do gesto.
       const raw = Number.isFinite(gesture.scale) && gesture.scale > 0 ? gesture.scale : active.raw
-      rebase(active.last, 0, 1)
-      follow(point, Math.min(active.maxScale * 1.4, Math.max(active.minScale / 1.4, raw)))
+      follow({ x: gesture.clientX, y: gesture.clientY }, Math.min(active.maxScale * 1.4, Math.max(active.minScale / 1.4, raw)))
     }
 
     const onGestureEnd = (event: Event) => {
@@ -3221,12 +3276,16 @@ function usePagePinch(
       content.removeEventListener('gestureend', onGestureEnd)
       window.removeEventListener('blur', onInterrupt)
       document.removeEventListener('visibilitychange', onInterrupt)
-      if (writeFrame) window.cancelAnimationFrame(writeFrame)
+      if (gestureFrame) window.cancelAnimationFrame(gestureFrame)
       if (wheelIdle) window.clearTimeout(wheelIdle)
       if (hudTimer) window.clearTimeout(hudTimer)
-      stopSettle()
+      if (settleFrame) window.cancelAnimationFrame(settleFrame)
       session = null
+      settling = null
       pagePinchActive = false
+      pagePinchFrozen = false
+      pagePinchFocusRow = null
+      setScale(1)
       if (hudAtMount) hudAtMount.dataset.visible = 'false'
     }
   }, [contentRef, trackRef, hudRef, options.enabled])
@@ -3846,6 +3905,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       // um único evento de rolagem no meio do caminho puxava a janela de volta
       // para o começo do material e o destino desmontava embaixo da viagem.
       if (pendingTargetRef.current != null) return
+      // Pinça mexendo no tamanho das casas: a conta abaixo usaria a casa velha.
+      if (pagePinchFrozen) return
       const slot = pageSlotHeightRef.current
       // Relativo à viewport: funciona tanto quando quem rola é o documento
       // quanto quando é o shell (tela cheia), sem saber qual dos dois é.
@@ -4923,6 +4984,9 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const seenRowsRef = useRef(new WeakSet<HTMLElement>())
 
   const alignPageRow = useCallback((row: HTMLElement) => {
+    // A página sob os dedos é da pinça enquanto ela a segura (ver
+    // `pagePinchFocusRow`); as outras seguem o ponto lateral dela normalmente.
+    if (pagePinchFrozen && row.id === pagePinchFocusRow) return
     const seen = seenRowsRef.current.has(row)
     seenRowsRef.current.add(row)
     // Na fileira horizontal cada casa é uma folha: a próxima começa do começo,
@@ -4998,8 +5062,14 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
     if (Math.abs(value - zoomRef.current) < 0.002) return false
     zoomRef.current = value
     // Síncrono: a pinça mede o layout novo logo na linha seguinte, antes de a
-    // tela pintar (ver `settle` em usePagePinch).
-    flushSync(() => setZoom(value))
+    // tela pintar (ver `commitSettle` em usePagePinch). O zoom ASSENTADO vai
+    // junto: os espaçadores já cresceram com a pinça, e esperar os 150 ms de
+    // costume os faria voltar ao tamanho velho e crescer de novo — a página
+    // daria dois pulos com a âncora correndo atrás.
+    flushSync(() => {
+      setZoom(value)
+      setSettledZoom(value)
+    })
     return true
   }, [])
   usePagePinch(contentRef, pagesTrackRef, pinchHudRef, {
@@ -5513,6 +5583,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
   const fillerSlot = horizontal ? pageSlotWidth : pageSlotHeight
   const fillerStartSize = Math.max(0, windowStart * fillerSlot)
   const fillerEndSize = Math.max(0, (pages.length - 1 - windowEnd) * fillerSlot)
+  // Na vertical o bloco de preenchimento é N casas de página, e a altura da
+  // página dentro de cada casa acompanha a pinça (ver `pinchSized`). Na
+  // fileira horizontal a casa é a largura da tela, que a pinça não muda.
+  const fillerHeight = (count: number) =>
+    pinchSized(count * spacerSize.height, count * (pageSlotHeight - spacerSize.height))
 
   return (
     <ViewerShell>
@@ -6309,7 +6384,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               {fillerStartSize > 0 && (
                 <div
                   aria-hidden
-                  style={horizontal ? { width: fillerStartSize } : { height: fillerStartSize }}
+                  style={horizontal ? { width: fillerStartSize } : { height: fillerHeight(windowStart) }}
                   className={horizontal ? 'h-px shrink-0' : 'w-full shrink-0'}
                 />
               )}
@@ -6364,7 +6439,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
               {fillerEndSize > 0 && (
                 <div
                   aria-hidden
-                  style={horizontal ? { width: fillerEndSize } : { height: fillerEndSize }}
+                  style={horizontal ? { width: fillerEndSize } : { height: fillerHeight(pages.length - 1 - windowEnd) }}
                   className={horizontal ? 'h-px shrink-0' : 'w-full shrink-0'}
                 />
               )}
@@ -7582,8 +7657,8 @@ const PdfPageSpacer = memo(function PdfPageSpacer({
       <div
         className="relative mx-auto flex shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]"
         style={{
-          width: frameWidth,
-          height: frameHeight,
+          width: pinchSized(size.width, frameWidth - size.width),
+          height: pinchSized(size.height, frameHeight - size.height),
           contentVisibility: 'auto',
           containIntrinsicSize: `${frameWidth}px ${frameHeight}px`,
         }}
@@ -9547,7 +9622,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // resposta muda entre navegadores e entre quadros de rolagem, o que dá
         // grifo que muda de tom sozinho. Também barateia a conta: a mistura
         // passa a ser recalculada só dentro da página, não na tela inteira.
-        style={{ width: frameOuterWidth, isolation: 'isolate' }}
+        // A largura acompanha a pinça sem render (ver `pinchSized`): só a
+        // página escala, a moldura (padding + borda) fica fixa.
+        style={{ width: pinchSized(pageFrameSize.width, frameOuterWidth - pageFrameSize.width), isolation: 'isolate' }}
       >
         {/* Sem `backdrop-blur`: a etiqueta fica sobre a página, que a pinça
             escala a cada quadro — e o Safari reborrava cada etiqueta de cada
