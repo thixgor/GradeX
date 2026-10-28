@@ -34,10 +34,13 @@
  * composição — a GPU estica o que já está desenhado, sem layout nem rolagem
  * no gesto.
  *
- * O que fazia o `transform` piscar no iPad era outra coisa, e foi resolvido
- * no leitor: a coluna virava camada própria no começo do gesto e deixava de
- * ser no fim (agora é camada o tempo todo), e o redesenho nítido apagava o
- * canvas que estava na tela (agora desenha num canvas novo e troca por cima).
+ * O que fazia a pinça piscar no iPhone/iPad era outra coisa, e foi resolvido
+ * no leitor (ver `usePagePinch`): a rolagem feita por JavaScript chega à tela
+ * do Safari alguns quadros depois do layout (a acomodação agora acontece com a
+ * coluna presa na tela), a página voltava ao tamanho anterior enquanto o
+ * redesenho nítido não terminava, a coluna virava camada própria no começo do
+ * gesto e deixava de ser no fim, e o redesenho apagava o canvas que estava na
+ * tela.
  *
  * ## O modelo
  *

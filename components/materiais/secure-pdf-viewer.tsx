@@ -2724,12 +2724,31 @@ function useViewerGestures(
   }, [enabled, ref, trackRef])
 }
 
+/**
+ * Tempo mínimo com a coluna presa depois da pinça (ver `freezeAndSettle`): a
+ * folga para o Safari do iOS aplicar a rolagem pedida por JavaScript, que no
+ * vídeo de tela chegou quatro quadros (~70 ms) depois do layout.
+ */
+const PINCH_FREEZE_MIN_MS = 240
+
 // ─── Pinça de dois dedos nas páginas ────────────────────────────────────────
 // Como no GoodNotes: os dedos ampliam e arrastam a página na hora (um
 // `transform` na coluna, sem render), e quando o último dedo sai o zoom de
 // verdade entra e a página re-rasteriza nítida no tamanho novo. O ponto do
 // material que estava entre os dedos continua entre os dedos — durante o
 // gesto, quando ele vira arrasto de um dedo só e depois que o layout se refaz.
+//
+// O que o vídeo de tela do iPhone mostrou, e onde cada coisa foi resolvida:
+//  - quatro quadros VAZIOS logo depois de soltar: no Safari do iOS a rolagem
+//    feita por JavaScript chega à tela alguns quadros depois do layout. Na
+//    pilha vertical a acomodação acontece com a coluna presa (`position:
+//    fixed`), e a rolagem nova é pedida enquanto nada visível depende dela —
+//    ver `freezeAndSettle`;
+//  - a página voltando ao tamanho ANTERIOR durante o redesenho nítido: a conta
+//    do tamanho da moldura misturava a escala do redesenho que começou com o
+//    tamanho do desenho que ainda está na tela — ver `pageFrameSize`;
+//  - a acomodação a 20 quadros por segundo: ela agora é uma transição CSS, que
+//    o compositor anima sozinho mesmo com a thread principal ocupada.
 //
 // Duas regras que o iPad cobra (as duas já piscaram na tela):
 //  - a coluna é camada de composição O TEMPO TODO (`will-change: transform`
@@ -2781,8 +2800,14 @@ interface PinchSession {
   frames: PinchFrameRef[]
 }
 
-/** A moldura da página (o que escala com o zoom), ou a linha inteira num espaçador. */
+/**
+ * O que escala com o zoom: a superfície da página (sem o padding da moldura,
+ * que não cresce junto — medir na moldura deixava o ponto entre os dedos
+ * escorregar uns pixels a cada zoom). Num espaçador, a moldura dele.
+ */
 function pinchFrameOf(row: HTMLElement): HTMLElement {
+  const surface = row.querySelector<HTMLElement>('[data-pdf-page-surface]')
+  if (surface) return surface
   const frame = row.firstElementChild
   return frame instanceof HTMLElement ? frame : row
 }
@@ -2817,6 +2842,8 @@ function usePagePinch(
     holdFocus: (untilMs: number) => void
     /** Uma viagem (sumário, retomada, rotação) manda na rolagem agora. */
     isTraveling: () => boolean
+    /** Leitura na fileira horizontal (a coluna mora num contêiner que rola de lado). */
+    isHorizontal: () => boolean
   }
 ) {
   const optionsRef = useRef(options)
@@ -2827,6 +2854,8 @@ function usePagePinch(
     if (!content || !options.enabled) return
 
     let session: PinchSession | null = null
+    // Coluna presa na tela durante a acomodação (ver `freezeAndSettle`).
+    let frozen: { track: HTMLElement; timer: number } | null = null
     let writeFrame = 0
     let settleFrame = 0
     let settleAbandoned = false
@@ -2873,15 +2902,39 @@ function usePagePinch(
     // Acomodação em curso e um gesto novo: o layout já está no zoom novo, só
     // falta tirar o transform — a página vai direto para onde ela já estava
     // indo.
+    /** Devolve a coluna presa ao fluxo, no lugar em que ela já está. */
+    const unfreeze = () => {
+      const held = frozen
+      if (!held) return
+      frozen = null
+      window.clearTimeout(held.timer)
+      const style = held.track.style
+      style.transition = ''
+      style.transform = ''
+      style.position = ''
+      style.top = ''
+      style.left = ''
+      style.width = ''
+      content.style.minHeight = ''
+    }
+
     const stopSettle = () => {
       if (settleFrame) {
         window.cancelAnimationFrame(settleFrame)
         settleFrame = 0
       }
+      unfreeze()
       const track = trackRef.current
       if (track) track.style.transform = ''
       pagePinchFrozen = false
       pagePinchFocusRow = null
+    }
+
+    // Encostou de novo (dedo, caneta, mouse, roda) durante a acomodação: dali
+    // em diante a posição é de quem lê.
+    const abandonSettle = () => {
+      settleAbandoned = true
+      if (frozen) stopSettle()
     }
 
     const begin = (point: PinchPoint, distance: number, count: number, source: PinchSession['source']) => {
@@ -3019,6 +3072,123 @@ function usePagePinch(
       step(performance.now())
     }
 
+    /**
+     * A acomodação no iPhone/iPad. O caso que o vídeo de tela mostrou:
+     *
+     * Quando os dedos saem, o zoom do React entra e a rolagem da janela tem de
+     * andar para o ponto entre os dedos continuar lá. No Chrome as duas coisas
+     * chegam à tela no mesmo quadro. No Safari do iOS a rolagem feita por
+     * JavaScript chega ALGUNS QUADROS DEPOIS: nesse intervalo a tela mostra o
+     * layout novo na rolagem velha — uma faixa de espaçadores vazia (quatro
+     * quadros escuros no vídeo), ou, antes de as páginas sem desenho ficarem
+     * escuras, páginas brancas. A versão que corrigia a rolagem a cada quadro
+     * do gesto "teleportava" pelo mesmo motivo.
+     *
+     * Então, por um instante, a rolagem deixa de importar: a coluna vira
+     * `position: fixed` exatamente onde está na tela, o zoom entra, a rolagem
+     * nova é pedida (o Safari pode aplicá-la quando quiser: nada visível
+     * depende dela) e a coluna é posta, ainda presa, no lugar em que vai ficar
+     * quando voltar ao fluxo. A diferença entre onde os dedos a deixaram e esse
+     * lugar vira uma TRANSIÇÃO CSS — o compositor anima sozinho, a 60 quadros,
+     * mesmo com a thread principal ocupada com o React e com o redesenho
+     * nítido (era o tranco a 20 quadros por segundo depois de soltar). Quando a
+     * transição acaba, a coluna volta ao fluxo no mesmo lugar e a seção, que
+     * segurou a altura do documento enquanto isso, solta.
+     */
+    const freezeAndSettle = ({
+      track,
+      active,
+      focusId,
+      fraction,
+      point,
+      from,
+      scale,
+    }: {
+      track: HTMLElement
+      active: PinchSession
+      focusId: string
+      fraction: PinchPoint
+      point: PinchPoint
+      from: PinchRect
+      scale: number
+    }) => {
+      const scroller = findReadingScroller(track)
+      const readScroll = () => (scroller ? scroller.scrollTop : window.scrollY)
+      const maxScroll = () => scroller
+        ? scroller.scrollHeight - scroller.clientHeight
+        : document.documentElement.scrollHeight - (document.documentElement.clientHeight || window.innerHeight)
+
+      // 1. A coluna parada, sem transform: onde ela está e quanto o documento
+      //    mede. A soma de `top` com a rolagem é a posição dela no documento,
+      //    que não muda com o zoom (o que muda é o que vem DENTRO dela).
+      track.style.transform = ''
+      const rect = track.getBoundingClientRect()
+      const base = rect.top + readScroll()
+      const sectionStyle = window.getComputedStyle(content)
+      const padding = (parseFloat(sectionStyle.paddingTop) || 0) + (parseFloat(sectionStyle.paddingBottom) || 0)
+      content.style.minHeight = `${content.offsetHeight}px`
+
+      // 2. Presa na tela, no mesmo lugar, com o transform em que os dedos a
+      //    deixaram. Nada disto é pintado até o fim desta tarefa.
+      const style = track.style
+      style.transition = 'none'
+      style.position = 'fixed'
+      style.top = `${rect.top}px`
+      style.left = `${rect.left}px`
+      style.width = `${rect.width}px`
+      frozen = { track, timer: 0 }
+
+      // 3. O zoom de verdade (síncrono: o DOM sai daqui no tamanho novo).
+      if (Math.abs(scale - 1) > 0.004) optionsRef.current.commit(active.baseZoom * scale)
+
+      // 4. Onde a página sob os dedos ficou, e a rolagem que a põe de volta
+      //    sob eles. A lateral é a rolagem da própria linha — essa entra junto
+      //    com o layout em qualquer navegador.
+      const row = document.getElementById(focusId)
+      let frameRect = row ? toPinchRect(pinchFrameOf(row).getBoundingClientRect()) : null
+      if (row && frameRect && row.scrollWidth - row.clientWidth > 1) {
+        const drift = anchorDrift(frameRect, fraction, point)
+        if (Math.abs(drift.x) > 0.5) {
+          row.scrollLeft += drift.x
+          frameRect = toPinchRect(pinchFrameOf(row).getBoundingClientRect())
+        }
+      }
+      content.style.minHeight = `${track.offsetHeight + padding}px`
+      let target = readScroll()
+      if (frameRect && !optionsRef.current.isTraveling()) {
+        const offset = frameRect.top - rect.top
+        target = base + offset + fraction.y * frameRect.height - point.y
+        target = Math.round(Math.min(Math.max(0, maxScroll()), Math.max(0, target)))
+        if (Math.abs(target - readScroll()) > 0.5) {
+          if (scroller) scroller.scrollTop = target
+          else window.scrollTo({ top: target, behavior: 'instant' })
+        }
+      }
+      // O lugar em que a coluna vai estar quando voltar ao fluxo com essa
+      // rolagem — calculado com o alvo, não com o que o navegador já aplicou.
+      const finalTop = base - target
+      style.top = `${finalTop}px`
+
+      // 5. A diferença entre onde os dedos deixaram a página e esse lugar vira
+      //    a transição (FLIP: começa desenhando o lugar velho por cima do novo).
+      const settled = row ? toPinchRect(pinchFrameOf(row).getBoundingClientRect()) : null
+      if (settled) {
+        writePinchTransform(track, transformBetween(settled, from, { x: rect.left, y: finalTop }))
+        void track.offsetWidth
+        style.transition = `transform ${PINCH_SETTLE_ANIMATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`
+        style.transform = ''
+      }
+
+      // 6. De volta ao fluxo depois da transição, com folga para o Safari já
+      //    ter aplicado a rolagem pedida no passo 4.
+      optionsRef.current.holdFocus(Date.now() + PINCH_SETTLE_ANIMATION_MS + 600)
+      frozen.timer = window.setTimeout(() => {
+        unfreeze()
+        pagePinchFrozen = false
+        pagePinchFocusRow = null
+      }, Math.max(PINCH_SETTLE_ANIMATION_MS, PINCH_FREEZE_MIN_MS) + 40)
+    }
+
     const end = () => {
       const active = session
       if (!active) return
@@ -3063,6 +3233,14 @@ function usePagePinch(
       // O alinhamento lateral automático não toca nesta linha até a página
       // assentar (ver `pagePinchFocusRow`).
       pagePinchFocusRow = best.id
+      // Na pilha vertical, a acomodação com a coluna presa (ver
+      // `freezeAndSettle`). Na fileira horizontal a coluna mora dentro de um
+      // contêiner que rola de lado, e prendê-la zeraria essa rolagem; ali fica
+      // a acomodação quadro a quadro.
+      if (!optionsRef.current.isHorizontal()) {
+        freezeAndSettle({ track, active, focusId: best.id, fraction, point, from, scale })
+        return
+      }
       // O transform sai ANTES do zoom do React, na mesma tarefa: quem mede
       // durante o commit (os efeitos de layout das linhas) já vê o layout sem
       // escala. `settle` põe de volta, no primeiro passo, o transform que
@@ -3074,12 +3252,16 @@ function usePagePinch(
     }
 
     // ── Dedos ────────────────────────────────────────────────────────────
+    // Contam todos os dedos na tela (menos a caneta). Contar só os que
+    // encostaram EM CIMA da página deixava a pinça de fora quando um dos dois
+    // caía num aviso flutuante ("Retomando da página…", a pastilha de zoom): o
+    // gesto virava rolagem nativa de dois dedos — o primeiro tranco do vídeo de
+    // tela. O gesto só é das páginas se pelo menos um dedo estiver nelas (ver
+    // `touchesPages`).
     const fingersOf = (event: TouchEvent) => {
       const points: PinchPoint[] = []
       for (const touch of Array.from(event.touches)) {
         if ((touch as Touch & { touchType?: string }).touchType === 'stylus') continue
-        const target = touch.target as Node | null
-        if (!target || !content.contains(target)) continue
         points.push({ x: touch.clientX, y: touch.clientY })
       }
       return points
@@ -3107,12 +3289,27 @@ function usePagePinch(
     // dedo é escrita de verdade: o toque que chega agora é a mão apoiada.
     const inkBlocksPinch = () => inkActive && Date.now() - inkActiveSince > TWO_FINGER_PAN_WINDOW_MS
 
+    // Algum dedo sobre as páginas — e nenhum numa folha ou diálogo aberto, que
+    // cobrem a tela e são de quem os abriu.
+    const touchesPages = (event: TouchEvent) => {
+      let onPages = false
+      for (const touch of Array.from(event.touches)) {
+        const target = touch.target as Element | null
+        if (!target) continue
+        if (target.closest?.('[role="dialog"]')) return false
+        if (content.contains(target)) onPages = true
+      }
+      return onPages
+    }
+
     const onTouchStart = (event: TouchEvent) => {
       lastTouchAt = Date.now()
       // Todos os toques são novos: o gesto anterior acabou, mesmo que o seu
       // `touchend` tenha se perdido (elemento que saiu do DOM no meio).
       if (session?.source === 'touch' && event.touches.length === event.changedTouches.length) end()
-      settleAbandoned = true
+      // Um dedo durante a acomodação: a página volta ao fluxo já. (Se forem
+      // dois, `begin` faz o mesmo.)
+      if (!session) abandonSettle()
       const points = fingersOf(event)
       if (session) {
         if (session.source !== 'touch' || points.length === 0) return
@@ -3121,7 +3318,7 @@ function usePagePinch(
         rebase(shape.point, shape.distance, shape.count)
         return
       }
-      if (points.length < 2 || inkBlocksPinch()) return
+      if (points.length < 2 || inkBlocksPinch() || !touchesPages(event)) return
       // Não cancelável = o navegador já está rolando com o primeiro dedo. Não
       // dá para tomar o gesto no meio sem a página andar duas vezes; o arrasto
       // de dois dedos continua sendo dele, e a próxima pinça funciona.
@@ -3158,7 +3355,7 @@ function usePagePinch(
       if (!event.ctrlKey) {
         // Rolagem comum logo depois da pinça: a posição passa a ser de quem
         // lê, e segurar a página contra a roda seria brigar com ela.
-        settleAbandoned = true
+        abandonSettle()
         return
       }
       // A pinça do Safari já chega pelos eventos `gesture*`: os dois juntos
@@ -3221,12 +3418,16 @@ function usePagePinch(
     }
 
     // Encostou de novo (mouse, caneta, dedo) durante a acomodação: dali em
-    // diante a posição é de quem lê.
+    // diante a posição é de quem lê. Fora de uma pinça: o segundo dedo de uma
+    // pinça nova chega por aqui antes do `touchstart`, e quem cuida dele é
+    // `begin`.
     const onPointerDown = () => {
-      settleAbandoned = true
+      if (!pagePinchActive) abandonSettle()
     }
 
-    content.addEventListener('touchstart', onTouchStart, { passive: false, capture: true })
+    // Na janela, e não só nas páginas: o segundo dedo pode cair num aviso
+    // flutuante por cima delas (ver `touchesPages`).
+    window.addEventListener('touchstart', onTouchStart, { passive: false, capture: true })
     window.addEventListener('touchmove', onTouchMove, { passive: false, capture: true })
     window.addEventListener('touchend', onTouchEnd, { passive: true, capture: true })
     window.addEventListener('touchcancel', onTouchEnd, { passive: true, capture: true })
@@ -3239,7 +3440,7 @@ function usePagePinch(
     window.addEventListener('pointerdown', onPointerDown, { passive: true, capture: true })
     return () => {
       window.removeEventListener('pointerdown', onPointerDown, true)
-      content.removeEventListener('touchstart', onTouchStart, true)
+      window.removeEventListener('touchstart', onTouchStart, true)
       window.removeEventListener('touchmove', onTouchMove, true)
       window.removeEventListener('touchend', onTouchEnd, true)
       window.removeEventListener('touchcancel', onTouchEnd, true)
@@ -5056,6 +5257,7 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
       suppressFocusUntilRef.current = Math.max(suppressFocusUntilRef.current, until)
     },
     isTraveling: () => pendingTargetRef.current != null,
+    isHorizontal: () => horizontalRef.current,
   })
 
   // O zoom nativo do Safari (a página do site inteira) fica de fora do leitor:
@@ -7844,7 +8046,9 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   const [waitSeconds, setWaitSeconds] = useState(0)
   const [pageProxy, setPageProxy] = useState<PageProxyEntry | null>(null)
   const [loadAttempt, setLoadAttempt] = useState(0)
-  const [renderSize, setRenderSize] = useState<PageSize | null>(null)
+  // Tamanho da página no desenho que está na tela, COM a escala em que ele
+  // foi feito (ver `pageFrameSize`).
+  const [renderSize, setRenderSize] = useState<(PageSize & { scale: number }) | null>(null)
   // A página já tem TINTA na tela? Não é a mesma pergunta que `renderSize`: o
   // tamanho é definido antes do desenho (para a moldura reservar o espaço e a
   // página não pular), e a espera saía da tela naquele instante. O leitor ficava
@@ -8151,7 +8355,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // ao mesmo tempo são o pico de memória que derruba a aba.
         if (!hasBitmapRef.current) {
           releasePageBitmaps(host)
-          setRenderSize({ width: displayViewport.width, height: displayViewport.height })
+          setRenderSize({ width: displayViewport.width, height: displayViewport.height, scale: renderScale })
         }
 
         fresh = document.createElement('canvas')
@@ -8168,7 +8372,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
 
         presentBitmap(host, fresh)
         fresh = null
-        setRenderSize({ width: displayViewport.width, height: displayViewport.height })
+        setRenderSize({ width: displayViewport.width, height: displayViewport.height, scale: renderScale })
         hasBitmapRef.current = true
         setPainted(true)
         // Solta o que o pdf.js guardou desta página: lista de operadores e,
@@ -8357,7 +8561,16 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
   // A moldura acompanha o zoom NA HORA, mesmo antes de a rasterização nítida
   // chegar: o canvas ocupa 100% dela, então o bitmap já existente é reescalado
   // pela GPU. É isso que faz o zoom parecer instantâneo sem re-parsear nada.
-  const zoomRatio = renderScale > 0 ? zoom / renderScale : 1
+  //
+  // A razão é contra a escala do DESENHO QUE ESTÁ NA TELA (`renderSize.scale`),
+  // e não contra `renderScale`. `renderScale` muda quando o redesenho COMEÇA, e
+  // `renderSize` só quando ele TERMINA: dividindo um pelo outro, durante todo
+  // o redesenho a página voltava ao tamanho do zoom ANTERIOR e depois pulava
+  // para o novo. Com os botões (degraus de 10–25%) isso mal se via; com a
+  // pinça (de 250% para 120% num gesto) era a página dobrando de tamanho por
+  // alguns quadros — no iPhone, uma tela vazia, porque a rolagem passava a
+  // mostrar outra parte do documento.
+  const zoomRatio = renderSize && renderSize.scale > 0 ? zoom / renderSize.scale : 1
   const pageFrameSize = renderSize
     ? { width: renderSize.width * zoomRatio, height: renderSize.height * zoomRatio }
     : fallbackSize
@@ -9682,6 +9895,7 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             desenho do PDF. */}
         <div
           ref={bitmapHostRef}
+          data-pdf-page-surface="true"
           className="relative block w-full overflow-hidden rounded-lg"
           style={{ aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}` }}
         />
