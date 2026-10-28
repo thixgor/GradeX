@@ -5600,9 +5600,11 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
         .pdf-viewer-shell .pdf-foco-compacto .foco-gatilho:hover {
           background: rgba(255, 255, 255, 0.1) !important;
         }
+        /* Só opacidade. O deslize de 6px fazia a página "pular" toda vez que
+           um espaçador virava página — e a pinça faz isso a cada gesto. */
         @keyframes pdfPageFade {
-          from { opacity: 0; transform: translateY(6px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0.4; }
+          to { opacity: 1; }
         }
         .pdf-page-fade {
           animation: pdfPageFade 0.22s ease-out;
@@ -9547,12 +9549,26 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
         // passa a ser recalculada só dentro da página, não na tela inteira.
         style={{ width: frameOuterWidth, isolation: 'isolate' }}
       >
-        <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/65 px-2 py-1 text-[11px] font-semibold text-zinc-50 backdrop-blur-md">
+        {/* Sem `backdrop-blur`: a etiqueta fica sobre a página, que a pinça
+            escala a cada quadro — e o Safari reborrava cada etiqueta de cada
+            página viva junto, além de piscar o desfoque dentro de camada com
+            transform. Fundo quase opaco lê igual. */}
+        <div className="absolute left-3 top-3 z-10 rounded-lg border border-zinc-200/30 bg-zinc-950/80 px-2 py-1 text-[11px] font-semibold text-zinc-50">
           Pag. {pageNumber}
         </div>
+        {/* A folha só fica BRANCA depois de desenhada.
+            Era `bg-white` desde a montagem, e uma página montada ainda sem
+            bitmap é um retângulo branco do tamanho da tela até o pdf.js
+            terminar — num tablet, centenas de milissegundos. Toda mudança de
+            zoom (e a pinça muda o zoom a cada gesto) remonta as vizinhas,
+            porque quantas páginas ficam vivas depende do zoom: era o "pisca
+            branco". Agora a página nova tem a cara do espaçador (a moldura
+            escura) e a folha surge num fade quando o desenho fica pronto. */}
         <canvas
           ref={canvasRef}
-          className="block h-auto w-full rounded-lg bg-white"
+          className={`block h-auto w-full rounded-lg transition-opacity duration-200 ease-out motion-reduce:transition-none ${
+            painted ? 'bg-white opacity-100' : 'opacity-0'
+          }`}
           style={{ aspectRatio: `${Math.max(1, pageFrameSize.width)} / ${Math.max(1, pageFrameSize.height)}` }}
         />
         {/* Só na PRIMEIRA pintura. Antes a condição incluía `loading`, que o
@@ -9561,8 +9577,8 @@ const PdfCanvasPage = memo(function PdfCanvasPage({
             passo de zoom. Com o render em offscreen, re-rasterizar não precisa
             mais esconder nada. */}
         {!painted && (visible || active) && (
-          <div className="absolute inset-2 rounded-lg bg-white/90 flex items-center justify-center">
-            <div className="h-7 w-7 rounded-full border-2 border-emerald-700/20 border-t-emerald-700 animate-spin" />
+          <div className="absolute inset-2 flex items-center justify-center rounded-lg bg-white/[0.04]">
+            <div className="h-7 w-7 animate-spin rounded-full border-2 border-white/15 border-t-emerald-300" />
           </div>
         )}
         {/* Rate limit não é erro do leitor: a página volta sozinha. Mostramos
