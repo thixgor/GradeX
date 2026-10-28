@@ -143,7 +143,13 @@ const nextConfig = {
      * Helvetica e sem logo — em silêncio, e com qualquer `β` ou `→` do cartão
      * soletrado (a Helvetica do PDF não tem esses glifos).
      */
-    '/api/flashcards/manual/*/pdf': ['./public/fonts/Inter-*.ttf', './public/logo-pdf.png'],
+    '/api/flashcards/manual/*/pdf': [
+      './public/fonts/Inter-Regular.ttf',
+      './public/fonts/Inter-Bold.ttf',
+      './public/fonts/Inter-Italic.ttf',
+      './public/fonts/Inter-BoldItalic.ttf',
+      './public/logo-pdf.png',
+    ],
   },
 
   // Habilitar otimização de pacotes pesados
