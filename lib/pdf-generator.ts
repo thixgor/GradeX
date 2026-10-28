@@ -3,45 +3,70 @@ import JsBarcode from 'jsbarcode'
 import { Exam, Question, UserAnswer, QuestionAnnotation, Form, FormBlock } from './types'
 import { decodeHtmlEntities } from './html-entities'
 
-// ── Base da marca (fontes, logo, cabeçalho e rodapé) ─────────────
+// ── Base da marca (fontes, logo, fundo, vidro, cabeçalho e rodapé) ──
 // Tudo isto morava aqui e havia sido reescrito pela metade em
-// `lib/user-report-generator.ts` — com `helvetica` no lugar da Roboto, o que
-// soletrava qualquer linha com um caractere fora do WinAnsi. Agora é um lugar
-// só; ver `lib/pdf/marca.ts`.
+// `lib/user-report-generator.ts` — com `helvetica` no lugar da fonte
+// embutida, o que soletrava qualquer linha com um caractere fora do WinAnsi.
+// Agora é um lugar só; ver `lib/pdf/marca.ts`. Os componentes de página
+// (cartão de título, questão, alternativas, grade) moram em `lib/pdf/folha.ts`.
 import {
-  CINZA_CLARO,
-  CINZA_TEXTO,
+  FLORESTA,
   LARANJA,
-  LARANJA_CLARO,
-  VERDE_ESCURO,
-  VERDE_MEDIO,
+  TINTA,
+  TINTA_SUAVE,
+  VERDE_VIVO,
+  Y_APOS_CABECALHO,
   aquecerAssetsDePdf,
   aquecerFontes as prewarmFontsCache,
   carregarLogo as loadLogo,
-  desenharCabecalho,
-  desenharRodape,
+  desenharFundoDaPagina,
+  desenharIconeDoApp,
+  desenharMancha,
+  desenharPilula,
+  desenharVidro,
+  encurtarParaLargura,
+  fonte,
+  quebrarComLimite,
   registrarFontes,
   sanitizarParaPdf as sanitizeForPdf,
 } from './pdf/marca'
 import {
-  ALTURA_MAXIMA_DA_IMAGEM,
-  type LinhaDeImagens,
-  desenharImagensNoPdf,
-  medirLinhasDeImagens,
-} from './pdf/imagens-de-questao'
-import { desenharCaixaDeRespostaComentada } from './pdf/caixa-de-resposta-comentada'
-import { desenharRecursoNoPdf } from './pdf/recurso-visual-pdf'
+  type Folha,
+  type LinhaDoGrupo,
+  criarFolha,
+  desenharAlternativas,
+  desenharCabecalhoDaQuestao,
+  desenharCartaoDeTitulo,
+  desenharGrupo,
+  desenharListaDeItens,
+  desenharNumeros,
+  desenharPares,
+  desenharPautas,
+  escreverCredito,
+  escreverNota,
+  escreverTexto,
+  finalizarFolha,
+  garantirEspaco,
+} from './pdf/folha'
+import {
+  type CelulaDaGrade,
+  alternativasDa,
+  desenharCaixaDeTexto,
+  desenharEnunciado,
+  desenharGrade,
+  desenharImagensNaFolha,
+  desenharRespostaComentada,
+  fecharQuestao,
+  rotuloDoTipo,
+} from './pdf/questao-na-folha'
+import { desenharImagemEmoldurada } from './pdf/imagens-de-questao'
 import type { ImagemDeQuestao, LayoutDeImagens } from './questoes/imagens'
-import { desenharLinhaRica, quebrarTexto } from './pdf/texto'
 // Reexportado: o módulo saiu daqui (ver lib/provas/resposta-comentada.ts), e
 // os testes e o relatório do aluno continuam encontrando o nome no lugar de
 // sempre.
 export { montarRespostaComentada } from './provas/resposta-comentada'
-import { montarRespostaComentada } from './provas/resposta-comentada'
 import {
   blocoDaQuestaoDoBanco,
-  blocoDaResposta,
-  blocoDoEnunciado,
   imagensDaExplicacaoDoBanco,
   layoutDaExplicacaoDoBanco,
   urlsDaQuestao,
@@ -50,9 +75,8 @@ import {
 /**
  * A família ativa neste arquivo.
  *
- * Continua sendo uma variável de módulo porque as centenas de
- * `doc.setFont(FONT, ...)` daqui dependem dela; quem a mantém em dia é
- * `registerFonts`, logo abaixo.
+ * Quem a mantém em dia é `registerFonts`, logo abaixo; ela vai para cada folha
+ * (`criarFolha`) e dali para todo componente que escreve.
  */
 let FONT = 'helvetica'
 
@@ -66,22 +90,6 @@ async function registerFonts(doc: jsPDF): Promise<void> {
  */
 export function prewarmPDFAssets(): void {
   aquecerAssetsDePdf()
-}
-
-// A quebra de linha e o negrito inline moram em `lib/pdf/texto.ts` — eram duas
-// cópias divergentes (esta e a do relatório do aluno). Os nomes locais ficam
-// para não reescrever as centenas de chamadas deste arquivo.
-const wrapText = quebrarTexto
-
-// Render a line with inline **bold** and *italic* markdown support.
-function drawRichLine(
-  doc: jsPDF,
-  line: string,
-  x: number,
-  y: number,
-  baseStyle: 'normal' | 'bold' | 'italic' = 'normal'
-): void {
-  desenharLinhaRica(doc, FONT, line, x, y, baseStyle)
 }
 
 // ── Session-level image cache — persists across all PDF calls in one tab ──
@@ -162,285 +170,100 @@ async function prefetchExamImages(questions: Question[] | undefined): Promise<Ma
   return imageMap
 }
 
-/**
- * O desenhador de imagens deste documento.
- *
- * Cada gerador tem o seu `y`, o seu subtítulo de cabeçalho e a sua margem; o
- * que é IGUAL entre eles — a conta do tamanho, a quebra de página que não
- * separa a figura do crédito, o lado a lado — mora em
- * `lib/pdf/imagens-de-questao.ts`. Esta fábrica só amarra os dois.
- */
-function criarDesenhoDeImagens(
-  doc: jsPDF,
-  imageMap: Map<string, ImgData>,
-  pageWidth: number,
-  pageHeight: number,
-  margin: number,
-  logo: string | null,
-) {
-  return (
-    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
-    y: number,
-    subtitulo: string,
-    opcoes: { recuo?: number; alturaMaxima?: number } = {},
-  ): number => {
-    if (bloco.imagens.length === 0) return y
-    const recuo = opcoes.recuo ?? 0
-    return desenharImagensNoPdf(doc, bloco.imagens, bloco.layout, imageMap, {
-      x: margin + recuo,
-      largura: pageWidth - 2 * margin - recuo,
-      y,
-      limiteY: pageHeight - 25,
-      alturaMaxima: opcoes.alturaMaxima,
-      fonte: FONT,
-      novaPagina: () => {
-        doc.addPage()
-        return addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
-      },
-    })
-  }
+// ── Peças comuns aos documentos de prova ─────────────────────────
+
+/** Um documento novo, com fontes embutidas, já com o cabeçalho da 1ª página. */
+async function abrirFolha(subtitulo: string): Promise<Folha> {
+  const doc = new jsPDF()
+  await registerFonts(doc)
+  const logo = await loadLogo()
+  return criarFolha(doc, FONT, logo, subtitulo)
 }
 
-/**
- * Mede as imagens de um bloco sem desenhar nada.
- *
- * É o par de `criarDesenhoDeImagens` para quem precisa da altura ANTES: a
- * caixa da resposta comentada é um retângulo pintado antes do conteúdo, e ela
- * só envolve a figura se souber quanto a figura ocupa.
- */
-function criarMedidaDeImagens(
-  doc: jsPDF,
-  imageMap: Map<string, ImgData>,
-  pageWidth: number,
-  margin: number,
-) {
-  return (
-    bloco: { imagens: ImagemDeQuestao[]; layout: LayoutDeImagens },
-    opcoes: { recuo?: number; alturaMaxima?: number } = {},
-  ): LinhaDeImagens[] => {
-    if (bloco.imagens.length === 0) return []
-    const recuo = opcoes.recuo ?? 0
-    return medirLinhasDeImagens(doc, bloco.imagens, bloco.layout, imageMap, {
-      largura: pageWidth - 2 * margin - 2 * recuo,
-      alturaMaxima: opcoes.alturaMaxima,
-      fonte: FONT,
-    })
-  }
+const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`
+
+const hoje = () => new Date().toLocaleDateString('pt-BR')
+
+/** Número no jeito brasileiro: 2,5 e não 2.5. */
+const numeroBr = (n: number | string) => String(n).replace('.', ',')
+
+/** Os números da prova, como pílulas do cartão de título. */
+function chipsDaProva(exam: Exam, total: number, extras: (string | null | undefined)[] = []): string[] {
+  return [
+    plural(total, 'questão', 'questões'),
+    exam.duration ? `${exam.duration} min` : null,
+    exam.scoringMethod === 'tri' ? 'TRI · 1000 pontos' : exam.totalPoints ? `${exam.totalPoints} pontos` : null,
+    ...extras,
+  ].filter((chip): chip is string => !!chip)
 }
 
-/**
- * O `y` do corpo numa página nova.
- *
- * `desenharCabecalho` tem altura fixa e devolve sempre isto; a constante
- * existe para o fatiamento de caixas altas poder PREVER a coordenada antes de
- * a página existir (ver `fatiarCaixaEmPaginas`).
- */
-const Y_APOS_CABECALHO = 40
-
-// Adiciona header padrão DomineAqui (com logo se disponível)
-function addDomineAquiHeader(doc: jsPDF, pageWidth: number, margin: number, subtitle?: string, logoData?: string | null) {
-  return desenharCabecalho(doc, pageWidth, margin, subtitle, logoData)
-}
-
-// Adiciona footer padrão DomineAqui
-function addDomineAquiFooter(doc: jsPDF, pageNum: number, totalPages: number, pageWidth: number, pageHeight: number, margin: number, extraText?: string) {
-  desenharRodape(doc, pageNum, totalPages, pageWidth, pageHeight, margin, extraText)
-}
+// ── Gabarito oficial ─────────────────────────────────────────────
 
 export async function generateGabaritoPDF(exam: Exam): Promise<Blob> {
   const questoes = questoesDaProva(exam)
   // `numberOfQuestions` é o número declarado na prova; quando ele falta, o que
   // está escrito no documento é a contagem real do que foi impresso.
   const totalDeQuestoes = exam.numberOfQuestions ?? questoes.length
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const logo = await loadLogo()
+  const folha = await abrirFolha('Gabarito oficial')
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
-
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial', logo)
-      return true
-    }
-    return false
-  }
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Gabarito Oficial', logo)
-
-  // === INFORMAÇÕES DA PROVA ===
-  // Box com título da prova
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setFillColor(...CINZA_CLARO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
-
-  doc.setTextColor(0, 0, 0)
-  doc.setFontSize(14)
-  doc.setFont(FONT, 'bold')
-  doc.text(exam.title, pageWidth / 2, y + 13, { align: 'center' })
-
-  y += 28
-
-  // Descrição se existir
-  if (exam.description) {
-    doc.setFontSize(10)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(100, 100, 100)
-    const descLines = wrapText(doc, exam.description, pageWidth - 2 * margin)
-    doc.text(descLines, pageWidth / 2, y, { align: 'center' })
-    y += descLines.length * 5 + 8
-  }
-
-  // Informações em duas colunas
-  const colWidth = (pageWidth - 2 * margin - 10) / 2
-
-  // Coluna 1 - Total de questões
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.roundedRect(margin, y, colWidth, 25, 2, 2, 'F')
-  doc.setFontSize(9)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFont(FONT, 'normal')
-  doc.text('TOTAL DE QUESTÕES', margin + 5, y + 8)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  doc.text(totalDeQuestoes.toString(), margin + 5, y + 19)
-
-  // Coluna 2 - Pontuação
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.roundedRect(margin + colWidth + 10, y, colWidth, 25, 2, 2, 'F')
-  doc.setFontSize(9)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFont(FONT, 'normal')
-  doc.text('PONTUAÇÃO', margin + colWidth + 15, y + 8)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  // `exam.totalPoints` pode não existir (prova discursiva, prova antiga): o
-  // texto dizia "undefined pontos" no gabarito oficial, impresso.
-  doc.text(
-    exam.scoringMethod === 'tri'
-      ? '1000 pontos (TRI)'
-      : exam.totalPoints
-        ? `${exam.totalPoints} pontos`
-        : '—',
-    margin + colWidth + 15,
-    y + 19
-  )
-
-  y += 35
-
-  // === RESPOSTAS ===
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(margin, y, pageWidth - 2 * margin, 10, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(11)
-  doc.setFont(FONT, 'bold')
-  doc.text('GABARITO', pageWidth / 2, y + 7, { align: 'center' })
-
-  y += 18
-
-  // Grid de respostas (5 colunas)
-  const columns = 5
-  const columnWidth = (pageWidth - 2 * margin) / columns
-  let currentCol = 0
-  let currentRow = 0
-  const rowHeight = 12
-  const cellPadding = 2
-
-  questoes.forEach((question: Question, index: number) => {
-    // Verifica se precisa de nova página
-    if (checkPage(rowHeight + 5)) {
-      currentRow = 0
-      currentCol = 0
-    }
-
-    // `|| []` porque discursiva e redação podem chegar sem o array: o gabarito
-    // delas é um traço, não uma exceção que derruba o arquivo inteiro.
-    const correctAlternative = (question.alternatives || []).find(alt => alt.isCorrect)
-    const answerLetter = correctAlternative?.letter || '-'
-
-    const x = margin + currentCol * columnWidth
-    const cellY = y + currentRow * rowHeight
-
-    // Alternar cores de fundo
-    if (index % 2 === 0) {
-      doc.setFillColor(250, 250, 250)
-    } else {
-      doc.setFillColor(...LARANJA_CLARO)
-    }
-    doc.rect(x, cellY - 7, columnWidth - 2, rowHeight, 'F')
-
-    // Número da questão
-    doc.setTextColor(100, 100, 100)
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.text(`${question.number}.`, x + cellPadding, cellY)
-
-    // Resposta
-    doc.setTextColor(...VERDE_ESCURO)
-    doc.setFontSize(11)
-    doc.setFont(FONT, 'bold')
-    doc.text(answerLetter, x + cellPadding + 12, cellY)
-
-    currentCol++
-    if (currentCol >= columns) {
-      currentCol = 0
-      currentRow++
-    }
+  desenharCartaoDeTitulo(folha, {
+    titulo: exam.title,
+    descricao: exam.description,
+    chips: chipsDaProva(exam, totalDeQuestoes, ['Gabarito oficial']),
   })
 
-  // Ajusta y para após o grid
-  y += Math.ceil(questoes.length / columns) * rowHeight + 15
+  // `exam.totalPoints` pode não existir (prova discursiva, prova antiga): o
+  // texto dizia "undefined pontos" no gabarito oficial, impresso.
+  desenharNumeros(folha, [
+    { valor: String(totalDeQuestoes), rotulo: 'Questões' },
+    {
+      valor: exam.scoringMethod === 'tri' ? '1000' : exam.totalPoints ? String(exam.totalPoints) : '—',
+      rotulo: exam.scoringMethod === 'tri' ? 'Pontos (TRI)' : 'Pontos',
+      tom: 'verde',
+    },
+    { valor: exam.scoringMethod === 'tri' ? 'TRI' : 'Normal', rotulo: 'Sistema de pontuação', tom: 'laranja' },
+  ])
 
-  // === INFORMAÇÕES ADICIONAIS ===
-  checkPage(60)
+  // `|| []` porque discursiva e redação podem chegar sem o array: o gabarito
+  // delas é um traço, não uma exceção que derruba o arquivo inteiro.
+  desenharGrade(
+    folha,
+    questoes.map((q, i) => ({
+      numero: q.number ?? i + 1,
+      letra: (q.alternatives || []).find((alt) => alt.isCorrect)?.letter || '—',
+    })),
+    5,
+    'Gabarito',
+  )
 
-  // Separador
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(0.5)
-  doc.line(margin, y, pageWidth - margin, y)
-  y += 10
-
-  // Informações de pontuação
-  doc.setFillColor(...CINZA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 45, 2, 2, 'FD')
-
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(11)
-  doc.setFont(FONT, 'bold')
-
+  folha.y += 2
   if (exam.scoringMethod === 'tri') {
-    doc.text('SISTEMA DE PONTUAÇÃO: TRI (Teoria de Resposta ao Item)', margin + 5, y + 10)
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text('A pontuação será calculada considerando:', margin + 5, y + 20)
-    doc.text('• Dificuldade de cada questão (parâmetro b)', margin + 10, y + 27)
-    doc.text('• Discriminação da questão (parâmetro a)', margin + 10, y + 33)
-    doc.text('• Probabilidade de acerto ao acaso (parâmetro c)', margin + 10, y + 39)
+    desenharListaDeItens(
+      folha,
+      [
+        '**TRI (Teoria de Resposta ao Item):** a nota considera o padrão de respostas, não só o número de acertos.',
+        'Dificuldade de cada questão (parâmetro b).',
+        'Discriminação da questão (parâmetro a).',
+        'Probabilidade de acerto ao acaso (parâmetro c).',
+      ],
+      { titulo: 'Sistema de pontuação' },
+    )
   } else {
-    doc.text(`SISTEMA DE PONTUAÇÃO: Normal`, margin + 5, y + 10)
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    const pointsPerQuestion = (exam.totalPoints || 100) / (totalDeQuestoes || 1)
-    doc.text(`Pontuação máxima: ${exam.totalPoints || 100} pontos`, margin + 5, y + 20)
-    doc.text(`Cada questão vale: ${pointsPerQuestion.toFixed(2)} pontos`, margin + 5, y + 27)
-    doc.text(`Total de questões: ${totalDeQuestoes}`, margin + 5, y + 34)
+    const pontos = exam.totalPoints || 100
+    const porQuestao = pontos / (totalDeQuestoes || 1)
+    desenharListaDeItens(
+      folha,
+      [
+        `Pontuação máxima: **${pontos} pontos**`,
+        `Cada questão vale: **${porQuestao.toFixed(2).replace('.', ',')} pontos**`,
+        `Total de questões: **${totalDeQuestoes}**`,
+      ],
+      { titulo: 'Sistema de pontuação' },
+    )
   }
 
-  // === RODAPÉ EM TODAS AS PÁGINAS ===
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin)
-  }
-
-  return doc.output('blob')
+  finalizarFolha(folha, exam.title)
+  return folha.doc.output('blob')
 }
 
 /**
@@ -477,38 +300,16 @@ export async function generateCompactAnswersPDF(
 ): Promise<Blob> {
   const comparar = opcoes.comparar === true
   const questoes = questoesDaProva(exam)
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const logo = await loadLogo()
+  const folha = await abrirFolha(comparar ? 'Folha de respostas comparada' : 'Folha de respostas')
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  const subtitulo = comparar ? 'Folha de Respostas — Comparada' : 'Folha de Respostas'
-
-  let y = addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
-
-  // === CABEÇALHO DA PROVA ===
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setFillColor(...CINZA_CLARO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
-  doc.setTextColor(0, 0, 0)
-  doc.setFontSize(13)
-  doc.setFont(FONT, 'bold')
-  doc.text(sanitizeForPdf(exam.title), pageWidth / 2, y + 13, { align: 'center' })
-  y += 26
-
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.text(sanitizeForPdf(userName || 'Aluno'), margin, y)
-  doc.text(
-    new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-    pageWidth - margin,
-    y,
-    { align: 'right' },
-  )
-  y += 10
+  desenharCartaoDeTitulo(folha, {
+    titulo: exam.title,
+    chips: [
+      userName || 'Aluno',
+      new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      comparar ? 'Comparada com o gabarito' : null,
+    ].filter((chip): chip is string => !!chip),
+  })
 
   /*
    * A resposta é procurada por `questionId`.
@@ -524,163 +325,54 @@ export async function generateCompactAnswersPDF(
   let acertos = 0
   let respondidas = 0
 
-  const linhas = apenasObjetivas.map((questao) => {
+  const celulas: CelulaDaGrade[] = apenasObjetivas.map((questao, i) => {
     const resposta = porQuestao.get(questao.id)
     const marcada = questao.alternatives.find((alt) => alt.id === resposta?.selectedAlternative)
     const correta = questao.alternatives.find((alt) => alt.isCorrect)
-    const letraMarcada = marcada?.letter || '—'
     if (marcada) respondidas++
     const acertou = !!marcada && !!correta && marcada.id === correta.id
     if (acertou) acertos++
-    return {
-      numero: questao.number,
-      minha: letraMarcada,
-      certa: correta?.letter || '—',
-      acertou,
-      respondida: !!marcada,
+    // A letra marcada. Em branco fica com o travessão, e não vazio: uma célula
+    // vazia numa folha de respostas parece falha de impressão.
+    const celula: CelulaDaGrade = { numero: questao.number ?? i + 1, letra: marcada?.letter || '—' }
+    if (comparar) {
+      // O sinal, e não só a cor: daltonismo e impressão em preto e branco
+      // apagariam a única informação que esta coluna carrega.
+      celula.gabarito = correta?.letter || '—'
+      celula.acerto = marcada ? acertou : null
     }
+    return celula
   })
 
   // === RESUMO (só na versão comparada: sem gabarito não há acerto a contar) ===
-  if (comparar && linhas.length > 0) {
-    const larguraCaixa = (pageWidth - 2 * margin - 10) / 2
-    doc.setFillColor(...LARANJA_CLARO)
-    doc.roundedRect(margin, y, larguraCaixa, 22, 2, 2, 'F')
-    doc.setFontSize(8)
-    doc.setTextColor(...VERDE_ESCURO)
-    doc.setFont(FONT, 'normal')
-    doc.text('ACERTOS', margin + 5, y + 8)
-    doc.setFontSize(14)
-    doc.setFont(FONT, 'bold')
-    doc.text(`${acertos} de ${linhas.length}`, margin + 5, y + 18)
-
-    doc.setFillColor(...LARANJA_CLARO)
-    doc.roundedRect(margin + larguraCaixa + 10, y, larguraCaixa, 22, 2, 2, 'F')
-    doc.setFontSize(8)
-    doc.setTextColor(...VERDE_ESCURO)
-    doc.setFont(FONT, 'normal')
-    doc.text('RESPONDIDAS', margin + larguraCaixa + 15, y + 8)
-    doc.setFontSize(14)
-    doc.setFont(FONT, 'bold')
-    doc.text(`${respondidas} de ${linhas.length}`, margin + larguraCaixa + 15, y + 18)
-    y += 30
-  } else {
-    y += 4
+  if (comparar && celulas.length > 0) {
+    desenharNumeros(folha, [
+      { valor: `${acertos} de ${celulas.length}`, rotulo: 'Acertos', tom: 'verde' },
+      { valor: `${respondidas} de ${celulas.length}`, rotulo: 'Respondidas' },
+      { valor: `${Math.round((acertos / celulas.length) * 100)}%`, rotulo: 'Aproveitamento', tom: 'laranja' },
+    ])
+    escreverNota(folha, 'Bolinha cheia: a sua resposta. Bolinha vazada: o gabarito oficial. A marca ao lado diz se você acertou.')
   }
 
-  // === A GRADE DE LETRAS ===
   // Quatro colunas na versão simples, três na comparada (que precisa de duas
   // letras e do sinal por linha).
-  const colunas = comparar ? 3 : 4
-  const larguraColuna = (pageWidth - 2 * margin) / colunas
-  const alturaLinha = 9
-  let coluna = 0
-
-  const cabecalhoDaGrade = () => {
-    doc.setFontSize(8)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    for (let c = 0; c < colunas; c++) {
-      const x = margin + c * larguraColuna
-      doc.text('Nº', x + 3, y)
-      doc.text('Sua', x + 16, y)
-      if (comparar) doc.text('Gabarito', x + 32, y)
-    }
-    y += 4
-    doc.setDrawColor(...VERDE_MEDIO)
-    doc.line(margin, y, pageWidth - margin, y)
-    y += 5
-  }
-
-  cabecalhoDaGrade()
-
-  for (let i = 0; i < linhas.length; i++) {
-    const linha = linhas[i]
-
-    if (coluna === 0 && y + alturaLinha > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, subtitulo, logo)
-      y += 4
-      cabecalhoDaGrade()
-    }
-
-    const x = margin + coluna * larguraColuna
-
-    // Faixa alternada para o olho não pular de linha numa coluna de números.
-    if (Math.floor(i / colunas) % 2 === 0) {
-      doc.setFillColor(250, 250, 250)
-      doc.rect(x, y - 6, larguraColuna - 2, alturaLinha, 'F')
-    }
-
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text(`${linha.numero}.`, x + 3, y)
-
-    // A letra marcada. Em branco fica com o travessão, e não vazio: uma célula
-    // vazia numa folha de respostas parece falha de impressão.
-    doc.setFontSize(11)
-    doc.setFont(FONT, 'bold')
-    doc.setTextColor(linha.respondida ? 0 : 150, linha.respondida ? 0 : 150, linha.respondida ? 0 : 150)
-    doc.text(linha.minha, x + 17, y)
-
-    if (comparar) {
-      doc.setFontSize(11)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      doc.text(linha.certa, x + 35, y)
-
-      // O sinal, e não só a cor: daltonismo e impressão em preto e branco
-      // apagariam a única informação que esta coluna carrega.
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'bold')
-      // Pelo sanitizador: sem a Roboto embutida, `✓` está fora do WinAnsi e o
-      // jsPDF reescreve a LINHA INTEIRA em UTF-16 com uma fonte de um byte —
-      // a folha sai soletrada. `sanitizeForPdf` o troca por `V` nesse caso e o
-      // deixa em paz quando a Roboto carregou.
-      if (linha.acertou) {
-        doc.setTextColor(22, 128, 61)
-        doc.text(sanitizeForPdf('✓'), x + 48, y)
-      } else if (linha.respondida) {
-        doc.setTextColor(190, 30, 45)
-        doc.text(sanitizeForPdf('✗'), x + 48, y)
-      }
-    }
-
-    coluna++
-    if (coluna >= colunas) {
-      coluna = 0
-      y += alturaLinha
-    }
-  }
-
-  if (coluna !== 0) y += alturaLinha
+  desenharGrade(folha, celulas, comparar ? 4 : 5, comparar ? 'Sua resposta e o gabarito' : 'Suas respostas')
 
   // === QUESTÕES SEM ALTERNATIVA ===
   // Discursiva não tem letra para marcar. Dizer isso é melhor do que deixar a
   // pessoa contar por que a folha tem menos linhas do que a prova tem questões.
   const semAlternativa = questoes.length - apenasObjetivas.length
   if (semAlternativa > 0) {
-    y += 6
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text(
+    escreverNota(
+      folha,
       semAlternativa === 1
         ? '1 questão discursiva não aparece nesta folha: ela não tem alternativa para marcar.'
         : `${semAlternativa} questões discursivas não aparecem nesta folha: elas não têm alternativa para marcar.`,
-      margin,
-      y,
     )
   }
 
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin)
-  }
-
-  return doc.output('blob')
+  finalizarFolha(folha, exam.title)
+  return folha.doc.output('blob')
 }
 
 export function downloadPDF(
@@ -713,359 +405,93 @@ export function downloadPDF(
  */
 export async function generateExamWithAnswersPDF(exam: Exam): Promise<Blob> {
   const questoes = questoesDaProva(exam)
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const [imageMap] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const folha = await abrirFolha('Prova com gabarito')
 
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
+  desenharCartaoDeTitulo(folha, {
+    titulo: exam.title,
+    descricao: exam.description,
+    chips: chipsDaProva(exam, exam.numberOfQuestions ?? questoes.length, ['Gabarito comentado']),
+  })
+  escreverNota(folha, 'As alternativas corretas aparecem em verde, com a marca de certo. O comentário de cada questão vem logo abaixo dela.')
 
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
-      return true
-    }
-    return false
-  }
-
-  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
-  const medirImagens = criarMedidaDeImagens(doc, imageMap, pageWidth, margin)
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
-
-  // Título
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 25, 3, 3, 'FD')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  doc.text(exam.title, pageWidth / 2, y + 10, { align: 'center' })
-  if (exam.description) {
-    doc.setFontSize(10)
-    doc.setFont(FONT, 'normal')
-    doc.text(exam.description, pageWidth / 2, y + 18, { align: 'center' })
-  }
-  y += 33
-
-  // Badge "com gabarito"
-  doc.setFillColor(26, 71, 42)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 9, 2, 2, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(9)
-  doc.setFont(FONT, 'bold')
-  doc.text(
-    sanitizeForPdf('✓  GABARITO COMENTADO  —  Alternativas corretas destacadas em verde'),
-    pageWidth / 2,
-    y + 6,
-    { align: 'center' },
-  )
-  y += 16
-
-  // Questões
   questoes.forEach((question, idx) => {
-    checkPage(50)
-
-    // Header da questão
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(11)
-    doc.setFont(FONT, 'bold')
-    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
-
-    // Tipo
-    const typeLabel = question.type === 'discursive' ? 'Discursiva' : question.type === 'essay' ? 'Redação' : 'Múltipla Escolha'
-    doc.setFontSize(8)
-    doc.setFont(FONT, 'normal')
-    doc.text(typeLabel, pageWidth - margin - 2, y + 7, { align: 'right' })
-    y += 15
-
-    // Reset color after header (prevents white text leaking into body)
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.setFont(FONT, 'normal')
-
-    // Enunciado
-    if (question.statement) {
-      checkPage(15)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
-      lines.forEach((line: string) => {
-        checkPage(8)
-        // Re-apply color/font after possible page break
-        doc.setFontSize(10)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin, y)
-        y += 6
-      })
-      y += 2
-    }
-
-    // Fonte do enunciado
-    if (question.statementSource) {
-      checkPage(8)
-      doc.setFontSize(8)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(100, 100, 100)
-      doc.text(`Fonte: ${question.statementSource}`, margin, y)
-      y += 6
-    }
-
-    // Imagens do enunciado
-    y = desenharImagens(blocoDoEnunciado(question), y, 'Prova com Gabarito')
-    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
-    if (question.supportMaterial) {
-      y = desenharRecursoNoPdf(
-        {
-          doc,
-          fonte: FONT,
-          x: margin,
-          largura: pageWidth - 2 * margin,
-          y,
-          limiteInferior: pageHeight - 25,
-          novaPagina: () => {
-            doc.addPage()
-            return addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
-          },
-        },
-        question.supportMaterial,
-      )
-    }
-
-    // Comando
-    if (question.command) {
-      checkPage(12)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
-      commandLines.forEach((line: string) => {
-        checkPage(8)
-        doc.setFont(FONT, 'bold')
-        doc.setTextColor(...VERDE_ESCURO)
-        drawRichLine(doc, line, margin, y, 'bold')
-        y += 6
-      })
-      y += 3
-    }
+    const correta = (question.alternatives || []).find((alt) => alt.isCorrect)
+    desenharCabecalhoDaQuestao(folha, `Questão ${question.number ?? idx + 1}`, [
+      { texto: rotuloDoTipo(question) },
+      ...(correta ? [{ texto: `Gabarito ${correta.letter}`, tom: 'verde' as const }] : []),
+    ])
+    desenharEnunciado(folha, question, imageMap)
 
     if (question.type === 'multiple-choice') {
-      y += 2
-      question.alternatives.forEach((alt) => {
-        const isCorrect = alt.isCorrect
-        const altText = `${alt.letter}) ${alt.text}`
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
-        // rect height: covers text lines with top/bottom padding (3+2), no bleed into gap
-        const rectH = altLines.length * 6 + 3
-        checkPage(rectH + 3)
-
-        // Fundo verde claro dinâmico para alternativa correta
-        if (isCorrect) {
-          doc.setFillColor(220, 245, 225)
-          doc.setDrawColor(70, 129, 82)
-          doc.setLineWidth(0.5)
-          doc.roundedRect(margin + 1, y - 3, pageWidth - 2 * margin - 2, rectH, 1.5, 1.5, 'FD')
-        }
-
-        doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
-        doc.setFontSize(10)
-        doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
-
-        // Ícone: checkmark desenhado com linhas (correto) ou checkbox vazio (errado)
-        if (isCorrect) {
-          // Círculo verde preenchido com checkmark via linhas
-          doc.setFillColor(70, 129, 82)
-          doc.setDrawColor(70, 129, 82)
-          doc.circle(margin + 4.5, y - 1.5, 3, 'F')
-          doc.setDrawColor(255, 255, 255)
-          doc.setLineWidth(0.7)
-          doc.line(margin + 3.2, y - 1.5, margin + 4.3, y - 0.3)
-          doc.line(margin + 4.3, y - 0.3, margin + 6, y - 3)
-        } else {
-          doc.setDrawColor(...VERDE_MEDIO)
-          doc.setLineWidth(0.4)
-          doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
-        }
-
-        altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) {
-            doc.setFontSize(10)
-            doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
-          }
-          drawRichLine(doc, line, margin + 10, y, isCorrect ? 'bold' : 'normal')
-          y += 6
-        })
-        y += 3
-      })
+      desenharAlternativas(
+        folha,
+        alternativasDa(question, (alt) => (alt.isCorrect ? 'certa' : 'vazia'), (alt) => (alt.isCorrect ? 'Correta' : undefined)),
+      )
     } else if (question.type === 'discursive') {
-      checkPage(20)
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'italic')
-      doc.setTextColor(100, 100, 100)
-      doc.text('(Questão discursiva — ver gabarito/pontos-chave abaixo)', margin + 2, y)
-      y += 8
+      escreverNota(folha, 'Questão discursiva: os pontos-chave esperados estão na resposta comentada.')
     }
 
-    // Resposta comentada: explicação avulsa + comentário por alternativa +
-    // pontos-chave, na ordem de `montarRespostaComentada`. Ler só
-    // `question.explanation` aqui era o que fazia este PDF sair sem comentário
-    // nenhum nas provas cujo feedback está por alternativa.
-    //
     // As imagens do comentário — o fluxograma, o esquema, a lâmina que ele
-    // descreve — entram DENTRO da caixa verde. Desenhadas depois dela, como
-    // eram, ficavam penduradas fora do retângulo.
-    const respostaComentada = montarRespostaComentada(question)
-    const recuoDaCaixa = 4
-    // A fonte é definida ANTES do `wrapText`: ele mede com a fonte ativa, e
-    // medir em corpo 10 o texto que sai em 9 dá outra quebra.
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    const linhasDoComentario = respostaComentada
-      ? wrapText(doc, respostaComentada, pageWidth - 2 * margin - 2 * recuoDaCaixa - 6)
-      : []
-    const linhasDeImagens = medirImagens(blocoDaResposta(question), {
-      recuo: recuoDaCaixa,
-      alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
-    })
-
-    if (linhasDoComentario.length > 0 || linhasDeImagens.length > 0) {
-      y = desenharCaixaDeRespostaComentada({
-        doc,
-        fonte: FONT,
-        x: margin,
-        largura: pageWidth - 2 * margin,
-        y,
-        limiteInferior: pageHeight - 25,
-        yAposQuebra: Y_APOS_CABECALHO,
-        novaPagina: () => {
-          doc.addPage()
-          addDomineAquiHeader(doc, pageWidth, margin, 'Prova com Gabarito', logo)
-        },
-        linhas: linhasDoComentario,
-        imagens: linhasDeImagens,
-        titulo: 'Resposta Comentada:',
-        cores: { fundo: [245, 250, 246], borda: [70, 129, 82], titulo: VERDE_ESCURO, texto: CINZA_TEXTO },
-        medidas: {
-          alturaDaLinha: 6,
-          alturaDoTitulo: 14,
-          respiroDeContinuacao: 4,
-          respiroInferior: 5,
-          recuo: recuoDaCaixa,
-          corpoDoTitulo: 8.5,
-          baseDoTitulo: 9,
-          corpoDoTexto: 9,
-        },
-        desenharLinha: (texto, x, yDaLinha) => drawRichLine(doc, texto, x, yDaLinha),
-      })
-      y += 2
-    }
-
-    // Separador entre questões, igual ao da prova em branco e ao do Banco.
-    y += 5
-    if (idx < questoes.length - 1) {
-      checkPage(6)
-      doc.setDrawColor(...LARANJA)
-      doc.setLineWidth(0.4)
-      doc.line(margin + 15, y, pageWidth - margin - 15, y)
-      y += 8
-    }
+    // descreve — entram DENTRO da caixa. Desenhadas depois dela, como eram,
+    // ficavam penduradas fora do retângulo.
+    desenharRespostaComentada(folha, question, imageMap)
+    fecharQuestao(folha)
   })
 
-  // Rodapé
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, exam.title)
-  }
+  finalizarFolha(folha, exam.title)
+  return folha.doc.output('blob')
+}
 
-  return doc.output('blob')
+/**
+ * A linha de identificação: rótulo à esquerda e o traço para escrever.
+ * `imagem` troca o traço pelo código de barras do aluno.
+ */
+function linhaDeIdentificacao(folha: Folha, rotulo: string, imagem?: string | null, codigo?: string): LinhaDoGrupo {
+  const { doc } = folha
+  const altura = imagem ? 24 : 12
+  return {
+    altura,
+    desenhar: (x, y, largura) => {
+      fonte(doc, 'bold', 8.5, TINTA_SUAVE)
+      doc.text(rotulo, x + 4.5, y + 7.6)
+      if (imagem) {
+        try {
+          doc.addImage(imagem, 'PNG', x + 32, y + 2.5, 70, 19)
+          return
+        } catch {
+          // Sem a imagem, o código vai escrito.
+        }
+      }
+      if (codigo) {
+        fonte(doc, 'normal', 10, TINTA)
+        doc.text(encurtarParaLargura(doc, codigo, largura - 40), x + 32, y + 7.6)
+        return
+      }
+      doc.setDrawColor(170, 186, 176)
+      doc.setLineWidth(0.3)
+      doc.line(x + 32, y + 8.4, x + largura - 5, y + 8.4)
+    },
+  }
 }
 
 // Gerar PDF da prova para alunos preencherem (client-side com jsPDF)
 export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob> {
   const questoes = questoesDaProva(exam)
   const totalDeQuestoes = exam.numberOfQuestions ?? questoes.length
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const [imageMap] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const folha = await abrirFolha('Prova')
 
-  const doc = new jsPDF()
-  await registerFonts(doc)
-
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
-
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
-      return true
-    }
-    return false
-  }
-
-  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
-
-  // === TÍTULO DA PROVA ===
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 25, 3, 3, 'FD')
-
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  doc.text(exam.title, pageWidth / 2, y + 10, { align: 'center' })
-
-  if (exam.description) {
-    doc.setFontSize(10)
-    doc.setFont(FONT, 'normal')
-    doc.text(exam.description, pageWidth / 2, y + 18, { align: 'center' })
-  }
-
-  y += 35
-
-  // === INFORMAÇÕES DA PROVA ===
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.setFontSize(9)
-  doc.setFont(FONT, 'normal')
-  doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, pageWidth - margin, y, { align: 'right' })
-  y += 5
   // Sem duração o texto saía "Duração: undefined minutos" no cabeçalho da
   // prova impressa — prova de treino não tem prazo, e isso é comum.
-  doc.text(
-    exam.duration
-      ? `Duração: ${exam.duration} minutos | Questões: ${totalDeQuestoes}`
-      : `Questões: ${totalDeQuestoes}`,
-    pageWidth - margin,
-    y,
-    { align: 'right' },
-  )
-  y += 10
+  desenharCartaoDeTitulo(folha, {
+    titulo: exam.title,
+    descricao: exam.description,
+    chips: chipsDaProva(exam, totalDeQuestoes, [`Data: ${hoje()}`]),
+  })
 
   // === IDENTIFICAÇÃO DO CANDIDATO ===
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(margin, y, pageWidth - 2 * margin, 8, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'bold')
-  doc.text('IDENTIFICAÇÃO DO CANDIDATO', margin + 5, y + 5.5)
-  y += 15
-
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'normal')
-  doc.text('Nome: _____________________________________________________________', margin, y)
-  y += 10
-
-  // Código de barras (se tiver userId)
+  let codigoDeBarras: string | null = null
   if (userId) {
     try {
       // Criar canvas temporário para gerar barcode
@@ -1076,240 +502,66 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
         height: 40,
         displayValue: true,
         fontSize: 12,
+        margin: 0,
       })
-
-      const barcodeImage = canvas.toDataURL('image/png')
-      doc.text('Código de Barras:', margin, y)
-      y += 5
-      doc.addImage(barcodeImage, 'PNG', margin, y, 80, 20)
-      y += 25
+      codigoDeBarras = canvas.toDataURL('image/png') || null
     } catch (error) {
       console.error('Erro ao gerar barcode:', error)
-      doc.text(`Código: ${userId}`, margin, y)
-      y += 8
     }
-  } else {
-    doc.text('Código: ___________________________________________________________', margin, y)
-    y += 10
   }
-
-  doc.text('Assinatura: ________________________________________________________', margin, y)
-  y += 12
+  desenharGrupo(
+    folha,
+    [
+      linhaDeIdentificacao(folha, 'Nome'),
+      userId
+        ? linhaDeIdentificacao(folha, 'Código', codigoDeBarras, userId)
+        : linhaDeIdentificacao(folha, 'Código'),
+      linhaDeIdentificacao(folha, 'Assinatura'),
+    ],
+    { titulo: 'Identificação do candidato', recuoDoFio: 4.5, depois: 4 },
+  )
 
   // === INSTRUÇÕES ===
-  doc.setFillColor(...LARANJA)
-  doc.rect(margin, y, pageWidth - 2 * margin, 8, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'bold')
-  doc.text('INSTRUÇÕES', margin + 5, y + 5.5)
-  y += 12
-
-  doc.setFontSize(9)
-  doc.setFont(FONT, 'normal')
-  doc.setTextColor(...CINZA_TEXTO)
-  const instructions = [
-    '• Preencha todos os campos de identificação acima.',
-    '• Leia atentamente cada questão antes de responder.',
-    '• Para questões objetivas, marque apenas UMA alternativa.',
-    '• Para questões discursivas, escreva de forma clara e legível.',
-    '• Não é permitido rasuras nas respostas.',
-  ]
-
-  instructions.forEach(instruction => {
-    doc.text(instruction, margin + 2, y)
-    y += 5
-  })
-
-  y += 8
+  desenharListaDeItens(
+    folha,
+    [
+      'Preencha todos os campos de identificação acima.',
+      'Leia atentamente cada questão antes de responder.',
+      'Nas questões objetivas, pinte apenas **uma** bolinha.',
+      'Nas questões discursivas, escreva de forma clara e legível.',
+      'Não é permitido rasurar as respostas.',
+    ],
+    { titulo: 'Instruções' },
+  )
+  folha.y += 2
 
   // === QUESTÕES ===
   questoes.forEach((question, idx) => {
-    checkPage(50)
-
-    // Header da questão
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(11)
-    doc.setFont(FONT, 'bold')
     // `question.number` e não o índice: o gabarito e a folha de respostas
     // imprimem o número da questão, e os três documentos precisam concordar.
-    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
-
-    // O tipo, à direita, como no gabarito comentado. Na prova em branco ele
-    // não existia, e quem folheia não sabia que a questão seguinte é uma
-    // discursiva de dez linhas até virar a página.
-    const rotuloDoTipo =
-      question.type === 'discursive' ? 'Discursiva' : question.type === 'essay' ? 'Redação' : 'Múltipla Escolha'
-    doc.setFontSize(8)
-    doc.setFont(FONT, 'normal')
-    doc.text(rotuloDoTipo, pageWidth - margin - 5, y + 7, { align: 'right' })
-
-    y += 15
-
-    // Reset depois do cabeçalho branco sobre verde: sem isto o corpo herda o
-    // branco e a questão sai invisível quando algum ramo esquece de repintar.
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.setFont(FONT, 'normal')
-
-    // Enunciado
-    if (question.statement) {
-      checkPage(15)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
-      lines.forEach((line: string) => {
-        checkPage(8)
-        doc.setFontSize(10)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin, y)
-        y += 6
-      })
-      y += 3
-    }
-
-    // Fonte do enunciado
-    if (question.statementSource) {
-      checkPage(8)
-      doc.setFontSize(8)
-      doc.setTextColor(100, 100, 100)
-      doc.text(`Fonte: ${question.statementSource}`, margin, y)
-      y += 6
-    }
-
-    // Imagens do enunciado
-    y = desenharImagens(blocoDoEnunciado(question), y, 'Prova')
-    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
-    if (question.supportMaterial) {
-      y = desenharRecursoNoPdf(
-        {
-          doc,
-          fonte: FONT,
-          x: margin,
-          largura: pageWidth - 2 * margin,
-          y,
-          limiteInferior: pageHeight - 25,
-          novaPagina: () => {
-            doc.addPage()
-            return addDomineAquiHeader(doc, pageWidth, margin, 'Prova', logo)
-          },
-        },
-        question.supportMaterial,
-      )
-    }
-
-    // Comando
-    if (question.command) {
-      checkPage(12)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
-      commandLines.forEach((line: string) => {
-        checkPage(8)
-        doc.setFont(FONT, 'bold')
-        doc.setTextColor(...VERDE_ESCURO)
-        drawRichLine(doc, line, margin, y, 'bold')
-        y += 6
-      })
-      y += 4
-    }
+    // O tipo vai à direita: quem folheia sabe que a seguinte é uma discursiva
+    // de dez linhas antes de virar a página.
+    desenharCabecalhoDaQuestao(folha, `Questão ${question.number ?? idx + 1}`, [
+      { texto: rotuloDoTipo(question) },
+      ...(question.maxScore ? [{ texto: `${numeroBr(question.maxScore)} pts`, tom: 'laranja' as const }] : []),
+    ])
+    desenharEnunciado(folha, question, imageMap)
 
     if (question.type === 'multiple-choice') {
-      // Alternativas com checkboxes
-      y += 3
-
-      question.alternatives.forEach((alt) => {
-        checkPage(12)
-
-        // Reset font for each alternative to prevent color/size leaks
-        doc.setFont(FONT, 'normal')
-        doc.setFontSize(10)
-        doc.setTextColor(...CINZA_TEXTO)
-
-        // Checkbox estilizado
-        doc.setDrawColor(...VERDE_MEDIO)
-        doc.setLineWidth(0.5)
-        doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
-
-        // Alternativa - use alt.letter from data instead of hardcoded array
-        const altText = `${alt.letter}) ${alt.text}`
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
-        altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) {
-            checkPage(6)
-            // Re-set after potential page break
-            doc.setFontSize(10)
-            doc.setTextColor(...CINZA_TEXTO)
-          }
-          drawRichLine(doc, line, margin + 10, y)
-          y += 6
-        })
-        y += 3
-      })
+      desenharAlternativas(folha, alternativasDa(question, () => 'vazia'))
     } else if (question.type === 'discursive') {
-      // Espaço para resposta discursiva
-      checkPage(60)
-
-      doc.setFontSize(9)
-      doc.setTextColor(...LARANJA)
-      doc.setFont(FONT, 'bold')
-      doc.text(
-        question.maxScore
-          ? `Espaço para resposta (máximo ${question.maxScore} pontos):`
-          : 'Espaço para resposta:',
-        margin,
-        y,
-      )
-      y += 6
-
-      /*
-       * As linhas para escrever.
-       *
-       * O `checkPage` por LINHA quebrava o bloco em qualquer ponto: o rótulo
-       * "Espaço para resposta" ficava no pé de uma página com uma ou duas
-       * linhas, e as outras oito na seguinte. Aqui a quebra acontece antes do
-       * bloco, e só se não couberem pelo menos quatro linhas — abaixo disso o
-       * espaço no pé da página não serve para escrever nada.
-       */
-      const numeroDeLinhas = 10
-      const alturaDaLinha = 6
-      const linhasQueCabem = Math.floor((pageHeight - 25 - y) / alturaDaLinha)
-      if (linhasQueCabem < Math.min(4, numeroDeLinhas)) checkPage(pageHeight)
-
-      doc.setDrawColor(200, 200, 200)
-      doc.setLineWidth(0.3)
-      for (let i = 0; i < numeroDeLinhas; i++) {
-        checkPage(alturaDaLinha + 2)
-        doc.line(margin, y, pageWidth - margin, y)
-        y += alturaDaLinha
-      }
+      desenharPautas(folha, 10, question.maxScore ? `Resposta · vale ${numeroBr(question.maxScore)} pontos` : 'Resposta')
+    } else if (question.type === 'essay') {
+      // A redação também precisa de onde ser escrita: impressa sem pauta
+      // nenhuma, ela saía como um enunciado solto.
+      desenharPautas(folha, 24, 'Redação')
     }
 
-    // Separador entre questões — o mesmo do PDF do Banco de Questões. Sem ele,
-    // o fim de uma questão e o começo da próxima ficam a dez milímetros de
-    // distância e nada mais, e numa prova de vinte questões o olho se perde.
-    y += 6
-    if (idx < questoes.length - 1) {
-      checkPage(6)
-      doc.setDrawColor(...LARANJA)
-      doc.setLineWidth(0.4)
-      doc.line(margin + 15, y, pageWidth - margin - 15, y)
-      y += 8
-    }
+    fecharQuestao(folha)
   })
 
-  // === RODAPÉ EM TODAS AS PÁGINAS ===
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, `${exam.title}`)
-  }
-
-  return doc.output('blob')
+  finalizarFolha(folha, exam.title)
+  return folha.doc.output('blob')
 }
 
 /**
@@ -1317,231 +569,43 @@ export async function generateExamPDF(exam: Exam, userId?: string): Promise<Blob
  */
 export async function generateStudentAnswersPDF(exam: Exam, answers: UserAnswer[], userName: string): Promise<Blob> {
   const questoes = questoesDaProva(exam)
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
-  const doc = new jsPDF()
-  await registerFonts(doc)
+  const [imageMap] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const folha = await abrirFolha('Relatório de respostas')
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
+  desenharCartaoDeTitulo(folha, {
+    titulo: exam.title,
+    chips: [`Aluno: ${userName || 'Aluno'}`, `Data: ${hoje()}`],
+  })
 
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
-      return true
-    }
-    return false
-  }
-
-  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
-
-  // === TÍTULO DA PROVA ===
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 18, 2, 2, 'FD')
-
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(14)
-  doc.setFont(FONT, 'bold')
-  doc.text(exam.title, pageWidth / 2, y + 12, { align: 'center' })
-
-  y += 25
-
-  // === INFORMAÇÕES DO ALUNO ===
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.setFontSize(10)
-  doc.setFont(FONT, 'bold')
-  doc.text('Aluno: ' + userName, margin, y)
-  y += 5
-  doc.setFont(FONT, 'normal')
-  doc.text('Data: ' + new Date().toLocaleDateString('pt-BR'), margin, y)
-  y += 10
-
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(0.5)
-  doc.line(margin, y, pageWidth - margin, y)
-  y += 10
-
-  // === QUESTÕES ===
   questoes.forEach((question, idx) => {
-    checkPage(40)
+    desenharCabecalhoDaQuestao(folha, `Questão ${question.number ?? idx + 1}`, [{ texto: rotuloDoTipo(question) }])
+    desenharEnunciado(folha, question, imageMap)
 
-    // Header da questão
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 8, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(10)
-    doc.setFont(FONT, 'bold')
-    doc.text('Questão ' + (question.number ?? idx + 1), margin + 5, y + 5.5)
-    y += 12
-
-    if (question.statement) {
-      checkPage(15)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      const lines = wrapText(doc, question.statement, pageWidth - 2 * margin)
-      lines.forEach((line: string) => {
-        checkPage(8)
-        // `drawRichLine` e não `doc.text`: este era o único PDF de prova que
-        // imprimia os `**` do enunciado em vez de pôr o trecho em negrito.
-        doc.setFontSize(10)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin, y)
-        y += 6
-      })
-      y += 3
-    }
-
-    if (question.statementSource) {
-      checkPage(8)
-      doc.setFontSize(8)
-      doc.setTextColor(100, 100, 100)
-      doc.text('Fonte: ' + question.statementSource, margin, y)
-      y += 6
-    }
-
-    // Imagens do enunciado
-    y = desenharImagens(blocoDoEnunciado(question), y, 'Relatório de Respostas')
-    // Tabela, gráfico, esquema ou citação (provas geradas por IA).
-    if (question.supportMaterial) {
-      y = desenharRecursoNoPdf(
-        {
-          doc,
-          fonte: FONT,
-          x: margin,
-          largura: pageWidth - 2 * margin,
-          y,
-          limiteInferior: pageHeight - 25,
-          novaPagina: () => {
-            doc.addPage()
-            return addDomineAquiHeader(doc, pageWidth, margin, 'Relatório de Respostas', logo)
-          },
-        },
-        question.supportMaterial,
-      )
-    }
-
-    if (question.command) {
-      checkPage(12)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      const commandLines = wrapText(doc, question.command, pageWidth - 2 * margin)
-      commandLines.forEach((line: string) => {
-        checkPage(8)
-        doc.setFont(FONT, 'bold')
-        doc.setTextColor(...VERDE_ESCURO)
-        drawRichLine(doc, line, margin, y, 'bold')
-        y += 6
-      })
-      y += 4
-    }
-
-    const answer = answers.find(a => a.questionId === question.id)
+    const answer = answers.find((a) => a.questionId === question.id)
 
     if (question.type === 'multiple-choice') {
-      y += 3
-
-      question.alternatives.forEach((alt) => {
-        checkPage(12)
-
-        const isSelected = answer?.selectedAlternative === alt.id
-
-        // Checkbox
-        doc.setDrawColor(...VERDE_MEDIO)
-        doc.setLineWidth(0.5)
-        doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
-
-        if (isSelected) {
-          doc.setFillColor(...VERDE_MEDIO)
-          doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1, 'F')
-        }
-
-        // Reset font/color explicitly per alternative
-        if (isSelected) {
-          doc.setFont(FONT, 'bold')
-          doc.setTextColor(...VERDE_ESCURO)
-        } else {
-          doc.setFont(FONT, 'normal')
-          doc.setTextColor(...CINZA_TEXTO)
-        }
-        doc.setFontSize(10)
-
-        const altText = alt.letter + ') ' + alt.text
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
-        altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) {
-            checkPage(6)
-            // Re-set after potential page break
-            doc.setFontSize(10)
-            if (isSelected) {
-              doc.setFont(FONT, 'bold')
-              doc.setTextColor(...VERDE_ESCURO)
-            } else {
-              doc.setFont(FONT, 'normal')
-              doc.setTextColor(...CINZA_TEXTO)
-            }
-          }
-          drawRichLine(doc, line, margin + 10, y, isSelected ? 'bold' : 'normal')
-          y += 6
-        })
-        y += 3
-      })
-    } else if (question.type === 'discursive') {
-      checkPage(20)
-
-      doc.setFontSize(9)
-      doc.setTextColor(...LARANJA)
-      doc.setFont(FONT, 'bold')
-      doc.text('Sua resposta:', margin, y)
-      y += 6
-
+      desenharAlternativas(
+        folha,
+        alternativasDa(
+          question,
+          (alt) => (answer?.selectedAlternative === alt.id ? 'marcada' : 'vazia'),
+          (alt) => (answer?.selectedAlternative === alt.id ? 'Sua resposta' : undefined),
+        ),
+      )
+      if (!answer?.selectedAlternative) escreverNota(folha, 'Você não marcou nenhuma alternativa nesta questão.')
+    } else if (question.type === 'discursive' || question.type === 'essay') {
       if (answer?.discursiveText) {
-        doc.setFontSize(10)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        const answerLines = wrapText(doc, answer.discursiveText, pageWidth - 2 * margin - 4)
-        answerLines.forEach((line: string) => {
-          checkPage(8)
-          doc.setFontSize(10)
-          doc.setFont(FONT, 'normal')
-          doc.setTextColor(...CINZA_TEXTO)
-          doc.text(line, margin + 2, y)
-          y += 6
-        })
+        desenharCaixaDeTexto(folha, answer.discursiveText, 'Sua resposta', { tom: 'claro' })
       } else {
-        doc.setFontSize(10)
-        doc.setTextColor(150, 150, 150)
-        doc.text('(Não respondida)', margin + 2, y)
-        y += 6
+        escreverNota(folha, '(Não respondida)')
       }
     }
 
-    // Separador entre questões, igual ao dos outros documentos da prova.
-    y += 6
-    if (idx < questoes.length - 1) {
-      checkPage(6)
-      doc.setDrawColor(...LARANJA)
-      doc.setLineWidth(0.4)
-      doc.line(margin + 15, y, pageWidth - margin - 15, y)
-      y += 8
-    }
+    fecharQuestao(folha)
   })
 
-  // === RODAPÉ ===
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, `Respostas de ${userName}`)
-  }
-
-  return doc.output('blob')
+  finalizarFolha(folha, `Respostas de ${userName}`)
+  return folha.doc.output('blob')
 }
 
 /**
@@ -1551,72 +615,23 @@ export async function generateAnnotationsPDF(
   examTitle: string,
   annotations: QuestionAnnotation[]
 ): Promise<Blob> {
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const logo = await loadLogo()
+  const folha = await abrirFolha('Anotações da prova')
+  const { doc } = folha
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
+  desenharCartaoDeTitulo(folha, {
+    titulo: examTitle,
+    chips: [plural(annotations.length, 'questão anotada', 'questões anotadas'), `Data: ${hoje()}`],
+  })
 
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova', logo)
-      return true
-    }
-    return false
-  }
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Anotações da Prova', logo)
-
-  // === TÍTULO DA PROVA ===
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setFillColor(...CINZA_CLARO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
-
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(14)
-  doc.setFont(FONT, 'bold')
-  doc.text(examTitle, pageWidth / 2, y + 13, { align: 'center' })
-
-  y += 30
-
-  // Se não há anotações
   if (annotations.length === 0) {
-    doc.setFontSize(12)
-    doc.setTextColor(100, 100, 100)
-    doc.text('Nenhuma anotação foi feita durante esta prova.', pageWidth / 2, y, {
-      align: 'center',
-    })
+    escreverNota(folha, 'Nenhuma anotação foi feita durante esta prova.')
   } else {
-    // === ANOTAÇÕES ===
-    // Ordenar por número da questão
-    const sortedAnnotations = [...annotations].sort(
-      (a, b) => a.questionNumber - b.questionNumber
-    )
+    const ordenadas = [...annotations].sort((a, b) => a.questionNumber - b.questionNumber)
 
-    for (const annotation of sortedAnnotations) {
-      // Verificar se há espaço para o título da questão
-      checkPage(30)
+    for (const annotation of ordenadas) {
+      desenharCabecalhoDaQuestao(folha, `Questão ${annotation.questionNumber}`, [], 24)
 
-      // Título da questão
-      doc.setFillColor(...VERDE_MEDIO)
-      doc.roundedRect(margin, y, pageWidth - 2 * margin, 12, 2, 2, 'F')
-
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(12)
-      doc.setFont(FONT, 'bold')
-      doc.text(`Questão ${annotation.questionNumber}`, margin + 5, y + 8)
-
-      y += 20
-
-      // Verificar se há canvas data URL
       if (annotation.canvasDataUrl) {
-        const maxImageWidth = pageWidth - 2 * margin
-        const maxImageHeight = 150 // Altura máxima para cada anotação
-
         try {
           /*
            * A anotação entrava esticada até 170×150mm, fosse qual fosse o
@@ -1632,69 +647,33 @@ export async function generateAnnotationsPDF(
            * largura, sem nunca ampliar.
            */
           const propriedades = doc.getImageProperties(annotation.canvasDataUrl)
-          const escala = Math.min(
-            maxImageWidth / propriedades.width,
-            maxImageHeight / propriedades.height,
-            1,
-          )
+          const larguraMaxima = folha.larguraUtil - 2
+          const alturaMaxima = Math.min(150, folha.limite - Y_APOS_CABECALHO - 4)
+          const escala = Math.min(larguraMaxima / propriedades.width, alturaMaxima / propriedades.height, 1)
           const largura = propriedades.width * escala
           const altura = propriedades.height * escala
 
-          checkPage(altura + 10)
-
-          doc.addImage(annotation.canvasDataUrl, 'PNG', margin, y, largura, altura)
-
-          y += altura + 15
-        } catch (error) {
-          // Se houver erro ao adicionar a imagem, mostrar mensagem
-          doc.setFontSize(10)
-          doc.setTextColor(200, 0, 0)
-          doc.text('Erro ao carregar anotação', margin, y)
-          y += 15
+          garantirEspaco(folha, altura + 4)
+          desenharImagemEmoldurada(doc, annotation.canvasDataUrl, folha.margem + 1, folha.y + 1, largura, altura)
+          folha.y += altura + 6
+        } catch {
+          escreverNota(folha, 'Não foi possível carregar esta anotação.')
         }
+      } else if (annotation.texts && annotation.texts.length > 0) {
+        desenharListaDeItens(
+          folha,
+          annotation.texts.map((t) => t.text),
+          { titulo: 'Anotações de texto' },
+        )
       } else {
-        // Se não houver canvas data URL, mostrar apenas os textos
-        if (annotation.texts && annotation.texts.length > 0) {
-          doc.setFontSize(10)
-          doc.setTextColor(...CINZA_TEXTO)
-          doc.text('Anotações de texto:', margin, y)
-          y += 8
-
-          for (const text of annotation.texts) {
-            checkPage(10)
-            const lines = wrapText(doc, text.text, pageWidth - 2 * margin - 10)
-            for (const line of lines) {
-              checkPage(6)
-              doc.text(`• ${line}`, margin + 5, y)
-              y += 6
-            }
-          }
-          y += 10
-        } else {
-          // Sem anotações
-          doc.setFontSize(10)
-          doc.setTextColor(150, 150, 150)
-          doc.text('(Sem anotações para esta questão)', margin, y)
-          y += 15
-        }
+        escreverNota(folha, '(Sem anotações para esta questão)')
       }
 
-      // Linha separadora entre questões
-      checkPage(5)
-      doc.setDrawColor(...LARANJA)
-      doc.setLineWidth(0.5)
-      doc.line(margin, y, pageWidth - margin, y)
-      y += 10
+      fecharQuestao(folha)
     }
   }
 
-  // === RODAPÉ EM TODAS AS PÁGINAS ===
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, `Anotações - ${examTitle}`)
-  }
-
+  finalizarFolha(folha, `Anotações · ${examTitle}`)
   return doc.output('blob')
 }
 
@@ -1705,106 +684,43 @@ export async function generateFormResponsePDF(
   form: Form,
   answers: Record<string, string | string[]>
 ): Promise<Blob> {
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const logo = await loadLogo()
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
+  const folha = await abrirFolha('Resumo da pesquisa')
 
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa', logo)
-      return true
-    }
-    return false
-  }
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, 'Resumo da Pesquisa', logo)
-
-  // Form Title
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 20, 2, 2, 'FD')
-
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(14)
-  doc.setFont(FONT, 'bold')
-  doc.text(decodeHtmlEntities(form.title), pageWidth / 2, y + 13, { align: 'center' })
-
-  y += 30
-
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.setFontSize(10)
   const dateStr = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })
   const timeStr = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo' })
-  doc.text(`Submetido em: ${dateStr} às ${timeStr} (Horário de Brasília)`, margin, y)
-  y += 15
-
-  // Questions and Answers
-  form.blocks.forEach((block: FormBlock) => {
-    if (block.type === 'question') {
-      checkPage(30)
-
-      // Question Title Wrapper
-      doc.setFillColor(...VERDE_MEDIO)
-      doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'bold')
-      doc.text('PERGUNTA', margin + 5, y + 7)
-      y += 15
-
-      // Question Content
-      doc.setTextColor(...VERDE_ESCURO)
-      doc.setFontSize(11)
-      doc.setFont(FONT, 'bold')
-      const titleText = decodeHtmlEntities(block.title || 'Sem título')
-      const titleLines = wrapText(doc, titleText, pageWidth - 2 * margin)
-      titleLines.forEach(line => {
-        checkPage(8)
-        doc.text(line, margin, y)
-        y += 6
-      })
-      y += 2
-
-      // Answer Text
-      doc.setTextColor(...CINZA_TEXTO)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'normal')
-
-      const answer = answers[block.id]
-      let answerText = ''
-
-      if (Array.isArray(answer)) {
-        answerText = answer.map(a => decodeHtmlEntities(String(a))).join(', ')
-      } else if (answer) {
-        answerText = decodeHtmlEntities(String(answer))
-      } else {
-        answerText = '(Sem resposta)'
-      }
-
-      const answerLines = wrapText(doc, String(answerText), pageWidth - 2 * margin)
-      answerLines.forEach(line => {
-        checkPage(8)
-        doc.text(line, margin, y)
-        y += 6
-      })
-
-      y += 10
-    }
+  desenharCartaoDeTitulo(folha, {
+    titulo: decodeHtmlEntities(form.title),
+    chips: [`Enviado em ${dateStr} às ${timeStr}`, 'Horário de Brasília'],
   })
 
-  // Footer
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, form.title)
-  }
+  let numero = 0
+  form.blocks.forEach((block: FormBlock) => {
+    if (block.type !== 'question') return
+    numero += 1
 
-  return doc.output('blob')
+    const answer = answers[block.id]
+    let answerText = ''
+    if (Array.isArray(answer)) {
+      answerText = answer.map((a) => decodeHtmlEntities(String(a))).join(', ')
+    } else if (answer) {
+      answerText = decodeHtmlEntities(String(answer))
+    } else {
+      answerText = '(Sem resposta)'
+    }
+
+    desenharCabecalhoDaQuestao(folha, `Pergunta ${numero}`, [], 24)
+    escreverTexto(folha, decodeHtmlEntities(block.title || 'Sem título'), {
+      estilo: 'bold',
+      cor: FLORESTA,
+      corpo: 10.5,
+      depois: 2.5,
+    })
+    desenharCaixaDeTexto(folha, answerText, 'Resposta', { tom: 'claro' })
+    folha.y += 2
+  })
+
+  finalizarFolha(folha, decodeHtmlEntities(form.title))
+  return folha.doc.output('blob')
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1813,15 +729,21 @@ export async function generateFormResponsePDF(
 
 export type GroupPDFType = 'exam' | 'with-answers' | 'gabarito' | 'respostas-comentadas'
 
-const TYPE_LABELS: Record<GroupPDFType, { title: string; subtitle: string; accent: readonly [number, number, number] }> = {
-  'exam':         { title: 'CADERNO DE PROVAS',          subtitle: 'Questões',                        accent: VERDE_MEDIO },
-  'with-answers': { title: 'CADERNO COM GABARITO',       subtitle: 'Questões + Respostas Comentadas', accent: [70, 110, 180] as const },
-  'gabarito':     { title: 'CADERNO DE GABARITOS',       subtitle: 'Gabarito Oficial',                accent: [180, 120, 30] as const },
-  'respostas-comentadas': { title: 'RESPOSTAS COMENTADAS', subtitle: 'Explicação de cada questão',     accent: VERDE_MEDIO },
+const TYPE_LABELS: Record<GroupPDFType, { title: string; subtitle: string; tom: 'escuro' | 'verde' | 'laranja' }> = {
+  'exam':         { title: 'Caderno de provas',     subtitle: 'Questões',                        tom: 'escuro' },
+  'with-answers': { title: 'Caderno com gabarito',  subtitle: 'Questões e respostas comentadas', tom: 'verde' },
+  'gabarito':     { title: 'Caderno de gabaritos',  subtitle: 'Gabarito oficial',                tom: 'laranja' },
+  'respostas-comentadas': { title: 'Respostas comentadas', subtitle: 'A explicação de cada questão', tom: 'verde' },
 }
 
 /**
  * Generates a single full-page cover for one exam inside the group PDF.
+ *
+ * Um cartaz: o fundo de manchas mais forte, a marca no alto, e o cartão de
+ * vidro escuro com o título no meio da folha. O título vai até quatro linhas
+ * e a descrição até cinco — medidos antes, e o cartão cresce para os dois
+ * (o cartão antigo tinha 110 mm fixos e um título longo escrevia por cima da
+ * descrição).
  */
 async function generateExamCoverBlob(
   exam: Exam,
@@ -1831,139 +753,77 @@ async function generateExamCoverBlob(
 ): Promise<Blob> {
   const doc = new jsPDF()
   await registerFonts(doc)
+  const logo = await loadLogo()
 
   const W = doc.internal.pageSize.getWidth()
   const H = doc.internal.pageSize.getHeight()
-  const { accent } = TYPE_LABELS[type]
+  const mx = 18
+  const { title: typeTitle, subtitle: typeSub, tom } = TYPE_LABELS[type]
 
-  // ── Dark header band ──────────────────────────────────────────
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, 0, W, 52, 'F')
+  desenharFundoDaPagina(doc)
+  desenharMancha(doc, W * 0.15, H * 0.62, 95, VERDE_VIVO, 0.16)
+  desenharMancha(doc, W * 0.95, H * 0.42, 80, LARANJA, 0.2)
 
-  // ── Accent stripe ─────────────────────────────────────────────
-  doc.setFillColor(...accent)
-  doc.rect(0, 52, W, 6, 'F')
+  // ── A marca no alto ───────────────────────────────────────────
+  desenharIconeDoApp(doc, mx, 22, 20, logo)
+  fonte(doc, 'bold', 20, FLORESTA)
+  doc.text('DomineAqui', mx + 26, 31)
+  fonte(doc, 'normal', 9, TINTA_SUAVE)
+  doc.text('Plataforma de estudos médicos', mx + 26, 37.5)
+  desenharPilula(doc, typeTitle, W - mx, 32, { tom, corpo: 8.5, altura: 8.6, alinhar: 'direita', larguraMaxima: 70 })
 
-  // ── Logo area ─────────────────────────────────────────────────
-  const logo = await loadLogo()
-  if (logo) {
-    try { doc.addImage(logo, 'PNG', 10, 8, 34, 34) } catch {}
-  }
-
-  // ── DomineAqui wordmark ───────────────────────────────────────
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(18)
-  doc.setTextColor(255, 255, 255)
-  doc.text('DomineAqui', 50, 26, { baseline: 'middle' })
-
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(180, 210, 190)
-  doc.text('Plataforma de Estudos Médicos', 50, 36, { baseline: 'middle' })
-
-  // ── Type badge ────────────────────────────────────────────────
-  const { title: typeTitle, subtitle: typeSub } = TYPE_LABELS[type]
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(...accent)
-  doc.text(typeTitle, W - 10, 20, { align: 'right', baseline: 'middle' })
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(7)
-  doc.setTextColor(180, 210, 190)
-  doc.text(typeSub, W - 10, 32, { align: 'right', baseline: 'middle' })
-
-  // ── Center card ───────────────────────────────────────────────
-  const cardTop = 80
-  const cardH = 110
-  const mx = 20
-
-  doc.setFillColor(248, 250, 248)
-  doc.roundedRect(mx, cardTop, W - mx * 2, cardH, 4, 4, 'F')
-  doc.setDrawColor(...accent)
-  doc.setLineWidth(0.6)
-  doc.roundedRect(mx, cardTop, W - mx * 2, cardH, 4, 4, 'S')
-
-  // Left accent bar
-  doc.setFillColor(...accent)
-  doc.roundedRect(mx, cardTop, 4, cardH, 2, 2, 'F')
-
-  // Exam number pill
-  const pillX = mx + 12
-  const pillY = cardTop + 14
-  doc.setFillColor(...accent)
-  doc.roundedRect(pillX, pillY - 5, 36, 10, 3, 3, 'F')
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(7)
-  doc.setTextColor(255, 255, 255)
-  doc.text(`PROVA ${index + 1} DE ${total}`, pillX + 18, pillY, { align: 'center', baseline: 'middle' })
-
-  /*
-   * Título e descrição, presos ao cartão.
-   *
-   * O cartão tem 110mm fixos, e o título saía inteiro: uma prova com nome
-   * longo ("N1 SOI I — Sistema Cardiovascular e Respiratório — Turma B
-   * 2026/2") gastava quatro ou cinco linhas, escrevia por cima da descrição e
-   * transbordava a borda do cartão, na CAPA do pacote.
-   *
-   * Três linhas de título, e a descrição começa DEPOIS delas — não numa
-   * coordenada fixa que só funcionava com títulos curtos.
-   */
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(16)
-  doc.setTextColor(...VERDE_ESCURO)
-  const todasAsLinhasDoTitulo = doc.splitTextToSize(sanitizeForPdf(exam.title), W - mx * 2 - 24) as string[]
-  const linhasDoTitulo = todasAsLinhasDoTitulo.slice(0, 3)
-  if (todasAsLinhasDoTitulo.length > 3) {
-    linhasDoTitulo[2] = `${linhasDoTitulo[2].replace(/\s+\S*$/, '')}...`
-  }
-  const alturaDaLinhaDoTitulo = 7
-  linhasDoTitulo.forEach((linha, i) => {
-    doc.text(linha, mx + 12, cardTop + 34 + i * alturaDaLinhaDoTitulo)
-  })
-
-  // Description
-  if (exam.description) {
-    const descLines = doc.splitTextToSize(sanitizeForPdf(exam.description), W - mx * 2 - 24) as string[]
-    doc.setFont(FONT, 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(100, 100, 100)
-    const yDaDescricao = cardTop + 34 + linhasDoTitulo.length * alturaDaLinhaDoTitulo + 6
-    // O que couber entre o título e o divisor do rodapé do cartão.
-    const linhasQueCabem = Math.max(0, Math.floor((cardTop + cardH - 32 - yDaDescricao) / 5))
-    descLines.slice(0, Math.min(3, linhasQueCabem)).forEach((linha, i) => {
-      doc.text(linha, mx + 12, yDaDescricao + i * 5)
-    })
-  }
-
-  // Divider
-  doc.setDrawColor(220, 230, 220)
-  doc.setLineWidth(0.4)
-  doc.line(mx + 10, cardTop + cardH - 26, W - mx - 10, cardTop + cardH - 26)
-
-  // Meta row
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(100, 100, 100)
+  // ── O cartão do título ────────────────────────────────────────
+  const largura = W - 2 * mx
+  const respiro = 11
+  const larguraDoTexto = largura - 2 * respiro
+  fonte(doc, 'bold', 23)
+  const titulo = quebrarComLimite(doc, exam.title || 'Prova', larguraDoTexto, 4)
+  fonte(doc, 'normal', 10.5)
+  const descricao = exam.description ? quebrarComLimite(doc, exam.description, larguraDoTexto, 5) : []
   const meta: string[] = []
-  if (exam.numberOfQuestions) meta.push(`${exam.numberOfQuestions} questões`)
-  if (exam.totalPoints)       meta.push(`${exam.totalPoints} pts`)
+  if (exam.numberOfQuestions) meta.push(plural(exam.numberOfQuestions, 'questão', 'questões'))
+  if (exam.totalPoints) meta.push(`${exam.totalPoints} pontos`)
   if (exam.scoringMethod === 'tri') meta.push('TRI')
-  if (meta.length) doc.text(meta.join('  ·  '), mx + 12, cardTop + cardH - 13)
+  if (exam.duration) meta.push(`${exam.duration} min`)
 
-  // ── Bottom bar ────────────────────────────────────────────────
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, H - 18, W, 18, 'F')
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(7)
-  doc.setTextColor(150, 200, 160)
-  doc.text('domineaqui.com.br', W / 2, H - 9, { align: 'center', baseline: 'middle' })
+  const altura =
+    respiro + 9 + 6 + titulo.length * 10 + (descricao.length ? 3 + descricao.length * 5.4 : 0) + (meta.length ? 9 + 7 : 0) + respiro
+  const topo = Math.max(62, (H - altura) / 2 - 6)
+  desenharVidro(doc, mx, topo, largura, altura, { tom: 'escuro', raio: 7 })
+
+  let y = topo + respiro
+  desenharPilula(doc, `Prova ${index + 1} de ${total}`, mx + respiro, y + 4.5, { tom: 'translucido', corpo: 8, altura: 9 })
+  y += 9 + 6
+  fonte(doc, 'bold', 23, [255, 255, 255])
+  for (const linha of titulo) {
+    doc.text(linha, mx + respiro, y + 7.6)
+    y += 10
+  }
+  if (descricao.length) {
+    y += 3
+    fonte(doc, 'normal', 10.5, [214, 234, 221])
+    for (const linha of descricao) {
+      doc.text(linha, mx + respiro, y + 4)
+      y += 5.4
+    }
+  }
+  if (meta.length) {
+    y += 9
+    let cx = mx + respiro
+    for (const item of meta) {
+      cx += desenharPilula(doc, item, cx, y + 3.5, { tom: 'translucido', corpo: 8, altura: 7 }) + 2.5
+    }
+  }
+
+  // ── O rodapé do cartaz ────────────────────────────────────────
+  fonte(doc, 'normal', 9, TINTA_SUAVE)
+  doc.text(typeSub, W / 2, H - 26, { align: 'center' })
+  fonte(doc, 'bold', 9, FLORESTA)
+  doc.text('domineaqui.com.br', W / 2, H - 20, { align: 'center' })
 
   return doc.output('blob')
 }
 
-/**
- * Merges an interleaved array of [cover, exam, cover, exam, …] Blobs into one PDF.
- */
 /**
  * As respostas comentadas, sozinhas, para ir no FIM do caderno: a pessoa faz a
  * prova no papel sem ver o gabarito e, ao virar a última página, encontra a
@@ -1973,123 +833,35 @@ async function generateExamCoverBlob(
  */
 export async function generateCommentedAnswersAppendixPDF(exam: Exam): Promise<Blob> {
   const questoes = questoesDaProva(exam)
-  const [imageMap, logo] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  const SUBTITULO = 'Respostas Comentadas'
-  let y = addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
-    }
-  }
-  const medirImagens = criarMedidaDeImagens(doc, imageMap, pageWidth, margin)
+  const [imageMap] = await Promise.all([prefetchExamImages(questoes), loadLogo()])
+  const folha = await abrirFolha('Respostas comentadas')
 
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 24, 3, 3, 'FD')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(15)
-  doc.text('Respostas comentadas', pageWidth / 2, y + 10, { align: 'center' })
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(9)
-  doc.text(sanitizeForPdf(`${exam.title} — leia depois de responder`), pageWidth / 2, y + 17.5, { align: 'center' })
-  y += 32
-
-  questoes.forEach((question, idx) => {
-    checkPage(40)
-    const correta = (question.alternatives || []).find((a) => a.isCorrect)
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFont(FONT, 'bold')
-    doc.setFontSize(11)
-    doc.text(`Questão ${question.number ?? idx + 1}`, margin + 5, y + 7)
-    if (correta) {
-      doc.setFontSize(10)
-      doc.text(`Gabarito: ${correta.letter}`, pageWidth - margin - 5, y + 7, { align: 'right' })
-    }
-    y += 15
-
-    if (correta) {
-      doc.setFont(FONT, 'bold')
-      doc.setFontSize(9.5)
-      const linhas = wrapText(doc, `${correta.letter}) ${correta.text}`, pageWidth - 2 * margin - 10)
-      const altura = linhas.length * 5.5 + 4
-      checkPage(altura + 4)
-      doc.setFillColor(220, 245, 225)
-      doc.setDrawColor(70, 129, 82)
-      doc.setLineWidth(0.4)
-      doc.roundedRect(margin, y - 3.5, pageWidth - 2 * margin, altura, 1.5, 1.5, 'FD')
-      doc.setTextColor(26, 71, 42)
-      linhas.forEach((linha: string) => {
-        drawRichLine(doc, linha, margin + 5, y + 2.2, 'bold')
-        y += 5.5
-      })
-      y += 5
-    }
-
-    const respostaComentada = montarRespostaComentada(question)
-    const recuoDaCaixa = 4
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'normal')
-    const linhasDoComentario = respostaComentada
-      ? wrapText(doc, respostaComentada, pageWidth - 2 * margin - 2 * recuoDaCaixa - 6)
-      : []
-    const linhasDeImagens = medirImagens(blocoDaResposta(question), {
-      recuo: recuoDaCaixa,
-      alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8,
-    })
-    if (linhasDoComentario.length > 0 || linhasDeImagens.length > 0) {
-      y = desenharCaixaDeRespostaComentada({
-        doc,
-        fonte: FONT,
-        x: margin,
-        largura: pageWidth - 2 * margin,
-        y,
-        limiteInferior: pageHeight - 25,
-        yAposQuebra: Y_APOS_CABECALHO,
-        novaPagina: () => {
-          doc.addPage()
-          addDomineAquiHeader(doc, pageWidth, margin, SUBTITULO, logo)
-        },
-        linhas: linhasDoComentario,
-        imagens: linhasDeImagens,
-        titulo: 'Resposta comentada:',
-        cores: { fundo: [245, 250, 246], borda: [70, 129, 82], titulo: VERDE_ESCURO, texto: CINZA_TEXTO },
-        medidas: {
-          alturaDaLinha: 6,
-          alturaDoTitulo: 14,
-          respiroDeContinuacao: 4,
-          respiroInferior: 5,
-          recuo: recuoDaCaixa,
-          corpoDoTitulo: 8.5,
-          baseDoTitulo: 9,
-          corpoDoTexto: 9,
-        },
-        desenharLinha: (texto, x, yDaLinha) => drawRichLine(doc, texto, x, yDaLinha),
-      })
-    } else {
-      doc.setFont(FONT, 'italic')
-      doc.setFontSize(9)
-      doc.setTextColor(110, 110, 110)
-      doc.text('Sem comentário cadastrado para esta questão.', margin, y)
-      y += 6
-    }
-    y += 8
+  desenharCartaoDeTitulo(folha, {
+    titulo: 'Respostas comentadas',
+    descricao: `${exam.title} — leia depois de responder.`,
+    chips: [plural(questoes.length, 'questão', 'questões')],
   })
 
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, exam.title)
-  }
-  return doc.output('blob')
+  questoes.forEach((question, idx) => {
+    const correta = (question.alternatives || []).find((a) => a.isCorrect)
+    desenharCabecalhoDaQuestao(
+      folha,
+      `Questão ${question.number ?? idx + 1}`,
+      correta ? [{ texto: `Gabarito ${correta.letter}`, tom: 'verde' }] : [{ texto: rotuloDoTipo(question) }],
+    )
+
+    if (correta) {
+      desenharAlternativas(folha, [{ letra: correta.letter, texto: correta.text || '', estado: 'certa', etiqueta: 'Correta' }])
+    }
+
+    if (!desenharRespostaComentada(folha, question, imageMap)) {
+      escreverNota(folha, 'Sem comentário cadastrado para esta questão.')
+    }
+    fecharQuestao(folha)
+  })
+
+  finalizarFolha(folha, exam.title)
+  return folha.doc.output('blob')
 }
 
 /** Caderno de estudo: a prova em branco e, no fim, as respostas comentadas. */
@@ -2227,225 +999,102 @@ export interface PurchaseReceiptUser {
   email: string
 }
 
+const reais = (valor: number) =>
+  `R$ ${(Number(valor) || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`
+
 export async function generatePurchaseReceiptPDF(
   purchases: PurchaseReceiptItem[],
   user: PurchaseReceiptUser
 ): Promise<Blob> {
   await Promise.all([prewarmFontsCache(), loadLogo()])
+  const folha = await abrirFolha('Comprovante de compras')
+  const { doc } = folha
 
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  await registerFonts(doc)
-
-  const W = doc.internal.pageSize.getWidth()
-  const H = doc.internal.pageSize.getHeight()
-  const mx = 18
-
-  // ── Header band ──────────────────────────────────────────────────
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, 0, W, 38, 'F')
-
-  const logo = await loadLogo()
-  if (logo) {
-    doc.addImage(logo, 'JPEG', mx, 7, 28, 24)
-  } else {
-    doc.setFont(FONT, 'bold')
-    doc.setFontSize(14)
-    doc.setTextColor(255, 255, 255)
-    doc.text('DomineAqui', mx, 22)
-  }
-
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(13)
-  doc.setTextColor(255, 255, 255)
-  doc.text('Comprovante de Compras', W - mx, 18, { align: 'right' })
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(180, 220, 185)
-  doc.text('domineaqui.com.br', W - mx, 26, { align: 'right' })
-
-  let y = 52
-
-  // ── Document metadata ────────────────────────────────────────────
   const emitDate = new Date().toLocaleDateString('pt-BR', {
     day: '2-digit', month: 'long', year: 'numeric',
   })
   const docId = `REC-${user.id.slice(-8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`
 
-  doc.setFillColor(245, 248, 245)
-  doc.roundedRect(mx, y, W - mx * 2, 36, 3, 3, 'F')
-  doc.setDrawColor(210, 228, 212)
-  doc.setLineWidth(0.4)
-  doc.roundedRect(mx, y, W - mx * 2, 36, 3, 3, 'S')
-
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text('DADOS DO DOCUMENTO', mx + 10, y + 10)
-
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.text(`Emitido em:  ${emitDate}`, mx + 10, y + 20)
-  doc.text(`Código:  ${docId}`, mx + 10, y + 28)
-  doc.text(`Versão:  1.0`, W - mx - 10, y + 20, { align: 'right' })
-  doc.text(`Plataforma:  DomineAqui`, W - mx - 10, y + 28, { align: 'right' })
-
-  y += 46
-
-  // ── User info ────────────────────────────────────────────────────
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text('DADOS DO TITULAR', mx, y)
-  y += 6
-
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(0.6)
-  doc.line(mx, y, W - mx, y)
-  y += 8
-
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(9)
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.text(`Nome:`, mx, y)
-  doc.setFont(FONT, 'bold')
-  doc.text(sanitizeForPdf(user.name), mx + 24, y)
-
-  doc.setFont(FONT, 'normal')
-  doc.text(`E-mail:`, mx + 100, y)
-  doc.setFont(FONT, 'bold')
-  doc.text(sanitizeForPdf(user.email), mx + 124, y)
-
-  y += 8
-  doc.setFont(FONT, 'normal')
-  doc.text(`ID da Conta:`, mx, y)
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(8)
-  doc.text(user.id, mx + 28, y)
-
-  y += 16
-
-  // ── Purchase table ───────────────────────────────────────────────
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(9)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text('HISTÓRICO DE COMPRAS', mx, y)
-  y += 6
-
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(0.6)
-  doc.line(mx, y, W - mx, y)
-  y += 2
-
-  // Table header
-  const colX = [mx, mx + 80, mx + 110, mx + 138]
-  const colW = W - mx * 2
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(mx, y, colW, 9, 'F')
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(8)
-  doc.setTextColor(255, 255, 255)
-  doc.text('Produto', colX[0] + 3, y + 6)
-  doc.text('Tipo', colX[1] + 3, y + 6)
-  doc.text('Data', colX[2] + 3, y + 6)
-  doc.text('Valor', colX[3] + 3, y + 6)
-  y += 9
-
-  // Table rows
-  purchases.forEach((p, i) => {
-    if (y > H - 40) {
-      doc.addPage()
-      y = 20
-    }
-    const rowH = 10
-    doc.setFillColor(i % 2 === 0 ? 250 : 255, i % 2 === 0 ? 252 : 255, i % 2 === 0 ? 250 : 255)
-    doc.rect(mx, y, colW, rowH, 'F')
-    doc.setDrawColor(225, 235, 225)
-    doc.setLineWidth(0.2)
-    doc.rect(mx, y, colW, rowH, 'S')
-
-    const title = sanitizeForPdf(p.itemTitle)
-    const titleLines = doc.splitTextToSize(title, 74)
-    const typeLabel = p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'
-    const dateStr = new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-    })
-    const priceStr = p.price === 0 ? 'Gratuito' : `R$ ${p.price.toFixed(2)}`
-
-    doc.setFont(FONT, 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.text(titleLines[0] || '', colX[0] + 3, y + 6.5)
-    doc.text(typeLabel, colX[1] + 3, y + 6.5)
-    doc.text(dateStr, colX[2] + 3, y + 6.5)
-    doc.setFont(FONT, 'bold')
-    const priceColor: readonly [number, number, number] = p.price === 0 ? [70, 129, 82] : CINZA_TEXTO
-    doc.setTextColor(...priceColor)
-    doc.text(priceStr, colX[3] + 3, y + 6.5)
-    y += rowH
+  desenharCartaoDeTitulo(folha, {
+    titulo: 'Comprovante de compras',
+    descricao: 'Documento gerado automaticamente pela plataforma DomineAqui.',
+    chips: [`Emitido em ${emitDate}`, docId, 'Versão 1.0'],
   })
 
-  y += 4
+  desenharPares(
+    folha,
+    [
+      { rotulo: 'Nome', valor: sanitizeForPdf(user.name) },
+      { rotulo: 'E-mail', valor: sanitizeForPdf(user.email) },
+      { rotulo: 'ID da conta', valor: user.id },
+    ],
+    { titulo: 'Dados do titular', larguraDoRotulo: 30 },
+  )
 
-  // ── Totals ───────────────────────────────────────────────────────
-  const totalPaid = purchases.reduce((s, p) => s + (p.price || 0), 0)
-  const totalItems = purchases.length
-
-  doc.setFillColor(235, 245, 236)
-  doc.roundedRect(mx, y, colW, 18, 2, 2, 'F')
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.setLineWidth(0.5)
-  doc.roundedRect(mx, y, colW, 18, 2, 2, 'S')
-
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(9)
-  doc.setTextColor(...CINZA_TEXTO)
-  doc.text(`Total de itens: ${totalItems}`, mx + 8, y + 11)
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(10)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text(`Total investido: R$ ${totalPaid.toFixed(2)}`, W - mx - 8, y + 11, { align: 'right' })
-
-  y += 28
-
-  // ── Terms declaration ────────────────────────────────────────────
-  doc.setFillColor(248, 250, 248)
-  doc.setDrawColor(210, 228, 212)
-  doc.setLineWidth(0.4)
-  const termsText = [
-    `O titular acima identificado declara ter lido, compreendido e aceito os Termos de Uso e a Política de`,
-    `Privacidade da plataforma DomineAqui (domineaqui.com.br) no momento da realização de cada compra`,
-    `listada neste documento. Os materiais adquiridos destinam-se a uso pessoal e intransferível, sendo`,
-    `vedada a reprodução, revenda ou distribuição sem autorização prévia e expressa da plataforma.`,
+  // ── A tabela de compras ──────────────────────────────────────────
+  // O nome do produto quebra em até duas linhas dentro da coluna dele: antes
+  // ele era cortado na primeira, sem reticências.
+  const colunas = { produto: 4.5, tipo: 92, data: 118, valor: folha.larguraUtil - 4.5 }
+  const larguraDoProduto = colunas.tipo - colunas.produto - 4
+  const linhas: LinhaDoGrupo[] = [
+    {
+      altura: 8,
+      desenhar: (x, y) => {
+        fonte(doc, 'bold', 7, TINTA_SUAVE)
+        doc.text('PRODUTO', x + colunas.produto, y + 5.2, { charSpace: 0.3 })
+        doc.text('TIPO', x + colunas.tipo, y + 5.2, { charSpace: 0.3 })
+        doc.text('DATA', x + colunas.data, y + 5.2, { charSpace: 0.3 })
+        doc.text('VALOR', x + colunas.valor, y + 5.2, { align: 'right', charSpace: 0.3 })
+      },
+    },
+    ...purchases.map((p): LinhaDoGrupo => {
+      fonte(doc, 'normal', 8.6, TINTA)
+      const titulo = quebrarComLimite(doc, sanitizeForPdf(p.itemTitle), larguraDoProduto, 2)
+      const altura = Math.max(1, titulo.length) * 4.4 + 4.4
+      const typeLabel = p.itemType === 'manual_clinico' ? 'Produto' : p.itemType === 'package' ? 'Pacote' : 'Material'
+      const dateStr = new Date(p.purchasedAt).toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+      })
+      return {
+        altura,
+        desenhar: (x, y) => {
+          fonte(doc, 'normal', 8.6, TINTA)
+          titulo.forEach((linha, n) => doc.text(linha, x + colunas.produto, y + 5.2 + n * 4.4))
+          fonte(doc, 'normal', 8.2, TINTA_SUAVE)
+          doc.text(typeLabel, x + colunas.tipo, y + 5.2)
+          doc.text(dateStr, x + colunas.data, y + 5.2)
+          fonte(doc, 'bold', 8.6, p.price === 0 ? [27, 104, 64] : TINTA)
+          doc.text(p.price === 0 ? 'Gratuito' : reais(p.price), x + colunas.valor, y + 5.2, { align: 'right' })
+        },
+      }
+    }),
   ]
-  const termsH = termsText.length * 5.5 + 16
-  doc.roundedRect(mx, y, colW, termsH, 2, 2, 'FD')
+  desenharGrupo(folha, linhas, { titulo: 'Histórico de compras', recuoDoFio: 4.5, depois: 3 })
 
-  doc.setFont(FONT, 'bold')
-  doc.setFontSize(8)
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.text('DECLARAÇÃO DE ACEITE DOS TERMOS', mx + 8, y + 9)
+  // ── Totais ───────────────────────────────────────────────────────
+  const totalPaid = purchases.reduce((s, p) => s + (p.price || 0), 0)
+  desenharNumeros(folha, [
+    { valor: String(purchases.length), rotulo: plural(purchases.length, 'item', 'itens') },
+    { valor: reais(totalPaid), rotulo: 'Total investido', tom: 'verde' },
+  ])
 
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(7.5)
-  doc.setTextColor(90, 90, 90)
-  termsText.forEach((line, i) => {
-    doc.text(line, mx + 8, y + 16 + i * 5.5)
-  })
+  // ── Declaração ───────────────────────────────────────────────────
+  // Um parágrafo quebrado na largura, não quatro linhas fixas escritas à mão:
+  // a fonte embutida é mais larga que a Helvetica, e as linhas fixas passavam
+  // da borda da caixa.
+  desenharCaixaDeTexto(
+    folha,
+    'O titular acima identificado declara ter lido, compreendido e aceito os Termos de Uso e a Política de Privacidade da plataforma DomineAqui (domineaqui.com.br) no momento da realização de cada compra listada neste documento. Os materiais adquiridos destinam-se a uso pessoal e intransferível, sendo vedada a reprodução, revenda ou distribuição sem autorização prévia e expressa da plataforma.',
+    'Declaração de aceite dos termos',
+    { tom: 'claro' },
+  )
 
-  // ── Footer ───────────────────────────────────────────────────────
-  doc.setFillColor(...VERDE_ESCURO)
-  doc.rect(0, H - 16, W, 16, 'F')
-  doc.setFont(FONT, 'normal')
-  doc.setFontSize(7)
-  doc.setTextColor(150, 200, 160)
-  doc.text('DomineAqui · domineaqui.com.br · Documento gerado automaticamente pela plataforma', W / 2, H - 8, { align: 'center', baseline: 'middle' })
-
+  finalizarFolha(folha, 'Documento gerado automaticamente pela plataforma', 'Comprovante')
   return doc.output('blob')
 }
 
 // ─────────────────────────────────────────────────────────────────
-// BANCO DE QUESTÕES — Lista (mesma engine das Provas: Roboto + wrapText)
+// BANCO DE QUESTÕES — Lista (mesma engine das Provas: fonte embutida e os mesmos componentes)
 // ─────────────────────────────────────────────────────────────────
 
 interface BancoAlternativaPDF {
@@ -2476,7 +1125,7 @@ interface BancoQuestaoPDF {
 
 /**
  * Gera o PDF de uma lista do Banco de Questões usando exatamente a mesma
- * engine das Provas (fontes Roboto com Unicode completo, wrapText próprio e
+ * engine das Provas (fonte Inter com Unicode completo, `quebrarTexto` e
  * markdown inline). Isso elimina o truncamento de letras/acentos do gerador
  * server-side antigo baseado em Helvetica.
  *
@@ -2488,10 +1137,6 @@ export async function generateBancoListaPDF(
   questoes: BancoQuestaoPDF[],
   incluirRespostas: boolean = false
 ): Promise<Blob> {
-  const doc = new jsPDF()
-  await registerFonts(doc)
-  const logo = await loadLogo()
-
   // Pré-carregar imagens das questões (mesma cache de sessão das provas).
   // Enunciado e explicação juntos: uma imagem que só aparece no comentário
   // também precisa dos bytes antes da hora de desenhar.
@@ -2511,301 +1156,89 @@ export async function generateBancoListaPDF(
     })
   )
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
-  const margin = 20
-  let y = margin
+  const folha = await abrirFolha(incluirRespostas ? 'Banco de questões · Gabarito' : 'Banco de questões')
 
-  const subtitle = incluirRespostas ? 'Banco de Questões · Gabarito' : 'Banco de Questões'
-
-  const checkPage = (needed: number) => {
-    if (y + needed > pageHeight - 25) {
-      doc.addPage()
-      y = addDomineAquiHeader(doc, pageWidth, margin, subtitle, logo)
-      return true
-    }
-    return false
-  }
-
-  const desenharImagens = criarDesenhoDeImagens(doc, imageMap, pageWidth, pageHeight, margin, logo)
-
-  y = addDomineAquiHeader(doc, pageWidth, margin, subtitle, logo)
-
-  // === TÍTULO DA LISTA ===
-  doc.setFillColor(...LARANJA_CLARO)
-  doc.setDrawColor(...VERDE_MEDIO)
-  doc.roundedRect(margin, y, pageWidth - 2 * margin, 22, 3, 3, 'FD')
-  doc.setTextColor(...VERDE_ESCURO)
-  doc.setFontSize(16)
-  doc.setFont(FONT, 'bold')
-  const tituloLines = wrapText(doc, listaNome, pageWidth - 2 * margin - 10)
-  doc.text(tituloLines[0] || listaNome, pageWidth / 2, y + 10, { align: 'center' })
-  doc.setFontSize(9)
-  doc.setFont(FONT, 'normal')
-  doc.setTextColor(100, 100, 100)
-  doc.text(`${questoes.length} ${questoes.length === 1 ? 'questão' : 'questões'}`, pageWidth / 2, y + 17, { align: 'center' })
-  y += 30
-
+  desenharCartaoDeTitulo(folha, {
+    titulo: listaNome,
+    chips: [plural(questoes.length, 'questão', 'questões'), incluirRespostas ? 'Com gabarito comentado' : null].filter(
+      (chip): chip is string => !!chip,
+    ),
+  })
   if (incluirRespostas) {
-    doc.setFillColor(...VERDE_ESCURO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 9, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(9)
-    doc.setFont(FONT, 'bold')
-    doc.text('GABARITO COMENTADO  —  Alternativas corretas destacadas em verde', pageWidth / 2, y + 6, { align: 'center' })
-    y += 16
+    escreverNota(folha, 'As alternativas corretas aparecem em verde, com a marca de certo. O gabarito rápido está no fim da lista.')
   }
 
-  // === QUESTÕES ===
   questoes.forEach((questao, idx) => {
-    // Garantir estado limpo no início de cada questão (evita vazamento de cor verde das alternativas)
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.setFontSize(10)
-    doc.setFont(FONT, 'normal')
-
-    checkPage(45)
-
-    // Header da questão
-    doc.setFillColor(...VERDE_MEDIO)
-    doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(11)
-    doc.setFont(FONT, 'bold')
-    doc.text(`Questão ${idx + 1}`, margin + 5, y + 7)
-
     // Metadados à direita (tipo · dificuldade · ano)
-    const tipoLabel = questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva'
-    const meta: string[] = [tipoLabel]
+    const pilulas: { texto: string; tom?: 'claro' | 'laranja' | 'verde' }[] = [
+      { texto: questao.tipo === 'objetiva' ? 'Objetiva' : 'Discursiva' },
+    ]
     if (questao.dificuldade) {
-      meta.push(questao.dificuldade === 'facil' ? 'Fácil' : questao.dificuldade === 'medio' ? 'Médio' : 'Difícil')
+      pilulas.push({
+        texto: questao.dificuldade === 'facil' ? 'Fácil' : questao.dificuldade === 'medio' ? 'Médio' : 'Difícil',
+        tom: questao.dificuldade === 'dificil' ? 'laranja' : questao.dificuldade === 'facil' ? 'verde' : 'claro',
+      })
     }
-    if (questao.ano) meta.push(String(questao.ano))
-    doc.setFontSize(8)
-    doc.setFont(FONT, 'normal')
-    doc.text(meta.join('  ·  '), pageWidth - margin - 2, y + 7, { align: 'right' })
-    y += 14
+    if (questao.ano) pilulas.push({ texto: String(questao.ano) })
+    desenharCabecalhoDaQuestao(folha, `Questão ${idx + 1}`, pilulas)
 
-    // Reset cor após header
-    doc.setTextColor(...CINZA_TEXTO)
-    doc.setFont(FONT, 'normal')
-
-    // Hierarquia (período > módulo > tópico)
-    const hierarquia = [questao.periodoNome, questao.moduloNome, questao.topicoNome].filter(Boolean).join(' > ')
+    // Hierarquia (período › módulo › tópico)
+    const hierarquia = [questao.periodoNome, questao.moduloNome, questao.topicoNome].filter(Boolean).join('  ›  ')
     if (hierarquia) {
-      checkPage(7)
-      doc.setFontSize(8)
-      doc.setFont(FONT, 'italic')
-      doc.setTextColor(120, 120, 120)
-      doc.text(sanitizeForPdf(hierarquia), margin, y)
-      y += 6
+      escreverTexto(folha, hierarquia.replace(/\*/g, ''), { corpo: 8, estilo: 'italic', cor: TINTA_SUAVE, entrelinha: 4.2, depois: 1.5 })
     }
 
-    // Enunciado
-    if (questao.enunciado) {
-      checkPage(12)
-      doc.setFontSize(10)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      const lines = wrapText(doc, questao.enunciado, pageWidth - 2 * margin)
-      lines.forEach((line: string) => {
-        checkPage(8)
-        doc.setFontSize(10)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin, y)
-        y += 6
-      })
-      y += 2
-    }
+    if (questao.enunciado) escreverTexto(folha, questao.enunciado, { depois: 2 })
+    desenharImagensNaFolha(folha, imageMap, blocoDaQuestaoDoBanco(questao))
+    folha.y += 1.5
 
-    // Imagens do enunciado
-    y = desenharImagens(blocoDaQuestaoDoBanco(questao), y, subtitle)
-
-    // Alternativas (objetiva)
     if (questao.tipo === 'objetiva' && questao.alternativas) {
-      y += 2
-      questao.alternativas.forEach((alt) => {
-        const isCorrect = incluirRespostas && !!alt.correta
-        const altText = `${alt.letra}) ${alt.texto}`
-        const altLines = wrapText(doc, altText, pageWidth - 2 * margin - 12)
-        const rectH = altLines.length * 6 + 3
-        checkPage(rectH + 3)
-
-        if (isCorrect) {
-          doc.setFillColor(220, 245, 225)
-          doc.setDrawColor(70, 129, 82)
-          doc.setLineWidth(0.5)
-          doc.roundedRect(margin + 1, y - 3, pageWidth - 2 * margin - 2, rectH, 1.5, 1.5, 'FD')
-        }
-
-        doc.setFont(FONT, isCorrect ? 'bold' : 'normal')
-        doc.setFontSize(10)
-        doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
-
-        // Ícone: check verde (correta) ou checkbox vazio
-        if (isCorrect) {
-          doc.setFillColor(70, 129, 82)
-          doc.setDrawColor(70, 129, 82)
-          doc.circle(margin + 4.5, y - 1.5, 3, 'F')
-          doc.setDrawColor(255, 255, 255)
-          doc.setLineWidth(0.7)
-          doc.line(margin + 3.2, y - 1.5, margin + 4.3, y - 0.3)
-          doc.line(margin + 4.3, y - 0.3, margin + 6, y - 3)
-        } else {
-          doc.setDrawColor(...VERDE_MEDIO)
-          doc.setLineWidth(0.4)
-          doc.roundedRect(margin + 2, y - 3.5, 5, 5, 1, 1)
-        }
-
-        altLines.forEach((line: string, lineIdx: number) => {
-          if (lineIdx > 0) {
-            doc.setFontSize(10)
-            doc.setTextColor(isCorrect ? 26 : CINZA_TEXTO[0], isCorrect ? 71 : CINZA_TEXTO[1], isCorrect ? 42 : CINZA_TEXTO[2])
+      desenharAlternativas(
+        folha,
+        questao.alternativas.map((alt, i) => {
+          const certa = incluirRespostas && !!alt.correta
+          return {
+            letra: alt.letra || String.fromCharCode(65 + i),
+            texto: alt.texto || '',
+            estado: certa ? 'certa' : 'vazia',
+            etiqueta: certa ? 'Correta' : undefined,
           }
-          drawRichLine(doc, line, margin + 10, y, isCorrect ? 'bold' : 'normal')
-          y += 6
-        })
-        // Reset após alternativa verde para não vazar para o bloco seguinte
-        doc.setTextColor(...CINZA_TEXTO)
-        doc.setFont(FONT, 'normal')
-        y += 3
-      })
+        }),
+      )
     } else if (questao.tipo === 'discursiva' && !incluirRespostas) {
-      // Espaço para resposta
-      checkPage(20)
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...LARANJA)
-      doc.text('Espaço para resposta:', margin, y)
-      y += 6
-      doc.setDrawColor(200, 200, 200)
-      doc.setLineWidth(0.3)
-      for (let i = 0; i < 6; i++) {
-        checkPage(8)
-        doc.line(margin, y, pageWidth - margin, y)
-        y += 7
-      }
+      desenharPautas(folha, 6, 'Resposta')
     }
 
     // Resposta modelo (discursiva, com respostas)
     if (incluirRespostas && questao.tipo === 'discursiva' && questao.respostaModelo) {
-      checkPage(14)
-      doc.setFontSize(8.5)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...VERDE_ESCURO)
-      doc.text('Resposta Modelo:', margin, y)
-      y += 6
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      wrapText(doc, questao.respostaModelo, pageWidth - 2 * margin - 4).forEach((line: string) => {
-        checkPage(8)
-        doc.setFontSize(9)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin + 4, y)
-        y += 6
-      })
-      y += 3
+      desenharCaixaDeTexto(folha, questao.respostaModelo, 'Resposta modelo', { tom: 'claro' })
     }
 
-    // Explicação / comentário (com respostas)
-    if (incluirRespostas && questao.explicacao) {
-      checkPage(14)
-      doc.setFontSize(8.5)
-      doc.setFont(FONT, 'bold')
-      doc.setTextColor(...LARANJA)
-      doc.text('Resposta Comentada:', margin, y)
-      y += 6
-      doc.setFontSize(9)
-      doc.setFont(FONT, 'normal')
-      doc.setTextColor(...CINZA_TEXTO)
-      wrapText(doc, questao.explicacao, pageWidth - 2 * margin - 4).forEach((line: string) => {
-        checkPage(8)
-        doc.setFontSize(9)
-        doc.setFont(FONT, 'normal')
-        doc.setTextColor(...CINZA_TEXTO)
-        drawRichLine(doc, line, margin + 4, y)
-        y += 6
-      })
-      y += 3
-    }
-
-    // Imagens da resposta comentada
+    // Explicação / comentário (com respostas), com as imagens DENTRO da caixa.
     if (incluirRespostas) {
-      y = desenharImagens(
-        { imagens: imagensDaExplicacaoDoBanco(questao), layout: layoutDaExplicacaoDoBanco(questao) },
-        y,
-        subtitle,
-        { recuo: 4, alturaMaxima: ALTURA_MAXIMA_DA_IMAGEM * 0.8 },
-      )
-    }
-
-    // Fonte
-    if (questao.fonte) {
-      checkPage(8)
-      doc.setFontSize(7.5)
-      doc.setFont(FONT, 'italic')
-      doc.setTextColor(120, 120, 120)
-      const fonteLines = wrapText(doc, `Fonte: ${questao.fonte}`, pageWidth - 2 * margin)
-      fonteLines.forEach((line: string) => {
-        doc.text(line, margin, y)
-        y += 4.5
+      desenharCaixaDeTexto(folha, questao.explicacao || '', 'Resposta comentada', {
+        imagens: { imagens: imagensDaExplicacaoDoBanco(questao), layout: layoutDaExplicacaoDoBanco(questao) },
+        imageMap,
       })
     }
 
-    // Separador entre questões
-    y += 6
-    checkPage(4)
-    doc.setDrawColor(...LARANJA)
-    doc.setLineWidth(0.4)
-    doc.line(margin + 15, y, pageWidth - margin - 15, y)
-    y += 8
+    if (questao.fonte) escreverCredito(folha, questao.fonte)
+    fecharQuestao(folha)
   })
 
   // === GABARITO RÁPIDO (objetivas) ===
   if (incluirRespostas) {
-    const objetivas = questoes.filter(q => q.tipo === 'objetiva')
-    if (objetivas.length > 0) {
-      checkPage(40)
-      doc.setFillColor(...VERDE_ESCURO)
-      doc.roundedRect(margin, y, pageWidth - 2 * margin, 10, 2, 2, 'F')
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(11)
-      doc.setFont(FONT, 'bold')
-      doc.text('GABARITO RÁPIDO', pageWidth / 2, y + 7, { align: 'center' })
-      y += 16
-
-      const columns = 5
-      const columnWidth = (pageWidth - 2 * margin) / columns
-      const rowHeight = 11
-      let col = 0
-      questoes.forEach((q, i) => {
-        if (q.tipo !== 'objetiva') return
-        const correta = q.alternativas?.find(a => a.correta)?.letra || '-'
-        const x = margin + col * columnWidth
-        doc.setFillColor(...LARANJA_CLARO)
-        doc.roundedRect(x, y - 6, columnWidth - 3, rowHeight, 2, 2, 'F')
-        doc.setTextColor(...VERDE_ESCURO)
-        doc.setFontSize(9)
-        doc.setFont(FONT, 'bold')
-        doc.text(`Q${i + 1}: ${correta}`, x + 4, y + 1)
-        col++
-        if (col >= columns) {
-          col = 0
-          y += rowHeight + 2
-          checkPage(rowHeight + 4)
-        }
-      })
+    const celulas: CelulaDaGrade[] = []
+    questoes.forEach((q, i) => {
+      if (q.tipo !== 'objetiva') return
+      celulas.push({ numero: i + 1, letra: q.alternativas?.find((a) => a.correta)?.letra || '—' })
+    })
+    if (celulas.length > 0) {
+      garantirEspaco(folha, 30)
+      desenharGrade(folha, celulas, 5, 'Gabarito rápido')
     }
   }
 
-  // === RODAPÉ EM TODAS AS PÁGINAS ===
-  const totalPages = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i)
-    addDomineAquiFooter(doc, i, totalPages, pageWidth, pageHeight, margin, listaNome)
-  }
-
-  return doc.output('blob')
+  finalizarFolha(folha, listaNome)
+  return folha.doc.output('blob')
 }

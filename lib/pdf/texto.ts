@@ -13,7 +13,7 @@
  *   `**Comentário por alternativa**` ia para o papel com os asteriscos.
  *
  * Uma cópia só resolve as duas. `sanitizarParaPdf` continua no funil: sem a
- * Roboto embutida, é o que impede um `≥` perdido de soletrar a linha inteira
+ * fonte embutida, é o que impede um `≥` perdido de soletrar a linha inteira
  * (ver `lib/pdf/marca.ts`).
  *
  * ## Os dois defeitos que a resposta comentada mostrava
@@ -307,27 +307,83 @@ export function quebrarTexto(doc: jsPDF, texto: string, larguraMaxima: number): 
   const limpo = sanitizarParaPdf(desescaparParaPdf(texto))
   const linhas: string[] = []
 
+  /*
+   * Cada pedaço é medido no estilo em que será DESENHADO.
+   *
+   * A medição antiga usava só a fonte ativa: um trecho em `**negrito**` — mais
+   * largo que o normal — era medido como normal, e a linha que "cabia" saía
+   * alguns milímetros além da margem. O estilo do pedaço se soma ao da linha
+   * (um `*itálico*` dentro de um comando em negrito é negrito-itálico), que é
+   * exatamente o que `desenharLinhaRica` faz na hora de pintar.
+   */
+  // Sem `getFont` (um documento de mentira, nos testes) não há como trocar o
+  // estilo para medir: tudo é medido na fonte ativa, como antes.
+  const fonteAtual = typeof doc.getFont === 'function' ? doc.getFont() : null
+  const familia = fonteAtual?.fontName ?? ''
+  const estiloDaLinha = (fonteAtual?.fontStyle ?? 'normal') as EstiloDeTexto
+  const base = marcadoresDo(estiloDaLinha)
+  const larguraDoEspaco = doc.getTextWidth(' ')
+  const medirPalavra = (palavra: Palavra): number => {
+    if (!fonteAtual || palavra.every((pedaco) => pedaco.estilo === 'normal')) {
+      return doc.getTextWidth(palavra.map((pedaco) => pedaco.texto).join(''))
+    }
+    let largura = 0
+    for (const pedaco of palavra) {
+      const proprio = marcadoresDo(pedaco.estilo)
+      const negrito = base.negrito || proprio.negrito
+      const italico = base.italico || proprio.italico
+      const estilo: EstiloDeTexto = negrito && italico ? 'bolditalic' : negrito ? 'bold' : italico ? 'italic' : 'normal'
+      try {
+        doc.setFont(familia, estilo)
+      } catch {
+        doc.setFont(familia, estiloDaLinha)
+      }
+      largura += doc.getTextWidth(pedaco.texto)
+    }
+    doc.setFont(familia, estiloDaLinha)
+    return largura
+  }
+
   for (const paragrafo of limpo.split(/\n/)) {
     if (paragrafo.trim() === '') {
       linhas.push('')
       continue
     }
 
-    const palavras = palavrasComEstilo(analisarTrechos(paragrafo))
+    // Uma "palavra" mais larga que a linha inteira — um link, uma sequência
+    // de DNA, um "aaaaaaa" colado — passava da margem do mesmo jeito, porque
+    // não há espaço onde quebrar. Ela é partida em pedaços que cabem.
+    const palavras = palavrasComEstilo(analisarTrechos(paragrafo)).flatMap((palavra): Palavra[] => {
+      if (medirPalavra(palavra) <= larguraMaxima) return [palavra]
+      const estilo = palavra[0].estilo
+      const corrido = palavra.map((pedaco) => pedaco.texto).join('')
+      const pedacos: Palavra[] = []
+      let atual = ''
+      for (const caractere of Array.from(corrido)) {
+        if (atual && medirPalavra([{ texto: atual + caractere, estilo }]) > larguraMaxima) {
+          pedacos.push([{ texto: atual, estilo }])
+          atual = caractere
+        } else {
+          atual += caractere
+        }
+      }
+      if (atual) pedacos.push([{ texto: atual, estilo }])
+      return pedacos
+    })
     let atual: Palavra[] = []
     // A medição ignora os marcadores porque eles não são desenhados.
-    let plano = ''
+    let larguraAtual = 0
 
     for (const palavra of palavras) {
-      const palavraPlana = palavra.map((pedaco) => pedaco.texto).join('')
-      const teste = plano ? `${plano} ${palavraPlana}` : palavraPlana
-      if (doc.getTextWidth(teste) > larguraMaxima && atual.length > 0) {
+      const larguraDaPalavra = medirPalavra(palavra)
+      const teste = atual.length > 0 ? larguraAtual + larguraDoEspaco + larguraDaPalavra : larguraDaPalavra
+      if (teste > larguraMaxima && atual.length > 0) {
         linhas.push(serializar(atual))
         atual = [palavra]
-        plano = palavraPlana
+        larguraAtual = larguraDaPalavra
       } else {
         atual.push(palavra)
-        plano = teste
+        larguraAtual = teste
       }
     }
     if (atual.length > 0) linhas.push(serializar(atual))

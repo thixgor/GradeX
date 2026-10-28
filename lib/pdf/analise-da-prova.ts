@@ -4,18 +4,25 @@ import {
   questaoMaisErradaDaTurma,
 } from '@/lib/provas/analise-da-turma'
 import {
-  CINZA_CLARO,
-  CINZA_TEXTO,
+  ERRO,
+  FIO,
+  FLORESTA,
   LARANJA,
-  VERDE_ESCURO,
-  VERDE_MEDIO,
+  TINTA,
+  TINTA_FRACA,
+  TINTA_SUAVE,
+  VERDE,
   carregarLogo,
   desenharCabecalho,
   desenharRodape,
+  desenharVidro,
+  encurtarParaLargura,
+  fonte as ligarFonte,
   registrarFontes,
   sanitizarParaPdf,
 } from './marca'
-import { carregarImagens, encaixar, type ImagemParaPdf } from './imagens'
+import { type Folha, baseDaLinha, desenharCartaoDeTitulo } from './folha'
+import { carregarImagens, type ImagemParaPdf } from './imagens'
 import { desenharImagensNoPdf } from './imagens-de-questao'
 import { fatiarCaixaEmPaginas } from './paginacao'
 import { desenharLinhaRica, quebrarTexto } from './texto'
@@ -186,7 +193,7 @@ export function formatarDuracao(minutos: number | null | undefined): string {
 
 function numeroCurto(valor: number | null | undefined, casas = 1): string {
   if (valor === null || valor === undefined || !Number.isFinite(valor)) return '—'
-  return Number.isInteger(valor) ? String(valor) : valor.toFixed(casas)
+  return Number.isInteger(valor) ? String(valor) : valor.toFixed(casas).replace('.', ',')
 }
 
 function dataCurta(valor?: string | Date | null): string {
@@ -243,6 +250,25 @@ function garantirEspaco(p: Pincel, necessario: number, subtitulo: string) {
 }
 
 /**
+ * O pincel visto como uma folha, para os componentes de `lib/pdf/folha.ts`.
+ * Quem chama devolve o `y` ao pincel depois (`p.y = folha.y`).
+ */
+function comoFolha(p: Pincel, subtitulo: string): Folha {
+  return {
+    doc: p.doc,
+    fonte: p.fonte,
+    largura: p.largura,
+    altura: p.altura,
+    margem: MARGEM,
+    larguraUtil: p.largura - 2 * MARGEM,
+    limite: p.altura - 26,
+    y: p.y,
+    subtitulo,
+    logo: p.logo,
+  }
+}
+
+/**
  * A quebra é a compartilhada (`lib/pdf/texto.ts`), não uma cópia local.
  *
  * A cópia que havia aqui media o texto COM os `**` — que não são desenhados —
@@ -256,18 +282,25 @@ function quebrar(p: Pincel, texto: string, larguraMax: number): string[] {
   return quebrarTexto(p.doc, texto || '', larguraMax)
 }
 
-/** O título de uma seção: barra verde, texto branco. */
+/**
+ * O título de uma seção: o texto em verde-escuro, um ponto laranja na frente
+ * e um fio que corre até a margem. A tarja verde sólida de antes pesava mais
+ * que o conteúdo embaixo dela.
+ */
 function tituloDeSecao(p: Pincel, texto: string, subtitulo: string) {
-  garantirEspaco(p, 22, subtitulo)
-  p.doc.setFillColor(...VERDE_ESCURO)
-  p.doc.roundedRect(MARGEM, p.y, p.largura - 2 * MARGEM, 11, 2, 2, 'F')
-  p.doc.setTextColor(255, 255, 255)
-  p.doc.setFontSize(11)
-  p.doc.setFont(p.fonte, 'bold')
-  p.doc.text(sanitizarParaPdf(texto), MARGEM + 6, p.y + 7.5)
-  p.doc.setTextColor(...CINZA_TEXTO)
-  p.doc.setFont(p.fonte, 'normal')
-  p.y += 18
+  garantirEspaco(p, 30, subtitulo)
+  p.y += 2
+  p.doc.setFillColor(...LARANJA)
+  p.doc.circle(MARGEM + 1.4, p.y + 4, 1.4, 'F')
+  ligarFonte(p.doc, 'bold', 13, FLORESTA)
+  const conteudo = encurtarParaLargura(p.doc, texto, p.largura - 2 * MARGEM - 20)
+  p.doc.text(conteudo, MARGEM + 5, p.y + 5.6)
+  const fim = MARGEM + 5 + p.doc.getTextWidth(conteudo) + 4
+  p.doc.setDrawColor(...FIO)
+  p.doc.setLineWidth(0.3)
+  p.doc.line(fim, p.y + 3.9, p.largura - MARGEM, p.y + 3.9)
+  ligarFonte(p.doc, 'normal', 10, TINTA)
+  p.y += 13
 }
 
 /** Um cartão de número: rótulo pequeno em cima, valor grande embaixo. */
@@ -281,23 +314,21 @@ function cartaoDeNumero(
   destaque = false,
 ) {
   const altura = 20
-  p.doc.setFillColor(destaque ? 253 : 250, destaque ? 246 : 250, destaque ? 230 : 250)
-  p.doc.setDrawColor(destaque ? LARANJA[0] : 225, destaque ? LARANJA[1] : 225, destaque ? LARANJA[2] : 225)
-  p.doc.setLineWidth(0.4)
-  p.doc.roundedRect(x, y, largura, altura, 2, 2, 'FD')
+  desenharVidro(p.doc, x, y, largura, altura, { tom: destaque ? 'laranja' : 'claro', raio: 3.6 })
 
-  p.doc.setFontSize(6.5)
-  p.doc.setFont(p.fonte, 'normal')
-  p.doc.setTextColor(110, 110, 110)
-  p.doc.text(sanitizarParaPdf(rotulo.toUpperCase()), x + largura / 2, y + 7, { align: 'center' })
+  // O valor encolhe para caber no cartão em vez de passar da borda.
+  let corpo = 15
+  ligarFonte(p.doc, 'bold', corpo, destaque ? [120, 62, 0] : FLORESTA)
+  while (corpo > 9 && p.doc.getTextWidth(sanitizarParaPdf(valor)) > largura - 6) {
+    corpo -= 0.5
+    p.doc.setFontSize(corpo)
+  }
+  p.doc.text(encurtarParaLargura(p.doc, valor, largura - 6), x + largura / 2, y + 10, { align: 'center' })
 
-  p.doc.setFontSize(13)
-  p.doc.setFont(p.fonte, 'bold')
-  p.doc.setTextColor(destaque ? VERDE_ESCURO[0] : 40, destaque ? VERDE_ESCURO[1] : 40, destaque ? VERDE_ESCURO[2] : 40)
-  p.doc.text(sanitizarParaPdf(valor), x + largura / 2, y + 15.5, { align: 'center' })
+  ligarFonte(p.doc, 'normal', 7.4, TINTA_SUAVE)
+  p.doc.text(encurtarParaLargura(p.doc, rotulo, largura - 6), x + largura / 2, y + 15.6, { align: 'center' })
 
-  p.doc.setTextColor(...CINZA_TEXTO)
-  p.doc.setFont(p.fonte, 'normal')
+  ligarFonte(p.doc, 'normal', 10, TINTA)
 }
 
 /** Uma fileira de cartões que se dividem a largura útil. */
@@ -309,7 +340,7 @@ function fileiraDeNumeros(
   if (itens.length === 0) return
   garantirEspaco(p, 26, subtitulo)
   const util = p.largura - 2 * MARGEM
-  const vao = 3
+  const vao = 3.5
   const largura = (util - vao * (itens.length - 1)) / itens.length
   itens.forEach((item, i) => {
     cartaoDeNumero(p, MARGEM + i * (largura + vao), p.y, largura, item.rotulo, item.valor, item.destaque)
@@ -330,32 +361,29 @@ function barra(
   const larguraDaBarra = p.largura - 2 * MARGEM - larguraDoRotulo - 26
   const proporcao = total > 0 ? quantidade / total : 0
 
-  p.doc.setFontSize(8)
-  p.doc.setFont(p.fonte, 'normal')
-  p.doc.setTextColor(110, 110, 110)
-  p.doc.text(sanitizarParaPdf(rotulo), MARGEM + larguraDoRotulo - 2, p.y + 3.6, { align: 'right' })
+  ligarFonte(p.doc, 'normal', 8, TINTA_SUAVE)
+  p.doc.text(encurtarParaLargura(p.doc, rotulo, larguraDoRotulo - 3), MARGEM + larguraDoRotulo - 2.5, p.y + 3.9, { align: 'right' })
 
-  p.doc.setFillColor(238, 238, 238)
-  p.doc.roundedRect(MARGEM + larguraDoRotulo, p.y, larguraDaBarra, 5.5, 1, 1, 'F')
+  // Cápsulas, como as barras de progresso do iOS.
+  p.doc.setFillColor(229, 236, 231)
+  p.doc.roundedRect(MARGEM + larguraDoRotulo, p.y, larguraDaBarra, 5.5, 2.75, 2.75, 'F')
 
   // Largura mínima visível: uma barra de 1 aluno em 200 seria invisível, e
   // "invisível" e "zero" precisam ser distinguíveis à primeira vista.
   const preenchida = quantidade > 0 ? Math.max(larguraDaBarra * proporcao, 1.6) : 0
   if (preenchida > 0) {
     p.doc.setFillColor(cor[0], cor[1], cor[2])
-    p.doc.roundedRect(MARGEM + larguraDoRotulo, p.y, preenchida, 5.5, 1, 1, 'F')
+    const raio = Math.min(2.75, preenchida / 2)
+    p.doc.roundedRect(MARGEM + larguraDoRotulo, p.y, preenchida, 5.5, raio, raio, 'F')
   }
 
-  p.doc.setFontSize(8)
-  p.doc.setFont(p.fonte, 'bold')
-  p.doc.setTextColor(80, 80, 80)
+  ligarFonte(p.doc, 'bold', 8, TINTA)
   p.doc.text(
     sanitizarParaPdf(sufixo ?? String(quantidade)),
     MARGEM + larguraDoRotulo + larguraDaBarra + 3,
     p.y + 3.6,
   )
-  p.doc.setFont(p.fonte, 'normal')
-  p.doc.setTextColor(...CINZA_TEXTO)
+  ligarFonte(p.doc, 'normal', 10, TINTA)
   p.y += 8
 }
 
@@ -373,12 +401,19 @@ function desenharCapa(p: Pincel, dados: DadosDaAnalise, recado: string) {
   const capa = prova.coverImage ? p.imagens.get(prova.coverImage) : null
   if (capa) {
     const alturaDaFaixa = 52
-    const { largura, altura } = encaixar(capa, util, alturaDaFaixa * 2.4)
+    // Cobre a faixa inteira (como `object-fit: cover`) e o recorte arredonda
+    // os cantos. O recorte antigo era `roundedRect(...)` sem estilo — que
+    // PINTA o contorno em vez de criar o caminho —, então o `clip` não
+    // recortava nada e uma capa alta cobria o cabeçalho e o título.
+    const escala = Math.max(util / capa.width, alturaDaFaixa / capa.height)
+    const largura = capa.width * escala
+    const altura = capa.height * escala
+    desenharVidro(p.doc, MARGEM - 1, p.y - 1, util + 2, alturaDaFaixa + 2, { raio: 5, opacidade: 0.96 })
     try {
-      // O clip mantém a imagem dentro da faixa mesmo quando ela é mais alta —
-      // sem ele, uma capa em retrato vazaria por cima do título.
       p.doc.saveGraphicsState()
-      p.doc.roundedRect(MARGEM, p.y, util, alturaDaFaixa, 3, 3).clip().discardPath()
+      p.doc.roundedRect(MARGEM, p.y, util, alturaDaFaixa, 4, 4, null)
+      p.doc.clip()
+      p.doc.discardPath()
       p.doc.addImage(
         capa.dataUrl,
         'JPEG',
@@ -387,51 +422,15 @@ function desenharCapa(p: Pincel, dados: DadosDaAnalise, recado: string) {
         largura,
         altura,
       )
-      p.doc.restoreGraphicsState()
     } catch {
-      try {
-        p.doc.addImage(capa.dataUrl, 'JPEG', MARGEM, p.y, util, alturaDaFaixa)
-      } catch { /* segue sem capa */ }
+      /* segue sem capa */
+    } finally {
+      p.doc.restoreGraphicsState()
     }
-    p.doc.setDrawColor(...VERDE_MEDIO)
-    p.doc.setLineWidth(0.6)
-    p.doc.roundedRect(MARGEM, p.y, util, alturaDaFaixa, 3, 3, 'S')
-    p.y += alturaDaFaixa + 10
+    p.y += alturaDaFaixa + 7
   }
 
-  // Título
-  p.doc.setFontSize(20)
-  p.doc.setFont(p.fonte, 'bold')
-  p.doc.setTextColor(...VERDE_ESCURO)
-  const titulo = quebrar(p, prova.title, util)
-  titulo.slice(0, 3).forEach((linha) => {
-    p.doc.text(linha, MARGEM, p.y)
-    p.y += 9
-  })
-  p.y += 2
-
-  // Régua verde-âmbar sob o título
-  p.doc.setDrawColor(...VERDE_MEDIO)
-  p.doc.setLineWidth(1.4)
-  p.doc.line(MARGEM, p.y, MARGEM + 34, p.y)
-  p.doc.setDrawColor(...LARANJA)
-  p.doc.line(MARGEM + 34, p.y, MARGEM + 52, p.y)
-  p.y += 8
-
-  if (prova.description) {
-    p.doc.setFontSize(10)
-    p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(90, 90, 90)
-    quebrar(p, prova.description, util)
-      .slice(0, 6)
-      .forEach((linha) => {
-        p.doc.text(linha, MARGEM, p.y)
-        p.y += 5.5
-      })
-    p.y += 4
-  }
-
-  // Ficha técnica
+  // Ficha técnica, como pílulas do cartão de título.
   const fichas: string[] = [
     `${prova.numberOfQuestions ?? dados.questoes.length} questões`,
     prova.scoringMethod === 'tri' ? 'TRI · 1000 pts' : `${prova.notaMaxima} pontos`,
@@ -439,49 +438,33 @@ function desenharCapa(p: Pincel, dados: DadosDaAnalise, recado: string) {
   ]
   if (prova.publico?.rotulo) fichas.push(prova.publico.rotulo)
 
-  p.doc.setFontSize(8.5)
-  let fichaX = MARGEM
-  const fichaY = p.y
-  fichas.forEach((ficha) => {
-    const texto = sanitizarParaPdf(ficha)
-    p.doc.setFont(p.fonte, 'normal')
-    const larguraDoTexto = p.doc.getTextWidth(texto) + 8
-    if (fichaX + larguraDoTexto > p.largura - MARGEM) {
-      fichaX = MARGEM
-      p.y += 9
-    }
-    p.doc.setFillColor(...CINZA_CLARO)
-    p.doc.roundedRect(fichaX, p.y - 4.5, larguraDoTexto, 7.5, 2, 2, 'F')
-    p.doc.setTextColor(90, 90, 90)
-    p.doc.text(texto, fichaX + 4, p.y)
-    fichaX += larguraDoTexto + 3
-  })
-  p.y = Math.max(p.y, fichaY) + 12
+  const folha = comoFolha(p, 'Análise da prova')
+  desenharCartaoDeTitulo(folha, { titulo: prova.title, descricao: prova.description, chips: fichas })
+  p.y = folha.y
 
   if (recado.trim()) {
-    const linhas = quebrar(p, recado.trim(), util - 12)
-    const alturaDaCaixa = linhas.length * 5.5 + 12
+    // O recado do professor, num vidro pêssego com aspas laranja.
+    ligarFonte(p.doc, 'italic', 10, TINTA)
+    const linhas = quebrar(p, recado.trim(), util - 20)
+    const alturaDaCaixa = linhas.length * 5.4 + 10
     garantirEspaco(p, alturaDaCaixa + 6, 'Análise da prova')
-    p.doc.setFillColor(255, 251, 235)
-    p.doc.setDrawColor(...LARANJA)
-    p.doc.setLineWidth(0.5)
-    p.doc.roundedRect(MARGEM, p.y, util, alturaDaCaixa, 2, 2, 'FD')
-    p.doc.setFontSize(9.5)
-    p.doc.setFont(p.fonte, 'italic')
-    p.doc.setTextColor(...CINZA_TEXTO)
-    let recadoY = p.y + 8
+    desenharVidro(p.doc, MARGEM, p.y, util, alturaDaCaixa, { tom: 'laranja', raio: 3.6 })
+    ligarFonte(p.doc, 'bold', 24, LARANJA)
+    p.doc.text('\u201C', MARGEM + 4, p.y + 12)
+    let recadoY = p.y + 5 + baseDaLinha(5.4, 10)
     linhas.forEach((linha) => {
-      p.doc.text(linha, MARGEM + 6, recadoY)
-      recadoY += 5.5
+      ligarFonte(p.doc, 'italic', 10, TINTA)
+      desenharLinhaRica(p.doc, p.fonte, linha, MARGEM + 13, recadoY, 'italic')
+      recadoY += 5.4
     })
-    p.doc.setFont(p.fonte, 'normal')
-    p.y += alturaDaCaixa + 8
+    ligarFonte(p.doc, 'normal', 10, TINTA)
+    p.y += alturaDaCaixa + 7
   }
 }
 
 function desenharResultadosGerais(p: Pincel, dados: DadosDaAnalise) {
   const { notas, presenca, prova } = dados
-  tituloDeSecao(p, 'RESULTADOS GERAIS', 'Resultados gerais')
+  tituloDeSecao(p, 'Resultados gerais', 'Resultados gerais')
 
   fileiraDeNumeros(
     p,
@@ -498,26 +481,24 @@ function desenharResultadosGerais(p: Pincel, dados: DadosDaAnalise) {
     notas.media !== null && prova.notaMaxima > 0 ? (notas.media / prova.notaMaxima) * 100 : null
 
   if (aproveitamento !== null) {
-    p.doc.setFontSize(9)
-    p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(90, 90, 90)
-    p.doc.text(
-      sanitizarParaPdf(
-        `A turma aproveitou ${aproveitamento.toFixed(0)}% da prova — média de ${numeroCurto(notas.media)} de ${prova.notaMaxima} pontos.`,
-      ),
-      MARGEM,
-      p.y,
-    )
-    p.y += 9
+    ligarFonte(p.doc, 'normal', 9, TINTA_SUAVE)
+    quebrar(
+      p,
+      `A turma aproveitou **${aproveitamento.toFixed(0)}%** da prova — média de ${numeroCurto(notas.media)} de ${prova.notaMaxima} pontos.`,
+      p.largura - 2 * MARGEM,
+    ).forEach((linha) => {
+      ligarFonte(p.doc, 'normal', 9, TINTA_SUAVE)
+      desenharLinhaRica(p.doc, p.fonte, linha, MARGEM, p.y + 1)
+      p.y += 4.8
+    })
+    p.y += 5
   }
 
   const totalNaDistribuicao = notas.distribuicao.reduce((a, f) => a + f.quantidade, 0)
   if (totalNaDistribuicao > 0) {
     garantirEspaco(p, 20 + notas.distribuicao.length * 8, 'Resultados gerais')
-    p.doc.setFontSize(9)
-    p.doc.setFont(p.fonte, 'bold')
-    p.doc.setTextColor(...VERDE_ESCURO)
-    p.doc.text('Distribuição das notas', MARGEM, p.y)
+    ligarFonte(p.doc, 'bold', 9.5, FLORESTA)
+    p.doc.text('Distribuição das notas', MARGEM, p.y + 1)
     p.y += 7
 
     notas.distribuicao.forEach((faixa) => {
@@ -527,7 +508,7 @@ function desenharResultadosGerais(p: Pincel, dados: DadosDaAnalise) {
         faixa.rotulo,
         faixa.quantidade,
         totalNaDistribuicao,
-        VERDE_MEDIO,
+        VERDE,
         `${faixa.quantidade}  (${pct}%)`,
       )
     })
@@ -569,21 +550,21 @@ function desenharDestaquesDeNota(
   }
 
   if (opcoes.tempoMedio && dados.tempos && dados.tempos.comRegistro > 0) {
-    p.doc.setFontSize(8)
-    p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(120, 120, 120)
     const daProva = dados.tempos.duracaoDaProva
       ? ` A prova tinha ${formatarDuracao(dados.tempos.duracaoDaProva)}.`
       : ''
-    p.doc.text(
-      sanitizarParaPdf(
-        `Tempo medido em ${dados.tempos.comRegistro} ${dados.tempos.comRegistro === 1 ? 'entrega' : 'entregas'} com início registrado · mediana ${formatarDuracao(dados.tempos.mediana)} · mais demorada ${formatarDuracao(dados.tempos.maior)}.${daProva}`,
-      ),
-      MARGEM,
-      p.y,
-    )
-    p.y += 9
-    p.doc.setTextColor(...CINZA_TEXTO)
+    // Quebrada na largura: numa linha só, esta frase passava da margem.
+    ligarFonte(p.doc, 'normal', 8, TINTA_FRACA)
+    quebrar(
+      p,
+      `Tempo medido em ${dados.tempos.comRegistro} ${dados.tempos.comRegistro === 1 ? 'entrega' : 'entregas'} com início registrado · mediana ${formatarDuracao(dados.tempos.mediana)} · mais demorada ${formatarDuracao(dados.tempos.maior)}.${daProva}`,
+      p.largura - 2 * MARGEM,
+    ).forEach((linha) => {
+      p.doc.text(linha, MARGEM, p.y)
+      p.y += 4.2
+    })
+    p.y += 5
+    ligarFonte(p.doc, 'normal', 10, TINTA)
   }
 }
 
@@ -595,7 +576,7 @@ function desenharClassificacao(p: Pincel, dados: DadosDaAnalise, opcoes: OpcoesD
   const ordenados = [...comNota].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
   const top = ordenados.slice(0, Math.max(1, config.top))
 
-  tituloDeSecao(p, `CLASSIFICAÇÃO — TOP ${top.length}`, 'Classificação')
+  tituloDeSecao(p, `Classificação — top ${top.length}`, 'Classificação')
 
   const objetivas = dados.questoes.filter((q) => q.type === 'multiple-choice').length
   const util = p.largura - 2 * MARGEM
@@ -608,18 +589,18 @@ function desenharClassificacao(p: Pincel, dados: DadosDaAnalise, opcoes: OpcoesD
 
     // A barra de fundo dá a nota sem exigir a leitura do número — e mostra a
     // distância entre o primeiro e o décimo, que a lista sozinha esconde.
-    p.doc.setFillColor(noPodio ? 240 : 247, noPodio ? 249 : 247, noPodio ? 242 : 247)
-    p.doc.roundedRect(MARGEM, p.y, util, 9.5, 1.5, 1.5, 'F')
+    desenharVidro(p.doc, MARGEM, p.y, util, 9.5, { raio: 4.75, sombra: noPodio, tom: 'claro' })
     if (proporcao > 0) {
-      p.doc.setFillColor(noPodio ? 214 : 232, noPodio ? 238 : 236, noPodio ? 219 : 232)
-      p.doc.roundedRect(MARGEM, p.y, Math.max(util * proporcao, 2), 9.5, 1.5, 1.5, 'F')
+      const preenchida = Math.max(util * Math.min(proporcao, 1), 9.5)
+      p.doc.setFillColor(noPodio ? 214 : 233, noPodio ? 238 : 240, noPodio ? 222 : 235)
+      p.doc.roundedRect(MARGEM, p.y, preenchida, 9.5, 4.75, 4.75, 'F')
     }
 
     // Medalha dos três primeiros: o único lugar do documento em que a cor
     // significa colocação, e não certo/errado.
     if (noPodio) {
       const medalha: [number, number, number] =
-        posicao === 1 ? [226, 164, 62] : posicao === 2 ? [160, 160, 165] : [176, 122, 74]
+        posicao === 1 ? [232, 150, 30] : posicao === 2 ? [150, 156, 162] : [170, 112, 64]
       p.doc.setFillColor(...medalha)
       p.doc.circle(MARGEM + 6, p.y + 4.75, 3.2, 'F')
       p.doc.setTextColor(255, 255, 255)
@@ -627,54 +608,44 @@ function desenharClassificacao(p: Pincel, dados: DadosDaAnalise, opcoes: OpcoesD
       p.doc.setFont(p.fonte, 'bold')
       p.doc.text(String(posicao), MARGEM + 6, p.y + 6.3, { align: 'center' })
     } else {
-      p.doc.setTextColor(130, 130, 130)
-      p.doc.setFontSize(8.5)
-      p.doc.setFont(p.fonte, 'bold')
+      ligarFonte(p.doc, 'bold', 8.5, TINTA_SUAVE)
       p.doc.text(`${posicao}º`, MARGEM + 6, p.y + 6.3, { align: 'center' })
     }
 
-    p.doc.setFontSize(9.5)
-    p.doc.setFont(p.fonte, noPodio ? 'bold' : 'normal')
-    p.doc.setTextColor(...CINZA_TEXTO)
-    // Sem nome, a lista vira a forma da turma sem expor ninguém — o mesmo
-    // relatório serve às duas escolhas do professor.
-    const nome = config.comNome ? aluno.userName : `Participante ${i + 1}`
-    p.doc.text(sanitizarParaPdf(nome), MARGEM + 13, p.y + 6.3)
-
+    // A direita primeiro: a nota e os acertos têm largura fixa, e o nome
+    // encurta para o que sobrar — um nome completo de seis sobrenomes
+    // passava por baixo dos acertos.
     let direitaX = p.largura - MARGEM - 4
-    p.doc.setFont(p.fonte, 'bold')
-    p.doc.setFontSize(9.5)
-    p.doc.setTextColor(...VERDE_ESCURO)
-    const nota = `${numeroCurto(aluno.score)} / ${dados.prova.notaMaxima}`
-    p.doc.text(sanitizarParaPdf(nota), direitaX, p.y + 6.3, { align: 'right' })
+    ligarFonte(p.doc, 'bold', 9.5, FLORESTA)
+    const nota = sanitizarParaPdf(`${numeroCurto(aluno.score)} / ${dados.prova.notaMaxima}`)
+    p.doc.text(nota, direitaX, p.y + 6.3, { align: 'right' })
     direitaX -= p.doc.getTextWidth(nota) + 6
 
     if (config.comAcertos && typeof aluno.acertos === 'number' && objetivas > 0) {
-      p.doc.setFont(p.fonte, 'normal')
-      p.doc.setFontSize(8)
-      p.doc.setTextColor(120, 120, 120)
-      p.doc.text(
-        sanitizarParaPdf(`${aluno.acertos}/${objetivas} acertos`),
-        direitaX,
-        p.y + 6.3,
-        { align: 'right' },
-      )
+      ligarFonte(p.doc, 'normal', 8, TINTA_SUAVE)
+      const acertos = sanitizarParaPdf(`${aluno.acertos}/${objetivas} acertos`)
+      p.doc.text(acertos, direitaX, p.y + 6.3, { align: 'right' })
+      direitaX -= p.doc.getTextWidth(acertos) + 5
     }
 
-    p.doc.setTextColor(...CINZA_TEXTO)
-    p.doc.setFont(p.fonte, 'normal')
+    // Sem nome, a lista vira a forma da turma sem expor ninguém — o mesmo
+    // relatório serve às duas escolhas do professor.
+    const nome = config.comNome ? aluno.userName : `Participante ${i + 1}`
+    ligarFonte(p.doc, noPodio ? 'bold' : 'normal', 9.5, TINTA)
+    p.doc.text(encurtarParaLargura(p.doc, nome, direitaX - (MARGEM + 13)), MARGEM + 13, p.y + 6.3)
+
+    ligarFonte(p.doc, 'normal', 10, TINTA)
     p.y += 11
   })
 
   if (ordenados.length > top.length) {
-    p.doc.setFontSize(8)
-    p.doc.setTextColor(130, 130, 130)
+    ligarFonte(p.doc, 'normal', 8, TINTA_FRACA)
     p.doc.text(
       sanitizarParaPdf(`+ ${ordenados.length - top.length} participantes fora do top ${top.length}.`),
       MARGEM,
       p.y + 2,
     )
-    p.doc.setTextColor(...CINZA_TEXTO)
+    ligarFonte(p.doc, 'normal', 10, TINTA)
     p.y += 8
   }
   p.y += 3
@@ -691,18 +662,13 @@ function desenharQuestaoEmDestaque(
   const util = p.largura - 2 * MARGEM
   tituloDeSecao(p, titulo, titulo)
 
-  const cor: [number, number, number] = tom === 'erro' ? [200, 62, 62] : [46, 143, 78]
+  const cor: readonly [number, number, number] = tom === 'erro' ? ERRO : VERDE
   const pct = questao.percentualDeAcerto
 
   // Cabeçalho da questão: número + índice de acerto
   garantirEspaco(p, 20, titulo)
-  p.doc.setFillColor(tom === 'erro' ? 254 : 240, tom === 'erro' ? 242 : 250, tom === 'erro' ? 242 : 243)
-  p.doc.setDrawColor(...cor)
-  p.doc.setLineWidth(0.5)
-  p.doc.roundedRect(MARGEM, p.y, util, 14, 2, 2, 'FD')
-  p.doc.setFontSize(10)
-  p.doc.setFont(p.fonte, 'bold')
-  p.doc.setTextColor(cor[0], cor[1], cor[2])
+  desenharVidro(p.doc, MARGEM, p.y, util, 14, { tom: tom === 'erro' ? 'erro' : 'verde', raio: 7 })
+  ligarFonte(p.doc, 'bold', 10, cor)
   p.doc.text(sanitizarParaPdf(`Questão ${questao.number}`), MARGEM + 6, p.y + 9)
   p.doc.text(
     sanitizarParaPdf(
@@ -714,31 +680,30 @@ function desenharQuestaoEmDestaque(
     p.y + 9,
     { align: 'right' },
   )
-  p.doc.setTextColor(...CINZA_TEXTO)
-  p.doc.setFont(p.fonte, 'normal')
+  ligarFonte(p.doc, 'normal', 10, TINTA)
   p.y += 20
 
+  // `desenharLinhaRica` e não `doc.text`: o enunciado vem com `**negrito**`, e
+  // o texto direto imprimia os asteriscos.
   if (detalhe.enunciado && (questao.enunciadoCompleto || questao.enunciado)) {
-    p.doc.setFontSize(9.5)
-    p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(...CINZA_TEXTO)
+    ligarFonte(p.doc, 'normal', 9.5, TINTA)
     quebrar(p, questao.enunciadoCompleto || questao.enunciado || '', util).forEach((linha) => {
       garantirEspaco(p, 8, titulo)
-      p.doc.text(linha, MARGEM, p.y)
+      ligarFonte(p.doc, 'normal', 9.5, TINTA)
+      desenharLinhaRica(p.doc, p.fonte, linha, MARGEM, p.y)
       p.y += 5.3
     })
     p.y += 3
 
     if (questao.comando) {
-      p.doc.setFont(p.fonte, 'bold')
-      p.doc.setTextColor(...VERDE_ESCURO)
+      ligarFonte(p.doc, 'bold', 9.5, FLORESTA)
       quebrar(p, questao.comando, util).forEach((linha) => {
         garantirEspaco(p, 8, titulo)
-        p.doc.text(linha, MARGEM, p.y)
+        ligarFonte(p.doc, 'bold', 9.5, FLORESTA)
+        desenharLinhaRica(p.doc, p.fonte, linha, MARGEM, p.y, 'bold')
         p.y += 5.3
       })
-      p.doc.setFont(p.fonte, 'normal')
-      p.doc.setTextColor(...CINZA_TEXTO)
+      ligarFonte(p.doc, 'normal', 10, TINTA)
       p.y += 3
     }
   }
@@ -753,10 +718,10 @@ function desenharQuestaoEmDestaque(
       layoutDeImagens(questao.layoutImagens),
       p.imagens,
       {
-        x: MARGEM,
-        largura: util,
+        x: MARGEM + 1,
+        largura: util - 2,
         y: p.y,
-        limiteY: p.altura - 22,
+        limiteY: p.altura - 27,
         alturaMaxima: 82,
         fonte: p.fonte,
         novaPagina: () => {
@@ -765,7 +730,7 @@ function desenharQuestaoEmDestaque(
         },
       },
     )
-    p.doc.setTextColor(...CINZA_TEXTO)
+    ligarFonte(p.doc, 'normal', 10, TINTA)
   }
 
   // Como a turma se dividiu entre as alternativas — o dado que separa "a turma
@@ -774,12 +739,9 @@ function desenharQuestaoEmDestaque(
   if (questao.porAlternativa.length > 0) {
     const totalDeEscolhas = questao.porAlternativa.reduce((a, b) => a + b.escolhas, 0)
     garantirEspaco(p, 14 + questao.porAlternativa.length * 8, titulo)
-    p.doc.setFontSize(9)
-    p.doc.setFont(p.fonte, 'bold')
-    p.doc.setTextColor(...VERDE_ESCURO)
-    p.doc.text('Como a turma respondeu', MARGEM, p.y)
-    p.doc.setFont(p.fonte, 'normal')
-    p.doc.setTextColor(...CINZA_TEXTO)
+    ligarFonte(p.doc, 'bold', 9.5, FLORESTA)
+    p.doc.text('Como a turma respondeu', MARGEM, p.y + 1)
+    ligarFonte(p.doc, 'normal', 10, TINTA)
     p.y += 7
 
     questao.porAlternativa.forEach((alt) => {
@@ -789,13 +751,13 @@ function desenharQuestaoEmDestaque(
         `${alt.letter})${alt.isCorrect ? ' ✓' : ''}`,
         alt.escolhas,
         totalDeEscolhas || 1,
-        alt.isCorrect ? VERDE_MEDIO : [205, 92, 92],
+        alt.isCorrect ? VERDE : [214, 104, 94],
         `${alt.escolhas}  (${pctAlt}%)`,
       )
     })
 
     if (questao.emBranco > 0) {
-      barra(p, 'Branco', questao.emBranco, totalDeEscolhas || 1, [180, 180, 180], String(questao.emBranco))
+      barra(p, 'Branco', questao.emBranco, totalDeEscolhas || 1, [170, 182, 175], String(questao.emBranco))
     }
     p.y += 3
   }
@@ -818,8 +780,10 @@ function desenharQuestaoEmDestaque(
 
     const alturaDaLinha = 5.3
     const alturaDoTitulo = 13
-    const respiroDeContinuacao = 5
-    const respiroInferior = 5
+    const respiroDeContinuacao = 6
+    // A linha de base está no TOPO da faixa de cada linha: o respiro de baixo
+    // é pequeno porque a própria faixa da última linha já é respiro.
+    const respiroInferior = 1.5
 
     const lotes = fatiarCaixaEmPaginas({
       totalDeLinhas: linhas.length,
@@ -836,31 +800,26 @@ function desenharQuestaoEmDestaque(
       if (lote.novaPagina) novaPagina(p, titulo)
       p.y = lote.y
 
-      p.doc.setFillColor(255, 251, 235)
-      p.doc.setDrawColor(...LARANJA)
-      p.doc.setLineWidth(0.5)
-      p.doc.roundedRect(MARGEM, p.y, util, lote.altura, 2, 2, 'FD')
+      desenharVidro(p.doc, MARGEM, p.y, util, lote.altura, { tom: 'verde', raio: 3.4 })
 
       if (lote.primeiro) {
-        p.doc.setFontSize(8)
-        p.doc.setFont(p.fonte, 'bold')
-        p.doc.setTextColor(...LARANJA)
-        p.doc.text('RESPOSTA COMENTADA', MARGEM + 6, p.y + 7)
+        p.doc.setFillColor(...LARANJA)
+        p.doc.circle(MARGEM + 7, p.y + 6.9, 1, 'F')
+        ligarFonte(p.doc, 'bold', 9, FLORESTA)
+        p.doc.text('Resposta comentada', MARGEM + 9.6, p.y + 8)
         p.y += alturaDoTitulo
       } else {
         p.y += respiroDeContinuacao
       }
 
-      p.doc.setFontSize(9)
-      p.doc.setFont(p.fonte, 'normal')
-      p.doc.setTextColor(...CINZA_TEXTO)
+      ligarFonte(p.doc, 'normal', 9, TINTA)
       for (const linha of linhas.slice(lote.inicio, lote.inicio + lote.linhas)) {
         // `desenharLinhaRica`: o comentário por alternativa vem com `**A)**`
         // em negrito, e `doc.text` imprimiria os asteriscos.
         desenharLinhaRica(p.doc, p.fonte, linha, MARGEM + 6, p.y)
         p.y += alturaDaLinha
       }
-      p.y += respiroInferior + 6
+      p.y = lote.y + lote.altura + 6
     }
   }
 
@@ -930,16 +889,9 @@ export async function gerarAnaliseDaProvaPDF(
     desenharCapa(p, dados, opcoes.recado)
   } else {
     p.y = desenharCabecalho(p.doc, p.largura, MARGEM, 'Análise da prova', logo)
-    p.doc.setFontSize(15)
-    p.doc.setFont(fonte, 'bold')
-    p.doc.setTextColor(...VERDE_ESCURO)
-    quebrar(p, dados.prova.title, p.largura - 2 * MARGEM).slice(0, 2).forEach((linha) => {
-      p.doc.text(linha, MARGEM, p.y)
-      p.y += 8
-    })
-    p.doc.setTextColor(...CINZA_TEXTO)
-    p.doc.setFont(fonte, 'normal')
-    p.y += 6
+    const folha = comoFolha(p, 'Análise da prova')
+    desenharCartaoDeTitulo(folha, { titulo: dados.prova.title })
+    p.y = folha.y
   }
 
   if (opcoes.resultadosGerais) desenharResultadosGerais(p, dados)
@@ -953,7 +905,7 @@ export async function gerarAnaliseDaProvaPDF(
       p,
       dados,
       maisErrada,
-      'QUESTÃO MAIS ERRADA',
+      'Questão mais errada',
       opcoes.questaoMaisErrada,
       'erro',
     )
@@ -964,7 +916,7 @@ export async function gerarAnaliseDaProvaPDF(
       p,
       dados,
       maisAcertada,
-      'QUESTÃO MAIS ACERTADA',
+      'Questão mais acertada',
       opcoes.questaoMaisAcertada,
       'acerto',
     )

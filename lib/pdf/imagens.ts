@@ -78,13 +78,3 @@ export async function carregarImagens(urls: (string | null | undefined)[]): Prom
   )
   return mapa
 }
-
-/** Escala uma imagem para caber numa caixa, sem nunca ampliá-la. */
-export function encaixar(
-  img: ImagemParaPdf,
-  larguraMax: number,
-  alturaMax: number,
-): { largura: number; altura: number } {
-  const escala = Math.min(larguraMax / img.width, alturaMax / img.height, 1)
-  return { largura: img.width * escala, altura: img.height * escala }
-}

@@ -72,10 +72,6 @@ const BENEFICIOS = [
   'Relatório do que você errou, com um deck focado nos pontos fracos',
 ]
 
-function escaparHtml(s: string) {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
-}
-
 function dataCurta(d: Date | string) {
   try {
     return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
@@ -289,32 +285,25 @@ export default function FlashcardsIaPage() {
     }
   }
 
-  function baixarPdf() {
+  async function baixarPdf() {
     if (!deckAberto || cartoes.length === 0) return
-    const janela = window.open('', '', 'width=1000,height=800')
-    if (!janela) {
-      avisar('Libere as janelas pop-up para baixar o PDF.', 'error')
-      return
+    try {
+      // Sob demanda: o jsPDF e a fonte só descem quando alguém pede o PDF.
+      const [{ gerarPdfDeFlashcardsIa }, { downloadPDF }] = await Promise.all([
+        import('@/lib/flashcards/pdf-ia'),
+        import('@/lib/pdf-generator'),
+      ])
+      const blob = await gerarPdfDeFlashcardsIa(deckAberto, cartoes)
+      const nome = deckAberto.title
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 80)
+      downloadPDF(blob, `${nome || 'flashcards'}-DomineAqui.pdf`)
+    } catch {
+      avisar('Não foi possível gerar o PDF.', 'error')
     }
-    const e = escaparHtml
-    janela.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${e(deckAberto.title)}</title>
-<style>
-*{box-sizing:border-box}body{margin:0;padding:32px;font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#101814;background:#fff}
-h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px}p.sub{color:#5b655f;margin:0 0 24px}
-.c{border:1px solid #e3e6e2;border-radius:14px;padding:16px 18px;margin:0 0 12px;page-break-inside:avoid}
-.n{font-size:11px;font-weight:700;color:#2f7d48;letter-spacing:.06em;text-transform:uppercase}
-.f{font-size:16px;font-weight:700;margin:6px 0 10px}.b{background:#f2f7f3;border-radius:10px;padding:10px 12px}
-.h{color:#9a6410;font-size:12.5px;margin-top:8px}
-</style></head><body><h1>${e(deckAberto.title)}</h1><p class="sub">${e(deckAberto.theme)} · ${cartoes.length} cartões · DomineAqui</p>
-${cartoes
-  .map(
-    (c, i) =>
-      `<div class="c"><div class="n">Cartão ${i + 1}</div><div class="f">${e(c.front)}</div><div class="b">${e(c.back)}</div>${c.hint ? `<div class="h">Dica: ${e(c.hint)}</div>` : ''}</div>`,
-  )
-  .join('')}
-</body></html>`)
-    janela.document.close()
-    window.setTimeout(() => janela.print(), 250)
   }
 
   const progresso = cartoes.length ? (indice + (notasDadas[cartao?.id ?? ''] ? 1 : 0)) / cartoes.length : 0
@@ -651,7 +640,7 @@ ${cartoes
               )}
 
               <div className="flex justify-center pt-1">
-                <button type="button" onClick={baixarPdf} className="ios-rotulo-2 inline-flex items-center gap-1.5 text-[13px] font-semibold">
+                <button type="button" onClick={() => void baixarPdf()} className="ios-rotulo-2 inline-flex items-center gap-1.5 text-[13px] font-semibold">
                   <Download className="h-3.5 w-3.5" /> Imprimir o deck
                 </button>
               </div>

@@ -30,7 +30,7 @@ import {
   distribuirEmLinhas,
   tamanhoDaImagem,
 } from '@/lib/questoes/imagens'
-import { sanitizarParaPdf } from './marca'
+import { TINTA_FRACA, desenharVidro, sanitizarParaPdf } from './marca'
 
 export interface ImagemCarregada {
   dataUrl: string
@@ -239,6 +239,39 @@ export function medirLinhasDeImagens(
   })
 }
 
+/**
+ * A figura numa moldura de vidro, com os cantos arredondados.
+ *
+ * A moldura passa 1 mm para fora da caixa da imagem — dentro da margem, que
+ * tem 18 — e o recorte arredonda os cantos da própria foto, como o iOS faz.
+ * Um documento sem recorte (os de mentira, nos testes) desenha a imagem reta.
+ */
+export function desenharImagemEmoldurada(
+  doc: jsPDF,
+  dataUrl: string,
+  x: number,
+  y: number,
+  largura: number,
+  altura: number,
+): void {
+  const raio = Math.min(1.8, largura / 6, altura / 6)
+  const podeRecortar = typeof doc.clip === 'function' && typeof doc.saveGraphicsState === 'function'
+  try {
+    if (podeRecortar) {
+      desenharVidro(doc, x - 1, y - 1, largura + 2, altura + 2, { raio: raio + 1, opacidade: 0.96 })
+      doc.saveGraphicsState()
+      doc.roundedRect(x, y, largura, altura, raio, raio, null)
+      doc.clip()
+      doc.discardPath()
+    }
+    doc.addImage(dataUrl, 'JPEG', x, y, largura, altura)
+  } catch {
+    // Um dataUrl corrompido não derruba o arquivo inteiro.
+  } finally {
+    if (podeRecortar) doc.restoreGraphicsState()
+  }
+}
+
 function desenharLinha(
   doc: jsPDF,
   medidas: ImagemMedida[],
@@ -252,15 +285,11 @@ function desenharLinha(
   for (const m of medidas) {
     const largura = m.largura * escala
     const altura = m.altura * escala
-    try {
-      doc.addImage(m.carregada.dataUrl, 'JPEG', x, y, largura, altura)
-    } catch {
-      // Um dataUrl corrompido não derruba o arquivo inteiro.
-    }
+    desenharImagemEmoldurada(doc, m.carregada.dataUrl, x, y, largura, altura)
     if (m.legenda.length > 0) {
       doc.setFont(fonte, 'italic')
       doc.setFontSize(TAMANHO_DA_FONTE_DA_LEGENDA)
-      doc.setTextColor(120, 120, 120)
+      doc.setTextColor(TINTA_FRACA[0], TINTA_FRACA[1], TINTA_FRACA[2])
       let yDaLegenda = y + alturaFinal + ALTURA_DA_LINHA_DA_FONTE
       for (const texto of m.legenda) {
         doc.text(texto, x, yDaLegenda)

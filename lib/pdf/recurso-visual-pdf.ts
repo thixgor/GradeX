@@ -1,7 +1,7 @@
 import type jsPDF from 'jspdf'
 
 import { escalaDoEixo, formatarValor, type RecursoVisual } from '@/lib/ia/estudo/recursos-visuais'
-import { sanitizarParaPdf } from './marca'
+import { FIO, LARANJA, MENTA, TINTA, TINTA_SUAVE, VERDE as VERDE_DA_MARCA, desenharVidro, sanitizarParaPdf } from './marca'
 
 /**
  * O material de apoio da questão (tabela, gráfico, esquema, citação) no PDF,
@@ -24,16 +24,13 @@ export interface ContextoDoRecursoNoPdf {
   novaPagina: () => number
 }
 
-const VERDE: [number, number, number] = [47, 125, 72]
-const VERDE_CLARO: [number, number, number] = [233, 243, 236]
-const BORDA: [number, number, number] = [210, 218, 212]
-const TEXTO: [number, number, number] = [40, 46, 42]
-const SUAVE: [number, number, number] = [110, 118, 112]
-const CORES: [number, number, number][] = [
-  [47, 125, 72],
-  [217, 138, 18],
-  [46, 143, 168],
-]
+type Cor = readonly [number, number, number]
+const VERDE: Cor = VERDE_DA_MARCA
+const VERDE_CLARO: Cor = MENTA
+const BORDA: Cor = FIO
+const TEXTO: Cor = TINTA
+const SUAVE: Cor = TINTA_SUAVE
+const CORES: Cor[] = [VERDE_DA_MARCA, LARANJA, [46, 143, 168]]
 
 const linhas = (doc: jsPDF, texto: string, largura: number): string[] =>
   doc.splitTextToSize(sanitizarParaPdf(texto || ''), largura) as string[]
@@ -47,11 +44,17 @@ export function desenharRecursoNoPdf(ctx: ContextoDoRecursoNoPdf, recurso: Recur
 
   const titulo = 'titulo' in recurso ? recurso.titulo : undefined
   if (titulo) {
-    garantir(10)
+    doc.setFont(fonte, 'bold')
+    doc.setFontSize(9)
+    const linhasDoTitulo = linhas(doc, titulo, largura)
+    // O título viaja com o começo do recurso: sozinho no pé da página, com a
+    // tabela ou o gráfico na seguinte, ele parecia um parágrafo solto.
+    const comeco = recurso.tipo === 'grafico' ? 72 : recurso.tipo === 'tabela' ? 18 : 14
+    garantir(linhasDoTitulo.length * 4.6 + 1.5 + comeco)
     doc.setFont(fonte, 'bold')
     doc.setFontSize(9)
     doc.setTextColor(...TEXTO)
-    for (const l of linhas(doc, titulo, largura)) {
+    for (const l of linhasDoTitulo) {
       doc.text(l, x, y)
       y += 4.6
     }
@@ -73,15 +76,17 @@ export function desenharRecursoNoPdf(ctx: ContextoDoRecursoNoPdf, recurso: Recur
         doc.setFont(fonte, cabecalho ? 'bold' : 'normal')
         doc.setFontSize(corpo)
       }
+      // Fios só na horizontal, cabeçalho em cápsula menta: a grade fechada
+      // de antigamente pesava mais que os números dentro dela.
       if (cabecalho) {
         doc.setFillColor(...VERDE_CLARO)
-        doc.rect(x, y, largura, altura, 'F')
+        doc.roundedRect(x, y, largura, altura, 1.6, 1.6, 'F')
+      } else {
+        doc.setDrawColor(...BORDA)
+        doc.setLineWidth(0.25)
+        doc.line(x, y + altura, x + largura, y + altura)
       }
-      doc.setDrawColor(...BORDA)
-      doc.setLineWidth(0.25)
-      doc.rect(x, y, largura, altura)
       quebradas.forEach((q, i) => {
-        if (i > 0) doc.line(x + larguraColuna * i, y, x + larguraColuna * i, y + altura)
         doc.setTextColor(...(cabecalho ? VERDE : TEXTO))
         q.forEach((l, k) => doc.text(l, x + larguraColuna * i + 2, y + 4.4 + k * 3.8))
       })
@@ -192,23 +197,31 @@ export function desenharRecursoNoPdf(ctx: ContextoDoRecursoNoPdf, recurso: Recur
   } else {
     doc.setFont(fonte, 'italic')
     doc.setFontSize(9)
-    const corpo = linhas(doc, `“${recurso.texto}”`, largura - 10)
+    const corpo = linhas(doc, `${recurso.texto}”`, largura - 14)
     const autor = recurso.autor || recurso.fonte ? `— ${[recurso.autor, recurso.fonte].filter(Boolean).join(', ')}` : ''
     const altura = corpo.length * 4.6 + (autor ? 6 : 0) + 4
-    garantir(Math.min(altura, limiteInferior - y - 1))
-    doc.setFillColor(...VERDE)
-    doc.rect(x, y, 1.2, altura - 2, 'F')
+    garantir(Math.min(altura + 4, limiteInferior - y - 1))
+    // Um cartão de vidro com as aspas desenhadas em laranja — no lugar da
+    // barra colorida na lateral, que fazia a citação parecer um alerta.
+    const topo = y
+    desenharVidro(doc, x, topo, largura, altura + 4, { tom: 'claro', raio: 3 })
+    doc.setFont(fonte, 'bold')
+    doc.setFontSize(22)
+    doc.setTextColor(...LARANJA)
+    doc.text('\u201C', x + 3, topo + 10.2)
+    doc.setFont(fonte, 'italic')
+    doc.setFontSize(9)
     doc.setTextColor(...TEXTO)
-    corpo.forEach((l, k) => doc.text(l, x + 5, y + 4 + k * 4.6))
-    y += corpo.length * 4.6 + 2
+    corpo.forEach((l, k) => doc.text(l, x + 9, topo + 6 + k * 4.6))
+    y = topo + 2 + corpo.length * 4.6 + 2
     if (autor) {
       doc.setFont(fonte, 'normal')
       doc.setFontSize(7.5)
       doc.setTextColor(...SUAVE)
-      doc.text(sanitizarParaPdf(autor), x + 5, y + 3)
+      doc.text(sanitizarParaPdf(autor), x + 9, y + 3)
       y += 6
     }
-    return y + 5
+    return topo + altura + 4 + 5
   }
 
   const fonteDoRecurso = 'fonte' in recurso ? recurso.fonte : undefined

@@ -135,6 +135,15 @@ const nextConfig = {
         '/api/materiais/*/pdf-viewer/{access,page,thumb}',
       ].map((rota) => [rota, ['./node_modules/@img/sharp-*/lib/**/*']]),
     ),
+    /**
+     * A fonte Inter e o logo reduzido do PDF do baralho de flashcards.
+     *
+     * `lib/pdf/marca-servidor.ts` os lê do disco com caminho montado em
+     * execução, e o rastreio não segue isso: sem esta linha o PDF sai em
+     * Helvetica e sem logo — em silêncio, e com qualquer `β` ou `→` do cartão
+     * soletrado (a Helvetica do PDF não tem esses glifos).
+     */
+    '/api/flashcards/manual/*/pdf': ['./public/fonts/Inter-*.ttf', './public/logo-pdf.png'],
   },
 
   // Habilitar otimização de pacotes pesados

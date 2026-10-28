@@ -19,6 +19,7 @@
 
 import type jsPDF from 'jspdf'
 import { ESPACO_ENTRE_LINHAS_DE_IMAGENS, type LinhaDeImagens } from './imagens-de-questao'
+import { LARANJA, type TomDoVidro, desenharVidro } from './marca'
 import { fatiarCaixaEmPaginas } from './paginacao'
 
 type Cor = readonly [number, number, number]
@@ -27,8 +28,9 @@ type Cor = readonly [number, number, number]
 export const ESPACO_ACIMA_DAS_IMAGENS = 3
 
 export interface CoresDaCaixa {
-  fundo: Cor
-  borda: Cor
+  /** Não pintam mais nada: a superfície é o vidro de `tom`. Ficam por compatibilidade. */
+  fundo?: Cor
+  borda?: Cor
   titulo: Cor
   texto: Cor
 }
@@ -75,6 +77,8 @@ export interface CaixaDeRespostaComentada {
   /** O rótulo do primeiro lote. */
   titulo: string
   cores: CoresDaCaixa
+  /** O tom do vidro da caixa. Padrão: verde. */
+  tom?: TomDoVidro
   medidas: MedidasDoConteudo
   /**
    * Escreve uma linha do comentário.
@@ -120,19 +124,22 @@ export function desenharCaixaDeRespostaComentada(caixa: CaixaDeRespostaComentada
     if (lote.novaPagina) caixa.novaPagina()
 
     const topo = lote.y
-    doc.setFillColor(cores.fundo[0], cores.fundo[1], cores.fundo[2])
-    doc.setDrawColor(cores.borda[0], cores.borda[1], cores.borda[2])
-    doc.setLineWidth(0.5)
-    doc.roundedRect(caixa.x, topo, caixa.largura, lote.altura, 2, 2, 'FD')
+    desenharVidro(doc, caixa.x, topo, caixa.largura, lote.altura, { tom: caixa.tom ?? 'verde', raio: 3.4 })
 
     const xDoConteudo = caixa.x + medidas.recuo
     y = topo
 
     if (lote.primeiro) {
+      // O ponto laranja é o ícone da caixa: desenhado, não um glifo.
+      const baseDoTitulo = topo + medidas.baseDoTitulo
+      if (typeof doc.circle === 'function') {
+        doc.setFillColor(LARANJA[0], LARANJA[1], LARANJA[2])
+        doc.circle(xDoConteudo + 1, baseDoTitulo - medidas.corpoDoTitulo * 0.125, 1, 'F')
+      }
       doc.setFontSize(medidas.corpoDoTitulo)
       doc.setFont(caixa.fonte, 'bold')
       doc.setTextColor(cores.titulo[0], cores.titulo[1], cores.titulo[2])
-      doc.text(caixa.titulo, xDoConteudo, topo + medidas.baseDoTitulo)
+      doc.text(caixa.titulo, xDoConteudo + 3.4, baseDoTitulo)
       y += medidas.alturaDoTitulo
     } else {
       y += medidas.respiroDeContinuacao
