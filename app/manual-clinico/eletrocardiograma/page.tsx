@@ -13,13 +13,11 @@ import {
   GradeDoPacote,
   OfertaDoPacote,
   PerguntasDoPacote,
-  SeloDoPacote,
+  CartaoDoPacote,
 } from '@/components/manual-clinico/pacote'
+import { CabecaDoModulo, HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
-import {
-  Activity, ArrowLeft, Crown, ArrowRight, Loader2, Gauge, Ruler,
-  GraduationCap, Check, ShieldCheck, Zap,
-} from 'lucide-react'
+import { Activity, Loader2, Gauge, Ruler, GraduationCap, Zap } from 'lucide-react'
 
 // Carregado sob demanda apenas quando o acesso é confirmado — o simulador
 // (motor de ECG + banco de traçados) não é enviado a quem não é assinante.
@@ -117,52 +115,20 @@ function EcgManualContent() {
 
   return (
     <div className="surface-page min-h-screen">
-      {/* HERO */}
-      <div className="relative overflow-hidden border-b border-border bg-muted/30">
-        <div className="container mx-auto max-w-6xl px-4 pb-6 pt-6">
-          <button onClick={() => router.push('/manual-clinico')} className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground">
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </button>
-          <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <SeloDoPacote />
-              <h1 className="sr-only">Manual do Eletrocardiograma</h1>
-              <>
-                <img
-                  src="/img/eletro/manual-eletrocardiograma-light.webp"
-                  alt="Manual do Eletrocardiograma"
-                  width={958}
-                  height={461}
-                  className="mt-1.5 block h-auto w-full max-w-[320px] dark:hidden sm:max-w-[380px]"
-                />
-                <img
-                  src="/img/eletro/manual-eletrocardiograma-dark.webp"
-                  alt="Manual do Eletrocardiograma"
-                  width={958}
-                  height={461}
-                  className="mt-1.5 hidden h-auto w-full max-w-[320px] dark:block sm:max-w-[380px]"
-                />
-              </>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Trilha de ensino interativa — do nó sinusal ao laudo, construindo o traçado onda por onda — mais o simulador de ECG: 12 derivações geradas matematicamente em tempo real, medidas automáticas, régua, modo monitor e banco de traçados com critérios diagnósticos internacionais.
-              </p>
-            </div>
-            {ready && hasAccess && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
-                <Crown className="h-4 w-4" /> Acesso liberado
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto max-w-6xl px-4 py-6">
+      <div className="container mx-auto max-w-6xl px-4 pb-6">
         {!ready ? (
           <div className="flex items-center justify-center py-24">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : hasAccess ? (
-          <EcgSimulator />
+          <>
+            <CabecaDoModulo
+              porta="eletrocardiograma"
+              texto="Trilha do nó sinusal ao laudo, construindo o traçado onda por onda, e o simulador de 12 derivações com medidas automáticas e banco de traçados."
+              className="mb-5"
+            />
+            <EcgSimulator />
+          </>
         ) : (
           <Paywall
             onCheckout={goToCheckout}
@@ -215,48 +181,56 @@ function Paywall({
     : basePrice
   const showPrice = isActive && basePrice > 0
 
-  // Visitante não vai para o login: /comprar é compra sem conta, com a Serial
-  // Key indo por e-mail. O rótulo antigo ("Entrar e desbloquear") prometia uma
-  // tela de login que não aparece — e agora que o aviso de visitante saiu daqui,
-  // esta é a única explicação do fluxo que a pessoa recebe.
-  const ctaLabel = isAuthenticated ? 'Desbloquear o Manual Clínico' : 'Comprar e desbloquear'
   const totalTracings = catalog?.total ?? 90
-
-  const perks = [
-    'Acesso imediato após o pagamento',
-    `Os ${totalTracings} traçados e as atualizações inclusos`,
-    `Os outros ${TOTAL_DE_MODULOS - 1} manuais vêm juntos, sem custo extra`,
-    'Nenhuma seção é vendida à parte',
-    ...(isAuthenticated ? [] : ['Sem conta? A Serial Key vai por e-mail']),
-  ]
 
   return (
     <>
-      {/* pb no celular reserva o espaço da barra fixa, senão ela cobre o rodapé do card */}
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-8">
+      {/* O herói é o mesmo de todas as portas do Manual (HeroiDoModulo). */}
+      <HeroiDoModulo
+        porta="eletrocardiograma"
+        titulo={<>Leia o ECG vendo a fisiologia virar onda.</>}
+        promessa={
+          <>
+            Mexa no potássio e veja a T apiculada nascer. Uma trilha do nó sinusal ao laudo e um simulador de 12
+            derivações gerado em tempo real — nunca imagem pronta.
+          </>
+        }
+        numeros={[
+          { v: totalTracings, r: 'traçados comentados' },
+          { v: 27, r: 'lições do zero ao laudo' },
+          { v: 12, r: 'derivações em tempo real' },
+        ]}
+        acoes={
+          <>
+            <button onClick={onCheckout} className="ck-cta">
+              Quero os {TOTAL_DE_MODULOS} manuais
+            </button>
+            <a href="#previa" className="ck-botao">Ver o simulador</a>
+          </>
+        }
+      >
+        <FaixaDoPacote atual="eletrocardiograma" className="mt-2" />
+      </HeroiDoModulo>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-8">
         {/* ── Coluna do argumento ── */}
-        <div className="space-y-6">
-          <FaixaDoPacote atual="eletrocardiograma" />
-
+        <div className="ck-escopo space-y-6">
           <AvisoJaTenho />
-
-          {/* Prova visual — no celular vem cedo, antes da lista de recursos */}
-          <SimulatorPreview className="lg:hidden" />
 
           <div className="grid gap-3 sm:grid-cols-2">
             {FEATURES.map((f) => (
-              <div key={f.t} className="rounded-xl border border-border bg-muted/30 p-4 transition-colors hover:border-primary/30">
-                <f.icon className="mb-2 h-5 w-5 text-primary" />
-                <p className="text-sm font-bold">{f.t}</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">{f.d}</p>
+              <div key={f.t} className="ck-vidro p-4">
+                <f.icon className="mb-2 h-5 w-5" style={{ color: 'var(--ck-verde)' }} />
+                <p className="text-sm font-bold" style={{ color: 'var(--ck-texto)' }}>{f.t}</p>
+                <p className="mt-0.5 text-[13px] leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>{f.d}</p>
               </div>
             ))}
           </div>
 
           {catalog && catalog.categories.length > 0 && (
-            <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="ck-vidro p-5 sm:p-6">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="font-heading text-base font-semibold tracking-tight">
+                <h3 className="font-heading text-base font-semibold tracking-tight" style={{ color: 'var(--ck-texto)' }}>
                   {catalog.total} traçados comentados
                 </h3>
                 {catalog.emergencies > 0 && (
@@ -265,17 +239,14 @@ function Paywall({
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-[13px] leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>
                 Cada padrão vem com critérios diagnósticos segundo AHA, ACC, ESC e SBC.
               </p>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {catalog.categories.map((c) => (
-                  <li
-                    key={c.name}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1.5 text-xs"
-                  >
-                    <span className="font-medium">{c.name}</span>
-                    <span className="font-mono text-[11px] font-bold text-primary">{c.count}</span>
+                  <li key={c.name} className="ck-chip" data-tom="neutro">
+                    <span>{c.name}</span>
+                    <span className="tabular-nums" style={{ color: 'var(--ck-texto-3)' }}>{c.count}</span>
                   </li>
                 ))}
               </ul>
@@ -284,40 +255,15 @@ function Paywall({
         </div>
 
         {/* ── Coluna da prova visual + preço ── */}
-        <div className="space-y-5 lg:sticky lg:top-6">
-          <SimulatorPreview className="hidden lg:block" />
+        <div className="space-y-5 lg:sticky lg:top-20">
+          <SimulatorPreview />
 
-          {/* Aqui o cartão mostra o que se leva, não quanto custa: quem chegou
-              pelo simulador ainda não sabe que a mesma compra abre outros seis
-              manuais, e o preço lido antes disso vira comparação com o preço de
-              um curso de ECG avulso. O número vem inteiro logo abaixo. */}
-          <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              O que a compra abre
-            </p>
-            <h3 className="mt-1.5 font-heading text-lg font-semibold leading-snug tracking-tight">
-              O Eletrocardiograma é 1 dos {TOTAL_DE_MODULOS} manuais
-            </h3>
-            <ul className="mt-4 space-y-1.5">
-              {perks.map((t) => (
-                <li key={t} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                  {t}
-                </li>
-              ))}
-            </ul>
-            <button
-              onClick={onCheckout}
-              className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-            >
-              <Crown className="h-4 w-4" />
-              {ctaLabel}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com segurança.
-            </p>
-          </div>
+          <CartaoDoPacote
+            atual="eletrocardiograma"
+            titulo={<>O Eletrocardiograma é 1 dos {TOTAL_DE_MODULOS} manuais</>}
+            onCheckout={onCheckout}
+            isAuthenticated={isAuthenticated}
+          />
         </div>
       </div>
 
@@ -364,7 +310,7 @@ function Paywall({
 /** Print real do simulador em moldura de aparelho — mostra o que se compra. */
 function SimulatorPreview({ className = '' }: { className?: string }) {
   return (
-    <figure className={`m-0 ${className}`}>
+    <figure id="previa" className={`m-0 scroll-mt-24 ${className}`}>
       <div className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-b from-slate-900 to-slate-950 p-5 shadow-sm">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.18]"
@@ -385,7 +331,7 @@ function SimulatorPreview({ className = '' }: { className?: string }) {
           className="relative mx-auto block h-auto w-full max-w-[260px] rounded-xl border border-white/10 shadow-2xl"
         />
       </div>
-      <figcaption className="mt-2 text-center text-[11px] text-muted-foreground">
+      <figcaption className="mt-2 text-center text-[12px]" style={{ color: 'var(--ck-texto-3)' }}>
         Tela real do simulador — medidas calculadas a partir do traçado gerado.
       </figcaption>
     </figure>

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { FaixaDoPacote, GradeDoPacote, ListaDoPacote } from '@/components/manual-clinico/pacote'
+import { HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { TOTAL_DE_MODULOS, apresentarPreco, precoPorModulo } from '@/lib/manual-clinico/pacote'
 import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
@@ -13,7 +14,6 @@ import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
 import { FichaMarcador } from '@/components/anatomia/ficha-estrutura'
 import type { ResumoAnatomia, RespostaAcessoAnatomia } from '@/lib/anatomia/tipos'
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   Check,
@@ -129,20 +129,17 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
 
   const chamadas = {
     hub: {
-      olho: 'Seção premium · Manual Clínico',
-      titulo: 'Domine Anatomia',
+      titulo: 'Toque na estrutura e leia a ficha inteira.',
       linha:
-        'O corpo humano em duas linguagens que se completam: pranchas reais com cada estrutura marcada e explicada, e modelos tridimensionais que você gira na mão.',
+        'Pranchas reais com cada estrutura marcada e explicada — localização, função, vascularização, inervação e clínica — e modelos 3D que você gira na mão.',
     },
     atlas: {
-      olho: 'Atlas de Anatomia · acervo completo',
-      titulo: 'O atlas que responde',
+      titulo: 'O atlas que responde.',
       linha:
         'Pranchas anatômicas reais com as estruturas marcadas. Toque em qualquer marcador e receba a ficha inteira — não só o nome.',
     },
     modelos: {
-      olho: 'Anatomia 3D · modelos interativos',
-      titulo: 'Anatomia que você gira',
+      titulo: 'Anatomia que você gira na mão.',
       linha:
         'Peças anatômicas rotacionáveis em 360°, organizadas por sistema e acompanhadas de uma explicação aprofundada em cada uma.',
     },
@@ -150,99 +147,32 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
 
   return (
     <div className="surface-page anatomia-ambiente min-h-screen pb-28 lg:pb-0">
-      {/* ══════════════ Hero ══════════════ */}
-      <header className="relative isolate overflow-hidden bg-slate-950">
-        <div className="absolute inset-0 grid grid-cols-3 opacity-40 sm:grid-cols-6" aria-hidden>
-          {catalogo.sistemas.slice(0, 6).map((sistema, indice) => (
-            <div key={sistema.slug} className="relative">
-              <Image
-                src={sistema.capa}
-                alt=""
-                fill
-                priority={indice < 3}
-                sizes="(max-width: 640px) 34vw, 17vw"
-                className="object-cover grayscale-[0.3]"
-              />
-            </div>
-          ))}
-        </div>
-        <div
-          className="absolute inset-0 bg-[linear-gradient(to_top,#020617_14%,rgba(2,6,23,0.94)_52%,rgba(2,6,23,0.66)_100%)]"
-          aria-hidden
-        />
-        <div className="pointer-events-none absolute -left-24 top-1/3 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -right-24 top-0 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl" aria-hidden />
-
-        <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-7 sm:pb-16 sm:pt-9">
-          <button
-            type="button"
-            onClick={() => router.push('/manual-clinico')}
-            className="mb-7 inline-flex items-center gap-1.5 text-sm text-white/50 transition-colors hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </button>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-400/12 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300">
-              <Crown className="h-3.5 w-3.5" /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
-            </span>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">{chamadas.olho}</span>
-          </div>
-
-          <h1 className="mt-4 max-w-4xl font-heading text-[2.6rem] font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            {chamadas.titulo}
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">{chamadas.linha}</p>
-
-          <dl className="mt-8 grid max-w-3xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
-            {[
-              { valor: catalogo.totalPranchas.toLocaleString('pt-BR'), rotulo: 'pranchas reais' },
-              { valor: catalogo.totalMarcadores.toLocaleString('pt-BR'), rotulo: 'estruturas com ficha' },
-              { valor: catalogo.totalModelos.toLocaleString('pt-BR'), rotulo: 'modelos 3D' },
-              { valor: catalogo.totalSistemas.toLocaleString('pt-BR'), rotulo: 'sistemas' },
-            ].map(item => (
-              <div key={item.rotulo} className="anatomia-vidro-escuro rounded-2xl p-3.5">
-                <dt className="font-heading text-2xl font-semibold tabular-nums text-white sm:text-3xl">{item.valor}</dt>
-                <dd className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-white/50">{item.rotulo}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <button
-              type="button"
-              onClick={irParaCheckout}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground shadow-lg transition hover:bg-primary/90 active:scale-[0.98]"
-            >
-              <Crown className="h-4 w-4" />
-              {rotuloCta}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-            {/* Sem preço na primeira dobra: aqui a pessoa ainda não sabe que a
-                mesma compra abre outros seis manuais, e o número lido antes
-                disso vira comparação com o preço de um atlas avulso. */}
-            <p className="text-sm text-white/60">
-              Domine Anatomia é <span className="font-black text-white">1 dos {TOTAL_DE_MODULOS} manuais</span>{' '}
-              que este acesso abre
-            </p>
-          </div>
-
-          <p className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-white/45">
-            <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-emerald-400" /> {TOTAL_DE_MODULOS} manuais na mesma compra
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-emerald-400" /> Incluso no DomineAqui Plus+
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-emerald-400" /> Acesso imediato
-            </span>
-          </p>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-6xl px-4 pt-8">
-        <FaixaDoPacote atual="anatomia" />
+      {/* ══════════════ Hero ══════════════
+          O herói comum das portas do Manual (HeroiDoModulo). A prancha de
+          verdade, logo abaixo, é a demonstração. */}
+      <div className="mx-auto max-w-6xl px-4">
+        <HeroiDoModulo
+          porta="anatomia"
+          titulo={chamadas.titulo}
+          promessa={chamadas.linha}
+          numeros={[
+            { v: catalogo.totalPranchas.toLocaleString('pt-BR'), r: 'pranchas reais' },
+            { v: catalogo.totalMarcadores.toLocaleString('pt-BR'), r: 'estruturas com ficha' },
+            { v: catalogo.totalModelos.toLocaleString('pt-BR'), r: 'modelos 3D' },
+          ]}
+          acoes={
+            <>
+              <button type="button" onClick={irParaCheckout} className="ck-cta">
+                {rotuloCta}
+              </button>
+              {catalogo.amostra && (
+                <a href="#amostra-anatomia" className="ck-botao">Testar uma prancha</a>
+              )}
+            </>
+          }
+        >
+          <FaixaDoPacote atual="anatomia" className="mt-2" />
+        </HeroiDoModulo>
       </div>
 
       {/* ══════════════ Amostra grátis: uma prancha de verdade ══════════════ */}
@@ -564,7 +494,7 @@ function AmostraInterativa({
   const insight = indice === null ? null : amostra.fichas[indice] || null
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+    <section id="amostra-anatomia" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12 sm:py-16">
       <div className="mb-7 max-w-2xl">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
           <Sparkles className="h-3.5 w-3.5" /> Amostra liberada

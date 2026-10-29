@@ -7,6 +7,11 @@ import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components/profile-completion-gate'
 import { SupportChat, esquecerTicketsEmMemoria } from '@/components/support-chat'
+import dynamicImport from 'next/dynamic'
+import { rotaSemBarra } from '@/components/manual-clinico/casco/modulos'
+
+// A moldura do Manual (aurora + barra de portas) só baixa no Manual.
+const MolduraDoManual = dynamicImport(() => import('@/components/manual-clinico/casco/moldura-do-manual'))
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
 import { AvisoDePartidaLenta } from '@/components/pwa/aviso-de-partida-lenta'
@@ -168,6 +173,9 @@ export function AppShell({
 }: AppShellProps) {
   const router = useRouter()
   const pathname = usePathname()
+  // Toda página do Manual Clínico ganha a mesma moldura (aurora + barra de
+  // portas), menos os visualizadores de tela cheia. Ver casco/modulos.ts.
+  const noManual = !!pathname && !rotaSemBarra(pathname)
   const { showSupport } = useUIPreferences()
   const { liteMode } = useLiteMode()
   // Avisa ao lugar global de anúncio que esta página tem os seus (topo e fim
@@ -424,7 +432,14 @@ export function AppShell({
 
             <main className="min-h-screen">
               <SlotDeAnuncio posicao="topo" />
-              {children}
+              {noManual ? (
+                <div className="mc-mundo ck-mundo">
+                  <MolduraDoManual />
+                  {children}
+                </div>
+              ) : (
+                children
+              )}
               <SlotDeAnuncio posicao="rodape" />
             </main>
 
@@ -547,7 +562,14 @@ export function AppShell({
 
           <main className="flex-1 min-w-0">
             <SlotDeAnuncio posicao="topo" />
-            {children}
+            {noManual ? (
+              <div className="mc-mundo ck-mundo">
+                <MolduraDoManual />
+                {children}
+              </div>
+            ) : (
+              children
+            )}
             <SlotDeAnuncio posicao="rodape" />
           </main>
         </div>

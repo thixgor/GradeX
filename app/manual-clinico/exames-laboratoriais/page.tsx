@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { CabecaDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import {
   Activity,
   ArrowRight,
@@ -54,24 +55,14 @@ export default function PaginaDosExames() {
 
   return (
     <AreaDosExames>
-      <div className="container mx-auto max-w-5xl px-4 pb-16 pt-16 sm:pt-8">
-        {/* ══════════════ Cabeçalho ══════════════ */}
-        <header>
-          <Link
-            href="/manual-clinico"
-            prefetch={false}
-            className="-m-2 mb-4 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            ← Voltar ao Manual Clínico
-          </Link>
-          <p className="lab-rubrica">DomineAqui Lab</p>
-          <h1 className="mt-1.5 font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            Exames Laboratoriais
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Interprete exames, compreenda alterações e conecte resultados à fisiologia e à clínica.
-          </p>
-        </header>
+      <div className="container mx-auto max-w-5xl px-4 pb-16">
+        {/* ══════════════ Cabeçalho ══════════════
+            A cabeça curta de todo módulo do Manual (CabecaDoModulo). */}
+        <CabecaDoModulo
+          porta="exames"
+          titulo="Exames Laboratoriais"
+          texto="Interprete o laudo e conecte cada número à fisiologia e à clínica."
+        />
 
         {/* ══════════════ Busca ══════════════ */}
         <div className="mt-6">

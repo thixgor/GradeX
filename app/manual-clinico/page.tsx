@@ -2,16 +2,12 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
 import { FocusSessionButton } from '@/components/focus-session-button'
 import { useTrackView } from '@/hooks/use-track-view'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import {
-  Search,
   Heart,
   Wind,
   Brain,
@@ -28,13 +24,9 @@ import {
   Bug,
   Target,
   BookOpen,
-  PersonStanding,
-  Calculator,
   ChevronLeft,
   ChevronRight,
   X,
-  Filter,
-  Sparkles,
   ArrowRight,
   FileDown,
   Highlighter,
@@ -48,23 +40,23 @@ import {
   XCircle,
   CreditCard,
   GraduationCap,
-  FlaskConical,
-  Route
 } from 'lucide-react'
 import { AREAS_SAUDE, SISTEMAS_FISIOLOGICOS, type AreaSaude, type SistemaFisiologico } from '@/lib/types/manual-clinico'
 import { clearAllManualHighlights, hasAnyManualHighlights } from '@/lib/manual-clinico-highlights'
 import { trackMeta } from '@/lib/meta-pixel'
 import { GuidedTour, type TourStep } from '@/components/manual-clinico/guided-tour'
-import { LogoRadiologia } from '@/components/radiologia/logo'
+import { estiloDoChip } from '@/components/sidebar-cores'
+import { PORTAS_DO_MANUAL, type PortaDoManual } from '@/components/manual-clinico/casco/modulos'
+import { IconeDaPorta } from '@/components/manual-clinico/casco/barra-do-manual'
+import { BuscaDoManual } from '@/components/manual-clinico/casco/busca-do-manual'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import {
   FaixaDoPacote,
   FechamentoDoPacote,
-  GradeDoPacote,
   OfertaDoPacote,
   PerguntasDoPacote,
 } from '@/components/manual-clinico/pacote'
-import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
+import { MODULOS_DO_PACOTE, TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PLUS_LABEL } from '@/lib/account-tier'
 
@@ -121,13 +113,6 @@ const PESQUISAS_SUGERIDAS: { label: string; slug: string }[] = [
   { label: 'Principais valvopatias', slug: 'principais-valvopatias' },
   { label: 'Sons pulmonares anormais', slug: 'sons-pulmonares-anormais' },
 ]
-
-const AREA_COLORS_ACTIVE: Record<AreaSaude, string> = {
-  'Medicina': 'bg-blue-500 text-white border-blue-600 shadow-blue-500/25 shadow-lg',
-  'Psicologia': 'bg-purple-500 text-white border-purple-600 shadow-purple-500/25 shadow-lg',
-  'Odontologia': 'bg-emerald-500 text-white border-emerald-600 shadow-emerald-500/25 shadow-lg',
-  'Biomedicina': 'bg-orange-500 text-white border-orange-600 shadow-orange-500/25 shadow-lg',
-}
 
 interface PatologiaResumo {
   _id: string
@@ -229,15 +214,15 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
   if (!subscription) return null
 
   return (
-    <div className="mt-5 mx-auto max-w-2xl rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+    <div className="ck-placa w-full max-w-xl p-4 text-left">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <Crown className="h-5 w-5 text-emerald-400 flex-shrink-0" />
+          <Crown className="h-5 w-5 flex-shrink-0" style={{ color: 'var(--ck-verde)' }} />
           <div>
-            <p className="text-sm font-black">
+            <p className="text-sm font-bold" style={{ color: 'var(--ck-texto)' }}>
               Manual Clínico {subscription.planLabel || 'ativo'} {subscription.isLifetime ? '(vitalício)' : ''}
             </p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-[13px]" style={{ color: 'var(--ck-texto-2)' }}>
               {subscription.isLifetime
                 ? 'Acesso para sempre, nunca expira.'
                 : subscription.isExpired
@@ -248,7 +233,8 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
         </div>
         <button
           onClick={() => setShowInfo(v => !v)}
-          className="p-1.5 rounded-lg bg-white/10 hover:bg-white/15 transition-colors"
+          className="grid h-8 w-8 place-items-center rounded-full transition-colors"
+          style={{ background: 'var(--ck-trilho)', color: 'var(--ck-texto-2)' }}
           aria-label="Informações da assinatura"
           title="Informações"
         >
@@ -257,7 +243,7 @@ function SubscriptionInfoBanner({ subscription }: { subscription: ManualSubscrip
       </div>
 
       {showInfo && (
-        <div className="mt-3 rounded-xl bg-black/15 p-3 text-xs space-y-1.5">
+        <div className="mt-3 space-y-1.5 border-t pt-3 text-xs" style={{ borderColor: 'var(--ck-sep)', color: 'var(--ck-texto)' }}>
           <div className="flex justify-between"><span className="text-muted-foreground">Plano:</span><strong>{subscription.planLabel || 'N/D'}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Assinado em:</span><strong>{formatDateBR(subscription.purchasedAt)}</strong></div>
           <div className="flex justify-between"><span className="text-muted-foreground">Expira em:</span><strong>{subscription.isLifetime ? 'Nunca' : formatDateBR(subscription.expiresAt)}</strong></div>
@@ -287,16 +273,16 @@ function RenewalBanner({
 }) {
   const isCard = subscription.paymentMethod === 'credit_card' || subscription.paymentMethod === 'card'
   return (
-    <div className="mt-4 mx-auto max-w-2xl rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+    <div className="ck-aviso w-full max-w-xl !items-start p-4 text-left">
       <div className="flex items-start gap-3">
-        <CalendarClock className="h-5 w-5 text-amber-400 flex-shrink-0" />
+        <CalendarClock className="h-5 w-5 flex-shrink-0" />
         <div className="flex-1">
-          <p className="text-sm font-black">
+          <p className="text-sm font-bold">
             {subscription.isExpired
               ? 'Seu Manual Clínico expirou'
               : `Seu Manual Clínico expira em ${formatRemainingHuman(subscription.daysRemaining, false)}`}
           </p>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-[13px] opacity-80">
             {isCard
               ? 'No vencimento, enviaremos um e-mail com link de 1 clique para renovar com seu cartão.'
               : 'Renove agora para não perder o acesso Plus+.'}
@@ -304,7 +290,7 @@ function RenewalBanner({
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               onClick={onRenew}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-amber-300 px-3 text-xs font-black text-amber-950 hover:bg-amber-200 transition"
+              className="ck-cta !h-10 !px-4 !text-[13px]"
             >
               <CreditCard className="h-3.5 w-3.5" /> Renovar agora
             </button>
@@ -317,11 +303,8 @@ function RenewalBanner({
             <button
               onClick={onDecline}
               disabled={declining}
-              className={`inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs font-bold transition disabled:opacity-60 ${
-                declineConfirm
-                  ? 'border-amber-400/50 bg-amber-500/15 text-amber-700 dark:text-amber-300'
-                  : 'border-border bg-card text-muted-foreground hover:text-foreground'
-              }`}
+              className="ck-botao !h-10 !px-4 !text-[13px]"
+              data-confirmando={declineConfirm ? '' : undefined}
             >
               {declining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <XCircle className="h-3.5 w-3.5" />}
               {declineConfirm ? 'Confirmar — mantenho o acesso até o vencimento' : 'Não quero renovar'}
@@ -428,7 +411,7 @@ function FloatingFocusGlass({ enabled }: { enabled: boolean }) {
     // foco nascia no MESMO ponto com `z-[55]`: no celular e no tablet ela ficava
     // literalmente atrás dos dois, sem toque possível. Aqui ela entra à esquerda
     // deles, na mesma faixa e com a mesma folga de safe-area.
-    <div className="pwa-safe-fixed-top fixed top-3 right-[9.75rem] z-[60]">
+    <div className="mc-com-foco pwa-safe-fixed-top fixed top-3 right-[9.75rem] z-[60]">
       <div className="relative liquid-glass-bubble overflow-visible rounded-full">
         <div className="liquid-glass-surface !rounded-full" />
         <div className="liquid-glass-refraction-top !left-[10%] !right-[10%] !rounded-full" />
@@ -718,6 +701,9 @@ function ManualClinicoContent() {
   }
 
   const hasFilters = busca || areasAtivas.length > 0 || sistemaAtivo
+  const vende = ctasReady && !manualAccess.hasFullAccess && !!product?.isActive
+  const precoAgora = hasActiveTier ? cheapestAfterTier : cheapestPlanPrice
+  const temTesteGratis = freeQuota?.mode === 'quantity' && (freeQuota?.limit ?? 0) > 0
 
   return (
     <div className="surface-page">
@@ -725,593 +711,414 @@ function ManualClinicoContent() {
       <FloatingFocusGlass enabled={isAuthenticated === true} />
       <GuidedTour open={tourOpen} steps={tourSteps} onClose={dismissTour} onFinish={dismissTour} />
 
-      {/* ══════════ HERO ══════════ */}
-      <div className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-muted/30" aria-hidden />
-
-        {/* Hero Content */}
-        <div className="relative z-10 container mx-auto px-4 pt-8 sm:pt-10 pb-10 max-w-6xl">
-          <div className="text-center mb-7">
-            <div className="inline-flex flex-col items-center">
-              <p className="editorial-mark mb-3 justify-center">Produto carro-chefe</p>
-              <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                <Crown className="h-3.5 w-3.5" /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
-              </span>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-heading tracking-tight text-foreground">
-                Manual Clínico
-              </h1>
-              <p className="text-muted-foreground mt-3 max-w-xl text-sm sm:text-base leading-relaxed">
-                Pare de abrir 5 abas pra resolver 1 patologia. Diagnóstico, diferenciais, conduta e farmacologia em segundos, pesquisáveis por nome, sinônimo ou CID-10.
-              </p>
-              {total > 0 && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-medium text-primary">
-                    {total} patologias prontas para consulta
-                  </span>
-                </div>
-              )}
-              {ctasReady && !manualAccess.hasFullAccess && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && (
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                  {isAuthenticated
-                    ? freeQuota.remaining > 0
-                      ? `Você ainda tem ${freeQuota.remaining} de ${freeQuota.limit} aberturas grátis`
-                      : `Você já usou suas ${freeQuota.limit} aberturas grátis`
-                    : `Entre e escolha ${freeQuota.limit} patologias grátis agora`}
-                </div>
-              )}
-              {ctasReady && manualAccess.hasFullAccess && manualAccess.reason === 'included_plan' && (
-                <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-400/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
-                  <Crown className="h-4 w-4" />
-                  Incluso no seu plano {PLUS_LABEL}
-                </div>
-              )}
-              {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription && (
-                <SubscriptionInfoBanner subscription={manualAccess.subscription} />
-              )}
-
-              {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription
-                && !manualAccess.subscription.isLifetime
-                && !manualAccess.subscription.renewalDeclined
-                && (manualAccess.subscription.daysRemaining != null && manualAccess.subscription.daysRemaining <= 7)
-                && (
-                  <RenewalBanner
-                    subscription={manualAccess.subscription}
-                    onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
-                    onDecline={handleDeclineRenewal}
-                    declining={renewalDeclining}
-                    declineConfirm={renewalDeclineConfirm}
-                  />
-                )}
-              {ctasReady && !manualAccess.hasFullAccess && manualAccess.subscription?.isExpired && !manualAccess.subscription.renewalDeclined && (
-                <RenewalBanner
-                  subscription={manualAccess.subscription}
-                  onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
-                  onDecline={handleDeclineRenewal}
-                  declining={renewalDeclining}
-                  declineConfirm={renewalDeclineConfirm}
-                />
-              )}
-
-              {/* ── Pricing event countdown ── (só quando lote dinâmico vale para TODOS os planos) */}
-              {ctasReady && !manualAccess.hasFullAccess && product?.isActive && hasActiveTier && pricingEventState ? (
-                <div className="mt-5 mx-auto max-w-md space-y-2">
-                  <PricingEventCountdown state={pricingEventState} compact />
-                  <div className="rounded-xl border border-emerald-300/25 bg-emerald-400/10 px-3 py-2 text-center text-[11px] font-bold text-emerald-700 dark:text-emerald-200">
-                    Lote {pricingEventState.activeTier?.label || 'ativo'} · {Math.round(tierPct)}% OFF
-                  </div>
-                </div>
-              ) : null}
-
-              {/* ── Action buttons ── */}
-              {!ctasReady ? (
-                <div className="mt-5 flex flex-wrap items-center justify-center gap-3" aria-hidden="true">
-                  <div className="h-12 w-64 rounded-xl bg-muted border border-border animate-pulse" />
-                  <div className="h-12 w-52 rounded-xl bg-muted/70 border border-border animate-pulse" />
-                </div>
-              ) : (
-                <>
-                  {!manualAccess.hasFullAccess && product?.isActive && enabledPlans.length > 0 && (
-                    <div className="mt-6 flex flex-col items-center gap-2.5" data-tour="access">
-                      {!isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 ? (
-                        <>
-                          {/* Deslogado com teste grátis: registro-primeiro */}
-                          <button
-                            onClick={() => goToFreeTrial()}
-                            className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-emerald-500 px-6 sm:px-7 text-sm sm:text-base font-bold text-white shadow-md shadow-emerald-500/25 transition hover:bg-emerald-500/90 active:scale-[0.98]"
-                          >
-                            <Sparkles className="h-5 w-5" />
-                            Criar conta grátis e testar {freeQuota.limit} patologias
-                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-                          </button>
-                          <button
-                            onClick={() => goToCheckout()}
-                            className="text-xs font-bold text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
-                          >
-                            Já quero desbloquear tudo · {formatBRL(hasActiveTier ? cheapestAfterTier : cheapestPlanPrice)}
-                          </button>
-                          <p className="text-[11px] font-medium text-muted-foreground/70">Sem cartão · leva menos de 1 minuto</p>
-                        </>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => goToCheckout()}
-                            className="group inline-flex h-12 sm:h-14 items-center justify-center gap-2.5 rounded-md bg-secondary px-6 sm:px-7 text-sm sm:text-base font-bold text-secondary-foreground shadow-md transition hover:bg-secondary/90 active:scale-[0.98]"
-                          >
-                            <Crown className="h-5 w-5" />
-                            Quero os {TOTAL_DE_MODULOS} manuais
-                            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-                          </button>
-                          <p className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                            {hasActiveTier
-                              ? <>Por apenas <span className="font-black">{formatBRL(cheapestAfterTier)}</span> <span className="line-through text-muted-foreground/60 ml-1 font-bold">{formatBRL(cheapestPlanPrice)}</span></>
-                              : <>Por apenas <span className="font-black">{formatBRL(cheapestPlanPrice)}</span></>}
-                          </p>
-                          {isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && freeQuota.remaining > 0 && (
-                            <p className="text-[11px] font-medium text-muted-foreground/70">
-                              Ou escolha uma patologia abaixo — você tem {freeQuota.remaining} de {freeQuota.limit} aberturas grátis
-                            </p>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  )}
-                  <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                    {product?.fullPdfButtonEnabled !== false && (
-                      <button
-                        onClick={handleGeneratePDF}
-                        disabled={pdfLoading}
-                        data-tour="pdf"
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                          bg-primary text-primary-foreground shadow-lg shadow-primary/25
-                          hover:bg-primary/90 active:scale-[0.97] transition-all duration-200
-                          disabled:opacity-60 disabled:cursor-not-allowed"
-                      >
-                        {pdfLoading
-                          ? <Loader2 className="h-4 w-4 animate-spin" />
-                          : <FileDown className="h-4 w-4" />}
-                        {pdfLoading
-                          ? 'Gerando PDF...'
-                          : manualAccess.hasFullAccess && product?.fullPdfExternalUrl
-                            ? 'Abrir Manual Completo (PDF)'
-                            : manualAccess.hasFullAccess
-                              ? 'Baixar Manual Completo (PDF)'
-                              : isAuthenticated === true ? 'Levar o Manual no PDF' : 'Entrar para baixar o PDF'}
-                      </button>
-                    )}
-
-                    {hasHighlights && (
-                      <button
-                        onClick={handleResetHighlights}
-                        className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all duration-200 active:scale-[0.97]
-                          ${resetConfirm
-                            ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
-                            : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'
-                          }`}
-                      >
-                        {resetConfirm
-                          ? <><RotateCcw className="h-4 w-4" /> Confirmar reset de marcações</>
-                          : <><Highlighter className="h-4 w-4" /> Resetar Marcações</>
-                        }
-                      </button>
-                    )}
-
-                    <button
-                      onClick={startTour}
-                      data-tour="tutorial-btn"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border border-emerald-400/30 bg-emerald-400/5 text-emerald-700 dark:text-emerald-300 transition-all duration-200 hover:bg-emerald-400/10 active:scale-[0.97]"
-                    >
-                      <GraduationCap className="h-4 w-4" />
-                      Tutorial
-                    </button>
-                  </div>
-
-                  {!manualAccess.hasFullAccess && product?.isActive && (
-                    <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] font-medium text-muted-foreground/70">
-                      <span className="inline-flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                        Acesso imediato
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                        {TOTAL_DE_MODULOS} manuais no mesmo acesso
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                        Atualizações inclusas
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <span className="h-1 w-1 rounded-full bg-emerald-400" />
-                        Pix, cartão ou boleto
-                      </span>
-                    </div>
-                  )}
-                </>
-              )}
+      <div className="container mx-auto max-w-6xl px-4 pb-12">
+        {/* ══════════ HERÓI DO PORTAL ══════════
+            O Manual Clínico é a porta de entrada de tudo: o título diz o
+            trabalho que ele resolve (não o nome do produto, que já está na
+            barra), três números reais provam o tamanho e as ações vêm logo. */}
+        <header className="ck-escopo mc-heroi ck-entra">
+          <span className="sidebar-mini-chip mc-heroi-chip" style={estiloDoChip('manualClinico')} aria-hidden>
+            <BookOpen />
+          </span>
+          <p className="text-[13px] font-semibold" style={{ color: 'var(--ck-texto-3)' }}>
+            Manual Clínico · {TOTAL_DE_MODULOS} manuais num só acesso
+          </p>
+          <h1 className="mc-heroi-titulo" style={{ color: 'var(--ck-texto)' }}>
+            Pare de abrir cinco abas para resolver um caso.
+          </h1>
+          <p className="mc-heroi-promessa">
+            Patologia, laboratório, imagem, lâmina, ECG, fármaco e calculadora — cada um com a sua porta, todos
+            pesquisáveis por nome, sinônimo ou CID-10.
+          </p>
+          <div className="mc-numeros">
+            <div className="mc-numero">
+              <b>{total > 0 ? total : '300+'}</b>
+              <span>patologias</span>
+            </div>
+            <div className="mc-numero">
+              <b>{TOTAL_DE_MODULOS}</b>
+              <span>manuais no mesmo acesso</span>
+            </div>
+            <div className="mc-numero">
+              <b>1</b>
+              <span>pagamento, acesso na hora</span>
             </div>
           </div>
 
-          {/* ══════════ SEARCH BAR ══════════ */}
-          <div className="max-w-2xl mx-auto" data-tour="search">
-            <div className="relative group">
-              <div className="relative flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-colors duration-200 group-focus-within:border-primary/50">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
-                <Input
-                  placeholder="Pesquisar por nome, sinônimo, CID-10..."
-                  value={busca}
-                  onChange={(e) => setBusca(e.target.value)}
-                  className="pl-12 pr-12 h-14 text-base bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/40"
-                  aria-label="Pesquisar patologias"
-                />
-                {busca && (
-                  <button
-                    onClick={() => setBusca('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-muted hover:bg-muted-foreground/20 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label="Limpar pesquisa"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {!busca && (
-              <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-                <div className="flex items-center gap-1.5 mr-0.5 text-muted-foreground/50">
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span className="text-xs font-medium uppercase tracking-wide">Sugestões</span>
-                </div>
-                {PESQUISAS_SUGERIDAS.map(({ label, slug }) => (
-                  <button
-                    key={slug}
-                    onClick={() => router.push(`/manual-clinico/${slug}`)}
-                    className="px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium bg-card border border-border text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-primary/5 transition-colors"
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
+          {/* ── O estado do acesso de quem já está aqui ── */}
+          {ctasReady && !manualAccess.hasFullAccess && temTesteGratis && freeQuota && (
+            <span className="ck-chip">
+              {isAuthenticated
+                ? freeQuota.remaining > 0
+                  ? `Você ainda tem ${freeQuota.remaining} de ${freeQuota.limit} aberturas grátis`
+                  : `Você já usou suas ${freeQuota.limit} aberturas grátis`
+                : `Entre e escolha ${freeQuota.limit} patologias grátis agora`}
+            </span>
+          )}
+          {ctasReady && manualAccess.hasFullAccess && manualAccess.reason === 'included_plan' && (
+            <span className="ck-chip" data-tom="ambar">
+              <Crown className="h-3.5 w-3.5" /> Incluso no seu plano {PLUS_LABEL}
+            </span>
+          )}
+          {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription && (
+            <SubscriptionInfoBanner subscription={manualAccess.subscription} />
+          )}
+          {ctasReady && manualAccess.hasFullAccess && manualAccess.subscription
+            && !manualAccess.subscription.isLifetime
+            && !manualAccess.subscription.renewalDeclined
+            && (manualAccess.subscription.daysRemaining != null && manualAccess.subscription.daysRemaining <= 7)
+            && (
+              <RenewalBanner
+                subscription={manualAccess.subscription}
+                onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
+                onDecline={handleDeclineRenewal}
+                declining={renewalDeclining}
+                declineConfirm={renewalDeclineConfirm}
+              />
             )}
+          {ctasReady && !manualAccess.hasFullAccess && manualAccess.subscription?.isExpired && !manualAccess.subscription.renewalDeclined && (
+            <RenewalBanner
+              subscription={manualAccess.subscription}
+              onRenew={() => goToCheckout(manualAccess.subscription?.planKey || 'semestral')}
+              onDecline={handleDeclineRenewal}
+              declining={renewalDeclining}
+              declineConfirm={renewalDeclineConfirm}
+            />
+          )}
+
+          {/* ── Lote dinâmico (só quando vale para TODOS os planos) ── */}
+          {vende && hasActiveTier && pricingEventState ? (
+            <div className="w-full max-w-md space-y-2">
+              <PricingEventCountdown state={pricingEventState} compact />
+              <p className="text-center text-[12.5px] font-semibold" style={{ color: 'var(--ck-verde)' }}>
+                Lote {pricingEventState.activeTier?.label || 'ativo'} · {Math.round(tierPct)}% OFF
+              </p>
+            </div>
+          ) : null}
+
+          {/* ── Ações ── */}
+          {!ctasReady ? (
+            <div className="mc-acoes" aria-hidden="true">
+              <div className="h-[54px] w-64 animate-pulse rounded-full" style={{ background: 'var(--ck-trilho)' }} />
+              <div className="h-[46px] w-44 animate-pulse rounded-full" style={{ background: 'var(--ck-trilho)' }} />
+            </div>
+          ) : (
+            <>
+              {vende && enabledPlans.length > 0 && (
+                <div className="flex flex-col items-center gap-2" data-tour="access">
+                  {!isAuthenticated && temTesteGratis && freeQuota ? (
+                    <>
+                      {/* Deslogado com teste grátis: registro-primeiro */}
+                      <button onClick={() => goToFreeTrial()} className="ck-cta ck-cta-verde">
+                        Testar {freeQuota.limit} patologias grátis
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                      <p className="text-[12.5px]" style={{ color: 'var(--ck-texto-3)' }}>
+                        Sem cartão · menos de 1 minuto ·{' '}
+                        <button onClick={() => goToCheckout()} className="ck-link">
+                          ou desbloquear tudo por {formatBRL(precoAgora)}
+                        </button>
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => goToCheckout()} className="ck-cta">
+                        Quero os {TOTAL_DE_MODULOS} manuais
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                      <p className="text-[13px] font-semibold" style={{ color: 'var(--ck-verde)' }}>
+                        Por {formatBRL(precoAgora)}
+                        {hasActiveTier && (
+                          <span className="ml-1.5 font-medium line-through" style={{ color: 'var(--ck-texto-3)' }}>
+                            {formatBRL(cheapestPlanPrice)}
+                          </span>
+                        )}
+                        <span className="font-medium" style={{ color: 'var(--ck-texto-3)' }}> · pagamento único</span>
+                      </p>
+                      {isAuthenticated && temTesteGratis && freeQuota && freeQuota.remaining > 0 && (
+                        <p className="text-[12.5px]" style={{ color: 'var(--ck-texto-3)' }}>
+                          Ou escolha uma patologia abaixo — você tem {freeQuota.remaining} de {freeQuota.limit} aberturas grátis
+                        </p>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+
+              <div className="mc-acoes">
+                {manualAccess.hasFullAccess && (
+                  <a href="#patologias" className="ck-cta">
+                    Buscar uma patologia
+                  </a>
+                )}
+                {product?.fullPdfButtonEnabled !== false && (
+                  <button onClick={handleGeneratePDF} disabled={pdfLoading} data-tour="pdf" className="ck-botao">
+                    {pdfLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                    {pdfLoading
+                      ? 'Gerando PDF...'
+                      : manualAccess.hasFullAccess && product?.fullPdfExternalUrl
+                        ? 'Abrir o PDF'
+                        : manualAccess.hasFullAccess
+                          ? 'Baixar o PDF'
+                          : isAuthenticated === true ? 'Levar no PDF' : 'Entrar para baixar o PDF'}
+                  </button>
+                )}
+                {hasHighlights && (
+                  <button onClick={handleResetHighlights} className="ck-botao" data-confirmando={resetConfirm ? '' : undefined}>
+                    {resetConfirm
+                      ? <><RotateCcw className="h-4 w-4" /> Confirmar reset</>
+                      : <><Highlighter className="h-4 w-4" /> Resetar marcações</>}
+                  </button>
+                )}
+                <button onClick={startTour} data-tour="tutorial-btn" className="ck-botao">
+                  <GraduationCap className="h-4 w-4" />
+                  Tutorial
+                </button>
+              </div>
+            </>
+          )}
+        </header>
+
+        {/* ══════════ AS PORTAS ══════════
+            O Manual é o portal: daqui a pessoa entra em cada ramificação. Uma
+            grade só, com a mesma cor de cada módulo na barra e no menu — o que
+            se reconhece não precisa ser lembrado. */}
+        <section id="portas" className="ck-escopo mt-12 scroll-mt-24" aria-labelledby="portas-titulo">
+          <div className="mb-5 text-center">
+            <h2 id="portas-titulo" className="mc-secao-titulo" style={{ color: 'var(--ck-texto)' }}>
+              Escolha por onde entrar
+            </h2>
+            <p className="mc-secao-apoio">Cada manual tem a sua porta. O acesso é um só.</p>
+          </div>
+          <div className="mc-portas">
+            {PORTAS_DO_PORTAL.map((porta) => (
+              <PortaDoPortal key={porta.id} porta={porta} />
+            ))}
+          </div>
+        </section>
+
+        {/* ══════════ PATOLOGIAS ══════════ */}
+        <section id="patologias" className="ck-escopo mt-14 scroll-mt-24" aria-labelledby="patologias-titulo">
+          <div className="mb-5 text-center">
+            <h2 id="patologias-titulo" className="mc-secao-titulo" style={{ color: 'var(--ck-texto)' }}>
+              Patologias
+            </h2>
+            <p className="mc-secao-apoio">
+              {total > 0 ? `${total} fichas` : 'As fichas'} com fisiopatologia, diferenciais, conduta e fluxograma.
+            </p>
           </div>
 
-          {/* ══════════ AREA FILTER PILLS ══════════ */}
-          <div className="flex flex-wrap items-center justify-center gap-2.5 mt-6" data-tour="filtros">
-            <div className="flex items-center gap-1.5 mr-1 text-muted-foreground/50">
-              <Filter className="h-3.5 w-3.5" />
-              <span className="text-xs font-medium uppercase tracking-wide">Filtros</span>
-            </div>
-            {AREAS_SAUDE.map(area => (
+          <div data-tour="search">
+            <BuscaDoManual
+              valor={busca}
+              aoMudar={setBusca}
+              placeholder="Nome, sinônimo ou CID-10"
+              rotulo="Pesquisar patologias"
+            />
+          </div>
+
+          {!busca && (
+            <p className="mx-auto mt-3 max-w-2xl text-center text-[13px] leading-relaxed" style={{ color: 'var(--ck-texto-3)' }}>
+              Experimente{' '}
+              {PESQUISAS_SUGERIDAS.map(({ label, slug }, i) => (
+                <span key={slug}>
+                  {i > 0 && ' · '}
+                  <Link href={`/manual-clinico/${slug}`} className="ck-link">{label}</Link>
+                </span>
+              ))}
+            </p>
+          )}
+
+          <div className="mc-filtros mt-5" data-tour="filtros" role="group" aria-label="Filtrar por área">
+            {AREAS_SAUDE.map((area) => (
               <button
                 key={area}
                 onClick={() => toggleArea(area)}
-                className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold border transition-colors ${
-                  areasAtivas.includes(area)
-                    ? AREA_COLORS_ACTIVE[area]
-                    : `${AREA_COLORS[area]} bg-card border-border hover:border-primary/35 hover:bg-muted/40`
-                }`}
-                aria-label={`Filtrar por ${area}`}
+                className="mc-filtro"
+                data-ativo={areasAtivas.includes(area) ? '' : undefined}
                 aria-pressed={areasAtivas.includes(area)}
+                aria-label={`Filtrar por ${area}`}
               >
                 {area}
               </button>
             ))}
             {hasFilters && (
-              <button
-                onClick={clearFilters}
-                className="text-xs text-muted-foreground/60 hover:text-foreground ml-1 underline underline-offset-2 transition-colors"
-              >
+              <button onClick={clearFilters} className="ck-link-discreto px-2">
                 Limpar
               </button>
             )}
           </div>
-        </div>
-      </div>
 
-        {/* ══════════ MAIN CONTENT ══════════ */}
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* A informação que faltava antes de qualquer preço: a compra não é de um
-            manual, é do pacote inteiro. Vem antes do banner de conversão de propósito. */}
-        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
-          <FaixaDoPacote atual="manual" className="mb-4" />
-        )}
-
-        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && (
-          <div className="mb-7 overflow-hidden rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-amber-300/15 p-2 text-amber-300">
-                  <Crown className="h-5 w-5" />
+          {/* Quem ainda não tem: a compra não é de um manual, é do pacote. */}
+          {vende && (
+            <div className="mx-auto mt-6 max-w-3xl">
+              <FaixaDoPacote atual="manual" />
+              {temTesteGratis && freeQuota && isAuthenticated && freeQuota.remaining <= 0 && (
+                <div className="ck-aviso mt-3">
+                  <Lock className="h-4 w-4" />
+                  <span className="flex-1">
+                    Você usou suas {freeQuota.limit} aberturas grátis. O Manual inteiro sai por {formatBRL(precoAgora)}
+                    {hasActiveTier ? ` · ${Math.round(tierPct)}% OFF` : ''}.
+                  </span>
+                  <button onClick={() => goToCheckout()} className="ck-link shrink-0">Desbloquear</button>
                 </div>
-                <div>
-                  <p className="text-sm font-bold leading-snug">
-                    {freeQuota?.mode === 'quantity' && freeQuota.limit > 0 && isAuthenticated && freeQuota.remaining <= 0
-                      ? 'Você abriu suas patologias grátis. Libere o Manual inteiro agora.'
-                      : 'Tenha o Manual Clínico inteiro.'}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {freeQuota?.mode === 'quantity' && freeQuota.limit > 0
-                      ? isAuthenticated
-                        ? `Você usou ${freeQuota.used} de ${freeQuota.limit} aberturas grátis. Desbloqueie por ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` · ${Math.round(tierPct)}% OFF` : ''}.`
-                        : `Crie sua conta e ganhe ${freeQuota.limit} aberturas grátis, ou desbloqueie o Manual completo.`
-                      : `${product.benefitText} · por apenas ${formatBRL(cheapestAfterTier)}${hasActiveTier ? ` (lote ${Math.round(tierPct)}% OFF)` : ''}.`}
-                  </p>
-                </div>
-              </div>
-              {!isAuthenticated && freeQuota?.mode === 'quantity' && freeQuota.limit > 0 ? (
-                <button
-                  onClick={() => goToFreeTrial()}
-                  className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-emerald-500 px-5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-500/90 active:scale-[0.98]"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Criar conta grátis
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </button>
-              ) : (
-                <button
-                  onClick={() => goToCheckout()}
-                  className="group inline-flex h-11 items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-                >
-                  Desbloquear agora
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </button>
               )}
             </div>
+          )}
+
+          {/* ── Índice por sistema ── */}
+          {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
+            <div className="mt-8" data-tour="sistemas">
+              <p className="mb-3 text-center text-[13px] font-semibold" style={{ color: 'var(--ck-texto-2)' }}>
+                Ou navegue por sistema
+              </p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+                {SISTEMAS_FISIOLOGICOS.map((sistema, idx) => {
+                  const Icon = SISTEMA_ICONS[sistema] || Stethoscope
+                  const tint = SISTEMA_TINTS[idx % SISTEMA_TINTS.length]
+                  return (
+                    <button
+                      key={sistema}
+                      onClick={() => selectSistema(sistema)}
+                      className="mc-item !items-center !justify-start !gap-2.5 !px-3 !py-3"
+                      aria-label={`Ver patologias do ${sistema}`}
+                    >
+                      <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-[10px] ${tint.bg}`}>
+                        <Icon className={`h-4 w-4 ${tint.text}`} />
+                      </span>
+                      <span className="line-clamp-2 text-[12.5px] font-semibold leading-tight" style={{ color: 'var(--ck-texto)' }}>
+                        {sistema}
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {sistemaAtivo && (
+            <div className="mt-6 flex justify-center">
+              <span className="ck-chip" data-tom="neutro">
+                {sistemaAtivo}
+                <button onClick={() => setSistemaAtivo('')} className="-mr-1 grid h-5 w-5 place-items-center rounded-full" aria-label="Remover filtro de sistema">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            </div>
+          )}
+
+          {/* ── Resultados ──
+              Spinner grande só na PRIMEIRA carga (lista vazia). Nas buscas
+              seguintes a lista antiga fica visível (esmaecida), então a página
+              não "pisca" a cada tecla. */}
+          <div className="mt-6">
+            {loading && patologias.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-20">
+                <Loader2 className="h-8 w-8 animate-spin" style={{ color: 'var(--ck-texto-3)' }} />
+                <span className="text-sm" style={{ color: 'var(--ck-texto-2)' }}>Buscando patologias...</span>
+              </div>
+            ) : searched && patologias.length === 0 ? (
+              <div className="py-16 text-center">
+                <h3 className="mb-1 text-lg font-semibold" style={{ color: 'var(--ck-texto)' }}>Nenhuma patologia encontrada</h3>
+                <p className="mx-auto max-w-md text-sm" style={{ color: 'var(--ck-texto-2)' }}>
+                  {hasFilters ? 'Tente ajustar seus filtros ou termos de pesquisa.' : 'O manual clínico ainda não possui patologias cadastradas.'}
+                </p>
+                {hasFilters && (
+                  <button className="ck-botao mt-4" onClick={clearFilters}>Limpar filtros</button>
+                )}
+              </div>
+            ) : patologias.length > 0 ? (
+              <>
+                <div className={`grid gap-2 transition-opacity duration-200 sm:grid-cols-2 ${loading ? 'pointer-events-none opacity-50' : ''}`}>
+                  {patologias.map((patologia, idx) => (
+                    <button
+                      key={patologia._id}
+                      type="button"
+                      data-tour={idx === 0 ? 'patologia' : undefined}
+                      // Todo mundo vai para a patologia, inclusive quem não tem
+                      // conta: a página abre a prévia, e é lá que o convite para
+                      // entrar aparece, com o valor já na tela.
+                      onClick={() => router.push(`/manual-clinico/${patologia.slug}`)}
+                      className="mc-item !flex-col !items-stretch"
+                    >
+                      <div className="flex w-full items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="mc-item-nome">{patologia.nome}</span>
+                            {patologia.cid10 && <span className="ck-chip ck-mono" data-tom="neutro">{patologia.cid10}</span>}
+                            <SeloDeAcesso patologia={patologia} />
+                          </div>
+                          {patologia.sinonimos.length > 0 && (
+                            <p className={`mc-item-sub ${patologia.isPremiumLocked ? 'blur-[1px]' : ''}`}>
+                              {patologia.sinonimos.join(' · ')}
+                            </p>
+                          )}
+                        </div>
+                        {patologia.accessStatus === 'login_required'
+                          ? <LogIn className="mc-item-seta h-4 w-4" style={{ color: 'var(--ck-verde)' }} />
+                          : patologia.isPremiumLocked
+                          ? <Lock className="mc-item-seta h-4 w-4" style={{ color: 'var(--ck-ambar)' }} />
+                          : isAuthenticated === true || patologia.isFree
+                          ? <ArrowRight className="mc-item-seta h-4 w-4" />
+                          : <LogIn className="mc-item-seta h-4 w-4" />}
+                      </div>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {patologia.areas.map((area) => (
+                          <span key={area} className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${AREA_COLORS[area]}`}>
+                            {area}
+                          </span>
+                        ))}
+                        <span className="text-[11.5px]" style={{ color: 'var(--ck-texto-3)' }}>{patologia.sistema}</span>
+                      </div>
+                      {patologia.accessStatus === 'free_available' && (
+                        <p className="mt-2.5 text-[12.5px] font-medium" style={{ color: 'var(--ck-verde)' }}>
+                          Abrir esta patologia usa 1 das suas escolhas gratuitas.
+                        </p>
+                      )}
+                      {patologia.accessStatus === 'login_required' && freeQuota?.limit ? (
+                        <p className="mt-2.5 text-[12.5px] font-medium" style={{ color: 'var(--ck-verde)' }}>
+                          Entre para usar suas {freeQuota.limit} escolhas gratuitas.
+                        </p>
+                      ) : null}
+                      {patologia.isPremiumLocked && patologia.accessStatus !== 'login_required' && (
+                        <p className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-[12.5px] font-medium" style={{ color: 'var(--ck-ambar)' }}>
+                          <span>Limite grátis atingido. Libere o Manual inteiro, pagamento único.</span>
+                          <span className="inline-flex items-center gap-1 font-bold">Quero tudo <ArrowRight className="h-3 w-3" /></span>
+                        </p>
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* ── Paginação ── */}
+                {totalPages > 1 && (
+                  <div className="mt-8 flex items-center justify-center gap-3">
+                    <button className="ck-botao !h-10 !px-4" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+                      <ChevronLeft className="h-4 w-4" /> Anterior
+                    </button>
+                    <span className="text-sm tabular-nums" style={{ color: 'var(--ck-texto-2)' }}>
+                      <strong style={{ color: 'var(--ck-texto)' }}>{page}</strong> de <strong style={{ color: 'var(--ck-texto)' }}>{totalPages}</strong>
+                    </span>
+                    <button className="ck-botao !h-10 !px-4" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
+                      Próxima <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : null}
           </div>
-        )}
+        </section>
 
-        {/* ══════════ ESTUDO INTEGRADO ENTRY ══════════ */}
-        {/* Primeiro da lista porque é o que costura os outros: um tema, e o que
-            cada manual tem sobre ele, na ordem em que se estuda. */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/estudo-integrado')}
-            data-tour="estudo-integrado"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-primary/25 bg-gradient-to-r from-primary/[0.07] to-card p-4 text-left transition-colors hover:border-primary/45"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-primary/10 p-2.5">
-                  <Route className="h-5 w-5 text-primary" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-bold leading-snug">Estudo Integrado</p>
-                    <span className="inline-flex items-center gap-1 rounded-md border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-primary">
-                      <Sparkles className="h-2.5 w-2.5" /> Novo
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Um tema, todos os manuais: estudando carcinoma renal na TC, veja a lâmina e os outros tumores do rim
-                    na Histopatologia, o ultrassom dos rins na Semiologia, a ficha do Manual Clínico e o tratamento — na
-                    ordem em que se estuda. Monte seus estudos e marque o que já viu.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ FERRAMENTAS CLÍNICAS ENTRY ══════════ */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/ferramentas')}
-            data-tour="ferramentas"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-primary/10 p-2.5">
-                  <Calculator className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold leading-snug">Ferramentas Clínicas</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Mais de 200 calculadoras e escores interativos que respondem enquanto você digita — gasometria,
-                    ventilação mecânica, escores de risco, função renal, sepse, AVC, hepatologia, doses e conversões.
-                    Cada uma com a fórmula à mostra, interpretação do resultado, armadilhas de aplicação e referência.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ EXAMES LABORATORIAIS ENTRY ══════════ */}
-        {/* Vem logo depois das Ferramentas porque é a mesma pergunta vista de
-            outro lado: lá a pessoa calcula um índice, aqui ela entende o valor
-            que alimentou a conta. */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/exames-laboratoriais')}
-            data-tour="exames-laboratoriais"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-emerald-700/20 bg-gradient-to-r from-emerald-700/[0.06] to-card p-4 text-left transition-colors hover:border-emerald-700/40"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-emerald-700/10 p-2.5">
-                  <FlaskConical className="h-5 w-5 text-emerald-700 dark:text-emerald-400" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="text-sm font-bold leading-snug">Exames Laboratoriais — DomineAqui Lab</p>
-                    <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                      <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Central de interpretação laboratorial: cada marcador com fisiologia, por que sobe, por que cai, a
-                    cadeia causal de cada doença, diagnósticos diferenciais lado a lado e padrões clássicos. Mais o
-                    Laboratório Virtual, que gera exames fictícios para você interpretar antes de ver a resposta.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-emerald-700" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ FARMACOLOGIA ENTRY ══════════ */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/farmacologia')}
-            data-tour="farmacologia"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-primary/10 p-2.5">
-                  <Pill className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold leading-snug">Farmacologia por classes</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Fármacos organizados por classe e subclasse: mecanismo, metabolismo, excreção, efeitos, posologia e calculadora de dose.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ DOMINE ANATOMIA ENTRY ══════════ */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/anatomia')}
-            data-tour="anatomia"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-border bg-card p-4 text-left transition-colors hover:border-primary/35"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="rounded-xl bg-primary/10 p-2.5">
-                  <PersonStanding className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold leading-snug">Domine Anatomia</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Escolha entre o Atlas de Anatomia com 418 pranchas da UFJF e marcadores aprofundados ou modelos 3D rotacionáveis em 360°.
-                  </p>
-                </div>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ HISTOLOGIA ENTRY ══════════ */}
-        {/* Seção privativa desde 2026-08-13: assinantes do Manual Clínico e
-            contas Plus+. Quem não assina cai na landing de vendas, na própria
-            rota — ver docs/adr/0003-histologia-privativa-assinantes.md. */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/histologia')}
-            data-tour="histologia"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-teal-600/20 bg-gradient-to-r from-teal-600/[0.06] to-card p-4 text-left transition-colors hover:border-teal-600/40"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <img
-                    src="/img/histologia/logo-manual-da-histologia.svg"
-                    alt="Manual da Histologia"
-                    width={650}
-                    height={566}
-                    className="block h-auto w-full max-w-[110px]"
-                  />
-                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                    <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  Atlas de histologia com microscópio virtual: 1.320 lâminas reais, zoom e
-                  objetivos de 4× a 100×, e 7.775 estruturas que você acende sobre a imagem até
-                  aprender a achá-las sozinho. Laboratório de preparação e artefatos, atlas
-                  pesquisável e 388 questões de identificação.
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-teal-600" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ RADIOLOGIA ENTRY ══════════ */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/radiologia')}
-            data-tour="tomografia"
-            className="group mb-3 w-full overflow-hidden rounded-lg border border-sky-500/20 bg-gradient-to-r from-sky-500/[0.06] to-card p-4 text-left transition-colors hover:border-sky-500/40"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <LogoRadiologia className="!max-w-[180px]" />
-                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                    <Crown className="h-2.5 w-2.5" /> {PLUS_LABEL}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  Tomografia e Raio-X no mesmo atlas. Percorra TCs de tórax, abdome e crânio corte a corte;
-                  nas 28 incidências radiográficas, acenda as estruturas sobre a imagem e estude técnica,
-                  critérios de qualidade, roteiro sistemático e armadilhas. Privativo para assinantes.
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-sky-500" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ ELETROCARDIOGRAMA ENTRY (premium) ══════════ */}
-        {!busca && (
-          <button
-            onClick={() => router.push('/manual-clinico/eletrocardiograma')}
-            data-tour="ecg"
-            className="group mb-7 w-full overflow-hidden rounded-lg border border-red-500/20 bg-gradient-to-r from-red-500/[0.06] to-card p-4 text-left transition-colors hover:border-red-500/40"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <>
-                    <img
-                      src="/img/eletro/manual-eletrocardiograma-light.webp"
-                      alt="Manual do Eletrocardiograma"
-                      width={958}
-                      height={461}
-                      className="block h-auto w-full max-w-[190px] dark:hidden"
-                    />
-                    <img
-                      src="/img/eletro/manual-eletrocardiograma-dark.webp"
-                      alt="Manual do Eletrocardiograma"
-                      width={958}
-                      height={461}
-                      className="hidden h-auto w-full max-w-[190px] dark:block"
-                    />
-                  </>
-                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                    <Crown className="h-2.5 w-2.5" /> Plus+
-                  </span>
-                </div>
-                <p className="mt-1.5 text-xs text-muted-foreground">
-                  Simulador interativo de ECG: 12 derivações em tempo real, papel milimetrado real, medidas automáticas, régua, banco de traçados com critérios diagnósticos e exercícios. Privativo para assinantes.
-                </p>
-              </div>
-              <ArrowRight className="h-5 w-5 shrink-0 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-hover:text-red-500" />
-            </div>
-          </button>
-        )}
-
-        {/* ══════════ A OFERTA — valor inteiro primeiro, preço depois ══════════ */}
-        {ctasReady && !manualAccess.hasFullAccess && product?.isActive && !busca && (
-          <div className="mb-10">
-            <GradeDoPacote atual="manual" />
-
+        {/* ══════════ A OFERTA — depois do valor inteiro ══════════
+            As portas acima já mostraram os nove manuais; aqui vem o preço,
+            as dúvidas e o último empurrão. */}
+        {vende && !busca && (
+          <div className="mt-16">
             <OfertaDoPacote
-              className="mt-10"
               onCheckout={() => goToCheckout()}
               isAuthenticated={isAuthenticated}
               precoBase={cheapestPlanPrice}
-              precoFinal={hasActiveTier ? cheapestAfterTier : cheapestPlanPrice}
+              precoFinal={precoAgora}
               temLote={hasActiveTier}
               pctLote={tierPct}
               rotuloLote={pricingEventState?.activeTier?.label ?? null}
@@ -1325,234 +1132,88 @@ function ManualClinicoContent() {
             <FechamentoDoPacote
               className="mt-8"
               onCheckout={() => goToCheckout()}
-              precoFinal={hasActiveTier ? cheapestAfterTier : cheapestPlanPrice}
+              precoFinal={precoAgora}
               mostrarPreco={cheapestPlanPrice > 0}
             />
           </div>
         )}
-
-        {/* ══════════ SISTEMAS GRID ══════════ */}
-        {!busca && areasAtivas.length === 0 && !sistemaAtivo && (
-          <div className="mb-10" data-tour="sistemas">
-            <div className="mb-5">
-              <p className="editorial-mark mb-2">Índice por sistema</p>
-              <h2 className="text-xl font-heading font-semibold tracking-tight">Sistemas Fisiológicos</h2>
-              <p className="text-sm text-muted-foreground mt-1">Selecione um sistema para filtrar as patologias.</p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {SISTEMAS_FISIOLOGICOS.map((sistema, idx) => {
-                const Icon = SISTEMA_ICONS[sistema] || Stethoscope
-                const tint = SISTEMA_TINTS[idx % SISTEMA_TINTS.length]
-                return (
-                  <button
-                    key={sistema}
-                    onClick={() => selectSistema(sistema)}
-                    className={`group flex flex-col items-start gap-3 p-4 rounded-xl border border-border bg-card text-left transition duration-200
-                      hover:-translate-y-0.5 hover:shadow-sm ${tint.border}
-                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:translate-y-0`}
-                    aria-label={`Ver patologias do ${sistema}`}
-                  >
-                    <div className={`rounded-lg p-2.5 ${tint.bg} transition-colors`}>
-                      <Icon className={`h-5 w-5 ${tint.text}`} />
-                    </div>
-                    <span className="text-[11px] sm:text-xs font-semibold leading-tight text-foreground/80 group-hover:text-foreground transition-colors line-clamp-2">
-                      {sistema}
-                    </span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Sistema ativo badge */}
-        {sistemaAtivo && (
-          <div className="flex items-center gap-2 mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/25">
-              {(() => { const Icon = SISTEMA_ICONS[sistemaAtivo] || Stethoscope; return <Icon className="h-4 w-4 text-primary" /> })()}
-              <span className="text-sm font-medium">{sistemaAtivo}</span>
-              <button
-                onClick={() => setSistemaAtivo('')}
-                className="ml-1 p-0.5 rounded-full hover:bg-primary/20 transition-colors"
-                aria-label="Remover filtro de sistema"
-              >
-                <X className="h-3.5 w-3.5 text-primary" />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* ══════════ RESULTS ══════════ */}
-        {/* Spinner grande só na PRIMEIRA carga (lista vazia). Nas buscas/filtros
-            seguintes a lista antiga fica visível (levemente esmaecida), então a
-            página não "pisca" a cada tecla — a maior fonte da sensação de travado. */}
-        {loading && patologias.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="relative">
-              <div className="h-10 w-10 rounded-full border-2 border-primary/20" />
-              <div className="absolute inset-0 h-10 w-10 rounded-full border-2 border-transparent border-t-primary animate-spin" />
-            </div>
-            <span className="text-sm text-muted-foreground">Buscando patologias...</span>
-          </div>
-        ) : searched && patologias.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-muted/50 mb-4">
-              <BookOpen className="h-10 w-10 text-muted-foreground/30" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1">Nenhuma patologia encontrada</h3>
-            <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              {hasFilters ? 'Tente ajustar seus filtros ou termos de pesquisa.' : 'O manual clínico ainda não possui patologias cadastradas.'}
-            </p>
-            {hasFilters && (
-              <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                Limpar filtros
-              </Button>
-            )}
-          </div>
-        ) : patologias.length > 0 ? (
-          <>
-            <div className={`grid gap-2.5 transition-opacity duration-200 ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
-              {patologias.map((patologia, idx) => (
-                <div
-                  key={patologia._id}
-                  data-tour={idx === 0 ? 'patologia' : undefined}
-                  // Todo mundo vai para a patologia, inclusive quem não tem
-                  // conta: a página abre a prévia — a mesma que quem já gastou
-                  // as visualizações gratuitas vê — e é lá que o convite para
-                  // entrar aparece, com o valor já na tela. Desviar o visitante
-                  // para o cadastro aqui era pedir a conta antes de mostrar o
-                  // que ela abre.
-                  onClick={() => router.push(`/manual-clinico/${patologia.slug}`)}
-                  className={`group relative rounded-xl border border-border bg-card
-                    hover:border-primary/40 hover:shadow-sm
-                    transition-colors duration-200 cursor-pointer overflow-hidden ${
-                      patologia.isPremiumLocked ? 'border-amber-400/30 bg-amber-400/[0.04]' : ''
-                    }`}
-                >
-                  {/* Editorial left-rule accent on hover */}
-                  <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${patologia.isPremiumLocked ? 'bg-amber-500' : 'bg-primary'} opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-l-xl`} />
-
-                  <div className="p-4 sm:p-5 pl-5">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h3 className="font-semibold text-base sm:text-lg group-hover:text-primary transition-colors duration-300">
-                            {patologia.nome}
-                          </h3>
-                          {patologia.cid10 && (
-                            <span className="px-2 py-0.5 rounded-md text-[10px] font-clinical font-medium bg-muted border border-border text-muted-foreground">
-                              {patologia.cid10}
-                            </span>
-                          )}
-                          {patologia.accessStatus === 'free_available' ? (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
-                              Escolha grátis
-                            </span>
-                          ) : patologia.accessStatus === 'login_required' ? (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
-                              <LogIn className="h-3 w-3" />
-                              Grátis com login
-                            </span>
-                          ) : patologia.isFree ? (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-emerald-300/25 bg-emerald-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-emerald-600 dark:text-emerald-300">
-                              Grátis liberada
-                            </span>
-                          ) : patologia.isPremiumLocked ? (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-amber-300/25 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                              <Lock className="h-3 w-3" />
-                              Plus+
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 rounded-md border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-primary">
-                              Plus+ liberado
-                            </span>
-                          )}
-                        </div>
-                        {patologia.sinonimos.length > 0 && (
-                          <p className={`text-sm text-muted-foreground/60 mt-1 truncate ${patologia.isPremiumLocked ? 'blur-[1px]' : ''}`}>
-                            {patologia.sinonimos.join(' · ')}
-                          </p>
-                        )}
-                        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                          {patologia.areas.map(area => (
-                            <span
-                              key={area}
-                              className={`text-[11px] px-2.5 py-0.5 rounded-lg border font-medium ${AREA_COLORS[area]}`}
-                            >
-                              {area}
-                            </span>
-                          ))}
-                          <span className="text-[11px] text-muted-foreground/50 font-medium">
-                            {patologia.sistema}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex-shrink-0 mt-2 p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors duration-200">
-                        {patologia.accessStatus === 'login_required'
-                          ? <LogIn className="h-4 w-4 text-emerald-500/70 group-hover:text-emerald-400 transition-all duration-300" />
-                          : patologia.isPremiumLocked
-                          ? <Lock className="h-4 w-4 text-amber-500/70 group-hover:text-amber-400 transition-all duration-300" />
-                          : isAuthenticated === true || patologia.isFree
-                          ? <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300" />
-                          : <LogIn className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-all duration-300" />
-                        }
-                      </div>
-                    </div>
-                    {patologia.accessStatus === 'free_available' && (
-                      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-200">
-                        Abrir esta patologia usa 1 das suas escolhas gratuitas.
-                      </div>
-                    )}
-                    {patologia.accessStatus === 'login_required' && freeQuota?.limit ? (
-                      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-200">
-                        Entre para usar suas {freeQuota.limit} escolhas gratuitas.
-                      </div>
-                    ) : null}
-                    {patologia.isPremiumLocked && patologia.accessStatus !== 'login_required' && (
-                      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-300/25 bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-700 dark:text-amber-200">
-                        <span>Você atingiu o limite grátis. Libere o Manual inteiro. Pagamento único.</span>
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-300/20 px-2 py-0.5 font-black text-amber-800 dark:text-amber-100">
-                          Quero tudo <ArrowRight className="h-3 w-3" />
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* ══════════ PAGINATION ══════════ */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-3 mt-8">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page <= 1}
-                  onClick={() => setPage(p => p - 1)}
-                  className="rounded-lg bg-card border-border"
-                >
-                  <ChevronLeft className="h-4 w-4 mr-1" />
-                  Anterior
-                </Button>
-                <div className="px-4 py-1.5 rounded-lg bg-card border border-border text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{page}</span> de <span className="font-medium text-foreground">{totalPages}</span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage(p => p + 1)}
-                  className="rounded-lg bg-card border-border"
-                >
-                  Próxima
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-            )}
-          </>
-        ) : null}
       </div>
     </div>
   )
+}
+
+/* ══════════════════════════ As portas do portal ══════════════════════════ */
+
+/**
+ * O que cada porta promete, em uma linha, com o número que prova. Os números
+ * vêm de `MODULOS_DO_PACOTE` (a mesma fonte das vitrines), para o portal não
+ * desencontrar do que cada módulo anuncia.
+ */
+const TEXTO_DAS_PORTAS: Partial<Record<PortaDoManual['id'], { texto: string; tour?: string }>> = {
+  estudo: {
+    texto: 'Um tema, todos os manuais: a TC, a lâmina, o ultrassom, a ficha e o tratamento — na ordem em que se estuda.',
+    tour: 'estudo-integrado',
+  },
+  exames: { texto: 'Cada marcador da citocina ao número do laudo — mais o Laboratório Virtual para praticar.', tour: 'exames-laboratoriais' },
+  farmacologia: { texto: 'Mecanismo, metabolismo, posologia e a calculadora de dose por peso em cada ficha.', tour: 'farmacologia' },
+  eletrocardiograma: { texto: 'A trilha do nó sinusal ao laudo e o simulador de 12 derivações em tempo real.', tour: 'ecg' },
+  radiologia: { texto: 'Pilhas de TC que você rola como na estação e Raio-X com cada estrutura acesa.', tour: 'tomografia' },
+  semiologia: { texto: 'Arraste o parâmetro e veja o sinal nascer — da mão ao otoscópio e ao POCUS.' },
+  histologia: { texto: 'Lâminas reais num microscópio de 4× a 100×, com as estruturas que você acende e apaga.', tour: 'histologia' },
+  anatomia: { texto: 'Pranchas reais com ficha em cada marcador e modelos 3D que você gira na mão.', tour: 'anatomia' },
+  ferramentas: { texto: 'Calculadoras e escores com a fórmula aberta, o fundamento e o que invalida o resultado.', tour: 'ferramentas' },
+}
+
+const NUMERO_DAS_PORTAS: Partial<Record<PortaDoManual['id'], string>> = Object.fromEntries(
+  MODULOS_DO_PACOTE.filter((m) => m.id !== 'manual').map((m) => [m.id, `${m.numeros[0].v} ${m.numeros[0].r}`]),
+)
+
+// O Estudo Integrado abre a grade (é o que costura os outros); as Patologias
+// não entram — são esta própria página, logo abaixo.
+const PORTAS_DO_PORTAL = [
+  ...PORTAS_DO_MANUAL.filter((p) => p.id === 'estudo'),
+  ...PORTAS_DO_MANUAL.filter((p) => p.id !== 'estudo' && p.id !== 'manual'),
+]
+
+function PortaDoPortal({ porta }: { porta: PortaDoManual }) {
+  const info = TEXTO_DAS_PORTAS[porta.id]
+  const numero = NUMERO_DAS_PORTAS[porta.id]
+  const larga = porta.id === 'estudo'
+  return (
+    <Link href={porta.href} data-tour={info?.tour} className={`mc-porta ${larga ? 'mc-porta-larga' : ''}`}>
+      <div className="mc-porta-topo">
+        <span className="sidebar-mini-chip" style={estiloDoChip(porta.cor)} aria-hidden>
+          <IconeDaPorta porta={porta} />
+        </span>
+        <div className="min-w-0">
+          <p className="mc-porta-nome">{porta.nome}</p>
+          {numero && <p className="mc-porta-num">{numero}</p>}
+          {larga && <p className="mc-porta-num">Novo · monte seus estudos e marque o que já viu</p>}
+        </div>
+      </div>
+      {info && <p className={`mc-porta-texto ${larga ? 'sm:ml-3 sm:flex-1' : ''}`}>{info.texto}</p>}
+      <ArrowRight className="mc-porta-ir h-4 w-4" aria-hidden />
+    </Link>
+  )
+}
+
+/** A etiqueta de acesso de cada patologia — o que está grátis, liberado ou trancado. */
+function SeloDeAcesso({ patologia }: { patologia: PatologiaResumo }) {
+  if (patologia.accessStatus === 'free_available') return <span className="ck-chip">Escolha grátis</span>
+  if (patologia.accessStatus === 'login_required') {
+    return (
+      <span className="ck-chip">
+        <LogIn className="h-3 w-3" /> Grátis com login
+      </span>
+    )
+  }
+  if (patologia.isFree) return <span className="ck-chip">Grátis liberada</span>
+  if (patologia.isPremiumLocked) {
+    return (
+      <span className="ck-chip" data-tom="ambar">
+        <Lock className="h-3 w-3" /> Plus+
+      </span>
+    )
+  }
+  return null
 }

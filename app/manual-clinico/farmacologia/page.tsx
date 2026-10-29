@@ -3,14 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { Input } from '@/components/ui/input'
 import {
-  Search,
   Pill,
   ArrowRight,
-  ArrowLeft,
-  X,
-  Filter,
   Lock,
   ChevronDown,
   ChevronUp,
@@ -18,6 +13,10 @@ import {
 } from 'lucide-react'
 import { CLASSES_MEDICAMENTOS, CLASSES_MEDICAMENTOS_NAMES } from '@/lib/types/farmacologia'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
+import { estiloDoChip } from '@/components/sidebar-cores'
+import { CabecaDoModulo, HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
+import { BuscaDoManual } from '@/components/manual-clinico/casco/busca-do-manual'
+import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import {
   AvisoJaTenho,
   BarraDoPacote,
@@ -167,101 +166,77 @@ function FarmacologiaContent() {
 
   return (
     <div className="surface-page min-h-screen">
-      {/* ══════════ HERO ══════════ */}
-      <div className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-muted/30" aria-hidden />
-        <div className="relative z-10 container mx-auto px-4 pt-8 pb-10 max-w-6xl">
-          <button
-            onClick={() => router.push('/manual-clinico')}
-            className="mb-5 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </button>
-
-          <div className="text-center mb-7">
-            <div className="inline-flex flex-col items-center">
-              <p className="editorial-mark mb-3 justify-center">Manual Clínico · Bulário</p>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold font-heading tracking-tight text-foreground">
-                Farmacologia
-              </h1>
-              <p className="text-muted-foreground mt-3 max-w-xl text-sm sm:text-base leading-relaxed">
-                Fármacos organizados por classe e subclasse — mecanismo de ação, metabolismo, excreção, efeitos, contraindicações, posologia e calculadora de dose.
-              </p>
-              {total > 0 && (
-                <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  <span className="text-xs font-medium text-primary">{total} fármacos disponíveis</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* SEARCH */}
-          <div className="max-w-2xl mx-auto">
-            <div className="relative group flex items-center bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-colors duration-200 focus-within:border-primary/50">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
-              <Input
-                placeholder="Pesquisar fármaco por nome, sinônimo ou classe..."
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-                className="pl-12 pr-12 h-14 text-base bg-transparent border-0 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/40"
-                aria-label="Pesquisar fármacos"
-              />
-              {busca && (
-                <button
-                  onClick={() => setBusca('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full bg-muted hover:bg-muted-foreground/20 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Limpar pesquisa"
-                >
-                  <X className="h-4 w-4" />
+      <div className="container mx-auto max-w-6xl px-4 pb-8">
+        {/* ══════════ ABERTURA ══════════
+            Quem não tem o Manual vê o herói comum das portas; quem tem vê a
+            cabeça curta e vai direto à busca. O catálogo é o mesmo nos dois —
+            é ele a prévia: os nomes abertos, a ficha atrás do cadeado. */}
+        {!hasFullAccess && product?.isActive ? (
+          <HeroiDoModulo
+            porta="farmacologia"
+            titulo={<>A dose certa, com o mecanismo à vista.</>}
+            promessa={
+              <>
+                Cada fármaco com mecanismo, metabolismo, excreção, efeitos, contraindicações e posologia — e a
+                calculadora de dose na mesma ficha.
+              </>
+            }
+            numeros={[
+              { v: total || '—', r: 'fármacos com ficha' },
+              { v: CLASSES_MEDICAMENTOS.length, r: 'classes terapêuticas' },
+            ]}
+            acoes={
+              <>
+                <button onClick={goToCheckout} className="ck-cta">
+                  Quero os {TOTAL_DE_MODULOS} manuais
                 </button>
-              )}
-            </div>
-          </div>
+                <a href="#catalogo" className="ck-botao">Ver o bulário</a>
+              </>
+            }
+          >
+            <FaixaDoPacote atual="farmacologia" className="mt-2" />
+          </HeroiDoModulo>
+        ) : (
+          <CabecaDoModulo
+            porta="farmacologia"
+            texto={
+              total > 0
+                ? `${total} fármacos por classe e subclasse — mecanismo, posologia e calculadora de dose.`
+                : 'Fármacos por classe e subclasse — mecanismo, posologia e calculadora de dose.'
+            }
+          />
+        )}
 
-          {/* CLASS FILTER */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-            <div className="flex items-center gap-1.5 mr-1 text-muted-foreground/50">
-              <Filter className="h-3.5 w-3.5" />
-              <span className="text-xs font-medium uppercase tracking-wide">Classes</span>
-            </div>
+        {/* ══════════ BUSCA ══════════ */}
+        <div id="catalogo" className="ck-escopo mt-8 scroll-mt-24 space-y-4">
+          {!hasFullAccess && product?.isActive && <AvisoJaTenho className="mx-auto max-w-2xl" />}
+          <BuscaDoManual
+            valor={busca}
+            aoMudar={setBusca}
+            placeholder="Fármaco, sinônimo ou classe"
+            rotulo="Pesquisar fármacos"
+          />
+          <div className="mc-filtros" role="group" aria-label="Filtrar por classe">
             {CLASSES_MEDICAMENTOS.map(({ classe }) => (
               <button
                 key={classe}
-                onClick={() => setClasseAtiva(prev => prev === classe ? '' : classe)}
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors ${
-                  classeAtiva === classe
-                    ? 'bg-primary text-primary-foreground border-primary shadow-sm'
-                    : 'bg-card border-border text-muted-foreground hover:bg-muted hover:text-foreground hover:border-primary/35'
-                }`}
+                onClick={() => setClasseAtiva((prev) => (prev === classe ? '' : classe))}
+                className="mc-filtro"
+                data-ativo={classeAtiva === classe ? '' : undefined}
+                aria-pressed={classeAtiva === classe}
               >
                 {classe}
               </button>
             ))}
             {hasFilters && (
-              <button
-                onClick={() => { setBusca(''); setClasseAtiva('') }}
-                className="text-xs text-muted-foreground/60 hover:text-foreground ml-1 underline underline-offset-2"
-              >
+              <button onClick={() => { setBusca(''); setClasseAtiva('') }} className="ck-link-discreto px-2">
                 Limpar
               </button>
             )}
           </div>
         </div>
-      </div>
 
-      {/* ══════════ MAIN ══════════ */}
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* A faixa do pacote no lugar do banner de preço: o que faltava aqui não
-            era um número, era a informação de que a mesma compra abre outros
-            seis manuais. O preço vem inteiro no fim da página, depois da grade. */}
-        {!hasFullAccess && product?.isActive && (
-          <div className="mb-7 space-y-3">
-            <FaixaDoPacote atual="farmacologia" />
-            <AvisoJaTenho />
-          </div>
-        )}
-
+        <div className="ck-escopo mt-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -269,11 +244,8 @@ function FarmacologiaContent() {
           </div>
         ) : searched && medicamentos.length === 0 ? (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-muted/50 mb-4">
-              <Pill className="h-10 w-10 text-muted-foreground/30" />
-            </div>
-            <h3 className="text-lg font-semibold mb-1">Nenhum fármaco encontrado</h3>
-            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+            <h3 className="mb-1 text-lg font-semibold" style={{ color: 'var(--ck-texto)' }}>Nenhum fármaco encontrado</h3>
+            <p className="mx-auto max-w-md text-sm" style={{ color: 'var(--ck-texto-2)' }}>
               {hasFilters ? 'Tente ajustar os filtros ou a pesquisa.' : 'A farmacologia ainda não possui fármacos cadastrados.'}
             </p>
           </div>
@@ -287,61 +259,47 @@ function FarmacologiaContent() {
                 <div key={classe}>
                   <button
                     onClick={() => setCollapsed(c => ({ ...c, [classe]: !c[classe] }))}
-                    className="w-full flex items-center justify-between gap-3 mb-3 group rounded-lg -mx-2 px-2 py-1 transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    aria-expanded={!isCollapsed}
+                    className="mb-3 flex w-full items-center justify-between gap-3 rounded-2xl px-1 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-primary/10 border border-primary/15">
-                        <Pill className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="text-left">
-                        <h2 className="text-lg font-heading font-semibold tracking-tight">{classe}</h2>
-                        <p className="text-xs text-muted-foreground">{countClasse} fármaco{countClasse !== 1 ? 's' : ''}</p>
+                      <span className="sidebar-mini-chip h-9 w-9 rounded-[11px]" style={estiloDoChip('farmacologia')} aria-hidden>
+                        <Pill />
+                      </span>
+                      <div>
+                        <h2 className="mc-secao-titulo !text-[1.25rem]" style={{ color: 'var(--ck-texto)' }}>{classe}</h2>
+                        <p className="text-[12.5px]" style={{ color: 'var(--ck-texto-3)' }}>{countClasse} fármaco{countClasse !== 1 ? 's' : ''}</p>
                       </div>
                     </div>
-                    {isCollapsed ? <ChevronDown className="h-5 w-5 text-muted-foreground transition-transform" /> : <ChevronUp className="h-5 w-5 text-muted-foreground transition-transform" />}
+                    {isCollapsed ? <ChevronDown className="h-5 w-5" style={{ color: 'var(--ck-texto-3)' }} /> : <ChevronUp className="h-5 w-5" style={{ color: 'var(--ck-texto-3)' }} />}
                   </button>
 
                   {!isCollapsed && (
                     <div className="space-y-5">
                       {Object.keys(subgrupos).sort().map(sub => (
                         <div key={sub}>
-                          <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground/70 mb-2 pl-1">{sub}</h3>
+                          <h3 className="mb-2 pl-1 text-[13px] font-semibold" style={{ color: 'var(--ck-texto-2)' }}>{sub}</h3>
                           <div className="grid gap-2 sm:grid-cols-2">
                             {subgrupos[sub].map(m => (
-                              <div
-                                key={m._id}
-                                onClick={() => openFarmaco(m.slug)}
-                                className={`group relative rounded-xl border border-border bg-card hover:border-primary/40 hover:shadow-sm transition-colors cursor-pointer overflow-hidden ${
-                                  m.isPremiumLocked ? 'border-amber-400/30 bg-amber-400/[0.04]' : ''
-                                }`}
-                              >
-                                <div className={`absolute left-0 top-0 bottom-0 w-[3px] ${m.isPremiumLocked ? 'bg-amber-500' : 'bg-primary'} opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-l-xl`} />
-                                <div className="p-4 flex items-start justify-between gap-3">
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      <h4 className="font-semibold group-hover:text-primary transition-colors">{m.nome}</h4>
-                                      {m.tipo_farmaco && (
-                                        <span className="px-2 py-0.5 rounded-md text-[10px] font-clinical font-medium bg-muted border border-border text-muted-foreground">
-                                          {m.tipo_farmaco}
-                                        </span>
-                                      )}
-                                      {m.isPremiumLocked && (
-                                        <span className="inline-flex items-center gap-1 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-amber-700 dark:text-amber-200">
-                                          <Lock className="h-3 w-3" /> Plus+
-                                        </span>
-                                      )}
-                                    </div>
-                                    {m.sinonimos?.length > 0 && (
-                                      <p className="text-xs text-muted-foreground/60 mt-1 truncate">{m.sinonimos.join(' · ')}</p>
+                              <button key={m._id} type="button" onClick={() => openFarmaco(m.slug)} className="mc-item">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <span className="mc-item-nome">{m.nome}</span>
+                                    {m.tipo_farmaco && <span className="ck-chip" data-tom="neutro">{m.tipo_farmaco}</span>}
+                                    {m.isPremiumLocked && (
+                                      <span className="ck-chip" data-tom="ambar">
+                                        <Lock className="h-3 w-3" /> Plus+
+                                      </span>
                                     )}
                                   </div>
-                                  <div className="flex-shrink-0 mt-0.5 p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors">
-                                    {m.isPremiumLocked
-                                      ? <Lock className="h-4 w-4 text-amber-500/70 group-hover:text-amber-500" />
-                                      : <ArrowRight className="h-4 w-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />}
-                                  </div>
+                                  {m.sinonimos?.length > 0 && <p className="mc-item-sub">{m.sinonimos.join(' · ')}</p>}
                                 </div>
-                              </div>
+                                {m.isPremiumLocked ? (
+                                  <Lock className="mc-item-seta h-4 w-4" style={{ color: 'var(--ck-ambar)' }} />
+                                ) : (
+                                  <ArrowRight className="mc-item-seta h-4 w-4" />
+                                )}
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -353,6 +311,8 @@ function FarmacologiaContent() {
             })}
           </div>
         )}
+
+        </div>
 
         {/* ── A oferta: o valor inteiro primeiro, o preço depois ── */}
         {!hasFullAccess && product?.isActive && (

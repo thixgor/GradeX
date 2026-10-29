@@ -11,7 +11,6 @@ import {
   Sigma,
   Smartphone,
   Star,
-  X,
   Zap,
 } from 'lucide-react'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
@@ -23,8 +22,9 @@ import {
   FechamentoDoPacote,
   GradeDoPacote,
   OfertaDoPacote,
-  SeloDoPacote,
 } from '@/components/manual-clinico/pacote'
+import { HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
+import { BuscaDoManual } from '@/components/manual-clinico/casco/busca-do-manual'
 import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { normalizar } from '@/lib/ferramentas-clinicas'
 import type { ItemCatalogo, ResumoFerramentas } from '@/app/api/manual-clinico/ferramentas/route'
@@ -158,42 +158,37 @@ export function VitrineFerramentas({
     <>
       {/* pb reserva o espaço da barra fixa do celular */}
       <div className="pb-28 lg:pb-0">
-        {/* ══════════════════════════ ABERTURA ══════════════════════════ */}
-        <section>
-          <SeloDoPacote />
-
-          <h1 className="mt-4 font-heading text-3xl font-bold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl">
-            {nFerramentas} calculadoras clínicas
-            <span className="block text-primary">com a conta aberta.</span>
-          </h1>
-
-          {areaAlvo ? (
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              <strong className="font-semibold text-foreground">{areaAlvo}</strong> faz parte das Ferramentas
-              Clínicas — a seção de calculadoras e escores do Manual Clínico. É privativa de assinantes e não é
-              vendida à parte. Abaixo está a lista completa do que há nela.
-            </p>
-          ) : (
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Gasometria, escores de risco, ajuste de dose, ventilação, sepse, obstetrícia, pediatria. Cada uma
-              responde em tempo real, mostra a fórmula, explica o fundamento fisiopatológico, avisa o que
-              invalida o resultado e cita de onde veio.
-            </p>
-          )}
-
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {numeros.map((n) => (
-              <div key={n.r} className="rounded-xl border border-border bg-card px-3 py-2.5">
-                <p className="font-heading text-2xl font-semibold tracking-tight text-primary">{n.v}</p>
-                <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{n.r}</p>
-              </div>
-            ))}
-          </div>
-
-          <FaixaDoPacote atual="ferramentas" className="mt-6" />
-
-          <AvisoJaTenho className="mt-3" />
-        </section>
+        {/* ══════════════════════════ ABERTURA ══════════════════════════
+            O herói é o mesmo de todas as portas do Manual (HeroiDoModulo). */}
+        <HeroiDoModulo
+          porta="ferramentas"
+          titulo={<>{nFerramentas} calculadoras com a conta aberta.</>}
+          promessa={
+            areaAlvo ? (
+              <>
+                <strong className="font-semibold" style={{ color: 'var(--ck-texto)' }}>{areaAlvo}</strong> faz parte
+                das Ferramentas Clínicas — privativa de quem tem o Manual Clínico, sem venda avulsa.
+              </>
+            ) : (
+              <>
+                Gasometria, escores, ajuste de dose, ventilação, sepse. Cada uma mostra a fórmula, o fundamento, o que
+                invalida o resultado e de onde veio.
+              </>
+            )
+          }
+          numeros={numeros.slice(0, 3)}
+          acoes={
+            <>
+              <button onClick={onCheckout} className="ck-cta">
+                Quero os {TOTAL_DE_MODULOS} manuais
+              </button>
+              <a href="#catalogo" className="ck-botao">Ver a lista inteira</a>
+            </>
+          }
+        >
+          <FaixaDoPacote atual="ferramentas" className="mt-2" />
+        </HeroiDoModulo>
+        <AvisoJaTenho className="mx-auto mt-6 max-w-2xl" />
 
         {/* ══════════════════════════ O QUE CADA UMA ENTREGA ══════════════════════════ */}
         <section className="mt-12">
@@ -388,39 +383,23 @@ function Catalogo({ resumo }: { resumo: ResumoFerramentas }) {
     })
 
   return (
-    <section className="mt-14">
-      <p className="editorial-mark mb-2">O catálogo inteiro</p>
-      <h2 className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
-        As {resumo.ferramentas} ferramentas, e o que cada uma faz
-      </h2>
-      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-        Sem lista genérica e sem &ldquo;entre outras&rdquo;. Está tudo aqui, com a descrição de cada uma —
-        procure a conta que você faz toda semana e confira se ela está na lista antes de decidir.
-      </p>
-
-      <div className="mt-5 max-w-xl">
-        <div className="group relative flex items-center overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors focus-within:border-primary/50">
-          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-          <input
-            type="text"
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            placeholder="Procurar no catálogo (winter, MELD, driving pressure...)"
-            aria-label="Procurar no catálogo de ferramentas"
-            className="h-12 w-full border-0 bg-transparent pl-11 pr-11 text-sm outline-none placeholder:text-muted-foreground/40"
-          />
-          {filtro && (
-            <button
-              type="button"
-              onClick={() => setFiltro('')}
-              aria-label="Limpar busca"
-              className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+    <section id="catalogo" className="ck-escopo mt-14 scroll-mt-24">
+      <div className="text-center">
+        <h2 className="mc-secao-titulo" style={{ color: 'var(--ck-texto)' }}>
+          As {resumo.ferramentas} ferramentas, e o que cada uma faz
+        </h2>
+        <p className="mc-secao-apoio mx-auto max-w-2xl">
+          Sem &ldquo;entre outras&rdquo;: procure a conta que você faz toda semana e confira antes de decidir.
+        </p>
       </div>
+
+      <BuscaDoManual
+        className="mt-5"
+        valor={filtro}
+        aoMudar={setFiltro}
+        placeholder="Winter, MELD, driving pressure…"
+        rotulo="Procurar no catálogo de ferramentas"
+      />
 
       {buscando ? (
         <div className="mt-5">

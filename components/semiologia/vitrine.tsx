@@ -1,17 +1,13 @@
 'use client'
 
-import Link from 'next/link'
 import {
   AlertTriangle,
-  ArrowRight,
   BarChart3,
-  Crown,
   Eye,
   GitCompareArrows,
   Lock,
   Microscope,
   Search,
-  ShieldCheck,
   Sparkles,
   Stethoscope,
   Target,
@@ -23,11 +19,11 @@ import {
   FaixaDoPacote,
   FechamentoDoPacote,
   GradeDoPacote,
-  ListaDoPacote,
   OfertaDoPacote,
   PerguntasDoPacote,
-  SeloDoPacote,
+  CartaoDoPacote,
 } from '@/components/manual-clinico/pacote'
+import { HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
@@ -113,44 +109,40 @@ export function VitrineSemiologia({
     <>
       {/* O padding de baixo reserva o espaço da barra fixa do celular. */}
       <div className="pb-28 lg:pb-0">
-        {/* ══════════════════ ABERTURA ══════════════════ */}
-        <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start xl:gap-10">
-          <div className="min-w-0">
-            <SeloDoPacote />
-
-            <p className="mt-4 text-[11px] font-black uppercase tracking-[0.18em] text-muted-foreground">
-              Manual Clínico · Semiologia
-            </p>
-            <h1 className="mt-2 font-heading text-3xl font-bold leading-[1.08] tracking-tight sm:text-4xl">
-              O exame físico que se aprende arrastando o parâmetro,
-              <span className="text-sky-600 dark:text-sky-400"> não decorando o número</span>.
-            </h1>
-
-            {alvo ? (
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <strong className="font-semibold text-foreground">{alvo}</strong> faz parte do Manual de Semiologia —
-                o atlas do exame físico, da imagem à beira do leito e do POCUS. Ele é privativo de assinantes: não
-                entra no teste grátis e não é vendido à parte.
-              </p>
+        {/* ══════════════════ ABERTURA ══════════════════
+            O herói é o mesmo de todas as portas do Manual (HeroiDoModulo). */}
+        <HeroiDoModulo
+          porta="semiologia"
+          titulo={<>O exame físico que se aprende mexendo, não decorando.</>}
+          promessa={
+            alvo ? (
+              <>
+                <strong className="font-semibold" style={{ color: 'var(--ck-texto)' }}>{alvo}</strong> faz parte do
+                Manual de Semiologia — privativo de quem tem o Manual Clínico, sem venda avulsa.
+              </>
             ) : (
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                O que você faz com a própria mão, antes de qualquer máquina — e o que se vê pelo otoscópio, pelo
-                oftalmoscópio e pela sonda. Cada achado com o mecanismo escrito, o que muda na conduta e onde ele
-                engana.
-              </p>
-            )}
+              <>
+                Arraste a bilirrubina e veja o amarelo nascer. Cada achado com o mecanismo, o que muda na conduta e
+                onde ele engana — da mão ao otoscópio e ao POCUS.
+              </>
+            )
+          }
+          numeros={numeros}
+          acoes={
+            <>
+              <button onClick={onCheckout} className="ck-cta">
+                Quero os {TOTAL_DE_MODULOS} manuais
+              </button>
+              <a href="#previa" className="ck-botao">Testar a prévia</a>
+            </>
+          }
+        >
+          <FaixaDoPacote atual="semiologia" className="mt-2" />
+        </HeroiDoModulo>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {numeros.map((n) => (
-                <div key={n.r} className="rounded-xl border border-border bg-card px-3 py-2.5">
-                  <p className="font-heading text-xl font-semibold tabular-nums tracking-tight text-primary">{n.v}</p>
-                  <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{n.r}</p>
-                </div>
-              ))}
-            </div>
-
-            <FaixaDoPacote atual="semiologia" className="mt-6" />
-            <AvisoJaTenho className="mt-3" />
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start xl:gap-10">
+          <div className="min-w-0">
+            <AvisoJaTenho />
 
             {/* As três alas, com o peso que cada uma tem de verdade. */}
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
@@ -179,42 +171,15 @@ export function VitrineSemiologia({
           </div>
 
           {/* ── Prévia + o tamanho do pacote ── */}
-          <div className="min-w-0 space-y-5 xl:sticky xl:top-6">
+          <div id="previa" className="min-w-0 scroll-mt-24 space-y-5 xl:sticky xl:top-20">
             <PreviaSemiologia />
 
-            {/* O cartão lateral mostra o tamanho do pacote, não o preço: quem
-                chega aqui ainda não sabe que a compra abre os outros manuais, e
-                um número antes disso vira comparação com o preço de um atlas
-                avulso. O preço vem inteiro mais abaixo, depois do acervo. */}
-            <div className="glass-panel overflow-hidden rounded-2xl p-5 sm:p-6">
-              <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                <Sparkles className="h-3.5 w-3.5" /> O que a compra abre
-              </p>
-              <h2 className="mt-2 font-heading text-lg font-semibold leading-snug tracking-tight">
-                A Semiologia é um dos {TOTAL_DE_MODULOS} manuais — e todos vêm juntos
-              </h2>
-              <ListaDoPacote atual="semiologia" className="mt-3.5" />
-              <button
-                onClick={onCheckout}
-                className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-              >
-                <Crown className="h-4 w-4" />
-                Quero os {TOTAL_DE_MODULOS} manuais
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              {!isAuthenticated && (
-                <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
-                  Já tem conta?{' '}
-                  <Link href="/auth/login" className="font-semibold text-foreground underline underline-offset-2">
-                    Entre e veja se já é seu
-                  </Link>
-                </p>
-              )}
-              <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com
-                segurança.
-              </p>
-            </div>
+            <CartaoDoPacote
+              atual="semiologia"
+              titulo={<>A Semiologia é 1 dos {TOTAL_DE_MODULOS} manuais</>}
+              onCheckout={onCheckout}
+              isAuthenticated={isAuthenticated}
+            />
           </div>
         </div>
 

@@ -1,16 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import {
   Activity,
   ArrowRight,
   BookOpen,
   Check,
   ChevronDown,
-  Crown,
+  ChevronRight,
   Flame,
   FlaskConical,
-  Layers,
   Microscope,
   PersonStanding,
   Pill,
@@ -18,10 +18,12 @@ import {
   ShieldCheck,
   Sigma,
   Stethoscope,
-  Sparkles,
-  Zap,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
+import { estiloDoChip } from '@/components/sidebar-cores'
+import { PORTAS_DO_MANUAL } from '@/components/manual-clinico/casco/modulos'
+import '@/components/checkout/checkout-vidro.css'
+import '@/components/manual-clinico/casco/manual-vidro.css'
 import { PLUS_LABEL } from '@/lib/account-tier'
 import { usePublicaAltura } from '@/hooks/use-publica-altura'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
@@ -55,10 +57,10 @@ import {
  *
  * ## Sobre o tom
  *
- * As vitrines não compartilham paleta: Ferramentas e Radiologia usam os tokens
- * de tema (viram claro e escuro com o resto do site), Anatomia e Histologia
- * abrem sobre herói escuro fixo, e o checkout é verde-escuro. Em vez de uma variante por vitrine, cada componente aceita `tom`: `'tema'` segue os tokens, `'escuro'`
- * usa superfícies claras sobre fundo escuro fixo.
+ * Todas as peças são do vidro do Manual (tokens `--ck-*`, ver
+ * `components/checkout/checkout-vidro.css`), as mesmas em todas as vitrines.
+ * `tom="escuro"` não é outra paleta: só força os tokens escuros, para as
+ * vitrines que abrem sobre fundo escuro fixo (Histologia, Anatomia).
  */
 
 type Tom = 'tema' | 'escuro'
@@ -75,62 +77,43 @@ const ICONES: Record<ModuloDoPacote['icone'], LucideIcon> = {
   Sigma,
 }
 
-/** Classes de superfície por tom — o único lugar que conhece as duas paletas. */
-const T = {
-  tema: {
-    cartao: 'border-border bg-card',
-    cartaoSuave: 'border-border bg-muted/30',
-    texto: 'text-foreground',
-    fraco: 'text-muted-foreground',
-    apagado: 'text-muted-foreground/60',
-    divisor: 'divide-border',
-    borda: 'border-border',
-    destaqueBorda: 'border-emerald-500/30',
-    destaqueFundo: 'bg-emerald-500/[0.07]',
-    destaqueTexto: 'text-emerald-700 dark:text-emerald-300',
-    ambarBorda: 'border-amber-500/25',
-    ambarFundo: 'bg-amber-500/[0.07]',
-    ambarTexto: 'text-amber-700 dark:text-amber-300',
-    precoTexto: 'text-primary',
-    riscado: 'text-muted-foreground/70',
-    botao: 'bg-primary text-primary-foreground hover:bg-primary/90',
-  },
-  escuro: {
-    cartao: 'border-white/10 bg-white/[0.055]',
-    cartaoSuave: 'border-white/10 bg-white/[0.03]',
-    texto: 'text-white',
-    fraco: 'text-white/60',
-    apagado: 'text-white/40',
-    divisor: 'divide-white/10',
-    borda: 'border-white/10',
-    destaqueBorda: 'border-emerald-300/30',
-    destaqueFundo: 'bg-emerald-300/[0.09]',
-    destaqueTexto: 'text-emerald-300',
-    ambarBorda: 'border-amber-300/30',
-    ambarFundo: 'bg-amber-300/[0.09]',
-    ambarTexto: 'text-amber-300',
-    precoTexto: 'text-emerald-200',
-    riscado: 'text-white/40',
-    botao: 'bg-emerald-300 text-emerald-950 hover:bg-emerald-200',
-  },
-} as const
+/** A cor do quadradinho de cada manual — a mesma da barra e do menu lateral. */
+function corDoModulo(id: IdDoModulo): string {
+  return PORTAS_DO_MANUAL.find((p) => p.id === id)?.cor || 'manualClinico'
+}
+
+function ChipDoModulo({ m, className = '' }: { m: ModuloDoPacote; className?: string }) {
+  const Icone = ICONES[m.icone]
+  return (
+    <span className={`sidebar-mini-chip ${className}`} style={estiloDoChip(corDoModulo(m.id))} aria-hidden>
+      <Icone />
+    </span>
+  )
+}
+
+/** Raiz de toda peça: dá os tokens do vidro e, no tom escuro, força os escuros. */
+function escopo(tom: Tom) {
+  return { className: 'ck-escopo', 'data-aparencia': tom === 'escuro' ? 'dark' : undefined } as const
+}
+
+const TXT = { color: 'var(--ck-texto)' }
+const TXT2 = { color: 'var(--ck-texto-2)' }
+const TXT3 = { color: 'var(--ck-texto-3)' }
+const VERDE = { color: 'var(--ck-verde)' }
 
 /* ══════════════════════════════ SELO ══════════════════════════════ */
 
 /**
  * O selo de topo — a primeira coisa que a página diz.
  *
- * Substitui o "incluso no Manual Clínico" que as vitrines usavam. A diferença
- * é a direção da frase: "incluso" pede que a pessoa já saiba o que é o Manual
- * Clínico; "N manuais, 1 pagamento" funciona para quem nunca ouviu falar dele.
+ * "N manuais, 1 pagamento" funciona para quem nunca ouviu falar do Manual;
+ * "incluso no Manual Clínico" pedia que a pessoa já soubesse o que ele é.
  */
 export function SeloDoPacote({ tom = 'tema', className = '' }: { tom?: Tom; className?: string }) {
-  const t = T[tom]
+  const e = escopo(tom)
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border ${t.ambarBorda} ${t.ambarFundo} px-3 py-1.5 text-[11px] font-black uppercase tracking-wider ${t.ambarTexto} ${className}`}
-    >
-      <Crown className="h-3.5 w-3.5" /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
+    <span {...e} className={`${e.className} ck-chip ${className}`} data-tom="ambar" style={{ height: 28, fontSize: 12.5 }}>
+      {TOTAL_DE_MODULOS} manuais · 1 pagamento
     </span>
   )
 }
@@ -138,12 +121,14 @@ export function SeloDoPacote({ tom = 'tema', className = '' }: { tom?: Tom; clas
 /* ══════════════════════════════ FAIXA ══════════════════════════════ */
 
 /**
- * A correção de expectativa, logo abaixo do herói.
+ * A correção de expectativa, logo abaixo do herói — numa linha.
  *
- * Quem chega numa vitrine acha que está diante de um produto. A faixa diz, na
- * primeira dobra, que não está — e nomeia os outros seis para que o argumento
- * seja verificável em vez de vago. Sem preço aqui de propósito: esta faixa
- * existe para aumentar o que está sendo pesado, não para pesar.
+ * Quem chega numa vitrine acha que está diante de um produto avulso. Antes isto
+ * era um bloco amarelo de cinco linhas ("Leia antes de comparar preço…") em
+ * todas as vitrines: o argumento certo no volume errado, que empurrava a
+ * própria seção para baixo da dobra. Agora é uma faixa: os nove quadradinhos
+ * coloridos (o olho conta antes de ler) e uma frase. Sem preço aqui de
+ * propósito: a faixa aumenta o que está sendo pesado, não pesa.
  */
 export function FaixaDoPacote({
   atual,
@@ -154,44 +139,26 @@ export function FaixaDoPacote({
   tom?: Tom
   className?: string
 }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const eu = MODULOS_DO_PACOTE.find((m) => m.id === atual)
   const outros = outrosModulos(atual)
 
   return (
-    <div className={`overflow-hidden rounded-2xl border ${t.ambarBorda} ${t.ambarFundo} p-4 sm:p-5 ${className}`}>
-      <p className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-wider ${t.ambarTexto}`}>
-        <Sparkles className="h-3.5 w-3.5" /> Leia antes de comparar preço
+    <div {...e} className={`${e.className} flex justify-center ${className}`}>
+      <p className="mc-incluso" title={`Abre também: ${outros.map((m) => m.nomeCurto).join(', ')}`}>
+        <span className="mc-incluso-chips">
+          {modulosOrdenados(atual).map((m) => (
+            <ChipDoModulo key={m.id} m={m} />
+          ))}
+        </span>
+        <span>
+          <strong>{eu?.nomeCurto ?? 'Este manual'}</strong> é 1 dos {TOTAL_DE_MODULOS} manuais do mesmo acesso
+          <span className="hidden sm:inline"> — não há venda avulsa</span>.
+        </span>
+        <Link href="/manual-clinico#portas" className="ck-link inline-flex items-center gap-0.5">
+          Ver todos <ChevronRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
       </p>
-      <h2 className={`mt-2 font-heading text-lg font-semibold leading-snug tracking-tight sm:text-xl ${t.texto}`}>
-        {eu?.nome ?? 'Este manual'} não é vendido separado — ele vem com outros {outros.length}.
-      </h2>
-      <p className={`mt-2 text-sm leading-relaxed ${t.fraco}`}>
-        Não existe compra avulsa de nenhuma seção. O mesmo pagamento que abre {eu?.nomeCurto ?? 'esta seção'} abre
-        também{' '}
-        {outros.map((m, i) => (
-          <span key={m.id}>
-            <strong className={`font-semibold ${t.texto}`}>{m.nomeCurto}</strong>
-            {i < outros.length - 2 ? ', ' : i === outros.length - 2 ? ' e ' : ''}
-          </span>
-        ))}
-        . Todos os manuais numa conta só — e quem já assina o Manual Clínico ou tem {PLUS_LABEL} já tem tudo isto sem
-        pagar de novo.
-      </p>
-      <ul className="mt-3.5 flex flex-wrap gap-1.5">
-        {outros.map((m) => {
-          const Icone = ICONES[m.icone]
-          return (
-            <li
-              key={m.id}
-              className={`inline-flex items-center gap-1.5 rounded-full border ${t.borda} ${t.cartao} px-2.5 py-1 text-[11.5px] font-semibold ${t.texto}`}
-            >
-              <Icone className={`h-3.5 w-3.5 ${t.ambarTexto}`} />
-              {m.nomeCurto}
-            </li>
-          )
-        })}
-      </ul>
     </div>
   )
 }
@@ -199,15 +166,10 @@ export function FaixaDoPacote({
 /* ══════════════════════════════ GRADE ══════════════════════════════ */
 
 /**
- * O que existe dentro de cada um deles.
- *
- * É a peça que constrói valor, e por isso vem inteira antes do preço. Cada
- * cartão traz números reais do acervo — não adjetivos — porque a pessoa que
- * está decidindo quer saber o tamanho do que recebe, e "conteúdo completo e
- * atualizado" não tem tamanho.
- *
- * O módulo da seção em que a pessoa está vem primeiro e marcado: é o que ela
- * reconhece, e serve de âncora para ler os outros seis como acréscimo.
+ * O que existe dentro de cada um deles — a peça que constrói valor, inteira
+ * antes do preço. Números reais do acervo, não adjetivos. O módulo da seção em
+ * que a pessoa está vem primeiro e marcado: é a âncora para ler os outros
+ * como acréscimo. Cada cartão leva ao próprio manual — explorar também vende.
  */
 export function GradeDoPacote({
   atual,
@@ -220,58 +182,45 @@ export function GradeDoPacote({
   titulo?: string
   className?: string
 }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const modulos = modulosOrdenados(atual)
 
   return (
-    <section className={className}>
-      <p className={`editorial-mark mb-2 ${tom === 'escuro' ? 'text-white/50' : ''}`}>O que entra na compra</p>
-      <h2 className={`font-heading text-xl font-semibold tracking-tight sm:text-2xl ${t.texto}`}>{titulo}</h2>
-      <p className={`mt-1.5 max-w-2xl text-sm leading-relaxed ${t.fraco}`}>
-        Nenhum deles é vendido à parte, e nenhum é uma versão reduzida do outro. São manuais completos,
-        liberados juntos no mesmo instante em que o pagamento é aprovado.
+    <section {...e} id="pacote" className={`${e.className} scroll-mt-24 ${className}`}>
+      <h2 className="mc-secao-titulo" style={TXT}>{titulo}</h2>
+      <p className="mc-secao-apoio max-w-2xl" style={TXT2}>
+        Nenhum é vendido à parte, nenhum é versão reduzida. Os {TOTAL_DE_MODULOS} abrem juntos, no instante em que
+        o pagamento é aprovado.
       </p>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mc-portas mt-5">
         {modulos.map((m) => {
-          const Icone = ICONES[m.icone]
           const eOAtual = m.id === atual
           return (
-            <article
-              key={m.id}
-              className={`relative flex flex-col overflow-hidden rounded-2xl border p-4 transition-colors ${
-                eOAtual ? `${t.destaqueBorda} ${t.destaqueFundo}` : `${t.cartao} hover:border-primary/30`
-              }`}
-            >
-              {eOAtual && (
-                <span
-                  className={`absolute right-3 top-3 inline-flex items-center gap-1 rounded-full border ${t.destaqueBorda} px-2 py-0.5 text-[9.5px] font-black uppercase tracking-wider ${t.destaqueTexto}`}
-                >
-                  Você está aqui
+            <Link key={m.id} href={m.href} className="mc-porta" data-atual={eOAtual || undefined}>
+              <span className="mc-porta-topo">
+                <ChipDoModulo m={m} />
+                <span className="min-w-0">
+                  <span className="mc-porta-nome block">{m.nomeCurto}</span>
+                  <span className="mc-porta-num block">
+                    {m.numeros[0].v} {m.numeros[0].r}
+                  </span>
                 </span>
-              )}
-              <span className={`mb-2.5 inline-flex w-fit rounded-lg p-2 ${eOAtual ? t.destaqueTexto : t.ambarTexto} ${t.cartaoSuave} border`}>
-                <Icone className="h-4 w-4" />
               </span>
-              <h3 className={`font-heading text-[15px] font-semibold leading-snug tracking-tight ${t.texto}`}>
-                {m.nome}
-              </h3>
-              <p className={`mt-1.5 text-[12.5px] leading-relaxed ${t.fraco}`}>{m.chamada}</p>
-              <p className={`mt-2 text-[12px] font-medium leading-relaxed ${t.destaqueTexto}`}>{m.destaque}</p>
-              <dl className={`mt-3 flex flex-wrap gap-x-4 gap-y-1.5 border-t ${t.borda} pt-3`}>
-                {m.numeros.map((n) => (
-                  <div key={n.r}>
-                    <dt className={`font-heading text-base font-semibold leading-none tabular-nums ${t.texto}`}>
-                      {n.v}
-                    </dt>
-                    <dd className={`mt-0.5 text-[10.5px] leading-tight ${t.apagado}`}>{n.r}</dd>
-                  </div>
+              <span className="mc-porta-texto">{m.destaque}</span>
+              <span className="mt-auto flex flex-wrap gap-x-4 gap-y-1 border-t pt-2.5" style={{ borderColor: 'var(--ck-sep)' }}>
+                {m.numeros.slice(1).map((n) => (
+                  <span key={n.r} className="text-[12px]" style={TXT3}>
+                    <b className="font-semibold tabular-nums" style={TXT}>{n.v}</b> {n.r}
+                  </span>
                 ))}
-              </dl>
-              <p className={`mt-3 inline-flex items-center gap-1.5 text-[11px] font-bold ${t.destaqueTexto}`}>
-                <Check className="h-3.5 w-3.5" /> {eOAtual ? 'É o que você veio buscar' : 'Vem junto, sem custo extra'}
-              </p>
-            </article>
+              </span>
+              {eOAtual ? (
+                <span className="ck-chip absolute right-3 top-3" style={{ height: 22, fontSize: 11 }}>Você está aqui</span>
+              ) : (
+                <ArrowRight className="mc-porta-ir h-4 w-4" aria-hidden />
+              )}
+            </Link>
           )
         })}
       </div>
@@ -282,11 +231,8 @@ export function GradeDoPacote({
 /* ══════════════════════ RESUMO EM UMA LINHA ══════════════════════ */
 
 /**
- * A versão curta da grade, para onde não cabe a grade inteira.
- *
- * Usada no checkout e nas colunas estreitas: sete linhas com o nome e o número
- * mais forte de cada manual. Faz o mesmo trabalho — mostrar que a compra é
- * conjunta e tem tamanho — ocupando um quinto do espaço.
+ * A versão curta da grade, para colunas estreitas (checkout): o nome e os
+ * números de cada manual, com o quadradinho da cor dele.
  */
 export function ListaDoPacote({
   atual,
@@ -297,29 +243,82 @@ export function ListaDoPacote({
   tom?: Tom
   className?: string
 }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const modulos = modulosOrdenados(atual)
 
   return (
-    <ul className={`divide-y overflow-hidden rounded-2xl border ${t.divisor} ${t.borda} ${t.cartao} ${className}`}>
-      {modulos.map((m) => {
-        const Icone = ICONES[m.icone]
-        return (
-          <li key={m.id} className="flex items-start gap-3 px-4 py-3">
-            <span className={`mt-0.5 shrink-0 ${t.ambarTexto}`}>
-              <Icone className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className={`text-[13.5px] font-bold leading-snug ${t.texto}`}>{m.nome}</p>
-              <p className={`mt-0.5 text-[11.5px] leading-snug ${t.fraco}`}>
-                {m.numeros.map((n) => `${n.v} ${n.r}`).join(' · ')}
-              </p>
-            </div>
-            <Check className={`mt-0.5 h-4 w-4 shrink-0 ${t.destaqueTexto}`} aria-label="Incluso" />
-          </li>
-        )
-      })}
+    <ul {...e} className={`${e.className} ck-placa overflow-hidden ${className}`}>
+      {modulos.map((m, i) => (
+        <li
+          key={m.id}
+          className="flex items-center gap-3 px-3.5 py-2.5"
+          style={i > 0 ? { borderTop: '1px solid var(--ck-sep)' } : undefined}
+        >
+          <ChipDoModulo m={m} />
+          <div className="min-w-0 flex-1">
+            <p className="text-[13.5px] font-semibold leading-snug" style={TXT}>{m.nome}</p>
+            <p className="mt-0.5 truncate text-[12px] leading-snug" style={TXT3}>
+              {m.numeros.map((n) => `${n.v} ${n.r}`).join(' · ')}
+            </p>
+          </div>
+          <Check className="h-4 w-4 shrink-0" style={VERDE} strokeWidth={3} aria-label="Incluso" />
+        </li>
+      ))}
     </ul>
+  )
+}
+
+/* ══════════════════════════ CARTÃO LATERAL ══════════════════════════ */
+
+/**
+ * O cartão ao lado da prévia, na primeira dobra de cada vitrine.
+ *
+ * Mostra o que se leva, não quanto custa: quem chegou pela prévia de um módulo
+ * ainda não sabe que a mesma compra abre os outros, e um preço lido antes disso
+ * vira comparação com o de um atlas avulso. O número vem inteiro mais abaixo,
+ * depois do acervo (`OfertaDoPacote`).
+ */
+export function CartaoDoPacote({
+  atual,
+  titulo,
+  onCheckout,
+  isAuthenticated,
+  rotulo,
+  tom = 'tema',
+  className = '',
+}: {
+  atual: IdDoModulo
+  /** "A Semiologia é 1 dos 9 manuais" — dito pelo módulo, com o artigo certo. */
+  titulo: React.ReactNode
+  onCheckout: () => void
+  isAuthenticated: boolean
+  /** Texto do botão; o padrão é "Quero os N manuais". */
+  rotulo?: React.ReactNode
+  tom?: Tom
+  className?: string
+}) {
+  const e = escopo(tom)
+  return (
+    <div {...e} className={`${e.className} ck-vidro-forte p-5 sm:p-6 ${className}`}>
+      <h2 className="font-heading text-lg font-semibold leading-snug tracking-tight" style={TXT}>
+        {titulo}
+      </h2>
+      <p className="mt-1 text-[13px]" style={TXT3}>Todos vêm juntos, no mesmo acesso.</p>
+      <ListaDoPacote atual={atual} tom={tom} className="mt-3.5" />
+      <button onClick={onCheckout} className="ck-cta mt-4 w-full">
+        {rotulo ?? <>Quero os {TOTAL_DE_MODULOS} manuais</>}
+        <ArrowRight className="h-4 w-4" />
+      </button>
+      {!isAuthenticated && (
+        <p className="mt-3 text-center text-[12.5px]" style={TXT3}>
+          Já tem conta?{' '}
+          <Link href="/auth/login" className="ck-link">Entre e veja se já é seu</Link>
+        </p>
+      )}
+      <p className="mt-3 flex items-center justify-center gap-1.5 text-[12px]" style={TXT3}>
+        <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento seguro
+      </p>
+    </div>
   )
 }
 
@@ -353,12 +352,10 @@ export interface OfertaProps {
 /**
  * O bloco de preço — e ele só aparece depois do valor.
  *
- * A sequência interna repete, em miniatura, a sequência da página: primeiro o
- * que se recebe (todos os manuais, somados), depois quanto custa, e por último a
- * conta que encolhe o número — o total dividido por sete, e o custo por dia
- * quando o plano tem prazo. Dividir é honesto e desarma a objeção sem precisar
- * de mais desconto: o que se compara com o preço de um manual avulso não é o
- * total, é o total sobre sete.
+ * Em miniatura, a sequência da página: o que se recebe (os nove manuais),
+ * quanto custa, e a conta que encolhe o número — o total dividido pelos
+ * manuais e por dia. Dividir é honesto e desarma a objeção sem mais desconto.
+ * A cobrança real vem logo abaixo do número grande, nunca em letra miúda.
  */
 export function OfertaDoPacote({
   onCheckout,
@@ -375,7 +372,7 @@ export function OfertaDoPacote({
   className = '',
   children,
 }: OfertaProps) {
-  const t = T[tom]
+  const e = escopo(tom)
   const porManual = precoPorModulo(precoFinal)
   const porDia = precoPorDia(precoFinal, mesesDoPlano)
   const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
@@ -388,23 +385,25 @@ export function OfertaDoPacote({
   ]
 
   return (
-    <section className={`overflow-hidden rounded-2xl border ${t.ambarBorda} ${t.ambarFundo} p-5 sm:p-7 ${className}`}>
+    <section {...e} className={`${e.className} ck-vidro-forte p-5 sm:p-7 ${className}`}>
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         {/* ── O que se recebe ── */}
         <div>
-          <p className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-wider ${t.ambarTexto}`}>
-            <Layers className="h-3.5 w-3.5" /> A oferta inteira
-          </p>
-          <h2 className={`mt-2 font-heading text-xl font-semibold leading-snug tracking-tight sm:text-2xl ${t.texto}`}>
-            Você não escolhe um manual. Você leva os {TOTAL_DE_MODULOS}.
+          <span className="mc-incluso-chips mb-3 flex">
+            {MODULOS_DO_PACOTE.map((m) => (
+              <ChipDoModulo key={m.id} m={m} />
+            ))}
+          </span>
+          <h2 className="mc-secao-titulo" style={TXT}>
+            Você não escolhe um manual. Leva os {TOTAL_DE_MODULOS}.
           </h2>
-          <p className={`mt-2 text-sm leading-relaxed ${t.fraco}`}>
+          <p className="mt-2 text-sm leading-relaxed" style={TXT2}>
             {NOMES_DO_PACOTE}. Tudo na mesma conta, aberto no mesmo segundo.
           </p>
-          <ul className="mt-4 space-y-1.5">
+          <ul className="mt-4 space-y-2">
             {garantias.map((g) => (
-              <li key={g} className={`flex items-start gap-2 text-[12.5px] ${t.fraco}`}>
-                <Check className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${t.destaqueTexto}`} />
+              <li key={g} className="flex items-start gap-2 text-[13.5px]" style={TXT2}>
+                <Check className="mt-0.5 h-4 w-4 shrink-0" style={VERDE} strokeWidth={3} />
                 {g}
               </li>
             ))}
@@ -412,65 +411,50 @@ export function OfertaDoPacote({
         </div>
 
         {/* ── Quanto custa ── */}
-        <div className={`rounded-2xl border ${t.borda} ${t.cartao} p-5`}>
+        <div className="ck-placa p-5">
           {mostrarPreco ? (
             <>
-              <p className={`text-xs font-semibold uppercase tracking-wider ${t.apagado}`}>
-                Os {TOTAL_DE_MODULOS} manuais por
-                {rotuloPlano ? ` · plano ${rotuloPlano}` : ''}
+              <p className="text-[13px] font-semibold" style={TXT3}>
+                Os {TOTAL_DE_MODULOS} manuais{rotuloPlano ? ` · plano ${rotuloPlano}` : ''}
               </p>
-              {/* O número grande é o MENSAL quando o plano tem prazo, e a
-                  cobrança de verdade vem logo abaixo em tamanho legível —
-                  nunca em letra miúda. Ver `apresentarPreco`. */}
-              <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                {preco.destaqueRiscado && (
-                  <span className={`text-base line-through ${t.riscado}`}>{preco.destaqueRiscado}</span>
-                )}
-                <span className={`font-heading text-3xl font-black tracking-tight sm:text-4xl ${t.precoTexto}`}>
+              {/* O número grande é o MENSAL quando o plano tem prazo; a cobrança
+                  de verdade vem logo abaixo, legível. Ver `apresentarPreco`. */}
+              <div className="mt-1.5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                {preco.destaqueRiscado && <span className="ck-riscado">{preco.destaqueRiscado}</span>}
+                <span className="ck-total">
                   {preco.destaque}
-                  {preco.sufixo && (
-                    <span className="text-lg font-bold sm:text-xl">{preco.sufixo}</span>
-                  )}
+                  {preco.sufixo && <span className="text-lg font-semibold sm:text-xl">{preco.sufixo}</span>}
                 </span>
                 {temLote && pctLote > 0 && (
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold ${t.destaqueFundo} ${t.destaqueTexto}`}
-                  >
+                  <span className="ck-chip" style={{ height: 24 }}>
                     <Flame className="h-3 w-3" /> −{Math.round(pctLote)}%
                   </span>
                 )}
               </div>
 
-              <p className={`mt-1.5 text-[13px] font-semibold leading-snug ${t.fraco}`}>
-                {preco.cobranca}
-              </p>
+              <p className="mt-2 text-[13.5px] font-semibold leading-snug" style={TXT2}>{preco.cobranca}</p>
 
               {porManual != null && (
-                <p className={`mt-2 text-[13px] font-bold leading-snug ${t.destaqueTexto}`}>
-                  Dá {reais(porManual)} por manual
-                  {porDia != null ? ` — cerca de ${reais(porDia)} por dia.` : '.'}
+                <p className="mt-2 text-[13.5px] font-semibold leading-snug" style={VERDE}>
+                  Dá {reais(porManual)} por manual{porDia != null ? ` — cerca de ${reais(porDia)} por dia.` : '.'}
                 </p>
               )}
 
               {temLote && rotuloLote && (
-                <p className={`mt-1.5 text-xs ${t.destaqueTexto}`}>
+                <p className="mt-1.5 text-xs" style={VERDE}>
                   Lote {rotuloLote} — você economiza {reais(precoBase - precoFinal)}.
                 </p>
               )}
             </>
           ) : (
-            <p className={`text-sm ${t.fraco}`}>
+            <p className="text-sm" style={TXT2}>
               Acesso liberado para assinantes do Manual Clínico e contas {PLUS_LABEL}.
             </p>
           )}
 
           {children}
 
-          <button
-            onClick={onCheckout}
-            className={`mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md px-6 text-sm font-bold shadow-sm transition active:scale-[0.98] ${t.botao}`}
-          >
-            <Crown className="h-4 w-4" />
+          <button onClick={onCheckout} className="ck-cta ck-cta-largo mt-4">
             {mostrarPreco
               ? `Quero os ${TOTAL_DE_MODULOS} manuais`
               : isAuthenticated
@@ -479,12 +463,8 @@ export function OfertaDoPacote({
             <ArrowRight className="h-4 w-4" />
           </button>
 
-          {/* Desconto PROUNI/FIES do Manual Clínico, quando existe.
-              Todas as vitrines de seção (radiologia, ferramentas, exames,
-              farmacologia) desenham a oferta por aqui — pendurar o chamativo
-              neste ponto é dizê-lo uma vez e valer em todas, em vez de sete
-              cópias que envelhecem separadas. Ele some sozinho quando o admin
-              não configurou benefício nenhum (ver ProuniCta). */}
+          {/* Desconto PROUNI/FIES do Manual Clínico, quando existe — dito uma
+              vez aqui, vale em todas as vitrines. Some sozinho sem benefício. */}
           <ProuniCta
             itemType="manual_clinico"
             itemId={MANUAL_CLINICO_PRODUCT_ID}
@@ -492,16 +472,15 @@ export function OfertaDoPacote({
             aparencia={tom === 'escuro' ? 'dark' : 'app'}
           />
 
-          <p className={`mt-3 flex items-center gap-1.5 border-t ${t.borda} pt-3 text-[11px] ${t.apagado}`}>
-            <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com
-            segurança.
+          <p className="mt-3 flex items-center gap-1.5 text-[12px]" style={TXT3}>
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0" style={VERDE} /> Pix, cartão ou boleto · pagamento seguro
           </p>
         </div>
       </div>
 
-      <p className={`mt-5 border-t ${t.borda} pt-4 text-[12px] leading-relaxed ${t.apagado}`}>
-        Já assina o Manual Clínico ou tem {PLUS_LABEL}? Então isto já é seu — entre na sua conta que as{' '}
-        {TOTAL_DE_MODULOS} seções abrem inteiras, sem pagar de novo.
+      <p className="mt-5 border-t pt-4 text-[12.5px] leading-relaxed" style={{ ...TXT3, borderColor: 'var(--ck-sep)' }}>
+        Já assina o Manual Clínico ou tem {PLUS_LABEL}? Então isto já é seu — entre na sua conta que os{' '}
+        {TOTAL_DE_MODULOS} manuais abrem inteiros, sem pagar de novo.
       </p>
     </section>
   )
@@ -510,11 +489,8 @@ export function OfertaDoPacote({
 /* ══════════════════════════ BARRA FIXA ══════════════════════════ */
 
 /**
- * A barra do celular. Sem ela o preço e o botão somem no primeiro scroll.
- *
- * O rótulo diz "N manuais" em vez do nome da seção porque é aqui que a pessoa
- * decide, e o que a faz decidir é o tamanho do que leva — não o nome da página
- * em que está.
+ * A barra do celular. Sem ela o preço e o botão somem no primeiro scroll. O
+ * rótulo diz "N manuais" porque é o tamanho do que leva que faz decidir.
  */
 export function BarraDoPacote({
   onCheckout,
@@ -536,34 +512,28 @@ export function BarraDoPacote({
   mostrarPreco: boolean
   tom?: Tom
 }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const porManual = precoPorModulo(precoFinal)
   const preco = apresentarPreco({ precoBase, precoFinal, temLote, mesesDoPlano })
   /*
-   * A barra publica a própria altura.
-   *
-   * Ela é `fixed` no rodapé e o "voltar" flutuante do iOS também é — e ele
-   * soma `--gx-barra-inferior-h` ao próprio `bottom` justamente para não
-   * pousar em cima de barra nenhuma. Sem publicar, a variável valia `0px` e o
-   * círculo do voltar caía bem em cima do PREÇO, que é a primeira coisa que
-   * alguém procura aqui. Ver hooks/use-publica-altura.ts.
+   * A barra publica a própria altura: o "voltar" flutuante do iOS soma
+   * `--gx-barra-inferior-h` ao próprio `bottom` para não pousar em cima do
+   * PREÇO. Ver hooks/use-publica-altura.ts.
    */
   const ref = usePublicaAltura<HTMLDivElement>('--gx-barra-inferior-h', true)
 
   return (
     <div
       ref={ref}
-      className={`fixed inset-x-0 bottom-0 z-40 border-t ${t.borda} px-4 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 backdrop-blur-md lg:hidden ${
-        tom === 'escuro' ? 'bg-[#04130b]/95' : 'bg-background/95'
-      }`}
+      {...e}
+      className={`${e.className} ck-vidro-forte fixed inset-x-2 bottom-[calc(0.5rem+env(safe-area-inset-bottom))] z-40 px-3 py-2.5 lg:hidden`}
+      style={{ borderRadius: 22 }}
     >
       <div className="flex items-center gap-3">
         {mostrarPreco && (
-          <div className="min-w-0">
-            {/* Com mensal em destaque, esta linha vira a cobrança real — é a
-                única coisa que a barra tem espaço para dizer e que a pessoa
-                precisa saber antes de tocar no botão. */}
-            <p className={`truncate text-[11px] font-bold ${preco.sufixo ? t.fraco : t.destaqueTexto}`}>
+          <div className="min-w-0 pl-1">
+            {/* Com mensal em destaque, esta linha vira a cobrança real. */}
+            <p className="truncate text-[11.5px] font-semibold" style={preco.sufixo ? TXT3 : VERDE}>
               {preco.sufixo
                 ? preco.cobranca
                 : temLote && pctLote > 0
@@ -572,26 +542,19 @@ export function BarraDoPacote({
                     ? `${TOTAL_DE_MODULOS} manuais · ${reais(porManual)} cada`
                     : `${TOTAL_DE_MODULOS} manuais inclusos`}
             </p>
-            {/* Mesmo número do cartão lá em cima: o mensal quando há prazo.
-                Uma barra dizendo o total e um cartão dizendo o mensal seriam
-                dois preços para o mesmo produto na mesma tela. */}
+            {/* Mesmo número do cartão lá em cima: o mensal quando há prazo. */}
             <p className="flex items-baseline gap-1.5">
-              {preco.destaqueRiscado && (
-                <span className={`text-[11px] line-through ${t.riscado}`}>{preco.destaqueRiscado}</span>
-              )}
-              <span className={`text-lg font-black leading-tight ${t.precoTexto}`}>
+              {preco.destaqueRiscado && <span className="ck-riscado text-[11px]">{preco.destaqueRiscado}</span>}
+              <span className="font-heading text-xl font-semibold leading-tight tabular-nums" style={TXT}>
                 {preco.destaque}
-                {preco.sufixo && <span className="text-xs font-bold">{preco.sufixo}</span>}
+                {preco.sufixo && <span className="text-xs font-semibold">{preco.sufixo}</span>}
               </span>
             </p>
           </div>
         )}
-        <button
-          onClick={onCheckout}
-          className={`ml-auto inline-flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-md px-4 text-sm font-bold shadow-sm transition active:scale-[0.98] ${t.botao}`}
-        >
-          <Crown className="h-4 w-4" />
+        <button onClick={onCheckout} className="ck-cta ml-auto shrink-0" style={{ height: 46, padding: '0 18px', fontSize: 14.5 }}>
           Quero os {TOTAL_DE_MODULOS}
+          <ArrowRight className="h-4 w-4" />
         </button>
       </div>
     </div>
@@ -637,34 +600,33 @@ const PERGUNTAS_DO_PACOTE = [
 
 /** As objeções que aparecem quando a oferta passa a ser conjunta. */
 export function PerguntasDoPacote({ tom = 'tema', className = '' }: { tom?: Tom; className?: string }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const [aberta, setAberta] = useState<number | null>(0)
 
   return (
-    <section className={className}>
-      <p className={`editorial-mark mb-2 ${tom === 'escuro' ? 'text-white/50' : ''}`}>Antes de decidir</p>
-      <h2 className={`font-heading text-xl font-semibold tracking-tight sm:text-2xl ${t.texto}`}>
-        As perguntas que todo mundo faz sobre o pacote
-      </h2>
-      <div className={`mt-5 divide-y overflow-hidden rounded-xl border ${t.divisor} ${t.borda} ${t.cartao}`}>
+    <section {...e} className={`${e.className} ${className}`}>
+      <h2 className="mc-secao-titulo" style={TXT}>Antes de decidir</h2>
+      <p className="mc-secao-apoio" style={TXT2}>As perguntas que todo mundo faz sobre o pacote.</p>
+      <div className="ck-vidro mt-5 overflow-hidden">
         {PERGUNTAS_DO_PACOTE.map((f, i) => {
           const estaAberta = aberta === i
           return (
-            <div key={f.q}>
+            <div key={f.q} style={i > 0 ? { borderTop: '1px solid var(--ck-sep)' } : undefined}>
               <button
                 type="button"
                 onClick={() => setAberta(estaAberta ? null : i)}
                 aria-expanded={estaAberta}
-                className={`flex w-full items-start gap-3 px-4 py-3.5 text-left transition-colors ${
-                  tom === 'escuro' ? 'hover:bg-white/[0.04]' : 'hover:bg-muted/40'
-                }`}
+                className="flex w-full items-start gap-3 px-5 py-4 text-left"
               >
-                <span className={`min-w-0 flex-1 text-[13.5px] font-semibold leading-snug ${t.texto}`}>{f.q}</span>
+                <span className="min-w-0 flex-1 text-[15px] font-semibold leading-snug" style={TXT}>{f.q}</span>
                 <ChevronDown
-                  className={`mt-0.5 h-4 w-4 shrink-0 ${t.apagado} transition-transform ${estaAberta ? 'rotate-180' : ''}`}
+                  className={`mt-0.5 h-4 w-4 shrink-0 transition-transform duration-300 ${estaAberta ? 'rotate-180' : ''}`}
+                  style={TXT3}
                 />
               </button>
-              {estaAberta && <p className={`px-4 pb-4 text-[13px] leading-relaxed ${t.fraco}`}>{f.a}</p>}
+              {estaAberta && (
+                <p className="ck-surge px-5 pb-4 text-[14px] leading-relaxed" style={TXT2}>{f.a}</p>
+              )}
             </div>
           )
         })}
@@ -676,22 +638,17 @@ export function PerguntasDoPacote({ tom = 'tema', className = '' }: { tom?: Tom;
 /* ══════════════════════ AVISO DE JÁ TER ACESSO ══════════════════════ */
 
 /**
- * A objeção mais barata de resolver: "será que eu já tenho isso?".
- *
- * Quem já assina e cai numa seção trancada por engano (sessão expirada, outro
- * navegador) precisa dessa informação antes de considerar comprar de novo.
+ * A objeção mais barata de resolver: "será que eu já tenho isso?" — uma linha.
  */
 export function AvisoJaTenho({ tom = 'tema', className = '' }: { tom?: Tom; className?: string }) {
-  const t = T[tom]
+  const e = escopo(tom)
   return (
-    <div className={`rounded-2xl border ${t.destaqueBorda} ${t.destaqueFundo} p-4 sm:p-5 ${className}`}>
-      <p className={`flex items-center gap-2 text-sm font-bold ${t.destaqueTexto}`}>
-        <Check className="h-4 w-4" /> Já assina o Manual Clínico ou tem {PLUS_LABEL}?
-      </p>
-      <p className={`mt-1.5 text-sm leading-relaxed ${t.fraco}`}>
-        Então os {TOTAL_DE_MODULOS} manuais já são seus — sem custo extra e sem comprar de novo. Basta entrar na sua
-        conta que as seções abrem inteiras.
-      </p>
+    <div {...e} className={`${e.className} ck-nota ${className}`}>
+      <Check className="h-4 w-4" style={VERDE} strokeWidth={3} />
+      <span>
+        <strong>Já assina o Manual Clínico ou tem {PLUS_LABEL}?</strong> Então os {TOTAL_DE_MODULOS} manuais já são
+        seus — é só entrar na conta.
+      </span>
     </div>
   )
 }
@@ -699,10 +656,8 @@ export function AvisoJaTenho({ tom = 'tema', className = '' }: { tom?: Tom; clas
 /* ══════════════════════ FECHAMENTO ══════════════════════ */
 
 /**
- * O último empurrão, no fim da página.
- *
- * Repete o tamanho do pacote porque, depois de rolar uma landing inteira sobre
- * uma seção só, é fácil ter esquecido que a compra abre outras seis.
+ * O último empurrão, no fim da página: depois de rolar uma landing inteira
+ * sobre uma seção só, é fácil ter esquecido que a compra abre as outras.
  */
 export function FechamentoDoPacote({
   onCheckout,
@@ -717,34 +672,28 @@ export function FechamentoDoPacote({
   tom?: Tom
   className?: string
 }) {
-  const t = T[tom]
+  const e = escopo(tom)
   const porManual = precoPorModulo(precoFinal)
 
   return (
-    <section className={`overflow-hidden rounded-2xl border ${t.ambarBorda} ${t.ambarFundo} p-5 sm:p-7 ${className}`}>
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="max-w-2xl">
-          <p className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-wider ${t.ambarTexto}`}>
-            <Zap className="h-3.5 w-3.5" /> Última coisa
-          </p>
-          <h2 className={`mt-2 font-heading text-xl font-semibold tracking-tight sm:text-2xl ${t.texto}`}>
-            {TOTAL_DE_MODULOS} manuais completos, um pagamento, acesso na hora
-          </h2>
-          <p className={`mt-2 text-sm leading-relaxed ${t.fraco}`}>
-            {mostrarPreco && porManual != null
-              ? `São ${reais(porManual)} por manual — e nenhum deles é uma amostra: todos abrem inteiros, com o acervo completo, no instante em que o pagamento é aprovado.`
-              : 'Todos abrem inteiros, com o acervo completo, no instante em que o pagamento é aprovado.'}
-          </p>
-        </div>
-        <button
-          onClick={onCheckout}
-          className={`inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-md px-6 text-sm font-bold shadow-sm transition active:scale-[0.98] ${t.botao}`}
-        >
-          <Crown className="h-4 w-4" />
-          {mostrarPreco ? `Levar os ${TOTAL_DE_MODULOS} por ${reais(precoFinal)}` : 'Desbloquear agora'}
-          <ArrowRight className="h-4 w-4" />
-        </button>
-      </div>
+    <section {...e} className={`${e.className} ck-vidro-forte flex flex-col items-center gap-4 p-6 text-center sm:p-10 ${className}`}>
+      <span className="mc-incluso-chips flex">
+        {MODULOS_DO_PACOTE.map((m) => (
+          <ChipDoModulo key={m.id} m={m} />
+        ))}
+      </span>
+      <h2 className="mc-secao-titulo max-w-xl" style={TXT}>
+        {TOTAL_DE_MODULOS} manuais completos, um pagamento, acesso na hora
+      </h2>
+      <p className="max-w-lg text-[15px] leading-relaxed" style={TXT2}>
+        {mostrarPreco && porManual != null
+          ? `São ${reais(porManual)} por manual — e nenhum é amostra: todos abrem inteiros no instante em que o pagamento é aprovado.`
+          : 'Todos abrem inteiros, com o acervo completo, no instante em que o pagamento é aprovado.'}
+      </p>
+      <button onClick={onCheckout} className="ck-cta">
+        {mostrarPreco ? `Levar os ${TOTAL_DE_MODULOS} por ${reais(precoFinal)}` : 'Desbloquear agora'}
+        <ArrowRight className="h-4 w-4" />
+      </button>
     </section>
   )
 }

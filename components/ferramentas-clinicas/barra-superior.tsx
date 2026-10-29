@@ -38,7 +38,7 @@ export function BarraFerramentas({
   return (
     <div
       className={cn(
-        'sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/85',
+        'mc-sub-barra sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/85',
         className,
       )}
     >

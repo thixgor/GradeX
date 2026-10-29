@@ -1,16 +1,14 @@
 import Link from 'next/link'
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
-  Crown,
   ImageIcon,
   Layers3,
   ListChecks,
   StickyNote,
   Target,
 } from 'lucide-react'
-import { LogoRadiologia } from '@/components/radiologia/logo'
+import { CabecaDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { CantosFilme, FilmeImagem } from '@/components/radiologia/filme'
 
 /**
@@ -115,55 +113,28 @@ export function HomeRadiologia({
 }: HomeRadiologiaProps) {
   return (
     <div className="rx surface-page min-h-screen">
-      {/* ══════════ NEGATOSCÓPIO ══════════ */}
-      <header className="rx-painel rx-grade rx-varredura relative overflow-hidden border-b border-sky-400/15">
-        <div className="rx-abaixo-flutuantes container relative mx-auto max-w-6xl px-4 pb-8 pt-6 sm:pb-10">
-          <Link
-            href="/manual-clinico"
-            className="-m-2 inline-flex items-center gap-1.5 rounded-lg p-2 text-sm text-sky-100/55 transition hover:text-sky-100"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </Link>
-
-          <div className="mt-5 max-w-3xl">
-            <div className="[filter:invert(1)_hue-rotate(180deg)_brightness(1.2)]">
-              <LogoRadiologia className="max-w-[280px] sm:max-w-[330px]" />
-            </div>
-            {/* O SVG do logo já traz margem interna: `mt-1` aqui equivale ao
-                respiro de `mt-5` em qualquer outro bloco. */}
-            <p className="editorial-mark mt-1 !text-sky-300/80 [&::before]:bg-sky-300/60">
-              Manual Clínico · Diagnóstico por imagem
-            </p>
-            <h1 className="mt-2 font-heading text-[1.65rem] font-semibold leading-tight tracking-tight text-white sm:text-4xl">
-              A anatomia como ela aparece na imagem
-            </h1>
-            <p className="mt-3.5 max-w-2xl text-sm leading-relaxed text-sky-100/65 sm:text-base">
-              Duas modalidades no mesmo manual. Percorra pilhas reais de tomografia corte a corte, como numa
-              estação de trabalho, e acenda cada estrutura diretamente sobre {totais.incidencias} incidências
-              radiográficas — com técnica, roteiro de leitura, armadilhas e correlação anatômica.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Selo destaque>
-                <Crown className="h-3.5 w-3.5" /> Acesso do Manual Clínico
-              </Selo>
-              <Selo>
-                <ImageIcon className="h-3.5 w-3.5 text-sky-300" /> {totais.incidencias} incidências
-              </Selo>
-              <Selo>
-                <Layers3 className="h-3.5 w-3.5 text-sky-300" /> {totais.series} séries · {totais.cortes} cortes
-              </Selo>
-              <Selo>
-                <Target className="h-3.5 w-3.5 text-sky-300" /> {totais.estruturas} estruturas
-              </Selo>
-            </div>
-          </div>
+      {/* ══════════ CABEÇA ══════════
+          A mesma cabeça curta de todo módulo do Manual (CabecaDoModulo); o
+          negatoscópio continua na tira de filme logo abaixo. */}
+      <div className="container mx-auto max-w-6xl px-4">
+        <CabecaDoModulo
+          porta="radiologia"
+          titulo="A anatomia como ela aparece na imagem"
+          texto={`Pilhas reais de tomografia corte a corte e ${totais.incidencias} incidências de Raio-X com cada estrutura acesa sobre o filme.`}
+        />
+        <div className="ck-escopo mt-3 flex flex-wrap gap-1.5">
+          <span className="ck-chip" data-tom="neutro">{totais.incidencias} incidências</span>
+          <span className="ck-chip" data-tom="neutro">{totais.series} séries · {totais.cortes} cortes</span>
+          <span className="ck-chip" data-tom="neutro">{totais.estruturas} estruturas</span>
         </div>
+      </div>
 
+      <div className="container mx-auto mt-5 max-w-6xl px-4">
+      <header className="rx-painel overflow-hidden rounded-[22px]">
         {/* Tira de filme: as regiões reais do acervo, no formato em que a
             radiologia guarda imagem desde sempre. Rola no toque em telas
             pequenas e ocupa a largura inteira nas grandes. */}
-        <div className="rx-tira relative border-t border-sky-400/10">
+        <div className="rx-tira relative">
           <div className="rx-rolagem flex gap-2 overflow-x-auto px-4 py-3.5">
             {tira.map((quadro) => (
               <div
@@ -184,6 +155,7 @@ export function HomeRadiologia({
           </div>
         </div>
       </header>
+      </div>
 
       <main className="container mx-auto max-w-6xl px-4 py-9 sm:py-11">
         {/* ══════════ MODALIDADES ══════════ */}
@@ -324,19 +296,6 @@ export function HomeRadiologia({
 
 /* ─────────────────────────────── Peças ─────────────────────────────── */
 
-function Selo({ children, destaque = false }: { children: React.ReactNode; destaque?: boolean }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold backdrop-blur ${
-        destaque
-          ? 'border-amber-300/30 bg-amber-400/10 text-amber-200'
-          : 'border-sky-400/20 bg-sky-400/[0.07] text-sky-100/75'
-      }`}
-    >
-      {children}
-    </span>
-  )
-}
 
 const TONS = {
   sky: {

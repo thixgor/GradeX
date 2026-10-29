@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
-  ArrowLeft,
   ArrowRight,
   Check,
   ChevronDown,
@@ -35,7 +34,7 @@ import { apresentarPreco } from '@/lib/manual-clinico/pacote'
 import { MANUAL_CLINICO_PRODUCT_ID } from '@/lib/manual-clinico/identidade'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { usePublicaAltura } from '@/hooks/use-publica-altura'
-import { LogoDaHistologia } from '@/components/histologia/marca'
+import { HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { setorDe, tema } from '@/components/histologia/tema'
 import { AVISO_EDUCACIONAL, CREDITO_BASE } from '@/lib/histologia/licenca'
 import type {
@@ -119,14 +118,10 @@ export function VitrineDaHistologia({
   return (
     <div className="surface-page min-h-screen pb-28 lg:pb-0">
       <Hero
-        amostra={dados.amostra}
         totais={totais}
         autenticado={acesso.autenticado}
         rotuloCta={rotuloCta}
-        mostrarPreco={mostrarPreco}
-        precoBase={precoBase}
-        precoFinal={precoFinal}
-        temLote={temLote}
+        temAmostra={!!dados.amostra}
         aoComprar={irParaCheckout}
       />
 
@@ -141,10 +136,6 @@ export function VitrineDaHistologia({
           </p>
         </div>
       )}
-
-      <div className="mx-auto max-w-6xl px-4 pt-8">
-        <FaixaDoPacote atual="histologia" />
-      </div>
 
       {dados.amostra && <Amostra amostra={dados.amostra} totalDeLaminas={totais.laminas} />}
 
@@ -196,187 +187,63 @@ export function VitrineDaHistologia({
 /* ══════════════════════════════ Hero ══════════════════════════════ */
 
 /**
- * O campo do microscópio como abertura.
+ * A abertura é o herói comum das portas do Manual (HeroiDoModulo): a mesma
+ * forma da Radiologia, da Semiologia, do Eletro. O microscópio, que é a
+ * identidade do módulo, vem logo abaixo e utilizável — na amostra — em vez de
+ * desfocado atrás do título.
  *
- * A lâmina da amostra entra desfocada e escurecida no fundo, dentro de uma
- * vinheta circular que imita a ocular. Não é enfeite: é a primeira coisa que
- * diz, sem texto, que este produto é um microscópio — e a mesma imagem aparece
- * nítida e utilizável logo abaixo, o que transforma a decoração em promessa
- * cumprida a uma rolagem de distância.
+ * Sem preço na primeira dobra de propósito: aqui a pessoa ainda não sabe que a
+ * mesma compra abre os outros manuais, e um número lido antes disso vira
+ * comparação com o preço de um atlas avulso.
  */
 function Hero({
-  amostra,
   totais,
   autenticado,
   rotuloCta,
-  mostrarPreco,
-  precoBase,
-  precoFinal,
-  temLote,
+  temAmostra,
   aoComprar,
 }: {
-  amostra: AmostraDaVitrine | null
   totais: TotaisDaVitrine
   autenticado: boolean
   rotuloCta: string
-  mostrarPreco: boolean
-  precoBase: number
-  precoFinal: number
-  temLote: boolean
+  temAmostra: boolean
   aoComprar: () => void
 }) {
+  const fmt = (n: number) => n.toLocaleString('pt-BR')
   return (
-    <header className="relative isolate overflow-hidden bg-[#070C0B]">
-      {amostra && (
-        <div className="absolute inset-0" aria-hidden>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={amostra.url}
-            alt=""
-            className="h-full w-full scale-125 object-cover opacity-70 blur-[1px]"
-          />
-        </div>
-      )}
-
-      {/* Vinheta da ocular: o campo redondo e a queda de luz para a borda. O
-          centro fica quase limpo — é a lâmina que precisa aparecer ali — e o
-          escurecimento se concentra onde o texto pousa. */}
-      <div
-        className="absolute inset-0"
-        aria-hidden
-        style={{
-          background:
-            'radial-gradient(ellipse 62% 70% at 72% 26%, rgba(7,12,11,0) 0%, rgba(7,12,11,0.55) 46%, rgba(7,12,11,0.94) 78%, #070C0B 100%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 bg-[linear-gradient(to_top,#070C0B_8%,rgba(7,12,11,0.92)_40%,rgba(7,12,11,0.60)_74%,rgba(7,12,11,0.30)_100%)]"
-        aria-hidden
-      />
-      {/* Retícula do micrômetro ocular, esmaecida para as bordas. */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.22]"
-        aria-hidden
-        style={{
-          backgroundImage:
-            'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
-          backgroundSize: '52px 52px',
-          color: 'rgb(70 174 170 / 0.55)',
-          maskImage: 'radial-gradient(ellipse 78% 68% at 50% 20%, black, transparent)',
-          WebkitMaskImage: 'radial-gradient(ellipse 78% 68% at 50% 20%, black, transparent)',
-        }}
-      />
-      <div
-        className="pointer-events-none absolute -left-28 top-1/4 h-96 w-96 rounded-full bg-teal-400/20 blur-3xl"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute -right-24 -top-16 h-96 w-96 rounded-full bg-violet-500/20 blur-3xl"
-        aria-hidden
-      />
-
-      <div className="relative mx-auto max-w-6xl px-4 pb-14 pt-6 sm:pb-20 sm:pt-8">
-        <div>
-          <Link
-            href="/manual-clinico"
-            className="-m-3 inline-flex items-center gap-1.5 rounded-lg p-3 text-sm text-white/55 transition-colors hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden /> Voltar ao Manual Clínico
-          </Link>
-        </div>
-
-        <div className="mt-5">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/25 bg-amber-400/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-amber-300 backdrop-blur">
-            <Crown className="h-3.5 w-3.5" aria-hidden /> {TOTAL_DE_MODULOS} manuais · 1 pagamento único
-          </span>
-        </div>
-
-        <h1 className="sr-only">Manual da Histologia</h1>
-        {/* O logotipo é desenhado para fundo claro — o "Histologia" é azul
-            escuro e some no campo. Em vez de refazer a marca, ela ganha a
-            etiqueta fosca que toda lâmina de vidro tem numa ponta: resolve o
-            contraste e é exatamente o objeto que o módulo vende. */}
-        <span className="mt-5 block w-fit rounded-lg bg-[#F6F1E8] px-4 py-3 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.8)] ring-1 ring-white/25">
-          <LogoDaHistologia className="h-auto w-[150px] sm:w-[175px]" />
-        </span>
-
-        <p className="mt-6 max-w-3xl font-heading text-[2rem] font-semibold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-          Na prova prática ninguém pergunta a definição.
-          <span className="block text-teal-300">Perguntam o que é isso na lâmina.</span>
-        </p>
-
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
-          {totais.laminas.toLocaleString('pt-BR')} lâminas reais num microscópio de verdade dentro
-          do navegador — zoom, objetivas de 4× a 100×, foco e iluminação. Você acende as{' '}
-          {totais.estruturas.toLocaleString('pt-BR')} estruturas sobre a imagem, uma a uma, até
-          saber achá-las sozinho com a camada desligada.
-        </p>
-
-        <dl className="mt-8 grid max-w-3xl grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
-          {[
-            { valor: totais.laminas.toLocaleString('pt-BR'), rotulo: 'lâminas reais' },
-            { valor: totais.estruturas.toLocaleString('pt-BR'), rotulo: 'estruturas marcadas' },
-            { valor: totais.questoes.toLocaleString('pt-BR'), rotulo: 'questões de identificação' },
-            { valor: totais.doencas.toLocaleString('pt-BR'), rotulo: 'doenças na histopatologia' },
-          ].map((item) => (
-            <div
-              key={item.rotulo}
-              className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5 backdrop-blur"
-            >
-              <dt className="font-heading text-2xl font-semibold tabular-nums text-white sm:text-3xl">
-                {item.valor}
-              </dt>
-              <dd className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-white/50">
-                {item.rotulo}
-              </dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <button
-            type="button"
-            onClick={aoComprar}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-teal-500 px-6 text-sm font-bold text-teal-950 shadow-[0_10px_30px_-10px_rgba(45,212,191,0.7)] transition hover:bg-teal-400 active:scale-[0.98]"
-          >
-            <Crown className="h-4 w-4" aria-hidden />
-            {rotuloCta}
-            <ArrowRight className="h-4 w-4" aria-hidden />
-          </button>
-
-          {/* Sem preço na primeira dobra de propósito: aqui a pessoa ainda não
-              sabe que a mesma compra abre outros seis manuais, e um número lido
-              antes disso vira comparação com o preço de um atlas avulso. O valor
-              aparece inteiro na seção da oferta, depois do acervo. */}
-          <p className="text-sm text-white/60">
-            A Histologia é <span className="font-black text-white">1 dos {TOTAL_DE_MODULOS} manuais</span> que
-            este acesso abre
-          </p>
-
-          {!autenticado && (
-            <Link
-              href={DESTINO_LOGIN}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/15 px-5 text-sm font-bold text-white/80 transition hover:border-white/35 hover:text-white"
-            >
-              Já assino — entrar
-            </Link>
-          )}
-        </div>
-
-        <ul className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-white/45">
-          {[
-            `${TOTAL_DE_MODULOS} manuais na mesma compra`,
-            'Nenhum é vendido separado',
-            'Incluso no DomineAqui Plus+',
-            'Acesso imediato',
-          ].map((item) => (
-            <li key={item} className="inline-flex items-center gap-1.5">
-              <Check className="h-3.5 w-3.5 text-teal-400" aria-hidden /> {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </header>
+    <div className="mx-auto max-w-6xl px-4">
+      <HeroiDoModulo
+        porta="histologia"
+        titulo={<>Na prova perguntam o que é isso na lâmina.</>}
+        promessa={
+          <>
+            {fmt(totais.laminas)} lâminas reais num microscópio dentro do navegador, de 4× a 100×. Acenda as{' '}
+            {fmt(totais.estruturas)} estruturas uma a uma até achá-las sozinho, com a camada desligada.
+          </>
+        }
+        numeros={[
+          { v: fmt(totais.laminas), r: 'lâminas reais' },
+          { v: fmt(totais.estruturas), r: 'estruturas marcadas' },
+          { v: fmt(totais.questoes), r: 'questões de identificação' },
+        ]}
+        acoes={
+          <>
+            <button type="button" onClick={aoComprar} className="ck-cta min-h-[48px]">
+              {rotuloCta}
+            </button>
+            {temAmostra ? (
+              <a href="#amostra" className="ck-botao">Usar o microscópio</a>
+            ) : (
+              !autenticado && (
+                <Link href={DESTINO_LOGIN} className="ck-botao">Já assino — entrar</Link>
+              )
+            )}
+          </>
+        }
+      >
+        <FaixaDoPacote atual="histologia" className="mt-2" />
+      </HeroiDoModulo>
+    </div>
   )
 }
 
@@ -406,7 +273,7 @@ function Amostra({
   const restantes = Math.max(totalDeLaminas - 1, 0)
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16" aria-labelledby="amostra">
+    <section className="mx-auto max-w-6xl scroll-mt-20 px-4 py-12 sm:py-16" aria-labelledby="amostra">
       <div className="mb-7 max-w-2xl">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-black uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
           <Sparkles className="h-3.5 w-3.5" aria-hidden /> Amostra liberada · sem login

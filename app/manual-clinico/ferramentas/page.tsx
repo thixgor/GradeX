@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { AppShell, useAppShell } from '@/components/app-shell'
-import { Input } from '@/components/ui/input'
 import {
   ArrowRight,
   BookOpen,
@@ -26,7 +25,8 @@ import {
   type Ferramenta,
 } from '@/lib/ferramentas-clinicas'
 import { ICONES, ICONE_PADRAO, tema } from '@/components/ferramentas-clinicas/tema'
-import { BarraFerramentas } from '@/components/ferramentas-clinicas/barra-superior'
+import { CabecaDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
+import { BuscaDoManual } from '@/components/manual-clinico/casco/busca-do-manual'
 import { useFavoritos } from '@/components/ferramentas-clinicas/use-favoritos'
 import { useAcessoFerramentas } from '@/components/ferramentas-clinicas/use-acesso'
 import { VitrineFerramentas } from '@/components/ferramentas-clinicas/vitrine'
@@ -75,8 +75,7 @@ function Conteudo() {
   if (!temAcesso) {
     return (
       <div className="surface-page min-h-screen">
-        <BarraFerramentas voltarHref="/manual-clinico" voltarLabel="Voltar ao Manual Clínico" />
-        <div className="container mx-auto max-w-6xl px-4 py-8">
+        <div className="container mx-auto max-w-6xl px-4 pb-8">
           <VitrineFerramentas
             onCheckout={() => router.push('/manual-clinico/checkout')}
             isAuthenticated={dados?.isAuthenticated ?? false}
@@ -92,86 +91,31 @@ function Conteudo() {
 
   return (
     <div className="surface-page min-h-screen">
-      {/* A barra fica ANTES do herói e é `sticky`: ela dá superfície opaca aos
-          botões flutuantes da casca, que antes tinham o título da página
-          passando por baixo deles ao rolar. */}
-      <BarraFerramentas voltarHref="/manual-clinico" voltarLabel="Voltar ao Manual Clínico" />
-
-      {/* ══════════════════════════ HERO ══════════════════════════ */}
-      <div className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 bg-muted/30" aria-hidden />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.4] dark:opacity-[0.2]"
-          aria-hidden
-          style={{
-            backgroundImage:
-              'linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)',
-            backgroundSize: '32px 32px',
-            color: 'rgb(148 163 184 / 0.16)',
-            maskImage: 'radial-gradient(ellipse 75% 65% at 50% 0%, black, transparent)',
-            WebkitMaskImage: 'radial-gradient(ellipse 75% 65% at 50% 0%, black, transparent)',
-          }}
+      {/* ══════════════════════════ CABEÇA ══════════════════════════
+          A barra de portas do Manual já dá o caminho de volta; aqui fica só a
+          cabeça curta e a busca, que é o que quem tem o módulo veio fazer. */}
+      <div className="container mx-auto max-w-6xl px-4">
+        <CabecaDoModulo
+          porta="ferramentas"
+          texto={`${TOTAL_FERRAMENTAS} calculadoras e escores em ${CATEGORIAS.length} áreas — fórmula aberta, fundamento, armadilhas e referência em cada uma.`}
+          lado={
+            favoritosProntos && favoritos.length > 0 ? (
+              <span className="ck-chip" data-tom="ambar">
+                <Star className="h-3.5 w-3.5 fill-current" /> {favoritos.length} favorita{favoritos.length !== 1 ? 's' : ''}
+              </span>
+            ) : undefined
+          }
         />
-
-        <div className="container relative z-10 mx-auto max-w-6xl px-4 pb-10 pt-6">
-          <div className="max-w-3xl">
-            <p className="editorial-mark mb-3">Manual Clínico · Calculadoras e escores</p>
-            <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-              Ferramentas Clínicas
-            </h1>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              {TOTAL_FERRAMENTAS} calculadoras e escores que respondem em tempo real, com a conta aberta. Cada
-              uma traz a fórmula, a interpretação do resultado, o fundamento fisiológico por trás dela, as
-              armadilhas que fazem o número mentir e a referência de onde veio.
-            </p>
-
-            <div className="mt-6 flex flex-wrap items-center gap-2.5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary">
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-                {TOTAL_FERRAMENTAS} ferramentas
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <Calculator className="h-3.5 w-3.5 text-primary" /> {CATEGORIAS.length} áreas
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <Sigma className="h-3.5 w-3.5 text-primary" /> Fórmula visível
-              </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-bold text-muted-foreground">
-                <BookOpen className="h-3.5 w-3.5 text-primary" /> Referenciadas
-              </span>
-              {favoritosProntos && favoritos.length > 0 && (
-                <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-xs font-bold text-amber-700 dark:text-amber-400">
-                  <Star className="h-3.5 w-3.5 fill-current" /> {favoritos.length} favorita{favoritos.length !== 1 ? 's' : ''}
-                </span>
-              )}
-            </div>
-
-            <div className="mt-6 max-w-xl">
-              <div className="group relative flex items-center overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors focus-within:border-primary/50">
-                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
-                <Input
-                  placeholder="Buscar (winter, anion gap, CHA2DS2, MELD, Holliday...)"
-                  value={busca}
-                  onChange={(e) => setBusca(e.target.value)}
-                  className="h-14 border-0 bg-transparent pl-12 pr-12 text-base ring-0 placeholder:text-muted-foreground/40 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  aria-label="Buscar ferramenta clínica"
-                />
-                {busca && (
-                  <button
-                    onClick={() => setBusca('')}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-muted p-1 text-muted-foreground transition-colors hover:bg-muted-foreground/20 hover:text-foreground"
-                    aria-label="Limpar busca"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        <BuscaDoManual
+          className="mt-5"
+          valor={busca}
+          aoMudar={setBusca}
+          placeholder="Winter, anion gap, CHA2DS2, MELD, Holliday…"
+          rotulo="Buscar ferramenta clínica"
+        />
       </div>
 
-      <div className="container mx-auto max-w-6xl px-4 py-8">
+      <div className="container mx-auto max-w-6xl px-4 pb-8 pt-6">
         {buscando ? (
           <ResultadosBusca termo={busca} resultados={resultados} carregando={carregando && !todas} />
         ) : (

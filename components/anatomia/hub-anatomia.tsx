@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { CabecaDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import type { ResumoAnatomia } from '@/lib/anatomia/tipos'
 import { lerUltimaVisita, type UltimaVisita } from '@/lib/anatomia/ultima-visita'
 import {
-  ArrowLeft,
   ArrowRight,
   BookOpen,
   Boxes,
@@ -146,62 +146,21 @@ export function HubAnatomia({ catalogo }: { catalogo: ResumoAnatomia }) {
 
   return (
     <main className="surface-page anatomia-ambiente min-h-screen">
-      {/* ══════════ Hero ══════════ */}
-      <section className="relative isolate overflow-hidden bg-slate-950">
-        {/* Mural de capas reais do acervo: é anatomia, tem que se ver anatomia. */}
-        <div className="absolute inset-0 grid grid-cols-3 opacity-40 sm:grid-cols-6" aria-hidden>
-          {catalogo.sistemas.slice(0, 6).map((sistema, indice) => (
-            <div key={sistema.slug} className="relative">
-              <Image
-                src={sistema.capa}
-                alt=""
-                fill
-                priority={indice < 3}
-                sizes="(max-width: 640px) 34vw, 17vw"
-                className="object-cover grayscale-[0.25]"
-              />
-            </div>
-          ))}
-        </div>
-        <div
-          className="absolute inset-0 bg-[linear-gradient(to_top,#020617_10%,rgba(2,6,23,0.9)_52%,rgba(2,6,23,0.58)_100%)]"
-          aria-hidden
+      {/* ══════════ Cabeça ══════════
+          A cabeça curta de todo módulo do Manual (CabecaDoModulo). */}
+      <div className="mx-auto max-w-6xl px-4">
+        <CabecaDoModulo
+          porta="anatomia"
+          titulo="Domine Anatomia"
+          texto="Pranchas reais com cada estrutura marcada e explicada, e peças 3D que você gira na mão. Toque num marcador e receba a ficha inteira."
         />
-        <div className="pointer-events-none absolute -left-24 top-1/3 h-96 w-96 rounded-full bg-emerald-500/20 blur-3xl" aria-hidden />
-        <div className="pointer-events-none absolute -right-24 top-0 h-96 w-96 rounded-full bg-cyan-500/20 blur-3xl" aria-hidden />
-
-        <div className="relative mx-auto max-w-6xl px-4 pb-10 pt-7 sm:pb-14 sm:pt-9">
-          <Link
-            href="/manual-clinico"
-            className="mb-7 inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" /> Voltar ao Manual Clínico
-          </Link>
-
-          <p className="editorial-mark !text-amber-300">Estudo visual e interativo</p>
-          <h1 className="mt-3 max-w-4xl font-heading text-[2.6rem] font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl">
-            Domine Anatomia
-          </h1>
-          <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-white/70 sm:text-lg">
-            Pranchas reais com cada estrutura marcada e explicada, e peças tridimensionais que você gira na mão.
-            Toque num marcador e receba a ficha inteira.
-          </p>
-
-          <dl className="mt-7 grid max-w-2xl grid-cols-2 gap-2.5 sm:grid-cols-4">
-            {[
-              { valor: catalogo.totalPranchas.toLocaleString('pt-BR'), rotulo: 'pranchas' },
-              { valor: totalEstruturas.toLocaleString('pt-BR'), rotulo: 'estruturas' },
-              { valor: catalogo.totalModelos.toLocaleString('pt-BR'), rotulo: 'modelos 3D' },
-              { valor: catalogo.totalSistemas.toLocaleString('pt-BR'), rotulo: 'sistemas' },
-            ].map(item => (
-              <div key={item.rotulo} className="anatomia-vidro-escuro rounded-2xl p-3">
-                <dt className="font-heading text-2xl font-semibold tabular-nums text-white sm:text-3xl">{item.valor}</dt>
-                <dd className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-white/55">{item.rotulo}</dd>
-              </div>
-            ))}
-          </dl>
+        <div className="ck-escopo mt-3 flex flex-wrap gap-1.5">
+          <span className="ck-chip" data-tom="neutro">{catalogo.totalPranchas.toLocaleString('pt-BR')} pranchas</span>
+          <span className="ck-chip" data-tom="neutro">{totalEstruturas.toLocaleString('pt-BR')} estruturas</span>
+          <span className="ck-chip" data-tom="neutro">{catalogo.totalModelos.toLocaleString('pt-BR')} modelos 3D</span>
+          <span className="ck-chip" data-tom="neutro">{catalogo.totalSistemas.toLocaleString('pt-BR')} sistemas</span>
         </div>
-      </section>
+      </div>
 
       {/* ══════════ Retomada + três portas ══════════ */}
       <section className="mx-auto max-w-6xl px-4 py-6 sm:py-9">

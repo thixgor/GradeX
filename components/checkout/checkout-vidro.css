@@ -33,6 +33,7 @@
   --ck-sep: rgba(31, 52, 36, 0.11);
   --ck-trilho: rgba(118, 118, 128, 0.12);
   --ck-polegar: #fff;
+  --ck-texto: hsl(var(--foreground));
   --ck-texto-2: hsl(140 9% 32%);
   --ck-texto-3: hsl(140 7% 42%);
   --ck-verde: #2f6b40;
@@ -71,6 +72,7 @@
   --ck-sep: rgba(255, 255, 255, 0.1);
   --ck-trilho: rgba(118, 118, 128, 0.24);
   --ck-polegar: rgba(255, 255, 255, 0.14);
+  --ck-texto: #f1f4f0;
   --ck-texto-2: hsl(140 10% 72%);
   --ck-texto-3: hsl(140 8% 62%);
   --ck-verde: #8fd19e;

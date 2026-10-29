@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, Eye, GitCompareArrows, GraduationCap, Stethoscope, Waves } from 'lucide-react'
 import type { CatalogoSemiologia } from '@/lib/semiologia/catalogo'
 import { ROTAS } from '@/lib/semiologia/rotas'
+import { CabecaDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { BuscaGlobal } from './busca-global'
 import { Capa } from './capa'
 import { Enfase } from './enfase'
@@ -31,13 +32,11 @@ export function HomeSemiologia({ catalogo, quizzes = [] }: { catalogo: CatalogoS
   return (
     <div className="space-y-10">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Manual Clínico</p>
-        <h1 className="mt-3 text-3xl font-bold sm:text-4xl">Manual de Semiologia</h1>
-        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-          O que você faz com a própria mão, antes de qualquer máquina — e o que se vê pelo otoscópio, pelo
-          oftalmoscópio e pela sonda à beira do leito. Cada achado com o mecanismo escrito, o que muda na conduta e
-          onde ele engana.
-        </p>
+        <CabecaDoModulo
+          porta="semiologia"
+          titulo="Manual de Semiologia"
+          texto="Da mão ao otoscópio, ao oftalmoscópio e à sonda: cada achado com o mecanismo, o que muda na conduta e onde ele engana."
+        />
         {/* A busca é a porta principal: com centenas de sinais e cenas, o
             aluno que sabe o que procura não deve rolar três grades para
             achar. Ela entende sinônimo, inglês, gíria e erro de digitação. */}

@@ -3,12 +3,10 @@
 import { useMemo, useState } from 'react'
 import {
   AlertTriangle,
-  ArrowRight,
   BookOpen,
   Check,
   Compass,
   Crosshair,
-  Crown,
   Flame,
   GraduationCap,
   ImageIcon,
@@ -18,8 +16,6 @@ import {
   StickyNote,
   Ruler,
   ScanLine,
-  ShieldCheck,
-  Sparkles,
   Stethoscope,
   Target,
 } from 'lucide-react'
@@ -29,16 +25,15 @@ import {
   FaixaDoPacote,
   FechamentoDoPacote,
   GradeDoPacote,
-  ListaDoPacote,
   OfertaDoPacote,
-  SeloDoPacote,
+  CartaoDoPacote,
 } from '@/components/manual-clinico/pacote'
 import { TOTAL_DE_MODULOS } from '@/lib/manual-clinico/pacote'
 import { usePricingEventState } from '@/components/pricing-events/usePricingEventState'
 import { PricingEventCountdown } from '@/components/pricing-events/PricingEventCountdown'
 import { PLUS_LABEL } from '@/lib/account-tier'
 import { NUMEROS_RAIO_X } from '@/lib/radiologia/numeros'
-import { LogoRadiologia } from '@/components/radiologia/logo'
+import { HeroiDoModulo } from '@/components/manual-clinico/casco/heroi-do-modulo'
 import { PreviaCine } from '@/components/tomografia/previa'
 import { PreviaRaioX } from '@/components/radiologia/previa-raio-x'
 import { tema } from '@/components/tomografia/tema'
@@ -252,40 +247,37 @@ export function VitrineRadiologia({
     <>
       {/* pb reserva o espaço da barra fixa do celular */}
       <div className="pb-28 lg:pb-0">
-        {/* ══════════ ABERTURA ══════════ */}
-        <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start xl:gap-10">
-          <div>
-            <SeloDoPacote />
-
-            <h1 className="sr-only">Manual de Radiologia</h1>
-            <LogoRadiologia className="mt-4" />
-
-            {alvo ? (
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                <strong className="font-semibold text-foreground">{alvo}</strong> faz parte do Manual de
-                Radiologia — o atlas de imagem do Manual Clínico. Ele é privativo de assinantes: não entra no
-                teste grátis e não é vendido à parte.
-              </p>
+        {/* ══════════ ABERTURA ══════════
+            O herói é o mesmo de todas as portas do Manual (HeroiDoModulo). */}
+        <HeroiDoModulo
+          porta="radiologia"
+          titulo={<>Leia imagem como na estação de trabalho.</>}
+          promessa={
+            alvo ? (
+              <>
+                <strong className="font-semibold" style={{ color: 'var(--ck-texto)' }}>{alvo}</strong> faz parte do
+                Manual de Radiologia — privativo de quem tem o Manual Clínico, sem venda avulsa.
+              </>
             ) : (
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Duas modalidades num atlas só. Percorra pilhas reais de tomografia corte a corte como numa
-                estação de trabalho e acenda cada estrutura sobre {rxEstudos} incidências radiográficas
-                organizadas por região — com dossiê, roteiro de leitura e armadilhas em cada uma.
-              </p>
-            )}
+              <>Pilhas reais de tomografia corte a corte e {rxEstudos} incidências de Raio-X com cada estrutura acesa sobre o filme.</>
+            )
+          }
+          numeros={numeros.slice(0, 3).map((n) => ({ v: n.v.toLocaleString('pt-BR'), r: n.r }))}
+          acoes={
+            <>
+              <button onClick={onCheckout} className="ck-cta">
+                Quero os {TOTAL_DE_MODULOS} manuais
+              </button>
+              <a href="#previa" className="ck-botao">Testar a prévia</a>
+            </>
+          }
+        >
+          <FaixaDoPacote atual="radiologia" className="mt-2" />
+        </HeroiDoModulo>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {numeros.map((n) => (
-                <div key={n.r} className="rounded-xl border border-border bg-card px-3 py-2.5">
-                  <p className="font-heading text-xl font-semibold tracking-tight text-primary">{n.v}</p>
-                  <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">{n.r}</p>
-                </div>
-              ))}
-            </div>
-
-            <FaixaDoPacote atual="radiologia" className="mt-6" />
-
-            <AvisoJaTenho className="mt-3" />
+        <div className="mt-8 grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-start xl:gap-10">
+          <div>
+            <AvisoJaTenho />
 
             {/* ── As duas modalidades ── */}
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -308,7 +300,7 @@ export function VitrineRadiologia({
 
           {/* ── Prévias + preço ── */}
           <div className="space-y-5 xl:sticky xl:top-6">
-            <div className="glass-panel-dark overflow-hidden rounded-2xl p-4 sm:p-5">
+            <div id="previa" className="glass-panel-dark scroll-mt-24 overflow-hidden rounded-2xl p-4 sm:p-5">
               <div className="mb-3 flex flex-wrap gap-1.5">
                 <BotaoPrevia ativo={modalidade === 'raio-x'} onClick={() => setModalidade('raio-x')}>
                   Raio-X
@@ -342,31 +334,12 @@ export function VitrineRadiologia({
               )}
             </div>
 
-            {/* O cartão lateral mostra o tamanho do pacote, não o preço: quem chega
-                aqui ainda não sabe que a compra abre outros seis manuais, e um
-                número antes disso vira comparação com o preço de um atlas avulso.
-                O preço vem inteiro mais abaixo, depois do acervo. */}
-            <div className="glass-panel overflow-hidden rounded-2xl p-5 sm:p-6">
-              <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-amber-700 dark:text-amber-300">
-                <Sparkles className="h-3.5 w-3.5" /> O que a compra abre
-              </p>
-              <h2 className="mt-2 font-heading text-lg font-semibold leading-snug tracking-tight">
-                A Radiologia é um dos {TOTAL_DE_MODULOS} manuais — e todos vêm juntos
-              </h2>
-              <ListaDoPacote atual="radiologia" className="mt-3.5" />
-              <button
-                onClick={onCheckout}
-                className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-md bg-primary px-6 text-sm font-bold text-primary-foreground shadow-sm transition hover:bg-primary/90 active:scale-[0.98]"
-              >
-                <Crown className="h-4 w-4" />
-                Quero os {TOTAL_DE_MODULOS} manuais
-                <ArrowRight className="h-4 w-4" />
-              </button>
-              <p className="mt-3 flex items-center gap-1.5 border-t border-border pt-3 text-[11px] text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0" /> Pix, cartão ou boleto · pagamento processado com
-                segurança.
-              </p>
-            </div>
+            <CartaoDoPacote
+              atual="radiologia"
+              titulo={<>A Radiologia é 1 dos {TOTAL_DE_MODULOS} manuais</>}
+              onCheckout={onCheckout}
+              isAuthenticated={isAuthenticated}
+            />
           </div>
         </div>
 
