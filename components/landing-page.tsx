@@ -36,6 +36,7 @@ import {
   classesDaAlternativa,
 } from '@/lib/banco/aparencia-da-questao'
 import { ACERVO_ANUNCIADO, rotuloDoAcervo } from '@/lib/banco/acervo-publico'
+import type { PrecoDoPlus } from '@/lib/landing/preco-do-plus'
 
 // Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
 // blurDataURL embutido — as fotos aparecem borradas na hora em vez de deixar um
@@ -1778,7 +1779,34 @@ function RailControls({
 
 /* =================== PÁGINA =================== */
 
-export default function LandingPage() {
+/*
+ * A landing pela ciência do comportamento
+ * ----------------------------------------
+ * Criar a conta acontece quando três coisas coincidem (modelo de Fogg):
+ * vontade, facilidade e um convite na hora certa. Cada seção puxa uma delas,
+ * e nenhuma usa um recurso que não seja verdade:
+ *
+ *  vontade      o problema nomeado no hero ("você estuda espalhado") e a
+ *               perda real ("errar na prova custa o ano", nas ferramentas);
+ *               prova social só com dado real (avaliações com amostra mínima,
+ *               depoimentos cadastrados — a seção some sem eles);
+ *               identidade: "feita para quem estuda Medicina".
+ *  facilidade   o custo da ação dito no ponto da ação: "conta grátis em 10
+ *               segundos com o Google · sem cartão" (é o que a tela de entrar
+ *               entrega); uma escada de compromisso — responder no hero, 10
+ *               questões sem cadastro, conta grátis, Plus+.
+ *  convite      o botão aparece onde a decisão acontece: no hero, no fim da
+ *               demo (o momento de maior interesse), na doca do celular e no
+ *               fecho, sempre com o mesmo rótulo.
+ *  reciprocidade questões de verdade antes de qualquer formulário.
+ *
+ * O que fica de fora de propósito (trava de ética da skill): escassez ou
+ * contador falsos, "X pessoas vendo agora", depoimento genérico, preço
+ * escondido até o checkout e frase que constrange quem não assina. O fecho
+ * dizia "enquanto você decide, alguém já está estudando aqui" — pressão por
+ * comparação, sem dado por trás. Virou o menor passo possível.
+ */
+export default function LandingPage({ precoPlus = null }: { precoPlus?: PrecoDoPlus | null } = {}) {
   const router = useRouter()
   const { liteMode } = useLiteMode()
   // No Modo Lite (ligado à mão ou detectado num aparelho fraco) o parallax nem
@@ -1868,7 +1896,7 @@ export default function LandingPage() {
       <HowItWorks />
       <SampleBand />
       <ProductsExplorer />
-      <Plans />
+      <Plans precoPlus={precoPlus} />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
       <MobileDock signupHref={signupHref} isLoggedIn={isLoggedIn} />
@@ -2194,8 +2222,11 @@ function Hero({
                 </GhostCTA>
               )}
             </div>
+            {/* O custo da ação, dito onde a ação está. "Acesso imediato" não
+                diz quanto custa; "10 segundos com o Google" diz — e é o que a
+                tela de entrar entrega ("Sua conta grátis em 10 segundos"). */}
             <p className="mt-4 font-da-mono text-[11px] text-da-muted md:text-xs">
-              Sem cartão · acesso imediato · celular e computador
+              Conta grátis em 10 segundos com o Google · sem cartão
             </p>
             {/* Nota real, calculada sobre as avaliações dos materiais. Só entra
                 depois do fetch e com amostra mínima — número inventado no hero
@@ -2231,7 +2262,7 @@ function Hero({
             <PlataformaDemo />
           </Reveal>
           <p className="relative mt-3 text-center font-da-mono text-[11px] text-da-muted xl:text-left">
-            Questões de verdade. Responda aqui mesmo.
+            Questões de verdade, sem cadastro. Responda aqui mesmo.
           </p>
         </div>
       </div>
@@ -3580,7 +3611,7 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
 
 /* ---------- PLANOS ---------- */
 
-function Plans() {
+function Plans({ precoPlus }: { precoPlus: PrecoDoPlus | null }) {
   // Cargo único: o Plus+ libera a plataforma inteira. A comparação da landing
   // é contra a conta gratuita, não contra um segundo plano pago.
   const gratuito = [
@@ -3613,8 +3644,7 @@ function Plans() {
             Comece de graça. Suba de nível quando quiser.
           </h2>
           <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-            Antes de comparar item por item, a pergunta é mais simples: qual desses dois é você
-            hoje?
+            Qual dos dois é você hoje?
           </p>
         </Reveal>
         <div className="mt-9 grid grid-cols-1 gap-5 md:mt-12 md:gap-6 lg:grid-cols-2">
@@ -3659,6 +3689,19 @@ function Plans() {
               <p className="relative mt-2 text-[15px] leading-relaxed text-da-muted md:text-base">
                 Para transformar a plataforma no seu ambiente completo de preparação.
               </p>
+              {/* O preço no cartão, com a cobrança real logo abaixo (ver
+                  lib/landing/preco-do-plus.ts). Sem catálogo, sem número. */}
+              {precoPlus && (
+                <div className="relative mt-5">
+                  <p className="font-da-display text-[1.65rem] font-semibold leading-none tracking-tight">
+                    <span className="mr-1.5 align-middle font-da-body text-[13px] font-medium text-da-muted">
+                      a partir de
+                    </span>
+                    {precoPlus.chamada}
+                  </p>
+                  <p className="mt-1.5 text-[13px] text-da-muted">{precoPlus.apoio}</p>
+                </div>
+              )}
               <ul className="relative mt-6 space-y-3">
                 {plus.map((f) => (
                   <li key={f} className="flex items-start gap-3">
@@ -3673,6 +3716,11 @@ function Plans() {
                 <PrimaryCTA href={LINKS.buy} className="w-full justify-center sm:w-auto">
                   Ver os planos
                 </PrimaryCTA>
+                {/* Reversão de risco, com o que de fato acontece (é a resposta
+                    do FAQ): quem cancela não perde a conta. */}
+                <p className="mt-3 text-[13px] text-da-muted">
+                  Cancelou? Sua conta continua e volta para o plano gratuito.
+                </p>
               </div>
             </div>
           </Reveal>
@@ -3818,9 +3866,15 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
         />
         <div className="relative mx-auto max-w-4xl px-5 py-16 text-center md:px-8 md:py-28">
           <Reveal>
+            {/* O menor passo possível, em vez de pressão: "uma questão hoje" é
+                um compromisso que cabe em qualquer dia, e é exatamente o que o
+                botão abre. */}
             <h2 className="mx-auto max-w-2xl font-da-display text-[2.1rem] font-semibold leading-[1.05] tracking-tighter md:text-6xl">
-              Enquanto você decide, alguém já está estudando aqui.
+              Sua próxima prova começa com uma questão.
             </h2>
+            <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-da-muted md:text-lg">
+              Responda a primeira hoje. A conta é grátis.
+            </p>
           </Reveal>
           <Reveal delay={100}>
             <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
@@ -3842,7 +3896,7 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-4 font-da-mono text-[11px] text-da-muted md:text-xs">
-              Sem cartão · acesso imediato · celular e computador
+              Conta grátis em 10 segundos com o Google · sem cartão
             </p>
           </Reveal>
         </div>

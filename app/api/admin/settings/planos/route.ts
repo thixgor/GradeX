@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig } from '@/lib/types'
@@ -184,6 +185,9 @@ export async function PUT(req: NextRequest) {
     // depois — tempo suficiente para ele achar que não salvou.
     invalidarCatalogoDePlanos()
     invalidarCatalogoDoUpgrade()
+    // A landing mostra o preço do Plus+ e é HTML estático (revalidate de 1 h):
+    // sem o purge, o preço novo levaria até uma hora para aparecer lá.
+    revalidatePath('/')
 
     return NextResponse.json({
       success: true,

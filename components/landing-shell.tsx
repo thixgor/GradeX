@@ -1,5 +1,6 @@
 import { Space_Grotesk, Inter, JetBrains_Mono } from 'next/font/google'
 import LandingPage from '@/components/landing-page'
+import type { PrecoDoPlus } from '@/lib/landing/preco-do-plus'
 
 // Fontes da landing. Declaradas aqui (e não no layout raiz) para que só a
 // landing baixe e faça preload desses arquivos — o resto do app segue com
@@ -38,10 +39,10 @@ const daMono = JetBrains_Mono({
  * `/api/auth/me` que a landing já consultava em toda visita — o cookie de
  * sessão é SameSite=strict e não acompanha uma navegação vinda de fora.
  */
-export function LandingShell() {
+export function LandingShell({ precoPlus = null }: { precoPlus?: PrecoDoPlus | null } = {}) {
   return (
     <div className={`${daDisplay.variable} ${daBody.variable} ${daMono.variable}`}>
-      <LandingPage />
+      <LandingPage precoPlus={precoPlus} />
     </div>
   )
 }

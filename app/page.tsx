@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
 import { LandingShell } from '@/components/landing-shell'
+import { precoDoPlus, type PrecoDoPlus } from '@/lib/landing/preco-do-plus'
+import type { PlanConfig } from '@/lib/types'
 
 // A landing é HTML ESTÁTICO, regenerado no máximo a cada hora — e na hora,
 // via `revalidatePath('/')`, quando o admin mexe em `landing_settings`.
@@ -32,8 +34,15 @@ interface LandingSettings {
   landingPageEnabled?: boolean
 }
 
-const DEFAULTS: Required<LandingSettings> = {
+interface DadosDaLanding {
+  landingPageEnabled: boolean
+  /** Preço do Plus+ para o cartão do plano; `null` = cartão sem número. */
+  precoPlus: PrecoDoPlus | null
+}
+
+const DEFAULTS: DadosDaLanding = {
   landingPageEnabled: true,
+  precoPlus: null,
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -52,20 +61,32 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   })
 }
 
-async function loadLandingSettings(): Promise<Required<LandingSettings>> {
+/**
+ * As duas leituras da landing, em paralelo: o interruptor da página e o
+ * catálogo de planos (para o preço do Plus+ no cartão). Entram no mesmo HTML
+ * estático de uma hora — o preço não custa uma consulta por visita; quem salva
+ * os planos no painel invalida `/` (app/api/admin/settings/planos).
+ */
+async function loadLandingSettings(): Promise<DadosDaLanding> {
   try {
     const { getDb } = await import('@/lib/mongodb')
     const db = await withTimeout(getDb(), 2500)
-    const settings = await withTimeout(
-      db
-        .collection<LandingSettings>('landing_settings')
-        .findOne({}, { projection: { landingPageEnabled: 1 } }),
+    const [settings, admin] = await withTimeout(
+      Promise.all([
+        db
+          .collection<LandingSettings>('landing_settings')
+          .findOne({}, { projection: { landingPageEnabled: 1 } }),
+        db
+          .collection<{ planos?: PlanConfig[] }>('admin_settings')
+          .findOne({}, { projection: { planos: 1 } }),
+      ]),
       2500
     )
 
-    return settings
-      ? { landingPageEnabled: settings.landingPageEnabled !== false }
-      : DEFAULTS
+    return {
+      landingPageEnabled: settings ? settings.landingPageEnabled !== false : true,
+      precoPlus: precoDoPlus(admin?.planos),
+    }
   } catch {
     // Falha de rede/timeout (inclusive durante o build, sem acesso ao Atlas):
     // a landing continua no ar. Desligá-la por causa de uma intermitência do
@@ -81,5 +102,5 @@ export default async function HomePage() {
     redirect('/auth/login')
   }
 
-  return <LandingShell />
+  return <LandingShell precoPlus={settings.precoPlus} />
 }
