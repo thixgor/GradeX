@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
-  Award, BookOpen, ChevronDown, Crown, Eye, EyeOff, Flame, GraduationCap, Layers, MessagesSquare, Sparkles,
+  Award, BookOpen, Brain, ChevronDown, Crown, Eye, EyeOff, Flame, GraduationCap, Heart, Layers, MessagesSquare, Sparkles,
   Star, Target, Trophy,
 } from 'lucide-react'
 import { avatarPorId } from '@/lib/monitorias/avatares'
@@ -392,6 +392,8 @@ const ICONE_DA_MEDALHA: Record<Medalha['icone'], typeof Trophy> = {
   livro: BookOpen,
   estrela: Star,
   comunidade: MessagesSquare,
+  coracao: Heart,
+  foco: Brain,
 }
 
 function Medalhas({ medalhas }: { medalhas: Medalha[] }) {
@@ -436,7 +438,7 @@ function Medalhas({ medalhas }: { medalhas: Medalha[] }) {
 const COR_DA_AREA: Record<AreaDeXp, string> = {
   banco: '#2563eb', provas: '#d0521c', flashcards: '#7646d8', aulas: '#cf3434', manual: '#bf2944',
   materiais: '#0f8f7c', anatomia: '#c94a35', quizzes: '#9343c9', ferramentas: '#2b7891', jogos: '#d22a7a',
-  foco: '#c27508', comunidade: '#1b88bd', constancia: '#2f6b40',
+  foco: '#c27508', comunidade: '#1b88bd', avaliacoes: '#e0457b', compras: '#d39b16', constancia: '#2f6b40',
 }
 
 function DeOndeVem({ porArea, total }: { porArea: Record<AreaDeXp, number>; total: number }) {

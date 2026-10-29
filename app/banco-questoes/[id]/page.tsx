@@ -421,7 +421,7 @@ ${respostaAluno}`
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       })
-      if (res.ok) avisarXp()
+      if (res.ok) avisarXp('questao')
 
       if (res.ok) {
         const data = await res.json()

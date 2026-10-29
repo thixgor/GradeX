@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -175,7 +176,10 @@ export default function EditDeckPage() {
       const saved = json.card
       const nextCards = cards.map((c, i) => i === idx ? { ...c, _id: saved._id, expanded: false } : c)
       setCards(nextCards)
-      if (!isUpdate) persistCardOrder(nextCards, { silent: true })
+      if (!isUpdate) {
+        persistCardOrder(nextCards, { silent: true })
+        avisarXp('flashcard')
+      }
       setToast({ open: true, message: 'Cartão salvo', type: 'success' })
     } catch (err: any) {
       setToast({ open: true, message: err.message || 'Erro', type: 'error' })

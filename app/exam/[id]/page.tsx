@@ -1305,7 +1305,7 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
           fromSavedProgress: true,
         }),
       })
-      if (res.ok) avisarXp()
+      if (res.ok) avisarXp('prova')
       const dados = await res.json()
       if (!res.ok) throw new Error(dados.error)
 
@@ -2253,7 +2253,7 @@ ${respostaAluno}`
           forcedSubmitReason: reason,
         }),
       })
-      if (res.ok) avisarXp()
+      if (res.ok) avisarXp('prova')
 
       const data = await res.json()
 
@@ -2427,7 +2427,7 @@ ${respostaAluno}`
           questionOrder: ordemDasQuestoes,
         }),
       })
-      if (res.ok) avisarXp()
+      if (res.ok) avisarXp('prova')
 
       const data = await res.json()
 

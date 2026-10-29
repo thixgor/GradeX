@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { CoverImage } from '@/components/cover-image'
 import { AnimatePresence, motion, useDragControls, useReducedMotion } from 'framer-motion'
@@ -257,6 +258,7 @@ export function ReviewPrompt({
       }
 
       setEnviado(true)
+      avisarXp('avaliacao')
       if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
         navigator.vibrate([10, 40, 14])
       }

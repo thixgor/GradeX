@@ -571,7 +571,7 @@ export default function ListaDetalhePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpo),
       })
-      if (res.ok) avisarXp()
+      if (res.ok) avisarXp('questao')
       if (!res.ok) return
       registradasRef.current.add(questaoId)
       setRegistradas(Array.from(registradasRef.current))

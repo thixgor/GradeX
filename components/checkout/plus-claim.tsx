@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import Link from 'next/link'
 import { Crown, LogIn } from 'lucide-react'
 import { PLUS_LABEL } from '@/lib/account-tier'
@@ -32,6 +33,7 @@ export async function resgatarComPlus(itemType: PlusClaimItemType, itemId: strin
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ itemType, itemId }),
     })
+    if (res.ok) avisarXp('resgate')
     const data = await res.json().catch(() => ({} as any))
     if (!res.ok) {
       return {

@@ -97,7 +97,7 @@ function MindMapHome() {
       })
       const data = await res.json()
       if (!res.ok) { setToast({ msg: data.error || 'Erro ao criar', type: 'error' }); return }
-      avisarXp()
+      avisarXp('mapa')
       router.push(`/mapa-mental/${data.map.slug || data.map._id}`)
     } catch {
       setToast({ msg: 'Erro ao criar mapa', type: 'error' })
@@ -157,7 +157,7 @@ function MindMapHome() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setToast({ msg: data.error || 'Erro ao importar', type: 'error' }); return }
-      avisarXp()
+      avisarXp('mapa')
       // Confirma quantos nós foram realmente salvos (após saneamento no servidor),
       // para o usuário verificar que nada foi perdido antes de abrir o editor.
       const savedCount = data.map?.nodeCount ?? data.map?.nodes?.length ?? nodes.length

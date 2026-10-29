@@ -155,7 +155,7 @@ export default function Rodada({
         total: Object.keys(respostas).length,
       },
     })
-    avisarXp()
+    avisarXp('anatomia')
     // Só o fim da rodada interessa; as respostas já estão fechadas nesse ponto.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encerrado])

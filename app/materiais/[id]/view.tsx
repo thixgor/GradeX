@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
@@ -265,6 +266,10 @@ export default function MaterialViewPage() {
   // Registra a abertura do material para o painel de estatísticas. Os logs do
   // leitor (`material_pdf_viewer_logs`) só existem para quem abre o PDF — este
   // evento cobre também quem só olhou a página do material.
+  // Abrir um material que é seu vale XP (uma vez por dia) — o "+XP" aparece.
+  useEffect(() => {
+    if (data?.material && data.hasAccess) avisarXp('material')
+  }, [data?.material?._id, data?.hasAccess])
   useTrackView(
     data?.material
       ? {
@@ -464,6 +469,7 @@ export default function MaterialViewPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemType: 'material', itemId: id }),
       })
+      if (res.ok) avisarXp('resgate')
       const json = await res.json().catch(() => ({}))
       if (!res.ok) {
         showCartMessage(json.error || 'Não foi possível resgatar este material.')

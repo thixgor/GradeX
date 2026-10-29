@@ -32,6 +32,7 @@
  * desenhado que preenche enquanto o comprador digita.
  */
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useEffect, useMemo, useState } from 'react'
 import { Loader2, AlertCircle, ArrowRight, Check, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, Info, FileText, ShieldCheck } from 'lucide-react'
 import { LogoAnimada } from '@/components/marca/logo-animada'
@@ -442,6 +443,7 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         setOrder(prev => prev ? { ...prev, status: data.status, statusDetail: data.statusDetail, paymentMethod: data.paymentMethod } : prev)
         if (data.status === 'approved') {
           parado = true
+          avisarXp('compra')
           props.onApproved?.({ ...order, status: 'approved' })
         } else if (['rejected', 'cancelled', 'expired'].includes(data.status)) {
           parado = true
@@ -915,7 +917,10 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
         )
       }
       setOrder(data)
-      if (data.status === 'approved') props.onApproved?.(data)
+      if (data.status === 'approved') {
+        avisarXp('compra')
+        props.onApproved?.(data)
+      }
       else if (['rejected', 'cancelled', 'expired'].includes(data.status)) props.onRejected?.(data)
     } catch (err: any) {
       setError(err?.message || 'Erro ao processar')

@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
@@ -1286,6 +1287,7 @@ export default function DeckPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemType: 'material', itemId: data.deck.linkedMaterialId }),
       })
+      if (res.ok) avisarXp('resgate')
       const json = await res.json().catch(() => ({}))
       if (!res.ok) {
         setToast({ open: true, message: json.error || 'Não foi possível resgatar este deck.', type: 'error' })

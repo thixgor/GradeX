@@ -91,6 +91,54 @@ describe('calcularXp', () => {
   })
 })
 
+describe('novas fontes: avaliação, compras, foco, flashcards criados', () => {
+  it('avaliar vale muito, e com comentário vale mais', () => {
+    const x = calcularXp(
+      [
+        { dia: '2026-10-20', fonte: 'avaliacao', quantidade: 2 },
+        { dia: '2026-10-20', fonte: 'avaliacao_escrita', quantidade: 1 },
+      ],
+      AGORA,
+    )
+    expect(x.porArea.avaliacoes).toBe(2 * 60 + 40)
+  })
+
+  it('compras e resgates não têm teto diário', () => {
+    const x = calcularXp(
+      [
+        { dia: '2026-10-20', fonte: 'compra_pacote', quantidade: 3 },
+        { dia: '2026-10-20', fonte: 'compra_manual', quantidade: 1 },
+        { dia: '2026-10-20', fonte: 'resgate_plus', quantidade: 10 },
+      ],
+      AGORA,
+    )
+    expect(x.porArea.compras).toBe(3 * 150 + 200 + 10 * 40)
+  })
+
+  it('meta de foco soma ao minuto e respeita o teto do foco', () => {
+    const x = calcularXp(
+      [
+        { dia: '2026-10-20', fonte: 'foco_minuto', quantidade: 50 },
+        { dia: '2026-10-20', fonte: 'foco_meta', quantidade: 2 },
+        { dia: '2026-10-21', fonte: 'foco_minuto', quantidade: 400 },
+      ],
+      AGORA,
+    )
+    expect(x.porArea.foco).toBe(50 + 30 + (TETO_DIARIO.foco as number))
+  })
+
+  it('criar baralho e cartas conta em flashcards', () => {
+    const x = calcularXp(
+      [
+        { dia: '2026-10-20', fonte: 'flash_baralho_criado', quantidade: 1 },
+        { dia: '2026-10-20', fonte: 'flash_carta_criada', quantidade: 10 },
+      ],
+      AGORA,
+    )
+    expect(x.porArea.flashcards).toBe(20 + 20)
+  })
+})
+
 describe('níveis e ligas', () => {
   it('curva cresce e o nível 1 começa no zero', () => {
     expect(xpParaNivel(1)).toBe(0)

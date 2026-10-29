@@ -22,6 +22,7 @@ export type CorDoChip = readonly [string, string]
 const CORES: Partial<Record<SidebarSectionKey | string, CorDoChip>> = {
   inicio: ['#5aa66b', '#2f6b40'],
   ranking: ['#f5c04a', '#c4840a'],
+  foco: ['#7c8cf8', '#4553d6'],
   provas: ['#f38a4e', '#d0521c'],
   bancoQuestoes: ['#5b9bff', '#2563eb'],
   aulas: ['#f47272', '#cf3434'],

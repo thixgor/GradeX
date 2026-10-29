@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, memo, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -1678,6 +1679,7 @@ function CreateDeckDialog({ open, onOpenChange, isAdmin, emailVerified, folders,
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Erro ao criar')
+      if (!(isAdmin && asAdmin)) avisarXp('baralho')
       onCreated(json.deck.slug)
     } catch (err: any) {
       setError(err?.message || 'Erro ao criar')

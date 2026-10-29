@@ -11,7 +11,13 @@ interface FocusSessionPayload {
   startedAt: string
   finishedAt: string
   totalTimeMs: number
+  /** Meta escolhida (min). Vira o bônus de "meta batida" no XP. */
+  targetMinutes?: number
+  /** Método da sessão (pomodoro, 52-17, ultradiano, livre). */
+  method?: string
 }
+
+const METODOS = new Set(['pomodoro', '52-17', 'ultradiano', 'livre'])
 
 // POST - Sync focus sessions (batch upsert)
 export async function POST(request: NextRequest) {
@@ -59,7 +65,18 @@ export async function POST(request: NextRequest) {
                 objective: String(s.objective || '').slice(0, 200),
                 startedAt: validStartedAt,
                 finishedAt: validFinishedAt,
-                totalTimeMs: Math.min(Math.max(0, Number(s.totalTimeMs) || 0), 86400000), // Max 24h
+                // Nunca mais que o tempo de relógio entre início e fim (nem 24 h):
+                // o tempo vem do aparelho e vira XP.
+                totalTimeMs: Math.min(
+                  Math.max(0, Number(s.totalTimeMs) || 0),
+                  Math.max(0, validFinishedAt.getTime() - validStartedAt.getTime()) || 86400000,
+                  86400000,
+                ),
+                targetMinutes:
+                  Number.isFinite(Number(s.targetMinutes)) && Number(s.targetMinutes) >= 5 && Number(s.targetMinutes) <= 180
+                    ? Math.round(Number(s.targetMinutes))
+                    : null,
+                method: typeof s.method === 'string' && METODOS.has(s.method) ? s.method : null,
                 syncedAt: new Date(),
               },
             },

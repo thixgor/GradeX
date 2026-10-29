@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarRelogio } from '@/lib/foco/ritmo-de-foco'
@@ -18,7 +19,11 @@ export interface FocusSession {
   status: 'active' | 'paused' | 'finished'
   /** Meta da sessão em minutos (25, 50, 90…). Sem meta, é cronômetro livre. */
   targetMinutes?: number
+  /** Método escolhido no Modo Foco (pomodoro, 52-17, ultradiano, livre). */
+  method?: MetodoDeFoco
 }
+
+export type MetodoDeFoco = 'pomodoro' | '52-17' | 'ultradiano' | 'livre'
 
 export interface FocusSessionHistory {
   id: string
@@ -28,6 +33,9 @@ export interface FocusSessionHistory {
   totalTimeMs: number       // net study time (excluding pauses)
   syncedToServer: boolean
   targetMinutes?: number
+  method?: MetodoDeFoco
+  /** O que a pessoa lembrou ao fim (recordação ativa). Fica só no aparelho. */
+  recall?: string
 }
 
 interface FocusSessionContextType {
@@ -36,7 +44,9 @@ interface FocusSessionContextType {
   elapsedMs: number         // real-time elapsed (excluding pauses)
 
   // Actions
-  startSession: (objective: string, targetMinutes?: number) => void
+  startSession: (objective: string, targetMinutes?: number, method?: MetodoDeFoco) => void
+  /** Guarda a recordação ativa na sessão do histórico (só no aparelho). */
+  saveRecall: (id: string, recall: string) => void
   pauseSession: () => void
   resumeSession: () => void
   finishSession: () => void
@@ -268,7 +278,7 @@ export function FocusSessionProvider({
 
   // --- Actions ---
 
-  const startSession = useCallback((objective: string, targetMinutes?: number) => {
+  const startSession = useCallback((objective: string, targetMinutes?: number, method?: MetodoDeFoco) => {
     const session: FocusSession = {
       id: generateId(),
       objective: objective.trim() || 'Sessão de foco',
@@ -276,10 +286,17 @@ export function FocusSessionProvider({
       totalPausedMs: 0,
       status: 'active',
       targetMinutes: targetMinutes && targetMinutes > 0 ? Math.round(targetMinutes) : undefined,
+      method,
     }
     setCurrentSession(session)
     setElapsedMs(0)
     setLastFinished(null)
+  }, [])
+
+  const saveRecall = useCallback((id: string, recall: string) => {
+    const texto = recall.trim().slice(0, 600)
+    setHistory(h => h.map(s => (s.id === id ? { ...s, recall: texto } : s)))
+    setLastFinished(prev => (prev && prev.id === id ? { ...prev, recall: texto } : prev))
   }, [])
 
   const pauseSession = useCallback(() => {
@@ -329,6 +346,7 @@ export function FocusSessionProvider({
         totalTimeMs: Math.max(0, totalTimeMs),
         syncedToServer: false,
         targetMinutes: prev.targetMinutes,
+        method: prev.method,
       }
       setLastFinished(entry)
 
@@ -375,9 +393,12 @@ export function FocusSessionProvider({
       const res = await fetch('/api/focus-sessions/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessions: unsynced }),
+        // A recordação ativa fica no aparelho: não sobe.
+        body: JSON.stringify({ sessions: unsynced.map(({ recall: _recall, ...sessao }) => sessao) }),
       })
       if (res.ok) {
+        // Sessão de verdade (1 min ou mais) entrou no desempenho: a festa do foco.
+        if (unsynced.some(s => (s.totalTimeMs || 0) >= 60_000)) avisarXp('foco')
         const sent = new Set(unsynced.map(s => `${s.id}|${s.objective}`))
         setHistory(h => h.map(s => (sent.has(`${s.id}|${s.objective}`) ? { ...s, syncedToServer: true } : s)))
       }
@@ -409,6 +430,7 @@ export function FocusSessionProvider({
       currentSession,
       elapsedMs,
       startSession,
+      saveRecall,
       pauseSession,
       resumeSession,
       finishSession,

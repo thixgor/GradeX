@@ -5,9 +5,11 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { LogoAnimada } from '@/components/marca/logo-animada'
-import { CHAVE_XP_SUJO, EVENTO_DE_XP } from '@/lib/xp/cliente'
+import { CHAVE_XP_MOTIVO, CHAVE_XP_SUJO, EVENTO_DE_XP, type MotivoDeXp } from '@/lib/xp/cliente'
+import { comemoracaoPara, type Comemoracao } from '@/lib/xp/motivos'
+import { CelebracaoDeXp, type Celebracao } from './comemoracao'
 import type { AreaDeXp, InfoDeNivel, Medalha } from '@/lib/xp/regras'
-import { AnelDeNivel, NumeroQueCorre, SeloDaLiga, estiloDaLiga } from './pecas'
+import { NumeroQueCorre, SeloDaLiga, estiloDaLiga } from './pecas'
 import { tocarSomDeXp } from './som'
 import '@/components/checkout/checkout-vidro.css'
 import '@/components/marca/logo-animada.css'
@@ -79,13 +81,15 @@ function gravar(chave: string, valor: unknown, area: 'session' | 'local' = 'sess
   } catch {}
 }
 
-type Ganho = { chave: number; xp: number; total: number; nivel: InfoDeNivel }
+type Ganho = { chave: number; xp: number; total: number; nivel: InfoDeNivel; comemoracao: Comemoracao }
 type Subida = { de: number; para: InfoDeNivel; novaLiga: boolean; apresentacao?: boolean; total: number }
 
 export function XpProvider({ userId, children }: { userId: string | null | undefined; children: React.ReactNode }) {
   const [dados, setDados] = useState<DadosDeXp | null>(null)
   const [ganho, setGanho] = useState<Ganho | null>(null)
   const [subida, setSubida] = useState<Subida | null>(null)
+  const [celebracao, setCelebracao] = useState<Celebracao | null>(null)
+  const motivoRef = useRef<{ motivo: MotivoDeXp; em: number } | null>(null)
   const pedindo = useRef(false)
   const espera = useRef<number | null>(null)
 
@@ -109,10 +113,25 @@ export function XpProvider({ userId, children }: { userId: string | null | undef
         return
       }
       if (novo.total > visto.total) {
-        setGanho({ chave: Date.now(), xp: novo.total - visto.total, total: novo.total, nivel: novo.nivel })
+        const xp = novo.total - visto.total
+        // O motivo do último aviso (até 3 min) decide a festa: na memória, ou
+        // na sessão quando a ação trocou de página (compra → "aprovada").
+        const guardado = motivoRef.current || ler<{ motivo: MotivoDeXp; em: number }>(CHAVE_XP_MOTIVO)
+        const motivo = guardado && Date.now() - guardado.em < 180_000 ? guardado.motivo : null
+        motivoRef.current = null
+        try { window.sessionStorage.removeItem(CHAVE_XP_MOTIVO) } catch {}
+        const comemoracao = comemoracaoPara(motivo, xp)
+
         if (novo.nivel.nivel > visto.nivel) {
           setSubida({ de: visto.nivel, para: novo.nivel, novaLiga: novo.nivel.liga.id !== visto.liga, total: novo.total })
+        } else if (comemoracao.tamanho === 'grande') {
+          // Progresso no nível antes do ganho: a barra da celebração anda dele.
+          const faixa = Math.max(1, novo.nivel.proximo - novo.nivel.base)
+          const antes = Math.max(0, Math.min(1, (visto.total - novo.nivel.base) / faixa))
+          setCelebracao({ chave: Date.now(), xp, total: novo.total, nivel: novo.nivel, progressoAntes: antes, comemoracao })
+          tocarSomDeXp(comemoracao.especial ? 'nivel' : 'grande')
         } else {
+          setGanho({ chave: Date.now(), xp, total: novo.total, nivel: novo.nivel, comemoracao })
           tocarSomDeXp('ponto')
         }
       }
@@ -146,7 +165,12 @@ export function XpProvider({ userId, children }: { userId: string | null | undef
   // Depois de uma ação que dá XP; e quando a aba volta a ficar visível.
   useEffect(() => {
     if (!userId) return
-    const aoGanhar = () => {
+    const aoGanhar = (evento: Event) => {
+      const motivo = (evento as CustomEvent<{ motivo?: MotivoDeXp }>).detail?.motivo
+      // Um motivo "grande" não é rebaixado por um pequeno logo depois.
+      if (motivo && (!motivoRef.current || comemoracaoPara(motivoRef.current.motivo, 0).tamanho !== 'grande')) {
+        motivoRef.current = { motivo, em: Date.now() }
+      }
       if (espera.current) window.clearTimeout(espera.current)
       // Um respiro: o servidor termina de gravar e várias ações seguidas viram um pedido.
       espera.current = window.setTimeout(() => recarregar(true), 1200)
@@ -173,11 +197,13 @@ export function XpProvider({ userId, children }: { userId: string | null | undef
   }, [ganho])
 
   const valor = useMemo(() => ({ dados, recarregar }), [dados, recarregar])
+  const fecharCelebracao = useCallback(() => setCelebracao(null), [])
 
   return (
     <Contexto.Provider value={valor}>
       {children}
-      <ToastDeXp ganho={subida ? null : ganho} />
+      <ToastDeXp ganho={subida || celebracao ? null : ganho} />
+      <CelebracaoDeXp celebracao={subida ? null : celebracao} fechar={fecharCelebracao} />
       <SubidaDeNivel subida={subida} fechar={() => setSubida(null)} />
     </Contexto.Provider>
   )
@@ -204,7 +230,9 @@ function ToastDeXp({ ganho }: { ganho: Ganho | null }) {
           exit={{ opacity: 0, y: -16, x: '-50%', scale: 0.95 }}
           transition={{ type: 'spring', stiffness: 420, damping: 24 }}
         >
-          <AnelDeNivel nivel={ganho.nivel.nivel} progresso={ganho.nivel.progresso} liga={ganho.nivel.liga} tamanho={40} />
+          <span className="xp-toast-moeda" aria-hidden>
+            <LogoAnimada tamanho="menu" nome={false} inclinacao="nenhuma" modo="gerando" />
+          </span>
           {!calmo && (
             <span className="xp-moedas" aria-hidden>
               {Array.from({ length: 8 }, (_, i) => (
@@ -220,6 +248,7 @@ function ToastDeXp({ ganho }: { ganho: Ganho | null }) {
             </span>
           )}
           <span>
+            <span className="xp-toast-marca">DomineAqui XP · {ganho.comemoracao.rotulo}</span>
             <b>+<NumeroQueCorre valor={ganho.xp} /> XP</b>
             <small>{Math.max(0, ganho.nivel.proximo - ganho.total).toLocaleString('pt-BR')} para o nível {ganho.nivel.nivel + 1}</small>
             <span className="xp-toast-barra" aria-hidden>

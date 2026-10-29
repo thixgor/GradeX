@@ -20,7 +20,7 @@ function somLigado(): boolean {
   }
 }
 
-export function tocarSomDeXp(qual: 'ponto' | 'nivel'): void {
+export function tocarSomDeXp(qual: 'ponto' | 'grande' | 'nivel'): void {
   if (typeof window === 'undefined' || !somLigado()) return
   if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches && qual === 'ponto') return
   try {
@@ -29,7 +29,8 @@ export function tocarSomDeXp(qual: 'ponto' | 'nivel'): void {
     contexto ||= new Ctor()
     const ctx = contexto
     if (ctx.state === 'suspended') ctx.resume().catch(() => {})
-    const notas = qual === 'ponto' ? [784, 1175] : [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568]
+    const notas =
+      qual === 'ponto' ? [784, 1175] : qual === 'grande' ? [659.25, 783.99, 1046.5, 1318.5] : [523.25, 659.25, 783.99, 1046.5, 1318.5, 1568]
     const passo = qual === 'ponto' ? 0.07 : 0.09
     notas.forEach((frequencia, i) => {
       const inicio = ctx.currentTime + i * passo

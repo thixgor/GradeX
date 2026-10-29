@@ -70,7 +70,7 @@ export async function montarExtratoDeXp(
     registros.push({ dia, fonte, quantidade })
   }
 
-  const [entregas, banco, cartas, dominadas, aulas, foco, eventos, leitor, posts, comentarios, mapas] =
+  const [entregas, banco, cartas, dominadas, aulas, foco, eventos, leitor, posts, comentarios, mapas, compras, manual, avaliacoes, criados] =
     await Promise.all([
       seguro(
         db
@@ -181,12 +181,27 @@ export async function montarExtratoDeXp(
       seguro(
         db
           .collection('focus-sessions')
-          .aggregate<{ _id: string | null; ms: number }>([
+          .aggregate<{ _id: string | null; ms: number; metas: number }>([
             { $match: { userId } },
-            { $group: { _id: porDiaNoFuso('$startedAt'), ms: { $sum: '$totalTimeMs' } } },
+            {
+              $group: {
+                _id: porDiaNoFuso('$startedAt'),
+                ms: { $sum: '$totalTimeMs' },
+                // Meta batida: a sessão tinha meta e o tempo líquido chegou nela.
+                metas: {
+                  $sum: {
+                    $cond: [
+                      { $and: [{ $gt: ['$targetMinutes', 0] }, { $gte: ['$totalTimeMs', { $multiply: ['$targetMinutes', 60_000] }] }] },
+                      1,
+                      0,
+                    ],
+                  },
+                },
+              },
+            },
           ])
           .toArray(),
-        [] as Array<{ _id: string | null; ms: number }>,
+        [] as Array<{ _id: string | null; ms: number; metas: number }>,
       ),
       seguro(
         db
@@ -277,6 +292,88 @@ export async function montarExtratoDeXp(
         })(),
         { criados: new Map<string, number>(), curtidas: [] as Array<{ _id: string | null; n: number }> },
       ),
+      // Compras de material e pacote, e os resgates do Plus+ (um por item).
+      seguro(
+        db
+          .collection('material_purchases')
+          .aggregate<{ _id: { dia: string | null; tipo: string }; n: number }>([
+            { $match: { userId, status: { $in: ['completed', 'swapped', 'plus_revoked'] } } },
+            {
+              $project: {
+                tipo: {
+                  $cond: [
+                    { $eq: ['$source', 'plus'] },
+                    'plus',
+                    { $cond: [{ $eq: ['$itemType', 'package'] }, 'pacote', 'material'] },
+                  ],
+                },
+                quando: { $ifNull: ['$claimedAt', '$purchasedAt'] },
+                itemId: 1,
+                // Troca do admin não é compra nova.
+                troca: { $eq: ['$source', 'swap'] },
+              },
+            },
+            { $match: { troca: false } },
+            { $group: { _id: { tipo: '$tipo', item: '$itemId' }, quando: { $min: '$quando' } } },
+            { $group: { _id: { dia: porDiaNoFuso('$quando'), tipo: '$_id.tipo' }, n: { $sum: 1 } } },
+          ])
+          .toArray(),
+        [] as Array<{ _id: { dia: string | null; tipo: string }; n: number }>,
+      ),
+      seguro(
+        db
+          .collection('manual_clinico_purchases')
+          .aggregate<{ _id: string | null; n: number }>([
+            { $match: { userId, status: { $in: ['completed', 'revoked'] }, price: { $gt: 0 } } },
+            { $group: { _id: porDiaNoFuso('$purchasedAt'), n: { $sum: 1 } } },
+          ])
+          .toArray(),
+        [] as Array<{ _id: string | null; n: number }>,
+      ),
+      // Avaliações: uma por item avaliado; comentário de verdade vale mais.
+      seguro(
+        db
+          .collection('reviews')
+          .aggregate<{ _id: string | null; n: number; escritas: number }>([
+            { $match: { userId, isAdminCreated: { $ne: true } } },
+            {
+              $group: {
+                _id: { t: '$targetType', id: '$targetId' },
+                quando: { $min: '$createdAt' },
+                escrita: { $max: { $gte: [{ $strLenCP: { $ifNull: ['$comment', ''] } }, 40] } },
+              },
+            },
+            { $group: { _id: porDiaNoFuso('$quando'), n: { $sum: 1 }, escritas: { $sum: { $cond: ['$escrita', 1, 0] } } } },
+          ])
+          .toArray(),
+        [] as Array<{ _id: string | null; n: number; escritas: number }>,
+      ),
+      // Flashcards criados pela pessoa: baralhos e cartas.
+      seguro(
+        (async () => {
+          const baralhos = await db
+            .collection(FLASHCARD_MANUAL_COLLECTIONS.decks)
+            .find({ ownerId: userId, ownerType: { $ne: 'admin' } }, { projection: { _id: 1, createdAt: 1 } })
+            .toArray()
+          const porDia = new Map<string, number>()
+          for (const b of baralhos) {
+            if (!b.createdAt) continue
+            const dia = new Date(b.createdAt).toLocaleDateString('en-CA', { timeZone: FUSO })
+            porDia.set(dia, (porDia.get(dia) || 0) + 1)
+          }
+          const cartas = baralhos.length
+            ? await db
+                .collection(FLASHCARD_MANUAL_COLLECTIONS.cards)
+                .aggregate<{ _id: string | null; n: number }>([
+                  { $match: { deckId: { $in: baralhos.map((b) => String(b._id)) } } },
+                  { $group: { _id: porDiaNoFuso('$createdAt'), n: { $sum: 1 } } },
+                ])
+                .toArray()
+            : []
+          return { baralhos: porDia, cartas }
+        })(),
+        { baralhos: new Map<string, number>(), cartas: [] as Array<{ _id: string | null; n: number }> },
+      ),
     ])
 
   // ── Provas ────────────────────────────────────────────────────────────────
@@ -342,6 +439,7 @@ export async function montarExtratoDeXp(
   for (const l of foco) {
     if (!l._id) continue
     somar(l._id, 'foco_minuto', Math.round((l.ms || 0) / 60_000))
+    somar(l._id, 'foco_meta', l.metas || 0)
   }
 
   // ── Eventos (Manual, materiais, anatomia, ferramentas, quizzes, jogos) ───
@@ -393,6 +491,19 @@ export async function montarExtratoDeXp(
   for (const l of comentarios) somar(l._id, 'forum_comentario', l.n)
   for (const [dia, n] of mapas.criados) somar(dia, 'mapa_criado', n)
   for (const l of mapas.curtidas) somar(l._id, 'mapa_curtido', l.n)
+
+  // ── Avaliações, compras, resgates e flashcards criados ────────────────────
+  for (const l of avaliacoes) {
+    somar(l._id, 'avaliacao', l.n)
+    somar(l._id, 'avaliacao_escrita', l.escritas)
+  }
+  for (const l of compras) {
+    const fonte = l._id.tipo === 'plus' ? 'resgate_plus' : l._id.tipo === 'pacote' ? 'compra_pacote' : 'compra_material'
+    somar(l._id.dia, fonte, l.n)
+  }
+  for (const l of manual) somar(l._id, 'compra_manual', l.n)
+  for (const [dia, n] of criados.baralhos) somar(dia, 'flash_baralho_criado', n)
+  for (const l of criados.cartas) somar(l._id, 'flash_carta_criada', l.n)
 
   return calcularXp(registros, agora)
 }

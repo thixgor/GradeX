@@ -87,7 +87,7 @@ export function PlayerDaAula({
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => {
           if (d?.progresso) {
-            if (d.progresso.concluida) avisarXp()
+            if (d.progresso.concluida) avisarXp('aula')
             aoAtualizarProgresso?.({
               percentual: d.progresso.percentual,
               concluida: d.progresso.concluida,

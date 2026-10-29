@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
@@ -219,6 +220,7 @@ export default function PackageDetailPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemType: 'package', itemId: id }),
       })
+      if (res.ok) avisarXp('resgate')
       const result = await res.json().catch(() => ({}))
       if (!res.ok) {
         setCartMessage(result.error || 'Não foi possível resgatar este pacote.')

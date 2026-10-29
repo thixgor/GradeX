@@ -40,6 +40,8 @@ export const AREAS_DE_XP = [
   'jogos',
   'foco',
   'comunidade',
+  'avaliacoes',
+  'compras',
   'constancia',
 ] as const
 export type AreaDeXp = (typeof AREAS_DE_XP)[number]
@@ -57,6 +59,8 @@ export const ROTULO_DA_AREA: Record<AreaDeXp, string> = {
   jogos: 'Jogos',
   foco: 'Sessões de foco',
   comunidade: 'Comunidade',
+  avaliacoes: 'Avaliações',
+  compras: 'Compras e resgates',
   constancia: 'Constância',
 }
 
@@ -74,6 +78,10 @@ export const TETO_DIARIO: Record<AreaDeXp, number | null> = {
   jogos: 90,
   foco: 180,
   comunidade: 120,
+  // Avaliar é o que mais ajuda quem vem depois: vale muito, com teto alto.
+  avaliacoes: 500,
+  // Compras e resgates são limitados pelo próprio catálogo: sem teto.
+  compras: null,
   constancia: null,
 }
 
@@ -89,6 +97,8 @@ export const FONTES_DE_XP = {
   flash_revisao: { area: 'flashcards', xp: 2, rotulo: 'Carta revisada' },
   flash_lembrei: { area: 'flashcards', xp: 1, rotulo: 'Carta lembrada (além da revisão)' },
   flash_dominada: { area: 'flashcards', xp: 5, rotulo: 'Carta dominada (intervalo de 21+ dias)' },
+  flash_baralho_criado: { area: 'flashcards', xp: 20, rotulo: 'Baralho de flashcards criado' },
+  flash_carta_criada: { area: 'flashcards', xp: 2, rotulo: 'Flashcard criado' },
   aula_concluida: { area: 'aulas', xp: 30, rotulo: 'Aula concluída' },
   manual_patologia: { area: 'manual', xp: 5, rotulo: 'Patologia estudada (uma vez por dia)' },
   manual_secao: { area: 'manual', xp: 2, rotulo: 'Módulo do Manual aberto (uma vez por dia)' },
@@ -106,6 +116,13 @@ export const FONTES_DE_XP = {
   forum_comentario: { area: 'comunidade', xp: 5, rotulo: 'Resposta no fórum' },
   mapa_criado: { area: 'comunidade', xp: 25, rotulo: 'Mapa mental criado' },
   mapa_curtido: { area: 'comunidade', xp: 3, rotulo: 'Curtida recebida num mapa mental' },
+  avaliacao: { area: 'avaliacoes', xp: 60, rotulo: 'Avaliação de material ou baralho' },
+  avaliacao_escrita: { area: 'avaliacoes', xp: 40, rotulo: 'Avaliação com comentário (40+ letras, além da nota)' },
+  compra_material: { area: 'compras', xp: 80, rotulo: 'Material comprado' },
+  compra_pacote: { area: 'compras', xp: 150, rotulo: 'Pacote de materiais comprado' },
+  compra_manual: { area: 'compras', xp: 200, rotulo: 'Manual Clínico adquirido' },
+  resgate_plus: { area: 'compras', xp: 40, rotulo: 'Material resgatado com o Plus+' },
+  foco_meta: { area: 'foco', xp: 15, rotulo: 'Meta da sessão de foco batida' },
   dia_ativo: { area: 'constancia', xp: 10, rotulo: 'Dia com estudo' },
   sequencia_7: { area: 'constancia', xp: 50, rotulo: 'Cada 7 dias seguidos de estudo' },
 } as const satisfies Record<string, { area: AreaDeXp; xp: number; rotulo: string }>
@@ -308,7 +325,7 @@ export interface Medalha {
   id: string
   nome: string
   texto: string
-  icone: 'questao' | 'prova' | 'carta' | 'aula' | 'chama' | 'livro' | 'estrela' | 'comunidade'
+  icone: 'questao' | 'prova' | 'carta' | 'aula' | 'chama' | 'livro' | 'estrela' | 'comunidade' | 'coracao' | 'foco'
   conquistada: boolean
   /** 0–1 até conquistar. */
   progresso: number
@@ -377,6 +394,22 @@ const DEGRAUS: Array<{
     icone: 'livro',
     valor: (e) => e.quantidades.manual_patologia,
     alvos: [10, 100, 300],
+  },
+  {
+    id: 'avaliacoes',
+    nome: 'Voz da turma',
+    texto: (a) => (a === 1 ? 'Primeira avaliação' : `${a} avaliações`),
+    icone: 'coracao',
+    valor: (e) => e.quantidades.avaliacao,
+    alvos: [1, 10, 30],
+  },
+  {
+    id: 'foco',
+    nome: 'Mente afiada',
+    texto: (a) => `${a.toLocaleString('pt-BR')} minutos de foco`,
+    icone: 'foco',
+    valor: (e) => e.quantidades.foco_minuto,
+    alvos: [60, 600, 3000],
   },
   {
     id: 'comunidade',

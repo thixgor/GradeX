@@ -110,7 +110,7 @@ export default function ForumPostPage(props: { params: Promise<{ id: string }> }
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao enviar comentário')
       }
-      avisarXp()
+      avisarXp('forum')
 
       setToastMessage('Comentário adicionado com sucesso!')
       setToastType('success')

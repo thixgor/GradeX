@@ -249,7 +249,7 @@ function NewForumPostContent() {
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao criar post')
       }
-      avisarXp()
+      avisarXp('forum')
 
       setToastMessage('Post criado com sucesso!')
       setToastType('success')

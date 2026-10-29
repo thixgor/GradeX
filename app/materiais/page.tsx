@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { Suspense, useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
@@ -737,6 +738,7 @@ function MateriaisContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemType, itemId }),
       })
+      if (res.ok) avisarXp('resgate')
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         notify(data.error || 'Não foi possível resgatar este item.', 'error')
