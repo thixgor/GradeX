@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import '@/components/checkout/checkout-vidro.css'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { AlertCircle, Check, Clock, Flame, Gift, Loader2, Package, ShoppingCart, Sparkles } from 'lucide-react'
@@ -61,19 +62,27 @@ function tempoRestante(alvo: string | null, agora: number) {
   }
 }
 
+/*
+ * A oferta mora no mundo do checkout: tema escuro de marca só nesta página,
+ * aurora fixa atrás e vidro por cima (`checkout-vidro.css`).
+ */
+const MUNDO = 'dark ck-mundo ck-fundo-fixo'
+
 const fundo: React.CSSProperties = {
   minHeight: '100vh',
-  background: 'radial-gradient(circle at 20% 0%, rgba(217,70,239,0.18), transparent 45%), linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
   padding: '24px 16px 48px',
   color: 'white',
 }
 
 const vidro: React.CSSProperties = {
-  background: 'rgba(6,20,10,0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(52,211,153,0.15)',
-  borderRadius: '20px',
+  position: 'relative',
+  background: 'var(--ck-vidro-forte)',
+  backdropFilter: 'blur(28px) saturate(170%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(170%)',
+  boxShadow:
+    'inset 0 1px 0 var(--ck-brilho), inset 0 0 0 1px var(--ck-borda), 0 0 0 1px var(--ck-contorno), 0 30px 60px -30px var(--ck-sombra)',
+  border: '1px solid transparent',
+  borderRadius: '26px',
 }
 
 export default function OfertaExclusivaPage() {
@@ -132,7 +141,7 @@ export default function OfertaExclusivaPage() {
 
   if (carregando) {
     return (
-      <div style={{ ...fundo, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={MUNDO} style={{ ...fundo, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#34d399' }} />
       </div>
     )
@@ -140,7 +149,7 @@ export default function OfertaExclusivaPage() {
 
   if (erro || !dados) {
     return (
-      <div style={fundo}>
+      <div style={fundo} className={MUNDO}>
         <div style={{ ...vidro, maxWidth: 520, margin: '64px auto', padding: 28, textAlign: 'center' }}>
           <AlertCircle className="mx-auto h-10 w-10" style={{ color: '#fbbf24' }} />
           <p style={{ marginTop: 14, fontSize: 16, fontWeight: 700 }}>{erro?.mensagem || 'Oferta indisponível.'}</p>
@@ -160,7 +169,7 @@ export default function OfertaExclusivaPage() {
   const nadaParaComprar = vitrine.itens.length === 0
 
   return (
-    <div style={fundo}>
+    <div style={fundo} className={MUNDO}>
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         {oferta.previaDoAdmin ? (
           <p style={{ marginBottom: 12, fontSize: 12, color: '#fbbf24', textAlign: 'center' }}>

@@ -21,7 +21,6 @@ import {
   ChevronDown,
   CreditCard,
   Zap,
-  CheckCircle2,
   Check,
   Lock,
   Tag,
@@ -29,6 +28,7 @@ import {
   Clock,
   GraduationCap,
   Crown,
+  ShieldCheck,
 } from 'lucide-react'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import type { PlanConfig } from '@/lib/types'
@@ -39,6 +39,9 @@ import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
+import { CabecaDoCheckout, MundoDoCheckout, TrilhaDoCheckout } from '@/components/checkout/mundo-do-checkout'
+import { SeloDePago } from '@/components/checkout/marca-no-pagamento'
+import { LogoAnimada } from '@/components/marca/logo-animada'
 import { combineDiscountsWithProuni } from '@/lib/prouni-shared'
 import {
   computeCheckoutCharge,
@@ -274,28 +277,28 @@ function BuyCheckoutContent() {
 
   if (loading || ofertaDeUpgrade === undefined) {
     return (
-      <div className="surface-page flex min-h-[60vh] items-center justify-center px-4 py-6">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      <MundoDoCheckout>
+        <div className="flex min-h-[70vh] flex-col items-center justify-center gap-4 px-4 py-6">
+          <LogoAnimada tamanho="compacto" nome={false} modo="gerando" flutua={false} inclinacao="nenhuma" />
+          <p className="text-sm font-medium text-muted-foreground">Preparando o seu pedido…</p>
+        </div>
+      </MundoDoCheckout>
     )
   }
 
   if (error || !plan) {
     return (
-      <div className="surface-page min-h-full px-4 py-6 sm:px-6">
-        <div className="mx-auto max-w-xl pt-8">
-          <div className="mb-4 rounded-lg border border-destructive/25 bg-destructive/10 px-5 py-6 text-sm text-destructive">
-            {error || 'Plano não disponível.'}
+      <MundoDoCheckout>
+        <div className="min-h-full px-4 py-6 sm:px-6">
+          <div className="ck-vidro-forte ck-entra mx-auto mt-10 max-w-md p-6 text-center">
+            <p className="ck-h1" style={{ fontSize: 24 }}>Não encontramos este plano</p>
+            <p className="ck-sub">{error || 'Plano não disponível.'}</p>
+            <button type="button" onClick={() => router.push('/buy')} className="ck-botao mt-5">
+              <ChevronLeft className="h-4 w-4" /> Ver os planos
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => router.push('/buy')}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-muted-foreground transition hover:bg-muted hover:text-foreground"
-          >
-            <ChevronLeft className="h-4 w-4" /> Voltar
-          </button>
         </div>
-      </div>
+      </MundoDoCheckout>
     )
   }
 
@@ -411,29 +414,28 @@ function BuyCheckoutContent() {
   }
 
   return (
-    <div className="surface-page min-h-full px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <MundoDoCheckout>
+    <div className="min-h-full px-4 pb-12 pt-4 sm:px-6 sm:pt-6 lg:px-8">
       <div className="mx-auto max-w-5xl">
-        <button
-          type="button"
-          onClick={() => router.push(veioDoUpgrade && planoDoUpgrade ? '/upgrade' : '/buy')}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground transition hover:text-foreground"
-        >
-          <ChevronLeft className="h-4 w-4" /> {veioDoUpgrade && planoDoUpgrade ? 'Voltar à oferta' : 'Voltar aos planos'}
-        </button>
-
-        <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          {planoDoUpgrade ? 'Finalizar upgrade' : 'Finalizar compra'}
-        </h1>
+        <CabecaDoCheckout
+          voltar={{
+            rotulo: veioDoUpgrade && planoDoUpgrade ? 'Voltar à oferta' : 'Planos',
+            onClick: () => router.push(veioDoUpgrade && planoDoUpgrade ? '/upgrade' : '/buy'),
+          }}
+          trilha={<TrilhaDoCheckout atual="pagamento" />}
+          titulo={planoDoUpgrade ? 'Finalizar upgrade' : 'Finalizar compra'}
+          subtitulo="Confira o valor e escolha como pagar. O acesso entra na sua conta assim que o pagamento cai."
+        />
 
         {/* O desconto de upgrade dito antes de qualquer número: quem veio do
             e-mail precisa ver que a oferta seguiu com ele até aqui. */}
         {planoDoUpgrade && (
-          <p className="mt-3 flex items-start gap-2.5 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] leading-snug text-amber-900 dark:border-amber-300/25 dark:bg-amber-300/10 dark:text-amber-100">
-            <Crown className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+          <p className="ck-aviso ck-entra mt-5" style={{ '--ordem': 1 } as React.CSSProperties}>
+            <Crown className="h-4 w-4" aria-hidden />
             <span>
               {bolsistaVenceu ? (
                 <>
-                  <strong className="font-extrabold">
+                  <strong className="font-bold">
                     Bolsista PROUNI/FIES: seu desconto + {ofertaDeUpgrade?.descontoExtraBolsista}% extra de upgrade já
                     estão no preço.
                   </strong>{' '}
@@ -441,13 +443,13 @@ function BuyCheckoutContent() {
                 </>
               ) : upgradeVenceu ? (
                 <>
-                  <strong className="font-extrabold">Seu desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% já está no preço.</strong>{' '}
+                  <strong className="font-bold">Seu desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% já está no preço.</strong>{' '}
                   O Plus+ começa no pagamento, e o Quest+ que você já pagou não se perde.
                 </>
               ) : payMode !== 'one_time' ? (
                 <>
                   O desconto de upgrade de {ofertaDeUpgrade?.descontoPercentual}% vale no{' '}
-                  <strong className="font-extrabold">Pagamento único</strong>.
+                  <strong className="font-bold">Pagamento único</strong>.
                 </>
               ) : (
                 <>Você está usando um desconto maior que o de upgrade — vale sempre o melhor para você.</>
@@ -463,7 +465,7 @@ function BuyCheckoutContent() {
           valorAtual={payableAmount}
           planoAtual={plan.tipo}
           origem="Checkout de plano"
-          className="mt-4"
+          className="mt-5"
         />
 
         {/* No celular o cartão de pagamento cai inteiro embaixo do resumo —
@@ -479,94 +481,112 @@ function BuyCheckoutContent() {
           rotulo="Pagar agora"
         />
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:items-start lg:gap-5">
-          {/* Resumo. Curto de propósito: quem chegou aqui já leu a página de
-              vendas — o que falta é conferir o valor e pagar. */}
-          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-md bg-primary/10 px-2 py-0.5 font-clinical text-[10px] font-bold uppercase tracking-[0.14em] text-primary">
-                {periodLabel}
-              </span>
-            </div>
-            <h2 className="mt-2 font-heading text-lg font-semibold tracking-tight text-foreground sm:text-xl">
-              {plan.nome}
-            </h2>
-
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t border-border pt-3">
-              {baseAmount > payableAmount && (
-                <span className="text-sm tabular-nums text-muted-foreground line-through">
-                  {formatBRL(baseAmount)}
-                </span>
-              )}
-              <span className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-foreground">
-                {formatBRL(totalDoResumo)}
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {months > 0 && payMode === 'subscription' ? `a cada ${cicloLabel}` : 'pagamento único'}
-              </span>
-            </div>
-
-            {/* A taxa aberta, e não embutida num número maior sem explicação. */}
-            {taxaDoResumo > 0 && chargeExibido && (
-              <div className="mt-2 flex flex-col gap-0.5 rounded-lg bg-muted/50 px-3 py-2 text-[11px] text-muted-foreground">
-                <div className="flex items-baseline justify-between gap-3">
-                  <span>{plan.nome}</span>
-                  <span className="tabular-nums">{formatBrl(chargeExibido.baseAmount)}</span>
-                </div>
-                <div className="flex items-baseline justify-between gap-3">
-                  <span>{chargeExibido.label}</span>
-                  <span className="tabular-nums">+ {formatBrl(taxaDoResumo)}</span>
-                </div>
-                {payMode === 'one_time' && !chargeValido && (
-                  <span className="mt-0.5 text-[10px] leading-snug">
-                    Estimativa no Pix. O valor final muda conforme o meio de pagamento escolhido ao lado.
-                  </span>
-                )}
-                {payMode === 'subscription' && (
-                  <span className="mt-0.5 text-[10px] leading-snug">
-                    Este é o valor de cada cobrança, e ele se repete a cada {cicloLabel}.
-                  </span>
-                )}
+        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:items-start lg:gap-6">
+          {/* O pedido, como um recibo. Curto de propósito: quem chegou aqui já
+              leu a página de vendas — o que falta é conferir o valor e pagar. */}
+          {/* O sticky fica num invólucro: o vidro precisa do `position:
+              relative` dele para a quina de luz. */}
+          <div className="lg:sticky lg:top-24">
+          <aside
+            className="ck-vidro ck-entra p-5 sm:p-6"
+            style={{ '--ordem': 2 } as React.CSSProperties}
+            aria-label="Resumo do pedido"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold" style={{ color: 'var(--ck-texto-3)' }}>Seu pedido</p>
+                <h2 className="mt-1 font-heading text-xl font-semibold leading-tight tracking-tight text-foreground sm:text-[22px]">
+                  {plan.nome}
+                </h2>
               </div>
-            )}
+              <span className="ck-chip shrink-0">{periodLabel}</span>
+            </div>
 
-            {prouniDiscountAmount > 0 && (
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                <GraduationCap className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                Desconto ProUni/FIES{prouniGrant?.discountLabel ? ` (${prouniGrant.discountLabel})` : ''}: −{' '}
-                {formatBRL(prouniDiscountAmount)}
+            <div className="ck-recibo mt-5">
+              <div className="ck-recibo-linha">
+                <span className="truncate">{plan.nome}</span>
+                <span>{formatBRL(baseAmount)}</span>
+              </div>
+              {prouniDiscountAmount > 0 && (
+                <div className="ck-recibo-linha" data-tom="desconto">
+                  <span className="inline-flex min-w-0 items-center gap-1.5">
+                    <GraduationCap className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span className="truncate">
+                      ProUni/FIES{prouniGrant?.discountLabel ? ` (${prouniGrant.discountLabel})` : ''}
+                    </span>
+                  </span>
+                  <span>− {formatBRL(prouniDiscountAmount)}</span>
+                </div>
+              )}
+              {upgradeDiscountAmount > 0 && (
+                <div className="ck-recibo-linha" data-tom="upgrade">
+                  <span className="inline-flex min-w-0 items-center gap-1.5">
+                    <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span className="truncate">
+                      {bolsistaVenceu
+                        ? `Extra de upgrade para bolsista (${ofertaDeUpgrade?.descontoExtraBolsista}%)`
+                        : `Upgrade Quest+ (${ofertaDeUpgrade?.descontoPercentual}%)`}
+                    </span>
+                  </span>
+                  <span>− {formatBRL(upgradeDiscountAmount)}</span>
+                </div>
+              )}
+              {appliedCoupon && couponSupported && couponDiscountAmount > 0 && (
+                <div className="ck-recibo-linha" data-tom="desconto">
+                  <span className="inline-flex min-w-0 items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                    <span className="truncate">Cupom {appliedCoupon.code}</span>
+                  </span>
+                  <span>− {formatBRL(couponDiscountAmount)}</span>
+                </div>
+              )}
+              {/* A taxa aberta, e não embutida num número maior sem explicação. */}
+              {taxaDoResumo > 0 && chargeExibido && (
+                <div className="ck-recibo-linha">
+                  <span>{chargeExibido.label}</span>
+                  <span>+ {formatBrl(taxaDoResumo)}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="ck-picote" aria-hidden />
+
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="text-[13px] font-semibold text-foreground">Total</p>
+                <p className="text-xs" style={{ color: 'var(--ck-texto-3)' }}>
+                  {months > 0 && payMode === 'subscription' ? `a cada ${cicloLabel}` : 'pagamento único'}
+                </p>
+              </div>
+              <div className="text-right">
+                {baseAmount > payableAmount && <p className="ck-riscado">{formatBRL(baseAmount)}</p>}
+                <p className="ck-total" aria-live="polite">{formatBRL(totalDoResumo)}</p>
+              </div>
+            </div>
+
+            {payMode === 'one_time' && !chargeValido && taxaDoResumo > 0 && (
+              <p className="mt-2 text-[11.5px] leading-snug" style={{ color: 'var(--ck-texto-3)' }}>
+                Estimativa no Pix. O valor final muda conforme o meio de pagamento escolhido.
+              </p>
+            )}
+            {payMode === 'subscription' && taxaDoResumo > 0 && (
+              <p className="mt-2 text-[11.5px] leading-snug" style={{ color: 'var(--ck-texto-3)' }}>
+                Este é o valor de cada cobrança, e ele se repete a cada {cicloLabel}.
               </p>
             )}
 
-            {upgradeDiscountAmount > 0 && (
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-amber-700 dark:text-amber-300">
-                <Crown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                {bolsistaVenceu
-                  ? `Extra de upgrade para bolsista (${ofertaDeUpgrade?.descontoExtraBolsista}%)`
-                  : `Desconto de upgrade Quest+ (${ofertaDeUpgrade?.descontoPercentual}%)`}
-                : − {formatBRL(upgradeDiscountAmount)}
-              </p>
-            )}
-
-            {appliedCoupon && couponSupported && (
-              <p
-                className={cn(
-                  'mt-1.5 text-xs font-bold',
-                  couponDiscountAmount > 0 ? 'text-primary' : 'text-muted-foreground'
-                )}
-              >
-                {couponDiscountAmount > 0
-                  ? `Cupom ${appliedCoupon.code}: − ${formatBRL(couponDiscountAmount)}`
-                  : upgradeVenceu
-                    ? `Cupom ${appliedCoupon.code} guardado — o seu desconto de upgrade, que é maior, é o que vale no preço. Os descontos não somam.`
-                    : `Cupom ${appliedCoupon.code} registrado na compra — o seu desconto ProUni/FIES, que é maior, é o que vale no preço.`}
+            {appliedCoupon && couponSupported && couponDiscountAmount <= 0 && (
+              <p className="mt-3 text-xs font-semibold" style={{ color: 'var(--ck-texto-2)' }}>
+                {upgradeVenceu
+                  ? `Cupom ${appliedCoupon.code} guardado — o seu desconto de upgrade, que é maior, é o que vale no preço. Os descontos não somam.`
+                  : `Cupom ${appliedCoupon.code} registrado na compra — o seu desconto ProUni/FIES, que é maior, é o que vale no preço.`}
               </p>
             )}
 
             {/* O benefício existe mas a pessoa está na assinatura recorrente:
                 dizer onde ele vale é mais útil que sumir com ele da tela. */}
             {prouniGrant && !prouniSupported && !planoDoUpgrade && (
-              <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+              <p className="mt-3 text-xs leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>
                 Seu desconto ProUni/FIES{prouniGrant.discountLabel ? ` de ${prouniGrant.discountLabel}` : ''} vale
                 no “Pagamento único” — a assinatura recorrente cobra sempre o valor cheio, em toda renovação.
               </p>
@@ -577,33 +597,34 @@ function BuyCheckoutContent() {
                 itens={[{ itemType: 'plus', itemId: plan.tipo }]}
                 onAplicar={(code) => applyCoupon(code)}
                 codigoAplicado={appliedCoupon?.code || null}
-                className="mt-3"
+                className="mt-4"
               />
             )}
 
             {/* A oferta PROUNI/FIES deste plano, para quem AINDA não tem a
-                concessão. Quem já tem vê o abatimento algumas linhas acima e
-                não precisa do convite de novo — por isso o `!prouniGrant`. O
+                concessão. Quem já tem vê o abatimento no recibo acima e não
+                precisa do convite de novo — por isso o `!prouniGrant`. O
                 chamativo some sozinho quando o admin não configurou benefício
                 para este plano (ver ProuniCta), e ele é quem diz que o
                 desconto sai de uma solicitação aprovada na conta, não de um
                 código digitado aqui. */}
             {!prouniGrant && (
-              <ProuniCta itemType="plus" itemId={plan.tipo} className="mt-3" />
+              <ProuniCta itemType="plus" itemId={plan.tipo} className="mt-4" />
             )}
 
             {/* Cupom: um link, não um bloco. Quem não tem código não precisa
                 olhar para um campo vazio no meio do caminho até o pagamento. */}
-            <div className="mt-3">
+            <div className="mt-4">
               {!couponSupported ? (
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--ck-texto-3)' }}>
                   {appliedCoupon
                     ? `Cupom ${appliedCoupon.code} guardado — escolha "Pagamento único" para aplicá-lo.`
                     : 'Cupom vale no "Pagamento único" — a assinatura recorrente cobra sempre o valor cheio.'}
                 </p>
               ) : appliedCoupon ? (
-                <div className="flex items-center justify-between gap-2.5 rounded-lg border border-primary/25 bg-primary/10 px-3 py-2">
-                  <p className="min-w-0 truncate text-xs font-bold text-primary">
+                <div className="ck-placa flex items-center justify-between gap-2.5 px-3.5 py-2.5">
+                  <p className="inline-flex min-w-0 items-center gap-1.5 truncate text-[13px] font-semibold" style={{ color: 'var(--ck-verde)' }}>
+                    <Check className="h-4 w-4 shrink-0" strokeWidth={3} aria-hidden />
                     {upgradeVenceu
                       ? `${appliedCoupon.code} · não soma com o upgrade`
                       : `${appliedCoupon.code} aplicado · ${formatBRL(appliedCoupon.discountAmount)} de desconto`}
@@ -611,13 +632,13 @@ function BuyCheckoutContent() {
                   <button
                     type="button"
                     onClick={removeCoupon}
-                    className="inline-flex shrink-0 items-center gap-1 text-xs font-bold text-destructive transition hover:underline"
+                    className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-destructive transition hover:underline"
                   >
                     <X className="h-3.5 w-3.5" /> Remover
                   </button>
                 </div>
               ) : couponAberto ? (
-                <>
+                <div className="ck-surge">
                   <div className="flex gap-2">
                     <input
                       autoFocus
@@ -625,26 +646,28 @@ function BuyCheckoutContent() {
                       onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError('') }}
                       onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
                       disabled={couponLoading}
-                      placeholder="Digite seu cupom"
+                      placeholder="Código do cupom"
                       aria-label="Código do cupom"
-                      className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
+                      aria-invalid={couponError ? true : undefined}
+                      className="ck-campo ck-mono min-w-0 flex-1 uppercase"
+                      style={{ height: 44 }}
                     />
                     <button
                       type="button"
                       onClick={() => applyCoupon()}
                       disabled={couponLoading || !couponCode.trim()}
-                      className="inline-flex h-10 items-center gap-1.5 rounded-lg bg-secondary px-4 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
+                      className="ck-botao"
                     >
                       {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
                     </button>
                   </div>
-                  {couponError ? <p className="mt-2 text-xs text-destructive">{couponError}</p> : null}
-                </>
+                  {couponError ? <p className="ck-ajuda" data-erro>{couponError}</p> : null}
+                </div>
               ) : (
                 <button
                   type="button"
                   onClick={() => setCouponAberto(true)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary underline-offset-4 hover:underline"
+                  className="ck-link inline-flex items-center gap-1.5"
                 >
                   <Tag className="h-3.5 w-3.5" /> Tenho um cupom
                 </button>
@@ -652,25 +675,26 @@ function BuyCheckoutContent() {
             </div>
 
             {beneficios.length > 0 && (
-              <div className="mt-3 border-t border-border pt-3">
+              <div className="mt-4 border-t pt-3" style={{ borderColor: 'var(--ck-sep)' }}>
                 <button
                   type="button"
                   onClick={() => setVerDetalhes((v) => !v)}
                   aria-expanded={verDetalhes}
                   aria-controls="beneficios-do-plano"
-                  className="flex w-full items-center justify-between gap-2 text-left text-xs font-semibold text-muted-foreground transition hover:text-foreground"
+                  className="flex w-full items-center justify-between gap-2 py-1 text-left text-[13px] font-semibold transition hover:text-foreground"
+                  style={{ color: 'var(--ck-texto-2)' }}
                 >
-                  Ver os {beneficios.length} itens inclusos
+                  O que vem no plano ({beneficios.length})
                   <ChevronDown
-                    className={cn('h-4 w-4 shrink-0 text-secondary transition-transform', verDetalhes && 'rotate-180')}
+                    className={cn('h-4 w-4 shrink-0 transition-transform duration-300', verDetalhes && 'rotate-180')}
                     aria-hidden
                   />
                 </button>
                 {verDetalhes && (
-                  <ul id="beneficios-do-plano" className="mt-2.5 flex flex-col gap-1.5">
+                  <ul id="beneficios-do-plano" className="ck-surge mt-2 flex flex-col gap-2">
                     {beneficios.map((f, i) => (
-                      <li key={i} className="flex items-start gap-2 text-[13px] leading-snug text-muted-foreground">
-                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+                      <li key={i} className="flex items-start gap-2 text-[13px] leading-snug text-foreground/85">
+                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" style={{ color: 'var(--ck-verde-claro)' }} strokeWidth={3} aria-hidden />
                         {f}
                       </li>
                     ))}
@@ -679,21 +703,25 @@ function BuyCheckoutContent() {
               </div>
             )}
 
-            <p className="mt-3 flex items-center gap-2 border-t border-border pt-3 text-[11px] text-muted-foreground">
-              <Lock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden />
+            <p className="mt-4 flex items-center gap-2 text-xs" style={{ color: 'var(--ck-texto-3)' }}>
+              <ShieldCheck className="h-4 w-4 shrink-0" style={{ color: 'var(--ck-verde-claro)' }} aria-hidden />
               Ambiente seguro do Mercado Pago · não guardamos o seu cartão
             </p>
+          </aside>
           </div>
 
           {/* Pagamento */}
-          <div ref={refDoPagamento} className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5">
+          <section
+            ref={refDoPagamento}
+            className="ck-vidro-forte ck-entra p-4 sm:p-6"
+            style={{ '--ordem': 3 } as React.CSSProperties}
+            aria-label="Pagamento"
+          >
             {isRecurring && !assinaturaBloqueada && (
-              <div className="mb-4">
-                <p className="mb-2 text-xs font-semibold text-muted-foreground">
-                  Como prefere pagar?
-                </p>
-                {/* Segmentado, não dois cartões empilhados: são duas opções
-                    curtas e a recomendada já vem escolhida. */}
+              <div className="mb-5">
+                <h2 className="mb-3 font-heading text-lg font-semibold tracking-tight text-foreground">
+                  Como você prefere pagar?
+                </h2>
                 {/*
                   Cada opção mostra o VALOR que ela cobra. Os dois modos custam
                   diferente — a assinatura cobra o preço de tabela limpo e o
@@ -702,7 +730,7 @@ function BuyCheckoutContent() {
                   cartão ou boleto"). A pessoa achava que escolhia um meio de
                   pagamento e escolhia, sem saber, um preço.
                 */}
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   <OpcaoDePagamento
                     ativo={payMode === 'one_time'}
                     onClick={() => escolherModo('one_time')}
@@ -728,7 +756,7 @@ function BuyCheckoutContent() {
               </div>
             )}
 
-            <CheckoutAccountNotice className="mb-4" />
+            <CheckoutAccountNotice className="mb-5" />
 
             {payMode === 'subscription' && isRecurring && !assinaturaBloqueada ? (
               <SubscriptionCheckout
@@ -760,10 +788,11 @@ function BuyCheckoutContent() {
                 onApproved={() => setTimeout(() => router.push('/profile?purchase=success'), 1500)}
               />
             )}
-          </div>
+          </section>
         </div>
       </div>
     </div>
+    </MundoDoCheckout>
   )
 }
 
@@ -790,31 +819,17 @@ function OpcaoDePagamento({
       type="button"
       onClick={onClick}
       aria-pressed={ativo}
-      className={cn(
-        'rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
-        ativo ? 'border-primary/50 bg-primary/10 shadow-sm' : 'border-border bg-background hover:bg-muted/50'
-      )}
+      className="ck-opcao"
+      data-ativo={ativo || undefined}
     >
-      <span className="flex items-center gap-1.5">
-        <Icone className={cn('h-4 w-4 shrink-0', ativo ? 'text-primary' : 'text-muted-foreground')} aria-hidden />
-        <span className={cn('truncate text-[13px] font-bold', ativo ? 'text-primary' : 'text-foreground')}>
-          {titulo}
-        </span>
+      <span className="ck-opcao-radio" aria-hidden />
+      <span className="flex items-center gap-1.5 pr-6">
+        <Icone className="h-4 w-4 shrink-0" style={{ color: ativo ? 'var(--ck-verde)' : 'var(--ck-texto-3)' }} aria-hidden />
+        <span className="text-[14px] font-semibold leading-tight text-foreground">{titulo}</span>
       </span>
-      <span
-        className={cn(
-          'mt-1 block text-[13px] font-semibold tabular-nums leading-snug',
-          ativo ? 'text-foreground' : 'text-muted-foreground'
-        )}
-      >
-        {valor}
-      </span>
-      <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">{detalhe}</span>
-      {selo && (
-        <span className="mt-1.5 inline-block rounded bg-primary/15 px-1.5 py-px text-[10px] font-bold text-primary">
-          {selo}
-        </span>
-      )}
+      <span className="mt-1 block text-[14px] font-semibold tabular-nums leading-snug text-foreground">{valor}</span>
+      <span className="mt-0.5 block text-[12px] leading-snug" style={{ color: 'var(--ck-texto-3)' }}>{detalhe}</span>
+      {selo && <span className="ck-chip mt-2 self-start" style={{ height: 22, fontSize: 11 }}>{selo}</span>}
     </button>
   )
 }
@@ -1012,31 +1027,33 @@ function SubscriptionCheckout({
 
   if (resultado === 'ativa') {
     return (
-      <div className="py-5 text-center">
-        <CheckCircle2 className="mx-auto mb-3 h-10 w-10 text-primary" />
-        <p className="text-base font-bold text-primary">Assinatura ativada com sucesso!</p>
-        <p className="mt-1 text-sm text-muted-foreground">Levando você para o seu perfil…</p>
+      <div className="ck-surge flex flex-col items-center gap-3 py-6 text-center" aria-live="polite">
+        <SeloDePago />
+        <p className="ck-h1" style={{ fontSize: 24 }}>Assinatura ativada</p>
+        <p className="ck-sub" style={{ marginTop: 0 }}>Levando você para o seu perfil…</p>
       </div>
     )
   }
 
   if (resultado === 'pendente') {
     return (
-      <div className="rounded-xl border border-primary/25 bg-primary/5 p-5 text-center">
-        <Clock className="mx-auto mb-3 h-9 w-9 text-primary" aria-hidden />
-        <p className="font-heading text-base font-semibold text-foreground">
+      <div className="ck-placa ck-surge p-5 text-center sm:p-6">
+        <span
+          className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-[18px]"
+          style={{ background: 'var(--ck-verde-fundo)', color: 'var(--ck-verde)' }}
+          aria-hidden
+        >
+          <Clock className="h-7 w-7" />
+        </span>
+        <p className="font-heading text-lg font-semibold text-foreground">
           Assinatura criada — falta a autorização do seu banco
         </p>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>
           Está tudo certo do nosso lado: o cartão foi enviado ao Mercado Pago e agora depende do seu banco
           liberar a cobrança. <strong className="text-foreground">Não envie de novo</strong> — a assinatura já
           existe e uma segunda tentativa seria recusada. Você recebe um e-mail assim que for aprovada.
         </p>
-        <button
-          type="button"
-          onClick={() => (window.location.href = '/profile')}
-          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-secondary px-5 py-3 text-sm font-bold text-secondary-foreground transition hover:bg-secondary/90"
-        >
+        <button type="button" onClick={() => (window.location.href = '/profile')} className="ck-botao mt-5">
           Acompanhar no meu perfil
         </button>
       </div>
@@ -1044,36 +1061,39 @@ function SubscriptionCheckout({
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-4">
-      <p className="rounded-lg border border-primary/15 bg-primary/5 p-3 text-[13px] leading-relaxed text-muted-foreground">
-        Você será cobrado{' '}
-        <strong className="text-primary">{formatBrl(cobranca.totalAmount)}</strong> a cada{' '}
-        {cicloLongo}, no mesmo cartão, até você cancelar.{' '}
-        {/*
-          "Cancele quando quiser no seu perfil" era texto puro, sem link — e o
-          perfil não tinha nada sobre a assinatura para quem chegasse lá. Agora
-          o endereço existe e a frase leva até ele.
-        */}
-        <a href="/profile" className="font-semibold text-primary underline-offset-4 hover:underline">
-          Cancele quando quiser no seu perfil
-        </a>
-        , sem multa, mantendo o acesso até o fim do período já pago.
+    <form onSubmit={submit} className="ck-escopo flex flex-col gap-4">
+      <p className="ck-nota">
+        <Clock className="h-4 w-4" aria-hidden />
+        <span>
+          Você será cobrado{' '}
+          <strong>{formatBrl(cobranca.totalAmount)}</strong> a cada{' '}
+          {cicloLongo}, no mesmo cartão, até você cancelar.{' '}
+          {/*
+            "Cancele quando quiser no seu perfil" era texto puro, sem link — e o
+            perfil não tinha nada sobre a assinatura para quem chegasse lá. Agora
+            o endereço existe e a frase leva até ele.
+          */}
+          <a href="/profile" className="ck-link" style={{ fontSize: 'inherit' }}>
+            Cancele quando quiser no seu perfil
+          </a>
+          , sem multa, mantendo o acesso até o fim do período já pago.
+        </span>
       </p>
 
       {/* A taxa aberta, e não embutida num total sem explicação. */}
       {cobranca.feeAmount > 0 && (
-        <div className="flex flex-col gap-1 rounded-lg bg-muted/50 px-3 py-2.5 text-[11px] text-muted-foreground">
-          <div className="flex items-baseline justify-between gap-3">
+        <div className="ck-placa ck-recibo px-4 py-3" style={{ fontSize: 12.5 }}>
+          <div className="ck-recibo-linha">
             <span>{plan.nome}</span>
-            <span className="tabular-nums">{formatBrl(cobranca.baseAmount)}</span>
+            <span>{formatBrl(cobranca.baseAmount)}</span>
           </div>
-          <div className="flex items-baseline justify-between gap-3">
+          <div className="ck-recibo-linha">
             <span>{cobranca.label}</span>
-            <span className="tabular-nums">+ {formatBrl(cobranca.feeAmount)}</span>
+            <span>+ {formatBrl(cobranca.feeAmount)}</span>
           </div>
-          <div className="mt-0.5 flex items-baseline justify-between gap-3 border-t border-border pt-1.5 text-xs font-bold text-foreground">
+          <div className="ck-recibo-linha border-t pt-2 text-[13.5px] font-semibold text-foreground" style={{ borderColor: 'var(--ck-sep)' }}>
             <span>Total por cobrança</span>
-            <span className="tabular-nums">{formatBrl(cobranca.totalAmount)}</span>
+            <span>{formatBrl(cobranca.totalAmount)}</span>
           </div>
         </div>
       )}
@@ -1089,10 +1109,7 @@ function SubscriptionCheckout({
         disabled={submitting}
       >
         <div>
-          <label
-            htmlFor="docNumber"
-            className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.06em] text-muted-foreground"
-          >
+          <label htmlFor="docNumber" className="ck-rotulo">
             CPF do titular
           </label>
           <input
@@ -1107,21 +1124,18 @@ function SubscriptionCheckout({
             onBlur={() => setCpfTocado(true)}
             placeholder="000.000.000-00"
             aria-invalid={cpfErrado || cpfFaltando}
-            className={cn(
-              'h-11 w-full rounded-[10px] border-[1.5px] bg-background px-3.5 font-mono text-base text-foreground outline-none transition focus:ring-2 focus:ring-primary/15 sm:text-sm',
-              cpfErrado || cpfFaltando ? 'border-destructive/60' : 'border-border focus:border-primary/45'
-            )}
+            className="ck-campo ck-mono"
           />
           {cpfErrado ? (
-            <span className="mt-1.5 block text-[11px] text-destructive">
+            <span className="ck-ajuda" data-erro>
               CPF inválido. Confira os números digitados.
             </span>
           ) : cpfFaltando ? (
-            <span className="mt-1.5 block text-[11px] text-destructive">
+            <span className="ck-ajuda" data-erro>
               Informe o CPF do titular do cartão.
             </span>
           ) : (
-            <span className="mt-1.5 block text-[11px] text-muted-foreground">
+            <span className="ck-ajuda">
               O Mercado Pago exige o documento do titular para cobrar no cartão.
             </span>
           )}
@@ -1129,54 +1143,31 @@ function SubscriptionCheckout({
       </CardTerminal>
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-        >
+        <div role="alert" className="ck-erro ck-surge">
           {error}
         </div>
       )}
 
-      {/* Mesmo tratamento do CTA de /buy (`.buy-cta`, globals.css): é o último
-          botão do funil e não podia continuar sendo o retângulo mais apagado
-          da tela justo onde o dinheiro sai. O halo só pulsa quando o botão
-          está habilitado — piscar num botão que não recebe clique é promessa
-          falsa. */}
-      <button
-        type="submit"
-        disabled={!podeEnviar}
-        className={cn(
-          'buy-cta inline-flex w-full items-center justify-center gap-2 rounded-2xl px-5 py-4 text-[15px] font-extrabold text-secondary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60',
-          podeEnviar && 'buy-cta-halo'
-        )}
-      >
-        {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        Ativar assinatura — {formatBrl(cobranca.totalAmount)}/{cicloCurto}
+      {/* O último botão do funil, onde o dinheiro sai: o mesmo laranja de
+          todos os checkouts, com o valor e o ciclo escritos nele. */}
+      <button type="submit" disabled={!podeEnviar} className="ck-cta ck-cta-largo">
+        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+        Ativar assinatura · {formatBrl(cobranca.totalAmount)}/{cicloCurto}
       </button>
 
-      <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-        <Lock className="h-3 w-3 shrink-0 text-primary" aria-hidden />
-        Pagamento seguro · Mercado Pago · dados criptografados
-      </p>
+      <div className="ck-confianca">
+        <span><Lock className="h-3 w-3" /> Pagamento seguro pelo Mercado Pago</span>
+        <span><ShieldCheck className="h-3 w-3" /> Cancele quando quiser</span>
+      </div>
 
       {/* O mesmo rodapé legal que o formulário de pagamento único já traz. */}
-      <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+      <p className="-mt-1 text-center text-xs leading-relaxed" style={{ color: 'var(--ck-texto-3)' }}>
         Ao ativar a assinatura você concorda com os{' '}
-        <a
-          href="/termos-de-servico"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-primary hover:underline"
-        >
+        <a href="/termos-de-servico" target="_blank" rel="noopener noreferrer" className="ck-link" style={{ fontSize: 12 }}>
           Termos de Serviço
         </a>{' '}
         e a{' '}
-        <a
-          href="/politica-de-privacidade"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-primary hover:underline"
-        >
+        <a href="/politica-de-privacidade" target="_blank" rel="noopener noreferrer" className="ck-link" style={{ fontSize: 12 }}>
           Política de Privacidade
         </a>
         .

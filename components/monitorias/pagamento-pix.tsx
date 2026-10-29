@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { QrDoPix } from '@/components/checkout/marca-no-pagamento'
 import { BookOpen, Brain, Check, ChevronDown, Copy, Loader2, QrCode, ShieldCheck, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
@@ -138,7 +138,13 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
     setTimeout(() => setCopiado(false), 2500)
   }
 
-  if ((gerando || !oferta) && !dados) return <div className="flex items-center justify-center gap-2 py-10 text-sm text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /> Preparando seu pagamento…</div>
+  // Gerando: a marca monta o QR (o mesmo quadro que revela o QR real depois).
+  if ((gerando || !oferta) && !dados) return (
+    <div className="ck-escopo flex flex-col items-center gap-4 py-6 text-sm font-semibold" aria-live="polite">
+      <QrDoPix />
+      <span className="inline-flex items-center gap-2.5"><span className="ck-pulso" aria-hidden /> Preparando seu pagamento…</span>
+    </div>
+  )
 
   // Escolha antes do PIX: material e Resumo por IA são opcionais (nada vem marcado).
   if (!dados && oferta && (ofereceMaterial || ofertaResumo)) {
@@ -157,7 +163,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
             onAceitar={setAceitouResumo}
           />
         )}
-        <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm">
+        <div className="rounded-[18px] border border-black/[0.07] bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/[0.05]">
           <div className="flex justify-between"><span className="text-muted-foreground">Monitoria</span><span className="font-medium">{formatarCentavos(oferta.valorAulaCentavos)}</span></div>
           {comMaterial && m && <div className="mt-1 flex justify-between"><span className="text-muted-foreground">Material: {m.titulo}</span><span>{formatarCentavos(m.precoCentavos)}</span></div>}
           {comResumo && ofertaResumo && <div className="mt-1 flex justify-between"><span className="text-muted-foreground">Resumo por IA</span><span>{formatarCentavos(ofertaResumo.precoCentavos)}</span></div>}
@@ -165,9 +171,9 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
           <p className="mt-1 text-xs text-muted-foreground">A taxa do PIX aparece no próximo passo, antes de você pagar. Nada é cobrado depois.</p>
         </div>
         {erro && <CaixaErro mensagem={erro} />}
-        <Button className="h-12 w-full rounded-xl text-base font-semibold" onClick={() => gerar(comMaterial, comResumo, ofertaResumo)} disabled={gerando || faltaAceite}>
-          {gerando ? <Loader2 className="h-5 w-5 animate-spin" /> : <><QrCode className="mr-2 h-5 w-5" /> Gerar PIX {extras ? `com ${extras}` : ''}</>}
-        </Button>
+        <button type="button" className="ck-cta ck-cta-largo" onClick={() => gerar(comMaterial, comResumo, ofertaResumo)} disabled={gerando || faltaAceite}>
+          {gerando ? <Loader2 className="h-5 w-5 animate-spin" /> : <><QrCode className="h-5 w-5" /> Gerar PIX {extras ? `com ${extras}` : ''}</>}
+        </button>
         {faltaAceite && <p className="-mt-2 text-center text-xs text-muted-foreground">Para levar o Resumo por IA, aceite os termos dele acima.</p>}
       </div>
     )
@@ -181,7 +187,7 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
         </p>
       )}
       {dados && (
-        <div className="rounded-xl border border-border bg-muted/30 p-4 text-sm">
+        <div className="rounded-[18px] border border-black/[0.07] bg-white/60 p-4 text-sm dark:border-white/10 dark:bg-white/[0.05]">
           <div className="flex justify-between"><span className="text-muted-foreground">Monitoria</span><span className="font-medium">{formatarCentavos(dados.valorCentavos)}</span></div>
           {dados.material && (
             <div className="mt-1 flex justify-between gap-3"><span className="min-w-0 truncate text-muted-foreground">Material: {dados.material.titulo}</span><span>{formatarCentavos(dados.material.precoCentavos)}</span></div>
@@ -229,18 +235,19 @@ export function PagamentoPix({ reservaId, onAprovado }: { reservaId: string; onA
         </div>
       )}
       {dados?.pix && (
-        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-5">
+        <div className="ck-escopo ck-vidro-forte ck-surge flex flex-col items-center gap-4 p-5">
           <p className="flex items-center gap-1.5 text-sm font-semibold"><QrCode className="h-4 w-4 text-primary" /> Escaneie no app do seu banco</p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`data:image/png;base64,${dados.pix.qrCodeBase64}`} alt="QR Code PIX" className="h-52 w-52 rounded-lg bg-white p-2" />
-          <Button variant="outline" onClick={copiar} className="w-full">
-            {copiado ? <><Check className="mr-2 h-4 w-4 text-primary" /> Copiado</> : <><Copy className="mr-2 h-4 w-4" /> Copiar PIX copia e cola</>}
-          </Button>
+          <div className="py-2">
+            <QrDoPix base64={dados.pix.qrCodeBase64} />
+          </div>
+          <button type="button" onClick={copiar} className={copiado ? 'ck-cta ck-cta-verde ck-cta-largo' : 'ck-cta ck-cta-largo'} style={{ height: 48, fontSize: 15 }}>
+            {copiado ? <><Check className="h-4 w-4" /> Copiado</> : <><Copy className="h-4 w-4" /> Copiar PIX copia e cola</>}
+          </button>
           <div className="flex w-full items-center justify-between text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1"><Timer className="h-3.5 w-3.5" /> Expira em {relogio || '--:--'}</span>
-            <span className="inline-flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> aguardando pagamento</span>
+            <span className="inline-flex items-center gap-2"><span className="ck-pulso" aria-hidden /> aguardando pagamento</span>
           </div>
-        </motion.div>
+        </div>
       )}
       {erro && (
         <div className="space-y-2">

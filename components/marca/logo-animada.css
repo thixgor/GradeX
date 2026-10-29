@@ -246,6 +246,23 @@
 .logo3d[data-flutua='nao'] .logo3d-flutua,
 .logo3d[data-flutua='nao'] .logo3d-sombra { animation: none !important; }
 
+/* Só a marca: sem nome, não há para onde deslizar. */
+.logo3d[data-nome='nao'] { --desvio: 0px; }
+.logo3d[data-nome='nao'] .logo3d-desliza { animation: none; }
+
+/* Gerando: a moeda gira sem parar, com pausa curta de frente — é a marca
+   "trabalhando", não um spinner genérico. O balanço sai para não somar. */
+.logo3d[data-modo='gerando'] .logo3d-gira {
+  animation: logo3d-roda 1500ms cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+.logo3d[data-modo='gerando'] .logo3d-flutua,
+.logo3d[data-modo='gerando'] .logo3d-sombra { animation: none; }
+
+@keyframes logo3d-roda {
+  0%, 18% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .logo3d *,
   .logo3d *::before,

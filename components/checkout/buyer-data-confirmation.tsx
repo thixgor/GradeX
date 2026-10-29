@@ -175,7 +175,7 @@ export function BuyerDataConfirmation({
         {rows.map((row) => {
           const Icon = row.icon
           return (
-            <div key={row.label} className={`rounded-xl border px-3.5 py-2.5 ${skin.row}`}>
+            <div key={row.label} className={`rounded-[16px] border px-3.5 py-2.5 ${skin.row}`}>
               <p className={`flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider ${skin.muted}`}>
                 <Icon className="h-3 w-3" /> {row.label}
               </p>
@@ -217,14 +217,14 @@ export function BuyerDataConfirmation({
           type="button"
           onClick={onConfirm}
           disabled={blocked}
-          className={`inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-lg text-[15px] font-bold shadow-sm transition disabled:cursor-not-allowed disabled:opacity-60 ${skin.confirm}`}
+          className={`inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full text-[15px] font-bold shadow-sm transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 ${skin.confirm}`}
         >
           Está tudo certo, ir para pagamento <ArrowRight className="h-4 w-4" />
         </button>
         <button
           type="button"
           onClick={onEdit}
-          className={`inline-flex h-12 items-center justify-center gap-2 rounded-lg border px-4 text-sm font-semibold transition sm:flex-none ${skin.edit}`}
+          className={`inline-flex h-12 items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold transition sm:flex-none ${skin.edit}`}
         >
           <Pencil className="h-3.5 w-3.5" /> Corrigir
         </button>

@@ -225,7 +225,7 @@ export function CouponPromo({
   }
 
   return (
-    <div className={cn('rounded-lg border p-3.5', pele.cartao, className)}>
+    <div className={cn('rounded-[18px] border p-3.5', pele.cartao, className)}>
       <div className="flex items-start gap-2.5">
         <Icone className={cn('mt-0.5 h-4 w-4 flex-none', pele.titulo)} strokeWidth={2.4} aria-hidden />
         <div className="min-w-0 flex-1">
@@ -233,7 +233,7 @@ export function CouponPromo({
             <p className={cn('text-sm font-bold leading-snug', pele.titulo)}>{promo.headline}</p>
             <span
               className={cn(
-                'inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] font-black',
+                'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-black',
                 pele.codigo,
               )}
             >
@@ -250,7 +250,7 @@ export function CouponPromo({
             <div className="mt-2.5 flex flex-wrap items-center gap-2">
               <span
                 className={cn(
-                  'inline-flex h-8 items-center rounded-md border px-2.5 font-mono text-sm font-black tracking-wider',
+                  'inline-flex h-9 items-center rounded-full border border-dashed px-3.5 font-mono text-sm font-black tracking-wider',
                   pele.codigo,
                 )}
               >
@@ -261,7 +261,7 @@ export function CouponPromo({
                   type="button"
                   onClick={() => onAplicar(promo.code as string)}
                   className={cn(
-                    'inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-xs font-black transition active:scale-95',
+                    'inline-flex h-9 items-center gap-1.5 rounded-full px-4 text-xs font-black transition active:scale-95',
                     pele.botao,
                   )}
                 >
@@ -272,7 +272,7 @@ export function CouponPromo({
                 type="button"
                 onClick={copiar}
                 className={cn(
-                  'inline-flex h-8 items-center gap-1.5 rounded-md px-2.5 text-xs font-bold transition active:scale-95',
+                  'inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-bold transition active:scale-95',
                   pele.botaoSecundario,
                 )}
               >

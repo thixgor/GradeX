@@ -2,25 +2,43 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
 import {
-  Loader2, CheckCircle2, Copy, Check, QrCode, KeyRound, ArrowRight,
+  Copy, Check, QrCode, KeyRound, ArrowRight,
   ShieldCheck, Mail, Clock, AlertCircle,
 } from 'lucide-react'
 import { ContaPosCompra } from '@/components/checkout/conta-pos-compra'
+import { QrDoPix, SeloDePago } from '@/components/checkout/marca-no-pagamento'
+import { LogoAnimada } from '@/components/marca/logo-animada'
+import '@/components/checkout/checkout-vidro.css'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 
+/*
+ * O comprovante mora no mesmo mundo do checkout: tema escuro de marca só nesta
+ * página, aurora fixa atrás e vidro por cima (`checkout-vidro.css`).
+ */
+const MUNDO = 'dark ck-mundo ck-fundo-fixo text-white'
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
-  background: 'linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
   padding: '32px 16px',
 }
 const glassCard: React.CSSProperties = {
-  background: 'rgba(6,20,10,0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(52,211,153,0.15)',
-  borderRadius: '20px',
+  position: 'relative',
+  background: 'var(--ck-vidro-forte)',
+  backdropFilter: 'blur(28px) saturate(170%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(170%)',
+  boxShadow:
+    'inset 0 1px 0 var(--ck-brilho), inset 0 0 0 1px var(--ck-borda), 0 0 0 1px var(--ck-contorno), 0 30px 60px -30px var(--ck-sombra)',
+  borderRadius: '26px',
+}
+
+/** Espera com a marca: a moeda girando no lugar do spinner. */
+function EsperaComMarca({ texto }: { texto?: string }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '14px', minHeight: texto ? undefined : '60vh' }}>
+      <LogoAnimada tamanho="compacto" nome={false} modo="gerando" flutua={false} inclinacao="nenhuma" />
+      {texto && <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.8)' }}>{texto}</p>}
+    </div>
+  )
 }
 
 interface TimedAccessInfo {
@@ -84,7 +102,7 @@ function CopyButton({ text, label = 'Copiar' }: { text: string; label?: string }
         display: 'inline-flex', alignItems: 'center', gap: '6px',
         background: copied ? 'rgba(52,211,153,0.25)' : 'rgba(52,211,153,0.15)',
         border: '1px solid rgba(52,211,153,0.4)', color: '#34d399',
-        borderRadius: '10px', padding: '10px 16px', cursor: 'pointer',
+        borderRadius: '999px', padding: '10px 16px', cursor: 'pointer',
         fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap',
       }}
     >
@@ -159,21 +177,15 @@ function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?:
   return (
     <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Selo + animação */}
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 16 }}
-        style={{ ...glassCard, padding: '36px 28px', textAlign: 'center', border: '1px solid rgba(52,211,153,0.4)', boxShadow: '0 0 60px rgba(52,211,153,0.18)' }}
-      >
-        <motion.div
-          initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 14 }}
-          style={{ width: '84px', height: '84px', margin: '0 auto 8px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(52,211,153,0.25), rgba(52,211,153,0.05))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <CheckCircle2 size={56} style={{ color: '#34d399' }} />
-        </motion.div>
+      {/* O momento da marca: a moeda gira de frente, o check pousa nela e os
+          aros se abrem (ver SeloDePago). Uma vez só, na chegada. */}
+      <div className="ck-entra" style={{ ...glassCard, padding: '28px 28px 34px', textAlign: 'center' }}>
+        <SeloDePago className="mb-2" />
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'linear-gradient(135deg, #059669, #34d399)', borderRadius: '999px', padding: '5px 14px', fontSize: '12px', fontWeight: 800, color: 'white', letterSpacing: '0.04em', marginBottom: '14px' }}>
           <ShieldCheck size={14} /> COMPRA APROVADA
         </div>
-        <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'white', marginBottom: '10px', letterSpacing: '-0.02em' }}>
-          Obrigado pela compra, {firstName}! 🎉
+        <h1 className="ck-h1" style={{ color: 'white', marginBottom: '10px' }}>
+          Obrigado pela compra, {firstName}!
         </h1>
         <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.7)', lineHeight: '1.6', maxWidth: '560px', margin: '0 auto' }}>
           {appliedToAccount ? (
@@ -195,7 +207,7 @@ function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?:
             </>
           )}
         </p>
-      </motion.div>
+      </div>
 
       {/* Sem conta (ou sem sessão): o atalho que cria a conta e ativa tudo. */}
       {cartaoDeConta}
@@ -219,9 +231,9 @@ function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?:
             href={data.isCart ? '/materiais?tab=mine' : '/dashboard'}
             style={{
               display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-              background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
-              border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
-              padding: '14px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
+              background: 'linear-gradient(180deg, #4f8f5c, #2f6b40)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.28), 0 12px 26px -12px rgba(46,97,64,0.8)',
+              border: 'none', borderRadius: '999px', color: 'white', fontWeight: 700, fontSize: '15px',
+              padding: '15px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
             }}
           >
             Acessar agora <ArrowRight size={16} />
@@ -314,9 +326,9 @@ function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?:
                   href={data.activationUrl}
                   style={{
                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                    background: 'linear-gradient(135deg, #059669, #34d399)', boxShadow: '0 0 30px rgba(52,211,153,0.3)',
-                    border: 'none', borderRadius: '12px', color: 'white', fontWeight: 700, fontSize: '15px',
-                    padding: '14px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
+                    background: 'linear-gradient(180deg, #4f8f5c, #2f6b40)', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.28), 0 12px 26px -12px rgba(46,97,64,0.8)',
+                    border: 'none', borderRadius: '999px', color: 'white', fontWeight: 700, fontSize: '15px',
+                    padding: '15px 24px', cursor: 'pointer', width: '100%', textDecoration: 'none',
                   }}
                 >
                   Ativar meu produto <ArrowRight size={16} />
@@ -370,19 +382,20 @@ function PendingView({ data }: { data: Purchase }) {
           </>
         ) : (
           <>
-            <Clock size={44} style={{ color: '#34d399', margin: '0 auto 16px' }} />
-            <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'white', marginBottom: '8px' }}>Aguardando confirmação do pagamento</h2>
+            <h2 className="ck-h1" style={{ fontSize: '24px', color: 'white', marginBottom: '8px' }}>Aguardando o pagamento</h2>
             <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)', marginBottom: '18px' }}>
               Assim que o pagamento for aprovado, sua Serial Key aparecerá aqui automaticamente e será enviada ao seu e-mail.
             </p>
             {data.pix?.qrCodeBase64 && (
-              <img src={`data:image/png;base64,${data.pix.qrCodeBase64}`} alt="QR Pix" style={{ width: '180px', height: '180px', borderRadius: '12px', background: 'white', padding: '8px', margin: '0 auto 12px' }} />
+              <div style={{ margin: '8px auto 16px' }}>
+                <QrDoPix base64={data.pix.qrCodeBase64} />
+              </div>
             )}
             {data.pix?.qrCode && (
               <div style={{ marginTop: '10px' }}><CopyButton text={data.pix.qrCode} label="Copiar código Pix" /></div>
             )}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginTop: '18px', fontSize: '12px', color: 'rgba(52,211,153,0.7)' }}>
-              <Loader2 size={14} className="animate-spin" /> Esta página atualiza sozinha.
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '18px', fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>
+              <span className="ck-pulso" aria-hidden /> Esta página atualiza sozinha.
             </div>
           </>
         )}
@@ -464,7 +477,7 @@ function AprovadaContent() {
   }, [podeOferecerConta, titulosPendentes])
 
   if (loading) {
-    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>
+    return <EsperaComMarca />
   }
   if (error) {
     return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '28px', color: '#f87171', textAlign: 'center' }}>{error}</div></div>
@@ -486,15 +499,15 @@ function AprovadaContent() {
     return <ApprovedView data={data} cartaoDeConta={cartaoDeConta} />
   }
   if (data?.approved && !data.serialKey) {
-    return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '28px', textAlign: 'center', color: 'white' }}><Loader2 size={28} style={{ color: '#34d399', margin: '0 auto 12px', animation: 'spin 1s linear infinite' }} /><p>Pagamento aprovado! Gerando sua Serial Key…</p></div></div>
+    return <div style={{ maxWidth: '520px', margin: '0 auto' }}><div style={{ ...glassCard, padding: '32px 28px', textAlign: 'center', color: 'white' }}><EsperaComMarca texto="Pagamento aprovado! Gerando a sua Serial Key…" /></div></div>
   }
   return <PendingView data={data as Purchase} />
 }
 
 export default function CompraAprovadaPage() {
   return (
-    <div style={pageStyle}>
-      <Suspense fallback={<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}><Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} /></div>}>
+    <div style={pageStyle} className={MUNDO}>
+      <Suspense fallback={<EsperaComMarca />}>
         <AprovadaContent />
       </Suspense>
     </div>

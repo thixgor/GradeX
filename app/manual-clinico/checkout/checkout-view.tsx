@@ -8,6 +8,9 @@ import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
 import { CheckoutAccountNotice } from '@/components/checkout/checkout-account-notice'
+import { MundoDoCheckout, TrilhaDoCheckout } from '@/components/checkout/mundo-do-checkout'
+import { SeloDePago } from '@/components/checkout/marca-no-pagamento'
+import { LogoAnimada } from '@/components/marca/logo-animada'
 import { CouponPromo } from '@/components/checkout/coupon-promo'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { useProuniGrant } from '@/hooks/use-prouni-grant'
@@ -337,18 +340,23 @@ export default function ManualClinicoCheckoutView({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#04130b] text-emerald-200">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="dark">
+        <MundoDoCheckout className="flex min-h-screen flex-col items-center justify-center gap-4 text-white">
+          <LogoAnimada tamanho="compacto" nome={false} modo="gerando" flutua={false} inclinacao="nenhuma" />
+          <p className="text-sm font-medium text-white/60">Preparando o seu pedido…</p>
+        </MundoDoCheckout>
       </div>
     )
   }
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-[#04130b] px-4 py-8 text-white">
-        <div className="mx-auto max-w-xl rounded-2xl border border-red-300/20 bg-red-400/10 p-6 text-red-100">
-          {error || 'Produto indisponivel.'}
-        </div>
+      <div className="dark">
+        <MundoDoCheckout className="min-h-screen px-4 py-8 text-white">
+          <div className="ck-erro mx-auto max-w-xl justify-center p-6 text-center">
+            {error || 'Produto indisponivel.'}
+          </div>
+        </MundoDoCheckout>
       </div>
     )
   }
@@ -356,18 +364,17 @@ export default function ManualClinicoCheckoutView({
   // Renovação só é bloqueada se já tem vitalício; temporários podem renovar/upgrade.
   if (hasFullAccess && hasLifetimeAccess) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#04130b] px-4 text-white">
-        <div className="max-w-md rounded-3xl border border-emerald-300/20 bg-white/[0.07] p-8 text-center backdrop-blur-2xl">
-          <Check className="mx-auto mb-4 h-10 w-10 text-emerald-300" />
-          <h1 className="text-2xl font-black">Manual ja desbloqueado</h1>
-          <p className="mt-2 text-sm text-white/55">Sua conta ja possui acesso completo.</p>
-          <button
-            onClick={() => router.push('/manual-clinico')}
-            className="mt-6 h-11 rounded-xl bg-emerald-300 px-5 text-sm font-black text-emerald-950"
-          >
-            Acessar Manual Clinico
-          </button>
-        </div>
+      <div className="dark">
+        <MundoDoCheckout className="flex min-h-screen items-center justify-center px-4 text-white">
+          <div className="ck-vidro-forte ck-entra max-w-md p-8 text-center">
+            <SeloDePago />
+            <h1 className="ck-h1 mt-2" style={{ fontSize: 26 }}>Manual já desbloqueado</h1>
+            <p className="ck-sub">Sua conta já possui acesso completo.</p>
+            <button onClick={() => router.push('/manual-clinico')} className="ck-cta ck-cta-verde mt-6">
+              Abrir o Manual Clínico
+            </button>
+          </div>
+        </MundoDoCheckout>
       </div>
     )
   }
@@ -415,16 +422,19 @@ export default function ManualClinicoCheckoutView({
   const precoDiario = precoPorDia(payableAmount, selectedPlan?.durationMonths ?? null)
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#031109] px-4 py-6 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(52,211,153,0.16),transparent_32%),radial-gradient(circle_at_84%_16%,rgba(226,164,62,0.13),transparent_28%)]" />
+    // O Manual Clínico é uma página escura de marca: o `dark` aqui faz o
+    // formulário de pagamento, os avisos e o vidro seguirem o mesmo tom,
+    // qualquer que seja o tema do resto do app.
+    <div className="dark">
+    <MundoDoCheckout className="min-h-screen px-4 py-6 text-white">
       <div className="relative mx-auto max-w-6xl">
-        <button
-          onClick={() => router.push('/manual-clinico')}
-          className="mb-6 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white/65 backdrop-blur-xl transition hover:bg-white/[0.08] hover:text-white"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar ao Manual
-        </button>
+        <div className="ck-entra mb-6 flex flex-wrap items-center justify-between gap-3">
+          <button onClick={() => router.push('/manual-clinico')} className="ck-voltar">
+            <ArrowLeft className="h-4 w-4" />
+            Voltar ao Manual
+          </button>
+          <TrilhaDoCheckout atual="pagamento" />
+        </div>
 
         {/* No celular o cartão de pagamento nasce depois da capa, dos planos,
             do preço, do ProUni e do cupom — ver a barra para o porquê. */}
@@ -447,8 +457,8 @@ export default function ManualClinicoCheckoutView({
           />
         )}
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
+          <div className="ck-vidro ck-entra p-5 sm:p-7" style={{ '--ordem': 1 } as React.CSSProperties}>
             <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10">
               {product.coverImageUrl ? (
                 <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover opacity-80" />
@@ -466,11 +476,11 @@ export default function ManualClinicoCheckoutView({
             </div>
 
             <div className="mb-5 flex items-start gap-3">
-              <div className="rounded-2xl bg-emerald-300/15 p-3 text-emerald-200">
+              <div className="rounded-[16px] bg-gradient-to-b from-[#f05f74] to-[#bf2944] p-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
                 <BookOpen className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-black tracking-tight sm:text-3xl">{product.label}</h1>
+                <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">{product.label}</h1>
                 <p className="mt-2 text-sm leading-relaxed text-white/58">{product.shortDescription}</p>
               </div>
             </div>
@@ -518,7 +528,7 @@ export default function ManualClinicoCheckoutView({
                         key={plan.key}
                         type="button"
                         onClick={() => setSelectedPlanKey(plan.key)}
-                        className={`relative flex items-center justify-between gap-3 rounded-2xl border p-4 text-left transition ${
+                        className={`relative flex items-center justify-between gap-3 rounded-[18px] border p-4 text-left transition active:scale-[0.99] ${
                           isActive
                             ? isLifetime
                               ? 'border-amber-300/60 bg-gradient-to-r from-amber-300/15 to-emerald-300/[0.07] shadow-lg shadow-amber-300/15'
@@ -592,7 +602,7 @@ export default function ManualClinicoCheckoutView({
               ))}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-emerald-300/15 bg-emerald-300/10 p-4">
+            <div className="mt-5 ck-placa p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-white/45">Total</p>
               {product.hasActivePromotion && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(product.price)}</p>
@@ -600,7 +610,7 @@ export default function ManualClinicoCheckoutView({
               {baseAmount > payableAmount && (
                 <p className="mt-1 text-sm font-bold text-white/40 line-through">{formatBRL(baseAmount)}</p>
               )}
-              <p className={`text-4xl font-black ${selectedIsLifetime ? 'text-amber-200' : 'text-emerald-200'}`}>
+              <p className={`font-heading text-4xl font-semibold tabular-nums tracking-tight ${selectedIsLifetime ? 'text-amber-200' : 'text-white'}`}>
                 {payableAmount <= 0 ? 'Gratis' : formatBRL(payableAmount)}
               </p>
               <p className="mt-1 text-xs font-bold text-white/60">
@@ -680,7 +690,8 @@ export default function ManualClinicoCheckoutView({
 
           <div
             ref={refDoPagamento}
-            className="rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-7"
+            className="ck-vidro-forte ck-entra p-5 sm:p-7"
+            style={{ '--ordem': 2 } as React.CSSProperties}
           >
             {!product.isActive ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -693,14 +704,14 @@ export default function ManualClinicoCheckoutView({
                 <CheckoutAccountNotice tone="dark" />
 
                 {payableAmount <= 0 ? (
-                  <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-6 text-center">
+                  <div className="ck-placa p-6 text-center">
                     <Check className="mx-auto mb-3 h-9 w-9 text-emerald-300" />
                     <h2 className="text-xl font-black">Acesso gratuito</h2>
                     <p className="mt-2 text-sm text-white/55">Confirme para liberar o Manual Clinico Completo na sua conta.</p>
                     <button
                       onClick={unlockFree}
                       disabled={freeLoading}
-                      className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-300 text-sm font-black text-emerald-950 transition hover:bg-emerald-200 disabled:opacity-60"
+                      className="ck-cta ck-cta-verde ck-cta-largo mt-6"
                     >
                       {freeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                       Liberar acesso
@@ -732,6 +743,7 @@ export default function ManualClinicoCheckoutView({
           </div>
         </div>
       </div>
+    </MundoDoCheckout>
     </div>
   )
 }

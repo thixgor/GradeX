@@ -24,27 +24,37 @@ import { useProuniGrant } from '@/hooks/use-prouni-grant'
 import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
+import '@/components/checkout/checkout-vidro.css'
 import { PlusAccountNotice, resgatarComPlus } from '@/components/checkout/plus-claim'
 import { PLUS_LABEL, ROTA_ASSINATURA } from '@/lib/account-tier'
 
+/*
+ * O checkout de materiais é uma página escura de marca. `MUNDO` liga o tema
+ * escuro só nela (o formulário de pagamento e os avisos seguem junto) e põe a
+ * aurora fixa do vidro do checkout atrás (`checkout-vidro.css`).
+ */
+const MUNDO = 'dark ck-mundo ck-fundo-fixo text-white'
+
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
-  background: 'linear-gradient(135deg, #020d06 0%, #031a0b 40%, #041408 100%)',
   padding: '24px 16px',
 }
 
 const glassCard: React.CSSProperties = {
-  background: 'rgba(6,20,10,0.85)',
-  backdropFilter: 'blur(20px)',
-  WebkitBackdropFilter: 'blur(20px)',
-  border: '1px solid rgba(52,211,153,0.15)',
-  borderRadius: '20px',
+  position: 'relative',
+  background: 'var(--ck-vidro-forte)',
+  backdropFilter: 'blur(28px) saturate(170%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(170%)',
+  boxShadow:
+    'inset 0 1px 0 var(--ck-brilho), inset 0 0 0 1px var(--ck-borda), 0 0 0 1px var(--ck-contorno), 0 30px 60px -30px var(--ck-sombra)',
+  borderRadius: '26px',
 }
 
 const emeraldBadge: React.CSSProperties = {
-  background: 'linear-gradient(135deg, #059669, #34d399)',
-  borderRadius: '10px',
-  padding: '6px 14px',
+  background: 'linear-gradient(180deg, #5aa66b, #2f6b40)',
+  boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)',
+  borderRadius: '999px',
+  padding: '5px 14px',
   fontSize: '13px',
   fontWeight: 700,
   color: 'white',
@@ -310,7 +320,7 @@ function PlusClaimShell({
 }) {
   const router = useRouter()
   return (
-    <div style={pageStyle}>
+    <div style={pageStyle} className={MUNDO}>
       <div style={{ maxWidth: '540px', margin: '0 auto', paddingTop: '48px' }}>
         <div style={{ ...glassCard, padding: '40px 28px', textAlign: 'center' }}>
           <div style={{
@@ -721,7 +731,7 @@ export default function MateriaisCheckoutPage() {
 
   if (loading) {
     return (
-      <div style={pageStyle}>
+      <div style={pageStyle} className={MUNDO}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
           <Loader2 size={32} style={{ color: '#34d399', animation: 'spin 1s linear infinite' }} />
         </div>
@@ -738,7 +748,7 @@ export default function MateriaisCheckoutPage() {
       else router.push(alreadyOwnedInfo.redirect)
     }
     return (
-      <div style={pageStyle}>
+      <div style={pageStyle} className={MUNDO}>
         <div style={{ maxWidth: '540px', margin: '0 auto', paddingTop: '48px' }}>
           <div style={{ ...glassCard, padding: '40px 32px', textAlign: 'center' }}>
             <div style={{
@@ -905,7 +915,7 @@ export default function MateriaisCheckoutPage() {
 
   if (error || (!isCartMode && !item) || (isCartMode && !cartPreview)) {
     return (
-      <div style={pageStyle}>
+      <div style={pageStyle} className={MUNDO}>
         <div style={{ maxWidth: '640px', margin: '0 auto', paddingTop: '40px' }}>
           <div style={{ ...glassCard, padding: '28px', color: '#f87171', marginBottom: '16px' }}>
             {error || 'Item não disponível.'}
@@ -995,21 +1005,17 @@ export default function MateriaisCheckoutPage() {
     }
 
     return (
-      <div style={pageStyle}>
+      <div style={pageStyle} className={MUNDO}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <button
             onClick={() => router.push('/materiais')}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '6px',
-              background: 'transparent', border: 'none',
-              color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '14px',
-              marginBottom: '24px', padding: '0',
-            }}
+            className="ck-voltar"
+            style={{ marginBottom: '24px' }}
           >
             <ChevronLeft size={16} /> Voltar aos materiais
           </button>
 
-          <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+          <h1 className="ck-h1" style={{ color: 'white', marginBottom: '8px' }}>
             Finalizar carrinho
           </h1>
           <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: suggestions.length > 0 ? '20px' : '32px' }}>
@@ -1692,23 +1698,19 @@ export default function MateriaisCheckoutPage() {
   }
 
   return (
-    <div style={pageStyle}>
+    <div style={pageStyle} className={MUNDO}>
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         {/* Back button */}
         <button
           onClick={() => router.push('/materiais')}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: '6px',
-            background: 'transparent', border: 'none',
-            color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: '14px',
-            marginBottom: '24px', padding: '0',
-          }}
+          className="ck-voltar"
+          style={{ marginBottom: '24px' }}
         >
           <ChevronLeft size={16} /> Voltar aos materiais
         </button>
 
         {/* Page title */}
-        <h1 style={{ fontSize: '28px', fontWeight: 800, color: 'white', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+        <h1 className="ck-h1" style={{ color: 'white', marginBottom: '8px' }}>
           Finalizar compra
         </h1>
         <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', marginBottom: '32px' }}>

@@ -16,7 +16,7 @@ import { useAuthUser } from '@/hooks/use-auth-user'
  * e quem já está logado é avisado de que essa compra NÃO cai direto na conta.
  */
 
-const BOX = 'rounded-2xl border p-3.5 text-sm'
+const BOX = 'rounded-[18px] border p-3.5 text-sm'
 
 export function CheckoutAccountNotice({
   variant = 'account',
@@ -41,11 +41,11 @@ export function CheckoutAccountNotice({
         link: 'text-emerald-300 hover:text-emerald-200',
       }
     : {
-        box: 'border-border bg-muted/40 text-foreground',
+        box: 'border-black/[0.07] bg-white/60 text-foreground dark:border-white/10 dark:bg-white/[0.05]',
         muted: 'text-muted-foreground',
         strong: 'text-foreground',
         icon: 'text-emerald-600 dark:text-emerald-400',
-        warnBox: 'border-amber-500/30 bg-amber-400/10 text-foreground',
+        warnBox: 'border-amber-500/30 bg-amber-400/[0.12] text-foreground',
         warnIcon: 'text-amber-600 dark:text-amber-400',
         link: 'text-primary hover:underline',
       }
@@ -95,26 +95,34 @@ export function CheckoutAccountNotice({
   // ── Checkout logado ──
   if (!user) return null
 
+  // Uma linha: quem está comprando, com a inicial no círculo — o mesmo jeito
+  // que a pessoa reconhece a própria conta no menu.
+  const inicial = (user.name || user.email || '?').trim().charAt(0).toUpperCase()
   return (
-    <div className={`${BOX} ${skin.box} ${className}`}>
-      <div className="flex items-start gap-2.5">
-        <UserCheck className={`mt-0.5 h-4 w-4 shrink-0 ${skin.icon}`} />
-        <div className="min-w-0 flex-1">
-          <p className={`text-xs font-semibold uppercase tracking-wider ${skin.muted}`}>
-            O acesso vai para esta conta
-          </p>
-          <p className={`mt-0.5 truncate font-bold ${skin.strong}`}>{user.name || user.email}</p>
-          {user.name ? <p className={`truncate text-xs ${skin.muted}`}>{user.email}</p> : null}
-          <a
-            href={`/auth/login?redirect=${encodeURIComponent(
-              typeof window === 'undefined' ? '/' : window.location.pathname + window.location.search
-            )}`}
-            className={`mt-1.5 inline-block text-xs font-semibold ${skin.link}`}
-          >
-            Não é esta conta? Entrar com outra
-          </a>
-        </div>
+    <div className={`${BOX} ${skin.box} flex items-center gap-3 py-2.5 ${className}`}>
+      <span
+        aria-hidden
+        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-b from-[#5aa66b] to-[#2f6b40] text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]"
+      >
+        {inicial}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className={`flex items-center gap-1 text-xs ${skin.muted}`}>
+          <UserCheck className={`h-3.5 w-3.5 shrink-0 ${skin.icon}`} aria-hidden /> O acesso vai para
+        </p>
+        <p className={`truncate font-semibold leading-tight ${skin.strong}`}>
+          {user.name || user.email}
+          {user.name ? <span className={`ml-1.5 text-xs font-normal ${skin.muted}`}>{user.email}</span> : null}
+        </p>
       </div>
+      <a
+        href={`/auth/login?redirect=${encodeURIComponent(
+          typeof window === 'undefined' ? '/' : window.location.pathname + window.location.search
+        )}`}
+        className={`shrink-0 text-xs font-semibold ${skin.link}`}
+      >
+        Trocar conta
+      </a>
     </div>
   )
 }

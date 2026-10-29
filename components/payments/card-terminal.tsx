@@ -597,10 +597,8 @@ export function CardTerminal(props: CardTerminalProps) {
           <span
             style={{
               fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: 11,
+              fontSize: 12.5,
               fontWeight: 600,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
               color: STATUS_COLOR[props.status],
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -615,9 +613,11 @@ export function CardTerminal(props: CardTerminalProps) {
           <span
             style={{
               display: 'block',
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-              fontSize: 17,
-              fontWeight: 700,
+              fontFamily: 'var(--font-heading), Georgia, serif',
+              fontSize: 20,
+              fontWeight: 600,
+              fontVariantNumeric: 'tabular-nums',
+              letterSpacing: '-0.01em',
               color: 'hsl(var(--foreground))',
               lineHeight: 1.1,
             }}
@@ -761,11 +761,11 @@ export function CardTerminal(props: CardTerminalProps) {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 14,
-          paddingTop: 14,
+          paddingTop: 12,
           marginTop: 14,
-          borderTop: '1px solid hsl(var(--border))',
-          fontSize: 10.5,
-          color: 'hsl(var(--muted-foreground))',
+          borderTop: '1px solid var(--ck-sep, hsl(var(--border)))',
+          fontSize: 11.5,
+          color: 'var(--ck-texto-3, hsl(var(--muted-foreground)))',
         }}
       >
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
@@ -795,14 +795,14 @@ function Field({
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 8 }}>
         <label style={fieldLabel}>{label}</label>
         {hint && (
-          <span style={{ fontSize: 10, fontWeight: 600, color: 'hsl(var(--primary))', letterSpacing: '0.02em' }}>
+          <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--ck-texto-3, hsl(var(--primary)))' }}>
             {hint}
           </span>
         )}
       </div>
       {children}
       {error && (
-        <span style={{ display: 'block', marginTop: 5, fontSize: 11, color: 'hsl(var(--destructive))' }}>{error}</span>
+        <span style={{ display: 'block', marginTop: 6, fontSize: 12, color: 'var(--ck-erro, hsl(var(--destructive)))' }}>{error}</span>
       )}
     </div>
   )
@@ -810,11 +810,12 @@ function Field({
 
 // ─── Estilos ─────────────────────────────────────────────────────────────────
 
+// Os tokens `--ck-*` vêm do vidro do checkout (`checkout-vidro.css`, no
+// `.ck-escopo` do formulário de pagamento); fora dele, caem no tema.
 const chassis: React.CSSProperties = {
-  borderRadius: 18,
-  border: '1px solid hsl(var(--border))',
-  background: 'hsl(var(--muted) / 0.35)',
-  padding: 16,
+  borderRadius: 22,
+  background: 'var(--ck-trilho, hsl(var(--muted) / 0.35))',
+  padding: 14,
 }
 
 const display: React.CSSProperties = {
@@ -822,40 +823,37 @@ const display: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: 12,
-  borderRadius: 12,
-  border: '1px solid hsl(var(--border))',
-  // Recuo de tela: o fundo mais escuro que o chassi é o que dá a leitura de
-  // "display" sem precisar de imagem nenhuma.
-  background: 'hsl(var(--background))',
-  boxShadow: 'inset 0 2px 8px hsl(var(--foreground) / 0.07)',
+  borderRadius: 16,
+  background: 'var(--ck-campo, hsl(var(--background)))',
+  boxShadow: 'inset 0 0 0 1px var(--ck-campo-borda, hsl(var(--border)))',
   padding: '11px 14px',
 }
 
 const fieldLabel: React.CSSProperties = {
   display: 'block',
-  fontSize: 11,
-  fontWeight: 700,
-  color: 'hsl(var(--muted-foreground))',
-  marginBottom: 6,
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
+  fontSize: 13,
+  fontWeight: 600,
+  color: 'var(--ck-texto-2, hsl(var(--muted-foreground)))',
+  marginBottom: 7,
 }
 
 function input(ativo: boolean): React.CSSProperties {
   return {
     width: '100%',
     boxSizing: 'border-box',
-    height: 44,
-    padding: '0 13px',
-    borderRadius: 10,
-    border: `1.5px solid ${ativo ? 'hsl(var(--primary))' : 'hsl(var(--border))'}`,
-    background: 'hsl(var(--background))',
+    height: 48,
+    padding: '0 15px',
+    borderRadius: 14,
+    border: 0,
+    background: ativo ? 'var(--ck-campo-foco, hsl(var(--background)))' : 'var(--ck-campo, hsl(var(--background)))',
     color: 'hsl(var(--foreground))',
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
     letterSpacing: '0.03em',
     outline: 'none',
-    boxShadow: ativo ? '0 0 0 3px hsl(var(--primary) / 0.14)' : 'none',
-    transition: 'border-color 0.15s, box-shadow 0.15s',
+    boxShadow: ativo
+      ? 'inset 0 0 0 1.5px var(--ck-verde-claro, hsl(var(--primary))), 0 0 0 4px rgba(70, 129, 82, 0.16)'
+      : 'inset 0 0 0 1px var(--ck-campo-borda, hsl(var(--border)))',
+    transition: 'box-shadow 0.16s, background 0.16s',
   }
 }

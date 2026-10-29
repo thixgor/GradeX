@@ -1,0 +1,913 @@
+/* ==========================================================================
+   Checkout — vidro, recibo e os dois momentos da marca
+   --------------------------------------------------------------------------
+   Importado pelos componentes de checkout (MundoDoCheckout, o formulário do
+   Mercado Pago, o Pix animado, o selo de pago): vai junto para onde houver
+   pagamento e não pesa no resto do app.
+
+   O mundo é o mesmo das telas de entrar e da landing — aurora com as cores da
+   marca e material translúcido por cima —, mas mais quieto: aqui a pessoa está
+   conferindo um valor e digitando cartão. Um único momento autoral por etapa:
+   a marca montando o QR do Pix, e a marca virando moeda quando o pagamento
+   cai. Todo o resto é controle que a pessoa já sabe usar, sem enfeite.
+
+   Tokens em `.ck-escopo` (e em `.ck-mundo`, que o inclui): o formulário de
+   pagamento leva `.ck-escopo` na raiz, então funciona igual dentro de uma
+   página antiga que ainda não ganhou o mundo de vidro.
+   ========================================================================== */
+
+.ck-mundo,
+.ck-escopo {
+  --ck-vidro: rgba(255, 253, 248, 0.58);
+  --ck-vidro-forte: rgba(255, 253, 248, 0.78);
+  --ck-quina: rgba(255, 255, 255, 0.95);
+  --ck-quina-baixa: rgba(255, 255, 255, 0.4);
+  --ck-borda: rgba(255, 255, 255, 0.7);
+  --ck-brilho: rgba(255, 255, 255, 0.95);
+  --ck-contorno: rgba(31, 52, 36, 0.08);
+  --ck-sombra: rgba(35, 70, 44, 0.22);
+  --ck-sombra-perto: rgba(35, 70, 44, 0.1);
+  --ck-campo: rgba(255, 255, 255, 0.72);
+  --ck-campo-foco: #fff;
+  --ck-campo-borda: rgba(31, 52, 36, 0.12);
+  --ck-sep: rgba(31, 52, 36, 0.11);
+  --ck-trilho: rgba(118, 118, 128, 0.12);
+  --ck-polegar: #fff;
+  --ck-texto-2: hsl(140 9% 32%);
+  --ck-texto-3: hsl(140 7% 42%);
+  --ck-verde: #2f6b40;
+  --ck-verde-claro: #468152;
+  --ck-verde-fundo: rgba(70, 129, 82, 0.1);
+  --ck-ambar: #8a5a00;
+  --ck-ambar-fundo: rgba(226, 164, 62, 0.14);
+  --ck-ambar-borda: rgba(196, 136, 30, 0.3);
+  --ck-erro: #b42318;
+  --ck-erro-fundo: rgba(217, 45, 32, 0.08);
+  --ck-erro-borda: rgba(217, 45, 32, 0.22);
+  --ck-papel: #fffdf8;
+
+  --ck-aurora-1: rgba(84, 150, 98, 0.5);
+  --ck-aurora-2: rgba(236, 176, 72, 0.4);
+  --ck-aurora-3: rgba(222, 112, 64, 0.28);
+  --ck-aurora-4: rgba(150, 200, 164, 0.5);
+}
+
+.dark .ck-mundo,
+.dark.ck-mundo,
+.dark .ck-escopo,
+.ck-escopo[data-aparencia='dark'] {
+  --ck-vidro: rgba(24, 34, 28, 0.52);
+  --ck-vidro-forte: rgba(22, 31, 26, 0.74);
+  --ck-quina: rgba(255, 255, 255, 0.26);
+  --ck-quina-baixa: rgba(255, 255, 255, 0.07);
+  --ck-borda: rgba(255, 255, 255, 0.09);
+  --ck-brilho: rgba(255, 255, 255, 0.12);
+  --ck-contorno: rgba(0, 0, 0, 0.5);
+  --ck-sombra: rgba(0, 0, 0, 0.6);
+  --ck-sombra-perto: rgba(0, 0, 0, 0.35);
+  --ck-campo: rgba(255, 255, 255, 0.06);
+  --ck-campo-foco: rgba(255, 255, 255, 0.1);
+  --ck-campo-borda: rgba(255, 255, 255, 0.1);
+  --ck-sep: rgba(255, 255, 255, 0.1);
+  --ck-trilho: rgba(118, 118, 128, 0.24);
+  --ck-polegar: rgba(255, 255, 255, 0.14);
+  --ck-texto-2: hsl(140 10% 72%);
+  --ck-texto-3: hsl(140 8% 62%);
+  --ck-verde: #8fd19e;
+  --ck-verde-claro: #6fbf80;
+  --ck-verde-fundo: rgba(111, 191, 128, 0.12);
+  --ck-ambar: #f5c56b;
+  --ck-ambar-fundo: rgba(226, 164, 62, 0.12);
+  --ck-ambar-borda: rgba(226, 164, 62, 0.3);
+  --ck-erro: #fda29b;
+  --ck-erro-fundo: rgba(240, 68, 56, 0.12);
+  --ck-erro-borda: rgba(240, 68, 56, 0.3);
+  --ck-papel: #15201a;
+
+  --ck-aurora-1: rgba(52, 120, 70, 0.45);
+  --ck-aurora-2: rgba(196, 130, 30, 0.2);
+  --ck-aurora-3: rgba(200, 84, 38, 0.2);
+  --ck-aurora-4: rgba(40, 96, 66, 0.42);
+}
+
+.ck-mundo {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  color: hsl(var(--foreground));
+}
+
+/* ── Aurora ─────────────────────────────────────────────────────────────── */
+
+.ck-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: hsl(var(--background));
+}
+
+.ck-aurora span {
+  position: absolute;
+  width: 64vmax;
+  height: 64vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--cor), transparent);
+}
+
+.ck-aurora span:nth-child(1) { --cor: var(--ck-aurora-1); top: -30vmax; left: -18vmax; }
+.ck-aurora span:nth-child(2) { --cor: var(--ck-aurora-2); top: -20vmax; right: -28vmax; width: 56vmax; height: 56vmax; }
+.ck-aurora span:nth-child(3) { --cor: var(--ck-aurora-3); bottom: -38vmax; right: -6vmax; }
+.ck-aurora span:nth-child(4) { --cor: var(--ck-aurora-4); bottom: -30vmax; left: -24vmax; width: 52vmax; height: 52vmax; }
+
+.ck-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+@media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .ck-aurora span {
+    animation: ck-deriva 38s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .ck-aurora span:nth-child(2) { animation-duration: 44s; animation-delay: -12s; }
+  .ck-aurora span:nth-child(3) { animation-duration: 41s; animation-delay: -20s; }
+  .ck-aurora span:nth-child(4) { animation-duration: 49s; animation-delay: -6s; }
+}
+
+@keyframes ck-deriva {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(5vmax, 3vmax, 0) scale(1.06); }
+  100% { transform: translate3d(-3vmax, 6vmax, 0) scale(0.95); }
+}
+
+/* A mesma aurora sem marcação: para páginas antigas que só ganham a classe
+   (o checkout de materiais). Camadas de degradê num pseudo-elemento fixo. */
+.ck-fundo-fixo::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 60vmax at 6% -8%, var(--ck-aurora-1), transparent 70%),
+    radial-gradient(50vmax 50vmax at 104% 4%, var(--ck-aurora-2), transparent 70%),
+    radial-gradient(60vmax 60vmax at 82% 112%, var(--ck-aurora-3), transparent 70%),
+    radial-gradient(50vmax 50vmax at -6% 96%, var(--ck-aurora-4), transparent 70%),
+    hsl(var(--background));
+}
+
+/* ── Material ───────────────────────────────────────────────────────────── */
+
+.ck-vidro,
+.ck-vidro-forte {
+  position: relative;
+  border-radius: 26px;
+  background: var(--ck-vidro);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 var(--ck-brilho),
+    inset 0 0 0 1px var(--ck-borda),
+    0 0 0 1px var(--ck-contorno),
+    0 30px 60px -30px var(--ck-sombra),
+    0 10px 22px -14px var(--ck-sombra-perto);
+}
+
+.ck-vidro-forte { background: var(--ck-vidro-forte); }
+
+.ck-vidro::before,
+.ck-vidro-forte::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(150deg, var(--ck-quina) 0%, transparent 32%, transparent 68%, var(--ck-quina-baixa) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+/* Um cartão dentro do vidro (não outro vidro: desfoque sobre desfoque só
+   custa e embaça). */
+.ck-placa {
+  border-radius: 18px;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+}
+
+.lite-mode .ck-vidro,
+.lite-mode .ck-vidro-forte {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: hsl(var(--card));
+}
+.lite-mode .ck-aurora span { display: none; }
+
+/* ── Cabeça da página ───────────────────────────────────────────────────── */
+
+.ck-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 36px;
+  padding: 0 14px 0 9px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ck-texto-2);
+  background: var(--ck-vidro);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: inset 0 0 0 1px var(--ck-borda), 0 0 0 1px var(--ck-contorno);
+  transition: color 160ms ease, transform 160ms ease;
+}
+.ck-voltar:hover { color: hsl(var(--foreground)); }
+.ck-voltar:active { transform: scale(0.97); }
+
+.ck-h1 {
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.ck-sub {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ck-texto-2);
+  text-wrap: pretty;
+}
+
+/* A trilha: três pontos, onde a pessoa está e quanto falta. Quem vê o fim do
+   caminho termina mais (gradiente de meta) — e não há quarto passo escondido. */
+.ck-trilha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ck-texto-3);
+}
+.ck-trilha li { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.ck-trilha li + li::before {
+  content: '';
+  width: 18px;
+  height: 1.5px;
+  margin-right: 2px;
+  border-radius: 1px;
+  background: var(--ck-sep);
+}
+.ck-trilha-ponto {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 10px;
+  background: var(--ck-trilho);
+  color: var(--ck-texto-2);
+}
+.ck-trilha [data-estado='feito'] .ck-trilha-ponto { background: var(--ck-verde-claro); color: #fff; }
+.ck-trilha [data-estado='agora'] { color: hsl(var(--foreground)); }
+.ck-trilha [data-estado='agora'] .ck-trilha-ponto {
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* ── Rótulos, campos, notas ─────────────────────────────────────────────── */
+
+.ck-rotulo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ck-texto-2);
+}
+
+.ck-rotulo small {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ck-texto-3);
+}
+
+.ck-campo {
+  width: 100%;
+  height: 48px;
+  padding: 0 15px;
+  border-radius: 14px;
+  border: 0;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+  color: hsl(var(--foreground));
+  font-size: 15px;
+  outline: none;
+  transition: box-shadow 160ms ease, background 160ms ease;
+}
+select.ck-campo { cursor: pointer; appearance: auto; }
+.ck-campo::placeholder { color: var(--ck-texto-3); opacity: 0.75; }
+.ck-campo:focus {
+  background: var(--ck-campo-foco);
+  box-shadow: inset 0 0 0 1.5px var(--ck-verde-claro), 0 0 0 4px rgba(70, 129, 82, 0.16);
+}
+.ck-campo[aria-invalid='true'] { box-shadow: inset 0 0 0 1.5px var(--ck-erro), 0 0 0 4px var(--ck-erro-fundo); }
+.ck-campo:disabled { opacity: 0.6; cursor: not-allowed; }
+.ck-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.02em; }
+
+.ck-ajuda {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ck-texto-3);
+}
+.ck-ajuda[data-erro] { color: var(--ck-erro); }
+.ck-ajuda svg { flex-shrink: 0; margin-top: 1px; }
+
+.ck-nota,
+.ck-aviso,
+.ck-erro {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.ck-nota { background: var(--ck-trilho); color: var(--ck-texto-2); }
+.ck-nota strong { color: hsl(var(--foreground)); }
+.ck-aviso { background: var(--ck-ambar-fundo); box-shadow: inset 0 0 0 1px var(--ck-ambar-borda); color: var(--ck-ambar); }
+.ck-erro { background: var(--ck-erro-fundo); box-shadow: inset 0 0 0 1px var(--ck-erro-borda); color: var(--ck-erro); }
+.ck-nota svg,
+.ck-aviso svg,
+.ck-erro svg { flex-shrink: 0; margin-top: 2px; }
+
+.ck-marcar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--ck-texto-2);
+  cursor: pointer;
+}
+.ck-marcar input { width: 18px; height: 18px; accent-color: var(--ck-verde-claro); }
+
+/* ── Escolhas ───────────────────────────────────────────────────────────── */
+
+/* Controle segmentado dos meios de pagamento: cada segmento diz quanto a
+   compra fica por ali — trocar de aba nunca surpreende com outro número. */
+.ck-seg {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 16px;
+  background: var(--ck-trilho);
+}
+
+.ck-seg-opcao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  min-height: 54px;
+  padding: 6px 8px;
+  border-radius: 13px;
+  color: var(--ck-texto-2);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 200ms ease, color 200ms ease, box-shadow 200ms ease, transform 160ms ease;
+}
+.ck-seg-opcao:hover { color: hsl(var(--foreground)); }
+.ck-seg-opcao:active { transform: scale(0.98); }
+.ck-seg-opcao span:first-child { display: inline-flex; align-items: center; gap: 6px; }
+.ck-seg-opcao small { font-size: 11.5px; font-weight: 600; color: var(--ck-texto-3); font-variant-numeric: tabular-nums; }
+.ck-seg-opcao[data-ativo] {
+  background: var(--ck-polegar);
+  color: hsl(var(--foreground));
+  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.12), 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+}
+.ck-seg-opcao[data-ativo] small { color: var(--ck-verde); }
+.ck-seg-opcao:focus-visible { outline: 2px solid var(--ck-verde-claro); outline-offset: 1px; }
+
+/* Cartão de escolha (pagamento único × assinatura). */
+.ck-opcao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 13px 14px 12px;
+  border-radius: 18px;
+  text-align: left;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+  transition: box-shadow 200ms ease, background 200ms ease, transform 160ms ease;
+}
+.ck-opcao:hover { background: var(--ck-campo-foco); }
+.ck-opcao:active { transform: scale(0.99); }
+.ck-opcao-linha { flex-direction: row; gap: 12px; }
+.ck-opcao[data-ativo],
+.ck-opcao.is-ativo {
+  background: var(--ck-campo-foco);
+  box-shadow: inset 0 0 0 2px var(--ck-verde-claro), 0 8px 22px -12px rgba(46, 97, 64, 0.5);
+}
+.ck-opcao:focus-visible { outline: 2px solid var(--ck-verde-claro); outline-offset: 2px; }
+.ck-opcao-radio {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ck-campo-borda);
+  transition: box-shadow 200ms ease;
+}
+.ck-opcao[data-ativo] .ck-opcao-radio,
+.ck-opcao.is-ativo .ck-opcao-radio { box-shadow: inset 0 0 0 5.5px var(--ck-verde-claro); }
+
+/* ── Botões ─────────────────────────────────────────────────────────────── */
+
+.ck-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  overflow: hidden;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: #fff;
+  background: linear-gradient(180deg, #dc6a3a, #c0501e);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 12px 26px -12px rgba(192, 80, 30, 0.75);
+  transition: transform 160ms ease, box-shadow 200ms ease, opacity 200ms ease, filter 200ms ease;
+}
+.ck-cta:hover { filter: brightness(1.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32), 0 16px 30px -12px rgba(192, 80, 30, 0.85); }
+.ck-cta:active { transform: scale(0.985); }
+.ck-cta:focus-visible { outline: 3px solid rgba(220, 106, 58, 0.45); outline-offset: 3px; }
+.ck-cta:disabled,
+.ck-cta[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; filter: saturate(0.7); box-shadow: none; }
+.ck-cta-largo { width: 100%; }
+
+/* O brilho que passa pelo botão de pagar uma vez, quando ele fica pronto. */
+.ck-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.35) 50%, transparent 65%);
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ck-cta:not(:disabled)::after { animation: ck-reluz 1200ms cubic-bezier(0.45, 0, 0.25, 1) 600ms both; }
+}
+@keyframes ck-reluz { to { transform: translateX(100%); } }
+
+.ck-cta-verde {
+  background: linear-gradient(180deg, #4f8f5c, #2f6b40);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 12px 26px -12px rgba(46, 97, 64, 0.8);
+}
+
+.ck-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+  transition: background 160ms ease, transform 160ms ease;
+}
+.ck-botao:hover { background: var(--ck-campo-foco); }
+.ck-botao:active { transform: scale(0.97); }
+.ck-botao:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.ck-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ck-verde);
+  text-underline-offset: 3px;
+}
+.ck-link:hover { text-decoration: underline; }
+.ck-link-discreto { font-size: 12.5px; color: var(--ck-texto-3); text-decoration: underline; text-underline-offset: 3px; }
+.ck-link-discreto:hover { color: hsl(var(--foreground)); }
+
+/* ── Recibo ─────────────────────────────────────────────────────────────── */
+
+/* O resumo é um recibo: linhas finas, o total embaixo de um picote. É o que a
+   pessoa já sabe ler — e o picote separa "o que é" de "quanto sai". */
+.ck-recibo { display: flex; flex-direction: column; gap: 7px; font-size: 13.5px; color: var(--ck-texto-2); }
+.ck-recibo-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+.ck-recibo-linha > span:last-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ck-recibo-linha[data-tom='desconto'] { color: var(--ck-verde); font-weight: 600; }
+.ck-recibo-linha[data-tom='upgrade'] { color: var(--ck-ambar); font-weight: 600; }
+
+.ck-picote {
+  position: relative;
+  height: 1px;
+  margin: 14px -2px;
+  background-image: linear-gradient(90deg, var(--ck-sep) 55%, transparent 0);
+  background-size: 9px 1px;
+}
+
+.ck-total {
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(2rem, 1.7rem + 1vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+
+.ck-riscado { font-size: 14px; color: var(--ck-texto-3); text-decoration: line-through; font-variant-numeric: tabular-nums; }
+
+.ck-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--ck-verde-fundo);
+  color: var(--ck-verde);
+}
+.ck-chip[data-tom='ambar'] { background: var(--ck-ambar-fundo); color: var(--ck-ambar); }
+.ck-chip[data-tom='neutro'] { background: var(--ck-trilho); color: var(--ck-texto-2); }
+
+.ck-sep { height: 1px; background: var(--ck-sep); }
+
+.ck-confianca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 14px;
+  font-size: 12px;
+  color: var(--ck-texto-3);
+}
+.ck-confianca span { display: inline-flex; align-items: center; gap: 5px; }
+.ck-confianca svg { color: var(--ck-verde-claro); }
+
+/* Entrada das peças, uma vez. */
+@media (prefers-reduced-motion: no-preference) {
+  .ck-entra { animation: ck-entra 560ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--ordem, 0) * 70ms); }
+}
+@keyframes ck-entra {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+.ck-surge { animation: ck-surge 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes ck-surge {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Chamada do Plus+ (enxuta) ──────────────────────────────────────────── */
+
+.ck-plus {
+  --plus-a: rgba(236, 176, 72, 0.22);
+  --plus-b: rgba(70, 129, 82, 0.12);
+  position: relative;
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 140% at 0% 0%, var(--plus-a), transparent 55%),
+    radial-gradient(120% 140% at 100% 100%, var(--plus-b), transparent 60%),
+    var(--ck-vidro-forte);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow: inset 0 1px 0 var(--ck-brilho), inset 0 0 0 1px var(--ck-ambar-borda), 0 10px 24px -18px rgba(150, 100, 20, 0.6);
+}
+.dark .ck-plus { --plus-a: rgba(226, 164, 62, 0.16); --plus-b: rgba(70, 129, 82, 0.14); }
+.ck-plus[data-aparencia='dark'] { --plus-a: rgba(226, 164, 62, 0.16); --plus-b: rgba(70, 129, 82, 0.14); color: #fff; }
+.ck-plus[data-aparencia='dark'] .text-amber-700 { color: #fcd34d; }
+.ck-plus[data-aparencia='dark'] .text-foreground { color: #fff; }
+
+.ck-plus-coroa {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  color: #5c3a00;
+  background: linear-gradient(160deg, #f6cf73, #e2a03e);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 4px 10px -4px rgba(180, 110, 20, 0.7);
+}
+
+.ck-plus-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #3d2600;
+  background: linear-gradient(180deg, #f6cf73, #e8a944);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 14px -8px rgba(180, 110, 20, 0.8);
+  transition: transform 160ms ease, filter 160ms ease;
+}
+.ck-plus-cta:hover { filter: brightness(1.04); }
+.ck-plus-cta:active { transform: scale(0.97); }
+
+.ck-plus-mais {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--ck-texto-2);
+  transition: background 160ms ease, transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ck-plus-mais:hover { background: var(--ck-trilho); }
+.ck-plus[data-aberto] .ck-plus-mais { transform: rotate(180deg); }
+
+.ck-plus-corpo {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ck-plus[data-aberto] .ck-plus-corpo { grid-template-rows: 1fr; }
+.ck-plus-corpo > div { overflow: hidden; min-height: 0; }
+
+/* ── Pix: a marca monta o QR ────────────────────────────────────────────── */
+
+.ck-qr {
+  --lado: 216px;
+  position: relative;
+  width: var(--lado);
+  height: var(--lado);
+  margin: 0 auto;
+  border-radius: 26px;
+  padding: 14px;
+  background: #fff;
+  box-shadow:
+    0 0 0 1px rgba(31, 52, 36, 0.08),
+    0 24px 48px -24px rgba(35, 70, 44, 0.45),
+    0 8px 18px -10px rgba(35, 70, 44, 0.2);
+  isolation: isolate;
+}
+
+/* As quatro quinas de mira, desenhadas por fora do papel. */
+.ck-qr-mira {
+  position: absolute;
+  inset: -9px;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--ck-verde-claro) 0 0) top left / 22px 3px,
+    linear-gradient(var(--ck-verde-claro) 0 0) top left / 3px 22px,
+    linear-gradient(var(--ck-verde-claro) 0 0) top right / 22px 3px,
+    linear-gradient(var(--ck-verde-claro) 0 0) top right / 3px 22px,
+    linear-gradient(var(--ck-verde-claro) 0 0) bottom left / 22px 3px,
+    linear-gradient(var(--ck-verde-claro) 0 0) bottom left / 3px 22px,
+    linear-gradient(var(--ck-verde-claro) 0 0) bottom right / 22px 3px,
+    linear-gradient(var(--ck-verde-claro) 0 0) bottom right / 3px 22px;
+  background-repeat: no-repeat;
+  border-radius: 8px;
+}
+
+.ck-qr-esqueleto,
+.ck-qr-real {
+  position: absolute;
+  inset: 14px;
+  width: calc(100% - 28px);
+  height: calc(100% - 28px);
+}
+
+.ck-qr-esqueleto { color: #1f3424; }
+.ck-qr-esqueleto .ck-qr-mod { fill: currentColor; opacity: 0.16; }
+.ck-qr-esqueleto .ck-qr-olho { fill: none; stroke: currentColor; stroke-width: 1; opacity: 0.85; }
+.ck-qr-esqueleto .ck-qr-pupila { fill: currentColor; opacity: 0.85; }
+
+.ck-qr-real { image-rendering: pixelated; border-radius: 4px; }
+
+.ck-qr-logo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.ck-qr-logo .logo3d { --tam: 62px; }
+.ck-qr-logo::before {
+  content: '';
+  position: absolute;
+  width: 92px;
+  height: 92px;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 0 0 6px #fff, 0 10px 24px -10px rgba(35, 70, 44, 0.45);
+}
+
+.ck-qr-feixe {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 14px;
+  height: 46px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, transparent, rgba(70, 129, 82, 0.22) 70%, rgba(70, 129, 82, 0.75) 96%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Gerando: os módulos "imprimem" de cima para baixo em laço, o feixe varre e
+   a moeda gira no meio. Nada disso é o QR — ele ainda não existe. */
+.ck-qr[data-fase='gerando'] .ck-qr-mod { animation: ck-qr-pisca 1600ms ease-in-out infinite; animation-delay: calc(var(--d) * 1ms); }
+.ck-qr[data-fase='gerando'] .ck-qr-feixe { animation: ck-qr-varre 1600ms cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.ck-qr[data-fase='gerando'] .ck-qr-olho,
+.ck-qr[data-fase='gerando'] .ck-qr-pupila { animation: ck-qr-olho 1600ms ease-in-out infinite; }
+
+@keyframes ck-qr-pisca {
+  0%, 100% { opacity: 0.1; }
+  45% { opacity: 0.75; }
+}
+@keyframes ck-qr-varre {
+  0% { opacity: 0; transform: translateY(-10px); }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(calc(var(--lado) - 60px)); }
+}
+@keyframes ck-qr-olho {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* Pronto: a impressão termina, a moeda sai do caminho e o QR de verdade
+   aparece debaixo de uma última passada do feixe. ~1,4 s, uma vez. */
+.ck-qr[data-fase='pronto'] .ck-qr-esqueleto { animation: ck-some 360ms ease 900ms both; }
+.ck-qr[data-fase='pronto'] .ck-qr-mod { animation: ck-qr-imprime 520ms ease both; animation-delay: calc(var(--d) * 0.45ms); }
+.ck-qr[data-fase='pronto'] .ck-qr-logo { animation: ck-qr-sai 460ms cubic-bezier(0.55, 0, 0.75, 0) 720ms both; }
+.ck-qr[data-fase='pronto'] .ck-qr-real { animation: ck-qr-revela 620ms cubic-bezier(0.16, 1, 0.3, 1) 880ms both; }
+.ck-qr[data-fase='pronto'] .ck-qr-feixe { animation: ck-qr-varre 900ms cubic-bezier(0.45, 0, 0.55, 1) 840ms both; }
+.ck-qr[data-fase='pronto'] .ck-qr-mira { animation: ck-qr-mira 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 1100ms both; }
+
+@keyframes ck-qr-imprime {
+  from { opacity: 0.08; }
+  to { opacity: 0.7; }
+}
+@keyframes ck-qr-sai {
+  0% { opacity: 1; visibility: visible; transform: scale(1); }
+  30% { transform: scale(1.08); }
+  100% { opacity: 0; visibility: hidden; transform: scale(0.4) translateY(-30px); }
+}
+@keyframes ck-qr-revela {
+  from { opacity: 0; filter: blur(8px); transform: scale(0.96); }
+  to { opacity: 1; filter: none; transform: none; }
+}
+@keyframes ck-qr-mira {
+  from { opacity: 0; transform: scale(1.12); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ck-some {
+  from { opacity: 1; visibility: visible; }
+  to { opacity: 0; visibility: hidden; }
+}
+
+.ck-qr[data-fase='pronto'] .ck-qr-esqueleto,
+.ck-qr[data-fase='pronto'] .ck-qr-logo { opacity: 0; visibility: hidden; }
+.ck-qr[data-fase='gerando'] .ck-qr-mira { opacity: 0.5; }
+
+/* O "aguardando" do Pix: um ponto que respira, não um spinner. */
+.ck-pulso {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ck-verde-claro);
+}
+.ck-pulso::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ck-verde-claro);
+  animation: ck-pulso 1800ms cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+@keyframes ck-pulso {
+  from { transform: scale(1); opacity: 0.6; }
+  to { transform: scale(3.2); opacity: 0; }
+}
+
+/* ── Pago: a moeda gira e vira selo ─────────────────────────────────────── */
+
+.ck-pago {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 148px;
+  height: 148px;
+  margin: 0 auto;
+}
+
+.ck-pago .logo3d { --tam: 84px; }
+
+.ck-pago-aro {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--ck-verde-claro);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ck-pago-check {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(180deg, #5aa66b, #2f6b40);
+  box-shadow: 0 0 0 4px var(--ck-papel), 0 8px 18px -6px rgba(46, 97, 64, 0.7);
+  z-index: 2;
+}
+.ck-pago-check path { stroke-dasharray: 24; stroke-dashoffset: 0; }
+
+.ck-pago-faisca {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 2px;
+  background: var(--cor);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ck-pago-check { animation: ck-pago-pop 520ms cubic-bezier(0.34, 1.56, 0.64, 1) 950ms both; }
+  .ck-pago-check path { animation: ck-pago-traco 420ms cubic-bezier(0.65, 0, 0.35, 1) 1150ms both; }
+  .ck-pago-aro { animation: ck-pago-aro 1100ms cubic-bezier(0.16, 1, 0.3, 1) 1000ms both; }
+  .ck-pago-aro + .ck-pago-aro { animation-delay: 1180ms; }
+  .ck-pago-faisca { animation: ck-pago-faisca 1000ms cubic-bezier(0.16, 1, 0.3, 1) 1020ms both; }
+}
+
+@keyframes ck-pago-pop {
+  from { opacity: 0; transform: scale(0.2); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ck-pago-traco {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes ck-pago-aro {
+  0% { opacity: 0.9; transform: scale(0.55); }
+  100% { opacity: 0; transform: scale(1.45); }
+}
+@keyframes ck-pago-faisca {
+  0% { opacity: 1; transform: rotate(var(--a)) translateY(0) scale(1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(calc(var(--r) * -1)) scale(0.4) rotate(140deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ck-qr *,
+  .ck-pulso::after { animation: none !important; }
+  .ck-qr[data-fase='pronto'] .ck-qr-feixe { display: none; }
+  .ck-qr[data-fase='gerando'] .ck-qr-mod { opacity: 0.35; }
+  .ck-entra,
+  .ck-surge { animation: none !important; }
+}

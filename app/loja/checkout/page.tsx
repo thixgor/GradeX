@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ShoppingCart, MapPin, Home, Truck, Trash2, Minus, Plus, Clock, ArrowLeft, PackageCheck } from 'lucide-react'
+import { ShoppingCart, MapPin, Home, Truck, Trash2, Minus, Plus, Clock, PackageCheck } from 'lucide-react'
 import { AppShell } from '@/components/app-shell'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { CabecaDoCheckout, MundoDoCheckout, TrilhaDoCheckout } from '@/components/checkout/mundo-do-checkout'
 import { MercadoPagoCheckout } from '@/components/payments/mercado-pago-checkout'
 import { useShopCart } from '@/context/ShopCartContext'
 import { computeFreight, estimateDeliveryDate, UFS } from '@/lib/shop'
@@ -127,22 +127,26 @@ export default function ShopCheckoutPage() {
 
   return (
     <AppShell headerTitle="Finalizar pedido">
-      <div className="surface-page container mx-auto max-w-5xl px-4 py-6">
-        <p className="editorial-mark mb-3">Checkout · loja</p>
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="mb-4 gap-1.5">
-          <ArrowLeft className="h-4 w-4" /> Voltar
-        </Button>
+      <MundoDoCheckout>
+      <div className="container mx-auto max-w-5xl px-4 pb-12 pt-4 sm:pt-6">
+        <CabecaDoCheckout
+          className="mb-6"
+          voltar={{ rotulo: 'Voltar', onClick: () => router.back() }}
+          trilha={<TrilhaDoCheckout passos={['escolha', 'dados', 'pagamento', 'acesso']} atual={canPay ? 'pagamento' : 'dados'} />}
+          titulo="Finalizar pedido"
+          subtitulo="Confira os itens, escolha como receber e pague. O pedido aparece no seu perfil assim que o pagamento cai."
+        />
 
-        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr] lg:items-start">
           {/* Coluna esquerda: itens + entrega */}
           <div className="space-y-6">
             {/* Itens */}
-            <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Itens do pedido</h2>
+            <section className="ck-vidro ck-entra p-5" style={{ '--ordem': 1 } as React.CSSProperties}>
+              <h2 className="mb-4 font-heading text-lg font-semibold tracking-tight">Itens do pedido</h2>
               <div className="space-y-3">
                 {items.map((i) => (
                   <div key={`${i.productId}::${i.versionId || ''}`} className="flex items-center gap-3">
-                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-muted/50">
+                    <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-[14px] bg-muted/50">
                       {i.imageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={i.imageUrl} alt={i.title} className="h-full w-full object-cover" />
@@ -157,12 +161,12 @@ export default function ShopCheckoutPage() {
                       {i.versionName && <p className="truncate text-[11px] text-muted-foreground">Versão: {i.versionName}</p>}
                       <p className="text-xs text-muted-foreground">R$ {brl(i.price)}</p>
                     </div>
-                    <div className="flex items-center gap-1 rounded-lg border border-border/60 p-0.5">
-                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity - 1, i.versionId)}>
+                    <div className="flex items-center gap-1 rounded-full bg-black/[0.05] p-0.5 dark:bg-white/[0.07]">
+                      <button className="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-background" onClick={() => setQuantity(i.productId, i.quantity - 1, i.versionId)}>
                         <Minus className="h-3.5 w-3.5" />
                       </button>
                       <span className="w-6 text-center text-xs font-semibold">{i.quantity}</span>
-                      <button className="flex h-7 w-7 items-center justify-center rounded hover:bg-muted" onClick={() => setQuantity(i.productId, i.quantity + 1, i.versionId)}>
+                      <button className="flex h-7 w-7 items-center justify-center rounded-full transition hover:bg-background" onClick={() => setQuantity(i.productId, i.quantity + 1, i.versionId)}>
                         <Plus className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -175,14 +179,14 @@ export default function ShopCheckoutPage() {
             </section>
 
             {/* Entrega */}
-            <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Forma de entrega</h2>
+            <section className="ck-vidro ck-entra p-5" style={{ '--ordem': 2 } as React.CSSProperties}>
+              <h2 className="mb-4 font-heading text-lg font-semibold tracking-tight">Como você quer receber?</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   onClick={() => setDeliveryType('pickup')}
                   className={cn(
-                    'flex items-start gap-3 rounded-xl border-2 p-3 text-left transition-all',
-                    deliveryType === 'pickup' ? 'border-primary bg-primary/5' : 'border-border/50 hover:border-border'
+                    'ck-opcao ck-opcao-linha items-start',
+                    deliveryType === 'pickup' && 'is-ativo'
                   )}
                 >
                   <MapPin className={cn('mt-0.5 h-5 w-5', deliveryType === 'pickup' ? 'text-primary' : 'text-muted-foreground')} />
@@ -194,8 +198,8 @@ export default function ShopCheckoutPage() {
                 <button
                   onClick={() => setDeliveryType('shipping')}
                   className={cn(
-                    'flex items-start gap-3 rounded-xl border-2 p-3 text-left transition-all',
-                    deliveryType === 'shipping' ? 'border-primary bg-primary/5' : 'border-border/50 hover:border-border'
+                    'ck-opcao ck-opcao-linha items-start',
+                    deliveryType === 'shipping' && 'is-ativo'
                   )}
                 >
                   <Home className={cn('mt-0.5 h-5 w-5', deliveryType === 'shipping' ? 'text-primary' : 'text-muted-foreground')} />
@@ -216,8 +220,8 @@ export default function ShopCheckoutPage() {
                     <label
                       key={pp.id}
                       className={cn(
-                        'flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-all',
-                        pickupPointId === pp.id ? 'border-primary bg-primary/5' : 'border-border/50'
+                        'ck-opcao ck-opcao-linha cursor-pointer items-start',
+                        pickupPointId === pp.id && 'is-ativo'
                       )}
                     >
                       <input
@@ -241,18 +245,18 @@ export default function ShopCheckoutPage() {
               {deliveryType === 'shipping' && (
                 <div className="mt-4 space-y-4">
                   <div className="grid gap-2 sm:grid-cols-2">
-                    <Input placeholder="Nome completo" value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} />
-                    <Input placeholder="Telefone (opcional)" value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} />
-                    <Input placeholder="CEP" value={address.cep} onChange={(e) => setAddress({ ...address, cep: e.target.value })} />
-                    <Input placeholder="Cidade" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
-                    <Input placeholder="Rua" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} />
-                    <Input placeholder="Número" value={address.number} onChange={(e) => setAddress({ ...address, number: e.target.value })} />
-                    <Input placeholder="Bairro" value={address.district} onChange={(e) => setAddress({ ...address, district: e.target.value })} />
-                    <Input placeholder="Complemento (opcional)" value={address.complement} onChange={(e) => setAddress({ ...address, complement: e.target.value })} />
+                    <input className="ck-campo" placeholder="Nome completo" value={address.name} onChange={(e) => setAddress({ ...address, name: e.target.value })} />
+                    <input className="ck-campo" placeholder="Telefone (opcional)" value={address.phone} onChange={(e) => setAddress({ ...address, phone: e.target.value })} />
+                    <input className="ck-campo" placeholder="CEP" value={address.cep} onChange={(e) => setAddress({ ...address, cep: e.target.value })} />
+                    <input className="ck-campo" placeholder="Cidade" value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
+                    <input className="ck-campo" placeholder="Rua" value={address.street} onChange={(e) => setAddress({ ...address, street: e.target.value })} />
+                    <input className="ck-campo" placeholder="Número" value={address.number} onChange={(e) => setAddress({ ...address, number: e.target.value })} />
+                    <input className="ck-campo" placeholder="Bairro" value={address.district} onChange={(e) => setAddress({ ...address, district: e.target.value })} />
+                    <input className="ck-campo" placeholder="Complemento (opcional)" value={address.complement} onChange={(e) => setAddress({ ...address, complement: e.target.value })} />
                     <select
                       value={address.uf}
                       onChange={(e) => setAddress({ ...address, uf: e.target.value })}
-                      className="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground [&>option]:bg-background [&>option]:text-foreground"
+                      className="ck-campo [&>option]:bg-background [&>option]:text-foreground"
                     >
                       <option value="">UF</option>
                       {UFS.map((uf) => (
@@ -262,7 +266,7 @@ export default function ShopCheckoutPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Método de entrega</p>
+                    <p className="ck-rotulo">Método de entrega</p>
                     {(settings?.deliveryMethods || []).length === 0 && (
                       <p className="text-xs text-muted-foreground">Nenhum método configurado. Escolha retirada.</p>
                     )}
@@ -272,8 +276,8 @@ export default function ShopCheckoutPage() {
                         <label
                           key={m.id}
                           className={cn(
-                            'flex cursor-pointer items-center justify-between gap-3 rounded-xl border p-3 transition-all',
-                            deliveryMethodId === m.id ? 'border-primary bg-primary/5' : 'border-border/50'
+                            'ck-opcao ck-opcao-linha cursor-pointer items-center justify-between',
+                            deliveryMethodId === m.id && 'is-ativo'
                           )}
                         >
                           <div className="flex items-start gap-3">
@@ -304,31 +308,33 @@ export default function ShopCheckoutPage() {
 
           {/* Coluna direita: resumo + pagamento */}
           <div className="space-y-4">
+            <div className="lg:sticky lg:top-24">
             <motion.section
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="sticky top-4 rounded-lg border border-border bg-card p-5 shadow-sm"
+              className="ck-vidro-forte p-5 sm:p-6"
             >
-              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Resumo</h2>
-              <div className="space-y-1.5 text-sm">
-                <div className="flex justify-between text-muted-foreground">
+              <h2 className="mb-4 font-heading text-lg font-semibold tracking-tight">Resumo</h2>
+              <div className="ck-recibo">
+                <div className="ck-recibo-linha">
                   <span>Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'itens'})</span>
-                  <span className="text-foreground">R$ {brl(subtotal)}</span>
+                  <span>R$ {brl(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-muted-foreground">
+                <div className="ck-recibo-linha">
                   <span>Frete</span>
-                  <span className="text-foreground">
+                  <span>
                     {deliveryType === 'pickup' ? 'Grátis' : address.uf ? (freight > 0 ? `R$ ${brl(freight)}` : 'Grátis') : '—'}
                   </span>
                 </div>
-                <div className="mt-2 flex justify-between border-t border-border/40 pt-2 text-base font-bold">
-                  <span>Total</span>
-                  <span>R$ {brl(total)}</span>
-                </div>
+              </div>
+              <div className="ck-picote" aria-hidden />
+              <div className="flex items-end justify-between gap-3">
+                <span className="text-[13px] font-semibold">Total</span>
+                <span className="ck-total">R$ {brl(total)}</span>
               </div>
 
               {eta && (
-                <div className="mt-3 flex items-center gap-2 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
+                <div className="ck-nota mt-4 items-center text-xs">
                   <Clock className="h-3.5 w-3.5" />
                   Previsão de {deliveryType === 'pickup' ? 'disponibilidade' : 'entrega'}:{' '}
                   <strong className="text-foreground">
@@ -339,7 +345,7 @@ export default function ShopCheckoutPage() {
 
               <div className="mt-4">
                 {!canPay ? (
-                  <div className="rounded-xl bg-muted/40 px-4 py-3 text-center text-xs text-muted-foreground">
+                  <div className="ck-nota justify-center text-center text-xs">
                     {deliveryType === 'shipping' && !addressValid
                       ? 'Preencha o endereço e escolha o método de entrega para pagar.'
                       : 'Selecione a forma de entrega para continuar.'}
@@ -375,9 +381,11 @@ export default function ShopCheckoutPage() {
                 <Truck className="h-3 w-3" /> {settings?.sellerFooter || 'Entregue por DomineAqui LTDA — Rio de Janeiro'}
               </p>
             </motion.section>
+            </div>
           </div>
         </div>
       </div>
+      </MundoDoCheckout>
     </AppShell>
   )
 }
@@ -418,9 +426,9 @@ function FreeOrderCheckout({
 
   return (
     <div>
-      <Button className="w-full gap-2" disabled={submitting} onClick={submit}>
+      <button type="button" className="ck-cta ck-cta-verde ck-cta-largo" disabled={submitting} onClick={submit}>
         {submitting ? 'Processando...' : 'Concluir pedido gratuito'}
-      </Button>
+      </button>
       {error && <p className="mt-2 text-center text-xs text-red-500">{error}</p>}
       <p className="mt-2 text-center text-[11px] text-muted-foreground">
         Sem custo — nenhum pagamento necessário.

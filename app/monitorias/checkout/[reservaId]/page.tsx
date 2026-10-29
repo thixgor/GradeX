@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, use } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { ArrowLeft, CalendarPlus, Check, Clock, Copy, Download, FileText, Hourglass, Loader2, MessagesSquare, PartyPopper, Receipt, Users } from 'lucide-react'
+import { ArrowLeft, CalendarPlus, Check, Clock, Copy, Download, FileText, Hourglass, Loader2, MessagesSquare, Receipt, Users } from 'lucide-react'
 import { PageScaffold } from '@/components/page-scaffold'
 import { Button } from '@/components/ui/button'
 import { Avatar, CaixaAviso, CaixaErro, Confete, Esqueleto, HoraBrasilia, api } from '@/components/monitorias/base'
@@ -16,6 +16,8 @@ import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import { formatarCentavos } from '@/lib/monitorias/dinheiro'
 import { formatarDuracao } from '@/lib/monitorias/agenda'
 import { formatarEmBrasilia } from '@/lib/fuso-brasilia'
+import { MundoDoCheckout } from '@/components/checkout/mundo-do-checkout'
+import { SeloDePago } from '@/components/checkout/marca-no-pagamento'
 import { cn } from '@/lib/utils'
 
 const PASSOS = ['Revisar', 'Contrato', 'Pagar', 'Confirmado'] as const
@@ -76,8 +78,9 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
 
   return (
     <PageScaffold>
+      <MundoDoCheckout>
       <div className="mx-auto max-w-2xl">
-        <Link href={urlSala} className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary">
+        <Link href={urlSala} className="ck-voltar mb-5">
           <ArrowLeft className="h-4 w-4" /> Voltar para a reserva
         </Link>
 
@@ -88,8 +91,8 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
               <motion.span
                 animate={{ scale: i === passo ? 1.1 : 1 }}
                 className={cn(
-                  'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-bold transition-colors',
-                  i < passo ? 'border-primary bg-primary text-primary-foreground' : i === passo ? 'border-primary bg-primary/10 text-primary' : 'border-border text-muted-foreground',
+                  'flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-colors',
+                  i < passo ? 'bg-gradient-to-b from-[#5aa66b] to-[#2f6b40] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)]' : i === passo ? 'bg-foreground text-background' : 'bg-black/[0.06] text-muted-foreground dark:bg-white/[0.08]',
                 )}
               >
                 {i < passo ? <Check className="h-4 w-4" /> : i + 1}
@@ -106,7 +109,7 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
         ) : !assento ? (
           <CaixaAviso>Você não tem um assento nesta reserva.</CaixaAviso>
         ) : (
-          <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-7">
+          <div className="ck-vidro-forte overflow-hidden p-5 sm:p-7">
             <AnimatePresence mode="wait">
               <motion.div
                 key={passo}
@@ -170,7 +173,7 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
                       <p className="text-sm text-muted-foreground">Contrato de prestação de serviços entre você e o monitor. Leva 1 minuto.</p>
                     </div>
                     {!termosOk && (
-                      <div className="rounded-2xl border border-border p-4">
+                      <div className="ck-placa p-4">
                         <TermosAceite papel="aluno" compacto onAceito={() => setTermosOk(true)} />
                       </div>
                     )}
@@ -192,7 +195,7 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
                     {p && !p.gratis && (!d.meuContrato || d.meuContrato.politicaV5) && <PrazosDoCancelamento inicio={p.inicio} valorCentavos={assento?.valorCentavos ?? 0} className="bg-muted/20" />}
                     {/* Termos atualizados depois da assinatura: o novo aceite fica aqui mesmo (sem ele o PIX recusa). */}
                     {!termosOk && (
-                      <div className="rounded-2xl border border-border p-4">
+                      <div className="ck-placa p-4">
                         <TermosAceite papel="aluno" compacto onAceito={() => setTermosOk(true)} />
                       </div>
                     )}
@@ -211,9 +214,7 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
                 {passo === 3 && (
                   <div className="relative space-y-5 text-center">
                     <Confete />
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 15 }} className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-xl">
-                      <PartyPopper className="h-10 w-10" />
-                    </motion.div>
+                    <SeloDePago />
                     <div>
                       <h1 className="font-heading text-2xl font-bold">{r.status === 'confirmada' ? 'Monitoria confirmada' : assento.status === 'gratis' ? 'Aula grátis garantida!' : 'Pagamento confirmado!'}</h1>
                       <p className="mt-1 text-sm text-muted-foreground">
@@ -255,6 +256,7 @@ export default function CheckoutMonitoria(props: { params: Promise<{ reservaId: 
           <Download className="h-3 w-3" /> Contrato, comprovante e termos ficam sempre disponíveis na página da reserva.
         </p>
       </div>
+      </MundoDoCheckout>
     </PageScaffold>
   )
 }

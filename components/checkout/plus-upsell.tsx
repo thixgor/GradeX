@@ -20,6 +20,12 @@ import {
  * dados de `/api/plus/oferta`: Plus+ não vê nada, Quest+ vê upgrade, o resto
  * vê a oferta — e só quando o plano cobre o que está sendo comprado.
  *
+ * Uma linha só, de propósito: a versão anterior era um cartão de 300 px acima
+ * do pagamento, com manchete de anúncio ("Espera!", "Você sabia?"), lista e
+ * preço grande — empurrava o formulário para baixo da dobra justo de quem já
+ * tinha decidido comprar. Agora é o argumento em uma frase, o preço real ao
+ * lado e o botão; a lista do que vem fica a um toque.
+ *
  * Falha em silêncio de propósito, como o `CouponPromo`: enquanto carrega, ou
  * se a busca cair, não desenha nada e o checkout segue igual. Também não
  * desloca a tela depois de montada além do próprio cartão: ele entra acima do
@@ -60,56 +66,6 @@ interface Props {
   className?: string
 }
 
-interface Pele {
-  cartao: string
-  selo: string
-  titulo: string
-  texto: string
-  destaque: string
-  riscado: string
-  preco: string
-  miudo: string
-  check: string
-  item: string
-  botao: string
-  link: string
-  aviso: string
-}
-
-const PELES: Record<AparenciaPlusUpsell, Pele> = {
-  app: {
-    cartao:
-      'border-amber-500/35 bg-gradient-to-br from-amber-500/[0.12] via-card to-primary/[0.08] dark:border-amber-300/30',
-    selo: 'bg-amber-400 text-amber-950',
-    titulo: 'text-foreground',
-    texto: 'text-muted-foreground',
-    destaque: 'text-amber-700 dark:text-amber-300',
-    riscado: 'text-muted-foreground',
-    preco: 'text-foreground',
-    miudo: 'text-muted-foreground',
-    check: 'bg-primary/15 text-primary',
-    item: 'text-foreground/90',
-    botao: 'bg-amber-400 text-amber-950 hover:bg-amber-300 focus-visible:ring-amber-500',
-    link: 'text-muted-foreground hover:text-foreground',
-    aviso: 'border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-100',
-  },
-  dark: {
-    cartao: 'border-amber-300/30 bg-gradient-to-br from-amber-300/[0.14] via-white/[0.05] to-emerald-300/[0.08]',
-    selo: 'bg-amber-300 text-amber-950',
-    titulo: 'text-white',
-    texto: 'text-white/65',
-    destaque: 'text-amber-200',
-    riscado: 'text-white/40',
-    preco: 'text-white',
-    miudo: 'text-white/50',
-    check: 'bg-emerald-300/15 text-emerald-300',
-    item: 'text-white/85',
-    botao: 'bg-amber-300 text-amber-950 hover:bg-amber-200 focus-visible:ring-amber-300',
-    link: 'text-white/50 hover:text-white',
-    aviso: 'border-amber-300/30 bg-amber-300/10 text-amber-100',
-  },
-}
-
 function formatBRL(valor: number): string {
   return `R$ ${Number(valor || 0).toFixed(2).replace('.', ',')}`
 }
@@ -147,6 +103,8 @@ export function PlusUpsell({
 }: Props) {
   const [dados, setDados] = useState<RespostaDaOferta | null>(null)
   const [aberto, setAberto] = useState(true)
+  // Fechado por padrão: a chamada é uma linha. A lista do que vem no Plus+
+  // abre quando a pessoa pede — o pagamento continua logo abaixo.
   const [verTudo, setVerTudo] = useState(false)
 
   useEffect(() => {
@@ -178,7 +136,6 @@ export function PlusUpsell({
 
   if (!dados || !oferta || modo === 'nenhuma') return null
 
-  const pele = PELES[aparencia]
   const upgrade = modo === 'upgrade'
   const arg = argumentoDaOferta({
     valorAtual,
@@ -188,10 +145,6 @@ export function PlusUpsell({
   const destino = destinoDaOferta(oferta.tipo, dados.logado)
   const principais = oferta.inclusos.filter((i) => !i.extra)
   const extras = oferta.inclusos.filter((i) => i.extra)
-  // Quatro de cara: no celular o cartão fica acima do formulário, e a lista
-  // inteira empurrava o pagamento para longe.
-  const visiveis = verTudo ? principais : principais.slice(0, 4)
-  const escondidos = principais.length - visiveis.length
   const nomeDoPlano = `Plus+${oferta.periodo ? ` ${oferta.periodo.replace(/^plano\s+/i, '')}` : ''}`
 
   const registrarClique = () => {
@@ -217,41 +170,38 @@ export function PlusUpsell({
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className={cn(
-          'flex w-full items-center gap-2 rounded-xl border px-3.5 py-2.5 text-left text-xs font-semibold transition',
-          pele.cartao,
-          className,
-        )}
+        className={cn('ck-escopo ck-plus flex w-full items-center gap-2.5 px-3 py-2 text-left text-[13px] font-semibold', className)}
+        data-aparencia={aparencia}
       >
-        <Crown className={cn('h-4 w-4 flex-none', pele.destaque)} aria-hidden />
-        <span className={cn('min-w-0 flex-1', pele.texto)}>
+        <Crown className="h-4 w-4 flex-none text-amber-600 dark:text-amber-300" aria-hidden />
+        <span className="min-w-0 flex-1 truncate" style={{ color: 'var(--ck-texto-2)' }}>
           {upgrade ? 'Upgrade para o Plus+' : `${nomeDoPlano}: a plataforma inteira`} por{' '}
-          <strong className={pele.titulo}>{formatBRL(oferta.preco)}</strong>
+          <strong className="text-foreground">{formatBRL(oferta.preco)}</strong>
         </span>
-        <span className={cn('flex-none underline-offset-4 hover:underline', pele.destaque)}>Ver oferta</span>
+        <span className="ck-link flex-none">Ver</span>
       </button>
     )
   }
 
-  // ── A manchete: o argumento que mais pesa para ESTA compra. ──
+  // ── A manchete: o argumento que mais pesa para ESTA compra, numa linha. ──
+  const destaque = 'text-amber-700 dark:text-amber-300'
   let manchete: React.ReactNode
   if (upgrade && contexto === 'plano') {
-    const momento = dados.perfil === 'quest' ? 'Antes de renovar o Quest+' : 'Antes de fechar o Quest+'
     manchete = arg.diferenca > 0
-      ? <>{momento}: por <span className={pele.destaque}>{formatBRL(arg.diferenca)} a mais</span>, leve a plataforma inteira</>
-      : <>{momento}: pelo mesmo valor, <span className={pele.destaque}>leve a plataforma inteira</span></>
+      ? <>Por <span className={destaque}>+{formatBRL(arg.diferenca)}</span>, troque o Quest+ pela plataforma inteira</>
+      : <>Pelo mesmo valor, troque o Quest+ pela <span className={destaque}>plataforma inteira</span></>
   } else if (upgrade) {
-    manchete = <>Você já tem o Quest+. Faça o upgrade e <span className={pele.destaque}>desbloqueie todo o resto</span></>
+    manchete = <>Você tem o Quest+. No Plus+, <span className={destaque}>isto já vem incluso</span></>
   } else if (arg.tipo === 'mais-barato') {
     manchete = arg.economia > 0
-      ? <>Espera! O Plus+ sai <span className={pele.destaque}>{formatBRL(arg.economia)} mais barato</span> que esta compra — e libera tudo</>
-      : <>Espera! Pelo mesmo valor, o Plus+ <span className={pele.destaque}>libera a plataforma inteira</span></>
+      ? <>O Plus+ sai <span className={destaque}>{formatBRL(arg.economia)} mais barato</span> e libera tudo</>
+      : <>Pelo mesmo valor, o Plus+ <span className={destaque}>libera tudo</span></>
   } else if (arg.tipo === 'quase-o-mesmo') {
-    manchete = <>Por só <span className={pele.destaque}>{formatBRL(arg.diferenca)} a mais</span>, leve a plataforma inteira</>
+    manchete = <>Por <span className={destaque}>+{formatBRL(arg.diferenca)}</span>, leve a plataforma inteira</>
   } else {
     manchete = arg.porMes
-      ? <>Você sabia? Por <span className={pele.destaque}>{formatBRL(arg.porMes)}/mês</span> você leva TUDO da plataforma</>
-      : <>Você sabia? O Plus+ <span className={pele.destaque}>libera TUDO da plataforma</span> num pagamento só</>
+      ? <>Tudo da plataforma por <span className={destaque}>{formatBRL(arg.porMes)}/mês</span></>
+      : <>O Plus+ <span className={destaque}>libera tudo</span> num pagamento só</>
   }
 
   // O Banco só é citado quando o plano de fato o libera (permissões modulares).
@@ -259,123 +209,102 @@ export function PlusUpsell({
   const sujeito = `${oQueEstaSendoComprado(contexto, quantidadeDeItens)} ${jaVem(contexto, quantidadeDeItens)} no ${nomeDoPlano}`
   const cobertura = upgrade && contexto === 'plano'
     ? temBanco
-      ? 'O Plus+ já traz o Banco de Questões do Quest+ — e soma a plataforma inteira:'
+      ? 'O Plus+ já traz o Banco de Questões do Quest+ e soma a plataforma inteira:'
       : 'Com o Plus+ você leva a plataforma inteira:'
     : upgrade
       ? temBanco
-        ? `${sujeito}, que mantém o Banco de Questões que você já usa e soma todo o resto:`
-        : `${sujeito}, junto com todo o resto:`
-      : `${sujeito} — junto com:`
+        ? `${sujeito}, que mantém o Banco de Questões que você já usa e soma:`
+        : `${sujeito}, junto com:`
+      : `${sujeito}, junto com:`
+
+  // A linha de preço, sempre com a cobrança real ao lado do "por mês".
+  const precoReal = `${formatBRL(oferta.preco)}${
+    oferta.durationMonths ? ` por ${oferta.durationMonths} ${oferta.durationMonths === 1 ? 'mês' : 'meses'}` : ''
+  }`
 
   return (
     <section
       aria-label={upgrade ? 'Upgrade para o Plus+' : 'Conheça o Plus+'}
-      className={cn('relative overflow-hidden rounded-2xl border p-4 shadow-sm sm:p-5', pele.cartao, className)}
+      className={cn('ck-escopo ck-plus', className)}
+      data-aberto={verTudo || undefined}
+      data-aparencia={aparencia}
     >
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span
-          className={cn(
-            'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide shadow-sm',
-            pele.selo,
-          )}
-        >
-          <Crown className="h-3 w-3" aria-hidden />
-          {upgrade ? 'Upgrade Quest+ → Plus+' : `DomineAqui ${nomeDoPlano}`}
+      <div className="flex items-center gap-3 p-2.5 pl-3 sm:p-3">
+        <span className="ck-plus-coroa" aria-hidden>
+          {upgrade ? <Zap className="h-[18px] w-[18px]" /> : <Crown className="h-[18px] w-[18px]" />}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[14px] font-semibold leading-snug tracking-tight sm:text-[15px]">{manchete}</p>
+          <p className="mt-0.5 truncate text-[12px]" style={{ color: 'var(--ck-texto-3)' }}>
+            {oferta.precoOriginal ? (
+              <span className="mr-1 line-through">{formatBRL(oferta.precoOriginal)}</span>
+            ) : null}
+            {nomeDoPlano} · {precoReal}
+          </p>
+        </div>
+        <span className="hidden flex-none sm:block">
+          <Link href={destino} onClick={registrarClique} className="ck-plus-cta">
+            {upgrade ? 'Fazer upgrade' : 'Conhecer'} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+          </Link>
         </span>
         <button
           type="button"
-          onClick={() => setAberto(false)}
-          className={cn('text-[11px] font-semibold transition', pele.link)}
+          onClick={() => setVerTudo((v) => !v)}
+          className="ck-plus-mais"
+          aria-expanded={verTudo}
+          aria-label={verTudo ? 'Esconder o que vem no Plus+' : 'Ver o que vem no Plus+'}
         >
-          Agora não
+          <ChevronDown className="h-4 w-4" aria-hidden />
         </button>
-      </div>
-
-      <h2 className={cn('mt-3 font-heading text-lg font-semibold leading-snug tracking-tight sm:text-xl', pele.titulo)}>
-        {manchete}
-      </h2>
-      <p className={cn('mt-1.5 text-xs leading-relaxed sm:text-[13px]', pele.texto)}>{cobertura}</p>
-
-      <ul className="mt-3 grid gap-x-4 gap-y-1.5 sm:grid-cols-2">
-        {visiveis.map((item) => (
-          <li key={item.chave} className={cn('flex items-start gap-2 text-[13px] font-medium leading-snug', pele.item)}>
-            <span className={cn('mt-px flex h-4 w-4 flex-none items-center justify-center rounded-full', pele.check)}>
-              <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
-            </span>
-            {item.rotulo}
-          </li>
-        ))}
-      </ul>
-      {escondidos > 0 && (
-        <button
-          type="button"
-          onClick={() => setVerTudo(true)}
-          className={cn('mt-2 inline-flex items-center gap-1 text-xs font-bold transition', pele.destaque)}
-        >
-          Ver {escondidos === 1 ? 'mais 1 incluído' : `mais ${escondidos} incluídos`} <ChevronDown className="h-3.5 w-3.5" aria-hidden />
-        </button>
-      )}
-      {extras.length > 0 && (verTudo || escondidos === 0) && (
-        <p className={cn('mt-2 flex items-start gap-1.5 text-xs leading-relaxed', pele.texto)}>
-          <Sparkles className={cn('mt-0.5 h-3.5 w-3.5 flex-none', pele.destaque)} aria-hidden />
-          <span>
-            E ainda: {extras.map((e) => e.rotulo).join(', ')}.
-          </span>
-        </p>
-      )}
-
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          {oferta.precoOriginal ? (
-            <p className={cn('text-xs font-semibold tabular-nums line-through', pele.riscado)}>
-              {formatBRL(oferta.precoOriginal)}
-            </p>
-          ) : null}
-          <p className={cn('font-heading text-2xl font-semibold tabular-nums tracking-tight', pele.preco)}>
-            {formatBRL(oferta.preco)}
-            {oferta.durationMonths ? (
-              <span className={cn('ml-1.5 text-xs font-semibold', pele.miudo)}>
-                por {oferta.durationMonths} {oferta.durationMonths === 1 ? 'mês' : 'meses'}
-              </span>
-            ) : null}
-          </p>
-          {arg.porMes && arg.porDia ? (
-            <p className={cn('text-[11px] font-bold', pele.destaque)}>
-              ≈ {formatBRL(arg.porMes)}/mês · cerca de {formatBRL(arg.porDia)} por dia
-            </p>
-          ) : null}
-        </div>
-
-        <Link
-          href={destino}
-          onClick={registrarClique}
-          className={cn(
-            'inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black shadow-sm transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
-            pele.botao,
-          )}
-        >
-          {upgrade ? <Zap className="h-4 w-4" aria-hidden /> : <Crown className="h-4 w-4" aria-hidden />}
-          {upgrade ? 'Fazer upgrade para o Plus+' : `Quero o ${nomeDoPlano}`}
-          <ArrowRight className="h-4 w-4" aria-hidden />
-        </Link>
       </div>
 
       {upgrade && dados.renovacaoAutomatica ? (
-        <p className={cn('mt-3 rounded-lg border px-3 py-2 text-[11px] leading-relaxed', pele.aviso)}>
-          Seu Quest+ tem renovação automática. Depois do upgrade, cancele-a no seu perfil para não pagar os dois.
+        <p className="mx-3 mb-2.5 text-[11.5px] leading-snug" style={{ color: 'var(--ck-ambar)' }}>
+          Seu Quest+ renova sozinho: depois do upgrade, cancele a renovação no perfil para não pagar os dois.
         </p>
       ) : null}
 
-      <p className={cn('mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]', pele.miudo)}>
-        <span className="inline-flex items-center gap-1">
-          <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> 7 dias de garantia
-        </span>
-        <span>
-          {upgrade
-            ? 'O prazo do Plus+ começa a contar no pagamento.'
-            : 'Prefere seguir só com esta compra? É só continuar abaixo.'}
-        </span>
-      </p>
+      <div className="ck-plus-corpo" inert={!verTudo}>
+        <div>
+          <div className="mx-3 border-t pb-3 pt-3" style={{ borderColor: 'var(--ck-sep)' }}>
+            <p className="text-[12.5px] leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>{cobertura}</p>
+            <ul className="mt-2 grid gap-x-4 gap-y-1.5 sm:grid-cols-2">
+              {principais.map((item) => (
+                <li key={item.chave} className="flex items-start gap-2 text-[13px] font-medium leading-snug">
+                  <Check className="mt-0.5 h-3.5 w-3.5 flex-none" style={{ color: 'var(--ck-verde-claro)' }} strokeWidth={3} aria-hidden />
+                  {item.rotulo}
+                </li>
+              ))}
+            </ul>
+            {extras.length > 0 && (
+              <p className="mt-2 flex items-start gap-1.5 text-[12px] leading-relaxed" style={{ color: 'var(--ck-texto-2)' }}>
+                <Sparkles className="mt-0.5 h-3.5 w-3.5 flex-none text-amber-600 dark:text-amber-300" aria-hidden />
+                <span>E ainda: {extras.map((e) => e.rotulo).join(', ')}.</span>
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px]" style={{ color: 'var(--ck-texto-3)' }}>
+                {arg.porMes && arg.porDia ? (
+                  <span>≈ {formatBRL(arg.porMes)}/mês · {formatBRL(arg.porDia)} por dia</span>
+                ) : null}
+                <span className="inline-flex items-center gap-1">
+                  <ShieldCheck className="h-3.5 w-3.5" aria-hidden /> 7 dias de garantia
+                </span>
+              </p>
+              <button type="button" onClick={() => setAberto(false)} className="ck-link-discreto">
+                {upgrade ? 'Agora não' : 'Seguir só com esta compra'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* No celular o botão desce para baixo da linha, largo para o polegar. */}
+      <div className="px-2.5 pb-2.5 sm:hidden">
+        <Link href={destino} onClick={registrarClique} className="ck-plus-cta w-full justify-center">
+          {upgrade ? 'Fazer upgrade para o Plus+' : `Conhecer o ${nomeDoPlano}`} <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+        </Link>
+      </div>
     </section>
   )
 }

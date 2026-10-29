@@ -30,19 +30,26 @@ type Tamanho = 'heroi' | 'compacto' | 'menu'
  * - `intro={false}`: nasce pronta (o menu lateral, que remonta a cada página);
  * - `flutua={false}`: sem o balanço em repouso, onde a pessoa trabalha;
  * - `inclinacao`: segue o ponteiro na `janela` toda, só `local` (com o
- *   ponteiro em cima da logo) ou `nenhuma`.
+ *   ponteiro em cima da logo) ou `nenhuma`;
+ * - `nome={false}`: só a marca, sem o nome ao lado (o selo do checkout);
+ * - `modo="gerando"`: a moeda não para de girar — o "estou trabalhando" do
+ *   checkout enquanto o Pix é gerado.
  */
 export function LogoAnimada({
   tamanho = 'heroi',
   intro = true,
   flutua = true,
   inclinacao = 'janela',
+  nome = true,
+  modo = 'normal',
   className = '',
 }: {
   tamanho?: Tamanho
   intro?: boolean
   flutua?: boolean
   inclinacao?: 'janela' | 'local' | 'nenhuma'
+  nome?: boolean
+  modo?: 'normal' | 'gerando'
   className?: string
 }) {
   const raizRef = useRef<HTMLDivElement>(null)
@@ -116,6 +123,8 @@ export function LogoAnimada({
       data-tamanho={tamanho}
       data-intro={intro ? undefined : 'nao'}
       data-flutua={flutua ? undefined : 'nao'}
+      data-nome={nome ? undefined : 'nao'}
+      data-modo={modo === 'normal' ? undefined : modo}
       role="img"
       aria-label="DomineAqui"
     >
@@ -223,17 +232,19 @@ export function LogoAnimada({
         </div>
       </div>
 
-      <svg viewBox="12 16 484 242" className="logo3d-nome" aria-hidden focusable="false">
-        {LETRAS.map(({ letra, d }, i) => (
-          <path
-            key={i}
-            d={d}
-            className="logo3d-letra"
-            data-letra={letra}
-            style={{ '--i': i } as React.CSSProperties}
-          />
-        ))}
-      </svg>
+      {nome && (
+        <svg viewBox="12 16 484 242" className="logo3d-nome" aria-hidden focusable="false">
+          {LETRAS.map(({ letra, d }, i) => (
+            <path
+              key={i}
+              d={d}
+              className="logo3d-letra"
+              data-letra={letra}
+              style={{ '--i': i } as React.CSSProperties}
+            />
+          ))}
+        </svg>
+      )}
     </div>
   )
 }

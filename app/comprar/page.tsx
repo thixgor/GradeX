@@ -16,6 +16,7 @@ import { ProuniCta } from '@/components/prouni/prouni-cta'
 import { BarraDePagamento } from '@/components/checkout/barra-de-pagamento'
 import { PlusUpsell } from '@/components/checkout/plus-upsell'
 import { PlusAccountNotice } from '@/components/checkout/plus-claim'
+import { CabecaDoCheckout, MundoDoCheckout, TrilhaDoCheckout } from '@/components/checkout/mundo-do-checkout'
 import type { ContextoDaOferta } from '@/lib/plus-oferta'
 import { PackageContents } from '@/components/shop/package-contents'
 import { ListaDoPacote } from '@/components/manual-clinico/pacote'
@@ -36,16 +37,6 @@ interface AppliedCoupon {
 
 function formatBRL(value: number): string {
   return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block', fontSize: '12px', fontWeight: 600, color: 'hsl(var(--primary))',
-  marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em',
-}
-const inputStyle: React.CSSProperties = {
-  width: '100%', boxSizing: 'border-box', background: 'hsl(var(--background))',
-  border: '1px solid hsl(var(--border))', color: 'hsl(var(--foreground))', borderRadius: '10px',
-  padding: '12px 14px', fontSize: '14px', outline: 'none',
 }
 
 interface Product {
@@ -82,7 +73,7 @@ function SecurityBadges({ className = '' }: { className?: string }) {
       {SECURITY_BADGES.map((badge) => (
         <span
           key={badge.src}
-          className="inline-flex h-11 items-center justify-center rounded-lg border border-border bg-white px-3"
+          className="inline-flex h-10 items-center justify-center rounded-full border border-black/[0.06] bg-white px-3.5"
         >
           <img src={badge.src} alt={badge.alt} title={badge.alt} style={{ height: badge.height }} className="w-auto object-contain" />
         </span>
@@ -190,14 +181,14 @@ function ManualClinicoCouponBox({
 
   if (!product.allowCoupons) {
     return (
-      <div className="rounded-lg border border-border bg-muted/40 p-4 text-sm text-muted-foreground">
+      <div className="ck-nota">
         Cupons nao estao habilitados para este produto.
       </div>
     )
   }
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
+    <div className="ck-placa p-4">
       <div className="mb-3 flex items-center gap-2 text-sm font-bold text-foreground">
         <Percent className="h-4 w-4 text-primary" />
         Cupom de desconto
@@ -223,7 +214,7 @@ function ManualClinicoCouponBox({
               setError('')
               onRemoved()
             }}
-            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-destructive/25 bg-destructive/10 text-sm font-bold text-destructive transition hover:bg-destructive/15"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-full border border-destructive/25 bg-destructive/10 text-sm font-bold text-destructive transition hover:bg-destructive/15"
           >
             <X className="h-4 w-4" />
             Remover cupom
@@ -242,14 +233,14 @@ function ManualClinicoCouponBox({
                 if (event.key === 'Enter') applyCoupon()
               }}
               disabled={loading || product.currentPrice <= 0}
-              className="h-10 min-w-0 flex-1 rounded-lg border border-border bg-background px-3 text-sm font-bold uppercase text-foreground outline-none transition focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
+              className="ck-campo ck-mono min-w-0 flex-1 uppercase" style={{ height: 42 }}
               placeholder="Digite seu cupom"
             />
             <button
               type="button"
               onClick={() => applyCoupon()}
               disabled={loading || !code.trim() || product.currentPrice <= 0}
-              className="inline-flex h-10 items-center gap-2 rounded-lg bg-secondary px-4 text-sm font-black text-secondary-foreground transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="ck-botao" style={{ height: 42 }}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Aplicar
@@ -359,7 +350,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
     return (
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="ck-vidro p-5 sm:p-6">
             <div className="mb-5 h-48 w-full animate-pulse rounded-lg bg-muted" />
             <div className="mb-5 flex items-start gap-3">
               <div className="h-12 w-12 flex-none animate-pulse rounded-lg bg-muted" />
@@ -374,7 +365,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
             </div>
             <div className="h-20 w-full animate-pulse rounded-lg bg-muted" />
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="ck-vidro p-5 sm:p-6">
             <div className="space-y-4">
               <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
               <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
@@ -390,7 +381,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
   if (error || !product) {
     return (
       <div className="mx-auto max-w-lg">
-        <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-6 py-7 text-center text-sm text-destructive">
+        <div className="ck-erro justify-center px-6 py-7 text-center">
           {error || 'Produto indisponível.'}
         </div>
       </div>
@@ -437,6 +428,9 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
 
   return (
     <div className="mx-auto max-w-6xl text-foreground">
+      <div className="ck-entra mb-5 flex justify-end">
+        <TrilhaDoCheckout passos={['escolha', 'dados', 'pagamento', 'acesso']} atual={step === 'payment' ? 'pagamento' : 'dados'} />
+      </div>
       {/* No celular a coluna do formulário cai depois da capa, da descrição, do
           preço e do cupom — quem já decidiu comprar rolava tudo isso à procura
           do primeiro campo. */}
@@ -456,9 +450,9 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           className="mb-5"
         />
       )}
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-        <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
-          <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
+        <div className="ck-vidro p-5 sm:p-6">
+          <div className="relative mb-5 overflow-hidden rounded-[18px]">
             {product.coverImageUrl ? (
               <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover" />
             ) : (
@@ -474,7 +468,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           </div>
 
           <div className="mb-5 flex items-start gap-3">
-            <div className="rounded-lg bg-primary/10 p-3 text-primary">
+            <div className="rounded-[16px] bg-gradient-to-b from-[#f05f74] to-[#bf2944] p-3 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
               <BookOpen className="h-6 w-6" />
             </div>
             <div>
@@ -496,7 +490,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           </div>
 
           {enabledPlans.length > 1 && (
-            <div className="mb-5 flex items-start gap-2.5 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3.5 dark:border-amber-300/25 dark:bg-amber-300/10">
+            <div className="mb-5 flex items-start gap-2.5 rounded-[16px] border border-amber-500/25 bg-amber-500/10 p-3.5 dark:border-amber-300/25 dark:bg-amber-300/10">
               <Crown className="mt-0.5 h-4 w-4 flex-none text-amber-600 dark:text-amber-300" />
               <p className="text-xs font-semibold leading-snug text-amber-900 dark:text-amber-100/90">
                 Boas notícias: dá pra ter o Manual <span className="font-black">para sempre</span> por um valor único.
@@ -526,14 +520,14 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                       key={plan.key}
                       type="button"
                       onClick={() => setSelectedPlanKey(plan.key)}
-                      className={`relative flex items-center justify-between gap-3 rounded-lg border p-4 text-left transition ${
+                      className={`relative flex items-center justify-between gap-3 rounded-[18px] border p-4 text-left transition active:scale-[0.99] ${
                         isActive
                           ? isLifetime
                             ? 'border-amber-500/50 bg-amber-500/10 shadow-sm dark:border-amber-300/50'
                             : 'border-primary/50 bg-primary/10 shadow-sm'
                           : isLifetime
                             ? 'border-amber-500/25 bg-amber-500/5 hover:bg-amber-500/10 dark:border-amber-300/30'
-                            : 'border-border bg-background hover:bg-muted/50'
+                            : 'border-black/[0.07] bg-white/55 hover:bg-white/80 dark:border-white/10 dark:bg-white/[0.04] dark:hover:bg-white/[0.08]'
                       }`}
                     >
                       {isLifetime && (
@@ -594,14 +588,14 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                 : 'Acesso vitalício liberado após pagamento aprovado',
               'Serial Key enviada por e-mail — não precisa criar conta agora',
             ].map((item) => (
-              <div key={item} className="flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2.5">
+              <div key={item} className="flex items-center gap-2 rounded-[14px] bg-white/45 px-3 py-2.5 dark:bg-white/[0.04]">
                 <Check className="h-4 w-4 shrink-0 text-primary" />
                 <span>{item}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-5 rounded-lg border border-primary/20 bg-primary/5 p-4">
+          <div className="mt-5 ck-placa p-4">
             <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Total</p>
             {product.hasActivePromotion && (
               <p className="mt-1 text-sm font-bold text-muted-foreground line-through">{formatBRL(product.price)}</p>
@@ -692,7 +686,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
           <SecurityBadges className="mt-3" />
         </div>
 
-        <div ref={refDoFormulario} className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+        <div ref={refDoFormulario} className="ck-vidro-forte p-5 sm:p-6">
           {!product.isActive ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <Lock className="mb-4 h-10 w-10 text-muted-foreground" />
@@ -705,19 +699,19 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
                   o aviso de "o acesso vai para o e-mail digitado" mentiria. */}
               {!appliesToAccount && <CheckoutAccountNotice variant="serial-key" />}
               <div>
-                <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" className="ck-campo" />
                 {touched && !nameValid && <span className="text-[11px] text-destructive">Informe nome e sobrenome.</span>}
               </div>
               <div>
-                <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" className="ck-campo" />
                 {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
                 <EmailQualityNotice state={accountDelivery} onUseSuggestion={setEmail} />
               </div>
               <div>
-                <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" className="ck-campo" />
                 {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
               <AccountDeliveryChoice state={accountDelivery} highlightMissing={touched} />
@@ -729,7 +723,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               <button
                 onClick={() => { setTouched(true); if (canGoToPayment) setStep('confirm') }}
                 disabled={!canGoToPayment}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-sm font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="ck-cta ck-cta-largo"
               >
                 Conferir meus dados <ArrowRight className="h-4 w-4" />
               </button>
@@ -754,7 +748,7 @@ function ManualClinicoComprarContent({ planKeyParam }: { planKeyParam: PlanKey |
               >
                 <ChevronLeft className="h-3.5 w-3.5" /> Editar meus dados
               </button>
-              <div className="rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
+              <div className="ck-placa px-3.5 py-3 text-xs text-muted-foreground">
                 Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
                 <span className="mt-1 block font-semibold text-foreground">
                   {appliesToAccount
@@ -943,7 +937,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
         <div className="mb-7 h-4 w-96 max-w-full animate-pulse rounded bg-muted" />
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
           <div className="flex flex-col gap-4">
-            <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+            <div className="ck-vidro p-5 sm:p-6">
               <div className="mb-5 h-48 w-full animate-pulse rounded-lg bg-muted" />
               <div className="mb-3 h-6 w-24 animate-pulse rounded-md bg-muted" />
               <div className="mb-2 h-6 w-3/4 animate-pulse rounded bg-muted" />
@@ -952,7 +946,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
             </div>
             <div className="h-16 w-full animate-pulse rounded-lg bg-muted" />
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="ck-vidro p-5 sm:p-6">
             <div className="space-y-4">
               <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
               <div className="h-12 w-full animate-pulse rounded-lg bg-muted" />
@@ -967,7 +961,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
   if (error || !product) {
     return (
       <div className="mx-auto max-w-lg">
-        <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-6 py-7 text-center text-sm text-destructive">
+        <div className="ck-erro justify-center px-6 py-7 text-center">
           {error || 'Produto indisponível.'}
         </div>
       </div>
@@ -976,13 +970,12 @@ function GenericComprarContent({ productType }: { productType: string }) {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <p className="editorial-mark mb-2">Compra sem login</p>
-      <h1 className="mb-1.5 font-heading text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-        Finalizar compra
-      </h1>
-      <p className="mb-7 text-sm text-muted-foreground">
-        Compra rápida e segura — você recebe sua <strong className="font-semibold text-primary">Serial Key</strong> por e-mail, mesmo sem ter conta.
-      </p>
+      <CabecaDoCheckout
+        className="mb-6"
+        trilha={<TrilhaDoCheckout passos={['dados', 'pagamento', 'acesso']} atual={step === 'payment' ? 'pagamento' : 'dados'} />}
+        titulo="Finalizar compra"
+        subtitulo={<>Sem precisar de conta: a sua <strong className="font-semibold text-foreground">Serial Key</strong> chega por e-mail assim que o pagamento cai.</>}
+      />
 
       {/*
         Quem chega aqui vindo de /buy leu uma página que fala em assinatura e em
@@ -992,7 +985,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
         onde cancelar uma assinatura que nunca existiu.
       */}
       {isPlusAccount(productType) && (
-        <div className="mb-7 flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/5 p-3.5 text-sm">
+        <div className="ck-nota mb-6 text-sm">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
           <p className="min-w-0 leading-relaxed text-muted-foreground">
             <strong className="font-semibold text-foreground">Pagamento único, sem renovação.</strong>{' '}
@@ -1028,14 +1021,14 @@ function GenericComprarContent({ productType }: { productType: string }) {
       />
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="min-w-0 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+          <div className="min-w-0 ck-vidro p-5 sm:p-6">
             {product.coverImageUrl && (
-              <div className="relative mb-5 overflow-hidden rounded-lg border border-border">
+              <div className="relative mb-5 overflow-hidden rounded-[18px]">
                 <img src={product.coverImageUrl} alt="" className="h-48 w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
               </div>
             )}
-            <span className="mb-3 inline-flex rounded-md bg-secondary px-3 py-1 text-xs font-bold text-secondary-foreground">
+            <span className="ck-chip mb-3">
               {product.productTypeLabel}
             </span>
             <h2 className={`font-heading text-xl font-semibold tracking-tight text-foreground ${product.productDescription ? 'mb-2' : 'mb-4'}`}>
@@ -1051,14 +1044,14 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 <PackageContents packageId={product.productId} variant="light" defaultOpen />
               </div>
             )}
-            <div className="rounded-lg border border-primary/15 bg-primary/5 p-4">
+            <div className="ck-placa p-4">
               <p className="mb-0.5 text-xs text-muted-foreground">Valor</p>
               {baseAmount > payableAmount && (
                 <p className="mb-0.5 text-sm text-muted-foreground line-through">
                   {formatBRL(baseAmount)}
                 </p>
               )}
-              <p className="font-heading text-3xl font-semibold tabular-nums tracking-tight text-primary">
+              <p className="ck-total">
                 {formatBRL(payableAmount)}
               </p>
               {hasActiveTier && tierBeatsCoupon && tierDiscountAmount > 0 ? (
@@ -1121,7 +1114,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
             ) : null}
 
             {couponEligible && (
-              <div className="mt-3.5 rounded-lg border border-border bg-background p-3.5">
+              <div className="mt-3.5 ck-placa p-3.5">
                 <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-foreground">
                   <Percent className="h-4 w-4 text-primary" /> Cupom de desconto
                 </div>
@@ -1150,13 +1143,13 @@ function GenericComprarContent({ productType }: { productType: string }) {
                         onKeyDown={(e) => { if (e.key === 'Enter') applyCoupon() }}
                         disabled={couponLoading}
                         placeholder="Digite seu cupom"
-                        className="h-9 min-w-0 flex-1 rounded-lg border border-border bg-card px-3 text-sm uppercase text-foreground outline-none focus:border-primary/45 focus:ring-2 focus:ring-primary/15"
+                        className="ck-campo ck-mono min-w-0 flex-1 uppercase" style={{ height: 42 }}
                       />
                       <button
                         type="button"
                         onClick={() => applyCoupon()}
                         disabled={couponLoading || !couponCode.trim()}
-                        className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-secondary px-3.5 text-xs font-black text-secondary-foreground disabled:cursor-not-allowed disabled:opacity-55"
+                        className="ck-botao" style={{ height: 42 }}
                       >
                         {couponLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />} Aplicar
                       </button>
@@ -1167,7 +1160,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2.5 rounded-lg border border-border bg-card p-4 text-xs text-muted-foreground shadow-sm">
+          <div className="ck-vidro flex flex-col gap-2.5 p-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-2.5">
               <ShieldCheck className="h-4 w-4 text-primary" /> Pagamento 100% seguro · Mercado Pago
             </div>
@@ -1178,26 +1171,26 @@ function GenericComprarContent({ productType }: { productType: string }) {
           </div>
         </div>
 
-        <div ref={refDoFormulario} className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6">
+        <div ref={refDoFormulario} className="ck-vidro-forte p-5 sm:p-6">
           {step === 'buyer' ? (
             <div className="flex flex-col gap-4">
               {/* Quem escolheu aplicar na conta não recebe Serial Key nenhuma —
                   o aviso de "o acesso vai para o e-mail digitado" mentiria. */}
               {!appliesToAccount && <CheckoutAccountNotice variant="serial-key" />}
               <div>
-                <label style={labelStyle}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
-                <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><User size={12} style={{ display: 'inline', marginRight: 4 }} /> Nome completo</label>
+                <input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched(true)} placeholder="Seu nome completo" className="ck-campo" />
                 {touched && !nameValid && <span className="text-[11px] text-destructive">Informe nome e sobrenome.</span>}
               </div>
               <div>
-                <label style={labelStyle}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><Mail size={12} style={{ display: 'inline', marginRight: 4 }} /> E-mail</label>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => setTouched(true)} type="email" placeholder="seu@email.com" className="ck-campo" />
                 {touched && !emailValid && <span className="text-[11px] text-destructive">E-mail inválido.</span>}
                 <EmailQualityNotice state={accountDelivery} onUseSuggestion={setEmail} />
               </div>
               <div>
-                <label style={labelStyle}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
-                <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" style={inputStyle} />
+                <label className="ck-rotulo" style={{ justifyContent: 'flex-start', gap: 6 }}><Phone size={12} style={{ display: 'inline', marginRight: 4 }} /> Telefone (com DDD)</label>
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} onBlur={() => setTouched(true)} placeholder="(00) 00000-0000" className="ck-campo" />
                 {touched && !phoneValid && <span className="text-[11px] text-destructive">Telefone inválido.</span>}
               </div>
               {accountDelivery.plusIncludes && plusClaimRedirect && (
@@ -1213,7 +1206,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
                 type="button"
                 onClick={() => { setTouched(true); if (canGoToPayment) setStep('confirm') }}
                 disabled={!canGoToPayment}
-                className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-secondary text-[15px] font-bold text-secondary-foreground shadow-sm transition hover:bg-secondary/90 disabled:cursor-not-allowed disabled:opacity-60"
+                className="ck-cta ck-cta-largo"
               >
                 Conferir meus dados <ArrowRight className="h-4 w-4" />
               </button>
@@ -1239,7 +1232,7 @@ function GenericComprarContent({ productType }: { productType: string }) {
               >
                 <ChevronLeft className="h-3.5 w-3.5" /> Editar meus dados
               </button>
-              <div className="mb-4 rounded-lg border border-border bg-muted/40 px-3.5 py-3 text-xs text-muted-foreground">
+              <div className="mb-4 ck-placa px-3.5 py-3 text-xs text-muted-foreground">
                 Comprando como <strong className="text-foreground">{name}</strong> · {email} · {phone}
                 <span className="mt-1 block font-semibold text-foreground">
                   {appliesToAccount
@@ -1289,7 +1282,9 @@ export default function ComprarPage() {
           </div>
         }
       >
-        <ComprarContent />
+        <MundoDoCheckout>
+          <ComprarContent />
+        </MundoDoCheckout>
       </Suspense>
     </PublicPageShell>
   )

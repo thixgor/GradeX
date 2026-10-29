@@ -95,7 +95,7 @@ export function BarraDePagamento({
           <p className="truncate text-[11px] font-semibold text-muted-foreground">
             {apoio ?? 'Total a pagar'}
           </p>
-          <p className="text-lg font-black leading-tight text-primary">{valor}</p>
+          <p className="font-heading text-xl font-semibold leading-tight tabular-nums tracking-tight text-foreground">{valor}</p>
         </div>
       ) : (
         <p className="flex min-w-0 items-center gap-1.5 text-[11px] font-semibold text-muted-foreground">
@@ -107,7 +107,7 @@ export function BarraDePagamento({
       <button
         type="button"
         onClick={irParaOFormulario}
-        className="btn-brand-glow ml-auto inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-xl px-5 text-sm font-bold text-white transition active:scale-[0.98]"
+        className="ml-auto inline-flex h-12 shrink-0 items-center justify-center gap-1.5 rounded-full bg-gradient-to-b from-[#dc6a3a] to-[#c0501e] px-5 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_10px_22px_-12px_rgba(192,80,30,0.8)] transition active:scale-[0.98]"
       >
         {rotulo}
         <ArrowDown className="h-4 w-4" />
