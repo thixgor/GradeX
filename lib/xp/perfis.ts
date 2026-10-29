@@ -60,9 +60,35 @@ export interface PerfilDeXp {
 }
 
 let indicesGarantidos = false
+let indicesDasFontes = false
 
-/** Índices do ranking — uma vez por instância, não por requisição. */
+/**
+ * Índices do ranking e das fontes que o extrato lê por pessoa — uma vez por
+ * instância, não por requisição. Ficam aqui (e não só em `mongodb-indexes.ts`,
+ * que em produção só roda com `npm run db:indexes`) para ninguém precisar
+ * lembrar de rodar nada: sem eles a varredura do XP leria o fórum e as aulas
+ * inteiros para cada conta. `createIndex` de um índice que já existe só
+ * confirma e volta.
+ *
+ * Os do ranking (`xp_perfis`, coleção nova e pequena) são esperados: o índice
+ * único de `userId` é o que impede retrato duplicado. Os das fontes saem em
+ * segundo plano — o primeiro de uma coleção grande (os logs do leitor de PDF)
+ * pode levar segundos, e a consulta funciona sem ele enquanto isso.
+ */
 export async function garantirIndicesDoXp(db: Db): Promise<void> {
+  if (!indicesDasFontes) {
+    indicesDasFontes = true
+    void Promise.all([
+      db.collection('forum_posts').createIndex({ authorId: 1, createdAt: -1 }),
+      db.collection('forum_comments').createIndex({ authorId: 1, createdAt: -1 }),
+      db.collection('aulas_progresso').createIndex({ usuarioId: 1, concluida: 1 }),
+      db.collection('aulas_postagens').createIndex({ usuariosConcluidos: 1 }),
+      db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, action: 1, createdAt: -1 }),
+    ]).catch((err) => {
+      indicesDasFontes = false
+      console.error('[xp] falha ao criar índices das fontes:', err)
+    })
+  }
   if (indicesGarantidos) return
   try {
     const col = db.collection(COLECAO_XP)

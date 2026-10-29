@@ -186,10 +186,6 @@
     "app/api/upload/route.ts": {
       "maxDuration": 60,
       "memory": 2048
-    },
-    "app/api/cron/xp/route.ts": {
-      "maxDuration": 60,
-      "memory": 512
     }
   },
   "crons": [
