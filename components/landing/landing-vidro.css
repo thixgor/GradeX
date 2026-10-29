@@ -1,0 +1,726 @@
+/* ==========================================================================
+   Landing — o mundo de vidro (components/landing-page.tsx)
+   --------------------------------------------------------------------------
+   O mesmo material das telas de entrar e do app: aurora com as três cores da
+   marca ao fundo, placas de vidro com a quina de luz, a logo 3D, as fontes da
+   marca e os chips coloridos de cada área. Quem sai da landing e entra na
+   conta não troca de produto no meio do caminho.
+
+   Os tokens `--da-*` continuam sendo a língua dos componentes da landing
+   (demo, depoimentos, passos); aqui eles apontam para a paleta das telas de
+   entrar, e as fontes `da` passam a ser as da marca — a landing deixa de
+   baixar três famílias próprias.
+   ========================================================================== */
+
+.da-landing {
+  --da-amber: 214 98 54;
+  --da-amber-lift: 226 118 72;
+  --da-ground: 239 232 220;
+  --da-panel: 255 253 248;
+  --da-tint: 247 240 228;
+  --da-paper: 26 36 25;
+  --da-muted: 68 84 74;
+  --da-amber-line: rgba(214, 98, 54, 0.32);
+  --da-neutral-line: rgba(26, 36, 25, 0.1);
+  --da-glass: rgba(255, 253, 248, 0.55);
+  --da-amber-soft: 150 82 44;
+  --da-amber-soft-line: rgba(150, 82, 44, 0.26);
+  --da-amber-ink: 168 76 26;
+
+  --font-da-display: var(--font-heading), Georgia, serif;
+  --font-da-body: var(--font-body), system-ui, sans-serif;
+  --font-da-mono: var(--font-clinical), ui-monospace, monospace;
+
+  /* Vidro */
+  --lp-vidro: rgba(255, 253, 248, 0.58);
+  --lp-vidro-forte: rgba(255, 253, 248, 0.82);
+  --lp-borda: rgba(255, 255, 255, 0.72);
+  --lp-brilho: rgba(255, 255, 255, 0.95);
+  --lp-contorno: rgba(31, 52, 36, 0.08);
+  --lp-sombra: rgba(35, 70, 44, 0.24);
+  --lp-quina: rgba(255, 255, 255, 0.95);
+  --lp-quina-baixa: rgba(255, 255, 255, 0.4);
+  --lp-campo: rgba(255, 255, 255, 0.55);
+  --lp-fio: rgba(31, 52, 36, 0.1);
+
+  --lp-aurora-1: rgba(84, 150, 98, 0.55);
+  --lp-aurora-2: rgba(236, 176, 72, 0.45);
+  --lp-aurora-3: rgba(222, 112, 64, 0.34);
+  --lp-aurora-4: rgba(150, 200, 164, 0.55);
+
+  position: relative;
+  isolation: isolate;
+  background: rgb(var(--da-ground));
+}
+
+.dark .da-landing {
+  --da-amber: 222 110 64;
+  --da-amber-lift: 234 128 82;
+  --da-ground: 7 13 9;
+  --da-panel: 24 34 28;
+  --da-tint: 18 28 22;
+  --da-paper: 240 235 224;
+  --da-muted: 162 180 168;
+  --da-amber-line: rgba(222, 110, 64, 0.26);
+  --da-neutral-line: rgba(255, 255, 255, 0.08);
+  --da-glass: rgba(24, 34, 28, 0.55);
+  --da-amber-soft: 214 160 128;
+  --da-amber-soft-line: rgba(214, 160, 128, 0.22);
+  --da-amber-ink: 238 132 86;
+
+  --lp-vidro: rgba(24, 34, 28, 0.52);
+  --lp-vidro-forte: rgba(24, 34, 28, 0.8);
+  --lp-borda: rgba(255, 255, 255, 0.09);
+  --lp-brilho: rgba(255, 255, 255, 0.12);
+  --lp-contorno: rgba(0, 0, 0, 0.5);
+  --lp-sombra: rgba(0, 0, 0, 0.6);
+  --lp-quina: rgba(255, 255, 255, 0.26);
+  --lp-quina-baixa: rgba(255, 255, 255, 0.07);
+  --lp-campo: rgba(255, 255, 255, 0.05);
+  --lp-fio: rgba(255, 255, 255, 0.08);
+
+  --lp-aurora-1: rgba(52, 120, 70, 0.5);
+  --lp-aurora-2: rgba(196, 130, 30, 0.22);
+  --lp-aurora-3: rgba(200, 84, 38, 0.24);
+  --lp-aurora-4: rgba(40, 96, 66, 0.45);
+}
+
+/* ── Aurora ─────────────────────────────────────────────────────────────── */
+
+.lp-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.lp-aurora span {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--cor), transparent);
+}
+
+.lp-aurora span:nth-child(1) { --cor: var(--lp-aurora-1); top: -32vmax; left: -24vmax; }
+.lp-aurora span:nth-child(2) { --cor: var(--lp-aurora-2); top: -16vmax; right: -30vmax; width: 60vmax; height: 60vmax; }
+.lp-aurora span:nth-child(3) { --cor: var(--lp-aurora-3); bottom: -38vmax; right: -10vmax; }
+.lp-aurora span:nth-child(4) { --cor: var(--lp-aurora-4); bottom: -30vmax; left: -28vmax; width: 56vmax; height: 56vmax; }
+
+.lp-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* Só se mexe em tela grande com mouse: no celular cada quadro obrigaria o
+   vidro a refazer o desfoque, e é a bateria de quem está decidindo. */
+@media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .lp-aurora span {
+    animation: lp-deriva 36s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .lp-aurora span:nth-child(2) { animation-duration: 43s; animation-delay: -12s; }
+  .lp-aurora span:nth-child(3) { animation-duration: 40s; animation-delay: -20s; }
+  .lp-aurora span:nth-child(4) { animation-duration: 47s; animation-delay: -6s; }
+}
+
+@keyframes lp-deriva {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vmax, 4vmax, 0) scale(1.08); }
+  100% { transform: translate3d(-4vmax, 7vmax, 0) scale(0.94); }
+}
+
+/* ── O material ─────────────────────────────────────────────────────────── */
+
+.lp-vidro {
+  position: relative;
+  background: var(--lp-vidro);
+  -webkit-backdrop-filter: blur(28px) saturate(175%);
+  backdrop-filter: blur(28px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 var(--lp-brilho),
+    inset 0 0 0 1px var(--lp-borda),
+    0 0 0 1px var(--lp-contorno),
+    0 30px 60px -28px var(--lp-sombra),
+    0 10px 22px -14px var(--lp-sombra);
+}
+
+/* A quina de luz: anel de 1 px, forte no alto à esquerda. */
+.lp-vidro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(150deg, var(--lp-quina) 0%, transparent 32%, transparent 68%, var(--lp-quina-baixa) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+.lp-vidro-forte { background: var(--lp-vidro-forte); }
+
+/* ── Ritmo das seções ───────────────────────────────────────────────────── */
+
+.lp-secao {
+  position: relative;
+  padding: 88px 0;
+}
+
+@media (min-width: 768px) {
+  .lp-secao { padding: 128px 0; }
+}
+
+.lp-titulo {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 4.4vw, 3.4rem);
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  color: rgb(var(--da-paper));
+}
+
+.lp-titulo em { font-style: italic; color: hsl(var(--primary)); }
+
+.lp-apoio {
+  margin-top: 16px;
+  max-width: 34rem;
+  font-size: 17px;
+  line-height: 1.55;
+  color: rgb(var(--da-muted));
+  text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+  .lp-apoio { font-size: 18.5px; }
+}
+
+/* ── Botões ─────────────────────────────────────────────────────────────── */
+
+.lp-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 28px;
+  border-radius: 999px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 16.5px;
+  font-weight: 650;
+  color: #fff;
+  background: linear-gradient(180deg, #dc6a3a 0%, #c0501e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 14px 28px -14px rgba(192, 80, 30, 0.85),
+    0 2px 5px rgba(192, 80, 30, 0.2);
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 200ms ease;
+}
+
+.lp-cta:hover { filter: brightness(1.06) saturate(1.05); }
+.lp-cta:active { transform: scale(0.975); }
+.lp-cta:focus-visible { outline: 3px solid rgba(214, 98, 54, 0.5); outline-offset: 3px; }
+
+.lp-cta-vidro {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 26px;
+  border-radius: 999px;
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 16.5px;
+  font-weight: 600;
+  color: rgb(var(--da-paper));
+  background: var(--lp-vidro);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  box-shadow: inset 0 1px 0 var(--lp-brilho), inset 0 0 0 1px var(--lp-borda), 0 8px 20px -12px var(--lp-sombra);
+  transition: transform 160ms ease, background-color 200ms ease;
+}
+
+.lp-cta-vidro:hover { background: var(--lp-vidro-forte); }
+.lp-cta-vidro:active { transform: scale(0.975); }
+.lp-cta-vidro:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 3px; }
+
+.lp-microcopia {
+  margin-top: 14px;
+  font-size: 13.5px;
+  color: rgb(var(--da-muted));
+}
+
+/* ── Barra de navegação: pílula de vidro flutuante ──────────────────────── */
+
+.lp-nav {
+  position: fixed;
+  z-index: 50;
+  top: calc(env(safe-area-inset-top, 0px) + 10px);
+  left: 10px;
+  right: 10px;
+  margin: 0 auto;
+  max-width: 1180px;
+  border-radius: 999px;
+}
+
+.lp-nav-miolo {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 8px 0 18px;
+}
+
+.lp-nav-link {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgb(var(--da-muted));
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.lp-nav-link:hover { color: rgb(var(--da-paper)); background: var(--lp-campo); }
+
+.lp-nav .lp-cta { min-height: 44px; padding: 0 20px; font-size: 15px; }
+
+.lp-redondo {
+  display: grid;
+  place-items: center;
+  height: 44px;
+  width: 44px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  color: rgb(var(--da-paper));
+  background: var(--lp-campo);
+  box-shadow: inset 0 0 0 1px var(--lp-fio);
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.lp-redondo:active { transform: scale(0.94); }
+
+/* `.lp-redondo` define `display`, e viria depois do `lg:hidden` do Tailwind. */
+@media (min-width: 1024px) {
+  .lp-redondo.lg\:hidden { display: none; }
+}
+
+.lp-menu {
+  margin-top: 8px;
+  border-radius: 28px;
+  padding: 10px;
+}
+
+.lp-menu-link {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 16px;
+  font-size: 16px;
+  color: rgb(var(--da-paper));
+}
+
+.lp-menu-link:active { background: var(--lp-campo); }
+
+/* ── Herói ──────────────────────────────────────────────────────────────── */
+
+.lp-heroi {
+  position: relative;
+  padding: calc(env(safe-area-inset-top, 0px) + 124px) 0 40px;
+}
+
+@media (min-width: 1280px) {
+  .lp-heroi { padding-top: 150px; }
+}
+
+.lp-heroi-titulo {
+  font-family: var(--font-heading), Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: rgb(var(--da-paper));
+  text-wrap: balance;
+}
+
+.lp-heroi-titulo em {
+  font-style: italic;
+  color: hsl(var(--primary));
+}
+
+/* O aparelho: começa inclinado em 3D e endireita conforme a página rola —
+   o produto vindo até quem olha. É animação ligada à rolagem pelo próprio
+   CSS (`animation-timeline: view()`); sem suporte, o aparelho fica reto. */
+.lp-dispositivo { transform-origin: 50% 0; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .lp-dispositivo {
+      animation: lp-endireita linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 42%;
+    }
+  }
+}
+
+@keyframes lp-endireita {
+  from { transform: perspective(1800px) rotateX(18deg) scale(0.93); }
+  to { transform: none; }
+}
+
+/* A janela do produto num bisel de vidro: o aparelho em que ele vive. */
+.lp-moldura {
+  border-radius: 30px;
+  padding: 10px;
+}
+
+.lp-moldura > * { border-radius: 22px; }
+
+/* Os fatos do herói: uma cápsula de vidro, quatro números de verdade. */
+.lp-fatos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-radius: 26px;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .lp-fatos { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.lp-fato {
+  position: relative;
+  padding: 18px 22px;
+}
+
+.lp-fato + .lp-fato::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 1px;
+  background: var(--lp-fio);
+}
+
+@media (max-width: 767px) {
+  .lp-fato:nth-child(3)::before { display: none; }
+  .lp-fato:nth-child(n + 3) { border-top: 1px solid var(--lp-fio); }
+}
+
+.lp-fato dt {
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: rgb(var(--da-paper));
+}
+
+.lp-fato dd {
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.3;
+  color: rgb(var(--da-muted));
+}
+
+/* ── O momento-assinatura: espalhado → junto ────────────────────────────
+   Seis pedaços do estudo de hoje flutuam soltos pelo palco. Quando o palco
+   entra na tela, cada um voa para uma linha da placa central e vira a
+   ferramenta que o resolve. Tudo em transform/opacity, uma vez só.
+   O palco é um container: as posições soltas são em `cqw`, e o desenho é o
+   mesmo do celular ao computador. */
+
+.lp-palco {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  aspect-ratio: 1 / 1.02;
+}
+
+.lp-palco-placa {
+  position: absolute;
+  inset: 8% 4%;
+  border-radius: 30px;
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 600ms ease 250ms, transform 800ms cubic-bezier(0.16, 1, 0.3, 1) 250ms;
+}
+
+.lp-palco[data-junto] .lp-palco-placa { opacity: 1; transform: none; }
+
+.lp-palco-cabeca {
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: 12%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transition: opacity 500ms ease 700ms;
+}
+
+.lp-palco[data-junto] .lp-palco-cabeca { opacity: 1; }
+
+.lp-peca {
+  --linha: 0;
+  position: absolute;
+  left: 9%;
+  right: 9%;
+  top: calc(23% + var(--linha) * 11.4%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 9.6%;
+  padding: 0 12px;
+  border-radius: 14px;
+  transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(0.92);
+  transition: transform 900ms cubic-bezier(0.2, 0.9, 0.2, 1), background-color 500ms ease, box-shadow 500ms ease;
+  transition-delay: calc(var(--linha) * 70ms);
+}
+
+.lp-palco[data-junto] .lp-peca {
+  transform: none;
+  background: var(--lp-campo);
+  box-shadow: inset 0 0 0 1px var(--lp-fio);
+}
+
+/* Solta, a peça é um papelzinho de vidro com a dor escrita. */
+.lp-peca-solta {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border-radius: 14px;
+  font-size: clamp(12px, 3.4cqw, 15px);
+  font-weight: 600;
+  color: rgb(var(--da-paper));
+  transition: opacity 300ms ease;
+  transition-delay: calc(200ms + var(--linha) * 70ms);
+}
+
+.lp-palco[data-junto] .lp-peca-solta { opacity: 0; }
+
+.lp-peca-solta svg { flex-shrink: 0; opacity: 0.55; }
+
+.lp-peca-junta {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  font-size: clamp(12.5px, 3.5cqw, 15.5px);
+  font-weight: 600;
+  color: rgb(var(--da-paper));
+  transition: opacity 400ms ease;
+  transition-delay: calc(450ms + var(--linha) * 70ms);
+}
+
+.lp-palco[data-junto] .lp-peca-junta { opacity: 1; }
+
+.lp-peca-junta .sidebar-mini-chip { height: 28px; width: 28px; border-radius: 8px; }
+
+/* ── Listas agrupadas (ferramentas, FAQ) ────────────────────────────────── */
+
+.lp-lista {
+  overflow: hidden;
+  border-radius: 26px;
+}
+
+.lp-linha + .lp-linha { border-top: 1px solid var(--lp-fio); }
+
+.lp-linha-gatilho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  text-align: left;
+  transition: background-color 160ms ease;
+}
+
+.lp-linha-gatilho:hover { background: var(--lp-campo); }
+.lp-linha-gatilho:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -2px; }
+
+.lp-linha-gatilho .sidebar-mini-chip { height: 40px; width: 40px; border-radius: 11px; }
+.lp-linha-gatilho .sidebar-mini-chip svg { height: 20px; width: 20px; }
+
+/* Os ícones das ferramentas trazem o traço âmbar de ornamento no próprio SVG;
+   sobre o chip colorido eles viram brancos, como no menu do app. */
+.lp-linha-gatilho .sidebar-mini-chip svg { stroke: #fff; stroke-width: 1.9; }
+
+.lp-mais {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 32px;
+  width: 32px;
+  border-radius: 999px;
+  color: rgb(var(--da-paper) / 0.6);
+  background: var(--lp-campo);
+  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[aria-expanded='true'] > .lp-mais { transform: rotate(45deg); }
+
+.lp-selo {
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.12);
+}
+
+/* ── Planos ─────────────────────────────────────────────────────────────── */
+
+.lp-plano {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  border-radius: 30px;
+  padding: 28px;
+}
+
+@media (min-width: 768px) {
+  .lp-plano { padding: 36px; }
+}
+
+.lp-plano-destaque {
+  background:
+    radial-gradient(120% 70% at 100% 0%, rgba(242, 160, 58, 0.24), transparent 60%),
+    var(--lp-vidro-forte);
+  box-shadow:
+    inset 0 1px 0 var(--lp-brilho),
+    inset 0 0 0 1.5px rgba(214, 98, 54, 0.45),
+    0 0 0 1px var(--lp-contorno),
+    0 34px 70px -30px rgba(192, 80, 30, 0.45);
+}
+
+.lp-check {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 22px;
+  width: 22px;
+  margin-top: 1px;
+  border-radius: 999px;
+  color: #fff;
+  background: linear-gradient(165deg, #5aa66b, #2f6b40);
+}
+
+/* ── Fecho ──────────────────────────────────────────────────────────────── */
+
+.lp-fecho {
+  border-radius: 36px;
+  padding: 64px 24px;
+  text-align: center;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .lp-fecho { padding: 88px 48px; }
+}
+
+.lp-fecho-logo {
+  display: flex;
+  justify-content: center;
+  min-height: 132px;
+}
+
+.lp-fecho-logo .logo3d { --tam: 104px; }
+
+@media (min-width: 768px) {
+  .lp-fecho-logo .logo3d { --tam: 132px; }
+  .lp-fecho-logo { min-height: 160px; }
+}
+
+/* ── Doca do celular ──────────────────────────────────────────────────────
+   Gruda embaixo depois que o herói sai da tela: no celular a página tem
+   metros de rolagem, e quem se convenceu no meio não deveria precisar caçar
+   o botão. Some no fecho (que já tem os dois botões) e com o menu aberto. */
+
+.lp-doca {
+  position: fixed;
+  z-index: 40;
+  left: 10px;
+  right: 10px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+  border-radius: 999px;
+  padding: 6px;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1), opacity 300ms ease;
+}
+
+.lp-doca[data-shown='false'] {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lp-doca .lp-cta,
+.lp-doca .lp-cta-vidro { min-height: 48px; font-size: 15px; }
+
+html[data-da-menu='aberto'] .lp-doca {
+  transform: translateY(140%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .lp-doca { display: none; }
+}
+
+/* ── Movimento reduzido e Modo Lite ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-peca,
+  .lp-peca-solta,
+  .lp-peca-junta,
+  .lp-palco-placa,
+  .lp-palco-cabeca { transition-duration: 1ms !important; transition-delay: 0ms !important; }
+}
+
+.lite-mode .da-landing { --lp-vidro: rgb(var(--da-panel)); --lp-vidro-forte: rgb(var(--da-panel)); }
+.lite-mode .lp-aurora { display: none; }
+.lite-mode .lp-vidro { outline: 1px solid var(--da-neutral-line); }
+
+/* ── Entrada do herói ───────────────────────────────────────────────────
+   Por CSS, não pelo `Reveal` (que espera o JS): o herói é o que o visitante
+   de anúncio vê em 3G, e ele aparece na primeira pintura. */
+.lp-entra { animation: lp-entra 760ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.lp-entra-2 { animation-delay: 120ms; }
+.lp-entra-3 { animation-delay: 240ms; }
+
+@keyframes lp-entra {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-entra { animation: lp-entra-calma 400ms ease both; }
+}
+
+@keyframes lp-entra-calma {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

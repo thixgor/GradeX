@@ -3895,35 +3895,6 @@ body.roller-dragging {
 }
 
 /* --------------------------------------------------------------------------
-   DOCA DE AÇÃO DO CELULAR
-   A barra que gruda no rodapé depois que o hero sai da tela. Existe por um
-   motivo bem prático: no celular a página tem vários metros de rolagem, e sem
-   ela o visitante convencido no meio do caminho precisa procurar um botão —
-   rolar para cima até o topo ou até o fim. A doca deixa a ação principal
-   sempre a um polegar de distância, o que é exatamente o oposto de cansar a
-   mão de quem já decidiu.
-   -------------------------------------------------------------------------- */
-.da-dock {
-  transform: translateY(120%);
-  transition: transform 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
-  will-change: transform;
-  /* O respiro de baixo mora aqui, e não numa classe utilitária, porque
-     `.pwa-safe-bottom` usa `!important` para vencer o padding do app — dentro
-     da doca ele zerava a folga e o botão encostava na borda da tela (e no
-     indicador de home do iPhone). Somando os dois no mesmo cálculo, a barra
-     respeita a área segura sem perder o respiro. */
-  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
-}
-.da-dock[data-shown='true'] {
-  transform: translateY(0);
-}
-
-/* Menu aberto: a doca se recolhe (ver o efeito em Nav). */
-html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
-  transform: translateY(120%);
-}
-
-/* --------------------------------------------------------------------------
    JANELA DO PRODUTO (hero e seção "30 segundos")
    O produto é desenhado em CSS, não fotografado. Um print viraria uma imagem
    pesada, borrada em tela retina, presa a um tema e desatualizada no dia
