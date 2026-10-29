@@ -1,5 +1,6 @@
 'use client'
 
+import { CartaoDeXp } from '@/components/xp/cartao-de-xp'
 import { useCallback, useEffect, useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
@@ -421,6 +422,11 @@ function DashboardContent() {
           <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-violet-500/8 blur-3xl" />
         </section>
+
+        {/* ═══════════════════════════════════════════════════════
+            1.4 XP — nível, liga, semana e a porta do ranking
+           ═══════════════════════════════════════════════════════ */}
+        <CartaoDeXp className="dash-rise" />
 
         {/* ═══════════════════════════════════════════════════════
             1.5 QUESTÃO DO DIA (gatilho de retorno diário)

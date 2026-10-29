@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import React, { Suspense, useCallback, useEffect, useRef, useState, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ThemeToggle } from '@/components/theme-toggle'
@@ -1304,6 +1305,7 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
           fromSavedProgress: true,
         }),
       })
+      if (res.ok) avisarXp()
       const dados = await res.json()
       if (!res.ok) throw new Error(dados.error)
 
@@ -2251,6 +2253,7 @@ ${respostaAluno}`
           forcedSubmitReason: reason,
         }),
       })
+      if (res.ok) avisarXp()
 
       const data = await res.json()
 
@@ -2424,6 +2427,7 @@ ${respostaAluno}`
           questionOrder: ordemDasQuestoes,
         }),
       })
+      if (res.ok) avisarXp()
 
       const data = await res.json()
 

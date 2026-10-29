@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -511,6 +512,8 @@ export default function ErrorHuntPage() {
         setFinalScore(score)
         setFinalTotal(total)
         setGameState('results')
+        // Caça ao erro é quiz: conta o acerto, não só a partida.
+        registrarXp({ tipo: 'quiz', area: 'caca-ao-erro', recursoId: questions.map((q) => q._id).slice(0, 3).join('-') || 'partida', acertos: score, total })
     }
 
     function playAgain() {

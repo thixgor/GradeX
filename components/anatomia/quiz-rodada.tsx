@@ -9,6 +9,7 @@
  * onde vêm as perguntas não precisa disso; responder, sim.
  */
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { PranchaInterativa } from '@/components/anatomia/prancha-interativa'
@@ -154,6 +155,7 @@ export default function Rodada({
         total: Object.keys(respostas).length,
       },
     })
+    avisarXp()
     // Só o fim da rodada interessa; as respostas já estão fechadas nesse ponto.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [encerrado])

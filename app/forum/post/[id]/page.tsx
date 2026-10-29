@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -109,6 +110,7 @@ export default function ForumPostPage(props: { params: Promise<{ id: string }> }
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao enviar comentário')
       }
+      avisarXp()
 
       setToastMessage('Comentário adicionado com sucesso!')
       setToastType('success')

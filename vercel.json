@@ -186,6 +186,10 @@
     "app/api/upload/route.ts": {
       "maxDuration": 60,
       "memory": 2048
+    },
+    "app/api/cron/xp/route.ts": {
+      "maxDuration": 60,
+      "memory": 512
     }
   },
   "crons": [
@@ -220,6 +224,10 @@
     {
       "path": "/api/cron/fulfillment-sweeper",
       "schedule": "5,20,35,50 * * * *"
+    },
+    {
+      "path": "/api/cron/xp",
+      "schedule": "23 * * * *"
     }
   ],
   "redirects": [

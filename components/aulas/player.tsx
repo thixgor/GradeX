@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Check, Loader2, PlayCircle, X } from 'lucide-react'
 import { formatarTempo } from '@/lib/aulas/progresso'
@@ -86,6 +87,7 @@ export function PlayerDaAula({
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => {
           if (d?.progresso) {
+            if (d.progresso.concluida) avisarXp()
             aoAtualizarProgresso?.({
               percentual: d.progresso.percentual,
               concluida: d.progresso.concluida,

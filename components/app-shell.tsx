@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/sidebar'
 import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components/profile-completion-gate'
+import { XpProvider } from '@/components/xp/xp-provider'
 import { SupportChat, esquecerTicketsEmMemoria } from '@/components/support-chat'
 import dynamicImport from 'next/dynamic'
 import { rotaSemBarra } from '@/components/manual-clinico/casco/modulos'
@@ -455,6 +456,7 @@ export function AppShell({
     <AppShellContext.Provider value={contextValue}>
       <LiteMotionConfig lite={liteMode}>
       <FocusSessionProvider>
+      <XpProvider userId={bootstrapUser?._id}>
       <div className="min-h-screen surface-page">
         <BanChecker />
         {/* Pede os dados que faltam no perfil (progressive profiling) */}
@@ -585,6 +587,7 @@ export function AppShell({
         {/* Support Chat */}
         {showSupport && <SupportChat />}
       </div>
+      </XpProvider>
       </FocusSessionProvider>
       </LiteMotionConfig>
     </AppShellContext.Provider>

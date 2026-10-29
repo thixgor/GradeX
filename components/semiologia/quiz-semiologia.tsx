@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import {
@@ -290,7 +291,7 @@ export function QuizSemiologia({
                 Próximo caso <ArrowRight className="h-4 w-4" />
               </button>
             ) : (
-              <button type="button" onClick={() => setFim(true)} className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+              <button type="button" onClick={() => { setFim(true); registrarXp({ tipo: 'quiz', area: 'semiologia', recursoId: titulo, titulo, acertos, total: questoes.length }) }} className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
                 Ver resultado <Trophy className="h-4 w-4" />
               </button>
             )}

@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -123,6 +124,8 @@ function HangmanGame({ word, onBack, onPlayAgain }: { word: HangmanWord; onBack:
 
     useEffect(() => { if (isGameOver) return; const i = setInterval(() => setTimer(t => t + 1), 1000); return () => clearInterval(i) }, [isGameOver])
     useEffect(() => { if (isGameOver && !showResult) setTimeout(() => setShowResult(true), 500) }, [isGameOver, showResult])
+    // Vitória rende XP (uma vez por palavra por dia — o servidor conta assim).
+    useEffect(() => { if (isWon) registrarXp({ tipo: 'jogo', area: 'forca', recursoId: word._id, titulo: word.theme }) }, [isWon, word._id, word.theme])
     useEffect(() => {
         const handleKey = (e: KeyboardEvent) => { if (isGameOver) return; const l = e.key.toUpperCase(); if (/^[A-Z]$/.test(l) && !guessedLetters.has(l)) handleGuess(l) }
         window.addEventListener('keydown', handleKey); return () => window.removeEventListener('keydown', handleKey)

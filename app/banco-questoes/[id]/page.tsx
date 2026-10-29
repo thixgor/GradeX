@@ -1,5 +1,6 @@
 "use client"
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
@@ -420,6 +421,7 @@ ${respostaAluno}`
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       })
+      if (res.ok) avisarXp()
 
       if (res.ok) {
         const data = await res.json()

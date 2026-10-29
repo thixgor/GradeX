@@ -48,6 +48,8 @@ import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
 import { BuscaGlobal } from '@/components/busca/busca-global'
 import { avatarPorId } from '@/lib/monitorias/avatares'
+import { XpDoMenu } from '@/components/xp/xp-do-menu'
+import { Trophy } from '@phosphor-icons/react/dist/ssr/Trophy'
 
 interface SidebarProps {
   user: {
@@ -527,6 +529,15 @@ export function Sidebar({
     cor: 'inicio',
   }
 
+  // O ranking de XP vale para todas as seções — fica fixo, logo abaixo do Início.
+  const rankingItem: NavItem = {
+    id: 'section:ranking',
+    icon: <Trophy className="h-5 w-5" weight={PESO_ICONE} />,
+    label: 'Ranking',
+    href: '/ranking',
+    cor: 'ranking',
+  }
+
   const tree: SidebarTreeNode[] = useMemo(
     () =>
       buildSidebarTree(
@@ -636,7 +647,7 @@ export function Sidebar({
   // a estática vem inteira do CDN. O `full` fica para o hover/toque abaixo,
   // que é quando o clique está para acontecer.
   const navHrefsKey = useMemo(() => {
-    const hrefs = [homeItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
+    const hrefs = [homeItem.href, rankingItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
     for (const node of tree) {
       if (node.type === 'section') hrefs.push(node.section.href)
       else hrefs.push(...node.sections.map((section) => section.href))
@@ -1170,7 +1181,24 @@ export function Sidebar({
                 skipEntrance={skipEntranceRef.current}
                 lite={liteMode}
               />
-              {tree.map((node, index) => renderNode(node, index + 1))}
+              <NavItemButton
+                item={rankingItem}
+                hoveredId={hoveredId}
+                pressedId={pressedId}
+                collapsed={isCollapsed}
+                isItemActive={isActive(rankingItem.href)}
+                onHover={handleItemHover}
+                onPress={(navItem) => {
+                  handleNavPress(navItem)
+                  handleNavPrefetch(navItem)
+                }}
+                onRelease={handleNavRelease}
+                onClick={() => handleNavClick(rankingItem)}
+                staggerIndex={1}
+                skipEntrance={skipEntranceRef.current}
+                lite={liteMode}
+              />
+              {tree.map((node, index) => renderNode(node, index + 2))}
             </div>
           </nav>
 
@@ -1372,6 +1400,7 @@ function SidebarAccountFooter({
 
   return (
     <div className="sidebar-rodape shrink-0 space-y-1.5 p-2.5">
+      <XpDoMenu recolhido={collapsed} />
       {/* Upgrade fica à vista: é a única ação do rodapé que o usuário não sabe
           que procura. Escondê-la num popover seria economizar espaço no lugar
           errado. */}

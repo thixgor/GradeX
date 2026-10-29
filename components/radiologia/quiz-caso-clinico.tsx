@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import {
@@ -180,6 +181,14 @@ export function QuizCasoClinicoView({ quiz, irmaos }: QuizCasoClinicoViewProps) 
     // efeito a cada gravação e o recorde se reescreveria em laço.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fase, percentual, quiz.slug, rodada.length])
+
+  // Fim da rodada: o acerto vira XP (o servidor fica com a melhor rodada do dia).
+  useEffect(() => {
+    if (fase !== 'resultado' || rodada.length === 0) return
+    registrarXp({ tipo: 'quiz', area: 'radiologia', recursoId: quiz.slug, acertos, total: rodada.length })
+    // Uma vez por fim de rodada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fase])
 
   // Atalhos de teclado: responder por número ou letra e seguir adiante sem
   // tirar a mão do teclado.

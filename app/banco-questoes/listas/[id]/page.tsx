@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { AppShell } from '@/components/app-shell'
@@ -570,6 +571,7 @@ export default function ListaDetalhePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpo),
       })
+      if (res.ok) avisarXp()
       if (!res.ok) return
       registradasRef.current.add(questaoId)
       setRegistradas(Array.from(registradasRef.current))

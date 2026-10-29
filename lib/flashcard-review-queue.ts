@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import type { FlashcardSpacedRating } from './types'
 
 /**
@@ -157,6 +158,7 @@ export function createReviewSync({ slug, userKey, onStatus, onSynced }: ReviewSy
       attempt = 0
       inFlight = false
       if (json?.progresses?.length) onSynced?.(json.progresses)
+      avisarXp()
       report(queue.length > 0 ? 'pending' : 'idle')
       if (queue.length > 0) schedule(50)
     } catch {

@@ -1,5 +1,6 @@
 'use client'
 
+import { avisarXp } from '@/lib/xp/cliente'
 import { Suspense } from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -248,6 +249,7 @@ function NewForumPostContent() {
       if (!res.ok) {
         throw new Error(data.error || 'Erro ao criar post')
       }
+      avisarXp()
 
       setToastMessage('Post criado com sucesso!')
       setToastType('success')

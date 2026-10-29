@@ -207,6 +207,11 @@ export async function ensureIndexes(db: Db): Promise<void> {
     db.collection('activity_events').createIndex({ kind: 1, createdAt: -1 }),
     db.collection('activity_events').createIndex({ kind: 1, resourceId: 1, createdAt: -1 }),
     db.collection('activity_events').createIndex({ userId: 1, createdAt: -1 }),
+    // ── XP (lib/xp): o extrato lê o histórico de cada pessoa por autor/usuário ──
+    db.collection('forum_posts').createIndex({ authorId: 1, createdAt: -1 }),
+    db.collection('forum_comments').createIndex({ authorId: 1, createdAt: -1 }),
+    db.collection('aulas_progresso').createIndex({ usuarioId: 1, concluida: 1 }),
+    db.collection('material_pdf_viewer_logs').createIndex({ userId: 1, action: 1, createdAt: -1 }),
     db.collection('activity_events').createIndex({ area: 1, createdAt: -1 }),
     /*
      * `sessions` — presença ("quem está no site agora").

@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { COURSE, LESSON_ORDER } from '@/lib/ecg/course/curriculum'
 
@@ -78,6 +79,8 @@ export function useCourseProgress() {
   }, [])
 
   const completeLesson = useCallback((lessonId: string, score: number, xp: number) => {
+    // O XP do curso também conta no XP do site (uma vez por lição por dia).
+    registrarXp({ tipo: 'licao', area: 'ecg', recursoId: lessonId, acertos: Math.round(score * 10), total: 10 })
     setProgress((prev) => {
       const day = today()
       const prevResult = prev.lessons[lessonId]

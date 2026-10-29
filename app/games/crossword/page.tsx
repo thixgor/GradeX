@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -375,6 +376,7 @@ function CrosswordGame({ puzzle, onBack }: { puzzle: CrosswordPuzzle; onBack: ()
         if (allCorrect && words.length > 0) {
             setIsComplete(true)
             setShowComplete(true)
+            registrarXp({ tipo: 'jogo', area: 'cruzadinha', recursoId: puzzle._id, titulo: puzzle.title })
         }
     }
 

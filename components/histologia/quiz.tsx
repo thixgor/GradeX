@@ -1,5 +1,6 @@
 'use client'
 
+import { registrarXp } from '@/lib/xp/cliente'
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -222,6 +223,7 @@ export function QuizRunner({ quiz: quizInicial, modoInicial = 'pratica', comGaba
 
     const final = calcularResultado(estadoCorrigido, quizCompleto.percentualAprovacao)
     setFinalizado(true)
+    registrarXp({ tipo: 'quiz', area: 'histologia', recursoId: quiz.slug, titulo: quiz.titulo, acertos: final.acertos, total: final.total })
     registrarQuiz(quiz.slug, {
       acertos: final.acertos,
       total: final.total,
