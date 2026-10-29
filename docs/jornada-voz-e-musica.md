@@ -132,22 +132,37 @@ _Tela do troféu_
   gentle vinyl texture, 75 BPM, hopeful and relaxed, no vocals, seamless loop
   ```
 
-## Ligar os áudios no site
+## Os áudios no site
 
-Enquanto os arquivos não estão na pasta, a jornada **não pede** os MP3 ao
-servidor: o balão escreve a fala e os efeitos sonoros (o "plim" dos pontos, a
-fanfarra do troféu) são sintetizados no próprio navegador. Depois de subir os
-arquivos, troque as chaves em `lib/jornada/narracao.ts`:
+Os 12 arquivos estão em `public/audio/jornada/` e ligados em
+`lib/jornada/narracao.ts` (`AUDIOS_PRONTOS`). Para tirar a voz ou a música do
+ar sem apagar nada, troque a chave para `false` — aí a jornada não pede os MP3
+e o balão volta a escrever a fala sozinho.
 
-```ts
-export const AUDIOS_PRONTOS = {
-  voz: true,     // os 11 MP3 das falas
-  musica: true,  // musica.mp3
-}
+### Tratamento aplicado (refaça igual ao regravar uma fala)
+
+Os arquivos que vêm do ElevenLabs chegam com volumes diferentes (de −16,8 a
+−23,7 LUFS entre as falas) e ~0,3 s de silêncio no fim. Antes de subir:
+
+```bash
+# Fala: apara o silêncio das pontas, normaliza para −18 LUFS e salva mono 64 kbps.
+ffmpeg -i entrada.mp3 -af "silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.05,areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.12,areverse,loudnorm=I=-18:TP=-1.5:LRA=11" -ac 1 -c:a libmp3lame -b:a 64k public/audio/jornada/<id>.mp3
 ```
 
+```bash
+# Música: corta o silêncio do fim, fade de entrada e saída (o loop "respira" em vez de ter buraco), −20 LUFS, 96 kbps.
+ffmpeg -i musica-original.mp3 -t 113.4 -af "afade=t=in:st=0:d=1.2,afade=t=out:st=110.9:d=2.5,loudnorm=I=-20:TP=-1.5:LRA=11" -ac 2 -c:a libmp3lame -b:a 96k public/audio/jornada/musica.mp3
+```
+
+Resultado: as 11 falas entre −18,2 e −18,5 LUFS (pico abaixo de −1,4 dB), de
+6 MB para 2 MB no total (falas 38–90 KB cada, música 1,4 MB). A música toca a
+30% do volume (~12 dB abaixo da voz) e abaixa para 10% enquanto a narradora
+fala. O balão escreve no ritmo do áudio: cada letra aparece quando a fala chega
+nela.
+
 Os MP3 em `public/` saem do CDN como arquivo estático — não passam por função
-nem contam como Fast Origin Transfer.
+nem contam como Fast Origin Transfer. A música só é baixada depois do primeiro
+toque na jornada, nunca no carregamento da página.
 
 ## O que a pessoa controla
 

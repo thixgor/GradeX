@@ -526,7 +526,7 @@ export function CompleteProfileModal({
                 inclinacao="local"
                 modo={saving ? 'gerando' : 'normal'}
               />
-              <Balao id={som.legenda} falando={som.falando === som.legenda && !!som.falando} calmo={!!calmo} />
+              <Balao id={som.legenda} falando={som.falando === som.legenda && !!som.falando} calmo={!!calmo} progressoDaVoz={som.progressoDaVoz} />
               <BotaoDeSom ligado={som.ligado} alternar={som.alternar} />
             </div>
 
@@ -940,10 +940,23 @@ function Tela({ children, direcao, calmo }: { children: React.ReactNode; direcao
  * O balão da narradora: escreve a fala letra a letra (como quem digita), e a
  * ondinha aparece só enquanto a voz toca de verdade.
  */
-function Balao({ id, falando, calmo }: { id: IdDaFala | null; falando: boolean; calmo: boolean }) {
+function Balao({
+  id,
+  falando,
+  calmo,
+  progressoDaVoz,
+}: {
+  id: IdDaFala | null
+  falando: boolean
+  calmo: boolean
+  progressoDaVoz: () => number | null
+}) {
   const texto = id ? FALAS[id].legenda : ''
   const [mostrado, setMostrado] = useState(calmo ? texto.length : 0)
 
+  // Com voz, o texto acompanha o áudio (onde a fala está, tanto do texto
+  // aparece — com uma folga de 6%, para a palavra surgir junto do som e não
+  // depois). Sem voz, ritmo de digitação: 24 ms por letra.
   useEffect(() => {
     if (calmo) {
       setMostrado(texto.length)
@@ -953,13 +966,16 @@ function Balao({ id, falando, calmo }: { id: IdDaFala | null; falando: boolean; 
     let quadro = 0
     const inicio = performance.now()
     const passo = (agora: number) => {
-      const n = Math.min(texto.length, Math.floor((agora - inicio) / 24))
-      setMostrado(n)
+      const naVoz = progressoDaVoz()
+      const n = naVoz !== null
+        ? Math.min(texto.length, Math.ceil(texto.length * Math.min(1, naVoz * 1.06)))
+        : Math.min(texto.length, Math.floor((agora - inicio) / 24))
+      setMostrado((anterior) => Math.max(anterior, n))
       if (n < texto.length) quadro = requestAnimationFrame(passo)
     }
     quadro = requestAnimationFrame(passo)
     return () => cancelAnimationFrame(quadro)
-  }, [texto, calmo])
+  }, [texto, calmo, progressoDaVoz])
 
   return (
     <p className="jd-balao" aria-live="polite">

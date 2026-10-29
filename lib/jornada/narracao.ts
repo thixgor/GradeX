@@ -99,14 +99,14 @@ export const FALAS: Record<IdDaFala, Fala> = {
 }
 
 /**
- * Quais arquivos já estão em `public/audio/jornada/`. Enquanto estiverem em
- * `false`, a jornada não pede o MP3 ao servidor (um 404 por fala, em todo
- * cadastro, à toa): o balão escreve a legenda e os efeitos sonoros sintetizados
- * continuam tocando. Subiu os arquivos? Troque para `true`.
+ * Quais arquivos estão em `public/audio/jornada/`. Em `false`, a jornada não
+ * pede o MP3 ao servidor (um 404 por fala, em todo cadastro, à toa): o balão
+ * escreve a legenda e os efeitos sonoros sintetizados continuam tocando. Útil
+ * para tirar a voz do ar sem apagar os arquivos.
  */
 export const AUDIOS_PRONTOS = {
-  voz: false,
-  musica: false,
+  voz: true,
+  musica: true,
 }
 
 export const PASTA_DE_AUDIO = '/audio/jornada'

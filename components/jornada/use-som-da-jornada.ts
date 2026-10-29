@@ -30,8 +30,11 @@ import { AUDIOS_PRONTOS, FALAS, PASTA_DE_AUDIO, type IdDaFala } from '@/lib/jorn
  */
 
 const CHAVE_PREFERENCIA = 'da_jornada_som'
-const VOLUME_MUSICA = 0.16
-const VOLUME_MUSICA_SOB_VOZ = 0.05
+// A música chega a -20 LUFS e as vozes a -18 (ver docs/jornada-voz-e-musica.md):
+// a 30% a música fica ~12 dB abaixo da voz quando toca sozinha, e a 10% some
+// para trás enquanto a narradora fala (~22 dB abaixo).
+const VOLUME_MUSICA = 0.3
+const VOLUME_MUSICA_SOB_VOZ = 0.1
 
 export type Efeito = 'toque' | 'ponto' | 'conquista' | 'fim'
 
@@ -257,5 +260,15 @@ export function useSomDaJornada(aberto: boolean) {
     contexto.current?.close().catch(() => {})
   }, [])
 
-  return { ligado, alternar, falar, falando, legenda, destravar, efeito }
+  /**
+   * Onde a voz está agora (0–1), para o balão escrever no ritmo da fala.
+   * `null` quando não há voz tocando — o balão volta ao ritmo de digitação.
+   */
+  const progressoDaVoz = useCallback((): number | null => {
+    const el = voz.current
+    if (!el || el.paused || !Number.isFinite(el.duration) || el.duration <= 0) return null
+    return Math.min(1, el.currentTime / el.duration)
+  }, [])
+
+  return { ligado, alternar, falar, falando, legenda, destravar, efeito, progressoDaVoz }
 }
