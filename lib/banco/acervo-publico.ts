@@ -52,3 +52,11 @@ export function rotuloDoAcervo(aproximado?: number | null): string | null {
 
 /** O que se diz quando não há número confiável para dizer. */
 export const ACERVO_SEM_NUMERO = 'Milhares de questões'
+
+/**
+ * O acervo dito nas telas estáticas — a landing e a de entrar —, que não podem
+ * perguntar a `/api/banco/contagem`: seria uma função por visita só para
+ * escrever um número redondo. É um piso, como o da rota: suba quando o banco
+ * passar do próximo milhar, nunca antes.
+ */
+export const ACERVO_ANUNCIADO = 15_000

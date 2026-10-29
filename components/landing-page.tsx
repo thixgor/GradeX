@@ -35,6 +35,7 @@ import {
   VISUAL_DO_VEREDITO,
   classesDaAlternativa,
 } from '@/lib/banco/aparencia-da-questao'
+import { ACERVO_ANUNCIADO, rotuloDoAcervo } from '@/lib/banco/acervo-publico'
 
 // Import estático: o Next lê as dimensões no build (zero layout shift) e gera o
 // blurDataURL embutido — as fotos aparecem borradas na hora em vez de deixar um
@@ -49,6 +50,9 @@ import logoManual from '@/public/landing/logo-manual.png'
 import provas3d from '@/public/landing/provas-3d.png'
 import flashcards3d from '@/public/landing/flashcards-3d.png'
 import susCover from '@/public/landing/sus-cover.jpg'
+
+/** "+15 mil questões" — o piso de `lib/banco/acervo-publico.ts`; a landing é estática. */
+const ACERVO_NA_LANDING = rotuloDoAcervo(ACERVO_ANUNCIADO) ?? 'Milhares de questões'
 
 /* =================== ROTAS =================== */
 
@@ -2434,11 +2438,11 @@ const PRODUCTS: Product[] = [
     key: 'banco',
     icon: <IconBank />,
     name: 'Banco de Questões',
-    teaser: 'Milhares de questões, uso ilimitado no Plus+.',
+    teaser: `${ACERVO_NA_LANDING}, uso ilimitado no Plus+.`,
     badge: 'Ilimitado no Plus+',
     headline: 'Errar aqui é de graça. Errar na prova custa o ano.',
     body: [
-      'Milhares de questões para resolver à vontade, com gabarito e comentário. Você descobre o buraco do seu conteúdo aqui dentro, antes de descobrir na hora que vale nota.',
+      `${ACERVO_NA_LANDING} para resolver à vontade, com gabarito e comentário. Você descobre o buraco do seu conteúdo aqui dentro, antes de descobrir na hora que vale nota.`,
     ],
     cta: { label: 'Entrar no banco', href: LINKS.bancoQuestoes },
     media: () => <ProductImage src={provas3d} alt="Banco de questões da plataforma" />,

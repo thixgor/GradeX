@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  ACERVO_ANUNCIADO,
   ACERVO_SEM_NUMERO,
   DEGRAU_DO_ACERVO,
   acervoArredondado,
@@ -35,6 +36,13 @@ describe('acervo público', () => {
     expect(rotuloDoAcervo(15_000)).toBe('+15 mil questões')
     expect(rotuloDoAcervo(15_238)).toBe('+15 mil questões')
     expect(rotuloDoAcervo(DEGRAU_DO_ACERVO)).toBe('+1 mil questões')
+  })
+
+  it('o número das telas estáticas é um milhar redondo, dito como piso', () => {
+    // Um 15.500 aqui viraria "+15 mil" na tela e esconderia que alguém quis
+    // anunciar mais do que a frase diz.
+    expect(acervoArredondado(ACERVO_ANUNCIADO)).toBe(ACERVO_ANUNCIADO)
+    expect(rotuloDoAcervo(ACERVO_ANUNCIADO)).toBe('+15 mil questões')
   })
 
   it('não inventa número quando não tem um — quem chama diz a frase genérica', () => {

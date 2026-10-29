@@ -1,0 +1,943 @@
+/* ==========================================================================
+   Telas de entrar — vidro, aurora e a logo 3D
+   --------------------------------------------------------------------------
+   Carregado só nas rotas /auth (por `app/auth/layout.tsx`): nada disto pesa
+   no CSS do resto do site.
+
+   O mundo destas telas é o do sistema da Apple — material translúcido sobre
+   uma aurora com as três cores da marca, controle segmentado, campos agrupados
+   com fio fino entre eles — e a logo é o único momento autoral. Todo o resto é
+   controle que a pessoa já sabe usar.
+   ========================================================================== */
+
+.auth-root {
+  --auth-fundo: #efe8dc;
+  --vidro: rgba(255, 253, 248, 0.46);
+  --vidro-quina: rgba(255, 255, 255, 0.95);
+  --vidro-quina-baixa: rgba(255, 255, 255, 0.4);
+  --vidro-borda: rgba(255, 255, 255, 0.72);
+  --vidro-brilho: rgba(255, 255, 255, 0.95);
+  --vidro-contorno: rgba(31, 52, 36, 0.08);
+  --vidro-sombra: rgba(35, 70, 44, 0.26);
+  --vidro-sombra-perto: rgba(35, 70, 44, 0.12);
+  --campo: rgba(255, 255, 255, 0.62);
+  --campo-foco: rgba(255, 255, 255, 0.94);
+  --campo-borda: rgba(31, 52, 36, 0.09);
+  --separador: rgba(31, 52, 36, 0.13);
+  --seg-fundo: rgba(118, 118, 128, 0.13);
+  --seg-polegar: #ffffff;
+  --texto-2: hsl(140 9% 32%);
+  --texto-3: hsl(140 7% 40%);
+  --erro: #b42318;
+  --erro-fundo: rgba(217, 45, 32, 0.08);
+  --erro-borda: rgba(217, 45, 32, 0.2);
+  --atencao: #8a5a00;
+  --atencao-fundo: rgba(226, 164, 62, 0.14);
+  --atencao-borda: rgba(196, 136, 30, 0.28);
+
+  --aurora-1: rgba(84, 150, 98, 0.62);
+  --aurora-2: rgba(236, 176, 72, 0.5);
+  --aurora-3: rgba(222, 112, 64, 0.38);
+  --aurora-4: rgba(150, 200, 164, 0.6);
+
+  /* Logo */
+  --logo-adesivo: #fbf7ec;
+  --logo-lado: #d9cfb6;
+  --logo-lado-fundo: #b9ad8e;
+  --logo-verde-claro: #5c9b6a;
+  --logo-verde-escuro: #2e6140;
+  --logo-balao-verde-1: #5a9668;
+  --logo-balao-verde-2: #3c7350;
+  --logo-lapis-1: #2f6140;
+  --logo-lapis-2: #1d3d29;
+  --logo-nome: #cf5a2a;
+  --logo-sombra: rgba(28, 56, 36, 0.32);
+  --logo-encaixe: #e4d9bf;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--auth-fundo);
+  color: hsl(var(--foreground));
+  caret-color: hsl(var(--secondary));
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dark .auth-root {
+  --auth-fundo: #070d09;
+  --vidro: rgba(24, 34, 28, 0.5);
+  --vidro-quina: rgba(255, 255, 255, 0.28);
+  --vidro-quina-baixa: rgba(255, 255, 255, 0.08);
+  --vidro-borda: rgba(255, 255, 255, 0.1);
+  --vidro-brilho: rgba(255, 255, 255, 0.14);
+  --vidro-contorno: rgba(0, 0, 0, 0.5);
+  --vidro-sombra: rgba(0, 0, 0, 0.6);
+  --vidro-sombra-perto: rgba(0, 0, 0, 0.35);
+  --campo: rgba(255, 255, 255, 0.06);
+  --campo-foco: rgba(255, 255, 255, 0.1);
+  --campo-borda: rgba(255, 255, 255, 0.08);
+  --separador: rgba(255, 255, 255, 0.1);
+  --seg-fundo: rgba(118, 118, 128, 0.24);
+  --seg-polegar: rgba(255, 255, 255, 0.16);
+  --texto-2: hsl(140 10% 70%);
+  --texto-3: hsl(140 8% 62%);
+  --erro: #fda29b;
+  --erro-fundo: rgba(240, 68, 56, 0.12);
+  --erro-borda: rgba(240, 68, 56, 0.28);
+  --atencao: #f5c56b;
+  --atencao-fundo: rgba(226, 164, 62, 0.12);
+  --atencao-borda: rgba(226, 164, 62, 0.28);
+
+  --aurora-1: rgba(52, 120, 70, 0.55);
+  --aurora-2: rgba(196, 130, 30, 0.26);
+  --aurora-3: rgba(200, 84, 38, 0.26);
+  --aurora-4: rgba(40, 96, 66, 0.5);
+
+  --logo-adesivo: #f1eedd;
+  --logo-lado: #9d9a83;
+  --logo-lado-fundo: #6d6b58;
+  --logo-verde-claro: #4f8d5d;
+  --logo-verde-escuro: #1f4a2d;
+  --logo-balao-verde-1: #4c8a5b;
+  --logo-balao-verde-2: #2f6340;
+  --logo-nome: #e57240;
+  --logo-sombra: rgba(0, 0, 0, 0.55);
+  --logo-encaixe: #b9b59e;
+}
+
+.auth-root ::selection {
+  background: hsl(var(--primary) / 0.28);
+  color: inherit;
+}
+
+/* ── Aurora ─────────────────────────────────────────────────────────────── */
+
+.auth-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.auth-aurora span {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--cor), transparent);
+}
+
+.auth-aurora span:nth-child(1) { --cor: var(--aurora-1); top: -30vmax; left: -22vmax; }
+.auth-aurora span:nth-child(2) { --cor: var(--aurora-2); top: -18vmax; right: -30vmax; width: 60vmax; height: 60vmax; }
+.auth-aurora span:nth-child(3) { --cor: var(--aurora-3); bottom: -36vmax; right: -8vmax; }
+.auth-aurora span:nth-child(4) { --cor: var(--aurora-4); bottom: -28vmax; left: -26vmax; width: 56vmax; height: 56vmax; }
+
+/* Grão fino por cima: sem ele o degradê faz faixas em tela de 8 bits. */
+.auth-aurora::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+/* A aurora só se mexe em tela grande com mouse. No celular, cada quadro dela
+   obrigaria o vidro do cartão a refazer o desfoque — e é a bateria de quem
+   está tentando entrar. Parada, ela continua bonita. */
+@media (min-width: 1024px) and (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .auth-aurora span {
+    animation: auth-deriva 34s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .auth-aurora span:nth-child(2) { animation-duration: 41s; animation-delay: -12s; }
+  .auth-aurora span:nth-child(3) { animation-duration: 38s; animation-delay: -20s; }
+  .auth-aurora span:nth-child(4) { animation-duration: 46s; animation-delay: -6s; }
+}
+
+@keyframes auth-deriva {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6vmax, 4vmax, 0) scale(1.08); }
+  100% { transform: translate3d(-4vmax, 7vmax, 0) scale(0.94); }
+}
+
+/* ── Material de vidro ──────────────────────────────────────────────────── */
+
+.vidro {
+  position: relative;
+  background: var(--vidro);
+  -webkit-backdrop-filter: blur(32px) saturate(175%);
+  backdrop-filter: blur(32px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 var(--vidro-brilho),
+    inset 0 0 0 1px var(--vidro-borda),
+    0 0 0 1px var(--vidro-contorno),
+    0 32px 64px -28px var(--vidro-sombra),
+    0 12px 24px -14px var(--vidro-sombra-perto);
+}
+
+/* A quina de luz do vidro: mais forte no alto à esquerda, de onde vem a luz,
+   e um reflexo fraco embaixo à direita. Desenhada como anel de 1px (máscara
+   sobre o próprio fundo), não como borda — acompanha qualquer raio. */
+.vidro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    var(--vidro-quina) 0%,
+    transparent 32%,
+    transparent 68%,
+    var(--vidro-quina-baixa) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+.auth-cartao {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 30px;
+  padding: 24px 20px 22px;
+}
+
+@media (min-width: 480px) {
+  .auth-cartao { padding: 32px 32px 28px; }
+}
+
+.pilula-vidro {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px 0 10px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  background: var(--vidro);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 var(--vidro-brilho),
+    inset 0 0 0 1px var(--vidro-borda),
+    0 6px 16px -8px var(--vidro-sombra);
+  transition: transform 160ms ease, background-color 200ms ease;
+}
+
+.pilula-vidro:active { transform: scale(0.96); }
+
+/* ── Palco ──────────────────────────────────────────────────────────────── */
+
+.auth-topo {
+  position: absolute;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  left: 16px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.auth-palco {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 22px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top, 0px) + 76px) 16px calc(env(safe-area-inset-bottom, 0px) + 28px);
+}
+
+.auth-marca {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-marca-texto { display: none; }
+
+@media (min-width: 1024px) {
+  .auth-palco[data-layout='dividido'] {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 440px);
+    align-items: center;
+    justify-items: stretch;
+    column-gap: clamp(48px, 7vw, 112px);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 96px 48px;
+  }
+  .auth-palco[data-layout='dividido'] .auth-marca { align-items: flex-start; }
+  .auth-palco[data-layout='dividido'] .auth-marca-texto { display: block; }
+}
+
+.auth-titulo-marca {
+  margin-top: 40px;
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(2.5rem, 3.4vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.auth-titulo-marca em {
+  font-style: italic;
+  color: hsl(var(--primary));
+}
+
+.auth-lista {
+  display: grid;
+  gap: 14px;
+  margin-top: 32px;
+}
+
+.auth-lista li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 15.5px;
+  line-height: 1.35;
+  color: var(--texto-2);
+}
+
+.auth-lista strong { color: hsl(var(--foreground)); font-weight: 650; }
+
+.auth-icone {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: hsl(var(--primary));
+  background: var(--vidro);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: inset 0 1px 0 var(--vidro-brilho), inset 0 0 0 1px var(--vidro-borda), 0 6px 14px -8px var(--vidro-sombra);
+}
+
+/* ── Entrada do conteúdo ────────────────────────────────────────────────── */
+
+.auth-entra {
+  animation: auth-entra 640ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-troca {
+  animation: auth-troca 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes auth-entra {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes auth-troca {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Controle segmentado ────────────────────────────────────────────────── */
+
+.segmentado {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px;
+  border-radius: 13px;
+  background: var(--seg-fundo);
+}
+
+.segmentado-polegar {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc(50% - 3px);
+  border-radius: 10px;
+  background: var(--seg-polegar);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04), inset 0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  transition: transform 380ms cubic-bezier(0.3, 1.2, 0.4, 1);
+}
+
+.segmentado[data-ativo='1'] .segmentado-polegar { transform: translateX(100%); }
+
+.segmentado button {
+  position: relative;
+  z-index: 1;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--texto-2);
+  transition: color 200ms ease;
+}
+
+.segmentado button[aria-pressed='true'] { color: hsl(var(--foreground)); }
+.segmentado button:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+
+/* ── Campos agrupados ───────────────────────────────────────────────────── */
+
+.campos {
+  border-radius: 16px;
+  background: var(--campo);
+  box-shadow: inset 0 0 0 1px var(--campo-borda);
+  transition: box-shadow 200ms ease, background-color 200ms ease;
+}
+
+.campos:focus-within {
+  box-shadow: inset 0 0 0 1.5px hsl(var(--primary) / 0.6), 0 0 0 4px hsl(var(--primary) / 0.14);
+}
+
+.campos[data-erro='true'] {
+  box-shadow: inset 0 0 0 1.5px var(--erro-borda), 0 0 0 4px var(--erro-fundo);
+}
+
+.campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+}
+
+.campo-linha + .campo-linha > .campo::before,
+.campo-linha + .campo-dobra .campo::before,
+.campo-dobra + .campo-linha > .campo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 0;
+  height: 1px;
+  background: var(--separador);
+  transform: scaleY(0.5);
+  transform-origin: top;
+}
+
+.campo-dobra + .campo-linha > .campo::before { opacity: var(--dobra-aberta, 0); transition: opacity 200ms ease; }
+.campos:has(.campo-dobra[data-aberto='true']) { --dobra-aberta: 1; }
+
+.campo-dobra {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 380ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease;
+}
+
+.campo-dobra[data-aberto='true'] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 420ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 320ms ease 80ms;
+}
+
+.campo-dobra > div { min-height: 0; overflow: hidden; }
+
+.campo input {
+  flex: 1;
+  min-width: 0;
+  height: 58px;
+  padding: 22px 16px 6px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  /* 16 px: abaixo disso o Safari do iPhone dá zoom no foco. */
+  font-size: 16px;
+  color: hsl(var(--foreground));
+  border-radius: 16px;
+}
+
+.campo input::placeholder { color: transparent; }
+
+.campo-rotulo {
+  position: absolute;
+  left: 16px;
+  top: 19px;
+  font-size: 16px;
+  line-height: 20px;
+  color: var(--texto-3);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), color 200ms ease;
+}
+
+.campo input:focus + .campo-rotulo,
+.campo input:not(:placeholder-shown) + .campo-rotulo,
+.campo input:-webkit-autofill + .campo-rotulo {
+  transform: translateY(-10px) scale(0.75);
+}
+
+.campo input:focus + .campo-rotulo { color: hsl(var(--primary)); }
+.campo input[aria-invalid='true'] + .campo-rotulo { color: var(--erro); }
+
+/* Preenchimento automático sem a tarja amarela do navegador. */
+.campo input:-webkit-autofill,
+.campo input:-webkit-autofill:hover,
+.campo input:-webkit-autofill:focus {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  caret-color: hsl(var(--secondary));
+  transition: background-color 100000s ease 0s;
+}
+
+.campo-acao {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  margin-right: 6px;
+  border-radius: 12px;
+  color: var(--texto-3);
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.campo-acao:hover { color: hsl(var(--foreground)); }
+.campo-acao:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -4px; }
+
+/* ── Botões ─────────────────────────────────────────────────────────────── */
+
+.botao-acao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 52px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 650;
+  letter-spacing: -0.005em;
+  color: #fff;
+  background: linear-gradient(180deg, #dc6a3a 0%, #c0501e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 12px 24px -12px rgba(192, 80, 30, 0.75),
+    0 2px 5px rgba(192, 80, 30, 0.2);
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
+}
+
+.botao-acao:hover { filter: brightness(1.06) saturate(1.05); }
+.botao-acao:active:not(:disabled) { transform: scale(0.975); }
+.botao-acao:disabled { opacity: 0.65; cursor: not-allowed; }
+.botao-acao:focus-visible { outline: 3px solid hsl(var(--secondary) / 0.5); outline-offset: 3px; }
+
+.botao-acao .seta { transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+.botao-acao:hover:not(:disabled) .seta { transform: translateX(3px); }
+
+.botao-vidro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  background: var(--campo);
+  box-shadow: inset 0 0 0 1px var(--campo-borda);
+  transition: transform 160ms ease, background-color 200ms ease, opacity 200ms ease;
+}
+
+.botao-vidro:hover:not(:disabled) { background: var(--campo-foco); }
+.botao-vidro:active:not(:disabled) { transform: scale(0.98); }
+.botao-vidro:disabled { opacity: 0.55; cursor: not-allowed; }
+.botao-vidro:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+.link-auth {
+  font-weight: 600;
+  color: hsl(var(--primary));
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  border-radius: 6px;
+}
+
+.link-auth:hover { text-decoration: underline; }
+.link-auth:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.link-auth:disabled { color: var(--texto-3); text-decoration: none; cursor: default; }
+
+.link-discreto {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--texto-2);
+  border-radius: 6px;
+  transition: color 160ms ease;
+}
+
+.link-discreto:hover { color: hsl(var(--foreground)); }
+.link-discreto:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+/* ── Avisos ─────────────────────────────────────────────────────────────── */
+
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.45;
+  animation: auth-troca 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.aviso svg { flex-shrink: 0; margin-top: 1px; }
+.aviso-erro { color: var(--erro); background: var(--erro-fundo); box-shadow: inset 0 0 0 1px var(--erro-borda); }
+.aviso-atencao { color: var(--atencao); background: var(--atencao-fundo); box-shadow: inset 0 0 0 1px var(--atencao-borda); }
+.aviso-neutro { color: var(--texto-2); background: var(--campo); box-shadow: inset 0 0 0 1px var(--campo-borda); }
+
+.divisor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--texto-3);
+}
+
+.divisor::before,
+.divisor::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--separador);
+}
+
+/* ── Selo de estado (sucesso, erro, e-mail) ─────────────────────────────── */
+
+.selo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 26px;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 16px 30px -14px var(--selo-sombra);
+  animation: selo-entra 620ms cubic-bezier(0.34, 1.5, 0.64, 1) both;
+}
+
+.selo[data-tipo='sucesso'] { --selo-sombra: rgba(46, 97, 64, 0.8); background: linear-gradient(160deg, #66a674, #2e6140); }
+.selo[data-tipo='erro'] { --selo-sombra: rgba(180, 35, 24, 0.7); background: linear-gradient(160deg, #e5675b, #a8281d); }
+.selo[data-tipo='email'] { --selo-sombra: rgba(192, 80, 30, 0.7); background: linear-gradient(160deg, #e7834f, #bf4f1c); }
+
+.selo::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 var(--selo-sombra);
+  animation: selo-onda 1100ms cubic-bezier(0.16, 1, 0.3, 1) 260ms both;
+  pointer-events: none;
+}
+
+.selo-traco {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: selo-traco 520ms cubic-bezier(0.65, 0, 0.35, 1) 300ms forwards;
+}
+
+@keyframes selo-entra {
+  from { opacity: 0; transform: scale(0.5) rotate(-8deg); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes selo-onda {
+  from { box-shadow: 0 0 0 0 var(--selo-sombra); opacity: 0.55; }
+  to { box-shadow: 0 0 0 18px var(--selo-sombra); opacity: 0; }
+}
+
+@keyframes selo-traco {
+  to { stroke-dashoffset: 0; }
+}
+
+/* ── Código de 6 dígitos ────────────────────────────────────────────────── */
+
+.codigo {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.codigo input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  font-size: 16px;
+  cursor: text;
+}
+
+.codigo-caixa {
+  display: grid;
+  place-items: center;
+  height: 58px;
+  border-radius: 14px;
+  font-family: var(--font-clinical), ui-monospace, monospace;
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  background: var(--campo);
+  box-shadow: inset 0 0 0 1px var(--campo-borda);
+  transition: box-shadow 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.codigo-caixa[data-cheia='true'] { animation: codigo-digito 220ms cubic-bezier(0.34, 1.5, 0.64, 1); }
+
+.codigo-caixa[data-ativa='true'] {
+  background: var(--campo-foco);
+  box-shadow: inset 0 0 0 1.5px hsl(var(--primary) / 0.7), 0 0 0 4px hsl(var(--primary) / 0.14);
+}
+
+.codigo-caixa[data-ativa='true']:empty::after {
+  content: '';
+  width: 2px;
+  height: 26px;
+  border-radius: 2px;
+  background: hsl(var(--secondary));
+  animation: codigo-cursor 1s steps(1) infinite;
+}
+
+@keyframes codigo-digito {
+  from { transform: scale(0.88); }
+  to { transform: none; }
+}
+
+@keyframes codigo-cursor {
+  50% { opacity: 0; }
+}
+
+/* ==========================================================================
+   Logo 3D
+   --------------------------------------------------------------------------
+   Linha do tempo (ms):   0 ─ moeda gira ─ 950
+                                520 ─ balão verde sobe ─ 1000
+                                    660 ─ balão amarelo ─ 1140
+                                        800 ─ lápis pousa ─ 1360
+                                              1200 ─ marca desliza ─ 1950
+                                               1300 ─ letras, 45 ms cada ─ 2300
+                                                    1600 ─ brilho varre ─ 2700
+                                                              2300 → flutua
+
+   O estado final de cada peça está nas regras-base, e as animações só
+   descrevem o caminho até ele (`both`). Sem animação (reduzir movimento, Modo
+   Lite, navegador antigo) a logo aparece pronta, não some.
+   ========================================================================== */
+
+.logo3d {
+  --tam: 66px;
+  --passo: calc(var(--tam) * 0.01);
+  --nome-alt: calc(var(--tam) * 0.8);
+  --nome-larg: calc(var(--nome-alt) * 2);
+  --vao: calc(var(--tam) * 0.16);
+  --desvio: calc((var(--nome-larg) + var(--vao)) / 2);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--vao);
+}
+
+.logo3d[data-tamanho='compacto'] { --tam: 52px; }
+
+@media (min-width: 1024px) {
+  .auth-palco[data-layout='dividido'] .logo3d[data-tamanho='heroi'] { --tam: 128px; }
+  .logo3d[data-tamanho='compacto'] { --tam: 60px; }
+}
+
+.logo3d-desliza {
+  position: relative;
+  width: calc(var(--tam) * 180 / 195);
+  height: var(--tam);
+  flex-shrink: 0;
+  perspective: calc(var(--tam) * 6);
+  animation: logo3d-desliza 760ms cubic-bezier(0.65, 0, 0.35, 1) 1200ms both;
+}
+
+.logo3d-inclina,
+.logo3d-flutua,
+.logo3d-gira {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.logo3d-inclina {
+  transform: rotateX(calc(var(--py, 0) * -16deg)) rotateY(calc(var(--px, 0) * 22deg));
+}
+
+.logo3d-flutua {
+  animation: logo3d-flutua 7s ease-in-out 2300ms infinite both;
+}
+
+.logo3d-gira {
+  animation: logo3d-gira 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.logo3d-camada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.logo3d-fatia {
+  fill: var(--logo-lado);
+  transform: translateZ(calc(var(--k) * var(--passo) * -1));
+  animation: logo3d-aparece 260ms ease-out both;
+}
+
+.logo3d-fatia-fundo { fill: var(--logo-lado-fundo); }
+
+.logo3d-face {
+  transform: translateZ(0);
+  animation: logo3d-aparece 260ms ease-out both;
+}
+
+.logo3d-adesivo { fill: var(--logo-adesivo); }
+
+/* A pegada de cada peça na base: quando ela sobe, fica o encaixe sombreado,
+   como num adesivo destacado da cartela. */
+.logo3d-encaixe { fill: var(--logo-encaixe); }
+
+.logo3d-peca {
+  backface-visibility: hidden;
+  transform: translateZ(var(--z));
+  filter: drop-shadow(0 calc(var(--tam) * 0.022) calc(var(--tam) * 0.028) var(--logo-sombra));
+  animation: logo3d-sobe 480ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.logo3d-balao-verde { --z: calc(var(--tam) * 0.09); transform-origin: 20% 62%; animation-delay: 520ms; }
+.logo3d-balao-amarelo { --z: calc(var(--tam) * 0.15); transform-origin: 64% 78%; animation-delay: 660ms; }
+.logo3d-lapis {
+  --z: calc(var(--tam) * 0.22);
+  transform-origin: 56% 71%;
+  animation: logo3d-pousa 560ms cubic-bezier(0.22, 1.25, 0.36, 1) 800ms both;
+}
+
+.logo3d-contornado {
+  stroke: var(--logo-adesivo);
+  stroke-width: 3.2;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+
+.logo3d-pontos { fill: var(--logo-adesivo); }
+
+.logo3d-brilho {
+  transform: translateX(260px);
+  animation: logo3d-varre 1100ms cubic-bezier(0.45, 0, 0.25, 1) 1600ms both;
+}
+
+.logo3d-reflexo {
+  transform: translate(calc(var(--px, 0) * -34px), calc(var(--py, 0) * -34px));
+}
+
+.logo3d-sombra {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: calc(var(--tam) * -0.14);
+  height: calc(var(--tam) * 0.12);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--logo-sombra), transparent);
+  animation: logo3d-sombra 7s ease-in-out 2300ms infinite both;
+}
+
+.logo3d-nome {
+  width: var(--nome-larg);
+  height: var(--nome-alt);
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.logo3d-letra {
+  fill: var(--logo-nome);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: logo3d-letra 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(1300ms + var(--i) * 45ms);
+}
+
+@keyframes logo3d-aparece {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes logo3d-gira {
+  0% { transform: rotateY(-200deg) rotateX(16deg) scale(0.5); }
+  65% { transform: rotateY(10deg) rotateX(-3deg) scale(1.03); }
+  100% { transform: none; }
+}
+
+@keyframes logo3d-sobe {
+  from { opacity: 0; transform: translateZ(0) scale(0.35); }
+  to { opacity: 1; transform: translateZ(var(--z)) scale(1); }
+}
+
+@keyframes logo3d-pousa {
+  from { opacity: 0; transform: translate3d(34%, -34%, calc(var(--z) * 3)) rotate(18deg); }
+  to { opacity: 1; transform: translateZ(var(--z)); }
+}
+
+@keyframes logo3d-desliza {
+  from { transform: translateX(var(--desvio)); }
+  to { transform: none; }
+}
+
+@keyframes logo3d-letra {
+  from { opacity: 0; transform: translateY(40%) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes logo3d-varre {
+  from { transform: translateX(-60px); }
+  to { transform: translateX(260px); }
+}
+
+@keyframes logo3d-flutua {
+  0%, 100% { transform: translateY(0) rotateY(-13deg) rotateX(5deg); }
+  50% { transform: translateY(-5%) rotateY(13deg) rotateX(-4deg); }
+}
+
+@keyframes logo3d-sombra {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.86); opacity: 0.7; }
+}
+
+/* ── Movimento reduzido e Modo Lite ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-root *,
+  .auth-root *::before,
+  .auth-root *::after {
+    animation: none !important;
+  }
+  .logo3d,
+  .auth-entra { animation: logo3d-aparece 400ms ease both !important; }
+  .logo3d-letra { opacity: 1; }
+  .segmentado-polegar,
+  .campo-dobra { transition-duration: 1ms !important; }
+}
+
+/* O Modo Lite zera desfoque e sombras (globals.css); sem eles o vidro vira
+   uma película rala sobre a aurora. Fica um cartão sólido. */
+.lite-mode .auth-root {
+  --vidro: hsl(var(--card));
+  --campo: hsl(var(--muted) / 0.6);
+}
+
+.lite-mode .auth-aurora { display: none; }
+.lite-mode .vidro,
+.lite-mode .pilula-vidro,
+.lite-mode .auth-icone { outline: 1px solid hsl(var(--border)); }

@@ -2,13 +2,43 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Logo } from '@/components/logo'
-import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { Check, Eye, EyeOff } from 'lucide-react'
+import { AuthShell } from '@/components/auth/auth-shell'
+import {
+    Aviso,
+    BotaoAcao,
+    BotaoVidro,
+    CabecalhoAuth,
+    Campo,
+    CartaoAuth,
+    GrupoDeCampos,
+    Selo,
+    useCapsLock,
+} from '@/components/auth/auth-ui'
+
+/**
+ * O mesmo mínimo que a API cobra — `SENHA_MIN`, de `lib/redefinicao-de-senha.ts`,
+ * que não pode vir para o navegador (importa o Mongo).
+ */
+const MINIMO_DA_SENHA = 6
+
+/** Uma regra da senha, marcada ao vivo enquanto a pessoa digita. */
+function Regra({ ok, children }: { ok: boolean; children: React.ReactNode }) {
+    return (
+        <li
+            className={`flex items-center gap-2 transition-colors duration-200 ${ok ? 'text-primary' : 'text-[color:var(--texto-3)]'}`}
+        >
+            <span
+                className={`grid h-[18px] w-[18px] place-items-center rounded-full transition-all duration-200 ${ok ? 'scale-100 bg-primary text-primary-foreground' : 'scale-90 bg-[color:var(--seg-fundo)] text-transparent'}`}
+                aria-hidden
+            >
+                <Check className="h-3 w-3" strokeWidth={3} />
+            </span>
+            {children}
+            <span className="sr-only">{ok ? '(cumprido)' : '(pendente)'}</span>
+        </li>
+    )
+}
 
 function ResetPasswordForm() {
     const router = useRouter()
@@ -21,6 +51,7 @@ function ResetPasswordForm() {
     const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState(false)
     const [error, setError] = useState('')
+    const { capsLigado, propsDoCapsLock } = useCapsLock()
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -36,7 +67,7 @@ function ResetPasswordForm() {
             return
         }
 
-        if (password.length < 6) {
+        if (password.length < MINIMO_DA_SENHA) {
             setError('A senha deve ter no mínimo 6 caracteres')
             return
         }
@@ -66,162 +97,121 @@ function ResetPasswordForm() {
 
     if (!token) {
         return (
-            <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                className="auth-glass-card relative z-10 flex w-full max-w-md flex-col rounded-2xl"
-            >
-                <div className="space-y-3 p-6 text-center">
-                    <div className="mb-4 flex justify-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-                            <AlertCircle className="h-8 w-8 text-destructive" />
-                        </div>
+            <CartaoAuth>
+                <div className="flex flex-col items-center gap-6 text-center">
+                    <Selo tipo="erro" />
+                    <CabecalhoAuth
+                        titulo="Link inválido"
+                        subtitulo="O link de redefinição de senha é inválido ou está incompleto. Peça um novo — leva um minuto."
+                    />
+                    <div className="w-full space-y-3">
+                        <BotaoAcao type="button" onClick={() => router.push('/auth/forgot-password')}>
+                            Pedir um novo link
+                        </BotaoAcao>
+                        <BotaoVidro onClick={() => router.push('/auth/login')}>Voltar para o login</BotaoVidro>
                     </div>
-                    <h1 className="font-heading text-2xl font-semibold">Link Inválido</h1>
-                    <p className="text-sm text-muted-foreground">
-                        O link de redefinição de senha é inválido ou está ausente.
-                    </p>
                 </div>
-                <div className="px-6 pb-6">
-                    <Button
-                        onClick={() => router.push('/auth/login')}
-                        className="h-11 w-full rounded-lg bg-secondary font-semibold text-secondary-foreground hover:bg-secondary/90"
-                    >
-                        Voltar para Login
-                    </Button>
-                </div>
-            </motion.div>
+            </CartaoAuth>
         )
     }
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="auth-glass-card relative z-10 flex w-full max-w-md flex-col rounded-2xl"
-        >
-            <div className="flex-shrink-0 space-y-3 p-6 pb-2 text-center">
-                <div className="mb-2 flex justify-center">
-                    <Logo variant="full" size="lg" />
+    if (success) {
+        return (
+            <CartaoAuth>
+                <div className="flex flex-col items-center gap-6 text-center">
+                    <Selo tipo="sucesso" />
+                    <CabecalhoAuth
+                        titulo="Senha atualizada"
+                        subtitulo="Por segurança, os aparelhos conectados foram desconectados: entre de novo com a nova senha."
+                    />
+                    <BotaoAcao type="button" onClick={() => router.push('/auth/login')}>
+                        Ir para o login
+                    </BotaoAcao>
                 </div>
-                <p className="editorial-mark justify-center">Nova senha</p>
-                <h1 className="font-heading text-2xl font-semibold tracking-tight">
-                    Redefinir Senha
-                </h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                    {!success
-                        ? 'Crie uma nova senha segura para sua conta'
-                        : 'Senha atualizada com sucesso!'}
-                </p>
-            </div>
+            </CartaoAuth>
+        )
+    }
 
-            <div className="px-6 pb-6 pt-2">
-                {success ? (
-                    <div className="flex flex-col items-center justify-center space-y-4 py-4">
-                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-                            <CheckCircle2 className="h-10 w-10 text-primary" />
-                        </div>
-                        <p className="text-center text-sm text-muted-foreground">
-                            Sua senha foi alterada. Por segurança, os aparelhos conectados foram desconectados: entre de novo com a nova senha.
-                        </p>
-                        <Button
-                            onClick={() => router.push('/auth/login')}
-                            className="mt-4 h-11 w-full rounded-lg bg-secondary font-semibold text-secondary-foreground hover:bg-secondary/90"
-                        >
-                            Ir para Login
-                        </Button>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="password" className="text-xs font-medium">Nova Senha</Label>
-                            <div className="relative">
-                                <Input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                    autoComplete="new-password"
-                                    className="auth-glass-input h-11 rounded-lg pr-10"
-                                />
+    const tamanhoOk = password.length >= MINIMO_DA_SENHA
+    const iguais = confirmPassword.length > 0 && password === confirmPassword
+
+    return (
+        <CartaoAuth>
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <CabecalhoAuth titulo="Redefinir senha" subtitulo="Crie uma senha nova para sua conta." />
+
+                <div className="space-y-3">
+                    <GrupoDeCampos>
+                        <Campo
+                            id="password"
+                            rotulo="Nova senha"
+                            type={showPassword ? 'text' : 'password'}
+                            autoComplete="new-password"
+                            enterKeyHint="next"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            aria-describedby="regras-senha"
+                            required
+                            autoFocus
+                            {...propsDoCapsLock}
+                            acao={
                                 <button
                                     type="button"
+                                    className="campo-acao"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                                    aria-label={showPassword ? 'Esconder senhas' : 'Mostrar senhas'}
+                                    aria-pressed={showPassword}
                                 >
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
                                 </button>
-                            </div>
-                        </div>
+                            }
+                        />
+                        <Campo
+                            id="confirmPassword"
+                            rotulo="Confirmar nova senha"
+                            type={showPassword ? 'text' : 'password'}
+                            autoComplete="new-password"
+                            enterKeyHint="done"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            aria-describedby="regras-senha"
+                            required
+                            {...propsDoCapsLock}
+                        />
+                    </GrupoDeCampos>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword" className="text-xs font-medium">Confirmar Nova Senha</Label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                                autoComplete="new-password"
-                                className="auth-glass-input h-11 rounded-lg"
-                            />
-                        </div>
+                    <ul id="regras-senha" className="space-y-1.5 px-1 text-[13px] font-medium">
+                        <Regra ok={tamanhoOk}>Pelo menos {MINIMO_DA_SENHA} caracteres</Regra>
+                        <Regra ok={iguais}>As duas senhas são iguais</Regra>
+                    </ul>
 
-                        {error && (
-                            <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-center text-sm text-destructive">
-                                {error}
-                            </div>
-                        )}
+                    {capsLigado && (
+                        <p className="px-1 text-[13px] font-medium text-[color:var(--atencao)]" aria-live="polite">
+                            Caps Lock ligado
+                        </p>
+                    )}
+                </div>
 
-                        {/expirado|inválido/i.test(error) && (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => router.push('/auth/forgot-password')}
-                                className="h-11 w-full rounded-lg"
-                            >
-                                Pedir um novo link
-                            </Button>
-                        )}
+                {error && <Aviso id="erro-auth">{error}</Aviso>}
 
-                        <Button
-                            type="submit"
-                            className="h-11 w-full rounded-lg bg-secondary font-semibold text-secondary-foreground hover:bg-secondary/90"
-                            disabled={loading}
-                        >
-                            {loading ? 'Redefinindo...' : 'Salvar Nova Senha'}
-                        </Button>
-                    </form>
+                {/expirado|inválido/i.test(error) && (
+                    <BotaoVidro onClick={() => router.push('/auth/forgot-password')}>Pedir um novo link</BotaoVidro>
                 )}
-            </div>
-        </motion.div>
+
+                <BotaoAcao carregando={loading} textoCarregando="Salvando…">
+                    Salvar nova senha
+                </BotaoAcao>
+            </form>
+        </CartaoAuth>
     )
 }
 
 export default function ResetPasswordPage() {
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden surface-page p-4 text-foreground">
-            <div
-                className="pointer-events-none fixed inset-0 z-0 opacity-50 dark:opacity-35"
-                style={{
-                    background:
-                        'radial-gradient(ellipse 70% 50% at 10% 0%, rgba(70,129,82,0.12), transparent 55%), radial-gradient(ellipse 50% 40% at 90% 100%, rgba(206,89,41,0.07), transparent 50%)',
-                }}
-                aria-hidden
-            />
-
-            <div className="absolute right-4 top-4 z-20">
-                <ThemeToggle />
-            </div>
-
-            <Suspense fallback={<div className="text-muted-foreground">Carregando...</div>}>
+        <AuthShell voltar={{ href: '/auth/login', rotulo: 'Entrar' }}>
+            <Suspense fallback={null}>
                 <ResetPasswordForm />
             </Suspense>
-        </div>
+        </AuthShell>
     )
 }
