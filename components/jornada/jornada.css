@@ -1,0 +1,699 @@
+/* ==========================================================================
+   Jornada de perfil — o "monte seu personagem" do DomineAqui
+   --------------------------------------------------------------------------
+   Material e tokens vêm do vidro do checkout (`checkout-vidro.css`, escopo
+   `.ck-escopo`): a jornada mora no mesmo mundo do login e do checkout. O que é
+   daqui é o jogo — trilha de fases, barra de XP, conquistas, faíscas e confete.
+
+   Tudo que se mexe para sozinho em "reduzir movimento" (bloco no fim).
+   ========================================================================== */
+
+/* ── Palco ─────────────────────────────────────────────────────────────── */
+
+.jd-palco {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  isolation: isolate;
+}
+@media (min-width: 640px) {
+  .jd-palco { align-items: center; padding: 16px; }
+}
+
+.jd-veu {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(8, 14, 10, 0.55);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  backdrop-filter: blur(10px) saturate(130%);
+}
+
+/* Duas luzes que passeiam devagar atrás do cartão: o "ambiente" do jogo. */
+.jd-luz {
+  position: absolute;
+  z-index: -1;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.jd-luz-a { left: -18vmax; top: -22vmax; background: radial-gradient(circle, rgba(74, 160, 98, 0.75), transparent 62%); animation: jd-passeia 18s ease-in-out infinite alternate; }
+.jd-luz-b { right: -20vmax; bottom: -26vmax; background: radial-gradient(circle, rgba(232, 118, 58, 0.6), transparent 62%); animation: jd-passeia 22s ease-in-out infinite alternate-reverse; }
+
+@keyframes jd-passeia {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(8vmax, 6vmax, 0) scale(1.15); }
+}
+
+/* ── Cartão ────────────────────────────────────────────────────────────── */
+
+.jd-cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 540px;
+  max-height: 94dvh;
+  overflow: hidden;
+  border-radius: 28px 28px 0 0;
+  background: var(--ck-vidro-forte);
+  -webkit-backdrop-filter: blur(30px) saturate(175%);
+  backdrop-filter: blur(30px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 var(--ck-brilho),
+    inset 0 0 0 1px var(--ck-borda),
+    0 0 0 1px var(--ck-contorno),
+    0 40px 80px -30px rgba(0, 0, 0, 0.55);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (min-width: 640px) {
+  .jd-cartao { border-radius: 30px; padding-bottom: 0; }
+}
+
+/* Alça de folha no celular: diz "isto é uma camada" sem precisar de X. */
+.jd-alca {
+  width: 38px;
+  height: 5px;
+  margin: 8px auto 0;
+  border-radius: 999px;
+  background: var(--ck-sep);
+}
+@media (min-width: 640px) { .jd-alca { display: none; } }
+
+.jd-treme { animation: jd-treme 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes jd-treme {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(3px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+/* ── Topo: narradora, som, trilha e XP ─────────────────────────────────── */
+
+.jd-topo { padding: 12px 18px 14px; }
+@media (min-width: 640px) { .jd-topo { padding: 18px 24px 16px; } }
+
+.jd-narradora {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.jd-narradora .logo3d { flex-shrink: 0; margin-top: -2px; }
+
+.jd-balao {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 6px 18px 18px 18px;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ck-texto);
+}
+.jd-balao::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 10px;
+  width: 12px;
+  height: 12px;
+  background: inherit;
+  transform: rotate(45deg);
+  box-shadow: inset 1px -1px 0 var(--ck-campo-borda);
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+.jd-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: -2px;
+  background: currentColor;
+  animation: jd-pisca 900ms steps(1) infinite;
+}
+@keyframes jd-pisca { 50% { opacity: 0; } }
+
+/* Ondinha de "está falando": só quando o áudio toca de verdade. */
+.jd-onda { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; margin-left: 6px; vertical-align: -1px; }
+.jd-onda i { width: 3px; border-radius: 2px; background: var(--ck-verde); animation: jd-onda 900ms ease-in-out infinite; }
+.jd-onda i:nth-child(2) { animation-delay: -300ms; }
+.jd-onda i:nth-child(3) { animation-delay: -600ms; }
+@keyframes jd-onda { 0%, 100% { height: 3px; } 50% { height: 12px; } }
+
+.jd-som {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  color: var(--ck-texto-2);
+  background: var(--ck-trilho);
+  transition: transform 150ms ease, color 150ms ease;
+}
+.jd-som:hover { color: var(--ck-texto); }
+.jd-som:active { transform: scale(0.92); }
+
+/* A trilha de fases: a primeira já vem feita (a conta existe) — progresso
+   dado de presente é o que mais segura alguém até o fim (endowed progress). */
+.jd-trilha {
+  display: flex;
+  align-items: center;
+  margin-top: 14px;
+}
+.jd-fase {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: var(--ck-texto-3);
+  background: var(--ck-trilho);
+  transition: background 300ms ease, color 300ms ease, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.jd-fase svg { width: 15px; height: 15px; }
+.jd-fase[data-estado='feita'] { color: #fff; background: linear-gradient(180deg, #4f9d63, #357a48); }
+.jd-fase[data-estado='atual'] {
+  color: #fff;
+  background: linear-gradient(180deg, #e8763a, #c4521f);
+  transform: scale(1.12);
+}
+.jd-fase[data-estado='atual']::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: inherit;
+  border: 2px solid rgba(232, 118, 58, 0.45);
+  animation: jd-anel 1.8s ease-out infinite;
+}
+@keyframes jd-anel {
+  from { transform: scale(0.85); opacity: 1; }
+  to { transform: scale(1.35); opacity: 0; }
+}
+.jd-fase-premio[data-estado='futura'] { color: #c08a12; background: rgba(226, 164, 62, 0.16); }
+
+.jd-elo {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  margin: 0 4px;
+  border-radius: 999px;
+  background: var(--ck-trilho);
+  overflow: hidden;
+}
+.jd-elo > i {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: linear-gradient(90deg, #4f9d63, #e8763a);
+  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Barra de XP */
+.jd-xp {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.jd-xp-barra {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--ck-trilho);
+  overflow: hidden;
+}
+.jd-xp-barra > i {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f0b23e, #e8763a 60%, #d4552a);
+  box-shadow: 0 0 12px rgba(232, 118, 58, 0.55);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.jd-xp-barra > i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.55) 45%, transparent 70%);
+  transform: translateX(-100%);
+  animation: jd-brilho 2.6s ease-in-out infinite;
+}
+@keyframes jd-brilho { 60%, 100% { transform: translateX(100%); } }
+
+.jd-xp-numero {
+  min-width: 74px;
+  text-align: right;
+  font-size: 12.5px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ck-texto-2);
+}
+.jd-xp-numero b { color: var(--ck-texto); }
+
+.jd-ganho {
+  position: absolute;
+  right: 86px;
+  top: -4px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #e8763a;
+  text-shadow: 0 2px 10px rgba(232, 118, 58, 0.45);
+  pointer-events: none;
+  animation: jd-sobe 1.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@keyframes jd-sobe {
+  0% { transform: translateY(8px) scale(0.6); opacity: 0; }
+  20% { transform: translateY(0) scale(1.15); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translateY(-22px) scale(1); opacity: 0; }
+}
+
+/* ── Corpo ─────────────────────────────────────────────────────────────── */
+
+.jd-corpo {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 18px 18px;
+}
+@media (min-width: 640px) { .jd-corpo { padding: 4px 24px 22px; } }
+
+.jd-titulo {
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: clamp(1.45rem, 1.25rem + 1vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ck-texto);
+  text-wrap: balance;
+}
+.jd-apoio { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--ck-texto-2); }
+
+/* ── Cartas de profissão ───────────────────────────────────────────────── */
+
+.jd-papeis { display: grid; gap: 10px; margin-top: 18px; }
+@media (min-width: 480px) { .jd-papeis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.jd-papel {
+  --cor: #4f9d63;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  text-align: left;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda), 0 10px 22px -18px rgba(0, 0, 0, 0.4);
+  transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 260ms ease, background 260ms ease;
+  overflow: visible;
+}
+@media (min-width: 480px) {
+  .jd-papel { flex-direction: column; text-align: center; padding: 20px 12px 16px; gap: 10px; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .jd-papel:hover { transform: translateY(-4px); box-shadow: inset 0 0 0 1px var(--ck-campo-borda), 0 22px 34px -22px var(--cor); }
+}
+.jd-papel:active { transform: scale(0.97); }
+.jd-papel[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--cor) 12%, var(--ck-campo));
+  box-shadow: inset 0 0 0 2px var(--cor), 0 0 0 5px color-mix(in srgb, var(--cor) 18%, transparent), 0 24px 40px -24px var(--cor);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.jd-papel-icone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 17px;
+  color: #fff;
+  background: linear-gradient(160deg, color-mix(in srgb, var(--cor) 72%, #fff), var(--cor) 55%, color-mix(in srgb, var(--cor) 70%, #000));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 10px 18px -8px var(--cor);
+}
+@media (min-width: 480px) { .jd-papel-icone { width: 62px; height: 62px; border-radius: 20px; } }
+.jd-papel-icone svg { width: 26px; height: 26px; }
+.jd-papel[aria-pressed='true'] .jd-papel-icone { animation: jd-quica 620ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes jd-quica {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.22) rotate(-8deg); }
+  60% { transform: scale(0.94) rotate(4deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.jd-papel-nome { display: block; font-size: 16px; font-weight: 800; color: var(--ck-texto); }
+.jd-papel-dica { display: block; margin-top: 1px; font-size: 12.5px; color: var(--ck-texto-3); }
+
+.jd-papel-marca {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--cor);
+  box-shadow: 0 0 0 3px var(--ck-papel, #fff);
+  animation: jd-surge 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes jd-surge { from { transform: scale(0) rotate(-90deg); } to { transform: scale(1) rotate(0); } }
+
+/* Faíscas: 12 pontos que explodem do ícone ao escolher. */
+.jd-faiscas { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; }
+.jd-faiscas i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px;
+  border-radius: 2px;
+  background: var(--cor);
+  animation: jd-explode 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.jd-faiscas i:nth-child(3n) { background: #f0b23e; border-radius: 50%; }
+.jd-faiscas i:nth-child(4n) { background: #e8763a; }
+@keyframes jd-explode {
+  0% { transform: rotate(var(--a)) translateX(0) scale(1); opacity: 1; }
+  100% { transform: rotate(var(--a)) translateX(var(--d, 54px)) scale(0.2); opacity: 0; }
+}
+
+/* ── Campos ────────────────────────────────────────────────────────────── */
+
+.jd-campos { display: grid; gap: 16px; margin-top: 18px; }
+.jd-campo { position: relative; }
+.jd-campo-ok {
+  position: absolute;
+  right: 12px;
+  top: 38px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  color: #fff;
+  background: #4f9d63;
+  pointer-events: none;
+  animation: jd-surge 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+/* Selects mostram a setinha à direita: o visto fica antes dela. */
+.jd-campo-ok[data-select] { right: 34px; }
+
+/* O seletor com busca não aceita aria-invalid: o erro vem por classe. */
+.jd-erro-campo { box-shadow: inset 0 0 0 1.5px var(--ck-erro), 0 0 0 4px var(--ck-erro-fundo) !important; }
+
+.jd-anos { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.jd-ano {
+  height: 44px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ck-texto-2);
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1), background 200ms ease, color 200ms ease;
+}
+.jd-ano:active { transform: scale(0.94); }
+.jd-ano[aria-pressed='true'] {
+  color: #fff;
+  background: linear-gradient(180deg, #e8763a, #c4521f);
+  box-shadow: 0 8px 16px -8px rgba(196, 82, 31, 0.8);
+  transform: translateY(-2px);
+}
+
+.jd-selo-seguro {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ck-texto-2);
+  background: var(--ck-trilho);
+}
+.jd-selo-seguro svg { flex-shrink: 0; margin-top: 1px; color: var(--ck-verde); }
+
+/* ── Rodapé ────────────────────────────────────────────────────────────── */
+
+.jd-rodape {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px 14px;
+  border-top: 1px solid var(--ck-sep);
+}
+@media (min-width: 640px) { .jd-rodape { padding: 14px 24px 18px; } }
+.jd-rodape .ck-cta { flex: 1; }
+
+.jd-voltar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  color: var(--ck-texto-2);
+  background: var(--ck-trilho);
+  transition: transform 150ms ease;
+}
+.jd-voltar:active { transform: scale(0.92); }
+
+.jd-adiar {
+  padding: 0 0 14px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ck-texto-3);
+}
+.jd-adiar button { text-decoration: underline; text-underline-offset: 3px; }
+.jd-adiar button:hover { color: var(--ck-texto); }
+
+/* ── Conquista (toast) ─────────────────────────────────────────────────── */
+
+.jd-conquista {
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(92%, 380px);
+  padding: 10px 14px 10px 10px;
+  border-radius: 20px;
+  color: #fff;
+  background: linear-gradient(135deg, rgba(36, 54, 40, 0.94), rgba(20, 28, 22, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 18px 40px -14px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(240, 178, 62, 0.35);
+  pointer-events: none;
+}
+.jd-conquista-selo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  color: #3b2a05;
+  background: radial-gradient(circle at 35% 30%, #ffe7a3, #f0b23e 55%, #b97a12);
+  box-shadow: 0 0 0 3px rgba(240, 178, 62, 0.25), 0 0 22px rgba(240, 178, 62, 0.55);
+  animation: jd-moeda 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.jd-conquista-selo svg { width: 20px; height: 20px; }
+@keyframes jd-moeda {
+  0% { transform: rotateY(0) scale(0.4); }
+  60% { transform: rotateY(540deg) scale(1.1); }
+  100% { transform: rotateY(720deg) scale(1); }
+}
+.jd-conquista small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #f0b23e; }
+.jd-conquista b { display: block; font-size: 15px; line-height: 1.2; }
+.jd-conquista span { display: block; font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+
+/* ── Abertura ──────────────────────────────────────────────────────────── */
+
+.jd-abertura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 22px 6px;
+  text-align: center;
+}
+@media (min-width: 640px) { .jd-abertura { padding: 24px 32px 8px; } }
+.jd-abertura .jd-titulo { font-size: clamp(1.8rem, 1.4rem + 1.8vw, 2.35rem); max-width: 16ch; }
+.jd-abertura .jd-apoio { max-width: 40ch; font-size: 15px; }
+
+/* As medalhas ainda trancadas: mostrar o que falta é o que puxa (Zeigarnik). */
+.jd-medalhas { display: flex; justify-content: center; gap: 10px; margin-top: 4px; }
+.jd-medalha {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  color: var(--ck-texto-3);
+  background: var(--ck-trilho);
+  box-shadow: inset 0 0 0 1.5px var(--ck-campo-borda);
+  overflow: hidden;
+}
+.jd-medalha svg { width: 22px; height: 22px; opacity: 0.55; }
+.jd-medalha::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: jd-brilho 3.2s ease-in-out infinite;
+  animation-delay: var(--atraso, 0s);
+}
+.jd-medalha-cadeado {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ck-texto-3);
+}
+.jd-medalha-cadeado svg { width: 10px; height: 10px; opacity: 1; }
+
+.jd-xp-inicial { font-size: 12.5px; font-weight: 700; color: var(--ck-texto-3); }
+
+/* ── Final: o troféu ───────────────────────────────────────────────────── */
+
+.jd-fim {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 22px 8px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.jd-trofeu {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 148px;
+  height: 148px;
+}
+.jd-trofeu-aro {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: conic-gradient(from 0deg, #f0b23e, #e8763a, #4f9d63, #f0b23e);
+  animation: jd-gira 4s linear infinite;
+  -webkit-mask: radial-gradient(circle, transparent 61%, #000 62%);
+  mask: radial-gradient(circle, transparent 61%, #000 62%);
+}
+.jd-trofeu-brilho {
+  position: absolute;
+  inset: -30px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(240, 178, 62, 0.45), transparent 65%);
+  animation: jd-pulsa 2.4s ease-in-out infinite;
+}
+.jd-trofeu-raios {
+  position: absolute;
+  inset: -46px;
+  background: repeating-conic-gradient(from 0deg, rgba(240, 178, 62, 0.22) 0 8deg, transparent 8deg 24deg);
+  -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%);
+  mask: radial-gradient(circle, #000 30%, transparent 70%);
+  animation: jd-gira 22s linear infinite;
+}
+@keyframes jd-gira { to { transform: rotate(360deg); } }
+@keyframes jd-pulsa { 0%, 100% { transform: scale(0.92); opacity: 0.8; } 50% { transform: scale(1.06); opacity: 1; } }
+
+.jd-trofeu-nivel {
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  color: #3b2a05;
+  background: linear-gradient(180deg, #ffd978, #f0b23e);
+  box-shadow: 0 6px 14px -6px rgba(185, 122, 18, 0.9);
+  white-space: nowrap;
+}
+
+.jd-placar {
+  font-family: var(--font-heading), Georgia, serif;
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ck-texto);
+}
+.jd-placar small { font-family: inherit; font-size: 18px; color: var(--ck-texto-3); }
+
+.jd-conquistas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; width: 100%; margin-top: 4px; }
+.jd-conquista-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 16px;
+  text-align: left;
+  background: var(--ck-campo);
+  box-shadow: inset 0 0 0 1px var(--ck-campo-borda);
+}
+.jd-conquista-item .jd-conquista-selo { width: 34px; height: 34px; animation: none; }
+.jd-conquista-item .jd-conquista-selo svg { width: 16px; height: 16px; }
+.jd-conquista-item b { display: block; font-size: 13px; line-height: 1.2; color: var(--ck-texto); }
+.jd-conquista-item span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11.5px; color: var(--ck-texto-3); }
+
+/* Confete: cada papel recebe direção, giro e atraso por variável. */
+.jd-confete { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.jd-confete i {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: jd-confete 2.4s cubic-bezier(0.15, 0.6, 0.35, 1) forwards;
+  animation-delay: var(--atraso);
+}
+@keyframes jd-confete {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  25% { transform: translate(calc(var(--x) * 0.6), var(--sobe)) rotate(calc(var(--g) * 0.4)); opacity: 1; }
+  100% { transform: translate(var(--x), 420px) rotate(var(--g)); opacity: 0; }
+}
+
+/* ── Movimento reduzido ────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .jd-luz, .jd-fase[data-estado='atual']::after, .jd-xp-barra > i::after, .jd-medalha::after,
+  .jd-trofeu-aro, .jd-trofeu-brilho, .jd-trofeu-raios, .jd-onda i, .jd-cursor { animation: none; }
+  .jd-faiscas, .jd-confete { display: none; }
+  .jd-papel, .jd-papel-icone, .jd-conquista-selo, .jd-papel-marca, .jd-campo-ok, .jd-ganho, .jd-treme { animation: none !important; transition: none; }
+}

@@ -1,12 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useBootstrap } from '@/hooks/use-bootstrap'
-import {
-  CompleteProfileModal,
-  type CompleteProfileValues,
-} from '@/components/complete-profile-modal'
+import type { CompleteProfileValues } from '@/components/complete-profile-modal'
+
+/**
+ * A jornada (animações, confete, som) só baixa quando vai abrir: o portão roda
+ * em toda página logada, e quase sempre o perfil já está completo.
+ */
+const CompleteProfileModal = dynamic(
+  () => import('@/components/complete-profile-modal').then((m) => m.CompleteProfileModal),
+  { ssr: false },
+)
 
 /**
  * Decide quando pedir os dados que faltam no perfil.
