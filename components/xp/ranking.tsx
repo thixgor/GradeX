@@ -7,6 +7,7 @@ import {
   Star, Target, Trophy,
 } from 'lucide-react'
 import { avatarPorId } from '@/lib/monitorias/avatares'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import {
   AREAS_DE_XP, FONTES_DE_XP, LIGAS, ROTULO_DA_AREA, TETO_DIARIO, hojeEmSaoPaulo, diaAnterior,
   type AreaDeXp, type FonteDeXp, type Medalha,
@@ -39,6 +40,8 @@ interface RespostaDoRanking {
   eu: LinhaDoRanking | null
   euElegivel: boolean
   euId: string
+  /** Ainda há quem tenha histórico e não tenha o XP calculado. */
+  calculando: { pendentes: number | null; comHistorico: number | null } | null
 }
 
 const ROTULO_DO_PERIODO: Record<Periodo, string> = { semana: 'Semana', mes: 'Mês', geral: 'Sempre' }
@@ -52,9 +55,9 @@ export function Ranking() {
   const [carregando, setCarregando] = useState(true)
   const pedido = useRef(0)
 
-  const carregar = useCallback(() => {
+  const carregar = useCallback((silencioso = false) => {
     const id = ++pedido.current
-    setCarregando(true)
+    if (!silencioso) setCarregando(true)
     setErro('')
     fetch(`/api/xp/ranking?periodo=${periodo}&escopo=${escopo}`, { cache: 'no-store' })
       .then(async (r) => {
@@ -72,6 +75,8 @@ export function Ranking() {
   }, [periodo, escopo])
 
   useEffect(() => { carregar() }, [carregar])
+  // Enquanto o XP retroativo é calculado, o ranking se enche sozinho.
+  useIntervaloVisivel(() => carregar(true), ranking?.calculando ? 5_000 : null)
   // Na página do ranking o XP precisa estar em dia.
   useEffect(() => { recarregar(true) }, [recarregar])
 
@@ -126,11 +131,13 @@ export function Ranking() {
           {ranking ? ` · ${ranking.participantes.toLocaleString('pt-BR')} no ranking` : ''}
         </p>
 
+        {ranking?.calculando && <Calculando estado={ranking.calculando} />}
+
         {erro ? (
           <p className="ck-aviso mt-5">{erro}</p>
         ) : !ranking || carregando ? (
           <EsqueletoDoRanking />
-        ) : ranking.topo.length === 0 ? (
+        ) : ranking.topo.length === 0 && ranking.calculando ? null : ranking.topo.length === 0 ? (
           <p className="ck-nota mt-5">Ninguém pontuou neste período ainda. Resolva uma questão e seja o primeiro.</p>
         ) : (
           <>
@@ -336,6 +343,32 @@ function Lista({ linhas, euId, chave }: { linhas: LinhaDoRanking[]; euId: string
         </motion.li>
       ))}
     </ol>
+  )
+}
+
+/**
+ * O XP retroativo sendo calculado: quantos com histórico já entraram. Mostrar
+ * a conta andando é melhor que uma lista vazia — e diz que o histórico conta.
+ */
+function Calculando({ estado }: { estado: NonNullable<RespostaDoRanking['calculando']> }) {
+  const total = estado.comHistorico ?? 0
+  const feitos = estado.pendentes === null || total === 0 ? 0 : Math.max(0, total - estado.pendentes)
+  const pct = total > 0 ? Math.round((feitos / total) * 100) : 0
+  return (
+    <motion.div className="xr-calculando" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} role="status">
+      <span className="xr-calculando-anel" aria-hidden />
+      <span className="min-w-0 flex-1">
+        <b>Calculando o XP de todo o histórico de estudo…</b>
+        <small>
+          {total > 0
+            ? `${feitos.toLocaleString('pt-BR')} de ${total.toLocaleString('pt-BR')} estudantes com histórico já estão no ranking. A lista se completa sozinha.`
+            : 'Lendo provas, questões, flashcards e aulas desde o primeiro dia. A lista se completa sozinha.'}
+        </small>
+        <span className="xr-calculando-barra" aria-hidden>
+          <i style={{ width: `${Math.max(4, pct)}%` }} />
+        </span>
+      </span>
+    </motion.div>
   )
 }
 

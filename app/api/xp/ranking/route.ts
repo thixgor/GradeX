@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { waitUntil } from '@vercel/functions'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { memoizarPorTempo } from '@/lib/cache-de-servidor'
 import { jsonComprimido } from '@/lib/resposta-comprimida'
 import { COLECAO_XP, campoDoPeriodo, obterPerfilDeXp, xpNoPeriodo, type Periodo, type PerfilDeXp } from '@/lib/xp/perfis'
 import { nivelDe } from '@/lib/xp/regras'
+import { estadoDaVarredura, varrerXp } from '@/lib/xp/varredura'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +32,11 @@ export interface LinhaDoRanking {
  *
  * O topo é igual para todos e muda devagar: fica 60 s em memória por chave
  * (período + escopo + faculdade). A posição de quem pede é contada na hora.
+ *
+ * Enquanto ainda há quem tenha histórico e não tenha XP calculado (logo depois
+ * do lançamento, ou de uma mudança de regra), abrir o ranking dispara a
+ * varredura depois da resposta (`waitUntil`, 20 s, uma por vez pela trava) e
+ * o topo sai sem cache: a tela mostra "calculando…" e vai se enchendo.
  */
 export async function GET(request: NextRequest) {
   const session = await getSession()
@@ -40,7 +47,11 @@ export async function GET(request: NextRequest) {
   const escopo = request.nextUrl.searchParams.get('escopo') === 'faculdade' ? 'faculdade' : 'todos'
 
   const db = await getDb()
-  const eu = await obterPerfilDeXp(db, session.userId)
+  const [eu, varredura] = await Promise.all([obterPerfilDeXp(db, session.userId), estadoDaVarredura(db)])
+  const calculando = varredura.pendentes === null || varredura.pendentes > 0
+  if (calculando) {
+    waitUntil(varrerXp(db, { orcamentoMs: 20_000 }).catch((err) => console.error('[xp] varredura pelo ranking falhou:', err)))
+  }
   const faculdade = escopo === 'faculdade' ? eu?.faculdade || null : null
   if (escopo === 'faculdade' && !faculdade) {
     return NextResponse.json({ error: 'Complete o perfil com a sua faculdade para ver o ranking dela.', semFaculdade: true }, { status: 409 })
@@ -52,7 +63,7 @@ export async function GET(request: NextRequest) {
   const col = db.collection<PerfilDeXp>(COLECAO_XP)
 
   const chave = `xp:ranking:${periodo}:${faculdade || '*'}:${Object.values(filtro).join('|')}`
-  const { topo, participantes } = await memoizarPorTempo(chave, 60_000, async () => {
+  const montarTopo = async () => {
     const [docs, participantes] = await Promise.all([
       col
         .find(base, {
@@ -80,7 +91,9 @@ export async function GET(request: NextRequest) {
       }
     })
     return { topo, participantes }
-  })
+  }
+  // Calculando, o topo muda a cada poucos segundos: nada de cache.
+  const { topo, participantes } = calculando ? await montarTopo() : await memoizarPorTempo(chave, 60_000, montarTopo)
 
   let minha: LinhaDoRanking | null = null
   if (eu?.elegivel) {
@@ -105,7 +118,10 @@ export async function GET(request: NextRequest) {
 
   return jsonComprimido(
     request,
-    { periodo, escopo, faculdade, topo, participantes, eu: minha, euElegivel: !!eu?.elegivel, euId: session.userId },
+    {
+      periodo, escopo, faculdade, topo, participantes, eu: minha, euElegivel: !!eu?.elegivel, euId: session.userId,
+      calculando: calculando ? { pendentes: varredura.pendentes, comHistorico: varredura.ativos } : null,
+    },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )
 }
