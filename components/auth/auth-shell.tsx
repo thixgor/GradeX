@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { ThemeToggle } from '@/components/theme-toggle'
-import { LogoAnimada } from './logo-animada'
+import { LogoAnimada } from '@/components/marca/logo-animada'
 
 /**
  * O casco das telas de entrar: aurora ao fundo, a logo 3D e o cartão de vidro.

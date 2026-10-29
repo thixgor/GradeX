@@ -266,23 +266,23 @@ export function NotificationsBell() {
 
   return (
     <div className="relative">
-      <Button
+      <button
         ref={triggerRef}
-        variant="ghost"
-        size="icon"
-        className="relative"
+        type="button"
+        className="ferramenta-botao"
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label="Notificações"
+        aria-label={unreadCount > 0 ? `Notificações, ${unreadCount} não lidas` : 'Notificações'}
+        title="Notificações"
       >
-        <Bell className="h-5 w-5" />
+        <Bell className="h-[19px] w-[19px]" strokeWidth={2} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="ferramenta-selo" aria-hidden>
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
-      </Button>
+      </button>
 
       {mounted && open && style && createPortal(panel, document.body)}
     </div>

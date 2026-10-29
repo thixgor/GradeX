@@ -40,19 +40,6 @@
   --aurora-3: rgba(222, 112, 64, 0.38);
   --aurora-4: rgba(150, 200, 164, 0.6);
 
-  /* Logo */
-  --logo-adesivo: #fbf7ec;
-  --logo-lado: #d9cfb6;
-  --logo-lado-fundo: #b9ad8e;
-  --logo-verde-claro: #5c9b6a;
-  --logo-verde-escuro: #2e6140;
-  --logo-balao-verde-1: #5a9668;
-  --logo-balao-verde-2: #3c7350;
-  --logo-lapis-1: #2f6140;
-  --logo-lapis-2: #1d3d29;
-  --logo-nome: #cf5a2a;
-  --logo-sombra: rgba(28, 56, 36, 0.32);
-  --logo-encaixe: #e4d9bf;
 
   position: relative;
   isolation: isolate;
@@ -95,16 +82,6 @@
   --aurora-3: rgba(200, 84, 38, 0.26);
   --aurora-4: rgba(40, 96, 66, 0.5);
 
-  --logo-adesivo: #f1eedd;
-  --logo-lado: #9d9a83;
-  --logo-lado-fundo: #6d6b58;
-  --logo-verde-claro: #4f8d5d;
-  --logo-verde-escuro: #1f4a2d;
-  --logo-balao-verde-1: #4c8a5b;
-  --logo-balao-verde-2: #2f6340;
-  --logo-nome: #e57240;
-  --logo-sombra: rgba(0, 0, 0, 0.55);
-  --logo-encaixe: #b9b59e;
 }
 
 .auth-root ::selection {
@@ -338,6 +315,11 @@
 @keyframes auth-entra {
   from { opacity: 0; transform: translateY(18px) scale(0.985); }
   to { opacity: 1; transform: none; }
+}
+
+@keyframes auth-entra-calma {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes auth-troca {
@@ -717,202 +699,10 @@
   50% { opacity: 0; }
 }
 
-/* ==========================================================================
-   Logo 3D
-   --------------------------------------------------------------------------
-   Linha do tempo (ms):   0 ─ moeda gira ─ 950
-                                520 ─ balão verde sobe ─ 1000
-                                    660 ─ balão amarelo ─ 1140
-                                        800 ─ lápis pousa ─ 1360
-                                              1200 ─ marca desliza ─ 1950
-                                               1300 ─ letras, 45 ms cada ─ 2300
-                                                    1600 ─ brilho varre ─ 2700
-                                                              2300 → flutua
-
-   O estado final de cada peça está nas regras-base, e as animações só
-   descrevem o caminho até ele (`both`). Sem animação (reduzir movimento, Modo
-   Lite, navegador antigo) a logo aparece pronta, não some.
-   ========================================================================== */
-
-.logo3d {
-  --tam: 66px;
-  --passo: calc(var(--tam) * 0.01);
-  --nome-alt: calc(var(--tam) * 0.8);
-  --nome-larg: calc(var(--nome-alt) * 2);
-  --vao: calc(var(--tam) * 0.16);
-  --desvio: calc((var(--nome-larg) + var(--vao)) / 2);
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--vao);
-}
-
-.logo3d[data-tamanho='compacto'] { --tam: 52px; }
-
+/* A logo do herói é maior na tela de entrar do computador. O resto da logo
+   mora em components/marca/logo-animada.css. */
 @media (min-width: 1024px) {
   .auth-palco[data-layout='dividido'] .logo3d[data-tamanho='heroi'] { --tam: 128px; }
-  .logo3d[data-tamanho='compacto'] { --tam: 60px; }
-}
-
-.logo3d-desliza {
-  position: relative;
-  width: calc(var(--tam) * 180 / 195);
-  height: var(--tam);
-  flex-shrink: 0;
-  perspective: calc(var(--tam) * 6);
-  animation: logo3d-desliza 760ms cubic-bezier(0.65, 0, 0.35, 1) 1200ms both;
-}
-
-.logo3d-inclina,
-.logo3d-flutua,
-.logo3d-gira {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.logo3d-inclina {
-  transform: rotateX(calc(var(--py, 0) * -16deg)) rotateY(calc(var(--px, 0) * 22deg));
-}
-
-.logo3d-flutua {
-  animation: logo3d-flutua 7s ease-in-out 2300ms infinite both;
-}
-
-.logo3d-gira {
-  animation: logo3d-gira 950ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.logo3d-camada {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.logo3d-fatia {
-  fill: var(--logo-lado);
-  transform: translateZ(calc(var(--k) * var(--passo) * -1));
-  animation: logo3d-aparece 260ms ease-out both;
-}
-
-.logo3d-fatia-fundo { fill: var(--logo-lado-fundo); }
-
-.logo3d-face {
-  transform: translateZ(0);
-  animation: logo3d-aparece 260ms ease-out both;
-}
-
-.logo3d-adesivo { fill: var(--logo-adesivo); }
-
-/* A pegada de cada peça na base: quando ela sobe, fica o encaixe sombreado,
-   como num adesivo destacado da cartela. */
-.logo3d-encaixe { fill: var(--logo-encaixe); }
-
-.logo3d-peca {
-  backface-visibility: hidden;
-  transform: translateZ(var(--z));
-  filter: drop-shadow(0 calc(var(--tam) * 0.022) calc(var(--tam) * 0.028) var(--logo-sombra));
-  animation: logo3d-sobe 480ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-.logo3d-balao-verde { --z: calc(var(--tam) * 0.09); transform-origin: 20% 62%; animation-delay: 520ms; }
-.logo3d-balao-amarelo { --z: calc(var(--tam) * 0.15); transform-origin: 64% 78%; animation-delay: 660ms; }
-.logo3d-lapis {
-  --z: calc(var(--tam) * 0.22);
-  transform-origin: 56% 71%;
-  animation: logo3d-pousa 560ms cubic-bezier(0.22, 1.25, 0.36, 1) 800ms both;
-}
-
-.logo3d-contornado {
-  stroke: var(--logo-adesivo);
-  stroke-width: 3.2;
-  stroke-linejoin: round;
-  paint-order: stroke;
-}
-
-.logo3d-pontos { fill: var(--logo-adesivo); }
-
-.logo3d-brilho {
-  transform: translateX(260px);
-  animation: logo3d-varre 1100ms cubic-bezier(0.45, 0, 0.25, 1) 1600ms both;
-}
-
-.logo3d-reflexo {
-  transform: translate(calc(var(--px, 0) * -34px), calc(var(--py, 0) * -34px));
-}
-
-.logo3d-sombra {
-  position: absolute;
-  left: 12%;
-  right: 12%;
-  bottom: calc(var(--tam) * -0.14);
-  height: calc(var(--tam) * 0.12);
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--logo-sombra), transparent);
-  animation: logo3d-sombra 7s ease-in-out 2300ms infinite both;
-}
-
-.logo3d-nome {
-  width: var(--nome-larg);
-  height: var(--nome-alt);
-  flex-shrink: 0;
-  overflow: visible;
-}
-
-.logo3d-letra {
-  fill: var(--logo-nome);
-  transform-box: fill-box;
-  transform-origin: 50% 100%;
-  animation: logo3d-letra 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  animation-delay: calc(1300ms + var(--i) * 45ms);
-}
-
-@keyframes logo3d-aparece {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes logo3d-gira {
-  0% { transform: rotateY(-200deg) rotateX(16deg) scale(0.5); }
-  65% { transform: rotateY(10deg) rotateX(-3deg) scale(1.03); }
-  100% { transform: none; }
-}
-
-@keyframes logo3d-sobe {
-  from { opacity: 0; transform: translateZ(0) scale(0.35); }
-  to { opacity: 1; transform: translateZ(var(--z)) scale(1); }
-}
-
-@keyframes logo3d-pousa {
-  from { opacity: 0; transform: translate3d(34%, -34%, calc(var(--z) * 3)) rotate(18deg); }
-  to { opacity: 1; transform: translateZ(var(--z)); }
-}
-
-@keyframes logo3d-desliza {
-  from { transform: translateX(var(--desvio)); }
-  to { transform: none; }
-}
-
-@keyframes logo3d-letra {
-  from { opacity: 0; transform: translateY(40%) scale(0.92); }
-  to { opacity: 1; transform: none; }
-}
-
-@keyframes logo3d-varre {
-  from { transform: translateX(-60px); }
-  to { transform: translateX(260px); }
-}
-
-@keyframes logo3d-flutua {
-  0%, 100% { transform: translateY(0) rotateY(-13deg) rotateX(5deg); }
-  50% { transform: translateY(-5%) rotateY(13deg) rotateX(-4deg); }
-}
-
-@keyframes logo3d-sombra {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.86); opacity: 0.7; }
 }
 
 /* ── Movimento reduzido e Modo Lite ─────────────────────────────────────── */
@@ -923,9 +713,7 @@
   .auth-root *::after {
     animation: none !important;
   }
-  .logo3d,
-  .auth-entra { animation: logo3d-aparece 400ms ease both !important; }
-  .logo3d-letra { opacity: 1; }
+  .auth-entra { animation: auth-entra-calma 400ms ease both !important; }
   .segmentado-polegar,
   .campo-dobra { transition-duration: 1ms !important; }
 }

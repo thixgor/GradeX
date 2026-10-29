@@ -110,8 +110,8 @@ export function BarraInferior({
         'border-t border-border/60 bg-background/85 backdrop-blur-xl',
         'shadow-[0_-8px_24px_-16px_rgba(21,61,31,0.45)]',
         apenasMobile && 'md:hidden',
-        ladoDaSidebar === 'aberta' && 'lg:left-[280px]',
-        ladoDaSidebar === 'recolhida' && 'lg:left-[72px]',
+        ladoDaSidebar === 'aberta' && 'lg:left-[288px]',
+        ladoDaSidebar === 'recolhida' && 'lg:left-[88px]',
         className,
       )}
       style={{

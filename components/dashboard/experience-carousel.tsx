@@ -102,7 +102,12 @@ function statFor(key: SidebarSectionKey, stats?: ExperienceStats): string | null
   }
 }
 
-export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
+/**
+ * `cabecalho={false}`: sem o título próprio — para quando quem embrulha o
+ * carrossel já dá nome a ele (a linha recolhível da dashboard). As setas
+ * continuam, alinhadas à direita.
+ */
+export function ExperienceCarousel({ stats, cabecalho = true }: { stats?: ExperienceStats; cabecalho?: boolean }) {
   const { sidebarSections, sidebarSectionOrder, sidebarSectionIcons, isAdmin } = useAppShell()
   const resolvedIcons = normalizeSidebarIcons(sidebarSectionIcons)
   const railRef = useRef<HTMLDivElement>(null)
@@ -159,16 +164,20 @@ export function ExperienceCarousel({ stats }: { stats?: ExperienceStats }) {
   if (sections.length === 0) return null
 
   return (
-    <section aria-labelledby="experiencias-titulo" data-tour="experiences">
-      <div className="mb-3 flex items-end justify-between gap-3">
-        <div className="min-w-0">
-          <h2 id="experiencias-titulo" className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
-            Explore a plataforma
-          </h2>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Deslize para conhecer cada área de estudo.
-          </p>
-        </div>
+    <section aria-labelledby={cabecalho ? 'experiencias-titulo' : undefined} aria-label={cabecalho ? undefined : 'Áreas da plataforma'} data-tour="experiences">
+      <div className={cn('flex items-end justify-between gap-3', cabecalho ? 'mb-3' : 'mb-2 lg:-mt-1')}>
+        {cabecalho ? (
+          <div className="min-w-0">
+            <h2 id="experiencias-titulo" className="font-heading text-lg font-semibold tracking-tight sm:text-xl">
+              Explore a plataforma
+            </h2>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Deslize para conhecer cada área de estudo.
+            </p>
+          </div>
+        ) : (
+          <span />
+        )}
         {/* Setas só em ponteiro: no toque o gesto é a própria navegação. */}
         <div className="hidden shrink-0 items-center gap-1.5 lg:flex">
           <button

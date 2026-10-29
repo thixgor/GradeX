@@ -241,19 +241,25 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
 
   return (
     <>
-      <Button
+      {/* Um ícone na cápsula de ferramentas do cabeçalho, como os vizinhos.
+          Era uma pílula em degradê verde-âmbar com "Carrinho" escrito — o
+          elemento mais chamativo da tela, inclusive com o carrinho vazio. O
+          que precisa chamar atenção é o carrinho COM itens: aí entra o selo. */}
+      <button
+        type="button"
         onClick={() => { setNotice(''); setOpen(true) }}
-        className="relative h-10 rounded-xl border border-emerald-300/50 bg-gradient-to-r from-emerald-700 via-emerald-600 to-amber-500 px-3 text-white shadow-lg shadow-emerald-700/25 transition hover:from-emerald-600 hover:via-emerald-500 hover:to-amber-400"
-        aria-label="Abrir carrinho"
+        className="ferramenta-botao"
+        data-cheio={totalCount > 0 || undefined}
+        aria-label={totalCount > 0 ? `Abrir carrinho, ${totalCount} ${totalCount === 1 ? 'item' : 'itens'}` : 'Abrir carrinho'}
+        title="Carrinho"
       >
-        <ShoppingCart className="h-5 w-5" />
-        <span className="ml-2 hidden text-sm font-bold sm:inline">Carrinho</span>
+        <ShoppingCart className="h-[19px] w-[19px]" strokeWidth={2} />
         {totalCount > 0 && (
-          <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-black text-white ring-2 ring-background">
+          <span className="ferramenta-selo" aria-hidden>
             {totalCount > 99 ? '99+' : totalCount}
           </span>
         )}
-      </Button>
+      </button>
 
       <AnimatePresence>
         {open && (

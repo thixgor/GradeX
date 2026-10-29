@@ -5,11 +5,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
+import { LogoAnimada } from '@/components/marca/logo-animada'
+import { estiloDoChip } from '@/components/sidebar-cores'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { useLiteMode } from '@/hooks/use-lite-mode'
-import { InstalarApp } from '@/components/pwa/instalar-app'
-import { COMUNIDADE_WHATSAPP_URL, WhatsAppGlyph } from '@/components/comunidade-whatsapp'
 // Os ícones do menu são os mesmos de lib/sidebar-icons.ts — a barra lateral da
 // demonstração é a barra lateral do produto, não um desenho parecido.
 import {
@@ -484,17 +484,6 @@ function GhostCTA({
 }
 
 /** Marcador editorial de seção: 01 / 05 com a régua. */
-function SectionMark({ n, label }: { n: string; label: string }) {
-  return (
-    <div className="mb-6 flex items-center gap-4">
-      <span className="font-da-mono text-xs text-da-amber-soft">{n}</span>
-      <span className="h-px flex-1 bg-[color:var(--da-neutral-line)]" />
-      <span className="font-da-mono text-[10px] uppercase tracking-[0.3em] text-da-muted">
-        {label}
-      </span>
-    </div>
-  )
-}
 
 /* =================== JANELA DO PRODUTO =================== */
 
@@ -550,6 +539,16 @@ interface SecaoDemo {
   path: string
   icone: LucideIcon
 }
+/** A cor do chip de cada seção da demo — a mesma do menu de verdade. */
+const COR_DEMO: Record<string, string> = {
+  inicio: 'inicio',
+  banco: 'bancoQuestoes',
+  provas: 'provas',
+  manual: 'manualClinico',
+  flashcards: 'flashcards',
+  cronograma: 'cronogramas',
+}
+
 const SECOES_DEMO: SecaoDemo[] = [
   { chave: 'inicio', rotulo: 'Início', path: 'domineaqui.com.br/dashboard', icone: Home },
   {
@@ -644,10 +643,11 @@ function AppWindow({
           </div>
 
           <div className="space-y-2 border-b border-border p-2 sm:p-3">
-            {/* O mesmo degradê do "Nova Prova" de lá: é a ação principal do
-                menu e a única coisa colorida em repouso. */}
-            <span className="flex h-10 w-full items-center justify-center gap-2 rounded-md bg-gradient-to-r from-[#468152] to-[#E2A43E] font-semibold text-white shadow-md shadow-[#468152]/20 sm:h-11 sm:justify-start sm:px-3">
-              <Plus className="h-5 w-5 shrink-0" aria-hidden />
+            {/* A mesma pílula laranja do "Nova Prova" de lá (`.sidebar-acao`). */}
+            <span className="sidebar-acao !h-10 justify-center gap-2 sm:!h-11 sm:justify-start sm:pl-1.5">
+              <span className="sidebar-acao-icone !h-8 !w-8">
+                <Plus className="h-[18px] w-[18px]" aria-hidden />
+              </span>
               <span className="hidden text-sm sm:inline">Nova Prova</span>
             </span>
             <span className="flex h-9 w-full items-center justify-center gap-2 rounded-xl border border-border bg-background text-muted-foreground sm:justify-start sm:px-3">
@@ -663,12 +663,12 @@ function AppWindow({
               const classes =
                 'sidebar-fluid-item flex w-full items-center gap-3 rounded-[14px] px-0 text-sm font-medium sm:px-3 ' +
                 (acesa
-                  ? 'sidebar-fluid-item-active text-primary font-semibold'
+                  ? 'sidebar-fluid-item-active text-foreground font-semibold'
                   : 'text-foreground/80') +
                 ' h-11 justify-center sm:justify-start'
               const miolo = (
                 <>
-                  <span className="sidebar-nav-chip shrink-0">
+                  <span className="sidebar-nav-chip shrink-0" style={estiloDoChip(COR_DEMO[secao.chave] ?? secao.chave)}>
                     <Icone className="h-[18px] w-[18px]" aria-hidden />
                   </span>
                   <span className="hidden truncate sm:inline">{secao.rotulo}</span>
@@ -697,13 +697,13 @@ function AppWindow({
               vivem fora da rolagem das áreas de estudo. */}
           <div className="space-y-0.5 border-t border-border p-2 sm:p-3">
             <span className="sidebar-fluid-item flex h-10 w-full items-center justify-center gap-3 rounded-[14px] text-sm text-foreground/80 sm:justify-start sm:px-3">
-              <span className="sidebar-nav-chip shrink-0">
+              <span className="sidebar-nav-chip shrink-0" style={estiloDoChip('perfil')}>
                 <User className="h-[18px] w-[18px]" aria-hidden />
               </span>
               <span className="hidden truncate sm:inline">Meu Perfil</span>
             </span>
             <span className="sidebar-fluid-item flex h-10 w-full items-center justify-center gap-3 rounded-[14px] text-sm font-semibold text-amber-700 dark:text-amber-400 sm:justify-start sm:px-3">
-              <span className="sidebar-nav-chip sidebar-nav-chip-gradient shrink-0">
+              <span className="sidebar-nav-chip shrink-0" style={estiloDoChip('upgrade')}>
                 <Zap className="h-[18px] w-[18px]" aria-hidden />
               </span>
               <span className="hidden truncate sm:inline">Plus+</span>
@@ -1847,22 +1847,19 @@ export default function LandingPage() {
       className="da-landing relative overflow-x-clip bg-da-ground font-da-body text-da-paper"
     >
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
-      {/* A ordem da página é a ordem da decisão, e ela é quase impossível de
-          interpretar errado:
-            problema (você estuda espalhado)
-            → solução e PRODUTO na mesma tela (o hero, com a questão de verdade)
-            → por que isso acontece (a banda do problema)
+      {/* A ordem da página é a ordem da decisão:
+            problema e PRODUTO na mesma tela (o hero, com a questão de verdade)
+            → por que isso acontece (uma frase)
             → prova (alunos, depois notas reais)
-            → como funciona (o ciclo em cinco passos)
-            → experimente (10 questões sem cadastro)
-            → o que está incluído (núcleo + ecossistema)
-            → por que aqui (arquivo solto × plataforma)
-            → quanto custa
-            → objeções
-            → CTA.
-          Antes, preço vinha antes de qualquer explicação de produto: ótimo para
-          quem já conhecia a marca, caro para quem chegou de um anúncio e ainda
-          estava tentando descobrir que site era este. */}
+            → como funciona → experimente → o que está incluído
+            → quanto custa → objeções → CTA.
+          A página tinha 12 mil px e 2 mil palavras: quem chegava de um anúncio
+          lia o hero e uma seção, no máximo. Saíram as seções que repetiam o
+          que outra já dizia — o comparativo "arquivo solto × plataforma"
+          (era a banda do problema de novo), o "instale o app" (a pergunta já
+          está no FAQ) e a comunidade do WhatsApp (que vive na dashboard, para
+          quem já é aluno) — e cada seção que ficou diz o essencial em uma
+          frase. O detalhe continua lá, mas fechado: abre quem quiser. */}
       <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} summary={showcase?.summary} />
       <ProblemBand />
       <Marquee />
@@ -1871,10 +1868,7 @@ export default function LandingPage() {
       <HowItWorks />
       <SampleBand />
       <ProductsExplorer />
-      <Differentiators />
       <Plans />
-      <InstallApp />
-      <Comunidade />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
       <Footer />
       <MobileDock signupHref={signupHref} isLoggedIn={isLoggedIn} />
@@ -1965,13 +1959,15 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
         }
       >
       <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-3 px-5 md:px-8">
+        {/* A logo 3D se monta na barra assim que a página pinta — é CSS, não
+            espera o JS. Sem o balanço em repouso: na barra ela fica parada e
+            só inclina com o ponteiro em cima. */}
         <a
           href="#top"
-          className="flex min-h-[44px] shrink-0 items-center gap-2.5"
+          className="flex min-h-[44px] shrink-0 items-center"
           aria-label="Domine Aqui"
         >
-          <Logo variant="icon" size="md" className="h-9" />
-          <span className="font-da-display text-lg font-semibold tracking-tight">Domine Aqui</span>
+          <LogoAnimada tamanho="menu" flutua={false} inclinacao="local" />
         </a>
 
         <nav className="hidden items-center gap-8 lg:flex">
@@ -2150,11 +2146,6 @@ function Hero({
           "que site é este?" sem uma rolagem inteira. */}
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-8 md:px-8 md:pb-16 xl:grid-cols-[1.05fr_1fr] xl:items-start xl:gap-14 xl:pt-14">
         <div className="relative z-10 max-w-2xl">
-          <Reveal>
-            <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
-              Para estudantes de Medicina
-            </p>
-          </Reveal>
           <Reveal delay={70}>
             {/* A headline fica. Ela tem identidade, nomeia um problema real e é
                 lembrada — trocá-la por "a plataforma completa para estudantes
@@ -2164,7 +2155,7 @@ function Hero({
                 só na respectiva largura de coluna. Uma manchete de quatro
                 linhas com uma palavra sozinha no fim perde exatamente o ritmo
                 que faz esta frase funcionar. */}
-            <h1 className="mt-4 font-da-display text-[clamp(1.6rem,8vw,2rem)] font-semibold leading-[1.02] tracking-tighter sm:text-[2.8rem] md:text-[3.4rem] md:leading-[0.98]">
+            <h1 className="font-da-display text-[clamp(1.6rem,8vw,2rem)] font-semibold leading-[1.02] tracking-tighter sm:text-[2.8rem] md:text-[3.4rem] md:leading-[0.98]">
               Você não estuda mal.
               <br />
               Você estuda espalhado.
@@ -2176,13 +2167,9 @@ function Hero({
                 anúncio e nunca ouviu a marca: o que é isto, para quem é e o que
                 eu ganho. Antes essa resposta estava diluída em dois parágrafos
                 — e quem não lia os dois saía sem saber que site era este. */}
-            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-da-muted md:text-lg">
-              O Domine Aqui reúne{' '}
-              <span className="text-da-paper">
-                Manual Clínico, banco de questões, provas da sua faculdade, flashcards e
-                cronograma
-              </span>{' '}
-              em uma plataforma só. Você abre e já sabe o que estudar agora.
+            <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-da-muted md:text-lg">
+              <span className="text-da-paper">Manual Clínico, questões, provas da sua faculdade e flashcards</span>{' '}
+              numa plataforma só, feita para quem estuda Medicina.
             </p>
           </Reveal>
           <Reveal delay={190}>
@@ -2244,7 +2231,7 @@ function Hero({
             <PlataformaDemo />
           </Reveal>
           <p className="relative mt-3 text-center font-da-mono text-[11px] text-da-muted xl:text-left">
-            Três questões de verdade, na tela de verdade. Responda sem sair da página.
+            Questões de verdade. Responda aqui mesmo.
           </p>
         </div>
       </div>
@@ -2253,8 +2240,8 @@ function Hero({
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] bg-[color:var(--da-neutral-line)] sm:grid-cols-4">
           {[
+            [ACERVO_NA_LANDING.replace(' questões', ''), 'questões comentadas'],
             ['300+', 'patologias no Manual Clínico'],
-            ['9', 'ferramentas na mesma conta'],
             ['Provas', 'reais da sua faculdade'],
             ['Grátis', 'para começar hoje'],
           ].map(([n, l]) => (
@@ -2659,7 +2646,10 @@ const GRUPOS: { titulo: string; nota: string; keys: string[] }[] = [
 ]
 
 function ProductsExplorer() {
-  const [openKey, setOpenKey] = useState<string | null>('manual')
+  // Tudo fechado de início: a lista é um índice de nove nomes com uma linha
+  // cada. Aberta no Manual, ela chegava com 150 palavras e uma imagem antes de
+  // o visitante escolher qualquer coisa.
+  const [openKey, setOpenKey] = useState<string | null>(null)
   const porChave = new Map(PRODUCTS.map((p) => [p.key, p]))
   let n = 0
 
@@ -2668,13 +2658,11 @@ function ProductsExplorer() {
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-[1.1fr_.9fr]">
           <Reveal>
-            <SectionMark n="05 / 08" label="O que está incluído" />
             <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
               Nove ferramentas. Uma conta. Abra a que te interessa.
             </h2>
             <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-              Três resolvem o dia a dia da prova. O resto já vem junto, para o dia em que você
-              precisar. Toque no nome para ver o que aquela ferramenta faz por você.
+              Toque no nome para ver o que cada uma faz.
             </p>
           </Reveal>
           {/* A arte do ecossistema saiu da primeira dobra e veio para cá, que é
@@ -2764,36 +2752,22 @@ function ProblemBand() {
         className="object-cover opacity-30"
       />
       <div aria-hidden className="absolute inset-0 bg-da-ground/80" />
-      <div className="relative mx-auto max-w-5xl px-5 py-16 md:px-8 md:py-32">
+      <div className="relative mx-auto max-w-5xl px-5 py-14 md:px-8 md:py-24">
         <Reveal>
-          <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
-            O problema que ninguém te conta
-          </p>
           {/* O inimigo aqui é o conteúdo ESPALHADO, não o formato PDF.
               Enquanto a headline era "o material que você baixou já morreu na
               pasta de Downloads", a página atacava um produto que a própria
               plataforma vende — e o visitante ouvia "PDF é uma porcaria;
               aliás, aqui estão os nossos". Dito assim, a ideia de plataforma
               viva continua inteira e para de trabalhar contra o catálogo. */}
-          <h2 className="mt-4 max-w-3xl font-da-display text-[1.9rem] font-semibold leading-[1.08] tracking-tight md:text-5xl">
+          <h2 className="max-w-3xl font-da-display text-[1.9rem] font-semibold leading-[1.08] tracking-tight md:text-5xl">
             O PDF deveria ser o começo do estudo. Não o fim.
           </h2>
         </Reveal>
         <Reveal delay={100}>
           <p className="mt-5 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-6 md:text-lg">
-            Quatorze abas abertas. Três PDFs pela metade. O resumo que alguém jogou no grupo. O
-            livro que você abriu uma vez. E a prova em cinco dias.
-          </p>
-          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:text-lg">
-            Nada disso é material ruim. O problema é que cada peça vive sozinha:{' '}
-            <span className="text-da-paper">
-              o arquivo não sabe o que você errou na questão, a questão não te leva ao capítulo, e o
-              capítulo não vira revisão.
-            </span>{' '}
-            Material que não conversa com o resto do seu estudo vira só mais um arquivo na pasta.
-          </p>
-          <p className="mt-5 max-w-2xl font-da-display text-lg font-semibold tracking-tight text-da-paper md:text-xl">
-            O Domine Aqui liga essas peças. Uma conta, uma aba, tudo que a prova cobra.
+            Quatorze abas, três PDFs pela metade e a prova em cinco dias.{' '}
+            <span className="text-da-paper">Aqui é uma conta, uma aba, tudo que a prova cobra.</span>
           </p>
         </Reveal>
       </div>
@@ -3049,13 +3023,11 @@ function HowItWorks() {
     >
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="03 / 08" label="Como funciona" />
           <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
             Trinta segundos aqui dentro, do começo ao fim.
           </h2>
           <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-            Um ciclo inteiro de estudo sem trocar de aba nenhuma vez. Toque num passo para ver a
-            tela.
+            Toque num passo para ver a tela.
           </p>
         </Reveal>
 
@@ -3101,14 +3073,15 @@ function HowItWorks() {
                             fechados obrigaria a tocar em cinco itens para ler
                             cinco frases — exatamente o tipo de trabalho que a
                             página não deveria pedir. */}
-                        <span
-                          className={
-                            'mt-1 block text-[14px] leading-relaxed transition-colors md:text-[15px] ' +
-                            (ativo ? 'text-da-muted' : 'text-da-muted/70')
-                          }
-                        >
-                          {p.texto}
-                        </span>
+                        {/* Só o passo aberto mostra a frase. Com as cinco à
+                            vista, a lista era um parágrafo de 90 palavras que
+                            ninguém lia; fechada, é um índice que se lê de
+                            relance — e quem toca vê a tela E a frase. */}
+                        {ativo && (
+                          <span className="da-panel-fade mt-1 block text-[14px] leading-relaxed text-da-muted md:text-[15px]">
+                            {p.texto}
+                          </span>
+                        )}
                       </span>
                     </button>
                   </li>
@@ -3162,16 +3135,11 @@ function SampleBand() {
           />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--da-amber-soft-line)] px-3 py-1.5 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
-                <IconPulse /> Amostra grátis · sem cadastro
-              </span>
-              <h2 className="mt-4 font-da-display text-[1.6rem] font-semibold leading-tight tracking-tight md:text-3xl">
+              <h2 className="font-da-display text-[1.6rem] font-semibold leading-tight tracking-tight md:text-3xl">
                 10 questões comentadas para testar agora
               </h2>
               <p className="mt-3 text-[15px] leading-relaxed text-da-muted md:text-base">
-                Sem cadastro, sem cartão, sem e-mail. Você responde, vê o gabarito na hora e lê o
-                comentário — do mesmo jeito que acontece lá dentro. Se gostar do que sentiu aqui,
-                a conta grátis está a um toque.
+                Sem cadastro e sem cartão. Gabarito e comentário na hora.
               </p>
             </div>
             <div className="shrink-0">
@@ -3269,83 +3237,6 @@ function PhoneMockup() {
         />
       </div>
     </div>
-  )
-}
-
-/* ---------- DIFERENCIAIS ---------- */
-
-function Differentiators() {
-  // A comparação não é contra o PDF: é contra o arquivo SOLTO, que pode ser um
-  // PDF, um print no rolo da câmera ou um resumo do grupo. A diferença é o que
-  // acontece depois de ler — e é aí que uma plataforma faz o que um arquivo
-  // isolado nunca vai fazer.
-  const linhas: [string, string][] = [
-    ['Procurar no meio de vinte arquivos', 'Uma busca só, por doença ou por tema'],
-    ['Parado na versão que você baixou', 'Atualizado dentro da plataforma'],
-    ['Ler e torcer para lembrar', 'Praticar na questão e voltar no flashcard'],
-    ['Som e imagem que o papel não tem', 'Ausculta que toca e foto clínica com referência'],
-    ['Nenhum registro do que você já domina', 'Seu erro, seu progresso e sua revisão guardados'],
-    ['Serve para todo mundo e para ninguém', 'Provas e cards montados na ementa do seu curso'],
-  ]
-  return (
-    <section className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
-      <Reveal>
-        <SectionMark n="06 / 08" label="Por que aqui" />
-        <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
-          Seu material é só uma parte do estudo. O Domine Aqui conecta o resto.
-        </h2>
-        <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-          A mesma matéria, dos dois jeitos. À esquerda, o arquivo solto — ele até ensina, mas para
-          por aí. À direita, o que acontece quando o conteúdo está ligado ao resto do seu estudo.
-        </p>
-      </Reveal>
-
-      <Reveal delay={80}>
-        <div className="mt-9 overflow-hidden rounded-2xl border border-[color:var(--da-neutral-line)] md:mt-12">
-          <div className="grid grid-cols-2 border-b border-[color:var(--da-neutral-line)] bg-da-panel/50">
-            <p className="px-4 py-3 font-da-mono text-[10px] uppercase tracking-widest text-da-muted md:px-6 md:text-[11px]">
-              Arquivo solto
-            </p>
-            <p className="border-l border-[color:var(--da-neutral-line)] px-4 py-3 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-ink md:px-6 md:text-[11px]">
-              Domine Aqui
-            </p>
-          </div>
-          {linhas.map(([antes, depois]) => (
-            <div
-              key={antes}
-              className="grid grid-cols-2 border-b border-[color:var(--da-neutral-line)] last:border-b-0"
-            >
-              <p className="px-4 py-4 text-[13.5px] leading-snug text-da-muted md:px-6 md:py-5 md:text-[15px]">
-                {antes}
-              </p>
-              <p className="flex items-start gap-2.5 border-l border-[color:var(--da-neutral-line)] px-4 py-4 text-[13.5px] leading-snug text-da-paper md:px-6 md:py-5 md:text-[15px]">
-                <svg
-                  viewBox="0 0 24 24"
-                  className="mt-0.5 h-4 w-4 shrink-0 text-da-amber-ink"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                >
-                  <path d="M5 13l4 4L19 7" />
-                </svg>
-                <span>{depois}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-      </Reveal>
-
-      <Reveal delay={120}>
-        <p className="mt-6 max-w-2xl text-[15px] leading-relaxed text-da-muted md:text-base">
-          É por isso que o Manual, o eletro e os flashcards não têm botão de baixar: eles vivem
-          onde o seu estudo acontece. E o que faz sentido no papel — como o guia de prescrição no
-          SUS — continua sendo PDF, para abrir às três da manhã na UPA, sem sinal.
-        </p>
-      </Reveal>
-    </section>
   )
 }
 
@@ -3498,7 +3389,6 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
       />
       <div className="relative mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="01 / 08" label="Quem já usa" />
           <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
             Não acredite em mim. Escute eles.
           </h2>
@@ -3618,7 +3508,6 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
     <section className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
       <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 md:px-8 md:pb-12 md:pt-24">
         <Reveal>
-          <SectionMark n="02 / 08" label="Avaliações dos materiais" />
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
@@ -3716,7 +3605,6 @@ function Plans() {
     >
       <div className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <SectionMark n="07 / 08" label="A oferta" />
           {/* "Suba de nível quando a prova apertar" ensinava o cliente errado:
               que o plano pago é remédio de emergência, para assinar na véspera
               e cancelar depois. O produto quer ser o ambiente normal de estudo
@@ -3870,148 +3758,6 @@ function Book3D() {
   )
 }
 
-/* ---------- INSTALAR APP (PWA) ---------- */
-
-/**
- * A seção `#app` da landing.
- *
- * O miolo é o MESMO componente que a página `/instalar` renderiza — só a paleta
- * muda (`aparencia="landing"`). Antes esta seção tinha implementação própria:
- * escutava `beforeinstallprompt` num `useEffect` (que chega depois do evento e
- * o perde), tratava todo mundo como iPhone e ensinava o Compartilhar do Safari
- * a quem estava num Galaxy. Quem entrava pela home — a maioria — via a pior das
- * duas versões, e nem sabia que `/instalar` existia.
- */
-function InstallApp() {
-  return (
-    <section
-      id="app"
-      className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40"
-    >
-      <div className="mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-28">
-        <Reveal>
-          <SectionMark n="App" label="No seu bolso" />
-        </Reveal>
-        <Reveal delay={80}>
-          <InstalarApp aparencia="landing" />
-        </Reveal>
-      </div>
-    </section>
-  )
-}
-
-/* ---------- COMUNIDADE NO WHATSAPP ---------- */
-
-const GRUPOS_DA_COMUNIDADE = [
-  {
-    nome: 'Ofertas',
-    texto: 'Cupons e promoções saem primeiro lá — às vezes, só lá.',
-  },
-  {
-    nome: 'Materiais gratuitos',
-    texto: 'Resumos, mapas e PDFs liberados de graça para quem está no grupo.',
-  },
-  {
-    nome: 'Simulados ao vivo',
-    texto: 'Data e hora de cada simulado, com a turma fazendo junto.',
-  },
-] as const
-
-/**
- * Convite para a comunidade do WhatsApp. A comunidade é o guarda-chuva; os
- * grupos moram dentro dela, então o card mostra os grupos para o visitante
- * saber o que vai encontrar antes de sair da página.
- */
-function Comunidade() {
-  return (
-    <section
-      id="comunidade"
-      className="relative overflow-hidden border-t border-[color:var(--da-neutral-line)]"
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: 'radial-gradient(600px 320px at 85% 20%, rgba(37,211,102,.10), transparent 70%)',
-        }}
-      />
-      <div className="relative mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-24">
-        <Reveal>
-          <SectionMark n="Grupos" label="Comunidade no WhatsApp" />
-        </Reveal>
-        <div className="grid gap-10 md:grid-cols-[1.05fr_1fr] md:items-center md:gap-14">
-          <Reveal>
-            <h2 className="max-w-xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
-              A turma também estuda pelo WhatsApp.
-            </h2>
-            <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-              Entre na comunidade do Domine Aqui e escolha os grupos que fazem sentido para
-              você. Sem spam: só aviso de oferta, material liberado e simulado marcado.
-            </p>
-            <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
-              <a
-                href={COMUNIDADE_WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 font-da-display font-semibold text-[#07361A] shadow-[0_14px_30px_-16px_rgba(37,211,102,.9)] transition hover:bg-[#2EE274] active:scale-[0.98]"
-              >
-                <WhatsAppGlyph className="h-5 w-5" />
-                Entrar na comunidade
-              </a>
-              <span className="text-center font-da-mono text-[11px] text-da-muted sm:text-left md:text-xs">
-                Grátis · sai quando quiser
-              </span>
-            </div>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <div className="rounded-3xl border border-[color:var(--da-neutral-line)] bg-da-panel/50 p-2 backdrop-blur-sm">
-              <div className="flex items-center gap-3 px-4 pb-3 pt-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#25D366]/15 text-[#1FAF55] dark:text-[#25D366]">
-                  <WhatsAppGlyph className="h-5 w-5" />
-                </span>
-                <div className="min-w-0">
-                  <p className="font-da-display text-[15px] font-semibold leading-tight">
-                    Comunidade Domine Aqui
-                  </p>
-                  <p className="font-da-mono text-[11px] text-da-muted">
-                    {GRUPOS_DA_COMUNIDADE.length} grupos dentro
-                  </p>
-                </div>
-              </div>
-              <ul className="space-y-1">
-                {GRUPOS_DA_COMUNIDADE.map((g) => (
-                  <li key={g.nome}>
-                    <a
-                      href={COMUNIDADE_WHATSAPP_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-3 rounded-2xl bg-da-ground/70 px-4 py-3.5 transition hover:bg-da-ground"
-                    >
-                      <span aria-hidden className="h-2 w-2 flex-shrink-0 rounded-full bg-[#25D366]" />
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-da-display text-[15px] font-semibold leading-tight">
-                          {g.nome}
-                        </span>
-                        <span className="mt-0.5 block text-[13px] leading-snug text-da-muted">
-                          {g.texto}
-                        </span>
-                      </span>
-                      <span className="font-da-mono text-[11px] text-da-muted transition group-hover:text-[#1FAF55] dark:group-hover:text-[#25D366]">
-                        Entrar →
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ---------- FAQ + CTA ---------- */
 
 function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boolean }) {
@@ -4025,23 +3771,15 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
     ],
     [
       'Qual a diferença entre o grátis e o Plus+?',
-      'O grátis é para conhecer a plataforma e começar a estudar: amostra do banco, patologias liberadas do Manual, cronograma básico e flashcards manuais. Provas e flashcards gerados por IA são dos assinantes Quest+ e Plus+. O Plus+ é a plataforma inteira sem trava — Manual Clínico completo, todos os materiais, banco ilimitado, aulas, mapas mentais e cronogramas.',
+      'O grátis é para conhecer e começar: amostra do banco, patologias liberadas do Manual, cronograma básico e flashcards manuais. O Plus+ é a plataforma inteira sem trava — Manual Clínico completo, todos os materiais, banco ilimitado, IA, aulas e mapas mentais.',
     ],
     [
       'É só para aluno da minha faculdade?',
       'Não. As provas são organizadas por faculdade, mas o Manual Clínico, o banco de questões, os flashcards e as ferramentas de IA servem a qualquer estudante de Medicina, residente ou médico — e as provas por IA você gera colando a ementa do seu próprio curso.',
     ],
     [
-      'Preciso instalar alguma coisa?',
-      'Não. Funciona no navegador, no computador e no celular. Se quiser, dá para instalar como aplicativo na tela de início em um toque — mas é opcional.',
-    ],
-    [
-      'Consigo estudar pelo celular?',
-      'Sim, a plataforma inteira. O comum é resolver questões e revisar flashcards no celular e usar o computador para prova longa e cronograma — a conta é a mesma e o progresso acompanha você.',
-    ],
-    [
-      'Os materiais são atualizados?',
-      'São. Eles vivem dentro da plataforma, então a correção e o conteúdo novo aparecem para você no mesmo dia — sem precisar baixar nada de novo.',
+      'Funciona no celular? Preciso instalar algo?',
+      'Funciona no navegador, no celular e no computador, com o mesmo progresso nos dois. Instalar como app na tela de início é opcional, em um toque.',
     ],
     [
       'E se eu cancelar?',
@@ -4052,7 +3790,6 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
     <section className="relative border-t border-[color:var(--da-neutral-line)] bg-da-panel/40">
       <div className="mx-auto max-w-3xl px-5 py-14 md:px-8 md:py-24">
         <Reveal>
-          <SectionMark n="08 / 08" label="Antes de começar" />
           <h2 className="font-da-display text-[2rem] font-semibold tracking-tighter md:text-5xl">
             Perguntas justas, respostas diretas
           </h2>
@@ -4081,10 +3818,7 @@ function FaqAndCTA({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn:
         />
         <div className="relative mx-auto max-w-4xl px-5 py-16 text-center md:px-8 md:py-28">
           <Reveal>
-            <p className="font-da-mono text-[11px] uppercase tracking-[0.28em] text-da-amber-soft md:text-xs">
-              Sua próxima prova começa agora
-            </p>
-            <h2 className="mx-auto mt-4 max-w-2xl font-da-display text-[2.1rem] font-semibold leading-[1.05] tracking-tighter md:text-6xl">
+            <h2 className="mx-auto max-w-2xl font-da-display text-[2.1rem] font-semibold leading-[1.05] tracking-tighter md:text-6xl">
               Enquanto você decide, alguém já está estudando aqui.
             </h2>
           </Reveal>

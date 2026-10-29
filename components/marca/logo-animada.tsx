@@ -2,11 +2,12 @@
 
 import { useEffect, useId, useRef } from 'react'
 import { LETRAS, MARCA } from './marca-caminhos'
+import './logo-animada.css'
 
 /** Fatias da espessura. Cada uma é um `<use>` da mesma silhueta: barato. */
 const FATIAS = 10
 
-type Tamanho = 'heroi' | 'compacto'
+type Tamanho = 'heroi' | 'compacto' | 'menu'
 
 /**
  * A logo das telas de entrar, em 3D e montando-se sozinha.
@@ -25,14 +26,26 @@ type Tamanho = 'heroi' | 'compacto'
  * Depois disso o JS só faz uma coisa: no computador, a marca inclina na direção
  * do ponteiro e o brilho escorre pela face. Sem ponteiro fino (celular) ou com
  * "reduzir movimento", não há laço nenhum rodando.
+ *
+ * - `intro={false}`: nasce pronta (o menu lateral, que remonta a cada página);
+ * - `flutua={false}`: sem o balanço em repouso, onde a pessoa trabalha;
+ * - `inclinacao`: segue o ponteiro na `janela` toda, só `local` (com o
+ *   ponteiro em cima da logo) ou `nenhuma`.
  */
 export function LogoAnimada({
   tamanho = 'heroi',
+  intro = true,
+  flutua = true,
+  inclinacao = 'janela',
   className = '',
 }: {
   tamanho?: Tamanho
+  intro?: boolean
+  flutua?: boolean
+  inclinacao?: 'janela' | 'local' | 'nenhuma'
   className?: string
 }) {
+  const raizRef = useRef<HTMLDivElement>(null)
   const inclinaRef = useRef<HTMLDivElement>(null)
   // `useId` traz caracteres que não servem em `url(#…)`.
   const base = useId().replace(/[^a-zA-Z0-9_-]/g, '')
@@ -40,7 +53,8 @@ export function LogoAnimada({
 
   useEffect(() => {
     const alvo = inclinaRef.current
-    if (!alvo) return
+    const raiz = raizRef.current
+    if (!alvo || !raiz || inclinacao === 'nenhuma') return
     const fino = window.matchMedia('(hover: hover) and (pointer: fine)')
     const calmo = window.matchMedia('(prefers-reduced-motion: reduce)')
     if (!fino.matches || calmo.matches) return
@@ -69,10 +83,12 @@ export function LogoAnimada({
       const r = alvo.getBoundingClientRect()
       const cx = r.left + r.width / 2
       const cy = r.top + r.height / 2
-      // Normaliza pela metade da janela: a marca reage ao ponteiro na tela
-      // toda, não só em cima dela.
-      alvoX = Math.max(-1, Math.min(1, (e.clientX - cx) / (window.innerWidth / 2)))
-      alvoY = Math.max(-1, Math.min(1, (e.clientY - cy) / (window.innerHeight / 2)))
+      // Na janela, normaliza pela metade da tela: a marca reage ao ponteiro em
+      // qualquer lugar. Local, pelo tamanho da própria logo.
+      const meiaL = inclinacao === 'local' ? Math.max(r.width, 40) : window.innerWidth / 2
+      const meiaA = inclinacao === 'local' ? Math.max(r.height, 40) : window.innerHeight / 2
+      alvoX = Math.max(-1, Math.min(1, (e.clientX - cx) / meiaL))
+      alvoY = Math.max(-1, Math.min(1, (e.clientY - cy) / meiaA))
       if (!quadro) quadro = requestAnimationFrame(passo)
     }
 
@@ -82,19 +98,24 @@ export function LogoAnimada({
       if (!quadro) quadro = requestAnimationFrame(passo)
     }
 
-    window.addEventListener('pointermove', mover, { passive: true })
-    document.documentElement.addEventListener('pointerleave', sair)
+    const origem: HTMLElement | Window = inclinacao === 'local' ? raiz : window
+    const borda: HTMLElement = inclinacao === 'local' ? raiz : document.documentElement
+    origem.addEventListener('pointermove', mover as EventListener, { passive: true })
+    borda.addEventListener('pointerleave', sair)
     return () => {
-      window.removeEventListener('pointermove', mover)
-      document.documentElement.removeEventListener('pointerleave', sair)
+      origem.removeEventListener('pointermove', mover as EventListener)
+      borda.removeEventListener('pointerleave', sair)
       cancelAnimationFrame(quadro)
     }
-  }, [])
+  }, [inclinacao])
 
   return (
     <div
+      ref={raizRef}
       className={`logo3d ${className}`}
       data-tamanho={tamanho}
+      data-intro={intro ? undefined : 'nao'}
+      data-flutua={flutua ? undefined : 'nao'}
       role="img"
       aria-label="DomineAqui"
     >

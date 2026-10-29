@@ -10,7 +10,7 @@ import { SupportChat, esquecerTicketsEmMemoria } from '@/components/support-chat
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
 import { AvisoDePartidaLenta } from '@/components/pwa/aviso-de-partida-lenta'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { NotificationsBell } from '@/components/notifications-bell'
@@ -132,15 +132,13 @@ interface AppShellProps {
    */
   comercio?: boolean
   /**
-   * Cabeçalho em vidro, em vez do opaco padrão do resto do app.
+   * Telas que já têm outro elemento de vidro na composição (a doca da Área de
+   * Ensino, `doca.tsx`).
    *
-   * A Área de Ensino tem uma doca flutuante em vidro no rodapé (ver
-   * `doca.tsx`); com o cabeçalho opaco por cima, a tela falava duas
-   * linguagens de material ao mesmo tempo. `vidro` troca só a superfície
-   * (`.cabecalho-vidro` em `globals.css`, mesma receita de três camadas da
-   * doca) — todo o resto do cabeçalho continua igual. Passe `true` apenas em
-   * telas que já têm outro elemento de vidro na composição; num cabeçalho
-   * sozinho, opaco continua sendo a leitura mais legível.
+   * O cabeçalho agora é vidro em todo o app (`.cabecalho-casco`), então a
+   * superfície já fala a mesma língua da doca. A prop segue existindo como
+   * marca (`data-vidro`) para o CSS afinar essas telas, e para nenhuma página
+   * que a passa quebrar.
    */
   vidro?: boolean
   /**
@@ -392,15 +390,8 @@ export function AppShell({
         <FocusSessionProvider isAuthenticated={false}>
           <div className="min-h-screen surface-page">
             {showHeader ? (
-              <header
-                className={cn(
-                  'pwa-safe-top sticky top-0 z-30',
-                  vidro
-                    ? 'cabecalho-vidro'
-                    : 'border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90',
-                )}
-              >
-                <div className="mx-auto flex h-14 sm:h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+              <header className="cabecalho-casco cabecalho-casco-visitante" data-vidro={vidro || undefined}>
+                <div className="cabecalho-placa mx-auto max-w-7xl">
                   <div className="flex items-center gap-3 min-w-0">
                     <Logo variant="icon" size="sm" />
                     <div className="min-w-0">
@@ -415,19 +406,15 @@ export function AppShell({
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <LiteModeToggle />
+                    <div className="barra-ferramentas">
+                      <MaterialCartButton isAuthenticated={false} />
+                      <LiteModeToggle />
+                    </div>
                     <ThemeToggle />
-                    <a
-                      href={loginHref}
-                      className={cn(
-                        buttonVariants({ size: 'sm' }),
-                        'h-9 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90'
-                      )}
-                    >
-                      <LogIn className="mr-2 h-4 w-4" />
+                    <a href={loginHref} className="cabecalho-entrar">
+                      <LogIn className="h-4 w-4" />
                       Entrar
                     </a>
-                    <MaterialCartButton isAuthenticated={false} />
                   </div>
                 </div>
               </header>
@@ -498,39 +485,37 @@ export function AppShell({
         <div
           className={cn(
             'min-h-screen flex flex-col transition-[padding-left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
-            sidebarCollapsed ? 'lg:pl-[72px]' : 'lg:pl-[280px]'
+            sidebarCollapsed ? 'lg:pl-[88px]' : 'lg:pl-[288px]'
           )}
         >
-          {/* Header */}
+          {/* Cabeçalho
+              No computador, uma placa de vidro flutuando no topo da coluna de
+              conteúdo, alinhada à sidebar (12 px das bordas, mesmo raio da
+              família); no celular, a barra de vidro presa ao topo. As
+              ferramentas — carrinho, foco, sino, Modo Lite, tema — moram numa
+              cápsula só: eram cinco caixas soltas, cada uma com borda e fundo
+              próprios, disputando a mesma faixa de 56 px. */}
           {showHeader && (
-            <header
-              className={cn(
-                'sticky top-0 z-30',
-                vidro
-                  ? 'cabecalho-vidro'
-                  : 'border-b border-border bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/90',
-              )}
-            >
-              <div className="flex h-14 sm:h-16 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">
+            <header className="cabecalho-casco" data-vidro={vidro || undefined}>
+              <div className="cabecalho-placa">
                 <div className="flex min-w-0 items-center gap-2 sm:gap-3">
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  <button
+                    type="button"
                     onClick={() => setSidebarOpen(true)}
-                    className="lg:hidden h-9 w-9 shrink-0 rounded-md"
+                    className="ferramenta-botao ferramenta-botao-solto lg:hidden"
                     aria-label="Abrir menu"
                   >
                     <Menu className="h-5 w-5" />
-                  </Button>
+                  </button>
 
-                  <div className="lg:hidden shrink-0">
+                  <div className="shrink-0 lg:hidden">
                     <Logo variant="icon" size="sm" />
                   </div>
 
                   <div className="hidden min-w-0 sm:block">
                     {headerTitle ? (
                       <div className="min-w-0">
-                        <h1 className="truncate font-heading text-base font-semibold tracking-tight sm:text-lg">
+                        <h1 className="truncate font-heading text-[1.15rem] font-semibold leading-tight tracking-[-0.015em]">
                           {headerTitle}
                         </h1>
                         {headerSubtitle && (
@@ -538,20 +523,22 @@ export function AppShell({
                         )}
                       </div>
                     ) : (
-                      <p className="truncate text-sm text-muted-foreground">
-                        Olá,{' '}
-                        <span className="font-medium text-foreground">{user?.name}</span>
+                      <p className="cabecalho-saudacao truncate">
+                        <span className="text-muted-foreground">{saudacaoDoDia()},</span>{' '}
+                        <span className="font-semibold text-foreground">{user?.name?.split(' ')[0]}</span>
                       </p>
                     )}
                   </div>
                 </div>
 
-                <div data-tour="header-tools" className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-                  {comercio ? <MaterialCartButton isAuthenticated={!!user} /> : null}
-                  <FocusSessionButton />
-                  <NotificationsBell />
-                  {/* Ao lado do tema: é onde a pessoa procura por "mudar o visual". */}
-                  <LiteModeToggle />
+                <div data-tour="header-tools" className="flex shrink-0 items-center gap-2">
+                  <div className="barra-ferramentas">
+                    {comercio ? <MaterialCartButton isAuthenticated={!!user} /> : null}
+                    <FocusSessionButton />
+                    <NotificationsBell />
+                    {/* Ao lado do tema: é onde a pessoa procura por "mudar o visual". */}
+                    <LiteModeToggle />
+                  </div>
                   <ThemeToggle />
                 </div>
               </div>
@@ -591,6 +578,14 @@ export function AppShell({
  * Fora do Lite fica em `"user"`, que passa a respeitar o
  * `prefers-reduced-motion` do sistema — algo que o app não fazia.
  */
+/** "Bom dia" até meio-dia, "Boa tarde" até as 18h, "Boa noite" depois. */
+function saudacaoDoDia(): string {
+  const hora = new Date().getHours()
+  if (hora < 12) return 'Bom dia'
+  if (hora < 18) return 'Boa tarde'
+  return 'Boa noite'
+}
+
 function LiteMotionConfig({ lite, children }: { lite: boolean; children: React.ReactNode }) {
   return (
     <MotionConfig reducedMotion={lite ? 'always' : 'user'}>{children}</MotionConfig>

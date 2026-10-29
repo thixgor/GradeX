@@ -1664,27 +1664,65 @@
    solid card surface where backdrop-filter is unsupported.
    ============================================ */
 
-/* Menu lateral: superfície SÓLIDA.
-   Era vidro translúcido com blur de tela inteira. No celular a sidebar é uma
-   gaveta por cima do conteúdo, então o texto da página atravessava o menu e
-   atrapalhava a leitura — e um backdrop-filter da altura da tela é o efeito
-   mais caro que existe em GPU de celular, pago justamente enquanto a gaveta
-   desliza. Agora é cartão opaco, com bisel e sombra projetada para continuar
-   parecendo uma camada acima da página. */
+/* Menu lateral: uma PLACA, não uma coluna.
+   No celular ela é gaveta por cima do conteúdo, e por isso segue opaca: o
+   texto da página atravessando o menu atrapalhava a leitura, e um
+   backdrop-filter da altura da tela é o efeito mais caro que existe em GPU de
+   celular, pago justamente enquanto a gaveta desliza.
+   No computador ela flutua ao lado do conteúdo (que reserva o espaço dela),
+   então não há nada atrás para desfocar — o vidro aqui é o próprio material:
+   um brilho verde no alto e âmbar embaixo, a quina de luz e a sombra que a
+   descola da página. Nenhum filtro, nenhum custo por quadro. */
 .sidebar-glass {
-  background: hsl(var(--card));
-  border-right: 1px solid hsl(var(--border));
+  background:
+    radial-gradient(120% 50% at 0% 0%, rgba(90, 166, 107, 0.12), transparent 60%),
+    radial-gradient(120% 40% at 100% 100%, rgba(242, 160, 58, 0.1), transparent 60%),
+    hsl(var(--card));
   box-shadow:
-    inset -1px 0 0 hsl(var(--foreground) / 0.04),
-    2px 0 24px -12px hsl(var(--foreground) / 0.25);
+    0 0 0 1px hsl(var(--foreground) / 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 28px 60px -24px hsl(var(--foreground) / 0.35),
+    0 8px 18px -12px hsl(var(--foreground) / 0.18);
 }
 
 .dark .sidebar-glass {
-  background: hsl(var(--card));
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(120% 50% at 0% 0%, rgba(90, 166, 107, 0.14), transparent 60%),
+    radial-gradient(120% 40% at 100% 100%, rgba(242, 160, 58, 0.07), transparent 60%),
+    hsl(150 18% 8.5%);
   box-shadow:
-    inset 1px 0 0 rgba(255, 255, 255, 0.05),
-    2px 0 30px -10px rgba(0, 0, 0, 0.6);
+    0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 28px 60px -20px rgba(0, 0, 0, 0.75);
+}
+
+/* A quina de luz: anel de 1 px, forte no alto à esquerda (de onde vem a luz).
+   É máscara sobre o próprio fundo, não borda — acompanha o raio da placa. */
+.sidebar-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.95), transparent 30%, transparent 75%, rgba(255, 255, 255, 0.4));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.dark .sidebar-glass::after {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.22), transparent 30%, transparent 75%, rgba(255, 255, 255, 0.07));
+}
+
+@media (min-width: 1024px) {
+  .sidebar-glass {
+    background:
+      radial-gradient(120% 50% at 0% 0%, rgba(90, 166, 107, 0.14), transparent 60%),
+      radial-gradient(120% 40% at 100% 100%, rgba(242, 160, 58, 0.12), transparent 60%),
+      hsl(var(--card) / 0.9);
+  }
 }
 
 /* ============================================
@@ -1896,8 +1934,23 @@
 }
 
 /* ============================================
-   Sidebar Fluid Glass Bubble - Apple iOS 26 / visionOS
-   Interactive cursor-tracking glassmorphism indicator
+   Menu lateral — placa de vidro com ícones de app
+   (components/sidebar.tsx)
+
+   Três decisões que o resto deste bloco segue:
+
+   1. Cada área tem um squircle COLORIDO com o ícone branco, como os Ajustes
+      do iPhone (cores em components/sidebar-cores.ts, entregues pelas
+      variáveis --chip-a / --chip-b). O olho acha "Banco de Questões" pelo azul
+      antes de ler; recolhido, o menu vira uma doca.
+   2. A rota atual é uma LENTE: a linha inteira ganha uma placa clara e
+      elevada, e o chip ganha um anel. São dois sinais de forma, não só de cor
+      — o que sobrevive no rail sem rótulo e para quem não distingue bem cor.
+   3. Hover é a bolha de vidro que segue o ponteiro (FluidGlassBubble); o
+      CSS não pinta fundo de hover nas linhas, senão seriam dois retângulos.
+
+   A demo da landing (PlataformaDemo) usa estas mesmas classes: mudou aqui,
+   mudou lá.
    ============================================ */
 
 /* Nav item base - clean, no background, relies on bubble overlay */
@@ -1908,109 +1961,86 @@
   outline: none;
 }
 
-/* Rota atual: fundo tingido + contorno. Antes o único sinal era a barrinha da
-   esquerda, que passava despercebida — principalmente no celular, onde a
-   bolha de vidro que segue o cursor nem existe. */
-.sidebar-fluid-item-active {
-  position: relative;
-  background: hsl(var(--primary) / 0.1);
-  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.2);
+.sidebar-fluid-item:focus-visible {
+  box-shadow: inset 0 0 0 2px hsl(var(--ring) / 0.7);
 }
 
-/* Marca de rota atual — traço vertical à esquerda.
-   Ficava em `left: -6px`, fora da caixa do botão. Só que o botão é
-   `overflow-hidden` (o clique precisa recortar o brilho do hover), então o
-   traço era cortado inteiro: nunca chegou a aparecer. Encostado na borda
-   interna ele existe de verdade — e no menu recolhido, onde não há rótulo, é
-   a única pista de "você está aqui" que se lê de canto de olho. */
+.sidebar-fluid-item-active {
+  position: relative;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 1px 1px rgba(26, 36, 25, 0.04),
+    0 6px 16px -8px rgba(26, 36, 25, 0.22),
+    inset 0 0 0 0.5px rgba(26, 36, 25, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.dark .sidebar-fluid-item-active {
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 6px 18px -10px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* A marca verde à esquerda: curta e arredondada, dentro da lente. */
 .sidebar-fluid-item-active::before {
   content: '';
   position: absolute;
-  left: 2px;
-  top: 16%;
-  bottom: 16%;
-  width: 4px;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #468152, #3a9d5e);
-  box-shadow: 0 0 8px rgba(70, 129, 82, 0.4);
+  left: 3px;
+  top: 30%;
+  bottom: 30%;
+  width: 3px;
+  border-radius: 3px;
+  background: hsl(var(--primary));
   z-index: 2;
 }
 
-.dark .sidebar-fluid-item-active::before {
-  background: linear-gradient(180deg, #5ba36a, #468152);
-  box-shadow: 0 0 12px rgba(70, 129, 82, 0.5);
-}
-
-/* ---- Chip do ícone ----
-   Cada item do menu ganha um quadradinho colorido atrás do ícone. É o que
-   faz o olho encontrar a lista: antes eram doze traços cinza iguais, sem
-   nenhum ponto de fixação, e o usuário relatou que os botões "não chamavam
-   atenção". O item ativo inverte o chip (preenchido na cor da marca). */
+/* ---- O chip de cada área ---- */
 .sidebar-nav-chip {
   display: grid;
   place-items: center;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 10px;
-  background: hsl(var(--primary) / 0.1);
-  color: hsl(var(--primary));
-  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.14);
+  height: 1.95rem;
+  width: 1.95rem;
+  border-radius: 9px;
+  color: #fff;
+  background: linear-gradient(165deg, var(--chip-a, #5aa66b), var(--chip-b, #2f6b40));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 3px 8px -4px var(--chip-b, #2f6b40);
   transition:
-    background-color 160ms ease,
-    color 160ms ease,
-    box-shadow 160ms ease;
+    box-shadow 200ms ease,
+    filter 200ms ease;
 }
 
-.sidebar-fluid-item:hover .sidebar-nav-chip,
-.sidebar-fluid-item:focus-visible .sidebar-nav-chip {
-  background: hsl(var(--primary) / 0.2);
-  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.28);
+.sidebar-nav-chip > svg {
+  height: 1.15rem;
+  width: 1.15rem;
+  filter: drop-shadow(0 1px 0.5px rgba(0, 0, 0, 0.18));
 }
 
+.sidebar-fluid-item:hover .sidebar-nav-chip {
+  filter: saturate(1.12) brightness(1.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 6px 14px -6px var(--chip-b, #2f6b40);
+}
+
+/* O anel do item ativo: claro por fora, na cor da área por dentro. */
 .sidebar-fluid-item-active .sidebar-nav-chip {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  box-shadow: 0 6px 14px -6px hsl(var(--primary) / 0.8);
-}
-
-.sidebar-nav-chip-gradient {
-  background: linear-gradient(135deg, rgba(226, 164, 62, 0.28), rgba(245, 158, 11, 0.22));
-  color: #b45309;
-  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.4);
-}
-
-.dark .sidebar-nav-chip-gradient {
-  color: #fbbf24;
-  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.35);
-}
-
-.sidebar-fluid-item:hover .sidebar-nav-chip-gradient {
-  background: linear-gradient(135deg, rgba(226, 164, 62, 0.42), rgba(245, 158, 11, 0.34));
-  box-shadow: inset 0 0 0 1px rgba(226, 164, 62, 0.55);
-}
-
-.sidebar-nav-chip-danger {
-  background: hsl(0 84% 60% / 0.12);
-  color: hsl(0 72% 51%);
-  box-shadow: inset 0 0 0 1px hsl(0 84% 60% / 0.2);
-}
-
-.dark .sidebar-nav-chip-danger {
-  color: hsl(0 91% 71%);
-}
-
-.sidebar-fluid-item:hover .sidebar-nav-chip-danger {
-  background: hsl(0 84% 60% / 0.2);
-  box-shadow: inset 0 0 0 1px hsl(0 84% 60% / 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 0 0 2px hsl(var(--card)),
+    0 0 0 3.5px var(--chip-b, #2f6b40),
+    0 6px 14px -6px var(--chip-b, #2f6b40);
 }
 
 /* ---- Grupos colapsáveis ----
-   O menu tinha até 18 itens de mesmo peso, sete deles subáreas do Manual
-   Clínico disputando atenção com "Provas". Agrupar só resolve se o olho
-   enxergar de imediato o que é filho de quem: daí o fio-guia vertical descendo
-   do cabeçalho do grupo e o chip menor e mais discreto nos filhos. Sem essas
-   duas pistas, o acordeão aberto vira a mesma lista plana de antes, só que
-   mais longa. */
+   O fio-guia desce do cabeçalho do grupo e os filhos ganham chip menor: sem
+   essas duas pistas o acordeão aberto vira a mesma lista plana, só que mais
+   longa. */
 .sidebar-group-children {
   position: relative;
   padding-left: 0;
@@ -2021,137 +2051,68 @@
   position: absolute;
   left: 27px;
   top: 2px;
-  bottom: 2px;
+  bottom: 8px;
   width: 1.5px;
   border-radius: 999px;
-  background: linear-gradient(
-    to bottom,
-    hsl(var(--primary) / 0.28),
-    hsl(var(--primary) / 0.06)
-  );
+  background: linear-gradient(to bottom, hsl(var(--foreground) / 0.16), hsl(var(--foreground) / 0.03));
 }
 
 .sidebar-nav-chip-nested {
-  height: 1.65rem;
-  width: 1.65rem;
-  border-radius: 8px;
-  background: hsl(var(--primary) / 0.07);
-  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.1);
+  height: 1.6rem;
+  width: 1.6rem;
+  border-radius: 7.5px;
 }
 
 .sidebar-nav-chip-nested > svg {
-  height: 1rem;
-  width: 1rem;
+  height: 0.95rem;
+  width: 0.95rem;
 }
 
-/* ---- Rail recolhido (72px, só a partir de 1024px: PC e tablet deitado) ----
-   O chip-caixa foi desenhado para o menu aberto, onde ele é o ponto de fixação
-   ao lado de um rótulo. Recolhido não sobra rótulo: cada linha vira um quadrado
-   de 32px contornado, catorze deles empilhados a 2px um do outro — uma grade de
-   caixinhas que se lê como defeito de renderização, não como menu. No rail o
-   chip deixa de ser caixa: fica só o ícone, e o fundo aparece apenas sob o
-   cursor ou na rota atual, que é o único item que precisa se destacar. */
-/*
- * No rail, nada come o espaço livre.
- *
- * Cada linha do menu recolhido é um flex com `justify-content: center` e um
- * ícone só — o rótulo, o selo "Novo", o atalho de teclado e a seta ficam com
- * `max-width: 0`. Zerar a LARGURA, porém, não zera o que esses elementos fazem
- * com a sobra: `margin-left: auto` (o `ml-auto` do selo, do atalho e do "PRO")
- * absorve TODO o espaço livre da linha antes que o `justify-content` chegue a
- * distribuí-lo, e `flex-grow: 1` (o rótulo da conta) faz o mesmo. O ícone
- * então encosta na borda em vez de ficar no meio.
- *
- * Era o que se via no tablet: a lupa da busca, o carrinho do Upgrade, a inicial
- * da conta e todo item com selo ("Mapas Mentais", "Games", "Materiais",
- * "Rifas") desalinhados dos demais — de 6px no selo a 19px no Upgrade —, numa
- * coluna em que o alinhamento é a única coisa que dá ordem à lista.
- *
- * A regra vale para os filhos DIRETOS das linhas, que é exatamente o conjunto
- * que precisa estar centrado; e vive só sob `.sidebar-rail`, classe que existe
- * apenas com o menu recolhido (ver components/sidebar.tsx). Aberto, as margens
- * automáticas voltam a valer e são o que joga selo e seta para a direita.
- */
-/*
- * No rail, os grupos ganham uma fronteira.
- *
- * Aberto, o menu separa as seções por grupos que abrem e fecham, com rótulo e
- * seta. Recolhido, os filhos somem e sobram só os ícones — e o que era uma
- * lista organizada em blocos vira uma coluna corrida de doze desenhos, sem
- * nada dizendo onde um assunto termina e o outro começa. Um traço curto e
- * discreto entre um grupo e o seguinte devolve a leitura em blocos sem ocupar
- * altura (é uma borda, não um item).
- */
-.sidebar-rail .sidebar-group + .sidebar-group {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid hsl(var(--border) / 0.7);
-}
-
+/* ---- Rail recolhido (64 px, só a partir de 1024 px) ----
+   No rail, nada come o espaço livre: rótulo, selo, atalho e seta ficam com
+   `max-width: 0`, mas o `margin-left: auto` deles (e o `flex-grow` do rótulo
+   da conta) ainda engoliria a sobra antes do `justify-content: center` — o
+   ícone encostaria na borda. A regra vale só para os filhos diretos das
+   linhas e só sob `.sidebar-rail`. */
 .sidebar-rail :is(button, a) > * {
   margin-left: 0 !important;
   margin-right: 0 !important;
   flex-grow: 0 !important;
 }
 
+/* Os grupos ganham uma fronteira: recolhido, os blocos viram uma coluna
+   corrida de ícones sem nada dizendo onde um assunto termina. */
+.sidebar-rail .sidebar-group + .sidebar-group {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid hsl(var(--foreground) / 0.08);
+}
+
+/* A doca: chips maiores, e a lente vira só o anel em volta do chip. */
 .sidebar-rail .sidebar-nav-chip {
-  height: 2.25rem;
-  width: 2.25rem;
-  border-radius: 12px;
-  background: transparent;
-  box-shadow: none;
-  color: hsl(var(--foreground) / 0.7);
+  height: 2.35rem;
+  width: 2.35rem;
+  border-radius: 11px;
 }
 
-.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip,
-.sidebar-rail .sidebar-fluid-item:focus-visible .sidebar-nav-chip {
-  background: hsl(var(--primary) / 0.14);
-  box-shadow: none;
-  color: hsl(var(--primary));
+.sidebar-rail .sidebar-nav-chip > svg {
+  height: 1.3rem;
+  width: 1.3rem;
 }
 
-.sidebar-rail .sidebar-fluid-item-active .sidebar-nav-chip {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  box-shadow: 0 6px 16px -8px hsl(var(--primary) / 0.9);
-}
-
-/* Upgrade e Sair seguem a mesma regra: nada de caixa em repouso, cor só no
-   hover — senão voltariam a ser duas exceções contornadas no meio do rail. */
-.sidebar-rail .sidebar-nav-chip-gradient,
-.sidebar-rail .sidebar-nav-chip-danger {
-  background: transparent;
-  box-shadow: none;
-}
-
-.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-gradient {
-  background: rgba(226, 164, 62, 0.18);
-  box-shadow: none;
-}
-
-.sidebar-rail .sidebar-fluid-item:hover .sidebar-nav-chip-danger {
-  background: hsl(0 84% 60% / 0.16);
-  box-shadow: none;
-}
-
-/* O destaque da rota atual passa a viver no chip preenchido; manter também o
-   fundo tingido da linha inteira empilharia dois retângulos concêntricos. */
 .sidebar-rail .sidebar-fluid-item-active {
   background: transparent;
   box-shadow: none;
 }
 
-/* A barrinha encosta na borda do menu: no rail ela é a única pista de "você
-   está aqui" que sobrevive a uma olhada de canto de olho. */
 .sidebar-rail .sidebar-fluid-item-active::before {
   left: 0;
-  top: 26%;
-  bottom: 26%;
-  width: 3px;
+  top: 28%;
+  bottom: 28%;
 }
 
 /* Rótulo flutuante do item recolhido. Portal + `fixed` porque o <aside> é
-   `overflow-hidden` e cortaria qualquer coisa desenhada fora dos 72px. */
+   `overflow-hidden` e cortaria qualquer coisa desenhada fora dele. */
 .sidebar-rail-tooltip {
   position: fixed;
   z-index: 60;
@@ -2161,72 +2122,298 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   border-radius: 10px;
-  border: 1px solid hsl(var(--border));
-  background: hsl(var(--popover));
-  padding: 0.3125rem 0.625rem;
+  padding: 0.375rem 0.7rem;
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.2;
   color: hsl(var(--popover-foreground));
-  box-shadow: 0 12px 32px -14px hsl(var(--foreground) / 0.5);
+  background: hsl(var(--popover) / 0.92);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  backdrop-filter: blur(16px) saturate(170%);
+  box-shadow:
+    0 0 0 0.5px hsl(var(--foreground) / 0.12),
+    0 12px 32px -14px hsl(var(--foreground) / 0.45);
   pointer-events: none;
+  animation: sidebar-surge 140ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .dark .sidebar-rail-tooltip {
-  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.14),
+    0 12px 32px -12px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes sidebar-surge {
+  from { opacity: 0; transform: translate(-4px, -50%); }
+  to { opacity: 1; transform: translate(0, -50%); }
 }
 
 /* ---- Tela baixa e deitada (tablet na horizontal, notebook curto) ----
-   O menu foi dimensionado pela largura: a 1024px o layout já é "desktop", mas a
-   altura pode ser 768px. Cabeçalho, bloco de criação e rodapé comem ~330px e
-   sobra menos da metade da tela para uma lista de dezoito áreas. Aqui a linha e
-   o chip encolhem e o contador de provas some — ele é a única informação do
-   menu que também vive na dashboard. */
+   A 1024 px o layout já é "desktop", mas a altura pode ser 768 px: a linha e o
+   chip encolhem e o medidor de provas some (ele também vive na dashboard). */
 @media (min-width: 1024px) and (max-height: 820px) {
   .sidebar-glass .sidebar-fluid-item {
     height: 2.5rem;
   }
-
   .sidebar-glass .sidebar-nav-chip {
     height: 1.75rem;
     width: 1.75rem;
-    border-radius: 9px;
+    border-radius: 8px;
   }
-
   .sidebar-glass .sidebar-nav-chip > svg {
     height: 1.05rem;
     width: 1.05rem;
   }
-
   .sidebar-glass .sidebar-nav-chip-nested {
     height: 1.5rem;
     width: 1.5rem;
   }
-
-  .sidebar-glass .sidebar-nav-chip-nested > svg {
-    height: 0.9rem;
-    width: 0.9rem;
-  }
-
   .sidebar-glass .sidebar-contador-provas {
     display: none;
   }
 }
 
-/* Painel que substitui o acordeão quando o menu está recolhido a 72px. */
-.sidebar-flyout {
-  background: hsl(var(--popover) / 0.98);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* Selo "Novo"/"Auto": pequeno demais e apagado demais para ser notado. */
+/* Selo "Novo"/"Auto": pílula verde que se nota sem gritar. */
 .sidebar-nav-badge {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  background: hsl(var(--primary) / 0.14);
+  color: hsl(var(--primary));
   font-weight: 700;
   letter-spacing: 0.02em;
 }
+
+.dark .sidebar-nav-badge {
+  background: hsl(var(--primary) / 0.22);
+  color: hsl(133 40% 70%);
+}
+
+/* ---- Cabeçalho: logo e o botão de recolher ---- */
+.sidebar-marca {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 2px;
+}
+
+.sidebar-marca:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* No rail sobra só a marca: o nome sai, e a intro não desliza. */
+.sidebar-rail .logo3d-nome { display: none; }
+.sidebar-rail .logo3d { --desvio: 0px; }
+
+.sidebar-recolher {
+  place-items: center;
+  height: 30px;
+  width: 30px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  color: hsl(var(--foreground) / 0.55);
+  background: hsl(var(--foreground) / 0.05);
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.sidebar-recolher.lg\:hidden { display: grid; }
+.sidebar-recolher:hover { background: hsl(var(--foreground) / 0.09); color: hsl(var(--foreground)); }
+.sidebar-recolher:active { transform: scale(0.92); }
+.sidebar-recolher:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+@media (min-width: 1024px) {
+  .sidebar-recolher.lg\:hidden { display: none; }
+}
+
+/* ---- "Nova Prova": a pílula laranja das telas de entrar ---- */
+.sidebar-acao {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 44px;
+  border-radius: 999px;
+  overflow: hidden;
+  font-size: 14.5px;
+  font-weight: 650;
+  color: #fff;
+  background: linear-gradient(180deg, #dc6a3a 0%, #c0501e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.14),
+    0 10px 20px -12px rgba(192, 80, 30, 0.8);
+}
+
+.sidebar-acao:hover:not(:disabled) { filter: brightness(1.06) saturate(1.05); }
+.sidebar-acao:active:not(:disabled) { transform: scale(0.97); }
+.sidebar-acao:disabled { opacity: 0.55; cursor: not-allowed; }
+.sidebar-acao:focus-visible { outline: 3px solid hsl(var(--secondary) / 0.5); outline-offset: 2px; }
+
+.sidebar-acao-icone {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 32px;
+  width: 32px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sidebar-acao:hover:not(:disabled) .sidebar-acao-icone { transform: rotate(90deg); }
+
+/* ---- Medidor de provas do mês ---- */
+.sidebar-medidor { padding: 2px 4px 0; }
+
+.sidebar-medidor-trilho {
+  display: block;
+  height: 4px;
+  margin-top: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: hsl(var(--foreground) / 0.08);
+}
+
+.sidebar-medidor-barra {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transform-origin: left;
+  background: linear-gradient(90deg, hsl(var(--primary)), #6fb57f);
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- Rodapé: Upgrade e conta ---- */
+.sidebar-rodape {
+  border-top: 1px solid hsl(var(--foreground) / 0.07);
+}
+
+.sidebar-mini-chip {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  height: 26px;
+  width: 26px;
+  border-radius: 7.5px;
+  color: #fff;
+  background: linear-gradient(165deg, var(--chip-a, #5aa66b), var(--chip-b, #2f6b40));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 2px 6px -3px var(--chip-b, #2f6b40);
+}
+
+.sidebar-mini-chip-grande {
+  height: 30px;
+  width: 30px;
+  border-radius: 9px;
+}
+
+.sidebar-upgrade {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 14px;
+  font-weight: 650;
+  color: #9a4a10;
+  background: linear-gradient(120deg, rgba(245, 176, 65, 0.2), rgba(224, 112, 26, 0.14));
+  box-shadow: inset 0 0 0 1px rgba(224, 112, 26, 0.18);
+  transition: background-color 200ms ease, box-shadow 200ms ease, transform 160ms ease;
+}
+
+.dark .sidebar-upgrade {
+  color: #f6c070;
+  background: linear-gradient(120deg, rgba(245, 176, 65, 0.16), rgba(224, 112, 26, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(245, 176, 65, 0.2);
+}
+
+.sidebar-upgrade:hover { box-shadow: inset 0 0 0 1px rgba(224, 112, 26, 0.32), 0 8px 18px -12px rgba(224, 112, 26, 0.7); }
+.sidebar-upgrade:active { transform: scale(0.98); }
+.sidebar-upgrade:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+.sidebar-selo-pro {
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: linear-gradient(90deg, #f2a03a, #d0601a);
+}
+
+.sidebar-conta {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 16px;
+  transition: background-color 160ms ease;
+}
+
+.sidebar-conta:hover,
+.sidebar-conta[data-aberto] { background: hsl(var(--foreground) / 0.05); }
+.sidebar-conta:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+/* O retrato com o aro em degradê da marca. */
+.sidebar-retrato {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 36px;
+  width: 36px;
+  overflow: hidden;
+  border-radius: 999px;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.12);
+  box-shadow: 0 0 0 2px hsl(var(--card)), 0 0 0 3.5px #6fb57f, 0 0 0 4px rgba(224, 112, 26, 0.5);
+}
+
+/* ---- Painéis que saem do menu: conta e grupos no rail ---- */
+.sidebar-popover {
+  border-radius: 16px;
+  background: hsl(var(--popover) / 0.9);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px hsl(var(--foreground) / 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 24px 48px -20px hsl(var(--foreground) / 0.4);
+}
+
+.dark .sidebar-popover {
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 48px -16px rgba(0, 0, 0, 0.8);
+}
+
+.sidebar-popover-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 6px 8px;
+  text-align: left;
+  font-size: 14px;
+  color: hsl(var(--foreground) / 0.88);
+  transition: background-color 140ms ease, color 140ms ease;
+}
+
+.sidebar-popover-item:hover { background: hsl(var(--foreground) / 0.06); }
+.sidebar-popover-item:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -2px; }
+.sidebar-popover-item-ativo { font-weight: 650; background: hsl(var(--foreground) / 0.06); }
+.sidebar-popover-item-sair:hover { color: hsl(0 72% 48%); background: hsl(0 84% 60% / 0.1); }
+.dark .sidebar-popover-item-sair:hover { color: hsl(0 91% 75%); }
+
+.sidebar-popover-divisor {
+  height: 1px;
+  margin: 4px 8px;
+  background: hsl(var(--foreground) / 0.08);
+}
+
+.lite-mode .sidebar-popover,
+.lite-mode .sidebar-rail-tooltip { background: hsl(var(--popover)); }
 
 /* ============================================
    Roller — barra de rolagem própria (components/ui/scroll-roller.tsx)
@@ -3766,33 +3953,19 @@ html[data-da-menu='aberto'] .da-dock[data-shown='true'] {
    -------------------------------------------------------------------------- */
 @media (max-width: 639px) {
   .da-nav-rail .sidebar-nav-chip {
-    height: 2.25rem;
-    width: 2.25rem;
-    border-radius: 12px;
-    background: transparent;
-    box-shadow: none;
-    color: hsl(var(--foreground) / 0.7);
+    height: 2.1rem;
+    width: 2.1rem;
+    border-radius: 10px;
   }
-  .da-nav-rail .sidebar-fluid-item-active .sidebar-nav-chip {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-    box-shadow: 0 6px 16px -8px hsl(var(--primary) / 0.9);
-  }
-  .da-nav-rail .sidebar-nav-chip-gradient {
-    background: transparent;
-    box-shadow: none;
-  }
-  /* O destaque da rota atual passa a viver no chip preenchido; manter também o
-     fundo tingido da linha inteira empilharia dois retângulos concêntricos. */
+  /* A lente vira só o anel em volta do chip, como no rail de verdade. */
   .da-nav-rail .sidebar-fluid-item-active {
     background: transparent;
     box-shadow: none;
   }
   .da-nav-rail .sidebar-fluid-item-active::before {
     left: 0;
-    top: 26%;
-    bottom: 26%;
-    width: 3px;
+    top: 28%;
+    bottom: 28%;
   }
 }
 
@@ -7995,3 +8168,330 @@ html[data-inspecao-aberta] body > *:not(#protecao-inspecao) {
   border: 2px solid hsl(var(--primary));
 }
 .mon-range:focus-visible { box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Cabeçalho da área logada (components/app-shell.tsx)
+
+   No computador, uma placa de vidro flutuando no topo da coluna de conteúdo,
+   12 px das bordas como a sidebar, e grudada no topo ao rolar. No celular, a
+   barra de vidro presa ao topo, de ponta a ponta. Os textos de menu sob blur
+   forte perdem nitidez, por isso o vidro aqui é mais denso (78%) que o de um
+   painel decorativo; no Modo Lite, opaco.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.cabecalho-casco {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.cabecalho-placa {
+  display: flex;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  background: hsl(var(--background) / 0.82);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 1px 0 hsl(var(--foreground) / 0.07);
+}
+
+.cabecalho-casco {
+  background: transparent;
+}
+
+@media (min-width: 640px) {
+  .cabecalho-placa { height: 60px; padding: 0 16px; }
+}
+
+@media (min-width: 1024px) {
+  .cabecalho-casco:not(.cabecalho-casco-visitante) {
+    top: 12px;
+    margin: 12px 12px 0 0;
+  }
+  .cabecalho-casco:not(.cabecalho-casco-visitante) .cabecalho-placa {
+    height: 64px;
+    padding: 0 12px 0 22px;
+    border-radius: 22px;
+    background: hsl(var(--card) / 0.78);
+    box-shadow:
+      0 0 0 1px hsl(var(--foreground) / 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 18px 40px -26px hsl(var(--foreground) / 0.4);
+  }
+  .dark .cabecalho-casco:not(.cabecalho-casco-visitante) .cabecalho-placa {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 18px 40px -22px rgba(0, 0, 0, 0.7);
+  }
+}
+
+.cabecalho-saudacao {
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 1024px) {
+  .cabecalho-saudacao {
+    font-family: var(--font-heading), Georgia, serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+  }
+}
+
+/* ── A cápsula das ferramentas ──
+   Um trilho só, com os botões redondos lado a lado. Os componentes de dentro
+   (foco, Modo Lite) trazem fundo e borda próprios para viverem sozinhos em
+   outras telas; aqui dentro eles abrem mão disso e viram ícones da cápsula. */
+.barra-ferramentas {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: hsl(var(--foreground) / 0.045);
+  box-shadow: inset 0 0 0 1px hsl(var(--foreground) / 0.05);
+}
+
+.dark .barra-ferramentas {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.ferramenta-botao {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  height: 36px;
+  width: 36px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  color: hsl(var(--foreground) / 0.72);
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.ferramenta-botao:hover { color: hsl(var(--foreground)); background: hsl(var(--card)); box-shadow: 0 1px 3px hsl(var(--foreground) / 0.12); }
+.dark .ferramenta-botao:hover { background: rgba(255, 255, 255, 0.1); box-shadow: none; }
+.ferramenta-botao:active { transform: scale(0.92); }
+.ferramenta-botao:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+.ferramenta-botao[aria-expanded='true'] { color: hsl(var(--foreground)); background: hsl(var(--card)); }
+.dark .ferramenta-botao[aria-expanded='true'] { background: rgba(255, 255, 255, 0.1); }
+.ferramenta-botao[data-cheio] { color: hsl(var(--secondary)); }
+
+/* Fora da cápsula (o menu do celular), o botão ganha um fundo próprio. */
+.ferramenta-botao-solto {
+  height: 40px;
+  width: 40px;
+  background: hsl(var(--foreground) / 0.05);
+}
+
+.ferramenta-selo {
+  position: absolute;
+  top: 1px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+  background: linear-gradient(180deg, #ef5b4c, #d23a2c);
+  box-shadow: 0 0 0 2px hsl(var(--card));
+  animation: ferramenta-selo-pula 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ferramenta-selo-pula {
+  from { transform: scale(0.4); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+/* Foco e Modo Lite dentro da cápsula. */
+.barra-ferramentas .foco-gatilho {
+  height: 36px;
+  border-color: transparent;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: hsl(var(--foreground) / 0.72);
+}
+
+.barra-ferramentas .foco-gatilho:hover { color: hsl(var(--foreground)); background: hsl(var(--card)); border-color: transparent; }
+.dark .barra-ferramentas .foco-gatilho:hover { background: rgba(255, 255, 255, 0.1); }
+.barra-ferramentas .foco-gatilho:is([data-estado='ativo'], [data-estado='meta'], [data-estado='pausado']) { border-color: transparent; }
+
+.barra-ferramentas > button,
+.barra-ferramentas > span[aria-hidden] {
+  height: 36px;
+  width: 36px;
+  border-radius: 999px;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.barra-ferramentas > button:hover { background: hsl(var(--card)); }
+.dark .barra-ferramentas > button:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* "Entrar" do visitante: a pílula laranja das telas de entrar. */
+.cabecalho-entrar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 650;
+  color: #fff;
+  background: linear-gradient(180deg, #dc6a3a 0%, #c0501e 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 8px 18px -10px rgba(192, 80, 30, 0.8);
+  transition: transform 160ms ease, filter 200ms ease;
+}
+
+.cabecalho-entrar:hover { filter: brightness(1.06); }
+.cabecalho-entrar:active { transform: scale(0.97); }
+
+.lite-mode .cabecalho-placa { background: hsl(var(--card)) !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   Dashboard — "Mais para você" (components/dashboard/secoes-recolhiveis.tsx)
+
+   Uma lista agrupada como as dos Ajustes do iPhone: uma placa só, linhas
+   separadas por fio fino, cada uma com chip colorido, título, resumo e a
+   seta. A linha abre no lugar, empurrando as de baixo (grid 0fr → 1fr, sem
+   medir altura em JS).
+   ══════════════════════════════════════════════════════════════════════ */
+
+.dash-grupo {
+  overflow: hidden;
+  border-radius: 22px;
+  background: hsl(var(--card));
+  box-shadow:
+    0 0 0 1px hsl(var(--foreground) / 0.06),
+    0 12px 30px -22px hsl(var(--foreground) / 0.35);
+}
+
+.dark .dash-grupo {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07), 0 12px 30px -20px rgba(0, 0, 0, 0.6);
+}
+
+.dash-linha + .dash-linha .dash-linha-topo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 62px;
+  right: 0;
+  height: 1px;
+  background: hsl(var(--foreground) / 0.08);
+  transform: scaleY(0.6);
+  transform-origin: top;
+}
+
+.dash-linha-topo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dash-linha-gatilho {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 4px 13px 16px;
+  min-height: 64px;
+  transition: background-color 160ms ease;
+}
+
+.dash-linha-gatilho:hover { background: hsl(var(--foreground) / 0.025); }
+.dash-linha-gatilho:active { background: hsl(var(--foreground) / 0.05); }
+.dash-linha-gatilho:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -2px; border-radius: 22px; }
+
+.dash-linha-seta { transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+.dash-linha-seta-alvo {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  width: 44px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+.dash-linha[data-aberta] .dash-linha-seta { transform: rotate(180deg); }
+
+.dash-linha-acao {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: hsl(var(--primary));
+  transition: background-color 160ms ease;
+}
+
+.dash-linha-acao:hover { background: hsl(var(--primary) / 0.1); }
+.dash-linha-acao:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 1px; }
+
+.dash-linha-corpo {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 380ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 200ms ease;
+}
+
+.dash-linha[data-aberta] .dash-linha-corpo {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 420ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 300ms ease 80ms;
+}
+
+.dash-linha-corpo > div { min-height: 0; overflow: hidden; }
+
+.dash-linha-conteudo {
+  padding: 2px 16px 18px;
+}
+
+@media (min-width: 640px) {
+  .dash-linha-conteudo { padding: 2px 18px 20px 62px; }
+}
+
+/* Cartão de dentro das linhas: mais leve que a placa, para não empilhar
+   dois pesos iguais. */
+.dash-cartao {
+  border-radius: 16px;
+  background: hsl(var(--background) / 0.6);
+  box-shadow: inset 0 0 0 1px hsl(var(--foreground) / 0.07);
+  transition: box-shadow 200ms ease, transform 200ms ease, background-color 200ms ease;
+}
+
+.dash-cartao:hover {
+  background: hsl(var(--background));
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.3), 0 10px 22px -16px hsl(var(--primary) / 0.6);
+  transform: translateY(-1px);
+}
+
+.dark .dash-cartao { background: rgba(255, 255, 255, 0.03); }
+.dark .dash-cartao:hover { background: rgba(255, 255, 255, 0.05); }
+
+/* O "Continuar estudando" do herói: a mesma pílula laranja do resto. */
+.dash-cta {
+  background: linear-gradient(180deg, #dc6a3a 0%, #c0501e 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 10px 22px -12px rgba(192, 80, 30, 0.9);
+}
+
+.dash-cta:hover { filter: brightness(1.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-linha-corpo,
+  .dash-linha[data-aberta] .dash-linha-corpo,
+  .dash-linha-seta { transition-duration: 1ms; }
+}

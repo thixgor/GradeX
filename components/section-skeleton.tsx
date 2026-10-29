@@ -21,8 +21,8 @@ export function SectionSkeleton({
 }) {
   return (
     <div className="min-h-screen surface-page">
-      {/* Rail lateral (só desktop, espelha o Sidebar de 280px) */}
-      <div className="hidden lg:flex fixed inset-y-0 left-0 w-[280px] flex-col gap-2 border-r border-border bg-background/60 p-4">
+      {/* Placa lateral (só desktop, espelha a sidebar flutuante de 264px) */}
+      <div className="hidden lg:flex fixed bottom-3 left-3 top-3 w-[264px] flex-col gap-2 rounded-[26px] border border-border bg-card/70 p-4">
         <Skeleton className="h-10 w-32 rounded-lg" />
         <div className="mt-4 flex flex-col gap-1.5">
           {Array.from({ length: 9 }).map((_, i) => (
@@ -31,7 +31,7 @@ export function SectionSkeleton({
         </div>
       </div>
 
-      <div className="lg:pl-[280px]">
+      <div className="lg:pl-[288px]">
         {/* Header sticky (espelha h-14 sm:h-16) */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur-md">
           <div className="flex h-14 sm:h-16 items-center justify-between gap-3 px-3 sm:px-4 lg:px-6">

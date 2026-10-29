@@ -10,14 +10,14 @@ import { BarraInferior } from '@/components/ui/barra-inferior'
  *
  * "Verificar resposta" e "Próxima" ficavam no fim do fluxo no desktop —
  * a barra flutuante só aparecia até `md`, porque em telas maiores ela
- * passaria por baixo da sidebar (fixa, `z-50`, ocupando 72 ou 280px à
+ * passaria por baixo da sidebar (fixa, `z-50`, ocupando 88 ou 288px à
  * esquerda). O preço era o mesmo problema que a barra resolve no celular:
  * para responder, era preciso descer até o fim das alternativas.
  *
  * Ela portala para o fim do `<body>` — fora da árvore que o layout do
  * `AppShell` empurra para a direita da sidebar (`lg:pl-[…]`) — então quem
  * a desloca precisa saber, por conta própria, se a sidebar está aberta
- * (280px) ou recolhida (72px). Esse dado só existe dentro da árvore do
+ * (288px) ou recolhida (88px). Esse dado só existe dentro da árvore do
  * `<AppShell>` (via `useAppShell()`); a página que RENDERIZA o `<AppShell>`
  * não é descendente dele, só quem é filho dele. Por isso este componente
  * existe separado: ele entra como filho do `<AppShell>`, nunca como o

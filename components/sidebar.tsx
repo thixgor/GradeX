@@ -1,11 +1,11 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { cloneElement, isValidElement, useRef, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import { useRef, useState, useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, useMotionValue, useSpring, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/logo'
+import { LogoAnimada } from '@/components/marca/logo-animada'
+import { estiloDoChip } from '@/components/sidebar-cores'
 import { cn } from '@/lib/utils'
 /*
  * Ícones do Phosphor, não do lucide.
@@ -87,6 +87,8 @@ interface NavItem {
   badge?: string
   variant?: 'default' | 'primary' | 'gradient'
   sectionKey?: SidebarSectionKey
+  /** Chave da cor do chip (ver `components/sidebar-cores.ts`). */
+  cor?: string
 }
 
 /** Selo fixo ao lado do rótulo. `undefined` = sem selo. */
@@ -100,17 +102,18 @@ const SECTION_BADGES: Partial<Record<SidebarSectionKey, string>> = {
 }
 
 /**
- * O peso dos ícones do menu em repouso.
+ * O peso dos ícones do menu.
  *
- * `duotone` é a assinatura do Phosphor e o que de fato tira a coluna do visual
- * de template: o mesmo desenho ganha uma segunda camada em opacidade baixa, e
- * o ícone deixa de ser um contorno de 2px igual ao de qualquer outro produto.
- * No peso `regular` a troca de biblioteca seria quase invisível — o contorno
- * simples do Phosphor e o do lucide se parecem demais a 20px.
+ * `fill`, branco, sobre o squircle colorido de cada área (ver
+ * `sidebar-cores.ts`): é o desenho dos Ajustes do iPhone, e o que faz a coluna
+ * se ler como um conjunto de apps, não como uma lista de links. O contorno
+ * fino de antes some sobre fundo colorido — a 20 px, só a forma cheia
+ * aguenta o contraste.
  *
- * O item ATIVO troca este peso por `fill` (ver `NavItemButton`).
+ * "Onde eu estou" deixou de depender da troca de peso: a linha ativa ganha a
+ * lente de vidro e o chip ganha um anel (ver `.sidebar-fluid-item-active`).
  */
-const PESO_ICONE = 'duotone' as const
+const PESO_ICONE = 'fill' as const
 
 // Shared easing & duration for all sidebar collapse animations
 const SB_DUR = '400ms'
@@ -278,7 +281,7 @@ function NavItemButton({
             // Rótulo em `foreground/80` no lugar de `muted-foreground`: o menu
             // inteiro em cinza claro era o que fazia os itens sumirem.
             : cn('text-foreground/80', (isHovered || isPressed) && 'text-foreground', isPressed && 'bg-primary/10 shadow-inner ring-1 ring-primary/15'),
-        isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-primary font-semibold'
+        isItemActive && !isGradient && !isLogout && 'sidebar-fluid-item-active text-foreground font-semibold'
       )}
       style={{
         paddingLeft: collapsed ? 0 : nested ? 26 : 12,
@@ -295,8 +298,8 @@ function NavItemButton({
           lite
             ? { scale: 1, rotate: 0 }
             : {
-                scale: isPressed ? 0.9 : isHovered ? 1.15 : 1,
-                rotate: isHovered ? [-6, 0] : 0,
+                scale: isPressed ? 0.9 : isHovered ? 1.08 : 1,
+                rotate: isHovered ? [-5, 0] : 0,
               }
         }
         transition={
@@ -307,26 +310,10 @@ function NavItemButton({
                 rotate: { type: 'spring', stiffness: 300, damping: 12 },
               }
         }
-        className={cn(
-          'flex-shrink-0 sidebar-nav-chip',
-          isGradient && 'sidebar-nav-chip-gradient',
-          isLogout && 'sidebar-nav-chip-danger',
-          nested && 'sidebar-nav-chip-nested',
-        )}
+        className={cn('flex-shrink-0 sidebar-nav-chip', nested && 'sidebar-nav-chip-nested')}
+        style={estiloDoChip(item.cor ?? 'inicio')}
       >
-        {/*
-          O item ativo é o MESMO ícone em peso `fill`.
-
-          É o que o Phosphor traz e o lucide não tinha: seis pesos do mesmo
-          desenho. Antes, "onde eu estou" dependia de um fundo verde atrás do
-          ícone — cor sozinha, que é o sinal que falha primeiro para quem não
-          distingue bem o verde, e o único sinal que sobra no rail de 72px,
-          onde não há rótulo para ler. Preenchido, a diferença é de FORMA:
-          enxerga-se em escala de cinza.
-        */}
-        {isItemActive && isValidElement(item.icon)
-          ? cloneElement(item.icon as React.ReactElement<{ weight?: string }>, { weight: 'fill' })
-          : item.icon}
+        {item.icon}
       </motion.span>
 
       {/* Label — always rendered, collapsed via CSS max-width + opacity */}
@@ -516,6 +503,7 @@ export function Sidebar({
         icon: <Icon className="h-5 w-5" weight={PESO_ICONE} />,
         label: section.label,
         href: section.href,
+        cor: section.key,
         badge:
           // O selo "5 Questões" é o saldo de quem não tem o Banco. Quem tem um
           // cargo que abre a seção — Plus+, Quest ou qualquer um criado em
@@ -536,6 +524,7 @@ export function Sidebar({
     icon: <Home className="h-5 w-5" weight={PESO_ICONE} />,
     label: 'Início',
     href: '/dashboard',
+    cor: 'inicio',
   }
 
   const tree: SidebarTreeNode[] = useMemo(
@@ -598,7 +587,7 @@ export function Sidebar({
   }, [])
 
   const secondaryNavItems: NavItem[] = [
-    { id: 'nav:profile', icon: <UserIcon className="h-5 w-5" weight={PESO_ICONE} />, label: 'Meu Perfil', href: '/profile' },
+    { id: 'nav:profile', icon: <UserIcon className="h-5 w-5" weight={PESO_ICONE} />, label: 'Meu Perfil', href: '/profile', cor: 'perfil' },
   ]
 
   if (isAdmin) {
@@ -607,6 +596,7 @@ export function Sidebar({
       icon: <Settings className="h-5 w-5" weight={PESO_ICONE} />,
       label: 'Painel Admin',
       href: '/admin',
+      cor: 'admin',
     })
   }
 
@@ -618,6 +608,7 @@ export function Sidebar({
     label: 'Modo Lite',
     badge: liteMode ? (litePreference === 'auto' ? 'Auto' : 'Ativo') : 'Off',
     onClick: toggleLiteMode,
+    cor: 'lite',
   }
 
   const upgradeItem: NavItem = {
@@ -626,6 +617,7 @@ export function Sidebar({
     label: 'Upgrade',
     href: '/buy',
     variant: 'gradient',
+    cor: 'upgrade',
   }
 
   // ── Aquecimento das rotas do menu ────────────────────────────────────
@@ -880,6 +872,7 @@ export function Sidebar({
       id: node.id,
       icon: <GroupIcon className="h-5 w-5" weight={PESO_ICONE} />,
       label: node.group.label,
+      cor: node.group.key,
     }
 
     return (
@@ -974,7 +967,7 @@ export function Sidebar({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -984,150 +977,144 @@ export function Sidebar({
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar
+          No computador ela FLUTUA: uma placa de vidro afastada 12 px das
+          bordas, como a barra lateral do iPadOS e do macOS, em vez de uma
+          coluna colada na borda da janela. No celular é a mesma placa, como
+          gaveta. A largura total ocupada (placa + folgas) é a que o conteúdo
+          reserva no AppShell: 288 px aberta, 88 px recolhida. */}
       <aside
         className={cn(
-          'pwa-safe-top pwa-safe-bottom sidebar-glass fixed inset-y-0 left-0 z-50 h-screen min-h-[100svh] max-h-[100dvh] flex flex-col overflow-hidden',
+          'pwa-safe-top pwa-safe-bottom sidebar-glass fixed z-50 flex flex-col overflow-hidden',
+          'bottom-2 left-2 top-2 rounded-[24px] lg:bottom-3 lg:left-3 lg:top-3 lg:rounded-[26px]',
           // `sidebar-rail` só existe recolhido (≥1024px). É o gancho do CSS que
           // troca o chip-caixa de cada ícone pelo alvo liso do rail — a 72px a
           // coluna de quadradinhos contornados era o que se via como bug.
           isCollapsed && 'sidebar-rail',
-          collapsed ? 'lg:w-[72px]' : 'lg:w-[280px]',
-          'w-[min(280px,88vw)]',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          collapsed ? 'lg:w-[64px]' : 'lg:w-[264px]',
+          'w-[min(300px,calc(100vw-48px))]',
+          // A placa fica a 8 px da borda: fechada, ela precisa andar a própria
+          // largura MAIS essa folga, senão sobra uma tira dela na tela.
+          isOpen ? 'translate-x-0' : '-translate-x-[calc(100%+1rem)]',
           'lg:translate-x-0'
         )}
         style={{
           transition: `width ${SB_DUR} ${SB_EASE}, transform ${SB_DUR} ${SB_EASE}`,
         }}
       >
-        {/* Header */}
+        {/* Cabeçalho: a logo 3D. A intro (moeda girando, balões subindo, nome
+            surgindo) só roda na primeira montagem da sessão — a sidebar
+            remonta a cada navegação, e repetir a montagem a cada clique seria
+            piscar. Depois, a marca só inclina com o ponteiro em cima dela. */}
         <div
-          className="border-b flex items-center shrink-0"
+          className="sidebar-cabecalho flex shrink-0 items-center"
           style={{
-            padding: isCollapsed ? '12px 8px' : '16px',
+            padding: isCollapsed ? '14px 0 8px' : '16px 12px 10px 16px',
             justifyContent: isCollapsed ? 'center' : 'space-between',
             flexDirection: isCollapsed ? 'column' : 'row',
-            gap: isCollapsed ? 8 : 0,
+            gap: isCollapsed ? 10 : 0,
             transition: `padding ${SB_DUR} ${SB_EASE}`,
           }}
         >
-          <motion.div
-            className="cursor-pointer flex-shrink-0"
+          <button
+            type="button"
+            className="sidebar-marca"
             onClick={() => router.push('/?landing=true')}
-            whileHover={{ scale: 1.02, opacity: 0.85 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            aria-label="DomineAqui — página inicial"
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {isCollapsed ? (
-                <motion.div
-                  key="icon"
-                  initial={{ opacity: 0, scale: 0.7, rotate: -10 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.7 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                >
-                  <Logo variant="icon" size="lg" />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="full"
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -8 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                >
-                  <Logo variant="full" size="md" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            <LogoAnimada
+              tamanho="menu"
+              intro={!skipEntranceRef.current && !liteMode}
+              flutua={false}
+              inclinacao="local"
+            />
+          </button>
 
-          <Button variant="ghost" size="icon" onClick={onClose} className="lg:hidden h-8 w-8">
-            <X className="h-5 w-5" />
-          </Button>
+          <button type="button" onClick={onClose} className="sidebar-recolher lg:hidden" aria-label="Fechar menu">
+            <X className="h-[18px] w-[18px]" weight="bold" />
+          </button>
 
-          {/* Collapse toggle — chevron rotates smoothly instead of swapping icons */}
-          <div className="hidden lg:flex">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onCollapse?.(!collapsed)}
-              className="h-7 w-7"
-            >
-              <motion.div
-                animate={{ rotate: collapsed ? 180 : 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              >
-                <CaretLeft className="h-4 w-4" />
-              </motion.div>
-            </Button>
-          </div>
+          {/* Recolher/expandir — a seta gira em vez de trocar de ícone. */}
+          <button
+            type="button"
+            onClick={() => onCollapse?.(!collapsed)}
+            className="sidebar-recolher hidden lg:grid"
+            aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+            title={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          >
+            <CaretLeft
+              className="h-4 w-4"
+              weight="bold"
+              style={{ transform: collapsed ? 'rotate(180deg)' : 'none', transition: `transform ${SB_DUR} ${SB_EASE}` }}
+            />
+          </button>
         </div>
 
-        {/* Create Exam Button */}
-        <div data-tour="sidebar-new-exam" className="p-3 border-b shrink-0 overflow-hidden space-y-2">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        {/* Ação principal, busca e o saldo de provas */}
+        <div data-tour="sidebar-new-exam" className="shrink-0 space-y-2 overflow-hidden px-3 pb-3 pt-1">
+          <button
+            type="button"
+            onClick={onCreateExam}
+            disabled={tierLimitExceeded}
+            title={isCollapsed ? 'Nova Prova' : undefined}
+            aria-label={isCollapsed ? 'Nova Prova' : undefined}
+            className="sidebar-acao"
+            style={{
+              justifyContent: isCollapsed ? 'center' : 'flex-start',
+              gap: isCollapsed ? 0 : 10,
+              paddingLeft: isCollapsed ? 0 : 6,
+              paddingRight: isCollapsed ? 0 : 14,
+              transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}, transform 160ms ease, filter 200ms ease`,
+            }}
           >
-            <Button
-              onClick={onCreateExam}
-              disabled={tierLimitExceeded}
-              title={isCollapsed ? 'Nova Prova' : undefined}
-              aria-label={isCollapsed ? 'Nova Prova' : undefined}
-              // Mesmo gradiente do "Nova Prova" do cabeçalho: é a ação
-              // principal do menu e estava com a cor mais apagada da tela.
-              className="w-full h-11 rounded-md bg-gradient-to-r from-[#468152] to-[#E2A43E] text-white hover:from-[#468152]/90 hover:to-[#E2A43E]/90 font-semibold overflow-hidden shadow-md shadow-[#468152]/20"
+            <span className="sidebar-acao-icone">
+              <Plus className="h-[18px] w-[18px]" weight="bold" />
+            </span>
+            <span
+              className="whitespace-nowrap overflow-hidden"
               style={{
-                justifyContent: isCollapsed ? 'center' : 'flex-start',
-                gap: isCollapsed ? 0 : 12,
-                paddingLeft: isCollapsed ? 0 : undefined,
-                paddingRight: isCollapsed ? 0 : undefined,
-                transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
+                maxWidth: isCollapsed ? 0 : 150,
+                opacity: isCollapsed ? 0 : 1,
+                transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
               }}
             >
-              <motion.span
-                animate={{ rotate: 0 }}
-                whileHover={{ rotate: 90 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                className="flex-shrink-0"
-              >
-                <Plus className="h-5 w-5" />
-              </motion.span>
-              <span
-                className="whitespace-nowrap overflow-hidden"
-                style={{
-                  maxWidth: isCollapsed ? 0 : 150,
-                  opacity: isCollapsed ? 0 : 1,
-                  transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
-                }}
-              >
-                Nova Prova
-              </span>
-            </Button>
-          </motion.div>
+              Nova Prova
+            </span>
+          </button>
 
           {/* Busca global — a saída de emergência do menu agrupado. Quem não
               sabe em que grupo mora "gasometria" digita e chega. O painel em si
               é carregado sob demanda; aqui só vive o botão. */}
           <BuscaGlobal variante="sidebar" colapsado={isCollapsed} />
 
-          {/* Exams remaining counter */}
+          {/* Saldo de provas do mês, como medidor. O número sozinho ("296 /
+              300") pedia conta de cabeça; a barra responde "falta muito?" de
+              relance. O limite é MENSAL (`examsPerMonth` no bootstrap) — o
+              texto dizia "hoje". */}
           <div
             className="sidebar-contador-provas overflow-hidden"
             style={{
-              maxHeight: isCollapsed ? 0 : 30,
+              maxHeight: isCollapsed ? 0 : 40,
               opacity: isCollapsed ? 0 : 1,
               transition: `max-height ${SB_DUR} ${SB_EASE}, opacity 200ms ${SB_EASE}`,
             }}
           >
-            {examsRemaining !== null && examsLimit !== null && (
-              <p className="text-xs text-muted-foreground text-center whitespace-nowrap">
-                {examsRemaining} / {examsLimit} provas restantes hoje
-              </p>
+            {examsRemaining != null && examsLimit != null && examsLimit > 0 && (
+              <div className="sidebar-medidor" role="img" aria-label={`${examsRemaining} de ${examsLimit} provas restantes neste mês`}>
+                <div className="flex items-baseline justify-between gap-2 px-0.5 text-[11.5px]">
+                  <span className="text-muted-foreground">Provas no mês</span>
+                  <span className="font-semibold tabular-nums text-foreground/80">
+                    {examsRemaining}
+                    <span className="font-normal text-muted-foreground"> / {examsLimit}</span>
+                  </span>
+                </div>
+                <span className="sidebar-medidor-trilho" aria-hidden>
+                  <span
+                    className="sidebar-medidor-barra"
+                    style={{ transform: `scaleX(${Math.max(0, Math.min(1, examsRemaining / examsLimit))})` }}
+                  />
+                </span>
+              </div>
             )}
           </div>
         </div>
@@ -1253,7 +1240,7 @@ function RailTooltip({ label, top }: { label: string; top: number }) {
     <div
       className="sidebar-rail-tooltip"
       role="presentation"
-      style={{ left: 78, top: Math.max(24, Math.min(top, window.innerHeight - 24)) }}
+      style={{ left: 88, top: Math.max(24, Math.min(top, window.innerHeight - 24)) }}
     >
       {label}
     </div>,
@@ -1292,8 +1279,8 @@ function GroupFlyout({
       initial={{ opacity: 0, x: -8 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-      className="sidebar-flyout fixed z-[60] min-w-[220px] rounded-xl border bg-popover p-1.5 shadow-xl"
-      style={{ left: 74, top: topoAjustado }}
+      className="sidebar-popover fixed z-[60] min-w-[232px] p-1.5"
+      style={{ left: 84, top: topoAjustado }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
       role="menu"
@@ -1311,12 +1298,11 @@ function GroupFlyout({
             type="button"
             role="menuitem"
             onClick={() => onSelect(section.href)}
-            className={cn(
-              'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
-              ativo ? 'bg-primary/10 text-primary font-semibold' : 'text-foreground/80 hover:bg-muted'
-            )}
+            className={cn('sidebar-popover-item', ativo && 'sidebar-popover-item-ativo')}
           >
-            <Icon className="h-4 w-4 shrink-0" weight={ativo ? 'fill' : PESO_ICONE} />
+            <span className="sidebar-mini-chip" style={estiloDoChip(section.key)}>
+              <Icon className="h-3.5 w-3.5" weight={PESO_ICONE} />
+            </span>
             <span className="truncate">{section.label}</span>
           </button>
         )
@@ -1385,29 +1371,27 @@ function SidebarAccountFooter({
   const larguraPainel = 232
 
   return (
-    <div className="shrink-0 border-t p-2 space-y-1.5">
+    <div className="sidebar-rodape shrink-0 space-y-1.5 p-2.5">
       {/* Upgrade fica à vista: é a única ação do rodapé que o usuário não sabe
           que procura. Escondê-la num popover seria economizar espaço no lugar
           errado. */}
       <button
         type="button"
         onClick={() => onNavigate(upgradeItem)}
-        className={cn(
-          'flex h-10 w-full items-center rounded-[12px] font-semibold text-amber-700 dark:text-amber-400',
-          'bg-gradient-to-r from-amber-500/10 to-orange-500/10 hover:from-amber-500/[0.18] hover:to-orange-500/[0.18]',
-          'transition-colors overflow-hidden'
-        )}
+        className="sidebar-upgrade"
         style={{
           justifyContent: collapsed ? 'center' : 'flex-start',
           gap: collapsed ? 0 : 10,
-          paddingLeft: collapsed ? 0 : 11,
-          paddingRight: collapsed ? 0 : 11,
+          paddingLeft: collapsed ? 0 : 6,
+          paddingRight: collapsed ? 0 : 12,
           transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
         }}
         aria-label="Upgrade"
         title={collapsed ? 'Upgrade' : undefined}
       >
-        <ShoppingCart className="h-[18px] w-[18px] shrink-0" weight={PESO_ICONE} />
+        <span className="sidebar-mini-chip sidebar-mini-chip-grande" style={estiloDoChip('upgrade')}>
+          <ShoppingCart className="h-4 w-4" weight={PESO_ICONE} />
+        </span>
         <span
           className="truncate whitespace-nowrap text-sm"
           style={{
@@ -1420,10 +1404,10 @@ function SidebarAccountFooter({
           Upgrade
         </span>
         <span
-          className="ml-auto text-[10px] font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent whitespace-nowrap"
+          className="sidebar-selo-pro ml-auto whitespace-nowrap"
           style={{
             maxWidth: collapsed ? 0 : 40,
-            opacity: collapsed ? 0 : 0.9,
+            opacity: collapsed ? 0 : 1,
             overflow: 'hidden',
             transition: `opacity 200ms ${SB_EASE}, max-width ${SB_DUR} ${SB_EASE}`,
           }}
@@ -1440,10 +1424,8 @@ function SidebarAccountFooter({
         aria-expanded={aberto}
         title={collapsed ? user.name : undefined}
         aria-label={collapsed ? `Conta de ${user.name}` : undefined}
-        className={cn(
-          'flex h-12 w-full items-center rounded-[12px] transition-colors hover:bg-muted overflow-hidden',
-          aberto && 'bg-muted'
-        )}
+        className="sidebar-conta"
+        data-aberto={aberto || undefined}
         style={{
           justifyContent: collapsed ? 'center' : 'flex-start',
           gap: collapsed ? 0 : 10,
@@ -1487,7 +1469,7 @@ function SidebarAccountFooter({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 6 }}
                 transition={lite ? { duration: 0 } : { duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="fixed z-[60] rounded-xl border bg-popover p-1.5 shadow-xl"
+                className="sidebar-popover fixed z-[60] p-1.5"
                 style={{
                   left: Math.max(8, ancora.left),
                   bottom: ancora.bottom,
@@ -1505,9 +1487,9 @@ function SidebarAccountFooter({
                       setAberto(false)
                       onNavigate(item)
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-foreground/85 transition-colors hover:bg-muted"
+                    className="sidebar-popover-item"
                   >
-                    <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center [&>svg]:h-[18px] [&>svg]:w-[18px]">
+                    <span className="sidebar-mini-chip [&>svg]:h-3.5 [&>svg]:w-3.5" style={estiloDoChip(item.cor ?? 'perfil')}>
                       {item.icon}
                     </span>
                     <span className="truncate">{item.label}</span>
@@ -1519,7 +1501,7 @@ function SidebarAccountFooter({
                   </button>
                 ))}
 
-                <div className="my-1 border-t" />
+                <div className="sidebar-popover-divisor" />
 
                 <button
                   type="button"
@@ -1528,9 +1510,11 @@ function SidebarAccountFooter({
                     setAberto(false)
                     onLogout()
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm text-foreground/85 transition-colors hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400"
+                  className="sidebar-popover-item sidebar-popover-item-sair"
                 >
-                  <LogOut className="h-[18px] w-[18px] shrink-0" weight={PESO_ICONE} />
+                  <span className="sidebar-mini-chip" style={estiloDoChip('sair')}>
+                    <LogOut className="h-3.5 w-3.5" weight={PESO_ICONE} />
+                  </span>
                   <span>Sair</span>
                 </button>
               </motion.div>
@@ -1547,7 +1531,7 @@ function RetratoDoMenu({ nome, avatar }: { nome: string; avatar?: string }) {
   const [falhou, setFalhou] = useState(false)
   const url = avatarPorId(avatar)?.url
   return (
-    <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 font-semibold text-primary">
+    <span className="sidebar-retrato">
       {url && !falhou ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={url} alt="" loading="lazy" decoding="async" referrerPolicy="no-referrer" onError={() => setFalhou(true)} className="h-full w-full object-cover object-[50%_22%]" />
