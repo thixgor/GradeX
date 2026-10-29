@@ -2,6 +2,8 @@ import type { Db, ObjectId } from 'mongodb'
 import { ObjectId as ObjectIdCtor } from 'mongodb'
 import type { Ticket, TicketMessage } from '@/lib/types'
 import { sendTicketReplyEmail } from '@/lib/mail'
+import { linkDoTicketDeVisitante } from '@/lib/tickets-visitante'
+import { ehTicketDeVisitante } from '@/lib/tickets-visitante-regras'
 import {
   TICKET_INTERVALO_EMAIL_MS,
   TICKET_STATUS_LABEL,
@@ -26,11 +28,21 @@ import {
  * nunca seria avisado dela.
  */
 
+/**
+ * Link da conversa que vai nos e-mails. Ticket de conta abre no balão de
+ * suporte (exige login); o de visitante abre a página pública com a chave.
+ */
+export function linkDaConversa(ticket: Ticket): string | undefined {
+  return ehTicketDeVisitante(ticket) ? linkDoTicketDeVisitante(String(ticket._id)) : undefined
+}
+
 /** E-mail atual do dono do ticket (o gravado na abertura pode ter mudado). */
 export async function emailDoDono(
   db: Db,
   ticket: Ticket,
 ): Promise<{ email: string; name: string }> {
+  // Visitante não tem conta: o e-mail é o que ele informou na abertura.
+  if (ehTicketDeVisitante(ticket)) return { email: ticket.userEmail, name: ticket.userName }
   try {
     const dono = await db
       .collection('users')
@@ -98,6 +110,7 @@ export async function enviarAvisoDeRespostas(
       respostas,
       perguntaDoUsuario: pergunta?.text,
       perguntaEm: pergunta?.sentAt,
+      link: linkDaConversa(ticket),
     })
   } catch (err) {
     console.error(`[tickets] falha no e-mail de resposta do ticket ${protocolo}:`, err)

@@ -14,6 +14,7 @@ import {
   rotuloDaCategoria,
   validarAberturaDeTicket,
 } from '@/lib/tickets'
+import { normalizarContexto } from '@/lib/tickets-visitante-regras'
 
 export const dynamic = 'force-dynamic'
 
@@ -104,7 +105,25 @@ export async function GET(request: NextRequest) {
             // `$arrayElemAt` em vez de `$last`: o operador de array `$last`
             // só existe do MongoDB 5.0 em diante, e não há motivo para exigir
             // isso de quem roda um cluster mais antigo.
-            lastMessage: { $arrayElemAt: [{ $ifNull: ['$messages', []] }, -1] },
+            // A prévia é a última fala de gente: o aviso automático ("Chamado
+            // registrado…") não diz nada de novo ao atendente nem ao aluno.
+            lastMessage: {
+              $ifNull: [
+                {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: { $ifNull: ['$messages', []] },
+                        as: 'm',
+                        cond: naoEhSistema,
+                      },
+                    },
+                    -1,
+                  ],
+                },
+                { $arrayElemAt: [{ $ifNull: ['$messages', []] }, -1] },
+              ],
+            },
             messageCount: { $size: { $ifNull: ['$messages', []] } },
             unreadCount: {
               $size: {
@@ -174,6 +193,8 @@ export async function POST(request: NextRequest) {
 
     const { title, message } = validado
     const category = ehCategoriaValida(body?.category) ? body.category : 'outro'
+    // De onde veio (o checkout, por exemplo): poupa o atendente de perguntar.
+    const contexto = normalizarContexto(body?.contexto)
 
     // Abrir ticket dispara e-mail para a equipe: sem limite, um script transforma
     // a caixa de entrada do suporte em fila de spam.
@@ -226,8 +247,10 @@ export async function POST(request: NextRequest) {
       userEmail: user.email,
       title,
       category,
-      priority: 'normal',
+      priority: category === 'financeiro' && contexto ? 'high' : 'normal',
       status: 'open',
+      origem: 'conta',
+      ...(contexto ? { contexto } : {}),
       messages: [
         novaMensagem({
           senderId: session.userId,
@@ -276,6 +299,7 @@ export async function POST(request: NextRequest) {
         usuarioNome: user.name,
         usuarioEmail: user.email,
         mensagem: message,
+        contexto,
       }).catch((err) => console.error('[tickets] falha no aviso de novo ticket:', err)),
     ])
 

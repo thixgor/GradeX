@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { ThemeToggle } from '@/components/theme-toggle'
 import {
   Dialog,
@@ -34,17 +33,18 @@ import {
 } from '@/lib/tickets'
 import {
   ArrowLeft,
-  CheckCheck,
   CheckCircle,
   Info,
   Loader2,
   MessageCircle,
   RefreshCw,
   Search,
-  Send,
   X as XIcon,
 } from 'lucide-react'
 import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
+import { MundoDoCheckout } from '@/components/checkout/mundo-do-checkout'
+import { Compositor, Conversa } from '@/components/suporte/conversa'
+import { ehTicketDeVisitante } from '@/lib/tickets-visitante-regras'
 
 /**
  * Painel de atendimento.
@@ -247,7 +247,7 @@ export default function AdminTicketsPage() {
     return (
       <Card
         key={String(ticket._id)}
-        className={`cursor-pointer transition-colors hover:bg-muted ${
+        className={`cursor-pointer rounded-[18px] border-black/[0.06] bg-white/70 shadow-sm backdrop-blur-xl transition hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-white/[0.05] ${
           ticket.status === 'closed' ? 'opacity-70' : ''
         } ${prioridade === 'urgent' ? 'border-red-400 dark:border-red-800' : ''}`}
         onClick={() => setSelectedId(String(ticket._id))}
@@ -271,6 +271,16 @@ export default function AdminTicketsPage() {
             <span className="text-[10px] text-muted-foreground font-mono">
               #{protocoloDoTicket(ticket._id)}
             </span>
+            {ehTicketDeVisitante(ticket) && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-300 font-semibold">
+                Visitante
+              </span>
+            )}
+            {ticket.contexto && (
+              <span className="max-w-[160px] truncate text-[10px] text-muted-foreground font-mono" title={ticket.contexto}>
+                {ticket.contexto}
+              </span>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-3 pt-0 space-y-1">
@@ -312,8 +322,8 @@ export default function AdminTicketsPage() {
   const statusDoSelecionado = selectedTicket?.status
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <MundoDoCheckout className="min-h-screen">
+      <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-background/60 backdrop-blur-xl dark:border-white/10">
         <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" onClick={() => router.push('/')}>
@@ -377,7 +387,7 @@ export default function AdminTicketsPage() {
 
       {/* Dialog do Ticket */}
       <Dialog open={!!selectedId} onOpenChange={(aberto) => !aberto && setSelectedId(null)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 gap-0">
+        <DialogContent className="ck-escopo flex max-h-[90dvh] max-w-2xl flex-col gap-0 overflow-hidden rounded-[26px] p-0">
           <DialogHeader className="p-4 pb-3 border-b">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
@@ -394,6 +404,17 @@ export default function AdminTicketsPage() {
                       )} • aberto ${tempoRelativo(selectedTicket.createdAt)}`
                     : ' '}
                 </DialogDescription>
+                {selectedTicket && (ehTicketDeVisitante(selectedTicket) || selectedTicket.contexto) && (
+                  <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                    {ehTicketDeVisitante(selectedTicket) && (
+                      <span className="font-semibold text-sky-700 dark:text-sky-300">
+                        Visitante sem conta — e-mail não verificado
+                        {selectedTicket.visitanteTemConta ? ' (existe conta com este e-mail)' : ''}
+                      </span>
+                    )}
+                    {selectedTicket.contexto && <span className="font-mono">veio de {selectedTicket.contexto}</span>}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-1 shrink-0">
                 {selectedTicket && (
@@ -432,10 +453,19 @@ export default function AdminTicketsPage() {
               <Loader2 className="h-5 w-5 animate-spin" />
             </div>
           ) : (
-            <div className="flex-1 overflow-auto space-y-3 p-4">
-              {selectedTicket.messages.map((msg) => (
-                <MensagemAdmin key={msg.id} msg={msg} />
-              ))}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+              <Conversa
+                key={String(selectedTicket._id)}
+                mensagens={selectedTicket.messages.map((m) => ({
+                  id: m.id,
+                  autor: ehMensagemDoSistema(m) ? 'sistema' : m.senderRole === 'admin' ? 'voce' : 'suporte',
+                  nome: m.senderName,
+                  texto: m.text,
+                  enviadaEm: m.sentAt,
+                  lidaEm: m.readAt,
+                }))}
+                assinatura={(nome) => nome || 'Aluno'}
+              />
               <div ref={fimDaConversa} />
             </div>
           )}
@@ -458,37 +488,20 @@ export default function AdminTicketsPage() {
 
               {statusDoSelecionado !== 'closed' && (
                 <>
-                  <div className="flex gap-2 items-end">
-                    <Textarea
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      placeholder="Responda ao usuário… (Enter envia, Shift+Enter quebra linha)"
-                      rows={1}
-                      maxLength={TICKET_MENSAGEM_MAX}
-                      className="min-h-[40px] max-h-32 resize-none py-2"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault()
-                          enviarMensagem()
-                        }
-                      }}
+                  <div className="-mx-4 -mt-2">
+                    <Compositor
+                      valor={newMessage}
+                      onMudar={setNewMessage}
+                      onEnviar={enviarMensagem}
+                      enviando={enviando}
+                      max={TICKET_MENSAGEM_MAX}
+                      placeholder="Responder (Enter envia, Shift+Enter quebra linha)"
                     />
-                    <Button
-                      onClick={enviarMensagem}
-                      size="icon"
-                      disabled={enviando || !newMessage.trim()}
-                      aria-label="Enviar resposta"
-                    >
-                      {enviando ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                    </Button>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
-                    O usuário recebe a resposta no chat e por e-mail (a menos que esteja com a conversa
-                    aberta na hora).
+                    {ehTicketDeVisitante(selectedTicket)
+                      ? 'O visitante recebe a resposta por e-mail, com o link da conversa.'
+                      : 'O usuário recebe a resposta no chat e por e-mail.'}
                   </p>
                 </>
               )}
@@ -593,49 +606,6 @@ export default function AdminTicketsPage() {
         message={toastMessage}
         type={toastType}
       />
-    </div>
-  )
-}
-
-function MensagemAdmin({ msg }: { msg: TicketMessage }) {
-  if (ehMensagemDoSistema(msg)) {
-    return (
-      <div className="flex justify-center">
-        <p className="max-w-[85%] rounded-lg bg-muted px-3 py-1.5 text-center text-[11px] italic text-muted-foreground">
-          {msg.text}
-        </p>
-      </div>
-    )
-  }
-
-  const doAdmin = msg.senderRole === 'admin'
-
-  return (
-    <div className={`flex ${doAdmin ? 'justify-end' : 'justify-start'}`}>
-      <div
-        className={`max-w-[80%] rounded-lg p-3 ${
-          doAdmin ? 'bg-primary text-primary-foreground' : 'bg-muted'
-        }`}
-      >
-        <p className="text-xs font-medium mb-1 opacity-80">{msg.senderName}</p>
-        <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>
-        <div className="flex items-center gap-1 justify-end mt-1">
-          <span className="text-[11px] opacity-70">
-            {new Date(msg.sentAt).toLocaleString('pt-BR', {
-              day: '2-digit',
-              month: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
-          {doAdmin && (
-            <CheckCheck
-              className={`h-3 w-3 ${msg.readAt ? 'text-blue-300' : 'opacity-50'}`}
-              aria-label={msg.readAt ? 'Lida pelo usuário' : 'Enviada'}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+    </MundoDoCheckout>
   )
 }

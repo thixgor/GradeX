@@ -36,6 +36,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Loader2, AlertCircle, ArrowRight, Check, Copy, QrCode, CreditCard, Barcode, ExternalLink, Lock, Info, FileText, ShieldCheck } from 'lucide-react'
 import { LogoAnimada } from '@/components/marca/logo-animada'
 import { QrDoPix, SeloDePago } from '@/components/checkout/marca-no-pagamento'
+import { AjudaNoCheckout } from '@/components/suporte/ajuda-no-checkout'
 import '@/components/checkout/checkout-vidro.css'
 import { formatCpf, isValidCpf, onlyCpfDigits } from '@/lib/cpf'
 import {
@@ -1265,6 +1266,9 @@ export function MercadoPagoCheckout(props: MercadoPagoCheckoutProps) {
           <span><Lock size={12} /> Pagamento seguro pelo Mercado Pago</span>
           <span><ShieldCheck size={12} /> Dados criptografados</span>
         </div>
+        {/* A porta do suporte em TODO checkout: um chamado com protocolo, já
+            marcado como "Pagamento", em vez de sair da compra para outro canal. */}
+        <AjudaNoCheckout titulo={`Dúvida no pagamento: ${props.description}`.slice(0, 120)} />
         <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--ck-texto-3)', lineHeight: 1.6, marginTop: '-6px' }}>
           Ao concluir a compra você concorda com os{' '}
           <a href="/termos-de-servico" target="_blank" rel="noopener noreferrer" className="ck-link" style={{ fontSize: '12px' }}>
@@ -1392,6 +1396,12 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         <button type="button" onClick={onReset} className="ck-botao" style={{ alignSelf: 'center' }}>
           Tentar de novo
         </button>
+        <AjudaNoCheckout
+          variante="link"
+          rotulo="Não sabe por que foi recusado? Abrir um chamado"
+          titulo={`${STATUS_LABELS[order.status]} — pedido ${String(order.orderId || '').slice(-8)}`}
+          className="self-center"
+        />
       </PainelDeResultado>
     )
   }
@@ -1535,6 +1545,12 @@ function ResultPanel({ order, method, onReset }: { order: CheckoutOrderResponse;
         <h3 className="ck-h1" style={{ fontSize: '22px' }}>{STATUS_LABELS[order.status]}</h3>
         <p className="ck-sub" style={{ fontSize: '14px' }}>{detalhe}</p>
       </div>
+      <AjudaNoCheckout
+        variante="link"
+        rotulo="Demorando demais? Abrir um chamado"
+        titulo={`Pagamento em análise — pedido ${String(order.orderId || '').slice(-8)}`}
+        className="self-center"
+      />
     </PainelDeResultado>
   )
 }

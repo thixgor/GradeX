@@ -21,6 +21,9 @@ export const TICKET_TITULO_MAX = 120
 export const TICKET_MENSAGEM_MAX = 4000
 export const TICKET_TITULO_MIN = 3
 
+/** Teto de mensagens por conversa — protege o documento e o painel. */
+export const TICKET_MENSAGENS_MAX = 300
+
 /** Quantos tickets sem resposta uma mesma pessoa pode manter em aberto. */
 export const TICKET_ABERTOS_POR_USUARIO = 5
 

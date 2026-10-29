@@ -1168,6 +1168,20 @@ export interface Ticket {
    * mensagem segurada simplesmente nunca chegaria à caixa de entrada.
    */
   pendingEmailSince?: Date
+  /**
+   * `visitante`: aberto sem conta (compra sem login, central de ajuda). O dono
+   * acompanha por link com chave (ver lib/tickets-visitante.ts) e o `userId`
+   * leva o prefixo `visitante:`. Ausente = ticket de conta.
+   */
+  origem?: 'conta' | 'visitante'
+  /** Página de onde o chamado foi aberto (`/comprar?productType=…`). */
+  contexto?: string
+  /** Hash do e-mail do visitante — limite por pessoa sem expor o endereço. */
+  visitanteEmailHash?: string
+  /** Hash do IP de abertura — para o admin ver rajadas, sem guardar o IP. */
+  visitanteIpHash?: string
+  /** O e-mail do visitante já tem conta? Só uma pista para o atendente. */
+  visitanteTemConta?: boolean
 }
 
 /**

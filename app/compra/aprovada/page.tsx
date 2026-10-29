@@ -7,6 +7,7 @@ import {
   ShieldCheck, Mail, Clock, AlertCircle,
 } from 'lucide-react'
 import { ContaPosCompra } from '@/components/checkout/conta-pos-compra'
+import { AjudaNoCheckout } from '@/components/suporte/ajuda-no-checkout'
 import { QrDoPix, SeloDePago } from '@/components/checkout/marca-no-pagamento'
 import { LogoAnimada } from '@/components/marca/logo-animada'
 import '@/components/checkout/checkout-vidro.css'
@@ -365,6 +366,13 @@ function ApprovedView({ data, cartaoDeConta }: { data: Purchase; cartaoDeConta?:
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
         <Mail size={13} /> Um comprovante em PDF também foi enviado ao seu e-mail.
       </div>
+
+      {/* Algo errado com a entrega? Chamado com o pedido no assunto. */}
+      <AjudaNoCheckout
+        categoria="acesso"
+        titulo={`Compra ${data.transactionId ? `#${String(data.transactionId).slice(-8)}` : ''} — ${data.productTitle || 'acesso'}`.slice(0, 120)}
+        rotulo={<>Algo não saiu como esperado? <strong>Abra um chamado</strong> com esta compra.</>}
+      />
     </div>
   )
 }

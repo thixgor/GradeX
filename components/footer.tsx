@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Instagram, Mail } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+// O rodapé mora no layout raiz: o gatilho do chamado só baixa nas telas de
+// compra, onde ele aparece — e não no JS de todas as páginas.
+const AjudaNoCheckout = dynamic(
+  () => import('@/components/suporte/ajuda-no-checkout').then((m) => m.AjudaNoCheckout),
+  { ssr: false },
+)
 
 // Canais de comunicação oficiais da plataforma
 const WHATSAPP_URL =
@@ -64,22 +72,16 @@ export function Footer() {
     return null
   }
 
-  // Nas telas de compra o foco é pagar: o rodapé vira uma linha — a ajuda
-  // (WhatsApp) e o legal. Os quatro canais ficam para as páginas de conteúdo.
+  // Nas telas de compra o foco é pagar: o rodapé vira uma linha — a ajuda e
+  // o legal. A ajuda é um CHAMADO (protocolo, histórico, contexto da compra),
+  // não um canal solto: ver components/suporte/ajuda-no-checkout.tsx.
   if (ehCompra(pathname)) {
     return (
       <footer className="relative z-10 mt-auto border-t border-black/[0.06] dark:border-white/[0.08]">
         <div className="container mx-auto flex flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-muted-foreground sm:flex-row">
-          <p>
+          <p className="ck-escopo">
             Dúvida na compra?{' '}
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold text-[#2f6b40] underline-offset-4 hover:underline dark:text-[#8fd19e]"
-            >
-              Chame no WhatsApp
-            </a>
+            <AjudaNoCheckout variante="link" rotulo="Abrir um chamado" className="text-xs" />
           </p>
           <LinksLegais />
         </div>
@@ -90,8 +92,14 @@ export function Footer() {
   return (
     <footer className="relative z-10 mt-auto border-t border-black/[0.06] dark:border-white/[0.08]">
       <div className="container mx-auto flex flex-col items-center gap-4 px-4 py-6 sm:flex-row sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-foreground">Fale com a gente</span>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/suporte"
+            className="inline-flex h-9 items-center rounded-full bg-gradient-to-b from-[#4f8f5c] to-[#2f6b40] px-4 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] transition active:scale-95"
+          >
+            Central de Ajuda
+          </Link>
+          <span className="text-xs text-muted-foreground">ou</span>
           <ul className="flex items-center gap-2">
             {CANAIS.map((canal) => (
               <li key={canal.nome}>

@@ -9,10 +9,13 @@ import { deliverTransactionalEmails, sendTicketStatusEmail } from '@/lib/mail'
 import {
   emailDoDono,
   enviarAvisoDeRespostas,
+  linkDaConversa,
   ultimaMensagemDe,
 } from '@/lib/tickets-avisos'
+import { ehTicketDeVisitante } from '@/lib/tickets-visitante-regras'
 import {
   TICKET_MENSAGEM_MAX,
+  TICKET_MENSAGENS_MAX,
   contarNaoLidas,
   devoAvisarPorEmail,
   ehPrioridadeValida,
@@ -52,6 +55,8 @@ function contextoDeRespostas(ticket: Ticket): { texto: string; data?: Date | str
 }
 
 async function notificar(db: Db, notificacao: Omit<Notification, '_id'>) {
+  // Visitante não tem sino: o aviso dele é o e-mail com o link do chamado.
+  if (ehTicketDeVisitante({ userId: notificacao.userId })) return
   try {
     await db.collection<Notification>('notifications').insertOne(notificacao as Notification)
   } catch (err) {
@@ -218,6 +223,15 @@ export async function PATCH(
         if (ticket.status === 'closed') {
           return NextResponse.json(
             { error: 'Este ticket está fechado. Abra um novo ticket para continuar.' },
+            { status: 409 },
+          )
+        }
+
+        // Documento do Mongo tem teto (16 MB) e o painel desenha a conversa
+        // inteira: uma conversa sem fim é um jeito lento de derrubar os dois.
+        if ((ticket.messages?.length || 0) >= TICKET_MENSAGENS_MAX) {
+          return NextResponse.json(
+            { error: 'Esta conversa ficou longa demais. Abra um novo ticket para continuar.' },
             { status: 409 },
           )
         }
@@ -438,6 +452,7 @@ export async function PATCH(
             evento: 'resolved',
             adminNome: nome,
             ultimasRespostas: contextoDeRespostas(ticket),
+              link: linkDaConversa(ticket),
           }).catch((err) => console.error('[tickets] falha no e-mail de resolução:', err)),
         ])
 
@@ -496,6 +511,7 @@ export async function PATCH(
               evento: 'closed',
               adminNome: nome,
               ultimasRespostas: contextoDeRespostas(ticket),
+              link: linkDaConversa(ticket),
             }).catch((err) => console.error('[tickets] falha no e-mail de encerramento:', err)),
           ])
           await ticketsCollection.updateOne(
@@ -565,6 +581,7 @@ export async function PATCH(
               criadoEm: ticket.createdAt,
               evento: 'reopened',
               adminNome: nome,
+              link: linkDaConversa(ticket),
             }).catch((err) => console.error('[tickets] falha no e-mail de reabertura:', err)),
           ])
           await ticketsCollection.updateOne(

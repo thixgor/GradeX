@@ -258,6 +258,13 @@ function isPublicRoute(pathname: string): boolean {
   // padrão. Formulários com "Exigir Login" ou "Entregar Material" validam a
   // sessão internamente (page + /api/forms/[id]/submit) e retornam o portão de
   // login ou 401 LOGIN_REQUIRED quando necessário.
+  // Suporte sem conta: a Central de Ajuda, a conversa pelo link com chave e as
+  // duas rotas de API dela. Cada uma valida por dentro (desafio de uso único,
+  // limites por IP/e-mail/global, chave HMAC) — ver lib/tickets-visitante.ts.
+  // O `/api/tickets` de conta continua atrás do login.
+  if (pathname === '/suporte' || pathname === '/api/suporte/visitante') return true
+  if (/^\/suporte\/ticket\/[a-f0-9]{24}$/.test(pathname)) return true
+  if (/^\/api\/suporte\/visitante\/[a-f0-9]{24}$/.test(pathname)) return true
   if (/^\/forms\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/forms\/[a-fA-F0-9]{24}$/.test(pathname)) return true
   if (/^\/api\/forms\/[a-fA-F0-9]{24}\/submit$/.test(pathname)) return true

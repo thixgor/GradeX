@@ -2492,6 +2492,55 @@ const RODAPE_TICKET = `
   </p>
 `
 
+const RODAPE_TICKET_VISITANTE = `
+  <p style="margin-top: 28px; font-size: 13px; color: #718096;">
+    Responder a este e-mail não chega até o atendimento — a conversa continua pelo botão acima.
+    Guarde este e-mail: o link é a sua chave para o chamado, não o compartilhe.
+  </p>
+`
+
+/**
+ * Confirmação de chamado aberto SEM conta.
+ *
+ * De propósito, não leva nada do que foi digitado — nem nome, nem título, nem
+ * mensagem. O formulário é público e o e-mail de destino não é verificado: se
+ * a confirmação repetisse o conteúdo, qualquer um poderia usar o suporte como
+ * relé para mandar texto arbitrário à caixa de entrada de outra pessoa. Assim,
+ * o pior que um abusador consegue é avisar alguém de que "um chamado foi
+ * aberto com este e-mail" — e os limites por e-mail cortam a repetição.
+ */
+export async function sendTicketVisitanteRecebidoEmail(input: {
+  email: string
+  protocolo: string
+  link: string
+}) {
+  const content = `
+    <h1 class="h1">Recebemos o seu chamado 🎫</h1>
+    <p>Olá!</p>
+    <p>
+      Um chamado de suporte foi aberto na DomineAqui com este e-mail, com o protocolo
+      <strong>#${escapeHtml(input.protocolo)}</strong>. A nossa equipe responde pelo link abaixo, e você
+      também recebe cada resposta aqui.
+    </p>
+
+    <div style="text-align: center;">
+      <a href="${input.link}" class="button" target="_blank">Acompanhar o chamado</a>
+    </div>
+
+    <p style="margin-top: 24px; font-size: 13px; color: #718096;">
+      Não foi você? Pode ignorar este e-mail — sem o link, ninguém lê o chamado em seu nome.
+    </p>
+    ${RODAPE_TICKET_VISITANTE}
+  `
+
+  await enviarEmailDeTicket(`confirmação do chamado #${input.protocolo} (visitante)`, {
+    from: '"DomineAqui - Suporte" <no-reply@domineaqui.com.br>',
+    to: input.email,
+    subject: `Recebemos o seu chamado #${input.protocolo}`,
+    html: getEmailTemplate('Chamado recebido', content),
+  })
+}
+
 /**
  * Aviso de que um administrador respondeu o ticket.
  *
@@ -2516,9 +2565,11 @@ export async function sendTicketReplyEmail(input: {
   respostas: { texto: string; data?: Date | string }[]
   perguntaDoUsuario?: string
   perguntaEm?: Date | string
+  /** Link da conversa para quem abriu sem conta (com a chave de acompanhamento). */
+  link?: string
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
-  const url = `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const url = input.link || `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
   const respostas = input.respostas.filter((r) => r && r.texto)
   if (respostas.length === 0) return
 
@@ -2567,7 +2618,7 @@ export async function sendTicketReplyEmail(input: {
       <a href="${url}" class="button" target="_blank">Continuar a conversa</a>
     </div>
 
-    ${RODAPE_TICKET}
+    ${input.link ? RODAPE_TICKET_VISITANTE : RODAPE_TICKET}
   `
 
   await enviarEmailDeTicket(
@@ -2605,9 +2656,11 @@ export async function sendTicketStatusEmail(input: {
    * ficarem só no chat.
    */
   ultimasRespostas?: { texto: string; data?: Date | string }[]
+  /** Link da conversa para quem abriu sem conta (com a chave de acompanhamento). */
+  link?: string
 }) {
   const primeiroNome = (input.name || '').split(' ')[0] || 'Aluno'
-  const url = `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
+  const url = input.link || `${URL_DO_SITE}/?suporte=${encodeURIComponent(input.ticketId)}`
   const respostas = (input.ultimasRespostas || []).filter((r) => r && r.texto)
 
   const textos = {
@@ -2631,7 +2684,10 @@ export async function sendTicketStatusEmail(input: {
       h1: 'Seu ticket foi encerrado',
       assunto: `Ticket #${input.protocolo} encerrado — ${input.titulo}`,
       status: 'Fechado',
-      corpo: `<p>${escapeHtml(input.adminNome)} encerrou o seu ticket. O histórico fica guardado na sua conta.</p>
+      corpo: input.link
+        ? `<p>${escapeHtml(input.adminNome)} encerrou o seu chamado. O histórico continua no link abaixo.</p>
+        <p>Precisando de novo, é só abrir outro pela Central de Ajuda — leva menos de um minuto.</p>`
+        : `<p>${escapeHtml(input.adminNome)} encerrou o seu ticket. O histórico fica guardado na sua conta.</p>
         <p>Precisando de novo, é só abrir um novo ticket pelo balão de suporte — leva menos de um minuto.</p>`,
       cta: 'Ver o histórico',
     },
@@ -2672,7 +2728,7 @@ export async function sendTicketStatusEmail(input: {
       <a href="${url}" class="button" target="_blank">${textos.cta}</a>
     </div>
 
-    ${RODAPE_TICKET}
+    ${input.link ? RODAPE_TICKET_VISITANTE : RODAPE_TICKET}
   `
 
   await enviarEmailDeTicket(`ticket #${input.protocolo} (${input.evento})`, {
@@ -2696,6 +2752,10 @@ export async function sendNewTicketAdminEmail(input: {
   usuarioNome: string
   usuarioEmail: string
   mensagem: string
+  /** Aberto sem conta: o e-mail informado não foi verificado. */
+  visitante?: boolean
+  /** Página de onde o chamado veio. */
+  contexto?: string
 }) {
   const destinatarios = Array.from(new Set(input.destinatarios.filter(Boolean)))
   if (destinatarios.length === 0) return
@@ -2704,7 +2764,10 @@ export async function sendNewTicketAdminEmail(input: {
 
   const content = `
     <h1 class="h1">Novo ticket de suporte 🎫</h1>
-    <p><strong>${escapeHtml(input.usuarioNome)}</strong> (${escapeHtml(input.usuarioEmail)}) abriu um ticket.</p>
+    <p><strong>${escapeHtml(input.usuarioNome)}</strong> (${escapeHtml(input.usuarioEmail)}) abriu um ticket${
+      input.visitante ? ' <strong>sem conta</strong> — o e-mail informado não foi verificado' : ''
+    }.</p>
+    ${input.contexto ? `<p style="font-size: 13px; color: #718096;">Veio de: <code>${escapeHtml(input.contexto)}</code></p>` : ''}
 
     ${fichaDoTicket({
       protocolo: input.protocolo,

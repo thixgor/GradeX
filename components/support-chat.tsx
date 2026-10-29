@@ -2,30 +2,20 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useFloatingDock } from '@/context/FloatingDockContext'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-import { Textarea } from './ui/textarea'
-import { Card } from './ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from './ui/select'
-import { Ticket, TicketMessage, TicketSummary, TicketCategory } from '@/lib/types'
-import { MessageCircle, X, Send, CheckCheck, ArrowLeft, Loader2, AlertCircle } from 'lucide-react'
+import { Ticket, TicketSummary } from '@/lib/types'
+import { AlertCircle, ArrowLeft, Loader2, MessageCircle, Plus, X } from 'lucide-react'
 import { notificationSound } from '@/lib/notification-sound'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 import {
-  TICKET_CATEGORIES,
   TICKET_MENSAGEM_MAX,
-  TICKET_TITULO_MAX,
+  TICKET_STATUS_LABEL,
   ehMensagemDoSistema,
   previaDaMensagem,
   protocoloDoTicket,
   tempoRelativo,
 } from '@/lib/tickets'
+import { Compositor, Conversa, type MensagemDaConversa } from '@/components/suporte/conversa'
+import { FormularioDeChamado } from '@/components/suporte/formulario-de-chamado'
 
 /**
  * Chat de suporte do usuário.
@@ -80,9 +70,6 @@ export function SupportChat() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null)
   const [estado, setEstado] = useState<Estado>('lista')
-  const [title, setTitle] = useState('')
-  const [category, setCategory] = useState<TicketCategory>('outro')
-  const [message, setMessage] = useState('')
   const [newMessage, setNewMessage] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [carregandoLista, setCarregandoLista] = useState(true)
@@ -181,14 +168,11 @@ export function SupportChat() {
   // enquanto o painel está aberto.
   useEffect(() => {
     carregarLista(isOpen)
-    if (!isOpen) return
-    // `document.hidden` corta o polling da aba em segundo plano: ninguém está
-    // lendo, e cada volta é uma invocação serverless paga.
-    const intervalo = setInterval(() => {
-      if (!document.hidden) carregarLista()
-    }, INTERVALO_LISTA)
-    return () => clearInterval(intervalo)
   }, [isOpen, carregarLista])
+
+  // Polling só com o painel aberto E a aba visível: ninguém lendo, nenhuma
+  // invocação paga (`useIntervaloVisivel` para de vez com a aba oculta).
+  useIntervaloVisivel(carregarLista, isOpen && estado === 'lista' ? INTERVALO_LISTA : null)
 
   useEffect(() => {
     if (!activeId) {
@@ -197,12 +181,27 @@ export function SupportChat() {
       return
     }
     carregarConversa(activeId)
-    if (!isOpen) return
-    const intervalo = setInterval(() => {
-      if (!document.hidden) carregarConversa(activeId)
-    }, INTERVALO_CONVERSA)
-    return () => clearInterval(intervalo)
-  }, [activeId, isOpen, carregarConversa])
+  }, [activeId, carregarConversa])
+
+  const recarregarConversa = useCallback(() => {
+    if (activeId) void carregarConversa(activeId)
+  }, [activeId, carregarConversa])
+  useIntervaloVisivel(recarregarConversa, isOpen && activeId ? INTERVALO_CONVERSA : null)
+
+  // A folha de ajuda dos checkouts abre a conversa recém-criada por aqui.
+  useEffect(() => {
+    const abrir = (e: Event) => {
+      const id = (e as CustomEvent<{ ticketId?: string }>).detail?.ticketId
+      if (!id) return
+      setActiveId(id)
+      setEstado('conversa')
+      dock?.open('support')
+      void carregarLista()
+    }
+    window.addEventListener('suporte:abrir', abrir)
+    return () => window.removeEventListener('suporte:abrir', abrir)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [carregarLista])
 
   // ── Leitura ───────────────────────────────────────────────────────────
   useEffect(() => {
@@ -231,38 +230,6 @@ export function SupportChat() {
   }, [activeTicket?.messages?.length, estado])
 
   // ── Ações ─────────────────────────────────────────────────────────────
-  async function criarTicket() {
-    if (!title.trim() || !message.trim() || enviando) return
-
-    setEnviando(true)
-    setErro('')
-    try {
-      const res = await fetch('/api/tickets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, message, category }),
-      })
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        setErro(data?.error || 'Não foi possível abrir o ticket. Tente de novo.')
-        return
-      }
-
-      setTitle('')
-      setMessage('')
-      setCategory('outro')
-      setActiveId(data.ticketId || null)
-      setEstado(data.ticketId ? 'conversa' : 'lista')
-      carregarLista()
-    } catch (error) {
-      console.error('Erro ao criar ticket:', error)
-      setErro('Falha de conexão. Verifique sua internet e tente de novo.')
-    } finally {
-      setEnviando(false)
-    }
-  }
-
   async function enviarMensagem() {
     const texto = newMessage.trim()
     if (!texto || !activeTicket || enviando) return
@@ -340,345 +307,194 @@ export function SupportChat() {
   const statusDaConversa = activeTicket?.status
   const podeEscrever = statusDaConversa !== 'closed'
 
-  function selo(status: Ticket['status']) {
-    const mapa: Record<Ticket['status'], { texto: string; classe: string }> = {
-      open: { texto: 'Aguardando', classe: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200' },
-      assigned: { texto: 'Em atendimento', classe: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200' },
-      resolved: { texto: 'Resolvido', classe: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' },
-      closed: { texto: 'Fechado', classe: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300' },
-    }
-    return mapa[status]
-  }
+  // A conversa no formato da tela: o que é meu, do suporte ou do sistema.
+  const mensagens: MensagemDaConversa[] = useMemo(
+    () =>
+      (activeTicket?.messages || []).map((m) => ({
+        id: m.id,
+        autor: ehMensagemDoSistema(m) ? 'sistema' : m.senderRole === 'admin' && m.senderId !== currentUserId ? 'suporte' : 'voce',
+        nome: m.senderName,
+        texto: m.text,
+        enviadaEm: m.sentAt,
+        lidaEm: m.readAt,
+      })),
+    [activeTicket?.messages, currentUserId],
+  )
+
+  const titulo =
+    estado === 'novo' ? 'Novo chamado' : estado === 'conversa' && activeTicket ? activeTicket.title : 'Suporte'
+  const subtitulo =
+    estado === 'conversa' && activeTicket
+      ? `#${protocoloDoTicket(activeTicket._id)} · ${TICKET_STATUS_LABEL[activeTicket.status]}`
+      : estado === 'novo'
+        ? 'A resposta chega aqui e no seu e-mail'
+        : 'Chamados com protocolo e histórico'
 
   return (
     <>
-      {/* Botão Flutuante — desktop apenas (no mobile o dock consolidado assume).
-          O `bottom` soma `--gx-barra-inferior-h`: quando alguma tela publica
-          uma barra de ações fixa no rodapé (ex.: a seleção em massa do
-          Catálogo), este círculo sobe para não ficar em cima do botão mais à
-          direita dela, interceptando o clique. Sem barra nenhuma publicando,
-          a variável vale 0px e o botão fica exatamente onde sempre esteve. */}
+      {/* Botão flutuante — só no computador (no celular o dock assume). O
+          `bottom` soma `--gx-barra-inferior-h` para subir quando uma tela
+          publica uma barra de ações fixa no rodapé. */}
       <button
         onClick={() => setOpen(!isOpen)}
         aria-label={isOpen ? 'Fechar suporte' : 'Abrir suporte'}
+        data-suporte-balao
         style={{ bottom: 'calc(1.5rem + var(--gx-barra-inferior-h, 0px))' }}
-        className="fixed right-6 z-50 hidden lg:flex w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:scale-110 transition-[transform,bottom] items-center justify-center"
+        className="fixed right-6 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-[#4f8f5c] to-[#2f6b40] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_14px_30px_-12px_rgba(46,97,64,0.8)] transition-[transform,bottom] hover:scale-105 active:scale-95 lg:flex"
       >
         {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
         {!isOpen && naoLidasTotais > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">
-            {naoLidasTotais > 9 ? '9+' : naoLidasTotais}
-          </span>
+          <span className="sp-contador absolute -right-1 -top-1">{naoLidasTotais > 9 ? '9+' : naoLidasTotais}</span>
         )}
       </button>
 
-      {/* Chat Window — mesma lógica: abre acima da barra, não em cima dela.
-          `--base` guarda o afastamento de sempre (5rem no mobile, 6rem do
-          `lg` em diante, exatamente como antes); só a soma com a variável da
-          barra é novidade. */}
       {isOpen && (
         <div
-          style={{
-            bottom: 'calc(var(--base, 5rem) + var(--gx-barra-inferior-h, 0px))',
-          }}
-          className="fixed right-4 left-4 sm:left-auto z-50 sm:w-96 w-auto h-[70vh] max-h-[600px] lg:right-6 lg:[--base:6rem] bg-background border border-border rounded-lg shadow-2xl flex flex-col overflow-hidden"
+          role="dialog"
+          aria-label="Suporte"
+          style={{ bottom: 'calc(var(--base, 5rem) + var(--gx-barra-inferior-h, 0px))' }}
+          className="ck-escopo ck-vidro-forte sp-painel fixed left-3 right-3 z-50 h-[min(72dvh,640px)] sm:left-auto sm:w-[400px] lg:right-6 lg:[--base:6rem]"
         >
-          {/* Header */}
-          <div className="p-4 border-b border-border bg-primary text-primary-foreground flex items-start justify-between gap-2">
-            <div className="flex items-start gap-2 min-w-0">
-              {estado !== 'lista' && (
-                <button
-                  onClick={estado === 'novo' ? () => setEstado('lista') : voltarParaLista}
-                  aria-label="Voltar"
-                  className="mt-0.5 rounded-md p-1 text-primary-foreground/80 transition hover:bg-white/15 hover:text-primary-foreground"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </button>
-              )}
-              <div className="min-w-0">
-                <h3 className="font-semibold truncate">
-                  {estado === 'novo'
-                    ? 'Novo ticket'
-                    : estado === 'conversa' && activeTicket
-                    ? activeTicket.title
-                    : 'Suporte'}
-                </h3>
-                <p className="text-xs opacity-90 truncate">
-                  {estado === 'conversa' && activeTicket
-                    ? `#${protocoloDoTicket(activeTicket._id)} • ${selo(activeTicket.status).texto}`
-                    : 'Tire suas dúvidas conosco'}
-                </p>
-              </div>
+          <div className="sp-cabeca">
+            {estado !== 'lista' && (
+              <button
+                onClick={estado === 'novo' ? () => setEstado('lista') : voltarParaLista}
+                aria-label="Voltar"
+                className="sp-icone-botao"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </button>
+            )}
+            <div className="min-w-0 flex-1">
+              <h3 className="truncate font-heading text-[17px] font-semibold leading-tight tracking-tight">{titulo}</h3>
+              <p className="truncate text-xs" style={{ color: 'var(--ck-texto-3)' }}>{subtitulo}</p>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              aria-label="Fechar suporte"
-              className="-mr-1 -mt-1 rounded-md p-1.5 text-primary-foreground/80 transition hover:bg-white/15 hover:text-primary-foreground"
-            >
-              <X className="h-5 w-5" />
+            {estado === 'conversa' && activeTicket && activeTicket.status !== 'closed' && (
+              <button
+                className="ck-link-discreto shrink-0"
+                disabled={enviando}
+                onClick={() => mudarStatus('close')}
+              >
+                Encerrar
+              </button>
+            )}
+            <button onClick={() => setOpen(false)} aria-label="Fechar suporte" className="sp-icone-botao">
+              <X className="h-4 w-4" />
             </button>
           </div>
 
           {erro && (
-            <div className="flex items-start gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/50 border-b border-red-200 dark:border-red-900">
-              <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
-              <p className="text-xs text-red-700 dark:text-red-300">{erro}</p>
-            </div>
+            <p className="ck-erro mx-3 mt-3" role="alert">
+              <AlertCircle className="h-4 w-4" /> {erro}
+            </p>
           )}
 
-          {/* Conteúdo */}
-          <div className="flex-1 min-h-0 flex flex-col">
+          <div className="flex min-h-0 flex-1 flex-col">
             {estado === 'novo' ? (
-              <div className="flex-1 overflow-auto p-4 space-y-4">
-                <div>
-                  <Label htmlFor="ticket-titulo">Título</Label>
-                  <Input
-                    id="ticket-titulo"
-                    value={title}
-                    maxLength={TICKET_TITULO_MAX}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Ex: Não consigo acessar o material"
-                  />
-                </div>
-                <div>
-                  <Label>Assunto</Label>
-                  <Select value={category} onValueChange={(v) => setCategory(v as TicketCategory)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Escolha o assunto" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TICKET_CATEGORIES.map((c) => (
-                        <SelectItem key={c.value} value={c.value}>
-                          {c.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="ticket-mensagem">Mensagem</Label>
-                  <Textarea
-                    id="ticket-mensagem"
-                    value={message}
-                    maxLength={TICKET_MENSAGEM_MAX}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Conte o que aconteceu com o máximo de detalhes que puder — isso acelera a resposta."
-                    rows={6}
-                  />
-                  <p className="mt-1 text-right text-[11px] text-muted-foreground">
-                    {message.length}/{TICKET_MENSAGEM_MAX}
-                  </p>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Você recebe a resposta aqui e também por e-mail.
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={criarTicket}
-                    disabled={enviando || title.trim().length < 3 || !message.trim()}
-                    className="flex-1"
-                  >
-                    {enviando && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                    Abrir ticket
-                  </Button>
-                  <Button onClick={() => setEstado('lista')} variant="outline">
-                    Cancelar
-                  </Button>
-                </div>
+              <div className="flex-1 overflow-y-auto overscroll-contain p-4">
+                <FormularioDeChamado
+                  modo="conta"
+                  onCriado={(c) => {
+                    setActiveId(c.ticketId)
+                    setEstado('conversa')
+                    carregarLista()
+                  }}
+                />
               </div>
             ) : estado === 'conversa' ? (
               !activeTicket ? (
-                <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                <div className="flex flex-1 items-center justify-center">
+                  <Loader2 className="h-5 w-5 animate-spin" style={{ color: 'var(--ck-texto-3)' }} />
                 </div>
               ) : (
                 <>
-                  <div className="flex-1 overflow-auto p-4 space-y-3">
-                    {activeTicket.messages.map((msg) => (
-                      <Mensagem
-                        key={msg.id}
-                        msg={msg}
-                        souEu={msg.senderId === currentUserId}
-                      />
-                    ))}
-                    <div ref={fimDaConversa} />
+                  <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                    <Conversa mensagens={mensagens} />
                   </div>
-
-                  <div className="border-t p-3 space-y-2">
-                    {activeTicket.status === 'resolved' && (
-                      <div className="p-2.5 rounded-lg bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-900">
-                        <p className="text-xs text-green-800 dark:text-green-200">
-                          ✓ Marcado como resolvido pelo suporte. <strong>Ainda com dúvida?</strong> É
-                          só responder abaixo que o atendimento volta.
-                        </p>
-                      </div>
-                    )}
-
-                    {activeTicket.status === 'closed' ? (
-                      <div className="space-y-2">
-                        <p className="text-xs text-muted-foreground">
-                          Este ticket foi encerrado. O histórico fica guardado na sua conta.
-                        </p>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                          disabled={enviando}
-                          onClick={() => mudarStatus('reopen')}
-                        >
-                          Reabrir este ticket
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="flex gap-2 items-end">
-                          <Textarea
-                            value={newMessage}
-                            onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Digite sua mensagem..."
-                            rows={1}
-                            maxLength={TICKET_MENSAGEM_MAX}
-                            className="min-h-[40px] max-h-28 resize-none py-2"
-                            onKeyDown={(e) => {
-                              // Enter envia, Shift+Enter quebra linha — o padrão
-                              // de qualquer chat. Antes, `onKeyPress` (removido
-                              // do React) enviava até no meio de um parágrafo.
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault()
-                                enviarMensagem()
-                              }
-                            }}
-                          />
-                          <Button
-                            onClick={enviarMensagem}
-                            size="icon"
-                            disabled={enviando || !newMessage.trim()}
-                            aria-label="Enviar mensagem"
-                          >
-                            {enviando ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Send className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full text-xs text-muted-foreground"
-                          disabled={enviando}
-                          onClick={() => mudarStatus('close')}
-                        >
-                          Encerrar ticket
-                        </Button>
-                      </>
-                    )}
-                  </div>
+                  {activeTicket.status === 'resolved' && (
+                    <p className="mx-3 mb-1 text-center text-xs" style={{ color: 'var(--ck-texto-2)' }}>
+                      Marcado como resolvido. Ainda com dúvida? É só responder.
+                    </p>
+                  )}
+                  {activeTicket.status === 'closed' ? (
+                    <div className="flex flex-col items-center gap-2 border-t px-4 py-4 text-center" style={{ borderColor: 'var(--ck-sep)' }}>
+                      <p className="text-xs" style={{ color: 'var(--ck-texto-2)' }}>
+                        Chamado encerrado. O histórico fica guardado na sua conta.
+                      </p>
+                      <button className="ck-botao" disabled={enviando} onClick={() => mudarStatus('reopen')}>
+                        Reabrir este chamado
+                      </button>
+                    </div>
+                  ) : (
+                    <Compositor
+                      valor={newMessage}
+                      onMudar={setNewMessage}
+                      onEnviar={enviarMensagem}
+                      enviando={enviando}
+                      max={TICKET_MENSAGEM_MAX}
+                    />
+                  )}
                 </>
               )
             ) : (
-              <div className="flex-1 overflow-auto p-4 space-y-3">
-                {carregandoLista ? (
-                  <div className="flex justify-center py-8 text-muted-foreground">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  </div>
-                ) : tickets.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <MessageCircle className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Você ainda não abriu nenhum ticket</p>
-                    <p className="text-xs mt-1">
-                      Precisa de ajuda? Fale com a gente — respondemos por aqui e por e-mail.
-                    </p>
-                  </div>
-                ) : (
-                  tickets.map((ticket) => {
-                    const s = selo(ticket.status)
-                    return (
-                      <Card
-                        key={String(ticket._id)}
-                        className="p-3 cursor-pointer hover:bg-muted transition-colors"
-                        onClick={() => abrirTicket(String(ticket._id))}
-                      >
-                        <div className="flex justify-between items-start gap-2">
-                          <h4 className="font-medium text-sm leading-tight">{ticket.title}</h4>
-                          <span className={`shrink-0 text-[11px] px-2 py-0.5 rounded ${s.classe}`}>
-                            {s.texto}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {ticket.lastMessage?.senderRole === 'admin' ? 'Suporte: ' : ''}
-                          {previaDaMensagem(ticket.lastMessage?.text, 60) || 'Sem mensagens'}
-                        </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-[11px] text-muted-foreground font-mono">
-                            #{protocoloDoTicket(ticket._id)} • {tempoRelativo(ticket.updatedAt)}
-                          </span>
-                          {ticket.unreadCount > 0 && (
-                            <span className="min-w-5 h-5 px-1.5 rounded-full bg-red-600 text-white text-[11px] font-bold flex items-center justify-center">
-                              {ticket.unreadCount}
+              <>
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+                  {carregandoLista ? (
+                    <div className="flex justify-center py-10">
+                      <Loader2 className="h-5 w-5 animate-spin" style={{ color: 'var(--ck-texto-3)' }} />
+                    </div>
+                  ) : tickets.length === 0 ? (
+                    <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
+                      <span className="sp-ajuda-icone" style={{ width: 48, height: 48, borderRadius: 16 }} aria-hidden>
+                        <MessageCircle className="h-6 w-6" />
+                      </span>
+                      <p className="mt-2 font-semibold">Nenhum chamado ainda</p>
+                      <p className="text-sm" style={{ color: 'var(--ck-texto-2)' }}>
+                        Travou em algo? Abra um chamado — respondemos por aqui e por e-mail.
+                      </p>
+                    </div>
+                  ) : (
+                    <ul className="sp-lista py-1">
+                      {tickets.map((ticket) => (
+                        <li key={String(ticket._id)}>
+                          <button type="button" className="sp-item w-full" onClick={() => abrirTicket(String(ticket._id))}>
+                            <span className="sp-ajuda-icone" aria-hidden>
+                              <MessageCircle className="h-4 w-4" />
                             </span>
-                          )}
-                        </div>
-                      </Card>
-                    )
-                  })
-                )}
-              </div>
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-baseline justify-between gap-2">
+                                <span className="truncate text-[15px] font-semibold">{ticket.title}</span>
+                                <span className="shrink-0 text-[11px]" style={{ color: 'var(--ck-texto-3)' }}>
+                                  {tempoRelativo(ticket.updatedAt)}
+                                </span>
+                              </span>
+                              <span className="mt-0.5 block truncate text-[13px]" style={{ color: 'var(--ck-texto-2)' }}>
+                                {ticket.lastMessage?.senderRole === 'admin' ? 'Suporte: ' : ''}
+                                {previaDaMensagem(ticket.lastMessage?.text, 70) || 'Sem mensagens'}
+                              </span>
+                              <span className="mt-1 flex items-center justify-between gap-2">
+                                <span className="sp-status" data-status={ticket.status}>
+                                  {TICKET_STATUS_LABEL[ticket.status]} · #{protocoloDoTicket(ticket._id)}
+                                </span>
+                                {ticket.unreadCount > 0 && <span className="sp-contador">{ticket.unreadCount}</span>}
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div className="border-t p-3" style={{ borderColor: 'var(--ck-sep)' }}>
+                  <button onClick={() => { setErro(''); setEstado('novo') }} className="ck-cta ck-cta-verde ck-cta-largo" style={{ height: 46 }}>
+                    <Plus className="h-4 w-4" /> Novo chamado
+                  </button>
+                </div>
+              </>
             )}
           </div>
-
-          {estado === 'lista' && (
-            <div className="p-3 border-t">
-              <Button onClick={() => { setErro(''); setEstado('novo') }} className="w-full">
-                Novo ticket
-              </Button>
-            </div>
-          )}
         </div>
       )}
     </>
-  )
-}
-
-function Mensagem({ msg, souEu }: { msg: TicketMessage; souEu: boolean }) {
-  const doSistema = ehMensagemDoSistema(msg)
-
-  if (doSistema) {
-    return (
-      <div className="flex justify-center">
-        <p className="max-w-[85%] rounded-lg bg-muted px-3 py-1.5 text-center text-[11px] italic text-muted-foreground">
-          {msg.text}
-        </p>
-      </div>
-    )
-  }
-
-  return (
-    <div className={`flex ${souEu ? 'justify-end' : 'justify-start'}`}>
-      <div
-        className={`max-w-[85%] rounded-lg p-3 ${
-          souEu ? 'bg-primary text-primary-foreground' : 'bg-muted'
-        }`}
-      >
-        {!souEu && msg.senderRole === 'admin' && (
-          <p className="text-xs font-semibold mb-1 opacity-70">{msg.senderName} • Suporte</p>
-        )}
-        <p className="text-sm whitespace-pre-wrap break-words">{msg.text}</p>
-        <div className="flex items-center gap-1 justify-end mt-1">
-          <span className="text-[11px] opacity-70">
-            {new Date(msg.sentAt).toLocaleTimeString('pt-BR', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
-          {souEu && (
-            <CheckCheck
-              className={`h-3 w-3 ${msg.readAt ? 'text-blue-300' : 'opacity-50'}`}
-              aria-label={msg.readAt ? 'Lida' : 'Enviada'}
-            />
-          )}
-        </div>
-      </div>
-    </div>
   )
 }
