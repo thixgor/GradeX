@@ -724,3 +724,76 @@ html[data-da-menu='aberto'] .lp-doca {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ── Prova social de primeira dobra ─────────────────────────────────────
+   Uma cápsula só sob o botão: retratos, média, total e uma frase real que
+   troca devagar. No celular a frase desce para a segunda linha. */
+.lp-prova-reserva { height: 52px; margin-top: 22px; }
+
+.lp-prova {
+  display: inline-flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  margin-top: 22px;
+  padding: 8px 18px 8px 10px;
+  border-radius: 26px;
+  animation: lp-entra 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.lp-prova-resumo { display: inline-flex; align-items: center; gap: 10px; }
+
+.lp-retrato {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  width: 30px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(165deg, var(--chip-a), var(--chip-b));
+  box-shadow: 0 0 0 2px rgb(var(--da-panel));
+}
+
+.lp-prova-fio {
+  width: 1px;
+  height: 22px;
+  background: var(--lp-fio);
+}
+
+.lp-prova-frase {
+  max-width: 34rem;
+  font-size: 14.5px;
+  line-height: 1.35;
+  text-align: left;
+  color: rgb(var(--da-paper));
+  animation: lp-frase 520ms ease both;
+}
+
+@keyframes lp-frase {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 767px) {
+  .lp-prova { padding: 10px 14px; }
+  .lp-prova-fio { display: none; }
+  .lp-prova-frase { flex-basis: 100%; text-align: center; }
+}
+
+/* Cartão translúcido SEM desfoque: os da faixa de avaliações andam o tempo
+   todo, e um backdrop-filter em cada um refaria o desfoque a cada quadro. */
+.lp-cartao {
+  border-radius: 20px;
+  background: var(--lp-vidro-forte);
+  box-shadow: inset 0 1px 0 var(--lp-brilho), inset 0 0 0 1px var(--lp-borda), 0 0 0 1px var(--lp-contorno), 0 14px 28px -20px var(--lp-sombra);
+}
+
+/* Os véus das pontas da esteira têm cor sólida (a do fundo antigo); sobre a
+   aurora eles viravam retângulos claros. A esteira já corre de borda a borda
+   da tela, então os cartões simplesmente saem por ela. */
+.da-landing .da-rail-fade { display: none; }

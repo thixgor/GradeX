@@ -10,6 +10,7 @@ import { estiloDoChip } from '@/components/sidebar-cores'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LiteModeToggle } from '@/components/lite-mode-toggle'
 import { useLiteMode } from '@/hooks/use-lite-mode'
+import { useIntervaloVisivel } from '@/hooks/use-intervalo-visivel'
 // Os ícones do menu são os mesmos de lib/sidebar-icons.ts — a barra lateral da
 // demonstração é a barra lateral do produto, não um desenho parecido.
 import {
@@ -1869,19 +1870,23 @@ export default function LandingPage({ precoPlus = null }: { precoPlus?: PrecoDoP
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
       {/* A ordem é a de um pitch (Pitchcraft, Hook → Context → Proposal →
           Evidence → Ask), contada como mudança (persuasion-pitch):
-            gancho     o problema nomeado + o produto jogável (Hero)
+            gancho     o problema nomeado + o produto jogável + a cápsula de
+                       prova social (Hero) e, logo abaixo, a faixa de avaliações
             contexto   o estudo espalhado se juntando numa placa (EspalhadoJunto)
+            evidência  os depoimentos em vídeo
             proposta   as ferramentas e o ciclo de estudo (ProductsExplorer, HowItWorks)
-            evidência  quem usa e as notas reais; e a prova na mão (depoimentos,
-                       avaliações, 10 questões sem cadastro)
-            pedido     planos com preço, objeções e o fecho.
+            pedido     10 questões sem cadastro, planos com preço, objeções, fecho.
+          A evidência veio para cima de propósito: quem chega de um anúncio não
+          conhece a marca, e "outros alunos usam e aprovam" responde antes de
+          qualquer argumento. No topo ela ocupa uma linha só; a parede de
+          avaliações fica logo abaixo da dobra, sem manchete.
           Cada seção diz uma coisa em uma frase; o detalhe fica fechado. */}
-      <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} summary={showcase?.summary} />
+      <Hero signupHref={signupHref} isLoggedIn={isLoggedIn} showcase={showcase} />
+      <PlatformReviews data={showcase} />
       <EspalhadoJunto signupHref={signupHref} />
+      <Testimonials />
       <ProductsExplorer />
       <HowItWorks />
-      <Testimonials />
-      <PlatformReviews data={showcase} />
       <SampleBand />
       <Plans precoPlus={precoPlus} />
       <FaqAndCTA signupHref={signupHref} isLoggedIn={isLoggedIn} />
@@ -2034,13 +2039,12 @@ function Nav({ signupHref, isLoggedIn }: { signupHref: string; isLoggedIn: boole
 function Hero({
   signupHref,
   isLoggedIn,
-  summary,
+  showcase,
 }: {
   signupHref: string
   isLoggedIn: boolean
-  summary?: ReviewsSummary
+  showcase: ShowcaseData | null
 }) {
-  const hasRating = !!summary && summary.count >= 3 && summary.avg > 0
   return (
     <section id="top" className="lp-heroi">
       {/* GANCHO (Pitchcraft, parte 1). A manchete fica: nomeia um problema real
@@ -2072,20 +2076,7 @@ function Hero({
         {/* O custo da ação, dito onde a ação está: é o que a tela de entrar
             entrega ("Sua conta grátis em 10 segundos"). */}
         <p className="lp-microcopia">Conta grátis em 10 segundos com o Google · sem cartão</p>
-        {/* Nota real, calculada sobre as avaliações dos materiais. Só entra
-            com amostra mínima — número inventado no hero é o jeito mais
-            rápido de perder a confiança do visitante. */}
-        {hasRating && (
-          <div className="lp-vidro mt-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-full px-4 py-2">
-            <Stars value={summary!.avg} />
-            <span className="font-da-display text-sm font-semibold">
-              {summary!.avg.toFixed(1).replace('.', ',')}
-            </span>
-            <span className="text-[13px] text-da-muted">
-              {summary!.count} avaliações de quem já estuda aqui
-            </span>
-          </div>
-        )}
+        <ProvaDoHeroi data={showcase} />
       </div>
 
       <div className="lp-entra lp-entra-2 relative mx-auto mt-12 max-w-[1100px] px-3 md:mt-16 md:px-8">
@@ -2115,6 +2106,91 @@ function Hero({
         </dl>
       </div>
     </section>
+  )
+}
+
+/**
+ * A prova social na primeira dobra, numa linha só.
+ *
+ * Quem chega de um anúncio pergunta primeiro "isso funciona pra gente como
+ * eu?", e a resposta mais rápida é outro aluno dizendo que funciona. Mas o
+ * topo é da promessa e do botão: por isso aqui cabe UMA cápsula — iniciais
+ * de quem avaliou, a média, o total e uma frase real que troca devagar. A
+ * parede de avaliações vem logo abaixo, para quem quiser ler mais.
+ *
+ * Tudo vem de /api/reviews/showcase (as avaliações dos materiais, escritas
+ * dentro da plataforma). Abaixo de 3 avaliações a cápsula não aparece: número
+ * pequeno não prova nada, e número inventado destrói o resto da página.
+ * Enquanto carrega, a altura fica reservada — a cápsula não empurra o
+ * aparelho quando chega.
+ */
+const CORES_DOS_RETRATOS = ['bancoQuestoes', 'provas', 'flashcards']
+
+function ProvaDoHeroi({ data }: { data: ShowcaseData | null }) {
+  const [indice, setIndice] = useState(0)
+  const [pausada, setPausada] = useState(false)
+  const [calmo, setCalmo] = useState(false)
+
+  useEffect(() => {
+    setCalmo(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  }, [])
+
+  // As frases que cabem numa linha: nota alta, comentário curto o bastante
+  // para ser lido de relance; verificadas e destacadas primeiro.
+  const frases = (data?.reviews ?? [])
+    .filter((r) => r.rating >= 4 && r.comment && r.comment.trim().length >= 24 && r.comment.trim().length <= 120)
+    .sort((a, b) => Number(b.isVerified) + Number(b.isFeatured) - (Number(a.isVerified) + Number(a.isFeatured)))
+    .slice(0, 6)
+
+  const trocar = useCallback(() => setIndice((i) => i + 1), [])
+  useIntervaloVisivel(trocar, frases.length > 1 && !pausada && !calmo ? 5500 : null)
+
+  if (data === null) return <div className="lp-prova-reserva" aria-hidden />
+  const { summary, reviews } = data
+  if (summary.count < 3 || summary.avg <= 0) return null
+
+  const retratos = Array.from(
+    new Map(reviews.filter((r) => r.displayName).map((r) => [r.displayName.charAt(0).toUpperCase(), r])).keys(),
+  ).slice(0, 3)
+  const frase = frases.length > 0 ? frases[indice % frases.length] : null
+  const primeiroNome = frase ? frase.displayName.split(' ')[0] : ''
+
+  return (
+    <div
+      className="lp-prova lp-vidro"
+      onMouseEnter={() => setPausada(true)}
+      onMouseLeave={() => setPausada(false)}
+    >
+      <span className="lp-prova-resumo">
+        {retratos.length > 0 && (
+          <span className="flex -space-x-2" aria-hidden>
+            {retratos.map((letra, k) => (
+              <span key={letra} className="lp-retrato" style={estiloDoChip(CORES_DOS_RETRATOS[k % 3])}>
+                {letra}
+              </span>
+            ))}
+          </span>
+        )}
+        <span className="flex items-center gap-1.5">
+          <Stars value={summary.avg} className="h-3.5 w-3.5" />
+          <strong className="font-da-display text-[15px] font-semibold">{summary.avg.toFixed(1).replace('.', ',')}</strong>
+        </span>
+        <span className="whitespace-nowrap text-[13.5px] text-da-muted">
+          {summary.count} {summary.count === 1 ? 'avaliação' : 'avaliações'}
+          <span className="hidden sm:inline"> de alunos</span>
+        </span>
+      </span>
+      {frase && (
+        <>
+          <span className="lp-prova-fio" aria-hidden />
+          {/* `key` refaz a entrada a cada troca; o leitor de tela ouve só a
+              frase atual, sem anúncio a cada 5 s (não é região viva). */}
+          <span key={frase._id} className="lp-prova-frase">
+            “{frase.comment.trim()}” <span className="text-da-muted">— {primeiroNome}</span>
+          </span>
+        </>
+      )}
+    </div>
   )
 }
 
@@ -3216,13 +3292,12 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
       />
       <div className="relative mx-auto max-w-7xl px-5 py-14 md:px-8 md:py-28">
         <Reveal>
-          <h2 className="max-w-3xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
-            Não acredite em mim. Escute eles.
+          <h2 className="lp-titulo max-w-3xl">
+            Não acredite em nós. <em>Escute quem usa.</em>
           </h2>
-          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-            Alunos que estavam exatamente onde você está agora — véspera de prova, material
-            espalhado, tempo curto. A frase de cada um já está no cartão; o vídeo é para quem
-            quiser ouvir da boca deles.
+          <p className="lp-apoio">
+            Alunos que estavam onde você está agora: véspera de prova, material espalhado, tempo
+            curto. A frase de cada um já está no cartão.
           </p>
         </Reveal>
       </div>
@@ -3274,29 +3349,19 @@ function TestimonialsRail({ items }: { items: Testimonial[] }) {
 
 function ReviewChip({ r }: { r: ShowcaseReview }) {
   return (
-    <article className="mr-4 flex w-[290px] shrink-0 flex-col rounded-2xl border border-[color:var(--da-neutral-line)] bg-da-ground p-5 sm:w-[330px]">
+    <article className="lp-cartao mr-3.5 flex w-[280px] shrink-0 flex-col p-4 sm:w-[310px]">
       <div className="flex items-center gap-3">
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[color:var(--da-amber-line)] bg-da-amber/10 font-da-display text-sm font-semibold text-da-amber-ink">
+        <span className="lp-retrato !h-9 !w-9 !text-[14px]" style={estiloDoChip(CORES_DOS_RETRATOS[(r.displayName || '?').charCodeAt(0) % 3])}>
           {(r.displayName || '?').charAt(0).toUpperCase()}
         </span>
         <div className="min-w-0">
-          <p className="truncate font-da-display text-sm font-semibold tracking-tight">
-            {r.displayName}
-          </p>
+          <p className="truncate text-[14.5px] font-semibold">{r.displayName}</p>
           <Stars value={r.rating} className="h-3.5 w-3.5" />
         </div>
-        {r.isVerified && (
-          <span className="ml-auto shrink-0 font-da-mono text-[10px] uppercase tracking-widest text-da-amber-soft">
-            Verificado
-          </span>
-        )}
+        {r.isVerified && <span className="lp-selo ml-auto shrink-0 !text-[11px]">Verificado</span>}
       </div>
-      <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-da-muted">{r.comment}</p>
-      {r.sourceTitle && (
-        <p className="mt-4 truncate border-t border-[color:var(--da-neutral-line)] pt-3 font-da-mono text-[10px] uppercase tracking-widest text-da-muted">
-          {r.sourceTitle}
-        </p>
-      )}
+      <p className="mt-3 line-clamp-3 text-[14px] leading-relaxed text-da-muted">{r.comment}</p>
+      {r.sourceTitle && <p className="mt-3 truncate text-[12px] text-da-muted/80">sobre {r.sourceTitle}</p>}
     </article>
   )
 }
@@ -3311,85 +3376,31 @@ function PlatformReviews({ data }: { data: ShowcaseData | null }) {
   const railsRef = useOffscreenPause<HTMLDivElement>()
   if (!data || data.reviews.length === 0) return null
 
-  const { reviews, summary } = data
-  // Com poucas avaliações a esteira dá volta rápido demais e fica óbvio que é
-  // a mesma coisa repetindo — nesse caso vira uma faixa estática.
-  const animate = reviews.length >= 6
-  // Teto de cartões por fileira. Com muitas avaliações a esteira chegava a
-  // ~40 cartões por fileira (× 2 cópias × 2 fileiras): DOM enorme dentro de
-  // uma camada animada sem parar, que é justamente o que faz a home arrastar
-  // no celular. Ninguém lê a 30ª avaliação de uma faixa que passa sozinha.
-  const MAX_POR_FILEIRA = 10
-  const half = Math.ceil(reviews.length / 2)
-  const rows = [
-    reviews.slice(0, half).slice(0, MAX_POR_FILEIRA),
-    reviews.slice(half).slice(0, MAX_POR_FILEIRA),
-  ]
-  // O keyframe anda -50% do track, então o conteúdo precisa estar duplicado um
-  // número PAR de vezes para o loop fechar sem salto. Em fileira curta, duas
-  // cópias podem não cobrir a largura de um monitor grande e apareceria um
-  // vazio no fim da volta — daí quatro.
-  const repeat = (row: ShowcaseReview[]) => (row.length < 6 ? 4 : 2)
+  // Uma fileira só, logo abaixo do herói, sem manchete: é a continuação da
+  // cápsula de prova, não uma seção nova pedindo atenção. Quem quer ler para;
+  // quem não quer, rola.
+  const fila = data.reviews.slice(0, 14)
+  const animate = fila.length >= 6
+  const copias = fila.length < 8 ? 3 : 2
+  const segundos = Math.max(40, fila.length * copias * 4.5)
 
   return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-5 pb-8 pt-14 md:px-8 md:pb-12 md:pt-24">
-        <Reveal>
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="max-w-2xl font-da-display text-[2rem] font-semibold leading-[1.05] tracking-tighter md:text-5xl">
-                Cada material daqui tem nota. Todas estão aqui.
-              </h2>
-              <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-da-muted md:mt-5 md:text-lg">
-                Nada de depoimento escolhido a dedo: o que passa abaixo é o que os alunos
-                escreveram dentro da plataforma, sobre os materiais que compraram.
-              </p>
-            </div>
-            {summary.count > 0 && (
-              <div className="shrink-0 rounded-2xl border border-[color:var(--da-amber-line)] bg-da-ground px-6 py-5">
-                <div className="flex items-end gap-2">
-                  <span className="font-da-display text-4xl font-semibold tracking-tighter text-da-amber-ink">
-                    {summary.avg.toFixed(1).replace('.', ',')}
-                  </span>
-                  <span className="pb-1 font-da-mono text-xs text-da-muted">/ 5</span>
-                </div>
-                <Stars value={summary.avg} className="mt-2 h-4 w-4" />
-                <p className="mt-2 font-da-mono text-[11px] text-da-muted">
-                  {summary.count} {summary.count === 1 ? 'avaliação' : 'avaliações'} na plataforma
-                </p>
-              </div>
-            )}
-          </div>
-        </Reveal>
-      </div>
-
-      {/* As pontas são apagadas por dois véus de gradiente sobre a faixa (ver
-          `.da-rail-fade`). Antes era `mask-image` no contêiner: máscara em cima
-          de conteúdo que anima obriga o navegador a recompor a camada inteira a
-          cada quadro — caro no celular, e o resultado visual é o mesmo. */}
-      <div ref={railsRef} className="relative pb-14 md:pb-24">
+    <section aria-label="Avaliações de alunos" className="relative pb-4 pt-10 md:pt-14">
+      <p className="mx-auto max-w-[1100px] px-5 text-center text-[14px] text-da-muted md:px-8">
+        O que os alunos escreveram dentro da plataforma, sobre os materiais que usam
+      </p>
+      <div ref={railsRef} className="relative mt-5">
         {animate ? (
-          rows.map((row, rowIndex) => {
-            const copies = repeat(row)
-            // A volta percorre metade do track: velocidade constante = duração
-            // proporcional ao número de cards atravessados nessa metade.
-            const seconds = Math.max(28, ((row.length * copies) / 2) * 9)
-            return (
-              <div key={rowIndex} className="da-rail-wrap overflow-hidden py-2">
-                <div
-                  className={'da-rail' + (rowIndex % 2 === 1 ? ' da-rail-reverse' : '')}
-                  style={{ '--da-rail-duration': `${seconds}s` } as CSSProperties}
-                >
-                  {Array.from({ length: copies }).flatMap((_, c) =>
-                    row.map((r) => <ReviewChip key={`${r._id}-${c}`} r={r} />),
-                  )}
-                </div>
-              </div>
-            )
-          })
+          <div className="da-rail-wrap overflow-hidden py-3">
+            <div className="da-rail" style={{ '--da-rail-duration': `${segundos}s` } as CSSProperties}>
+              {Array.from({ length: copias }).flatMap((_, c) =>
+                fila.map((r) => <ReviewChip key={`${r._id}-${c}`} r={r} />),
+              )}
+            </div>
+          </div>
         ) : (
-          <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-y-4 px-5 md:px-8">
-            {reviews.map((r) => (
+          <div className="mx-auto flex max-w-[1100px] flex-wrap justify-center gap-y-4 px-5 md:px-8">
+            {fila.map((r) => (
               <ReviewChip key={r._id} r={r} />
             ))}
           </div>
