@@ -8,10 +8,11 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /**
- * Varredura do XP de hora em hora (ver `lib/xp/varredura.ts`): calcula quem
- * tem histórico e ainda não tem XP, e refaz os retratos com mais de 6 h. Para
- * em 45 s; o próximo disparo — ou a próxima pessoa que abrir o ranking —
- * continua de onde parou.
+ * Varredura do XP, uma vez por dia às 4h23 de Brasília (ver
+ * `lib/xp/varredura.ts`): calcula quem tem histórico e ainda não tem XP, e
+ * refaz os retratos com mais de 24 h. Para em 45 s — o teto de custo é esse,
+ * 45 s de função por dia. O retroativo inicial não espera por ela: abrir o
+ * ranking já dispara a varredura enquanto houver gente sem XP calculado.
  */
 export async function GET(request: NextRequest) {
   if (!isCronAuthorized(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

@@ -223,7 +223,7 @@
     },
     {
       "path": "/api/cron/xp",
-      "schedule": "23 * * * *"
+      "schedule": "23 7 * * *"
     }
   ],
   "redirects": [

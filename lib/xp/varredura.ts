@@ -19,8 +19,14 @@ import { EVENTOS_COM_XP } from './extrato'
  */
 
 const COLECAO_ESTADO = 'xp_varredura'
-/** Retrato com mais de 6 h é refeito pela varredura (quem visita o site se refaz sozinho). */
-const IDADE_MAXIMA_MS = 6 * 60 * 60 * 1000
+/**
+ * Retrato com mais de 24 h é refeito pela varredura. Mais que isso é gasto à
+ * toa: o XP só muda quando a pessoa estuda, e quem estuda está no site — o
+ * `/api/xp/eu` já refaz o retrato dela. A varredura existe para quem nunca foi
+ * calculado (o retroativo) e para as raras mudanças sem visita (a nota de uma
+ * prova liberada depois).
+ */
+const IDADE_MAXIMA_MS = 24 * 60 * 60 * 1000
 const SIMULTANEOS = 6
 
 interface Estado {
