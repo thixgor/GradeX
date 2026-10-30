@@ -74,7 +74,10 @@ export default function AdminDomPage() {
         <h1 className="flex items-center gap-2 text-2xl font-bold">
           <Sparkles className="h-6 w-6 text-orange-500" /> Dom — assistente de IA
         </h1>
-        <Button variant="outline" size="sm" className="ml-auto" onClick={() => void carregar()} disabled={carregando}>
+        <Button asChild variant="outline" size="sm" className="ml-auto">
+          <Link href="/admin/dom/conversas">Histórico de conversas</Link>
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => void carregar()} disabled={carregando}>
           <RefreshCw className={`mr-2 h-4 w-4 ${carregando ? 'animate-spin' : ''}`} /> Atualizar
         </Button>
       </div>
@@ -126,11 +129,16 @@ export default function AdminDomPage() {
                     Casou: <code>{i.trecho}</code>
                     {i.rota ? ` · página ${i.rota}` : ''}
                   </p>
-                  {!i.resolvido && (
-                    <Button variant="ghost" size="sm" className="mt-1" onClick={() => void agir({ acao: 'resolver', id: i.id })}>
-                      Marcar como visto
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href={`/admin/dom/conversas?q=${encodeURIComponent(i.userId)}`}>Ver conversas da pessoa</Link>
                     </Button>
-                  )}
+                    {!i.resolvido && (
+                      <Button variant="ghost" size="sm" onClick={() => void agir({ acao: 'resolver', id: i.id })}>
+                        Marcar como visto
+                      </Button>
+                    )}
+                  </div>
                 </div>
               ))}
             </CardContent>
@@ -147,7 +155,10 @@ export default function AdminDomPage() {
                   {dados.topo.map((t) => (
                     <li key={t.userId} className="flex items-center gap-2 py-2">
                       <span className="min-w-0 flex-1 truncate">
-                        {t.nome || t.userId} <span className="text-muted-foreground">{t.email}</span>
+                        <Link href={`/admin/dom/conversas?q=${encodeURIComponent(t.userId)}`} className="hover:underline">
+                          {t.nome || t.userId}
+                        </Link>{' '}
+                        <span className="text-muted-foreground">{t.email}</span>
                       </span>
                       <span className="tabular-nums">{t.mensagens} msg</span>
                       <span className="w-24 text-right tabular-nums text-muted-foreground">{n(t.tokens)} tok</span>

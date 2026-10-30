@@ -360,6 +360,10 @@ export function DomAssistente({
         .filter((m) => !m.tom)
         .slice(-MAX_HISTORICO)
         .map((m) => ({ papel: m.papel, texto: m.texto, assinatura: m.assinatura }))
+      // A conversa ganha id já na primeira mensagem: o servidor guarda o
+      // histórico por ele (o mesmo do arquivo do aparelho).
+      const conversaId = idAtual[modoAtual] || novoIdDeConversa()
+      if (!idAtual[modoAtual]) setIdAtual((a) => ({ ...a, [modoAtual]: conversaId }))
       acrescentar(modoAtual, { id: novoId(), papel: 'aluno', texto: limpo })
       setTexto('')
       if (entradaRef.current) entradaRef.current.style.height = 'auto'
@@ -385,6 +389,7 @@ export function DomAssistente({
           body: JSON.stringify({
             modo: modoAtual,
             mensagem: limpo,
+            conversaId,
             historico,
             contexto: { rota, materialId: material?.id, pagina: material?.pagina ?? undefined, tema },
           }),
@@ -440,7 +445,7 @@ export function DomAssistente({
         abortRef.current = null
       }
     },
-    [acrescentar, carregando, conversas, dizerMomento, material, modo, rota, socratico.tema, status?.liberado],
+    [acrescentar, carregando, conversas, dizerMomento, idAtual, material, modo, rota, socratico.tema, status?.liberado],
   )
 
   const irPara = useCallback(
@@ -879,6 +884,9 @@ function Historico({
           </div>
         ))}
       </div>
+      <p className="dom-historico__aviso">
+        Apagar tira a conversa só deste aparelho. A DomineAqui guarda as suas 25 conversas mais recentes para segurança e qualidade do Dom.
+      </p>
     </div>
   )
 }

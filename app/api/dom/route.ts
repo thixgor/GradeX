@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { randomBytes } from 'crypto'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
@@ -25,6 +25,7 @@ import { DomIndisponivel, perguntarAoModelo, type TurnoDoModelo } from '@/lib/do
 import { fontesDaBusca, fontesDasReferencias } from '@/lib/dom/fontes'
 import { cursoValido } from '@/lib/dom/temas'
 import { temaPorId } from '@/lib/dom/temas-servidor'
+import { idDeConversaValido, registrarTroca } from '@/lib/dom/historico'
 import { falaDePreco, materiaisComoDestinos, materiaisDaMensagem, precosAtuais } from '@/lib/dom/catalogo'
 import { conteudoDaBusca, pedeRecomendacao, sugestoesDeCompra } from '@/lib/dom/descobertas'
 
@@ -79,6 +80,7 @@ export async function POST(request: NextRequest) {
   if (!mensagem) return erro(400, { error: 'Escreva alguma coisa para o Dom.' })
   const ctx = corpo?.contexto && typeof corpo.contexto === 'object' ? corpo.contexto : {}
   const rota = hrefInternoSeguro(ctx.rota)?.split('?')[0] || undefined
+  const conversaId = idDeConversaValido(corpo?.conversaId)
 
   const db = await getDb()
   void garantirIndicesDoDom(db)
@@ -144,6 +146,9 @@ export async function POST(request: NextRequest) {
     const texto = suspendeu
       ? `Vou dar uma pausa nas nossas conversas por hoje, ${usuario.primeiroNome || 'tá'}. Amanhã a gente volta a estudar juntinhos!`
       : respostaParaAtaque(ataque, usuario.primeiroNome)
+    after(() =>
+      registrarTroca(db, { userId: usuario.id, nome: usuario.nome, email: usuario.email, conversaId, modo, aluno: mensagem, dom: texto, motor: 'local', alerta: ataque.tipo, rota }),
+    )
     const resposta: RespostaDoDom = {
       texto,
       humor: 'preocupado',
@@ -255,7 +260,8 @@ export async function POST(request: NextRequest) {
     return erro(503, { error: 'Fiquei sem palavras… Pode perguntar de novo?', motivo: 'vazio' })
   }
 
-  if (saidaVazou(texto, canario)) {
+  const vazou = saidaVazou(texto, canario)
+  if (vazou) {
     void registrarIncidente(db, {
       userId: usuario.id,
       nome: usuario.nome,
@@ -278,6 +284,23 @@ export async function POST(request: NextRequest) {
   const progresso = Math.max(0, Math.min(100, Math.round(Number(j.progresso) || 0)))
 
   registrarUso(db, usuario.id, { motor: resultado.motor, entrada: resultado.entrada, saida: resultado.saida })
+  // Histórico para o admin, gravado depois que a resposta sai.
+  after(() =>
+    registrarTroca(db, {
+      userId: usuario.id,
+      nome: usuario.nome,
+      email: usuario.email,
+      conversaId,
+      modo,
+      tema: tema?.titulo || null,
+      aluno: mensagem,
+      dom: texto,
+      motor: resultado.motor,
+      alerta: vazou ? 'vazamento-de-prompt' : null,
+      rota,
+      materialId: materialId || undefined,
+    }),
+  )
 
   const resposta: RespostaDoDom = {
     texto,

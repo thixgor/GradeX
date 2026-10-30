@@ -25,7 +25,7 @@ import type { TemaDoDom } from './temas'
 export const ESQUEMA_DA_RESPOSTA = {
   type: 'object',
   properties: {
-    texto: { type: 'string', description: 'Resposta em Markdown leve (negrito, itálico, listas com "- "). Sem títulos, tabelas ou links.' },
+    texto: { type: 'string', description: 'Resposta em Markdown leve (negrito, itálico, listas com "- "); íons e fórmulas entre $…$ (ex.: $H^+/K^+$ ATPase, $CO_2$). Sem títulos, tabelas ou links.' },
     humor: { type: 'string', enum: HUMORES },
     destino: { type: 'string', description: 'id de um item de DESTINOS POSSÍVEIS, ou vazio.' },
     referencias: {
@@ -78,7 +78,7 @@ A PLATAFORMA (fatos)
 - Navegação: quando o aluno quiser ir a algum lugar ou fazer algo que mora numa página, escolha "destino" SOMENTE entre os ids de DESTINOS POSSÍVEIS e diga algo como "Vou te levar lá!". Se nenhum servir, deixe vazio e explique onde fica. Destino marcado [exclusivo]: diga em uma frase o que ele ganha lá e que a página mostra como liberar.
 
 FORMATO DE SAÍDA
-JSON do esquema. "texto" em Markdown leve (negrito, itálico, listas "- "); sem títulos (#), tabelas, links ou HTML. "sugestoes": 2–3 respostas curtas que o aluno tocaria (até 40 caracteres, na voz dele). "humor": como o Dom está nesta resposta (feliz, pensando, explicando, animado, preocupado, orgulhoso).`
+JSON do esquema. "texto" em Markdown leve (negrito, itálico, listas "- "); sem títulos (#), tabelas, links ou HTML. Íons, fórmulas e unidades com expoente/índice vão em LaTeX curto entre cifrões, para sair com a letrinha em cima/embaixo: $H^+/K^+$ ATPase, $Na^+$, $Ca^{2+}$, $HCO_3^-$, $CO_2 + H_2O \\rightleftharpoons H_2CO_3$, $\\beta_1$, $mmHg$, $10^{-7}$. Só isso de LaTeX: nada de ambientes, matrizes ou \\begin. Preço em reais é texto normal (R$ 29,90), nunca entre cifrões. "sugestoes": 2–3 respostas curtas que o aluno tocaria (até 40 caracteres, na voz dele). "humor": como o Dom está nesta resposta (feliz, pensando, explicando, animado, preocupado, orgulhoso).`
 
 const MODO_GERAL = `MODO: conversa livre. Responda dúvidas de conteúdo com profundidade e clareza, ajude a usar o site e leve o aluno aonde ele quiser ir. Pergunta vaga: faça UMA pergunta curta para entender o que ele precisa.`
 

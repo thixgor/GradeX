@@ -64,8 +64,19 @@ retoma o contexto.
 ## Conversas
 
 Até 25 conversas por conta, no próprio aparelho (`localStorage`,
-`components/dom/arquivo-de-conversas.ts`); a 26ª apaga a mais antiga. Nada vai
-para o banco.
+`components/dom/arquivo-de-conversas.ts`); a 26ª apaga a mais antiga.
+
+Cópia da equipe no servidor (`lib/dom/historico.ts`, coleção `dom_conversas`):
+as 25 conversas mais recentes de cada pessoa, até 40 falas cada, gravadas
+depois da resposta sair (`after`). O admin vê tudo em **/admin/dom/conversas**
+(busca por nome, e-mail, título ou id; filtro por modo e por alerta). Apagar no
+aparelho não apaga a cópia da equipe — a gaveta de conversas avisa o aluno.
+
+## Fórmulas
+
+`$H^+/K^+$`, `$CO_2$`, `\ce{HCO3^-}`, setas e letras gregas viram sup/sub e
+Unicode em `components/dom/matematica.tsx` (sem KaTeX). O prompt pede esse
+formato; "R$ 29,90" não é confundido com fórmula.
 
 **Silenciar**: o Dom fala `desabilitado.mp3` e fica com fita na boca em todo
 lugar onde aparece, até religar o som.

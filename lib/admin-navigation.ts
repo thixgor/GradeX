@@ -1,5 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import {
+  MessagesSquare,
   BadgeDollarSign,
   BadgePercent,
   BarChart3,
@@ -433,6 +434,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Sparkles,
     group: 'operacao',
     keywords: ['dom', 'ia', 'assistente', 'gemini', 'exploit', 'jailbreak', 'seguranca', 'tokens', 'cota'],
+  },
+  {
+    title: 'Histórico de IA',
+    description: 'Conversas de todos os usuários com o Dom (as 25 mais recentes de cada pessoa), com busca e alertas.',
+    href: '/admin/dom/conversas',
+    icon: MessagesSquare,
+    group: 'operacao',
+    keywords: ['historico', 'conversas', 'chat', 'dom', 'ia', 'mensagens', 'usuarios'],
   },
   {
     title: 'Anúncios',

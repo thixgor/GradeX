@@ -24,6 +24,8 @@ import { hojeEmSaoPaulo } from '@/lib/xp/regras'
 import { INCIDENTES_PARA_SUSPENDER, LIMITES_DO_DOM, SUSPENSAO_MS, type ModoDoDom } from './config'
 import type { Ataque } from './guarda'
 
+import { COLECAO_CONVERSAS } from './historico'
+
 export const COLECAO_USO = 'dom_uso'
 export const COLECAO_GLOBAL = 'dom_global'
 export const COLECAO_INCIDENTES = 'dom_incidentes'
@@ -45,6 +47,10 @@ export async function garantirIndicesDoDom(db: Db): Promise<void> {
       db.collection(COLECAO_INCIDENTES).createIndex({ createdAt: -1 }),
       db.collection(COLECAO_INCIDENTES).createIndex({ userId: 1, createdAt: -1 }),
       db.collection(COLECAO_INCIDENTES).createIndex({ createdAt: 1 }, { expireAfterSeconds: DIAS_GUARDADOS_INCIDENTES * 86_400 }),
+      // Histórico das conversas (lib/dom/historico.ts): uma por (pessoa, conversa).
+      db.collection(COLECAO_CONVERSAS).createIndex({ userId: 1, conversaId: 1 }, { unique: true }),
+      db.collection(COLECAO_CONVERSAS).createIndex({ userId: 1, atualizadaEm: -1 }),
+      db.collection(COLECAO_CONVERSAS).createIndex({ atualizadaEm: -1 }),
     ])
   } catch (erro) {
     indicesGarantidos = false

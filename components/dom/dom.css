@@ -1847,3 +1847,19 @@
   .dom-escada li { animation-duration: 1ms !important; }
   .dom-conversa { scroll-behavior: auto; }
 }
+
+/* Fórmulas nas respostas ($H^+/K^+$): sup/sub sem abrir a entrelinha. */
+.dom-formula { font-variant-numeric: lining-nums; }
+.dom-formula sup,
+.dom-formula sub { font-size: 0.72em; line-height: 0; position: relative; vertical-align: baseline; }
+.dom-formula sup { top: -0.5em; }
+.dom-formula sub { bottom: -0.25em; }
+
+.dom-historico__aviso {
+  margin: 0;
+  padding: 0.55rem 1rem 0.75rem;
+  border-top: 1px solid var(--dom-borda);
+  font-size: 0.66rem;
+  line-height: 1.35;
+  color: var(--dom-texto-3);
+}
