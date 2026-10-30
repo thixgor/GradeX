@@ -24,6 +24,8 @@ import { montarPromptDoSistema } from '@/lib/dom/prompt'
 import { DomIndisponivel, perguntarAoModelo, type TurnoDoModelo } from '@/lib/dom/modelo'
 import { fontesDaBusca, fontesDasReferencias } from '@/lib/dom/fontes'
 import { cursoValido, temaPorId } from '@/lib/dom/temas'
+import { falaDePreco, materiaisComoDestinos, materiaisDaMensagem, precosAtuais } from '@/lib/dom/catalogo'
+import { conteudoDaBusca, pedeRecomendacao, sugestoesDeCompra } from '@/lib/dom/descobertas'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -157,11 +159,25 @@ export async function POST(request: NextRequest) {
   const pagina = Number.isInteger(ctx.pagina) && ctx.pagina > 0 && ctx.pagina < 5000 ? ctx.pagina : null
   const pagante = isPaidAccount(usuario.accountType, usuario.isAdmin)
   const querBusca = modo === 'geral' && pedeConteudoDeSaude(mensagem)
-  const [xp, material, buscar] = await Promise.all([
+  const querPrecos = modo !== 'socratico' && falaDePreco(mensagem)
+  const geral = modo === 'geral'
+  const [xp, material, buscar, materiais, precos, achados] = await Promise.all([
     xpDoAluno(db, usuario.id),
     materialId ? fichaDoMaterial(db, materialId, pagina, usuario.isAdmin).catch(() => null) : Promise.resolve(null),
     querBusca ? reservarBusca(db, usuario.id) : Promise.resolve(false),
+    modo === 'geral' ? materiaisDaMensagem(db, mensagem, usuario.isAdmin) : Promise.resolve([]),
+    querPrecos ? precosAtuais(db) : Promise.resolve([]),
+    geral ? conteudoDaBusca(db, mensagem, { userId: usuario.id, isAdmin: usuario.isAdmin }) : Promise.resolve([]),
   ])
+  // "Quem estuda isto também leva": depende do material achado acima (ou da
+  // última compra, quando o aluno pede indicação). O modelo do motor fica em
+  // memória por 30 min; aqui custa uma consulta das compras da pessoa.
+  // No leitor, só quando o aluno pede (cada pergunta sobre a página não precisa disso).
+  const pediu = pedeRecomendacao(mensagem)
+  const sementes = materialId ? (pediu ? [materialId] : []) : materiais.map((m) => m.id)
+  const sugestoes = geral || pediu
+    ? await sugestoesDeCompra(db, usuario.id, { sementes: sementes.slice(0, 2), pediu })
+    : []
 
   let tema = null as Parameters<typeof montarPromptDoSistema>[0]['tema']
   if (modo === 'socratico' && ctx.tema && typeof ctx.tema === 'object') {
@@ -177,7 +193,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const destinos = modo === 'socratico' ? [] : candidatosDeDestino(mensagem, { accountType: usuario.accountType, isAdmin: usuario.isAdmin })
+  const destinos =
+    modo === 'socratico'
+      ? []
+      : [
+          ...candidatosDeDestino(mensagem, { accountType: usuario.accountType, isAdmin: usuario.isAdmin }),
+          ...materiaisComoDestinos(materiais),
+          ...achados,
+          ...sugestoes.map((s) => s.destino),
+        ]
   const canario = `DOM-${randomBytes(6).toString('hex')}`
   const sistema = montarPromptDoSistema({
     modo,
@@ -198,6 +222,10 @@ export async function POST(request: NextRequest) {
     destinos,
     material,
     tema,
+    materiais,
+    precos,
+    achados,
+    sugestoes,
   })
 
   let resultado

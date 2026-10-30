@@ -12,6 +12,9 @@ import {
   ExternalLink,
   Flame,
   GraduationCap,
+  History,
+  MessageSquarePlus,
+  Trash2,
   Layers,
   Library,
   Maximize2,
@@ -38,6 +41,17 @@ import { EscolhaDeTema, IntroSocratica, ProgressoSocratico, type TemaEscolhido }
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
 import { bipe, definirMudo, falar, pararDeFalar, silenciarComCena, type PrioridadeDaFala } from './voz'
 import { useMudo } from './use-mudo'
+import {
+  grupoDaData,
+  gravarConversas,
+  lerConversas,
+  novoIdDeConversa,
+  removerDaLista,
+  salvarNaLista,
+  tituloDe,
+  type ConversaSalva,
+  type GrupoDeData,
+} from './arquivo-de-conversas'
 
 /**
  * O painel do Dom. Baixado só quando o aluno abre o Dom pela primeira vez
@@ -86,6 +100,8 @@ interface Guardado {
   conversas: Partial<Record<ModoDoDom, Mensagem[]>>
   socratico: EstadoSocratico
   expandido?: boolean
+  /** Qual conversa salva está aberta em cada modo. */
+  idAtual?: Partial<Record<ModoDoDom, string>>
 }
 
 const CHAVE = 'dom:conversa:v1'
@@ -160,6 +176,9 @@ export function DomAssistente({
   const [conversas, setConversas] = useState<Partial<Record<ModoDoDom, Mensagem[]>>>(() => guardado.current?.conversas || {})
   const [socratico, setSocratico] = useState<EstadoSocratico>(() => guardado.current?.socratico || SOCRATICO_INICIAL)
   const [expandido, setExpandido] = useState<boolean>(() => !!guardado.current?.expandido && telaLarga())
+  const [idAtual, setIdAtual] = useState<Partial<Record<ModoDoDom, string>>>(() => guardado.current?.idAtual || {})
+  const [arquivo, setArquivo] = useState<ConversaSalva<Mensagem, EstadoSocratico>[]>([])
+  const [verHistorico, setVerHistorico] = useState(false)
   const [status, setStatus] = useState<StatusDoDom | null>(null)
   const [texto, setTexto] = useState('')
   const [carregando, setCarregando] = useState(false)
@@ -182,8 +201,40 @@ export function DomAssistente({
   const traje = modo === 'socratico' && socratico.fase !== 'intro' ? 'socrates' : 'normal'
 
   useEffect(() => {
-    gravar(CHAVE, { modo, conversas, socratico, expandido } satisfies Guardado, 'sessao')
-  }, [modo, conversas, socratico, expandido])
+    gravar(CHAVE, { modo, conversas, socratico, expandido, idAtual } satisfies Guardado, 'sessao')
+  }, [modo, conversas, socratico, expandido, idAtual])
+
+  // Arquivo de conversas da conta (chega com o status, que traz a `conta`).
+  const conta = status?.conta || ''
+  useEffect(() => {
+    if (status?.liberado) setArquivo(lerConversas<Mensagem, EstadoSocratico>(conta))
+  }, [conta, status?.liberado])
+
+  // Toda mudança na conversa aberta é salva no arquivo (a vazia não entra).
+  useEffect(() => {
+    if (!status?.liberado) return
+    const msgs = conversas[modo] || []
+    if (!msgs.length) return
+    let id = idAtual[modo]
+    if (!id) {
+      id = novoIdDeConversa()
+      setIdAtual((a) => ({ ...a, [modo]: id }))
+    }
+    const conversa: ConversaSalva<Mensagem, EstadoSocratico> = {
+      id,
+      modo,
+      titulo: modo === 'socratico' && socratico.tema ? `Socrático: ${socratico.tema.titulo}` : tituloDe(msgs),
+      atualizadaEm: Date.now(),
+      mensagens: msgs.filter((m) => !m.tom),
+      socratico: modo === 'socratico' ? socratico : undefined,
+    }
+    setArquivo((lista) => {
+      const nova = salvarNaLista(lista, conversa)
+      gravarConversas(conta, nova)
+      return nova
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversas, socratico, modo, status?.liberado])
 
   /**
    * Mostra no balão e fala com a voz gravada do Dom (ou mexe a boca em
@@ -433,6 +484,7 @@ export function DomAssistente({
   }
 
   const escolherTema = (t: TemaEscolhido) => {
+    setIdAtual((a) => ({ ...a, socratico: novoIdDeConversa() }))
     setSocratico({ fase: 'sessao', tema: t, etapa: 'diagnostico', progresso: 0 })
     setConversas((c) => ({ ...c, socratico: [] }))
     void enviar(`Quero estudar pelo método socrático: ${t.titulo}`, { tema: t })
@@ -446,6 +498,41 @@ export function DomAssistente({
   }
 
   /** Silenciar tem cena (o Dom reclama e leva a fita); religar tira a fita e ele comemora. */
+  /** Começa do zero no modo atual; a conversa anterior fica no arquivo. */
+  const novaConversa = () => {
+    abortRef.current?.abort()
+    setVerHistorico(false)
+    setNovaId(null)
+    setIdAtual((a) => ({ ...a, [modo]: novoIdDeConversa() }))
+    setConversas((c) => ({ ...c, [modo]: [] }))
+    if (modo === 'socratico') setSocratico((s) => ({ fase: s.fase === 'intro' ? 'intro' : 'tema', etapa: null, progresso: 0 }))
+    setEstado('feliz')
+    entradaRef.current?.focus()
+  }
+
+  const abrirConversa = (c: ConversaSalva<Mensagem, EstadoSocratico>) => {
+    abortRef.current?.abort()
+    setVerHistorico(false)
+    setNovaId(null)
+    setModo(c.modo === 'material' && !material ? 'geral' : c.modo)
+    const destino = c.modo === 'material' && !material ? 'geral' : c.modo
+    setIdAtual((a) => ({ ...a, [destino]: c.id }))
+    setConversas((atual) => ({ ...atual, [destino]: c.mensagens.map((m) => ({ ...m, destinoResolvido: true })) }))
+    if (c.modo === 'socratico' && c.socratico) setSocratico({ ...c.socratico, fase: 'sessao' })
+  }
+
+  const apagarConversa = (id: string) => {
+    setArquivo((lista) => {
+      const nova = removerDaLista(lista, id)
+      gravarConversas(conta, nova)
+      return nova
+    })
+    if (idAtual[modo] === id) {
+      setIdAtual((a) => ({ ...a, [modo]: novoIdDeConversa() }))
+      setConversas((c) => ({ ...c, [modo]: [] }))
+    }
+  }
+
   const alternarMudo = () => {
     if (mudo) {
       definirMudo(false)
@@ -508,6 +595,23 @@ export function DomAssistente({
             <span>{carregando ? 'pensando…' : 'DomineAqui AI · online'}</span>
           </div>
           <div className="ml-auto flex items-center gap-0.5">
+            {liberado && (
+              <>
+                <button type="button" className="dom-icone-botao" onClick={novaConversa} aria-label="Nova conversa" title="Nova conversa">
+                  <MessageSquarePlus className="h-[18px] w-[18px]" />
+                </button>
+                <button
+                  type="button"
+                  className="dom-icone-botao"
+                  onClick={() => setVerHistorico((v) => !v)}
+                  aria-label="Conversas salvas"
+                  aria-pressed={verHistorico}
+                  title="Conversas"
+                >
+                  <History className="h-[18px] w-[18px]" />
+                </button>
+              </>
+            )}
             <button
               type="button"
               className="dom-icone-botao hidden sm:inline-flex"
@@ -536,6 +640,17 @@ export function DomAssistente({
               </button>
             ))}
           </div>
+        )}
+
+        {verHistorico && liberado && (
+          <Historico
+            conversas={arquivo}
+            atual={idAtual[modo]}
+            aoAbrir={abrirConversa}
+            aoApagar={apagarConversa}
+            aoNova={novaConversa}
+            aoFechar={() => setVerHistorico(false)}
+          />
         )}
 
         <div className="dom-corpo">
@@ -698,6 +813,73 @@ export function DomAssistente({
         </div>
       </div>
     </>
+  )
+}
+
+const ICONE_DO_MODO: Record<ModoDoDom, typeof MessageCircle> = { geral: MessageCircle, socratico: GraduationCap, material: BookOpen }
+
+/** Gaveta das conversas salvas no aparelho (até 25; as mais antigas saem sozinhas). */
+function Historico({
+  conversas,
+  atual,
+  aoAbrir,
+  aoApagar,
+  aoNova,
+  aoFechar,
+}: {
+  conversas: ConversaSalva<Mensagem, EstadoSocratico>[]
+  atual?: string
+  aoAbrir: (c: ConversaSalva<Mensagem, EstadoSocratico>) => void
+  aoApagar: (id: string) => void
+  aoNova: () => void
+  aoFechar: () => void
+}) {
+  const grupos = new Map<GrupoDeData, ConversaSalva<Mensagem, EstadoSocratico>[]>()
+  for (const c of conversas) {
+    const g = grupoDaData(c.atualizadaEm)
+    if (!grupos.has(g)) grupos.set(g, [])
+    grupos.get(g)!.push(c)
+  }
+  return (
+    <div className="dom-historico" role="dialog" aria-label="Conversas salvas">
+      <div className="dom-historico__topo">
+        <strong>Conversas</strong>
+        <span className="dom-texto-3 text-[0.7rem]">{conversas.length} de 25 · as mais antigas saem sozinhas</span>
+        <button type="button" className="dom-icone-botao ml-auto" onClick={aoFechar} aria-label="Fechar conversas">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <button type="button" className="dom-botao dom-botao--principal mx-3 mb-2 py-2 text-[0.82rem]" onClick={aoNova}>
+        <MessageSquarePlus className="h-4 w-4" aria-hidden /> Nova conversa
+      </button>
+      <div className="dom-historico__lista">
+        {!conversas.length && <p className="dom-texto-3 px-4 py-6 text-center text-[0.82rem]">Suas conversas com o Dom aparecem aqui.</p>}
+        {[...grupos.entries()].map(([grupo, lista]) => (
+          <div key={grupo}>
+            <p className="dom-historico__grupo">{grupo}</p>
+            {lista.map((c) => {
+              const Icone = ICONE_DO_MODO[c.modo] || MessageCircle
+              return (
+                <div key={c.id} className="dom-historico__item" data-atual={c.id === atual || undefined}>
+                  <button type="button" className="dom-historico__abrir" onClick={() => aoAbrir(c)}>
+                    <Icone className="h-4 w-4 flex-none text-[var(--dom-laranja-forte)]" aria-hidden />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[0.84rem] font-semibold text-[var(--dom-texto)]">{c.titulo}</span>
+                      <span className="block text-[0.68rem] text-[var(--dom-texto-3)]">
+                        {new Date(c.atualizadaEm).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })} · {c.mensagens.length} mensagens
+                      </span>
+                    </span>
+                  </button>
+                  <button type="button" className="dom-icone-botao" onClick={() => aoApagar(c.id)} aria-label={`Apagar a conversa ${c.titulo}`}>
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              )
+            })}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 

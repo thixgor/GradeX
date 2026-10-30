@@ -70,6 +70,11 @@ A PLATAFORMA (fatos)
 - Quest+: Banco de Questões completo, PDFs das provas (em branco, gabarito e comentada) e provas e flashcards com IA.
 - Flashcards com IA e provas com IA: exclusivos de Quest+ e Plus+. Flashcards manuais, cronogramas, fórum, APGs e games: para todos.
 - Comprar um material também libera você (o Dom) por 3 dias.
+- /materiais é o catálogo de materiais (resumos e apostilas por período e por tema, PDFs com leitor protegido, pacotes com desconto). Quando o aluno quiser estudar um tema, além da área da plataforma, ofereça o material que aparecer em MATERIAIS DO CATÁLOGO; se nenhum aparecer, sugira procurar em /materiais.
+- ACHADOS NA BUSCA DA PLATAFORMA vêm do mesmo algoritmo da busca do site: se o aluno procura um conteúdo (patologia, fármaco, aula, deck, calculadora), aponte o achado mais certeiro como destino em vez de descrever o caminho.
+- QUEM ESTUDA ISTO TAMBÉM LEVA vem do motor de recomendação dos materiais: cite no máximo um, com o motivo, só quando combinar com o que o aluno quer (nunca empurre compra).
+- Histologia e histopatologia: dá para estudar pelo Manual de Histologia (/manual-clinico/histologia: atlas de lâminas, histologia com zoom, laboratório, quizzes) e pela Histopatologia (/manual-clinico/histologia/histopatologia: doenças por sistema, mecanismos de lesão, atlas patológico) — e também por um material de /materiais. Ofereça os dois caminhos.
+- Preços: use SOMENTE os valores de PLANOS E PREÇOS ATUAIS quando aparecerem; nunca invente preço, desconto ou parcelamento. Sem essa seção, diga que os valores atualizados estão em /buy.
 - Navegação: quando o aluno quiser ir a algum lugar ou fazer algo que mora numa página, escolha "destino" SOMENTE entre os ids de DESTINOS POSSÍVEIS e diga algo como "Vou te levar lá!". Se nenhum servir, deixe vazio e explique onde fica. Destino marcado [exclusivo]: diga em uma frase o que ele ganha lá e que a página mostra como liberar.
 
 FORMATO DE SAÍDA
@@ -122,6 +127,14 @@ export interface EntradaDoPrompt {
   destinos: CandidatoDeDestino[]
   material?: FichaDoMaterial | null
   tema?: (TemaDoDom & { curso: string; periodo: number | null; livre?: boolean }) | null
+  /** Materiais de /materiais ligados à mensagem (busca no servidor). */
+  materiais?: Array<{ id: string; titulo: string; preco: string; resumo: string }>
+  /** Planos visíveis da /buy, já formatados como na página. */
+  precos?: string[]
+  /** Achados da busca da plataforma (mesmo algoritmo da caixa de busca). */
+  achados?: Array<{ id: string; titulo: string; resumo?: string }>
+  /** Motor "quem estuda isto também leva". */
+  sugestoes?: Array<{ titulo: string; preco: string; motivo: string; destino: { id: string } }>
 }
 
 function data(d?: Date | null): string {
@@ -170,6 +183,26 @@ export function montarPromptDoSistema(e: EntradaDoPrompt): string {
     linhas.push(t.livre ? `- Escolhido pelo aluno (livre): ${t.titulo}` : `- ${t.titulo} (${t.curso}${t.periodo ? `, ${t.periodo}º período` : ''} · ${t.trilha})`)
     if (t.itens.length) linhas.push(`- O que cobrir: ${t.itens.join('; ')}`)
     if (t.livre) linhas.push('- Se o tema livre não for da área da saúde, recuse com gentileza e peça outro.')
+  }
+
+  if (e.materiais?.length) {
+    linhas.push('', 'MATERIAIS DO CATÁLOGO (ligados à mensagem; o destino é material:<id>)')
+    for (const m of e.materiais) linhas.push(`- ${m.titulo} · ${m.preco}${m.resumo ? ` — ${m.resumo}` : ''}`)
+  }
+
+  if (e.achados?.length) {
+    linhas.push('', 'ACHADOS NA BUSCA DA PLATAFORMA (o que a caixa de busca do site encontra para a mensagem; destino busca:<n>)')
+    for (const a of e.achados) linhas.push(`- ${a.id}: ${a.titulo}${a.resumo ? ` — ${a.resumo}` : ''}`)
+  }
+
+  if (e.sugestoes?.length) {
+    linhas.push('', 'QUEM ESTUDA ISTO TAMBÉM LEVA (motor de recomendação dos materiais; destino leva:<n>)')
+    for (const s of e.sugestoes) linhas.push(`- ${s.destino.id}: ${s.titulo} · ${s.preco} — ${s.motivo}`)
+  }
+
+  if (e.precos?.length) {
+    linhas.push('', 'PLANOS E PREÇOS ATUAIS (os mesmos de /buy)')
+    for (const p of e.precos) linhas.push(`- ${p}`)
   }
 
   linhas.push('', 'DESTINOS POSSÍVEIS (id → página)')

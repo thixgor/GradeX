@@ -121,6 +121,8 @@ export interface StatusDoDom {
   motivo?: 'sem-plano' | 'suspenso' | 'nao-autenticado'
   primeiroNome: string
   plano: string
+  /** Identificação anônima da conta (hash curto): separa as conversas salvas no aparelho. */
+  conta?: string
   periodo?: number | null
   /** Para o painel mostrar nível, liga, sequência e posição (o Dom sabe disso). */
   xp?: { total: number; nivel: number; liga: string; semana: number; sequencia: number; posicaoSemana: number | null; posicaoGeral: number | null } | null

@@ -42,8 +42,25 @@ Nada é falado em tempo real: todo áudio é gravado.
 4. Índice: `node scripts/dom/indexar-audios.mjs` → `components/dom/audios-gravados.ts`.
 
 Fala sem áudio aparece só no balão, com a boca mexendo em silêncio. Para não
-cansar, falas "baixas" (pensando, achei, vou te levar lá) tocam só às vezes e
-com intervalo mínimo (`voz.ts`, parcimônia).
+cansar, falas "baixas" (pensando, achei, vou te levar lá) respeitam um
+intervalo mínimo de 20 s e as "normais" de 4 s (`voz.ts`, parcimônia) — sem
+sorteio. A voz só passa pelo Web Audio (boca pela amplitude) com o contexto
+rodando; suspenso, o áudio toca direto, e qualquer toque ou volta da aba
+retoma o contexto.
+
+## O que o Dom consulta
+
+- Busca da plataforma (`lib/busca-plataforma/conteudo.ts`, o mesmo algoritmo
+  da caixa de busca) → achados viram destinos `busca:<n>`.
+- Motor "quem estuda isto também leva" (`lib/recomendacoes`) → sugestões
+  `leva:<n>`, semeadas pelo material da conversa ou pela última compra.
+- Materiais de /materiais e preços da /buy (`lib/dom/catalogo.ts`).
+
+## Conversas
+
+Até 25 conversas por conta, no próprio aparelho (`localStorage`,
+`components/dom/arquivo-de-conversas.ts`); a 26ª apaga a mais antiga. Nada vai
+para o banco.
 
 **Silenciar**: o Dom fala `desabilitado.mp3` e fica com fita na boca em todo
 lugar onde aparece, até religar o som.

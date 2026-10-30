@@ -78,19 +78,20 @@ let atual: { audio?: HTMLAudioElement; parar: () => void } | null = null
 /**
  * Parcimônia — o que impede o Dom de virar o colega chato:
  * - `alta`: o aluno pediu (silenciar, passo do guia, fim do socrático) → sempre;
- * - `normal`: saudações e reações → no máximo uma a cada 8 s;
- * - `baixa`: "pensando…", "achei!", "vou te levar lá" → só 60% das vezes e no
- *   máximo uma a cada 25 s. Nas outras, a frase vai só para o balão e a boca
- *   mexe em silêncio.
+ * - `normal`: saudações e reações → no máximo uma a cada 4 s;
+ * - `baixa`: "pensando…", "achei!", "vou te levar lá" → no máximo uma a cada
+ *   20 s. Nas outras, a frase vai só para o balão e a boca mexe em silêncio.
+ *
+ * Sem sorteio: com ele, a mesma ação ora falava, ora não — e parecia que a
+ * voz tinha sumido.
  */
 export type PrioridadeDaFala = 'alta' | 'normal' | 'baixa'
-const INTERVALO_MINIMO_MS: Record<PrioridadeDaFala, number> = { alta: 0, normal: 8_000, baixa: 25_000 }
+const INTERVALO_MINIMO_MS: Record<PrioridadeDaFala, number> = { alta: 0, normal: 4_000, baixa: 20_000 }
 let ultimoAudioEm = 0
 
 function deveTocar(prioridade: PrioridadeDaFala): boolean {
   if (prioridade === 'alta') return true
-  if (Date.now() - ultimoAudioEm < INTERVALO_MINIMO_MS[prioridade]) return false
-  return prioridade === 'normal' || Math.random() < 0.6
+  return Date.now() - ultimoAudioEm >= INTERVALO_MINIMO_MS[prioridade]
 }
 
 export function pararDeFalar(): void {
@@ -151,17 +152,36 @@ export function falar(
   audio.volume = 0.75
   let quadro = 0
   let terminou = false
+  let desligar: (() => void) | null = null
+  let pararBocaMuda: (() => void) | null = null
+  // Rede lenta ou arquivo travado: quem espera o fim (o guia, a cena do mudo)
+  // não pode ficar parado para sempre.
+  const limite = setTimeout(() => {
+    if (!terminou && audio.paused) {
+      audio.pause()
+      atual = { parar: bocaMuda(duracaoEstimada(fala), o) }
+      terminou = true
+      desligar?.()
+    }
+  }, 5000)
   const terminar = () => {
     if (terminou) return
     terminou = true
+    clearTimeout(limite)
     cancelAnimationFrame(quadro)
+    pararBocaMuda?.()
+    desligar?.()
     o.aoBoca?.(false)
     o.aoTerminar?.()
   }
-  // Boca pela amplitude (quando o Web Audio deixa); senão, o ritmo irregular.
-  let pararBocaMuda: (() => void) | null = null
+  // Boca pela amplitude só com o Web Audio RODANDO. Ligar o elemento a um
+  // contexto suspenso (sem toque ainda, aba que voltou do segundo plano, iOS
+  // depois de uma ligação) manda o som para um destino mudo — era o "às vezes
+  // a voz some". Fora disso, o elemento toca direto e a boca segue o ritmo
+  // irregular.
   const ctx = contexto()
-  if (ctx) {
+  const comAnalisador = !!ctx && ctx.state === 'running'
+  if (comAnalisador && ctx) {
     try {
       const fonte = ctx.createMediaElementSource(audio)
       const analisador = ctx.createAnalyser()
@@ -172,6 +192,14 @@ export function falar(
       ganho.gain.value = 0.75
       fonte.connect(analisador).connect(ganho).connect(ctx.destination)
       audio.volume = 1
+      desligar = () => {
+        try {
+          fonte.disconnect()
+          ganho.disconnect()
+        } catch {
+          /* já desligado */
+        }
+      }
       const dados = new Uint8Array(analisador.fftSize)
       let aberta = false
       const ler = () => {
@@ -191,27 +219,35 @@ export function falar(
       }
       audio.addEventListener('play', () => (quadro = requestAnimationFrame(ler)), { once: true })
     } catch {
-      pararBocaMuda = null
+      desligar = null
     }
   }
   audio.addEventListener('play', () => {
+    clearTimeout(limite)
     o.aoComecar?.()
-    if (!ctx) pararBocaMuda = bocaMuda(audio.duration ? audio.duration * 1000 : duracaoEstimada(fala), { aoBoca: o.aoBoca })
+    if (!desligar) pararBocaMuda = bocaMuda(audio.duration ? audio.duration * 1000 : duracaoEstimada(fala), { aoBoca: o.aoBoca })
   }, { once: true })
   audio.addEventListener('ended', terminar, { once: true })
   audio.addEventListener('error', () => {
     // Arquivo listado mas ausente (deploy pela metade): cai para a boca muda.
-    terminar()
+    if (terminou) return
+    clearTimeout(limite)
+    terminou = true
+    desligar?.()
+    atual = { parar: bocaMuda(duracaoEstimada(fala), o) }
   }, { once: true })
   audio.play().catch(() => {
     // Autoplay bloqueado (sem toque ainda): fica só o balão, com a boca mexendo.
+    if (terminou) return
+    clearTimeout(limite)
+    terminou = true
+    desligar?.()
     atual = { parar: bocaMuda(duracaoEstimada(fala), o) }
   })
   atual = {
     audio,
     parar: () => {
       audio.pause()
-      pararBocaMuda?.()
       terminar()
     },
   }
@@ -220,12 +256,31 @@ export function falar(
 // ── Bipes ──────────────────────────────────────────────────────────────────
 
 let audioCtx: AudioContext | null = null
+let destravaInstalada = false
+
+/**
+ * O navegador suspende o contexto (sem toque, aba em segundo plano, iOS
+ * "interrupted"). A cada toque/tecla e a cada volta da aba, tenta retomar —
+ * assim a próxima fala sai com voz e com a boca pela amplitude.
+ */
+function instalarDestrava(): void {
+  if (destravaInstalada || typeof window === 'undefined') return
+  destravaInstalada = true
+  const retomar = () => {
+    if (audioCtx && audioCtx.state !== 'running' && audioCtx.state !== 'closed') void audioCtx.resume().catch(() => {})
+  }
+  for (const evento of ['pointerdown', 'keydown', 'touchend'] as const) window.addEventListener(evento, retomar, { passive: true, capture: true })
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') retomar()
+  })
+}
 
 function contexto(): AudioContext | null {
   if (typeof window === 'undefined') return null
   try {
-    audioCtx ??= new (window.AudioContext || (window as any).webkitAudioContext)()
-    if (audioCtx.state === 'suspended') void audioCtx.resume()
+    if (!audioCtx || audioCtx.state === 'closed') audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    instalarDestrava()
+    if (audioCtx.state !== 'running') void audioCtx.resume().catch(() => {})
     return audioCtx
   } catch {
     return null

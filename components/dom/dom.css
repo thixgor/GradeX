@@ -990,6 +990,37 @@
 .dom-painel[data-modo='socratico'] .dom-aba[aria-selected='true'] svg { color: #b8862a; }
 .dom-aba:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: -2px; border-radius: 0.75rem; }
 
+/* Gaveta das conversas salvas. */
+.dom-historico {
+  position: absolute;
+  z-index: 5;
+  top: 4rem;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.2rem;
+  background: var(--dom-vidro-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: var(--dom-sombra);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  animation: dom-msg 280ms var(--dom-sai) both;
+}
+@media (min-width: 900px) {
+  .dom-painel[data-expandido] .dom-historico { right: auto; width: 340px; }
+}
+.dom-historico__topo { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem 0.6rem 0.5rem 1rem; }
+.dom-historico__topo strong { font-size: 0.95rem; color: var(--dom-texto); }
+.dom-historico__lista { flex: 1; min-height: 0; overflow-y: auto; padding: 0 0.4rem 0.6rem; }
+.dom-historico__grupo { padding: 0.6rem 0.6rem 0.25rem; font-size: 0.66rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--dom-texto-3); }
+.dom-historico__item { display: flex; align-items: center; gap: 0.25rem; border-radius: 0.8rem; transition: background 150ms; }
+.dom-historico__item:hover { background: var(--dom-chip); }
+.dom-historico__item[data-atual] { background: var(--dom-chip-hover); }
+.dom-historico__abrir { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; text-align: left; }
+.dom-historico__abrir:focus-visible { outline: 2px solid var(--dom-verde); border-radius: 0.8rem; }
+
 /* Corpo: uma coluna no lado; duas no modo expandido. */
 .dom-corpo {
   flex: 1;

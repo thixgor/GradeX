@@ -71,6 +71,11 @@ export function exclusivoPara(href: string, accountType: string, isAdmin: boolea
   return false
 }
 
+/** As palavras que importam numa frase falada ("quero estudar histologia" → ["histologia"]). */
+export function termosSignificativos(frase: string): string[] {
+  return termosDaConsulta(frase).filter((t) => t.length > 2 && !STOPWORDS.has(t))
+}
+
 /** Até `limite` destinos plausíveis para a frase, do mais provável ao menos. */
 export function candidatosDeDestino(
   frase: string,

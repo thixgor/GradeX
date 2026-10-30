@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
+import { invalidarCacheDeServidor } from '@/lib/cache-de-servidor'
 import { getDb } from '@/lib/mongodb'
 import { getSession } from '@/lib/auth'
 import { PlanConfig } from '@/lib/types'
@@ -188,6 +189,8 @@ export async function PUT(req: NextRequest) {
     // A landing mostra o preço do Plus+ e é HTML estático (revalidate de 1 h):
     // sem o purge, o preço novo levaria até uma hora para aparecer lá.
     revalidatePath('/')
+    // O Dom (assistente de IA) cita os preços atuais: derruba o cache dele.
+    invalidarCacheDeServidor('dom:planos')
 
     return NextResponse.json({
       success: true,

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { createHash } from 'crypto'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
 import { LIMITES_DO_DOM, type StatusDoDom } from '@/lib/dom/config'
@@ -31,6 +32,7 @@ export async function GET() {
     motivo: acesso.liberado ? undefined : acesso.motivo === 'suspenso' ? 'suspenso' : 'sem-plano',
     primeiroNome: acesso.usuario?.primeiroNome || '',
     plano: acesso.usuario?.plano || '',
+    conta: createHash('sha256').update(`dom:${session.userId}`).digest('hex').slice(0, 12),
     periodo: acesso.usuario?.periodo ?? null,
     xp,
     restantes,
