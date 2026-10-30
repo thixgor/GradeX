@@ -457,7 +457,7 @@ export default function ManualClinicoCheckoutView({
           />
         )}
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
           <div className="ck-vidro ck-entra p-5 sm:p-7" style={{ '--ordem': 1 } as React.CSSProperties}>
             <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10">
               {product.coverImageUrl ? (

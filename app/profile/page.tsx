@@ -12,6 +12,9 @@
  * próprio arquivo em `components/profile/`.
  */
 
+import dynamic from 'next/dynamic'
+// O Modo Foco (jogos, respiração, sons) só baixa quando a aba abre.
+const ModoFoco = dynamic(() => import('@/components/foco/modo-foco').then((m) => m.ModoFoco), { ssr: false })
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -57,10 +60,13 @@ import type { CampoDoPerfil } from '@/components/profile/personal-data-card'
 
 const CAMPOS: CampoDoPerfil[] = ['email', 'dados', 'cpf', 'fullName', 'dateOfBirth', 'foto', 'senha']
 
-type ProfileTab = 'visao-geral' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
+type ProfileTab = 'visao-geral' | 'foco' | 'desempenho' | 'pedidos' | 'atendimento' | 'config'
 
 const TABS = [
   { id: 'visao-geral', label: 'Visão geral', short: 'Geral' },
+  // O Modo Foco: métodos, ciclos, jogos de atenção e respiração. Também abre
+  // pelo botão "Foco" do topo e por /foco.
+  { id: 'foco', label: 'Foco', short: 'Foco' },
   { id: 'desempenho', label: 'Desempenho', short: 'Gráficos' },
   { id: 'pedidos', label: 'Pedidos', short: 'Pedidos' },
   // "Atendimento" reúne o que a pessoa PEDIU e espera resposta: solicitações de
@@ -78,6 +84,8 @@ function parseTab(value: string | null | undefined): ProfileTab {
       return 'pedidos'
     case 'desempenho':
       return 'desempenho'
+    case 'foco':
+      return 'foco'
     case 'atendimento':
     case 'solicitacoes':
     case 'tickets':
@@ -501,6 +509,12 @@ export default function ProfilePage() {
               onCancelSubscription={() => setCancelDialogOpen(true)}
               cancellingSubscription={cancelling}
             />
+          )}
+
+          {tab === 'foco' && (
+            <div className="ck-mundo ck-escopo">
+              <ModoFoco />
+            </div>
           )}
 
           {tab === 'desempenho' && (

@@ -21,6 +21,10 @@ export interface FocusSession {
   targetMinutes?: number
   /** Método escolhido no Modo Foco (pomodoro, 52-17, ultradiano, livre). */
   method?: MetodoDeFoco
+  /** Quantas vezes a pessoa saiu da aba durante a sessão (automonitoramento). */
+  distracoes?: number
+  /** Pausada pelo modo rígido porque a aba ficou oculta — volta sozinha. */
+  pausadaPorSaida?: boolean
 }
 
 export type MetodoDeFoco = 'pomodoro' | '52-17' | 'ultradiano' | 'livre'
@@ -34,6 +38,7 @@ export interface FocusSessionHistory {
   syncedToServer: boolean
   targetMinutes?: number
   method?: MetodoDeFoco
+  distracoes?: number
   /** O que a pessoa lembrou ao fim (recordação ativa). Fica só no aparelho. */
   recall?: string
 }
@@ -47,6 +52,12 @@ interface FocusSessionContextType {
   startSession: (objective: string, targetMinutes?: number, method?: MetodoDeFoco) => void
   /** Guarda a recordação ativa na sessão do histórico (só no aparelho). */
   saveRecall: (id: string, recall: string) => void
+  /**
+   * Modo rígido: o cronômetro pausa sozinho quando a aba fica oculta e volta
+   * quando ela reaparece; e as áreas fora do estudo pedem confirmação.
+   */
+  rigido: boolean
+  setRigido: (valor: boolean) => void
   pauseSession: () => void
   resumeSession: () => void
   finishSession: () => void
@@ -293,6 +304,42 @@ export function FocusSessionProvider({
     setLastFinished(null)
   }, [])
 
+  // ── Distrações e modo rígido ──────────────────────────────────────────────
+  // Contar as saídas da aba é automonitoramento — medir o próprio
+  // comportamento é das intervenções que mais mexem em meta (Harkin et al.,
+  // 2016). No modo rígido, sair pausa; voltar retoma.
+  const [rigido, setRigidoEstado] = useState(false)
+  useEffect(() => {
+    try { setRigidoEstado(window.localStorage.getItem('gradex:foco:rigido') === '1') } catch {}
+  }, [])
+  const setRigido = useCallback((valor: boolean) => {
+    setRigidoEstado(valor)
+    try { window.localStorage.setItem('gradex:foco:rigido', valor ? '1' : '0') } catch {}
+  }, [])
+
+  useEffect(() => {
+    function aoMudarVisibilidade() {
+      const oculta = document.visibilityState === 'hidden'
+      setCurrentSession(prev => {
+        if (!prev) return prev
+        if (oculta && prev.status === 'active') {
+          const distracoes = (prev.distracoes || 0) + 1
+          if (rigido) {
+            return { ...prev, distracoes, status: 'paused' as const, pausedAt: new Date().toISOString(), pausadaPorSaida: true }
+          }
+          return { ...prev, distracoes }
+        }
+        if (!oculta && prev.status === 'paused' && prev.pausadaPorSaida && prev.pausedAt) {
+          const pausa = Date.now() - new Date(prev.pausedAt).getTime()
+          return { ...prev, status: 'active' as const, pausedAt: undefined, pausadaPorSaida: false, totalPausedMs: prev.totalPausedMs + pausa }
+        }
+        return prev
+      })
+    }
+    document.addEventListener('visibilitychange', aoMudarVisibilidade)
+    return () => document.removeEventListener('visibilitychange', aoMudarVisibilidade)
+  }, [rigido])
+
   const saveRecall = useCallback((id: string, recall: string) => {
     const texto = recall.trim().slice(0, 600)
     setHistory(h => h.map(s => (s.id === id ? { ...s, recall: texto } : s)))
@@ -347,6 +394,7 @@ export function FocusSessionProvider({
         syncedToServer: false,
         targetMinutes: prev.targetMinutes,
         method: prev.method,
+        distracoes: prev.distracoes || 0,
       }
       setLastFinished(entry)
 
@@ -431,6 +479,8 @@ export function FocusSessionProvider({
       elapsedMs,
       startSession,
       saveRecall,
+      rigido,
+      setRigido,
       pauseSession,
       resumeSession,
       finishSession,

@@ -309,7 +309,7 @@ export function VitrineAnatomia({ dados, secao = 'hub' }: VitrineAnatomiaProps) 
 
       {/* ══════════════ Preço ══════════════ */}
       <section className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start">
           <div className="space-y-5">
             <div className="vidro vidro-brilho relevo relative overflow-hidden rounded-[22px] !border-amber-500/25 p-5 sm:p-7">
               <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" aria-hidden />

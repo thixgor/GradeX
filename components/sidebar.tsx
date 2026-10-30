@@ -50,7 +50,6 @@ import { BuscaGlobal } from '@/components/busca/busca-global'
 import { avatarPorId } from '@/lib/monitorias/avatares'
 import { XpDoMenu } from '@/components/xp/xp-do-menu'
 import { Trophy } from '@phosphor-icons/react/dist/ssr/Trophy'
-import { Timer } from '@phosphor-icons/react/dist/ssr/Timer'
 
 interface SidebarProps {
   user: {
@@ -539,14 +538,6 @@ export function Sidebar({
     cor: 'ranking',
   }
 
-  // O Modo Foco também vale para todas as seções: logo abaixo do Ranking.
-  const focoItem: NavItem = {
-    id: 'section:foco',
-    icon: <Timer className="h-5 w-5" weight={PESO_ICONE} />,
-    label: 'Modo Foco',
-    href: '/foco',
-    cor: 'foco',
-  }
 
   const tree: SidebarTreeNode[] = useMemo(
     () =>
@@ -657,7 +648,7 @@ export function Sidebar({
   // a estática vem inteira do CDN. O `full` fica para o hover/toque abaixo,
   // que é quando o clique está para acontecer.
   const navHrefsKey = useMemo(() => {
-    const hrefs = [homeItem.href, rankingItem.href, focoItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
+    const hrefs = [homeItem.href, rankingItem.href, ...secondaryNavItems.map((item) => item.href), upgradeItem.href]
     for (const node of tree) {
       if (node.type === 'section') hrefs.push(node.section.href)
       else hrefs.push(...node.sections.map((section) => section.href))
@@ -1208,24 +1199,7 @@ export function Sidebar({
                 skipEntrance={skipEntranceRef.current}
                 lite={liteMode}
               />
-              <NavItemButton
-                item={focoItem}
-                hoveredId={hoveredId}
-                pressedId={pressedId}
-                collapsed={isCollapsed}
-                isItemActive={isActive(focoItem.href)}
-                onHover={handleItemHover}
-                onPress={(navItem) => {
-                  handleNavPress(navItem)
-                  handleNavPrefetch(navItem)
-                }}
-                onRelease={handleNavRelease}
-                onClick={() => handleNavClick(focoItem)}
-                staggerIndex={2}
-                skipEntrance={skipEntranceRef.current}
-                lite={liteMode}
-              />
-              {tree.map((node, index) => renderNode(node, index + 3))}
+              {tree.map((node, index) => renderNode(node, index + 2))}
             </div>
           </nav>
 

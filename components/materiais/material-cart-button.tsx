@@ -250,8 +250,9 @@ export function MaterialCartButton({ isAuthenticated }: { isAuthenticated: boole
         onClick={() => { setNotice(''); setOpen(true) }}
         className="ferramenta-botao"
         data-cheio={totalCount > 0 || undefined}
+        data-ferramenta="carrinho"
+        data-dica={totalCount > 0 ? `Carrinho · ${totalCount} ${totalCount === 1 ? 'item' : 'itens'}` : 'Carrinho'}
         aria-label={totalCount > 0 ? `Abrir carrinho, ${totalCount} ${totalCount === 1 ? 'item' : 'itens'}` : 'Abrir carrinho'}
-        title="Carrinho"
       >
         <ShoppingCart className="h-[19px] w-[19px]" strokeWidth={2} />
         {totalCount > 0 && (

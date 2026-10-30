@@ -796,7 +796,7 @@ function CommandBar({
   const [searchOpen, setSearchOpen] = useState(false)
 
   const searchField = (
-    <div className="relative flex-1">
+    <div className="relative min-w-0 flex-1">
       <Search className="ios-rotulo-2 pointer-events-none absolute left-3 top-1/2 h-[17px] w-[17px] -translate-y-1/2" />
       <input
         type="search"
@@ -860,7 +860,7 @@ function CommandBar({
       {/* Desktop: navegação, busca e ações lado a lado, sem estados escondidos. */}
       <div className="hidden items-center gap-3 lg:flex">
         {!isGuest && (
-          <Segmented items={sectionItems} value={section} onChange={onSectionChange} className="w-[390px] shrink-0" />
+          <Segmented items={sectionItems} value={section} onChange={onSectionChange} className="w-[330px] shrink-0 xl:w-[390px]" />
         )}
         {isGuest && (
           <p className="inline-flex shrink-0 items-center gap-2 px-2 text-[15px] font-semibold">
@@ -870,8 +870,9 @@ function CommandBar({
         {searchField}
         {!isGuest && (
           <div className="flex shrink-0 items-center gap-2">
-            <Link href="/flashcards/ia" className="ios-botao-suave !h-10 !px-4 !text-[15px]">
-              <Wand2 className="h-4 w-4" /> Gerar com IA
+            {/* Entre lg e xl o menu lateral come 288 px: o botão fica só no ícone. */}
+            <Link href="/flashcards/ia" className="ios-botao-suave !h-10 !px-3 !text-[15px] xl:!px-4" aria-label="Gerar com IA">
+              <Wand2 className="h-4 w-4" /> <span className="hidden xl:inline">Gerar com IA</span>
             </Link>
             <button type="button" onClick={onCreateDeck} className="ios-botao !h-10 !px-4 !text-[15px]">
               <Plus className="h-4 w-4" strokeWidth={2.5} /> Criar deck

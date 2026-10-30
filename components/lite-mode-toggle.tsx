@@ -114,7 +114,8 @@ export function LiteModeToggle({
         onClick={handleToggle}
         aria-pressed={liteMode}
         aria-label={actionLabel}
-        title={`${stateLabel} — toque para ${liteMode ? 'desativar' : 'ativar'}`}
+        data-ferramenta="lite"
+        data-dica={liteMode ? 'Modo Lite ligado' : 'Modo Lite: app mais leve'}
         data-lite-active={liteMode ? 'true' : 'false'}
         className={cn(
           'relative inline-flex h-9 w-9 items-center justify-center rounded-md border text-foreground shadow-sm transition-colors',

@@ -292,6 +292,8 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // O Modo Foco mora no Perfil (aba Foco) e abre pelo botão do topo.
+      { source: '/foco', destination: '/profile?tab=foco', permanent: false },
       {
         source: '/manual-clinico/tomografia',
         destination: '/manual-clinico/radiologia/tomografia',

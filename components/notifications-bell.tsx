@@ -274,7 +274,9 @@ export function NotificationsBell() {
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={unreadCount > 0 ? `Notificações, ${unreadCount} não lidas` : 'Notificações'}
-        title="Notificações"
+        data-ferramenta="avisos"
+        data-nao-lidas={unreadCount > 0 ? '' : undefined}
+        data-dica={unreadCount > 0 ? `${unreadCount} ${unreadCount === 1 ? 'notificação nova' : 'notificações novas'}` : 'Notificações'}
       >
         <Bell className="h-[19px] w-[19px]" strokeWidth={2} />
         {unreadCount > 0 && (

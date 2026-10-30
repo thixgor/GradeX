@@ -1,0 +1,188 @@
+/* ==========================================================================
+   Ferramentas do topo — cada botão com identidade própria
+   --------------------------------------------------------------------------
+   Antes os cinco eram o mesmo ícone cinza numa cápsula: o olho não separava
+   o carrinho das notificações. Agora cada um tem a sua cor (a mesma lógica
+   dos quadradinhos do menu), um gesto próprio no hover (o carrinho balança,
+   o sino toca, o ponteiro do Lite varre, o Foco pulsa) e uma dica que diz o
+   que faz. O Foco é o único com rótulo e estado do dia: é o que mais vale
+   chamar atenção.
+   ========================================================================== */
+
+.barra-ferramentas [data-ferramenta] {
+  --cor: 100 116 139;
+  position: relative;
+  color: rgb(var(--cor));
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+}
+.barra-ferramentas [data-ferramenta='carrinho'] { --cor: 222 106 50; }
+.barra-ferramentas [data-ferramenta='avisos'] { --cor: 27 136 189; }
+.barra-ferramentas [data-ferramenta='lite'] { --cor: 34 160 107; }
+.barra-ferramentas [data-ferramenta='foco'] { --cor: 79 92 224; }
+
+@media (hover: hover) and (pointer: fine) {
+  .barra-ferramentas [data-ferramenta]:hover {
+    transform: translateY(-1px);
+    color: rgb(var(--cor));
+    background: rgb(var(--cor) / 0.12) !important;
+    box-shadow: 0 6px 14px -8px rgb(var(--cor) / 0.7);
+  }
+  .barra-ferramentas [data-ferramenta='carrinho']:hover svg { animation: ft-balanca 520ms ease; }
+  .barra-ferramentas [data-ferramenta='avisos']:hover svg { animation: ft-sino 700ms ease; transform-origin: 50% 10%; }
+  .barra-ferramentas [data-ferramenta='lite']:hover svg { animation: ft-ponteiro 700ms ease; }
+}
+.barra-ferramentas [data-ferramenta]:active { transform: scale(0.92); }
+
+@keyframes ft-balanca { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-14deg) translateX(-1px); } 60% { transform: rotate(10deg) translateX(1px); } }
+@keyframes ft-sino { 0%, 100% { transform: rotate(0); } 15% { transform: rotate(18deg); } 35% { transform: rotate(-14deg); } 55% { transform: rotate(9deg); } 75% { transform: rotate(-5deg); } }
+@keyframes ft-ponteiro { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-35deg); } 70% { transform: rotate(18deg); } }
+
+/* Carrinho com itens: fica laranja e o selo pula. */
+.barra-ferramentas [data-ferramenta='carrinho'][data-cheio] { background: rgb(var(--cor) / 0.12) !important; }
+
+/* Notificação nova: o sino toca sozinho a cada poucos segundos. */
+.barra-ferramentas [data-ferramenta='avisos'][data-nao-lidas] { background: rgb(var(--cor) / 0.1) !important; }
+.barra-ferramentas [data-ferramenta='avisos'][data-nao-lidas] svg { animation: ft-sino 900ms ease 1.2s 3; transform-origin: 50% 10%; }
+
+/* Lite ligado: âmbar (o que já era a cor do estado). */
+.barra-ferramentas [data-ferramenta='lite'][data-lite-active='true'] { --cor: 217 140 20; background: rgb(var(--cor) / 0.14) !important; }
+
+/* ── Foco: o botão que mais chama ───────────────────────────────────────── */
+
+.barra-ferramentas .foco-gatilho[data-ferramenta='foco'] {
+  padding: 0 10px 0 5px;
+  color: rgb(var(--cor));
+  font-weight: 700;
+}
+.foco-gatilho-anel { display: grid; place-items: center; }
+.foco-gatilho-anel .foco-anel-traco { stroke: rgb(79 92 224); }
+.foco-gatilho-chama {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  padding: 1px 6px 1px 4px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  background: linear-gradient(180deg, #ffa25e, #e8642a);
+  box-shadow: 0 3px 8px -3px rgba(232, 100, 42, 0.8);
+}
+/* Nenhum minuto hoje: o halo pulsa — o convite está em toda página. */
+.foco-gatilho[data-convite]::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  border: 2px solid rgb(79 92 224 / 0.5);
+  animation: ft-halo 2.2s ease-out infinite;
+  pointer-events: none;
+}
+.foco-gatilho[data-convite] { background: rgb(79 92 224 / 0.1) !important; }
+@keyframes ft-halo { 0% { transform: scale(0.92); opacity: 1; } 80%, 100% { transform: scale(1.18); opacity: 0; } }
+
+/* ── Dica (só com ponteiro fino; no toque, o rótulo acessível basta) ───── */
+
+@media (hover: hover) and (pointer: fine) {
+  .barra-ferramentas [data-dica]::after {
+    content: attr(data-dica);
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    z-index: 60;
+    padding: 6px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: #fff;
+    background: rgba(20, 24, 22, 0.92);
+    box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translate(-50%, -4px);
+    transition: opacity 160ms ease 250ms, transform 160ms ease 250ms;
+    pointer-events: none;
+  }
+  .barra-ferramentas [data-dica]:hover::after,
+  .barra-ferramentas [data-dica]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ── A folha do Modo Foco ──────────────────────────────────────────────── */
+
+.foco-folha-palco {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(8, 12, 30, 0.38);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.foco-folha {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--ck-papel, hsl(var(--background)));
+  box-shadow: -30px 0 60px -30px rgba(0, 0, 0, 0.5);
+}
+@media (min-width: 768px) {
+  .foco-folha { width: min(640px, 92vw); border-radius: 28px 0 0 28px; }
+}
+.foco-folha-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 10px 20px;
+  border-bottom: 1px solid var(--ck-sep);
+}
+.foco-folha-titulo { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-heading), Georgia, serif; font-size: 20px; font-weight: 600; color: rgb(79 92 224); }
+.foco-folha-fechar { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px; color: var(--ck-texto-2); background: var(--ck-trilho); }
+.foco-folha-fechar:hover { color: var(--ck-texto); }
+.foco-folha-corpo { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); }
+.foco-folha-carregando { height: 420px; border-radius: 26px; background: var(--ck-trilho); animation: xr-carrega 1.4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .foco-gatilho[data-convite]::before,
+  .barra-ferramentas [data-ferramenta] svg { animation: none !important; }
+}
+
+/* ── Orientação da barra (TourDoTopo) ──────────────────────────────────── */
+
+.tour-alvo {
+  z-index: 61;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgb(var(--cor, 79 92 224)), 0 0 30px rgb(var(--cor, 79 92 224) / 0.6) !important;
+  animation: ft-destaque 1.6s ease-in-out infinite;
+}
+@keyframes ft-destaque { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+.tour-bolha {
+  position: fixed;
+  z-index: 160;
+  padding: 14px 16px 12px;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(160deg, rgba(36, 44, 92, 0.97), rgba(20, 24, 50, 0.98));
+  box-shadow: 0 20px 44px -16px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(143, 155, 255, 0.35);
+}
+.tour-bolha::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  left: calc(var(--seta) - 7px);
+  width: 14px;
+  height: 14px;
+  background: rgba(36, 44, 92, 0.97);
+  transform: rotate(45deg);
+  border-radius: 3px;
+}
+.tour-passo { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #a9b3ff; }
+.tour-titulo { margin-top: 2px; font-size: 16px; font-weight: 800; }
+.tour-texto { margin-top: 4px; font-size: 13px; line-height: 1.45; color: rgba(255, 255, 255, 0.82); }
+.tour-acoes { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.tour-pular { min-height: 36px; padding: 0 10px; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
+.tour-proximo { min-height: 36px; padding: 0 16px; border-radius: 999px; font-size: 13.5px; font-weight: 800; color: #1c2160; background: linear-gradient(180deg, #fff, #dfe3ff); }
+@media (prefers-reduced-motion: reduce) { .tour-alvo { animation: none; } }

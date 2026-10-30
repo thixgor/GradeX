@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
-  BookOpen, Brain, Check, ChevronDown, CloudRain, Coffee, Droplets, Flame, Maximize2, Music, Pause, Play,
-  Smartphone, Sparkles, Square, Target, Volume2, VolumeX, Waves, Wind,
+  BookOpen, Brain, Check, ChevronDown, CloudRain, Coffee, Droplets, Eye, Flame, Lock, Maximize2, Music, Pause, Play,
+  Smartphone, Sparkles, Square, Target, Volume2, VolumeX, Waves, Wind, Zap,
 } from 'lucide-react'
 import { useFocusSession, type MetodoDeFoco } from '@/hooks/use-focus-session'
 import { formatarMinutos, formatarRelogio, minutosPorDia, sequenciaDeFoco, sugestoesDeObjetivo } from '@/lib/foco/ritmo-de-foco'
@@ -88,7 +88,7 @@ export function ModoFoco() {
   const calmo = useReducedMotion()
   const {
     currentSession, elapsedMs, startSession, pauseSession, resumeSession, finishSession,
-    history, lastFinished, dismissLastFinished, saveRecall, isAuthenticated,
+    history, lastFinished, dismissLastFinished, saveRecall, isAuthenticated, rigido, setRigido,
   } = useFocusSession()
 
   const [prefs, setPrefs] = useState<Preferencias>(PREFS_PADRAO)
@@ -279,6 +279,13 @@ export function ModoFoco() {
             </AnelDeFoco>
             <p className="mf-objetivo">{currentSession.objective}</p>
             <Tomates metodo={metodo.id} feitos={ciclo?.feitos || 0} />
+            <p className="mf-distracoes" data-zero={!currentSession.distracoes ? '' : undefined}>
+              <Eye className="h-3.5 w-3.5" aria-hidden />
+              {currentSession.distracoes
+                ? `Saiu da aba ${currentSession.distracoes} ${currentSession.distracoes === 1 ? 'vez' : 'vezes'}`
+                : 'Nenhuma saída da aba até agora'}
+              {rigido && <span className="mf-distracoes-rigido"><Lock className="h-3 w-3" /> rígido</span>}
+            </p>
             <div className="mf-controles">
               {currentSession.status === 'active' ? (
                 <button type="button" className="ck-botao min-h-[48px]" onClick={pauseSession}><Pause className="h-4 w-4" /> Pausar</button>
@@ -386,6 +393,32 @@ export function ModoFoco() {
               <Marca feito={checklist.aba} aoMudar={() => setChecklist((c) => ({ ...c, aba: !c.aba }))} Icone={BookOpen} texto="Só a aba do estudo aberta" />
             </div>
             <SomAmbiente prefs={prefs} mudar={mudarPrefs} />
+
+            <h2 className="mf-h2 mt-7">4. Regras da sessão</h2>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={rigido}
+              className="mf-regra min-h-[56px]"
+              onClick={() => { setRigido(!rigido); tocarSino('toque') }}
+            >
+              <span className="mf-regra-icone" aria-hidden><Lock className="h-4 w-4" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="mf-regra-nome">Modo rígido</span>
+                <span className="mf-regra-texto">
+                  Sair da aba pausa o cronômetro, e loja, rifas, fórum e jogos ficam trancados até o fim da sessão.
+                </span>
+              </span>
+              <span className="mf-interruptor" aria-hidden />
+            </button>
+            <div className="mf-combo">
+              <Zap className="h-4 w-4 shrink-0" aria-hidden />
+              <span>
+                <b>Combo de foco:</b> cada questão do Banco acertada durante a sessão vale <b>+5 XP</b> além dos 10 de sempre.
+                Conferido pelo horário, no servidor.
+              </span>
+            </div>
+            <p className="mf-nota-ciencia">{PRATICAS.compromisso.texto}</p>
 
             <button type="button" className="ck-cta mf-comecar min-h-[56px]" onClick={() => comecar()}>
               <Play className="h-5 w-5" fill="currentColor" />
@@ -530,7 +563,7 @@ function Resumo({
   maisUm,
   fechar,
 }: {
-  sessao: { totalTimeMs: number; objective: string; targetMinutes?: number; recall?: string; syncedToServer: boolean }
+  sessao: { totalTimeMs: number; objective: string; targetMinutes?: number; recall?: string; syncedToServer: boolean; distracoes?: number }
   isAuthenticated: boolean
   salvar: (texto: string) => void
   maisUm: () => void
@@ -548,6 +581,14 @@ function Resumo({
       <p className="mf-resumo-rotulo">{bateu ? 'Meta batida' : 'Sessão concluída'}</p>
       <p className="mf-relogio">{minutos < 1 ? '< 1 min' : formatarMinutos(minutos)}</p>
       <p className="mf-objetivo">{sessao.objective}</p>
+      {minutos >= 1 && (
+        <p className="mf-distracoes" data-zero={!sessao.distracoes ? '' : undefined}>
+          <Eye className="h-3.5 w-3.5" aria-hidden />
+          {sessao.distracoes
+            ? `${sessao.distracoes} ${sessao.distracoes === 1 ? 'saída' : 'saídas'} da aba — a próxima pode ter menos`
+            : 'Zero saídas da aba: foco limpo'}
+        </p>
+      )}
       <p className="mf-nota-ciencia">
         {minutos < 1
           ? 'Sessões de menos de 1 minuto não entram no desempenho.'

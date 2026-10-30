@@ -257,7 +257,8 @@ export function ListaDoPacote({
           <ChipDoModulo m={m} />
           <div className="min-w-0 flex-1">
             <p className="text-[13.5px] font-semibold leading-snug" style={TXT}>{m.nome}</p>
-            <p className="mt-0.5 truncate text-[12px] leading-snug" style={TXT3}>
+            {/* contain: a linha cortada não empurra a largura mínima das grades em volta. */}
+            <p className="mt-0.5 truncate text-[12px] leading-snug [contain:inline-size]" style={TXT3}>
               {m.numeros.map((n) => `${n.v} ${n.r}`).join(' · ')}
             </p>
           </div>

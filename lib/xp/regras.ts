@@ -42,6 +42,7 @@ export const AREAS_DE_XP = [
   'comunidade',
   'avaliacoes',
   'compras',
+  'combo',
   'constancia',
 ] as const
 export type AreaDeXp = (typeof AREAS_DE_XP)[number]
@@ -61,6 +62,7 @@ export const ROTULO_DA_AREA: Record<AreaDeXp, string> = {
   comunidade: 'Comunidade',
   avaliacoes: 'Avaliações',
   compras: 'Compras e resgates',
+  combo: 'Combo de foco',
   constancia: 'Constância',
 }
 
@@ -82,6 +84,8 @@ export const TETO_DIARIO: Record<AreaDeXp, number | null> = {
   avaliacoes: 500,
   // Compras e resgates são limitados pelo próprio catálogo: sem teto.
   compras: null,
+  // Acerto dentro de uma sessão de foco: o incentivo para estudar com o cronômetro.
+  combo: 300,
   constancia: null,
 }
 
@@ -123,6 +127,7 @@ export const FONTES_DE_XP = {
   compra_manual: { area: 'compras', xp: 200, rotulo: 'Manual Clínico adquirido' },
   resgate_plus: { area: 'compras', xp: 40, rotulo: 'Material resgatado com o Plus+' },
   foco_meta: { area: 'foco', xp: 15, rotulo: 'Meta da sessão de foco batida' },
+  foco_combo: { area: 'combo', xp: 5, rotulo: 'Questão do banco acertada durante uma sessão de foco (além dos 10)' },
   dia_ativo: { area: 'constancia', xp: 10, rotulo: 'Dia com estudo' },
   sequencia_7: { area: 'constancia', xp: 50, rotulo: 'Cada 7 dias seguidos de estudo' },
 } as const satisfies Record<string, { area: AreaDeXp; xp: number; rotulo: string }>

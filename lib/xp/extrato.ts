@@ -492,6 +492,41 @@ export async function montarExtratoDeXp(
   for (const [dia, n] of mapas.criados) somar(dia, 'mapa_criado', n)
   for (const l of mapas.curtidas) somar(l._id, 'mapa_curtido', l.n)
 
+  // ── Combo de foco: acerto no banco dentro de uma sessão de foco ───────────
+  // A sessão é gravada com início e fim; a resolução, com a hora. O cruzamento
+  // é feito aqui, no servidor — não há como "declarar" o combo pelo navegador.
+  if (userObjectId) {
+    const sessoes = await seguro(
+      db
+        .collection<{ startedAt?: Date; finishedAt?: Date }>('focus-sessions')
+        .find(
+          { userId, totalTimeMs: { $gte: 5 * 60_000 }, startedAt: { $gte: new Date(agora.getTime() - 400 * 86_400_000) } },
+          { projection: { _id: 0, startedAt: 1, finishedAt: 1 } },
+        )
+        .sort({ startedAt: -1 })
+        .limit(600)
+        .toArray() as Promise<Array<{ startedAt?: Date; finishedAt?: Date }>>,
+      [] as Array<{ startedAt?: Date; finishedAt?: Date }>,
+    )
+    const janelas = sessoes
+      .filter((s) => s.startedAt && s.finishedAt && new Date(s.finishedAt) > new Date(s.startedAt))
+      .map((s) => ({ createdAt: { $gte: new Date(s.startedAt as Date), $lte: new Date(s.finishedAt as Date) } }))
+    for (let i = 0; i < janelas.length; i += 150) {
+      const combo = await seguro(
+        db
+          .collection('banco_resolucoes')
+          .aggregate<{ _id: string | null; n: number }>([
+            { $match: { userId: userObjectId, correta: true, $or: janelas.slice(i, i + 150) } },
+            { $group: { _id: { dia: porDiaNoFuso('$createdAt'), q: '$questaoId' } } },
+            { $group: { _id: '$_id.dia', n: { $sum: 1 } } },
+          ])
+          .toArray(),
+        [] as Array<{ _id: string | null; n: number }>,
+      )
+      for (const l of combo) somar(l._id, 'foco_combo', l.n)
+    }
+  }
+
   // ── Avaliações, compras, resgates e flashcards criados ────────────────────
   for (const l of avaliacoes) {
     somar(l._id, 'avaliacao', l.n)

@@ -165,9 +165,11 @@
 
 /* ── Material ───────────────────────────────────────────────────────────── */
 
+/* A posição vai com especificidade zero: uma barra de vidro `fixed` ou
+   `sticky` (a de compra das vitrines no celular) tem de vencer este padrão. */
+:where(.ck-vidro, .ck-vidro-forte) { position: relative; }
 .ck-vidro,
 .ck-vidro-forte {
-  position: relative;
   border-radius: 26px;
   background: var(--ck-vidro);
   -webkit-backdrop-filter: blur(28px) saturate(170%);

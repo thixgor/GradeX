@@ -165,6 +165,17 @@ export const PRATICAS = {
       revista: 'Psychological Science',
     },
   },
+  compromisso: {
+    nome: 'Pré-compromisso e automonitoramento',
+    texto: 'Trancar a tentação antes (o modo rígido) é um pré-compromisso: quem se impõe a regra antes rende mais do que quem confia na força de vontade na hora. E contar as saídas da aba é monitorar o próprio progresso, que ajuda a cumprir a meta.',
+    evidencia: 'moderada' as Evidencia,
+    referencia: {
+      autores: 'Harkin B, Webb TL, Chang BPI, et al.',
+      ano: 2016,
+      titulo: 'Does monitoring goal progress promote goal attainment? A meta-analysis of the experimental evidence',
+      revista: 'Psychological Bulletin',
+    },
+  },
   aquecimento: {
     nome: 'Aquecimento de atenção',
     texto: 'Os jogos esquentam a atenção antes de começar e quebram a pausa sem rede social. Não prometem "aumentar a inteligência": treino cognitivo melhora o próprio jogo, não muito além dele.',

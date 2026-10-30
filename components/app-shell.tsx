@@ -7,6 +7,9 @@ import { CreateExamModal } from '@/components/create-exam-modal'
 import { BanChecker } from '@/components/ban-checker'
 import { ProfileCompletionGate, resetProfilePromptDismissal } from '@/components/profile-completion-gate'
 import { XpProvider } from '@/components/xp/xp-provider'
+import '@/components/ferramentas-do-topo.css'
+import { AdesaoDoFoco } from '@/components/foco/adesao-do-foco'
+import { TourDoTopo } from '@/components/tour-do-topo'
 import { SupportChat, esquecerTicketsEmMemoria } from '@/components/support-chat'
 import dynamicImport from 'next/dynamic'
 import { rotaSemBarra } from '@/components/manual-clinico/casco/modulos'
@@ -504,7 +507,12 @@ export function AppShell({
             'min-h-screen flex flex-col transition-[padding-left] duration-[400ms] ease-[cubic-bezier(0.4,0,0.2,1)]',
             sidebarCollapsed ? 'lg:pl-[88px]' : 'lg:pl-[288px]'
           )}
+          style={{ ['--sidebar-largura' as string]: sidebarCollapsed ? '88px' : '288px' }}
         >
+          {/* Convite de foco no ponto de estudo, chama em risco e o modo rígido. */}
+          <AdesaoDoFoco />
+          {/* Orientação da barra do topo, uma vez por conta. */}
+          <TourDoTopo userId={bootstrapUser?._id} />
           {/* Cabeçalho
               No computador, uma placa de vidro flutuando no topo da coluna de
               conteúdo, alinhada à sidebar (12 px das bordas, mesmo raio da

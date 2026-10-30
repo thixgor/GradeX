@@ -255,7 +255,7 @@ export function MateriaisToolbar({
             />
             {/* O min-width impede que o resto da barra esprema o campo até
                 virar um cotoco. */}
-            <div className="hidden min-w-[220px] max-w-md flex-1 lg:flex">{renderSearchInput(true)}</div>
+            <div className="hidden min-w-[140px] max-w-md flex-1 lg:flex xl:min-w-[220px]">{renderSearchInput(true)}</div>
             {showSort && <div className="ml-auto hidden lg:block"><SortMenu value={sort} onChange={onSortChange} /></div>}
           </div>
 

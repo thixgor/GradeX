@@ -334,7 +334,7 @@ export function PainelDeFoco({
           <p className="mt-0.5 text-[13px] leading-snug text-muted-foreground">
             Diga o que vai estudar e cronometre. O tempo entra no seu desempenho e vira XP.
           </p>
-          <Link href="/foco" onClick={onFechar} className="mt-2 inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline">
+          <Link href="/profile?tab=foco" onClick={onFechar} className="mt-2 inline-flex items-center gap-1 text-[13px] font-semibold text-primary hover:underline">
             Abrir o Modo Foco — Pomodoro, respiração e jogos de atenção →
           </Link>
         </div>
