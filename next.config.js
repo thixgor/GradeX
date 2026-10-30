@@ -435,6 +435,17 @@ const nextConfig = {
             },
           ]
         : []),
+      // Desenhos do Dom (assistente de IA): versionados na pasta (`/dom/v1/`),
+      // gerados por `scripts/dom/preparar-mascotes.mjs`. Desenho novo = `v2/`.
+      {
+        source: '/dom/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
       // Cache para fontes
       {
         source: '/fonts/(.*)',

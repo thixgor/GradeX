@@ -16,6 +16,8 @@ import { rotaSemBarra } from '@/components/manual-clinico/casco/modulos'
 
 // A moldura do Manual (aurora + barra de portas) só baixa no Manual.
 const MolduraDoManual = dynamicImport(() => import('@/components/manual-clinico/casco/moldura-do-manual'))
+// O Dom (assistente de IA) só baixa no navegador e depois do casco.
+const DomLancador = dynamicImport(() => import('@/components/dom/dom-lancador').then((m) => m.DomLancador), { ssr: false })
 import { PageLoading } from '@/components/page-loading'
 import { SectionSkeleton } from '@/components/section-skeleton'
 import { AvisoDePartidaLenta } from '@/components/pwa/aviso-de-partida-lenta'
@@ -594,6 +596,9 @@ export function AppShell({
 
         {/* Support Chat */}
         {showSupport && <SupportChat />}
+
+        {/* Dom, o assistente de IA (quem pode usar é a API que decide). */}
+        {bootstrapUser && <DomLancador nome={bootstrapUser.name} />}
       </div>
       </XpProvider>
       </FocusSessionProvider>

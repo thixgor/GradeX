@@ -23,6 +23,8 @@ export type AdminSecurityEventType =
   | 'database_reset_failed'      // tentativa de esvaziar o banco recusada
   | 'user_password_reset'        // admin gerou senha provisória para um usuário
   | 'user_password_link_sent'    // admin mandou o link de redefinição a um usuário
+  | 'dom_exploit'                // tentativa de exploit no Dom (assistente de IA)
+  | 'dom_suspended'              // Dom suspenso 24 h para a conta após repetidas tentativas
 
 export interface AdminSecurityEvent {
   type: AdminSecurityEventType

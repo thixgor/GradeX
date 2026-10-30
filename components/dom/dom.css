@@ -1,0 +1,1553 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Dom — o assistente de IA da DomineAqui.
+
+   Movimento (regras do impeccable): transform/opacity apenas; chegada com
+   `--dom-sai` (cubic-bezier(.16,1,.3,1)), saída mais rápida que a entrada;
+   feedback 120–150 ms, estado 200–300 ms, painel 320–420 ms, um único
+   momento autoral (a troca de traje socrático, ~1,6 s). Loops ociosos param
+   com a aba oculta (`[data-oculto]`) e somem com `prefers-reduced-motion`.
+
+   Cada parte do mascote é um `div` com o seu próprio `<svg>`: girar a cauda
+   move uma camada composta pela GPU, sem redesenhar as outras 500 formas.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.dom-escopo :is(h1, h2, h3, h4, h5, h6) {
+  font-family: inherit;
+}
+.dom-escopo {
+  --dom-sai: cubic-bezier(0.16, 1, 0.3, 1);
+  --dom-entra: cubic-bezier(0.7, 0, 0.84, 0);
+  /* A cortina da troca de traje: devagar nas pontas, constante no meio. */
+  --dom-cortina: cubic-bezier(0.45, 0, 0.25, 1);
+  --dom-laranja: #ef8a3c;
+  --dom-laranja-forte: #d96a1f;
+  --dom-verde: #2f7a5b;
+  --dom-verde-escuro: #1d4f3f;
+  --dom-verde-claro: #9fd8bf;
+  --dom-ouro: #e8b44a;
+  --dom-vermelho: #e5484d;
+
+  --dom-texto: #1a2419;
+  --dom-texto-2: #4a5a4c;
+  --dom-texto-3: #6f7d70;
+  --dom-vidro: rgba(252, 249, 243, 0.78);
+  --dom-vidro-forte: rgba(255, 253, 249, 0.92);
+  --dom-borda: rgba(29, 79, 63, 0.14);
+  --dom-borda-forte: rgba(29, 79, 63, 0.24);
+  --dom-bolha-dom: rgba(255, 255, 255, 0.86);
+  --dom-bolha-aluno: linear-gradient(180deg, #3a8a68, #2a6a50);
+  --dom-chip: rgba(47, 122, 91, 0.08);
+  --dom-chip-hover: rgba(47, 122, 91, 0.16);
+  --dom-superficie: rgba(255, 255, 255, 0.55);
+  --dom-superficie-forte: rgba(255, 255, 255, 0.82);
+  --dom-trilho: rgba(29, 79, 63, 0.07);
+  --dom-sombra: 0 30px 70px -28px rgba(20, 40, 30, 0.45), 0 2px 0 rgba(255, 255, 255, 0.7) inset;
+  --dom-palco: radial-gradient(120% 90% at 20% 0%, rgba(239, 138, 60, 0.18), transparent 60%),
+    radial-gradient(90% 80% at 100% 100%, rgba(47, 122, 91, 0.16), transparent 60%);
+  color: var(--dom-texto);
+}
+
+.dark .dom-escopo {
+  --dom-texto: #f0ebe0;
+  --dom-texto-2: #c5cfc4;
+  --dom-texto-3: #93a196;
+  --dom-vidro: rgba(16, 26, 21, 0.74);
+  --dom-vidro-forte: rgba(18, 29, 24, 0.94);
+  --dom-borda: rgba(159, 216, 191, 0.14);
+  --dom-borda-forte: rgba(159, 216, 191, 0.26);
+  --dom-bolha-dom: rgba(255, 255, 255, 0.07);
+  --dom-chip: rgba(159, 216, 191, 0.08);
+  --dom-chip-hover: rgba(159, 216, 191, 0.16);
+  --dom-superficie: rgba(255, 255, 255, 0.045);
+  --dom-superficie-forte: rgba(255, 255, 255, 0.075);
+  --dom-trilho: rgba(255, 255, 255, 0.05);
+  --dom-sombra: 0 30px 80px -24px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  --dom-palco: radial-gradient(120% 90% at 20% 0%, rgba(239, 138, 60, 0.16), transparent 60%),
+    radial-gradient(90% 80% at 100% 100%, rgba(47, 122, 91, 0.22), transparent 60%);
+}
+
+/* ── Mascote ──────────────────────────────────────────────────────────── */
+
+.dom-mascote {
+  position: relative;
+  aspect-ratio: 954 / 1254;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+.dom-mascote__camada,
+.dom-mascote__traje {
+  position: absolute;
+  inset: 0;
+}
+.dom-mascote__camada > svg,
+.dom-mascote__extras {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Corpo inteiro respira (a partir dos pés). */
+.dom-mascote__corpo {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 96%;
+  animation: dom-respira 3.6s ease-in-out infinite;
+}
+@keyframes dom-respira {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.006, 1.014); }
+}
+
+/* Cauda: pivô na base, por trás da perna (≈ x 400, y 1050 do desenho). */
+.dom-mascote__cauda {
+  transform-origin: 26.2% 83.7%;
+  animation: dom-abana 2.8s ease-in-out infinite;
+}
+@keyframes dom-abana {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-7deg); }
+  60% { transform: rotate(3deg); }
+}
+.dom-mascote[data-estado='feliz'] .dom-mascote__cauda,
+.dom-mascote[data-estado='animado'] .dom-mascote__cauda,
+.dom-mascote[data-estado='orgulhoso'] .dom-mascote__cauda,
+.dom-mascote[data-estado='acenando'] .dom-mascote__cauda {
+  animation: dom-abana-feliz 0.55s ease-in-out infinite;
+}
+@keyframes dom-abana-feliz {
+  0%, 100% { transform: rotate(4deg); }
+  50% { transform: rotate(-14deg); }
+}
+.dom-mascote[data-estado='pensando'] .dom-mascote__cauda {
+  animation: dom-abana-curioso 1.6s ease-in-out infinite;
+}
+@keyframes dom-abana-curioso {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(-9deg); }
+}
+.dom-mascote[data-estado='erro'] .dom-mascote__cauda,
+.dom-mascote[data-estado='preocupado'] .dom-mascote__cauda {
+  animation: none;
+  transform: rotate(9deg);
+  transition: transform 300ms var(--dom-sai);
+}
+
+/* Celular: um "tec-tec" leve quando pensa. Pivô no punho. */
+.dom-mascote__celular {
+  transform-origin: 88% 72%;
+  transition: transform 300ms var(--dom-sai);
+}
+.dom-mascote[data-estado='pensando'] .dom-mascote__celular {
+  animation: dom-digita 0.9s ease-in-out infinite;
+}
+@keyframes dom-digita {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  40% { transform: rotate(-1.6deg) translateY(-0.4%); }
+}
+
+/* Pulinho de alegria / aceno. */
+.dom-mascote[data-estado='animado'] .dom-mascote__corpo,
+.dom-mascote[data-estado='acenando'] .dom-mascote__corpo {
+  animation: dom-pulinho 0.9s var(--dom-sai) 2, dom-respira 3.6s ease-in-out 1.8s infinite;
+}
+@keyframes dom-pulinho {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  18% { transform: translateY(0) scale(1.03, 0.96); }
+  45% { transform: translateY(-5%) scale(0.98, 1.03); }
+  70% { transform: translateY(0) scale(1.02, 0.98); }
+}
+.dom-mascote[data-estado='explicando'] .dom-mascote__corpo {
+  animation: dom-explica 2.4s ease-in-out infinite;
+}
+@keyframes dom-explica {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-1.2deg); }
+  75% { transform: rotate(1.2deg); }
+}
+
+/* Pálpebras: escala vertical a partir do topo do olho. */
+.dom-palpebra {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  transition: transform 70ms ease-in;
+}
+.dom-mascote[data-piscando='1'] .dom-palpebra {
+  transform: scaleY(1);
+}
+
+/* Boca: aberta só quando fala. */
+.dom-boca {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform 90ms ease-out, opacity 90ms;
+}
+.dom-mascote[data-falando='1'] .dom-boca {
+  opacity: 1;
+  animation: dom-fala 0.26s ease-in-out infinite alternate;
+}
+.dom-mascote[data-falando='1'][data-silaba='1'] .dom-boca {
+  animation-duration: 0.18s;
+}
+@keyframes dom-fala {
+  0% { transform: scaleY(0.25); }
+  100% { transform: scaleY(1); }
+}
+
+/* Bochechas coradas quando está feliz/orgulhoso. */
+.dom-bochecha {
+  opacity: 0;
+  transition: opacity 400ms var(--dom-sai);
+}
+.dom-mascote[data-estado='feliz'] .dom-bochecha,
+.dom-mascote[data-estado='orgulhoso'] .dom-bochecha,
+.dom-mascote[data-estado='animado'] .dom-bochecha,
+.dom-mascote[data-estado='acenando'] .dom-bochecha {
+  opacity: 0.55;
+}
+
+/* Luz do celular no rosto e reflexo nos óculos. */
+.dom-luz,
+.dom-reflexo,
+.dom-feixe {
+  opacity: 0;
+  transition: opacity 260ms var(--dom-sai);
+  mix-blend-mode: screen;
+}
+.dom-mascote[data-estado='pensando'] .dom-luz,
+.dom-mascote[data-estado='erro'] .dom-luz {
+  opacity: 1;
+  animation: dom-tremula 1.7s ease-in-out infinite;
+}
+.dom-mascote[data-estado='pensando'] .dom-reflexo,
+.dom-mascote[data-estado='erro'] .dom-reflexo,
+.dom-mascote[data-estado='pensando'] .dom-feixe,
+.dom-mascote[data-estado='erro'] .dom-feixe {
+  opacity: 1;
+}
+@keyframes dom-tremula {
+  0%, 100% { opacity: 0.85; }
+  35% { opacity: 1; }
+  60% { opacity: 0.7; }
+  80% { opacity: 0.95; }
+}
+/* As "linhas de texto" da tela rolando no reflexo da lente. */
+.dom-reflexo__linhas {
+  animation: dom-rola 1.4s linear infinite;
+}
+@keyframes dom-rola {
+  from { transform: translateY(0); }
+  to { transform: translateY(-36px); }
+}
+.dom-mascote[data-estado='erro'] .dom-reflexo__linhas {
+  animation: dom-pisca-erro 0.7s steps(2, jump-none) infinite;
+}
+@keyframes dom-pisca-erro {
+  0% { opacity: 1; }
+  100% { opacity: 0.35; }
+}
+
+/* Gotinha de preocupação. */
+.dom-gota {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+}
+.dom-mascote[data-estado='erro'] .dom-gota,
+.dom-mascote[data-estado='preocupado'] .dom-gota {
+  animation: dom-gota 1.8s var(--dom-sai) infinite;
+}
+@keyframes dom-gota {
+  0% { opacity: 0; transform: translateY(-10px) scale(0.6); }
+  25% { opacity: 1; transform: translateY(0) scale(1); }
+  80% { opacity: 1; transform: translateY(14px) scale(1); }
+  100% { opacity: 0; transform: translateY(24px) scale(0.9); }
+}
+
+/* Brilhinhos de orgulho. */
+.dom-brilho {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.dom-mascote[data-estado='orgulhoso'] .dom-brilho,
+.dom-mascote[data-estado='animado'] .dom-brilho {
+  animation: dom-cintila 1.6s ease-in-out infinite;
+}
+.dom-mascote .dom-brilho:nth-of-type(2) { animation-delay: 0.4s; }
+.dom-mascote .dom-brilho:nth-of-type(3) { animation-delay: 0.8s; }
+@keyframes dom-cintila {
+  0%, 100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+
+/* "Hmm…" — balõezinhos de pensamento. */
+.dom-pensamento circle {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.dom-mascote[data-estado='pensando'] .dom-pensamento circle {
+  animation: dom-bolinha 1.5s ease-in-out infinite;
+}
+.dom-mascote .dom-pensamento circle:nth-child(2) { animation-delay: 0.2s; }
+.dom-mascote .dom-pensamento circle:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dom-bolinha {
+  0%, 100% { opacity: 0; transform: scale(0.5); }
+  40%, 70% { opacity: 0.95; transform: scale(1); }
+}
+
+/* Esqueleto enquanto o desenho baixa (silhueta respirando). */
+.dom-mascote__silhueta {
+  position: absolute;
+  inset: 8% 14% 2%;
+  border-radius: 46% 46% 30% 30%;
+  background: radial-gradient(circle at 50% 25%, rgba(239, 138, 60, 0.35), rgba(239, 138, 60, 0.08) 60%, transparent 70%);
+  animation: dom-respira 2s ease-in-out infinite;
+}
+
+/* ── Troca de traje: Dom → Sócrates ───────────────────────────────────── */
+
+.dom-mascote__traje {
+  transition: opacity 200ms;
+}
+.dom-mascote[data-traje='normal'] .dom-mascote__traje[data-qual='socrates'],
+.dom-mascote[data-traje='socrates'] .dom-mascote__traje[data-qual='normal'] {
+  opacity: 0;
+  visibility: hidden;
+}
+/* Durante a troca os dois aparecem: o novo nasce de cima para baixo, como uma
+   toga caindo, atrás de uma linha de luz dourada; o mascote gira como moeda. */
+.dom-mascote[data-trocando] .dom-mascote__traje[data-qual] {
+  opacity: 1;
+  visibility: visible;
+  transition: none;
+}
+.dom-mascote[data-trocando] {
+  animation: dom-gira 1.6s var(--dom-sai) both;
+}
+@keyframes dom-gira {
+  0% { transform: perspective(900px) rotateY(0deg) scale(1); }
+  28% { transform: perspective(900px) rotateY(80deg) scale(0.94); }
+  42% { transform: perspective(900px) rotateY(-30deg) scale(1.04); }
+  60% { transform: perspective(900px) rotateY(12deg) scale(1.02); }
+  100% { transform: perspective(900px) rotateY(0deg) scale(1); }
+}
+.dom-mascote[data-trocando='socrates'] .dom-mascote__traje[data-qual='socrates'],
+.dom-mascote[data-trocando='normal'] .dom-mascote__traje[data-qual='normal'] {
+  animation: dom-veste 1.6s var(--dom-cortina) both;
+}
+/* O traje que sai é recortado na mesma linha: nada do antigo aparece por
+   trás do novo (o celular preto atrás do de bronze, por exemplo). */
+.dom-mascote[data-trocando='socrates'] .dom-mascote__traje[data-qual='normal'],
+.dom-mascote[data-trocando='normal'] .dom-mascote__traje[data-qual='socrates'] {
+  animation: dom-despe 1.6s var(--dom-cortina) both;
+}
+@keyframes dom-veste {
+  0%, 24% { clip-path: inset(0 0 100% 0); }
+  88%, 100% { clip-path: inset(0 0 0 0); }
+}
+@keyframes dom-despe {
+  0%, 24% { clip-path: inset(0 0 0 0); }
+  88%, 100% { clip-path: inset(100% 0 0 0); }
+}
+.dom-troca {
+  position: absolute;
+  inset: -12% -18%;
+  pointer-events: none;
+  overflow: visible;
+}
+.dom-troca__linha {
+  animation: dom-linha 1.6s var(--dom-cortina) both;
+}
+@keyframes dom-linha {
+  0%, 24% { transform: translateY(0); opacity: 0; }
+  28% { opacity: 1; }
+  84% { opacity: 1; }
+  88%, 100% { transform: translateY(1254px); opacity: 0; }
+}
+.dom-troca__louro {
+  stroke-dasharray: 1400;
+  stroke-dashoffset: 1400;
+  animation: dom-louro 1.6s var(--dom-sai) 0.2s both;
+}
+@keyframes dom-louro {
+  0% { stroke-dashoffset: 1400; opacity: 0; }
+  15% { opacity: 1; }
+  70% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.dom-troca__particula {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dom-particula 1.4s var(--dom-sai) both;
+}
+@keyframes dom-particula {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.2); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); }
+}
+.dom-troca__nome {
+  font: 600 64px/1 'Times New Roman', Georgia, serif;
+  letter-spacing: 0.32em;
+  fill: var(--dom-ouro);
+  animation: dom-nome 1.6s var(--dom-sai) 0.35s both;
+}
+@keyframes dom-nome {
+  0% { opacity: 0; transform: translateY(18px); }
+  35%, 70% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+/* ── Logo DomineAqui AI ───────────────────────────────────────────────── */
+
+.dom-logo {
+  position: relative;
+  aspect-ratio: 905 / 350;
+  height: 100%;
+}
+.dom-logo[data-so-selo] { aspect-ratio: 340 / 350; }
+.dom-logo[data-so-selo] .dom-logo__selo { transform-origin: 50% 52%; }
+.dom-logo > div,
+.dom-logo > svg {
+  position: absolute;
+  inset: 0;
+}
+.dom-logo svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.dom-logo__selo {
+  transform-origin: 19% 52%;
+  animation: dom-selo-entra 900ms var(--dom-sai) both, dom-selo-flutua 5s ease-in-out 900ms infinite;
+}
+@keyframes dom-selo-entra {
+  0% { opacity: 0; transform: translateY(-14%) rotate(-14deg) scale(0.7); }
+  60% { opacity: 1; transform: translateY(2%) rotate(3deg) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes dom-selo-flutua {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-1.6%) rotate(-1deg); }
+}
+.dom-logo__letreiro {
+  animation: dom-letreiro 800ms var(--dom-sai) 250ms both;
+}
+@keyframes dom-letreiro {
+  0% { clip-path: inset(0 100% 0 0); opacity: 0.3; }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+.dom-logo__no {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dom-no 2.8s ease-in-out infinite;
+}
+.dom-logo__no:nth-of-type(2) { animation-delay: 0.35s; }
+.dom-logo__no:nth-of-type(3) { animation-delay: 0.7s; }
+.dom-logo__no:nth-of-type(4) { animation-delay: 1.05s; }
+@keyframes dom-no {
+  0%, 100% { opacity: 0.15; transform: scale(0.9); }
+  40% { opacity: 0.85; transform: scale(1.25); }
+}
+.dom-logo__fluxo {
+  stroke-dasharray: 6 14;
+  animation: dom-fluxo 1.2s linear infinite;
+}
+@keyframes dom-fluxo {
+  to { stroke-dashoffset: -40; }
+}
+.dom-logo__brilho {
+  animation: dom-varre 4.5s var(--dom-sai) 1s infinite;
+}
+@keyframes dom-varre {
+  0% { transform: translateX(-340px) skewX(-18deg); }
+  35%, 100% { transform: translateX(420px) skewX(-18deg); }
+}
+.dom-logo__cruz {
+  animation: dom-cruz 3.2s ease-in-out infinite;
+}
+@keyframes dom-cruz {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 0.55; }
+}
+.dom-logo[data-pensando='1'] .dom-logo__no { animation-duration: 0.9s; }
+.dom-logo[data-pensando='1'] .dom-logo__fluxo { animation-duration: 0.45s; }
+
+/* ── Lançador ─────────────────────────────────────────────────────────── */
+
+.dom-lancador {
+  position: fixed;
+  z-index: 49;
+  right: 1rem;
+  bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px) + var(--gx-barra-inferior-h, 0px));
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  transition: transform 320ms var(--dom-sai), opacity 200ms;
+}
+@media (min-width: 1024px) {
+  .dom-lancador {
+    right: 1.5rem;
+    bottom: calc(6rem + var(--gx-barra-inferior-h, 0px));
+  }
+}
+.dom-lancador[data-aberto='1'] {
+  transform: scale(0.6) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+}
+.dom-lancador__botao {
+  position: relative;
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 9999px;
+  padding: 3px;
+  background: conic-gradient(from var(--dom-giro, 0deg), #ef8a3c, #e8b44a, #2f7a5b, #9fd8bf, #ef8a3c);
+  box-shadow: 0 18px 40px -16px rgba(217, 106, 31, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  transition: transform 160ms var(--dom-sai), box-shadow 160ms;
+  cursor: pointer;
+  animation: dom-orbita 6s linear infinite;
+}
+@property --dom-giro {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes dom-orbita {
+  to { --dom-giro: 360deg; }
+}
+.dom-lancador__botao:hover { transform: translateY(-3px) scale(1.05); }
+.dom-lancador__botao:active { transform: scale(0.94); }
+.dom-lancador__botao:focus-visible { outline: 3px solid var(--dom-laranja); outline-offset: 3px; }
+.dom-lancador__miolo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, #fff8ec, #f6d6ae 72%);
+}
+.dark .dom-lancador__miolo { background: radial-gradient(circle at 50% 28%, #3c2c1d, #18120c 78%); }
+.dom-lancador__status {
+  position: absolute;
+  right: 2px;
+  bottom: 4px;
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 9999px;
+  background: #3fcf8e;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 0 rgba(63, 207, 142, 0.6);
+  animation: dom-ping 2.4s var(--dom-sai) infinite;
+}
+@keyframes dom-ping {
+  0% { box-shadow: 0 0 0 0 rgba(63, 207, 142, 0.55); }
+  70%, 100% { box-shadow: 0 0 0 9px rgba(63, 207, 142, 0); }
+}
+.dom-lancador__rotulo {
+  position: absolute;
+  bottom: -0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.05rem 0.45rem;
+  border-radius: 9999px;
+  background: #1d4f3f;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  box-shadow: 0 6px 14px -6px rgba(0, 0, 0, 0.5);
+}
+.dom-busto {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.dom-busto > .dom-mascote {
+  position: absolute;
+  width: 150%;
+  left: -24%;
+  top: 4%;
+}
+.dom-lancador__balao {
+  max-width: 16rem;
+  margin-bottom: 0.9rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 1.1rem 1.1rem 0.3rem 1.1rem;
+  background: var(--dom-vidro-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: var(--dom-sombra);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  font-size: 0.86rem;
+  line-height: 1.38;
+  color: var(--dom-texto);
+  animation: dom-balao 460ms var(--dom-sai) both;
+  cursor: pointer;
+  text-align: left;
+}
+.dom-lancador__balao strong { display: block; font-size: 0.7rem; color: var(--dom-laranja-forte); letter-spacing: 0.02em; }
+@keyframes dom-balao {
+  from { opacity: 0; transform: translateY(10px) scale(0.94); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ── Painel ───────────────────────────────────────────────────────────── */
+
+.dom-painel {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--dom-fundo-painel);
+  animation: dom-painel-entra 420ms var(--dom-sai) both;
+  --dom-fundo-painel: #fbf7f0;
+}
+.dark .dom-painel { --dom-fundo-painel: #0d1612; }
+@media (min-width: 640px) {
+  .dom-painel {
+    inset: auto 1.25rem 1.25rem auto;
+    width: 460px;
+    height: min(800px, calc(100dvh - 2.5rem));
+    border-radius: 1.75rem;
+    border: 1px solid var(--dom-borda);
+    box-shadow: var(--dom-sombra);
+    transition: width 420ms var(--dom-sai), height 420ms var(--dom-sai), inset 420ms var(--dom-sai);
+  }
+  .dom-painel[data-expandido] {
+    inset: 50% auto auto 50%;
+    width: min(1080px, calc(100vw - 3rem));
+    height: min(820px, calc(100dvh - 3rem));
+    transform: translate(-50%, -50%);
+    animation: dom-painel-expande 460ms var(--dom-sai) both;
+  }
+}
+.dom-painel[data-saindo] { animation: dom-painel-sai 200ms var(--dom-entra) both; }
+@keyframes dom-painel-entra {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dom-painel-expande {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.97); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+@keyframes dom-painel-sai {
+  to { opacity: 0; transform: translateY(18px) scale(0.98); }
+}
+/* Véu atrás do modo expandido: foco no estudo. */
+.dom-veu {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: rgba(12, 20, 16, 0.42);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: dom-veu 320ms var(--dom-sai) both;
+}
+@keyframes dom-veu { from { opacity: 0; } }
+
+/* Aurora: três manchas de luz se movendo devagar atrás do vidro. */
+.dom-aurora {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.dom-aurora i {
+  position: absolute;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.55;
+  will-change: transform;
+}
+.dom-aurora i:nth-child(1) { background: #f6a560; top: -22%; left: -18%; animation: dom-aurora-a 18s ease-in-out infinite; }
+.dom-aurora i:nth-child(2) { background: #7cc7a4; top: 18%; right: -30%; animation: dom-aurora-b 22s ease-in-out infinite; }
+.dom-aurora i:nth-child(3) { background: #f3d08a; bottom: -30%; left: 10%; opacity: 0.35; animation: dom-aurora-c 26s ease-in-out infinite; }
+.dark .dom-aurora i { opacity: 0.28; }
+.dark .dom-aurora i:nth-child(3) { opacity: 0.18; }
+@keyframes dom-aurora-a { 50% { transform: translate(22%, 16%) scale(1.15); } }
+@keyframes dom-aurora-b { 50% { transform: translate(-26%, 12%) scale(0.9); } }
+@keyframes dom-aurora-c { 50% { transform: translate(18%, -18%) scale(1.2); } }
+.dom-painel[data-modo='socratico'] .dom-aurora i:nth-child(1) { background: #e8b44a; }
+.dom-painel[data-modo='socratico'] .dom-aurora i:nth-child(2) { background: #c95454; opacity: 0.32; }
+.dom-painel[data-modo='socratico'] .dom-aurora i:nth-child(3) { background: #f4ead6; opacity: 0.6; }
+.dark .dom-painel[data-modo='socratico'] .dom-aurora i:nth-child(3) { background: #8a6a2a; opacity: 0.25; }
+
+/* Friso grego no topo do modo socrático. */
+.dom-friso {
+  height: 10px;
+  flex: none;
+  opacity: 0;
+  transition: opacity 400ms var(--dom-sai);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10' viewBox='0 0 20 10'%3E%3Cpath d='M0 9h4V3h8v4H8V5H6v4h10V1H2' fill='none' stroke='%23c9952f' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-size: 20px 10px;
+}
+.dom-painel[data-modo='socratico'] .dom-friso { opacity: 0.9; }
+
+.dom-cabeca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.75rem 0.6rem 1rem;
+  padding-top: max(0.7rem, env(safe-area-inset-top));
+}
+.dom-cabeca__logo { height: 2.5rem; flex: none; }
+.dom-cabeca__nome { line-height: 1.1; }
+.dom-cabeca__nome strong { display: block; font-size: 1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--dom-texto); }
+.dom-cabeca__nome span { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.7rem; font-weight: 600; color: var(--dom-texto-3); }
+.dom-cabeca__nome span::before { content: ''; width: 0.45rem; height: 0.45rem; border-radius: 9999px; background: #3fcf8e; box-shadow: 0 0 0 3px rgba(63, 207, 142, 0.2); }
+.dom-painel[data-modo='socratico'] .dom-cabeca__nome span::before { background: #e8b44a; box-shadow: 0 0 0 3px rgba(232, 180, 74, 0.25); }
+.dom-icone-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.8rem;
+  color: var(--dom-texto-2);
+  transition: background 150ms, color 150ms, transform 120ms;
+}
+.dom-icone-botao:hover { background: var(--dom-chip-hover); color: var(--dom-texto); }
+.dom-icone-botao:active { transform: scale(0.92); }
+.dom-icone-botao:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: 2px; }
+.dom-icone-botao[aria-pressed='true'] { color: var(--dom-laranja-forte); }
+
+/* Abas: pílula que desliza até a aba ativa. */
+.dom-abas {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 0.3rem;
+  margin: 0 1rem 0.2rem;
+  border-radius: 1rem;
+  background: var(--dom-trilho);
+  border: 1px solid var(--dom-borda);
+}
+.dom-abas__pilula {
+  position: absolute;
+  top: 0.3rem;
+  bottom: 0.3rem;
+  left: 0.3rem;
+  width: calc((100% - 0.6rem) / var(--n));
+  transform: translateX(calc(100% * var(--i)));
+  border-radius: 0.75rem;
+  background: var(--dom-vidro-forte);
+  box-shadow: 0 8px 20px -12px rgba(20, 40, 30, 0.55), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+  transition: transform 380ms var(--dom-sai);
+}
+.dark .dom-abas__pilula { box-shadow: 0 8px 20px -12px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.06) inset; }
+.dom-aba {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--dom-texto-3);
+  transition: color 200ms;
+  white-space: nowrap;
+}
+.dom-aba[aria-selected='true'] { color: var(--dom-texto); }
+.dom-aba[aria-selected='true'] svg { color: var(--dom-laranja-forte); }
+.dom-painel[data-modo='socratico'] .dom-aba[aria-selected='true'] svg { color: #b8862a; }
+.dom-aba:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: -2px; border-radius: 0.75rem; }
+
+/* Corpo: uma coluna no lado; duas no modo expandido. */
+.dom-corpo {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.dom-lateral { display: contents; }
+.dom-principal {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 900px) {
+  .dom-painel[data-expandido] .dom-corpo {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+  }
+  .dom-painel[data-expandido] .dom-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 0.6rem 1rem 1rem;
+    border-right: 1px solid var(--dom-borda);
+    overflow-y: auto;
+    overflow-anchor: none;
+  }
+  .dom-painel[data-expandido] .dom-bento { grid-template-columns: repeat(3, 1fr); }
+  .dom-painel[data-expandido] .dom-bento__item--largo { grid-column: span 3; }
+  .dom-painel[data-expandido][data-modo='socratico'] .dom-palco__mascote { width: 11.5rem; }
+  .dom-painel[data-expandido] .dom-principal { max-width: 760px; width: 100%; margin: 0 auto; }
+}
+
+/* Palco: Dom no pedestal de luz + balão com rabinho. */
+.dom-palco {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.4rem;
+  padding: 0.4rem 1rem 0;
+  min-height: 10.5rem;
+}
+.dom-palco__mascote {
+  position: relative;
+  width: 7.6rem;
+  flex: none;
+  z-index: 1;
+}
+.dom-palco__mascote::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -2%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(239, 138, 60, 0.45), rgba(239, 138, 60, 0) 70%);
+  z-index: -1;
+  animation: dom-pedestal 3.6s ease-in-out infinite;
+}
+.dom-painel[data-modo='socratico'] .dom-palco__mascote::after {
+  background: radial-gradient(closest-side, rgba(232, 180, 74, 0.6), rgba(232, 180, 74, 0) 70%);
+}
+@keyframes dom-pedestal { 50% { transform: scaleX(1.08); opacity: 0.75; } }
+.dom-palco__fala {
+  position: relative;
+  flex: 1;
+  align-self: center;
+  margin-bottom: 1.2rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 1.1rem;
+  background: var(--dom-vidro-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: 0 14px 30px -20px rgba(20, 40, 30, 0.5);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.42;
+  color: var(--dom-texto);
+  min-height: 2.8rem;
+}
+.dom-palco__fala::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  bottom: 14px;
+  width: 14px;
+  height: 14px;
+  background: inherit;
+  border-left: 1px solid var(--dom-borda);
+  border-bottom: 1px solid var(--dom-borda);
+  transform: rotate(45deg);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.dom-palco__fala[data-tom='erro'] { border-color: rgba(229, 72, 77, 0.5); color: #b42328; }
+.dark .dom-palco__fala[data-tom='erro'] { color: #ff9a9d; }
+.dom-palco__fala-texto { animation: dom-fala-troca 300ms var(--dom-sai) both; }
+@keyframes dom-fala-troca {
+  from { opacity: 0; transform: translateY(5px); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@media (min-width: 900px) {
+  .dom-painel[data-expandido] .dom-palco {
+    flex-direction: column-reverse;
+    align-items: center;
+    padding: 0.5rem 0 0;
+    min-height: 0;
+  }
+  .dom-painel[data-expandido] .dom-palco__mascote { width: 13.5rem; }
+  .dom-painel[data-expandido] .dom-palco__fala { align-self: stretch; margin: 0 0 0.6rem; text-align: center; }
+  .dom-painel[data-expandido] .dom-palco__fala::before { left: 50%; bottom: -7px; transform: translateX(-50%) rotate(-45deg); }
+}
+@media (max-height: 700px) {
+  .dom-palco { min-height: 8.2rem; }
+  .dom-palco__mascote { width: 5.8rem; }
+}
+
+/* Cartão de status do aluno (nível, liga, sequência, cota). */
+.dom-status {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+.dom-status__item {
+  padding: 0.6rem 0.5rem;
+  border-radius: 0.9rem;
+  background: var(--dom-superficie);
+  border: 1px solid var(--dom-borda);
+  text-align: center;
+}
+.dom-status__valor { display: flex; align-items: center; justify-content: center; gap: 0.25rem; font-size: 1.05rem; font-weight: 800; letter-spacing: -0.01em; color: var(--dom-texto); font-variant-numeric: tabular-nums; }
+.dom-status__rotulo { display: block; margin-top: 0.1rem; font-size: 0.66rem; font-weight: 600; color: var(--dom-texto-3); }
+.dom-lateral-cartao {
+  padding: 0.85rem;
+  border-radius: 1.1rem;
+  background: var(--dom-superficie);
+  border: 1px solid var(--dom-borda);
+}
+.dom-lateral-cartao h4 { font-size: 0.74rem; font-weight: 750; color: var(--dom-texto-3); margin-bottom: 0.5rem; }
+.dom-so-expandido { display: none; }
+@media (min-width: 900px) {
+  .dom-painel[data-expandido] .dom-so-expandido { display: block; }
+  .dom-painel[data-expandido] .dom-so-lado { display: none; }
+}
+
+/* Escada socrática (vertical, no modo expandido). */
+.dom-degraus { display: grid; gap: 0.15rem; }
+.dom-degrau {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.7rem;
+  font-size: 0.8rem;
+  color: var(--dom-texto-3);
+  transition: background 300ms, color 300ms;
+}
+.dom-degrau__ponto {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--dom-borda-forte);
+  font-size: 0.68rem;
+  font-weight: 800;
+  flex: none;
+  transition: background 300ms, border-color 300ms, transform 300ms var(--dom-sai);
+}
+.dom-degrau[data-feito='1'] { color: var(--dom-texto-2); }
+.dom-degrau[data-feito='1'] .dom-degrau__ponto { background: var(--dom-verde); border-color: var(--dom-verde); color: #fff; }
+.dom-degrau[data-atual='1'] { background: rgba(232, 180, 74, 0.16); color: var(--dom-texto); font-weight: 700; }
+.dom-degrau[data-atual='1'] .dom-degrau__ponto { background: linear-gradient(180deg, var(--dom-ouro), var(--dom-laranja)); border-color: transparent; color: #2b1d05; transform: scale(1.12); }
+
+.dom-progresso { padding: 0.55rem 1rem 0.5rem; }
+.dom-progresso__trilho {
+  position: relative;
+  height: 0.45rem;
+  border-radius: 9999px;
+  background: var(--dom-trilho);
+  overflow: hidden;
+}
+.dom-progresso__barra {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--dom-ouro), var(--dom-laranja));
+  transition: transform 700ms var(--dom-sai);
+}
+.dom-progresso__barra::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transform: translateX(-100%);
+  animation: dom-brilho-barra 2.4s ease-in-out infinite;
+}
+@keyframes dom-brilho-barra { 60%, 100% { transform: translateX(100%); } }
+.dom-progresso__degraus {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-size: 0.66rem;
+  color: var(--dom-texto-3);
+}
+.dom-progresso__degrau[data-atual='1'] { color: var(--dom-texto); font-weight: 700; }
+.dom-progresso__degrau[data-feito='1'] { color: var(--dom-laranja-forte); }
+
+/* Conversa */
+.dom-conversa {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.6rem 1rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  scroll-behavior: smooth;
+  mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 10px), transparent);
+}
+
+/* Abertura: saudação grande + bento de ações. */
+.dom-boas-vindas { padding: 0.4rem 0 0.2rem; animation: dom-msg 500ms var(--dom-sai) both; }
+.dom-boas-vindas__ola {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--dom-texto);
+}
+.dom-boas-vindas__ola span { color: var(--dom-laranja-forte); }
+.dom-boas-vindas__sub { margin-top: 0.3rem; font-size: 0.88rem; line-height: 1.45; color: var(--dom-texto-2); }
+.dom-bento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+}
+.dom-bento__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.85rem;
+  border-radius: 1.1rem;
+  background: var(--dom-superficie);
+  border: 1px solid var(--dom-borda);
+  text-align: left;
+  overflow: hidden;
+  transition: transform 220ms var(--dom-sai), border-color 200ms, box-shadow 220ms var(--dom-sai);
+  animation: dom-msg 460ms var(--dom-sai) both;
+}
+.dom-bento__item:nth-child(2) { animation-delay: 60ms; }
+.dom-bento__item:nth-child(3) { animation-delay: 120ms; }
+.dom-bento__item:nth-child(4) { animation-delay: 180ms; }
+.dom-bento__item:hover {
+  transform: translateY(-3px);
+  border-color: var(--dom-borda-forte);
+  box-shadow: 0 18px 34px -22px rgba(20, 40, 30, 0.55);
+}
+.dom-bento__item:active { transform: translateY(-1px) scale(0.98); }
+.dom-bento__item:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: 2px; }
+.dom-bento__item--largo { grid-column: span 2; flex-direction: row; align-items: center; }
+.dom-bento__icone {
+  display: grid;
+  place-items: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 0.8rem;
+  color: #fff;
+  flex: none;
+  box-shadow: 0 8px 18px -10px currentColor;
+}
+.dom-bento__icone--laranja { background: linear-gradient(145deg, #f6a560, #d96a1f); }
+.dom-bento__icone--verde { background: linear-gradient(145deg, #4fae86, #1d4f3f); }
+.dom-bento__icone--ouro { background: linear-gradient(145deg, #f0c25e, #b8862a); }
+.dom-bento__icone--azul { background: linear-gradient(145deg, #6aa6ff, #2f5fd0); }
+.dom-bento__titulo { font-size: 0.86rem; font-weight: 750; line-height: 1.2; color: var(--dom-texto); }
+.dom-bento__texto { font-size: 0.74rem; line-height: 1.35; color: var(--dom-texto-3); }
+.dom-bento__seta {
+  position: absolute;
+  right: 0.7rem;
+  top: 0.75rem;
+  color: var(--dom-texto-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 200ms, transform 220ms var(--dom-sai);
+}
+.dom-bento__item:hover .dom-bento__seta { opacity: 1; transform: none; }
+
+/* Mensagens */
+.dom-msg { animation: dom-msg 380ms var(--dom-sai) both; }
+@keyframes dom-msg {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.dom-msg[data-papel='aluno'] {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 1.2rem 1.2rem 0.35rem 1.2rem;
+  background: linear-gradient(160deg, #3d9472, #22604a);
+  color: #fff;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-shadow: 0 12px 24px -16px rgba(34, 96, 74, 0.9);
+}
+.dom-msg[data-papel='dom'] { align-self: stretch; }
+.dom-msg__autor {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.74rem;
+  font-weight: 750;
+  color: var(--dom-texto);
+}
+.dom-msg__autor small { font-weight: 500; color: var(--dom-texto-3); }
+.dom-avatar {
+  position: relative;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #fff6e8, #f3c996);
+  border: 1px solid rgba(239, 138, 60, 0.45);
+  flex: none;
+}
+.dom-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.dom-painel[data-modo='socratico'] .dom-avatar { border-color: rgba(232, 180, 74, 0.8); }
+.dom-msg__bolha {
+  padding: 0.85rem 0.95rem;
+  border-radius: 0.35rem 1.2rem 1.2rem 1.2rem;
+  background: var(--dom-superficie-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: 0 18px 36px -28px rgba(20, 40, 30, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.62;
+  color: var(--dom-texto);
+  overflow-wrap: anywhere;
+}
+.dom-msg__bolha p + p,
+.dom-msg__bolha p + ul,
+.dom-msg__bolha p + ol,
+.dom-msg__bolha ul + p,
+.dom-msg__bolha ol + p { margin-top: 0.6rem; }
+.dom-msg__bolha ul,
+.dom-msg__bolha ol { padding-left: 1.15rem; margin: 0.4rem 0; }
+.dom-msg__bolha ul { list-style: none; padding-left: 0; }
+.dom-msg__bolha ul li { position: relative; padding-left: 1.1rem; }
+.dom-msg__bolha ul li::before {
+  content: '';
+  position: absolute;
+  left: 0.2rem;
+  top: 0.62em;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: var(--dom-laranja);
+}
+.dom-msg__bolha ol { list-style: decimal; }
+.dom-msg__bolha ol li::marker { color: var(--dom-laranja-forte); font-weight: 800; }
+.dom-msg__bolha li + li { margin-top: 0.3rem; }
+.dom-msg__bolha strong { font-weight: 750; color: var(--dom-texto); background: linear-gradient(transparent 62%, rgba(239, 138, 60, 0.22) 62%); }
+.dom-msg__bolha[data-tom='erro'] { border-color: rgba(229, 72, 77, 0.45); background: rgba(229, 72, 77, 0.07); }
+/* A resposta nova aparece bloco a bloco, saindo do desfoque. */
+.dom-msg__bolha[data-nova] [style*='--k'] {
+  animation: dom-revela 560ms var(--dom-sai) both;
+  animation-delay: calc(var(--k) * 110ms);
+}
+@keyframes dom-revela {
+  from { opacity: 0; filter: blur(4px); }
+  to { opacity: 1; filter: none; }
+}
+.dom-msg__rodape {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+.dom-msg__mini {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--dom-texto-3);
+  transition: background 150ms, color 150ms;
+}
+.dom-msg__mini:hover { background: var(--dom-chip); color: var(--dom-texto); }
+
+/* Fontes como cartões coloridos pela base. */
+.dom-fontes { margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px dashed var(--dom-borda-forte); }
+.dom-fontes__titulo { display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; font-weight: 750; color: var(--dom-texto-3); margin-bottom: 0.45rem; }
+.dom-fontes__lista { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr)); gap: 0.45rem; }
+.dom-fonte {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--dom-borda);
+  background: var(--dom-superficie);
+  font-size: 0.76rem;
+  line-height: 1.2;
+  color: var(--dom-texto);
+  text-align: left;
+  transition: transform 200ms var(--dom-sai), border-color 150ms, box-shadow 200ms;
+  animation: dom-msg 380ms var(--dom-sai) both;
+}
+.dom-fonte:hover { transform: translateY(-2px); border-color: var(--dom-borda-forte); box-shadow: 0 12px 22px -16px rgba(20, 40, 30, 0.6); }
+.dom-fonte:active { transform: scale(0.98); }
+.dom-fonte__selo {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 0.6rem;
+  font-size: 0.58rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: #fff;
+  flex: none;
+}
+.dom-fonte__selo[data-base='pubmed'] { background: linear-gradient(145deg, #4a8fe0, #1f5aa8); }
+.dom-fonte__selo[data-base='scielo'] { background: linear-gradient(145deg, #f2994a, #c4621b); }
+.dom-fonte__selo[data-base='diretriz'] { background: linear-gradient(145deg, #4fae86, #1d4f3f); }
+.dom-fonte__selo[data-base='livro'] { background: linear-gradient(145deg, #9b7be0, #5b3fa8); }
+.dom-fonte__selo[data-base='web'] { background: linear-gradient(145deg, #7d8b84, #44504a); }
+.dom-fonte__detalhe { display: block; margin-top: 0.1rem; font-size: 0.66rem; color: var(--dom-texto-3); }
+
+/* "Vou te levar lá" */
+.dom-destino {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid var(--dom-borda-forte);
+  background: linear-gradient(135deg, rgba(47, 122, 91, 0.12), rgba(239, 138, 60, 0.1));
+  animation: dom-msg 420ms var(--dom-sai) both;
+}
+.dom-destino__icone {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 9999px;
+  background: linear-gradient(160deg, #3d9472, #22604a);
+  color: #fff;
+  flex: none;
+}
+.dom-destino__anel { position: absolute; inset: -4px; transform: rotate(-90deg); }
+.dom-destino__anel circle {
+  fill: none;
+  stroke: var(--dom-laranja);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 164;
+  stroke-dashoffset: 164;
+  animation: dom-anel var(--dom-espera, 2.6s) linear both;
+}
+@keyframes dom-anel { to { stroke-dashoffset: 0; } }
+.dom-destino[data-exclusivo] { background: linear-gradient(135deg, rgba(232, 180, 74, 0.18), rgba(239, 138, 60, 0.1)); }
+.dom-destino[data-exclusivo] .dom-destino__icone { background: linear-gradient(160deg, #f0c25e, #b8862a); color: #2b1d05; }
+
+/* Raciocínio: etapas que se completam enquanto o Dom trabalha. */
+.dom-raciocinio {
+  align-self: stretch;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.35rem 1.2rem 1.2rem 1.2rem;
+  background: var(--dom-superficie);
+  border: 1px solid var(--dom-borda);
+  animation: dom-msg 360ms var(--dom-sai) both;
+  overflow: hidden;
+  position: relative;
+}
+.dom-raciocinio::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: dom-varredura 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.dark .dom-raciocinio::after { background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.06) 50%, transparent 70%); }
+@keyframes dom-varredura { to { transform: translateX(100%); } }
+.dom-raciocinio__passo {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.8rem;
+  color: var(--dom-texto-3);
+  transition: color 300ms;
+}
+.dom-raciocinio__passo + .dom-raciocinio__passo { margin-top: 0.4rem; }
+.dom-raciocinio__passo[data-estado='feito'] { color: var(--dom-texto-2); }
+.dom-raciocinio__passo[data-estado='agora'] { color: var(--dom-texto); font-weight: 650; }
+.dom-raciocinio__marca {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--dom-borda-forte);
+  flex: none;
+}
+.dom-raciocinio__passo[data-estado='feito'] .dom-raciocinio__marca { background: var(--dom-verde); border-color: var(--dom-verde); color: #fff; animation: dom-pop 300ms var(--dom-sai); }
+.dom-raciocinio__passo[data-estado='agora'] .dom-raciocinio__marca { border-color: var(--dom-laranja); border-top-color: transparent; animation: dom-gira-marca 0.8s linear infinite; }
+@keyframes dom-gira-marca { to { transform: rotate(360deg); } }
+@keyframes dom-pop { from { transform: scale(0.4); } 60% { transform: scale(1.2); } }
+
+/* Sugestões */
+.dom-sugestoes {
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding: 0.2rem 1rem 0.55rem;
+  scrollbar-width: none;
+}
+.dom-sugestoes::-webkit-scrollbar { display: none; }
+.dom-chip {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 9999px;
+  border: 1px solid var(--dom-borda-forte);
+  background: var(--dom-superficie-forte);
+  font-size: 0.79rem;
+  font-weight: 600;
+  color: var(--dom-texto);
+  transition: background 150ms, transform 150ms var(--dom-sai), border-color 150ms;
+  animation: dom-msg 340ms var(--dom-sai) both;
+}
+.dom-chip svg { color: var(--dom-laranja-forte); }
+.dom-chip:hover { border-color: var(--dom-laranja); transform: translateY(-1px); }
+.dom-chip:active { transform: scale(0.96); }
+.dom-chip:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: 2px; }
+.dom-chip:nth-child(2) { animation-delay: 50ms; }
+.dom-chip:nth-child(3) { animation-delay: 100ms; }
+.dom-chip:nth-child(4) { animation-delay: 150ms; }
+
+/* Compositor flutuante com anel de luz. */
+.dom-compositor {
+  position: relative;
+  margin: 0 0.85rem;
+  margin-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  border-radius: 1.3rem;
+  padding: 1.5px;
+  background: var(--dom-borda-forte);
+  transition: background 300ms;
+}
+.dom-compositor:focus-within { background: linear-gradient(120deg, var(--dom-laranja), var(--dom-ouro), var(--dom-verde)); }
+.dom-compositor[data-pensando] {
+  background: conic-gradient(from var(--dom-giro, 0deg), var(--dom-laranja), var(--dom-ouro), var(--dom-verde), var(--dom-laranja));
+  animation: dom-orbita 2.2s linear infinite;
+}
+.dom-entrada {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  padding: 0.45rem 0.45rem 0.45rem 0.85rem;
+  border-radius: calc(1.3rem - 1.5px);
+  /* Sólido: o anel de gradiente fica só na borda, não vaza para dentro. */
+  background: #fffdf9;
+}
+.dark .dom-entrada { background: #16231d; }
+.dom-entrada textarea {
+  flex: 1;
+  resize: none;
+  max-height: 7.5rem;
+  min-height: 2.4rem;
+  padding: 0.5rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--dom-texto);
+  font-size: 16px;
+  line-height: 1.4;
+  outline: none;
+}
+@media (min-width: 640px) { .dom-entrada textarea { font-size: 0.9rem; } }
+.dom-entrada textarea::placeholder { color: var(--dom-texto-3); }
+.dom-enviar {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.95rem;
+  background: linear-gradient(160deg, #f6a560, #d96a1f);
+  color: #fff;
+  box-shadow: 0 10px 22px -12px rgba(217, 106, 31, 0.95);
+  transition: transform 150ms var(--dom-sai), opacity 150ms;
+}
+.dom-enviar svg { transition: transform 200ms var(--dom-sai); }
+.dom-enviar:not(:disabled):hover svg { transform: translate(2px, -2px); }
+.dom-enviar:disabled { opacity: 0.35; box-shadow: none; }
+.dom-enviar:not(:disabled):active { transform: scale(0.9); }
+.dom-enviar:focus-visible { outline: 2px solid var(--dom-laranja); outline-offset: 2px; }
+.dom-rodape {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem 0.6rem;
+  font-size: 0.68rem;
+  color: var(--dom-texto-3);
+}
+.dom-cota { display: inline-flex; align-items: center; gap: 0.4rem; font-variant-numeric: tabular-nums; }
+.dom-cota svg circle:last-child { transition: stroke-dashoffset 600ms var(--dom-sai); }
+
+/* Botões e cartões genéricos */
+.dom-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem 1.05rem;
+  border-radius: 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: transform 150ms var(--dom-sai), filter 150ms, background 150ms, box-shadow 200ms;
+}
+.dom-botao:active { transform: scale(0.97); }
+.dom-botao:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: 2px; }
+.dom-botao--principal { background: linear-gradient(160deg, #3d9472, #22604a); color: #fff; box-shadow: 0 14px 28px -16px rgba(34, 96, 74, 0.95); }
+.dom-botao--principal:hover { filter: brightness(1.07); }
+.dom-botao--ouro { background: linear-gradient(160deg, #f4cd72, #c9952f); color: #2b1d05; box-shadow: 0 14px 30px -14px rgba(201, 149, 47, 0.95); }
+.dom-botao--ouro:hover { filter: brightness(1.05); }
+.dom-botao--suave { background: var(--dom-superficie); color: var(--dom-texto); border: 1px solid var(--dom-borda); }
+.dom-botao--suave:hover { border-color: var(--dom-borda-forte); }
+.dom-cartao {
+  padding: 1rem;
+  border-radius: 1.2rem;
+  border: 1px solid var(--dom-borda);
+  background: var(--dom-superficie-forte);
+}
+.dom-titulo { font-size: 1.08rem; font-weight: 800; line-height: 1.22; letter-spacing: -0.015em; color: var(--dom-texto); }
+.dom-texto-2 { color: var(--dom-texto-2); }
+.dom-texto-3 { color: var(--dom-texto-3); }
+.dom-escada { display: grid; gap: 0.45rem; counter-reset: degrau; }
+.dom-escada li {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  font-size: 0.82rem;
+  line-height: 1.38;
+  color: var(--dom-texto-2);
+  animation: dom-msg 380ms var(--dom-sai) both;
+}
+.dom-escada li::before {
+  counter-increment: degrau;
+  content: counter(degrau);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(160deg, #f4cd72, #c9952f);
+  color: #2b1d05;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.dom-escada li:nth-child(2) { animation-delay: 60ms; }
+.dom-escada li:nth-child(3) { animation-delay: 120ms; }
+.dom-escada li:nth-child(4) { animation-delay: 180ms; }
+.dom-escada li:nth-child(5) { animation-delay: 240ms; }
+.dom-escada li:nth-child(6) { animation-delay: 300ms; }
+.dom-campo {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.85rem;
+  border: 1px solid var(--dom-borda-forte);
+  background: var(--dom-superficie-forte);
+  color: var(--dom-texto);
+  font-size: 16px;
+}
+@media (min-width: 640px) { .dom-campo { font-size: 0.86rem; } }
+.dom-campo:focus { outline: none; border-color: var(--dom-verde); box-shadow: 0 0 0 3px rgba(47, 122, 91, 0.18); }
+.dom-tema {
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.9rem;
+  border: 1px solid transparent;
+  transition: background 150ms, border-color 150ms, transform 200ms var(--dom-sai);
+}
+.dom-tema:hover { background: var(--dom-superficie); border-color: var(--dom-borda); transform: translateX(3px); }
+.dom-tema:focus-visible { outline: 2px solid var(--dom-verde); }
+/* Placa escura para a marca completa (o letreiro prateado pede fundo escuro). */
+.dom-placa {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 1rem 0.8rem;
+  border-radius: 1.2rem;
+  background: radial-gradient(120% 120% at 20% 0%, #1f4a3b, #0c1a14 70%);
+  box-shadow: 0 20px 40px -26px rgba(12, 26, 20, 0.9), 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+.dom-placa .dom-logo { height: 5.4rem; }
+
+/* Cabeçalho do socrático: coluna grega e o título. */
+.dom-cabecalho-grego {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.dom-cabecalho-grego svg { flex: none; color: #c9952f; }
+
+.dom-confete {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 3;
+}
+.dom-confete i {
+  position: absolute;
+  top: -10px;
+  width: 7px;
+  height: 11px;
+  border-radius: 2px;
+  animation: dom-confete 1.9s var(--dom-sai) both;
+}
+@keyframes dom-confete {
+  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+  100% { transform: translate(var(--dx), 520px) rotate(var(--rot)); opacity: 0; }
+}
+
+/* ── Movimento reduzido e aba oculta ─────────────────────────────────── */
+
+.dom-escopo[data-oculto] *,
+.dom-escopo[data-oculto] *::before {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dom-mascote__corpo,
+  .dom-mascote__cauda,
+  .dom-mascote__celular,
+  .dom-lancador__aura,
+  .dom-logo__selo,
+  .dom-logo__brilho,
+  .dom-aurora i,
+  .dom-lancador__botao,
+  .dom-compositor[data-pensando],
+  .dom-raciocinio::after,
+  .dom-progresso__barra::after,
+  .dom-logo__fluxo,
+  .dom-reflexo__linhas,
+  .dom-brilho,
+  .dom-mascote[data-trocando] {
+    animation: none !important;
+  }
+  .dom-mascote[data-trocando] .dom-mascote__traje { animation-duration: 1ms !important; }
+  .dom-troca { display: none; }
+  .dom-painel,
+  .dom-msg,
+  .dom-chip,
+  .dom-fonte,
+  .dom-bento__item,
+  .dom-msg__bolha[data-nova] [style*='--k'],
+  .dom-boas-vindas,
+  .dom-escada li { animation-duration: 1ms !important; }
+  .dom-conversa { scroll-behavior: auto; }
+}

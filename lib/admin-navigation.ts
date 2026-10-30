@@ -427,6 +427,14 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     keywords: ['proctoring', 'fiscalizacao', 'camera', 'monitoramento', 'ao vivo', 'cola'],
   },
   {
+    title: 'Dom (IA)',
+    description: 'Uso do assistente de IA por dia e por motor, quem mais conversa, suspensões e tentativas de exploit.',
+    href: '/admin/dom',
+    icon: Sparkles,
+    group: 'operacao',
+    keywords: ['dom', 'ia', 'assistente', 'gemini', 'exploit', 'jailbreak', 'seguranca', 'tokens', 'cota'],
+  },
+  {
     title: 'Anúncios',
     description: 'Banners e anúncios rotativos exibidos dentro da plataforma.',
     href: '/admin/anuncios',

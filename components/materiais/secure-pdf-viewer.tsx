@@ -188,6 +188,7 @@ import {
   measurePageIndex,
   RELAYOUT_SETTLE_MS,
 } from '@/lib/pdf-viewer-relayout'
+import { DomLancador } from '@/components/dom/dom-lancador'
 
 type ViewerMode = 'single' | 'width' | 'continuous'
 // Folhas do celular. O cabeçalho antigo empilhava até cinco linhas de rolagem
@@ -5827,6 +5828,8 @@ export function SecurePdfViewer({ materialId }: { materialId: string }) {
 
   return (
     <ViewerShell>
+      {/* O Dom tira dúvidas deste material sabendo em que página o leitor está. */}
+      <DomLancador material={{ id: materialId, pagina: currentPage, titulo: access.material.title }} />
       <style jsx global>{`
         /* Material das barras do leitor. Opaco de propósito (ver o comentário
            do cabeçalho: vidro com desfoque numa faixa presa sobre a rolagem é

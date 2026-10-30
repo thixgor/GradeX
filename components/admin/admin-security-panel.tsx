@@ -50,6 +50,8 @@ const EVENT_LABELS: Record<string, { label: string; tone: string }> = {
   admins_logged_out: { label: 'Admins desconectados', tone: 'text-amber-600 dark:text-amber-400' },
   user_password_reset: { label: 'Senha de usuário redefinida', tone: 'text-amber-600 dark:text-amber-400' },
   user_password_link_sent: { label: 'Link de senha enviado', tone: 'text-muted-foreground' },
+  dom_exploit: { label: 'Tentativa de exploit no Dom (IA)', tone: 'text-red-600 dark:text-red-400' },
+  dom_suspended: { label: 'Dom suspenso para a conta', tone: 'text-red-600 dark:text-red-400' },
 }
 
 function formatDuration(totalSeconds?: number): string {
