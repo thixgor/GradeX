@@ -17,6 +17,8 @@
  *   reenviar não rende nada.
  */
 
+import { reagirDom, type EventoDoDom } from '@/lib/dom/reacoes'
+
 export const EVENTO_DE_XP = 'xp:atualizar'
 
 /** Marca que o XP guardado na sessão ficou velho (a próxima página relê). */
@@ -51,6 +53,15 @@ export function avisarXp(motivo?: MotivoDeXp): void {
     if (motivo) window.sessionStorage.setItem(CHAVE_XP_MOTIVO, JSON.stringify({ motivo, em: Date.now() }))
   } catch {}
   window.dispatchEvent(new CustomEvent(EVENTO_DE_XP, { detail: { motivo } }))
+  // O Dom comemora as conquistas que têm fala própria (ver lib/dom/reacoes).
+  const doDom = motivo ? REACAO_DO_DOM[motivo] : undefined
+  if (doDom) setTimeout(() => reagirDom(doDom), 2200)
+}
+
+const REACAO_DO_DOM: Partial<Record<MotivoDeXp, EventoDoDom>> = {
+  compra: { tipo: 'compra' },
+  foco: { tipo: 'foco' },
+  aula: { tipo: 'aula' },
 }
 
 export type TipoDeXpDoCliente = 'quiz' | 'licao' | 'jogo'

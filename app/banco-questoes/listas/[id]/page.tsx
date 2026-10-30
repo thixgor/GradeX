@@ -84,6 +84,7 @@ import {
 import { rolarAte } from '@/components/banco/rolagem-guiada'
 import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
 import {
+import { reagirDom } from '@/lib/dom/reacoes'
   apagarSessao,
   lerSessao,
   quandoFoi,
@@ -548,6 +549,8 @@ export default function ListaDetalhePage() {
     questao: BancoQuestaoComHierarquia,
     resposta: RespostaUsuario | undefined,
     tempoGasto?: number,
+    /** Conferida agora pela pessoa (e não registrada em lote ao finalizar): vale para o foguinho do Dom. */
+    conferidaAgora = false,
   ) {
     const questaoId = String(questao._id)
     if (!resposta) return
@@ -573,6 +576,10 @@ export default function ListaDetalhePage() {
       })
       if (res.ok) avisarXp('questao')
       if (!res.ok) return
+      if (conferidaAgora && questao.tipo === 'objetiva') {
+        const dados = await res.json().catch(() => null)
+        if (typeof dados?.correta === 'boolean') reagirDom({ tipo: 'resposta', certa: dados.correta })
+      }
       registradasRef.current.add(questaoId)
       setRegistradas(Array.from(registradasRef.current))
     } catch {
@@ -594,7 +601,7 @@ export default function ListaDetalhePage() {
     const questao = questoes[index]
     if (questao) {
       const gasto = Math.round((Date.now() - questaoAbertaEm.current) / 1000)
-      void registrarResolucao(questao, getRespostaAtual(String(questao._id)), gasto)
+      void registrarResolucao(questao, getRespostaAtual(String(questao._id)), gasto, true)
     }
   }
 

@@ -460,6 +460,9 @@ export async function middleware(request: NextRequest) {
   // Skip para assets estáticos
   if (
     pathname.startsWith('/_next/') ||
+    // Desenhos e falas gravadas do Dom (public/dom/): a landing os usa para
+    // quem ainda não entrou, e um .mp3 desviado para o login viraria HTML.
+    pathname.startsWith('/dom/') ||
     pathname.startsWith('/img/') ||
     // Service worker da PWA (public/sw.js). Precisa ser servido como JS puro;
     // sem isso o middleware trataria como rota protegida e redirecionaria o

@@ -68,6 +68,7 @@ import {
 } from '@/components/banco/feedback-questao'
 import { rolarAte } from '@/components/banco/rolagem-guiada'
 import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
+import { reagirDom } from '@/lib/dom/reacoes'
 
 const formatText = (text: string) => text?.replace(/\\nl/g, '\n').replace(/\\n/g, '\n') || ''
 
@@ -427,6 +428,8 @@ ${respostaAluno}`
         const data = await res.json()
         setResultado(data)
         setMostrarResposta(true)
+        // Foguinho do Dom: a sequência de acertos é contada em `lib/dom/reacoes`.
+        if (questao.tipo === 'objetiva' && typeof data?.correta === 'boolean') reagirDom({ tipo: 'resposta', certa: data.correta })
       }
     } catch (err) {
       console.error('Erro ao responder:', err)

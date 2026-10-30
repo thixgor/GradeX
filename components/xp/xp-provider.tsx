@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { LogoAnimada } from '@/components/marca/logo-animada'
 import { CHAVE_XP_MOTIVO, CHAVE_XP_SUJO, EVENTO_DE_XP, type MotivoDeXp } from '@/lib/xp/cliente'
 import { comemoracaoPara, type Comemoracao } from '@/lib/xp/motivos'
+import { reagirDom } from '@/lib/dom/reacoes'
 import { CelebracaoDeXp, type Celebracao } from './comemoracao'
 import type { AreaDeXp, InfoDeNivel, Medalha } from '@/lib/xp/regras'
 import { NumeroQueCorre, SeloDaLiga, estiloDaLiga } from './pecas'
@@ -124,6 +125,8 @@ export function XpProvider({ userId, children }: { userId: string | null | undef
 
         if (novo.nivel.nivel > visto.nivel) {
           setSubida({ de: visto.nivel, para: novo.nivel, novaLiga: novo.nivel.liga.id !== visto.liga, total: novo.total })
+          // O Dom entra depois da tela de subida de nível, não por cima dela.
+          setTimeout(() => reagirDom({ tipo: 'nivel', novaLiga: novo.nivel.liga.id !== visto.liga }), 4500)
         } else if (comemoracao.tamanho === 'grande') {
           // Progresso no nível antes do ganho: a barra da celebração anda dele.
           const faixa = Math.max(1, novo.nivel.proximo - novo.nivel.base)

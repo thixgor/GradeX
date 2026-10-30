@@ -180,24 +180,20 @@
   transform: scaleY(1);
 }
 
-/* Boca: aberta só quando fala. */
+/* Boca: aparece quando fala e abre/fecha no ritmo do áudio (`data-boca`). */
 .dom-boca {
   transform-box: fill-box;
   transform-origin: 50% 0%;
   transform: scaleY(0);
   opacity: 0;
-  transition: transform 90ms ease-out, opacity 90ms;
+  transition: transform 70ms ease-out, opacity 90ms;
 }
 .dom-mascote[data-falando='1'] .dom-boca {
   opacity: 1;
-  animation: dom-fala 0.26s ease-in-out infinite alternate;
+  transform: scaleY(0.22);
 }
-.dom-mascote[data-falando='1'][data-silaba='1'] .dom-boca {
-  animation-duration: 0.18s;
-}
-@keyframes dom-fala {
-  0% { transform: scaleY(0.25); }
-  100% { transform: scaleY(1); }
+.dom-mascote[data-falando='1'][data-boca='1'] .dom-boca {
+  transform: scaleY(1);
 }
 
 /* Bochechas coradas quando está feliz/orgulhoso. */
@@ -599,6 +595,110 @@
 @keyframes dom-balao {
   from { opacity: 0; transform: translateY(10px) scale(0.94); }
   to { opacity: 1; transform: none; }
+}
+
+/* ── Aparição (reações na plataforma) ────────────────────────────────── */
+
+.dom-aparicao {
+  position: fixed;
+  z-index: 58;
+  right: 0.5rem;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px) + var(--gx-barra-inferior-h, 0px));
+  display: flex;
+  align-items: flex-end;
+  gap: 0.25rem;
+  pointer-events: none;
+  animation: dom-aparece 620ms var(--dom-sai) both;
+}
+@media (min-width: 1024px) {
+  .dom-aparicao { right: 1.25rem; bottom: calc(5.5rem + var(--gx-barra-inferior-h, 0px)); }
+}
+.dom-aparicao[data-saindo] { animation: dom-some 380ms var(--dom-entra) both; }
+@keyframes dom-aparece {
+  0% { transform: translateX(120%) rotate(8deg); opacity: 0; }
+  60% { transform: translateX(-6%) rotate(-3deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes dom-some {
+  to { transform: translateX(120%) rotate(6deg); opacity: 0; }
+}
+.dom-aparicao__mascote {
+  position: relative;
+  width: 8.5rem;
+  pointer-events: auto;
+  filter: drop-shadow(0 18px 24px rgba(20, 40, 30, 0.35));
+}
+@media (min-width: 640px) { .dom-aparicao__mascote { width: 10rem; } }
+.dom-aparicao__balao {
+  pointer-events: auto;
+  max-width: 15rem;
+  margin-bottom: 7rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 1.1rem 1.1rem 0.3rem 1.1rem;
+  background: var(--dom-vidro-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: var(--dom-sombra);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  color: var(--dom-texto);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.38;
+  text-align: left;
+  animation: dom-balao 480ms var(--dom-sai) 260ms both;
+}
+.dom-aparicao__selo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.3rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(160deg, #ffb000, #ff5a00);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.dom-aparicao[data-efeito='fogo'] .dom-aparicao__balao { border-color: rgba(255, 106, 0, 0.45); }
+.dom-efeito {
+  position: absolute;
+  inset: -10% -10% 30%;
+  pointer-events: none;
+  overflow: visible;
+}
+.dom-efeito i {
+  position: absolute;
+  bottom: 20%;
+  width: 8px;
+  height: 11px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: dom-efeito-sobe 1.6s var(--dom-sai) both;
+}
+.dom-efeito--fogo i {
+  width: 12px;
+  height: 16px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  filter: blur(0.5px);
+  animation-name: dom-chama;
+  animation-duration: 1.2s;
+  animation-iteration-count: 3;
+}
+.dom-efeito--coracao i {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  clip-path: path('M6 11 L1 6 A2.8 2.8 0 0 1 6 2 A2.8 2.8 0 0 1 11 6 Z');
+}
+@keyframes dom-efeito-sobe {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(0.4); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx), -160px) rotate(var(--rot)) scale(1); }
+}
+@keyframes dom-chama {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(var(--dx) * 0.4), -120px) scale(1.3); }
 }
 
 /* ── Painel ───────────────────────────────────────────────────────────── */
@@ -1541,6 +1641,8 @@
   }
   .dom-mascote[data-trocando] .dom-mascote__traje { animation-duration: 1ms !important; }
   .dom-troca { display: none; }
+  .dom-aparicao,
+  .dom-efeito,
   .dom-painel,
   .dom-msg,
   .dom-chip,

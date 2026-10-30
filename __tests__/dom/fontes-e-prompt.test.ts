@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { fontesDaBusca, fontesDasReferencias, urlDeBusca } from '@/lib/dom/fontes'
 import { montarPromptDoSistema } from '@/lib/dom/prompt'
 import { temasDoPeriodo, temaPorId } from '@/lib/dom/temas'
-import { falaDe, FALAS } from '@/components/dom/falas'
+import { falaDe, textoDaFala, FALAS } from '@/components/dom/falas'
 
 describe('fontes', () => {
   it('monta busca recente no PubMed e descarta referência incompleta', () => {
@@ -77,9 +77,11 @@ describe('temas', () => {
 })
 
 describe('falas', () => {
-  it('tem muitas variações para cada momento e troca o nome', () => {
-    for (const lista of Object.values(FALAS)) expect(lista.length).toBeGreaterThanOrEqual(3)
-    expect(falaDe('bomDia', 'Ana')).toContain('Ana')
-    expect(falaDe('bomDia')).not.toContain('{nome}')
+  it('saudações e momentos do assistente têm várias versões e não repetem em seguida', () => {
+    for (const m of ['bomDia', 'boaTarde', 'boaNoite', 'pensando', 'erro', 'tchau'] as const) expect(FALAS[m].length).toBeGreaterThanOrEqual(5)
+    const a = falaDe('bomDia')
+    const b = falaDe('bomDia')
+    expect(a.id).not.toBe(b.id)
+    expect(textoDaFala(a)).not.toMatch(/\[/)
   })
 })

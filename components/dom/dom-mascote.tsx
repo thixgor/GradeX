@@ -19,8 +19,8 @@ interface Props {
   estado?: EstadoDoDom
   traje?: TrajeDoDom
   falando?: boolean
-  /** Pulso de sílaba vindo da voz (alterna a velocidade da boca). */
-  silaba?: boolean
+  /** Boca aberta agora (segue a amplitude do áudio gravado). */
+  boca?: boolean
   className?: string
   /** Sem os enfeites (luz, pensamento, brilhos) — para o lançador pequeno. */
   simples?: boolean
@@ -111,7 +111,7 @@ function usePiscar(ref: React.RefObject<HTMLDivElement | null>) {
   }, [ref])
 }
 
-export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, silaba = false, className, simples = false }: Props) {
+export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, boca = false, className, simples = false }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const normal = useDesenho('dom')
   // A toga só baixa quando alguém entra no modo socrático (400 KB).
@@ -153,7 +153,7 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
       data-traje={mostrado}
       data-trocando={trocando || undefined}
       data-falando={falando ? '1' : '0'}
-      data-silaba={silaba ? '1' : '0'}
+      data-boca={boca ? '1' : '0'}
       aria-hidden
     >
       {!pronto && <div className="dom-mascote__silhueta" />}

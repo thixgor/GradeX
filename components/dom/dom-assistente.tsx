@@ -35,8 +35,8 @@ import { DomMascote, type EstadoDoDom } from './dom-mascote'
 import { DomLogo } from './dom-logo'
 import { TextoDoDom } from './texto-do-dom'
 import { EscolhaDeTema, IntroSocratica, ProgressoSocratico, type TemaEscolhido } from './dom-socratico'
-import { falaDe, momentoDaSaudacao, type MomentoDaFala } from './falas'
-import { bipe, definirMudo, estaMudo, falar, pararDeFalar, vozDisponivel } from './voz'
+import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
+import { bipe, definirMudo, estaMudo, falar, pararDeFalar } from './voz'
 
 /**
  * O painel do Dom. Baixado só quando o aluno abre o Dom pela primeira vez
@@ -156,7 +156,7 @@ export function DomAssistente({
   const [fala, setFala] = useState<{ texto: string; tom?: 'erro' }>({ texto: '' })
   const [estado, setEstado] = useState<EstadoDoDom>('acenando')
   const [falando, setFalando] = useState(false)
-  const [silaba, setSilaba] = useState(false)
+  const [boca, setBoca] = useState(false)
   const [mudo, setMudo] = useState(true)
   const [saindo, setSaindo] = useState(false)
   const [confete, setConfete] = useState(false)
@@ -174,17 +174,25 @@ export function DomAssistente({
     gravar(CHAVE, { modo, conversas, socratico, expandido } satisfies Guardado, 'sessao')
   }, [modo, conversas, socratico, expandido])
 
-  /** Fala em voz alta (se não estiver mudo) e mostra no balão, com a boca mexendo. */
-  const dizer = useCallback((frase: string, opcoes: { tom?: 'erro'; voz?: boolean } = {}) => {
-    setFala({ texto: frase, tom: opcoes.tom })
+  /**
+   * Mostra no balão e fala com a voz gravada do Dom (ou mexe a boca em
+   * silêncio, se ainda não há áudio para a fala). Texto solto — a mensagem de
+   * erro que veio da API — só aparece no balão.
+   */
+  const dizer = useCallback((conteudo: Fala | string, opcoes: { tom?: 'erro'; voz?: boolean } = {}) => {
+    if (typeof conteudo === 'string') {
+      setFala({ texto: conteudo, tom: opcoes.tom })
+      return
+    }
+    setFala({ texto: textoDaFala(conteudo), tom: opcoes.tom })
     if (opcoes.voz === false) return
-    falar(frase, {
+    falar(conteudo, {
       aoComecar: () => setFalando(true),
       aoTerminar: () => setFalando(false),
-      aoPalavra: () => setSilaba((s) => !s),
+      aoBoca: setBoca,
     })
   }, [])
-  const dizerMomento = useCallback((m: MomentoDaFala, opcoes?: { tom?: 'erro'; voz?: boolean }) => dizer(falaDe(m, primeiroNome), opcoes), [dizer, primeiroNome])
+  const dizerMomento = useCallback((m: MomentoDaFala, opcoes?: { tom?: 'erro'; voz?: boolean }) => dizer(falaDe(m), opcoes), [dizer])
 
   // Abertura: status + saudação pela hora (apresentação na primeira vez da vida).
   useEffect(() => {
@@ -195,18 +203,17 @@ export function DomAssistente({
       .then((s: StatusDoDom) => {
         if (!vivo) return
         setStatus(s)
-        const n = s.primeiroNome || nome
         if (!s.liberado) {
-          dizer(falaDe('bloqueado', n))
+          dizer(falaDe('bloqueado'))
           return
         }
         if (!ler<boolean>(CHAVE_CONHECEU, 'local')) {
           gravar(CHAVE_CONHECEU, true, 'local')
-          dizer(falaDe('primeiraVez', n))
+          dizer(falaDe('primeiraVez'))
         } else if (material) {
-          dizer(falaDe('material', n))
+          dizer(falaDe('material'))
         } else {
-          dizer(falaDe(momentoDaSaudacao(), n))
+          dizer(falaDe(momentoDaSaudacao()))
         }
         setTimeout(() => vivo && setEstado('feliz'), 1800)
       })
@@ -258,7 +265,8 @@ export function DomAssistente({
     let i = 0
     setPasso(0)
     const girar = () => {
-      setFala({ texto: falaDe(i > 0 && saude ? 'pensandoSaude' : 'pensando', primeiroNome) })
+      // Só a primeira frase sai em voz; as seguintes trocam no balão (falar a cada 1,7 s cansaria).
+      dizer(falaDe(i > 0 && saude ? 'pensandoSaude' : 'pensando'), { voz: i === 0 })
       setPasso(Math.min(i, 2))
       i++
     }
@@ -314,7 +322,7 @@ export function DomAssistente({
         const dados = await r.json().catch(() => ({}))
         if (!r.ok) {
           const motivo = dados?.motivo
-          acrescentar(modoAtual, { id: novoId(), papel: 'dom', texto: dados?.error || falaDe('erro'), tom: 'erro' })
+          acrescentar(modoAtual, { id: novoId(), papel: 'dom', texto: dados?.error || textoDaFala(falaDe('erro')), tom: 'erro' })
           setEstado(r.status === 429 ? 'preocupado' : 'erro')
           bipe('erro')
           const momento: MomentoDaFala = r.status === 429 ? (motivo === 'minuto' ? 'calma' : 'limite') : r.status === 503 ? 'semSinal' : 'erro'
@@ -352,7 +360,7 @@ export function DomAssistente({
         }
       } catch (e) {
         if ((e as Error)?.name === 'AbortError') return
-        acrescentar(modoAtual, { id: novoId(), papel: 'dom', texto: falaDe('erro'), tom: 'erro' })
+        acrescentar(modoAtual, { id: novoId(), papel: 'dom', texto: textoDaFala(falaDe('erro')), tom: 'erro' })
         setEstado('erro')
         bipe('erro')
         dizerMomento('erro', { tom: 'erro' })
@@ -421,7 +429,7 @@ export function DomAssistente({
     const novo = !mudo
     setMudo(novo)
     definirMudo(novo)
-    if (!novo) dizer(falaDe('ouvindo'))
+    if (!novo) dizer(falaDe('somLigado'))
   }
 
   const comecarFrase = (frase: string) => {
@@ -482,11 +490,9 @@ export function DomAssistente({
             >
               {expandido ? <Minimize2 className="h-[18px] w-[18px]" /> : <Maximize2 className="h-[18px] w-[18px]" />}
             </button>
-            {vozDisponivel() && (
-              <button type="button" className="dom-icone-botao" onClick={alternarMudo} aria-label={mudo ? 'Ligar a voz do Dom' : 'Silenciar o Dom'} aria-pressed={!mudo}>
-                {mudo ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
-              </button>
-            )}
+            <button type="button" className="dom-icone-botao" onClick={alternarMudo} aria-label={mudo ? 'Ligar o som do Dom' : 'Silenciar o Dom'} aria-pressed={!mudo}>
+              {mudo ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
+            </button>
             <button type="button" className="dom-icone-botao" onClick={fechar} aria-label="Fechar o Dom">
               <X className="h-5 w-5" />
             </button>
@@ -510,7 +516,7 @@ export function DomAssistente({
           <aside className="dom-lateral">
             <div className="dom-palco">
               <div className="dom-palco__mascote">
-                <DomMascote estado={estado} traje={traje} falando={falando} silaba={silaba} />
+                <DomMascote estado={estado} traje={traje} falando={falando} boca={boca} />
               </div>
               <div className="dom-palco__fala" data-tom={fala.tom} aria-live="polite">
                 <p key={fala.texto} className="dom-palco__fala-texto">
@@ -579,7 +585,6 @@ export function DomAssistente({
                       automatico={m.id === ultima?.id && !m.destinoResolvido}
                       aoIr={irPara}
                       aoCancelar={(id) => setConversas((c) => ({ ...c, [modo]: (c[modo] || []).map((x) => (x.id === id ? { ...x, destinoResolvido: true } : x)) }))}
-                      aoOuvir={(t) => falar(t, { aoComecar: () => setFalando(true), aoTerminar: () => setFalando(false), aoPalavra: () => setSilaba((s) => !s) }, 900)}
                     />
                   ))}
                   {carregando && <Raciocinio passos={PASSOS_DO_RACIOCINIO[modo]} atual={passo} />}
@@ -758,14 +763,12 @@ function MensagemDoDom({
   automatico,
   aoIr,
   aoCancelar,
-  aoOuvir,
 }: {
   m: Mensagem
   nova: boolean
   automatico: boolean
   aoIr: (d: DestinoDoDom, id: string) => void
   aoCancelar: (id: string) => void
-  aoOuvir: (texto: string) => void
 }) {
   const [copiado, setCopiado] = useState(false)
   if (m.papel === 'aluno') return <div className="dom-msg" data-papel="aluno">{m.texto}</div>
@@ -806,12 +809,6 @@ function MensagemDoDom({
       </div>
       {!m.tom && (
         <div className="dom-msg__rodape">
-          {vozDisponivel() && (
-            <button type="button" className="dom-msg__mini" onClick={() => aoOuvir(m.texto)}>
-              <Volume2 className="h-3.5 w-3.5" aria-hidden />
-              Ouvir
-            </button>
-          )}
           <button
             type="button"
             className="dom-msg__mini"

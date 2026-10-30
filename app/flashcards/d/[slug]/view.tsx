@@ -114,6 +114,7 @@ import { FundoIos } from '@/components/materiais/fundo-ios'
 import { AnelProgresso, Confete } from '@/components/flashcards/pecas-ios'
 import { lerErrosLocais, marcarErroLocal } from '@/lib/flashcard-caderno-de-erros'
 import { lerMetaDiaria, lerSequencia, registrarDiaDeEstudo } from '@/lib/flashcard-ritmo'
+import { reagirDom } from '@/lib/dom/reacoes'
 
 interface AccessFlags {
   hasAccess: boolean
@@ -2447,8 +2448,14 @@ function SessionResult({ summary, deckTitle, onReviewErrors, onStudyMore, onClos
   const [sequencia, setSequencia] = useState({ dias: 0, estudouHoje: false })
   const [meta, setMeta] = useState(20)
   useEffect(() => {
-    setSequencia(lerSequencia())
+    const seq = lerSequencia()
+    setSequencia(seq)
     setMeta(lerMetaDiaria())
+    // O Dom comemora: marco de dias seguidos (3, 7, 30…) vence o "revisão feita".
+    const t = setTimeout(() => {
+      reagirDom(seq.dias === 3 || (seq.dias > 0 && seq.dias % 7 === 0) ? { tipo: 'sequenciaDias', dias: seq.dias } : { tipo: 'flashcards' })
+    }, 1800)
+    return () => clearTimeout(t)
   }, [])
   const totalNotes = summary.counts.FACIL + summary.counts.MEDIO + summary.counts.DIFICIL
   const acertos = summary.counts.FACIL + summary.counts.MEDIO

@@ -76,6 +76,7 @@ import { useJanelaSincronizada } from '@/hooks/use-janela-sincronizada'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
 import { travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
+import { ReacaoDoResultado } from '@/components/dom/reacao-do-resultado'
 import {
   ALVO_DA_ASSINATURA,
   ALVO_DO_BOTAO_INICIAR,
@@ -2776,6 +2777,7 @@ ${respostaAluno}`
                 uma frase julgando. Sem número para desenhar (correção
                 pendente, TRI), ele vira o selo de "entregue".
               */}
+              <ReacaoDoResultado chave={`${id}:${notaGeralEmPercentual ?? 'pendente'}`} percentual={notaGeralEmPercentual} />
               <div className="ios-assenta">
                 {isPracticeOrPersonal ? (
                   <AnelDeNota percentual={notaGeralEmPercentual} rotulo={`Nota geral: ${overallScore}`}>
