@@ -1,26 +1,25 @@
 /**
- * Temas do Método Socrático, tirados da mesma grade dos cronogramas.
+ * Temas do Método Socrático: a ementa que o admin importa em
+ * `/admin/cronogramas` (coleção `cronograma_ementas`), a MESMA que monta os
+ * cronogramas em `/cronogramas`. Corrigiu um assunto lá, o Dom já pergunta
+ * sobre o assunto corrigido — sem deploy. A leitura do banco fica em
+ * `temas-servidor.ts`; aqui só o que é puro (e testável).
  *
- * Os quatro arquivos de grade somam ~400 KB de módulo; por isso só o servidor
- * os importa (rota `GET /api/dom/temas`, cacheada na borda) e a tela recebe a
- * lista achatada de um período: tópico › subtópico › módulo, com os
- * submódulos como "o que cai" — é isso que o Dom usa para montar a escada de
- * perguntas sem precisar de outro pedido.
+ * A tela recebe a lista achatada de um período: tópico › subtópico › módulo,
+ * com os submódulos como "o que cai" — é isso que o Dom usa para montar a
+ * escada de perguntas sem precisar de outro pedido.
  */
 
-import { getMedicinaTopicos } from '@/lib/medicina-periodos-helper'
-import { getBiomedicinaTopicos, type BiomedicinaPeriodo } from '@/lib/biomedicina-periodos-helper'
-import { getOdontologiaTopicos, type OdontologiaPeriodo } from '@/lib/odontologia-periodos-helper'
-import { getPsicologiaTopicos, type PsicologiaPeriodo } from '@/lib/psicologia-periodos-helper'
+import { isSecaoCurso, type EmentaTopico, type SecaoCurso } from '@/lib/cronogramas/tipos'
 
-export type CursoDoDom = 'medicina' | 'biomedicina' | 'odontologia' | 'psicologia'
+export type CursoDoDom = SecaoCurso
 
-export const CURSOS_DO_DOM: Array<{ id: CursoDoDom; nome: string; periodos: number }> = [
-  { id: 'medicina', nome: 'Medicina', periodos: 5 },
-  { id: 'biomedicina', nome: 'Biomedicina', periodos: 7 },
-  { id: 'odontologia', nome: 'Odontologia', periodos: 10 },
-  { id: 'psicologia', nome: 'Psicologia', periodos: 10 },
-]
+export interface CursoComTemas {
+  id: CursoDoDom
+  nome: string
+  /** Períodos que têm ementa importada (os únicos que o seletor oferece). */
+  periodos: number[]
+}
 
 export interface TemaDoDom {
   id: string
@@ -31,31 +30,23 @@ export interface TemaDoDom {
   itens: string[]
 }
 
-function topicosDe(curso: CursoDoDom, periodo: number): any[] {
-  switch (curso) {
-    case 'medicina':
-      return getMedicinaTopicos(periodo as 1 | 2 | 3 | 4 | 5) || []
-    case 'biomedicina':
-      return getBiomedicinaTopicos(periodo as BiomedicinaPeriodo) || []
-    case 'odontologia':
-      return getOdontologiaTopicos(periodo as OdontologiaPeriodo) || []
-    case 'psicologia':
-      return getPsicologiaTopicos(periodo as PsicologiaPeriodo) || []
-  }
-}
-
-export function temasDoPeriodo(curso: CursoDoDom, periodo: number): TemaDoDom[] {
-  const def = CURSOS_DO_DOM.find((c) => c.id === curso)
-  if (!def || !Number.isInteger(periodo) || periodo < 1 || periodo > def.periodos) return []
+/**
+ * Achata a ementa em temas (um por módulo). O que o admin desmarcou
+ * (`incluido: false`) fica de fora, como no gerador de cronogramas.
+ */
+export function achatarEmenta(topicos: EmentaTopico[]): TemaDoDom[] {
   const saida: TemaDoDom[] = []
-  for (const topico of topicosDe(curso, periodo)) {
-    for (const sub of topico?.subtopicos || []) {
-      for (const modulo of sub?.modulos || []) {
+  for (const topico of topicos || []) {
+    if (topico?.incluido === false) continue
+    for (const sub of topico.subtopicos || []) {
+      if (sub?.incluido === false) continue
+      for (const modulo of sub.modulos || []) {
+        if (modulo?.incluido === false) continue
         saida.push({
           id: String(modulo.id),
-          titulo: String(modulo.nome),
+          titulo: String(modulo.nome).slice(0, 160),
           trilha: `${topico.nome} › ${sub.nome}`,
-          itens: (modulo.submodulos || []).slice(0, 6).map((s: any) => String(s.nome).slice(0, 110)),
+          itens: (modulo.submodulos || []).slice(0, 6).map((s) => String(s.nome).slice(0, 110)),
         })
       }
     }
@@ -63,11 +54,6 @@ export function temasDoPeriodo(curso: CursoDoDom, periodo: number): TemaDoDom[] 
   return saida
 }
 
-/** Acha um tema pelo id (a rota do chat recebe só o id e remonta o resto). */
-export function temaPorId(curso: CursoDoDom, periodo: number, id: string): TemaDoDom | null {
-  return temasDoPeriodo(curso, periodo).find((t) => t.id === id) || null
-}
-
 export function cursoValido(v: unknown): v is CursoDoDom {
-  return typeof v === 'string' && CURSOS_DO_DOM.some((c) => c.id === v)
+  return isSecaoCurso(v)
 }

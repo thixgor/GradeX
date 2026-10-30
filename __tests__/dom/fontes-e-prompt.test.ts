@@ -1,7 +1,25 @@
 import { describe, expect, it } from 'vitest'
 import { fontesDaBusca, fontesDasReferencias, urlDeBusca } from '@/lib/dom/fontes'
 import { montarPromptDoSistema } from '@/lib/dom/prompt'
-import { temasDoPeriodo, temaPorId } from '@/lib/dom/temas'
+import { achatarEmenta, cursoValido } from '@/lib/dom/temas'
+import type { EmentaTopico } from '@/lib/cronogramas/tipos'
+
+// Ementa como o admin importa em /admin/cronogramas (coleção cronograma_ementas).
+const EMENTA = [
+  {
+    id: 't1', nome: 'SOI I', prioridade: 'alta', incluido: true,
+    subtopicos: [
+      {
+        id: 's1', nome: 'Bases moleculares', prioridade: 'alta', incluido: true,
+        modulos: [
+          { id: 'm1', nome: 'Membrana plasmática', prioridade: 'alta', horasEstimadas: 2, incluido: true, submodulos: [{ id: 'x1', nome: 'Bicamada lipídica', prioridade: 'alta' }, { id: 'x2', nome: 'Transporte', prioridade: 'media' }] },
+          { id: 'm2', nome: 'Desmarcado pelo admin', prioridade: 'baixa', horasEstimadas: 1, incluido: false, submodulos: [] },
+        ],
+      },
+    ],
+  },
+  { id: 't2', nome: 'Fora do cronograma', prioridade: 'baixa', incluido: false, subtopicos: [{ id: 's2', nome: 'X', prioridade: 'baixa', incluido: true, modulos: [{ id: 'm3', nome: 'Não entra', prioridade: 'baixa', horasEstimadas: 1, incluido: true, submodulos: [] }] }] },
+] as unknown as EmentaTopico[]
 import { falaDe, textoDaFala, FALAS } from '@/components/dom/falas'
 
 describe('fontes', () => {
@@ -59,7 +77,7 @@ describe('prompt', () => {
     expect(p).toContain('bom dia') // 13h UTC = 10h em São Paulo
   })
   it('modo socrático leva a escada e o tema', () => {
-    const tema = temasDoPeriodo('medicina', 1)[0]
+    const tema = achatarEmenta(EMENTA)[0]
     const p = montarPromptDoSistema({ ...base, modo: 'socratico', destinos: [], tema: { ...tema, curso: 'medicina', periodo: 1 } })
     expect(p).toContain('MÉTODO SOCRÁTICO')
     expect(p).toContain(tema.titulo)
@@ -67,12 +85,16 @@ describe('prompt', () => {
   })
 })
 
-describe('temas', () => {
-  it('achata a grade do período e acha pelo id', () => {
-    const temas = temasDoPeriodo('medicina', 1)
-    expect(temas.length).toBeGreaterThan(5)
-    expect(temaPorId('medicina', 1, temas[0].id)?.titulo).toBe(temas[0].titulo)
-    expect(temasDoPeriodo('medicina', 9)).toEqual([])
+describe('temas (ementa dos cronogramas)', () => {
+  it('achata a ementa importada pelo admin, um tema por módulo', () => {
+    expect(achatarEmenta(EMENTA)).toEqual([
+      { id: 'm1', titulo: 'Membrana plasmática', trilha: 'SOI I › Bases moleculares', itens: ['Bicamada lipídica', 'Transporte'] },
+    ])
+  })
+  it('período sem ementa não tem temas; curso precisa ser uma seção dos cronogramas', () => {
+    expect(achatarEmenta([])).toEqual([])
+    expect(cursoValido('medicina')).toBe(true)
+    expect(cursoValido('engenharia')).toBe(false)
   })
 })
 

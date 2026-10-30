@@ -21,12 +21,12 @@ interface TemaDaGrade {
   itens: string[]
 }
 
-const CURSOS = [
-  { id: 'medicina', nome: 'Medicina', periodos: 5 },
-  { id: 'biomedicina', nome: 'Biomedicina', periodos: 7 },
-  { id: 'odontologia', nome: 'Odontologia', periodos: 10 },
-  { id: 'psicologia', nome: 'Psicologia', periodos: 10 },
-]
+/** Cursos e períodos com ementa importada em /admin/cronogramas (vêm de `/api/dom/temas`). */
+interface CursoComTemas {
+  id: string
+  nome: string
+  periodos: number[]
+}
 
 const PASSOS: Record<EtapaSocratica, string> = {
   diagnostico: 'Eu descubro o que você já sabe — sem nota, sem julgamento.',
@@ -97,28 +97,52 @@ export function EscolhaDeTema({
   aoEscolher: (t: TemaEscolhido) => void
   aoVoltar?: () => void
 }) {
+  const [cursos, setCursos] = useState<CursoComTemas[] | null>(null)
   const [curso, setCurso] = useState('medicina')
-  const def = CURSOS.find((c) => c.id === curso)!
-  const [periodo, setPeriodo] = useState(() => Math.min(Math.max(periodoDoAluno || 1, 1), 5))
+  const [periodo, setPeriodo] = useState(() => Math.max(periodoDoAluno || 1, 1))
   const [temas, setTemas] = useState<TemaDaGrade[] | null>(null)
   const [busca, setBusca] = useState('')
   const [livre, setLivre] = useState('')
 
-  useEffect(() => {
-    if (periodo > def.periodos) setPeriodo(def.periodos)
-  }, [def.periodos, periodo])
-
+  // A grade é a ementa que o admin importa para os cronogramas: só aparecem
+  // os cursos e períodos que já têm ementa.
   useEffect(() => {
     let vivo = true
+    fetch('/api/dom/temas')
+      .then((r) => (r.ok ? r.json() : { cursos: [] }))
+      .then((d) => {
+        if (!vivo) return
+        const lista: CursoComTemas[] = (Array.isArray(d.cursos) ? d.cursos : []).filter((c: CursoComTemas) => c.periodos?.length)
+        setCursos(lista)
+        if (lista.length && !lista.some((c) => c.id === curso)) setCurso(lista[0].id)
+      })
+      .catch(() => vivo && setCursos([]))
+    return () => {
+      vivo = false
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const periodos = useMemo(() => cursos?.find((c) => c.id === curso)?.periodos || [], [cursos, curso])
+  // Período do aluno se tiver ementa; senão o mais próximo abaixo dele, ou o primeiro.
+  const periodoValido = periodos.includes(periodo) ? periodo : [...periodos].reverse().find((p) => p <= periodo) ?? periodos[0] ?? null
+
+  useEffect(() => {
+    if (cursos === null) return
+    if (periodoValido === null) {
+      setTemas([])
+      return
+    }
+    let vivo = true
     setTemas(null)
-    fetch(`/api/dom/temas?curso=${curso}&periodo=${Math.min(periodo, def.periodos)}`)
+    fetch(`/api/dom/temas?curso=${curso}&periodo=${periodoValido}`)
       .then((r) => (r.ok ? r.json() : { temas: [] }))
       .then((d) => vivo && setTemas(Array.isArray(d.temas) ? d.temas : []))
       .catch(() => vivo && setTemas([]))
     return () => {
       vivo = false
     }
-  }, [curso, periodo, def.periodos])
+  }, [cursos, curso, periodoValido])
 
   const grupos = useMemo(() => {
     const termo = busca.trim().toLowerCase()
@@ -149,7 +173,7 @@ export function EscolhaDeTema({
           <label className="text-[0.7rem] font-semibold text-[var(--dom-texto-3)]">
             Curso
             <select className="dom-campo mt-1" value={curso} onChange={(e) => setCurso(e.target.value)}>
-              {CURSOS.map((c) => (
+              {(cursos || []).map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.nome}
                 </option>
@@ -158,8 +182,8 @@ export function EscolhaDeTema({
           </label>
           <label className="text-[0.7rem] font-semibold text-[var(--dom-texto-3)]">
             Período
-            <select className="dom-campo mt-1" value={Math.min(periodo, def.periodos)} onChange={(e) => setPeriodo(Number(e.target.value))}>
-              {Array.from({ length: def.periodos }, (_, i) => i + 1).map((p) => (
+            <select className="dom-campo mt-1" value={periodoValido ?? ''} disabled={!periodos.length} onChange={(e) => setPeriodo(Number(e.target.value))}>
+              {periodos.map((p) => (
                 <option key={p} value={p}>
                   {p}º período
                 </option>
@@ -182,7 +206,8 @@ export function EscolhaDeTema({
 
       <div className="min-h-0 flex-1 overflow-y-auto px-2 py-2">
         {temas === null && <p className="dom-texto-3 p-3 text-sm">Abrindo a grade do período…</p>}
-        {temas && !grupos.length && <p className="dom-texto-3 p-3 text-sm">Nenhum tema aqui. Que tal escolher um tema livre abaixo?</p>}
+        {cursos && !cursos.length && <p className="dom-texto-3 p-3 text-sm">A grade dos cronogramas ainda não foi publicada. Escolha um tema livre abaixo!</p>}
+        {temas && !!cursos?.length && !grupos.length && <p className="dom-texto-3 p-3 text-sm">Nenhum tema aqui. Que tal escolher um tema livre abaixo?</p>}
         {grupos.map(([grupo, lista]) => (
           <div key={grupo} className="mb-2">
             <p className="px-2 pb-1 pt-2 text-[0.68rem] font-bold uppercase tracking-wide text-[var(--dom-texto-3)]">{grupo}</p>
@@ -191,7 +216,7 @@ export function EscolhaDeTema({
                 key={t.id}
                 type="button"
                 className="dom-tema"
-                onClick={() => aoEscolher({ tipo: 'grade', curso, periodo: Math.min(periodo, def.periodos), id: t.id, titulo: t.titulo, trilha: t.trilha })}
+                onClick={() => periodoValido && aoEscolher({ tipo: 'grade', curso, periodo: periodoValido, id: t.id, titulo: t.titulo, trilha: t.trilha })}
               >
                 <span className="flex items-start gap-2">
                   <BookOpen className="mt-0.5 h-4 w-4 flex-none text-[var(--dom-laranja-forte)]" aria-hidden />

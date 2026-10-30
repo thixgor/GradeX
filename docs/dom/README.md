@@ -55,6 +55,11 @@ retoma o contexto.
 - Motor "quem estuda isto também leva" (`lib/recomendacoes`) → sugestões
   `leva:<n>`, semeadas pelo material da conversa ou pela última compra.
 - Materiais de /materiais e preços da /buy (`lib/dom/catalogo.ts`).
+- Temas do Método Socrático: a ementa que o admin importa em
+  `/admin/cronogramas` (coleção `cronograma_ementas`, a mesma de /cronogramas),
+  por `lib/dom/temas-servidor.ts`. Só aparecem cursos e períodos com ementa;
+  módulo desmarcado (`incluido: false`) não vira tema. Importação nova chega ao
+  Dom em até 5 min (cache da borda em `/api/dom/temas`).
 
 ## Conversas
 

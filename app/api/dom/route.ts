@@ -23,7 +23,8 @@ import { assinarFala, falaAutentica, fichaDoMaterial, pedeConteudoDeSaude, xpDoA
 import { montarPromptDoSistema } from '@/lib/dom/prompt'
 import { DomIndisponivel, perguntarAoModelo, type TurnoDoModelo } from '@/lib/dom/modelo'
 import { fontesDaBusca, fontesDasReferencias } from '@/lib/dom/fontes'
-import { cursoValido, temaPorId } from '@/lib/dom/temas'
+import { cursoValido } from '@/lib/dom/temas'
+import { temaPorId } from '@/lib/dom/temas-servidor'
 import { falaDePreco, materiaisComoDestinos, materiaisDaMensagem, precosAtuais } from '@/lib/dom/catalogo'
 import { conteudoDaBusca, pedeRecomendacao, sugestoesDeCompra } from '@/lib/dom/descobertas'
 
@@ -188,7 +189,7 @@ export async function POST(request: NextRequest) {
       const ataqueNoTema = detectarAtaque(tema.titulo)
       if (ataqueNoTema) tema = { ...tema, titulo: 'tema inválido (peça outro ao aluno)' }
     } else if (cursoValido(t.curso) && periodo && typeof t.id === 'string') {
-      const achado = temaPorId(t.curso, periodo, t.id)
+      const achado = await temaPorId(t.curso, periodo, t.id).catch(() => null)
       if (achado) tema = { ...achado, curso: t.curso, periodo }
     }
   }
