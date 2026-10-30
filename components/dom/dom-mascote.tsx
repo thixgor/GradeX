@@ -220,11 +220,11 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
             {/* Fita adesiva na boca (som desligado): duas tiras cruzadas, pontas rasgadas. */}
             <g className="dom-fita" aria-hidden>
               <g transform="rotate(-9 705 428)">
-                <path d="M600 410 l6 -6 l6 6 l6 -6 l6 6 h162 l6 -6 l6 6 l6 -6 l6 6 v38 l-6 6 l-6 -6 l-6 6 l-6 -6 h-162 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#ece5d2" stroke="#c9bf9f" strokeWidth="3" />
+                <path d="M600 410 l6 -6 l6 6 l6 -6 l6 6 h162 l6 -6 l6 6 l6 -6 l6 6 v38 l-6 6 l-6 -6 l-6 6 l-6 -6 h-162 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#d6dbde" stroke="#8d979c" strokeWidth="4" />
                 <rect x="618" y="414" width="170" height="8" rx="4" fill="#ffffff" opacity="0.55" />
               </g>
               <g transform="rotate(11 705 432)">
-                <path d="M622 414 l6 -6 l6 6 l6 -6 l6 6 h118 l6 -6 l6 6 l6 -6 l6 6 v36 l-6 6 l-6 -6 l-6 6 l-6 -6 h-118 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#f3edde" stroke="#c9bf9f" strokeWidth="3" />
+                <path d="M622 414 l6 -6 l6 6 l6 -6 l6 6 h118 l6 -6 l6 6 l6 -6 l6 6 v36 l-6 6 l-6 -6 l-6 6 l-6 -6 h-118 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#e2e6e8" stroke="#8d979c" strokeWidth="4" />
                 <rect x="640" y="418" width="128" height="7" rx="3.5" fill="#ffffff" opacity="0.5" />
               </g>
             </g>

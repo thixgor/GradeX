@@ -669,7 +669,8 @@
   animation: dom-balao 480ms var(--dom-sai) 260ms both;
 }
 .dom-aparicao__selo {
-  display: inline-flex;
+  display: flex;
+  width: fit-content;
   align-items: center;
   gap: 0.25rem;
   margin-bottom: 0.3rem;
@@ -683,7 +684,7 @@
 .dom-aparicao[data-efeito='fogo'] .dom-aparicao__balao { border-color: rgba(255, 106, 0, 0.45); }
 .dom-efeito {
   position: absolute;
-  inset: -10% -10% 30%;
+  inset: 0 -10% 45%;
   pointer-events: none;
   overflow: visible;
 }
@@ -714,7 +715,7 @@
 @keyframes dom-efeito-sobe {
   0% { opacity: 0; transform: translate(0, 0) rotate(0) scale(0.4); }
   15% { opacity: 1; }
-  100% { opacity: 0; transform: translate(var(--dx), -160px) rotate(var(--rot)) scale(1); }
+  100% { opacity: 0; transform: translate(calc(var(--dx) * 1.6), -110px) rotate(var(--rot)) scale(1); }
 }
 @keyframes dom-chama {
   0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
@@ -749,7 +750,6 @@
   0%, 100% { transform: translateY(0) rotate(-2deg); }
   50% { transform: translateY(-6%) rotate(2deg); }
 }
-.dom-guia[data-lado='esquerda'] .dom-guia__mascote > .dom-mascote { transform: scaleX(-1); }
 .dom-guia__mascote {
   width: 7.5rem;
   flex: none;

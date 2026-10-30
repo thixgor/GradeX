@@ -29,7 +29,7 @@ const ESTADO_DO_EFEITO: Record<Reacao['efeito'], EstadoDoDom> = {
   nenhum: 'feliz',
 }
 
-export function DomReacoes({ painelAberto }: { painelAberto: boolean }) {
+export function DomReacoes({ painelAberto, aoMudar }: { painelAberto: boolean; aoMudar?: (naTela: boolean) => void }) {
   const [atual, setAtual] = useState<(Reacao & { chave: number; texto: string; sequencia: number }) | null>(null)
   const [saindo, setSaindo] = useState(false)
   const [falando, setFalando] = useState(false)
@@ -37,6 +37,10 @@ export function DomReacoes({ painelAberto }: { painelAberto: boolean }) {
   const mudo = useMudo()
   const ultimaRef = useRef<{ em: number; peso: number }>({ em: 0, peso: 0 })
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+
+  useEffect(() => {
+    aoMudar?.(!!atual)
+  }, [atual, aoMudar])
 
   useEffect(() => {
     const limpar = () => {

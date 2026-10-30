@@ -75,6 +75,8 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
   const [boca, setBoca] = useState(false)
   const [oculto, setOculto] = useState(false)
   const mudo = useMudo()
+  // Uma aparição (conquista) na tela: o botão e o balão saem da frente.
+  const [reagindo, setReagindo] = useState(false)
   const primeiroNome = (nome.trim().split(/\s+/)[0] || '').replace(/^./, (c) => c.toUpperCase())
 
   // Reabre se estava aberto antes da navegação.
@@ -151,8 +153,8 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
 
   return (
     <div className="dom-escopo" data-oculto={oculto || undefined}>
-      <div className="dom-lancador" data-aberto={aberto ? '1' : '0'}>
-        {balao && (
+      <div className="dom-lancador" data-aberto={aberto || reagindo ? '1' : '0'}>
+        {balao && !reagindo && (
           <button type="button" className="dom-lancador__balao" onClick={abrir}>
             <strong>Dom · DomineAqui AI</strong>
             {balao}
@@ -176,7 +178,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
           </span>
         </button>
       </div>
-      {mascoteLiberado && <DomReacoes painelAberto={aberto} />}
+      {mascoteLiberado && <DomReacoes painelAberto={aberto} aoMudar={setReagindo} />}
       {aberto && <DomAssistente nome={primeiroNome} material={material} rota={pathname} aoFechar={fechar} />}
     </div>
   )
