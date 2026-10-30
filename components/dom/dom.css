@@ -320,13 +320,13 @@
   40%, 70% { opacity: 0.95; transform: scale(1); }
 }
 
-/* Esqueleto enquanto o desenho baixa (silhueta respirando). */
-.dom-mascote__silhueta {
+/* Prévia rasterizada enquanto o desenho baixa (mesmo enquadramento do SVG). */
+.dom-mascote__previa {
   position: absolute;
-  inset: 8% 14% 2%;
-  border-radius: 46% 46% 30% 30%;
-  background: radial-gradient(circle at 50% 25%, rgba(239, 138, 60, 0.35), rgba(239, 138, 60, 0.08) 60%, transparent 70%);
-  animation: dom-respira 2s ease-in-out infinite;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* ── Troca de traje: Dom → Sócrates ───────────────────────────────────── */
@@ -515,6 +515,10 @@
     bottom: calc(6rem + var(--gx-barra-inferior-h, 0px));
   }
 }
+.dom-lancador[data-posicionado] {
+  transition: transform 320ms var(--dom-sai), opacity 200ms, left 380ms var(--dom-mola, cubic-bezier(0.34, 1.56, 0.64, 1)), top 380ms var(--dom-mola, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+.dom-lancador[data-arrastando] { transition: none; }
 .dom-lancador[data-aberto='1'] {
   transform: scale(0.6) translateY(20px);
   opacity: 0;
@@ -540,7 +544,27 @@
 @keyframes dom-orbita {
   to { --dom-giro: 360deg; }
 }
+.dom-lancador__botao { touch-action: none; -webkit-touch-callout: none; }
 .dom-lancador__botao:hover { transform: translateY(-3px) scale(1.05); }
+/* Arrastando: levanta, inclina para o lado do puxão e o Dom se sacode. */
+.dom-lancador[data-arrastando] .dom-lancador__botao {
+  cursor: grabbing;
+  transform: scale(1.12) rotate(var(--dom-incl, 0deg));
+  box-shadow: 0 28px 50px -18px rgba(217, 106, 31, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  transition: transform 90ms linear;
+}
+.dom-lancador[data-arrastando] .dom-busto > * { animation: dom-sacode 0.32s ease-in-out infinite; }
+@keyframes dom-sacode {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-4%) rotate(-7deg); }
+  75% { transform: translateX(4%) rotate(7deg); }
+}
+.dom-busto__previa {
+  position: absolute;
+  width: 150%;
+  left: -24%;
+  top: 4%;
+}
 .dom-lancador__botao:active { transform: scale(0.94); }
 .dom-lancador__botao:focus-visible { outline: 3px solid var(--dom-laranja); outline-offset: 3px; }
 .dom-lancador__miolo {
@@ -596,8 +620,12 @@
   top: 4%;
 }
 .dom-lancador__balao {
-  max-width: 16rem;
-  margin-bottom: 0.9rem;
+  /* Fora do fluxo: o balão não empurra o botão (que pode estar em qualquer borda). */
+  position: absolute;
+  right: calc(100% + 0.6rem);
+  bottom: 0.9rem;
+  width: max-content;
+  max-width: min(16rem, calc(100vw - 7rem));
   padding: 0.7rem 0.9rem;
   border-radius: 1.1rem 1.1rem 0.3rem 1.1rem;
   background: var(--dom-vidro-forte);
@@ -611,6 +639,11 @@
   animation: dom-balao 460ms var(--dom-sai) both;
   cursor: pointer;
   text-align: left;
+}
+.dom-lancador[data-lado='esquerda'] .dom-lancador__balao {
+  right: auto;
+  left: calc(100% + 0.6rem);
+  border-radius: 1.1rem 1.1rem 1.1rem 0.3rem;
 }
 .dom-lancador__balao strong { display: block; font-size: 0.7rem; color: var(--dom-laranja-forte); letter-spacing: 0.02em; }
 @keyframes dom-balao {
@@ -1550,17 +1583,22 @@
 @keyframes dom-gira-marca { to { transform: rotate(360deg); } }
 @keyframes dom-pop { from { transform: scale(0.4); } 60% { transform: scale(1.2); } }
 
-/* Sugestões */
+/* Sugestões: quebram linha em vez de rolar de lado. A rolagem horizontal
+   (sem barra) cortava o chip na borda do painel e, no mouse, escondia o resto. */
 .dom-sugestoes {
   display: flex;
-  gap: 0.45rem;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   padding: 0.2rem 1rem 0.55rem;
-  scrollbar-width: none;
+  max-height: 7.5rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
-.dom-sugestoes::-webkit-scrollbar { display: none; }
 .dom-chip {
-  flex: none;
+  flex: 0 1 auto;
+  max-width: 100%;
+  text-align: left;
+  line-height: 1.25;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -1574,7 +1612,7 @@
   transition: background 150ms, transform 150ms var(--dom-sai), border-color 150ms;
   animation: dom-msg 340ms var(--dom-sai) both;
 }
-.dom-chip svg { color: var(--dom-laranja-forte); }
+.dom-chip svg { color: var(--dom-laranja-forte); flex: none; }
 .dom-chip:hover { border-color: var(--dom-laranja); transform: translateY(-1px); }
 .dom-chip:active { transform: scale(0.96); }
 .dom-chip:focus-visible { outline: 2px solid var(--dom-verde); outline-offset: 2px; }

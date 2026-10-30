@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
-import { DomMascote } from './dom-mascote'
+import { DomMascote, PREVIA } from './dom-mascote'
+import { carregarDesenho } from './desenhos'
+import { useArrastar } from './use-arrastar'
 import { DomReacoes } from './dom-reacoes'
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
 import { falar, pararDeFalar } from './voz'
@@ -77,6 +79,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
   const mudo = useMudo()
   // Uma aparição (conquista) na tela: o botão e o balão saem da frente.
   const [reagindo, setReagindo] = useState(false)
+  const arrasto = useArrastar<HTMLDivElement>()
   const primeiroNome = (nome.trim().split(/\s+/)[0] || '').replace(/^./, (c) => c.toUpperCase())
 
   // Reabre se estava aberto antes da navegação.
@@ -95,10 +98,15 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
     gravarArmazenado(CHAVE_ABERTO, '0', 'sessao')
   }, [])
 
-  // Desenho do mascote depois que a página assentou (não disputa banda com ela).
+  // Desenho em camadas depois que a página assentou (não disputa banda com
+  // ela); até lá o botão mostra a prévia de 17 KB, que aparece na hora.
   useEffect(() => {
     const ocioso = (window as any).requestIdleCallback as undefined | ((cb: () => void, o?: { timeout: number }) => number)
-    const t = ocioso ? ocioso(() => setMascoteLiberado(true), { timeout: 3500 }) : window.setTimeout(() => setMascoteLiberado(true), 2000)
+    const liberar = () => {
+      void carregarDesenho('dom').catch(() => {})
+      setMascoteLiberado(true)
+    }
+    const t = ocioso ? ocioso(liberar, { timeout: 1500 }) : window.setTimeout(liberar, 800)
     return () => {
       if (!ocioso) clearTimeout(t)
     }
@@ -153,7 +161,15 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
 
   return (
     <div className="dom-escopo" data-oculto={oculto || undefined}>
-      <div className="dom-lancador" data-aberto={aberto || reagindo ? '1' : '0'}>
+      <div
+        ref={arrasto.ref}
+        className="dom-lancador"
+        data-aberto={aberto || reagindo ? '1' : '0'}
+        data-lado={arrasto.lado}
+        data-arrastando={arrasto.arrastando || undefined}
+        data-posicionado={arrasto.estilo ? '1' : undefined}
+        style={{ ...arrasto.estilo, ['--dom-incl' as string]: `${arrasto.inclinacao}deg` }}
+      >
         {balao && !reagindo && (
           <button type="button" className="dom-lancador__balao" onClick={abrir}>
             <strong>Dom · DomineAqui AI</strong>
@@ -163,14 +179,24 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
         <button
           type="button"
           className="dom-lancador__botao"
-          onClick={abrir}
+          onClick={() => {
+            if (!arrasto.foiArrasto()) abrir()
+          }}
           onPointerEnter={() => void carregarPainel()}
           onFocus={() => void carregarPainel()}
+          {...arrasto.eventos}
+          title="Toque para conversar · arraste para mudar de lugar"
           aria-label={primeiroNome ? `Abrir o Dom, assistente de IA de ${primeiroNome}` : 'Abrir o Dom, assistente de IA'}
           aria-haspopup="dialog"
         >
           <span className="dom-lancador__miolo">
-            <span className="dom-busto">{mascoteLiberado && <DomMascote estado={balao ? 'acenando' : 'parado'} falando={falando} boca={boca} calado={mudo && !falando} simples />}</span>
+            <span className="dom-busto">
+              {mascoteLiberado ? (
+                <DomMascote estado={arrasto.arrastando ? 'animado' : balao ? 'acenando' : 'parado'} falando={falando} boca={boca} calado={mudo && !falando} simples />
+              ) : (
+                <img className="dom-busto__previa" src={PREVIA} alt="" draggable={false} />
+              )}
+            </span>
           </span>
           <span className="dom-lancador__status" aria-hidden />
           <span className="dom-lancador__rotulo" aria-hidden>

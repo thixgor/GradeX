@@ -29,6 +29,7 @@ interface Props {
 }
 
 const VIEWBOX = '150 0 954 1254'
+export const PREVIA = '/dom/v1/dom-previa.webp'
 
 // Olhos (elipse que a pálpebra cobre) e lentes, medidos sobre o desenho.
 const OLHOS = [
@@ -159,8 +160,9 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
       data-calado={calado ? '1' : '0'}
       aria-hidden
     >
-      {!pronto && <div className="dom-mascote__silhueta" />}
       <div className="dom-mascote__corpo">
+        {/* Prévia de 17 KB enquanto o desenho em camadas (~60 KB) baixa e monta. */}
+        {!pronto && <img className="dom-mascote__previa" src={PREVIA} alt="" decoding="async" draggable={false} />}
         <Traje desenho={normal} qual="normal" />
         <Traje desenho={socrates} qual="socrates" />
 

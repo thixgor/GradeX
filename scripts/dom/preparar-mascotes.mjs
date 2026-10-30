@@ -257,6 +257,11 @@ try {
   const svg = readFileSync(join(DESTINO, 'dom.svg'), 'utf8').replace(/viewBox="[^"]+"/, 'viewBox="300 40 640 640"')
   await sharp(Buffer.from(svg), { density: 30 }).resize(128, 128).webp({ quality: 82 }).toFile(join(DESTINO, 'dom-rosto.webp'))
   console.log('dom-rosto.webp: 128 px')
+  // Prévia do corpo inteiro: aparece na hora enquanto o SVG (~60 KB comprimido)
+  // baixa e é montado em camadas. 2× o maior tamanho comum do mascote.
+  const inteiro = readFileSync(join(DESTINO, 'dom.svg'), 'utf8')
+  await sharp(Buffer.from(inteiro), { density: 40 }).resize(240).webp({ quality: 60, alphaQuality: 70, effort: 6 }).toFile(join(DESTINO, 'dom-previa.webp'))
+  console.log('dom-previa.webp: 240 px')
 } catch (erro) {
   console.warn('dom-rosto.webp não gerado (sharp indisponível):', erro instanceof Error ? erro.message : erro)
 }
