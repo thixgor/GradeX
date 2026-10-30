@@ -1,7 +1,7 @@
 'use client'
 
 import { memo, useEffect, useId, useRef, useState } from 'react'
-import { carregarDesenho, type Desenho, type NomeDoDesenho } from './desenhos'
+import { carregarDesenho, desenhoCarregado, type Desenho, type NomeDoDesenho } from './desenhos'
 
 /**
  * O Dom, vivo: pisca, respira, abana a cauda, mexe a boca quando fala, olha
@@ -47,9 +47,15 @@ const TELA: Record<TrajeDoDom, { x: number; y: number }> = {
 }
 
 function useDesenho(nome: NomeDoDesenho, ligado = true): Desenho | null {
-  const [d, setD] = useState<Desenho | null>(null)
+  // Já baixado nesta aba: nasce desenhado (sem a prévia piscar na troca de página).
+  const [d, setD] = useState<Desenho | null>(() => (ligado ? desenhoCarregado(nome) : null))
   useEffect(() => {
     if (!ligado) return
+    const pronto = desenhoCarregado(nome)
+    if (pronto) {
+      setD(pronto) // mesmo objeto: não renderiza de novo
+      return
+    }
     let vivo = true
     carregarDesenho(nome)
       .then((x) => vivo && setD(x))

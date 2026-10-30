@@ -3,8 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
+import { X } from 'lucide-react'
 import { DomMascote, PREVIA } from './dom-mascote'
-import { carregarDesenho } from './desenhos'
+import { carregarDesenho, desenhoCarregado } from './desenhos'
+import { domOcultoAqui, ondeDaSecao, secaoDaRota, type SecaoDoDom } from './secoes'
+import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { useArrastar } from './use-arrastar'
 import { DomReacoes } from './dom-reacoes'
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
@@ -33,6 +36,13 @@ const carregarPainel = () => import('./dom-assistente').then((m) => m.DomAssiste
 const DomAssistente = dynamic(carregarPainel, { ssr: false })
 
 const CHAVE_ABERTO = 'dom:aberto'
+
+/**
+ * Painel aberto nesta visita: na troca de página o Dom nasce aberto e SEM
+ * animação de entrada, saudação ou bipe — continua a conversa, não "chega de
+ * novo" (era o piscar a cada navegação).
+ */
+let abertoEmMemoria: boolean | null = null
 const CHAVE_BALAO_DIA = 'dom:balao-dia'
 
 /** Telas sem o botão do Dom: prova, resolução de questões, login e checkout. */
@@ -68,10 +78,23 @@ function gravarArmazenado(chave: string, valor: string, onde: 'local' | 'sessao'
   } catch {}
 }
 
-export function DomLancador({ nome = '', material }: { nome?: string; material?: ContextoDoMaterial | null }) {
+export function DomLancador({
+  nome = '',
+  material,
+  escondido = false,
+}: {
+  nome?: string
+  material?: ContextoDoMaterial | null
+  /** A tela pediu para sumir (ex.: "ocultar barras" do leitor de PDF). O estado fica guardado. */
+  escondido?: boolean
+}) {
   const pathname = usePathname() || '/'
-  const [aberto, setAberto] = useState(false)
-  const [mascoteLiberado, setMascoteLiberado] = useState(false)
+  const [aberto, setAberto] = useState(() => abertoEmMemoria === true)
+  // Continuação = já estava aberto na página anterior.
+  const [continuacao] = useState(() => abertoEmMemoria === true)
+  const [mascoteLiberado, setMascoteLiberado] = useState(() => desenhoCarregado('dom') !== null)
+  const { domOcultoEm, hydrated: preferenciasLidas, setDomOculto } = useUIPreferences()
+  const [aviso, setAviso] = useState<SecaoDoDom | null>(null)
   const [balao, setBalao] = useState<string | null>(null)
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
@@ -82,21 +105,44 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
   const arrasto = useArrastar<HTMLDivElement>()
   const primeiroNome = (nome.trim().split(/\s+/)[0] || '').replace(/^./, (c) => c.toUpperCase())
 
-  // Reabre se estava aberto antes da navegação.
+  // Recarregou a página com o painel aberto: reabre (aí sim, como chegada nova).
   useEffect(() => {
-    if (lerArmazenado(CHAVE_ABERTO, 'sessao') === '1') setAberto(true)
+    if (abertoEmMemoria === null) {
+      abertoEmMemoria = lerArmazenado(CHAVE_ABERTO, 'sessao') === '1'
+      if (abertoEmMemoria) setAberto(true)
+    }
   }, [])
 
   const abrir = useCallback(() => {
     setBalao(null)
     pararDeFalar()
     setAberto(true)
+    abertoEmMemoria = true
     gravarArmazenado(CHAVE_ABERTO, '1', 'sessao')
   }, [])
   const fechar = useCallback(() => {
     setAberto(false)
+    abertoEmMemoria = false
     gravarArmazenado(CHAVE_ABERTO, '0', 'sessao')
   }, [])
+
+  // Escondido nesta seção (escolha da pessoa) ou pela própria tela.
+  const secao = secaoDaRota(pathname, !!material)
+  const ocultoPelaPessoa = preferenciasLidas && domOcultoAqui(domOcultoEm, pathname, !!material)
+  const esconderAqui = useCallback(() => {
+    pararDeFalar()
+    fechar()
+    setDomOculto(secao, true)
+    setAviso(secao)
+  }, [fechar, secao, setDomOculto])
+  useEffect(() => {
+    if (!aviso) return
+    const t = setTimeout(() => setAviso(null), 7000)
+    return () => clearTimeout(t)
+  }, [aviso])
+  useEffect(() => {
+    if (escondido || ocultoPelaPessoa) pararDeFalar()
+  }, [escondido, ocultoPelaPessoa])
 
   // Desenho em camadas depois que a página assentou (não disputa banda com
   // ela); até lá o botão mostra a prévia de 17 KB, que aparece na hora.
@@ -114,7 +160,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
 
   // Balão: fala da página (uma vez por sessão em cada tipo) ou saudação do dia.
   useEffect(() => {
-    if (aberto || rotaSemDom(pathname)) return
+    if (aberto || escondido || ocultoPelaPessoa || rotaSemDom(pathname)) return
     const daPagina = momentoDaPagina(pathname, !!material)
     let momento: MomentoDaFala | null = null
     let marcar: () => void = () => {}
@@ -140,7 +186,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
       clearTimeout(mostrar)
       clearTimeout(esconder)
     }
-  }, [pathname, material, aberto])
+  }, [pathname, material, aberto, escondido, ocultoPelaPessoa])
 
   // Animações param com a aba oculta.
   useEffect(() => {
@@ -148,6 +194,33 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
     document.addEventListener('visibilitychange', ver)
     return () => document.removeEventListener('visibilitychange', ver)
   }, [])
+
+  // Antes de ler as preferências (só no primeiro carregamento da visita), não
+  // aparece: senão quem escondeu o Dom aqui o veria piscar e sumir.
+  if (!preferenciasLidas) return null
+
+  // Escondido pela pessoa aqui: nada do Dom (nem as comemorações). Só o aviso
+  // de onde trazer de volta, por alguns segundos, com "Desfazer".
+  if (ocultoPelaPessoa) {
+    return aviso ? (
+      <div className="dom-escopo">
+        <div className="dom-aviso-oculto" role="status">
+          <span>
+            Dom escondido {ondeDaSecao(aviso)}. Para trazer de volta: <strong>Perfil › Ajustes</strong>.
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              setDomOculto(aviso, false)
+              setAviso(null)
+            }}
+          >
+            Desfazer
+          </button>
+        </div>
+      </div>
+    ) : null
+  }
 
   // Prova e resolução de questões: sem botão nem painel (foco), mas o Dom
   // ainda aparece para comemorar o foguinho e o resultado.
@@ -160,7 +233,9 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
   }
 
   return (
-    <div className="dom-escopo" data-oculto={oculto || undefined}>
+    // `hidden` (e não desmontar): o leitor oculta as barras e o Dom some junto,
+    // mas a conversa aberta continua lá quando as barras voltam.
+    <div className="dom-escopo" data-oculto={oculto || undefined} hidden={escondido}>
       <div
         ref={arrasto.ref}
         className="dom-lancador"
@@ -203,9 +278,23 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
             IA
           </span>
         </button>
+        {/* Esconder aqui (aparece ao passar o mouse; no toque, fica no painel). */}
+        <button type="button" className="dom-lancador__esconder" onClick={esconderAqui} title={`Esconder o Dom ${ondeDaSecao(secao)}`} aria-label={`Esconder o Dom ${ondeDaSecao(secao)}`}>
+          <X className="h-3 w-3" aria-hidden />
+        </button>
       </div>
       {mascoteLiberado && <DomReacoes painelAberto={aberto} aoMudar={setReagindo} />}
-      {aberto && <DomAssistente nome={primeiroNome} material={material} rota={pathname} aoFechar={fechar} />}
+      {aberto && (
+        <DomAssistente
+          nome={primeiroNome}
+          material={material}
+          rota={pathname}
+          aoFechar={fechar}
+          continuacao={continuacao}
+          aoEsconder={esconderAqui}
+          ondeEsconder={ondeDaSecao(secao)}
+        />
+      )}
     </div>
   )
 }

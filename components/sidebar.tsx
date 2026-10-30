@@ -996,6 +996,7 @@ export function Sidebar({
           gaveta. A largura total ocupada (placa + folgas) é a que o conteúdo
           reserva no AppShell: 288 px aberta, 88 px recolhida. */}
       <aside
+        data-dom-obstaculo="lateral"
         className={cn(
           'pwa-safe-top pwa-safe-bottom sidebar-glass fixed z-50 flex flex-col overflow-hidden',
           'bottom-2 left-2 top-2 rounded-[24px] lg:bottom-3 lg:left-3 lg:top-3 lg:rounded-[26px]',

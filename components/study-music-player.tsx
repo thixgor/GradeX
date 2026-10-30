@@ -798,6 +798,21 @@ export function StudyMusicPlayer() {
         return () => unregister('music')
     }, [register, unregister, podeRenderizar, isPlaying])
 
+    // Avisa o Dom (botão flutuante da IA) onde a música está: ele sobe acima
+    // do botão no desktop e sai da frente quando o painel abre (dom.css).
+    const naDireita = podeRenderizar && !/^\/exams?\/[^/]+$/.test(pathname || '')
+    useEffect(() => {
+        const raiz = document.documentElement
+        if (naDireita) raiz.dataset.gxMusica = '1'
+        else delete raiz.dataset.gxMusica
+        if (naDireita && isExpanded) raiz.dataset.gxMusicaAberta = '1'
+        else delete raiz.dataset.gxMusicaAberta
+        return () => {
+            delete raiz.dataset.gxMusica
+            delete raiz.dataset.gxMusicaAberta
+        }
+    }, [naDireita, isExpanded])
+
     if (!podeRenderizar) return null
 
     const isExamResolver = /^\/exams?\/[^/]+$/.test(pathname || '')
@@ -840,6 +855,7 @@ export function StudyMusicPlayer() {
             />
 
             <div
+                data-dom-obstaculo="botao"
                 className={cn(
                     'fixed z-40',
                     isExamResolver ? 'left-4 sm:left-5' : 'right-4 sm:right-6',

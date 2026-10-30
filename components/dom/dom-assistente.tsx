@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Flame,
   GraduationCap,
+  EyeOff,
   History,
   MessageSquarePlus,
   Trash2,
@@ -157,16 +158,29 @@ const PASSOS_DO_RACIOCINIO: Record<ModoDoDom, string[]> = {
   socratico: ['Lendo o seu raciocínio', 'Encontrando o próximo degrau', 'Preparando a pergunta'],
 }
 
+/** Último status lido nesta visita: na troca de página o painel já nasce pronto. */
+let statusEmMemoria: StatusDoDom | null = null
+/** E a última frase do balão, para ele não ficar vazio (nem falar de novo) na troca de página. */
+let falaEmMemoria: { texto: string; tom?: 'erro' } = { texto: '' }
+
 export function DomAssistente({
   nome,
   material,
   rota,
   aoFechar,
+  continuacao = false,
+  aoEsconder,
+  ondeEsconder = 'aqui',
 }: {
   nome: string
   material?: ContextoDoMaterial | null
   rota: string
   aoFechar: () => void
+  /** Já estava aberto na página anterior: sem entrada, bipe nem saudação nova. */
+  continuacao?: boolean
+  /** Esconde o Dom nesta seção (volta em Perfil › Ajustes). */
+  aoEsconder?: () => void
+  ondeEsconder?: string
 }) {
   const router = useRouter()
   const guardado = useRef<Guardado | null>(null)
@@ -179,13 +193,16 @@ export function DomAssistente({
   const [idAtual, setIdAtual] = useState<Partial<Record<ModoDoDom, string>>>(() => guardado.current?.idAtual || {})
   const [arquivo, setArquivo] = useState<ConversaSalva<Mensagem, EstadoSocratico>[]>([])
   const [verHistorico, setVerHistorico] = useState(false)
-  const [status, setStatus] = useState<StatusDoDom | null>(null)
+  const [status, setStatus] = useState<StatusDoDom | null>(() => (continuacao ? statusEmMemoria : null))
   const [texto, setTexto] = useState('')
   const [carregando, setCarregando] = useState(false)
   const [passo, setPasso] = useState(0)
   const [novaId, setNovaId] = useState<string | null>(null)
-  const [fala, setFala] = useState<{ texto: string; tom?: 'erro' }>({ texto: '' })
-  const [estado, setEstado] = useState<EstadoDoDom>('acenando')
+  const [fala, setFala] = useState<{ texto: string; tom?: 'erro' }>(() => (continuacao ? falaEmMemoria : { texto: '' }))
+  useEffect(() => {
+    falaEmMemoria = fala
+  }, [fala])
+  const [estado, setEstado] = useState<EstadoDoDom>(continuacao ? 'feliz' : 'acenando')
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
   const mudo = useMudo()
@@ -263,12 +280,18 @@ export function DomAssistente({
   // Abertura: status + saudação pela hora (apresentação na primeira vez da vida).
   useEffect(() => {
     let vivo = true
-    bipe('abrir')
+    if (!continuacao) bipe('abrir')
     fetch('/api/dom/status', { cache: 'no-store' })
       .then((r) => r.json())
       .then((s: StatusDoDom) => {
         if (!vivo) return
+        statusEmMemoria = s
         setStatus(s)
+        // Troca de página com o painel aberto: só atualiza o status, em silêncio.
+        if (continuacao && s.liberado) {
+          setEstado('feliz')
+          return
+        }
         if (!s.liberado) {
           dizer(falaDe('bloqueado'))
           return
@@ -585,6 +608,7 @@ export function DomAssistente({
         data-modo={modo}
         data-expandido={expandido || undefined}
         data-saindo={saindo || undefined}
+        data-continuacao={continuacao || undefined}
       >
         <div className="dom-aurora" aria-hidden>
           <i />
@@ -626,6 +650,17 @@ export function DomAssistente({
             >
               {expandido ? <Minimize2 className="h-[18px] w-[18px]" /> : <Maximize2 className="h-[18px] w-[18px]" />}
             </button>
+            {aoEsconder && (
+              <button
+                type="button"
+                className="dom-icone-botao"
+                onClick={aoEsconder}
+                aria-label={`Esconder o Dom ${ondeEsconder}`}
+                title={`Esconder o Dom ${ondeEsconder} (volta em Perfil › Ajustes)`}
+              >
+                <EyeOff className="h-[18px] w-[18px]" />
+              </button>
+            )}
             <button type="button" className="dom-icone-botao" onClick={alternarMudo} aria-label={mudo ? 'Ligar o som do Dom' : 'Silenciar o Dom'} aria-pressed={!mudo}>
               {mudo ? <VolumeX className="h-[18px] w-[18px]" /> : <Volume2 className="h-[18px] w-[18px]" />}
             </button>

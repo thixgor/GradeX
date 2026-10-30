@@ -7,7 +7,8 @@
  */
 
 import { useRouter } from 'next/navigation'
-import { ArrowRight, BookOpen, KeyRound, MessageCircle, Music, XCircle } from 'lucide-react'
+import { ArrowRight, BookOpen, KeyRound, MessageCircle, Music, Sparkles, XCircle } from 'lucide-react'
+import { SECOES_DO_DOM } from '@/components/dom/secoes'
 import { Button } from '@/components/ui/button'
 import { LiteModeSettingsCard } from '@/components/lite-mode-settings-card'
 import { PersonalDataCard, type CampoDoPerfil } from '@/components/profile/personal-data-card'
@@ -47,7 +48,8 @@ export function SettingsTab({
   onVerAssinatura: () => void
 }) {
   const router = useRouter()
-  const { showMusic, showSupport, toggle } = useUIPreferences()
+  const { showMusic, showSupport, toggle, domOcultoEm, setDomOculto } = useUIPreferences()
+  const domEmTudo = !domOcultoEm.includes('tudo')
 
   return (
     <div className="space-y-5">
@@ -91,6 +93,28 @@ export function SettingsTab({
             checked={showSupport}
             onToggle={() => toggle('showSupport')}
           />
+        </div>
+
+        <h3 className="mb-1 mt-5 flex items-center gap-2 text-sm font-semibold">
+          <Sparkles className="h-4 w-4 text-primary" /> Dom, o assistente de IA
+        </h3>
+        <p className="mb-3 text-xs text-muted-foreground">
+          Escondeu o Dom em algum lugar (no × dele ou em &ldquo;Esconder aqui&rdquo;)? Traga de volta aqui. No leitor de PDF ele
+          também some quando você oculta as barras.
+        </p>
+        <div className="divide-y divide-border rounded-xl border border-border">
+          {SECOES_DO_DOM.map((secao) => (
+            <PreferenceToggle
+              key={secao.id}
+              label={secao.id === 'tudo' ? 'Mostrar o Dom' : secao.rotulo}
+              description={secao.id === 'tudo' ? 'Desligado, ele some do site inteiro' : domEmTudo ? 'Mostrar o Dom aqui' : 'Ligue "Mostrar o Dom" primeiro'}
+              checked={secao.id === 'tudo' ? domEmTudo : domEmTudo && !domOcultoEm.includes(secao.id)}
+              onToggle={() => {
+                if (secao.id === 'tudo') setDomOculto('tudo', domEmTudo)
+                else if (domEmTudo) setDomOculto(secao.id, !domOcultoEm.includes(secao.id))
+              }}
+            />
+          ))}
         </div>
       </section>
 

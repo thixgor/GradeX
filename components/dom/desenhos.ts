@@ -19,6 +19,8 @@ export interface Desenho {
 
 const VERSAO = 'v1'
 const cache = new Map<NomeDoDesenho, Promise<Desenho>>()
+/** Já separados: quem monta de novo (troca de página) desenha no primeiro quadro. */
+const prontos = new Map<NomeDoDesenho, Desenho>()
 
 function separar(svg: string): Desenho {
   const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1] || '0 0 100 100'
@@ -38,6 +40,10 @@ export function carregarDesenho(nome: NomeDoDesenho): Promise<Desenho> {
         return r.text()
       })
       .then(separar)
+      .then((d) => {
+        prontos.set(nome, d)
+        return d
+      })
       .catch((e) => {
         cache.delete(nome) // a próxima montagem tenta de novo
         throw e
@@ -45,6 +51,11 @@ export function carregarDesenho(nome: NomeDoDesenho): Promise<Desenho> {
     cache.set(nome, p)
   }
   return p
+}
+
+/** O desenho, se já baixou nesta aba (síncrono). */
+export function desenhoCarregado(nome: NomeDoDesenho): Desenho | null {
+  return prontos.get(nome) ?? null
 }
 
 /** Já baixado? (para pular o esqueleto na segunda montagem). */

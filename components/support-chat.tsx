@@ -339,6 +339,7 @@ export function SupportChat() {
         onClick={() => setOpen(!isOpen)}
         aria-label={isOpen ? 'Fechar suporte' : 'Abrir suporte'}
         data-suporte-balao
+        data-dom-obstaculo="botao"
         style={{ bottom: 'calc(1.5rem + var(--gx-barra-inferior-h, 0px))' }}
         className="fixed right-6 z-50 hidden h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-[#4f8f5c] to-[#2f6b40] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_14px_30px_-12px_rgba(46,97,64,0.8)] transition-[transform,bottom] hover:scale-105 active:scale-95 lg:flex"
       >
