@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       error:
         acesso.motivo === 'suspenso'
           ? 'O Dom está pausado na sua conta por uso fora das regras. Se achar que foi engano, fale com o suporte.'
-          : 'O Dom é exclusivo para assinantes Plus+ e Quest+ ou para quem comprou um material nos últimos 7 dias.',
+          : 'O Dom é exclusivo para assinantes Plus+ e Quest+ ou para quem comprou um material nos últimos 3 dias.',
       motivo: acesso.motivo,
     })
   }

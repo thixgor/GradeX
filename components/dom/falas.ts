@@ -32,7 +32,7 @@ export type MomentoDaFala =
   | 'pensando' | 'pensandoSaude' | 'achou' | 'navegando'
   | 'erro' | 'semSinal' | 'limite' | 'calma' | 'tchau'
   | 'socraticoVestir' | 'socraticoInicio' | 'socraticoAcerto' | 'socraticoQuase' | 'socraticoNaoSei' | 'socraticoFim' | 'socraticoTirar'
-  | 'material' | 'bloqueado' | 'somLigado' | 'obrigado' | 'foraDoEscopo' | 'exclusivo'
+  | 'material' | 'bloqueado' | 'somLigado' | 'somDesligado' | 'obrigado' | 'foraDoEscopo' | 'exclusivo'
   // Reações na plataforma
   | 'foguinho3' | 'foguinho5' | 'foguinho10' | 'apagouFoguinho'
   | 'gabaritou' | 'notaAlta' | 'notaMedia' | 'notaBaixa' | 'provaIniciada'
@@ -44,7 +44,7 @@ export type MomentoDaFala =
   // Landing (passeio guiado)
   | 'landingConvite' | 'landingOla' | 'landingQuestoes' | 'landingFlashcards' | 'landingManual' | 'landingMateriais' | 'landingDom' | 'landingPlanos' | 'landingFim'
   // Tour do site
-  | 'tourOla' | 'tourMenu' | 'tourBusca' | 'tourFoco' | 'tourXp' | 'tourDom' | 'tourFim'
+  | 'tourOla' | 'tourAtalho' | 'tourNumeros' | 'tourAreas' | 'tourMenu' | 'tourCriarProva' | 'tourBusca' | 'tourFoco' | 'tourXp' | 'tourBotaoTour' | 'tourDom' | 'tourFim'
 
 const f = (id: string, voz: string): Fala => ({ id, voz })
 
@@ -242,6 +242,11 @@ export const FALAS: Record<MomentoDaFala, Fala[]> = {
     f('som-ligado-02', '[playfully] Testando, um, dois… tá me ouvindo?'),
     f('som-ligado-03', '[happy] Oba, voltei a ter voz!'),
   ],
+  somDesligado: [
+    // Gravada direto pelo time (não veio do roteiro): o Dom reclama, com
+    // humor, de estar sendo calado — e ganha uma fita na boca.
+    f('desabilitado', '[sheepish] Ei… tá me calando? Tudo bem, eu fico aqui quietinho, de fita na boca. Quando quiser me ouvir de novo, é só ligar o som!'),
+  ],
   obrigado: [
     f('obrigado-01', '[warmly] Imagina! Tô aqui pra isso.'),
     f('obrigado-02', '[happy] Por nada! Adoro te ajudar.'),
@@ -349,7 +354,7 @@ export const FALAS: Record<MomentoDaFala, Fala[]> = {
   compraFeita: [
     f('compra-01', '[excited] Ebaaa, material novo! Bora estudar ele juntos?'),
     f('compra-02', '[happy] Ótima escolha! E olha: comigo do lado, você aproveita o dobro.'),
-    f('compra-03', '[cheerfully] Compra feita! Ah, e agora eu fico liberado pra você por sete dias.'),
+    f('compra-03b', '[cheerfully] Compra feita! Ah, e agora eu fico liberado pra você por três dias. Bora aproveitar?'),
     f('compra-04', '[proud] Investir no próprio estudo é o melhor investimento. Parabéns!'),
   ],
   aulaConcluida: [
@@ -386,7 +391,7 @@ export const FALAS: Record<MomentoDaFala, Fala[]> = {
     f('materiais-01', '[curious] Procurando o material certo? Me fala o tema que eu acho pra você.'),
     f('materiais-02', '[playfully] Esses resumos foram feitos por quem já passou pelo mesmo sufoco que você.'),
     f('materiais-03', '[warmly] Dica de amigo: o material do seu período economiza horas de caça a PDF.'),
-    f('materiais-04', '[cheerfully] Comprou um material? Eu fico liberado pra te ajudar com ele por sete dias!'),
+    f('materiais-04b', '[cheerfully] Comprou um material? Eu fico liberado pra te ajudar com ele por três dias!'),
     f('materiais-05', '[chuckles] Estudar sem material bom é como auscultar sem estetoscópio.'),
   ],
   paginaPacotes: [
@@ -450,6 +455,21 @@ export const FALAS: Record<MomentoDaFala, Fala[]> = {
   tourOla: [
     f('tour-ola-01', '[excited] Bem-vindo à DomineAqui! Eu sou o Dom e vou te mostrar onde fica tudo. Leva só um minutinho.'),
     f('tour-ola-02', '[warmly] Chegou! Deixa eu te apresentar a casa rapidinho.'),
+  ],
+  tourAtalho: [
+    f('tour-atalho-01', '[playfully] Na dúvida, aperta esse botão. É o caminho mais curto entre abrir o site e estar estudando.'),
+  ],
+  tourNumeros: [
+    f('tour-numeros-01', '[warmly] Aqui ficam os seus números. Sem comparação com ninguém: só você contra você de ontem.'),
+  ],
+  tourAreas: [
+    f('tour-areas-01', '[cheerfully] Arrasta pro lado: cada cartão é uma área inteira da plataforma. Escolhe duas e faz delas sua rotina.'),
+  ],
+  tourCriarProva: [
+    f('tour-criar-prova-01', '[excited] Prova amanhã? Aqui você monta um simulado do seu jeito e treina a pressão de verdade.'),
+  ],
+  tourBotaoTour: [
+    f('tour-botao-tour-01', '[chuckles] Esqueceu alguma coisa? Esse botão refaz o tour quando quiser. Eu não me canso.'),
   ],
   tourMenu: [
     f('tour-menu-01', '[cheerfully] Aqui no menu ficam todas as áreas: provas, questões, flashcards, manuais e materiais.'),

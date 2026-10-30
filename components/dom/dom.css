@@ -196,6 +196,27 @@
   transform: scaleY(1);
 }
 
+/* Fita na boca (silenciado): entra com um tapa, sai com um puxão. */
+.dom-fita {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  opacity: 0;
+  transform: translate(60px, -40px) rotate(25deg) scale(0.6);
+  transition: opacity 180ms var(--dom-entra), transform 260ms var(--dom-entra);
+  pointer-events: none;
+}
+.dom-mascote[data-calado='1'] .dom-fita {
+  opacity: 1;
+  transform: none;
+  animation: dom-tapa 420ms var(--dom-sai);
+}
+@keyframes dom-tapa {
+  0% { transform: scale(1.5) rotate(-6deg); opacity: 0; }
+  55% { transform: scale(0.94) rotate(1deg); opacity: 1; }
+  100% { transform: none; }
+}
+.dom-mascote[data-calado='1'] .dom-boca { opacity: 0 !important; }
+
 /* Bochechas coradas quando está feliz/orgulhoso. */
 .dom-bochecha {
   opacity: 0;
@@ -699,6 +720,105 @@
   0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
   30% { opacity: 1; }
   100% { opacity: 0; transform: translate(calc(var(--dx) * 0.4), -120px) scale(1.3); }
+}
+
+/* ── Guia (landing e tour) ───────────────────────────────────────────── */
+
+.dom-guia {
+  position: fixed;
+  z-index: 70;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: flex-end;
+  gap: 0.35rem;
+  max-width: calc(100vw - 1rem);
+  pointer-events: none;
+  /* "Passear": a troca de lado anima left/right via transform, sem layout. */
+  transition: transform 700ms var(--dom-sai);
+  animation: dom-aparece 620ms var(--dom-sai) both;
+}
+.dom-guia[data-lado='direita'] { right: 0.5rem; flex-direction: row; }
+.dom-guia[data-lado='esquerda'] { left: 0.5rem; flex-direction: row-reverse; animation-name: dom-aparece-esq; }
+@keyframes dom-aparece-esq {
+  0% { transform: translateX(-120%) rotate(-8deg); opacity: 0; }
+  60% { transform: translateX(6%) rotate(3deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+.dom-guia[data-andando] .dom-guia__mascote { animation: dom-anda 0.32s ease-in-out infinite; }
+@keyframes dom-anda {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-6%) rotate(2deg); }
+}
+.dom-guia[data-lado='esquerda'] .dom-guia__mascote > .dom-mascote { transform: scaleX(-1); }
+.dom-guia__mascote {
+  width: 7.5rem;
+  flex: none;
+  pointer-events: auto;
+  filter: drop-shadow(0 18px 24px rgba(20, 40, 30, 0.35));
+  cursor: pointer;
+}
+@media (min-width: 768px) { .dom-guia__mascote { width: 10rem; } }
+.dom-guia__balao {
+  pointer-events: auto;
+  width: min(22rem, calc(100vw - 9.5rem));
+  margin-bottom: 5.5rem;
+  padding: 0.85rem 0.95rem 0.7rem;
+  border-radius: 1.2rem;
+  background: var(--dom-vidro-forte);
+  border: 1px solid var(--dom-borda);
+  box-shadow: var(--dom-sombra);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  color: var(--dom-texto);
+  animation: dom-balao 460ms var(--dom-sai) both;
+}
+@media (min-width: 768px) { .dom-guia__balao { margin-bottom: 7rem; } }
+.dom-guia__balao p { font-size: 0.92rem; font-weight: 500; line-height: 1.45; }
+.dom-guia__passo { display: block; margin-bottom: 0.2rem; font-size: 0.68rem; font-weight: 800; color: var(--dom-laranja-forte); letter-spacing: 0.03em; }
+.dom-guia__acoes { display: flex; align-items: center; gap: 0.35rem; margin-top: 0.6rem; flex-wrap: wrap; }
+.dom-guia__acoes .dom-icone-botao { width: 2rem; height: 2rem; }
+
+.dom-no-tour {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.75rem 0 0.25rem;
+  padding: 0.55rem 0.7rem 0.55rem 0.55rem;
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(239, 138, 60, 0.12), rgba(47, 122, 91, 0.1));
+  border: 1px solid var(--dom-borda);
+  animation: dom-balao 420ms var(--dom-sai) both;
+}
+.dom-no-tour__busto {
+  position: relative;
+  width: 3.4rem;
+  height: 3.4rem;
+  flex: none;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 28%, #fff8ec, #f6d6ae 72%);
+  border: 2px solid rgba(239, 138, 60, 0.55);
+}
+.dark .dom-no-tour__busto { background: radial-gradient(circle at 50% 28%, #3c2c1d, #18120c 78%); }
+.dom-no-tour__fala { font-size: 0.8rem; line-height: 1.38; color: var(--dom-texto); }
+.dom-no-tour__fala strong { display: block; font-size: 0.68rem; font-weight: 800; color: var(--dom-laranja-forte); }
+
+/* Contorno de luz na parte que o Dom está explicando. */
+.dom-destaque {
+  position: relative;
+  border-radius: 1.25rem;
+  outline: 3px solid rgba(239, 138, 60, 0.85);
+  outline-offset: 6px;
+  box-shadow: 0 0 0 12px rgba(239, 138, 60, 0.12), 0 0 60px rgba(239, 138, 60, 0.35);
+  animation: dom-destaque 1.8s ease-in-out infinite;
+  scroll-margin: 6rem;
+  transition: outline-color 300ms, box-shadow 300ms;
+}
+@keyframes dom-destaque {
+  50% { outline-color: rgba(232, 180, 74, 0.55); box-shadow: 0 0 0 18px rgba(239, 138, 60, 0.06), 0 0 80px rgba(239, 138, 60, 0.25); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dom-guia, .dom-guia__mascote, .dom-destaque { animation: none !important; }
 }
 
 /* ── Painel ───────────────────────────────────────────────────────────── */

@@ -63,8 +63,8 @@ export const INCIDENTES_PARA_SUSPENDER = 3
 /** Duração da suspensão automática. */
 export const SUSPENSAO_MS = 24 * 60 * 60 * 1000
 
-/** Janela da regra "comprou um material nos últimos 7 dias". */
-export const DIAS_DE_ACESSO_POR_COMPRA = 7
+/** Janela da regra "comprou um material nos últimos 3 dias". */
+export const DIAS_DE_ACESSO_POR_COMPRA = 3
 
 export type ModoDoDom = 'geral' | 'socratico' | 'material'
 

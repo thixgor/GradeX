@@ -7,6 +7,7 @@ import { DomMascote } from './dom-mascote'
 import { DomReacoes } from './dom-reacoes'
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
 import { falar, pararDeFalar } from './voz'
+import { useMudo } from './use-mudo'
 import type { ContextoDoMaterial } from './dom-assistente'
 import './dom.css'
 
@@ -73,6 +74,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
   const [oculto, setOculto] = useState(false)
+  const mudo = useMudo()
   const primeiroNome = (nome.trim().split(/\s+/)[0] || '').replace(/^./, (c) => c.toUpperCase())
 
   // Reabre se estava aberto antes da navegação.
@@ -166,7 +168,7 @@ export function DomLancador({ nome = '', material }: { nome?: string; material?:
           aria-haspopup="dialog"
         >
           <span className="dom-lancador__miolo">
-            <span className="dom-busto">{mascoteLiberado && <DomMascote estado={balao ? 'acenando' : 'parado'} falando={falando} boca={boca} simples />}</span>
+            <span className="dom-busto">{mascoteLiberado && <DomMascote estado={balao ? 'acenando' : 'parado'} falando={falando} boca={boca} calado={mudo && !falando} simples />}</span>
           </span>
           <span className="dom-lancador__status" aria-hidden />
           <span className="dom-lancador__rotulo" aria-hidden>

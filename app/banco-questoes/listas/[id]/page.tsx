@@ -83,8 +83,8 @@ import {
 } from '@/components/banco/feedback-questao'
 import { rolarAte } from '@/components/banco/rolagem-guiada'
 import { useEstaNaTela } from '@/components/banco/use-esta-na-tela'
-import {
 import { reagirDom } from '@/lib/dom/reacoes'
+import {
   apagarSessao,
   lerSessao,
   quandoFoi,

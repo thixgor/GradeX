@@ -6,6 +6,7 @@ import { EVENTO_DO_DOM, type Reacao } from '@/lib/dom/reacoes'
 import { DomMascote, type EstadoDoDom } from './dom-mascote'
 import { falaDe, textoDaFala } from './falas'
 import { bipe, falar } from './voz'
+import { useMudo } from './use-mudo'
 
 /**
  * A aparição do Dom: quando a plataforma avisa uma conquista (`reagirDom`),
@@ -33,6 +34,7 @@ export function DomReacoes({ painelAberto }: { painelAberto: boolean }) {
   const [saindo, setSaindo] = useState(false)
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
+  const mudo = useMudo()
   const ultimaRef = useRef<{ em: number; peso: number }>({ em: 0, peso: 0 })
   const timers = useRef<ReturnType<typeof setTimeout>[]>([])
 
@@ -81,7 +83,7 @@ export function DomReacoes({ painelAberto }: { painelAberto: boolean }) {
         {atual.texto}
       </button>
       <button type="button" className="dom-aparicao__mascote" onClick={dispensar} aria-label="Dispensar o Dom">
-        <DomMascote estado={ESTADO_DO_EFEITO[atual.efeito]} falando={falando} boca={boca} />
+        <DomMascote estado={ESTADO_DO_EFEITO[atual.efeito]} falando={falando} boca={boca} calado={mudo && !falando} />
         {atual.efeito !== 'nenhum' && <Efeito tipo={atual.efeito} />}
       </button>
     </div>

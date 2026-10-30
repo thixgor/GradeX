@@ -36,7 +36,8 @@ import { DomLogo } from './dom-logo'
 import { TextoDoDom } from './texto-do-dom'
 import { EscolhaDeTema, IntroSocratica, ProgressoSocratico, type TemaEscolhido } from './dom-socratico'
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
-import { bipe, definirMudo, estaMudo, falar, pararDeFalar } from './voz'
+import { bipe, definirMudo, falar, pararDeFalar, silenciarComCena, type PrioridadeDaFala } from './voz'
+import { useMudo } from './use-mudo'
 
 /**
  * O painel do Dom. Baixado só quando o aluno abre o Dom pela primeira vez
@@ -123,6 +124,17 @@ const ESTADO_DO_HUMOR: Record<string, EstadoDoDom> = {
   orgulhoso: 'orgulhoso',
 }
 
+/** Prioridade da voz pelo prefixo do id da fala (ver a parcimônia em `voz.ts`). */
+const PRIORIDADE_DO_MOMENTO: Record<string, PrioridadeDaFala> = {
+  pensando: 'baixa',
+  'pensando-saude': 'baixa',
+  achou: 'baixa',
+  navegando: 'baixa',
+  'socratico-vestir': 'alta',
+  'socratico-fim': 'alta',
+  'som-ligado': 'alta',
+}
+
 const PASSOS_DO_RACIOCINIO: Record<ModoDoDom, string[]> = {
   geral: ['Entendendo sua pergunta', 'Procurando nas melhores fontes', 'Montando uma explicação didática'],
   material: ['Lendo o contexto do material', 'Conectando com a sua dúvida', 'Escrevendo a explicação'],
@@ -157,7 +169,7 @@ export function DomAssistente({
   const [estado, setEstado] = useState<EstadoDoDom>('acenando')
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
-  const [mudo, setMudo] = useState(true)
+  const mudo = useMudo()
   const [saindo, setSaindo] = useState(false)
   const [confete, setConfete] = useState(false)
   const conversaRef = useRef<HTMLDivElement>(null)
@@ -169,7 +181,6 @@ export function DomAssistente({
   const mensagens = conversas[modo] || []
   const traje = modo === 'socratico' && socratico.fase !== 'intro' ? 'socrates' : 'normal'
 
-  useEffect(() => setMudo(estaMudo()), [])
   useEffect(() => {
     gravar(CHAVE, { modo, conversas, socratico, expandido } satisfies Guardado, 'sessao')
   }, [modo, conversas, socratico, expandido])
@@ -179,20 +190,24 @@ export function DomAssistente({
    * silêncio, se ainda não há áudio para a fala). Texto solto — a mensagem de
    * erro que veio da API — só aparece no balão.
    */
-  const dizer = useCallback((conteudo: Fala | string, opcoes: { tom?: 'erro'; voz?: boolean } = {}) => {
+  const dizer = useCallback((conteudo: Fala | string, opcoes: { tom?: 'erro'; voz?: boolean; prioridade?: PrioridadeDaFala } = {}) => {
     if (typeof conteudo === 'string') {
       setFala({ texto: conteudo, tom: opcoes.tom })
       return
     }
     setFala({ texto: textoDaFala(conteudo), tom: opcoes.tom })
     if (opcoes.voz === false) return
-    falar(conteudo, {
-      aoComecar: () => setFalando(true),
-      aoTerminar: () => setFalando(false),
-      aoBoca: setBoca,
-    })
+    falar(
+      conteudo,
+      {
+        aoComecar: () => setFalando(true),
+        aoTerminar: () => setFalando(false),
+        aoBoca: setBoca,
+      },
+      { prioridade: opcoes.prioridade ?? PRIORIDADE_DO_MOMENTO[conteudo.id.replace(/-\d+b?$/, '')] ?? 'normal' },
+    )
   }, [])
-  const dizerMomento = useCallback((m: MomentoDaFala, opcoes?: { tom?: 'erro'; voz?: boolean }) => dizer(falaDe(m), opcoes), [dizer])
+  const dizerMomento = useCallback((m: MomentoDaFala, opcoes?: { tom?: 'erro'; voz?: boolean; prioridade?: PrioridadeDaFala }) => dizer(falaDe(m), opcoes), [dizer])
 
   // Abertura: status + saudação pela hora (apresentação na primeira vez da vida).
   useEffect(() => {
@@ -425,11 +440,18 @@ export function DomAssistente({
     dizerMomento('socraticoInicio', { voz: false })
   }
 
+  /** Silenciar tem cena (o Dom reclama e leva a fita); religar tira a fita e ele comemora. */
   const alternarMudo = () => {
-    const novo = !mudo
-    setMudo(novo)
-    definirMudo(novo)
-    if (!novo) dizer(falaDe('somLigado'))
+    if (mudo) {
+      definirMudo(false)
+      dizer(falaDe('somLigado'))
+      setEstado('animado')
+      return
+    }
+    const fala = falaDe('somDesligado')
+    setFala({ texto: textoDaFala(fala) })
+    setEstado('preocupado')
+    silenciarComCena(fala, { aoComecar: () => setFalando(true), aoTerminar: () => setFalando(false), aoBoca: setBoca })
   }
 
   const comecarFrase = (frase: string) => {
@@ -516,7 +538,7 @@ export function DomAssistente({
           <aside className="dom-lateral">
             <div className="dom-palco">
               <div className="dom-palco__mascote">
-                <DomMascote estado={estado} traje={traje} falando={falando} boca={boca} />
+                <DomMascote estado={estado} traje={traje} falando={falando} boca={boca} calado={mudo && !falando} />
               </div>
               <div className="dom-palco__fala" data-tom={fala.tom} aria-live="polite">
                 <p key={fala.texto} className="dom-palco__fala-texto">
@@ -1012,7 +1034,7 @@ function Vitrine({ status }: { status: StatusDoDom }) {
       </p>
       <Link className="dom-botao dom-botao--suave w-full text-[0.8rem]" href="/materiais">
         <ShoppingBag className="h-4 w-4" aria-hidden />
-        Comprou um material? O Dom fica liberado por 7 dias
+        Comprou um material? O Dom fica liberado por 3 dias
       </Link>
     </div>
   )

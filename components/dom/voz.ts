@@ -30,6 +30,8 @@ export function estaMudo(): boolean {
   }
 }
 
+export const EVENTO_DO_MUDO = 'dom:mudo'
+
 export function definirMudo(mudo: boolean): void {
   try {
     localStorage.setItem(CHAVE_MUDO, mudo ? '1' : '0')
@@ -37,6 +39,27 @@ export function definirMudo(mudo: boolean): void {
     /* sem armazenamento: vale só nesta visita */
   }
   if (mudo) pararDeFalar()
+  // Todos os Doms da tela (lançador, painel, aparições) põem/tiram a fita juntos.
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent(EVENTO_DO_MUDO, { detail: { mudo } }))
+}
+
+/**
+ * Silenciar com cena: o Dom reclama (a fala `desabilitado`, que toca mesmo
+ * indo para o mudo) e só então leva a fita na boca. `aoFalar` recebe os
+ * ouvintes da boca de quem está mostrando o Dom.
+ */
+export function silenciarComCena(fala: Fala, o: OuvintesDaFala = {}): void {
+  falar(
+    fala,
+    {
+      ...o,
+      aoTerminar: () => {
+        o.aoTerminar?.()
+        definirMudo(true)
+      },
+    },
+    { prioridade: 'alta', ignorarMudo: true },
+  )
 }
 
 export function temAudio(fala: Fala): boolean {
@@ -51,6 +74,24 @@ export interface OuvintesDaFala {
 }
 
 let atual: { audio?: HTMLAudioElement; parar: () => void } | null = null
+
+/**
+ * Parcimônia — o que impede o Dom de virar o colega chato:
+ * - `alta`: o aluno pediu (silenciar, passo do guia, fim do socrático) → sempre;
+ * - `normal`: saudações e reações → no máximo uma a cada 8 s;
+ * - `baixa`: "pensando…", "achei!", "vou te levar lá" → só 60% das vezes e no
+ *   máximo uma a cada 25 s. Nas outras, a frase vai só para o balão e a boca
+ *   mexe em silêncio.
+ */
+export type PrioridadeDaFala = 'alta' | 'normal' | 'baixa'
+const INTERVALO_MINIMO_MS: Record<PrioridadeDaFala, number> = { alta: 0, normal: 8_000, baixa: 25_000 }
+let ultimoAudioEm = 0
+
+function deveTocar(prioridade: PrioridadeDaFala): boolean {
+  if (prioridade === 'alta') return true
+  if (Date.now() - ultimoAudioEm < INTERVALO_MINIMO_MS[prioridade]) return false
+  return prioridade === 'normal' || Math.random() < 0.6
+}
 
 export function pararDeFalar(): void {
   atual?.parar()
@@ -93,15 +134,21 @@ function bocaMuda(ms: number, o: OuvintesDaFala): () => void {
  * Fala em voz alta (ou mexe a boca em silêncio, se mudo ou sem gravação).
  * Interrompe a fala anterior.
  */
-export function falar(fala: Fala, o: OuvintesDaFala = {}): void {
+export function falar(
+  fala: Fala,
+  o: OuvintesDaFala = {},
+  { prioridade = 'normal', ignorarMudo = false }: { prioridade?: PrioridadeDaFala; ignorarMudo?: boolean } = {},
+): void {
   if (typeof window === 'undefined') return
   pararDeFalar()
-  if (estaMudo() || !temAudio(fala)) {
+  if ((estaMudo() && !ignorarMudo) || !temAudio(fala) || !deveTocar(prioridade)) {
     atual = { parar: bocaMuda(duracaoEstimada(fala), o) }
     return
   }
+  ultimoAudioEm = Date.now()
   const audio = new Audio(`${PASTA}/${fala.id}.mp3`)
   audio.preload = 'auto'
+  audio.volume = 0.75
   let quadro = 0
   let terminou = false
   const terminar = () => {
@@ -119,7 +166,12 @@ export function falar(fala: Fala, o: OuvintesDaFala = {}): void {
       const fonte = ctx.createMediaElementSource(audio)
       const analisador = ctx.createAnalyser()
       analisador.fftSize = 512
-      fonte.connect(analisador).connect(ctx.destination)
+      // Com o Web Audio no meio, o volume do elemento não vale em todo
+      // navegador: o ganho de 75% vai num nó próprio.
+      const ganho = ctx.createGain()
+      ganho.gain.value = 0.75
+      fonte.connect(analisador).connect(ganho).connect(ctx.destination)
+      audio.volume = 1
       const dados = new Uint8Array(analisador.fftSize)
       let aberta = false
       const ler = () => {

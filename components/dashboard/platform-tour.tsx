@@ -46,6 +46,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { DomNoTour } from '@/components/dom/dom-no-tour'
 
 // ─── Roteiro ────────────────────────────────────────────────────
 
@@ -188,6 +189,18 @@ function buildScript(firstName: string): TourStep[] {
       body:
         'Esse botão fica na dashboard para sempre. Refaça este tour quantas vezes quiser, no dia que quiser — sem custo, sem constrangimento, sem precisar pedir ajuda a ninguém. Estar perdido na primeira semana é normal; continuar perdido é que não precisa acontecer.',
       hint: 'Guardamos onde você parou: se sair no meio, volta exatamente daí.',
+    },
+    {
+      id: 'dom',
+      chapter: 2,
+      target: '.dom-lancador__botao',
+      icon: Sparkles,
+      accent: '#ef8a3c',
+      eyebrow: 'O seu parceiro',
+      title: 'E aqui fico eu, o Dom',
+      body:
+        'Sou a inteligência artificial da DomineAqui. Tiro dúvidas de saúde com fontes atualizadas, te levo para qualquer página ("quero um simulado", "quero estudar anatomia") e viro Sócrates para te fazer pensar como médico. Também apareço para comemorar quando você manda bem.',
+      hint: 'Liberado para Plus+, Quest+ e para quem comprou um material nos últimos 3 dias.',
     },
     {
       id: 'finish',
@@ -641,6 +654,9 @@ export function PlatformTour({
 
           {/* Ilustração só na abertura */}
           {step.id === 'welcome' && <WelcomeVisual />}
+
+          {/* O Dom apresenta cada passo, com a voz dele. */}
+          <DomNoTour passo={step.id} />
 
           <h3
             id="platform-tour-title"

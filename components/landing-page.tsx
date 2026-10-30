@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { Logo } from '@/components/logo'
 import { LogoAnimada } from '@/components/marca/logo-animada'
@@ -1793,6 +1794,10 @@ function RailControls({
  * dizia "enquanto você decide, alguém já está estudando aqui" — pressão por
  * comparação, sem dado por trás. Virou o menor passo possível.
  */
+// O Dom (mascote e IA) passeia pela página com o visitante. Só no navegador e
+// depois da primeira pintura: a landing é HTML estático do CDN.
+const GuiaDaLanding = dynamic(() => import('@/components/dom/guia-da-landing'), { ssr: false })
+
 export default function LandingPage({ precoPlus = null }: { precoPlus?: PrecoDoPlus | null } = {}) {
   const router = useRouter()
   const { liteMode } = useLiteMode()
@@ -1868,6 +1873,7 @@ export default function LandingPage({ precoPlus = null }: { precoPlus?: PrecoDoP
         <span />
       </div>
       <Nav signupHref={signupHref} isLoggedIn={isLoggedIn} />
+      <GuiaDaLanding />
       {/* A ordem é a de um pitch (Pitchcraft, Hook → Context → Proposal →
           Evidence → Ask), contada como mudança (persuasion-pitch):
             gancho     o problema nomeado + o produto jogável + a cápsula de
@@ -2519,7 +2525,7 @@ function ProductRow({
 }) {
   const panelId = `produto-${product.key}`
   return (
-    <div className="lp-linha">
+    <div className="lp-linha" data-produto={product.key}>
       <h3>
         <button
           type="button"

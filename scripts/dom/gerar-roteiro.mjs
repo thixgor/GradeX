@@ -22,13 +22,13 @@ const SECOES = [
   ['Assistente — saudações', ['bomDia', 'boaTarde', 'boaNoite', 'madrugada', 'primeiraVez', 'voltou']],
   ['Assistente — trabalhando', ['pensando', 'pensandoSaude', 'achou', 'navegando']],
   ['Assistente — erros e limites', ['erro', 'semSinal', 'limite', 'calma']],
-  ['Assistente — conversa', ['tchau', 'material', 'bloqueado', 'somLigado', 'obrigado', 'foraDoEscopo', 'exclusivo']],
+  ['Assistente — conversa', ['tchau', 'material', 'bloqueado', 'somLigado', 'somDesligado', 'obrigado', 'foraDoEscopo', 'exclusivo']],
   ['Método Socrático', ['socraticoVestir', 'socraticoInicio', 'socraticoAcerto', 'socraticoQuase', 'socraticoNaoSei', 'socraticoFim', 'socraticoTirar']],
   ['Reações — questões e provas', ['foguinho3', 'foguinho5', 'foguinho10', 'apagouFoguinho', 'gabaritou', 'notaAlta', 'notaMedia', 'notaBaixa', 'provaIniciada']],
   ['Reações — progresso', ['subiuNivel', 'novaLiga', 'sequencia3', 'sequencia7', 'sequencia30', 'flashcardsFeitos', 'revisaoEmDia', 'aulaConcluida', 'focoConcluido', 'questaoDoDia', 'voltouDepoisDeSumir', 'estudandoTarde', 'xpGanho', 'compraFeita']],
   ['Páginas (vitrines e leitor)', ['paginaMateriais', 'paginaPacotes', 'paginaPlanos', 'paginaLeitor']],
   ['Landing — passeio guiado (em ordem)', ['landingConvite', 'landingOla', 'landingQuestoes', 'landingFlashcards', 'landingManual', 'landingMateriais', 'landingDom', 'landingPlanos', 'landingFim']],
-  ['Tour do site (em ordem)', ['tourOla', 'tourMenu', 'tourBusca', 'tourFoco', 'tourXp', 'tourDom', 'tourFim']],
+  ['Tour do site (em ordem)', ['tourOla', 'tourAtalho', 'tourNumeros', 'tourAreas', 'tourMenu', 'tourCriarProva', 'tourBusca', 'tourFoco', 'tourXp', 'tourBotaoTour', 'tourDom', 'tourFim']],
 ]
 
 const todas = Object.values(FALAS).flat()

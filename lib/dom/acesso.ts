@@ -4,7 +4,7 @@ import 'server-only'
  * Quem pode conversar com o Dom.
  *
  * Regra do produto: **Plus+, Quest+ (e admin) ou quem comprou um material nos
- * últimos 7 dias**. A compra recente conta só se for compra paga de verdade —
+ * últimos 3 dias**. A compra recente conta só se for compra paga de verdade —
  * resgate pelo Plus+ (`source: 'plus'`), entrega manual do admin e troca não
  * abrem a porta, senão um único resgate valeria uma semana de IA para sempre.
  *

@@ -19,7 +19,7 @@ import { useCallback, useEffect, useState } from 'react'
  * herdam o progresso uma da outra.
  */
 
-const TOUR_VERSION = 'v1'
+const TOUR_VERSION = 'v2'
 
 export type TourStatus = 'new' | 'paused' | 'done'
 

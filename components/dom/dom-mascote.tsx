@@ -21,6 +21,8 @@ interface Props {
   falando?: boolean
   /** Boca aberta agora (segue a amplitude do áudio gravado). */
   boca?: boolean
+  /** Silenciado: fita adesiva na boca. */
+  calado?: boolean
   className?: string
   /** Sem os enfeites (luz, pensamento, brilhos) — para o lançador pequeno. */
   simples?: boolean
@@ -111,7 +113,7 @@ function usePiscar(ref: React.RefObject<HTMLDivElement | null>) {
   }, [ref])
 }
 
-export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, boca = false, className, simples = false }: Props) {
+export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, boca = false, calado = false, className, simples = false }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const normal = useDesenho('dom')
   // A toga só baixa quando alguém entra no modo socrático (400 KB).
@@ -154,6 +156,7 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
       data-trocando={trocando || undefined}
       data-falando={falando ? '1' : '0'}
       data-boca={boca ? '1' : '0'}
+      data-calado={calado ? '1' : '0'}
       aria-hidden
     >
       {!pronto && <div className="dom-mascote__silhueta" />}
@@ -212,6 +215,18 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
             <g className="dom-boca">
               <ellipse cx="704" cy="446" rx="30" ry="22" fill="#3b120a" />
               <ellipse cx="704" cy="458" rx="18" ry="9" fill="#e86a6a" />
+            </g>
+
+            {/* Fita adesiva na boca (som desligado): duas tiras cruzadas, pontas rasgadas. */}
+            <g className="dom-fita" aria-hidden>
+              <g transform="rotate(-9 705 428)">
+                <path d="M600 410 l6 -6 l6 6 l6 -6 l6 6 h162 l6 -6 l6 6 l6 -6 l6 6 v38 l-6 6 l-6 -6 l-6 6 l-6 -6 h-162 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#ece5d2" stroke="#c9bf9f" strokeWidth="3" />
+                <rect x="618" y="414" width="170" height="8" rx="4" fill="#ffffff" opacity="0.55" />
+              </g>
+              <g transform="rotate(11 705 432)">
+                <path d="M622 414 l6 -6 l6 6 l6 -6 l6 6 h118 l6 -6 l6 6 l6 -6 l6 6 v36 l-6 6 l-6 -6 l-6 6 l-6 -6 h-118 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#f3edde" stroke="#c9bf9f" strokeWidth="3" />
+                <rect x="640" y="418" width="128" height="7" rx="3.5" fill="#ffffff" opacity="0.5" />
+              </g>
             </g>
 
             {!simples && (

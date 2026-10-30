@@ -5,6 +5,7 @@ import { ArrowRight, Pause, Play, X } from 'lucide-react'
 import { DomMascote, type EstadoDoDom } from './dom-mascote'
 import { falaDe, textoDaFala, type Fala, type MomentoDaFala } from './falas'
 import { bipe, falar, pararDeFalar } from './voz'
+import { useMudo } from './use-mudo'
 import './dom.css'
 
 /**
@@ -49,6 +50,7 @@ export function DomGuia({ passos, convite = 'landingConvite', aoFim, comecarJa =
   const [fala, setFala] = useState<Fala | null>(null)
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
+  const mudo = useMudo()
   const [andando, setAndando] = useState(false)
   const [visivel, setVisivel] = useState(false)
   const destacado = useRef<Element | null>(null)
@@ -111,7 +113,7 @@ export function DomGuia({ passos, convite = 'landingConvite', aoFim, comecarJa =
             if (indice < passos.length - 1) setIndice((i) => i + 1)
           }, PAUSA_ENTRE_PASSOS_MS)
         },
-      })
+      }, { prioridade: 'alta' })
     }, 650)
     return () => {
       vivo = false
@@ -193,7 +195,7 @@ export function DomGuia({ passos, convite = 'landingConvite', aoFim, comecarJa =
           </div>
         )}
         <button type="button" className="dom-guia__mascote" onClick={fase === 'convite' ? comecar : proximo} aria-label={fase === 'convite' ? 'Começar o passeio com o Dom' : 'Próximo passo'}>
-          <DomMascote estado={estado} falando={falando} boca={boca} />
+          <DomMascote estado={estado} falando={falando} boca={boca} calado={mudo && !falando} />
         </button>
       </div>
     </div>
