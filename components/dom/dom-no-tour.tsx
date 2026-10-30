@@ -27,7 +27,7 @@ const FALA_DO_PASSO: Record<string, MomentoDaFala> = {
   finish: 'tourFim',
 }
 
-export function DomNoTour({ passo }: { passo: string }) {
+export function DomNoTour({ passo, aoFalar }: { passo: string; aoFalar?: (falando: boolean) => void }) {
   const [texto, setTexto] = useState('')
   const [falando, setFalando] = useState(false)
   const [boca, setBoca] = useState(false)
@@ -38,11 +38,26 @@ export function DomNoTour({ passo }: { passo: string }) {
     if (!momento) return
     const fala = falaDe(momento)
     setTexto(textoDaFala(fala))
-    const t = setTimeout(() => falar(fala, { aoComecar: () => setFalando(true), aoTerminar: () => setFalando(false), aoBoca: setBoca }, { prioridade: 'alta' }), 350)
+    const t = setTimeout(() => falar(
+        fala,
+        {
+          aoComecar: () => {
+            setFalando(true)
+            aoFalar?.(true)
+          },
+          aoTerminar: () => {
+            setFalando(false)
+            aoFalar?.(false)
+          },
+          aoBoca: setBoca,
+        },
+        { prioridade: 'alta' },
+      ), 350)
     return () => {
       clearTimeout(t)
       pararDeFalar()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [passo])
 
   if (!FALA_DO_PASSO[passo]) return null

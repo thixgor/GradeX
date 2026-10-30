@@ -1215,6 +1215,11 @@
   scroll-behavior: smooth;
   mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 10px), transparent);
 }
+/* Nenhum item da conversa encolhe: com a lista maior que a altura, o cartão
+   "pensando…" (overflow: hidden) era espremido até sumir. */
+.dom-conversa > * {
+  flex-shrink: 0;
+}
 
 /* Abertura: saudação grande + bento de ações. */
 .dom-boas-vindas { padding: 0.4rem 0 0.2rem; animation: dom-msg 500ms var(--dom-sai) both; }

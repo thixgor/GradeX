@@ -47,6 +47,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DomNoTour } from '@/components/dom/dom-no-tour'
+import { useMusicaDoTour } from './use-musica-do-tour'
 
 // ─── Roteiro ────────────────────────────────────────────────────
 
@@ -344,6 +345,8 @@ export function PlatformTour({
   onFinish: () => void
 }) {
   const router = useRouter()
+  // A lofi do cadastro por baixo do tour, abaixando quando o Dom fala.
+  const { aoFalar } = useMusicaDoTour(open)
   const [mounted, setMounted] = useState(false)
   const [steps, setSteps] = useState<TourStep[]>([])
   const [index, setIndex] = useState(0)
@@ -656,7 +659,7 @@ export function PlatformTour({
           {step.id === 'welcome' && <WelcomeVisual />}
 
           {/* O Dom apresenta cada passo, com a voz dele. */}
-          <DomNoTour passo={step.id} />
+          <DomNoTour passo={step.id} aoFalar={aoFalar} />
 
           <h3
             id="platform-tour-title"

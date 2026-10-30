@@ -243,10 +243,15 @@ export function DomAssistente({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Rola até o fim depois de o navegador montar o que entrou (resposta nova ou
+  // o cartão de raciocínio crescendo a cada passo).
   useEffect(() => {
-    const el = conversaRef.current
-    if (el) el.scrollTop = el.scrollHeight
-  }, [mensagens.length, carregando])
+    const quadro = requestAnimationFrame(() => {
+      const el = conversaRef.current
+      if (el) el.scrollTop = el.scrollHeight
+    })
+    return () => cancelAnimationFrame(quadro)
+  }, [mensagens.length, carregando, passo])
 
   useEffect(() => {
     const t = setTimeout(() => entradaRef.current?.focus({ preventScroll: true }), 450)
