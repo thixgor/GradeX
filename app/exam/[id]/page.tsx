@@ -3564,88 +3564,106 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <FundoIos capa={exam.coverImage} capaSizes="(max-width: 1024px) 100vw, 720px" className="min-h-screen">
-          <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6 lg:px-8">
+        <FundoIos className="min-h-screen">
+          <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6 lg:px-8">
             {topoDaPorta('Início', () => router.push('/'))}
 
-            <div className="mt-4 grid gap-6 sm:mt-6 lg:mt-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:grid-rows-[auto_1fr] lg:gap-x-10 xl:gap-x-14">
-              {/* ── A prova ── */}
-              <section className="min-w-0 space-y-6">
-                {/*
-                  A capa inteira, em proporção, e não uma faixa de altura fixa
-                  desbotada por um degradê com o título por cima — ver
-                  components/exam/capa-da-prova.tsx.
-                */}
-                {exam.coverImage && (
-                  <div className="ios-capa ios-assenta overflow-hidden rounded-[24px] shadow-[var(--ios-sombra-alta)] sm:rounded-[28px]">
-                    <CapaDaProva
-                      src={exam.coverImage}
-                      titulo={exam.title}
-                      sizes="(max-width: 1024px) 100vw, 720px"
-                    />
-                  </div>
-                )}
+            {/*
+              Arte à esquerda, prova à direita — a página de álbum da Apple.
 
-                <div className="pv-entra space-y-3" style={{ '--pv-ordem': 1 } as React.CSSProperties}>
-                  {((exam as any).isPersonalExam || exam.isPracticeExam || exam.proctoring?.enabled) && (
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {(exam as any).isPersonalExam && <span className="pv-etiqueta" data-tom="tinta">Prova pessoal</span>}
-                      {exam.isPracticeExam && <span className="pv-etiqueta" data-tom="tinta">Treino</span>}
-                      {exam.proctoring?.enabled && (
-                        <span className="pv-etiqueta" data-tom="ambar">
-                          <Eye className="h-3 w-3" /> Monitorada
-                        </span>
-                      )}
+              Antes as duas colunas eram "capa + título + números + portões"
+              contra "o formulário", e o formulário acabava no meio da tela:
+              meia página de vazio à direita. Agora a capa e os portões fazem
+              uma coluna e o título, os números e o "Antes de começar" fazem a
+              outra, de alturas parecidas. No celular a ordem é a de leitura:
+              capa, título, números, começar, portões.
+            */}
+            <div className="mt-4 grid items-start gap-6 sm:mt-6 lg:mt-8 lg:grid-cols-2 lg:gap-10 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] xl:gap-14">
+              {/* ── A arte ── */}
+              <div className="min-w-0 space-y-6">
+                <div className="relative">
+                  {/* O brilho da própria capa, desfocado atrás da moldura: a cor
+                      da prova sem tingir a página inteira. */}
+                  {exam.coverImage && (
+                    <div aria-hidden className="pv-arte-brilho">
+                      <CoverImage src={exam.coverImage} alt="" sizes="(max-width: 1024px) 100vw, 620px" />
                     </div>
                   )}
-                  <h1 className="ios-titulo-grande">{exam.title}</h1>
-                  {exam.description && (
-                    <p className="max-w-[62ch] whitespace-pre-line text-[16px] leading-relaxed ios-rotulo-2">
-                      {exam.description}
-                    </p>
-                  )}
-                </div>
-
-                {/* Retomada — a primeira coisa que quem caiu precisa ler. */}
-                {retomada?.temProgresso && (
-                  <ExamResumeCard
-                    veredito={retomada}
-                    respondidas={progressoSalvo?.respondidas ?? contarRespondidas(progressoSalvo?.answers)}
-                    totalDeQuestoes={exam.questions.length}
-                    salvoEm={progressoSalvo?.atualizadoEm}
-                    retomando={retomando}
-                    entregando={submitting}
-                    onContinuar={continuarProva}
-                    onEntregar={entregarRascunho}
-                  />
-                )}
-
-                {/* A faixa de números, à moda da App Store. */}
-                <div className="pv-entra ios-cartao rounded-[22px] py-4" style={{ '--pv-ordem': 2 } as React.CSSProperties}>
-                  <div className="ios-faixa">
-                    {numeros.map((n) => (
-                      <div key={n.rotulo}>
-                        <span className="ios-faixa-rotulo">{n.rotulo}</span>
-                        <span className="ios-faixa-valor" style={{ color: 'var(--ios-rotulo)' }}>
-                          {n.valor}
-                        </span>
-                        {n.nota && <span className="ios-faixa-nota">{n.nota}</span>}
-                      </div>
-                    ))}
+                  <div className="pv-arte ios-capa">
+                    <CapaDaProva
+                      adaptavel
+                      src={exam.coverImage}
+                      titulo={exam.title}
+                      sizes="(max-width: 1024px) 100vw, 620px"
+                      className="max-h-[62vh] lg:max-h-[min(64vh,600px)]"
+                    />
                   </div>
                 </div>
 
-              </section>
+                {/* Portões — os quatro marcos que só existiam no banco. Do
+                    notebook para cima, embaixo da capa. */}
+                {temPainelDePortoes && (
+                  <div className="pv-entra hidden lg:block" style={{ '--pv-ordem': 6 } as React.CSSProperties}>
+                    <ExamGateStatus janela={janela!} />
+                  </div>
+                )}
+              </div>
 
-              {/* ── Começar ──
-                  No celular o painel vem logo depois dos números — antes dos
-                  portões —, para o botão de começar não ficar a três telas de
-                  rolagem. Do notebook para cima ele ocupa a coluna da direita
-                  inteira e acompanha a rolagem. */}
-              <aside className="lg:sticky lg:top-6 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
+              {/* ── A prova e o começar ── */}
+              <div className="min-w-0 space-y-6">
+                  <div className="pv-entra space-y-3" style={{ '--pv-ordem': 1 } as React.CSSProperties}>
+                    {((exam as any).isPersonalExam || exam.isPracticeExam || exam.proctoring?.enabled) && (
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {(exam as any).isPersonalExam && <span className="pv-etiqueta" data-tom="tinta">Prova pessoal</span>}
+                        {exam.isPracticeExam && <span className="pv-etiqueta" data-tom="tinta">Treino</span>}
+                        {exam.proctoring?.enabled && (
+                          <span className="pv-etiqueta" data-tom="ambar">
+                            <Eye className="h-3 w-3" /> Monitorada
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <h1 className="ios-titulo-grande">{exam.title}</h1>
+                    {exam.description && (
+                      <p className="max-w-[62ch] whitespace-pre-line text-[16px] leading-relaxed ios-rotulo-2">
+                        {exam.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Retomada — a primeira coisa que quem caiu precisa ler. */}
+                  {retomada?.temProgresso && (
+                    <ExamResumeCard
+                      veredito={retomada}
+                      respondidas={progressoSalvo?.respondidas ?? contarRespondidas(progressoSalvo?.answers)}
+                      totalDeQuestoes={exam.questions.length}
+                      salvoEm={progressoSalvo?.atualizadoEm}
+                      retomando={retomando}
+                      entregando={submitting}
+                      onContinuar={continuarProva}
+                      onEntregar={entregarRascunho}
+                    />
+                  )}
+
+                  {/* A faixa de números, à moda da App Store. */}
+                  <div className="pv-entra ios-cartao rounded-[22px] py-4" style={{ '--pv-ordem': 3 } as React.CSSProperties}>
+                    <div className="ios-faixa">
+                      {numeros.map((n, i) => (
+                        <div key={n.rotulo} className="pv-entra" style={{ '--pv-ordem': 4 + i } as React.CSSProperties}>
+                          <span className="ios-faixa-rotulo">{n.rotulo}</span>
+                          <span className="ios-faixa-valor" style={{ color: 'var(--ios-rotulo)' }}>
+                            {n.valor}
+                          </span>
+                          {n.nota && <span className="ios-faixa-nota">{n.nota}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                {/* ── Começar ── */}
                 <div
                   className="pv-painel pv-entra space-y-5 p-5 sm:p-7"
-                  style={{ '--pv-ordem': 3 } as React.CSSProperties}
+                  style={{ '--pv-ordem': 5 } as React.CSSProperties}
                 >
                   <div>
                     <h2 className="ios-titulo-secao">{janela?.encerrada ? 'A prova terminou' : 'Antes de começar'}</h2>
@@ -3841,16 +3859,18 @@ ${respostaAluno}`
 
                   <PdfCtaBanner accountType={accountType} isAdmin={userRole === 'admin'} compact />
                 </div>
-                <ExamBrandFooter className="mt-4" />
-              </aside>
 
-              {/* Portões — os quatro marcos que só existiam no banco. */}
-              {temPainelDePortoes && (
-                <div className="min-w-0 lg:col-start-1">
-                  <ExamGateStatus janela={janela!} />
-                </div>
-              )}
+                {/* No celular e no tablet os portões vêm depois do começar,
+                    para o botão não ficar a três telas de rolagem. */}
+                {temPainelDePortoes && (
+                  <div className="lg:hidden">
+                    <ExamGateStatus janela={janela!} />
+                  </div>
+                )}
+              </div>
             </div>
+
+            <ExamBrandFooter className="mt-10" />
           </div>
         </FundoIos>
       </>
@@ -3864,7 +3884,7 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <FundoIos capa={exam.coverImage} capaSizes="(max-width: 1024px) 100vw, 720px" className="min-h-screen">
+        <FundoIos className="min-h-screen">
           <div className="mx-auto w-full max-w-2xl px-4 pb-16 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6">
             {topoDaPorta('Sair', () => {
               setInWaitingRoom(false)

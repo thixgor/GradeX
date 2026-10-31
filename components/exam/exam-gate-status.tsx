@@ -128,9 +128,19 @@ function proximoMarco(janela: JanelaDaProva): { rotulo: string; quando: Date } |
   }
 }
 
-/** Segundos em `1:04:09` / `4:09` — o formato de cronômetro, não de duração. */
+/**
+ * Segundos em `1:04:09` / `4:09` — o formato de cronômetro, não de duração.
+ * Passando de um dia, os dias vão à frente (`29d 23:58`): uma prova aberta
+ * por um mês mostrava `719:58:57`, um número que ninguém lê como prazo.
+ */
 function contagem(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000))
+  const dias = Math.floor(total / 86400)
+  if (dias > 0) {
+    const horas = Math.floor((total % 86400) / 3600)
+    const minutos = Math.floor((total % 3600) / 60)
+    return `${dias}d ${String(horas).padStart(2, '0')}:${String(minutos).padStart(2, '0')}`
+  }
   const h = Math.floor(total / 3600)
   const m = Math.floor((total % 3600) / 60)
   const s = total % 60

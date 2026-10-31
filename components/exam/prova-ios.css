@@ -1436,3 +1436,102 @@ button.pv-capsula {
   color: var(--ios-chao);
   background: var(--ios-rotulo);
 }
+
+/* ══════════ A arte da prova (tela de entrada) ══════════ */
+
+/* A capa assenta: sobe, cresce e ganha foco uma vez, na chegada. No mouse,
+   sobe um fio — o mesmo gesto dos cartões da loja. */
+.vidro-ios .pv-arte {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  box-shadow:
+    0 2px 6px rgba(16, 24, 20, 0.06),
+    0 34px 64px -34px rgba(16, 24, 20, 0.55);
+  /* `backwards`: com `both` o quadro final segura o transform e o hover não sobe. */
+  animation: pv-arte-entra 0.95s var(--ios-expo) backwards;
+  transition:
+    transform 0.6s var(--ios-mola),
+    box-shadow 0.6s var(--ios-mola);
+}
+@media (min-width: 640px) {
+  .vidro-ios .pv-arte {
+    border-radius: 30px;
+  }
+}
+.dark .vidro-ios .pv-arte {
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.4),
+    0 34px 70px -30px rgba(0, 0, 0, 0.9);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-arte:hover {
+    transform: translateY(-4px) scale(1.008);
+    box-shadow:
+      0 4px 10px rgba(16, 24, 20, 0.08),
+      0 44px 80px -36px rgba(16, 24, 20, 0.6);
+  }
+}
+@keyframes pv-arte-entra {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+    filter: blur(10px);
+  }
+  60% {
+    filter: blur(0);
+  }
+}
+
+/* O brilho: a própria capa, ampliada e desfocada embaixo da moldura. Pulsa
+   devagar, como a luz de um palco — o único movimento contínuo da tela. */
+.vidro-ios .pv-arte-brilho {
+  position: absolute;
+  inset: 10% 6% -6%;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 40px;
+  opacity: 0.5;
+  filter: blur(46px) saturate(160%);
+  transform: translateZ(0);
+  pointer-events: none;
+  animation:
+    pv-brilho-entra 1.4s var(--ios-expo) 0.2s both,
+    pv-brilho-respira 7s ease-in-out 1.6s infinite;
+}
+.vidro-ios .pv-arte-brilho + .pv-arte {
+  z-index: 1;
+}
+.dark .vidro-ios .pv-arte-brilho {
+  opacity: 0.38;
+}
+@keyframes pv-brilho-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+@keyframes pv-brilho-respira {
+  50% {
+    transform: scale(1.05) translateY(2%);
+    opacity: 0.38;
+  }
+}
+@media (max-width: 640px) {
+  .vidro-ios .pv-arte-brilho {
+    filter: blur(32px) saturate(150%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .pv-arte,
+  .vidro-ios .pv-arte-brilho {
+    animation: none;
+  }
+  .vidro-ios .pv-arte {
+    transition: none;
+  }
+}
+.lite-mode .vidro-ios .pv-arte-brilho {
+  display: none;
+}

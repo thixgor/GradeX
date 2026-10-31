@@ -448,7 +448,7 @@ export function ExamJaFinalizada({
   }
 
   return (
-    <FundoIos capa={exam.coverImage} capaSizes="(max-width: 560px) 100vw, 560px" className="min-h-screen">
+    <FundoIos className="min-h-screen">
       <div className="mx-auto w-full max-w-xl px-4 pb-16 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6">
         {/* A marca: esta é a tela de quem chega pelo link direto da prova. */}
         <nav className="flex items-center justify-between gap-3 py-2">

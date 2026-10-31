@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { CoverImage } from '@/components/cover-image'
 import { Logo } from '@/components/logo'
 import { cn } from '@/lib/utils'
@@ -33,6 +34,7 @@ export function CapaDaProva({
   sizes = '(max-width: 768px) 100vw, 768px',
   priority = true,
   className,
+  adaptavel = false,
 }: {
   src?: string | null
   titulo: string
@@ -40,20 +42,73 @@ export function CapaDaProva({
   sizes?: string
   priority?: boolean
   className?: string
+  /**
+   * A moldura toma a proporção da PRÓPRIA imagem (entre 4:5 e 2:1) e mostra a
+   * capa inteira, sem corte.
+   *
+   * A caixa fixa de 2:1 servia à capa 16:9 e mutilava o resto: uma capa em
+   * retrato perdia dois terços da altura, e o título que ela trazia escrito
+   * saía decepado. Aqui a imagem vai com `object-contain`; quando a proporção
+   * dela passa dos limites, o que sobra da moldura é a mesma imagem, ampliada
+   * e desfocada por trás (a mesma URL e o mesmo `sizes`: sai do cache, sem um
+   * byte a mais).
+   */
+  adaptavel?: boolean
 }) {
+  const [proporcao, setProporcao] = useState<number | null>(null)
+
+  const fallback = (
+    <span className="absolute inset-0 flex items-center justify-center bg-[#153D1F]">
+      <Logo variant="dark" size="lg" className="opacity-60" />
+    </span>
+  )
+
+  if (!adaptavel) {
+    return (
+      <div className={cn('relative aspect-[16/9] w-full overflow-hidden bg-[#153D1F] sm:aspect-[2/1]', className)}>
+        <CoverImage
+          src={src}
+          alt={`Capa da prova ${titulo}`}
+          sizes={sizes}
+          priority={priority}
+          className="object-center"
+          fallback={fallback}
+        />
+      </div>
+    )
+  }
+
+  // Sem capa, a moldura não vira um buraco escuro: um campo da marca, com o
+  // ícone ao centro.
+  const campoDaMarca = (
+    <span className="ios-capa-vazia absolute inset-0 flex items-center justify-center">
+      <Logo variant="icon" size="lg" className="block !h-20 w-auto opacity-80 dark:hidden" />
+      <Logo variant="dark" size="lg" className="hidden !h-20 w-auto opacity-80 dark:block" />
+    </span>
+  )
+
+  // 16:9 enquanto a imagem não chega (é a proporção da maioria das capas), e
+  // a medida real assim que ela carrega.
+  const aspecto = proporcao ? Math.min(2, Math.max(0.8, proporcao)) : 16 / 9
+
   return (
-    <div className={cn('relative aspect-[16/9] w-full overflow-hidden bg-[#153D1F] sm:aspect-[2/1]', className)}>
+    <div
+      className={cn('relative w-full overflow-hidden', src ? 'bg-[#153D1F]' : '', className)}
+      style={{ aspectRatio: String(aspecto) }}
+    >
+      {src && (
+        <div aria-hidden className="absolute inset-0 scale-125 opacity-80 blur-2xl saturate-150">
+          <CoverImage src={src} alt="" sizes={sizes} priority={priority} />
+        </div>
+      )}
       <CoverImage
         src={src}
         alt={`Capa da prova ${titulo}`}
         sizes={sizes}
         priority={priority}
-        className="object-center"
-        fallback={
-          <span className="absolute inset-0 flex items-center justify-center bg-[#153D1F]">
-            <Logo variant="dark" size="lg" className="opacity-60" />
-          </span>
-        }
+        className="!object-contain"
+        fallback={campoDaMarca}
+        onNaturalSize={(largura, altura) => setProporcao(largura / altura)}
       />
     </div>
   )
