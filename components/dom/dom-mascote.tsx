@@ -26,7 +26,12 @@ interface Props {
   className?: string
   /** Sem os enfeites (luz, pensamento, brilhos) — para o lançador pequeno. */
   simples?: boolean
+  /** A troca de traje começou de verdade (a toga já chegou): o painel faz a cerimônia junto. */
+  aoTrocarTraje?: (para: TrajeDoDom) => void
 }
+
+/** Duração da troca de traje — a mesma do CSS (`--dom-troca-ms` em dom.css). */
+export const DURACAO_DA_TROCA_MS = 2200
 
 const VIEWBOX = '150 0 954 1254'
 export const PREVIA = '/dom/v1/dom-previa.webp'
@@ -40,6 +45,9 @@ const LENTES = [
   { cx: 548, cy: 318, rx: 92, ry: 80, rot: -9 },
   { cx: 818, cy: 268, rx: 84, ry: 72, rot: -6 },
 ]
+// Centro da boca: no encontro dos dois arcos do sorriso, logo abaixo do
+// "filtro" que desce do focinho (medido nos dois trajes).
+const BOCA = { x: 738, y: 442 }
 // Onde a luz da tela nasce em cada traje (o celular muda de lugar).
 const TELA: Record<TrajeDoDom, { x: number; y: number }> = {
   normal: { x: 880, y: 660 },
@@ -120,7 +128,7 @@ function usePiscar(ref: React.RefObject<HTMLDivElement | null>) {
   }, [ref])
 }
 
-export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, boca = false, calado = false, className, simples = false }: Props) {
+export function DomMascote({ estado = 'parado', traje = 'normal', falando = false, boca = false, calado = false, className, simples = false, aoTrocarTraje }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const normal = useDesenho('dom')
   // A toga só baixa quando alguém entra no modo socrático (400 KB).
@@ -133,14 +141,17 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
   // Troca de traje: guarda o traje mostrado e anima a passagem.
   const [mostrado, setMostrado] = useState<TrajeDoDom>(traje)
   const [trocando, setTrocando] = useState<TrajeDoDom | null>(null)
+  const aoTrocarRef = useRef(aoTrocarTraje)
+  aoTrocarRef.current = aoTrocarTraje
   useEffect(() => {
     if (traje === mostrado) return
     if (traje === 'socrates' && !socrates) return // espera a toga chegar
     setTrocando(traje)
+    aoTrocarRef.current?.(traje)
     const t = setTimeout(() => {
       setMostrado(traje)
       setTrocando(null)
-    }, 1650)
+    }, DURACAO_DA_TROCA_MS + 50)
     return () => clearTimeout(t)
   }, [traje, mostrado, socrates])
 
@@ -166,6 +177,8 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
       data-calado={calado ? '1' : '0'}
       aria-hidden
     >
+      {/* Halo e raios de sol ATRÁS do mascote durante a troca. */}
+      {trocando && <FundoDaTroca para={trocando} />}
       <div className="dom-mascote__corpo">
         {/* Prévia de 17 KB enquanto o desenho em camadas (~60 KB) baixa e monta. */}
         {!pronto && <img className="dom-mascote__previa" src={PREVIA} alt="" decoding="async" draggable={false} />}
@@ -219,14 +232,16 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
               </g>
             ))}
 
-            {/* Boca aberta (fala) logo abaixo do sorriso */}
+            {/* Boca aberta (fala) logo abaixo do sorriso, no encontro dos dois
+                arcos (sob o "filtro" do focinho, x ≈ 738 nos dois trajes). */}
             <g className="dom-boca">
-              <ellipse cx="704" cy="446" rx="30" ry="22" fill="#3b120a" />
-              <ellipse cx="704" cy="458" rx="18" ry="9" fill="#e86a6a" />
+              <ellipse cx={BOCA.x} cy={BOCA.y} rx="30" ry="22" fill="#3b120a" />
+              <ellipse cx={BOCA.x} cy={BOCA.y + 12} rx="18" ry="9" fill="#e86a6a" />
             </g>
 
             {/* Fita adesiva na boca (som desligado): duas tiras cruzadas, pontas rasgadas. */}
             <g className="dom-fita" aria-hidden>
+              <g transform={`translate(${BOCA.x - 705} 0)`}>
               <g transform="rotate(-9 705 428)">
                 <path d="M600 410 l6 -6 l6 6 l6 -6 l6 6 h162 l6 -6 l6 6 l6 -6 l6 6 v38 l-6 6 l-6 -6 l-6 6 l-6 -6 h-162 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#d6dbde" stroke="#8d979c" strokeWidth="4" />
                 <rect x="618" y="414" width="170" height="8" rx="4" fill="#ffffff" opacity="0.55" />
@@ -234,6 +249,7 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
               <g transform="rotate(11 705 432)">
                 <path d="M622 414 l6 -6 l6 6 l6 -6 l6 6 h118 l6 -6 l6 6 l6 -6 l6 6 v36 l-6 6 l-6 -6 l-6 6 l-6 -6 h-118 l-6 6 l-6 -6 l-6 6 l-6 -6 z" fill="#e2e6e8" stroke="#8d979c" strokeWidth="4" />
                 <rect x="640" y="418" width="128" height="7" rx="3.5" fill="#ffffff" opacity="0.5" />
+              </g>
               </g>
             </g>
 
@@ -293,11 +309,49 @@ export function DomMascote({ estado = 'parado', traje = 'normal', falando = fals
   )
 }
 
+/** Atrás do mascote: halo que acende e raios de sol girando (só na ida para Sócrates, mais discretos na volta). */
+function FundoDaTroca({ para }: { para: TrajeDoDom }) {
+  const raios = Array.from({ length: 16 }, (_, i) => i * (360 / 16))
+  return (
+    <svg className="dom-troca-fundo" data-para={para} viewBox="-20 -150 1300 1560" aria-hidden>
+      <defs>
+        <radialGradient id="dom-halo-troca" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#fff6d6" stopOpacity="0.95" />
+          <stop offset="0.45" stopColor="#f3cf6e" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#e8b44a" stopOpacity="0" />
+        </radialGradient>
+        <linearGradient id="dom-raio-troca" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffe9a8" stopOpacity="0" />
+          <stop offset="0.35" stopColor="#ffe9a8" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#e8b44a" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <circle className="dom-troca-fundo__halo" cx="627" cy="520" r="620" fill="url(#dom-halo-troca)" />
+      <g className="dom-troca-fundo__raios">
+        {raios.map((ang) => (
+          <path key={ang} d="M627 520 L600 -120 L654 -120 Z" fill="url(#dom-raio-troca)" transform={`rotate(${ang} 627 520)`} />
+        ))}
+      </g>
+    </svg>
+  )
+}
+
+/** Nuvem de poeira de mármore que estoura na hora em que o traje cai. */
+const NUVEM = Array.from({ length: 12 }, (_, i) => {
+  const ang = (i / 12) * Math.PI * 2 + (i % 2) * 0.2
+  return {
+    cx: 627 + Math.cos(ang) * (300 + (i % 3) * 40),
+    cy: 700 + Math.sin(ang) * (360 + (i % 2) * 60),
+    r: 70 + (i % 4) * 22,
+    atraso: `${380 + (i % 4) * 45}ms`,
+  }
+})
+
 /** Luz dourada que varre, coroa de louros desenhando e poeira de mármore. */
 function EfeitoDeTroca({ para }: { para: TrajeDoDom }) {
-  const particulas = Array.from({ length: 18 }, (_, i) => {
-    const ang = (i / 18) * Math.PI * 2
-    const raio = 260 + (i % 4) * 70
+  const particulas = Array.from({ length: 26 }, (_, i) => {
+    const ang = (i / 26) * Math.PI * 2
+    const raio = 300 + (i % 5) * 80
     return {
       x: 627 + Math.cos(ang) * 120,
       y: 560 + Math.sin(ang) * 160,
@@ -305,18 +359,29 @@ function EfeitoDeTroca({ para }: { para: TrajeDoDom }) {
       dy: `${Math.round(Math.sin(ang) * raio)}px`,
       cor: i % 3 === 0 ? '#ffffff' : i % 3 === 1 ? '#e8b44a' : '#f6e3b0',
       r: 6 + (i % 3) * 4,
-      atraso: `${(i % 6) * 40 + 280}ms`,
+      atraso: `${(i % 6) * 50 + 420}ms`,
     }
   })
   return (
-    <svg className="dom-troca" viewBox="-20 -150 1300 1560" aria-hidden>
+    <svg className="dom-troca" data-para={para} viewBox="-20 -150 1300 1560" aria-hidden>
       <defs>
         <linearGradient id="dom-linha-ouro" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#e8b44a" stopOpacity="0" />
           <stop offset="0.5" stopColor="#fff3c4" />
           <stop offset="1" stopColor="#e8b44a" stopOpacity="0" />
         </linearGradient>
+        <radialGradient id="dom-clarao-troca" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="0.4" stopColor="#fff1c2" stopOpacity="0.55" />
+          <stop offset="1" stopColor="#e8b44a" stopOpacity="0" />
+        </radialGradient>
       </defs>
+      {/* Poeira de mármore estourando em volta do corpo */}
+      <g className="dom-troca__nuvem">
+        {NUVEM.map((n, i) => (
+          <circle key={i} cx={n.cx} cy={n.cy} r={n.r} style={{ animationDelay: n.atraso }} />
+        ))}
+      </g>
       <g className="dom-troca__linha">
         <rect x="120" y="0" width="1020" height="10" rx="5" fill="url(#dom-linha-ouro)" />
         <rect x="200" y="-24" width="860" height="58" fill="url(#dom-linha-ouro)" opacity="0.25" />
@@ -337,6 +402,8 @@ function EfeitoDeTroca({ para }: { para: TrajeDoDom }) {
           style={{ ['--dx' as string]: p.dx, ['--dy' as string]: p.dy, animationDelay: p.atraso }}
         />
       ))}
+      {/* Clarão no fim: o traje novo "acende" */}
+      <circle className="dom-troca__clarao" cx="627" cy="560" r="560" fill="url(#dom-clarao-troca)" />
       <text className="dom-troca__nome" x="640" y="-60" textAnchor="middle">
         {para === 'socrates' ? 'ΣΩΚΡΑΤΗΣ' : 'DOM'}
       </text>

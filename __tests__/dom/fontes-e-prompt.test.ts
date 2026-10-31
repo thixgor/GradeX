@@ -4,21 +4,23 @@ import { montarPromptDoSistema } from '@/lib/dom/prompt'
 import { achatarEmenta, cursoValido } from '@/lib/dom/temas'
 import type { EmentaTopico } from '@/lib/cronogramas/tipos'
 
-// Ementa como o admin importa em /admin/cronogramas (coleção cronograma_ementas).
+// Ementa como o admin importa em /admin/cronogramas (coleção cronograma_ementas):
+// `montarEmenta` grava `incluido: false` em todos os níveis — esse campo é a
+// seleção do ALUNO no gerador de cronograma, não um corte do admin.
 const EMENTA = [
   {
-    id: 't1', nome: 'SOI I', prioridade: 'alta', incluido: true,
+    id: 't1', nome: 'SOI I', prioridade: 'alta', incluido: false,
     subtopicos: [
       {
-        id: 's1', nome: 'Bases moleculares', prioridade: 'alta', incluido: true,
+        id: 's1', nome: 'Bases moleculares', prioridade: 'alta', incluido: false,
         modulos: [
-          { id: 'm1', nome: 'Membrana plasmática', prioridade: 'alta', horasEstimadas: 2, incluido: true, submodulos: [{ id: 'x1', nome: 'Bicamada lipídica', prioridade: 'alta' }, { id: 'x2', nome: 'Transporte', prioridade: 'media' }] },
-          { id: 'm2', nome: 'Desmarcado pelo admin', prioridade: 'baixa', horasEstimadas: 1, incluido: false, submodulos: [] },
+          { id: 'm1', nome: 'Membrana plasmática', prioridade: 'alta', horasEstimadas: 2, incluido: false, submodulos: [{ id: 'x1', nome: 'Bicamada lipídica', prioridade: 'alta' }, { id: 'x2', nome: 'Transporte', prioridade: 'media' }] },
+          { id: 'm2', nome: 'Potencial de membrana', prioridade: 'baixa', horasEstimadas: 1, incluido: false, submodulos: [] },
         ],
       },
     ],
   },
-  { id: 't2', nome: 'Fora do cronograma', prioridade: 'baixa', incluido: false, subtopicos: [{ id: 's2', nome: 'X', prioridade: 'baixa', incluido: true, modulos: [{ id: 'm3', nome: 'Não entra', prioridade: 'baixa', horasEstimadas: 1, incluido: true, submodulos: [] }] }] },
+  { id: 't2', nome: 'HAM I', prioridade: 'baixa', incluido: false, subtopicos: [{ id: 's2', nome: 'Anatomia', prioridade: 'baixa', incluido: false, modulos: [{ id: 'm3', nome: 'Membro superior', prioridade: 'baixa', horasEstimadas: 1, incluido: false, submodulos: [] }] }] },
 ] as unknown as EmentaTopico[]
 import { falaDe, textoDaFala, FALAS } from '@/components/dom/falas'
 
@@ -86,9 +88,11 @@ describe('prompt', () => {
 })
 
 describe('temas (ementa dos cronogramas)', () => {
-  it('achata a ementa importada pelo admin, um tema por módulo', () => {
+  it('achata a ementa importada pelo admin inteira, um tema por módulo (ignora o `incluido` do gerador)', () => {
     expect(achatarEmenta(EMENTA)).toEqual([
       { id: 'm1', titulo: 'Membrana plasmática', trilha: 'SOI I › Bases moleculares', itens: ['Bicamada lipídica', 'Transporte'] },
+      { id: 'm2', titulo: 'Potencial de membrana', trilha: 'SOI I › Bases moleculares', itens: [] },
+      { id: 'm3', titulo: 'Membro superior', trilha: 'HAM I › Anatomia', itens: [] },
     ])
   })
   it('período sem ementa não tem temas; curso precisa ser uma seção dos cronogramas', () => {

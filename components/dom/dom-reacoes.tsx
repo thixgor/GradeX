@@ -14,8 +14,9 @@ import { useMudo } from './use-mudo'
  * confete, estrelas, coração), e sai sozinho. Um toque o dispensa.
  *
  * Educado de propósito: no máximo uma aparição a cada 25 s (a não ser que a
- * nova seja mais importante), nunca com o painel do Dom aberto, e nada em
- * prova em andamento — o lançador nem existe nessas telas.
+ * nova seja mais importante) e nunca com o painel do Dom aberto. Numa prova
+ * valendo, com trava, o lançador fica em modo foco (sem botão nem painel) e
+ * só estas aparições continuam — a do resultado chega depois da entrega.
  */
 
 const INTERVALO_MINIMO_MS = 25_000

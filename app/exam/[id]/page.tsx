@@ -3,6 +3,7 @@
 import { avisarXp } from '@/lib/xp/cliente'
 import React, { Suspense, useCallback, useEffect, useRef, useState, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { LogoLoading } from '@/components/logo-loading'
 import { Countdown } from '@/components/countdown'
@@ -74,7 +75,7 @@ import {
 } from '@/lib/provas/sincronizacao-da-janela'
 import { useJanelaSincronizada } from '@/hooks/use-janela-sincronizada'
 import { resolverDownloadsDaProva } from '@/lib/provas/downloads-da-prova'
-import { travasDaProva } from '@/lib/provas/anti-cola'
+import { algumaTravaLigada, travasDaProva } from '@/lib/provas/anti-cola'
 import { exigeEntregaAutomatica, inicioBloqueadoPorProgresso } from '@/lib/provas/retomada'
 import { ReacaoDoResultado } from '@/components/dom/reacao-do-resultado'
 import {
@@ -106,16 +107,34 @@ import {
  * prerenderização — é a mesma casca que /provas usa. A tela em si continua
  * sendo `ConteudoDaProva`.
  */
+/*
+ * O Dom (assistente de IA) também vive aqui — a tela de prova não usa o
+ * `AppShell`, que é quem o carrega no resto do site. Só baixa no navegador,
+ * depois da prova, e só aparece para quem está logado.
+ */
+const DomLancador = dynamic(() => import('@/components/dom/dom-lancador').then((m) => m.DomLancador), { ssr: false })
+
+/** O que a prova conta ao Dom: quem está logado e se ele deve sair da frente. */
+interface DomNaProva {
+  nome: string
+  /** Prova valendo (não treino/pessoal) com trava ou câmera, em andamento: sem botão nem painel. */
+  foco: boolean
+}
+
 export default function ExamPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params)
+  const [dom, setDom] = useState<DomNaProva | null>(null)
   return (
-    <Suspense fallback={<LogoLoading message="Carregando prova..." size="lg" fullscreen />}>
-      <ConteudoDaProva params={params} />
-    </Suspense>
+    <>
+      <Suspense fallback={<LogoLoading message="Carregando prova..." size="lg" fullscreen />}>
+        <ConteudoDaProva params={params} aoMudarDom={setDom} />
+      </Suspense>
+      {dom && <DomLancador nome={dom.nome} foco={dom.foco} />}
+    </>
   )
 }
 
-function ConteudoDaProva({ params }: { params: { id: string } }) {
+function ConteudoDaProva({ params, aoMudarDom }: { params: { id: string }; aoMudarDom: (dom: DomNaProva | null) => void }) {
   const { id } = params
   const router = useRouter()
   const parametrosDaUrl = useSearchParams()
@@ -920,6 +939,24 @@ function ConteudoDaProva({ params }: { params: { id: string } }) {
    * `return` que a tela faz mais abaixo.
    */
   const isSelfPacedExam = Boolean(exam?.isPracticeExam || (exam as any)?.isPersonalExam || emTreino)
+
+  /*
+   * O Dom na prova. Aparece em treino, prova pessoal e prova sem trava. Sai da
+   * frente (fica só a comemoração do resultado) quando a prova vale de verdade
+   * e o admin a protegeu — alguma trava anticópia ligada ou câmera — e só
+   * enquanto ela está sendo resolvida: na sala de espera e no resultado ele
+   * volta. Um assistente de IA aberto ao lado anularia a trava.
+   */
+  const domEmFoco =
+    !!exam &&
+    started &&
+    !submitted &&
+    !isSelfPacedExam &&
+    (algumaTravaLigada(travasDaProva(exam)) || !!exam.proctoring?.enabled)
+  const nomeParaODom = exam ? loggedUserName : ''
+  useEffect(() => {
+    aoMudarDom(nomeParaODom ? { nome: nomeParaODom, foco: domEmFoco } : null)
+  }, [aoMudarDom, nomeParaODom, domEmFoco])
   const examDeadline: Date | null = !exam
     ? null
     : practiceTimeLimitMs && examStartTime

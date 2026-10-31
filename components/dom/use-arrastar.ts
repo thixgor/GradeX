@@ -45,6 +45,25 @@ function guardar(p: Posicao) {
 
 const limitar = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
 
+/**
+ * Largura livre da janela, SEM a barra de rolagem. `innerWidth` conta a barra:
+ * grudado à direita, o botão ficava com uns 15 px embaixo dela.
+ */
+function larguraDaJanela(): number {
+  return document.documentElement.clientWidth || window.innerWidth
+}
+
+/**
+ * Tamanho do botão sem as transformações do CSS. Com o painel aberto o
+ * lançador encolhe (`scale(0.6)`) e some; medido com `getBoundingClientRect`
+ * nessa hora, ele "tinha" 40 px de largura, e ao fechar o painel voltava aos
+ * 68 px na posição calculada para 40 — metade para fora da tela, cortado no
+ * canto. `offsetWidth` ignora a escala.
+ */
+function tamanho(el: HTMLElement | null): { largura: number; altura: number } {
+  return { largura: el?.offsetWidth || 68, altura: el?.offsetHeight || 68 }
+}
+
 /** Posição já lida nesta visita: na troca de página o botão nasce no lugar (sem pular). */
 let emMemoria: Posicao | null | undefined
 
@@ -56,7 +75,7 @@ function obstaculos(tipo: 'lateral' | 'botao'): DOMRect[] {
   if (typeof document === 'undefined') return []
   return [...document.querySelectorAll(`[data-dom-obstaculo="${tipo}"]`)]
     .map((e) => e.getBoundingClientRect())
-    .filter((r) => r.width > 0 && r.height > 0 && r.right > 0 && r.left < window.innerWidth)
+    .filter((r) => r.width > 0 && r.height > 0 && r.right > 0 && r.left < larguraDaJanela())
 }
 
 /** Borda esquerda livre: depois da barra lateral, quando ela está na tela. */
@@ -121,9 +140,9 @@ export function useArrastar<T extends HTMLElement>() {
       arrastou.current = true
       setArrastando(true)
     }
-    const { width, height } = ref.current.getBoundingClientRect()
+    const { largura: width, altura: height } = tamanho(ref.current)
     setLivre({
-      x: limitar(e.clientX - g.ox, bordaEsquerda(), window.innerWidth - width - MARGEM),
+      x: limitar(e.clientX - g.ox, bordaEsquerda(), larguraDaJanela() - width - MARGEM),
       y: limitar(e.clientY - g.oy, MARGEM, window.innerHeight - height - MARGEM),
     })
     const dt = Math.max(1, e.timeStamp - g.ultimoT)
@@ -140,7 +159,7 @@ export function useArrastar<T extends HTMLElement>() {
     if (!g.ativo || !ref.current) return
     const r = ref.current.getBoundingClientRect()
     const nova: Posicao = {
-      lado: r.left + r.width / 2 < window.innerWidth / 2 ? 'esquerda' : 'direita',
+      lado: r.left + r.width / 2 < larguraDaJanela() / 2 ? 'esquerda' : 'direita',
       topo: limitar(r.top / window.innerHeight, 0, 1),
     }
     guardar(nova)
@@ -163,12 +182,10 @@ export function useArrastar<T extends HTMLElement>() {
     estilo = { left: livre.x, top: livre.y, right: 'auto', bottom: 'auto' }
   } else if (posicao && typeof window !== 'undefined') {
     // Sempre por `left`/`top`: assim o "grudar na borda" anima a partir de onde soltou.
-    const caixa = ref.current?.getBoundingClientRect()
-    const largura = caixa?.width || 68
-    const altura = caixa?.height || 68
+    const { largura, altura } = tamanho(ref.current)
     // Esquerda: depois da barra lateral (não some embaixo dela). E desvia dos
     // botões de música e suporte.
-    const left = posicao.lado === 'esquerda' ? bordaEsquerda() : window.innerWidth - largura - MARGEM
+    const left = posicao.lado === 'esquerda' ? bordaEsquerda() : larguraDaJanela() - largura - MARGEM
     const top = desviar(left, limitar(posicao.topo * window.innerHeight, MARGEM, window.innerHeight - altura - MARGEM), largura, altura)
     estilo = { left, top, right: 'auto', bottom: 'auto' }
   }
@@ -176,7 +193,7 @@ export function useArrastar<T extends HTMLElement>() {
   return {
     ref,
     estilo,
-    lado: (livre ? (livre.x < (typeof window !== 'undefined' ? window.innerWidth / 2 : 0) ? 'esquerda' : 'direita') : posicao?.lado || 'direita') as LadoDoBotao,
+    lado: (livre ? (livre.x < (typeof window !== 'undefined' ? larguraDaJanela() / 2 : 0) ? 'esquerda' : 'direita') : posicao?.lado || 'direita') as LadoDoBotao,
     arrastando,
     inclinacao,
     foiArrasto,

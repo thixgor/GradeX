@@ -33,3 +33,22 @@ export function domOcultoAqui(ocultoEm: readonly string[], pathname: string, noL
 export function ondeDaSecao(secao: SecaoDoDom): string {
   return SECOES_DO_DOM.find((s) => s.id === secao)?.onde || 'aqui'
 }
+
+/**
+ * Telas sem o botão do Dom: login e checkout. Provas, simulados e o Banco de
+ * Questões TÊM o Dom — quem tira ele da frente numa prova valendo, com trava
+ * ou câmera, é a própria tela de prova (`foco`, ver `app/exam/[id]/page.tsx`).
+ */
+export function rotaSemDom(pathname: string): boolean {
+  return pathname.startsWith('/auth') || pathname.startsWith('/buy/checkout')
+}
+
+/**
+ * Telas de resolução (prova, questão avulsa, lista/simulado): têm barra de
+ * ações no rodapé e o botão de anotar logo acima dela, no mesmo canto — o Dom
+ * sobe para não ficar em cima dos dois.
+ */
+export function rotaDeResolucao(pathname: string): boolean {
+  if (/^\/exam\/[^/]+$/.test(pathname)) return true
+  return /^\/banco-questoes\/(listas\/)?[^/]+$/.test(pathname) && !/^\/banco-questoes\/(historico|listas)$/.test(pathname)
+}

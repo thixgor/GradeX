@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { X } from 'lucide-react'
 import { DomMascote, PREVIA } from './dom-mascote'
 import { carregarDesenho, desenhoCarregado } from './desenhos'
-import { domOcultoAqui, ondeDaSecao, secaoDaRota, type SecaoDoDom } from './secoes'
+import { domOcultoAqui, ondeDaSecao, rotaDeResolucao, rotaSemDom, secaoDaRota, type SecaoDoDom } from './secoes'
 import { useUIPreferences } from '@/hooks/use-ui-preferences'
 import { useArrastar } from './use-arrastar'
 import { DomReacoes } from './dom-reacoes'
@@ -45,13 +45,6 @@ const CHAVE_ABERTO = 'dom:aberto'
 let abertoEmMemoria: boolean | null = null
 const CHAVE_BALAO_DIA = 'dom:balao-dia'
 
-/** Telas sem o botão do Dom: prova, resolução de questões, login e checkout. */
-export function rotaSemDom(pathname: string): boolean {
-  if (/^\/exams?\/[^/]+$/.test(pathname) && pathname !== '/exams/create-personal') return true
-  if (/^\/banco-questoes\/(listas\/)?[^/]+$/.test(pathname) && !/^\/banco-questoes\/(historico|listas)$/.test(pathname)) return true
-  return pathname.startsWith('/auth') || pathname.startsWith('/buy/checkout')
-}
-
 /** A fala de contexto da página (vitrines e leitor), se houver. */
 function momentoDaPagina(pathname: string, noLeitor: boolean): MomentoDaFala | null {
   if (noLeitor) return 'paginaLeitor'
@@ -82,11 +75,17 @@ export function DomLancador({
   nome = '',
   material,
   escondido = false,
+  foco = false,
 }: {
   nome?: string
   material?: ContextoDoMaterial | null
   /** A tela pediu para sumir (ex.: "ocultar barras" do leitor de PDF). O estado fica guardado. */
   escondido?: boolean
+  /**
+   * Modo foco (prova valendo, com trava, em andamento): sem botão nem painel,
+   * só as comemorações. Se o painel estava aberto, ele fecha.
+   */
+  foco?: boolean
 }) {
   const pathname = usePathname() || '/'
   const [aberto, setAberto] = useState(() => abertoEmMemoria === true)
@@ -126,6 +125,16 @@ export function DomLancador({
     gravarArmazenado(CHAVE_ABERTO, '0', 'sessao')
   }, [])
 
+  // A prova entrou em modo foco com o painel aberto: fecha (e não reabre
+  // sozinho depois da entrega).
+  useEffect(() => {
+    if (foco) {
+      pararDeFalar()
+      fechar()
+      setBalao(null)
+    }
+  }, [foco, fechar])
+
   // Escondido nesta seção (escolha da pessoa) ou pela própria tela.
   const secao = secaoDaRota(pathname, !!material)
   const ocultoPelaPessoa = preferenciasLidas && domOcultoAqui(domOcultoEm, pathname, !!material)
@@ -137,7 +146,7 @@ export function DomLancador({
   }, [fechar, secao, setDomOculto])
   useEffect(() => {
     if (!aviso) return
-    const t = setTimeout(() => setAviso(null), 7000)
+    const t = setTimeout(() => setAviso(null), 9000)
     return () => clearTimeout(t)
   }, [aviso])
   useEffect(() => {
@@ -160,7 +169,7 @@ export function DomLancador({
 
   // Balão: fala da página (uma vez por sessão em cada tipo) ou saudação do dia.
   useEffect(() => {
-    if (aberto || escondido || ocultoPelaPessoa || rotaSemDom(pathname)) return
+    if (aberto || escondido || foco || ocultoPelaPessoa || rotaSemDom(pathname)) return
     const daPagina = momentoDaPagina(pathname, !!material)
     let momento: MomentoDaFala | null = null
     let marcar: () => void = () => {}
@@ -186,7 +195,7 @@ export function DomLancador({
       clearTimeout(mostrar)
       clearTimeout(esconder)
     }
-  }, [pathname, material, aberto, escondido, ocultoPelaPessoa])
+  }, [pathname, material, aberto, escondido, foco, ocultoPelaPessoa])
 
   // Animações param com a aba oculta.
   useEffect(() => {
@@ -222,9 +231,9 @@ export function DomLancador({
     ) : null
   }
 
-  // Prova e resolução de questões: sem botão nem painel (foco), mas o Dom
-  // ainda aparece para comemorar o foguinho e o resultado.
-  if (rotaSemDom(pathname)) {
+  // Login/checkout, ou prova valendo com trava: sem botão nem painel, mas o
+  // Dom ainda aparece para comemorar o foguinho e o resultado.
+  if (foco || rotaSemDom(pathname)) {
     return (
       <div className="dom-escopo" data-oculto={oculto || undefined}>
         {mascoteLiberado && <DomReacoes painelAberto={false} />}
@@ -241,6 +250,7 @@ export function DomLancador({
         className="dom-lancador"
         data-aberto={aberto || reagindo ? '1' : '0'}
         data-lado={arrasto.lado}
+        data-resolucao={rotaDeResolucao(pathname) || undefined}
         data-arrastando={arrasto.arrastando || undefined}
         data-posicionado={arrasto.estilo ? '1' : undefined}
         style={{ ...arrasto.estilo, ['--dom-incl' as string]: `${arrasto.inclinacao}deg` }}

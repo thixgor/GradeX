@@ -31,17 +31,20 @@ export interface TemaDoDom {
 }
 
 /**
- * Achata a ementa em temas (um por módulo). O que o admin desmarcou
- * (`incluido: false`) fica de fora, como no gerador de cronogramas.
+ * Achata a ementa em temas (um por módulo) — a ementa inteira do período.
+ *
+ * O campo `incluido` NÃO é filtro aqui. Ele é a marcação que o ALUNO faz ao
+ * montar o próprio cronograma (`app/cronogramas/criar/page.tsx` o preenche
+ * com o que a pessoa selecionou); na ementa gravada pela importação ele nasce
+ * `false` em todos os níveis (`montarEmenta`). Filtrar por ele deixava o
+ * seletor do Método Socrático sempre vazio — "Nenhum tema aqui".
  */
 export function achatarEmenta(topicos: EmentaTopico[]): TemaDoDom[] {
   const saida: TemaDoDom[] = []
   for (const topico of topicos || []) {
-    if (topico?.incluido === false) continue
-    for (const sub of topico.subtopicos || []) {
-      if (sub?.incluido === false) continue
-      for (const modulo of sub.modulos || []) {
-        if (modulo?.incluido === false) continue
+    for (const sub of topico?.subtopicos || []) {
+      for (const modulo of sub?.modulos || []) {
+        if (!modulo?.id || !modulo.nome) continue
         saida.push({
           id: String(modulo.id),
           titulo: String(modulo.nome).slice(0, 160),

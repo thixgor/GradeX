@@ -35,13 +35,14 @@ import {
 } from 'lucide-react'
 import type { DestinoDoDom, EtapaSocratica, FonteDoDom, ModoDoDom, RespostaDoDom, StatusDoDom } from '@/lib/dom/config'
 import { ETAPAS_SOCRATICAS, MAX_CARACTERES_MENSAGEM, MAX_HISTORICO, ROTULO_DA_ETAPA } from '@/lib/dom/config'
-import { DomMascote, type EstadoDoDom } from './dom-mascote'
+import { DomMascote, DURACAO_DA_TROCA_MS, type EstadoDoDom, type TrajeDoDom } from './dom-mascote'
 import { DomLogo } from './dom-logo'
 import { TextoDoDom } from './texto-do-dom'
 import { EscolhaDeTema, IntroSocratica, ProgressoSocratico, type TemaEscolhido } from './dom-socratico'
 import { falaDe, momentoDaSaudacao, textoDaFala, type Fala, type MomentoDaFala } from './falas'
 import { bipe, definirMudo, falar, pararDeFalar, silenciarComCena, type PrioridadeDaFala } from './voz'
 import { useMudo } from './use-mudo'
+import { usePainelNoCelular } from './use-painel-no-celular'
 import {
   grupoDaData,
   gravarConversas,
@@ -208,7 +209,19 @@ export function DomAssistente({
   const mudo = useMudo()
   const [saindo, setSaindo] = useState(false)
   const [confete, setConfete] = useState(false)
+  // A cerimônia de Sócrates no painel inteiro, no compasso da troca do mascote.
+  const [cerimonia, setCerimonia] = useState(0)
+  const aoTrocarTraje = useCallback((para: TrajeDoDom) => {
+    if (para === 'socrates') setCerimonia((n) => n + 1)
+  }, [])
+  useEffect(() => {
+    if (!cerimonia) return
+    const t = setTimeout(() => setCerimonia(0), DURACAO_DA_TROCA_MS + 100)
+    return () => clearTimeout(t)
+  }, [cerimonia])
   const conversaRef = useRef<HTMLDivElement>(null)
+  const painelRef = useRef<HTMLDivElement>(null)
+  usePainelNoCelular(painelRef)
   const entradaRef = useRef<HTMLTextAreaElement>(null)
   const abortRef = useRef<AbortController | null>(null)
   const conversouRef = useRef(false)
@@ -602,6 +615,7 @@ export function DomAssistente({
     <>
       {expandido && <div className="dom-veu" onClick={() => setExpandido(false)} aria-hidden />}
       <div
+        ref={painelRef}
         className="dom-escopo dom-painel"
         role="dialog"
         aria-label="Dom, assistente de IA da DomineAqui"
@@ -616,6 +630,7 @@ export function DomAssistente({
           <i />
         </div>
         <div className="dom-friso" aria-hidden />
+        {cerimonia > 0 && <CerimoniaSocratica key={cerimonia} />}
 
         <header className="dom-cabeca">
           <DomLogo className="dom-cabeca__logo" pensando={carregando} soSelo />
@@ -698,7 +713,7 @@ export function DomAssistente({
           <aside className="dom-lateral">
             <div className="dom-palco">
               <div className="dom-palco__mascote">
-                <DomMascote estado={estado} traje={traje} falando={falando} boca={boca} calado={mudo && !falando} />
+                <DomMascote estado={estado} traje={traje} falando={falando} boca={boca} calado={mudo && !falando} aoTrocarTraje={aoTrocarTraje} />
               </div>
               <div className="dom-palco__fala" data-tom={fala.tom} aria-live="polite">
                 <p key={fala.texto} className="dom-palco__fala-texto">
@@ -1287,5 +1302,48 @@ function Confete() {
         />
       ))}
     </div>
+  )
+}
+
+/** Coluna grega estilizada (capitel, fuste canelado e base). */
+function ColunaGrega({ lado }: { lado: 'esquerda' | 'direita' }) {
+  return (
+    <svg className="dom-cerimonia__coluna" data-lado={lado} viewBox="0 0 60 300" preserveAspectRatio="none" aria-hidden>
+      <g fill="currentColor">
+        <rect x="2" y="0" width="56" height="10" rx="2" />
+        <path d="M6 10h48l-6 12H12z" opacity="0.85" />
+        <rect x="12" y="22" width="36" height="252" opacity="0.55" />
+        {[17, 25, 33, 41].map((x) => (
+          <rect key={x} x={x} y="24" width="3" height="248" rx="1.5" opacity="0.6" />
+        ))}
+        <path d="M12 274h36l6 12H6z" opacity="0.85" />
+        <rect x="2" y="286" width="56" height="14" rx="2" />
+      </g>
+    </svg>
+  )
+}
+
+/**
+ * A entrada de Sócrates: luz, colunas, friso e título. Duas camadas — luz e
+ * colunas ATRÁS do conteúdo (o Dom fica na frente da coluna, como estátua no
+ * templo, e a luz não desbota o desenho); friso e título por cima.
+ */
+export function CerimoniaSocratica() {
+  return (
+    <>
+      <div className="dom-cerimonia" data-camada="fundo" aria-hidden>
+        <div className="dom-cerimonia__luz" />
+        <ColunaGrega lado="esquerda" />
+        <ColunaGrega lado="direita" />
+      </div>
+      <div className="dom-cerimonia" data-camada="frente" aria-hidden>
+        <div className="dom-cerimonia__friso" />
+        <div className="dom-cerimonia__friso" data-onde="baixo" />
+        <div className="dom-cerimonia__titulo">
+          <strong>Dom Sócrates</strong>
+          <span>Conhece-te a ti mesmo</span>
+        </div>
+      </div>
+    </>
   )
 }
