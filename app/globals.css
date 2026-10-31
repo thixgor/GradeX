@@ -8477,6 +8477,21 @@ html[data-inspecao-aberta] body > *:not(#protecao-inspecao) {
   padding: 12px 16px 0;
 }
 
+/* Na coluna do app: alinhado às bordas da placa do cabeçalho (12 px da
+   borda direita; à esquerda a coluna já desconta o menu). */
+.aviso-email-faixa-casco {
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 0;
+}
+
+@media (min-width: 1024px) {
+  .aviso-email-faixa-casco {
+    padding: 12px 12px 0 0;
+  }
+  .aviso-email-faixa-casco .aviso-email {
+    max-width: none;
+  }
+}
+
 .aviso-email {
   position: relative;
   display: flex;

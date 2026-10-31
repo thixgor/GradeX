@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowUpRight, Check, ChevronDown, Loader2, MailCheck, RotateCw, X } from 'lucide-react'
@@ -9,6 +9,24 @@ import { cn } from '@/lib/utils'
 /** Espera entre reenvios, igual em todo lugar: evita a pessoa martelar o botão. */
 const ESPERA_REENVIO_S = 60
 const CHAVE_RECOLHIDO = 'aviso-email-recolhido'
+
+/*
+ * Onde o aviso é desenhado. Nas páginas com o casco do app (menu lateral
+ * flutuante), dentro da coluna de conteúdo — senão o menu cobre o começo do
+ * cartão. Nas demais, no topo da página (instância do layout raiz).
+ */
+let cascos = 0
+const ouvintes = new Set<() => void>()
+function avisar() {
+  ouvintes.forEach((f) => f())
+}
+function assinar(f: () => void) {
+  ouvintes.add(f)
+  return () => {
+    ouvintes.delete(f)
+  }
+}
+const haCasco = () => cascos > 0
 
 /** Atalho para a caixa de entrada dos provedores mais comuns. */
 function caixaDeEntrada(email: string): { nome: string; url: string } | null {
@@ -25,10 +43,21 @@ function caixaDeEntrada(email: string): { nome: string; url: string } | null {
  * faixa de alerta: o tom é "falta um passo", não "algo deu errado".
  * Recolhe para uma pastilha (lembrada na aba) para não brigar com o conteúdo.
  */
-export function VerifyEmailBanner() {
+export function VerifyEmailBanner({ noCasco = false }: { noCasco?: boolean } = {}) {
   const pathname = usePathname()
   const reduzir = useReducedMotion()
-  const oculto = !pathname || pathname.startsWith('/auth') || pathname === '/'
+  const cascoPresente = useSyncExternalStore(assinar, haCasco, () => false)
+  const oculto = !pathname || pathname.startsWith('/auth') || pathname === '/' || (!noCasco && cascoPresente)
+
+  useEffect(() => {
+    if (!noCasco) return
+    cascos++
+    avisar()
+    return () => {
+      cascos--
+      avisar()
+    }
+  }, [noCasco])
 
   const [usuario, setUsuario] = useState<{ email: string; emailVerified: boolean } | null>(null)
   const [recolhido, setRecolhido] = useState(false)
@@ -98,7 +127,7 @@ export function VerifyEmailBanner() {
   const mola = reduzir ? { duration: 0 } : { type: 'spring' as const, stiffness: 380, damping: 32 }
 
   return (
-    <div className="aviso-email-faixa" role="region" aria-label="Verificação de e-mail">
+    <div className={cn('aviso-email-faixa', noCasco && 'aviso-email-faixa-casco')} role="region" aria-label="Verificação de e-mail">
       <AnimatePresence mode="wait" initial={false}>
         {recolhido ? (
           <motion.button

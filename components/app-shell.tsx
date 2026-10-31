@@ -1,5 +1,6 @@
 'use client'
 
+import { VerifyEmailBanner } from '@/components/verify-email-banner'
 import { useState, useEffect, createContext, useContext, useMemo } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { Sidebar } from '@/components/sidebar'
@@ -517,6 +518,7 @@ export function AppShell({
           <AdesaoDoFoco />
           {/* Orientação da barra do topo, uma vez por conta. */}
           <TourDoTopo userId={bootstrapUser?._id} />
+          <VerifyEmailBanner noCasco />
           {/* Cabeçalho
               No computador, uma placa de vidro flutuando no topo da coluna de
               conteúdo, alinhada à sidebar (12 px das bordas, mesmo raio da
