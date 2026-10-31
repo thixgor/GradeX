@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, useState, type ReactNode, type SyntheticEvent } from 'react'
 import { cn } from '@/lib/utils'
 import { canUseNextImage, normalizeCoverSrc } from '@/lib/cover-image-src'
 
@@ -40,6 +40,8 @@ interface CoverImageProps {
   priority?: boolean
   /** Renderizado quando não há capa ou quando o download falha. */
   fallback?: ReactNode
+  /** Avisa as dimensões naturais da imagem assim que ela carrega. */
+  onNaturalSize?: (largura: number, altura: number) => void
 }
 
 /**
@@ -53,6 +55,7 @@ export function CoverImage({
   className,
   priority = false,
   fallback = null,
+  onNaturalSize,
 }: CoverImageProps) {
   const [failed, setFailed] = useState(false)
   const [loaded, setLoaded] = useState(false)
@@ -69,9 +72,20 @@ export function CoverImage({
   // Imagem já em cache do navegador termina de carregar antes da hidratação, e
   // o evento `load` nunca chega ao React — sem esta checagem o card ficaria
   // preso no esqueleto para sempre.
-  const settleIfCached = useCallback((node: HTMLImageElement | null) => {
-    if (node?.complete) setLoaded(true)
-  }, [])
+  const settleIfCached = useCallback(
+    (node: HTMLImageElement | null) => {
+      if (node?.complete) {
+        setLoaded(true)
+        if (node.naturalWidth) onNaturalSize?.(node.naturalWidth, node.naturalHeight)
+      }
+    },
+    [onNaturalSize],
+  )
+  const aoCarregar = (e: SyntheticEvent<HTMLImageElement>) => {
+    setLoaded(true)
+    const img = e.currentTarget
+    if (img.naturalWidth) onNaturalSize?.(img.naturalWidth, img.naturalHeight)
+  }
 
   if (!src || failed) return <>{fallback}</>
 
@@ -92,7 +106,7 @@ export function CoverImage({
           fill
           sizes={sizes}
           priority={priority}
-          onLoad={() => setLoaded(true)}
+          onLoad={aoCarregar}
           onError={() => setFailed(true)}
           className={cn('object-cover', fade, className)}
         />
@@ -103,7 +117,7 @@ export function CoverImage({
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
-          onLoad={() => setLoaded(true)}
+          onLoad={aoCarregar}
           onError={() => setFailed(true)}
           className={cn('absolute inset-0 h-full w-full object-cover', fade, className)}
         />
