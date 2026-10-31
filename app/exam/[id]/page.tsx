@@ -2472,7 +2472,7 @@ ${respostaAluno}`
 
   if (!exam) {
     return (
-      <FundoIos className="flex min-h-screen items-center justify-center p-6">
+      <FundoIos className="flex min-h-[100dvh] flex-1 items-center justify-center p-6">
         <div className="max-w-sm space-y-4 text-center">
           <p className="ios-titulo-produto">Prova não encontrada</p>
           <p className="text-[15px] ios-rotulo-2">
@@ -2734,7 +2734,7 @@ ${respostaAluno}`
     return (
       <>
         {proctoringModal}
-        <FundoIos className="min-h-screen">
+        <FundoIos className="min-h-[100dvh] flex-1">
           {/*
             A folga do rodapé acompanha a barra fixa do pitch.
 
@@ -3564,7 +3564,7 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <FundoIos className="min-h-screen">
+        <FundoIos className="min-h-[100dvh] flex-1">
           <div className="mx-auto w-full max-w-6xl px-4 pb-12 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6 lg:px-8">
             {topoDaPorta('Início', () => router.push('/'))}
 
@@ -3884,7 +3884,7 @@ ${respostaAluno}`
       <>
         {proctoringModal}
         {avisoDeInicio}
-        <FundoIos className="min-h-screen">
+        <FundoIos className="min-h-[100dvh] flex-1">
           <div className="mx-auto w-full max-w-2xl px-4 pb-16 pt-[calc(8px+env(safe-area-inset-top))] sm:px-6">
             {topoDaPorta('Sair', () => {
               setInWaitingRoom(false)
@@ -4151,7 +4151,7 @@ ${respostaAluno}`
         aoBloquear={(mensagem) => showToastMessage(mensagem, 'info')}
       />
       {proctoringModal}
-      <FundoIos className="min-h-screen">
+      <FundoIos className="min-h-[100dvh] flex-1">
       <div
         className="min-h-screen"
         // A barra do polegar ocupa o rodapé nos dois modos: o botão de

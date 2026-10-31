@@ -1426,7 +1426,9 @@ button.pv-capsula {
 @media (min-width: 640px) {
   .vidro-ios .pv-rodape-fixo {
     position: static;
-    margin: 0;
+    /* A distância até os ajustes mora aqui: um `mt-*` na peça perdia para
+       este `margin`, e a explicação do tempo encostava no botão. */
+    margin: 24px 0 0;
     padding: 0;
     background: none;
   }
@@ -1534,4 +1536,61 @@ button.pv-capsula {
 }
 .lite-mode .vidro-ios .pv-arte-brilho {
   display: none;
+}
+
+/* A cápsula de tempo do treino: ícone e rótulo, 56 px de alvo. A escolhida
+   ganha a cor do texto como fundo e dá um pulo pequeno. */
+.vidro-ios .pv-tempo {
+  display: inline-flex;
+  min-height: 56px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 4px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ios-rotulo-2);
+  background: var(--ios-preenchimento);
+  transition:
+    background-color 0.2s ease-out,
+    color 0.2s ease-out,
+    transform 0.14s ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.vidro-ios .pv-tempo:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vidro-ios .pv-tempo:hover {
+    color: var(--ios-rotulo);
+    background: var(--ios-preenchimento-forte);
+  }
+}
+.vidro-ios .pv-tempo[aria-checked='true'] {
+  color: var(--ios-chao);
+  background: var(--ios-rotulo);
+  animation: pv-escolha 0.42s var(--ios-expo);
+}
+@keyframes pv-escolha {
+  40% {
+    transform: scale(1.08);
+  }
+}
+/* O ícone de embaralhar dá uma volta quando a chave muda. */
+.vidro-ios .pv-gira {
+  animation: pv-gira 0.55s var(--ios-expo);
+}
+@keyframes pv-gira {
+  from {
+    transform: rotate(-180deg) scale(0.6);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vidro-ios .pv-tempo[aria-checked='true'],
+  .vidro-ios .pv-gira {
+    animation: none;
+  }
 }
