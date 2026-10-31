@@ -5,6 +5,8 @@ import { rotaAutenticada, ok } from '@/lib/monitorias/rota'
 import { carregarUsuario } from '@/lib/monitorias/servidor'
 import { avatarPorId } from '@/lib/monitorias/avatares'
 import { definirRetratoDaConta } from '@/lib/monitorias/fotos'
+import { getDb } from '@/lib/mongodb'
+import { ObjectId } from 'mongodb'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,5 +25,20 @@ export async function PUT(request: NextRequest) {
     if (!user || user.banned) return erro(403, 'Conta indisponível.')
     await definirRetratoDaConta(sessao.userId, escolhido)
     return ok({ avatar: escolhido.id })
+  })
+}
+
+/**
+ * DELETE — tira o retrato da galeria da conta e volta para a foto do Google
+ * (ou as iniciais, se a conta não tem). O perfil de monitor fica como está:
+ * monitor precisa de retrato do catálogo.
+ */
+export async function DELETE(request: NextRequest) {
+  return rotaAutenticada(request, { limite: 'WRITE' }, async ({ sessao }) => {
+    const user = await carregarUsuario(sessao.userId)
+    if (!user || user.banned) return erro(403, 'Conta indisponível.')
+    const db = await getDb()
+    await db.collection('users').updateOne({ _id: new ObjectId(sessao.userId) }, { $unset: { avatar: '' } })
+    return ok({ avatar: null })
   })
 }

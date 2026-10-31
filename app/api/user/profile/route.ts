@@ -1,3 +1,4 @@
+import { fotoDoGoogleValida } from '@/lib/foto-google'
 import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import crypto from 'crypto'
@@ -36,6 +37,7 @@ const PROFILE_PROJECTION = {
   fullName: 1,
   dateOfBirth: 1,
   avatar: 1,
+  profilePicture: 1,
   // Só para saber SE existe (conta do Google não tem). O hash nunca sai daqui.
   password: 1,
 } as const
@@ -86,6 +88,7 @@ export async function GET() {
       hasCpf: !!user.cpf,
       cpfVerified: !!user.cpfVerified,
       avatar: user.avatar || '',
+      fotoGoogle: fotoDoGoogleValida(user.profilePicture) || '',
       hasPassword: !!user.password,
     },
   })

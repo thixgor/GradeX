@@ -1,3 +1,4 @@
+import { fotoDoGoogleValida } from '@/lib/foto-google'
 /**
  * Optimized Bootstrap Endpoint
  * Aggregates multiple user data points in a single request
@@ -47,6 +48,8 @@ interface BootstrapResponse {
     secondaryRole?: 'monitor' | string
     emailVerified: boolean
     avatar?: string
+    /** Foto do Google (URL do CDN deles), retrato padrão sem galeria. */
+    fotoGoogle?: string
     accountType: 'free' | 'trial' | 'premium'
     trialExpiresAt?: string
     trialDaysUsed?: number
@@ -201,7 +204,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         { _id: userId },
         {
           projection: {
-            email: 1, name: 1, role: 1, secondaryRole: 1, emailVerified: 1, avatar: 1,
+            email: 1, name: 1, role: 1, secondaryRole: 1, emailVerified: 1, avatar: 1, profilePicture: 1,
             accountType: 1, trialExpiresAt: 1, trialDaysUsed: 1, trialDaysRemaining: 1,
             isBanned: 1, banReason: 1, banDetails: 1, bannedAt: 1,
             subscriptionStartDate: 1, subscriptionEndDate: 1,
@@ -286,6 +289,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         secondaryRole: userDoc.secondaryRole,
         emailVerified: userDoc.emailVerified || false,
         avatar: userDoc.avatar || undefined,
+        fotoGoogle: fotoDoGoogleValida(userDoc.profilePicture) || undefined,
         accountType: userDoc.accountType || 'free',
         trialExpiresAt: userDoc.trialExpiresAt,
         trialDaysUsed: userDoc.trialDaysUsed,

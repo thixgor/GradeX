@@ -1,3 +1,4 @@
+import { fotoDoGoogleValida } from '@/lib/foto-google'
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { getDb } from '@/lib/mongodb'
@@ -63,6 +64,7 @@ export async function GET() {
           secondaryRole: 1,
           emailVerified: 1,
           avatar: 1,
+          profilePicture: 1,
         },
       }
     )
@@ -101,6 +103,7 @@ export async function GET() {
         secondaryRole: user.secondaryRole,
         emailVerified: !!user.emailVerified,
         avatar: user.avatar || null,
+        fotoGoogle: fotoDoGoogleValida(user.profilePicture),
       },
     }, { headers })
   } catch (error) {

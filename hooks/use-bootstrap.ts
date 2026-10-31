@@ -37,6 +37,8 @@ export interface BootstrapUser {
   emailVerified: boolean
   /** Retrato da galeria (id do catálogo em lib/monitorias/avatares). */
   avatar?: string
+  /** Foto do Google (URL do CDN deles): retrato padrão de quem não escolheu um da galeria. */
+  fotoGoogle?: string
   accountType: 'free' | 'trial' | 'premium'
   trialExpiresAt?: string
   trialDaysUsed?: number
@@ -576,7 +578,7 @@ export function clearBootstrapCache() {
  * Troca o retrato no cache da sessão (memória + aparelho) sem refazer o
  * bootstrap: o menu lateral e quem mais lê `user.avatar` atualizam na hora.
  */
-export function atualizarAvatarNoBootstrap(avatar: string) {
+export function atualizarAvatarNoBootstrap(avatar: string | undefined) {
   if (!globalBootstrapData?.user) return
   globalBootstrapData = { ...globalBootstrapData, user: { ...globalBootstrapData.user, avatar } }
   saveBootstrapToStorage(globalBootstrapData)

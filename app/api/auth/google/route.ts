@@ -4,6 +4,7 @@ import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
+import { fotoDoGoogleValida } from '@/lib/foto-google'
 
 export const dynamic = 'force-dynamic'
 
@@ -48,10 +49,15 @@ export async function POST(request: NextRequest) {
 
       // Atualiza a foto de perfil se fornecida
       const updateData: any = { lastLoginAt: new Date() }
-      if (picture && !user.profilePicture) {
-        updateData.profilePicture = picture
-        updateData.googleId = sub
+      // A foto do Google é só uma URL do CDN deles (nada no nosso Blob). Ela
+      // muda quando a pessoa troca a foto lá, então acompanhamos — mas nunca
+      // por cima de uma foto que não seja do Google.
+      const fotoNova = fotoDoGoogleValida(picture)
+      const fotoAtualEhDoGoogle = !user.profilePicture || !!fotoDoGoogleValida(user.profilePicture)
+      if (fotoNova && fotoAtualEhDoGoogle && fotoNova !== user.profilePicture) {
+        updateData.profilePicture = fotoNova
       }
+      if (!user.googleId) updateData.googleId = sub
       await usersCollection.updateOne(
         { _id: user._id },
         { $set: updateData }

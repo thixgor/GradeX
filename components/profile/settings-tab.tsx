@@ -38,7 +38,7 @@ export function SettingsTab({
   /** Já cancelada — o acesso corre até o fim do período pago. */
   cancelamentoAgendado: boolean
   onNameChange: (name: string) => void
-  onAvatarChange: (id: string) => void
+  onAvatarChange: (id: string | null) => void
   onSalvo?: () => void
   onToast: (message: string, type?: 'success' | 'error') => void
   onReloadUser: () => void

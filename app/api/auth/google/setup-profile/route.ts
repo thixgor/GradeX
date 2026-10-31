@@ -4,6 +4,7 @@ import { createToken, setAuthCookie, generateSessionId } from '@/lib/auth'
 import { recordLoginSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import { verifyGoogleIdToken, GoogleAuthError } from '@/lib/google-auth'
+import { fotoDoGoogleValida } from '@/lib/foto-google'
 import { sendWelcomeEmail, deliverTransactionalEmails } from '@/lib/mail'
 import { recordCheckoutEvent, getRequestAnalyticsMeta } from '@/lib/analytics'
 import { vincularIndicacaoNoCadastro } from '@/lib/embaixadores/servidor'
@@ -69,7 +70,8 @@ export async function POST(request: NextRequest) {
 
       const patch: Record<string, unknown> = { lastLoginAt: new Date() }
       if (!existingUser.googleId) patch.googleId = googleId
-      if (picture && !existingUser.profilePicture) patch.profilePicture = picture
+      const fotoNova = fotoDoGoogleValida(picture)
+      if (fotoNova && (!existingUser.profilePicture || fotoDoGoogleValida(existingUser.profilePicture))) patch.profilePicture = fotoNova
       await usersCollection.updateOne({ _id: existingUser._id }, { $set: patch })
 
       const jti = generateSessionId()

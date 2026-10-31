@@ -65,6 +65,7 @@ interface User {
   secondaryRole?: string
   emailVerified?: boolean
   avatar?: string
+  fotoGoogle?: string
 }
 
 interface AppShellContextType {
@@ -244,6 +245,7 @@ export function AppShell({
       secondaryRole: bootstrapUser.secondaryRole,
       emailVerified: bootstrapUser.emailVerified,
       avatar: bootstrapUser.avatar,
+      fotoGoogle: bootstrapUser.fotoGoogle,
     }
   }, [bootstrapUser])
 

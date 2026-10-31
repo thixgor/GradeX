@@ -69,6 +69,8 @@ type Perfil = ProfileFormState & {
   cpfVerified: boolean
   emailVerified: boolean
   avatar: string
+  /** Foto do Google (URL do CDN deles), mostrada enquanto não há retrato da galeria. */
+  fotoGoogle: string
   /** Conta criada pelo Google não tem senha até a pessoa criar uma. */
   hasPassword: boolean
 }
@@ -93,6 +95,7 @@ const VAZIO: Perfil = {
   cpfVerified: false,
   emailVerified: true,
   avatar: '',
+  fotoGoogle: '',
   hasPassword: true,
 }
 
@@ -212,7 +215,7 @@ export function PersonalDataCard({
   /** Campo pedido pelo link (`?campo=`): rola até ele e já abre a edição. */
   campo?: CampoDoPerfil | null
   onNameChange: (name: string) => void
-  onAvatarChange: (id: string) => void
+  onAvatarChange: (id: string | null) => void
   onToast: (message: string, type?: 'success' | 'error') => void
   onEmailChanged: () => void
   /** Algo foi salvo (a página mostra o atalho de volta, se veio de outro lugar). */
@@ -289,13 +292,14 @@ export function PersonalDataCard({
         vazio="Escolha um retrato da galeria. Nada de envio de arquivo."
         nome={perfil.name || userEmail}
         atual={perfil.avatar}
+        fotoGoogle={perfil.fotoGoogle || null}
         endpoint="/api/user/avatar"
         abrir={campo === 'foto'}
         fechadaSemRetrato
         onEscolhido={(id) => {
-          setPerfil((p) => ({ ...p, avatar: id }))
+          setPerfil((p) => ({ ...p, avatar: id || '' }))
           onAvatarChange(id)
-          onToast('Foto atualizada.')
+          onToast(id ? 'Foto atualizada.' : 'Voltamos para a sua foto do Google.')
           onSalvo?.()
         }}
       />

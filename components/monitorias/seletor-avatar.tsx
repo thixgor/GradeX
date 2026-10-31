@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Check, ChevronDown, ExternalLink, Loader2 } from 'lucide-react'
 import { AVATARES, FILTROS_AVATAR, SERIES_AVATAR, avatarPorId, creditoDoAvatar, descricaoDoAvatar, type Avatar, type FiltroAvatar, type SerieAvatar } from '@/lib/monitorias/avatares'
 import { cn } from '@/lib/utils'
+import { fotoDoGoogleNoTamanho } from '@/lib/foto-google'
 import { atualizarAvatarNoBootstrap } from '@/hooks/use-bootstrap'
 import { Avatar as Iniciais, CaixaErro, api } from './base'
 
@@ -17,11 +18,17 @@ export function SeletorAvatar({
   atual,
   onEscolhido,
   endpoint = '/api/monitorias/tutor/foto',
+  fotoGoogle,
+  onUsarGoogle,
 }: {
   atual: string | null
   onEscolhido: (id: string) => void
   /** Onde grava: o painel do monitor ou o retrato da conta (/profile). Os dois mudam a mesma foto. */
   endpoint?: string
+  /** Foto do Google da conta: vira a primeira opção (só no /profile). */
+  fotoGoogle?: string | null
+  /** Voltou para a foto do Google (o retrato da galeria foi tirado). */
+  onUsarGoogle?: () => void
 }) {
   const reduzir = useReducedMotion()
   const [filtro, setFiltro] = useState<FiltroAvatar>('todos')
@@ -56,8 +63,53 @@ export function SeletorAvatar({
     }
   }
 
+  async function usarGoogle() {
+    if (salvando || !escolhido) return
+    setSalvando('google')
+    setErro('')
+    try {
+      await api(endpoint, { method: 'DELETE' })
+      setEscolhido(null)
+      atualizarAvatarNoBootstrap(undefined)
+      onUsarGoogle?.()
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : 'Não foi possível salvar. Tente de novo.')
+    } finally {
+      setSalvando(null)
+    }
+  }
+
+  const urlGoogle = onUsarGoogle ? fotoDoGoogleNoTamanho(fotoGoogle, 56) : null
+
   return (
     <div>
+      {urlGoogle && (
+        <button
+          type="button"
+          onClick={usarGoogle}
+          aria-pressed={!escolhido}
+          className={cn('vidro-google mb-5', !escolhido && 'vidro-google-ativo')}
+        >
+          <span className="relative block h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-white/60 dark:ring-white/15">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={urlGoogle} alt="" width={56} height={56} decoding="async" referrerPolicy="no-referrer" className="h-full w-full object-cover" />
+            {(!escolhido || salvando === 'google') && (
+              <span className="absolute inset-0 flex items-center justify-center bg-primary/35">
+                {salvando === 'google' ? <Loader2 className="h-5 w-5 animate-spin text-white" /> : <Check className="h-6 w-6 text-white drop-shadow" />}
+              </span>
+            )}
+          </span>
+          <span className="min-w-0 flex-1 text-left">
+            <span className="flex items-center gap-1.5 text-[15px] font-semibold">
+              <LogoGoogle /> Sua foto do Google
+            </span>
+            <span className="block text-[13px] leading-snug text-muted-foreground">
+              {escolhido ? 'Toque para voltar a usá-la. Ela acompanha a foto da sua conta Google.' : 'Em uso. Se trocar a foto no Google, ela muda aqui também.'}
+            </span>
+          </span>
+        </button>
+      )}
+
       <div className="-mx-1 mb-4 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]" role="tablist" aria-label="Filtrar retratos">
         {FILTROS_AVATAR.map((f) => (
           <button
@@ -174,6 +226,7 @@ export function SecaoRetrato({
   onEscolhido,
   abrir,
   fechadaSemRetrato,
+  fotoGoogle,
   id = 'galeria-retratos',
 }: {
   titulo: string
@@ -183,7 +236,10 @@ export function SecaoRetrato({
   nome: string
   atual: string | null | undefined
   endpoint?: string
-  onEscolhido?: (id: string) => void
+  /** `null` = voltou para a foto do Google. */
+  onEscolhido?: (id: string | null) => void
+  /** Foto do Google da conta, mostrada quando não há retrato e oferecida como opção. */
+  fotoGoogle?: string | null
   /** Força abrir (link direto para a foto). */
   abrir?: boolean
   /** Começa fechada mesmo sem retrato (no /profile a foto é opcional). */
@@ -194,6 +250,7 @@ export function SecaoRetrato({
   const [atual, setAtual] = useState<string | null>(avatarPorId(inicial) ? inicial! : null)
   const [aberto, setAberto] = useState(!!abrir || (!atual && !fechadaSemRetrato))
   const retrato = avatarPorId(atual)
+  const urlGoogle = fotoDoGoogleNoTamanho(fotoGoogle, 56)
   return (
     <section id={id} className="scroll-mt-24 overflow-hidden rounded-2xl border border-border bg-card">
       <button
@@ -203,12 +260,12 @@ export function SecaoRetrato({
         aria-controls={`${id}-corpo`}
         className="flex w-full items-center gap-4 p-5 text-left transition hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring sm:p-6"
       >
-        <Iniciais nome={nome || 'Você'} url={retrato?.url || null} tamanho={56} />
+        <Iniciais nome={nome || 'Você'} url={retrato?.url || urlGoogle} tamanho={56} />
         <span className="min-w-0 flex-1">
           <span className="block font-heading text-lg font-semibold">{titulo}</span>
-          <span className="block truncate text-sm text-muted-foreground">{retrato ? descricaoDoAvatar(retrato) : vazio}</span>
+          <span className="block truncate text-sm text-muted-foreground">{retrato ? descricaoDoAvatar(retrato) : urlGoogle ? 'Foto da sua conta Google' : vazio}</span>
         </span>
-        <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato ? 'Trocar' : 'Escolher'}</span>
+        <span className="shrink-0 text-sm font-medium text-primary">{aberto ? 'Fechar' : retrato || urlGoogle ? 'Trocar' : 'Escolher'}</span>
         <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-200', aberto && 'rotate-180')} />
       </button>
       <AnimatePresence initial={false}>
@@ -225,6 +282,16 @@ export function SecaoRetrato({
               <SeletorAvatar
                 atual={atual}
                 endpoint={endpoint}
+                fotoGoogle={fotoGoogle}
+                onUsarGoogle={
+                  urlGoogle
+                    ? () => {
+                        setAtual(null)
+                        setAberto(false)
+                        onEscolhido?.(null)
+                      }
+                    : undefined
+                }
                 onEscolhido={(novo) => {
                   setAtual(novo)
                   setAberto(false)
@@ -236,6 +303,17 @@ export function SecaoRetrato({
         )}
       </AnimatePresence>
     </section>
+  )
+}
+
+function LogoGoogle() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" aria-hidden>
+      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
+      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
+      <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z" />
+      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A10.96 10.96 0 0 0 12 1 11 11 0 0 0 2.18 7.06L5.84 9.9C6.71 7.3 9.14 5.38 12 5.38z" />
+    </svg>
   )
 }
 

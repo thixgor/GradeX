@@ -47,7 +47,7 @@ import { useCargos } from '@/hooks/use-cargos'
 import { useLiteMode } from '@/hooks/use-lite-mode'
 import { ScrollRoller } from '@/components/ui/scroll-roller'
 import { BuscaGlobal } from '@/components/busca/busca-global'
-import { avatarPorId } from '@/lib/monitorias/avatares'
+import { urlDoRetrato } from '@/lib/foto-google'
 import { XpDoMenu } from '@/components/xp/xp-do-menu'
 import { Trophy } from '@phosphor-icons/react/dist/ssr/Trophy'
 
@@ -60,6 +60,8 @@ interface SidebarProps {
     accountType?: 'gratuito' | 'trial' | 'plus' | 'premium' | 'essential'
     /** Retrato da galeria (id do catálogo). */
     avatar?: string
+    /** Foto do Google, usada quando não há retrato da galeria. */
+    fotoGoogle?: string
   } | null
   onCreateExam: () => void
   onLogout: () => void
@@ -1465,7 +1467,7 @@ function SidebarAccountFooter({
           transition: `gap ${SB_DUR} ${SB_EASE}, padding ${SB_DUR} ${SB_EASE}`,
         }}
       >
-        <RetratoDoMenu nome={user.name} avatar={user.avatar} />
+        <RetratoDoMenu nome={user.name} avatar={user.avatar} fotoGoogle={user.fotoGoogle} />
         <span
           className="min-w-0 flex-1 text-left"
           style={{
@@ -1557,10 +1559,11 @@ function SidebarAccountFooter({
   )
 }
 
-/** Retrato da conta no rodapé do menu; sem retrato (ou se a imagem falhar), a inicial. */
-function RetratoDoMenu({ nome, avatar }: { nome: string; avatar?: string }) {
+/** Retrato da conta no rodapé do menu: galeria > foto do Google > inicial. */
+function RetratoDoMenu({ nome, avatar, fotoGoogle }: { nome: string; avatar?: string; fotoGoogle?: string }) {
+  const url = urlDoRetrato(avatar, fotoGoogle, 36)
   const [falhou, setFalhou] = useState(false)
-  const url = avatarPorId(avatar)?.url
+  useEffect(() => setFalhou(false), [url])
   return (
     <span className="sidebar-retrato">
       {url && !falhou ? (

@@ -53,8 +53,8 @@ import { precoAnunciado, useOfertaDeUpgrade } from '@/hooks/use-oferta-de-upgrad
 import { SeloDeCargo } from '@/components/cargo-badge'
 import { cn } from '@/lib/utils'
 import { Avatar as Retrato } from '@/components/monitorias/base'
+import { urlDoRetrato } from '@/lib/foto-google'
 import { escopoMonitorias } from '@/components/monitorias/fonte'
-import { avatarPorId } from '@/lib/monitorias/avatares'
 import { voltarValido } from '@/lib/monitorias/requisitos'
 import type { CampoDoPerfil } from '@/components/profile/personal-data-card'
 
@@ -114,6 +114,7 @@ export default function ProfilePage() {
   })
   const [salvouAlgo, setSalvouAlgo] = useState(false)
   const [avatar, setAvatar] = useState<string | null>(null)
+  const [fotoGoogle, setFotoGoogle] = useState<string | null>(null)
 
   const [submissions, setSubmissions] = useState<UserSubmission[]>([])
   const [submissionsLoading, setSubmissionsLoading] = useState(true)
@@ -253,6 +254,7 @@ export default function ProfilePage() {
         setUserEmail(data.user?.email || '')
         setUserId(data.user?._id || data.user?.id || '')
         setAvatar(data.user?.avatar || null)
+        setFotoGoogle(data.user?.fotoGoogle || null)
         if (data.user?.trialExpiresAt) setTrialExpiresAt(new Date(data.user.trialExpiresAt))
         setUserTotals({
           totalCronogramasCreated: data.user?.totalCronogramasCreated || 0,
@@ -397,10 +399,10 @@ export default function ProfilePage() {
               type="button"
               onClick={irParaFoto}
               className="group relative shrink-0 rounded-[32%]"
-              aria-label={avatar ? 'Trocar foto do perfil' : 'Escolher foto do perfil'}
+              aria-label={avatar || fotoGoogle ? 'Trocar foto do perfil' : 'Escolher foto do perfil'}
             >
-              <Retrato nome={userName || '?'} url={avatarPorId(avatar)?.url || null} tamanho={84} />
-              <span className="perfil-trocar-foto">{avatar ? 'Trocar' : 'Foto'}</span>
+              <Retrato nome={userName || '?'} url={urlDoRetrato(avatar, fotoGoogle, 84)} tamanho={84} />
+              <span className="perfil-trocar-foto">{avatar || fotoGoogle ? 'Trocar' : 'Foto'}</span>
             </button>
             <div className="min-w-0 flex-1">
               <h1 className="ios-titulo-grande truncate">
